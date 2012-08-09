@@ -34,6 +34,7 @@ public:
     void applyStyle(const OTMLNodePtr& styleNode);
 
     void setAlignBottom(bool aliginBottom) { m_alignBottom = aliginBottom; update(); }
+    bool isAlignBottom() { return m_alignBottom; }
 
     bool isUIVerticalLayout() { return true; }
 

@@ -139,7 +139,6 @@ protected:
     // walk related
     int m_walkAnimationPhase;
     int m_walkedPixels;
-    int m_walkStepDuration;
     uint m_footStep;
     Timer m_walkTimer;
     Timer m_footTimer;
@@ -151,6 +150,7 @@ protected:
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;
     Otc::Direction m_lastStepDirection;
+    Position m_lastStepPosition;
     Position m_oldPosition;
 };
 

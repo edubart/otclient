@@ -572,6 +572,7 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<UIVerticalLayout, UIBoxLayout>();
     g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
     g_lua.bindClassMemberFunction<UIVerticalLayout>("setAlignBottom", &UIVerticalLayout::setAlignBottom);
+    g_lua.bindClassMemberFunction<UIVerticalLayout>("isAlignBottom", &UIVerticalLayout::isAlignBottom);
 
     // UIHorizontalLayout
     g_lua.registerClass<UIHorizontalLayout, UIBoxLayout>();

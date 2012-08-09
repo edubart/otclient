@@ -48,7 +48,6 @@ Creature::Creature() : Thing()
     m_direction = Otc::South;
     m_walkAnimationPhase = 0;
     m_walkedPixels = 0;
-    m_walkStepDuration = 0;
     m_walkTurnDirection = Otc::InvalidDirection;
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
@@ -258,6 +257,7 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
 
     // get walk direction
     m_lastStepDirection = oldPos.getDirectionFromPosition(newPos);
+    m_lastStepPosition = newPos;
 
     // set current walking direction
     setDirection(m_lastStepDirection);
@@ -266,7 +266,6 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     m_walking = true;
     m_walkTimer.restart();
     m_walkedPixels = 0;
-    m_walkStepDuration = getStepDuration();
 
     // no direction need to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
@@ -351,7 +350,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     int footAnimPhases = getAnimationPhases() - 1;
     if(totalPixelsWalked == 32 || footAnimPhases == 0)
         m_walkAnimationPhase = 0;
-    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= m_walkStepDuration / 4 ) {
+    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= getStepDuration() / 4 ) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
         m_footStepDrawn = false;
@@ -415,13 +414,14 @@ void Creature::nextWalkUpdate()
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
-        }, m_walkStepDuration / 32);
+        }, getStepDuration() / 32);
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = m_walkStepDuration / 32;
+    int stepDuration = getStepDuration();
+    float walkTicksPerPixel = stepDuration / 32;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // needed for paralyze effect
@@ -433,7 +433,7 @@ void Creature::updateWalk()
     updateWalkingTile();
 
     // terminate walk
-    if(m_walking && m_walkTimer.ticksElapsed() >= m_walkStepDuration)
+    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration)
         terminateWalk();
 }
 
@@ -608,7 +608,11 @@ Point Creature::getDrawOffset()
 int Creature::getStepDuration()
 {
     int groundSpeed = 0;
-    const TilePtr& tile = getTile();
+
+    Position tilePos = m_lastStepPosition;
+    if(!tilePos.isValid())
+        tilePos = m_position;
+    const TilePtr& tile = g_map.getTile(tilePos);
     if(tile)
         groundSpeed = tile->getGroundSpeed();
 

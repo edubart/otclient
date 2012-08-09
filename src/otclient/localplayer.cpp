@@ -66,12 +66,16 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
     if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
         return false;
 
+    // paralyzed
+    if(m_speed == 0)
+        return false;
+
     // last walk is not done yet
-    if(m_walkTimer.ticksElapsed() < m_walkStepDuration)
+    if(m_walkTimer.ticksElapsed() < getStepDuration())
         return false;
 
     // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= m_walkStepDuration + PREWALK_TIMEOUT;
+    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration() + PREWALK_TIMEOUT;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
     if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
@@ -178,7 +182,8 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 
 void LocalPlayer::updateWalk()
 {
-    float walkTicksPerPixel = m_walkStepDuration / 32.0f;
+    int stepDuration = getStepDuration();
+    float walkTicksPerPixel = stepDuration / 32.0f;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // update walk animation and offsets
@@ -186,8 +191,8 @@ void LocalPlayer::updateWalk()
     updateWalkOffset(totalPixelsWalked);
     updateWalkingTile();
 
-    // terminate walk only when client and server side walk are complated
-    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= m_walkStepDuration)
+    // terminate walk only when client and server side walk are completed
+    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= stepDuration)
         terminateWalk();
 }
 
