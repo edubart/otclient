@@ -53,7 +53,7 @@ public:
     const std::string& getVersion() { return m_appVersion; }
 
     std::string getBuildCompiler() { return BUILD_COMPILER; }
-    std::string getBuildDate() { return BUILD_DATE; }
+    std::string getBuildDate();
     std::string getBuildRevision() { return BUILD_REVISION; }
     std::string getBuildCommit() { return BUILD_COMMIT; }
     std::string getBuildType() { return BUILD_TYPE; }

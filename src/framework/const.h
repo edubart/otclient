@@ -27,7 +27,6 @@
 #define RAD_TO_DEC (180.0/acos(-1))
 
 #define BUILD_COMPILER "gcc " __VERSION__
-#define BUILD_DATE __DATE__
 
 #ifndef BUILD_COMMIT
 #define BUILD_COMMIT "devel"

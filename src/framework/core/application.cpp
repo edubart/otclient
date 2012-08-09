@@ -153,3 +153,8 @@ std::string Application::getOs()
     return "linux";
 #endif
 }
+
+std::string Application::getBuildDate()
+{
+    return std::string(__DATE__);
+}

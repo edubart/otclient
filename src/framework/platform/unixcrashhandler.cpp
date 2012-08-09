@@ -44,7 +44,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
     ss << stdext::format("app name: %s\n", g_app.getName());
     ss << stdext::format("app version: %s\n", g_app.getVersion());
     ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
-    ss << stdext::format("build date: %s\n", BUILD_DATE);
+    ss << stdext::format("build date: %s\n", __DATE__);
     ss << stdext::format("build type: %s\n", BUILD_TYPE);
     ss << stdext::format("build revision: %s (%s)\n", BUILD_REVISION, BUILD_COMMIT);
     ss << stdext::format("crash date: %s\n", stdext::date_time_string());
