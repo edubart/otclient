@@ -67,9 +67,7 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
-  local clientVersion = g_game.getClientVersion()
-
-  if not clientVersion or clientVersion == 0 then clientVersion = 960 end
+  local clientVersion = g_settings.getInteger('client-version')
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -85,7 +83,10 @@ function EnterGame.init()
   for _i, proto in pairs(g_game.getSupportedProtocols()) do
     protocolBox:addOption(proto)
   end
-  protocolBox:setCurrentOption(clientVersion)
+
+  if clientVersion then
+    protocolBox:setCurrentOption(clientVersion)
+  end
 
   -- only open entergame when app starts
   if not g_app.isRunning() then

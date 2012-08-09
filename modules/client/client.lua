@@ -37,11 +37,6 @@ function Client.init()
   g_window.setIcon(resolvepath('clienticon.png'))
   g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
 
-  -- load default client version
-  local clientVersion = g_settings.getInteger('client-version')
-  if not clientVersion or clientVersion == 0 then clientVersion = 960 end
-  g_game.setClientVersion(clientVersion)
-
   connect(g_app, { onRun =
     function()
       -- Play startup music (The Silver Tree, by Mattias Westlund)

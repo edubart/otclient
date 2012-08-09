@@ -45,6 +45,9 @@ end
 function UIItem:onDestroy()
   if self == g_ui.getDraggingWidget() and self.hoveredWho then
     self.hoveredWho:setBorderWidth(0)
+  end
+
+  if self.hoveredWho then
     self.hoveredWho = nil
   end
 end
