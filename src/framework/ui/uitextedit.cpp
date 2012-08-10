@@ -27,6 +27,7 @@
 #include <framework/core/clock.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/core/application.h>
+#include <framework/input/mouse.h>
 
 UITextEdit::UITextEdit()
 {
@@ -389,6 +390,14 @@ std::string UITextEdit::getDisplayedText()
         return std::string(m_text.length(), '*');
     else
         return m_text;
+}
+
+void UITextEdit::onHoverChange(bool hovered)
+{
+    if(hovered)
+        g_mouse.setTextCursor();
+    else
+        g_mouse.restoreCursor();
 }
 
 void UITextEdit::onTextChange(const std::string& text, const std::string& oldText)

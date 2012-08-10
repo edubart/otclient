@@ -40,6 +40,7 @@
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/fontmanager.h>
 #include <framework/ui/ui.h>
+#include <framework/input/mouse.h>
 #endif
 
 #ifdef FW_NET
@@ -239,6 +240,16 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_window", "isFullscreen", &PlatformWindow::isFullscreen, &g_window);
     g_lua.bindSingletonFunction("g_window", "isMaximized", &PlatformWindow::isMaximized, &g_window);
     g_lua.bindSingletonFunction("g_window", "hasFocus", &PlatformWindow::hasFocus, &g_window);
+
+    // Input
+    g_lua.registerSingletonClass("g_mouse");
+    g_lua.bindSingletonFunction("g_mouse", "setTargetCursor", &Mouse::setTargetCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "setHorizontalCursor", &Mouse::setHorizontalCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "setVerticalCursor", &Mouse::setVerticalCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "setTextCursor", &Mouse::setTextCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "restoreCursor", &Mouse::restoreCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "isCursorChanged", &Mouse::isCursorChanged, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "isPressed", &Mouse::isPressed, &g_mouse);
 
     // Graphics
     g_lua.registerSingletonClass("g_graphics");

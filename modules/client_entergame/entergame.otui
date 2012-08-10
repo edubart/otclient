@@ -5,7 +5,6 @@ EnterGameWindow
   !text: tr('Enter Game')
   size: 236 274
   @onEnter: EnterGame.doLogin()
-  @onEscape: EnterGame.hide()
 
   MenuLabel
     !text: tr('Account name')
@@ -107,14 +106,6 @@ EnterGameWindow
   Button
     !text: tr('Ok')
     width: 64
-    anchors.right: next.left
-    anchors.bottom: parent.bottom
-    margin-right: 10
-    @onClick: EnterGame.doLogin()
-
-  Button
-    !text: tr('Cancel')
-    width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: EnterGame.hide()
+    @onClick: EnterGame.doLogin()

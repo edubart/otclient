@@ -368,6 +368,9 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
 
+        # window input
+        ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/input/mouse.h
 
         ${CMAKE_CURRENT_LIST_DIR}/core/graphicalapplication.cpp
         ${CMAKE_CURRENT_LIST_DIR}/core/graphicalapplication.h

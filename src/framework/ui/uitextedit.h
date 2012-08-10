@@ -62,6 +62,7 @@ public:
     bool isMultiline() { return m_multiline; }
 
 protected:
+    virtual void onHoverChange(bool hovered);
     virtual void onTextChange(const std::string& text, const std::string& oldText);
     virtual void onFontChange(const std::string& font);
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
