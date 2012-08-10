@@ -268,6 +268,8 @@ public:
     std::string getWorldName() { return m_worldName; }
     std::vector<uint8> getGMActions() { return m_gmActions; }
 
+    std::string formatCreatureName(const std::string &name);
+
 protected:
     void enableBotCall() { m_denyBotCall = false; }
     void disableBotCall() { m_denyBotCall = true; }

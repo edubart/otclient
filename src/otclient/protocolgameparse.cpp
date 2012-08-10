@@ -626,7 +626,7 @@ void ProtocolGame::parseCloseNpcTrade(const InputMessagePtr&)
 
 void ProtocolGame::parseOwnTrade(const InputMessagePtr& msg)
 {
-    std::string name = msg->getString();
+    std::string name = g_game.formatCreatureName(msg->getString());
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
@@ -638,7 +638,7 @@ void ProtocolGame::parseOwnTrade(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCounterTrade(const InputMessagePtr& msg)
 {
-    std::string name = msg->getString();
+    std::string name = g_game.formatCreatureName(msg->getString());
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
@@ -962,7 +962,7 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
 {
     msg->getU32(); // channel statement guid
 
-    std::string name = msg->getString();
+    std::string name = g_game.formatCreatureName(msg->getString());
     int level = msg->getU16();
     Otc::MessageMode mode = Proto::translateMessageModeFromServer(msg->getU8());
     int channelId = 0;
@@ -1025,10 +1025,10 @@ void ProtocolGame::parseOpenChannel(const InputMessagePtr& msg)
     if(g_game.getFeature(Otc::GameChannelPlayerList)) {
         int joinedPlayers = msg->getU16();
         for(int i=0;i<joinedPlayers;++i)
-            msg->getString(); // player name
+            g_game.formatCreatureName(msg->getString()); // player name
         int invitedPlayers = msg->getU16();
         for(int i=0;i<invitedPlayers;++i)
-            msg->getString(); // player name
+            g_game.formatCreatureName(msg->getString()); // player name
     }
 
     g_game.processOpenChannel(channelId, name);
@@ -1036,7 +1036,7 @@ void ProtocolGame::parseOpenChannel(const InputMessagePtr& msg)
 
 void ProtocolGame::parseOpenPrivateChannel(const InputMessagePtr& msg)
 {
-    std::string name = msg->getString();
+    std::string name = g_game.formatCreatureName(msg->getString());
 
     g_game.processOpenPrivateChannel(name);
 }
@@ -1226,7 +1226,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
-    std::string name = msg->getString();
+    std::string name = g_game.formatCreatureName(msg->getString());
     bool online = msg->getU8() != 0;
 
     g_game.processVipAdd(id, name, online);
@@ -1289,7 +1289,7 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
 void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 {
     msg->getU16(); // channel id
-    msg->getString(); // player name
+    g_game.formatCreatureName(msg->getString()); // player name
     msg->getU8(); // event type
 }
 
@@ -1517,11 +1517,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
                     creatureType = Proto::CreatureTypeNpc;
             }
 
-            std::string name = msg->getString();
-
-            // every creature name must start with a capital letter
-            if(name.length() > 0)
-                name[0] = toupper(name[0]);
+            std::string name = g_game.formatCreatureName(msg->getString());
 
             if(id == m_localPlayer->getId())
                 creature = m_localPlayer;

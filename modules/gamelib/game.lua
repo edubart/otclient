@@ -1,7 +1,12 @@
 local currentRsa
+local enableCreatureNameFormat = true
 
 function g_game.getRsa()
   return currentRsa
+end
+
+function g_game.isCreatureNameFormatEnabled()
+  return enableCreatureNameFormat
 end
 
 function g_game.chooseRsa(host)

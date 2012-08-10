@@ -1199,3 +1199,11 @@ void Game::setFollowingCreature(const CreaturePtr& creature)
 
     g_lua.callGlobalField("g_game", "onFollowingCreatureChange", creature, oldCreature);
 }
+
+std::string Game::formatCreatureName(const std::string& name)
+{
+    std::string formatedName = name;
+    if(g_lua.callGlobalField<bool>("g_game", "isCreatureNameFormatEnabled") && name.length() > 0)
+        formatedName[0] = stdext::upchar(formatedName[0]);
+    return formatedName;
+}

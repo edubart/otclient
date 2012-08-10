@@ -6,6 +6,7 @@ function UIScrollArea.create()
   local scrollarea = UIScrollArea.internalCreate()
   scrollarea:setClipping(true)
   scrollarea.inverted = false
+  scrollarea.alwaysScrollMaximum = false
   return scrollarea
 end
 
@@ -21,34 +22,45 @@ function UIScrollArea:onStyleApply(styleName, styleNode)
       end)
     elseif name == 'inverted-scroll' then
       self:setInverted(value)
+    elseif name == 'always-scroll-maximum' then
+      self:setAlwaysScrollMaximum(value)
     end
   end
 end
 
 function UIScrollArea:updateScrollBars()
-  local offset = { x = 0, y = 0 }
-  local scrollheight = math.max(self:getChildrenRect().height - self:getPaddingRect().height, 0)
-  local scrollwidth = math.max(self:getChildrenRect().width - self:getPaddingRect().width, 0)
+  local scrollWidth = math.max(self:getChildrenRect().width - self:getPaddingRect().width, 0)
+  local scrollHeight = math.max(self:getChildrenRect().height - self:getPaddingRect().height, 0)
 
   local scrollbar = self.verticalScrollBar
   if scrollbar then
     if self.inverted then
-      scrollbar:setMinimum(-scrollheight)
+      scrollbar:setMinimum(-scrollHeight)
       scrollbar:setMaximum(0)
     else
       scrollbar:setMinimum(0)
-      scrollbar:setMaximum(scrollheight)
+      scrollbar:setMaximum(scrollHeight)
     end
   end
 
   local scrollbar = self.horizontalScrollBar
   if scrollbar then
     if self.inverted then
-      scrollbar:setMinimum(-scrollwidth)
+      scrollbar:setMinimum(-scrollWidth)
     else
-      scrollbar:setMaximum(scrollwidth)
+      scrollbar:setMaximum(scrollWidth)
     end
   end
+
+  if self.lastScrollWidth ~= scrollWidth then
+    self:onScrollWidthChange()
+  end
+  if self.lastScrollHeight ~= scrollHeight then
+    self:onScrollHeightChange()
+  end
+
+  self.lastScrollWidth = scrollWidth
+  self.lastScrollHeight = scrollHeight
 end
 
 function UIScrollArea:setVerticalScrollBar(scrollbar)
@@ -68,6 +80,10 @@ end
 
 function UIScrollArea:setInverted(inverted)
   self.inverted = inverted
+end
+
+function UIScrollArea:setAlwaysScrollMaximum(value)
+  self.alwaysScrollMaximum = value
 end
 
 function UIScrollArea:onLayoutUpdate()
@@ -97,5 +113,17 @@ function UIScrollArea:onChildFocusChange(focusedChild, oldFocused, reason)
     if delta > 0 then
       self.verticalScrollBar:increment(delta)
     end
+  end
+end
+
+function UIScrollArea:onScrollWidthChange()
+  if self.alwaysScrollMaximum and self.horizontalScrollBar then
+    self.horizontalScrollBar:setValue(self.horizontalScrollBar:getMaximum())
+  end
+end
+
+function UIScrollArea:onScrollHeightChange()
+  if self.alwaysScrollMaximum and self.verticalScrollBar then
+    self.verticalScrollBar:setValue(self.verticalScrollBar:getMaximum())
   end
 end
