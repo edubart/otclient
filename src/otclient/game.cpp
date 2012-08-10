@@ -1128,7 +1128,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version < 810 || version > 960)
+    if(version < 810 || version > 961)
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
