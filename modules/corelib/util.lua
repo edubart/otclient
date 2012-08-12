@@ -263,4 +263,21 @@ function tr(s, ...)
   return string.format(s, ...)
 end
 
+function getOppositeAnchor(anchor)
+  if anchor == AnchorLeft then
+    return AnchorRight
+  elseif anchor == AnchorRight then
+    return AnchorLeft
+  elseif anchor == AnchorTop then
+    return AnchorBottom
+  elseif anchor == AnchorBottom then
+    return AnchorTop
+  elseif anchor == AnchorVerticalCenter then
+    return AnchorHorizontalCenter
+  elseif anchor == AnchorHorizontalCenter then
+    return AnchorVerticalCenter
+  end
+  return anchor
+end
+
 -- @}

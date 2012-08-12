@@ -17,7 +17,9 @@ MainWindow
 
   TextList
     id: characterList
-    anchors.fill: parent
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: characterListScrollBar.left
     anchors.bottom: accountStatusLabel.top
     margin-bottom: 5
     padding: 1
@@ -26,9 +28,10 @@ MainWindow
 
   VerticalScrollBar
     id: characterListScrollBar
-    anchors.top: characterList.top
-    anchors.bottom: characterList.bottom
-    anchors.right: characterList.right
+    anchors.top: parent.top
+    anchors.bottom: accountStatusLabel.top
+    anchors.right: parent.right
+    margin-bottom: 5
     step: 14
     pixels-scroll: true
 

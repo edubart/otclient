@@ -3,56 +3,78 @@ if not UIWindow then dofile 'uiwindow' end
 -- @docclass
 UIMessageBox = extends(UIWindow)
 
-MessageBoxOk = 1
-MessageBoxCancel = 2
-
 -- messagebox cannot be created from otui files
 UIMessageBox.create = nil
 
-function UIMessageBox.display(title, message, flags)
-  local messagebox = UIMessageBox.internalCreate()
-  rootWidget:addChild(messagebox)
+function UIMessageBox.display(title, message, buttons, onEnterCallback, onEscapeCallback)
+  local messageBox = UIMessageBox.internalCreate()
+  rootWidget:addChild(messageBox)
 
-  messagebox:setStyle('MainWindow')
-  messagebox:setText(title)
+  messageBox:setStyle('MainWindow')
+  messageBox:setText(title)
 
-  local messageLabel = g_ui.createWidget('MessageBoxLabel', messagebox)
+  local messageLabel = g_ui.createWidget('MessageBoxLabel', messageBox)
   messageLabel:setText(message)
-  messageLabel:resizeToText()
 
-  -- setup messagebox first button
-  local buttonRight = g_ui.createWidget('MessageBoxRightButton', messagebox)
+  local buttonsWidth = 0
+  local buttonsHeight = 0
 
-  if flags == MessageBoxOk then
-    buttonRight:setText('Ok')
-    connect(buttonRight, { onClick = function(self) self:getParent():ok() end })
-    connect(messagebox, { onEnter = function(self) self:ok() end })
-    connect(messagebox, { onEscape = function(self) self:ok() end })
-  elseif flags == MessageBoxCancel then
-    buttonRight:setText('Cancel')
-    connect(buttonRight, { onClick = function(self) self:getParent():cancel() end })
-    connect(messagebox, { onEnter = function(self) self:cancel() end })
-    connect(messagebox, { onEscape = function(self) self:cancel() end })
+  local anchor = AnchorRight
+  if buttons.anchor then anchor = buttons.anchor end
+
+  local buttonHolder = g_ui.createWidget('MessageBoxButtonHolder', messageBox)
+  buttonHolder:addAnchor(anchor, 'parent', anchor)
+
+  for i=1,#buttons do
+    local button = messageBox:addButton(buttons[i].text, buttons[i].callback)
+    if i == 1 then
+      button:setMarginLeft(0)
+      button:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+      button:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+      buttonsHeight = button:getHeight()
+    else
+      button:addAnchor(AnchorBottom, 'prev', AnchorBottom)
+      button:addAnchor(AnchorLeft, 'prev', AnchorRight)
+    end
+    buttonsWidth = buttonsWidth + button:getWidth() + button:getMarginLeft()
   end
 
-  messagebox:setWidth(math.max(messageLabel:getWidth(), messagebox:getTextSize().width) + messagebox:getPaddingLeft() + messagebox:getPaddingRight())
-  messagebox:setHeight(messageLabel:getHeight() + messagebox:getPaddingTop() + messagebox:getPaddingBottom() + buttonRight:getHeight() + 10)
+  buttonHolder:setWidth(buttonsWidth)
+  buttonHolder:setHeight(buttonsHeight)
 
-  --messagebox:lock()
+  if onEnterCallback then connect(messageBox, { onEnter = onEnterCallback }) end
+  if onEscapeCallback then connect(messageBox, { onEscape = onEscapeCallback }) end
 
-  return messagebox
+  messageBox:setWidth(math.max(messageLabel:getWidth(), messageBox:getTextSize().width, buttonHolder:getWidth()) + messageBox:getPaddingLeft() + messageBox:getPaddingRight())
+  messageBox:setHeight(messageLabel:getHeight() + messageBox:getPaddingTop() + messageBox:getPaddingBottom() + buttonHolder:getHeight() + buttonHolder:getMarginTop())
+  return messageBox
 end
 
 function displayInfoBox(title, message)
-  return UIMessageBox.display(title, message, MessageBoxOk)
+  local defaultCallback = function(self) self:ok() end
+  return UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
 end
 
 function displayErrorBox(title, message)
-  return UIMessageBox.display(title, message, MessageBoxOk)
+  local defaultCallback = function(self) self:ok() end
+  return UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
 end
 
 function displayCancelBox(title, message)
-  return UIMessageBox.display(title, message, MessageBoxCancel)
+  local defaultCallback = function(self) self:cancel() end
+  return UIMessageBox.display(title, message, {{text='Cancel', callback=defaultCallback}}, defaultCallback, defaultCallback)
+end
+
+function displayGeneralBox(title, message, buttons, onEnterCallback, onEscapeCallback)
+  return UIMessageBox.display(title, message, buttons, onEnterCallback, onEscapeCallback)
+end
+
+function UIMessageBox:addButton(text, callback)
+  local buttonHolder = self:getChildById('buttonHolder')
+  local button = g_ui.createWidget('MessageBoxButton', buttonHolder)
+  button:setText(text)
+  connect(button, { onClick = callback })
+  return button
 end
 
 function UIMessageBox:ok()

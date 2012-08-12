@@ -13,8 +13,6 @@ exitWindow = nil
 
 function init()
   g_ui.importStyle('styles/countwindow.otui')
-  g_ui.importStyle('styles/logoutwindow.otui')
-  g_ui.importStyle('styles/exitwindow.otui')
 
   connect(g_game, { onGameStart = show,
                     onGameEnd = hide }, true)
@@ -122,32 +120,18 @@ function tryExit()
   if exitWindow then
     return true
   end
-  exitWindow = g_ui.createWidget('ExitWindow', rootWidget)
-  local exitButton = exitWindow:getChildById('buttonExit')
-  local logButton = exitWindow:getChildById('buttonLogout')
-  local cancelButton = exitWindow:getChildById('buttonCancel')
 
-  local exitFunc = function()
-    logout() -- try logout anyway
-    forceExit()
-  end
-  local logoutFunc = function()
-    logout()
-    logButton:getParent():destroy()
-    exitWindow = nil
-  end
-  local cancelFunc = function()
-    cancelButton:getParent():destroy()
-    exitWindow = nil
-  end
+  local exitFunc = function() logout() forceExit() end
+  local logoutFunc = function() logout() exitWindow:destroy() exitWindow = nil end
+  local cancelFunc = function() exitWindow:destroy() exitWindow = nil end
 
-  exitWindow.onEscape = cancelFunc
-  exitWindow.onEnter = logoutFunc
+  exitWindow = displayGeneralBox('Exit', tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."), {
+    { text='Force Exit', callback=exitFunc },
+    { text='Logout', callback=logoutFunc },
+    { text='Cancel', callback=cancelFunc },
+    anchor=AnchorHorizontalCenter}, logoutFunc, cancelFunc)
 
-  exitButton.onClick = exitFunc
-  logButton.onClick = logoutFunc
-  cancelButton.onClick = cancelFunc
-  return true -- signal closing
+  return true
 end
 
 function logout()
@@ -161,25 +145,14 @@ function tryLogout()
   if logoutWindow then
     return
   end
-  logoutWindow = g_ui.createWidget('LogoutWindow', rootWidget)
-  local yesButton = logoutWindow:getChildById('buttonYes')
-  local noButton = logoutWindow:getChildById('buttonNo')
 
-  local logoutFunc = function()
-    logout()
-    yesButton:getParent():destroy()
-    logoutWindow = nil
-  end
-  local cancelFunc = function()
-    noButton:getParent():destroy()
-    logoutWindow = nil
-  end
+  local yesCallback = function() logout() logoutWindow:destroy() logoutWindow=nil end
+  local noCallback = function() logoutWindow:destroy() logoutWindow=nil end
 
-  logoutWindow.onEnter = logoutFunc
-  logoutWindow.onEscape = cancelFunc
-
-  yesButton.onClick = logoutFunc
-  noButton.onClick = cancelFunc
+  logoutWindow = displayGeneralBox('Logout', tr('Are you sure you want to logout?'), {
+    { text='Yes', callback=yesCallback },
+    { text='No', callback=noCallback },
+    anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
 end
 
 function onMouseGrabberRelease(self, mousePosition, mouseButton)

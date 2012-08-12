@@ -22,6 +22,7 @@ end
 
 function UIGameMap:onDragLeave(droppedWidget, mousePos)
   self.currentDragThing = nil
+  self.hoveredWho = nil
   g_mouse.restoreCursor()
   return true
 end
