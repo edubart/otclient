@@ -58,6 +58,7 @@ public:
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
 
+    int getIp();
     boost::system::error_code getError() { return m_error; }
     bool isConnecting() { return m_connecting; }
     bool isConnected() { return m_connected; }

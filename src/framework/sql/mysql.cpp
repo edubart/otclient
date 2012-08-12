@@ -263,25 +263,6 @@ std::string DBResult::getDataString(const std::string &s)
     return std::string("");
 }
 
-const char* DBResult::getDataStream(const std::string &s, unsigned long &size)
-{
-    ListNames::iterator it = m_listNames.find(s);
-    if(it != m_listNames.end() ) {
-        if(m_row[it->second] == NULL) {
-            size = 0;
-            return NULL;
-        }
-        else {
-            size = mysql_fetch_lengths(m_res)[it->second];
-            return m_row[it->second];
-        }
-    }
-
-    g_logger.error(stdext::format("error during getDataStream(%s).", s));
-    size = 0;
-    return NULL;
-}
-
 bool DBResult::next()
 {
     m_row = mysql_fetch_row(m_res);

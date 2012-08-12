@@ -660,6 +660,7 @@ void Application::registerLuaFunctions()
 
     // Connection
     g_lua.registerClass<Connection>();
+    g_lua.bindClassMemberFunction<Connection>("getIp", &Connection::getIp);
 
     // Protocol
     g_lua.registerClass<Protocol>();
@@ -737,7 +738,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<DBResult>("getDataInt", &DBResult::getDataInt);
     g_lua.bindClassMemberFunction<DBResult>("getDataLong", &DBResult::getDataLong);
     g_lua.bindClassMemberFunction<DBResult>("getDataString", &DBResult::getDataString);
-    //g_lua.bindClassMemberFunction<DBResult>("getDataStream", &DBResult::getDataStream);
     g_lua.bindClassMemberFunction<DBResult>("next", &DBResult::next);
 
     // Mysql

@@ -240,3 +240,13 @@ void Connection::handleError(const boost::system::error_code& error)
     }
 }
 
+int Connection::getIp()
+{
+    boost::system::error_code error;
+    const boost::asio::ip::tcp::endpoint ip = m_socket.remote_endpoint(error);
+    if(!error)
+        return boost::asio::detail::socket_ops::host_to_network_long(ip.address().to_v4().to_ulong());
+
+    g_logger.error("Getting remote ip");
+    return 0;
+}

@@ -71,7 +71,6 @@ public:
     int32_t getDataInt(const std::string &s);
     int64_t getDataLong(const std::string &s);
     std::string getDataString(const std::string &s);
-    const char* getDataStream(const std::string &s, unsigned long &size);
 
     bool next();
 
