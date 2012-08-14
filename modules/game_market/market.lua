@@ -379,7 +379,7 @@ local function updateSelectedItem(widget)
     nameLabel:setText(selectedItem.item.marketData.name)
     clearOffers()
 
-    Market.enableCreateOffer(true)-- update offer types
+    Market.enableCreateOffer(true) -- update offer types
     MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
   else
     Market.clearSelectedItem()
@@ -650,10 +650,10 @@ local function initInterface()
 
   -- setup offers
   buyButton = itemOffersPanel:getChildById('buyButton')
-  buyButton.onClick = function() openAmountWindow(Market.buyMarketOffer, MarketAction.Buy, 'Buy') end
+  buyButton.onClick = function() openAmountWindow(Market.acceptMarketOffer, MarketAction.Buy, 'Buy') end
 
   sellButton = itemOffersPanel:getChildById('sellButton')
-  sellButton.onClick = function() openAmountWindow(Market.sellMarketOffer, MarketAction.Sell, 'Sell') end
+  sellButton.onClick = function() openAmountWindow(Market.acceptMarketOffer, MarketAction.Sell, 'Sell') end
 
   -- setup selected item
   nameLabel = marketOffersPanel:getChildById('nameLabel')
@@ -725,7 +725,7 @@ function init()
   g_ui.importStyle('ui/general/amountwindow.otui')
 
   offerExhaust[MarketAction.Sell] = 10
-  offerExhaust[MarketAction.Buy] = 60
+  offerExhaust[MarketAction.Buy] = 20
 
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
@@ -864,6 +864,7 @@ function Market.refreshItemsWidget(selectItem)
     local itemBox = g_ui.createWidget('MarketItemBox', itemsPanel)
     itemBox.onCheckChange = Market.onItemBoxChecked
     itemBox.item = item
+
     if selectItem > 0 and item.ptr:getId() == selectItem then
       select = itemBox
     end
@@ -871,6 +872,7 @@ function Market.refreshItemsWidget(selectItem)
     local itemWidget = itemBox:getChildById('item')
     item.ptr:setCount(1) -- reset item count for image
     itemWidget:setItem(item.ptr)
+
     local amount = Market.depotContains(item.ptr:getId())
     if amount > 0 then
       itemWidget:setText(amount)
@@ -988,8 +990,6 @@ function Market.createNewOffer()
     errorMsg = errorMsg..'Amount is too low.\n'
   end
   local timeCheck = os.time() - lastCreatedOffer
-  print(timeCheck)
-  print(offerExhaust[type])
   if timeCheck < offerExhaust[type] then
     local waitTime = math.ceil((offerExhaust[type] - timeCheck))
     errorMsg = errorMsg..'You must wait '.. waitTime ..' seconds before creating a new offer.\n'
@@ -1005,13 +1005,7 @@ function Market.createNewOffer()
   Market.resetCreateOffer()
 end
 
-function Market.buyMarketOffer(amount, timestamp, counter)
-  if timestamp > 0 and amount > 0 then
-    MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
-  end
-end
-
-function Market.sellMarketOffer(amount, timestamp, counter)
+function Market.acceptMarketOffer(amount, timestamp, counter)
   if timestamp > 0 and amount > 0 then
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
 
@@ -1022,6 +1016,9 @@ end
 
 function Market.onItemBoxChecked(widget)
   if widget:isChecked() then
+    if selectedItem.ref and widget ~= selectedItem.ref then
+      selectedItem.ref:setChecked(false) -- temporary fix?
+    end
     updateSelectedItem(widget)
   end
 end
