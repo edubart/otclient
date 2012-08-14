@@ -37,11 +37,6 @@ function Client.init()
   g_window.setIcon(resolvepath('clienticon.png'))
   g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
 
-  local clientVersion = g_settings.getInteger('client-version')
-  if clientVersion ~= 0 then
-    g_game.setClientVersion(clientVersion)
-  end
-
   connect(g_app, { onRun =
     function()
       -- Play startup music (The Silver Tree, by Mattias Westlund)
@@ -58,6 +53,11 @@ function Client.terminate()
   g_settings.set('window-size', g_window.getUnmaximizedSize())
   g_settings.set('window-pos', g_window.getUnmaximizedPos())
   g_settings.set('window-maximized', g_window.isMaximized())
-  g_settings.set('client-version', g_game.getClientVersion())
+
+  local clientVersion = g_game.getClientVersion()
+  if clientVersion ~= 0 then
+    g_settings.set('client-version', clientVersion)
+  end
+
   Client = nil
 end

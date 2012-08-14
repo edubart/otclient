@@ -333,6 +333,7 @@ namespace Otc
         GameChargeableItems = 25,
         GameOfflineTrainingTime = 26,
         GamePurseSlot = 27,
+        GameFormatCreatureName = 28,
         // 23-50 unused yet
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101

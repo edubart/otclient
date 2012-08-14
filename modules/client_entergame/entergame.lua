@@ -169,7 +169,14 @@ function EnterGame.doLogin()
 
   g_game.chooseRsa(G.host)
   g_game.setClientVersion(clientVersion)
-  protocolLogin:login(G.host, G.port, G.account, G.password)
+
+  if modules.game_tibiafiles.isLoaded() then
+    protocolLogin:login(G.host, G.port, G.account, G.password)
+  else
+    loadBox:destroy()
+    loadBox = nil
+    EnterGame.show()
+  end
 end
 
 function EnterGame.displayMotd()

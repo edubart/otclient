@@ -1128,10 +1128,11 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version < 810 || version > 961)
+    if(version != 0 && (version < 810 || version > 961))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
+    enableFeature(Otc::GameFormatCreatureName);
 
     if(version <= 810) {
         enableFeature(Otc::GameChargeableItems);
@@ -1203,7 +1204,7 @@ void Game::setFollowingCreature(const CreaturePtr& creature)
 std::string Game::formatCreatureName(const std::string& name)
 {
     std::string formatedName = name;
-    if(m_isCreatureNameFormatEnabled && name.length() > 0)
+    if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0)
         formatedName[0] = stdext::upchar(formatedName[0]);
     return formatedName;
 }
