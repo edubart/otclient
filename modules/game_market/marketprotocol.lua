@@ -2,11 +2,12 @@ MarketProtocol = {}
 
 -- private functions
 
+local silent
 local protocol
 local statistics = runinsandbox('offerstatistic.lua')
 
 local function send(msg)
-  if protocol then
+  if protocol and not silent then
     protocol:send(msg)
   end
 end
@@ -130,6 +131,8 @@ function initProtocol()
   if g_game.isOnline() then
     MarketProtocol.registerProtocol()
   end
+
+  MarketProtocol.silent(false)
 end
 
 function terminateProtocol()
@@ -163,6 +166,10 @@ function MarketProtocol.unregisterProtocol()
     ProtocolGame.unregisterOpcode(GameServerOpcodes.GameServerMarketBrowse, parseMarketBrowse)
   end
   MarketProtocol.updateProtocol(nil)
+end
+
+function MarketProtocol.silent(mode)
+  silent = mode
 end
 
 -- sending protocols

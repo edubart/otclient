@@ -45,6 +45,16 @@ function UIRadioGroup:selectWidget(selectedWidget)
   signalcall(self.onSelectionChange, self, selectedWidget, previousSelectedWidget)
 end
 
+function UIRadioGroup:clearSelected()
+  if not self.selectedWidget then return end
+  
+  local previousSelectedWidget = self.selectedWidget
+  self.selectedWidget:setChecked(false)
+  self.selectedWidget = nil
+
+  signalcall(self.onSelectionChange, self, nil, previousSelectedWidget)
+end
+
 function UIRadioGroup:getSelectedWidget()
   return self.selectedWidget
 end

@@ -6,11 +6,6 @@
       BeniS's Skype: benjiz69
 
       List:
-      * Add constraints for creating/buying offers:
-        - Add max market offers or a new method for updating depot items
-        - Add timer before you can create another offer (1 minute?)
-        - Add a check for buying offers (if you do not have enough balance)
-
       * Add offer management:
         - Current Offers
         - Offer History
@@ -18,16 +13,19 @@
       * Optimize Offer Updates:
         - Cache and avoid dead loop runs
 
-      * Clean up the interface building
-        - Add a new market interface file to handle building?
-
       * Optimize loading market items:
         - Cache items to their categories
+
+      * Clean up the interface building
+        - Add a new market interface file to handle building?      
 
       * Add offer table column ordering.
         - Player Name, Amount, Total Price, Peice Price and Ends At
 
       * Add simple close button.
+
+      * Extend information features
+        - Hover over offers for purchase information (balance after transaction, etc)
   ]]
 
 Market = {}
@@ -77,10 +75,12 @@ detailsTable = nil
 buyStatsTable = nil
 sellStatsTable = nil
 
+offerExhaust = {}
 marketOffers = {}
 marketItems = {}
 information = {}
 currentItems = {}
+lastCreatedOffer = 0
 fee = 0
 
 local offerTableHeader = {
@@ -399,50 +399,6 @@ local function updateBalance(balance)
   balanceLabel:resizeToText()
 end
 
-local function updateDepotItemCount(itemId, amount)
-  if Market.depotContains(itemId) < amount then
-    return false
-  end
-  for i = 1, #information.depotItems do
-    local depotItem = information.depotItems[i]
-    if depotItem and itemId == depotItem.ptr:getId() then
-      local depotItemCount = depotItem.ptr:getCount()
-
-      if depotItem.ptr:isStackable() then
-        if depotItemCount <= 100 and depotItemCount >= amount then
-          if (depotItemCount - amount) <= 0 then
-            table.remove(information.depotItems, i) -- warning: this re-indexes
-          else
-            depotItem.ptr:setCount(depotItemCount - amount)
-            information.depotItems[i] = depotItem
-          end
-          return true
-        else
-          local removeCount = math.floor(amount/100)
-          local remainder = amount % depotItemCount
-          if remainder > 0 then
-            removeCount = removeCount + 1
-          end
-          for j = 1, removeCount do
-            if j == removeCount and remainder > 0 then
-              updateDepotItemCount(itemId, remainder)
-            else
-              updateDepotItemCount(itemId, 100)
-            end
-          end
-          return true
-        end
-      else
-        if amount > 0 then
-          information.depotItems[i] = nil
-          amount = amount - 1
-        end
-      end
-    end
-  end
-  return true
-end
-
 local function updateFee(price, amount)
   fee = math.ceil(price / 100 * amount)
   if fee < 20 then
@@ -511,7 +467,6 @@ local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
   for _, offer in pairs(marketOffers[MarketAction.Sell]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Buy] = offer
-      buyButton:setEnabled(true)
     end
   end
 
@@ -520,6 +475,7 @@ local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
     local price = offer:getPrice()
     if price > information.balance then
       balanceLabel:setColor('#b22222')
+      buyButton:setEnabled(false)
     else
       local slice = (information.balance / 2)
       if (price/slice) * 100 <= 40 then
@@ -530,6 +486,7 @@ local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
         color = '#ee9a00' -- orange
       end
       balanceLabel:setColor(color)
+      buyButton:setEnabled(true)
     end
   end
 end
@@ -767,6 +724,9 @@ function init()
   g_ui.importStyle('ui/general/marketcombobox.otui')
   g_ui.importStyle('ui/general/amountwindow.otui')
 
+  offerExhaust[MarketAction.Sell] = 10
+  offerExhaust[MarketAction.Buy] = 60
+
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
   marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
@@ -920,8 +880,6 @@ function Market.refreshItemsWidget(selectItem)
     radioItemSet:addWidget(itemBox)
   end
   if select then
-    selectedItem.item = select.item
-    selectedItem.ref = select
     select:setChecked(true)
   end
 
@@ -1029,21 +987,21 @@ function Market.createNewOffer()
   elseif amount < amountEdit.minimum then
     errorMsg = errorMsg..'Amount is too low.\n'
   end
+  local timeCheck = os.time() - lastCreatedOffer
+  print(timeCheck)
+  print(offerExhaust[type])
+  if timeCheck < offerExhaust[type] then
+    local waitTime = math.ceil((offerExhaust[type] - timeCheck))
+    errorMsg = errorMsg..'You must wait '.. waitTime ..' seconds before creating a new offer.\n'
+  end
 
   if errorMsg ~= '' then
-    UIMessageBox.display('Error', errorMsg, MessageBoxOk)
+    displayInfoBox('Error', errorMsg)
     return
   end
 
   MarketProtocol.sendMarketCreateOffer(type, spriteId, amount, piecePrice, anonymous)
-  if type == MarketAction.Sell then
-    --[[
-      This is required due to bot protected protocol (cannot update browse item without user input)
-      normal way is to use the new retrieved depot items in onMarketEnter and refresh the items widget.   
-    ]]
-    updateDepotItemCount(spriteId, amount)
-    Market.refreshItemsWidget(spriteId)
-  end
+  lastCreatedOffer = os.time()
   Market.resetCreateOffer()
 end
 
@@ -1058,7 +1016,6 @@ function Market.sellMarketOffer(amount, timestamp, counter)
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
 
     local spriteId = selectedItem.item.ptr:getId()
-    updateDepotItemCount(spriteId, amount)
     Market.refreshItemsWidget(spriteId)
   end
 end
@@ -1088,6 +1045,14 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
   end
 
   Market.loadDepotItems(depotItems)
+  -- update the items widget to match depot items
+  if Market.isItemSelected() then
+    local spriteId = selectedItem.item.ptr:getId()
+    MarketProtocol.silent(true) -- disable protocol messages
+    Market.refreshItemsWidget(spriteId)
+    MarketProtocol.silent(false) -- enable protocol messages
+  end
+ 
   if table.empty(currentItems) then
     Market.loadMarketItems(MarketCategory.First)
   end

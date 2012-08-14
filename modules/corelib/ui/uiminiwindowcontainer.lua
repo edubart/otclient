@@ -9,11 +9,15 @@ function UIMiniWindowContainer.create()
   return container
 end
 
+function UIMiniWindowContainer:getClassName()
+  return 'UIMiniWindowContainer'
+end
+
 function UIMiniWindowContainer:onDrop(widget, mousePos)
   if widget:getClassName() == 'UIMiniWindow' then
     local oldParent = widget:getParent()
     if oldParent == self then
-        return true
+      return true
     end
 
     if oldParent then
@@ -21,10 +25,10 @@ function UIMiniWindowContainer:onDrop(widget, mousePos)
     end
 
     if widget.movedWidget then
-        local index = self:getChildIndex(widget.movedWidget)
-        self:insertChild(index + widget.movedIndex, widget)
+      local index = self:getChildIndex(widget.movedWidget)
+      self:insertChild(index + widget.movedIndex, widget)
     else
-        self:addChild(widget)
+      self:addChild(widget)
     end
 
     return true
@@ -96,8 +100,4 @@ function UIMiniWindowContainer:saveChildren()
       ignoreIndex = ignoreIndex + 1
     end
   end
-end
-
-function UIMiniWindowContainer:getClassName()
-  return 'UIMiniWindowContainer'
 end

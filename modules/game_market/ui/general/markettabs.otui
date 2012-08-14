@@ -5,6 +5,10 @@ MarketTabBarButton < TabBarButton
   font: verdana-11px-rounded
   text-offset: 0 2
 
+  $!first:
+    anchors.left: prev.right
+    margin-left: 0
+
   $hover !checked:
     image-clip: 0 20 20 20
     color: white
