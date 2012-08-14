@@ -90,6 +90,8 @@ void UIWidget::drawImage(const Rect& screenCoords)
         if(m_imageRect.isValid())
             drawRect.resize(m_imageRect.size());
 
+        Rect clipRect = m_imageClipRect.isValid() ? m_imageClipRect : Rect(0, 0, m_imageTexture->getSize());
+
         if(!m_imageBordered) {
             if(m_imageFixedRatio) {
                 Size textureSize = m_imageTexture->getSize();
@@ -108,9 +110,9 @@ void UIWidget::drawImage(const Rect& screenCoords)
                 m_imageCoordsBuffer.addRect(drawRect, textureClipRect);
             } else {
                 if(m_imageRepeated)
-                    m_imageCoordsBuffer.addRepeatedRects(drawRect, m_imageClipRect);
+                    m_imageCoordsBuffer.addRepeatedRects(drawRect, clipRect);
                 else
-                    m_imageCoordsBuffer.addRect(drawRect, m_imageClipRect);
+                    m_imageCoordsBuffer.addRect(drawRect, clipRect);
             }
         } else {
             int top = m_imageBorder.top;
@@ -119,7 +121,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
             int right  = m_imageBorder.right;
 
             // calculates border coords
-            const Rect clip = m_imageClipRect;
+            const Rect clip = clipRect;
             Rect leftBorder(clip.left(), clip.top() + top, left, clip.height() - top - bottom);
             Rect rightBorder(clip.right() - right + 1, clip.top() + top, right, clip.height() - top - bottom);
             Rect topBorder(clip.left() + left, clip.top(), clip.width() - right - left, top);
@@ -174,7 +176,6 @@ void UIWidget::drawImage(const Rect& screenCoords)
 void UIWidget::setImageSource(const std::string& source)
 {
     m_imageTexture = g_textures.getTexture(source);
-    if(!m_imageClipRect.isValid())
-        m_imageClipRect = Rect(0, 0, m_imageTexture->getSize());
+    m_imageMustRecache = true;
 }
 
