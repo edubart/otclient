@@ -171,14 +171,17 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             // -1 or 255 => auto detect position
             // -2        => append
 
-            bool append = (stackPos == -2 || priority <= 3);
+            bool append;
+            if(stackPos == -2)
+                append = true;
+            else {
+                append = (priority <= 3);
 
-            // newer protocols does not store creatures in reverse order
-            if(g_game.getClientVersion() >= 854 && priority == 4)
-                append = !append;
+                // newer protocols does not store creatures in reverse order
+                if(g_game.getClientVersion() >= 854 && priority == 4)
+                    append = !append;
+            }
 
-            if(g_game.getClientVersion() < 900 && priority == 4 && stackPos == -2)
-                append = !append;
 
             for(stackPos = 0; stackPos < (int)m_things.size(); ++stackPos) {
                 int otherPriority = m_things[stackPos]->getStackPriority();
