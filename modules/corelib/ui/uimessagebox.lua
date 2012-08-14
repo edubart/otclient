@@ -51,18 +51,24 @@ function UIMessageBox.display(title, message, buttons, onEnterCallback, onEscape
 end
 
 function displayInfoBox(title, message)
-  local defaultCallback = function(self) self:ok() end
-  return UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  local messageBox
+  local defaultCallback = function() messageBox:ok() end
+  messageBox = UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  return messageBox
 end
 
 function displayErrorBox(title, message)
-  local defaultCallback = function(self) self:ok() end
-  return UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  local messageBox
+  local defaultCallback = function() messageBox:ok() end
+  messageBox = UIMessageBox.display(title, message, {{text='Ok', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  return messageBox
 end
 
 function displayCancelBox(title, message)
-  local defaultCallback = function(self) self:cancel() end
-  return UIMessageBox.display(title, message, {{text='Cancel', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  local messageBox
+  local defaultCallback = function() messageBox:cancel() end
+  messageBox = UIMessageBox.display(title, message, {{text='Cancel', callback=defaultCallback}}, defaultCallback, defaultCallback)
+  return messageBox
 end
 
 function displayGeneralBox(title, message, buttons, onEnterCallback, onEscapeCallback)

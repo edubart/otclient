@@ -269,6 +269,8 @@ public:
     std::vector<uint8> getGMActions() { return m_gmActions; }
 
     std::string formatCreatureName(const std::string &name);
+    void enableCreatureNameFormat() { m_isCreatureNameFormatEnabled = true; }
+    void disableCreatureNameFormat() { m_isCreatureNameFormatEnabled = false; }
 
 protected:
     void enableBotCall() { m_denyBotCall = false; }
@@ -285,6 +287,7 @@ private:
     std::map<int, ContainerPtr> m_containers;
     std::map<int, Vip> m_vips;
 
+    stdext::boolean<true> m_isCreatureNameFormatEnabled;
     bool m_online;
     bool m_denyBotCall;
     bool m_dead;

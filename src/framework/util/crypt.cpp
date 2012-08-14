@@ -265,6 +265,9 @@ std::string Crypt::sha512Encode(const std::string& decoded_string, bool upperCas
 
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
+    RSA_free(m_rsa);
+    m_rsa = RSA_new();
+
     BN_dec2bn(&m_rsa->n, n.c_str());
     BN_dec2bn(&m_rsa->e, e.c_str());
 }
