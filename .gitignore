@@ -24,6 +24,8 @@ CMakeLists.txt.user*
 *.log
 *.bak
 *.swp
+.lvimrc
+.clang_complete
 config.otml
 /modules/otclientrc.lua
 !.gitignore
