@@ -46,3 +46,6 @@ set(DATA_INSTALL_DIR share/otclient)
 install(TARGETS otclient RUNTIME DESTINATION bin)
 install(FILES README.md TODO BUGS LICENSE AUTHORS init.lua otclientrc.lua DESTINATION ${DATA_INSTALL_DIR})
 install(DIRECTORY modules DESTINATION ${DATA_INSTALL_DIR} PATTERN ".git" EXCLUDE)
+
+# add "make run"
+add_custom_target(run COMMAND otclient DEPENDS otclient WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
