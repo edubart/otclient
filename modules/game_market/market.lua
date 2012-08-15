@@ -749,6 +749,7 @@ end
 function Market.reset()
   balanceLabel:setColor('#bbbbbb')
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  searchEdit:setText('')
   clearFilters()
   Market.updateCurrentItems()
 end
@@ -1071,6 +1072,8 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
     MarketProtocol.silent(true) -- disable protocol messages
     Market.refreshItemsWidget(spriteId)
     MarketProtocol.silent(false) -- enable protocol messages
+  else
+    Market.refreshItemsWidget()
   end
  
   if table.empty(currentItems) then
