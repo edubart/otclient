@@ -16,12 +16,9 @@
       * Add offer table column ordering.
         - Player Name, Amount, Total Price, Peice Price and Ends At
 
-      * Add simple close button.
-
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
-
-      * Display out of trend market offers based on their previous statistics (like cipsoft does)
+        - Display out of trend market offers based on their previous statistics (like cipsoft does)
 
       * Make compatible with cipsoft 9.61 (has the protocol changed? creating offer not working)
   ]]
@@ -727,6 +724,7 @@ function init()
 
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
+  connect(g_game, { onGameEnd = Market.close })
   marketWindow = g_ui.createWidget('MarketWindow', rootWidget)
   marketWindow:hide()
 
@@ -739,6 +737,7 @@ end
 function terminate()
   protocol.terminateProtocol()
   disconnect(g_game, { onGameEnd = Market.reset })
+  disconnect(g_game, { onGameEnd = Market.close })
 
   if marketWindow then
     marketWindow:destroy()
@@ -748,11 +747,10 @@ function terminate()
 end
 
 function Market.reset()
-  Market.close(true)
   balanceLabel:setColor('#bbbbbb')
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   clearFilters()
-  clearItems()
+  Market.updateCurrentItems()
 end
 
 function Market.clearSelectedItem()
@@ -811,6 +809,7 @@ function Market.enableCreateOffer(enable)
 end
 
 function Market.close(notify)
+  if notify == nil then notify = true end
   marketWindow:hide()
   marketWindow:unlock()
   Market.clearSelectedItem()
@@ -888,10 +887,13 @@ function Market.refreshItemsWidget(selectItem)
   layout:update()
 end
 
---[[
-  TODO: Optimize loading market items
-    * Preload items to their categories
-  ]]
+function Market.refreshOffers()
+  if Market.isItemSelected() then
+    Market.onItemBoxChecked(selectedItem.ref)
+  end
+end
+
+
 function Market.loadMarketItems(category)
   if table.empty(marketItems[category]) then
     initMarketItems(category)
@@ -1031,9 +1033,7 @@ end
 function Market.acceptMarketOffer(amount, timestamp, counter)
   if timestamp > 0 and amount > 0 then
     MarketProtocol.sendMarketAcceptOffer(timestamp, counter, amount)
-
-    local spriteId = selectedItem.item.ptr:getId()
-    Market.refreshItemsWidget(spriteId)
+    Market.refreshOffers()
   end
 end
 

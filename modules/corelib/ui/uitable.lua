@@ -92,6 +92,8 @@ function UITable:addHeaderRow(data)
         col:setHeight(value)
       elseif type == 'text' then
         col:setText(value)
+      elseif type == 'onClick' then
+        col.onClick = value
       end
     end
     table.insert(columns, col)

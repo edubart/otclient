@@ -1,7 +1,7 @@
 MarketWindow < MainWindow
   id: marketWindow
   !text: tr('Market')
-  size: 700 510
+  size: 700 530
 
   @onEscape: Market.close(true)
 
@@ -23,6 +23,7 @@ MarketWindow < MainWindow
     padding: 3
     border-width: 1
     border-color: #000000
+    margin-bottom: 20
 
   Label
     id: balanceLabel
@@ -31,3 +32,30 @@ MarketWindow < MainWindow
     text-offset: 0 2
     anchors.top: parent.top
     anchors.right: parent.right
+
+  Button
+    id: closeButton
+    !text: tr('Close')
+    anchors.top: mainTabContent.bottom
+    anchors.horizontalCenter: mainTabContent.horizontalCenter
+    margin-top: 5
+    width: 110
+    @onClick: Market.close()
+
+  Button
+    id: refreshOffersButton
+    !text: tr('Refresh Offers')
+    anchors.top: mainTabContent.bottom
+    anchors.right: mainTabContent.right
+    margin-top: 5
+    width: 110
+    @onClick: Market.refreshOffers()
+
+  Button
+    id: resetButton
+    !text: tr('Reset Market')
+    anchors.top: mainTabContent.bottom
+    anchors.left: mainTabContent.left
+    margin-top: 5
+    width: 110
+    @onClick: Market.reset()
