@@ -3,7 +3,7 @@ MarketWindow < MainWindow
   !text: tr('Market')
   size: 700 510
 
-  @onEscape: Market.close()
+  @onEscape: Market.close(true)
 
   // Main Panel Window
 

@@ -10,12 +10,6 @@
         - Current Offers
         - Offer History
 
-      * Optimize Offer Updates:
-        - Cache and avoid dead loop runs
-
-      * Optimize loading market items:
-        - Cache items to their categories
-
       * Clean up the interface building
         - Add a new market interface file to handle building?      
 
@@ -26,6 +20,10 @@
 
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
+
+      * Display out of trend market offers based on their previous statistics (like cipsoft does)
+
+      * Make compatible with cipsoft 9.61 (has the protocol changed? creating offer not working)
   ]]
 
 Market = {}
@@ -91,17 +89,14 @@ local offerTableHeader = {
   {['text'] = 'Ends at', ['width'] = 120}
 }
 
-local function isItemValid(item, category)
-  local searchFilter = searchEdit:getText():lower()
-  local useSearchFilter = false
-  if searchFilter and searchFilter:len() > 2 then
-    useSearchFilter = true
-  end
-  local filterSearchAll = filterButtons[MarketFilters.SearchAll]:isChecked()
-  if filterSearchAll and useSearchFilter then
-    category = MarketCategory.All
+local function isItemValid(item, category, searchFilter)
+  if not item or not item.marketData then
+    return false
   end
 
+  if not category then
+    category = MarketCategory.All
+  end
   if item.marketData.category ~= category and category ~= MarketCategory.All then
     return false
   end
@@ -135,7 +130,7 @@ local function isItemValid(item, category)
   if filterDepot and Market.depotContains(item.ptr:getId()) <= 0 then
     return false
   end
-  if useSearchFilter then
+  if searchFilter then
     local checkString = marketData.name:lower()
     if not checkString:find(searchFilter) then
       return false
@@ -251,21 +246,22 @@ local function mergeOffer(offer)
 end
 
 local function updateOffers(offers)
-  -- TODO: optimize offer updates
-  selectedOffer[MarketAction.Buy] = nil
-  selectedOffer[MarketAction.Sell] = nil
-
   if not buyOfferTable or not sellOfferTable then
     return
   end
+
   balanceLabel:setColor('#bbbbbb')
+  selectedOffer[MarketAction.Buy] = nil
+  selectedOffer[MarketAction.Sell] = nil
+
+  -- clear existing offer data
   buyOfferTable:clearData()
   sellOfferTable:clearData()
   
   sellButton:setEnabled(false)
   buyButton:setEnabled(false)
 
-  for k, offer in pairs(offers) do
+  for _, offer in pairs(offers) do
     mergeOffer(offer)
   end
   for type, offers in pairs(marketOffers) do
@@ -582,21 +578,23 @@ local function onAmountChange()
   end
 end
 
-local function initMarketItems()
+local function initMarketItems(category)
+  -- initialize market category
+  marketItems[category] = {}
+
   -- populate all market items
-  marketItems = {}
   local types = g_things.findThingTypeByAttr(ThingAttrMarket, 0)
   for i = 1, #types do
     local t = types[i]
     local newItem = Item.create(t:getId())
     if newItem then
       local marketData = t:getMarketData()
-      if not table.empty(marketData) then
+      if not table.empty(marketData) and marketData.category == category then
         local item = {
           ptr = newItem,
           marketData = marketData
         }
-        marketItems[#marketItems+1] = item
+        marketItems[marketData.category][#marketItems[category]+1] = item
       end
     end
   end
@@ -733,7 +731,9 @@ function init()
   marketWindow:hide()
 
   initInterface() -- build interface
-  initMarketItems()
+  for category = MarketCategory.First, MarketCategory.Last do
+    initMarketItems(category)
+  end
 end
 
 function terminate()
@@ -748,7 +748,7 @@ function terminate()
 end
 
 function Market.reset()
-  Market.close()
+  Market.close(true)
   balanceLabel:setColor('#bbbbbb')
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   clearFilters()
@@ -811,7 +811,6 @@ function Market.enableCreateOffer(enable)
 end
 
 function Market.close(notify)
-  local notify = notify or true
   marketWindow:hide()
   marketWindow:unlock()
   Market.clearSelectedItem()
@@ -894,15 +893,38 @@ end
     * Preload items to their categories
   ]]
 function Market.loadMarketItems(category)
-  if table.empty(marketItems) then
-    initMarketItems()
+  if table.empty(marketItems[category]) then
+    initMarketItems(category)
+  end
+  clearItems()
+
+  -- check search filter
+  local searchFilter = searchEdit:getText():lower()
+  if not searchFilter or searchFilter:len() < 3 then
+    searchFilter = nil
+  end
+  local filterSearchAll = filterButtons[MarketFilters.SearchAll]:isChecked()
+  if filterSearchAll and searchFilter then
+    category = MarketCategory.All
   end
 
-  clearItems()
-  for i = 1, #marketItems do
-    local item = marketItems[i]
-    if isItemValid(item, category) then
-      table.insert(currentItems, item)
+  if category == MarketCategory.All then
+    -- loop all categories
+    for category = MarketCategory.First, MarketCategory.Last do
+      for i = 1, #marketItems[category] do
+        local item = marketItems[category][i]
+        if isItemValid(item, category, searchFilter) then
+          table.insert(currentItems, item)
+        end
+      end
+    end
+  else
+    -- loop specific category
+    for i = 1, #marketItems[category] do
+      local item = marketItems[category][i]
+      if isItemValid(item, category, searchFilter) then
+        table.insert(currentItems, item)
+      end
     end
   end
 
@@ -978,6 +1000,7 @@ function Market.createNewOffer()
   local amount = amountEdit:getValue()
   local anonymous = anonymous:isChecked() and 1 or 0
 
+  -- error check offer
   local errorMsg = ''
   if piecePrice > piecePriceEdit.maximum then
     errorMsg = errorMsg..'Price is too high.\n'
