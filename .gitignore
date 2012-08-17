@@ -28,7 +28,9 @@ CMakeLists.txt.user*
 .clang_complete
 config.otml
 /modules/otclientrc.lua
+/doc
 !.gitignore
 otclient.map
 otclient.layout
 LOCALTODO
+tags
