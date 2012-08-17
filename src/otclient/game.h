@@ -156,9 +156,9 @@ public:
     void refreshContainer();
 
     // attack/follow related
-    void attack(const CreaturePtr& creature);
+    void attack(CreaturePtr creature);
     void cancelAttack() { attack(nullptr); }
-    void follow(const CreaturePtr& creature);
+    void follow(CreaturePtr creature);
     void cancelFollow() { follow(nullptr); }
     void cancelAttackAndFollow();
 

@@ -385,7 +385,7 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
 void Game::processAttackCancel(uint seq)
 {
     if(isAttacking() && (seq == 0 || m_seq == seq))
-        setAttackingCreature(nullptr);
+        cancelAttack();
 }
 
 void Game::processWalkCancel(Otc::Direction direction)
@@ -737,44 +737,44 @@ void Game::refreshContainer()
     m_protocolGame->sendRefreshContainer();
 }
 
-void Game::attack(const CreaturePtr& creature)
+void Game::attack(CreaturePtr creature)
 {
     if(!canPerformGameAction() || creature == m_localPlayer)
         return;
 
-    if(creature && creature == m_attackingCreature) {
-        cancelAttack();
-        return;
-    }
+    // cancel when attacking again
+    if(creature && creature == m_attackingCreature)
+        creature = nullptr;
 
     if(creature && isFollowing())
         cancelFollow();
 
     setAttackingCreature(creature);
-    m_protocolGame->sendAttack(creature ? creature->getId() : 0, ++m_seq);
+    m_seq++;
+    m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
 }
 
-void Game::follow(const CreaturePtr& creature)
+void Game::follow(CreaturePtr creature)
 {
-    if(!canPerformGameAction() || creature == m_localPlayer || creature == m_followingCreature)
+    if(!canPerformGameAction() || creature == m_localPlayer)
         return;
+
+    // cancel when following again
+    if(creature && creature == m_followingCreature)
+        creature = nullptr;
 
     if(creature && isAttacking())
         cancelAttack();
 
     setFollowingCreature(creature);
-    m_protocolGame->sendFollow(creature ? creature->getId() : 0, ++m_seq);
+    m_seq++;
+    m_protocolGame->sendFollow(creature ? creature->getId() : 0, m_seq);
 }
 
 void Game::cancelAttackAndFollow()
 {
     if(!canPerformGameAction())
         return;
-
-    if(isAttacking())
-        setAttackingCreature(nullptr);
-    if(isFollowing())
-        setFollowingCreature(nullptr);
 
     m_protocolGame->sendCancelAttackAndFollow();
 }
