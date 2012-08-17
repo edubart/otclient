@@ -84,6 +84,9 @@ public:
     Point getDrawOffset();
     int getStepDuration();
     Point getWalkOffset() { return m_walkOffset; }
+    virtual Point getDisplacement();
+    virtual int getDisplacementX();
+    virtual int getDisplacementY();
 
     void updateShield();
 

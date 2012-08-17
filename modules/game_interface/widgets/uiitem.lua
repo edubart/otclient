@@ -20,9 +20,7 @@ function UIItem:onDragLeave(droppedWidget, mousePos)
 end
 
 function UIItem:onDrop(widget, mousePos)
-  if self:isVirtual() then return false end
-
-  if not widget or not widget.currentDragThing then return false end
+  if not self:canAcceptDrop(widget, mousePos) then return false end
 
   local item = widget.currentDragThing
   if not item:isItem() then return false end
@@ -94,3 +92,20 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
   return false
 end
 
+function UIItem:canAcceptDrop(widget, mousePos)
+  if self:isVirtual() then return false end
+  if not widget or not widget.currentDragThing then return false end
+
+  local children = rootWidget:recursiveGetChildrenByPos(mousePos)
+  for i=1,#children do
+    local child = children[i]
+    if child == self then
+      return true
+    elseif not child:isPhantom() then
+      return false
+    end
+  end
+
+  error('Widget ' .. self:getId() .. ' not in drop list.')
+  return false
+end

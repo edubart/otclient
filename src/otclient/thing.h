@@ -65,9 +65,9 @@ public:
     Size getSize() { return rawGetThingType()->getSize(); }
     int getWidth() { return rawGetThingType()->getWidth(); }
     int getHeight() { return rawGetThingType()->getHeight(); }
-    Point getDisplacement() { return rawGetThingType()->getDisplacement(); }
-    int getDisplacementX() { return rawGetThingType()->getDisplacementX(); }
-    int getDisplacementY() { return rawGetThingType()->getDisplacementY(); }
+    virtual Point getDisplacement() { return rawGetThingType()->getDisplacement(); }
+    virtual int getDisplacementX() { return rawGetThingType()->getDisplacementX(); }
+    virtual int getDisplacementY() { return rawGetThingType()->getDisplacementY(); }
     int getExactSize() { return rawGetThingType()->getExactSize(); }
     int getLayers() { return rawGetThingType()->getLayers(); }
     int getNumPatternX() { return rawGetThingType()->getNumPatternX(); }

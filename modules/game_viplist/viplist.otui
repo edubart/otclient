@@ -7,6 +7,7 @@ MiniWindow
   !text: tr('VIP List')
   height: 100
   icon: viplist.png
+  @onClose: modules.game_viplist.onMiniWindowClose()
   &save: true
 
   MiniWindowContents

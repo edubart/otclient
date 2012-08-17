@@ -156,7 +156,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getCategory() == ThingCategoryEffect)
             animationPhase = std::min(animationPhase+1, getAnimationPhases());
 
-        rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase);
+        rawGetThingType()->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
@@ -630,6 +630,30 @@ int Creature::getStepDuration()
     interval = std::max(interval, g_game.getServerBeat());
 
     return interval;
+}
+
+Point Creature::getDisplacement()
+{
+    Point displacement = Thing::getDisplacement();
+    if(m_outfit.getCategory() == ThingCategoryEffect)
+        displacement = Point(8, 8);
+    return displacement;
+}
+
+int Creature::getDisplacementX()
+{
+    int displacementX = Thing::getDisplacementX();
+    if(m_outfit.getCategory() == ThingCategoryEffect)
+        displacementX = 8;
+    return displacementX;
+}
+
+int Creature::getDisplacementY()
+{
+    int displacementY = Thing::getDisplacementY();
+    if(m_outfit.getCategory() == ThingCategoryEffect)
+        displacementY = 8;
+    return displacementY;
 }
 
 const ThingTypePtr& Creature::getThingType()

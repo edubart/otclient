@@ -179,9 +179,9 @@ function onUseWith(clickedWidget, mousePosition)
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
       g_game.useWith(selectedThing, tile:getTopMultiUseThing())
-    elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
-      g_game.useWith(selectedThing, clickedWidget:getItem())
     end
+  elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
+    g_game.useWith(selectedThing, clickedWidget:getItem())
   end
 end
 

@@ -138,6 +138,24 @@ function UIMiniWindow:onDragEnter(mousePos)
   return true
 end
 
+function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
+  if self.movedWidget then
+    self.setMovedChildMargin(0)
+    self.movedWidget = nil
+    self.setMovedChildMargin = nil
+    self.movedIndex = nil
+  end
+
+  local parent = self:getParent()
+  if parent then
+    if parent:getClassName() == 'UIMiniWindowContainer' then
+      parent:saveChildren()
+    else
+      self:saveParentPosition(parent:getId(), self:getPosition())
+    end
+  end
+end
+
 function UIMiniWindow:onDragMove(mousePos, mouseMoved)
   local oldMousePosY = mousePos.y - mouseMoved.y
   local children = rootWidget:recursiveGetChildrenByMarginPos(mousePos)
@@ -188,24 +206,6 @@ function UIMiniWindow:onMousePress()
   end
 end
 
-function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
-  if self.movedWidget then
-    self.setMovedChildMargin(0)
-    self.movedWidget = nil
-    self.setMovedChildMargin = nil
-    self.movedIndex = nil
-  end
-
-  local parent = self:getParent()
-  if parent then
-    if parent:getClassName() == 'UIMiniWindowContainer' then
-      parent:saveChildren()
-    else
-      self:saveParentPosition(parent:getId(), self:getPosition())
-    end
-  end
-end
-
 function UIMiniWindow:onFocusChange(focused)
   -- miniwindows only raises when its outside MiniWindowContainers
   if not focused then return end
@@ -252,4 +252,14 @@ end
 
 function UIMiniWindow:disableResize()
   self:getChildById('bottomResizeBorder'):disable()
+end
+
+function UIMiniWindow:setMinimumHeight(height)
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  resizeBorder:setMinimum(height)
+end
+
+function UIMiniWindow:setMaximumHeight(height)
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  resizeBorder:setMaximum(height)
 end

@@ -56,7 +56,7 @@ MiniWindow
   !text: tr('Inventory')
   icon: inventory.png
   height: 95
-  @onClose: onMiniWindowClose()
+  @onClose: modules.game_inventory.onMiniWindowClose()
   &save: true
 
   MiniWindowContents

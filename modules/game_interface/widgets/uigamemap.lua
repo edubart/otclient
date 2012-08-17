@@ -7,7 +7,6 @@ function UIGameMap.create()
   return gameMap
 end
 
-
 function UIGameMap:onDragEnter(mousePos)
   local tile = self:getTile(mousePos)
   if not tile then return false end
@@ -28,7 +27,7 @@ function UIGameMap:onDragLeave(droppedWidget, mousePos)
 end
 
 function UIGameMap:onDrop(widget, mousePos)
-  if not widget or not widget.currentDragThing then return false end
+  if not self:canAcceptDrop(widget, mousePos) then return false end
 
   local tile = self:getTile(mousePos)
   if not tile then return false end
@@ -81,4 +80,21 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   end
 
   return ret
+end
+
+function UIGameMap:canAcceptDrop(widget, mousePos)
+  if not widget or not widget.currentDragThing then return false end
+
+  local children = rootWidget:recursiveGetChildrenByPos(mousePos)
+  for i=1,#children do
+    local child = children[i]
+    if child == self then
+      return true
+    elseif not child:isPhantom() then
+      return false
+    end
+  end
+
+  error('Widget ' .. self:getId() .. ' not in drop list.')
+  return false
 end

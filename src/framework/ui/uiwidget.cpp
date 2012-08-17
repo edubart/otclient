@@ -1198,7 +1198,6 @@ UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
     return widget;
 }
 
-
 bool UIWidget::setState(Fw::WidgetState state, bool on)
 {
     if(state == Fw::InvalidState)

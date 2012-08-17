@@ -28,7 +28,7 @@ MiniWindow
   icon: combatcontrols.png
   height: 48
   &save: true
-  @onClose: onMiniWindowClose()
+  @onClose: modules.game_combatcontrols.onMiniWindowClose()
 
   MiniWindowContents
     FightOffensiveBox

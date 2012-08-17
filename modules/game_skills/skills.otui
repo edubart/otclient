@@ -35,7 +35,7 @@ MiniWindow
   !text: tr('Skills')
   height: 150
   icon: skills.png
-  @onClose: onMiniWindowClose()
+  @onClose: modules.game_skills.onMiniWindowClose()
   &save: true
 
   MiniWindowContents
@@ -149,4 +149,3 @@ MiniWindow
         !text: tr('Fishing')
       SkillValueLabel
       SkillPercentPanel
-

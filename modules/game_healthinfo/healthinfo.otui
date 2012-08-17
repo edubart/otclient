@@ -65,7 +65,7 @@ MiniWindow
   id: healthInfoWindow
   !text: tr('Health Info')
   height: 102
-  @onClose: onMiniWindowClose()
+  @onClose: modules.game_healthinfo.onMiniWindowClose()
   &save: true
 
   MiniWindowContents

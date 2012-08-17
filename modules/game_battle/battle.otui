@@ -41,7 +41,7 @@ MiniWindow
   !text: tr('Battle')
   height: 166
   icon: battle.png
-  @onClose: onMiniWindowClose()
+  @onClose: modules.game_battle.onMiniWindowClose()
   &save: true
 
   MiniWindowContents
