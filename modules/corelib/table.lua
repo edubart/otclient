@@ -16,7 +16,11 @@ end
 function table.copy(t)
   local res = {}
   for k,v in pairs(t) do
-    res[k] = v
+    if type(v) == "table" then
+      res[k] = table.copy(v)
+    else
+      res[k] = v
+    end
   end
   return res
 end

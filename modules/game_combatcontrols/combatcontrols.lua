@@ -78,8 +78,8 @@ function update()
 end
 
 function check()
-  if(Options.getOption('autoChaseOverride')) then
-    if(g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent) then
+  if Options.getOption('autoChaseOverride') then
+    if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
       g_game.setChaseMode(DontChase)
     end
   end
@@ -87,13 +87,13 @@ end
 
 function online()
   local player = g_game.getLocalPlayer()
-  if(player) then
+  if player then
     local char = player:getName()
 
     local lastCombatControls = g_settings.getNode('LastCombatControls')
 
-    if(not table.empty(lastCombatControls)) then
-      if(lastCombatControls[char]) then
+    if not table.empty(lastCombatControls) then
+      if lastCombatControls[char] then
         g_game.setFightMode(lastCombatControls[char].fightMode)
         g_game.setChaseMode(lastCombatControls[char].chaseMode)
         g_game.setSafeFight(lastCombatControls[char].safeFight)
@@ -101,18 +101,17 @@ function online()
     end
   end
 
-  combatControlsWindow:setVisible(combatControlsButton:isOn())
   update()
 end
 
 function offline()
   local lastCombatControls = g_settings.getNode('LastCombatControls')
-  if(not lastCombatControls) then
+  if not lastCombatControls then
     lastCombatControls = {}
   end
 
   local player = g_game.getLocalPlayer()
-  if(player) then
+  if player then
     local char = player:getName()
     lastCombatControls[char] = {
       fightMode = g_game.getFightMode(),
@@ -161,4 +160,8 @@ end
 
 function onSetSafeFight(self, checked)
   g_game.setSafeFight(not checked)
+end
+
+function onMiniWindowClose()
+  combatControlsButton:setOn(false)
 end

@@ -28,6 +28,7 @@ MiniWindow
   icon: combatcontrols.png
   height: 48
   &save: true
+  @onClose: onMiniWindowClose()
 
   MiniWindowContents
     FightOffensiveBox
