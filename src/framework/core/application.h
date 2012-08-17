@@ -52,6 +52,7 @@ public:
     const std::string& getCompactName() { return m_appCompactName; }
     const std::string& getVersion() { return m_appVersion; }
 
+    std::string getCharset() { return m_charset; }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate();
     std::string getBuildRevision() { return BUILD_REVISION; }
@@ -64,6 +65,7 @@ public:
 protected:
     void registerLuaFunctions();
 
+    std::string m_charset;
     std::string m_appName;
     std::string m_appCompactName;
     std::string m_appVersion;

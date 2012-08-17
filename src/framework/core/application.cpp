@@ -53,6 +53,7 @@ Application::Application()
     m_appName = "application";
     m_appCompactName = "app";
     m_appVersion = "none";
+    m_charset = "cp1252";
     m_stopping = false;
 }
 

@@ -36,6 +36,7 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     m_yOffset = fontNode->valueAt("y-offset", 0);
     m_firstGlyph = fontNode->valueAt("first-glyph", 32);
     m_glyphSpacing = fontNode->valueAt("spacing", Size(0,0));
+    int spaceWidth = fontNode->valueAt("space-width", glyphSize.width());
 
     // load font texture
     m_texture = g_textures.getTexture(textureFile);
@@ -47,14 +48,21 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
         calculateGlyphsWidthsAutomatically(Image::load(textureFile), glyphSize);
     }
 
+    // 32 and 160 are spaces (&nbsp;)
+    m_glyphsSize[32].setWidth(spaceWidth);
+    m_glyphsSize[160].setWidth(spaceWidth);
+
     // new line actually has a size that will be useful in multiline algorithm
     m_glyphsSize[(uchar)'\n'] = Size(1, m_glyphHeight);
 
     // read custom widths
+    /*
     if(OTMLNodePtr node = fontNode->get("glyph-widths")) {
         for(const OTMLNodePtr& child : node->children())
             m_glyphsSize[stdext::safe_cast<int>(child->tag())].setWidth(child->value<int>());
     }
+    */
+
 
     // calculate glyphs texture coords
     int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
@@ -268,12 +276,8 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
                 if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0)
                     filledPixels++;
             }
-            if(filledPixels > 0) {
+            if(filledPixels > 0)
                 width = x - glyphCoords.left() + 1;
-                width += m_glyphSpacing.width();
-                if(m_glyphHeight >= 16 && filledPixels >= m_glyphHeight/3)
-                    width += 1;
-            }
         }
         // store glyph size
         m_glyphsSize[glyph].resize(width, m_glyphHeight);

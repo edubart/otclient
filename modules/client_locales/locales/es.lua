@@ -2,6 +2,7 @@
 
 locale = {
   name = "es",
+  charset = "cp1252",
   languageName = "Español",
 
   translation = {

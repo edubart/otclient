@@ -1,5 +1,6 @@
 locale = {
   name = "pt",
+  charset = "cp1252",
   languageName = "Português",
 
   -- As traduções devem vir sempre em ordem alfabética.
