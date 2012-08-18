@@ -54,7 +54,7 @@ MiniWindow
   id: inventoryWindow
   !text: tr('Inventory')
   icon: inventory.png
-  height: 480
+  height: 175
   @onClose: modules.game_inventory.onMiniWindowClose()
   &save: true
 
@@ -62,25 +62,25 @@ MiniWindow
     HeadSlot
       anchors.top: parent.top
       anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 4
+      margin-top: 3
 
     BodySlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     LegSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     FeetSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     NeckSlot
-      anchors.top: parent.top
+      anchors.top: slot1.top
       anchors.right: slot1.left
       margin-top: 10
       margin-right: 5
@@ -88,15 +88,15 @@ MiniWindow
     LeftSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     FingerSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     BackSlot
-      anchors.top: parent.top
+      anchors.top: slot1.top
       anchors.left: slot1.right
       margin-top: 10
       margin-left: 5
@@ -104,9 +104,9 @@ MiniWindow
     RightSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
 
     AmmoSlot
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
-      margin-top: 5
+      margin-top: 3
