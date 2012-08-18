@@ -33,6 +33,9 @@ public:
     LuaObject();
     virtual ~LuaObject();
 
+    template<typename T>
+    void connectLuaField(const std::string& field, const std::function<T>& f, bool pushFront = false);
+
     /// Calls a function or table of functions stored in a lua field, results are pushed onto the stack,
     /// if any lua error occurs, it will be reported to stdout and return 0 results
     /// @return the number of results
@@ -85,7 +88,65 @@ private:
     int m_fieldsTableRef;
 };
 
+template<typename F>
+void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront = false);
+
+template<typename Lambda>
+typename std::enable_if<std::is_constructible<decltype(&Lambda::operator())>::value, void>::type
+connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront = false);
+
 #include "luainterface.h"
+
+template<typename T>
+void LuaObject::connectLuaField(const std::string& field, const std::function<T>& f, bool pushFront)
+{
+    luaGetField(field);
+    if(g_lua.isTable()) {
+        if(pushFront)
+            g_lua.pushInteger(1);
+        push_luavalue(f);
+        g_lua.callGlobalField("table","insert");
+    } else {
+        if(g_lua.isNil()) {
+            push_luavalue(f);
+            luaSetField(field);
+            g_lua.pop();
+        } else if(g_lua.isFunction()) {
+            g_lua.newTable();
+            g_lua.insert(-2);
+            g_lua.rawSeti(1);
+            push_luavalue(f);
+            g_lua.rawSeti(2);
+            luaSetField(field);
+        }
+    }
+}
+
+// connect for std::function
+template<typename F>
+void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront) {
+    obj->connectLuaField<F>(field, f, pushFront);
+}
+
+namespace luabinder {
+    template<typename F>
+    struct connect_lambda;
+
+    template<typename Lambda, typename Ret, typename... Args>
+    struct connect_lambda<Ret(Lambda::*)(Args...) const> {
+        static void call(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront) {
+            connect(obj, field, std::function<Ret(Args...)>(f), pushFront);
+        }
+    };
+};
+
+// connect for lambdas
+template<typename Lambda>
+typename std::enable_if<std::is_constructible<decltype(&Lambda::operator())>::value, void>::type
+connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront) {
+    typedef decltype(&Lambda::operator()) F;
+    luabinder::connect_lambda<F>::call(obj, field, f, pushFront);
+}
 
 template<typename... T>
 int LuaObject::luaCallField(const std::string& field, const T&... args) {
