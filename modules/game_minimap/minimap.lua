@@ -16,8 +16,8 @@ function init()
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
-    onForceWalk = center,
   })
+  connect(LocalPlayer, { onPositionChange = center })
 
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
@@ -44,8 +44,8 @@ function terminate()
   disconnect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
-    onForceWalk = center,
   })
+  disconnect(LocalPlayer, { onPositionChange = center })
 
   if g_game.isOnline() then
     saveMap()
