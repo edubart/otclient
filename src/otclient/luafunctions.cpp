@@ -53,6 +53,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "loadDat", &ThingTypeManager::loadDat, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadOtb", &ThingTypeManager::loadOtb, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadXml", &ThingTypeManager::loadXml, &g_things);
+    g_lua.bindSingletonFunction("g_things", "isDatLoaded", &ThingTypeManager::isDatLoaded, &g_things);
+    g_lua.bindSingletonFunction("g_things", "isOtbLoaded", &ThingTypeManager::isOtbLoaded, &g_things);
     g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
     g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
     g_lua.bindSingletonFunction("g_things", "getThingType", &ThingTypeManager::getThingType, &g_things);
