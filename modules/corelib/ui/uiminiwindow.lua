@@ -3,6 +3,7 @@ UIMiniWindow = extends(UIWindow)
 
 function UIMiniWindow.create()
   local miniwindow = UIMiniWindow.internalCreate()
+  miniwindow.isSetup = false
   return miniwindow
 end
 
@@ -103,7 +104,13 @@ function UIMiniWindow:onSetup()
       if selfSettings.closed then
         self:close(true)
       end
+
+      if selfSettings.height then
+        self:setHeight(selfSettings.height)
+      end
     end
+
+    self.isSetup = true
   end
 
   local newParent = self:getParent()
@@ -117,6 +124,19 @@ function UIMiniWindow:onSetup()
     if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and newParent ~= oldParent then
       newParent:order()
     end
+  end
+
+  if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and self:isVisible() then
+    -- not on input event, must rework
+    --newParent:fitAll(self)
+  end
+end
+
+function UIMiniWindow:onVisibilityChange(visible)
+  local parent = self:getParent()
+  if visible and parent and parent:getClassName() == 'UIMiniWindowContainer' then
+    -- not on input event, must rework
+    --parent:fitAll(self)
   end
 end
 
@@ -215,6 +235,18 @@ function UIMiniWindow:onFocusChange(focused)
   end
 end
 
+function UIMiniWindow:onGeometryChange(oldRect, rect)
+  if self.isSetup then
+    self:setSettings({height = rect.height})
+  end
+
+  local parent = self:getParent()
+  if self:isVisible() and parent and parent:getClassName() == 'UIMiniWindowContainer' then
+    -- not on input event, must rework
+    --parent:fitAll(self)
+  end
+end
+
 function UIMiniWindow:setSettings(data)
   if not self.save then return end
 
@@ -254,12 +286,18 @@ function UIMiniWindow:disableResize()
   self:getChildById('bottomResizeBorder'):disable()
 end
 
-function UIMiniWindow:setMinimumHeight(height)
+function UIMiniWindow:setContentMinimumHeight(height)
+  local contentsPanel = self:getChildById('contentsPanel')
+  local minHeight = contentsPanel:getMarginTop() + contentsPanel:getMarginBottom() + contentsPanel:getPaddingTop() + contentsPanel:getPaddingBottom()
+
   local resizeBorder = self:getChildById('bottomResizeBorder')
-  resizeBorder:setMinimum(height)
+  resizeBorder:setMinimum(minHeight + height)
 end
 
-function UIMiniWindow:setMaximumHeight(height)
+function UIMiniWindow:setContentMaximumHeight(height)
+  local contentsPanel = self:getChildById('contentsPanel')
+  local minHeight = contentsPanel:getMarginTop() + contentsPanel:getMarginBottom() + contentsPanel:getPaddingTop() + contentsPanel:getPaddingBottom()
+
   local resizeBorder = self:getChildById('bottomResizeBorder')
-  resizeBorder:setMaximum(height)
+  resizeBorder:setMaximum(minHeight + height)
 end

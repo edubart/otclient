@@ -31,4 +31,3 @@ ContainerWindow < MiniWindow
       type: grid
       cell-size: 34 34
       flow: true
-

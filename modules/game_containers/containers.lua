@@ -88,6 +88,11 @@ function onContainerOpen(container, previousContainer)
 
   container.window = containerWindow
   container.itemsPanel = containerPanel
+
+  local layout = containerPanel:getLayout()
+  local cellSize = layout:getCellSize()
+  containerWindow:setContentMinimumHeight(cellSize.height*1)
+  containerWindow:setContentMaximumHeight(cellSize.height*layout:getNumLines())
 end
 
 function onContainerClose(container)

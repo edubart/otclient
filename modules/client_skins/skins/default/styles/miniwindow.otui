@@ -75,7 +75,7 @@ MiniWindow < UIMiniWindow
     anchors.left: parent.left
     anchors.right: parent.right
     height: 3
-    minimum: 64
+    minimum: 48
     background: #ffffff88
 
 MiniWindowContents < ScrollablePanel

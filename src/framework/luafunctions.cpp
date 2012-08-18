@@ -600,6 +600,9 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIGridLayout>("setFlow", &UIGridLayout::setFlow);
     g_lua.bindClassMemberFunction<UIGridLayout>("setNumColumns", &UIGridLayout::setNumColumns);
     g_lua.bindClassMemberFunction<UIGridLayout>("setNumLines", &UIGridLayout::setNumLines);
+    g_lua.bindClassMemberFunction<UIGridLayout>("getNumColumns", &UIGridLayout::getNumColumns);
+    g_lua.bindClassMemberFunction<UIGridLayout>("getNumLines", &UIGridLayout::getNumLines);
+    g_lua.bindClassMemberFunction<UIGridLayout>("getCellSize", &UIGridLayout::getCellSize);
     g_lua.bindClassMemberFunction<UIGridLayout>("isUIGridLayout", &UIGridLayout::isUIGridLayout);
 
     // UIAnchorLayout

@@ -13,6 +13,63 @@ function UIMiniWindowContainer:getClassName()
   return 'UIMiniWindowContainer'
 end
 
+function UIMiniWindowContainer:fitAll(noRemoveChild)
+  if not self:isVisible() then
+    return
+  end
+
+  local sumHeight = 0
+  local children = self:getChildren()
+  for i=1,#children do
+    sumHeight = sumHeight + children[i]:getHeight()
+  end
+
+  local selfHeight = self:getHeight()
+  if sumHeight <= selfHeight then
+    return
+  end
+
+  local removeChildren = {}
+
+  -- try to remove no-save widget
+  for i=#children,1,-1 do
+    if sumHeight < selfHeight then
+      break
+    end
+
+    local child = children[i]
+    if child ~= noRemoveChild and not child.save then
+      local childHeight = child:getHeight()
+      sumHeight = sumHeight - childHeight
+      table.insert(removeChildren, child)
+    end
+  end
+
+  -- try to remove save widget
+  for i=#children,1,-1 do
+    if sumHeight < selfHeight then
+      break
+    end
+
+    local child = children[i]
+    if child ~= noRemoveChild then
+      local childHeight = child:getHeight()
+      sumHeight = sumHeight - childHeight
+      table.insert(removeChildren, child)
+    end
+  end
+
+  -- close widgets
+  for i=1,#removeChildren do
+    removeChildren[i]:close()
+  end
+
+  -- dont let noRemoveChild be bigger than self
+  if noRemoveChild:getHeight() > selfHeight - 20 then
+    noRemoveChild:setHeight(selfHeight - 20)
+  end
+end
+
 function UIMiniWindowContainer:onDrop(widget, mousePos)
   if widget:getClassName() == 'UIMiniWindow' then
     local oldParent = widget:getParent()

@@ -33,6 +33,10 @@ function init()
   battleButton:setOn(true)
   g_keyboard.bindKeyDown('Ctrl+B', toggle)
 
+  -- this disables scrollbar auto hiding
+  local scrollbar = battleWindow:getChildById('miniwindowScrollBar')
+  scrollbar:mergeStyle({ ['$!on'] = { }})
+
   battlePanel = battleWindow:recursiveGetChildById('battlePanel')
 
   hidePlayersButton = battleWindow:recursiveGetChildById('hidePlayers')

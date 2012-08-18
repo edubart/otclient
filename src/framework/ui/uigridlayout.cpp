@@ -37,7 +37,6 @@ void UIGridLayout::applyStyle(const OTMLNodePtr& styleNode)
 {
     UILayout::applyStyle(styleNode);
 
-
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "cell-size")
             setCellSize(node->value<Size>());
@@ -83,8 +82,13 @@ bool UIGridLayout::internalUpdate()
     Point topLeft = clippingRect.topLeft();
 
     int numColumns = m_numColumns;
-    if(m_flow && m_cellSize.width() > 0)
+    if(m_flow && m_cellSize.width() > 0) {
         numColumns = clippingRect.width() / (m_cellSize.width() + m_cellSpacing);
+        if(numColumns > 0) {
+            m_numColumns = numColumns;
+            m_numLines = std::ceil(widgets.size() / (float)numColumns);
+        }
+    }
 
     if(numColumns <= 0)
         numColumns = 1;

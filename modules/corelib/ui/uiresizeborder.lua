@@ -92,12 +92,22 @@ function UIResizeBorder:setMaximum(maximum)
   if self.maximum == self.minimum then
     self:hide()
   end
+
+  local parent = self:getParent()
+  if self:isVisible() and parent:getHeight() > maximum then
+    parent:setHeight(maximum)
+  end
 end
 
 function UIResizeBorder:setMinimum(minimum)
   self.minimum = minimum
   if self.maximum == self.minimum then
     self:hide()
+  end
+
+  local parent = self:getParent()
+  if self:isVisible() and parent:getHeight() < minimum then
+    parent:setHeight(minimum)
   end
 end
 

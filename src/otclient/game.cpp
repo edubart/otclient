@@ -180,7 +180,11 @@ void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, c
     m_containers[containerId] = container;
     container->onAddItems(items);
 
+    // we might want to close a container here
+    enableBotCall();
     container->onOpen(previousContainer);
+    disableBotCall();
+
     if(previousContainer)
         previousContainer->onClose();
 }

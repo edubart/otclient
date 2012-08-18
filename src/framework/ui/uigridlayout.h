@@ -45,6 +45,10 @@ public:
     void setFitChildren(bool enable) { m_fitChildren = enable; update(); }
     void setFlow(bool enable) { m_flow = enable; update(); }
 
+    Size getCellSize() { return m_cellSize; }
+    int getNumColumns() { return m_numColumns; }
+    int getNumLines() { return m_numLines; }
+
     virtual bool isUIGridLayout() { return true; }
 
 protected:
@@ -61,4 +65,3 @@ private:
 };
 
 #endif
-
