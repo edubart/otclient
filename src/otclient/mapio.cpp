@@ -22,7 +22,7 @@
 
 #include "map.h"
 #include "tile.h"
-
+#include "game.h"
 
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
@@ -300,7 +300,7 @@ void Map::saveOtbm(const std::string &fileName)
             Position base(-1, -1, -1);
             bool firstNode = true;
 
-            for(uint8_t z = 0; z < Otc::MAX_Z + 1; ++z) {
+            for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
                 for(const auto& it : m_tileBlocks[z]) {
                     const TileBlock& block = it.second;
                     for(const TilePtr& tile : block.getTiles()) {
@@ -499,9 +499,8 @@ bool Map::loadOtcm(const std::string& fileName)
 
 void Map::saveOtcm(const std::string& fileName)
 {
-#if 0
     try {
-        g_clock.update();
+        stdext::timer saveTimer;
 
         FileStreamPtr fin = g_resources.createFile(fileName);
         fin->cache();
@@ -527,29 +526,33 @@ void Map::saveOtcm(const std::string& fileName)
         fin->addU16(start);
         fin->seek(start);
 
-        for(auto& pair : m_tiles) {
-            const TilePtr& tile = pair.second;
-            if(!tile || tile->isEmpty())
-                continue;
+        for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+            for(const auto& it : m_tileBlocks[z]) {
+                const TileBlock& block = it.second;
+                for(const TilePtr& tile : block.getTiles()) {
+                    if(!tile || tile->isEmpty())
+                        continue;
 
-            Position pos = pair.first;
-            fin->addU16(pos.x);
-            fin->addU16(pos.y);
-            fin->addU8(pos.z);
+                    Position pos = tile->getPosition();
+                    fin->addU16(pos.x);
+                    fin->addU16(pos.y);
+                    fin->addU8(pos.z);
 
-            const auto& list = tile->getThings();
-            auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
-            for(auto it = first, end = list.end(); it != end; ++it) {
-                const ThingPtr& thing = *it;
-                if(thing->isItem()) {
-                    ItemPtr item = thing->static_self_cast<Item>();
-                    fin->addU16(item->getId());
-                    fin->addU8(item->getCountOrSubType());
+                    const auto& list = tile->getThings();
+                    auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
+                    for(auto it = first, end = list.end(); it != end; ++it) {
+                        const ThingPtr& thing = *it;
+                        if(thing->isItem()) {
+                            ItemPtr item = thing->static_self_cast<Item>();
+                            fin->addU16(item->getId());
+                            fin->addU8(item->getCountOrSubType());
+                        }
+                    }
+
+                    // end of tile
+                    fin->addU16(0xFFFF);
                 }
             }
-
-            // end of tile
-            fin->addU16(0xFFFF);
         }
 
         // end of file
@@ -559,9 +562,10 @@ void Map::saveOtcm(const std::string& fileName)
         fin->addU8(invalidPos.z);
 
         fin->flush();
+
         fin->close();
+        g_logger.debug(stdext::format("Otcm save time: %.2f seconds", saveTimer.elapsed_seconds()));
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to save OTCM map: %s", e.what()));
     }
-#endif
 }

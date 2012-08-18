@@ -2,8 +2,6 @@ DEFAULT_ZOOM = 60
 MAX_FLOOR_UP = 0
 MAX_FLOOR_DOWN = 15
 
-G.minimapFirstLoad = true
-
 navigating = false
 minimapWidget = nil
 minimapButton = nil
@@ -15,8 +13,11 @@ minimapWindow = nil
   you change floor it will not update the minimap.
 ]]
 function init()
-  connect(g_game, { onGameStart = reset,
-                    onForceWalk = center })
+  connect(g_game, {
+    onGameStart = online,
+    onGameEnd = offline,
+    onForceWalk = center,
+  })
 
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
@@ -37,34 +38,45 @@ function init()
   minimapWidget.onMouseWheel = onMinimapMouseWheel
 
   reset()
-
-  -- load only the first time (avoid load/save between reloads)
-  --[[
-  if G.minimapFirstLoad then
-    G.minimapFirstLoad = false
-    if g_resources.fileExists('/minimap.otcm') then
-      if g_game.isOnline() then
-        perror('cannot load minimap while online')
-      else
-        g_map.loadOtcm('/minimap.otcm')
-      end
-    end
-
-    -- save only when closing the client
-    connect(g_app, { onTerminate = function()
-      g_map.saveOtcm('/minimap.otcm')
-    end})
-  end]]--
 end
 
 function terminate()
-  disconnect(g_game, { onGameStart = reset,
-                       onForceWalk = center })
+  disconnect(g_game, {
+    onGameStart = online,
+    onGameEnd = offline,
+    onForceWalk = center,
+  })
+
+  if g_game.isOnline() then
+    saveMap()
+  end
 
   g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapButton:destroy()
   minimapWindow:destroy()
+end
+
+function online()
+  reset()
+  loadMap()
+end
+
+function offline()
+  saveMap()
+end
+
+function loadMap()
+  local clientVersion = g_game.getClientVersion()
+  local minimapName = '/minimap_' .. clientVersion .. '.otcm'
+  g_map.clean()
+  g_map.loadOtcm(minimapName)
+end
+
+function saveMap()
+  local clientVersion = g_game.getClientVersion()
+  local minimapName = '/minimap_' .. clientVersion .. '.otcm'
+  g_map.saveOtcm(minimapName)
 end
 
 function toggle()
