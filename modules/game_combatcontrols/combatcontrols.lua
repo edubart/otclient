@@ -33,7 +33,8 @@ function init()
     onFightModeChange = update,
     onChaseModeChange = update,
     onSafeFightChange = update,
-    onWalk = check
+    onWalk = check,
+    onAutoWalk = check
   })
 
   if g_game.isOnline() then
@@ -56,7 +57,8 @@ function terminate()
     onFightModeChange = update,
     onChaseModeChange = update,
     onSafeFightChange = update,
-    onWalk = check
+    onWalk = check,
+    onAutoWalk = check
   })
 end
 

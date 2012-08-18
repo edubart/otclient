@@ -499,9 +499,9 @@ void Game::walk(Otc::Direction direction)
             return;
     }
 
-    forceWalk(direction);
-
     g_lua.callGlobalField("g_game", "onWalk", direction);
+
+    forceWalk(direction);
 }
 
 void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
@@ -529,9 +529,9 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
             m_localPlayer->preWalk(direction);
     }
 
-    m_protocolGame->sendAutoWalk(dirs);
-
     g_lua.callGlobalField("g_game", "onAutoWalk", dirs);
+
+    m_protocolGame->sendAutoWalk(dirs);
 }
 
 void Game::forceWalk(Otc::Direction direction)
