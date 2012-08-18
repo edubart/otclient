@@ -68,15 +68,17 @@ end
 
 function loadMap()
   local clientVersion = g_game.getClientVersion()
-  local minimapName = '/minimap_' .. clientVersion .. '.otcm'
-  g_map.clean()
-  g_map.loadOtcm(minimapName)
+  local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+  if g_resources.fileExists(minimapFile) then
+    g_map.clean()
+    g_map.loadOtcm(minimapFile)
+  end
 end
 
 function saveMap()
   local clientVersion = g_game.getClientVersion()
-  local minimapName = '/minimap_' .. clientVersion .. '.otcm'
-  g_map.saveOtcm(minimapName)
+  local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+  g_map.saveOtcm(minimapFile)
 end
 
 function toggle()

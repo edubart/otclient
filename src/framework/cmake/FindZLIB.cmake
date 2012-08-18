@@ -5,7 +5,7 @@
 
 FIND_PATH(ZLIB_INCLUDE_DIR NAMES zlib.h)
 SET(_ZLIB_STATIC_LIBS libz.a libzlib.a zlib1.a)
-SET(_ZLIB_SHARED_LIBS z.dll zlib.dll zdll.dll zlib1.dll z zlib zdll zlib1)
+SET(_ZLIB_SHARED_LIBS z zlib zdll zlib1)
 IF(USE_STATIC_LIBS)
     FIND_LIBRARY(ZLIB_LIBRARY NAMES ${_ZLIB_STATIC_LIBS} ${_ZLIB_SHARED_LIBS})
 ELSE()

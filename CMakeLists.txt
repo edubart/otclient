@@ -5,6 +5,7 @@ set(FRAMEWORK_SOUND ON)
 set(FRAMEWORK_GRAPHICS ON)
 set(FRAMEWORK_XML ON)
 set(FRAMEWORK_NET ON)
+#set(FRAMEWORK_GIT ON)
 include(src/framework/CMakeLists.txt)
 include(src/otclient/CMakeLists.txt)
 
@@ -44,7 +45,7 @@ endif()
 # installation
 set(DATA_INSTALL_DIR share/otclient)
 install(TARGETS otclient RUNTIME DESTINATION bin)
-install(FILES README.md TODO BUGS LICENSE AUTHORS init.lua otclientrc.lua DESTINATION ${DATA_INSTALL_DIR})
+install(FILES README.md BUGS LICENSE AUTHORS init.lua otclientrc.lua DESTINATION ${DATA_INSTALL_DIR})
 install(DIRECTORY modules DESTINATION ${DATA_INSTALL_DIR} PATTERN ".git" EXCLUDE)
 
 # add "make run"

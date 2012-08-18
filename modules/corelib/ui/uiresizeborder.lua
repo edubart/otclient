@@ -38,25 +38,21 @@ function UIResizeBorder:onMouseMove(mousePos, mouseMoved)
       local delta = mousePos.y - self:getY() - self:getHeight()/2
       local parent = self:getParent()
       local newsize = math.min(math.max(parent:getHeight() + delta, self.minimum), self.maximum)
-      if newsize ~= currentMargin then
-        self.newsize = newsize
-        if not self.event or self.event:isExecuted() then
-          self.event = addEvent(function()
-            parent:setHeight(self.newsize)
-          end)
-        end
+      self.newsize = newsize
+      if not self.event or self.event:isExecuted() then
+        self.event = addEvent(function()
+          parent:setHeight(self.newsize)
+        end)
       end
     else
       local delta = mousePos.x - self:getX() - self:getWidth()/2
       local parent = self:getParent()
       local newsize = math.min(math.max(parent:getWidth() + delta, self.minimum), self.maximum)
-      if newsize ~= currentMargin then
-        self.newsize = newsize
-        if not self.event or self.event:isExecuted() then
-          self.event = addEvent(function()
-            parent:setWidth(self.newsize)
-          end)
-        end
+      self.newsize = newsize
+      if not self.event or self.event:isExecuted() then
+        self.event = addEvent(function()
+          parent:setWidth(self.newsize)
+        end)
       end
     end
     return true

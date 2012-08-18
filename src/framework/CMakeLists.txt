@@ -176,7 +176,7 @@ if(WIN32)
     set(REQUIRED_BOOST_COMPONENTS ${REQUIRED_BOOST_COMPONENTS} thread chrono) # mingw32 does not have std::thread
 endif()
 set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_LIBS ON)
+set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
 #find lua
@@ -464,6 +464,20 @@ if(FRAMEWORK_SQL)
         ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.h
     )
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
+endif()
+
+if(FRAMEWORK_GIT)
+    find_package(Git2 REQUIRED)
+
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${GIT2_INCLUDE_DIR})
+    set(framework_LIBRARIES ${GIT2_LIBRARY} ${framework_LIBRARIES})
+
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/git/declarations.h
+        ${CMAKE_CURRENT_LIST_DIR}/git/gitrepository.h
+        ${CMAKE_CURRENT_LIST_DIR}/git/gitrepository.cpp
+    )
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_GIT)
 endif()
 
 include_directories(${framework_INCLUDE_DIRS})

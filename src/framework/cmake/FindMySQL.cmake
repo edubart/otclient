@@ -4,8 +4,8 @@
 #  MYSQL_LIBRARY - the mysql library
 
 FIND_PATH(MYSQL_INCLUDE_DIR NAMES mysql.h PATH_SUFFIXES mysql)
-SET(_MYSQL_STATIC_LIBS mysqlclient.a mysqlclient_r.a)
-SET(_MYSQL_SHARED_LIBS mysqlclient mysqlclient_r)
+SET(_MYSQL_STATIC_LIBS libmysqlclient.a libmysqlclient_r.a)
+SET(_MYSQL_SHARED_LIBS libmysqlclient.dll.a libmysqlclient_r.dll.a mysqlclient mysqlclient_r)
 IF(USE_STATIC_LIBS)
     FIND_LIBRARY(MYSQL_LIBRARY NAMES ${_MYSQL_STATIC_LIBS} ${_MYSQL_SHARED_LIBS})
 ELSE()
