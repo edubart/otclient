@@ -1,5 +1,4 @@
 InventoryItem < Item
-  margin: 0 1
 
 HeadSlot < InventoryItem
   id: slot1
@@ -55,23 +54,59 @@ MiniWindow
   id: inventoryWindow
   !text: tr('Inventory')
   icon: inventory.png
-  height: 95
+  height: 480
   @onClose: modules.game_inventory.onMiniWindowClose()
   &save: true
 
   MiniWindowContents
-    padding: 4 5
-    layout:
-      type: grid
-      num-columns: 5
-      cell-size: 36 34
     HeadSlot
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 4
+
     BodySlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
     LegSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
     FeetSlot
-    BackSlot
-    LeftSlot
-    RightSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
     NeckSlot
+      anchors.top: parent.top
+      anchors.right: slot1.left
+      margin-top: 10
+      margin-right: 5
+
+    LeftSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
     FingerSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
+    BackSlot
+      anchors.top: parent.top
+      anchors.left: slot1.right
+      margin-top: 10
+      margin-left: 5
+
+    RightSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
+
     AmmoSlot
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
+      margin-top: 5
