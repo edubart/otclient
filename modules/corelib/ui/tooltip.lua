@@ -92,6 +92,10 @@ function UIWidget:setTooltip(text)
   self.tooltip = text
 end
 
+function UIWidget:removeTooltip()
+  self.tooltip = nil
+end
+
 function UIWidget:getTooltip()
   return self.tooltip
 end

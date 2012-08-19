@@ -467,7 +467,7 @@ local function onSelectSellOffer(table, selectedRow, previousSelectedRow)
   if offer then
     local price = offer:getPrice()
     if price > information.balance then
-      balanceLabel:setColor('#b22222')
+      balanceLabel:setColor('#b22222') -- red
       buyButton:setEnabled(false)
     else
       local slice = (information.balance / 2)
@@ -751,7 +751,9 @@ function Market.reset()
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
   clearFilters()
-  Market.updateCurrentItems()
+  if information and not table.empty(information) then
+    Market.updateCurrentItems()
+  end
 end
 
 function Market.clearSelectedItem()

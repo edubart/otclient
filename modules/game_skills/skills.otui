@@ -86,9 +86,29 @@ MiniWindow
       SkillValueLabel
 
     SkillButton
+      id: speed
+      height: 15
+      SkillNameLabel
+        !text: tr('Speed')
+      SkillValueLabel
+
+    SkillButton
+      id: regenerationTime
+      SkillNameLabel
+        !text: tr('Regeneration Time')
+      SkillValueLabel
+
+    SkillButton
       id: stamina
       SkillNameLabel
         !text: tr('Stamina')
+      SkillValueLabel
+      SkillPercentPanel
+
+    SkillButton
+      id: offlineTraining
+      SkillNameLabel
+        !text: tr('Offline Training')
       SkillValueLabel
       SkillPercentPanel
 
@@ -116,7 +136,6 @@ MiniWindow
 
     SkillButton
       id: skillId2
-
       SkillNameLabel
         !text: tr('Sword Fighting')
       SkillValueLabel

@@ -876,7 +876,7 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     else
         freeCapacity = msg->getU16() / 100.0;
 
-    double totalCapacity;
+    double totalCapacity = 0;
     if(g_game.getFeature(Otc::GameTotalCapacity))
         totalCapacity = msg->getU32() / 100.0;
 
@@ -892,42 +892,57 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     double maxMana = msg->getU16();
     double magicLevel = msg->getU8();
 
+    double baseMagicLevel;
     if(g_game.getFeature(Otc::GameSkillsBase))
-        msg->getU8(); // base magic level
+        baseMagicLevel = msg->getU8();
+    else
+        baseMagicLevel = magicLevel;
 
     double magicLevelPercent = msg->getU8();
     double soul = msg->getU8();
     double stamina = msg->getU16();
 
+    double baseSpeed = 0;
+    if(g_game.getFeature(Otc::GameSkillsBase))
+        baseSpeed = msg->getU16();
+
+    double regeneration = 0;
+    if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
+        regeneration = msg->getU16();
+
+    double training = 0;
+    if(g_game.getFeature(Otc::GameOfflineTrainingTime))
+        training = msg->getU16();
+
     m_localPlayer->setHealth(health, maxHealth);
     m_localPlayer->setFreeCapacity(freeCapacity);
+    m_localPlayer->setTotalCapacity(totalCapacity);
     m_localPlayer->setExperience(experience);
     m_localPlayer->setLevel(level, levelPercent);
     m_localPlayer->setMana(mana, maxMana);
     m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
+    m_localPlayer->setBaseMagicLevel(baseMagicLevel);
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
-
-    if(g_game.getFeature(Otc::GameSkillsBase))
-        msg->getU16(); // base speed
-
-    if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
-        msg->getU16();
-
-    if(g_game.getFeature(Otc::GameOfflineTrainingTime))
-        msg->getU16();
+    m_localPlayer->setBaseSpeed(baseSpeed);
+    m_localPlayer->setRegenerationTime(regeneration);
+    m_localPlayer->setOfflineTrainingTime(training);
 }
 
 void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 {
     for(int skill = 0; skill < Otc::LastSkill; skill++) {
         int level = msg->getU8();
+        int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            msg->getU8(); // base
+            baseLevel = msg->getU8(); // base
+        else
+            baseLevel = level;
 
         int levelPercent = msg->getU8();
 
         m_localPlayer->setSkill((Otc::Skill)skill, level, levelPercent);
+        m_localPlayer->setBaseSkill((Otc::Skill)skill, baseLevel);
     }
 }
 

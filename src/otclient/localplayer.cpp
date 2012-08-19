@@ -39,6 +39,7 @@ LocalPlayer::LocalPlayer()
     m_walkLockExpiration = 0;
 
     m_skillsLevel.fill(-1);
+    m_skillsBaseLevel.fill(-1);
     m_skillsLevelPercent.fill(-1);
 
     m_health = -1;
@@ -51,8 +52,13 @@ LocalPlayer::LocalPlayer()
     m_maxMana = -1;
     m_magicLevel = -1;
     m_magicLevelPercent = -1;
+    m_baseMagicLevel = -1;
     m_soul = -1;
     m_stamina = -1;
+    m_baseSpeed = -1;
+    m_regenerationTime = -1;
+    m_offlineTrainingTime = -1;
+    m_totalCapacity = -1;
 }
 
 void LocalPlayer::lockWalk(int millis)
@@ -248,6 +254,21 @@ void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
     }
 }
 
+void LocalPlayer::setBaseSkill(Otc::Skill skill, int baseLevel)
+{
+    if(skill >= Otc::LastSkill) {
+        g_logger.traceError("invalid skill");
+        return;
+    }
+
+    int oldBaseLevel = m_skillsBaseLevel[skill];
+    if(baseLevel != oldBaseLevel) {
+        m_skillsBaseLevel[skill] = baseLevel;
+
+        callLuaField("onBaseSkillChange", skill, baseLevel, oldBaseLevel);
+    }
+}
+
 void LocalPlayer::setHealth(double health, double maxHealth)
 {
     if(m_health != health || m_maxHealth != maxHealth) {
@@ -274,6 +295,16 @@ void LocalPlayer::setFreeCapacity(double freeCapacity)
         m_freeCapacity = freeCapacity;
 
         callLuaField("onFreeCapacityChange", freeCapacity, oldFreeCapacity);
+    }
+}
+
+void LocalPlayer::setTotalCapacity(double totalCapacity)
+{
+    if(m_totalCapacity != totalCapacity) {
+        double oldTotalCapacity = m_totalCapacity;
+        m_totalCapacity = totalCapacity;
+
+        callLuaField("onTotalCapacityChange", totalCapacity, oldTotalCapacity);
     }
 }
 
@@ -320,6 +351,16 @@ void LocalPlayer::setMagicLevel(double magicLevel, double magicLevelPercent)
         m_magicLevelPercent = magicLevelPercent;
 
         callLuaField("onMagicLevelChange", magicLevel, magicLevelPercent, oldMagicLevel, oldMagicLevelPercent);
+    }
+}
+
+void LocalPlayer::setBaseMagicLevel(double baseMagicLevel)
+{
+    if(m_baseMagicLevel != baseMagicLevel) {
+        double oldBaseMagicLevel = m_baseMagicLevel;
+        m_baseMagicLevel = baseMagicLevel;
+
+        callLuaField("onBaseMagicLevelChange", baseMagicLevel, oldBaseMagicLevel);
     }
 }
 
@@ -374,6 +415,36 @@ void LocalPlayer::setPremium(bool premium)
         m_premium = premium;
 
         callLuaField("onPremiumChange", premium);
+    }
+}
+
+void LocalPlayer::setBaseSpeed(double baseSpeed)
+{
+    if(m_baseSpeed != baseSpeed) {
+        double oldBaseSpeed = m_baseSpeed;
+        m_baseSpeed = baseSpeed;
+
+        callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);
+    }
+}
+
+void LocalPlayer::setRegenerationTime(double regenerationTime)
+{
+    if(m_regenerationTime != regenerationTime) {
+        double oldRegenerationTime = m_regenerationTime;
+        m_regenerationTime = regenerationTime;
+
+        callLuaField("onRegenerationChange", regenerationTime, oldRegenerationTime);
+    }
+}
+
+void LocalPlayer::setOfflineTrainingTime(double offlineTrainingTime)
+{
+    if(m_offlineTrainingTime != offlineTrainingTime) {
+        double oldOfflineTrainingTime = m_offlineTrainingTime;
+        m_offlineTrainingTime = offlineTrainingTime;
+
+        callLuaField("onOfflineTrainingChange", offlineTrainingTime, oldOfflineTrainingTime);
     }
 }
 

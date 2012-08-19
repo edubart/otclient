@@ -514,11 +514,14 @@ void Creature::setOutfit(const Outfit& outfit)
 
 void Creature::setSpeed(uint16 speed)
 {
+    uint16 oldSpeed = m_speed;
     m_speed = speed;
 
     // speed can change while walking (utani hur, paralyze, etc..)
     if(m_walking)
         nextWalkUpdate();
+
+    callLuaField("onSpeedChange", speed, oldSpeed);
 }
 
 void Creature::setSkull(uint8 skull)

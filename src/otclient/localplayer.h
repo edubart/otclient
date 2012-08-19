@@ -41,27 +41,35 @@ public:
 
     void setStates(int states);
     void setSkill(Otc::Skill skill, int level, int levelPercent);
+    void setBaseSkill(Otc::Skill skill, int baseLevel);
     void setHealth(double health, double maxHealth);
     void setFreeCapacity(double freeCapacity);
+    void setTotalCapacity(double totalCapacity);
     void setExperience(double experience);
     void setLevel(double level, double levelPercent);
     void setMana(double mana, double maxMana);
     void setMagicLevel(double magicLevel, double magicLevelPercent);
+    void setBaseMagicLevel(double baseMagicLevel);
     void setSoul(double soul);
     void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
     void setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item);
     void setVocation(int vocation);
     void setPremium(bool premium);
+    void setBaseSpeed(double baseSpeed);
+    void setRegenerationTime(double regenerationTime);
+    void setOfflineTrainingTime(double offlineTrainingTime);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
+    int getSkillBaseLevel(Otc::Skill skill) { return m_skillsBaseLevel[skill]; }
     int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
     int getVocation() { return m_vocation; }
     double getWalkPing();
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
     double getFreeCapacity() { return m_freeCapacity; }
+    double getTotalCapacity() { return m_totalCapacity; }
     double getExperience() { return m_experience; }
     double getLevel() { return m_level; }
     double getLevelPercent() { return m_levelPercent; }
@@ -69,8 +77,12 @@ public:
     double getMaxMana() { return m_maxMana; }
     double getMagicLevel() { return m_magicLevel; }
     double getMagicLevelPercent() { return m_magicLevelPercent; }
+    double getBaseMagicLevel() { return m_baseMagicLevel; }
     double getSoul() { return m_soul; }
     double getStamina() { return m_stamina; }
+    double getBaseSpeed() { return m_baseSpeed; }
+    double getRegenerationTime() { return m_regenerationTime; }
+    double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
 
     bool hasSight(const Position& pos);
@@ -111,6 +123,7 @@ private:
     std::deque<int> m_lastWalkPings;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
+    std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
 
     bool m_known;
@@ -121,6 +134,7 @@ private:
     double m_health;
     double m_maxHealth;
     double m_freeCapacity;
+    double m_totalCapacity;
     double m_experience;
     double m_level;
     double m_levelPercent;
@@ -128,8 +142,12 @@ private:
     double m_maxMana;
     double m_magicLevel;
     double m_magicLevelPercent;
+    double m_baseMagicLevel;
     double m_soul;
     double m_stamina;
+    double m_baseSpeed;
+    double m_regenerationTime;
+    double m_offlineTrainingTime;
 };
 
 #endif
