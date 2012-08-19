@@ -521,7 +521,7 @@ void Creature::setSpeed(uint16 speed)
     if(m_walking)
         nextWalkUpdate();
 
-    callLuaField("onSpeedChange", speed, oldSpeed);
+    callLuaField("onSpeedChange", m_speed, oldSpeed);
 }
 
 void Creature::setSkull(uint8 skull)

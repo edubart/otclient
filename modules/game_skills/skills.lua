@@ -20,8 +20,8 @@ function init()
     onBaseSkillChange = onBaseSkillChange
   })
   connect(g_game, {
-    onGameStart = update,
-    onGameEnd = update
+    onGameStart = refresh,
+    onGameEnd = refresh
   })
 
   skillsWindow = g_ui.loadUI('skills.otui', modules.game_interface.getRightPanel())
@@ -51,8 +51,8 @@ function terminate()
     onBaseSkillChange = onBaseSkillChange
   })
   disconnect(g_game, {
-    onGameStart = update,
-    onGameEnd = update
+    onGameStart = refresh,
+    onGameEnd = refresh
   })
 
   g_keyboard.unbindKeyDown('Ctrl+S')
@@ -100,7 +100,7 @@ end
 function setSkillPercent(id, percent, tooltip)
   local skill = skillsWindow:recursiveGetChildById(id)
   local widget = skill:getChildById('percent')
-  widget:setPercent(percent)
+  widget:setPercent(math.floor(percent))
 
   if tooltip then
     widget:setTooltip(tooltip)
@@ -145,6 +145,8 @@ function refresh()
     onSkillChange(player, i, player:getSkillLevel(i), player:getSkillLevelPercent(i))
     onBaseSkillChange(player, i, player:getSkillBaseLevel(i))
   end
+
+  update()
 end
 
 function toggle()
@@ -211,6 +213,9 @@ function onStaminaChange(localPlayer, stamina)
 end
 
 function onOfflineTrainingChange(localPlayer, offlineTrainingTime)
+  if not g_game.getFeature(GameOfflineTrainingTime) then
+    return
+  end
   local hours = math.floor(offlineTrainingTime / 60)
   local minutes = offlineTrainingTime % 60
   if minutes < 10 then
@@ -223,6 +228,9 @@ function onOfflineTrainingChange(localPlayer, offlineTrainingTime)
 end
 
 function onRegenerationChange(localPlayer, regenerationTime)
+  if not g_game.getFeature(GamePlayerRegenerationTime) then
+    return
+  end
   local hours = math.floor(regenerationTime / 60)
   local minutes = regenerationTime % 60
   if minutes < 10 then
