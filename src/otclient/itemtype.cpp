@@ -41,7 +41,6 @@ void ItemType::unserialize(const BinaryTreePtr& node)
     node->getU32(); // flags
 
     static uint16 lastId = 99;
-    static ItemTypePtr nullType = g_things.getNullItemType();
     while(node->canRead()) {
         uint8 attr = node->getU8();
         if(attr == 0 || attr == 0xFF)
@@ -54,9 +53,10 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                 if(serverId > 20000 && serverId < 20100) {
                     serverId -= 20000;
                 } else if(lastId > 99 && lastId != serverId - 1) {
+                    static ItemType nullType;
                     while(lastId != serverId - 1) {
-                        nullType->setServerId(lastId++);
-                        g_things.addItemType(nullType);
+                        nullType.setServerId(lastId++);
+                        g_things.addItemType(ItemTypePtr(&nullType));
                     }
                 }
                 setServerId(serverId);

@@ -120,6 +120,7 @@ public:
     bool isItem() { return true; }
 
     void addContainerItem(const ItemPtr& i) { m_containerItems.push_back(i); }
+    void clearContainerItems() { m_containerItems.clear(); }
 
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
