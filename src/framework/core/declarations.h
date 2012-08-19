@@ -32,14 +32,14 @@ class Event;
 class ScheduledEvent;
 class FileStream;
 class BinaryTree;
-class BinaryWriteTree;
+class OutputBinaryTree;
 
 typedef stdext::shared_object_ptr<Module> ModulePtr;
 typedef stdext::shared_object_ptr<Event> EventPtr;
 typedef stdext::shared_object_ptr<ScheduledEvent> ScheduledEventPtr;
 typedef stdext::shared_object_ptr<FileStream> FileStreamPtr;
 typedef stdext::shared_object_ptr<BinaryTree> BinaryTreePtr;
-typedef stdext::shared_object_ptr<BinaryWriteTree> BinaryWriteTreePtr;
+typedef stdext::shared_object_ptr<OutputBinaryTree> OutputBinaryTreePtr;
 
 typedef std::vector<BinaryTreePtr> BinaryTreeVec;
 

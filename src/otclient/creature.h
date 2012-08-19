@@ -43,6 +43,7 @@ public:
 
     Creature();
 
+
     virtual void draw(const Point& dest, float scaleFactor, bool animate);
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);

@@ -165,7 +165,6 @@ public:
     Position& operator-=(const Position& other) { x-=other.x; y-=other.y; z-=other.z; return *this; }
     // Point conversion(s)
     Position operator+(const Point& other) const { return Position(x + other.x, y + other.y, z); }
-    Position operator&(int a) const { return Position(x & a, y & a, z); }
     Position& operator+=(const Point& other) { x += other.x; y += other.y; return *this; }
 
     Position& operator=(const Position& other) { x = other.x; y = other.y; z = other.z; return *this; }

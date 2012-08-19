@@ -93,12 +93,13 @@ public:
     int getSubType();
     int getCount();
     uint32 getId() { return m_id; }
+    uint16 getServerId() { return m_otbId; }
     bool isValid();
 
     ItemPtr clone();
 
     void unserializeItem(const BinaryTreePtr& in);
-    void serializeItem(const FileStreamPtr& out);
+    void serializeItem(const OutputBinaryTreePtr& out);
 
     void setDepotId(uint16 depotId) { m_attribs.set(ATTR_DEPOT_ID, depotId); }
     uint16 getDepotId() { return m_attribs.get<uint16>(ATTR_DEPOT_ID); }

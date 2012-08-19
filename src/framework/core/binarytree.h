@@ -66,4 +66,27 @@ private:
     uint m_startPos;
 };
 
+class OutputBinaryTree : public stdext::shared_object
+{
+public:
+    OutputBinaryTree(const FileStreamPtr& finish);
+
+    void addU8(uint8 v);
+    void addU16(uint16 v);
+    void addU32(uint32 v);
+    void addString(const std::string& v);
+    void addPos(const Position& pos);
+    void addPoint(const Point& point);
+
+    void startNode(uint8 node);
+    void endNode();
+
+private:
+    FileStreamPtr m_fin;
+
+protected:
+    void write(const uint8* data, int size);
+};
+
 #endif
+

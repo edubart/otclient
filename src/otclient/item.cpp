@@ -268,10 +268,10 @@ void Item::unserializeItem(const BinaryTreePtr &in)
     }
 }
 
-void Item::serializeItem(const FileStreamPtr& out)
+void Item::serializeItem(const OutputBinaryTreePtr& out)
 {
     out->startNode(OTBM_ITEM);
-    out->addU16(getId());
+    out->addU16(getServerId());
 
     out->addU8(ATTR_COUNT);
     out->addU8(getCount());

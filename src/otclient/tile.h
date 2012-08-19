@@ -111,6 +111,7 @@ public:
 
     void setHouseId(uint32 hid) { m_houseId = hid; }
     uint32 getHouseId() { return m_houseId; }
+    bool isHouseTile() const { return (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
 

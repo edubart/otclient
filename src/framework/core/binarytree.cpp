@@ -181,3 +181,70 @@ Point BinaryTree::getPoint()
     ret.y = getU8();
     return ret;
 }
+
+OutputBinaryTree::OutputBinaryTree(const FileStreamPtr& fin)
+    : m_fin(fin)
+{
+    startNode(0);
+}
+
+void OutputBinaryTree::addU8(uint8 v)
+{
+    write(&v, 1);
+}
+
+void OutputBinaryTree::addU16(uint16 v)
+{
+    uint8 data[2];
+    stdext::writeLE16(data, v);
+    write(data, 2);
+}
+
+void OutputBinaryTree::addU32(uint32 v)
+{
+    uint8 data[4];
+    stdext::writeLE32(data, v);
+    write(data, 4);
+}
+
+void OutputBinaryTree::addString(const std::string& v)
+{
+    if(v.size() > 0xFFFF)
+        stdext::throw_exception("too long string");
+
+    addU16(v.length());
+    write((const uint8*)v.c_str(), v.length());
+}
+
+void OutputBinaryTree::addPos(const Position& pos)
+{
+    addU16(pos.x);
+    addU16(pos.y);
+    addU8(pos.z);
+}
+
+void OutputBinaryTree::addPoint(const Point& point)
+{
+    addU8(point.x);
+    addU8(point.y);
+}
+
+void OutputBinaryTree::startNode(uint8 node)
+{
+    m_fin->addU8(BINARYTREE_NODE_START);
+    addU8(node);
+}
+
+void OutputBinaryTree::endNode()
+{
+    m_fin->addU8(BINARYTREE_NODE_END);
+}
+
+void OutputBinaryTree::write(const uint8 *data, int size)
+{
+    for(int i=0;i<size;++i) {
+        if(data[i]==BINARYTREE_NODE_START || data[i]==BINARYTREE_NODE_END||data[i]==BINARYTREE_ESCAPE_CHAR)
+            m_fin->addU8(BINARYTREE_ESCAPE_CHAR);
+        m_fin->addU8(data[i]);
+    }
+}
