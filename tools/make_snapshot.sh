@@ -6,6 +6,7 @@ gitroot="git://github.com/edubart/otclient.git"
 name="otclient"
 workdir="$HOME/$name-builds"
 mingwplatform="i486-mingw32"
+mingwbin="/usr/$mingwplatform/bin"
 makejobs=4
 
 [ "$1" == "--replace" ] && replace=true || replace=false
@@ -135,6 +136,10 @@ cd $pkgname
 # copy otclient files
 cp -R $workdir/otclient/mods .
 cp -R $workdir/otclient/modules .
+cp $mingwbin/libEGL.dll .
+cp $mingwbin/libGLESv2.dll .
+cp $mingwbin/d3dcompiler_43.dll .
+cp $mingwbin/d3dx9_43.dll .
 cp $workdir/otclient/build.win32/otclient.exe .
 cp $workdir/otclient/build.win32/otclient.map .
 cp $workdir/otclient/build.win32dx9/otclient.exe otclient_dx9.exe
