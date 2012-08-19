@@ -751,7 +751,7 @@ function Market.reset()
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
   clearFilters()
-  if information and not table.empty(information) then
+  if not table.empty(information) then
     Market.updateCurrentItems()
   end
 end
