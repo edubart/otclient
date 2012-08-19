@@ -55,6 +55,7 @@ void ThingTypeManager::terminate()
     for(int i = 0; i < ThingLastCategory; ++i)
         m_thingTypes[i].clear();
     m_itemTypes.clear();
+    m_reverseItemTypes.clear();
     m_nullThingType = nullptr;
     m_nullItemType = nullptr;
 }
@@ -115,11 +116,18 @@ void ThingTypeManager::loadOtb(const std::string& file)
     root->getU32(); // build number
     root->skip(128); // description
 
+    m_reverseItemTypes.clear();
     m_itemTypes.resize(root->getChildren().size(), m_nullItemType);
+
     for(const BinaryTreePtr& node : root->getChildren()) {
         ItemTypePtr itemType(new ItemType);
         itemType->unserialize(node);
         addItemType(itemType);
+
+        uint16 clientId = itemType->getClientId();
+        if(clientId >= m_reverseItemTypes.size())
+            m_reverseItemTypes.resize(clientId+1);
+        m_reverseItemTypes[clientId] = itemType;
     }
 
     m_otbLoaded = true;
@@ -237,15 +245,13 @@ void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 
 const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
 {
-    if(m_itemTypes.empty())
+    if(id == 0 || id >= m_reverseItemTypes.size())
         return m_nullItemType;
 
-    for(const ItemTypePtr& itemType : m_itemTypes) {
-        if(itemType->getClientId() == id)
-            return itemType;
-    }
-
-    return m_nullItemType;
+    if(m_reverseItemTypes[id])
+        return m_reverseItemTypes[id];
+    else
+        return m_nullItemType;
 }
 
 const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory category)

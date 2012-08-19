@@ -702,14 +702,17 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_SIZE: {
+            bool forceResize = false;
             switch(wParam) {
                 case SIZE_MAXIMIZED:
                     m_maximized = true;
                     m_visible = true;
+                    forceResize = true;
                     break;
                 case SIZE_RESTORED:
                     m_maximized = false;
                     m_visible = true;
+                    forceResize = true;
                     break;
                 case SIZE_MINIMIZED:
                     m_visible = false;
@@ -723,7 +726,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             size.setWidth(std::max(std::min((int)LOWORD(lParam), 7680), m_minimumSize.width()));
             size.setHeight(std::max(std::min((int)HIWORD(lParam), 4320), m_minimumSize.height()));
 
-            if(m_visible && m_size != size) {
+            if(m_visible && (forceResize || m_size != size)) {
                 m_size = size;
                 m_onResize(m_size);
             }

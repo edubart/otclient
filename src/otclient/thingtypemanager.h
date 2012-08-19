@@ -71,6 +71,7 @@ public:
 
 private:
     ThingTypeList m_thingTypes[ThingLastCategory];
+    ItemTypeList m_reverseItemTypes;
     ItemTypeList m_itemTypes;
 
     ThingTypePtr m_nullThingType;

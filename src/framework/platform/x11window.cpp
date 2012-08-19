@@ -793,6 +793,7 @@ void X11Window::poll()
             }
             case MapNotify:
                 m_visible = true;
+                needsResizeUpdate = true;
                 break;
             case UnmapNotify:
                 m_visible = false;

@@ -38,8 +38,8 @@
 #include <framework/core/binarytree.h>
 
 Item::Item() :
-    m_id(0),
-    m_otbId(0),
+    m_clientId(0),
+    m_serverId(0),
     m_countOrSubType(1)
 {
 }
@@ -60,7 +60,7 @@ ItemPtr Item::createFromOtb(int id)
 
 void Item::draw(const Point& dest, float scaleFactor, bool animate)
 {
-    if(m_id == 0)
+    if(m_clientId == 0)
         return;
 
     // determine animation phase
@@ -179,9 +179,8 @@ void Item::setId(uint32 id)
 {
     if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
-    //m_otbId = g_things.findItemTypeByClientId(id)->getServerId();
-    m_id = id;
-    m_otbId = 0;
+    m_serverId = g_things.findItemTypeByClientId(id)->getServerId();
+    m_clientId = id;
 }
 
 void Item::setOtbId(uint16 id)
@@ -189,17 +188,17 @@ void Item::setOtbId(uint16 id)
     if(!g_things.isValidOtbId(id))
         id = 0;
     auto itemType = g_things.getItemType(id);
-    m_otbId = id;
+    m_serverId = id;
 
     id = itemType->getClientId();
     if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
-    m_id = id;
+    m_clientId = id;
 }
 
 bool Item::isValid()
 {
-    return g_things.isValidDatId(m_id, ThingCategoryItem);
+    return g_things.isValidDatId(m_clientId, ThingCategoryItem);
 }
 
 void Item::unserializeItem(const BinaryTreePtr &in)
@@ -344,10 +343,10 @@ ItemPtr Item::clone()
 
 const ThingTypePtr& Item::getThingType()
 {
-    return g_things.getThingType(m_id, ThingCategoryItem);
+    return g_things.getThingType(m_clientId, ThingCategoryItem);
 }
 
 ThingType* Item::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_id, ThingCategoryItem);
+    return g_things.rawGetThingType(m_clientId, ThingCategoryItem);
 }

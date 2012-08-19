@@ -92,8 +92,9 @@ public:
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType();
     int getCount();
-    uint32 getId() { return m_id; }
-    uint16 getServerId() { return m_otbId; }
+    uint32 getId() { return m_clientId; }
+    uint16 getClientId() { return m_clientId; }
+    uint16 getServerId() { return m_serverId; }
     bool isValid();
 
     ItemPtr clone();
@@ -127,8 +128,8 @@ public:
     ThingType *rawGetThingType();
 
 private:
-    uint16 m_id;
-    uint16 m_otbId;
+    uint16 m_clientId;
+    uint16 m_serverId;
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
     std::vector<ItemPtr> m_containerItems;

@@ -159,10 +159,6 @@ void Painter::setAlphaWriting(bool enable)
 
 void Painter::setResolution(const Size& resolution)
 {
-    if(m_resolution == resolution)
-        return;
-
-
     // The projection matrix converts from Painter's coordinate system to GL's coordinate system
     //    * GL's viewport is 2x2, Painter's is width x height
     //    * GL has +y -> -y going from bottom -> top, Painter is the other way round

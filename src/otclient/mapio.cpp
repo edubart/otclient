@@ -49,18 +49,13 @@ void Map::loadOtbm(const std::string& fileName)
         stdext::throw_exception("could not read root property!");
 
     uint32 headerVersion = root->getU32();
-    if(!headerVersion || headerVersion > 3)
+    if(headerVersion > 3)
         stdext::throw_exception(stdext::format("Unknown OTBM version detected: %u.", headerVersion));
 
     setWidth(root->getU16());
     setHeight(root->getU16());
 
     uint32 headerMajorItems = root->getU8();
-    if(headerMajorItems < 3) {
-        stdext::throw_exception(stdext::format("This map needs to be upgraded. read %d what it's supposed to be: %u",
-                                               headerMajorItems, g_things.getOtbMajorVersion()));
-    }
-
     if(headerMajorItems > g_things.getOtbMajorVersion()) {
         stdext::throw_exception(stdext::format("This map was saved with different OTB version. read %d what it's supposed to be: %d",
                                                headerMajorItems, g_things.getOtbMajorVersion()));
@@ -213,7 +208,7 @@ void Map::loadOtbm(const std::string& fileName)
     g_logger.debug("OTBM read successfully.");
     fin->close();
 
-    loadSpawns(getSpawnFile());
+    //loadSpawns(getSpawnFile());
 //  m_houses.load(getHouseFile());
 }
 
@@ -223,6 +218,7 @@ void Map::saveOtbm(const std::string &fileName)
     if(!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
+    fin->cache();
     std::string dir;
     if(fileName.find_last_of('/') == std::string::npos)
         dir = g_resources.getWorkDir();
@@ -568,10 +564,7 @@ void Map::saveOtcm(const std::string& fileName)
                     fin->addU16(pos.y);
                     fin->addU8(pos.z);
 
-                    const auto& list = tile->getThings();
-                    auto first = std::find_if(list.begin(), list.end(), [](const ThingPtr& thing) { return thing->isItem(); });
-                    for(auto it = first, end = list.end(); it != end; ++it) {
-                        const ThingPtr& thing = *it;
+                    for(const ThingPtr& thing : tile->getThings()) {
                         if(thing->isItem()) {
                             ItemPtr item = thing->static_self_cast<Item>();
                             fin->addU16(item->getId());
