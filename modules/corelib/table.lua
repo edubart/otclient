@@ -16,8 +16,16 @@ end
 function table.copy(t)
   local res = {}
   for k,v in pairs(t) do
+    res[k] = v
+  end
+  return res
+end
+
+function table.recursivecopy(t)
+  local res = {}
+  for k,v in pairs(t) do
     if type(v) == "table" then
-      res[k] = table.copy(v)
+      res[k] = table.recursivecopy(v)
     else
       res[k] = v
     end
