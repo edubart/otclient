@@ -88,15 +88,22 @@ function EnterGame.init()
     protocolBox:setCurrentOption(clientVersion)
   end
 
-  -- only open entergame when app starts
-  if not g_app.isRunning() then
-    if #host > 0 and #password > 0 and #account > 0 and autologin then
-      addEvent(EnterGame.doLogin)
-    end
-  else
-    if g_game.isOnline() then
-      enterGame:hide()
-    end
+  enterGame:hide()
+
+  if g_app.isRunning() and not g_game.isOnline() then
+    enterGame:show()
+  end
+end
+
+function EnterGame.firstShow()
+  enterGame:show()
+
+  local account = g_crypt.decrypt(g_settings.get('account'))
+  local password = g_crypt.decrypt(g_settings.get('password'))
+  local host = g_settings.get('host')
+  local autologin = g_settings.getBoolean('autologin')
+  if #host > 0 and #password > 0 and #account > 0 and autologin then
+    addEvent(EnterGame.doLogin)
   end
 end
 

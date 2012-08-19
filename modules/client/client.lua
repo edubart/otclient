@@ -9,6 +9,30 @@ function Client.reloadScripts()
   print(message)
 end
 
+function Client.startup()
+  -- Play startup music (The Silver Tree, by Mattias Westlund)
+  g_sounds.playMusic("startup.ogg", 3)
+  connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
+  connect(g_game, { onGameEnd = function() g_sounds.playMusic("startup.ogg", 3) end })
+
+  -- Check for startup errors
+  local errtitle = nil
+  local errmsg = nil
+
+  if g_graphics.getRenderer():lower():match('gdi generic') then
+    errtitle = tr('Graphics card driver not detected')
+    errmsg = tr('No graphics card detected, everything will be drawn using the CPU,\nthus the performance will be really bad.\nPlease update your graphics driver to have a better performance.')
+  end
+
+  -- Show entergame
+  if errmsg or errtitle then
+    local msgbox = displayErrorBox(errtitle, errmsg)
+    msgbox.onOk = function() EnterGame.firstShow() end
+  else
+    EnterGame.firstShow()
+  end
+end
+
 function Client.init()
   g_window.setMinimumSize({ width = 600, height = 480 })
 
@@ -37,15 +61,7 @@ function Client.init()
   g_window.setIcon(resolvepath('clienticon.png'))
   g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
 
-  connect(g_app, { onRun =
-    function()
-      -- Play startup music (The Silver Tree, by Mattias Westlund)
-      g_sounds.playMusic("startup.ogg", 3)
-      connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
-      connect(g_game, { onGameEnd = function() g_sounds.playMusic("startup.ogg", 3) end })
-    end
-  })
-
+  connect(g_app, { onRun = Client.startup })
 end
 
 function Client.terminate()
