@@ -968,7 +968,7 @@ void ProtocolGame::parseSpellCooldown(const InputMessagePtr& msg)
     int spellId = msg->getU8();
     int delay = msg->getU32();
 
-    g_lua.callGlobalField("g_game", "onSpellCooldown", delay);
+    g_lua.callGlobalField("g_game", "onSpellCooldown", spellId, delay);
 }
 
 void ProtocolGame::parseSpellGroupCooldown(const InputMessagePtr& msg)
