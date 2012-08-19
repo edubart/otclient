@@ -65,8 +65,8 @@ namespace Otc
         DrawAnimations = 2048,
         DrawWalls = DrawOnBottom | DrawOnTop,
         DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
-                         DrawCreatures | DrawEffects | DrawMissiles |
-                         DrawCreaturesInformation | DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
+                         DrawCreatures | DrawEffects | DrawMissiles | DrawCreaturesInformation |
+                         DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
     };
 
     enum DatOpts {
@@ -307,7 +307,7 @@ namespace Otc
         MessageRVRAnswer               = 47,
         MessageRVRContinue             = 48,
         LastMessage                    = 49,
-        MessageInvalid                 = 255,
+        MessageInvalid                 = 255
     };
 
     enum GameFeature {

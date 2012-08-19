@@ -61,6 +61,9 @@ function terminate()
 end
 
 function setSkillBase(id, value, baseValue)
+  if baseValue < 1 or value < 1 then
+    return
+  end
   local skill = skillsWindow:recursiveGetChildById(id)
   local widget = skill:getChildById('value')
 
@@ -236,9 +239,6 @@ function onSpeedChange(localPlayer, speed)
 end
 
 function onBaseSpeedChange(localPlayer, baseSpeed)
-  if baseSpeed < 1 then
-    return
-  end
   local speed = localPlayer:getSpeed()
   onSpeedChange(localPlayer, baseSpeed)
 
@@ -253,9 +253,6 @@ function onMagicLevelChange(localPlayer, magiclevel, percent)
 end
 
 function onBaseMagicLevelChange(localPlayer, baseMagicLevel)
-  if baseMagicLevel < 1 then
-    return
-  end
   local magiclevel = localPlayer:getMagicLevel()
   onMagicLevelChange(localPlayer, magiclevel, localPlayer:getMagicLevelPercent())
 
@@ -270,9 +267,6 @@ function onSkillChange(localPlayer, id, level, percent)
 end
 
 function onBaseSkillChange(localPlayer, id, baseLevel)
-  if baseLevel < 1 then
-    return
-  end
   local level = localPlayer:getSkillLevel(id)
   onSkillChange(localPlayer, id, level, localPlayer:getSkillLevelPercent(id))
 
