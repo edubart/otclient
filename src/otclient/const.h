@@ -334,6 +334,7 @@ namespace Otc
         GameOfflineTrainingTime = 20,
         GamePurseSlot = 21,
         GameFormatCreatureName = 22,
+        GameSpellList = 23,
         // 23-50 unused yet
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101

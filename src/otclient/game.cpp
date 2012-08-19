@@ -1157,6 +1157,7 @@ void Game::setClientVersion(int version)
     if(version >= 870) {
         enableFeature(Otc::GameDoubleExperience);
         enableFeature(Otc::GamePlayerMounts);
+        enableFeature(Otc::GameSpellList);
     }
 
     if(version >= 910) {

@@ -856,13 +856,15 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 {
     bool premium = msg->getU8(); // premium
     int vocation = msg->getU8(); // vocation
+
     int spellCount = msg->getU16();
-    for(int i=0;i<spellCount;++i) {
-        int spellId = msg->getU8(); // spell id - TODO: add to local player
-    }
+    std::vector<int> spells;
+    for(int i=0;i<spellCount;++i)
+        spells.push_back(msg->getU8()); // spell id
 
     m_localPlayer->setPremium(premium);
     m_localPlayer->setVocation(vocation);
+    m_localPlayer->setSpells(spells);
 }
 
 void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
@@ -963,19 +965,25 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 
 void ProtocolGame::parseSpellCooldown(const InputMessagePtr& msg)
 {
-    msg->getU8(); // spell id
-    msg->getU32(); // cooldown
+    int spellId = msg->getU8();
+    int delay = msg->getU32();
+
+    g_lua.callGlobalField("g_game", "onSpellCooldown", delay);
 }
 
 void ProtocolGame::parseSpellGroupCooldown(const InputMessagePtr& msg)
 {
-    msg->getU8(); // group id
-    msg->getU32(); // cooldown
+    int groupId = msg->getU8();
+    int delay = msg->getU32();
+
+    g_lua.callGlobalField("g_game", "onSpellGroupCooldown", groupId, delay);
 }
 
 void ProtocolGame::parseMultiUseCooldown(const InputMessagePtr& msg)
 {
-    msg->getU32(); // cooldown
+    int delay = msg->getU32();
+
+    g_lua.callGlobalField("g_game", "onMultiUseCooldown", delay);
 }
 
 void ProtocolGame::parseTalk(const InputMessagePtr& msg)

@@ -448,6 +448,16 @@ void LocalPlayer::setOfflineTrainingTime(double offlineTrainingTime)
     }
 }
 
+void LocalPlayer::setSpells(const std::vector<int>& spells)
+{
+    if(m_spells != spells) {
+        std::vector<int> oldSpells = m_spells;
+        m_spells = spells;
+
+        callLuaField("onSpellsChange", spells, oldSpells);
+    }
+}
+
 double LocalPlayer::getWalkPing()
 {
     if(m_lastWalkPings.empty())

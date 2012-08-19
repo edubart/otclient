@@ -63,6 +63,7 @@ GameChargeableItems = 19
 GameOfflineTrainingTime = 20
 GamePurseSlot = 21
 GameFormatCreatureName = 22
+GameSpellList = 23
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

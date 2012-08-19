@@ -59,6 +59,7 @@ public:
     void setBaseSpeed(double baseSpeed);
     void setRegenerationTime(double regenerationTime);
     void setOfflineTrainingTime(double offlineTrainingTime);
+    void setSpells(const std::vector<int>& spells);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
@@ -83,6 +84,7 @@ public:
     double getBaseSpeed() { return m_baseSpeed; }
     double getRegenerationTime() { return m_regenerationTime; }
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
+    std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
 
     bool hasSight(const Position& pos);
@@ -125,6 +127,7 @@ private:
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
+    std::vector<int> m_spells;
 
     bool m_known;
     int m_states;
