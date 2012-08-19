@@ -53,10 +53,11 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                 if(serverId > 20000 && serverId < 20100) {
                     serverId -= 20000;
                 } else if(lastId > 99 && lastId != serverId - 1) {
-                    static ItemType nullType;
+
                     while(lastId != serverId - 1) {
-                        nullType.setServerId(lastId++);
-                        g_things.addItemType(ItemTypePtr(&nullType));
+                        ItemTypePtr tmp(new ItemType);
+                        tmp->setServerId(lastId++);
+                        g_things.addItemType(tmp);
                     }
                 }
                 setServerId(serverId);
