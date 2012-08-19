@@ -41,13 +41,14 @@ public:
     CreatureType() { }
     CreatureType(const std::string& name) { setName(name); }
 
-    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
-    void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
     void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
-
-    std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
-    Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
     int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
+
+    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
+    std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
+
+    void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
+    Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
 
 private:
     stdext::dynamic_storage<uint8> m_attribs;
@@ -63,7 +64,9 @@ public:
     void loadNpcs(const std::string& folder);
     void loadCreatureBuffer(const std::string& buffer);
 
-    CreatureTypePtr getCreature(std::string name);
+    CreatureTypePtr getCreatureByName(std::string name);
+    CreatureTypePtr getCreatureByLook(int look);
+
     bool isLoaded() const { return m_loaded; }
 
 protected:
@@ -73,5 +76,7 @@ private:
     std::vector<CreatureTypePtr> m_creatures;
     stdext::boolean<false> m_loaded;
 };
+
+extern Creatures g_creatures;
 
 #endif

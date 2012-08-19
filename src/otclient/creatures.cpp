@@ -26,6 +26,8 @@
 #include <framework/core/resourcemanager.h>
 #include <boost/filesystem.hpp>
 
+Creatures g_creatures;
+
 void Creatures::loadMonsters(const std::string& file)
 {
     TiXmlDocument doc;
@@ -127,11 +129,22 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr
     return type >= 0;
 }
 
-CreatureTypePtr Creatures::getCreature(std::string name)
+CreatureTypePtr Creatures::getCreatureByName(std::string name)
 {
     stdext::tolower(name);
     stdext::trim(name);
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
                            [=] (const CreatureTypePtr& m) -> bool { return m->getName() == name; });
+    return it != m_creatures.end() ? *it : nullptr;
+}
+
+CreatureTypePtr Creatures::getCreatureByLook(int look)
+{
+    auto findFun = [=] (const CreatureTypePtr& c) -> bool
+    {
+        const Outfit& o = c->getOutfit();
+        return o.getId() == look;
+    };
+    auto it = std::find_if(m_creatures.begin(), m_creatures.end(), findFun);
     return it != m_creatures.end() ? *it : nullptr;
 }

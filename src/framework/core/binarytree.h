@@ -66,25 +66,4 @@ private:
     uint m_startPos;
 };
 
-class BinaryWriteTree : public stdext::shared_object
-{
-public:
-    BinaryWriteTree(const FileStreamPtr& fin);
-    ~BinaryWriteTree();
-
-    void startNode(uint8 type);
-    void endNode();
-
-    void writeU8(uint8 u8);
-    void writeU16(uint16 u16);
-    void writeU32(uint32 u32);
-    void writeString(const std::string& str);
-
-    void writePoint(const Point& p) { writeU8(p.x); writeU8(p.y); }
-    void writePos(const Position& p) { writeU16(p.x); writeU16(p.y); writeU8(p.z); }
-
-private:
-    FileStreamPtr m_fin;
-};
-
 #endif

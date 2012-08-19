@@ -28,7 +28,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/xml/tinyxml.h>
 
-enum ItemCategory {
+enum ItemCategory : uint8 {
     ItemCategoryInvalid      = 0,
     ItemCategoryGround       = 1,
     ItemCategoryContainer    = 2,
@@ -86,18 +86,22 @@ public:
 
     void unserialize(const BinaryTreePtr& node);
 
+    void setServerId(uint16 serverId) { m_attribs.set(ItemTypeAttrServerId, serverId); }
     uint16 getServerId() { return m_attribs.get<uint16>(ItemTypeAttrServerId); }
+
+    void setClientId(uint16 clientId) { m_attribs.set(ItemTypeAttrClientId, clientId); }
     uint16 getClientId() { return m_attribs.get<uint16>(ItemTypeAttrClientId); }
+
+    void setCategory(ItemCategory category) { m_category = category; }
     ItemCategory getCategory() { return m_category; }
+
+    void setName(const std::string& name) { m_attribs.set(ItemTypeAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(ItemTypeAttrName); }
+
+    void setDesc(const std::string& desc) { m_attribs.set(ItemTypeAttrDesc, desc); }
     std::string getDesc() { return m_attribs.get<std::string>(ItemTypeAttrDesc); }
 
     bool isNull() { return m_null; }
-
-    void setClientId(uint16 clientId) { m_attribs.set(ItemTypeAttrClientId, clientId); }
-    void setServerId(uint16 serverId) { m_attribs.set(ItemTypeAttrServerId, serverId); }
-    void setName(const std::string& name) { m_attribs.set(ItemTypeAttrName, name); }
-    void setDesc(const std::string& desc) { m_attribs.set(ItemTypeAttrDesc, desc); }
 
 private:
     ItemCategory m_category;

@@ -268,41 +268,45 @@ void Item::unserializeItem(const BinaryTreePtr &in)
     }
 }
 
-void Item::serializeItem(const BinaryWriteTreePtr& out)
+void Item::serializeItem(const FileStreamPtr& out)
 {
     out->startNode(OTBM_ITEM);
-    out->writeU16(getId());
+    out->addU16(getId());
 
-    out->writeU8(ATTR_COUNT);
-    out->writeU8(getCount());
+    out->addU8(ATTR_COUNT);
+    out->addU8(getCount());
 
-    out->writeU8(ATTR_CHARGES);
-    out->writeU16(getCountOrSubType());
+    out->addU8(ATTR_CHARGES);
+    out->addU16(getCountOrSubType());
 
     Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
     if(dest.isValid()) {
-        out->writeU8(ATTR_TELE_DEST);
-        out->writePos(dest);
+        out->addU8(ATTR_TELE_DEST);
+        out->addPos(dest);
     }
 
     if(isDepot()) {
-        out->writeU8(ATTR_DEPOT_ID);
-        out->writeU16(getDepotId());
+        out->addU8(ATTR_DEPOT_ID);
+        out->addU16(getDepotId());
     }
 
     uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
     uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if(aid) {
-        out->writeU8(ATTR_ACTION_ID);
-        out->writeU16(aid);
+        out->addU8(ATTR_ACTION_ID);
+        out->addU16(aid);
     }
 
     if(uid) {
-        out->writeU8(ATTR_UNIQUE_ID);
-        out->writeU16(uid);
+        out->addU8(ATTR_UNIQUE_ID);
+        out->addU16(uid);
     }
 
     out->endNode();
+    if(!m_containerItems.empty()) {
+        for(auto c : m_containerItems)
+            c->serializeItem(out);
+    }
 }
 
 int Item::getSubType()

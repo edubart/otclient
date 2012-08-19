@@ -42,7 +42,7 @@ void Effect::onAppear()
 
     // hack to fix some animation phases duration, currently there is no better solution
     if(m_id == 33)
-        m_phaseDuration *= 4;
+        m_phaseDuration <<= 2;
 
     // schedule removal
     auto self = asEffect();

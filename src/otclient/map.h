@@ -187,7 +187,7 @@ public:
     void saveOtbm(const std::string& fileName);
 
     void loadSpawns(const std::string& fileName);
-    void saveSpawns(const std::string&) { }
+    void saveSpawns(const std::string&);
 
     // otbm attributes (description, size, etc.)
     void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
@@ -201,9 +201,9 @@ public:
     Size getSize() { return Size(m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT)); }
     std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION), "\n"); }
 
-    void loadMonsters(const std::string& fileName) { m_creatures.loadMonsters(fileName); }
-    void loadSingleCreature(const std::string& file) { m_creatures.loadSingleCreature(file); }
-    void loadNpcs(const std::string& folder) { m_creatures.loadNpcs(folder); }
+    void loadMonsters(const std::string& fileName) { g_creatures.loadMonsters(fileName); }
+    void loadSingleCreature(const std::string& file) { g_creatures.loadSingleCreature(file); }
+    void loadNpcs(const std::string& folder) { g_creatures.loadNpcs(folder); }
 
     void clean();
     void cleanDynamicThings();
@@ -234,7 +234,7 @@ public:
     // town/house/monster related
     TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
     HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
-    CreatureTypePtr getCreature(const std::string &name) { return m_creatures.getCreature(name); }
+    CreatureTypePtr getCreature(const std::string &name) { return g_creatures.getCreatureByName(name); }
 
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
@@ -273,7 +273,6 @@ private:
     stdext::packed_storage<uint8> m_attribs;
     Houses m_houses;
     Towns m_towns;
-    Creatures m_creatures;
     static TilePtr m_nulltile;
 };
 

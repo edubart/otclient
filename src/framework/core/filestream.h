@@ -26,6 +26,8 @@
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 #include <framework/util/databuffer.h>
+#include <otclient/position.h>
+#include <framework/util/point.h>
 
 struct PHYSFS_File;
 
@@ -55,11 +57,15 @@ public:
     std::string getString();
     BinaryTreePtr getBinaryTree();
 
+    void startNode(uint8 n);
+    void endNode();
     void addU8(uint8 v);
     void addU16(uint16 v);
     void addU32(uint32 v);
     void addU64(uint64 v);
     void addString(const std::string& v);
+    void addPos(const Position& pos) { addU16(pos.x); addU16(pos.y); addU8(pos.z); }
+    void addPoint(const Point& p) { addU8(p.x); addU8(p.y); }
 
     FileStreamPtr asFileStream() { return static_self_cast<FileStream>(); }
 

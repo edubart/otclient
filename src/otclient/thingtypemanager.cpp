@@ -25,6 +25,8 @@
 #include "thing.h"
 #include "thingtype.h"
 #include "itemtype.h"
+#include "creature.h"
+#include "creatures.h"
 
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
@@ -125,7 +127,9 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
 void ThingTypeManager::loadXml(const std::string& file)
 {
-    /// Read XML
+    if(!isOtbLoaded())
+        stdext::throw_exception("OTB must be loaded before XML");
+
     TiXmlDocument doc;
     doc.Parse(g_resources.loadFile(file).c_str());
     if(doc.Error())
@@ -140,19 +144,27 @@ void ThingTypeManager::loadXml(const std::string& file)
             continue;
 
         uint16 id = element->readType<uint16>("id");
-        if(id > 20000 && id < 20100) {
-            id -= 20000;
-            ItemTypePtr newType(new ItemType);
-            newType->setServerId(id);
-            addItemType(newType);
-        }
-
-        if(id != 0)
-            parseItemType(id, element);
-        else {
-            uint16 fromId = element->readType<uint16>("fromid"), toId = element->readType<uint16>("toid");
-            for(uint16 i = fromId; i < toId; ++i)
-                parseItemType(i, element);
+        if(id != 0) {
+            std::vector<std::string> s_ids = stdext::split(element->Attribute("id"), ";");
+            for(const std::string& s : s_ids) {
+                std::vector<int32> ids = stdext::split<int32>(s, "-");
+                if(ids.size() > 1) {
+                    int32 i = ids[0];
+                    while(i <= ids[1])
+                        parseItemType(i++, element);
+                } else
+                    parseItemType(atoi(s.c_str()), element);
+            }
+        } else {
+            std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
+            std::vector<int32> end   = stdext::split<int32>(element->Attribute("toid"), ";");
+            if(begin[0] && begin.size() == end.size()) {
+                size_t size = begin.size();
+                for(size_t i = 0; i < size; ++i) {
+                    while(begin[i] <= end[i])
+                        parseItemType(begin[i]++, element);
+                }
+            }
         }
     }
 
@@ -164,23 +176,53 @@ void ThingTypeManager::loadXml(const std::string& file)
 void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 {
     uint16 serverId = id;
+    ItemTypePtr itemType = nullptr;
     if(serverId > 20000 && id < 20100) {
         serverId -= 20000;
 
-        ItemTypePtr newType(new ItemType);
-        newType->setServerId(serverId);
-        addItemType(newType);
+        itemType = ItemTypePtr(new ItemType);
+        itemType->setServerId(serverId);
+        addItemType(itemType);
     }
 
-    ItemTypePtr itemType = getItemType(serverId);
+    if(!itemType) {
+        itemType = getItemType(serverId);
+        if(itemType == m_nullItemType) {
+            itemType = ItemTypePtr(new ItemType);
+            itemType->setServerId(id);
+            addItemType(itemType);
+        }
+    }
+
     itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
-        if(attrib->ValueStr() != "attribute")
-            break;
+        std::string key = attrib->Attribute("key");
+        if(key.empty())
+            continue;
 
-        if(attrib->Attribute("key") == "description") {
+        stdext::tolower(key);
+        if(key == "description")
             itemType->setDesc(attrib->Attribute("value"));
-            break;
+        else if(key == "weapontype")
+            itemType->setCategory(ItemCategoryWeapon);
+        else if(key == "ammotype")
+            itemType->setCategory(ItemCategoryAmmunition);
+        else if(key == "armor")
+            itemType->setCategory(ItemCategoryArmor);
+        else if(key == "charges")
+            itemType->setCategory(ItemCategoryCharges);
+        else if(key == "type") {
+            std::string value = attrib->Attribute("value");
+            stdext::tolower(value);
+
+            if(value == "key")
+                itemType->setCategory(ItemCategoryKey);
+            else if(value == "magicfield")
+                itemType->setCategory(ItemCategoryMagicField);
+            else if(value == "teleport")
+                itemType->setCategory(ItemCategoryTeleport);
+            else if(value == "door")
+                itemType->setCategory(ItemCategoryDoor);
         }
     }
 }
@@ -189,7 +231,7 @@ void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
     uint16 id = itemType->getServerId();
     if(m_itemTypes.size() <= id)
-        m_itemTypes.resize(id+1, m_nullItemType);
+        m_itemTypes.resize((id * 3) / 2 + 1, m_nullItemType);
     m_itemTypes[id] = itemType;
 }
 
@@ -217,11 +259,34 @@ const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory cate
 
 const ItemTypePtr& ThingTypeManager::getItemType(uint16 id)
 {
-    if(id >= m_itemTypes.size()) {
+    if(id >= m_itemTypes.size() || m_itemTypes[id] == m_nullItemType) {
         g_logger.error(stdext::format("invalid thing type server id %d", id));
         return m_nullItemType;
     }
     return m_itemTypes[id];
+}
+
+CreaturePtr ThingTypeManager::castThingToCreature(const ThingTypePtr& thing)
+{
+    if(!thing)
+        return nullptr;
+
+    if(thing->getCategory() != ThingCategoryCreature)
+        stdext::throw_exception("Thing type is not a creature");
+
+    uint16 clientId = thing->getId();
+    CreaturePtr ret(new Creature);
+    CreatureTypePtr cType = g_creatures.getCreatureByLook(clientId);
+    if(!cType) {
+        // a creature can have a look item with whether client id or even server id
+        const ItemTypePtr& item = findItemTypeByClientId(clientId);
+        if(item && !(cType = g_creatures.getCreatureByLook(item->getServerId())))
+            stdext::throw_exception(stdext::format("failed to find creature with look type/item %hd", clientId));
+    }
+
+    ret->setName(cType->getName());
+    ret->setOutfit(cType->getOutfit());
+    return ret;
 }
 
 ThingTypeList ThingTypeManager::findThingTypeByAttr(ThingAttr attr, ThingCategory category)

@@ -59,9 +59,11 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "getDatSignature", &ThingTypeManager::getDatSignature, &g_things);
     g_lua.bindSingletonFunction("g_things", "getThingType", &ThingTypeManager::getThingType, &g_things);
     g_lua.bindSingletonFunction("g_things", "getItemType", &ThingTypeManager::getItemType, &g_things);
+    g_lua.bindSingletonFunction("g_things", "getThingTypes", &ThingTypeManager::getThingTypes, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByClientId", &ThingTypeManager::findItemTypeByClientId, &g_things);
     g_lua.bindSingletonFunction("g_things", "findThingTypeByAttr", &ThingTypeManager::findThingTypeByAttr, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
+    g_lua.bindSingletonFunction("g_things", "castThingToCreature", &ThingTypeManager::castThingToCreature, &g_things);
 
 #if 0
     g_lua.registerSingletonClass("g_houses");
@@ -111,6 +113,11 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getTown", &Map::getTown, &g_map);
     g_lua.bindSingletonFunction("g_map", "getHouse", &Map::getHouse, &g_map);
     g_lua.bindSingletonFunction("g_map", "getCreature", &Map::getCreature, &g_map);
+
+    /// \todo move creatures from Map to here
+    g_lua.registerSingletonClass("g_creatures");
+    g_lua.bindSingletonFunction("g_creatures", "getCreature", &Creatures::getCreatureByName, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getCreatureByLook", &Creatures::getCreatureByLook, &g_creatures);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -340,6 +347,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("getId", &ThingType::getId);
     g_lua.bindClassMemberFunction<ThingType>("getMarketData", &ThingType::getMarketData);
     g_lua.bindClassMemberFunction<ThingType>("getClothSlot", &ThingType::getClothSlot);
+    g_lua.bindClassMemberFunction<ThingType>("getCategory", &ThingType::getCategory);
 
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);

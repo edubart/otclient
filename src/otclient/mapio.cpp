@@ -95,7 +95,7 @@ void Map::loadOtbm(const std::string& fileName)
         }
     }
 
-    for(const BinaryTreePtr &nodeMapData : node->getChildren()) {
+    for(const BinaryTreePtr& nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
             Position basePos = nodeMapData->getPosition();
@@ -149,7 +149,7 @@ void Map::loadOtbm(const std::string& fileName)
                     }
                 }
 
-                for(const BinaryTreePtr &nodeItem : nodeTile->getChildren()) {
+                for(const BinaryTreePtr& nodeItem : nodeTile->getChildren()) {
                     if(nodeItem->getU8() != OTBM_ITEM)
                         stdext::throw_exception("invalid item node");
 
@@ -163,7 +163,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                             ItemPtr cItem = Item::createFromOtb(containerItem->getU16());
                             cItem->unserializeItem(containerItem);
-                            //item->addContainerItem(cItem);
+                            item->addContainerItem(cItem);
                         }
                     }
 
@@ -175,8 +175,11 @@ void Map::loadOtbm(const std::string& fileName)
                     addThing(item, pos);
                 }
 
-                if(const TilePtr& tile = getTile(pos))
+                if(const TilePtr& tile = getTile(pos)) {
+                    if(house)
+                        tile->setHouseId(house->getId());
                     tile->setFlags((tileflags_t)flags);
+                }
             }
         } else if(mapDataType == OTBM_TOWNS) {
             TownPtr town = nullptr;
@@ -263,41 +266,40 @@ void Map::saveOtbm(const std::string &fileName)
 #endif
 
     fin->addU32(0); // file version
-    BinaryWriteTreePtr root(new BinaryWriteTree(fin));
-    root->startNode(0);
+    fin->startNode(0);
     {
-        root->writeU32(version);
+        fin->addU32(version);
 
         Size mapSize = getSize();
-        root->writeU16(mapSize.width());
-        root->writeU16(mapSize.height());
+        fin->addU16(mapSize.width());
+        fin->addU16(mapSize.height());
 
-        root->writeU32(g_things.getOtbMajorVersion());
-        root->writeU32(g_things.getOtbMinorVersion());
+        fin->addU32(g_things.getOtbMajorVersion());
+        fin->addU32(g_things.getOtbMinorVersion());
 
-        root->startNode(OTBM_MAP_DATA);
+        fin->startNode(OTBM_MAP_DATA);
         {
             // own description.
             for(const auto& desc : getDescriptions()) {
-                root->writeU8(OTBM_ATTR_DESCRIPTION);
-                root->writeString(desc);
+                fin->addU8(OTBM_ATTR_DESCRIPTION);
+                fin->addString(desc);
             }
 
             // special one
-            root->writeU8(OTBM_ATTR_DESCRIPTION);
-            root->writeString(stdext::format("Saved with %s v%s", g_app.getName(), g_app.getVersion()));
+            fin->addU8(OTBM_ATTR_DESCRIPTION);
+            fin->addString(stdext::format("Saved with %s v%s", g_app.getName(), g_app.getVersion()));
 
             // spawn file.
-            root->writeU8(OTBM_ATTR_SPAWN_FILE);
-            root->writeString(spawnFile);
+            fin->addU8(OTBM_ATTR_SPAWN_FILE);
+            fin->addString(spawnFile);
 
             // house file.
             if(version > 1) {
-                root->writeU8(OTBM_ATTR_HOUSE_FILE);
-                root->writeString(houseFile);
+                fin->addU8(OTBM_ATTR_HOUSE_FILE);
+                fin->addString(houseFile);
             }
 
-            Position base(-1, -1, -1);
+            Position base(0, 0, 0);
             bool firstNode = true;
 
             for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
@@ -311,71 +313,72 @@ void Map::saveOtbm(const std::string &fileName)
                         if(!pos.isValid())
                             continue;
 
-                        if(pos.x < base.x || pos.x >= base.x + 256 || pos.y < base.y|| pos.y >= base.y + 256 ||
-                                pos.z != base.z) {
+                        if(pos.x < base.x || pos.x >= base.x + 255
+                                || pos.y < base.y || pos.y >= base.y + 255
+                                || pos.z != base.z) {
                             if(!firstNode)
-                                root->endNode(); /// OTBM_TILE_AREA
+                                fin->endNode(); /// OTBM_TILE_AREA
 
-                            root->startNode(OTBM_TILE_AREA);
+                            fin->startNode(OTBM_TILE_AREA);
                             firstNode = false;
-                            root->writePos(base = pos & 0xFF00);
+                            fin->addPos(base = pos & 0xFF00);
                         }
 
                         uint32 flags = tile->getFlags();
 
-                        root->startNode((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE ? OTBM_HOUSETILE : OTBM_TILE);
-                        root->writePoint(Point(pos.x, pos.y) & 0xFF);
-//                      if(tileNode->getType() == OTBM_HOUSETILE)
-//                          tileNode->writeU32(tile->getHouseId());
+                        fin->startNode((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE ? OTBM_HOUSETILE : OTBM_TILE);
+                        fin->addPoint(Point(pos.x, pos.y) & 0xFF);
+                        if((flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
+                            fin->addU32(tile->getHouseId());
 
                         if(flags) {
-                            root->writeU8(OTBM_ATTR_TILE_FLAGS);
-                            root->writeU32(flags);
+                            fin->addU8(OTBM_ATTR_TILE_FLAGS);
+                            fin->addU32(flags);
                         }
 
                         for(const ItemPtr& item : tile->getItems()) {
                             if(item->isGround()) {
-                                root->writeU8(OTBM_ATTR_ITEM);
-                                root->writeU16(item->getId());
+                                fin->addU8(OTBM_ATTR_ITEM);
+                                fin->addU16(item->getId());
                                 continue;
                             }
 
-                            item->serializeItem(root); 
+                            item->serializeItem(fin);
                         }
 
-                        root->endNode(); // OTBM_TILE
+                        fin->endNode(); // OTBM_TILE
                     }
                 }
             }
 
             if(!firstNode)
-                root->endNode();  // OTBM_TILE_AREA
+                fin->endNode();  // OTBM_TILE_AREA
 
-            root->startNode(OTBM_TOWNS);
+            fin->startNode(OTBM_TOWNS);
             for(const TownPtr& town : m_towns.getTowns()) {
-                root->writeU32(town->getId());
-                root->writeString(town->getName());
-                root->writePos(town->getPos());
+                fin->addU32(town->getId());
+                fin->addString(town->getName());
+                fin->addPos(town->getPos());
             }
-            root->endNode();
+            fin->endNode();
 
             if(version > 1) {
-                root->startNode(OTBM_WAYPOINTS);
+                fin->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
-                    root->writeString(it.second);
-                    root->writePos(it.first);
+                    fin->addString(it.second);
+                    fin->addPos(it.first);
                 }
-                root->endNode();
+                fin->endNode();
             }
         }
-        root->endNode(); // OTBM_MAP_DATA
+        fin->endNode(); // OTBM_MAP_DATA
     }
-    root->endNode(); // 0 (root)
+    fin->endNode(); // 0 (root)
 }
 
 void Map::loadSpawns(const std::string &fileName)
 {
-    if(!m_creatures.isLoaded())
+    if(!g_creatures.isLoaded())
         stdext::throw_exception("cannot load spawns; monsters/nps aren't loaded.");
 
     TiXmlDocument doc;
@@ -401,7 +404,7 @@ void Map::loadSpawns(const std::string &fileName)
             stdext::tolower(cName);
             stdext::trim(cName);
 
-            if (!(cType = m_creatures.getCreature(cName)))
+            if (!(cType = g_creatures.getCreatureByName(cName)))
                 continue;
 
             cType->setSpawnTime(cNode->readType<int>("spawntime"));
@@ -418,6 +421,21 @@ void Map::loadSpawns(const std::string &fileName)
             addThing(creature, centerPos, 4);
         }
     }
+}
+
+void Map::saveSpawns(const std::string& fileName)
+{
+#if 0
+    TiXmlDocument doc;
+
+    TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+    doc.LinkEndChild(decl);
+
+    TiXmlElement* root = new TiXmlElement("spawns");
+    doc.LinkEndChild(root);
+
+    TiXmlElement* spawn = NULL;
+#endif
 }
 
 bool Map::loadOtcm(const std::string& fileName)

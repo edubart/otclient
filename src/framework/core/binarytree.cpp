@@ -181,32 +181,3 @@ Point BinaryTree::getPoint()
     ret.y = getU8();
     return ret;
 }
-
-/// BinaryWriteTree
-BinaryWriteTree::BinaryWriteTree(const FileStreamPtr& fin) :
-    m_fin(fin)
-{
-}
-
-BinaryWriteTree::~BinaryWriteTree()
-{
-    m_fin->close();
-    m_fin = nullptr;
-}
-
-void BinaryWriteTree::startNode(uint8 type)
-{
-    writeU8(BINARYTREE_NODE_START);
-    writeU8(type);
-}
-
-void BinaryWriteTree::endNode()
-{
-    writeU8(BINARYTREE_NODE_END);
-}
-
-void BinaryWriteTree::writeU8(uint8 u8) { m_fin->addU8(u8); }
-void BinaryWriteTree::writeU16(uint16 u16) { m_fin->addU16(u16); }
-void BinaryWriteTree::writeU32(uint32 u32) { m_fin->addU32(u32); }
-void BinaryWriteTree::writeString(const std::string& str) { m_fin->addString(str); }
-

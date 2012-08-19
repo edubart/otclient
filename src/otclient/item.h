@@ -98,7 +98,7 @@ public:
     ItemPtr clone();
 
     void unserializeItem(const BinaryTreePtr& in);
-    void serializeItem(const BinaryWriteTreePtr& out);
+    void serializeItem(const FileStreamPtr& out);
 
     void setDepotId(uint16 depotId) { m_attribs.set(ATTR_DEPOT_ID, depotId); }
     uint16 getDepotId() { return m_attribs.get<uint16>(ATTR_DEPOT_ID); }
@@ -119,6 +119,8 @@ public:
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() { return true; }
 
+    void addContainerItem(const ItemPtr& i) { m_containerItems.push_back(i); }
+
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
 
@@ -127,6 +129,7 @@ private:
     uint16 m_otbId;
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
+    std::vector<ItemPtr> m_containerItems;
 };
 
 #pragma pack(pop)

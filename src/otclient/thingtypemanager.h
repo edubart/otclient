@@ -50,6 +50,7 @@ public:
     const ItemTypePtr& getItemType(uint16 id);
     ThingType* rawGetThingType(uint16 id, ThingCategory category) { return m_thingTypes[category][id].get(); }
     ItemType* rawGetItemType(uint16 id) { return m_itemTypes[id].get(); }
+    CreaturePtr castThingToCreature(const ThingTypePtr& thing);
 
     ThingTypeList findThingTypeByAttr(ThingAttr attr, ThingCategory category);
     ItemTypeList findItemTypeByCategory(ItemCategory category);

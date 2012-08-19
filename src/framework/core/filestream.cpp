@@ -267,6 +267,17 @@ BinaryTreePtr FileStream::getBinaryTree()
     return BinaryTreePtr(new BinaryTree(asFileStream()));
 }
 
+void FileStream::startNode(uint8 n)
+{
+    addU8(BINARYTREE_NODE_START);
+    addU8(n);
+}
+
+void FileStream::endNode()
+{
+    addU8(BINARYTREE_NODE_END);
+}
+
 void FileStream::addU8(uint8 v)
 {
     if(!m_caching) {

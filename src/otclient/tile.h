@@ -109,7 +109,7 @@ public:
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
     uint32 getFlags() { return m_flags; }
 
-    void setHouseId(uint32 hid) { if(m_flags & TILESTATE_HOUSE) m_houseId = hid; }
+    void setHouseId(uint32 hid) { m_houseId = hid; }
     uint32 getHouseId() { return m_houseId; }
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
