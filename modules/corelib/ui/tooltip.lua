@@ -6,18 +6,18 @@ local toolTipLabel
 local currentHoveredWidget
 
 -- private functions
-local function moveToolTip(tooltip)
-  if not tooltip:isVisible() or tooltip:getOpacity() < 0.1 then return end
+local function moveToolTip(first)
+  if not first and (not toolTipLabel:isVisible() or toolTipLabel:getOpacity() < 0.1) then return end
 
   local pos = g_window.getMousePosition()
   pos.y = pos.y + 1
-  local xdif = g_window.getSize().width - (pos.x + tooltip:getWidth())
+  local xdif = g_window.getSize().width - (pos.x + toolTipLabel:getWidth())
   if xdif < 2 then
-    pos.x = pos.x - tooltip:getWidth() - 3
+    pos.x = pos.x - toolTipLabel:getWidth() - 3
   else
     pos.x = pos.x + 10
   end
-  tooltip:setPosition(pos)
+  toolTipLabel:setPosition(pos)
 end
 
 local function onWidgetHoverChange(widget, hovered)
@@ -51,7 +51,7 @@ function g_tooltip.init()
     toolTipLabel:setBackgroundColor('#111111cc')
     toolTipLabel:setTextAlign(AlignCenter)
     toolTipLabel:hide()
-    toolTipLabel.onMouseMove = moveToolTip
+    toolTipLabel.onMouseMove = function() moveToolTip() end
   end)
 end
 
@@ -77,7 +77,7 @@ function g_tooltip.display(text)
   toolTipLabel:raise()
   toolTipLabel:enable()
   g_effects.fadeIn(toolTipLabel, 100)
-  moveToolTip(toolTipLabel)
+  moveToolTip(true)
 end
 
 function g_tooltip.hide()
