@@ -164,6 +164,10 @@ function refresh()
   end
 
   update()
+
+  local contentsPanel = skillsWindow:getChildById('contentsPanel')
+  skillsWindow:setContentMinimumHeight(44)
+  skillsWindow:setContentMaximumHeight(contentsPanel:getChildrenRect().height)
 end
 
 function toggle()

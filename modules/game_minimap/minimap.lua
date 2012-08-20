@@ -25,6 +25,8 @@ function init()
   minimapButton:setOn(true)
 
   minimapWindow = g_ui.loadUI('minimap.otui', modules.game_interface.getRightPanel())
+  minimapWindow:setContentMinimumHeight(64)
+  minimapWindow:setContentMaximumHeight(256)
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)

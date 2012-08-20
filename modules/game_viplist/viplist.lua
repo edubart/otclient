@@ -32,6 +32,9 @@ function refresh()
   for id,vip in pairs(g_game.getVips()) do
     onAddVip(id, unpack(vip))
   end
+
+  vipWindow:setContentMinimumHeight(38)
+  vipWindow:setContentMaximumHeight(256)
 end
 
 function clear()
