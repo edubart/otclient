@@ -486,6 +486,7 @@ function onLeftPanelVisibilityChange(leftPanel, visible)
     local children = leftPanel:getChildren()
     for i=1,#children do
       children[i]:setParent(gameRightPanel)
+      children[i]:saveParent(gameRightPanel)
     end
   end
 end

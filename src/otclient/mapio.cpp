@@ -587,7 +587,7 @@ void Map::saveOtcm(const std::string& fileName)
         fin->flush();
 
         fin->close();
-        g_logger.debug(stdext::format("Otcm save time: %.2f seconds", saveTimer.elapsed_seconds()));
+        //g_logger.debug(stdext::format("Otcm save time: %.2f seconds", saveTimer.elapsed_seconds()));
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to save OTCM map: %s", e.what()));
     }

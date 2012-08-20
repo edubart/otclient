@@ -166,14 +166,7 @@ function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
     self.movedIndex = nil
   end
 
-  local parent = self:getParent()
-  if parent then
-    if parent:getClassName() == 'UIMiniWindowContainer' then
-      parent:saveChildren()
-    else
-      self:saveParentPosition(parent:getId(), self:getPosition())
-    end
-  end
+  self:saveParent(self:getParent())
 end
 
 function UIMiniWindow:onDragMove(mousePos, mouseMoved)
@@ -267,6 +260,17 @@ function UIMiniWindow:setSettings(data)
   g_settings.setNode('MiniWindows', settings)
 end
 
+function UIMiniWindow:saveParent(parent)
+  local parent = self:getParent()
+  if parent then
+    if parent:getClassName() == 'UIMiniWindowContainer' then
+      parent:saveChildren()
+    else
+      self:saveParentPosition(parent:getId(), self:getPosition())
+    end
+  end
+end
+
 function UIMiniWindow:saveParentPosition(parentId, position)
   local selfSettings = {}
   selfSettings.parentId = parentId
@@ -284,6 +288,12 @@ end
 
 function UIMiniWindow:disableResize()
   self:getChildById('bottomResizeBorder'):disable()
+end
+
+function UIMiniWindow:setContentHeight(height)
+  local contentsPanel = self:getChildById('contentsPanel')
+  local minHeight = contentsPanel:getMarginTop() + contentsPanel:getMarginBottom() + contentsPanel:getPaddingTop() + contentsPanel:getPaddingBottom()
+  self:setHeight(minHeight + height)
 end
 
 function UIMiniWindow:setContentMinimumHeight(height)
