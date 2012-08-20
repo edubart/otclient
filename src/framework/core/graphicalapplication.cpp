@@ -108,8 +108,7 @@ void GraphicalApplication::run()
 
     g_lua.callGlobalField("g_app", "onRun");
 
-    // show the application only after we draw some frames
-    g_dispatcher.scheduleEvent([] { g_window.show(); }, 10);
+    g_window.show();
 
     while(!m_stopping) {
         // poll all events before rendering

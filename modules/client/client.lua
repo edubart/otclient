@@ -35,6 +35,7 @@ end
 
 function Client.init()
   g_window.setMinimumSize({ width = 600, height = 480 })
+  g_sounds.preload("startup.ogg")
 
   -- initialize in fullscreen mode on mobile devices
   if g_window.getPlatformType() == "X11-EGL" then

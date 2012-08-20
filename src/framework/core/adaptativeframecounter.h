@@ -52,6 +52,7 @@ public:
     int getLastFps() { return m_lastFps; }
     int getPartialFps() { return (int)m_partialFps; }
     int getMaxFps() { return m_maxFps; }
+    int getFrames() { return m_frames; }
     float getMediumFrameDelay() { return m_mediumFrameDelay; }
 
 private:

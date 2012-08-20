@@ -70,6 +70,7 @@ public:
 
     Size getUnmaximizedSize() { return m_unmaximizedSize; }
     Size getSize() { return m_size; }
+    Size getMinimumSize() { return m_minimumSize; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     Point getUnmaximizedPos() { return m_unmaximizedPos; }
@@ -105,6 +106,7 @@ protected:
     Timer m_keyPressTimer;
 
     Size m_size;
+    Size m_minimumSize;
     Point m_position;
     Size m_unmaximizedSize;
     Point m_unmaximizedPos;

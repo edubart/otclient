@@ -79,12 +79,16 @@ public:
     std::string getPlatformType();
 
 private:
+    Rect getClientRect();
+    Rect getWindowRect();
+    Rect adjustWindowRect(const Rect& rect);
+
     HWND m_window;
     HINSTANCE m_instance;
     HDC m_deviceContext;
     HCURSOR m_cursor;
     HCURSOR m_defaultCursor;
-    Size m_minimumSize;
+    bool m_hidden;
 
 #ifdef OPENGL_ES
     EGLConfig m_eglConfig;

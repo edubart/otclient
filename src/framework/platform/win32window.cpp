@@ -37,6 +37,8 @@ WIN32Window::WIN32Window()
     m_deviceContext = 0;
     m_cursor = 0;
     m_minimumSize = Size(600,480);
+    m_size = Size(600,480);
+    m_hidden = true;
 
 #ifdef OPENGL_ES
     m_eglConfig = 0;
@@ -264,21 +266,19 @@ void WIN32Window::internalCreateWindow()
     DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
     // initialize in the center of the screen
-    m_size = m_minimumSize;
     m_position = ((getDisplaySize() - m_size) / 2).toPoint();
 
-    RECT windowRect = {m_position.x, m_position.y, m_position.x + m_size.width(), m_position.y + m_size.height()};
-    AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+    Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
                                g_app.getCompactName().c_str(),
                                NULL,
                                dwStyle,
-                               windowRect.left,
-                               windowRect.top,
-                               windowRect.right - windowRect.left,
-                               windowRect.bottom - windowRect.top,
+                               screenRect.left(),
+                               screenRect.top(),
+                               screenRect.width(),
+                               screenRect.height(),
                                NULL,
                                NULL,
                                m_instance,
@@ -444,50 +444,45 @@ void *WIN32Window::getExtensionProcAddress(const char *ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    RECT clientRect;
-    GetClientRect(m_window, &clientRect);
-
-    RECT windowRect = {pos.x, pos.y,  clientRect.right - clientRect.left, clientRect.bottom - clientRect.top};
-    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
-
-    int x = windowRect.left;
-    int y = windowRect.top;
-    GetWindowRect(m_window, &windowRect);
-    int width = windowRect.right - windowRect.left;
-    int height = windowRect.bottom - windowRect.top;
-
-    MoveWindow(m_window, x, y, width, height, TRUE);
+    Rect clientRect(pos, getClientRect().size());
+    Rect windowRect = adjustWindowRect(clientRect);
+    MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
+    if(m_hidden)
+        ShowWindow(m_window, SW_HIDE);
 }
 
 void WIN32Window::resize(const Size& size)
 {
-    RECT windowRect;
-    RECT clientRect;
-
-    GetWindowRect(m_window, &windowRect);
-    GetClientRect(m_window, &clientRect);
-
-    int x = windowRect.left;
-    int y = windowRect.top;
-    int width = size.width() + ((windowRect.right - windowRect.left) - (clientRect.right - clientRect.left));
-    int height = size.height() + ((windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top));
-
-    MoveWindow(m_window, x, y, width, height, TRUE);
+    if(size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
+        return;
+    Rect clientRect(getClientRect().topLeft(), size);
+    Rect windowRect = adjustWindowRect(clientRect);
+    MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
+    if(m_hidden)
+        ShowWindow(m_window, SW_HIDE);
 }
 
 void WIN32Window::show()
 {
-    ShowWindow(m_window, SW_SHOW);
+    m_hidden = false;
+    if(m_maximized)
+        ShowWindow(m_window, SW_MAXIMIZE);
+    else
+        ShowWindow(m_window, SW_SHOW);
 }
 
 void WIN32Window::hide()
 {
+    m_hidden = true;
     ShowWindow(m_window, SW_HIDE);
 }
 
 void WIN32Window::maximize()
 {
-    ShowWindow(m_window, SW_MAXIMIZE);
+    if(!m_hidden)
+        ShowWindow(m_window, SW_MAXIMIZE);
+    else
+        m_maximized = true;
 }
 
 void WIN32Window::poll()
@@ -697,8 +692,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_GETMINMAXINFO: {
             LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
-            pMMI->ptMinTrackSize.x = m_minimumSize.width();
-            pMMI->ptMinTrackSize.y = m_minimumSize.height();
+            Rect adjustedRect = adjustWindowRect(Rect(getWindowRect().topLeft(), m_minimumSize));
+            pMMI->ptMinTrackSize.x = adjustedRect.width();
+            pMMI->ptMinTrackSize.y = adjustedRect.height();
             break;
         }
         case WM_SIZE: {
@@ -722,9 +718,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(m_visible && m_deviceContext)
                 internalRestoreGLContext();
 
-            Size size;
-            size.setWidth(std::max(std::min((int)LOWORD(lParam), 7680), m_minimumSize.width()));
-            size.setHeight(std::max(std::min((int)HIWORD(lParam), 4320), m_minimumSize.height()));
+            Size size = Size(LOWORD(lParam), HIWORD(lParam));
+            size.setWidth(std::max(std::min(size.width(), 7680), 32));
+            size.setHeight(std::max(std::min(size.height(), 4320), 32));
 
             if(m_visible && (forceResize || m_size != size)) {
                 m_size = size;
@@ -837,23 +833,22 @@ void WIN32Window::setFullscreen(bool fullscreen)
     if(m_fullscreen == fullscreen)
         return;
 
+    m_fullscreen = fullscreen;
+
     DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
     static WINDOWPLACEMENT wpPrev;
     wpPrev.length = sizeof(wpPrev);
 
     if(fullscreen) {
+        Size size = getDisplaySize();
         GetWindowPlacement(m_window, &wpPrev);
-        SetWindowLong(m_window, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW);
-        SetWindowPos(m_window, HWND_TOP, 0, 0, getDisplayWidth(), getDisplayHeight(),
-                     SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+        SetWindowLong(m_window, GWL_STYLE, (dwStyle & ~WS_OVERLAPPEDWINDOW) | WS_POPUP | WS_EX_TOPMOST);
+        SetWindowPos(m_window, HWND_TOPMOST, 0, 0, size.width(), size.height(), SWP_FRAMECHANGED);
     } else {
-        SetWindowLong(m_window, GWL_STYLE, dwStyle | WS_OVERLAPPEDWINDOW);
+        SetWindowLong(m_window, GWL_STYLE, (dwStyle & ~(WS_POPUP | WS_EX_TOPMOST)) | WS_OVERLAPPEDWINDOW);
         SetWindowPlacement(m_window, &wpPrev);
-        SetWindowPos(m_window, NULL, 0, 0, 0, 0,
-                     SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
+        SetWindowPos(m_window, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_FRAMECHANGED);
     }
-
-    m_fullscreen = fullscreen;
 }
 
 void WIN32Window::setVerticalSync(bool enable)
@@ -966,6 +961,45 @@ std::string WIN32Window::getPlatformType()
 #else
     return "WIN32-EGL";
 #endif
+}
+
+
+Rect WIN32Window::getClientRect()
+{
+    RECT clientRect = {0,0,0,0};
+    int ret = GetClientRect(m_window, &clientRect);
+    assert(ret != 0);
+    return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
+}
+
+Rect WIN32Window::getWindowRect()
+{
+    RECT windowRect = {0,0,0,0};
+    int ret = GetWindowRect(m_window, &windowRect);
+    assert(ret != 0);
+    return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
+}
+
+Rect WIN32Window::adjustWindowRect(const Rect& clientRect)
+{
+    Rect rect;
+    DWORD dwStyle;
+    DWORD dwExStyle;
+    RECT windowRect = { clientRect.left(), clientRect.top(), clientRect.right(), clientRect.bottom() };
+    if(m_window) {
+        dwStyle = GetWindowLong(m_window, GWL_STYLE);
+        dwExStyle = GetWindowLong(m_window, GWL_EXSTYLE);
+    } else {
+        dwStyle = WS_OVERLAPPEDWINDOW;
+        dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    }
+    if(AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle) != 0) {
+        rect = Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
+    } else {
+        g_logger.traceError("AdjustWindowRectEx failed");
+        rect = Rect(0,0, m_minimumSize);
+    }
+    return rect;
 }
 
 #endif

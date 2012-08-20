@@ -25,7 +25,7 @@ if(WIN32)
                        -I${CMAKE_CURRENT_SOURCE_DIR}/src
                        -i${CMAKE_CURRENT_SOURCE_DIR}/src/otcicon.rc
                        -o ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o)
-    SET(executable_SOURCES ${executable_SOURCES} otcicon.o)
+    set(executable_SOURCES ${executable_SOURCES} otcicon.o)
 endif()
 
 # add otclient executable

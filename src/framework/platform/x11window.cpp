@@ -40,6 +40,7 @@ X11Window::X11Window()
     m_xic = 0;
     m_screen = 0;
     m_wmDelete = 0;
+    m_minimumSize = Size(600,480);
     m_size = Size(600,480);
 
 #ifdef OPENGL_ES
@@ -520,6 +521,8 @@ void X11Window::move(const Point& pos)
 
 void X11Window::resize(const Size& size)
 {
+    if(size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
+        return;
     XResizeWindow(m_display, m_window, size.width(), size.height());
 }
 
