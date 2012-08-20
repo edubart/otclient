@@ -76,10 +76,10 @@ function setSkillBase(id, value, baseValue)
 
   if value > baseValue then
     widget:setColor('#008b00') -- green
-    skill:setTooltip(baseValue .. ' + ' .. (value - baseValue))
+    skill:setTooltip(baseValue .. ' +' .. (value - baseValue))
   elseif value < baseValue then
     widget:setColor('#b22222') -- red
-    skill:setTooltip(baseValue .. ' - ' .. (value - baseValue))
+    skill:setTooltip(baseValue .. ' ' .. (value - baseValue))
   else
     widget:setColor('#bbbbbb') -- default
     skill:removeTooltip()

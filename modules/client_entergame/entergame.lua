@@ -9,8 +9,10 @@ local protocolBox
 
 -- private functions
 local function onError(protocol, message, errorCode)
-  loadBox:destroy()
-  loadBox = nil
+  if loadBox then
+    loadBox:destroy()
+    loadBox = nil
+  end
 
   if not errorCode then
     EnterGame.clearAccountFields()
