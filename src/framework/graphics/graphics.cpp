@@ -87,6 +87,9 @@ void Graphics::init()
     if(m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
 
+    if(Size(m_maxTextureSize,m_maxTextureSize) < g_window.getDisplaySize())
+        m_cacheBackbuffer = false;
+
     m_alphaBits = 0;
     glGetIntegerv(GL_ALPHA_BITS, &m_alphaBits);
 
@@ -169,28 +172,40 @@ bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
     Painter *painter = nullptr;
+    Painter *fallbackPainter = nullptr;
 #ifdef PAINTER_OGL2
     // always prefer OpenGL 2 over OpenGL 1
-    if(!painter && g_painterOGL2 && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
-        m_selectedPainterEngine = Painter_OpenGL2;
-        painter = g_painterOGL2;
+    if(g_painterOGL2) {
+        if(!painter && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
+            m_selectedPainterEngine = Painter_OpenGL2;
+            painter = g_painterOGL2;
+        }
+        fallbackPainter = g_painterOGL2;
     }
 #endif
 
 #ifdef PAINTER_OGL1
     // fallback to OpenGL 1 in older hardwares
-    if(!painter && g_painterOGL1 && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any)) {
-        m_selectedPainterEngine = Painter_OpenGL1;
-        painter = g_painterOGL1;
+    if(g_painterOGL1) {
+        if(!painter && (painterEngine == Painter_OpenGL1 || painterEngine == Painter_Any)) {
+            m_selectedPainterEngine = Painter_OpenGL1;
+            painter = g_painterOGL1;
+        }
+        fallbackPainter = g_painterOGL1;
     }
 #endif
 
+    if(!painter)
+        painter = fallbackPainter;
+
     // switch painters GL state
     if(painter) {
-        if(g_painter)
-            g_painter->unbind();
-        painter->bind();
-        g_painter = painter;
+        if(painter != g_painter) {
+            if(g_painter)
+                g_painter->unbind();
+            painter->bind();
+            g_painter = painter;
+        }
 
         if(painterEngine == Painter_Any)
             return true;
