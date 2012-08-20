@@ -68,7 +68,7 @@ function resetSkillColor(id)
 end
 
 function setSkillBase(id, value, baseValue)
-  if baseValue < 1 or value < 1 then
+  if baseValue < 0 or value < 0 then
     return
   end
   local skill = skillsWindow:recursiveGetChildById(id)
