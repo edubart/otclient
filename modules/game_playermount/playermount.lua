@@ -7,13 +7,22 @@ function terminate()
 end
 
 function toggleMount()
-  if g_game.getFeature(GamePlayerMounts) then
-    g_game.mount(not g_game.isMounted())
+  local player = g_game.getLocalPlayer()
+  if player then
+    player:toggleMount()
+  end
+end
+
+function mount()
+  local player = g_game.getLocalPlayer()
+  if player then
+    player:mount()
   end
 end
 
 function dismount()
-  if g_game.getFeature(GamePlayerMounts) then
-    g_game.mount(false)
+  local player = g_game.getLocalPlayer()
+  if player then
+    player:dismount()
   end
 end

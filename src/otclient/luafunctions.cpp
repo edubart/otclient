@@ -199,7 +199,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "isDead", &Game::isDead, &g_game);
     g_lua.bindSingletonFunction("g_game", "isAttacking", &Game::isAttacking, &g_game);
     g_lua.bindSingletonFunction("g_game", "isFollowing", &Game::isFollowing, &g_game);
-    g_lua.bindSingletonFunction("g_game", "isMounted", &Game::isMounted, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainer", &Game::getContainer, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainers", &Game::getContainers, &g_game);
     g_lua.bindSingletonFunction("g_game", "getVips", &Game::getVips, &g_game);
@@ -380,6 +379,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("setStates", &LocalPlayer::setStates);
     g_lua.bindClassMemberFunction<LocalPlayer>("setSkill", &LocalPlayer::setSkill);
     g_lua.bindClassMemberFunction<LocalPlayer>("setHealth", &LocalPlayer::setHealth);
+    g_lua.bindClassMemberFunction<LocalPlayer>("setTotalCapacity", &LocalPlayer::setTotalCapacity);
     g_lua.bindClassMemberFunction<LocalPlayer>("setFreeCapacity", &LocalPlayer::setFreeCapacity);
     g_lua.bindClassMemberFunction<LocalPlayer>("setExperience", &LocalPlayer::setExperience);
     g_lua.bindClassMemberFunction<LocalPlayer>("setLevel", &LocalPlayer::setLevel);

@@ -53,7 +53,6 @@ void Game::resetGameStates()
     m_online = false;
     m_denyBotCall = false;
     m_dead = false;
-    m_mounted = false;
     m_serverBeat = 50;
     m_seq = 0;
     m_canReportBugs = false;
@@ -1079,7 +1078,6 @@ void Game::mount(bool mount)
         return;
 
     m_protocolGame->sendMountStatus(mount);
-    m_mounted = mount;
 }
 
 void Game::requestItemInfo(const ItemPtr& item, int index)

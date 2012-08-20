@@ -9,6 +9,7 @@ function init()
     onManaChange = onManaChange,
     onSoulChange = onSoulChange,
     onFreeCapacityChange = onFreeCapacityChange,
+    onTotalCapacityChange = onTotalCapacityChange,
     onStaminaChange = onStaminaChange,
     onOfflineTrainingChange = onOfflineTrainingChange,
     onRegenerationChange = onRegenerationChange,
@@ -20,8 +21,7 @@ function init()
     onBaseSkillChange = onBaseSkillChange
   })
   connect(g_game, {
-    onGameStart = refresh,
-    onGameEnd = refresh
+    onGameStart = refresh
   })
 
   skillsWindow = g_ui.loadUI('skills.otui', modules.game_interface.getRightPanel())
@@ -40,6 +40,7 @@ function terminate()
     onManaChange = onManaChange,
     onSoulChange = onSoulChange,
     onFreeCapacityChange = onFreeCapacityChange,
+    onTotalCapacityChange = onTotalCapacityChange,
     onStaminaChange = onStaminaChange,
     onOfflineTrainingChange = onOfflineTrainingChange,
     onRegenerationChange = onRegenerationChange,
@@ -60,6 +61,12 @@ function terminate()
   skillsWindow:destroy()
 end
 
+function resetSkillColor(id)
+  local skill = skillsWindow:recursiveGetChildById(id)
+  local widget = skill:getChildById('value')
+  widget:setColor('#bbbbbb')
+end
+
 function setSkillBase(id, value, baseValue)
   if baseValue < 1 or value < 1 then
     return
@@ -68,13 +75,13 @@ function setSkillBase(id, value, baseValue)
   local widget = skill:getChildById('value')
 
   if value > baseValue then
-    widget:setColor('#008b00')
+    widget:setColor('#008b00') -- green
     skill:setTooltip(baseValue .. ' + ' .. (value - baseValue))
   elseif value < baseValue then
-    widget:setColor('#008b00')
+    widget:setColor('#b22222') -- red
     skill:setTooltip(baseValue .. ' - ' .. (value - baseValue))
   else
-    widget:setColor('#bbbbbb')
+    widget:setColor('#bbbbbb') -- default
     skill:removeTooltip()
   end
 end
@@ -104,6 +111,18 @@ function setSkillPercent(id, percent, tooltip)
 
   if tooltip then
     widget:setTooltip(tooltip)
+  end
+end
+
+function checkAlert(id, value, maxValue, threshold)
+  if value > maxValue or maxValue < 1 then
+    return
+  end
+  local percent = math.floor((value / maxValue) * 100)
+  if percent < threshold then
+    setSkillColor(id, '#b22222') -- red
+  else
+    resetSkillColor(id)
   end
 end
 
@@ -138,8 +157,6 @@ function refresh()
   onOfflineTrainingChange(player, player:getOfflineTrainingTime())
   onRegenerationChange(player, player:getRegenerationTime())
   onSpeedChange(player, player:getSpeed())
-  onBaseSpeedChange(player, player:getBaseSpeed())
-  onBaseMagicLevelChange(player, player:getBaseMagicLevel())
 
   for i=0,6 do
     onSkillChange(player, i, player:getSkillLevel(i), player:getSkillLevelPercent(i))
@@ -186,10 +203,12 @@ end
 
 function onHealthChange(localPlayer, health, maxHealth)
   setSkillValue('health', tr(health))
+  checkAlert('health', health, maxHealth, 30)
 end
 
 function onManaChange(localPlayer, mana, maxMana)
   setSkillValue('mana', tr(mana))
+  checkAlert('mana', mana, maxMana, 30)
 end
 
 function onSoulChange(localPlayer, soul)
@@ -198,6 +217,11 @@ end
 
 function onFreeCapacityChange(localPlayer, freeCapacity)
   setSkillValue('capacity', freeCapacity)
+  checkAlert('capacity', freeCapacity, localPlayer:getTotalCapacity(), 20)
+end
+
+function onTotalCapacityChange(localPlayer, totalCapacity)
+  checkAlert('capacity', localPlayer:getFreeCapacity(), totalCapacity, 20)
 end
 
 function onStaminaChange(localPlayer, stamina)
@@ -228,7 +252,7 @@ function onOfflineTrainingChange(localPlayer, offlineTrainingTime)
 end
 
 function onRegenerationChange(localPlayer, regenerationTime)
-  if not g_game.getFeature(GamePlayerRegenerationTime) then
+  if not g_game.getFeature(GamePlayerRegenerationTime) or regenerationTime < 0 then
     return
   end
   local hours = math.floor(regenerationTime / 60)
@@ -238,45 +262,37 @@ function onRegenerationChange(localPlayer, regenerationTime)
   end
 
   setSkillValue('regenerationTime', hours .. ":" .. minutes)
+  checkAlert('regenerationTime', regenerationTime, 30, 20) -- what is max regeneration?
 end
 
 function onSpeedChange(localPlayer, speed)
   setSkillValue('speed', speed)
 
-  setSkillBase('speed', speed, localPlayer:getBaseSpeed())
+  onBaseSpeedChange(localPlayer, localPlayer:getBaseSpeed())
 end
 
 function onBaseSpeedChange(localPlayer, baseSpeed)
-  local speed = localPlayer:getSpeed()
-  onSpeedChange(localPlayer, baseSpeed)
-
-  setSkillBase('speed', speed, baseSpeed)
+  setSkillBase('speed', localPlayer:getSpeed(), baseSpeed)
 end
 
 function onMagicLevelChange(localPlayer, magiclevel, percent)
   setSkillValue('magiclevel', magiclevel)
   setSkillPercent('magiclevel', percent, tr('You have %s percent to go', 100 - percent))
 
-  setSkillBase('magiclevel', magiclevel, localPlayer:getBaseMagicLevel())
+  onBaseMagicLevelChange(localPlayer, localPlayer:getBaseMagicLevel())
 end
 
 function onBaseMagicLevelChange(localPlayer, baseMagicLevel)
-  local magiclevel = localPlayer:getMagicLevel()
-  onMagicLevelChange(localPlayer, magiclevel, localPlayer:getMagicLevelPercent())
-
-  setSkillBase('magiclevel', magiclevel, baseMagicLevel)
+  setSkillBase('magiclevel', localPlayer:getMagicLevel(), baseMagicLevel)
 end
 
 function onSkillChange(localPlayer, id, level, percent)
   setSkillValue('skillId' .. id, level)
   setSkillPercent('skillId' .. id, percent, tr('You have %s percent to go', 100 - percent))
 
-  setSkillBase('skillId'..id, level, localPlayer:getSkillBaseLevel(id))
+  onBaseSkillChange(localPlayer, id, localPlayer:getSkillBaseLevel(id))
 end
 
 function onBaseSkillChange(localPlayer, id, baseLevel)
-  local level = localPlayer:getSkillLevel(id)
-  onSkillChange(localPlayer, id, level, localPlayer:getSkillLevelPercent(id))
-
-  setSkillBase('skillId'..id, level, baseLevel)
+  setSkillBase('skillId'..id, localPlayer:getSkillLevel(id), baseLevel)
 end

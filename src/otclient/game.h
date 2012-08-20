@@ -251,7 +251,6 @@ public:
     bool isDead() { return m_dead; }
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
-    bool isMounted() { return m_mounted; }
 
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
@@ -288,7 +287,6 @@ private:
     bool m_online;
     bool m_denyBotCall;
     bool m_dead;
-    bool m_mounted;
     int m_serverBeat;
     uint m_seq;
     Otc::FightModes m_fightMode;

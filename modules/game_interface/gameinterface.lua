@@ -251,12 +251,19 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   end
 
   if creatureThing then
+    local localPlayer = g_game.getLocalPlayer()
     menu:addSeparator()
 
     if creatureThing:isLocalPlayer() then
       menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
-      if creatureThing:isPartyMember() --[[and not fighting]] then
+      if not localPlayer:isMounted() then
+        menu:addOption(tr('Mount'), function() localPlayer:mount() end)
+      else
+        menu:addOption(tr('Dismount'), function() localPlayer:dismount() end)
+      end
+
+      if creatureThing:isPartyMember() then
         if creatureThing:isPartyLeader() then
           if creatureThing:isPartySharedExperienceActive() then
             menu:addOption(tr('Disable Shared Experience'), function() g_game.partyShareExperience(false) end)
@@ -268,7 +275,6 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
 
     else
-      local localPlayer = g_game.getLocalPlayer()
       if g_game.getAttackingCreature() ~= creatureThing then
         menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end)
       else
