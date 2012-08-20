@@ -93,6 +93,13 @@ function toggle()
   end
 end
 
+function hideLabels()
+  capLabel:hide()
+  soulLabel:hide()
+  local removeHeight = capLabel:getHeight() + capLabel:getMarginTop() + capLabel:getMarginBottom()
+  healthInfoWindow:setHeight(healthInfoWindow:getHeight() - removeHeight)
+end
+
 function onMiniWindowClose()
   healthInfoButton:setOn(false)
 end

@@ -70,7 +70,7 @@ TopPanel
     id: frameCounter
     anchors.top: parent.top
     anchors.left: prev.right
-    margin-top: 8
+    margin-top: 10
     margin-right: 5
     @onSetup: |
       cycleEvent(function()

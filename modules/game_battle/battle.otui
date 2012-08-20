@@ -99,7 +99,7 @@ MiniWindow
       anchors.right: parent.right
       anchors.top: prev.bottom
       margin-top: 5
+      padding-right: 5
       layout:
         type: verticalBox
         fit-children: true
-

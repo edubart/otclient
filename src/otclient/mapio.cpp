@@ -515,7 +515,7 @@ bool Map::loadOtcm(const std::string& fileName)
 
         fin->close();
 
-        g_logger.debug(stdext::format("Otcm load time: %.2f seconds", loadTimer.elapsed_seconds()));
+        //g_logger.debug(stdext::format("Otcm load time: %.2f seconds", loadTimer.elapsed_seconds()));
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("failed to load OTCM map: %s", e.what()));

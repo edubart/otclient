@@ -16,20 +16,19 @@ QuestLineWindow < MainWindow
 
   TextList
     id: missionList
-    anchors.fill: parent
-    anchors.bottom: none
-    width: 200
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: missionListScrollBar.left
     height: 200
     padding: 1
     focusable: false
-    margin-right: 20
     vertical-scrollbar: missionListScrollBar
 
   VerticalScrollBar
     id: missionListScrollBar
-    anchors.top: missionList.top
-    anchors.bottom: missionList.bottom
-    anchors.left: missionList.right
+    anchors.top: parent.top
+    anchors.right: parent.right
+    height: 200
     step: 14
     pixels-scroll: true
 
@@ -38,8 +37,8 @@ QuestLineWindow < MainWindow
     anchors.top: missionList.bottom
     anchors.left: parent.left
     anchors.right: missionListScrollBar.right
-    anchors.bottom: parent.bottom
-    margin-bottom: 30
+    anchors.bottom: closeButton.top
+    margin-bottom: 10
     margin-top: 10
     text-wrap: true
 

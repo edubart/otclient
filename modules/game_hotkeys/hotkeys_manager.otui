@@ -38,7 +38,6 @@ MainWindow
     anchors.right: prev.left
     anchors.top: prev.top
     anchors.bottom: prev.bottom
-    margin-top: 2
     padding: 1
     focusable: false
 
@@ -159,6 +158,13 @@ MainWindow
     checked: false
     margin-top: 2
     @onCheckChange: modules.game_hotkeys.changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
 
   Button
     !text: tr('Close')

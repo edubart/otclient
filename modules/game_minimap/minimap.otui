@@ -39,7 +39,6 @@ MiniWindow
     size: 14 14
 
   MiniWindowContents
-    padding: 2
     UIMap
       id: minimap
       anchors.fill: parent

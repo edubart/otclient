@@ -192,4 +192,3 @@ void UIMap::updateMapSize()
     if(m_aspectRatio == 0.0f)
         updateVisibleDimension();
 }
-

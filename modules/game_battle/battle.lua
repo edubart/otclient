@@ -196,7 +196,7 @@ function addCreature(creature)
     local creatureWidget = battleButton:getChildById('creature')
     local labelWidget = battleButton:getChildById('label')
     local lifeBarWidget = battleButton:getChildById('lifeBar')
-    battleButton.onHoverChange = onbattleButtonHoverChange
+    battleButton.onHoverChange = onBattleButtonHoverChange
     battleButton.onMouseRelease = onMouseRelease
 
     battleButton:setId('BattleButton_' .. creature:getName():gsub('%s','_'))
@@ -325,7 +325,7 @@ function setLifeBarPercent(battleButton, percent)
   lifeBarWidget:setBackgroundColor(color)
 end
 
-function onbattleButtonHoverChange(widget, hovered)
+function onBattleButtonHoverChange(widget, hovered)
   if widget.isBattleButton then
     widget.isHovered = hovered
     checkBattleButton(widget)

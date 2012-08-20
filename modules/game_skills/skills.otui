@@ -39,10 +39,12 @@ MiniWindow
   &save: true
 
   MiniWindowContents
-    anchors.fill: parent
+    padding-left: 5
+    padding-right: 5
     layout: verticalBox
 
     SkillButton
+      margin-top: 5
       id: experience
       height: 15
       SkillNameLabel

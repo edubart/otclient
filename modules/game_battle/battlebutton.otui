@@ -1,7 +1,6 @@
 BattleButton < UIButton
   height: 20
-  margin-top: 5
-  margin-right: 4
+  margin-bottom: 5
   &isBattleButton: true
 
   UICreature

@@ -1,6 +1,10 @@
 VipListLabel < GameLabel
+  margin-top: 2
   font: verdana-11px-monochrome
   phantom: false
+
+  $first:
+    margin-top: 5
 
 MiniWindow
   id: vipWindow
@@ -12,5 +16,6 @@ MiniWindow
 
   MiniWindowContents
     layout: verticalBox
-    anchors.fill: parent
+    padding-left: 5
+    padding-right: 5
     &onMousePress: modules.game_viplist.onVipListMousePress

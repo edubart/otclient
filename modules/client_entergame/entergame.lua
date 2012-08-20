@@ -98,7 +98,7 @@ function EnterGame.init()
 end
 
 function EnterGame.firstShow()
-  enterGame:show()
+  EnterGame.show()
 
   local account = g_crypt.decrypt(g_settings.get('account'))
   local password = g_crypt.decrypt(g_settings.get('password'))
