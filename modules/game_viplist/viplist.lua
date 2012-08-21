@@ -10,9 +10,9 @@ function init()
 
   g_keyboard.bindKeyDown('Ctrl+P', toggle)
 
-  vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
   vipButton = TopMenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', toggle)
   vipButton:setOn(true)
+  vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
 
   refresh()
 end

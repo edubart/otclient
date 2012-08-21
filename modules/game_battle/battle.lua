@@ -28,9 +28,9 @@ table.insert(LifeBarColors, {percentAbove = -1, color = '#4F0000' } )
 
 function init()
   g_ui.importStyle('battlebutton.otui')
-  battleWindow = g_ui.loadUI('battle.otui', modules.game_interface.getRightPanel())
   battleButton = TopMenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', toggle)
   battleButton:setOn(true)
+  battleWindow = g_ui.loadUI('battle.otui', modules.game_interface.getRightPanel())
   g_keyboard.bindKeyDown('Ctrl+B', toggle)
 
   -- this disables scrollbar auto hiding

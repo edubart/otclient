@@ -3,7 +3,6 @@ UIMiniWindow = extends(UIWindow)
 
 function UIMiniWindow.create()
   local miniwindow = UIMiniWindow.internalCreate()
-  miniwindow.isSetup = false
   return miniwindow
 end
 
@@ -22,6 +21,7 @@ function UIMiniWindow:open(dontSave)
 end
 
 function UIMiniWindow:close(dontSave)
+  if not self:isExplicitlyVisible() then return end
   self:setVisible(false)
 
   if not dontSave then
@@ -88,6 +88,7 @@ function UIMiniWindow:onSetup()
         if parent then
           if parent:getClassName() == 'UIMiniWindowContainer' and selfSettings.index and parent:isOn() then
             self.miniIndex = selfSettings.index
+            --addEvent(function() parent:scheduleInsert(self, selfSettings.index) end)
             parent:scheduleInsert(self, selfSettings.index)
           elseif selfSettings.position then
             self:setParent(parent)
@@ -109,8 +110,6 @@ function UIMiniWindow:onSetup()
         self:setHeight(selfSettings.height)
       end
     end
-
-    self.isSetup = true
   end
 
   local newParent = self:getParent()
@@ -119,24 +118,22 @@ function UIMiniWindow:onSetup()
 
   if self.save then
     if oldParent and oldParent:getClassName() == 'UIMiniWindowContainer' then
-      oldParent:order()
+      addEvent(function() oldParent:order() end)
     end
     if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and newParent ~= oldParent then
-      newParent:order()
+      addEvent(function() newParent:order() end)
     end
   end
 
   if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and self:isVisible() then
-    -- not on input event, must rework
-    --newParent:fitAll(self)
+    newParent:fitAll(self)
   end
 end
 
 function UIMiniWindow:onVisibilityChange(visible)
   local parent = self:getParent()
   if visible and parent and parent:getClassName() == 'UIMiniWindowContainer' then
-    -- not on input event, must rework
-    --parent:fitAll(self)
+    parent:fitAll(self)
   end
 end
 
@@ -220,7 +217,6 @@ function UIMiniWindow:onMousePress()
 end
 
 function UIMiniWindow:onFocusChange(focused)
-  -- miniwindows only raises when its outside MiniWindowContainers
   if not focused then return end
   local parent = self:getParent()
   if parent and parent:getClassName() ~= 'UIMiniWindowContainer' then
@@ -228,15 +224,12 @@ function UIMiniWindow:onFocusChange(focused)
   end
 end
 
-function UIMiniWindow:onGeometryChange(oldRect, rect)
-  if self.isSetup then
-    self:setSettings({height = rect.height})
-  end
+function UIMiniWindow:onHeightChange(height)
+  self:setSettings({height = height})
 
   local parent = self:getParent()
   if self:isVisible() and parent and parent:getClassName() == 'UIMiniWindowContainer' then
-    -- not on input event, must rework
-    --parent:fitAll(self)
+    parent:fitAll(self)
   end
 end
 
@@ -310,4 +303,14 @@ function UIMiniWindow:setContentMaximumHeight(height)
 
   local resizeBorder = self:getChildById('bottomResizeBorder')
   resizeBorder:setMaximum(minHeight + height)
+end
+
+function UIMiniWindow:getMinimumHeight()
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  return resizeBorder:getMinimum()
+end
+
+function UIMiniWindow:getMaximumHeight()
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  return resizeBorder:getMaximum()
 end

@@ -449,6 +449,6 @@ UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const
     } else
         stdext::throw_exception(stdext::format("unable to create widget of type '%s'", widgetType));
 
+    widget->callLuaField("onSetup");
     return widget;
 }
-

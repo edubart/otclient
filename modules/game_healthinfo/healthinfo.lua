@@ -35,10 +35,11 @@ function init()
 
   connect(g_game, { onGameEnd = offline })
 
-  healthInfoWindow = g_ui.loadUI('healthinfo.otui', modules.game_interface.getRightPanel())
   healthInfoButton = TopMenu.addRightGameToggleButton('healthInfoButton', tr('Health Information'), 'healthinfo.png', toggle)
-  healthInfoWindow:disableResize()
   healthInfoButton:setOn(true)
+
+  healthInfoWindow = g_ui.loadUI('healthinfo.otui', modules.game_interface.getRightPanel())
+  healthInfoWindow:disableResize()
   healthBar = healthInfoWindow:recursiveGetChildById('healthBar')
   manaBar = healthInfoWindow:recursiveGetChildById('manaBar')
   healthLabel = healthInfoWindow:recursiveGetChildById('healthLabel')

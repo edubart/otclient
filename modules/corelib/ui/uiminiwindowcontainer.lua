@@ -21,19 +21,31 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
   local sumHeight = 0
   local children = self:getChildren()
   for i=1,#children do
-    sumHeight = sumHeight + children[i]:getHeight()
+    if children[i]:isVisible() then
+      sumHeight = sumHeight + children[i]:getHeight()
+    end
   end
 
-  local selfHeight = self:getHeight()
+  local selfHeight = self:getHeight() - (self:getMarginTop() + self:getMarginBottom() + self:getPaddingTop() + self:getPaddingBottom())
   if sumHeight <= selfHeight then
     return
   end
 
   local removeChildren = {}
 
+  -- try to resize noRemoveChild
+  local maximumHeight = selfHeight - (sumHeight - noRemoveChild:getHeight())
+  if noRemoveChild:getMinimumHeight() <= maximumHeight then
+    sumHeight = sumHeight - noRemoveChild:getHeight() + maximumHeight
+    addEvent(function() noRemoveChild:setHeight(maximumHeight) end)
+  end
+
+  -- TODO: try to resize another widget?
+  -- TODO: try to find another panel?
+
   -- try to remove no-save widget
   for i=#children,1,-1 do
-    if sumHeight < selfHeight then
+    if sumHeight <= selfHeight then
       break
     end
 
@@ -47,7 +59,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
 
   -- try to remove save widget
   for i=#children,1,-1 do
-    if sumHeight < selfHeight then
+    if sumHeight <= selfHeight then
       break
     end
 
@@ -62,11 +74,6 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
   -- close widgets
   for i=1,#removeChildren do
     removeChildren[i]:close()
-  end
-
-  -- dont let noRemoveChild be bigger than self
-  if noRemoveChild:getHeight() > selfHeight - 20 then
-    noRemoveChild:setHeight(selfHeight - 20)
   end
 end
 
@@ -88,6 +95,7 @@ function UIMiniWindowContainer:onDrop(widget, mousePos)
       self:addChild(widget)
     end
 
+    self:fitAll(widget)
     return true
   end
 end
@@ -114,7 +122,9 @@ function UIMiniWindowContainer:scheduleInsert(widget, index)
   else
     local oldParent = widget:getParent()
     if oldParent ~= self then
-      oldParent:removeChild(widget)
+      if oldParent then
+        oldParent:removeChild(widget)
+      end
       self:insertChild(index, widget)
 
       while true do

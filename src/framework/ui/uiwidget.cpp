@@ -177,7 +177,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
     index = index <= 0 ? (m_children.size() + index) : index-1;
 
     if(!(index >= 0 && (uint)index <= m_children.size())) {
-        g_logger.traceError("attemp to insert a child in an invalid index");
+        g_logger.traceError("attempt to insert a child in an invalid index");
         return;
     }
 
@@ -504,10 +504,6 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
 
         if(m_firstOnStyle) {
-            auto self = static_self_cast<UIWidget>();
-            g_dispatcher.addEvent([self] {
-                self->callLuaField("onSetup");
-            });
             // always focus new child
             if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
                 focus();
