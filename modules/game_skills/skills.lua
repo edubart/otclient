@@ -115,12 +115,44 @@ function setSkillPercent(id, percent, tooltip)
   end
 end
 
-function checkAlert(id, value, maxValue, threshold)
-  if value > maxValue or maxValue < 1 then
-    return
+function checkAlert(id, value, maxValue, threshold, greaterThan)
+  if greaterThan == nil then greaterThan = false end
+  local alert = false
+
+  -- maxValue can be set to false to check value and threshold
+  -- used for regeneration checking
+  if type(maxValue) == 'boolean' then
+    if maxValue then
+      return
+    end
+
+    if greaterThan then
+      if value > threshold then
+        alert = true
+      end
+    else
+      if value < threshold then
+        alert = true
+      end
+    end
+  elseif type(maxValue) == 'number' then
+    if maxValue < 0 then
+      return
+    end
+
+    local percent = math.floor((value / maxValue) * 100)
+    if greaterThan then
+      if percent > threshold then
+        alert = true
+      end
+    else
+      if percent < threshold then
+        alert = true
+      end
+    end
   end
-  local percent = math.floor((value / maxValue) * 100)
-  if percent < threshold then
+
+  if alert then
     setSkillColor(id, '#b22222') -- red
   else
     resetSkillColor(id)
@@ -267,7 +299,7 @@ function onRegenerationChange(localPlayer, regenerationTime)
   end
 
   setSkillValue('regenerationTime', hours .. ":" .. minutes)
-  checkAlert('regenerationTime', regenerationTime, 30, 20) -- what is max regeneration?
+  checkAlert('regenerationTime', regenerationTime, false, 300)
 end
 
 function onSpeedChange(localPlayer, speed)

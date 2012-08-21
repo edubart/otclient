@@ -44,60 +44,64 @@ MiniWindow
   @onClose: modules.game_battle.onMiniWindowClose()
   &save: true
 
+  BattlePlayers
+    id: hidePlayers
+    !tooltip: tr('Hide players')
+    anchors.top: parent.top
+    anchors.right: next.left
+    margin-right: 5
+    margin-top: 26
+    @onCheckChange: modules.game_battle.checkCreatures()
+
+  BattleNPCs
+    id: hideNPCs
+    !tooltip: tr('Hide Npcs')
+    anchors.top: parent.top
+    anchors.right: next.left
+    margin-right: 5
+    margin-top: 26
+    @onCheckChange: modules.game_battle.checkCreatures()
+
+  BattleMonsters
+    id: hideMonsters
+    !tooltip: tr('Hide monsters')
+    anchors.top: parent.top
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 26
+    @onCheckChange: modules.game_battle.checkCreatures()
+
+  BattleSkulls
+    id: hideSkulls
+    !tooltip: tr('Hide non-skull players')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 5
+    @onCheckChange: modules.game_battle.checkCreatures()
+
+  BattleParty
+    id: hideParty
+    !tooltip: tr('Hide party members')
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin-left: 5
+    phantom: true
+    @onCheckChange: modules.game_battle.checkCreatures()
+
+  HorizontalSeparator
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 5
+
   MiniWindowContents
-    BattlePlayers
-      id: hidePlayers
-      !tooltip: tr('Hide players')
-      anchors.top: parent.top
-      anchors.right: next.left
-      margin-right: 5
-      margin-top: 3
-      @onCheckChange: modules.game_battle.checkCreatures()
-
-    BattleNPCs
-      id: hideNPCs
-      !tooltip: tr('Hide Npcs')
-      anchors.top: parent.top
-      anchors.right: next.left
-      margin-right: 5
-      margin-top: 3
-      @onCheckChange: modules.game_battle.checkCreatures()
-
-    BattleMonsters
-      id: hideMonsters
-      !tooltip: tr('Hide monsters')
-      anchors.top: parent.top
-      anchors.horizontalCenter: parent.horizontalCenter
-      margin-top: 3
-      @onCheckChange: modules.game_battle.checkCreatures()
-
-    BattleSkulls
-      id: hideSkulls
-      !tooltip: tr('Hide non-skull players')
-      anchors.top: prev.top
-      anchors.left: prev.right
-      margin-left: 5
-      @onCheckChange: modules.game_battle.checkCreatures()
-
-    BattleParty
-      id: hideParty
-      !tooltip: tr('Hide party members')
-      anchors.top: prev.top
-      anchors.left: prev.right
-      margin-left: 5
-      @onCheckChange: modules.game_battle.checkCreatures()
-
-    HorizontalSeparator
-      anchors.top: prev.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      margin-top: 5
+    anchors.top: parent.top
+    margin-top: 50
 
     Panel
       id: battlePanel
       anchors.left: parent.left
       anchors.right: parent.right
-      anchors.top: prev.bottom
+      anchors.top: parent.top
       margin-top: 5
       padding-right: 5
       layout:
