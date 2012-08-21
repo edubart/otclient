@@ -58,10 +58,9 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   end
 
   local tile = self:getTile(mousePosition)
-  if tile == nil then return false end
 
   local localPlayerPos = g_game.getLocalPlayer():getPosition()
-  local autoWalkPos = tile:getPosition()
+  local autoWalkPos = self:getPosition(mousePosition)
   if autoWalkPos.z ~= localPlayerPos.z then
     local dz = autoWalkPos.z - localPlayerPos.z
     autoWalkPos.x = autoWalkPos.x + dz
@@ -69,10 +68,17 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     autoWalkPos.z = localPlayerPos.z
   end
 
-  local lookThing = tile:getTopLookThing()
-  local useThing = tile:getTopUseThing()
-  local creatureThing = tile:getTopCreature()
-  local multiUseThing = tile:getTopMultiUseThing()
+  local lookThing
+  local useThing
+  local creatureThing
+  local multiUseThing
+
+  if tile then
+    lookThing = tile:getTopLookThing()
+    useThing = tile:getTopUseThing()
+    creatureThing = tile:getTopCreature()
+    multiUseThing = tile:getTopMultiUseThing()
+  end
 
   local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
   if ret then

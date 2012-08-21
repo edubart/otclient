@@ -116,18 +116,57 @@ void UIMap::setKeepAspectRatio(bool enable)
     updateMapSize();
 }
 
+Position UIMap::getPosition(const Point& mousePos)
+{
+    if(!m_mapRect.contains(mousePos))
+        return Position();
+
+    Point relativeMousePos = mousePos - m_mapRect.topLeft();
+    Size visibleSize = getVisibleDimension() * m_mapView->getTileSize();
+    Position cameraPosition = getCameraPosition();
+
+    // if we have no camera, its impossible to get the tile
+    if(!cameraPosition.isValid())
+        return Position();
+
+    float scaleFactor = m_mapView->getTileSize() / (float)Otc::TILE_PIXELS;
+    float horizontalStretchFactor = visibleSize.width() / (float)m_mapRect.width();
+    float verticalStretchFactor = visibleSize.height() / (float)m_mapRect.height();
+
+    Point tilePos2D = Point(relativeMousePos.x * horizontalStretchFactor, relativeMousePos.y * verticalStretchFactor);
+
+    if(m_mapView->isFollowingCreature())
+        tilePos2D += getFollowingCreature()->getWalkOffset() * scaleFactor;
+    tilePos2D /= m_mapView->getTileSize();
+
+    Point visibleCenterOffset = m_mapView->getVisibleCenterOffset();
+    Position position = Position(1 + (int)tilePos2D.x - visibleCenterOffset.x, 1 + (int)tilePos2D.y - visibleCenterOffset.y, 0) + cameraPosition;
+    if(!position.isValid())
+        return Position();
+
+    return position;
+}
+
 TilePtr UIMap::getTile(const Point& mousePos)
 {
-  /*
-   * Known Issue: If you move a container widget into the map rect
-   * and you move an item onto itself it will allow this to execute
-   * still dropping the item on the ground.
-   */
-    if(!m_mapRect.contains(mousePos))
+    Position tilePos = getPosition(mousePos);
+    if(!tilePos.isValid())
         return nullptr;
 
-    //TODO: move MapView code to UIMap and rework this shit
-    return m_mapView->getTile(mousePos, m_mapRect);
+    // we must check every floor, from top to bottom to check for a clickable tile
+    TilePtr tile;
+    tilePos.coveredUp(tilePos.z - m_mapView->getCachedFirstVisibleFloor());
+    for(int i = m_mapView->getCachedFirstVisibleFloor(); i <= m_mapView->getCachedLastVisibleFloor(); i++) {
+        tile = g_map.getTile(tilePos);
+        if(tile && tile->isClickable())
+            break;
+        tilePos.coveredDown();
+    }
+
+    if(!tile || !tile->isClickable())
+        return nullptr;
+
+    return tile;
 }
 
 void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)

@@ -617,48 +617,6 @@ Position MapView::getCameraPosition()
     return m_customCameraPosition;
 }
 
-TilePtr MapView::getTile(const Point& mousePos, const Rect& mapRect)
-{
-    Point relativeMousePos = mousePos - mapRect.topLeft();
-    Size visibleSize = m_visibleDimension * m_tileSize;
-    Position cameraPosition = getCameraPosition();
-
-    // if we have no camera, its impossible to get the tile
-    if(!cameraPosition.isValid())
-        return nullptr;
-
-    float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
-
-
-    float horizontalStretchFactor = visibleSize.width() / (float)mapRect.width();
-    float verticalStretchFactor = visibleSize.height() / (float)mapRect.height();
-
-    Point tilePos2D = Point(relativeMousePos.x * horizontalStretchFactor, relativeMousePos.y * verticalStretchFactor);
-
-    if(isFollowingCreature())
-        tilePos2D += m_followingCreature->getWalkOffset() * scaleFactor;
-    tilePos2D /= m_tileSize;
-
-    Position tilePos = Position(1 + (int)tilePos2D.x - m_visibleCenterOffset.x, 1 + (int)tilePos2D.y - m_visibleCenterOffset.y, 0) + cameraPosition;
-    if(!tilePos.isValid())
-        return nullptr;
-
-    // we must check every floor, from top to bottom to check for a clickable tile
-    TilePtr tile;
-    tilePos.coveredUp(tilePos.z - m_cachedFirstVisibleFloor);
-    for(int i = m_cachedFirstVisibleFloor; i <= m_cachedLastVisibleFloor; i++) {
-        tile = g_map.getTile(tilePos);
-        if(tile && tile->isClickable())
-            break;
-        tilePos.coveredDown();
-    }
-
-    if(!tile || !tile->isClickable())
-        return nullptr;
-
-    return tile;
-}
-
 void MapView::setDrawMinimapColors(bool enable)
 {
     if(m_drawMinimapColors == enable)

@@ -68,6 +68,7 @@ public:
     CreaturePtr getFollowingCreature() { return m_mapView->getFollowingCreature(); }
     Otc::DrawFlags getDrawFlags() { return m_mapView->getDrawFlags(); }
     Position getCameraPosition() { return m_mapView->getCameraPosition(); }
+    Position getPosition(const Point& mousePos);
     TilePtr getTile(const Point& mousePos);
     int getMaxZoomIn() { return m_maxZoomIn; }
     int getMaxZoomOut() { return m_maxZoomOut; }

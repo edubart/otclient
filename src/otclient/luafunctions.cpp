@@ -494,6 +494,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getFollowingCreature", &UIMap::getFollowingCreature);
     g_lua.bindClassMemberFunction<UIMap>("getDrawFlags", &UIMap::getDrawFlags);
     g_lua.bindClassMemberFunction<UIMap>("getCameraPosition", &UIMap::getCameraPosition);
+    g_lua.bindClassMemberFunction<UIMap>("getPosition", &UIMap::getPosition);
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomIn", &UIMap::getMaxZoomIn);
     g_lua.bindClassMemberFunction<UIMap>("getMaxZoomOut", &UIMap::getMaxZoomOut);

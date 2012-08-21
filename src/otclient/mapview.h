@@ -67,6 +67,10 @@ public:
     // map dimension related
     void setVisibleDimension(const Size& visibleDimension);
     Size getVisibleDimension() { return m_visibleDimension; }
+    int getTileSize() { return m_tileSize; }
+    Point getVisibleCenterOffset() { return m_visibleCenterOffset; }
+    int getCachedFirstVisibleFloor() { return m_cachedFirstVisibleFloor; }
+    int getCachedLastVisibleFloor() { return m_cachedLastVisibleFloor; }
 
     // view mode related
     void setViewMode(ViewMode viewMode);
@@ -100,8 +104,6 @@ public:
     void setShader(const PainterShaderProgramPtr& shader) { m_shader = shader; }
     PainterShaderProgramPtr getShader() { return m_shader; }
 
-    // get tile
-    TilePtr getTile(const Point& mousePos, const Rect& mapRect);
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
