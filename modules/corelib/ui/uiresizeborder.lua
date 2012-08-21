@@ -9,6 +9,14 @@ function UIResizeBorder.create()
   return resizeborder
 end
 
+function UIResizeBorder:onSetup()
+  if self:getWidth() > self:getHeight() then
+    self.vertical = true
+  else
+    self.vertical = false
+  end
+end
+
 function UIResizeBorder:onHoverChange(hovered)
   if hovered then
     if g_mouse.isCursorChanged() or g_mouse.isPressed() then return end
@@ -34,19 +42,21 @@ end
 
 function UIResizeBorder:onMouseMove(mousePos, mouseMoved)
   if self:isPressed() then
+    local parent = self:getParent()
+    local newSize = 0
     if self.vertical then
       local delta = mousePos.y - self:getY() - self:getHeight()/2
-      local parent = self:getParent()
-      local newSize = math.min(math.max(parent:getHeight() + delta, self.minimum), self.maximum)
+      newSize = math.min(math.max(parent:getHeight() + delta, self.minimum), self.maximum)
       parent:setHeight(newSize)
       signalcall(parent.onHeightChange, parent, newSize)
     else
       local delta = mousePos.x - self:getX() - self:getWidth()/2
-      local parent = self:getParent()
-      local newSize = math.min(math.max(parent:getWidth() + delta, self.minimum), self.maximum)
+      newSize = math.min(math.max(parent:getWidth() + delta, self.minimum), self.maximum)
       parent:setWidth(newSize)
       signalcall(parent.onWidthChange, parent, newSize)
     end
+
+    self:checkBoundary(newSize)
     return true
   end
 end
@@ -76,28 +86,42 @@ function UIResizeBorder:onVisibilityChange(visible)
 end
 
 function UIResizeBorder:setMaximum(maximum)
-  self.maximum  = maximum
-  if self.maximum == self.minimum then
-    self:hide()
-  end
-
-  local parent = self:getParent()
-  if self:isVisible() and parent:getHeight() > maximum then
-    parent:setHeight(maximum)
-  end
+  self.maximum = maximum
+  self:checkBoundary()
 end
 
 function UIResizeBorder:setMinimum(minimum)
   self.minimum = minimum
-  if self.maximum == self.minimum then
-    self:hide()
-  end
-
-  local parent = self:getParent()
-  if self:isVisible() and parent:getHeight() < minimum then
-    parent:setHeight(minimum)
-  end
+  self:checkBoundary()
 end
 
 function UIResizeBorder:getMaximum() return self.maximum end
 function UIResizeBorder:getMinimum() return self.minimum end
+
+function UIResizeBorder:setParentSize(size)
+  local parent = self:getParent()
+  if self.vertical then
+    parent:setHeight(size)
+  else
+    parent:setWidth(size)
+  end
+  self:checkBoundary(size)
+end
+
+function UIResizeBorder:getParentSize()
+  local parent = self:getParent()
+  if self.vertical then
+    return parent:getHeight()
+  else
+    return parent:getWidth()
+  end
+end
+
+function UIResizeBorder:checkBoundary(size)
+  size = size or self:getParentSize()
+  if self.maximum == self.minimum and size == self.maximum then
+    self:hide()
+  else
+    self:show()
+  end
+end

@@ -7,10 +7,6 @@ LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
-  if string.len(accountName) == 0 or string.len(accountPassword) == 0 then
-    signalcall(self.onError, self, tr("You must enter an account name and password."))
-    return
-  end
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onError, self, tr("You must enter a valid server address and port."))
     return

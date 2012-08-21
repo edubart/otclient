@@ -37,7 +37,6 @@ function UIMiniWindow:minimize(dontSave)
   self:getChildById('miniwindowScrollBar'):hide()
   self:getChildById('bottomResizeBorder'):hide()
   self:getChildById('minimizeButton'):setOn(true)
-  self.savedHeight = self:getHeight()
   self:setHeight(self.minimizedHeight)
 
   if not dontSave then
@@ -53,10 +52,15 @@ function UIMiniWindow:maximize(dontSave)
   self:getChildById('miniwindowScrollBar'):show()
   self:getChildById('bottomResizeBorder'):show()
   self:getChildById('minimizeButton'):setOn(false)
-  self:setHeight(self.savedHeight)
+  self:setHeight(self:getSettings('height'))
 
   if not dontSave then
     self:setSettings({minimized = false})
+  end
+
+  local parent = self:getParent()
+  if parent and parent:getClassName() == 'UIMiniWindowContainer' then
+    parent:fitAll(self)
   end
 
   signalcall(self.onMaximize, self)
@@ -88,7 +92,6 @@ function UIMiniWindow:onSetup()
         if parent then
           if parent:getClassName() == 'UIMiniWindowContainer' and selfSettings.index and parent:isOn() then
             self.miniIndex = selfSettings.index
-            --addEvent(function() parent:scheduleInsert(self, selfSettings.index) end)
             parent:scheduleInsert(self, selfSettings.index)
           elseif selfSettings.position then
             self:setParent(parent)
@@ -100,14 +103,12 @@ function UIMiniWindow:onSetup()
 
       if selfSettings.minimized then
         self:minimize(true)
+      elseif selfSettings.height then
+        self:setHeight(selfSettings.height)
       end
 
       if selfSettings.closed then
         self:close(true)
-      end
-
-      if selfSettings.height then
-        self:setHeight(selfSettings.height)
       end
     end
   end
@@ -233,6 +234,17 @@ function UIMiniWindow:onHeightChange(height)
   end
 end
 
+function UIMiniWindow:getSettings(name)
+  local settings = g_settings.getNode('MiniWindows')
+  if settings then
+    local selfSettings = settings[self:getId()]
+    if selfSettings then
+      return selfSettings[name]
+    end
+  end
+  return nil
+end
+
 function UIMiniWindow:setSettings(data)
   if not self.save then return end
 
@@ -286,7 +298,9 @@ end
 function UIMiniWindow:setContentHeight(height)
   local contentsPanel = self:getChildById('contentsPanel')
   local minHeight = contentsPanel:getMarginTop() + contentsPanel:getMarginBottom() + contentsPanel:getPaddingTop() + contentsPanel:getPaddingBottom()
-  self:setHeight(minHeight + height)
+
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  resizeBorder:setParentSize(minHeight + height)
 end
 
 function UIMiniWindow:setContentMinimumHeight(height)

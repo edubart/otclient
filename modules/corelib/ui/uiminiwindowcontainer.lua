@@ -40,6 +40,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
     addEvent(function() noRemoveChild:setHeight(maximumHeight) end)
   end
 
+  -- TODO: most likely, minimum and maximum size are not set yet, so code above might not work properly. onSetup event
   -- TODO: try to resize another widget?
   -- TODO: try to find another panel?
 
