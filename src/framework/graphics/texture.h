@@ -30,7 +30,7 @@ class Texture : public stdext::shared_object
 public:
     Texture();
     Texture(const Size& size);
-    Texture(const ImagePtr& image, bool buildMipmaps = false);
+    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
     virtual ~Texture();
 
     void bind();
@@ -57,7 +57,7 @@ protected:
     void setupWrap();
     void setupFilters();
     void setupTranformMatrix();
-    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4);
+    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4, bool compress = false);
 
     uint m_id;
     Size m_size;

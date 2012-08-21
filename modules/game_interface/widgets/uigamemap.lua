@@ -61,6 +61,10 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
 
   local localPlayerPos = g_game.getLocalPlayer():getPosition()
   local autoWalkPos = self:getPosition(mousePosition)
+
+  -- happens when clicking outside of map boundaries
+  if not autoWalkPos then return false end
+
   if autoWalkPos.z ~= localPlayerPos.z then
     local dz = autoWalkPos.z - localPlayerPos.z
     autoWalkPos.x = autoWalkPos.x + dz

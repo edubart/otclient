@@ -46,7 +46,7 @@ Texture::Texture(const Size& size)
     setupFilters();
 }
 
-Texture::Texture(const ImagePtr& image, bool buildMipmaps)
+Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress)
 {
     m_id = 0;
 
@@ -67,11 +67,11 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps)
     if(buildMipmaps) {
         int level = 0;
         do {
-            setupPixels(level++, glImage->getSize(), glImage->getPixelData(), glImage->getBpp());
+            setupPixels(level++, glImage->getSize(), glImage->getPixelData(), glImage->getBpp(), compress);
         } while(glImage->nextMipmap());
         m_hasMipmaps = true;
     } else
-        setupPixels(0, glImage->getSize(), glImage->getPixelData(), glImage->getBpp());
+        setupPixels(0, glImage->getSize(), glImage->getPixelData(), glImage->getBpp(), compress);
 
     setupWrap();
     setupFilters();
@@ -216,7 +216,7 @@ void Texture::setupTranformMatrix()
     }
 }
 
-void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channels)
+void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channels, bool compress)
 {
     GLenum format = 0;
     switch(channels) {
@@ -234,5 +234,9 @@ void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channe
             break;
     }
 
-    glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    GLenum internalFormat = GL_RGBA;
+    if(compress)
+        internalFormat = GL_COMPRESSED_RGBA;
+
+    glTexImage2D(GL_TEXTURE_2D, level, internalFormat, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 }
