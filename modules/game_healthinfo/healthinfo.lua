@@ -56,6 +56,8 @@ function init()
     onSoulChange(localPlayer, localPlayer:getSoul())
     onFreeCapacityChange(localPlayer, localPlayer:getFreeCapacity())
   end
+
+  healthInfoWindow:setup()
 end
 
 function terminate()

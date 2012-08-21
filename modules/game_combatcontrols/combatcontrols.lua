@@ -40,6 +40,8 @@ function init()
   if g_game.isOnline() then
     online()
   end
+
+  combatControlsWindow:setup()
 end
 
 function terminate()

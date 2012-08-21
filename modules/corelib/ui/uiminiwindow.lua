@@ -66,7 +66,7 @@ function UIMiniWindow:maximize(dontSave)
   signalcall(self.onMaximize, self)
 end
 
-function UIMiniWindow:onSetup()
+function UIMiniWindow:setup()
   self:getChildById('closeButton').onClick =
     function()
       self:close()
@@ -126,16 +126,11 @@ function UIMiniWindow:onSetup()
     end
   end
 
-  if newParent and newParent:getClassName() == 'UIMiniWindowContainer' and self:isVisible() then
-    newParent:fitAll(self)
-  end
+  self:fitOnParent()
 end
 
 function UIMiniWindow:onVisibilityChange(visible)
-  local parent = self:getParent()
-  if visible and parent and parent:getClassName() == 'UIMiniWindowContainer' then
-    parent:fitAll(self)
-  end
+  self:fitOnParent()
 end
 
 function UIMiniWindow:onDragEnter(mousePos)
@@ -227,11 +222,7 @@ end
 
 function UIMiniWindow:onHeightChange(height)
   self:setSettings({height = height})
-
-  local parent = self:getParent()
-  if self:isVisible() and parent and parent:getClassName() == 'UIMiniWindowContainer' then
-    parent:fitAll(self)
-  end
+  self:fitOnParent()
 end
 
 function UIMiniWindow:getSettings(name)
@@ -295,6 +286,24 @@ function UIMiniWindow:disableResize()
   self:getChildById('bottomResizeBorder'):disable()
 end
 
+function UIMiniWindow:fitOnParent()
+  local parent = self:getParent()
+  if self:isVisible() and parent and parent:getClassName() == 'UIMiniWindowContainer' then
+    parent:fitAll(self)
+  end
+end
+
+function UIMiniWindow:setParent(parent)
+  UIWidget.setParent(self, parent)
+  self:saveParent(parent)
+  self:fitOnParent()
+end
+
+function UIMiniWindow:setHeight(height)
+  UIWidget.setHeight(self, height)
+  signalcall(self.onHeightChange, self, height)
+end
+
 function UIMiniWindow:setContentHeight(height)
   local contentsPanel = self:getChildById('contentsPanel')
   local minHeight = contentsPanel:getMarginTop() + contentsPanel:getMarginBottom() + contentsPanel:getPaddingTop() + contentsPanel:getPaddingBottom()
@@ -327,4 +336,9 @@ end
 function UIMiniWindow:getMaximumHeight()
   local resizeBorder = self:getChildById('bottomResizeBorder')
   return resizeBorder:getMaximum()
+end
+
+function UIMiniWindow:isResizeable()
+  local resizeBorder = self:getChildById('bottomResizeBorder')
+  return resizeBorder:isVisible() and resizeBorder:isEnabled()
 end

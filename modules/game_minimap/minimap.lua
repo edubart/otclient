@@ -40,6 +40,7 @@ function init()
   minimapWidget.onMouseWheel = onMinimapMouseWheel
 
   reset()
+  minimapWindow:setup()
 end
 
 function terminate()

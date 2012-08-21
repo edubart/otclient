@@ -15,6 +15,7 @@ function init()
   vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
 
   refresh()
+  vipWindow:setup()
 end
 
 function terminate()

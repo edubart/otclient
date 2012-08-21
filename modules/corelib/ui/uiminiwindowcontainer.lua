@@ -35,7 +35,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
 
   -- try to resize noRemoveChild
   local maximumHeight = selfHeight - (sumHeight - noRemoveChild:getHeight())
-  if noRemoveChild:getMinimumHeight() <= maximumHeight then
+  if noRemoveChild:isResizeable() and noRemoveChild:getMinimumHeight() <= maximumHeight then
     sumHeight = sumHeight - noRemoveChild:getHeight() + maximumHeight
     addEvent(function() noRemoveChild:setHeight(maximumHeight) end)
   end

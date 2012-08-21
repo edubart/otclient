@@ -31,6 +31,7 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+S', toggle)
 
   refresh()
+  skillsWindow:setup()
 end
 
 function terminate()

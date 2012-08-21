@@ -65,6 +65,7 @@ function init()
                     onGameEnd = removeAllCreatures } )
 
   checkCreatures()
+  battleWindow:setup()
 end
 
 function terminate()
