@@ -692,7 +692,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_GETMINMAXINFO: {
             LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
-            Rect adjustedRect = adjustWindowRect(Rect(getWindowRect().topLeft(), m_minimumSize));
+            Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
             pMMI->ptMinTrackSize.x = adjustedRect.width();
             pMMI->ptMinTrackSize.y = adjustedRect.height();
             break;
@@ -966,18 +966,26 @@ std::string WIN32Window::getPlatformType()
 
 Rect WIN32Window::getClientRect()
 {
-    RECT clientRect = {0,0,0,0};
-    int ret = GetClientRect(m_window, &clientRect);
-    assert(ret != 0);
-    return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
+    if(m_window) {
+        RECT clientRect = {0,0,0,0};
+        int ret = GetClientRect(m_window, &clientRect);
+        assert(ret != 0);
+        return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
+    } else {
+        return Rect(m_position, m_size);
+    }
 }
 
 Rect WIN32Window::getWindowRect()
 {
-    RECT windowRect = {0,0,0,0};
-    int ret = GetWindowRect(m_window, &windowRect);
-    assert(ret != 0);
-    return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
+    if(m_window) {
+        RECT windowRect = {0,0,0,0};
+        int ret = GetWindowRect(m_window, &windowRect);
+        assert(ret != 0);
+        return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
+    } else {
+        return adjustWindowRect(getClientRect());
+    }
 }
 
 Rect WIN32Window::adjustWindowRect(const Rect& clientRect)

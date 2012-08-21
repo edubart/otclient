@@ -514,10 +514,17 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    if(!g_things.isValidDatId(outfit.getCategory() == ThingCategoryCreature ? outfit.getId() : outfit.getAuxId(), outfit.getCategory()))
-        return;
+    if(outfit.getCategory() != ThingCategoryCreature) {
+        if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
+            return;
+        m_outfit.setAuxId(outfit.getAuxId());
+        m_outfit.setCategory(outfit.getCategory());
+    } else {
+        if(!g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
+            return;
+        m_outfit = outfit;
+    }
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
-    m_outfit = outfit;
 }
 
 void Creature::setSpeed(uint16 speed)
