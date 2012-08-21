@@ -39,6 +39,7 @@ public:
     static Color getColor(int color);
 
     void setId(int id) { m_id = id; }
+    void setAuxId(int id) { m_auxId = id; }
     void setHead(int head) { m_head = head; m_headColor = getColor(head); }
     void setBody(int body) { m_body = body; m_bodyColor = getColor(body); }
     void setLegs(int legs) { m_legs = legs; m_legsColor = getColor(legs); }
@@ -50,6 +51,7 @@ public:
     void resetClothes();
 
     int getId() const { return m_id; }
+    int getAuxId() const { return m_auxId; }
     int getHead() const { return m_head; }
     int getBody() const { return m_body; }
     int getLegs() const { return m_legs; }
@@ -65,7 +67,7 @@ public:
 
 private:
     ThingCategory m_category;
-    int m_id, m_head, m_body, m_legs, m_feet, m_addons, m_mount;
+    int m_id, m_auxId, m_head, m_body, m_legs, m_feet, m_addons, m_mount;
     Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
 

@@ -135,8 +135,10 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         }
     // outfit is a creature imitating an item or the invisible effect
     } else  {
+        ThingType *type = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory());
+
         int animationPhase = 0;
-        int animationPhases = getAnimationPhases();
+        int animationPhases = type->getAnimationPhases();
         int animateTicks = Otc::ITEM_TICKS_PER_FRAME;
 
         // when creature is an effect we cant render the first and last animation phase,
@@ -154,14 +156,20 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         }
 
         if(m_outfit.getCategory() == ThingCategoryEffect)
-            animationPhase = std::min(animationPhase+1, getAnimationPhases());
+            animationPhase = std::min(animationPhase+1, animationPhases);
 
-        rawGetThingType()->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase);
+        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 }
 
 void Creature::drawOutfit(const Rect& destRect, bool resize)
 {
+    int exactSize;
+    if(m_outfit.getCategory() == ThingCategoryCreature)
+        exactSize = getExactSize();
+    else
+        exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
+
     if(g_graphics.canUseFBO()) {
         const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
         outfitBuffer->resize(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
@@ -173,7 +181,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
 
         Rect srcRect;
         if(resize)
-            srcRect.resize(getExactSize(), getExactSize());
+            srcRect.resize(exactSize, exactSize);
         else
             srcRect.resize(2*Otc::TILE_PIXELS*0.75f, 2*Otc::TILE_PIXELS*0.75f);
         srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS - 1, 2*Otc::TILE_PIXELS - 1));
@@ -181,7 +189,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     } else {
         float scaleFactor;
         if(resize)
-            scaleFactor = destRect.width() / (float)getExactSize();
+            scaleFactor = destRect.width() / (float)exactSize;
         else
             scaleFactor = destRect.width() / (float)(2*Otc::TILE_PIXELS*0.75f);
         Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) - getDisplacement())*scaleFactor;
@@ -506,7 +514,7 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    if(!g_things.isValidDatId(outfit.getId(), outfit.getCategory()))
+    if(!g_things.isValidDatId(outfit.getCategory() == ThingCategoryCreature ? outfit.getId() : outfit.getAuxId(), outfit.getCategory()))
         return;
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
     m_outfit = outfit;
@@ -637,34 +645,31 @@ int Creature::getStepDuration()
 
 Point Creature::getDisplacement()
 {
-    Point displacement = Thing::getDisplacement();
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        displacement = Point(8, 8);
-    return displacement;
+        return Point(8, 8);
+    return Thing::getDisplacement();
 }
 
 int Creature::getDisplacementX()
 {
-    int displacementX = Thing::getDisplacementX();
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        displacementX = 8;
-    return displacementX;
+        return 8;
+    return Thing::getDisplacementX();
 }
 
 int Creature::getDisplacementY()
 {
-    int displacementY = Thing::getDisplacementY();
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        displacementY = 8;
-    return displacementY;
+        return 8;
+    return Thing::getDisplacementY();
 }
 
 const ThingTypePtr& Creature::getThingType()
 {
-    return g_things.getThingType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);
 }
 
 ThingType* Creature::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.rawGetThingType(m_outfit.getId(), ThingCategoryCreature);
 }

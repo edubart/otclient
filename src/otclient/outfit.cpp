@@ -25,7 +25,8 @@
 Outfit::Outfit()
 {
     m_category = ThingCategoryCreature;
-    m_id = 0;
+    m_id = 128;
+    m_auxId = 0;
     resetClothes();
 }
 
