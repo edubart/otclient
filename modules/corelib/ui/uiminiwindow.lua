@@ -368,5 +368,5 @@ end
 
 function UIMiniWindow:isResizeable()
   local resizeBorder = self:getChildById('bottomResizeBorder')
-  return resizeBorder:isVisible() and resizeBorder:isEnabled()
+  return resizeBorder:isExplicitlyVisible() and resizeBorder:isEnabled()
 end
