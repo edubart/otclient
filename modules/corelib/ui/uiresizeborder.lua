@@ -17,6 +17,12 @@ function UIResizeBorder:onSetup()
   end
 end
 
+function UIResizeBorder:onDestroy()
+  if self.hovering then
+    g_mouse.restoreCursor()
+  end
+end
+
 function UIResizeBorder:onHoverChange(hovered)
   if hovered then
     if g_mouse.isCursorChanged() or g_mouse.isPressed() then return end

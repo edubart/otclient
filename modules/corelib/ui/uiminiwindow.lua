@@ -37,6 +37,7 @@ function UIMiniWindow:minimize(dontSave)
   self:getChildById('miniwindowScrollBar'):hide()
   self:getChildById('bottomResizeBorder'):hide()
   self:getChildById('minimizeButton'):setOn(true)
+  self.maximizedHeight = self:getHeight()
   self:setHeight(self.minimizedHeight)
 
   if not dontSave then
@@ -52,7 +53,7 @@ function UIMiniWindow:maximize(dontSave)
   self:getChildById('miniwindowScrollBar'):show()
   self:getChildById('bottomResizeBorder'):show()
   self:getChildById('minimizeButton'):setOn(false)
-  self:setHeight(self:getSettings('height'))
+  self:setHeight(self:getSettings('height') or self.maximizedHeight)
 
   if not dontSave then
     self:setSettings({minimized = false})
@@ -103,8 +104,12 @@ function UIMiniWindow:setup()
 
       if selfSettings.minimized then
         self:minimize(true)
-      elseif selfSettings.height then
-        self:setHeight(selfSettings.height)
+      else
+        if selfSettings.height and self:isResizeable() then
+          self:setHeight(selfSettings.height)
+        elseif selfSettings.height and not self:isResizeable() then
+          self:eraseSettings({height = true})
+        end
       end
 
       if selfSettings.closed then
@@ -221,11 +226,14 @@ function UIMiniWindow:onFocusChange(focused)
 end
 
 function UIMiniWindow:onHeightChange(height)
-  self:setSettings({height = height})
+  if not self:isOn() then
+    self:setSettings({height = height})
+  end
   self:fitOnParent()
 end
 
 function UIMiniWindow:getSettings(name)
+  if not self.save then return nil end
   local settings = g_settings.getNode('MiniWindows')
   if settings then
     local selfSettings = settings[self:getId()]
@@ -251,6 +259,26 @@ function UIMiniWindow:setSettings(data)
 
   for key,value in pairs(data) do
     settings[id][key] = value
+  end
+
+  g_settings.setNode('MiniWindows', settings)
+end
+
+function UIMiniWindow:eraseSettings(data)
+  if not self.save then return end
+
+  local settings = g_settings.getNode('MiniWindows')
+  if not settings then
+    settings = {}
+  end
+
+  local id = self:getId()
+  if not settings[id] then
+    settings[id] = {}
+  end
+
+  for key,value in pairs(data) do
+    settings[id][key] = nil
   end
 
   g_settings.setNode('MiniWindows', settings)
