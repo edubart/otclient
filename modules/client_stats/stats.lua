@@ -1,5 +1,5 @@
-HOST = '189.55.105.125'
-PORT = 3000
+HOST = 'otclient.herokuapp.com'
+PORT = 80
 
 function init()
   connect(g_game, { onGameStart = onGameStart })
