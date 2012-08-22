@@ -193,4 +193,3 @@ std::string OTMLNode::emit()
 {
     return OTMLEmitter::emitNode(asOTMLNode(), 0);
 }
-

@@ -432,6 +432,8 @@ if(FRAMEWORK_NET)
         ${CMAKE_CURRENT_LIST_DIR}/net/outputmessage.h
         ${CMAKE_CURRENT_LIST_DIR}/net/protocol.cpp
         ${CMAKE_CURRENT_LIST_DIR}/net/protocol.h
+        ${CMAKE_CURRENT_LIST_DIR}/net/protocolhttp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/net/protocolhttp.h
         ${CMAKE_CURRENT_LIST_DIR}/net/server.cpp
         ${CMAKE_CURRENT_LIST_DIR}/net/server.h
     )

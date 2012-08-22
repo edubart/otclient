@@ -156,8 +156,26 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
     m_recvCallback = callback;
 
     asio::async_read(m_socket,
-                     asio::buffer(m_recvBuffer, bytes),
+                     asio::buffer(m_streamBuffer.prepare(bytes)),
                      std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, bytes));
+
+    m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
+    m_readTimer.async_wait(std::bind(&Connection::onTimeout, asConnection(), std::placeholders::_1));
+}
+
+void Connection::read_until(const std::string& what, const RecvCallback& callback)
+{
+    m_readTimer.cancel();
+
+    if(!m_connected)
+        return;
+
+    m_recvCallback = callback;
+
+    asio::async_read_until(m_socket,
+                           m_streamBuffer,
+                           what.c_str(),
+                           std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
     m_readTimer.async_wait(std::bind(&Connection::onTimeout, asConnection(), std::placeholders::_1));
@@ -172,7 +190,7 @@ void Connection::read_some(const RecvCallback& callback)
 
     m_recvCallback = callback;
 
-    m_socket.async_read_some(asio::buffer(m_recvBuffer, RECV_BUFFER_SIZE),
+    m_socket.async_read_some(asio::buffer(m_streamBuffer.prepare(RECV_BUFFER_SIZE)),
                              std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.expires_from_now(boost::posix_time::seconds(READ_TIMEOUT));
@@ -217,10 +235,15 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
         return;
 
     if(!error) {
-        if(m_recvCallback)
-            m_recvCallback(m_recvBuffer, recvSize);
-    } else
+        if(m_recvCallback) {
+            const char* header = boost::asio::buffer_cast<const char*>(m_streamBuffer.data());
+            m_recvCallback((uint8*)header, recvSize);
+        }
+    }
+    else
         handleError(error);
+
+    m_streamBuffer.consume(recvSize);
 }
 
 void Connection::onTimeout(const boost::system::error_code& error)

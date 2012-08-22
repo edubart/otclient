@@ -20,61 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef PROTOCOLHTTP_H
+#define PROTOCOLHTTP_H
 
 #include "declarations.h"
-#include "inputmessage.h"
-#include "outputmessage.h"
 #include "connection.h"
 
 #include <framework/luaengine/luaobject.h>
 
 // @bindclass
-class Protocol : public LuaObject
+class ProtocolHttp : public LuaObject
 {
 public:
-    Protocol();
-    virtual ~Protocol();
+    ProtocolHttp();
+    virtual ~ProtocolHttp();
 
     void connect(const std::string& host, uint16 port);
     void disconnect();
 
-    bool isConnected();
-    bool isConnecting();
-    ConnectionPtr getConnection() { return m_connection; }
-    void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
+    void send(const std::string &message);
+    void recv();
 
-    void generateXteaKey();
-    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d);
-    std::vector<int> getXteaKey();
-    void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
-
-    void enableChecksum() { m_checksumEnabled = true; }
-
-    virtual void send(const OutputMessagePtr& outputMessage);
-    virtual void recv();
-
-    ProtocolPtr asProtocol() { return static_self_cast<Protocol>(); }
+    ProtocolHttpPtr asProtocolHttp() { return static_self_cast<ProtocolHttp>(); }
 
 protected:
-    virtual void onConnect();
-    virtual void onRecv(const InputMessagePtr& inputMessage);
-    virtual void onError(const boost::system::error_code& err);
-
-    uint32 m_xteaKey[4];
+    void onConnect();
+    void onRecv(uint8* buffer, uint16 size);
+    void onError(const boost::system::error_code& err);
 
 private:
-    void internalRecvHeader(uint8* buffer, uint16 size);
-    void internalRecvData(uint8* buffer, uint16 size);
-
-    bool xteaDecrypt(const InputMessagePtr& inputMessage);
-    void xteaEncrypt(const OutputMessagePtr& outputMessage);
-
-    bool m_checksumEnabled;
-    bool m_xteaEncryptionEnabled;
     ConnectionPtr m_connection;
-    InputMessagePtr m_inputMessage;
 };
 
 #endif

@@ -22,7 +22,6 @@
 
 #include <framework/core/application.h>
 #include <framework/luaengine/luainterface.h>
-#include <framework/net/protocol.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
 #include <framework/otml/otml.h>
@@ -45,6 +44,8 @@
 
 #ifdef FW_NET
 #include <framework/net/server.h>
+#include <framework/net/protocol.h>
+#include <framework/net/protocolhttp.h>
 #endif
 
 #ifdef FW_SQL
@@ -682,6 +683,14 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Protocol>("enableXteaEncryption", &Protocol::enableXteaEncryption);
     g_lua.bindClassMemberFunction<Protocol>("enableChecksum", &Protocol::enableChecksum);
 
+    // ProtocolHttp
+    g_lua.registerClass<ProtocolHttp>();
+    g_lua.bindClassStaticFunction<ProtocolHttp>("create", []{ return ProtocolHttpPtr(new ProtocolHttp); });
+    g_lua.bindClassMemberFunction<ProtocolHttp>("connect", &ProtocolHttp::connect);
+    g_lua.bindClassMemberFunction<ProtocolHttp>("disconnect", &ProtocolHttp::disconnect);
+    g_lua.bindClassMemberFunction<ProtocolHttp>("send", &ProtocolHttp::send);
+    g_lua.bindClassMemberFunction<ProtocolHttp>("recv", &ProtocolHttp::recv);
+
     // InputMessage
     g_lua.registerClass<InputMessage>();
     g_lua.bindClassStaticFunction<InputMessage>("create", []{ return InputMessagePtr(new InputMessage); });
@@ -744,7 +753,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<DBResult>("next", &DBResult::next);
 
     // Mysql
-    g_lua.registerClass<DatabaseMySQL>();
+    g_lua.registerClass<DatabaseMySQL, Database>();
     g_lua.bindClassStaticFunction<DatabaseMySQL>("create", []{ return DatabaseMySQLPtr(new DatabaseMySQL); });
     g_lua.bindClassMemberFunction<DatabaseMySQL>("connect", &DatabaseMySQL::connect);
     g_lua.bindClassMemberFunction<DatabaseMySQL>("executeQuery", &DatabaseMySQL::executeQuery);

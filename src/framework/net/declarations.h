@@ -32,12 +32,14 @@ class InputMessage;
 class OutputMessage;
 class Connection;
 class Protocol;
+class ProtocolHttp;
 class Server;
 
 typedef stdext::shared_object_ptr<InputMessage> InputMessagePtr;
 typedef stdext::shared_object_ptr<OutputMessage> OutputMessagePtr;
 typedef stdext::shared_object_ptr<Connection> ConnectionPtr;
 typedef stdext::shared_object_ptr<Protocol> ProtocolPtr;
+typedef stdext::shared_object_ptr<ProtocolHttp> ProtocolHttpPtr;
 typedef stdext::shared_object_ptr<Server> ServerPtr;
 
 #endif

@@ -16,6 +16,7 @@ Module
     - client_terminal
     - client_modulemanager
     - client_entergame
+    - client_stats
 
   @onLoad: |
     dofile 'client'

@@ -236,6 +236,14 @@ function toboolean(str)
   return false
 end
 
+function fromboolean(boolean)
+  if boolean then
+    return 'true'
+  else
+    return 'false'
+  end
+end
+
 function signalcall(param, ...)
   if type(param) == 'function' then
     local status, ret = pcall(param, ...)

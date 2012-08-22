@@ -54,6 +54,7 @@ public:
 
     void write(uint8* buffer, uint16 size);
     void read(uint16 bytes, const RecvCallback& callback);
+    void read_until(const std::string& what, const RecvCallback& callback);
     void read_some(const RecvCallback& callback);
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }
@@ -81,7 +82,7 @@ protected:
     asio::ip::tcp::socket m_socket;
 
     uint8 m_sendBuffer[SEND_BUFFER_SIZE];
-    uint8 m_recvBuffer[RECV_BUFFER_SIZE];
+    asio::streambuf m_streamBuffer;
     bool m_connected;
     bool m_connecting;
     boost::system::error_code m_error;
