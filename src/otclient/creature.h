@@ -85,6 +85,9 @@ public:
     Point getDrawOffset();
     int getStepDuration();
     Point getWalkOffset() { return m_walkOffset; }
+    Position getLastStepFromPosition() { return m_lastStepFromPosition; }
+    Position getLastStepToPosition() { return m_lastStepToPosition; }
+    float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
     virtual Point getDisplacement();
     virtual int getDisplacementX();
     virtual int getDisplacementY();
@@ -154,7 +157,8 @@ protected:
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;
     Otc::Direction m_lastStepDirection;
-    Position m_lastStepPosition;
+    Position m_lastStepFromPosition;
+    Position m_lastStepToPosition;
     Position m_oldPosition;
 };
 

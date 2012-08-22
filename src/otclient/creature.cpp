@@ -265,7 +265,8 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
 
     // get walk direction
     m_lastStepDirection = oldPos.getDirectionFromPosition(newPos);
-    m_lastStepPosition = newPos;
+    m_lastStepFromPosition = oldPos;
+    m_lastStepToPosition = newPos;
 
     // set current walking direction
     setDirection(m_lastStepDirection);
@@ -627,7 +628,7 @@ int Creature::getStepDuration()
 {
     int groundSpeed = 0;
 
-    Position tilePos = m_lastStepPosition;
+    Position tilePos = m_lastStepToPosition;
     if(!tilePos.isValid())
         tilePos = m_position;
     const TilePtr& tile = g_map.getTile(tilePos);

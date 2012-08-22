@@ -371,6 +371,26 @@ CreaturePtr Tile::getTopCreature()
     }
     if(!creature && !m_walkingCreatures.empty())
         creature = m_walkingCreatures.back();
+
+    // check for walking creatures in tiles around
+    if(!creature) {
+        for(int xi=-1;xi<=1;++xi) {
+            for(int yi=-1;yi<=1;++yi) {
+                Position pos = m_position.translated(xi, yi);
+                if(pos == m_position)
+                    continue;
+
+                const TilePtr& tile = g_map.getTile(pos);
+                if(tile) {
+                    for(const CreaturePtr& c : tile->getCreatures()) {
+                        if(c->isWalking() && c->getLastStepFromPosition() == m_position && c->getStepProgress() < 0.75f) {
+                            creature = c;
+                        }
+                    }
+                }
+            }
+        }
+    }
     return creature;
 }
 
