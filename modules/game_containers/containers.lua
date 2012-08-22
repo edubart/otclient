@@ -22,7 +22,7 @@ end
 
 function reloadContainers()
   clean()
-  for containerid,container in pairs(g_game.getContainers()) do
+  for _,container in pairs(g_game.getContainers()) do
     onContainerOpen(container)
   end
 end
@@ -91,7 +91,7 @@ function onContainerOpen(container, previousContainer)
 
   local layout = containerPanel:getLayout()
   local cellSize = layout:getCellSize()
-  containerWindow:setContentMinimumHeight(cellSize.height*1)
+  containerWindow:setContentMinimumHeight(cellSize.height)
   containerWindow:setContentMaximumHeight(cellSize.height*layout:getNumLines())
 
   if not previousContainer then

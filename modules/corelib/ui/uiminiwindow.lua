@@ -314,6 +314,10 @@ function UIMiniWindow:disableResize()
   self:getChildById('bottomResizeBorder'):disable()
 end
 
+function UIMiniWindow:enableResize()
+  self:getChildById('bottomResizeBorder'):enable()
+end
+
 function UIMiniWindow:fitOnParent()
   local parent = self:getParent()
   if self:isVisible() and parent and parent:getClassName() == 'UIMiniWindowContainer' then

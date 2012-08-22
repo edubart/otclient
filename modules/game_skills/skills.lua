@@ -268,7 +268,7 @@ function onStaminaChange(localPlayer, stamina)
   if minutes < 10 then
     minutes = '0' .. minutes
   end
-  local percent = 100 * stamina / (42 * 60) -- max is 42 hours
+  local percent = math.floor(100 * stamina / (42 * 60)) -- max is 42 hours
 
   setSkillValue('stamina', hours .. ":" .. minutes)
   setSkillPercent('stamina', percent, tr('You have %s percent', percent))
@@ -293,13 +293,13 @@ function onRegenerationChange(localPlayer, regenerationTime)
   if not g_game.getFeature(GamePlayerRegenerationTime) or regenerationTime < 0 then
     return
   end
-  local hours = math.floor(regenerationTime / 60)
-  local minutes = regenerationTime % 60
-  if minutes < 10 then
-    minutes = '0' .. minutes
+  local minutes = math.floor(regenerationTime / 60)
+  local seconds = regenerationTime % 60
+  if seconds < 10 then
+    seconds = '0' .. seconds
   end
 
-  setSkillValue('regenerationTime', hours .. ":" .. minutes)
+  setSkillValue('regenerationTime', minutes .. ":" .. seconds)
   checkAlert('regenerationTime', regenerationTime, false, 300)
 end
 

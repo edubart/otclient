@@ -325,11 +325,15 @@ void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector
     {
         virtualMountCreature = CreaturePtr(new Creature);
         virtualMountCreature->setDirection(Otc::South);
-        if(currentOufit.getMount() > 0) {
-            Outfit mountOutfit;
-            mountOutfit.setId(currentOufit.getMount());
-            virtualMountCreature->setOutfit(mountOutfit);
-        }
+
+        Outfit mountOutfit;
+        mountOutfit.setId(0);
+
+        int mount = currentOufit.getMount();
+        if(mount > 0)
+            mountOutfit.setId(mount);
+
+        virtualMountCreature->setOutfit(mountOutfit);
     }
 
     g_lua.callGlobalField("g_game", "onOpenOutfitWindow", virtualOutfitCreature, outfitList, virtualMountCreature, mountList);

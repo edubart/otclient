@@ -19,8 +19,6 @@
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
         - Display out of trend market offers based on their previous statistics (like cipsoft does)
-
-      * Make compatible with cipsoft 9.61 (has the protocol changed? creating offer not working)
   ]]
 
 Market = {}
@@ -1005,8 +1003,18 @@ function Market.createNewOffer()
   local amount = amountEdit:getValue()
   local anonymous = anonymous:isChecked() and 1 or 0
 
-  -- error check offer
+  -- error checking
   local errorMsg = ''
+  if type == MarketAction.Buy then
+    if information.balance < ((piecePrice * amount) + fee) then
+      errorMsg = errorMsg..'Not enough balance to create this offer.\n'
+    end
+  elseif type == MarketAction.Sell then
+    if Market.depotContains(spriteId) < amount then
+      errorMsg = errorMsg..'Not enough items in your depot to create this offer.\n'
+    end
+  end
+
   if piecePrice > piecePriceEdit.maximum then
     errorMsg = errorMsg..'Price is too high.\n'
   elseif piecePrice < piecePriceEdit.minimum then
@@ -1017,9 +1025,10 @@ function Market.createNewOffer()
   elseif amount < amountEdit.minimum then
     errorMsg = errorMsg..'Amount is too low.\n'
   end
+
   local timeCheck = os.time() - lastCreatedOffer
   if timeCheck < offerExhaust[type] then
-    local waitTime = math.ceil((offerExhaust[type] - timeCheck))
+    local waitTime = math.ceil(offerExhaust[type] - timeCheck)
     errorMsg = errorMsg..'You must wait '.. waitTime ..' seconds before creating a new offer.\n'
   end
 

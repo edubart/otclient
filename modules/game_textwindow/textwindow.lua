@@ -67,6 +67,7 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
     if writeable then
       g_game.editText(id, textEdit:getText())
     end
+    textEdit = nil
     destroy()
   end
 

@@ -521,7 +521,7 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit.setAuxId(outfit.getAuxId());
         m_outfit.setCategory(outfit.getCategory());
     } else {
-        if(!g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
+        if(outfit.getId() > 0 && !g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
             return;
         m_outfit = outfit;
     }

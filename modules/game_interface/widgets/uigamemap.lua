@@ -56,15 +56,13 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     self.cancelNextRelease = false
     return true
   end
-
-  local tile = self:getTile(mousePosition)
-
-  local localPlayerPos = g_game.getLocalPlayer():getPosition()
+  
   local autoWalkPos = self:getPosition(mousePosition)
-
+  
   -- happens when clicking outside of map boundaries
   if not autoWalkPos then return false end
-
+  
+  local localPlayerPos = g_game.getLocalPlayer():getPosition()
   if autoWalkPos.z ~= localPlayerPos.z then
     local dz = autoWalkPos.z - localPlayerPos.z
     autoWalkPos.x = autoWalkPos.x + dz
@@ -77,6 +75,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   local creatureThing
   local multiUseThing
 
+  local tile = self:getTile(mousePosition)
   if tile then
     lookThing = tile:getTopLookThing()
     useThing = tile:getTopUseThing()
