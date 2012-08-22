@@ -428,7 +428,7 @@ int Map::getLastAwareFloor()
         return Otc::SEA_FLOOR;
 }
 
-std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps)
+std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps, int flags)
 {
     // pathfinding using A* search algorithm
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
@@ -455,20 +455,20 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
 
-    result = Otc::PATHFIND_OK;
+    result = Otc::PATHFIND_RESULT_NO_WAY;
 
     if(startPos == goalPos) {
-        result = Otc::PATHFIND_SAME_POSITION;
+        result = Otc::PATHFIND_RESULT_SAME_POSITION;
         return ret;
     }
 
     if(startPos.z != goalPos.z) {
-        result = Otc::PATHFIND_IMPOSSIBLE;
+        result = Otc::PATHFIND_RESULT_IMPOSSIBLE;
         return ret;
     }
 
     if(startPos.distance(goalPos) > maxSteps) {
-        result = Otc::PATHFIND_TOO_FAR;
+        result = Otc::PATHFIND_RESULT_TOO_FAR;
         return ret;
     }
 
@@ -479,10 +479,18 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     currentNode->pos = startPos;
     nodes[startPos] = currentNode;
     Node *foundNode = nullptr;
-    while(currentNode && currentNode->steps < maxSteps) {
+    while(currentNode) {
+        // too far
+        if(currentNode->steps >= maxSteps) {
+            result = Otc::PATHFIND_RESULT_TOO_FAR;
+            break;
+        }
+
+        // path found
         if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost))
             foundNode = currentNode;
 
+        // cost too high
         if(foundNode && currentNode->totalCost >= foundNode->cost)
             break;
 
@@ -493,8 +501,19 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
                 Position neighborPos = currentNode->pos.translated(i, j);
                 const TilePtr& tile = getTile(neighborPos);
-                if(!tile || (!tile->isPathable() && neighborPos != goalPos) || (!tile->isWalkable() && neighborPos == goalPos))
-                    continue;
+
+                if(neighborPos != goalPos) {
+                    if(!(flags & Otc::PATHFIND_ALLOW_NULLTILES) && !tile)
+                        continue;
+                    if(tile) {
+                        if(!(flags & Otc::PATHFIND_ALLOW_CREATURES) && tile->hasCreature())
+                            continue;
+                        if(!(flags & Otc::PATHFIND_ALLOW_NONPATHABLE) && !tile->isPathable())
+                            continue;
+                        if(!(flags & Otc::PATHFIND_ALLOW_NONWALKABLE) && !tile->isWalkable())
+                            continue;
+                    }
+                }
 
                 float walkFactor;
                 Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
@@ -503,7 +522,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 else
                     walkFactor = 1.0f;
 
-                float cost = currentNode->cost + (tile->getGroundSpeed() * walkFactor) / 100.0f;
+                int groundSpeed = tile ? tile->getGroundSpeed() : 100;
+                float cost = currentNode->cost + (groundSpeed * walkFactor) / 100.0f;
 
                 Node *neighborNode;
                 if(nodes.find(neighborPos) == nodes.end()) {
@@ -544,8 +564,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
         dirs.pop_back();
         std::reverse(dirs.begin(), dirs.end());
-    } else
-        result = Otc::PATHFIND_NO_WAY;
+        result = Otc::PATHFIND_RESULT_OK;
+    }
 
     for(auto it : nodes)
         delete it.second;

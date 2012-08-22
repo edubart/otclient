@@ -469,11 +469,8 @@ bool Tile::changesFloor()
 
 bool Tile::isPathable()
 {
-    if(!isWalkable())
-        return false;
-
     for(const ThingPtr& thing : m_things) {
-        if(thing->isNotPathable() || thing->isCreature())
+        if(thing->isNotPathable())
             return false;
     }
 

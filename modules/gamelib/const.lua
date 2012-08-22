@@ -156,4 +156,19 @@ OsTypes = {
   OtclientMac = 12
 }
 
+PathFindResults = {
+    Ok = 0,
+    Position = 1,
+    Impossipble = 2,
+    TooFar = 3,
+    NoWay = 4
+}
+
+PathFindFlags = {
+    AllowNullTiles = 1,
+    AllowCreatures = 2,
+    AllowNonPathable = 4,
+    AllowNonWalkable = 8
+}
+
 -- @}

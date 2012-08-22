@@ -341,11 +341,18 @@ namespace Otc
     };
 
     enum PathFindResult {
-        PATHFIND_OK = 0,
-        PATHFIND_SAME_POSITION,
-        PATHFIND_IMPOSSIBLE,
-        PATHFIND_TOO_FAR,
-        PATHFIND_NO_WAY
+        PATHFIND_RESULT_OK = 0,
+        PATHFIND_RESULT_SAME_POSITION,
+        PATHFIND_RESULT_IMPOSSIBLE,
+        PATHFIND_RESULT_TOO_FAR,
+        PATHFIND_RESULT_NO_WAY
+    };
+
+    enum PathFindFlag {
+        PATHFIND_ALLOW_NULLTILES = 1,
+        PATHFIND_ALLOW_CREATURES = 2,
+        PATHFIND_ALLOW_NONPATHABLE = 4,
+        PATHFIND_ALLOW_NONWALKABLE = 8
     };
 }
 
