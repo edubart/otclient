@@ -811,11 +811,12 @@ end
 
 function Market.close(notify)
   if notify == nil then notify = true end
-  marketWindow:hide()
-  marketWindow:unlock()
-  Market.clearSelectedItem()
-  if notify then
-    MarketProtocol.sendMarketLeave()
+  if not marketWindow:isHidden() then
+    marketWindow:hide()
+    marketWindow:unlock()
+    if notify then
+      MarketProtocol.sendMarketLeave()
+    end
   end
 end
 
