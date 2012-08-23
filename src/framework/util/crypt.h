@@ -37,7 +37,7 @@ public:
     std::string base64Encode(const std::string& decoded_string);
     std::string base64Decode(const std::string& encoded_string);
     std::string xorCrypt(const std::string& buffer, const std::string& key);
-    std::string genUUIDKey();
+    std::string genUUID();
     std::string encrypt(const std::string& decrypted_string);
     std::string decrypt(const std::string& encrypted_string);
     std::string md5Encode(const std::string& decoded_string, bool upperCase);
@@ -52,6 +52,7 @@ public:
     bool rsaDecrypt(unsigned char *msg, int size);
 
 private:
+    std::string genUUIDKey();
     RSA *m_rsa;
 };
 

@@ -88,6 +88,7 @@ void Application::registerLuaFunctions()
 
     // Crypt
     g_lua.registerSingletonClass("g_crypt");
+    g_lua.bindSingletonFunction("g_crypt", "genUUID", &Crypt::genUUID, &g_crypt);
     g_lua.bindSingletonFunction("g_crypt", "encrypt", &Crypt::encrypt, &g_crypt);
     g_lua.bindSingletonFunction("g_crypt", "decrypt", &Crypt::decrypt, &g_crypt);
     g_lua.bindSingletonFunction("g_crypt", "sha1Encode", &Crypt::sha1Encode, &g_crypt);

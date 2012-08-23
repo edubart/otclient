@@ -25,6 +25,9 @@
 #include <framework/core/logger.h>
 
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 #include <boost/functional/hash.hpp>
 
 #include <openssl/rsa.h>
@@ -145,6 +148,13 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
             j = 0;
     }
     return out;
+}
+
+std::string Crypt::genUUID()
+{
+    boost::uuids::random_generator gen;
+    boost::uuids::uuid u = gen();
+    return boost::uuids::to_string(u);
 }
 
 std::string Crypt::genUUIDKey()
