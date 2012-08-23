@@ -75,7 +75,7 @@ function onConnect(protocol)
   post = post .. '&display_height='    .. g_window.getDisplayHeight()
 
   local message = ''
-  message = message .. "POST /report HTTP/1.0\r\n"
+  message = message .. "POST /report HTTP/1.1\r\n"
   message = message .. "Host: " .. HOST .. "\r\n"
   message = message .. "Accept: */*\r\n"
   message = message .. "Connection: close\r\n"

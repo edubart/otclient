@@ -235,8 +235,13 @@ void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channe
     }
 
     GLenum internalFormat = GL_RGBA;
+
+#ifdef OPENGL_ES
+    //TODO
+#else
     if(compress)
         internalFormat = GL_COMPRESSED_RGBA;
+#endif
 
     glTexImage2D(GL_TEXTURE_2D, level, internalFormat, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 }
