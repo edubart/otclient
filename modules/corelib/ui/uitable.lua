@@ -31,8 +31,11 @@ function UITable:onDestroy()
   self.columns = {}
   self.headerRow = {}
   self.selectedRow = nil
-  self.dataSpace:destroyChildren()
-  self.dataSpace = nil
+
+  if self.dataSpace then
+    self.dataSpace:destroyChildren()
+    self.dataSpace = nil
+  end
 end
 
 function UITable:onStyleApply(styleName, styleNode)

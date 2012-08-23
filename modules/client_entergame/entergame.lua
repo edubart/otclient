@@ -105,7 +105,7 @@ function EnterGame.firstShow()
   local host = g_settings.get('host')
   local autologin = g_settings.getBoolean('autologin')
   if #host > 0 and #password > 0 and #account > 0 and autologin then
-    addEvent(EnterGame.doLogin)
+    autoLogiEvent = addEvent(EnterGame.doLogin)
   end
 end
 
@@ -148,6 +148,7 @@ function EnterGame.clearAccountFields()
 end
 
 function EnterGame.doLogin()
+  autoLogiEvent = nil
   G.account = enterGame:getChildById('accountNameTextEdit'):getText()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
@@ -190,6 +191,26 @@ end
 
 function EnterGame.displayMotd()
   displayInfoBox(tr('Message of the day'), G.motdMessage)
+end
+
+function EnterGame.setDefaultServer(host, port, protocol)
+  local hostTextEdit = enterGame:getChildById('serverHostTextEdit')
+  local portTextEdit = enterGame:getChildById('serverPortTextEdit')
+  local protocolLabel = enterGame:getChildById('protocolLabel')
+  local accountTextEdit = enterGame:getChildById('accountNameTextEdit')
+  local passwordTextEdit = enterGame:getChildById('accountPasswordTextEdit')
+
+  if hostTextEdit:getText() ~= host then
+    hostTextEdit:setText(host)
+    portTextEdit:setText(port)
+    protocolBox:setCurrentOption(protocol)
+    accountTextEdit:setText('')
+    passwordTextEdit:setText('')
+
+    if autoLogiEvent then
+      autoLogiEvent:cancel()
+    end
+  end
 end
 
 function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeight)

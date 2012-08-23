@@ -70,8 +70,12 @@ end
 function Locales.terminate()
   installedLocales = nil
   currentLocale = nil
-  localeComboBox:destroy()
-  localeComboBox = nil
+
+  if localeComboBox then
+    localeComboBox:destroy()
+    localeComboBox = nil
+  end
+
   Extended.unregister(ExtendedLocales)
   disconnect(g_game, { onGameStart = onGameStart })
 end
