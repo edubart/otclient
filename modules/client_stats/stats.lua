@@ -1,6 +1,9 @@
 HOST = 'otclient.herokuapp.com'
 PORT = 80
 UUID = nil
+REPORT_DELAY = 60
+
+sendReportEvent = nil
 
 --HOST = 'localhost'
 --PORT = 3000
@@ -14,32 +17,31 @@ function initUUID()
 end
 
 function init()
-  connect(g_game, { onGameStart = onGameStart })
+  connect(g_game, { onGameStart = onGameStart,
+                    onGameEnd = onGameEnd })
 
   initUUID()
-
-  protocolHttp = ProtocolHttp.create()
-  connect(protocolHttp, { onConnect = onConnect,
-    onRecv = onRecv,
-    onError = onError })
 end
 
 function terminate()
-  disconnect(g_game, { onGameStart = onGameStart })
-
-  disconnect(protocolHttp, { onConnect = onConnect,
-    onRecv = onRecv,
-    onError = onError })
-  protocolHttp = nil
+  disconnect(g_game, { onGameStart = onGameStart,
+                       onGameEnd = onGameEnd })
 end
 
 function sendReport()
+  local protocolHttp = ProtocolHttp.create()
+  protocolHttp.onConnect = onConnect
+  protocolHttp.onRecv = onRecv
+  protocolHttp.onError = onError
   protocolHttp:connect(HOST, PORT)
 end
 
--- events
 function onGameStart()
-  scheduleEvent(sendReport, 5*1000)
+  sendReportEvent = cycleEvent(sendReport, REPORT_DELAY*1000)
+end
+
+function onGameEnd()
+  sendReportEvent:cancel()
 end
 
 function onConnect(protocol)
@@ -50,6 +52,7 @@ function onConnect(protocol)
 
   local post = ''
   post = post .. 'uid='                .. UUID
+  post = post .. '&report_delay'       .. REPORT_DELAY
   post = post .. '&os'                 .. g_app.getOs()
   post = post .. '&graphics_vendor='   .. g_graphics.getVendor()
   post = post .. '&graphics_renderer=' .. g_graphics.getRenderer()
