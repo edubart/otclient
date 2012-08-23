@@ -42,7 +42,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
         while(!msg->eof()) {
             opcode = msg->getU8();
 
-            if(!m_gameInitialized && opcode >= Proto::GameServerFirstGameOpcode) {
+            // must be > so extended will be enabled before GameStart.
+            if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode) {
                 g_game.processGameStart();
                 m_gameInitialized = true;
             }
