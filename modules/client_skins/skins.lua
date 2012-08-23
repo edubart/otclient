@@ -16,8 +16,7 @@ local function onSkinComboBoxOptionChange(self, optionText, optionData)
 end
 
 local function getSkinPath(name)
-  local current = getfsrcpath()
-  return g_resources.getRealDir(current) .. current .. '/skins/' .. string.lower(name)
+  return getfsrcpath() .. '/skins/' .. string.lower(name)
 end
 
 -- public functions
@@ -27,7 +26,7 @@ function Skins.init()
   Skins.installSkins('skins')
 
   if installedSkins[defaultSkinName] then
-    g_resources.addSearchPath(getSkinPath(defaultSkinName), 0)
+    g_resources.addSearchPath(getSkinPath(defaultSkinName), true)
   end
 
   local userSkinName = g_settings.get('skin', 'false')

@@ -100,12 +100,27 @@ bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
 
 bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 {
-    if(!PHYSFS_addToSearchPath(path.c_str(), pushFront ? 0 : 1))
-        return false;
+    std::string savePath = path;
+    if(!PHYSFS_addToSearchPath(path.c_str(), pushFront ? 0 : 1)) {
+        bool found = false;
+        for(std::string searchPath : m_searchPaths) {
+            std::string newPath = searchPath + path;
+            if(PHYSFS_addToSearchPath(newPath.c_str(), pushFront ? 0 : 1)) {
+                savePath = newPath;
+                found = true;
+                break;
+            }
+        }
+
+        if(!found) {
+            g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getLastError()));
+            return false;
+        }
+    }
     if(pushFront)
-        m_searchPaths.push_front(path);
+        m_searchPaths.push_front(savePath);
     else
-        m_searchPaths.push_back(path);
+        m_searchPaths.push_back(savePath);
     m_hasSearchPath = true;
     return true;
 }
