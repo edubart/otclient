@@ -35,7 +35,7 @@ function refresh()
   end
 
   vipWindow:setContentMinimumHeight(38)
-  vipWindow:setContentMaximumHeight(256)
+  --vipWindow:setContentMaximumHeight(256)
 end
 
 function clear()

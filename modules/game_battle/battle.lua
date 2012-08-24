@@ -50,7 +50,7 @@ function init()
   mouseWidget:setFocusable(false)
 
   battleWindow:setContentMinimumHeight(80)
-  battleWindow:setContentMaximumHeight(384)
+  --battleWindow:setContentMaximumHeight(384)
 
   connect(Creature, { onSkullChange = checkCreatureSkull,
                       onEmblemChange = checkCreatureEmblem,
