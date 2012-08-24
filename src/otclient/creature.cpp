@@ -658,6 +658,8 @@ Point Creature::getDisplacement()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
         return Point(8, 8);
+    else if(m_outfit.getCategory() == ThingCategoryItem)
+        return Point(0, 0);
     return Thing::getDisplacement();
 }
 
@@ -665,6 +667,8 @@ int Creature::getDisplacementX()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
         return 8;
+    else if(m_outfit.getCategory() == ThingCategoryItem)
+        return 0;
     return Thing::getDisplacementX();
 }
 
@@ -672,6 +676,8 @@ int Creature::getDisplacementY()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
         return 8;
+    else if(m_outfit.getCategory() == ThingCategoryItem)
+        return 0;
     return Thing::getDisplacementY();
 }
 
