@@ -236,15 +236,18 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter->setColor(Color::white);
-        g_painter->drawTexturedRect(Rect(point.x + 12, point.y + 5, m_skullTexture->getSize()), m_skullTexture);
+        Rect skullRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_skullTexture->getSize());
+        g_painter->drawTexturedRect(skullRect, m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
         g_painter->setColor(Color::white);
-        g_painter->drawTexturedRect(Rect(point.x, point.y + 5, m_shieldTexture->getSize()), m_shieldTexture);
+        Rect shieldRect = Rect(backgroundRect.x() + 13.5, backgroundRect.y() + 5, m_shieldTexture->getSize());
+        g_painter->drawTexturedRect(shieldRect, m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
         g_painter->setColor(Color::white);
-        g_painter->drawTexturedRect(Rect(point.x + 12, point.y + 16, m_emblemTexture->getSize()), m_emblemTexture);
+        Rect emblemRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 16, m_emblemTexture->getSize());
+        g_painter->drawTexturedRect(emblemRect, m_emblemTexture);
     }
 }
 

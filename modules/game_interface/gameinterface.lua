@@ -351,11 +351,10 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
       if useThing:isContainer() then
         if useThing:getParentContainer() then
           g_game.open(useThing, useThing:getParentContainer())
-          return true
         else
           g_game.open(useThing)
-        return true
         end
+        return true
       elseif useThing:isMultiUse() then
         startUseWith(useThing)
         return true

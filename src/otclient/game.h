@@ -268,6 +268,7 @@ public:
     std::vector<uint8> getGMActions() { return m_gmActions; }
 
     std::string formatCreatureName(const std::string &name);
+    int findEmptyContainerId();
 
 protected:
     void enableBotCall() { m_denyBotCall = false; }

@@ -97,7 +97,7 @@ function UIMiniWindow:setup()
           elseif selfSettings.position then
             self:setParent(parent)
             self:setPosition(topoint(selfSettings.position))
-            self:bindRectToParent()
+            addEvent(function() self:bindRectToParent() end)
           end
         end
       end

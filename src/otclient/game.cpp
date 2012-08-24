@@ -663,7 +663,9 @@ void Game::use(const ThingPtr& thing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackpos(), 0);
+    // some itens, e.g. parcel, are not set as containers but they are.
+    // always try to use these items in free container slots.
+    m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackpos(), findEmptyContainerId());
 }
 
 void Game::useInventoryItem(int itemId)
@@ -710,13 +712,10 @@ void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
         return;
 
     int id = 0;
-    if(!previousContainer) {
-        // find a free container id
-        while(m_containers[id] != nullptr)
-            id++;
-    } else {
+    if(!previousContainer)
+        id = findEmptyContainerId();
+    else
         id = previousContainer->getId();
-    }
 
     m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), id);
 }
@@ -1214,4 +1213,12 @@ std::string Game::formatCreatureName(const std::string& name)
     if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0)
         formatedName[0] = stdext::upchar(formatedName[0]);
     return formatedName;
+}
+
+int Game::findEmptyContainerId()
+{
+    int id = 0;
+    while(m_containers[id] != nullptr)
+        id++;
+    return id;
 }
