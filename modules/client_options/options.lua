@@ -52,8 +52,8 @@ local function setupGraphicsEngines()
   end
 
   if not g_graphics.canCacheBackbuffer() then
-    graphicsPanel:getChildById('foregroundFrameRateScrollBar'):disable()
-    graphicsPanel:getChildById('foregroundFrameRateLimitLabel'):disable()
+    graphicsPanel:getChildById('foregroundFrameRate'):disable()
+    graphicsPanel:getChildById('foregroundFrameRateLabel'):disable()
   end
 end
 

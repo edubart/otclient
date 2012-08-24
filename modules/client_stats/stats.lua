@@ -5,9 +5,6 @@ REPORT_DELAY = 60
 
 sendReportEvent = nil
 
---HOST = 'localhost'
---PORT = 3000
-
 function initUUID()
   UUID = g_settings.getString('report-uuid')
   if not UUID or #UUID ~= 36 then
@@ -52,8 +49,8 @@ function onConnect(protocol)
 
   local post = ''
   post = post .. 'uid='                .. UUID
-  post = post .. '&report_delay'       .. REPORT_DELAY
-  post = post .. '&os'                 .. g_app.getOs()
+  post = post .. '&report_delay='      .. REPORT_DELAY
+  post = post .. '&os='                .. g_app.getOs()
   post = post .. '&graphics_vendor='   .. g_graphics.getVendor()
   post = post .. '&graphics_renderer=' .. g_graphics.getRenderer()
   post = post .. '&graphics_version='  .. g_graphics.getVersion()
@@ -64,6 +61,7 @@ function onConnect(protocol)
   post = post .. '&window_width='      .. g_window.getWidth()
   post = post .. '&window_height='     .. g_window.getHeight()
   post = post .. '&player_name='       .. g_game.getLocalPlayer():getName()
+  post = post .. '&world_name='        .. g_game.getWorldName()
   post = post .. '&otserv_host='       .. G.host
   post = post .. '&otserv_port='       .. G.port
   post = post .. '&otserv_protocol='   .. g_game.getClientVersion()
