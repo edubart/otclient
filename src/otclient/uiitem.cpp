@@ -55,7 +55,10 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
         float scaleFactor = std::min(drawRect.width() / (float)exactSize, drawRect.height() / (float)exactSize);
         dest += (m_item->getDisplacement() - Point(32,32)) * scaleFactor;
 
-        g_painter->setColor(Color::white);
+        if(isEnabled())
+            g_painter->setColor(Color::white);
+        else
+            g_painter->setColor(Color(100, 100, 100));
         m_item->draw(dest, scaleFactor, true);
 
         if(m_font && (m_item->isStackable() || m_item->isChargeable()) && m_item->getCountOrSubType() > 1) {

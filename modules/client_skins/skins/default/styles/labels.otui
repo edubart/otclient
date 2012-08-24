@@ -22,3 +22,11 @@ MenuLabel < Label
 GameLabel < UILabel
   font: verdana-11px-antialised
   color: #bbbbbb
+
+FrameCounterLabel < Label
+  @onSetup: |
+    self.updateEvent = cycleEvent(function()
+      local text = 'FPS: ' .. g_app.getBackgroundPaneFps()
+      self:setText(text)
+    end, 1000)
+  @onDestroy: self.updateEvent:cancel()

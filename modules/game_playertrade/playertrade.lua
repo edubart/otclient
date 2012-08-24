@@ -26,6 +26,7 @@ function createTrade()
     g_game.rejectTrade()
     tradeWindow:hide()
   end
+  tradeWindow:setup()
 end
 
 function fillTrade(name, items, counter)
@@ -53,7 +54,7 @@ function fillTrade(name, items, counter)
     local itemWidget = g_ui.createWidget('Item', tradeContainer)
     itemWidget:setItem(item)
     itemWidget:setVirtual(true)
-    itemWidget:setMargin(1)
+    itemWidget:setMargin(0)
     itemWidget.onClick = function()
       g_game.inspectTrade(counter, index-1)
     end
@@ -69,7 +70,8 @@ function onGameCounterTrade(name, items)
 end
 
 function onGameCloseTrade()
-  if not tradeWindow then return end
-  tradeWindow:destroy()
-  tradeWindow = nil
+  if tradeWindow then
+    tradeWindow:destroy()
+    tradeWindow = nil
+  end
 end

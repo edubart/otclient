@@ -12,7 +12,7 @@ TradeWindow < MiniWindow
     margin-left: 4
 
   MiniWindowContents
-    padding: 6
+    padding: 4
 
     ScrollableFlatPanel
       id: ownTradeContainer
@@ -20,26 +20,27 @@ TradeWindow < MiniWindow
       anchors.bottom: acceptButton.top
       anchors.left: parent.left
       anchors.right: ownTradeScrollBar.left
-      margin-top: 14
+      margin-top: 16
       margin-bottom: 4
       padding: 2
       layout:
         type: grid
-        cell-size: 36 36
+        cell-size: 34 34
         flow: true
-        cell-spacing: 0
+        cell-spacing: 1
       vertical-scrollbar: ownTradeScrollBar
 
     VerticalScrollBar
       id: ownTradeScrollBar
       anchors.top: parent.top
       anchors.bottom: acceptButton.top
-      anchors.right: counterTradeContainer.left
-      margin-top: 14
+      anchors.right: parent.horizontalCenter
+      margin-top: 16
       margin-bottom: 4
+      margin-right: 2
       step: 14
       pixels-scroll: true
-      $disabled:
+      $!on:
         width: 0
 
     ScrollableFlatPanel
@@ -48,14 +49,15 @@ TradeWindow < MiniWindow
       anchors.bottom: acceptButton.top
       anchors.left: parent.horizontalCenter
       anchors.right: counterTradeScrollBar.left
-      margin-top: 14
+      margin-top: 16
       margin-bottom: 4
+      margin-left: 2
       padding: 2
       layout:
         type: grid
-        cell-size: 36 36
+        cell-size: 34 34
         flow: true
-        cell-spacing: 0
+        cell-spacing: 1
       vertical-scrollbar: counterTradeScrollBar
 
     VerticalScrollBar
@@ -63,25 +65,26 @@ TradeWindow < MiniWindow
       anchors.top: parent.top
       anchors.bottom: acceptButton.top
       anchors.right: parent.right
-      margin-top: 14
+      margin-top: 16
       margin-bottom: 4
+      margin-right: 1
       step: 14
       pixels-scroll: true
-      $disabled:
+      $!on:
         width: 0
 
     Label
       id: ownTradeLabel
       anchors.bottom: ownTradeContainer.top
       anchors.left: ownTradeContainer.left
-      anchors.right: ownTradeContainer.right
+      anchors.right: parent.horizontalCenter
       margin-bottom: 2
 
     Label
       id: counterTradeLabel
       anchors.bottom: counterTradeContainer.top
-      anchors.left: counterTradeContainer.left
-      anchors.right: counterTradeContainer.right
+      anchors.left: parent.horizontalCenter
+      anchors.right: counterTradeScrollBar.right
       margin-bottom: 2
 
     Button

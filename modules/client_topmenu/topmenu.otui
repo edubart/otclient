@@ -37,13 +37,18 @@ TopMenuButtonsPanel < Panel
     fit-children: true
   padding: 6 4
 
-TopPanel < Panel
+TopMenuPanel < Panel
   height: 36
   image-source: images/top_panel.png
   image-repeated: true
   focusable: false
 
-TopPanel
+TopMenuFrameCounterLabel < FrameCounterLabel
+  color: white
+  margin-top: 10
+  margin-right: 5
+
+TopMenuPanel
   id: topMenu
   anchors.top: parent.top
   anchors.left: parent.left
@@ -62,25 +67,11 @@ TopPanel
     anchors.left: prev.right
     visible: false
 
-  UILabel
+  TopMenuFrameCounterLabel
     id: frameCounter
-    text-align: right
     text-auto-resize: true
-    color: white
-    id: frameCounter
     anchors.top: parent.top
     anchors.left: prev.right
-    margin-top: 10
-    margin-right: 5
-    @onSetup: |
-      cycleEvent(function()
-        local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
-        if frameCounter then
-          local text = 'FPS: ' .. g_app.getBackgroundPaneFps()
-          frameCounter:setText(text)
-          --print(text)
-        end
-      end, 250)
 
   TopMenuButtonsPanel
     id: rightButtonsPanel
