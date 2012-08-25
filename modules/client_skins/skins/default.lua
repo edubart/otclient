@@ -12,6 +12,7 @@ local skin = {
 
   styles = {
     'buttons.otui',
+    'creaturebuttons.otui',
     'labels.otui',
     'panels.otui',
     'separators.otui',

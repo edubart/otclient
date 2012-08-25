@@ -1,0 +1,48 @@
+CreatureButton < UICreatureButton
+  height: 20
+  margin-bottom: 5
+
+  UICreature
+    id: creature
+    size: 20 20
+    anchors.left: parent.left
+    anchors.top: parent.top
+    phantom: true
+
+  UIWidget
+    id: spacer
+    width: 5
+    anchors.left: creature.right
+    anchors.top: creature.top
+    phantom: true
+
+  UIWidget
+    id: skull
+    height: 11
+    anchors.left: spacer.right
+    anchors.top: spacer.top
+    phantom: true
+
+  UIWidget
+    id: emblem
+    height: 11
+    anchors.left: skull.right
+    anchors.top: creature.top
+    phantom: true
+
+  Label
+    id: label
+    anchors.left: emblem.right
+    anchors.top: creature.top
+    color: #888888
+    margin-left: 2
+    phantom: true
+
+  ProgressBar
+    id: lifeBar
+    height: 5
+    anchors.left: spacer.right
+    anchors.right: parent.right
+    anchors.top: label.bottom
+    margin-top: 2
+    phantom: true

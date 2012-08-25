@@ -154,6 +154,11 @@ local function clearFilters()
   end
 end
 
+local function clearFee()
+  feeLabel:setText('')
+  fee = 0
+end
+
 local function refreshTypeList()
   offerTypeList:clearOptions()
   offerTypeList:addOption('Buy')
@@ -163,11 +168,6 @@ local function refreshTypeList()
       offerTypeList:addOption('Sell')
     end
   end
-end
-
-local function refreshFee()
-  feeLabel:setText('')
-  fee = 0
 end
 
 local function addOffer(offer, type)
@@ -841,7 +841,7 @@ function Market.resetCreateOffer()
   totalPriceEdit:setValue(1)
   amountEdit:setValue(1)
   refreshTypeList()
-  refreshFee()
+  clearFee()
 end
 
 function Market.refreshItemsWidget(selectItem)

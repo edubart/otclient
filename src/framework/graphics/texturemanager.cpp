@@ -64,14 +64,14 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
         try {
             // currently only png textures are supported
             if(!stdext::ends_with(filePath, ".png"))
-                stdext::throw_exception("texture file format no supported");
+                stdext::throw_exception("texture file format not supported");
 
             // load texture file data
             std::stringstream fin;
             g_resources.loadFile(filePath, fin);
             texture = loadPNG(fin);
         } catch(stdext::exception& e) {
-            g_logger.error(stdext::format("unable to load texture '%s': %s", fileName, e.what()));
+            g_logger.error(stdext::format("Unable to load texture '%s': %s", fileName, e.what()));
             texture = g_textures.getEmptyTexture();
         }
 

@@ -182,6 +182,11 @@ function onUseWith(clickedWidget, mousePosition)
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
     g_game.useWith(selectedThing, clickedWidget:getItem())
+  elseif clickedWidget:getClassName() == 'UICreatureButton' then
+    local creature = clickedWidget:getCreature()
+    if creature then
+      g_game.useWith(selectedThing, creature)
+    end
   end
 end
 
