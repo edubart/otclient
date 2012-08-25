@@ -33,10 +33,18 @@ function init()
   logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', tryLogout)
   logoutButton:hide()
 
-  g_keyboard.bindKeyPress('Up', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Right', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Down', function() g_game.walk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Left', function() g_game.walk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  bindKeys()
+
+  if g_game.isOnline() then
+    show()
+  end
+end
+
+function bindKeys()
+  g_keyboard.bindKeyPress('Up', smartWalk, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Right', smartWalk, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Down', smartWalk, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Left', smartWalk, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad8', function() g_game.walk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad9', function() g_game.walk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad6', function() g_game.walk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -59,19 +67,8 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
-
-  g_keyboard.bindKeyDown('Ctrl+.', function()
-    if gameMapPanel:isKeepAspectRatioEnabled() then
-      gameMapPanel:setKeepAspectRatio(false)
-    else
-      gameMapPanel:setKeepAspectRatio(true)
-      gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
-    end
-  end, gameRootPanel)
-
-  if g_game.isOnline() then
-    show()
-  end
+  g_keyboard.bindKeyDown('Ctrl+;', toggleDash, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+.', toggleAspectRatio, gameRootPanel)
 end
 
 function terminate()
@@ -153,6 +150,46 @@ function tryLogout()
     { text='Yes', callback=yesCallback },
     { text='No', callback=noCallback },
     anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+end
+
+function smartWalk()
+  local dir
+  if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
+    dir = NorthWest
+  elseif g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Right') then
+    dir = NorthEast
+  elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Left') then
+    dir = SouthWest
+  elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Right') then
+    dir = SouthEast
+  elseif g_keyboard.isKeyPressed('Up') then
+    dir = North
+  elseif g_keyboard.isKeyPressed('Down') then
+    dir = South
+  elseif g_keyboard.isKeyPressed('Left') then
+    dir = West
+  elseif g_keyboard.isKeyPressed('Right') then
+    dir = East
+  end
+
+  if Options.getOption('walkBooster') then
+    if g_game.getLocalPlayer():canWalk(dir) then
+      g_game.walk(dir)
+    else
+      g_game.forceWalk(dir)
+    end
+  else
+    g_game.walk(dir)
+  end
+end
+
+function toggleAspectRatio()
+  if gameMapPanel:isKeepAspectRatioEnabled() then
+    gameMapPanel:setKeepAspectRatio(false)
+  else
+    gameMapPanel:setKeepAspectRatio(true)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+  end
 end
 
 function onMouseGrabberRelease(self, mousePosition, mouseButton)

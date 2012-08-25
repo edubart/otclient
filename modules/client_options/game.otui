@@ -1,0 +1,21 @@
+Panel
+  OptionCheckBox
+    id: classicControl
+    !text: tr('Classic control')
+
+  OptionCheckBox
+    id: autoChaseOverride
+    !text: tr('Allow auto chase override')
+
+  OptionCheckBox
+    id: walkBooster
+    !text: tr('Enable walk booster')
+    !tooltip: tr('Also know as dash in tibia community, recommended\nfor playing characters with high speed')
+
+  OptionCheckBox
+    id: enableMusic
+    !text: tr('Enable music')
+
+  OptionCheckBox
+    id: showLeftPanel
+    !text: tr('Show left panel')

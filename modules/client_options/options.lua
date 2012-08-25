@@ -5,6 +5,8 @@ local defaultOptions = {
   showfps = true,
   fullscreen = false,
   classicControl = false,
+  walkBooster = false,
+  smartWalk = false,
   autoChaseOverride = true,
   showStatusMessagesInConsole = true,
   showEventMessagesInConsole = true,
@@ -68,8 +70,8 @@ function Options.init()
     end
   end
 
-  g_keyboard.bindKeyDown('Ctrl+D', Options.toggle)
   g_keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
+  g_keyboard.bindKeyDown('Ctrl+D', function() Options.toggleOption('walkBooster') end)
 
   optionsWindow = g_ui.displayUI('options.otui')
   optionsWindow:hide()
@@ -78,8 +80,11 @@ function Options.init()
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  generalPanel = g_ui.loadUI('general.otui')
-  optionsTabBar:addTab(tr('General'), generalPanel)
+  generalPanel = g_ui.loadUI('game.otui')
+  optionsTabBar:addTab(tr('Game'), generalPanel)
+
+  generalPanel = g_ui.loadUI('console.otui')
+  optionsTabBar:addTab(tr('Console'), generalPanel)
 
   graphicsPanel = g_ui.loadUI('graphics.otui')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
@@ -147,8 +152,8 @@ function Options.setOption(key, value)
     end
 
     if graphicsPanel then
-	  graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
-	end
+      graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
+    end
     g_app.setBackgroundPaneMaxFps(value)
   elseif key == 'foregroundFrameRate' then
     local text = value
@@ -158,7 +163,7 @@ function Options.setOption(key, value)
     end
 
     if graphicsPanel then
-	  graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
+      graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
     end
     g_app.setForegroundPaneMaxFps(value)
   elseif key == 'painterEngine' then

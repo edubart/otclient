@@ -24,9 +24,43 @@ GameLabel < UILabel
   color: #bbbbbb
 
 FrameCounterLabel < Label
+  font: verdana-11px-rounded
   @onSetup: |
     self.updateEvent = cycleEvent(function()
       local text = 'FPS: ' .. g_app.getBackgroundPaneFps()
       self:setText(text)
+    end, 1000)
+  @onDestroy: self.updateEvent:cancel()
+
+PingLabel < Label
+  font: verdana-11px-rounded
+  @onSetup: |
+    self.updateEvent = cycleEvent(function()
+      if g_game.isOnline() then
+        local ping = -1
+        if g_game.getFeature(GameClientPing) then
+          ping = g_game.getPing()
+        else
+          ping = g_game.getLocalPlayer():getWalkPing()
+        end
+        local text = 'Ping: '
+        if ping < 0 then
+          text = text .. "??"
+          self:setColor('yellow')
+        else
+          text = text .. ping .. ' ms'
+          if ping >= 500 then
+            self:setColor('red')
+          elseif ping >= 250 then
+            self:setColor('yellow')
+          else
+            self:setColor('green')
+          end
+        end
+        self:setText(text)
+        self:show()
+      else
+        self:hide()
+      end
     end, 1000)
   @onDestroy: self.updateEvent:cancel()

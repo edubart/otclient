@@ -73,8 +73,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
-                if((opcode == Proto::GameServerPing && g_game.getClientVersion() >= 953) ||
-                   (opcode == Proto::GameServerPingBack && g_game.getClientVersion() < 953))
+                if((opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing)) ||
+                   (opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing)))
                     parsePingBack(msg);
                 else
                     parsePing(msg);

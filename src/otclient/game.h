@@ -252,6 +252,7 @@ public:
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
 
+    int getPing() { return m_ping; }
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
     std::map<int, Vip> getVips() { return m_vips; }
@@ -289,6 +290,7 @@ private:
     bool m_denyBotCall;
     bool m_dead;
     int m_serverBeat;
+    int m_ping;
     uint m_seq;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
@@ -298,6 +300,7 @@ private:
     std::string m_characterName;
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
+    ScheduledEventPtr m_pingEvent;
     int m_clientVersion;
 };
 

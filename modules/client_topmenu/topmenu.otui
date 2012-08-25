@@ -67,11 +67,21 @@ TopMenuPanel
     anchors.left: prev.right
     visible: false
 
-  TopMenuFrameCounterLabel
+  FrameCounterLabel
+    color: white
+    margin-top: 4
+    margin-left: 5
     id: frameCounter
     text-auto-resize: true
     anchors.top: parent.top
-    anchors.left: prev.right
+    anchors.left: leftGameButtonsPanel.right
+
+  PingLabel
+    color: white
+    id: pingLabel
+    text-auto-resize: true
+    anchors.top: frameCounter.bottom
+    anchors.left: frameCounter.left
 
   TopMenuButtonsPanel
     id: rightButtonsPanel

@@ -199,6 +199,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "isDead", &Game::isDead, &g_game);
     g_lua.bindSingletonFunction("g_game", "isAttacking", &Game::isAttacking, &g_game);
     g_lua.bindSingletonFunction("g_game", "isFollowing", &Game::isFollowing, &g_game);
+    g_lua.bindSingletonFunction("g_game", "getPing", &Game::getPing, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainer", &Game::getContainer, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainers", &Game::getContainers, &g_game);
     g_lua.bindSingletonFunction("g_game", "getVips", &Game::getVips, &g_game);
@@ -412,6 +413,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("getTotalCapacity", &LocalPlayer::getTotalCapacity);
     g_lua.bindClassMemberFunction<LocalPlayer>("getInventoryItem", &LocalPlayer::getInventoryItem);
     g_lua.bindClassMemberFunction<LocalPlayer>("getVocation", &LocalPlayer::getVocation);
+    g_lua.bindClassMemberFunction<LocalPlayer>("getWalkPing", &LocalPlayer::getWalkPing);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPremium", &LocalPlayer::isPremium);
     g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);

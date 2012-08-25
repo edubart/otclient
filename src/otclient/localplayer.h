@@ -66,7 +66,7 @@ public:
     int getSkillBaseLevel(Otc::Skill skill) { return m_skillsBaseLevel[skill]; }
     int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
     int getVocation() { return m_vocation; }
-    double getWalkPing();
+    int getWalkPing() { return m_lastWalkPing; }
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
     double getFreeCapacity() { return m_freeCapacity; }
@@ -122,7 +122,8 @@ private:
     ScheduledEventPtr m_autoWalkEndEvent;
     stdext::boolean<false> m_waitingWalkPong;
     Timer m_walkPingTimer;
-    std::deque<int> m_lastWalkPings;
+    Timer m_idleTimer;
+    int m_lastWalkPing;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;

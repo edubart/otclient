@@ -15,6 +15,14 @@ function translateKeyCombo(keyCombo)
   return keyComboDesc
 end
 
+local function getKeyCode(key)
+  for keyCode, keyDesc in pairs(KeyCodeDescs) do
+    if keyDesc:lower() == key:trim():lower() then
+      return keyCode
+    end
+  end
+end
+
 local function retranslateKeyComboDesc(keyComboDesc)
   if keyComboDesc == nil then
     error('Unable to translate key combo \'' .. keyComboDesc .. '\'')
@@ -138,6 +146,13 @@ end
 
 function g_keyboard.getModifiers()
   return g_window.getKeyboardModifiers()
+end
+
+function g_keyboard.isKeyPressed(key)
+  if type(key) == 'string' then
+    key = getKeyCode(key)
+  end
+  return g_window.isKeyPressed(key)
 end
 
 function g_keyboard.isCtrlPressed()

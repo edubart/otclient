@@ -37,6 +37,7 @@ LocalPlayer::LocalPlayer()
     m_states = 0;
     m_vocation = 0;
     m_walkLockExpiration = 0;
+    m_lastWalkPing = -1;
 
     m_skillsLevel.fill(-1);
     m_skillsBaseLevel.fill(-1);
@@ -99,11 +100,8 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
     // a prewalk was going on
     if(m_preWalking) {
         if(m_waitingWalkPong) {
-            if(newPos == m_lastPrewalkDestionation) {
-                m_lastWalkPings.push_back(m_walkPingTimer.ticksElapsed());
-                if(m_lastWalkPings.size() > 10)
-                    m_lastWalkPings.pop_front();
-            }
+            if(newPos == m_lastPrewalkDestionation)
+                m_lastWalkPing = m_walkPingTimer.ticksElapsed();
 
             m_waitingWalkPong = false;
         }
@@ -120,6 +118,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
     }
     // no prewalk was going on, this must be an server side automated walk
     else {
+        m_walkPingTimer.restart();
         m_autoWalking = true;
         if(m_autoWalkEndEvent)
             m_autoWalkEndEvent->cancel();
@@ -135,6 +134,12 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     // avoid reanimating prewalks
     if(m_preWalking && m_lastPrewalkDestionation == newPos)
         return;
+
+    m_waitingWalkPong = false;
+    if(m_walkPingTimer.ticksElapsed() > getStepDuration() && m_idleTimer.ticksElapsed() > getStepDuration()*2) {
+        m_waitingWalkPong = true;
+        m_walkPingTimer.restart();
+    }
 
     m_preWalking = true;
 
@@ -155,6 +160,8 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
     m_lastPrewalkDone = true;
     m_waitingWalkPong = false;
+    m_walkPingTimer.restart();
+    m_idleTimer.restart();
 
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
@@ -206,6 +213,7 @@ void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
     m_preWalking = false;
+    m_idleTimer.restart();
 
     auto self = asLocalPlayer();
 
@@ -456,17 +464,6 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
 
         callLuaField("onSpellsChange", spells, oldSpells);
     }
-}
-
-double LocalPlayer::getWalkPing()
-{
-    if(m_lastWalkPings.empty())
-        return 9999;
-
-    double sum = 0;
-    for(int p : m_lastWalkPings)
-        sum += p;
-    return sum / (double)m_lastWalkPings.size();
 }
 
 bool LocalPlayer::hasSight(const Position& pos)

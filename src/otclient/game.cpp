@@ -55,6 +55,7 @@ void Game::resetGameStates()
     m_dead = false;
     m_serverBeat = 50;
     m_seq = 0;
+    m_ping = -1;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
     m_chaseMode = Otc::DontChase;
@@ -68,6 +69,12 @@ void Game::resetGameStates()
         if(container)
             container->onClose();
     }
+
+    if(m_pingEvent) {
+        m_pingEvent->cancel();
+        m_pingEvent = nullptr;
+    }
+
     m_containers.clear();
     m_vips.clear();
     m_gmActions.clear();
@@ -122,6 +129,16 @@ void Game::processGameStart()
     enableBotCall();
     g_lua.callGlobalField("g_game", "onGameStart");
     disableBotCall();
+
+    if(g_game.getFeature(Otc::GameClientPing)) {
+        m_pingEvent = g_dispatcher.cycleEvent([this] {
+            if(m_protocolGame && m_protocolGame->isConnected()) {
+                enableBotCall();
+                m_protocolGame->sendPing();
+                disableBotCall();
+            }
+        }, 1000);
+    }
 }
 
 void Game::processGameEnd()
@@ -159,6 +176,7 @@ void Game::processPing()
 
 void Game::processPingBack(int elapsed)
 {
+    m_ping = elapsed;
     g_lua.callGlobalField("g_game", "onPingBack", elapsed);
 }
 
@@ -1175,8 +1193,9 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GamePlayerMarket);
     }
 
-    if(version >= 954) {
+    if(version >= 953) {
         enableFeature(Otc::GamePurseSlot);
+        enableFeature(Otc::GameClientPing);
     }
 
     if(version >= 960) {
