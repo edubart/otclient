@@ -1,4 +1,4 @@
-WALK_AUTO_REPEAT_DELAY = 90
+WALK_AUTO_REPEAT_DELAY = 180
 
 gameRootPanel = nil
 gameMapPanel = nil
