@@ -49,7 +49,7 @@ end
 function g_game.getSupportedProtocols()
   return {
     810, 853, 854, 860, 861, 862, 870, 
-	910, 940, 944, 953, 954, 960, 961
+    910, 940, 944, 953, 954, 960, 961
   }
 end
 

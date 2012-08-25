@@ -257,10 +257,12 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if creatureThing:isLocalPlayer() then
       menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
-      if not localPlayer:isMounted() then
-        menu:addOption(tr('Mount'), function() localPlayer:mount() end)
-      else
-        menu:addOption(tr('Dismount'), function() localPlayer:dismount() end)
+      if g_game.getFeature(GamePlayerMounts) then
+        if not localPlayer:isMounted() then
+          menu:addOption(tr('Mount'), function() localPlayer:mount() end)
+        else
+          menu:addOption(tr('Dismount'), function() localPlayer:dismount() end)
+        end
       end
 
       if creatureThing:isPartyMember() then
