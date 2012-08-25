@@ -66,7 +66,7 @@ public:
     virtual std::string getPlatformType() = 0;
 
     int getDisplayWidth() { return getDisplaySize().width(); }
-    int getDisplayHeight() { return getDisplaySize().width(); }
+    int getDisplayHeight() { return getDisplaySize().height(); }
 
     Size getUnmaximizedSize() { return m_unmaximizedSize; }
     Size getSize() { return m_size; }
