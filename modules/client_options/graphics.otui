@@ -35,7 +35,7 @@ Panel
     !tooltip: tr('Limits FPS to 60')
 
   OptionCheckBox
-    id: showfps
+    id: showFps
     !text: tr('Show frame rate')
 
   OptionCheckBox

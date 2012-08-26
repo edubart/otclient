@@ -154,22 +154,27 @@ end
 
 function smartWalk()
   local dir
-  if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
-    dir = NorthWest
-  elseif g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Right') then
-    dir = NorthEast
-  elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Left') then
-    dir = SouthWest
-  elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Right') then
-    dir = SouthEast
-  elseif g_keyboard.isKeyPressed('Up') then
-    dir = North
-  elseif g_keyboard.isKeyPressed('Down') then
-    dir = South
-  elseif g_keyboard.isKeyPressed('Left') then
-    dir = West
-  elseif g_keyboard.isKeyPressed('Right') then
-    dir = East
+  if Options.getOption('smartWalk') then
+    if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
+      dir = NorthWest
+    elseif g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Right') then
+      dir = NorthEast
+    elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Left') then
+      dir = SouthWest
+    elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Right') then
+      dir = SouthEast
+    end
+  end
+  if not dir then
+    if g_keyboard.isKeyPressed('Up') then
+      dir = North
+    elseif g_keyboard.isKeyPressed('Down') then
+      dir = South
+    elseif g_keyboard.isKeyPressed('Left') then
+      dir = West
+    elseif g_keyboard.isKeyPressed('Right') then
+      dir = East
+    end
   end
 
   if Options.getOption('walkBooster') then

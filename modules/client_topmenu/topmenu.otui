@@ -68,10 +68,10 @@ TopMenuPanel
     visible: false
 
   FrameCounterLabel
+    id: frameCounter
     color: white
     margin-top: 4
     margin-left: 5
-    id: frameCounter
     text-auto-resize: true
     anchors.top: parent.top
     anchors.left: leftGameButtonsPanel.right

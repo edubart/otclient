@@ -36,7 +36,7 @@ PingLabel < Label
   font: verdana-11px-rounded
   @onSetup: |
     self.updateEvent = cycleEvent(function()
-      if g_game.isOnline() then
+      if g_game.isOnline() and Options.getOption('showPing') then
         local ping = -1
         if g_game.getFeature(GameClientPing) then
           ping = g_game.getPing()

@@ -89,7 +89,6 @@ function UICreatureButton:updateSkull(skullId)
 
   if skullId ~= SkullNone then
     skullWidget:setWidth(skullWidget:getHeight())
-    print(skullId)
     local imagePath = getSkullImagePath(skullId)
     skullWidget:setImageSource(imagePath)
     labelWidget:setMarginLeft(5)

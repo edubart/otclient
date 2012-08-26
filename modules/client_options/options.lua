@@ -2,7 +2,8 @@ Options = {}
 
 local defaultOptions = {
   vsync = false,
-  showfps = true,
+  showFps = true,
+  showPing = true,
   fullscreen = false,
   classicControl = false,
   walkBooster = false,
@@ -131,10 +132,15 @@ function Options.setOption(key, value)
   if options[key] == value then return end
   if key == 'vsync' then
     g_window.setVerticalSync(value)
-  elseif key == 'showfps' then
+  elseif key == 'showFps' then
     addEvent(function()
       local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
       if frameCounter then frameCounter:setVisible(value) end
+    end)
+  elseif key == 'showPing' then
+    addEvent(function()
+      local ping = rootWidget:recursiveGetChildById('pingLabel')
+      if ping then ping:setVisible(value) end
     end)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
