@@ -139,6 +139,7 @@ function Locales.setLocale(name)
     return false
   end
   currentLocale = locale
+  if Locales.onLocaleChanged then Locales.onLocaleChanged(name) end
   return true
 end
 

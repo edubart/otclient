@@ -1,5 +1,16 @@
 Client = {}
 
+local musicFilename = "startup.ogg"
+
+function Client.setMusic(filename)
+  musicFilename = filename
+  g_sounds.stopMusic(0)
+
+  if not g_game.isOnline() then
+    g_sounds.playMusic(musicFilename, 3)
+  end
+end
+
 function Client.reloadScripts()
   g_modules.reloadModules()
   dofile '/otclientrc'
@@ -11,9 +22,9 @@ end
 
 function Client.startup()
   -- Play startup music (The Silver Tree, by Mattias Westlund)
-  g_sounds.playMusic("startup.ogg", 3)
+  g_sounds.playMusic(musicFilename, 3)
   connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
-  connect(g_game, { onGameEnd = function() g_sounds.playMusic("startup.ogg", 3) end })
+  connect(g_game, { onGameEnd = function() g_sounds.playMusic(musicFilename, 3) end })
 
   -- Check for startup errors
   local errtitle = nil
@@ -35,7 +46,7 @@ end
 
 function Client.init()
   g_window.setMinimumSize({ width = 600, height = 480 })
-  g_sounds.preload("startup.ogg")
+  g_sounds.preload(musicFilename)
 
   -- initialize in fullscreen mode on mobile devices
   if g_window.getPlatformType() == "X11-EGL" then

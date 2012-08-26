@@ -45,8 +45,8 @@ TopMenuPanel < Panel
 
 TopMenuFrameCounterLabel < FrameCounterLabel
   color: white
-  margin-top: 10
-  margin-right: 5
+  margin-top: 4
+  margin-left: 5
 
 TopMenuPanel
   id: topMenu
@@ -67,11 +67,8 @@ TopMenuPanel
     anchors.left: prev.right
     visible: false
 
-  FrameCounterLabel
+  TopMenuFrameCounterLabel
     id: frameCounter
-    color: white
-    margin-top: 4
-    margin-left: 5
     text-auto-resize: true
     anchors.top: parent.top
     anchors.left: leftGameButtonsPanel.right

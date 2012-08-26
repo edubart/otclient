@@ -1,3 +1,4 @@
+-- TODO: find another hotkey for this. Ctrl+Z will be reserved to undo on textedits.
 HOTKEY = 'Ctrl+Z'
 
 bugReportWindow = nil
@@ -26,8 +27,10 @@ function doReport()
 end
 
 function show()
-  bugTextEdit:setText('')
-  bugReportWindow:show()
-  bugReportWindow:raise()
-  bugReportWindow:focus()
+  if g_game.isOnline() then
+    bugTextEdit:setText('')
+    bugReportWindow:show()
+    bugReportWindow:raise()
+    bugReportWindow:focus()
+  end
 end
