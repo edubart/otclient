@@ -21,12 +21,21 @@
  */
 
 #include "creatures.h"
+#include "creature.h"
 
 #include <framework/xml/tinyxml.h>
 #include <framework/core/resourcemanager.h>
 #include <boost/filesystem.hpp>
 
 Creatures g_creatures;
+
+CreaturePtr CreatureType::cast()
+{
+    CreaturePtr ret(new Creature);
+    ret->setName(getName());
+    ret->setOutfit(getOutfit());
+    return ret;
+}
 
 void Creatures::loadMonsters(const std::string& file)
 {
@@ -108,13 +117,11 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr
 
     Outfit out;
     out.setCategory(ThingCategoryCreature);
-    int32 type;
     if(!attrib->Attribute("type").empty())
-        type = attrib->readType<int32>("type");
+        out.setId(attrib->readType<int32>("type"));
     else
-        type = attrib->readType<int32>("typeex");
+        out.setAuxId(attrib->readType<int32>("typeex"));
 
-    out.setId(type);
     {
         out.setHead(attrib->readType<int>(("head")));
         out.setBody(attrib->readType<int>(("body")));
@@ -126,7 +133,7 @@ bool Creatures::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr
 
     m->setOutfit(out);
     m_creatures.push_back(m);
-    return type >= 0;
+    return true;
 }
 
 CreatureTypePtr Creatures::getCreatureByName(std::string name)
@@ -143,7 +150,7 @@ CreatureTypePtr Creatures::getCreatureByLook(int look)
     auto findFun = [=] (const CreatureTypePtr& c) -> bool
     {
         const Outfit& o = c->getOutfit();
-        return o.getId() == look;
+        return o.getId() == look || o.getAuxId() == look;
     };
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(), findFun);
     return it != m_creatures.end() ? *it : nullptr;

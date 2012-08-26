@@ -50,6 +50,8 @@ public:
     void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
     Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
 
+    CreaturePtr cast();
+
 private:
     stdext::dynamic_storage<uint8> m_attribs;
 };
@@ -68,6 +70,8 @@ public:
     CreatureTypePtr getCreatureByLook(int look);
 
     bool isLoaded() const { return m_loaded; }
+
+    const std::vector<CreatureTypePtr>& getCreatures() { return m_creatures; }
 
 protected:
     bool m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);

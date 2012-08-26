@@ -84,58 +84,10 @@ enum OTBM_NodeTypes_t
     OTBM_WAYPOINT = 16
 };
 
-enum clientVersion_t
-{
-    CLIENT_VERSION_750 = 1,
-    CLIENT_VERSION_755 = 2,
-    CLIENT_VERSION_760 = 3,
-    CLIENT_VERSION_770 = 3,
-    CLIENT_VERSION_780 = 4,
-    CLIENT_VERSION_790 = 5,
-    CLIENT_VERSION_792 = 6,
-    CLIENT_VERSION_800 = 7,
-    CLIENT_VERSION_810 = 8,
-    CLIENT_VERSION_811 = 9,
-    CLIENT_VERSION_820 = 10,
-    CLIENT_VERSION_830 = 11,
-    CLIENT_VERSION_840 = 12,
-    CLIENT_VERSION_841 = 13,
-    CLIENT_VERSION_842 = 14,
-    CLIENT_VERSION_850 = 15,
-    CLIENT_VERSION_854_OLD = 16,
-    CLIENT_VERSION_854 = 17,
-    CLIENT_VERSION_855 = 18,
-    CLIENT_VERSION_860_OLD = 19,
-    CLIENT_VERSION_860 = 20,
-    CLIENT_VERSION_861 = 21,
-    CLIENT_VERSION_862 = 22,
-    CLIENT_VERSION_870 = 23,
-    CLIENT_VERSION_871 = 24,
-    CLIENT_VERSION_872 = 25,
-    CLIENT_VERSION_873 = 26,
-    CLIENT_VERSION_900 = 27,
-    CLIENT_VERSION_910 = 28,
-    CLIENT_VERSION_920 = 29,
-    CLIENT_VERSION_940 = 30,
-    CLIENT_VERSION_944_V1 = 31,
-    CLIENT_VERSION_944_V2 = 32,
-    CLIENT_VERSION_944_V3 = 33,
-    CLIENT_VERSION_944_V4 = 34,
-    CLIENT_VERSION_946 = 35,
-    CLIENT_VERSION_950 = 36,
-    CLIENT_VERSION_952 = 37,
-    CLIENT_VERSION_953 = 38,
-    CLIENT_VERSION_954 = 39,
-    CLIENT_VERSION_960 = 40,
-    CLIENT_VERSION_961 = 41
-};
-
 enum {
     OTCM_SIGNATURE = 0x4D43544F,
     OTCM_VERSION = 1
 };
-
-
 
 enum {
     BLOCK_SIZE = 32
@@ -183,8 +135,8 @@ public:
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
-    void loadOtbm(const std::string& fileName);
-    void saveOtbm(const std::string& fileName);
+    void loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
+    void saveOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
 
     void loadSpawns(const std::string& fileName);
     void saveSpawns(const std::string&);
@@ -200,10 +152,6 @@ public:
     std::string getSpawnFile() { return m_attribs.get<std::string>(OTBM_ATTR_SPAWN_FILE); }
     Size getSize() { return Size(m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT)); }
     std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION), "\n"); }
-
-    void loadMonsters(const std::string& fileName) { g_creatures.loadMonsters(fileName); }
-    void loadSingleCreature(const std::string& file) { g_creatures.loadSingleCreature(file); }
-    void loadNpcs(const std::string& folder) { g_creatures.loadNpcs(folder); }
 
     void clean();
     void cleanDynamicThings();

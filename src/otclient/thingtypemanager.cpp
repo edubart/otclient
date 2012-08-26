@@ -287,7 +287,7 @@ CreaturePtr ThingTypeManager::castThingToCreature(const ThingTypePtr& thing)
         // a creature can have a look item with whether client id or even server id
         const ItemTypePtr& item = findItemTypeByClientId(clientId);
         if(item && !(cType = g_creatures.getCreatureByLook(item->getServerId())))
-            stdext::throw_exception(stdext::format("failed to find creature with look type/item %hd", clientId));
+            stdext::throw_exception(stdext::format("failed to find creature with look type/item %hd", item->getServerId()));
     }
 
     ret->setName(cType->getName());

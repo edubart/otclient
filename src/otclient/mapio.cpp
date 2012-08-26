@@ -30,8 +30,9 @@
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
 #include <framework/xml/tinyxml.h>
+#include <framework/ui/uiwidget.h>
 
-void Map::loadOtbm(const std::string& fileName)
+void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
 {
     FileStreamPtr fin = g_resources.openFile(fileName);
     if(!fin)
@@ -42,7 +43,7 @@ void Map::loadOtbm(const std::string& fileName)
         stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
     if(fin->getU32())
-        stdext::throw_exception("Unknown file version detected");
+            stdext::throw_exception("Unknown file version detected");
 
     BinaryTreePtr root = fin->getBinaryTree();
     if(root->getU8())
@@ -94,6 +95,7 @@ void Map::loadOtbm(const std::string& fileName)
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
             Position basePos = nodeMapData->getPosition();
+            unsigned int pbarvalue=0;
 
             for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();
@@ -175,6 +177,7 @@ void Map::loadOtbm(const std::string& fileName)
                     if(house)
                         tile->setHouseId(house->getId());
                     tile->setFlags((tileflags_t)flags);
+                    //if(!(++pbarvalue % 8192) && pbar);
                 }
             }
         } else if(mapDataType == OTBM_TOWNS) {
@@ -207,12 +210,9 @@ void Map::loadOtbm(const std::string& fileName)
 
     g_logger.debug("OTBM read successfully.");
     fin->close();
-
-    //loadSpawns(getSpawnFile());
-//  m_houses.load(getHouseFile());
 }
 
-void Map::saveOtbm(const std::string &fileName)
+void Map::saveOtbm(const std::string &fileName, const UIWidgetPtr&/* pbar*/)
 {
     FileStreamPtr fin = g_resources.createFile(fileName);
     if(!fin)
@@ -226,9 +226,7 @@ void Map::saveOtbm(const std::string &fileName)
         dir = fileName.substr(0, fileName.find_last_of('/'));
 
     uint32 version = 0;
-    /// Support old versions (< 810 or 860 IIRC)
-    /// TODO: Use constants?
-    if(g_things.getOtbMajorVersion() < 10)
+    if(g_things.getOtbMajorVersion() < ClientVersion820)
         version = 1;
     else
         version = 2;
@@ -386,8 +384,10 @@ void Map::saveOtbm(const std::string &fileName)
 
 void Map::loadSpawns(const std::string &fileName)
 {
-    if(!g_creatures.isLoaded())
-        stdext::throw_exception("cannot load spawns; monsters/nps aren't loaded.");
+    if(!g_creatures.isLoaded()) {
+        g_logger.error("cannot load spawns; monsters/nps aren't loaded.");
+        return;
+    }
 
     TiXmlDocument doc;
     doc.Parse(g_resources.loadFile(fileName).c_str());

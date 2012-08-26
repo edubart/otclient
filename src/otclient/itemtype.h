@@ -79,6 +79,52 @@ enum ItemTypeAttr : uint8 {
     ItemTypeAttrLast             = 45
 };
 
+enum ClientVersion
+{
+    ClientVersion750        = 1,
+    ClientVersion755        = 2,
+    ClientVersion760        = 3,
+    ClientVersion770        = 3,
+    ClientVersion780        = 4,
+    ClientVersion790        = 5,
+    ClientVersion792        = 6,
+    ClientVersion800        = 7,
+    ClientVersion810        = 8,
+    ClientVersion811        = 9,
+    ClientVersion820        = 10,
+    ClientVersion830        = 11,
+    ClientVersion840        = 12,
+    ClientVersion841        = 13,
+    ClientVersion842        = 14,
+    ClientVersion850        = 15,
+    ClientVersion854_OLD    = 16,
+    ClientVersion854        = 17,
+    ClientVersion855        = 18,
+    ClientVersion860_OLD    = 19,
+    ClientVersion860        = 20,
+    ClientVersion861        = 21,
+    ClientVersion862        = 22,
+    ClientVersion870        = 23,
+    ClientVersion871        = 24,
+    ClientVersion872        = 25,
+    ClientVersion873        = 26,
+    ClientVersion900        = 27,
+    ClientVersion910        = 28,
+    ClientVersion920        = 29,
+    ClientVersion940        = 30,
+    ClientVersion944_V1     = 31,
+    ClientVersion944_V2     = 32,
+    ClientVersion944_V3     = 33,
+    ClientVersion944_V4     = 34,
+    ClientVersion946        = 35,
+    ClientVersion950        = 36,
+    ClientVersion952        = 37,
+    ClientVersion953        = 38,
+    ClientVersion954        = 39,
+    ClientVersion960        = 40,
+    ClientVersion961        = 41
+};
+
 class ItemType : public LuaObject
 {
 public:

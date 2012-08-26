@@ -105,19 +105,19 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "findPath", &Map::findPath, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadOtbm", &Map::loadOtbm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtbm", &Map::saveOtbm, &g_map);
+    g_lua.bindSingletonFunction("g_map", "loadSpawns", &Map::loadSpawns, &g_map);
     g_lua.bindSingletonFunction("g_map", "loadOtcm", &Map::loadOtcm, &g_map);
     g_lua.bindSingletonFunction("g_map", "saveOtcm", &Map::saveOtcm, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadMonsters", &Map::loadMonsters, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadNpcs", &Map::loadNpcs, &g_map);
-    g_lua.bindSingletonFunction("g_map", "loadSingleCreature", &Map::loadSingleCreature, &g_map);
     g_lua.bindSingletonFunction("g_map", "getTown", &Map::getTown, &g_map);
     g_lua.bindSingletonFunction("g_map", "getHouse", &Map::getHouse, &g_map);
-    g_lua.bindSingletonFunction("g_map", "getCreature", &Map::getCreature, &g_map);
 
-    /// \todo move creatures from Map to here
     g_lua.registerSingletonClass("g_creatures");
-    g_lua.bindSingletonFunction("g_creatures", "getCreature", &Creatures::getCreatureByName, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getCreatures", &Creatures::getCreatures, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getCreatureByName", &Creatures::getCreatureByName, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getCreatureByLook", &Creatures::getCreatureByLook, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "loadMonsters", &Creatures::loadMonsters, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "loadNpcs", &Creatures::loadNpcs, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "loadSingleCreature", &Creatures::loadSingleCreature, &g_creatures);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -318,6 +318,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<CreatureType>("getName", &CreatureType::getName);
     g_lua.bindClassMemberFunction<CreatureType>("getOutfit", &CreatureType::getOutfit);
     g_lua.bindClassMemberFunction<CreatureType>("getSpawnTime", &CreatureType::getSpawnTime);
+    g_lua.bindClassMemberFunction<CreatureType>("cast", &CreatureType::cast);
 
     g_lua.registerClass<Creature, Thing>();
     g_lua.bindClassStaticFunction<Creature>("create", []{ return CreaturePtr(new Creature); });
