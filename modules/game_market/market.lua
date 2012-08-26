@@ -1062,7 +1062,9 @@ end
 -- protocol callback functions
 
 function Market.onMarketEnter(depotItems, offers, balance, vocation)
+  Market.clearSelectedItem()
   updateBalance(balance)
+  
   information.totalOffers = offers
   local player = g_game.getLocalPlayer()
   if player then
