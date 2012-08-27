@@ -80,7 +80,7 @@ function ProtocolLogin:onRecv(msg)
     elseif opcode == LoginServerMotd then
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
-      signalcall(self.onError, self, tr("Client needs update."))
+      signalcall(self.onError, self, tr("Client needs update. Verify your spr/dat/pic versions."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
     else

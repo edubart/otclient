@@ -143,6 +143,10 @@ function Locales.setLocale(name)
   return true
 end
 
+function Locales.getComboBox()
+  return localeComboBox
+end
+
 -- global function used to translate texts
 function tr(text, ...)
   if currentLocale then

@@ -13,9 +13,21 @@ function UIMiniWindowContainer:getClassName()
   return 'UIMiniWindowContainer'
 end
 
+-- TODO: connect to window onResize event
+-- TODO: try to resize another widget?
+-- TODO: try to find another panel?
 function UIMiniWindowContainer:fitAll(noRemoveChild)
   if not self:isVisible() then
     return
+  end
+
+  if not noRemoveChild then
+    local children = self:getChildren()
+    if #children > 0 then
+      noRemoveChild = children[#children]
+    else
+      return
+    end
   end
 
   local sumHeight = 0
@@ -39,10 +51,6 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
     sumHeight = sumHeight - noRemoveChild:getHeight() + maximumHeight
     addEvent(function() noRemoveChild:setHeight(maximumHeight) end)
   end
-
-  -- TODO: most likely, minimum and maximum size are not set yet, so code above might not work properly. onSetup event
-  -- TODO: try to resize another widget?
-  -- TODO: try to find another panel?
 
   -- try to remove no-save widget
   for i=#children,1,-1 do

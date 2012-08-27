@@ -48,6 +48,20 @@ function UIComboBox:addOption(text, data)
   return index
 end
 
+function UIComboBox:removeOption(text)
+  for i,v in ipairs(self.options) do
+    if v.text == text then
+      table.remove(self.options, i)
+      if self.currentIndex == i then
+        self:setCurrentIndex(1)
+      elseif self.currentIndex > i then
+        self.currentIndex = self.currentIndex - 1
+      end
+      return
+    end
+  end
+end
+
 function UIComboBox:onMousePress(mousePos, mouseButton)
   local menu = g_ui.createWidget(self:getStyleName() .. 'PopupMenu')
   menu:setId(self:getId() .. 'PopupMenu')
