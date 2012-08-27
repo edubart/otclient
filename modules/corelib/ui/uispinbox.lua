@@ -13,9 +13,9 @@ end
 
 function UISpinBox:onMouseWheel(mousePos, direction)
   if direction == MouseWheelUp then
-    self:setValue(self.value + 1)
+    self:up()
   elseif direction == MouseWheelDown then
-    self:setValue(self.value - 1)
+    self:down()
   end
   return true
 end
@@ -57,6 +57,14 @@ function UISpinBox:onStyleApply(styleName, styleNode)
         end)
     end
   end
+end
+
+function UISpinBox:up()
+  self:setValue(self.value + 1)
+end
+
+function UISpinBox:down()
+  self:setValue(self.value - 1)
 end
 
 function UISpinBox:setValue(value)

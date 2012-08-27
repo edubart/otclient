@@ -1,17 +1,18 @@
 CountWindow < MainWindow
   id: countWindow
   !text: tr('Move Stackable Item')
-  size: 196 112
+  size: 196 122
 
   Label
     !text: tr('Amount:')
-    width: 64
+    text-auto-resize: true
     anchors.left: parent.left
     anchors.top: parent.top
     margin-top: 2
 
   SpinBox
     id: countSpinBox
+    margin-left: 5
     anchors.left: prev.right
     anchors.right: parent.right
     anchors.top: parent.top
