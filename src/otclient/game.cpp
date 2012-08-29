@@ -131,13 +131,14 @@ void Game::processGameStart()
     disableBotCall();
 
     if(g_game.getFeature(Otc::GameClientPing)) {
+        m_protocolGame->sendPing();
         m_pingEvent = g_dispatcher.cycleEvent([this] {
             if(m_protocolGame && m_protocolGame->isConnected()) {
                 enableBotCall();
                 m_protocolGame->sendPing();
                 disableBotCall();
             }
-        }, 1000);
+        }, 2000);
     }
 }
 

@@ -379,7 +379,7 @@ void ProtocolGame::parsePing(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
 {
-    g_game.processPingBack(m_pingTimer.ticksElapsed());
+    g_game.processPingBack(m_pingTimer.elapsed_millis());
 }
 
 void ProtocolGame::parseChallange(const InputMessagePtr& msg)
@@ -1379,7 +1379,7 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
     if(opcode == 0)
         m_enableSendExtendedOpcode = true;
     else
-         callLuaField("onExtendedOpcode", opcode, buffer);
+        callLuaField("onExtendedOpcode", opcode, buffer);
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
