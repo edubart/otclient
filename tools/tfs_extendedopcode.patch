@@ -140,6 +140,25 @@ index 363c62b..c706f10 100644
 +
 +	<event type="extendedopcode" name="ExtendedOpcode" event="script" value="extendedopcode.lua"/>
  </creaturescripts>
+diff --git a/data/creaturescripts/scripts/extendedopcode.lua b/data/creaturescripts/scripts/extendedopcode.lua
+new file mode 100644
+index 0000000..c488a4d
+--- /dev/null
++++ b/data/creaturescripts/scripts/extendedopcode.lua
+@@ -0,0 +1,13 @@
++OPCODE_LANGUAGE = 1
++
++function onExtendedOpcode(cid, opcode, buffer)
++	if opcode == OPCODE_LANGUAGE then
++	  -- otclient language
++	  if buffer == 'en' or buffer == 'pt' then
++		  -- example, setting player language, because otclient is multi-language...
++		  --doCreatureSetStorage(cid, CREATURE_STORAGE_LANGUAGE, buffer)
++	  end
++	else
++	  -- other opcodes can be ignored, and the server will just work fine...
++	end
++end
 diff --git a/game.cpp b/game.cpp
 index 2e4dc2c..7508591 100644
 --- a/game.cpp
@@ -274,7 +293,7 @@ index 6cf8ee1..615f094 100644
  		void putPadding(uint32_t amount);
  
 diff --git a/player.h b/player.h
-index 63e9183..e003e63 100644
+index 63e9183..7cb8313 100644
 --- a/player.h
 +++ b/player.h
 @@ -228,6 +228,7 @@ class Player : public Creature, public Cylinder
@@ -285,15 +304,6 @@ index 63e9183..e003e63 100644
  		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
  		void setOperatingSystem(OperatingSystem_t os) {operatingSystem = os;}
  		uint32_t getClientVersion() const {return clientVersion;}
-@@ -400,7 +401,7 @@ class Player : public Creature, public Cylinder
- 			onSell = saleCallback;
- 			return shopOwner;
- 		}
--		
-+
- 		//Quest functions
- 		void onUpdateQuest();
- 
 @@ -580,6 +581,9 @@ class Player : public Creature, public Cylinder
  		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown)
  			{if(client) client->sendSpellGroupCooldown(groupId, cooldown);}
@@ -305,7 +315,7 @@ index 63e9183..e003e63 100644
  		void sendAddContainerItem(const Container* container, const Item* item);
  		void sendUpdateContainerItem(const Container* container, uint8_t slot, const Item* oldItem, const Item* newItem);
 diff --git a/protocolgame.cpp b/protocolgame.cpp
-index b980be0..c75654e 100644
+index b980be0..7a84f61 100644
 --- a/protocolgame.cpp
 +++ b/protocolgame.cpp
 @@ -263,6 +263,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
@@ -342,15 +352,6 @@ index b980be0..c75654e 100644
  			case 0x64: // move with steps
  				parseAutoWalk(msg);
  				break;
-@@ -2411,7 +2424,7 @@ void ProtocolGame::sendMarketDetail(uint16_t itemId)
- 	}
- 	else
- 		msg->put<char>(0x00);
--	
-+
- 	if((statistics = IOMarket::getInstance()->getSaleStatistics(itemId)))
- 	{
- 		msg->put<char>(0x01);
 @@ -3705,3 +3718,28 @@ void ProtocolGame::AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item)
  	msg->put<uint32_t>(item.buyPrice);
  	msg->put<uint32_t>(item.sellPrice);
