@@ -692,13 +692,6 @@ void LuaInterface::createLuaState()
     rawSeti(5);
     pop(2);
 
-    // replace loadfile
-    getGlobal("package");
-    getField("loaders");
-    pushCFunction(&LuaInterface::luaScriptLoader);
-    rawSeti(5);
-    pop(2);
-
     // replace dofile
     pushCFunction(&LuaInterface::lua_dofile);
     setGlobal("dofile");

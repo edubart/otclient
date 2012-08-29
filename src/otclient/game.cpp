@@ -635,7 +635,10 @@ void Game::look(const ThingPtr& thing)
     if(!canPerformGameAction() || !thing)
         return;
 
-    m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackpos());
+    if(thing->isCreature() && m_clientVersion >= 961)
+        m_protocolGame->sendLookCreature(thing->getId());
+    else
+        m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackpos());
 }
 
 void Game::move(const ThingPtr& thing, const Position& toPos, int count)
@@ -774,7 +777,12 @@ void Game::attack(CreaturePtr creature)
         cancelFollow();
 
     setAttackingCreature(creature);
-    m_seq++;
+
+    if(m_clientVersion >= 963)
+        m_seq = creature->getId();
+    else
+        m_seq++;
+
     m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
 }
 
@@ -791,7 +799,12 @@ void Game::follow(CreaturePtr creature)
         cancelAttack();
 
     setFollowingCreature(creature);
-    m_seq++;
+
+    if(m_clientVersion >= 963)
+        m_seq = creature->getId();
+    else
+        m_seq++;
+
     m_protocolGame->sendFollow(creature ? creature->getId() : 0, m_seq);
 }
 
@@ -1151,7 +1164,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 810 || version > 961))
+    if(version != 0 && (version < 810 || version > 963))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();

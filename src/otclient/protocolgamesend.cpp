@@ -436,6 +436,14 @@ void ProtocolGame::sendLook(const Position& position, int thingId, int stackpos)
     send(msg);
 }
 
+void ProtocolGame::sendLookCreature(uint32 creatureId)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(0x8D);
+    msg->addU32(creatureId);
+    send(msg);
+}
+
 void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message)
 {
     if(message.empty())

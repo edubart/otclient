@@ -1254,9 +1254,18 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 {
-    uint id = msg->getU32();
-    std::string name = g_game.formatCreatureName(msg->getString());
-    bool online = msg->getU8() != 0;
+    uint id, markId;
+    std::string name, desc;
+    bool online, notifyLogin;
+
+    id = msg->getU32();
+    name = g_game.formatCreatureName(msg->getString());
+    if(g_game.getClientVersion() >= 963) {
+        desc = msg->getString();
+        markId = msg->getU32();
+        notifyLogin = msg->getU8();
+    }
+    online = msg->getU8();
 
     g_game.processVipAdd(id, name, online);
 }

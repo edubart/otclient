@@ -72,6 +72,7 @@ public:
     void sendEditText(uint id, const std::string& text);
     void sendEditList(uint id, int doorId, const std::string& text);
     void sendLook(const Position& position, int thingId, int stackpos);
+    void sendLookCreature(uint creatureId);
     void sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message);
     void sendRequestChannels();
     void sendJoinChannel(int channelId);

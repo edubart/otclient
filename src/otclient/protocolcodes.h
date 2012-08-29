@@ -191,6 +191,7 @@ namespace Proto {
         ClientEditText                      = 137,
         ClientEditList                      = 138,
         ClientLook                          = 140,
+        ClientLookCreature                  = 141,
         ClientTalk                          = 150,
         ClientRequestChannels               = 151,
         ClientJoinChannel                   = 152,
