@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
+set(VERSION "0.5.3")
+
 set(FRAMEWORK_SOUND ON)
 set(FRAMEWORK_GRAPHICS ON)
 set(FRAMEWORK_XML ON)
@@ -27,6 +29,8 @@ if(WIN32)
                        -o ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o)
     set(executable_SOURCES ${executable_SOURCES} otcicon.o)
 endif()
+
+add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 # add otclient executable
 add_executable(otclient ${framework_SOURCES} ${otclient_SOURCES} ${executable_SOURCES})

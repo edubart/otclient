@@ -33,6 +33,7 @@ fi
 cd $workdir/otclient
 revision=`git rev-list --all | wc -l`
 commit=`git describe --dirty --always`
+version=`cat CMakeLists.txt | grep "set(VERSION" | sed 's/.*"\([^"]*\)".*/\1/'`
 
 # compile for win32
 rm -rf build.win32
@@ -77,7 +78,7 @@ cd ..
 
 ##################################################
 # create win32 package
-pkg_suffix="-snapshot-linux64-`date +%Y%m%d`"
+pkg_suffix="-linux64-$version"
 pkgname="$name$pkg_suffix"
 pkgzip="$pkgname.tgz"
 cd $workdir
@@ -125,7 +126,7 @@ cp $workdir/Tibia/*.dat $pkgname/modules/game_tibiafiles/860/
 
 ##################################################
 # create win32 package
-pkg_suffix="-snapshot-win32-`date +%Y%m%d`"
+pkg_suffix="-win32-$version"
 pkgname="$name$pkg_suffix"
 pkgzip="$pkgname.zip"
 cd $workdir
