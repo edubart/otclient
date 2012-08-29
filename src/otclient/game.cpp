@@ -1173,7 +1173,7 @@ void Game::setClientVersion(int version)
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
-    if(version <= 810) {
+    if(version <= 854) {
         enableFeature(Otc::GameChargeableItems);
     }
 
