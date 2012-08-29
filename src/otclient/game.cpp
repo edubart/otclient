@@ -467,10 +467,10 @@ void Game::safeLogout()
     m_protocolGame->sendLogout();
 }
 
-void Game::walk(Otc::Direction direction)
+bool Game::walk(Otc::Direction direction)
 {
     if(!canPerformGameAction())
-        return;
+        return false;
 
     // must cancel follow before any new walk
     if(isFollowing())
@@ -479,11 +479,11 @@ void Game::walk(Otc::Direction direction)
     // msut cancel auto walking and wait next try
     if(m_localPlayer->isAutoWalking()) {
         m_protocolGame->sendStop();
-        return;
+        return false;
     }
 
     if(!m_localPlayer->canWalk(direction))
-        return;
+        return false;
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
     TilePtr toTile = g_map.getTile(toPos);
@@ -521,12 +521,13 @@ void Game::walk(Otc::Direction direction)
             (!toTile || toTile->isEmpty())) {
             m_localPlayer->lockWalk();
         } else
-            return;
+            return false;
     }
 
     g_lua.callGlobalField("g_game", "onWalk", direction);
 
     forceWalk(direction);
+    return true;
 }
 
 void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
@@ -778,9 +779,10 @@ void Game::attack(CreaturePtr creature)
 
     setAttackingCreature(creature);
 
-    if(m_clientVersion >= 963)
-        m_seq = creature->getId();
-    else
+    if(m_clientVersion >= 963) {
+        if(creature)
+            m_seq = creature->getId();
+    } else
         m_seq++;
 
     m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
@@ -800,9 +802,10 @@ void Game::follow(CreaturePtr creature)
 
     setFollowingCreature(creature);
 
-    if(m_clientVersion >= 963)
-        m_seq = creature->getId();
-    else
+    if(m_clientVersion >= 963) {
+        if(creature)
+            m_seq = creature->getId();
+    } else
         m_seq++;
 
     m_protocolGame->sendFollow(creature ? creature->getId() : 0, m_seq);
