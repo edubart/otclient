@@ -93,6 +93,16 @@ function UISpinBox:setValue(value)
     self:setText(value)
   end
   self.value = value
+
+  local upButton = self:getChildById('up')
+  local downButton = self:getChildById('down')
+  if upButton then
+    upButton:setEnabled(self.maximum ~= self.minimum and self.value ~= self.maximum)
+  end
+  if downButton then
+    downButton:setEnabled(self.maximum ~= self.minimum and self.value ~= self.minimum)
+  end
+
   signalcall(self.onValueChange, self, value)
 end
 

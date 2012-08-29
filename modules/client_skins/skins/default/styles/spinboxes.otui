@@ -1,14 +1,6 @@
-SpinBox < UISpinBox
-  font: verdana-11px-antialised
-  color: #aaaaaa
+SpinBox < TextEdit
+  __class: UISpinBox
   size: 86 20
-  text-offset: 0 3
-  text-margin: 3
-  image-source: /images/textedit.png
-  image-border: 1
-
-  $disabled:
-    color: #aaaaaa88
 
   Button
     id: up
