@@ -295,3 +295,10 @@ KeyCodeDescs = {
   [KeyNumpad8] = 'Numpad8',
   [KeyNumpad9] = 'Numpad9'
 }
+
+NetworkMessageTypes = {
+  Boolean = 1,
+  Number = 2,
+  String = 3,
+  Table = 4
+}

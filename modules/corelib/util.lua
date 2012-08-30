@@ -244,6 +244,22 @@ function fromboolean(boolean)
   end
 end
 
+function booleantonumber(boolean)
+  if boolean then
+    return 1
+  else
+    return 0
+  end
+end
+
+function numbertoboolean(number)
+  if number ~= 0 then
+    return true
+  else
+    return false
+  end
+end
+
 function signalcall(param, ...)
   if type(param) == 'function' then
     local status, ret = pcall(param, ...)

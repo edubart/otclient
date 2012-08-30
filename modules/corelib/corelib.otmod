@@ -19,3 +19,6 @@ Module
     dofile 'mouse'
 
     dofiles 'ui'
+
+    dofile 'inputmessage'
+    dofile 'outputmessage'

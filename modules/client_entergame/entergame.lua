@@ -28,7 +28,7 @@ local function onMotd(protocol, motd)
   motdButton:show()
 end
 
-local function onCharacterList(protocol, characters, premDays)
+local function onCharacterList(protocol, characters, account)
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
     g_settings.set('account', g_crypt.encrypt(G.account))
     g_settings.set('password', g_crypt.encrypt(G.password))
@@ -40,7 +40,7 @@ local function onCharacterList(protocol, characters, premDays)
   loadBox:destroy()
   loadBox = nil
 
-  CharacterList.create(characters, premDays)
+  CharacterList.create(characters, account)
   CharacterList.show()
 
   local lastMotdNumber = g_settings.getNumber("motd")

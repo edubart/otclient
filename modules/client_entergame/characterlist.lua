@@ -182,9 +182,9 @@ function CharacterList.terminate()
   CharacterList = nil
 end
 
-function CharacterList.create(characters, premDays)
+function CharacterList.create(characters, account)
   G.characters = characters
-  G.premDays = premDays
+  G.premDays = account.premDays
 
   characterList:destroyChildren()
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
@@ -212,8 +212,8 @@ function CharacterList.create(characters, premDays)
 
   characterList:focusChild(focusLabel, ActiveFocusReason)
 
-  if premDays > 0 then
-    accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", premDays))
+  if account.premDays > 0 then
+    accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", account.premDays))
   else
     accountStatusLabel:setText(tr('Account Status:\nFree Account'))
   end

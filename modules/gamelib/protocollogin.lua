@@ -5,6 +5,7 @@ LoginServerError = 10
 LoginServerMotd = 20
 LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
+LoginServerExtendedCharacterList = 101
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(host) == 0 or port == nil or port == 0 then
@@ -83,6 +84,8 @@ function ProtocolLogin:onRecv(msg)
       signalcall(self.onError, self, tr("Client needs update. Verify your spr/dat/pic versions."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
+    elseif opcode == LoginServerExtendedCharacterList then
+      self:parseExtendedCharacterList(msg)
     else
       self:parseOpcode(opcode, msg)
     end
@@ -111,8 +114,16 @@ function ProtocolLogin:parseCharacterList(msg)
     character.worldPort = msg:getU16()
     characters[i] = character
   end
-  local premDays = msg:getU16()
-  signalcall(self.onCharacterList, self, characters, premDays)
+
+  local account = {}
+  account.premDays = msg:getU16()
+  signalcall(self.onCharacterList, self, characters, account)
+end
+
+function ProtocolLogin:parseExtendedCharacterList(msg)
+  local characters = msg:getTable()
+  local account = msg:getTable()
+  signalcall(self.onCharacterList, self, characters, account)
 end
 
 function ProtocolLogin:parseOpcode(opcode, msg)

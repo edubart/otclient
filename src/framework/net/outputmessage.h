@@ -51,7 +51,11 @@ public:
 
     void encryptRsa(int size);
 
+    uint16 getWritePos() { return m_writePos; }
     uint16 getMessageSize() { return m_messageSize; }
+
+    void setWritePos(uint16 writePos) { m_writePos = writePos; }
+    void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
 
 protected:
     uint8* getWriteBuffer() { return m_buffer + m_writePos; }
