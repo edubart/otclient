@@ -1,22 +1,45 @@
-CharacterListLabel < Label
-  font: verdana-11px-monochrome
-  background-color: alpha
-  text-offset: 2 0
+CharacterWidget < UIWidget
+  height: 14
   focusable: true
+  background-color: alpha
 
   $focus:
     background-color: #ffffff22
+
+  Label
+    id: name
     color: #ffffff
+    anchors.top: parent.top
+    anchors.left: parent.left
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    text-offset: 2 0
+
+  Label
+    id: worldName
+    color: #ffffff
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-right: 5
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    &baseText: '(%s)'
 
 MainWindow
   id: charactersWindow
   !text: tr('Character List')
   size: 250 248
+  visible: false
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.destroy()
+  @onSetup: |
+    g_keyboard.bindKeyPress('Up', function() self:getChildById('characters'):focusPreviousChild(KeyboardFocusReason) end, self)
+    g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
 
   TextList
-    id: characterList
+    id: characters
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left

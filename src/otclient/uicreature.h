@@ -34,6 +34,7 @@ public:
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
     void setFixedCreatureSize(bool fixed) { m_fixedCreatureSize = fixed; }
+    void setOutfit(const Outfit& outfit);
 
     CreaturePtr getCreature() { return m_creature; }
     bool isFixedCreatureSize() { return m_fixedCreatureSize; }

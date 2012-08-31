@@ -15,7 +15,7 @@ local function calcValues(self)
   else -- horizontal
     pxrange = (self:getWidth() - decrementButton:getWidth() - decrementButton:getMarginLeft() - decrementButton:getMarginRight()
                                - incrementButton:getWidth() - incrementButton:getMarginLeft() - incrementButton:getMarginRight())
-    center = self:getX() + self:getWidth() / 2
+    center = self:getX() + math.floor(self:getWidth() / 2)
   end
 
   local range = self.maximum - self.minimum + 1
@@ -83,6 +83,7 @@ local function parseSliderPos(self, pos)
   offset = math.min(math.max(point - center, -pxrange/2), pxrange/2)
   local newvalue = math.floor(((offset / (pxrange - px)) + 0.5) * (range - 1)) + self.minimum
   self:setValue(newvalue)
+  -- this function must be reworked, scroll is not that good based on center
 end
 
 

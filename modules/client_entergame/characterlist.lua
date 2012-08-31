@@ -78,7 +78,7 @@ local function resendWait()
     end
 
     if charactersWindow then
-      local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
+      local selected = characterList:getFocusedChild()
       if selected then
         local charInfo = { worldHost = selected.worldHost,
                            worldPort = selected.worldPort,
@@ -101,19 +101,6 @@ local function onLoginWait(message, time)
   resendWaitEvent = scheduleEvent(resendWait, time * 1000)
 end
 
-local function onCharactersWindowKeyPress(self, keyCode, keyboardModifiers)
-  if keyboardModifiers == KeyboardNoModifier then
-    if keyCode == KeyUp then
-      characterList:focusPreviousChild(KeyboardFocusReason)
-      return true
-    elseif keyCode == KeyDown or keyCode == KeyTab then
-      characterList:focusNextChild(KeyboardFocusReason)
-      return true
-    end
-  end
-  return false
-end
-
 function onGameLoginError(message)
   CharacterList.destroyLoadBox()
   errorBox = displayErrorBox(tr("Login Error"), message)
@@ -134,10 +121,6 @@ end
 
 -- public functions
 function CharacterList.init()
-  charactersWindow = g_ui.displayUI('characterlist.otui')
-  charactersWindow:hide()
-  characterList = charactersWindow:getChildById('characterList')
-  charactersWindow.onKeyPress = onCharactersWindowKeyPress
   connect(g_game, { onLoginError = onGameLoginError })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
@@ -145,7 +128,7 @@ function CharacterList.init()
   connect(g_game, { onGameEnd = CharacterList.showAgain })
 
   if G.characters then
-    CharacterList.create(G.characters, G.premDays)
+    CharacterList.create(G.characters, G.characterAccount)
   end
 end
 
@@ -155,9 +138,8 @@ function CharacterList.terminate()
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
   disconnect(g_game, { onLoginWait = onLoginWait })
   disconnect(g_game, { onGameEnd = CharacterList.showAgain })
-  characterList = nil
-  charactersWindow:destroy()
-  charactersWindow = nil
+  CharacterList.destroy()
+
   if loadBox then
     g_game.cancelLogin()
     loadBox:destroy()
@@ -182,36 +164,54 @@ function CharacterList.terminate()
   CharacterList = nil
 end
 
-function CharacterList.create(characters, account)
+function CharacterList.create(characters, account, otui)
+  if not otui then otui = 'characterlist.otui' end
+
+  charactersWindow = g_ui.displayUI(otui)
+  characterList = charactersWindow:getChildById('characters')
+
+  -- characters
   G.characters = characters
-  G.premDays = account.premDays
+  G.characterAccount = account
 
   characterList:destroyChildren()
   local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
 
   local focusLabel
   for i,characterInfo in ipairs(characters) do
-    local characterName = characterInfo.name
-    local worldName = characterInfo.worldName
-    local worldHost = characterInfo.worldIp
-    local worldPort = characterInfo.worldPort
+    local widget = g_ui.createWidget('CharacterWidget', characterList)
+    for key,value in pairs(characterInfo) do
+      local subWidget = widget:getChildById(key)
+      if subWidget then
+        if key == 'outfit' then -- it's an exception
+          subWidget:setOutfit(value)
+        else
+          local text = value
+          if subWidget.baseText and subWidget.baseTranslate then
+            text = tr(subWidget.baseText, text)
+          elseif subWidget.baseText then
+            text = string.format(subWidget.baseText, text)
+          end
+          subWidget:setText(text)
+        end
+      end
+    end
 
-    local label = g_ui.createWidget('CharacterListLabel', characterList)
-    label:setText(characterName .. '  (' .. worldName .. ')')
-    label:setPhantom(false)
-    label.characterName = characterName
-    label.worldHost = worldHost
-    label.worldPort = worldPort
+    -- these are used by login
+    widget.characterName = characterInfo.name
+    widget.worldHost = characterInfo.worldIp
+    widget.worldPort = characterInfo.worldPort
 
-    connect(label, { onDoubleClick = function () CharacterList.doLogin() return true end } )
+    connect(widget, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
     if i == 1 or g_settings.get('lastUsedCharacter') == characterName then
-      focusLabel = label
+      focusLabel = widget
     end
   end
 
   characterList:focusChild(focusLabel, ActiveFocusReason)
 
+  -- account
   if account.premDays > 0 then
     accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", account.premDays))
   else
@@ -219,13 +219,14 @@ function CharacterList.create(characters, account)
   end
 end
 
-function CharacterList.hide()
-  charactersWindow:hide()
-end
-
 function CharacterList.destroy()
-  CharacterList.hide()
-  if not g_game.isOnline() then
+  if charactersWindow then
+    characterList = nil
+    charactersWindow:destroy()
+    charactersWindow = nil
+  end
+
+  if EnterGame and not g_game.isOnline() then
     EnterGame.show()
   end
 end
@@ -236,6 +237,10 @@ function CharacterList.show()
     charactersWindow:raise()
     charactersWindow:focus()
   end
+end
+
+function CharacterList.hide()
+  charactersWindow:hide()
 end
 
 function CharacterList.showAgain()
@@ -252,7 +257,7 @@ function CharacterList.isVisible()
 end
 
 function CharacterList.doLogin()
-  local selected = charactersWindow:getChildById('characterList'):getFocusedChild()
+  local selected = characterList:getFocusedChild()
   if selected then
     local charInfo = { worldHost = selected.worldHost,
                        worldPort = selected.worldPort,

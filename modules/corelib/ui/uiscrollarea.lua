@@ -47,7 +47,9 @@ function UIScrollArea:updateScrollBars()
   if scrollbar then
     if self.inverted then
       scrollbar:setMinimum(-scrollWidth)
+      scrollbar:setMaximum(0)
     else
+      scrollbar:setMinimum(0)
       scrollbar:setMaximum(scrollWidth)
     end
   end
@@ -75,6 +77,11 @@ end
 
 function UIScrollArea:setHorizontalScrollBar(scrollbar)
   self.horizontalScrollBar = scrollbar
+  self.horizontalScrollBar.onValueChange = function(scrollbar, value)
+    local virtualOffset = self:getVirtualOffset()
+    virtualOffset.x = value
+    self:setVirtualOffset(virtualOffset)
+  end
   self:updateScrollBars()
 end
 
@@ -97,6 +104,12 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
     else
       self.verticalScrollBar:increment()
     end
+  elseif self.horizontalScrollBar then
+    if mouseWheel == MouseWheelUp then
+      self.horizontalScrollBar:increment()
+    else
+      self.horizontalScrollBar:decrement()
+    end
   end
   return true
 end
@@ -104,14 +117,26 @@ end
 function UIScrollArea:onChildFocusChange(focusedChild, oldFocused, reason)
   if focusedChild and (reason == MouseFocusReason or reason == KeyboardFocusReason) then
     local paddingRect = self:getPaddingRect()
-    local delta = paddingRect.y - focusedChild:getY()
-    if delta > 0 then
-      self.verticalScrollBar:decrement(delta)
-    end
+    if self.verticalScrollBar then
+      local deltaY = paddingRect.y - focusedChild:getY()
+      if deltaY > 0 then
+        self.verticalScrollBar:decrement(deltaY)
+      end
 
-    delta = (focusedChild:getY() + focusedChild:getHeight()) - (paddingRect.y + paddingRect.height)
-    if delta > 0 then
-      self.verticalScrollBar:increment(delta)
+      deltaY = (focusedChild:getY() + focusedChild:getHeight()) - (paddingRect.y + paddingRect.height)
+      if deltaY > 0 then
+        self.verticalScrollBar:increment(deltaY)
+      end
+    else
+      local deltaX = paddingRect.x - focusedChild:getX()
+      if deltaX > 0 then
+        self.horizontalScrollBar:decrement(deltaX)
+      end
+
+      deltaX = (focusedChild:getX() + focusedChild:getWidth()) - (paddingRect.x + paddingRect.width)
+      if deltaX > 0 then
+        self.horizontalScrollBar:increment(deltaX)
+      end
     end
   end
 end

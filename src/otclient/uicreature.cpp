@@ -38,6 +38,14 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
     }
 }
 
+void UICreature::setOutfit(const Outfit& outfit)
+{
+    if(!m_creature)
+        m_creature = CreaturePtr(new Creature);
+    m_creature->setDirection(Otc::South);
+    m_creature->setOutfit(outfit);
+}
+
 void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);

@@ -123,7 +123,8 @@ end
 function ProtocolLogin:parseExtendedCharacterList(msg)
   local characters = msg:getTable()
   local account = msg:getTable()
-  signalcall(self.onCharacterList, self, characters, account)
+  local otui = msg:getString()
+  signalcall(self.onCharacterList, self, characters, account, otui)
 end
 
 function ProtocolLogin:parseOpcode(opcode, msg)
