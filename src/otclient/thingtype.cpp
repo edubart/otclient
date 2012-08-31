@@ -287,3 +287,11 @@ uint ThingType::getTextureIndex(int l, int x, int y, int z) {
                * m_numPatternY + y)
                * m_numPatternX + x;
 }
+
+int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+{
+    getTexture(animationPhase); // we must calculate it anyway.
+    int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
+    return std::max(size.width(), size.height());
+}

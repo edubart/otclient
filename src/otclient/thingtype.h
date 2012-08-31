@@ -117,7 +117,7 @@ public:
     Size getSize() { return m_size; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
-    int getExactSize() { return m_exactSize; }
+    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
     int getLayers() { return m_layers; }
     int getNumPatternX() { return m_numPatternX; }
     int getNumPatternY() { return m_numPatternY; }

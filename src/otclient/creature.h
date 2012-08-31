@@ -91,6 +91,7 @@ public:
     virtual Point getDisplacement();
     virtual int getDisplacementX();
     virtual int getDisplacementY();
+    virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
 
     void updateShield();
 

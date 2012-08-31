@@ -458,7 +458,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
 end
 
 function moveStackableItem(item, toPos)
-  if(countWindow) then
+  if countWindow then
     return
   end
   if g_keyboard.isCtrlPressed() then
@@ -479,8 +479,17 @@ function moveStackableItem(item, toPos)
   scrollbar:setMaximum(count)
   scrollbar:setMinimum(1)
   scrollbar:setValue(count)
-  scrollbar.onValueChange = function(self, value) spinbox:setValue(value) end
-  spinbox.onValueChange = function(self, value) scrollbar:setValue(value) end
+
+  local spinBoxValueChange = function(self, value)
+    scrollbar:setValue(value)
+  end
+  spinbox.onValueChange = spinBoxValueChange
+
+  scrollbar.onValueChange = function(self, value)
+    spinbox.onValueChange = nil
+    spinbox:setValue(math.round(value))
+    spinbox.onValueChange = spinBoxValueChange
+  end
 
   local okButton = countWindow:getChildById('buttonOk')
   local moveFunc = function()

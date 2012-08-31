@@ -124,6 +124,10 @@ public:
     void addContainerItem(const ItemPtr& i) { m_containerItems.push_back(i); }
     void clearContainerItems() { m_containerItems.clear(); }
 
+    void calculatePatterns(int& xPattern, int& yPattern, int& zPattern);
+    int calculateAnimationPhase(bool animate);
+    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
+
     const ThingTypePtr& getThingType();
     ThingType *rawGetThingType();
 

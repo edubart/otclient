@@ -64,7 +64,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
         return;
 
     // determine animation phase
-    int animationPhase = 0;
+    int animationPhase = calculateAnimationPhase(animate);
     if(getAnimationPhases() > 1) {
         if(animate)
             animationPhase = (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
@@ -74,103 +74,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
-    if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
-        if(m_countOrSubType <= 0) {
-            xPattern = 0;
-            yPattern = 0;
-        } else if(m_countOrSubType < 5) {
-            xPattern = m_countOrSubType-1;
-            yPattern = 0;
-        } else if(m_countOrSubType < 10) {
-            xPattern = 0;
-            yPattern = 1;
-        } else if(m_countOrSubType < 25) {
-            xPattern = 1;
-            yPattern = 1;
-        } else if(m_countOrSubType < 50) {
-            xPattern = 2;
-            yPattern = 1;
-        } else {
-            xPattern = 3;
-            yPattern = 1;
-        }
-    } else if(isHangable()) {
-        const TilePtr& tile = getTile();
-        if(tile) {
-            if(tile->mustHookSouth())
-                xPattern = getNumPatternX() >= 2 ? 1 : 0;
-            else if(tile->mustHookEast())
-                xPattern = getNumPatternX() >= 3 ? 2 : 0;
-        }
-    } else if(isSplash() || isFluidContainer()) {
-        int color = Otc::FluidTransparent;
-        switch(m_countOrSubType) {
-            case Otc::FluidNone:
-                color = Otc::FluidTransparent;
-                break;
-            case Otc::FluidWater:
-                color = Otc::FluidBlue;
-                break;
-            case Otc::FluidMana:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidBeer:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidOil:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidBlood:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidSlime:
-                color = Otc::FluidGreen;
-                break;
-            case Otc::FluidMud:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidLemonade:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidWine:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidHealth:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidUrine:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidRum:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidFruidJuice:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidCoconutMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidTea:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidMead:
-                color = Otc::FluidBrown;
-                break;
-            default:
-                color = Otc::FluidTransparent;
-                break;
-        }
-
-        xPattern = (color % 4) % getNumPatternX();
-        yPattern = (color / 4) % getNumPatternY();
-    } else if(isGround() || isOnBottom()) {
-        xPattern = m_position.x % getNumPatternX();
-        yPattern = m_position.y % getNumPatternY();
-        zPattern = m_position.z % getNumPatternZ();
-    }
+    calculatePatterns(xPattern, yPattern, zPattern);
 
     rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 }
@@ -339,6 +243,128 @@ ItemPtr Item::clone()
     ItemPtr item = ItemPtr(new Item);
     *(item.get()) = *this;
     return item;
+}
+
+void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
+{
+    if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
+        if(m_countOrSubType <= 0) {
+            xPattern = 0;
+            yPattern = 0;
+        } else if(m_countOrSubType < 5) {
+            xPattern = m_countOrSubType-1;
+            yPattern = 0;
+        } else if(m_countOrSubType < 10) {
+            xPattern = 0;
+            yPattern = 1;
+        } else if(m_countOrSubType < 25) {
+            xPattern = 1;
+            yPattern = 1;
+        } else if(m_countOrSubType < 50) {
+            xPattern = 2;
+            yPattern = 1;
+        } else {
+            xPattern = 3;
+            yPattern = 1;
+        }
+    } else if(isHangable()) {
+        const TilePtr& tile = getTile();
+        if(tile) {
+            if(tile->mustHookSouth())
+                xPattern = getNumPatternX() >= 2 ? 1 : 0;
+            else if(tile->mustHookEast())
+                xPattern = getNumPatternX() >= 3 ? 2 : 0;
+        }
+    } else if(isSplash() || isFluidContainer()) {
+        int color = Otc::FluidTransparent;
+        switch(m_countOrSubType) {
+            case Otc::FluidNone:
+                color = Otc::FluidTransparent;
+                break;
+            case Otc::FluidWater:
+                color = Otc::FluidBlue;
+                break;
+            case Otc::FluidMana:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidBeer:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidOil:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidBlood:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidSlime:
+                color = Otc::FluidGreen;
+                break;
+            case Otc::FluidMud:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidLemonade:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidWine:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidHealth:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidUrine:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidRum:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidFruidJuice:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidCoconutMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidTea:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidMead:
+                color = Otc::FluidBrown;
+                break;
+            default:
+                color = Otc::FluidTransparent;
+                break;
+        }
+
+        xPattern = (color % 4) % getNumPatternX();
+        yPattern = (color / 4) % getNumPatternY();
+    } else if(isGround() || isOnBottom()) {
+        xPattern = m_position.x % getNumPatternX();
+        yPattern = m_position.y % getNumPatternY();
+        zPattern = m_position.z % getNumPatternZ();
+    }
+}
+
+int Item::calculateAnimationPhase(bool animate)
+{
+    if(getAnimationPhases() > 1) {
+        if(animate)
+            return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+        else
+            return getAnimationPhases()-1;
+    }
+    return 0;
+}
+
+int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+{
+    int exactSize = 0;
+    calculatePatterns(xPattern, yPattern, zPattern);
+    animationPhase = calculateAnimationPhase(true);
+    for(layer = 0; layer < getLayers(); ++layer)
+        exactSize = std::max(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
+    return exactSize;
 }
 
 const ThingTypePtr& Item::getThingType()

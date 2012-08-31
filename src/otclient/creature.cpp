@@ -681,6 +681,34 @@ int Creature::getDisplacementY()
     return Thing::getDisplacementY();
 }
 
+int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+{
+    int exactSize = 0;
+
+    animationPhase = m_walkAnimationPhase;
+
+    if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+        xPattern = Otc::East;
+    else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+        xPattern = Otc::West;
+    else
+        xPattern = m_direction;
+
+    zPattern = 0;
+    if(m_outfit.getMount() != 0)
+        zPattern = 1;
+
+    for(yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
+        if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
+            continue;
+
+        for(layer = 0; layer < getLayers(); ++layer)
+            exactSize = std::max(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
+    }
+
+    return exactSize;
+}
+
 const ThingTypePtr& Creature::getThingType()
 {
     return g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);

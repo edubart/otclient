@@ -48,7 +48,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
         Rect drawRect = getPaddingRect();
         Point dest = drawRect.bottomRight() + Point(1,1);
 
-        int exactSize = m_item->getExactSize();
+        int exactSize = std::max(32, m_item->getExactSize());
         if(exactSize == 0)
             return;
 

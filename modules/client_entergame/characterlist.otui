@@ -2,6 +2,11 @@ CharacterWidget < UIWidget
   height: 14
   focusable: true
   background-color: alpha
+  @onFocusChange: |
+    local children = self:getChildren()
+    for i=1,#children do
+      children[i]:setOn(self:isFocused())
+    end
 
   $focus:
     background-color: #ffffff22
@@ -15,6 +20,10 @@ CharacterWidget < UIWidget
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
+    on: true
+
+    $!on:
+      color: #aaaaaa
 
   Label
     id: worldName
@@ -26,6 +35,10 @@ CharacterWidget < UIWidget
     text-auto-resize: true
     background-color: alpha
     &baseText: '(%s)'
+    on: true
+
+    $!on:
+      color: #aaaaaa
 
 MainWindow
   id: charactersWindow

@@ -72,20 +72,19 @@ local function updateSlider(self)
   end
 end
 
-local function parseSliderPos(self, pos)
-  local point
+local function parseSliderPos(self, pos, move)
+  local point, delta
   if self.orientation == 'vertical' then
     point = pos.y
+    delta = move.y
   else
     point = pos.x
+    delta = move.x
   end
   local range, pxrange, px, offset, center = calcValues(self)
-  offset = math.min(math.max(point - center, -pxrange/2), pxrange/2)
-  local newvalue = math.floor(((offset / (pxrange - px)) + 0.5) * (range - 1)) + self.minimum
+  local newvalue = self.value + delta * (range / (pxrange - px))
   self:setValue(newvalue)
-  -- this function must be reworked, scroll is not that good based on center
 end
-
 
 -- public functions
 function UIScrollBar.create()
@@ -105,7 +104,7 @@ function UIScrollBar:onSetup()
   --signalcall(self.onValueChange, self, self.value)
   g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end, 300)
   g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end, 300)
-  g_mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos) end)
+  g_mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos, mouseMoved) end)
   updateSlider(self)
 end
 
