@@ -487,7 +487,7 @@ function moveStackableItem(item, toPos)
 
   scrollbar.onValueChange = function(self, value)
     spinbox.onValueChange = nil
-    spinbox:setValue(math.round(value))
+    spinbox:setValue(value)
     spinbox.onValueChange = spinBoxValueChange
   end
 

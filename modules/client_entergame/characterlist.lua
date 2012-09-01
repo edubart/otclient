@@ -244,7 +244,7 @@ function CharacterList.hide()
 end
 
 function CharacterList.showAgain()
-  if characterList:hasChildren() then
+  if characterList and characterList:hasChildren() then
     CharacterList.show()
   end
 end

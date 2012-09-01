@@ -168,7 +168,7 @@ function UIScrollBar:setValue(value)
   self.value = value
   updateSlider(self)
   if self.setupDone then
-    signalcall(self.onValueChange, self, value, delta)
+    signalcall(self.onValueChange, self, math.round(value), delta)
   end
 end
 
@@ -203,6 +203,6 @@ end
 
 function UIScrollBar:getMaximum() return self.maximum end
 function UIScrollBar:getMinimum() return self.minimum end
-function UIScrollBar:getValue() return self.value end
+function UIScrollBar:getValue() return math.round(self.value) end
 function UIScrollBar:getStep() return self.step end
 function UIScrollBar:getOrientation() return self.orientation end
