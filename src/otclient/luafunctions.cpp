@@ -63,7 +63,6 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "findItemTypeByClientId", &ThingTypeManager::findItemTypeByClientId, &g_things);
     g_lua.bindSingletonFunction("g_things", "findThingTypeByAttr", &ThingTypeManager::findThingTypeByAttr, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
-    g_lua.bindSingletonFunction("g_things", "castThingToCreature", &ThingTypeManager::castThingToCreature, &g_things);
 
 #if 0
     g_lua.registerSingletonClass("g_houses");

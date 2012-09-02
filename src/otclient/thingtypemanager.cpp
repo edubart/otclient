@@ -272,29 +272,6 @@ const ItemTypePtr& ThingTypeManager::getItemType(uint16 id)
     return m_itemTypes[id];
 }
 
-CreaturePtr ThingTypeManager::castThingToCreature(const ThingTypePtr& thing)
-{
-    if(!thing)
-        return nullptr;
-
-    if(thing->getCategory() != ThingCategoryCreature)
-        stdext::throw_exception("Thing type is not a creature");
-
-    uint16 clientId = thing->getId();
-    CreaturePtr ret(new Creature);
-    CreatureTypePtr cType = g_creatures.getCreatureByLook(clientId);
-    if(!cType) {
-        // a creature can have a look item with whether client id or even server id
-        const ItemTypePtr& item = findItemTypeByClientId(clientId);
-        if(item && !(cType = g_creatures.getCreatureByLook(item->getServerId())))
-            stdext::throw_exception(stdext::format("failed to find creature with look type/item %hd", item->getServerId()));
-    }
-
-    ret->setName(cType->getName());
-    ret->setOutfit(cType->getOutfit());
-    return ret;
-}
-
 ThingTypeList ThingTypeManager::findThingTypeByAttr(ThingAttr attr, ThingCategory category)
 {
     ThingTypeList ret;

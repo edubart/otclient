@@ -102,21 +102,18 @@ public:
         tile = TilePtr(new Tile(pos));
         return tile;
     }
-
     const TilePtr& getOrCreate(const Position& pos) {
         TilePtr& tile = m_tiles[getTileIndex(pos)];
         if(!tile)
             tile = TilePtr(new Tile(pos));
         return tile;
     }
-
     const TilePtr& get(const Position& pos) { return m_tiles[getTileIndex(pos)]; }
-
     void remove(const Position& pos) { m_tiles[getTileIndex(pos)] = nullptr; }
 
     uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
 
-    const std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> getTiles() const { return m_tiles; }
+    const std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE>& getTiles() const { return m_tiles; }
 
 private:
     std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> m_tiles;
