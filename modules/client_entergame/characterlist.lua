@@ -204,7 +204,7 @@ function CharacterList.create(characters, account, otui)
 
     connect(widget, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
-    if i == 1 or g_settings.get('lastUsedCharacter') == characterName then
+    if i == 1 or g_settings.get('lastUsedCharacter') == widget.characterName then
       focusLabel = widget
     end
   end
