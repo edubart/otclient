@@ -138,7 +138,12 @@ function CharacterList.terminate()
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
   disconnect(g_game, { onLoginWait = onLoginWait })
   disconnect(g_game, { onGameEnd = CharacterList.showAgain })
-  CharacterList.destroy()
+
+  if charactersWindow then
+    characterList = nil
+    charactersWindow:destroy()
+    charactersWindow = nil
+  end
 
   if loadBox then
     g_game.cancelLogin()
@@ -166,6 +171,10 @@ end
 
 function CharacterList.create(characters, account, otui)
   if not otui then otui = 'characterlist.otui' end
+  
+  if charactersWindow then
+    charactersWindow:destroy()
+  end
 
   charactersWindow = g_ui.displayUI(otui)
   characterList = charactersWindow:getChildById('characters')
@@ -220,6 +229,8 @@ function CharacterList.create(characters, account, otui)
 end
 
 function CharacterList.destroy()
+  charactersWindow:hide()
+
   if charactersWindow then
     characterList = nil
     charactersWindow:destroy()
@@ -262,7 +273,7 @@ function CharacterList.doLogin()
     local charInfo = { worldHost = selected.worldHost,
                        worldPort = selected.worldPort,
                        characterName = selected.characterName }
-    CharacterList.hide()
+    charactersWindow:hide()
     tryLogin(charInfo)
   else
     displayErrorBox(tr('Error'), tr('You must select a character to login!'))
