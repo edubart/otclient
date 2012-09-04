@@ -38,7 +38,7 @@ function onGameStart()
 end
 
 function onGameEnd()
-  sendReportEvent:cancel()
+  removeEvent(sendReportEvent)
 end
 
 function onConnect(protocol)
