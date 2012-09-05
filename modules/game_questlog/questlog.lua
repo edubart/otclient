@@ -53,6 +53,8 @@ function onGameQuestLog(quests)
   questLogWindow.onDestroy = function()
     questLogWindow = nil
   end
+
+  questList:focusChild(questList:getFirstChild())
 end
 
 function onGameQuestLine(questId, questMissions)
@@ -71,13 +73,17 @@ function onGameQuestLine(questId, questMissions)
   for i,questMission in pairs(questMissions) do
     local name, description = unpack(questMission)
 
-    local missionLabel = g_ui.createWidget('MissionLabel', missionList)
+    local missionLabel = g_ui.createWidget('MissionLabel')
     missionLabel:setText(name)
     missionLabel.description = description
+    missionList:addChild(missionLabel)
   end
 
   questLineWindow.onDestroy = function()
     if questLogWindow then questLogWindow:show() end
     questLineWindow = nil
   end
+
+  missionList:focusChild(missionList:getFirstChild())
 end
+
