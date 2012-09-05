@@ -15,7 +15,8 @@ function init()
   g_ui.importStyle('styles/countwindow.otui')
 
   connect(g_game, { onGameStart = show,
-                    onGameEnd = hide }, true)
+                    onGameEnd = hide,
+                    onLoginAdvice = onLoginAdvice }, true)
 
   gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
@@ -73,7 +74,8 @@ end
 
 function terminate()
   disconnect(g_game, { onGameStart = show,
-                       onGameEnd = hide })
+                       onGameEnd = hide,
+                       onLoginAdvice = onLoginAdvice })
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton:destroy()
@@ -106,6 +108,10 @@ function hide()
   gameRootPanel:hide()
   logoutButton:hide()
   Background.show()
+end
+
+function onLoginAdvice(message)
+  displayInfoBox("For Your Information", message)
 end
 
 function forceExit()
@@ -538,4 +544,3 @@ function onLeftPanelVisibilityChange(leftPanel, visible)
     end
   end
 end
-
