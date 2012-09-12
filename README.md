@@ -12,7 +12,7 @@ Otclient is written in C++2011, the upcoming C++ standard and heavily scripted i
 Beyond of it's flexibility with scripts, otclient comes with tons of other features that make possible
 the creation of new client side stuff in otserv that was not possible before. These include,
 sound system, graphics effects with shaders, modules/addons system, animated textures,
-styleable user interface, transparency, multi language, in game lua terminal, an OpenGL 1.1/2.0 ES engine that make possible to
+styleable user interface, transparency, multi language, in game lua terminal, an OpenGL 1.1/2.0 ES engine that make possible
 to port to mobile platforms. Otclient is also flexible enough to
 create tibia tools like map editors just using scripts, because it wasn't designed to be just a
 client, instead otclient was designed to be a combination of a framework and tibia APIs.
@@ -30,9 +30,7 @@ In short, if you need to compile OTClient, follow these tutorials:
 
 ### Need help?
 
-Checkout our website at <http://otclient.info> for tutorials and more information.
-If you have any questions or are looking for more information, please feel free to ask on our official
-forum at <http://forum.otclient.info> or talk with us at #otclient irc.freenode.net
+Try to ask questions in [otland](http://otland.net/forum.php) or talk with us at #otclient irc.freenode.net
 
 ### Bugs
 
@@ -44,8 +42,7 @@ We encourage you to contribute to otclient! You can make pull requests of any im
 
 ### Contact
 
-You have 3 options, use the [forum](http://forum.otclient.info/), talk directly with us at #otclient irc.freenode.net
-or send an email directly to the project leader edub4rt@gmail.com
+Talk directly with us at #otclient irc.freenode.net or send an email directly to the project leader edub4rt@gmail.com
 
 ### License
 
