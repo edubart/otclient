@@ -30,6 +30,7 @@
 class UICreature : public UIWidget
 {
 public:
+    UICreature() { m_color = Color::white; }
     void drawSelf(Fw::DrawPane drawPane);
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }

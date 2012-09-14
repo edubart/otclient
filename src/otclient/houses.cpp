@@ -24,8 +24,16 @@
 
 #include <framework/core/resourcemanager.h>
 
+HouseManager g_houses;
+
+House::House()
+{
+    m_nullTile = TilePtr(new Tile(Position()));
+}
+
 House::House(uint32 hId, const std::string &name, const Position &pos)
 {
+    m_nullTile = TilePtr(new Tile(Position()));
     setId(hId);
     setName(name);
     if(pos.isValid())
@@ -38,39 +46,73 @@ void House::setTile(const TilePtr& tile)
     m_tiles.insert(std::make_pair(tile->getPosition(), tile));
 }
 
+const TilePtr& House::getTile(const Position& position)
+{
+    TileMap::const_iterator iter = m_tiles.find(position);
+    if(iter != m_tiles.end())
+        return iter->second;
+    return m_nullTile;
+}
+
 void House::load(const TiXmlElement *elem)
 {
     std::string name = elem->Attribute("name");
     if(name.empty())
         name = stdext::format("Unnamed house #%lu", getId());
 
+    setName(name);
     setRent(elem->readType<uint32>("rent"));
     setSize(elem->readType<uint32>("size"));
     setTownId(elem->readType<uint32>("townid"));
-    m_isGuildHall = elem->readType<bool>("rent");
+    m_isGuildHall = elem->readType<bool>("guildhall");
     setEntry(elem->readPos("entry"));
 }
 
-void Houses::addHouse(const HousePtr& house)
+void House::save(TiXmlElement*& elem)
+{
+#define s(x) stdext::to_string((x)) // ugly macro again... to save "typing".
+    elem = new TiXmlElement("house");
+
+    elem->SetAttribute("name", getName());
+    elem->SetAttribute("houseid", s(getId()));
+
+    Position entry = getEntry();
+    elem->SetAttribute("entryx", s(entry.x));
+    elem->SetAttribute("entryy", s(entry.y));
+    elem->SetAttribute("entryz", s(entry.z));
+
+    elem->SetAttribute("rent", s(getRent()));
+    elem->SetAttribute("townid", s(getTownId()));
+    elem->SetAttribute("size", s(getSize()));
+    elem->SetAttribute("guildhall", s(m_isGuildHall));
+}
+
+HouseManager::HouseManager()
+{
+    m_nullHouse = HousePtr(new House);
+}
+
+void HouseManager::addHouse(const HousePtr& house)
 {
     if(findHouse(house->getId()) == m_houses.end())
         m_houses.push_back(house);
 }
 
-void Houses::removeHouse(uint32 houseId)
+void HouseManager::removeHouse(uint32 houseId)
 {
     auto it = findHouse(houseId);
     if(it != m_houses.end())
         m_houses.erase(it);
 }
 
-HousePtr Houses::getHouse(uint32 houseId)
+const HousePtr& HouseManager::getHouse(uint32 houseId)
 {
-    auto it = findHouse(houseId);
-    return it != m_houses.end() ? *it : nullptr;
+    auto it = std::find_if(m_houses.begin(), m_houses.end(),
+                           [=] (const HousePtr& house) -> bool { return house->getId() == houseId; });
+    return it != m_houses.end() ? *it : m_nullHouse;
 }
 
-void Houses::load(const std::string& fileName)
+void HouseManager::load(const std::string& fileName)
 {
     TiXmlDocument doc;
     doc.Parse(g_resources.loadFile(fileName).c_str());
@@ -94,9 +136,29 @@ void Houses::load(const std::string& fileName)
     }
 }
 
-HouseList::iterator Houses::findHouse(uint32 houseId)
+void HouseManager::save(const std::string& fileName)
+{
+    TiXmlDocument doc;
+    doc.SetTabSize(2);
+
+    TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+    doc.LinkEndChild(decl);
+
+    TiXmlElement* root = new TiXmlElement("houses");
+    doc.LinkEndChild(root);
+
+    for(auto house : m_houses) {
+        TiXmlElement *elem;
+        house->save(elem);
+        root->LinkEndChild(elem);
+    }
+
+    if(!doc.SaveFile(fileName))
+        stdext::throw_exception(stdext::format("failed to save houses XML: %s", doc.ErrorDesc()));
+}
+
+HouseList::iterator HouseManager::findHouse(uint32 houseId)
 {
     return std::find_if(m_houses.begin(), m_houses.end(),
                            [=] (const HousePtr& house) -> bool { return house->getId() == houseId; });
 }
-

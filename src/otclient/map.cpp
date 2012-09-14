@@ -67,9 +67,9 @@ void Map::clean()
 
     m_waypoints.clear();
 
-    m_towns.clear();
-    m_houses.clear();
-    g_creatures.clear();
+    g_towns.clear();
+    g_houses.clear();
+    g_creatures.clearSpawns();
     m_tilesRect = Rect(65534, 65534, 0, 0);
 }
 

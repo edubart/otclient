@@ -135,9 +135,6 @@ public:
     void loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
     void saveOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
 
-    void loadSpawns(const std::string& fileName);
-    void saveSpawns(const std::string&);
-
     // otbm attributes (description, size, etc.)
     void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
     void setSpawnFile(const std::string& file) { m_attribs.set(OTBM_ATTR_SPAWN_FILE, file); }
@@ -176,11 +173,6 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    // town/house/monster related
-    TownPtr getTown(uint32 tid) { return m_towns.getTown(tid); }
-    HousePtr getHouse(uint32 hid) { return m_houses.getHouse(hid); }
-    CreatureTypePtr getCreature(const std::string &name) { return g_creatures.getCreatureByName(name); }
-
     void setLight(const Light& light) { m_light = light; }
     void setCentralPosition(const Position& centralPosition);
 
@@ -205,6 +197,7 @@ private:
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z+1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
+    std::unordered_map<Position, CreatureTypePtr, PositionHasher> m_creatureTypes;
     std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
@@ -216,8 +209,6 @@ private:
     Rect m_tilesRect;
 
     stdext::packed_storage<uint8> m_attribs;
-    Houses m_houses;
-    Towns m_towns;
     static TilePtr m_nulltile;
 };
 

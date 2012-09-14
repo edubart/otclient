@@ -41,50 +41,65 @@ enum HouseAttr : uint8
 class House : public LuaObject
 {
 public:
-    House() { }
+    House();
     House(uint32 hId, const std::string& name = "", const Position& pos=Position());
-    ~House() { m_tiles.clear(); }
+    ~House() { m_tiles.clear(); m_nullTile = nullptr; }
 
     void setTile(const TilePtr& tile);
-    void setId(uint32 hId) { m_attribs.set(HouseAttrId, hId); }
-    void setName(const std::string& name) { m_attribs.set(HouseAttrName, name); }
-    void setTownId(uint32 tid) { m_attribs.set(HouseAttrTown, tid); }
-    void setSize(uint32 s) { m_attribs.set(HouseAttrSize, s); }
-    void setRent(uint32 r) { m_attribs.set(HouseAttrRent, r); }
-    void setEntry(const Position& p) { m_attribs.set(HouseAttrEntry, p); }
+    const TilePtr& getTile(const Position& pos);
 
-    uint32 getId() { return m_attribs.get<uint32>(HouseAttrId); }
+    void setName(const std::string& name) { m_attribs.set(HouseAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(HouseAttrName); }
-    uint32 getRent() { return m_attribs.get<uint32>(HouseAttrRent); }
+
+    void setId(uint32 hId) { m_attribs.set(HouseAttrId, hId); }
+    uint32 getId() { return m_attribs.get<uint32>(HouseAttrId); }
+
+    void setTownId(uint32 tid) { m_attribs.set(HouseAttrTown, tid); }
+    uint32 getTownId() { return m_attribs.get<uint32>(HouseAttrTown); }
+
+    void setSize(uint32 s) { m_attribs.set(HouseAttrSize, s); }
     uint32 getSize() { return m_attribs.get<uint32>(HouseAttrSize); }
+
+    void setRent(uint32 r) { m_attribs.set(HouseAttrRent, r); }
+    uint32 getRent() { return m_attribs.get<uint32>(HouseAttrRent); }
+
+    void setEntry(const Position& p) { m_attribs.set(HouseAttrEntry, p); }
+    Position getEntry() { return m_attribs.get<Position>(HouseAttrEntry); }
 
 protected:
     void load(const TiXmlElement* elem);
-    void save(TiXmlElement &elem) { } // TODO
+    void save(TiXmlElement*& elem);
 
 private:
     stdext::packed_storage<uint8> m_attribs;
     TileMap m_tiles;
+    TilePtr m_nullTile;
     stdext::boolean<false> m_isGuildHall;
 
-    friend class Houses;
+    friend class HouseManager;
 };
 
-class Houses {
+class HouseManager {
 public:
-    void clear() { m_houses.clear(); }
+    HouseManager();
+
     void addHouse(const HousePtr& house);
     void removeHouse(uint32 houseId);
+    HouseList getHouseList() { return m_houses; }
+    const HousePtr& getHouse(uint32 houseId);
+    void clear() { m_houses.clear(); m_nullHouse = nullptr; }
+
     void load(const std::string& fileName);
+    void save(const std::string& fileName);
 
-    HouseList houseList() const { return m_houses; }
-    HousePtr getHouse(uint32 houseId);
-
-private:
+private:    
     HouseList m_houses;
+    HousePtr m_nullHouse;
 
 protected:
     HouseList::iterator findHouse(uint32 houseId);
 };
+
+extern HouseManager g_houses;
 
 #endif

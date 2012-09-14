@@ -109,9 +109,9 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
                 if(type ==  OTBM_HOUSETILE) {
                     uint32 hId = nodeTile->getU32();
                     TilePtr tile = getOrCreateTile(pos);
-                    if(!(house = m_houses.getHouse(hId))) {
+                    if(!(house = g_houses.getHouse(hId))) {
                         house = HousePtr(new House(hId));
-                        m_houses.addHouse(house);
+                        g_houses.addHouse(house);
                     }
                     house->setTile(tile);
                 }
@@ -189,9 +189,9 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
                 uint32 townId = nodeTown->getU32();
                 std::string townName = nodeTown->getString();
                 Position townCoords = nodeTown->getPosition();
-                if(!(town = m_towns.getTown(townId))) {
+                if(!(town = g_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
-                    m_towns.addTown(town);
+                    g_towns.addTown(town);
                 }
             }
         } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
@@ -208,7 +208,6 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
             stdext::throw_exception(stdext::format("Unknown map data node %d", (int)mapDataType));
     }
 
-    g_logger.debug("OTBM read successfully.");
     fin->close();
 }
 
@@ -358,7 +357,7 @@ void Map::saveOtbm(const std::string &fileName, const UIWidgetPtr&/* pbar*/)
                 root->endNode();  // OTBM_TILE_AREA
 
             root->startNode(OTBM_TOWNS);
-            for(const TownPtr& town : m_towns.getTowns()) {
+            for(const TownPtr& town : g_towns.getTowns()) {
                 root->addU32(town->getId());
                 root->addString(town->getName());
                 root->addPos(town->getPos());
@@ -380,70 +379,6 @@ void Map::saveOtbm(const std::string &fileName, const UIWidgetPtr&/* pbar*/)
 
     fin->flush();
     fin->close();
-}
-
-void Map::loadSpawns(const std::string &fileName)
-{
-    if(!g_creatures.isLoaded()) {
-        g_logger.error("cannot load spawns; monsters/nps aren't loaded.");
-        return;
-    }
-
-    TiXmlDocument doc;
-    doc.Parse(g_resources.loadFile(fileName).c_str());
-    if(doc.Error())
-        stdext::throw_exception(stdext::format("cannot load spawns xml file '%s: '%s'", fileName, doc.ErrorDesc()));
-
-    TiXmlElement* root = doc.FirstChildElement();
-    if(!root || root->ValueStr() != "spawns")
-        stdext::throw_exception("malformed spawns file");
-
-    CreatureTypePtr cType(nullptr);
-    for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
-        if(node->ValueTStr() != "spawn")
-            stdext::throw_exception("invalid spawn node");
-
-        Position centerPos = node->readPos("center");
-        for(TiXmlElement* cNode = node->FirstChildElement(); cNode; cNode = cNode->NextSiblingElement()) {
-            if(cNode->ValueStr() != "monster" && cNode->ValueStr() != "npc")
-                stdext::throw_exception(stdext::format("invalid spawn-subnode %s", cNode->ValueStr()));
-
-            std::string cName = cNode->Attribute("name");
-            stdext::tolower(cName);
-            stdext::trim(cName);
-
-            if (!(cType = g_creatures.getCreatureByName(cName)))
-                continue;
-
-            cType->setSpawnTime(cNode->readType<int>("spawntime"));
-            CreaturePtr creature(new Creature);
-            creature->setOutfit(cType->getOutfit());
-
-            stdext::ucwords(cName);
-            creature->setName(cName);
-
-            centerPos.x += cNode->readType<int>("x");
-            centerPos.y += cNode->readType<int>("y");
-            centerPos.z  = cNode->readType<int>("z");
-
-            addThing(creature, centerPos, 4);
-        }
-    }
-}
-
-void Map::saveSpawns(const std::string& fileName)
-{
-#if 0
-    TiXmlDocument doc;
-
-    TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
-    doc.LinkEndChild(decl);
-
-    TiXmlElement* root = new TiXmlElement("spawns");
-    doc.LinkEndChild(root);
-
-    TiXmlElement* spawn = NULL;
-#endif
 }
 
 bool Map::loadOtcm(const std::string& fileName)

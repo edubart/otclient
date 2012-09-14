@@ -49,6 +49,7 @@ class ItemType;
 class House;
 class Town;
 class CreatureType;
+class Spawn;
 
 typedef stdext::shared_object_ptr<MapView> MapViewPtr;
 typedef stdext::shared_object_ptr<Tile> TilePtr;
@@ -69,6 +70,7 @@ typedef stdext::shared_object_ptr<ItemType> ItemTypePtr;
 typedef stdext::shared_object_ptr<House> HousePtr;
 typedef stdext::shared_object_ptr<Town> TownPtr;
 typedef stdext::shared_object_ptr<CreatureType> CreatureTypePtr;
+typedef stdext::shared_object_ptr<Spawn> SpawnPtr;
 
 typedef std::vector<ThingPtr> ThingList;
 typedef std::vector<ThingTypePtr> ThingTypeList;

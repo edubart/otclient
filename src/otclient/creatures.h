@@ -32,7 +32,43 @@ enum CreatureAttr : uint8
     CreatureAttrPosition  = 0,
     CreatureAttrName      = 1,
     CreatureAttrOutfit    = 2,
-    CreatureAttrSpawnTime = 3
+    CreatureAttrSpawnTime = 3,
+    CreatureAttrDir       = 4
+};
+
+enum SpawnAttr : uint8
+{
+    SpawnAttrRadius  = 0,
+    SpawnAttrCenter  = 1,
+    SpawnAttrPos     = 2
+};
+
+class Spawn : public LuaObject
+{
+public:
+    Spawn() { }
+    Spawn(int32 radius) { setRadius(radius); }
+
+    void setRadius(int32 r) { m_attribs.set(SpawnAttrRadius, r) ;}
+    int32 getRadius() { return m_attribs.get<int32>(SpawnAttrRadius); }
+
+    void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
+    Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrPos); }
+
+    void addCreature(const Position& placePos, const CreatureTypePtr& cType);
+    void removeCreature(const Position& pos);
+    void clear() { m_creatures.clear(); }
+
+protected:
+    void load(TiXmlElement* node);
+    void save(TiXmlElement*& node);
+    void __addCreature(const Position& centerPos, const CreatureTypePtr& cType);
+    void __removeCreature(std::unordered_map<Position, CreatureTypePtr, PositionHasher>::iterator iter);
+
+private:
+    stdext::dynamic_storage<uint8> m_attribs;
+    std::unordered_map<Position, CreatureTypePtr, PositionHasher> m_creatures;
+    friend class CreatureManager;
 };
 
 class CreatureType : public LuaObject
@@ -41,14 +77,17 @@ public:
     CreatureType() { }
     CreatureType(const std::string& name) { setName(name); }
 
-    void setSpawnTime(int spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
-    int getSpawnTime() { return m_attribs.get<int>(CreatureAttrSpawnTime); }
+    void setSpawnTime(int32 spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
+    int32 getSpawnTime() { return m_attribs.get<int32>(CreatureAttrSpawnTime); }
 
-    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
+    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); dump << "set"<<getName(); }
     std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
 
     void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
     Outfit getOutfit() { return m_attribs.get<Outfit>(CreatureAttrOutfit); }
+
+    void setDirection(Otc::Direction dir) { m_attribs.set(CreatureAttrDir, dir); }
+    Otc::Direction getDirection() { return m_attribs.get<Otc::Direction>(CreatureAttrDir); }
 
     CreaturePtr cast();
 
@@ -56,31 +95,39 @@ private:
     stdext::dynamic_storage<uint8> m_attribs;
 };
 
-class Creatures
+class CreatureManager
 {
 public:
+    CreatureManager();
     void clear() { m_creatures.clear(); }
+    void clearSpawns();
 
     void loadMonsters(const std::string& file);
     void loadSingleCreature(const std::string& file);
     void loadNpcs(const std::string& folder);
     void loadCreatureBuffer(const std::string& buffer);
+    void loadSpawns(const std::string& fileName);
+    void saveSpawns(const std::string& fileName);
 
-    CreatureTypePtr getCreatureByName(std::string name);
-    CreatureTypePtr getCreatureByLook(int look);
+    const CreatureTypePtr& getCreatureByName(std::string name);
+    const CreatureTypePtr& getCreatureByLook(int look);
 
-    bool isLoaded() const { return m_loaded; }
+    bool isLoaded() { return m_loaded; }
+    bool isSpawnLoaded() { return m_spawnLoaded; }
 
     const std::vector<CreatureTypePtr>& getCreatures() { return m_creatures; }
+    const std::vector<SpawnPtr>& getSpawns() { return m_spawns; }
 
 protected:
-    bool m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
+    void m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
 
 private:
     std::vector<CreatureTypePtr> m_creatures;
-    stdext::boolean<false> m_loaded;
+    std::vector<SpawnPtr> m_spawns;
+    stdext::boolean<false> m_loaded, m_spawnLoaded;
+    CreatureTypePtr m_nullCreature;
 };
 
-extern Creatures g_creatures;
+extern CreatureManager g_creatures;
 
 #endif

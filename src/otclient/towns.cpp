@@ -22,6 +22,8 @@
 
 #include "towns.h"
 
+TownManager g_towns;
+
 Town::Town(uint32 tid, const std::string& name, const Position& pos)
     : m_id(tid), m_name(name)
 {
@@ -29,29 +31,34 @@ Town::Town(uint32 tid, const std::string& name, const Position& pos)
         m_pos = pos;
 }
 
+TownManager::TownManager()
+{
+    m_nullTown = TownPtr(new Town);
+}
 
-void Towns::addTown(const TownPtr &town)
+void TownManager::addTown(const TownPtr &town)
 {
     if(findTown(town->getId()) == m_towns.end())
         m_towns.push_back(town);
 }
 
-void Towns::removeTown(uint32 townId)
+void TownManager::removeTown(uint32 townId)
 {
     auto it = findTown(townId);
     if(it != m_towns.end())
         m_towns.erase(it);
 }
 
-TownPtr Towns::getTown(uint32 townId)
+const TownPtr& TownManager::getTown(uint32 townId)
 {
-    auto it = findTown(townId);
+    auto it = std::find_if(m_towns.begin(), m_towns.end(),
+                           [=] (const TownPtr& town) -> bool { return town->getId() == townId; });
     if(it != m_towns.end())
         return *it;
-    return nullptr;
+    return m_nullTown;
 }
 
-TownList::iterator Towns::findTown(uint32 townId)
+TownList::iterator TownManager::findTown(uint32 townId)
 {
     return std::find_if(m_towns.begin(), m_towns.end(),
                         [=] (const TownPtr& town) -> bool { return town->getId() == townId; });

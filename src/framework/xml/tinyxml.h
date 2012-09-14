@@ -43,6 +43,7 @@ distribution.
 #include <framework/const.h>
 #include <otclient/position.h>
 #include <framework/stdext/cast.h>
+#include <framework/stdext/string.h>
 
 // Help out windows:
 #if defined( _DEBUG ) && !defined( DEBUG )
@@ -51,7 +52,7 @@ distribution.
 
 #ifdef TIXML_USE_STL
     #include <string>
-     #include <iostream>
+    #include <iostream>
     #include <sstream>
     #define TIXML_STRING        std::string
 #else
@@ -1005,6 +1006,7 @@ public:
     std::string Attribute( const std::string& name, double* d ) const;
 
     void SetAttribute( const std::string& name, const std::string& _value );
+    void SetAttribute( const std::string& name, int _value) { SetAttribute(name, stdext::to_string(_value)); }
 
     void RemoveAttribute( const std::string& name );
 

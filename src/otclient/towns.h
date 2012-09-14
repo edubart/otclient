@@ -26,7 +26,6 @@
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 
-
 class Town : public LuaObject
 {
 public:
@@ -47,22 +46,26 @@ private:
     Position m_pos; // temple pos
 };
 
-class Towns
+class TownManager
 {
 public:
-    void addTown(const TownPtr &town);
+    TownManager();
+
+    void addTown(const TownPtr& town);
     void removeTown(uint32 townId);
+    const TownPtr& getTown(uint32 townId);
 
-    TownPtr getTown(uint32 townId);
     TownList getTowns() { return m_towns; }
-
-    void clear() { m_towns.clear(); }   
+    void clear() { m_towns.clear(); m_nullTown = nullptr; }
 
 private:
     TownList m_towns;
+    TownPtr m_nullTown;
 
 protected:
     TownList::iterator findTown(uint32 townId);
 };
+
+extern TownManager g_towns;
 
 #endif
