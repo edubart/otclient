@@ -70,21 +70,20 @@ void House::load(const TiXmlElement *elem)
 
 void House::save(TiXmlElement*& elem)
 {
-#define s(x) stdext::to_string((x)) // ugly macro again... to save "typing".
     elem = new TiXmlElement("house");
 
     elem->SetAttribute("name", getName());
-    elem->SetAttribute("houseid", s(getId()));
+    elem->SetAttribute("houseid", getId());
 
     Position entry = getEntry();
-    elem->SetAttribute("entryx", s(entry.x));
-    elem->SetAttribute("entryy", s(entry.y));
-    elem->SetAttribute("entryz", s(entry.z));
+    elem->SetAttribute("entryx", entry.x);
+    elem->SetAttribute("entryy", entry.y);
+    elem->SetAttribute("entryz", entry.z);
 
-    elem->SetAttribute("rent", s(getRent()));
-    elem->SetAttribute("townid", s(getTownId()));
-    elem->SetAttribute("size", s(getSize()));
-    elem->SetAttribute("guildhall", s(m_isGuildHall));
+    elem->SetAttribute("rent", getRent());
+    elem->SetAttribute("townid", getTownId());
+    elem->SetAttribute("size", getSize());
+    elem->SetAttribute("guildhall", (int)m_isGuildHall);
 }
 
 HouseManager::HouseManager()
