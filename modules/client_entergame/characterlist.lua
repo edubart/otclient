@@ -171,7 +171,7 @@ end
 
 function CharacterList.create(characters, account, otui)
   if not otui then otui = 'characterlist.otui' end
-  
+
   if charactersWindow then
     charactersWindow:destroy()
   end
@@ -243,7 +243,7 @@ function CharacterList.destroy()
 end
 
 function CharacterList.show()
-  if not loadBox and not errorBox and charactersWindow then
+  if not loadBox and not errorBox then
     charactersWindow:show()
     charactersWindow:raise()
     charactersWindow:focus()
