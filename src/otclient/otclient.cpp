@@ -79,6 +79,7 @@ void OTClient::init(const std::vector<std::string>& args)
 
 void OTClient::terminate()
 {
+    g_creatures.clear();
     g_game.terminate();
     g_map.terminate();
     g_things.terminate();
