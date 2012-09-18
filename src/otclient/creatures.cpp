@@ -287,11 +287,15 @@ void CreatureManager::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureT
         return;
 
     Outfit out;
-    out.setCategory(ThingCategoryCreature);
-    if(!attrib->Attribute("type").empty())
-        out.setId(attrib->readType<int32>("type"));
-    else
-        out.setId(attrib->readType<int32>("typeex"));
+
+    int32 type = attrib->readType<int32>("type");
+    if(type > 0) {
+        out.setCategory(ThingCategoryCreature);
+        out.setId(type);
+    } else {
+        out.setCategory(ThingCategoryItem);
+        out.setAuxId(attrib->readType<int32>("typeex"));
+    }
 
     {
         out.setHead(attrib->readType<int>(("head")));
