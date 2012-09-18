@@ -144,6 +144,7 @@ CreaturePtr CreatureType::cast()
 CreatureManager::CreatureManager()
 {
     m_nullCreature = CreatureTypePtr(new CreatureType);
+    m_nullSpawn    = SpawnPtr(new Spawn);
 }
 
 void CreatureManager::clearSpawns()
@@ -330,3 +331,20 @@ const CreatureTypePtr& CreatureManager::getCreatureByLook(int look)
     g_logger.warning(stdext::format("could not find creature with looktype: %d", look));
     return m_nullCreature;
 }
+
+const SpawnPtr& CreatureManager::getSpawn(const Position& centerPos)
+{
+    // TODO instead of a list, a map could do better...
+    auto findFun = [=] (const SpawnPtr& sp) -> bool
+    {
+        const Position& center = sp->getCenterPos();
+        return center == centerPos;
+    };
+    auto it = std::find_if(m_spawns.begin(), m_spawns.end(), findFun);
+    if(it != m_spawns.end())
+        return *it;
+    // Let it be debug so in release versions it shouldn't annoy the user
+    g_logger.debug(stdext::format("failed to find spawn at center %s",stdext::to_string(centerPos)));
+    return m_nullSpawn;
+}
+

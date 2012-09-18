@@ -80,7 +80,7 @@ public:
     void setSpawnTime(int32 spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
     int32 getSpawnTime() { return m_attribs.get<int32>(CreatureAttrSpawnTime); }
 
-    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); dump << "set"<<getName(); }
+    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
 
     void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
@@ -111,6 +111,7 @@ public:
 
     const CreatureTypePtr& getCreatureByName(std::string name);
     const CreatureTypePtr& getCreatureByLook(int look);
+    const SpawnPtr& getSpawn(const Position& centerPos);
 
     bool isLoaded() { return m_loaded; }
     bool isSpawnLoaded() { return m_spawnLoaded; }
@@ -126,6 +127,7 @@ private:
     std::vector<SpawnPtr> m_spawns;
     stdext::boolean<false> m_loaded, m_spawnLoaded;
     CreatureTypePtr m_nullCreature;
+    SpawnPtr m_nullSpawn;
 };
 
 extern CreatureManager g_creatures;

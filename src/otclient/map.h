@@ -197,7 +197,6 @@ private:
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z+1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
-    std::unordered_map<Position, CreatureTypePtr, PositionHasher> m_creatureTypes;
     std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
