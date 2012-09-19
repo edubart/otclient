@@ -111,7 +111,7 @@ public:
 
     const CreatureTypePtr& getCreatureByName(std::string name);
     const CreatureTypePtr& getCreatureByLook(int look);
-    const SpawnPtr& getSpawn(const Position& centerPos);
+    SpawnPtr getSpawn(const Position& centerPos);
 
     bool isLoaded() { return m_loaded; }
     bool isSpawnLoaded() { return m_spawnLoaded; }
@@ -127,7 +127,6 @@ private:
     std::vector<SpawnPtr> m_spawns;
     stdext::boolean<false> m_loaded, m_spawnLoaded;
     CreatureTypePtr m_nullCreature;
-    SpawnPtr m_nullSpawn;
 };
 
 extern CreatureManager g_creatures;

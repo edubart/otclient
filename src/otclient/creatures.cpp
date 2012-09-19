@@ -144,7 +144,6 @@ CreaturePtr CreatureType::cast()
 CreatureManager::CreatureManager()
 {
     m_nullCreature = CreatureTypePtr(new CreatureType);
-    m_nullSpawn    = SpawnPtr(new Spawn);
 }
 
 void CreatureManager::clearSpawns()
@@ -203,7 +202,7 @@ void CreatureManager::loadNpcs(const std::string& folder)
 void CreatureManager::loadSpawns(const std::string& fileName)
 {
     if(!isLoaded()) {
-        g_logger.fatal("creatures aren't loaded yet to load spawns.");
+        g_logger.warning("creatures aren't loaded yet to load spawns.");
         return;
     }
 
@@ -336,7 +335,7 @@ const CreatureTypePtr& CreatureManager::getCreatureByLook(int look)
     return m_nullCreature;
 }
 
-const SpawnPtr& CreatureManager::getSpawn(const Position& centerPos)
+SpawnPtr CreatureManager::getSpawn(const Position& centerPos)
 {
     // TODO instead of a list, a map could do better...
     auto findFun = [=] (const SpawnPtr& sp) -> bool
@@ -349,6 +348,6 @@ const SpawnPtr& CreatureManager::getSpawn(const Position& centerPos)
         return *it;
     // Let it be debug so in release versions it shouldn't annoy the user
     g_logger.debug(stdext::format("failed to find spawn at center %s",stdext::to_string(centerPos)));
-    return m_nullSpawn;
+    return nullptr;
 }
 
