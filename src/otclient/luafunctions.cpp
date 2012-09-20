@@ -114,10 +114,10 @@ void OTClient::registerLuaFunctions()
 
     g_lua.registerSingletonClass("g_creatures");
     g_lua.bindSingletonFunction("g_creatures", "getCreatures", &CreatureManager::getCreatures, &g_creatures);
-    g_lua.bindSingletonFunction("g_creatures", "getSpawns", &CreatureManager::getSpawns, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getCreatureByName", &CreatureManager::getCreatureByName, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getCreatureByLook", &CreatureManager::getCreatureByLook, &g_creatures);
-    g_lua.bindSingletonFunction("g_creatures", "getSpawn", &CreatureManager::getSpawns, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getSpawn", &CreatureManager::getSpawn, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "addSpawn", &CreatureManager::addSpawn, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "loadMonsters", &CreatureManager::loadMonsters, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "loadNpcs", &CreatureManager::loadNpcs, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "loadSingleCreature", &CreatureManager::loadSingleCreature, &g_creatures);

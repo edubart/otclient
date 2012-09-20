@@ -46,7 +46,7 @@ enum SpawnAttr : uint8
 class Spawn : public LuaObject
 {
 public:
-    Spawn() { }
+    Spawn() = default;
     Spawn(int32 radius) { setRadius(radius); }
 
     void setRadius(int32 r) { m_attribs.set(SpawnAttrRadius, r) ;}
@@ -62,8 +62,6 @@ public:
 protected:
     void load(TiXmlElement* node);
     void save(TiXmlElement*& node);
-    void __addCreature(const Position& centerPos, const CreatureTypePtr& cType);
-    void __removeCreature(std::unordered_map<Position, CreatureTypePtr, PositionHasher>::iterator iter);
 
 private:
     stdext::dynamic_storage<uint8> m_attribs;
@@ -74,7 +72,7 @@ private:
 class CreatureType : public LuaObject
 {
 public:
-    CreatureType() { }
+    CreatureType() = default;
     CreatureType(const std::string& name) { setName(name); }
 
     void setSpawnTime(int32 spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
@@ -111,20 +109,21 @@ public:
 
     const CreatureTypePtr& getCreatureByName(std::string name);
     const CreatureTypePtr& getCreatureByLook(int look);
+
     SpawnPtr getSpawn(const Position& centerPos);
+    SpawnPtr addSpawn(const Position& centerPos, int radius);
 
     bool isLoaded() { return m_loaded; }
     bool isSpawnLoaded() { return m_spawnLoaded; }
 
     const std::vector<CreatureTypePtr>& getCreatures() { return m_creatures; }
-    const std::vector<SpawnPtr>& getSpawns() { return m_spawns; }
 
 protected:
     void m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
 
 private:
     std::vector<CreatureTypePtr> m_creatures;
-    std::vector<SpawnPtr> m_spawns;
+    std::unordered_map<Position, SpawnPtr, PositionHasher> m_spawns;
     stdext::boolean<false> m_loaded, m_spawnLoaded;
     CreatureTypePtr m_nullCreature;
 };
