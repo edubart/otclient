@@ -185,7 +185,11 @@ void CreatureManager::loadSingleCreature(const std::string& file)
 
 void CreatureManager::loadNpcs(const std::string& folder)
 {
-    boost::filesystem::path npcPath(boost::filesystem::current_path().generic_string() + folder);
+    std::string tmp = folder;
+    if(!stdext::ends_with(tmp, "/"))
+        tmp += "/";
+
+    boost::filesystem::path npcPath(boost::filesystem::current_path().generic_string() + tmp);
     if(!boost::filesystem::exists(npcPath))
         stdext::throw_exception(stdext::format("NPCs folder '%s' was not found.", folder));
 
@@ -194,9 +198,6 @@ void CreatureManager::loadNpcs(const std::string& folder)
         if(boost::filesystem::is_directory(it->status()))
             continue;
 
-        std::string tmp = folder;
-        if(!stdext::ends_with(tmp, "/"))
-            tmp += "/";
         loadCreatureBuffer(g_resources.loadFile(tmp + f));
     }
 }
