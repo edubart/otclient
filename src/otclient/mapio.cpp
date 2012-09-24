@@ -252,12 +252,6 @@ void Map::saveOtbm(const std::string &fileName, const UIWidgetPtr&/* pbar*/)
 
     if((sep_pos = houseFile.rfind('/')) != std::string::npos)
         houseFile = houseFile.substr(sep_pos + 1);
-#if 0
-    if(version > 1)
-        m_houses->save(dir + "/" + houseFile);
-
-    saveSpawns(dir + "/" + spawnFile);
-#endif
 
     fin->addU32(0); // file version
     OutputBinaryTreePtr root(new OutputBinaryTree(fin));

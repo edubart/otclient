@@ -111,6 +111,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getHouseFile", &Map::getHouseFile, &g_map);
     g_lua.bindSingletonFunction("g_map", "getSpawnFile", &Map::getSpawnFile, &g_map);
     g_lua.bindSingletonFunction("g_map", "createTile", &Map::createTile, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getSize", &Map::getSize, &g_map);;
 
     g_lua.registerSingletonClass("g_creatures");
     g_lua.bindSingletonFunction("g_creatures", "getCreatures", &CreatureManager::getCreatures, &g_creatures);
