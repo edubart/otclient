@@ -153,7 +153,7 @@ void HouseManager::save(const std::string& fileName)
     }
 
     if(!doc.SaveFile(fileName))
-        stdext::throw_exception(stdext::format("failed to save houses XML: %s", doc.ErrorDesc()));
+        stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", fileName, doc.ErrorDesc()));
 }
 
 HouseList::iterator HouseManager::findHouse(uint32 houseId)

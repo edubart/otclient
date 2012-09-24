@@ -253,7 +253,7 @@ void CreatureManager::saveSpawns(const std::string& fileName)
     }
 
     if(!doc.SaveFile(fileName))
-        stdext::throw_exception(stdext::format("failed to save spawns XML: %s", doc.ErrorDesc()));
+        stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", fileName, doc.ErrorDesc()));
 }
 
 void CreatureManager::loadCreatureBuffer(const std::string& buffer)

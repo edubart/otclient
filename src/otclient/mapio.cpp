@@ -211,7 +211,7 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
     fin->close();
 }
 
-void Map::saveOtbm(const std::string &fileName, const UIWidgetPtr&/* pbar*/)
+void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
 {
     FileStreamPtr fin = g_resources.createFile(fileName);
     if(!fin)
