@@ -39,7 +39,7 @@ Have found a bug? Please create an issue in our [bug tracker](https://github.com
 
 ### Contributing
 
-We encourage you to contribute to otclient! You can make pull requests of any improvement in our github page.
+We encourage you to contribute to otclient! You can make pull requests of any improvement in our github page, alternatively, see [Contributing Wiki Page](https://github.com/edubart/otclient/wiki/Contributing).
 
 ### Contact
 
