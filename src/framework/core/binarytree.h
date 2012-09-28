@@ -85,7 +85,7 @@ private:
     FileStreamPtr m_fin;
 
 protected:
-    void write(const uint8* data, int size);
+    void write(const uint8* data, size_t size);
 };
 
 #endif

@@ -240,11 +240,12 @@ void OutputBinaryTree::endNode()
     m_fin->addU8(BINARYTREE_NODE_END);
 }
 
-void OutputBinaryTree::write(const uint8 *data, int size)
+void OutputBinaryTree::write(const uint8 *data, size_t size)
 {
-    for(int i=0;i<size;++i) {
+    for(size_t i=0;i<size;++i) {
         if(data[i]==BINARYTREE_NODE_START || data[i]==BINARYTREE_NODE_END||data[i]==BINARYTREE_ESCAPE_CHAR)
             m_fin->addU8(BINARYTREE_ESCAPE_CHAR);
         m_fin->addU8(data[i]);
     }
 }
+
