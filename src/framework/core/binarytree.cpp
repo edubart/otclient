@@ -232,7 +232,7 @@ void OutputBinaryTree::addPoint(const Point& point)
 void OutputBinaryTree::startNode(uint8 node)
 {
     m_fin->addU8(BINARYTREE_NODE_START);
-    addU8(node);
+    write(&node, 1);
 }
 
 void OutputBinaryTree::endNode()
