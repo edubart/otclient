@@ -34,6 +34,14 @@
 #include <framework/net/connection.h>
 #endif
 
+/* Ugly hack but works.  */
+#if defined __APPLE__ && defined CRASH_HANDLER
+/* UNIX Crash handler for some reason did not go as expected on a Mac system
+ * TODO: RTFM it.
+ */
+#undef CRASH_HANDLER
+#endif
+
 void exitSignalHandler(int sig)
 {
     static bool signaled = false;

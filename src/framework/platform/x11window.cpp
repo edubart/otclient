@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifdef __linux
+#if defined __linux || defined __APPLE__
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
