@@ -1,3 +1,5 @@
+TextScrollbar < VerticalScrollBar
+
 TextWindow < MainWindow
   id: textWindow
   size: 280 280
@@ -24,8 +26,20 @@ TextWindow < MainWindow
     id: text
     anchors.fill: parent
     anchors.top: textItem.bottom
+    margin-right: 10
     margin-top: 30
     margin-bottom: 30
+
+  TextScrollbar
+    id: textScroll
+    anchors.left: prev.right
+    anchors.top: prev.top
+    anchors.bottom: prev.bottom
+    minimum: 0
+    maximum: 0
+    step: 1
+    value: 0
+    pixels-scroll: true
 
   Button
     id: cancelButton
