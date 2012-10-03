@@ -41,6 +41,13 @@ static bool isInZone(const Position& pos/* placePos*/,
            );
 }
 
+void CreatureManager::terminate()
+{
+    clearSpawns();
+    clear();
+    m_nullCreature = nullptr;
+}
+
 void Spawn::load(TiXmlElement* node)
 {
     Position centerPos = node->readPos("center");
@@ -276,14 +283,14 @@ void CreatureManager::loadCreatureBuffer(const std::string& buffer)
         if(attrib->ValueStr() != "look")
             continue;
 
-        m_loadCreatureBuffer(attrib, newType);
+        internalLoadCreatureBuffer(attrib, newType);
         break;
     }
 
     doc.Clear();
 }
 
-void CreatureManager::m_loadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr& m)
+void CreatureManager::internalLoadCreatureBuffer(TiXmlElement* attrib, const CreatureTypePtr& m)
 {
     if(std::find(m_creatures.begin(), m_creatures.end(), m) != m_creatures.end())
         return;

@@ -99,6 +99,7 @@ public:
     CreatureManager();
     void clear() { m_creatures.clear(); }
     void clearSpawns();
+    void terminate();
 
     void loadMonsters(const std::string& file);
     void loadSingleCreature(const std::string& file);
@@ -119,7 +120,7 @@ public:
     const std::vector<CreatureTypePtr>& getCreatures() { return m_creatures; }
 
 protected:
-    void m_loadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
+    void internalLoadCreatureBuffer(TiXmlElement* elem, const CreatureTypePtr& m);
 
 private:
     std::vector<CreatureTypePtr> m_creatures;
