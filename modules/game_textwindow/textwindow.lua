@@ -129,7 +129,7 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
       textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), _next + delta - 1))
       if writeable then textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), line + delta)) end
     else
-      textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), _prev + delta + 1))
+      textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), _prev + delta + 1) - 1)
       if writeable then textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), line + delta)) end
     end
   
