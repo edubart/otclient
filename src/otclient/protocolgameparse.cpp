@@ -337,10 +337,8 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getClientVersion() >= 860)
+    if(g_game.getClientVersion() >= 854)
         numViolationReasons = 20;
-    else if(g_game.getClientVersion() >= 854)
-        numViolationReasons = 19;
     else
         numViolationReasons = 32;
 
