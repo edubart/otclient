@@ -31,7 +31,8 @@ In short, if you need to compile OTClient, follow these tutorials:
 
 ### Need help?
 
-Try to ask questions in [otland](http://otland.net/forum.php) or talk with us at #otclient irc.freenode.net
+Try to ask questions in [otland](http://otland.net/f494/), now we have a board for the project there,
+or talk with us at #otclient irc.freenode.net
 
 ### Bugs
 
