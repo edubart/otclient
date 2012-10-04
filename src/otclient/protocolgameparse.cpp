@@ -1461,11 +1461,6 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         outfit.setLegs(legs);
         outfit.setFeet(feet);
         outfit.setAddons(addons);
-
-        if(g_game.getFeature(Otc::GamePlayerMounts)) {
-            int mount = msg->getU16();
-            outfit.setMount(mount);
-        }
     }
     else {
         int lookTypeEx = msg->getU16();
@@ -1479,6 +1474,10 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         }
     }
 
+    if(g_game.getFeature(Otc::GamePlayerMounts)) {
+        int mount = msg->getU16();
+        outfit.setMount(mount);
+    }
     return outfit;
 }
 
