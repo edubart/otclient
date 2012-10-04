@@ -685,14 +685,8 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
 {
     int exactSize = 0;
 
-    animationPhase = m_walkAnimationPhase;
-
-    if(m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-        xPattern = Otc::East;
-    else if(m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-        xPattern = Otc::West;
-    else
-        xPattern = m_direction;
+    animationPhase = 0;
+    xPattern = Otc::South;
 
     zPattern = 0;
     if(m_outfit.getMount() != 0)
