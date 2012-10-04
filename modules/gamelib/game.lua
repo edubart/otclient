@@ -10,7 +10,7 @@ function g_game.isCreatureNameFormatEnabled()
 end
 
 function g_game.chooseRsa(host)
-  if host:match('.*\.tibia\.com') or host:match('.*\.cipsoft\.com') then
+  if string.ends(host, '.tibia.com') or string.ends(host, '.cipsoft.com') then
     g_game.setRsa(CIPSOFT_RSA)
   else
     g_game.setRsa(OTSERV_RSA)

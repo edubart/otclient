@@ -20,6 +20,10 @@ function string:starts(start)
   return string.sub(self, 1, #start) == start
 end
 
+function string.ends(s, test)
+   return test =='' or string.sub(s,-string.len(test)) == test
+end
+
 function string:trim()
   return string.match(self, '^%s*(.*%S)') or ''
 end
