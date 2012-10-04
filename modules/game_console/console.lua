@@ -464,7 +464,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
     g_map.addThing(staticText, creaturePos, -1)
   end
 
-  local defaultMessage = mode < 3 and true or false
+  local defaultMessage = mode <= 3 and true or false
   speaktype = SpeakTypes[mode]
 
   if not speaktype then
