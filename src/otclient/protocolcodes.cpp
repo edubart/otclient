@@ -40,13 +40,13 @@ void buildMessageModesMap(int version) {
         messageModesMap[Otc::MessageNpcFrom]                 = 5;
         messageModesMap[Otc::MessagePrivateFrom]             = 6;
         messageModesMap[Otc::MessagePrivateTo]               = 6;
-        messageModesMap[Otc::MessageChannelHighlight]        = 7;
-        messageModesMap[Otc::MessageChannel]                 = 8;
+        messageModesMap[Otc::MessageChannel]                 = 7;
+        messageModesMap[Otc::MessageChannelManagement]       = 8;
         messageModesMap[Otc::MessageGamemasterBroadcast]     = 9;
         messageModesMap[Otc::MessageGamemasterChannel]       = 10;
         messageModesMap[Otc::MessageGamemasterPrivateFrom]   = 11;
         messageModesMap[Otc::MessageGamemasterPrivateTo]     = 11;
-        messageModesMap[Otc::MessageChannelManagement]       = 12;
+        messageModesMap[Otc::MessageChannelHighlight]        = 12;
         messageModesMap[Otc::MessageMonsterSay]              = 13;
         messageModesMap[Otc::MessageMonsterYell]             = 14;
         messageModesMap[Otc::MessageWarning]                 = 15;

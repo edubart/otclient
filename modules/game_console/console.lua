@@ -274,18 +274,18 @@ end
 -- Contains letter width for font "verdana-11px-antialised" as console is based on it
 local letterWidth = {
   [32] = 4, [33] = 3, [34] = 6, [35] = 8, [36] = 7, [37] = 13, [38] = 9, [39] = 3, [40] = 5, [41] = 5, [42] = 6, [43] = 8, [44] = 4, [45] = 5, [46] = 3, [47] = 8,
-  [48] = 7, [49] = 6, [50] = 7, [51] = 7, [52] = 7, [53] = 7, [54] = 7, [55] = 7, [56] = 7, [57] = 7, [58] = 3, [59] = 4, [60] = 8, [61] = 8, [62] = 8, [63] = 6, 
+  [48] = 7, [49] = 6, [50] = 7, [51] = 7, [52] = 7, [53] = 7, [54] = 7, [55] = 7, [56] = 7, [57] = 7, [58] = 3, [59] = 4, [60] = 8, [61] = 8, [62] = 8, [63] = 6,
   [64] = 10, [65] = 9, [66] = 7, [67] = 7, [68] = 8, [69] = 7, [70] = 7, [71] = 8, [72] = 8, [73] = 5, [74] = 5, [75] = 7, [76] = 7, [77] = 9, [78] = 8, [79] = 8,
   [80] = 7, [81] = 8, [82] = 8, [83] = 7, [84] = 8, [85] = 8, [86] = 8, [87] = 12, [88] = 8, [89] = 8, [90] = 7, [91] = 5, [92] = 8, [93] = 5, [94] = 9, [95] = 8,
   [96] = 5, [97] = 7, [98] = 7, [99] = 6, [100] = 7, [101] = 7, [102] = 5, [103] = 7, [104] = 7, [105] = 3, [106] = 4, [107] = 7, [108] = 3, [109] = 11, [110] = 7,
-  [111] = 7, [112] = 7, [113] = 7, [114] = 6, [115] = 6, [116] = 5, [117] = 7, [118] = 8, [119] = 10, [120] = 8, [121] = 8, [122] = 6, [123] = 7, [124] = 4, [125] = 7, [126] = 8, 
-  [127] = 1, [128] = 7, [129] = 6, [130] = 3, [131] = 7, [132] = 6, [133] = 11, [134] = 7, [135] = 7, [136] = 7, [137] = 13, [138] = 7, [139] = 4, [140] = 11, [141] = 6, [142] = 6, 
-  [143] = 6, [144] = 6, [145] = 4, [146] = 3, [147] = 7, [148] = 6, [149] = 6, [150] = 7, [151] = 10, [152] = 7, [153] = 10, [154] = 6, [155] = 5, [156] = 11, [157] = 6, [158] = 6, 
+  [111] = 7, [112] = 7, [113] = 7, [114] = 6, [115] = 6, [116] = 5, [117] = 7, [118] = 8, [119] = 10, [120] = 8, [121] = 8, [122] = 6, [123] = 7, [124] = 4, [125] = 7, [126] = 8,
+  [127] = 1, [128] = 7, [129] = 6, [130] = 3, [131] = 7, [132] = 6, [133] = 11, [134] = 7, [135] = 7, [136] = 7, [137] = 13, [138] = 7, [139] = 4, [140] = 11, [141] = 6, [142] = 6,
+  [143] = 6, [144] = 6, [145] = 4, [146] = 3, [147] = 7, [148] = 6, [149] = 6, [150] = 7, [151] = 10, [152] = 7, [153] = 10, [154] = 6, [155] = 5, [156] = 11, [157] = 6, [158] = 6,
   [159] = 8, [160] = 4, [161] = 3, [162] = 7, [163] = 7, [164] = 7, [165] = 8, [166] = 4, [167] = 7, [168] = 6, [169] = 10, [170] = 6, [171] = 8, [172] = 8, [173] = 16, [174] = 10,
-  [175] = 8, [176] = 5, [177] = 8, [178] = 5, [179] = 5, [180] = 6, [181] = 7, [182] = 7, [183] = 3, [184] = 5, [185] = 6, [186] = 6, [187] = 8, [188] = 12, [189] = 12, [190] = 12, 
+  [175] = 8, [176] = 5, [177] = 8, [178] = 5, [179] = 5, [180] = 6, [181] = 7, [182] = 7, [183] = 3, [184] = 5, [185] = 6, [186] = 6, [187] = 8, [188] = 12, [189] = 12, [190] = 12,
   [191] = 6, [192] = 9, [193] = 9, [194] = 9, [195] = 9, [196] = 9, [197] = 9, [198] = 11, [199] = 7, [200] = 7, [201] = 7, [202] = 7, [203] = 7, [204] = 5, [205] = 5, [206] = 6,
   [207] = 5, [208] = 8, [209] = 8, [210] = 8, [211] = 8, [212] = 8, [213] = 8, [214] = 8, [215] = 8, [216] = 8, [217] = 8, [218] = 8, [219] = 8, [220] = 8, [221] = 8, [222] = 7,
-  [223] = 7, [224] = 7, [225] = 7, [226] = 7, [227] = 7, [228] = 7, [229] = 7, [230] = 11, [231] = 6, [232] = 7, [233] = 7, [234] = 7, [235] = 7, [236] = 3, [237] = 4, [238] = 4, 
+  [223] = 7, [224] = 7, [225] = 7, [226] = 7, [227] = 7, [228] = 7, [229] = 7, [230] = 11, [231] = 6, [232] = 7, [233] = 7, [234] = 7, [235] = 7, [236] = 3, [237] = 4, [238] = 4,
   [239] = 4, [240] = 7, [241] = 7, [242] = 7, [243] = 7, [244] = 7, [245] = 7, [246] = 7, [247] = 9, [248] = 7, [249] = 7, [250] = 7, [251] = 7, [252] = 7, [253] = 8, [254] = 7, [255] = 8
 }
 
@@ -299,7 +299,7 @@ function getHighlightedText(text)
       table.insert(tmpData, v)
     end
   until not(string.find(text, "{([^}]+)}", tmpData[#tmpData-1]))
-  
+
   return tmpData
 end
 
@@ -315,18 +315,18 @@ function addTabText(text, speaktype, tab, creatureName)
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
-  
+
   -- Overlay for consoleBuffer which shows highlighted words only
   local consoleBufferHighlight = panel:getChildById('consoleBufferHighlight')
   local labelHighlight = g_ui.createWidget('ConsoleLabel', consoleBufferHighlight)
   labelHighlight:setId('consoleLabel' .. panel:getChildCount())
   labelHighlight:setColor("#1f9ffe")
-  
-  
-  local player = g_game.getLocalPlayer() 
+
+
+  local player = g_game.getLocalPlayer()
   if speaktype.npcChat and player:getName() ~= creatureName then  -- Check if it is the npc who is talking
     local highlightData = getHighlightedText(text)
-    if #highlightData == 0 then 
+    if #highlightData == 0 then
       labelHighlight:setText("")
     else
       -- Remove the curly braces
@@ -344,7 +344,7 @@ function addTabText(text, speaktype, tab, creatureName)
       local tmpText = ""
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
-        local lastBlockEnd = (highlightData[(i-2)*3+2] or 1) 
+        local lastBlockEnd = (highlightData[(i-2)*3+2] or 1)
 
         for letter = lastBlockEnd, dataBlock._start-1 do
           tmpText = tmpText .. string.rep(string.char(127), letterWidth[string.byte(text:sub(letter, letter))])
@@ -362,7 +362,7 @@ function addTabText(text, speaktype, tab, creatureName)
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
   end
-  
+
   if consoleBufferHighlight:getChildCount() > MAX_LINES then
     consoleBufferHighlight:getFirstChild():destroy()
   end
@@ -654,7 +654,7 @@ function onGameStart()
     if savedChannels then
       for channelName, channelId in pairs(savedChannels) do
         channelId = tonumber(channelId)
-        if channelId ~= 0 then
+        if channelId ~= 0 and channelId < 100 then
           if not table.find(channels, channelId) then
             g_game.joinChannel(channelId)
           end
