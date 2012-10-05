@@ -451,7 +451,7 @@ bool Tile::isWalkable()
 
         if(thing->isCreature()) {
             CreaturePtr creature = thing->static_self_cast<Creature>();
-            if(!creature->isPassable())
+            if(!creature->isPassable() && creature->canBeSeen())
                 return false;
         }
     }

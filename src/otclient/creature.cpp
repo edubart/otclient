@@ -60,6 +60,9 @@ Creature::Creature() : Thing()
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 {
+    if(!canBeSeen())
+        return;
+
     Point animationOffset = animate ? m_walkOffset : Point(0,0);
 
     if(m_showTimedSquare && animate) {
@@ -523,6 +526,7 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
+    Outfit oldOutfit = outfit;
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
             return;
@@ -534,6 +538,8 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit = outfit;
     }
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
+
+    callLuaField("onOutfitChange", m_outfit, oldOutfit);
 }
 
 void Creature::setSpeed(uint16 speed)

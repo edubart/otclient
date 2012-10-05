@@ -368,6 +368,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("showStaticSquare", &Creature::showStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("hideStaticSquare", &Creature::hideStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);
+    g_lua.bindClassMemberFunction<Creature>("isInvisible", &Creature::isInvisible);
+    g_lua.bindClassMemberFunction<Creature>("canBeSeen", &Creature::canBeSeen);
 
     g_lua.registerClass<ItemType>();
     g_lua.bindClassMemberFunction<ItemType>("getServerId", &ItemType::getServerId);

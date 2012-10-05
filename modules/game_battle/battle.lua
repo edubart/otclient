@@ -41,6 +41,7 @@ function init()
   connect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
+    onOutfitChange = onCreatureOutfitChange,
     onHealthPercentChange = onCreatureHealthPercentChange,
     onPositionChange = onCreaturePositionChange,
     onAppear = onCreatureAppear,
@@ -67,6 +68,7 @@ function terminate()
   disconnect(Creature, {  
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
+    onOutfitChange = onCreatureOutfitChange,
     onHealthPercentChange = onCreatureHealthPercentChange,
     onPositionChange = onCreaturePositionChange,
     onAppear = onCreatureAppear,
@@ -126,6 +128,8 @@ function doCreatureFitFilters(creature)
     return false
   end
 
+  if not creature:canBeSeen() then return false end
+
   local hidePlayers = hidePlayersButton:isChecked()
   local hideNPCs = hideNPCsButton:isChecked()
   local hideMonsters = hideMonstersButton:isChecked()
@@ -168,9 +172,17 @@ function onCreaturePositionChange(creature, newPos, oldPos)
   end
 end
 
+function onCreatureOutfitChange(creature, outfit, oldOutfit)
+  if not creature:canBeSeen() then
+    removeCreature(creature)
+  elseif doCreatureFitFilters(creature) then
+    removeCreature(creature)
+    addCreature(creature)
+  end
+end
+
 function onCreatureAppear(creature)
-  local player = g_game.getLocalPlayer()
-  if creature ~= player and creature:getPosition().z == player:getPosition().z and doCreatureFitFilters(creature) then
+  if doCreatureFitFilters(creature) then
     addCreature(creature)
   end
 end
