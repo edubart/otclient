@@ -109,15 +109,15 @@ void ThingTypeManager::loadOtb(const std::string& file)
     if(signature != 0)
         stdext::throw_exception("invalid otb file");
 
-    root->getU32(); // flags
+    root->skip(4);
 
     m_otbMajorVersion = root->getU32();
     m_otbMinorVersion = root->getU32();
-    root->getU32(); // build number
+    root->skip(4);
     root->skip(128); // description
 
     m_reverseItemTypes.clear();
-    m_itemTypes.resize(root->getChildren().size(), m_nullItemType);
+    m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
 
     for(const BinaryTreePtr& node : root->getChildren()) {
         ItemTypePtr itemType(new ItemType);
@@ -185,7 +185,7 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 {
     uint16 serverId = id;
     ItemTypePtr itemType = nullptr;
-    if(serverId > 20000 && id < 20100) {
+    if(serverId > 20000 && serverId < 20100) {
         serverId -= 20000;
 
         itemType = ItemTypePtr(new ItemType);
@@ -193,15 +193,8 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
         addItemType(itemType);
     }
 
-    if(!itemType) {
-        itemType = getItemType(serverId);
-        if(itemType == m_nullItemType) {
-            itemType = ItemTypePtr(new ItemType);
-            itemType->setServerId(id);
-            addItemType(itemType);
-        }
-    }
-
+    itemType = getItemType(serverId);
+    assert(itemType && "Internal error");
     itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
         std::string key = attrib->Attribute("key");
@@ -238,8 +231,8 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
     uint16 id = itemType->getServerId();
-    if(m_itemTypes.size() <= id)
-        m_itemTypes.resize((id * 3) / 2 + 1, m_nullItemType);
+    if(id > m_itemTypes.size())
+        m_itemTypes.resize(id + 1, m_nullItemType);
     m_itemTypes[id] = itemType;
 }
 
