@@ -378,7 +378,7 @@ void MapView::updateVisibleTilesCache(int start)
         m_spiral.clear();
     }
 
-    if(start == 0 && m_drawTexts && m_viewMode <= NEAR_VIEW)
+    if(start == 0 && m_viewMode <= NEAR_VIEW)
         m_cachedFloorVisibleCreatures = g_map.getSpectators(cameraPosition, false);
 }
 
