@@ -71,6 +71,7 @@ function UIScrollArea:setVerticalScrollBar(scrollbar)
     local virtualOffset = self:getVirtualOffset()
     virtualOffset.y = value
     self:setVirtualOffset(virtualOffset)
+    self:onScrollbarChange(value)  -- Maybe there is a better way to do this?
   end
   self:updateScrollBars()
 end
@@ -81,6 +82,7 @@ function UIScrollArea:setHorizontalScrollBar(scrollbar)
     local virtualOffset = self:getVirtualOffset()
     virtualOffset.x = value
     self:setVirtualOffset(virtualOffset)
+    self:onScrollbarChange(value)  -- Maybe there is a better way to do this?
   end
   self:updateScrollBars()
 end

@@ -24,6 +24,31 @@ ConsoleTabBarPanel < TabBarRoundedPanel
     inverted-scroll: true
     padding: 1
 
+  ScrollablePanel
+    id: consoleBufferHighlight
+    anchors.fill: parent
+    margin-right: 12
+    vertical-scrollbar: consoleScrollBarHighlight
+    layout:
+      type: verticalBox
+      align-bottom: true
+    border-width: 1
+    border-color: #202327
+    inverted-scroll: true
+    padding: 1
+    @onScrollbarChange: |
+      local consoleScrollBar = self:getParent():getChildById('consoleScrollBar')
+      local consoleScrollBarHighlight = self:getParent():getChildById('consoleScrollBarHighlight')
+      consoleScrollBar:setValue(consoleScrollBarHighlight:getValue())
+
+  VerticalScrollBar
+    id: consoleScrollBarHighlight
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 14
+    pixels-scroll: true
+
   VerticalScrollBar
     id: consoleScrollBar
     anchors.top: parent.top
