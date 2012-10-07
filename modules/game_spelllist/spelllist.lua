@@ -136,7 +136,8 @@ function init()
   g_keyboard.bindKeyPress('Down', function() spellList:focusNextChild(KeyboardFocusReason) end, spelllistWindow)
   g_keyboard.bindKeyPress('Up', function() spellList:focusPreviousChild(KeyboardFocusReason) end, spelllistWindow)
 
-  for index, spell in ipairs(spellDisplayOrder) do
+  for i = 1, #spellDisplayOrder do
+	local spell = spellDisplayOrder[i]
     local info = SpellInfo[spell]
     local tmpLabel = g_ui.createWidget('SpellListLabel', spellList)
     tmpLabel:setId(spell)
@@ -163,6 +164,11 @@ end
 function terminate()
   disconnect(g_game, { onGameStart = setupOptions,
                        onGameEnd = resetWindow })
+
+  disconnect(spellList, { onChildFocusChange = function(self, focusedChild)
+                          if focusedChild == nil then return end
+                          updateSpellInformation(focusedChild)
+                        end })   
 
   spelllistButton:destroy()
   spelllistButton      = nil
