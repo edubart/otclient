@@ -1,0 +1,317 @@
+SpellListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 42 3
+  focusable: true
+  height: 36
+  image-clip: 0 0 32 32
+  image-size: 32 32
+  image-offset: 2 2
+  image-source: /game_spelllist/icons/icons.png
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+SpellInfoLabel < Label
+  width: 70
+  font: verdana-11px-monochrome
+  text-align: right
+  margin-left: 10
+  margin-top: 5
+
+SpellInfoValueLabel < Label
+  text-align: left
+  width: 190
+  margin-left: 10
+  margin-top: 5
+
+MainWindow
+  id: spelllistWindow
+  !text: tr('Spell List')
+  size: 500 400
+  @onEscape: toggle()
+
+  TextList
+    id: spellList
+    vertical-scrollbar: spellsScrollBar
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.bottom: next.top
+    margin-bottom: 10
+    padding: 1
+    width: 210
+    focusable: false
+
+  Button
+    id: buttonCancel
+    !text: tr('Close')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: toggle()
+
+  VerticalScrollBar
+    id: spellsScrollBar
+    anchors.top: spellList.top
+    anchors.bottom: spellList.bottom
+    anchors.right: spellList.right
+    step: 50
+    pixels-scroll: true
+
+  SpellInfoLabel
+    id: labelName
+    anchors.left: spellList.right
+    anchors.top: spellList.top
+    text: Name:
+
+  Button
+    id: buttonFilterLevel
+    !text: tr('Level')
+    !tooltip: tr('Hide spells for higher exp. levels')
+    width: 64
+    anchors.left: spellList.left
+    anchors.top: spellList.bottom
+    @onClick: toggleFilter(self)
+    margin-left: 10
+    margin-top: 5
+    color: #FF0000D0
+    $on:
+      color: green
+
+  Button
+    id: buttonFilterVocation
+    !text: tr('Vocation')
+    !tooltip: tr('Hide spells for other vocations')
+    width: 64
+    anchors.left: prev.right
+    anchors.top: spellList.bottom
+    @onClick: toggleFilter(self)
+    margin-left: 10
+    margin-top: 5
+    color: #FF0000D0
+    $on:
+      color: green
+
+  SpellInfoLabel
+    id: labelFormula
+    anchors.left: spellList.right
+    anchors.top: labelName.bottom
+    text: Formula:
+
+
+  SpellInfoLabel
+    id: labelVocation
+    anchors.left: spellList.right
+    anchors.top: labelFormula.bottom
+    text: Vocation:
+
+  SpellInfoLabel
+    id: labelGroup
+    anchors.left: spellList.right
+    anchors.top: labelVocation.bottom
+    text: Group:
+
+  SpellInfoLabel
+    id: labelType
+    anchors.left: spellList.right
+    anchors.top: labelGroup.bottom
+    text: Type:
+
+  SpellInfoLabel
+    id: labelCooldown
+    anchors.left: spellList.right
+    anchors.top: labelType.bottom
+    text: Cooldown:
+
+  SpellInfoLabel
+    id: labelLevel
+    anchors.left: spellList.right
+    anchors.top: labelCooldown.bottom
+    text: Level:
+
+  SpellInfoLabel
+    id: labelMana
+    anchors.left: spellList.right
+    anchors.top: labelLevel.bottom
+    text: Mana / Soul:
+
+  SpellInfoLabel
+    id: labelPremium
+    anchors.left: spellList.right
+    anchors.top: labelMana.bottom
+    text: Premium:
+
+  SpellInfoValueLabel
+    id: labelNameValue
+    anchors.left: labelName.right
+    anchors.top: spellList.top
+
+  SpellInfoValueLabel
+    id: labelFormulaValue
+    anchors.left: labelFormula.right
+    anchors.top: labelNameValue.bottom
+
+  SpellInfoValueLabel
+    id: labelVocationValue
+    anchors.left: labelVocation.right
+    anchors.top: labelFormulaValue.bottom
+
+  SpellInfoValueLabel
+    id: labelGroupValue
+    anchors.left: labelGroup.right
+    anchors.top: labelVocationValue.bottom
+
+  SpellInfoValueLabel
+    id: labelTypeValue
+    anchors.left: labelType.right
+    anchors.top: labelGroupValue.bottom
+
+  SpellInfoValueLabel
+    id: labelCooldownValue
+    anchors.left: labelCooldown.right
+    anchors.top: labelTypeValue.bottom
+
+  SpellInfoValueLabel
+    id: labelLevelValue
+    anchors.left: labelLevel.right
+    anchors.top: labelCooldownValue.bottom
+
+  SpellInfoValueLabel
+    id: labelManaValue
+    anchors.left: labelMana.right
+    anchors.top: labelLevelValue.bottom
+
+  SpellInfoValueLabel
+    id: labelPremiumValue
+    anchors.left: labelPremium.right
+    anchors.top: labelManaValue.bottom
+
+  Label
+    id: labelVocationFilter
+    anchors.top: labelPremium.bottom
+    anchors.left: spellList.right
+    width: 70
+    font: verdana-11px-monochrome
+    text: Vocation
+    margin-top: 25
+    margin-left: 20
+
+  CheckBox
+    id: vocationBoxAny
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    margin-left: 3
+    text: Any 
+    width: 50
+
+  CheckBox
+    id: vocationBoxSorcerer
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Sorcerer 
+    width: 50
+
+  CheckBox
+    id: vocationBoxDruid
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Druid
+    width: 50
+
+  CheckBox
+    id: vocationBoxPaladin
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Paladin 
+    width: 50
+
+  CheckBox
+    id: vocationBoxKnight
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Knight 
+    width: 50
+
+  Label
+    id: labelGroupFilter
+    anchors.top: labelPremium.bottom
+    anchors.left: labelVocationFilter.right
+    width: 70
+    font: verdana-11px-monochrome
+    text: Group
+    margin-top: 25
+    margin-left: 20
+
+  CheckBox
+    id: groupBoxAny
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    margin-left: 3
+    text: Any 
+    width: 50
+
+  CheckBox
+    id: groupBoxAttack
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Attack
+    width: 50
+
+  CheckBox
+    id: groupBoxHealing
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Healing
+    width: 50
+
+  CheckBox
+    id: groupBoxSupport
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Support 
+    width: 50
+
+  Label
+    id: labelPremiumFilter
+    anchors.top: labelPremium.bottom
+    anchors.left: labelGroupFilter.right
+    width: 70
+    font: verdana-11px-monochrome
+    text: Premium
+    margin-top: 25
+    margin-left: 20
+
+  CheckBox
+    id: premiumBoxAny
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    margin-left: 3
+    text: Any 
+    width: 50
+
+  CheckBox
+    id: premiumBoxNo
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: No
+    width: 50
+
+  CheckBox
+    id: premiumBoxYes
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 3
+    text: Yes
+    width: 50

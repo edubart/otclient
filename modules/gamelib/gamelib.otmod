@@ -19,5 +19,6 @@ Module
     dofile 'player'
     dofile 'market'
     dofile 'thing'
+    dofile 'spells'
     
     dofiles 'ui'
