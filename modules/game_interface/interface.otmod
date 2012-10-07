@@ -28,5 +28,6 @@ Module
     - game_playerdeath
     - game_playermount
     - game_market
+    - game_spelllist
   @onLoad: init()
   @onUnload: terminate()
