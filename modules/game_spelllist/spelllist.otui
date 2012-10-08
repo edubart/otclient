@@ -29,7 +29,7 @@ SpellInfoValueLabel < Label
 MainWindow
   id: spelllistWindow
   !text: tr('Spell List')
-  size: 500 400
+  size: 550 400
   @onEscape: toggle()
 
   TextList
@@ -142,6 +142,12 @@ MainWindow
     anchors.top: labelMana.bottom
     text: Premium:
 
+  SpellInfoLabel
+    id: labelDescription
+    anchors.left: spellList.right
+    anchors.top: labelPremium.bottom
+    text: Description:
+
   SpellInfoValueLabel
     id: labelNameValue
     anchors.left: labelName.right
@@ -187,6 +193,11 @@ MainWindow
     anchors.left: labelPremium.right
     anchors.top: labelManaValue.bottom
 
+  SpellInfoValueLabel
+    id: labelDescriptionValue
+    anchors.left: labelDescription.right
+    anchors.top: labelPremiumValue.bottom
+
   Label
     id: labelVocationFilter
     anchors.top: labelPremium.bottom
@@ -194,7 +205,7 @@ MainWindow
     width: 70
     font: verdana-11px-monochrome
     text: Vocation
-    margin-top: 25
+    margin-top: 30
     margin-left: 20
 
   CheckBox
@@ -245,7 +256,7 @@ MainWindow
     width: 70
     font: verdana-11px-monochrome
     text: Group
-    margin-top: 25
+    margin-top: 30
     margin-left: 20
 
   CheckBox
@@ -288,7 +299,7 @@ MainWindow
     width: 70
     font: verdana-11px-monochrome
     text: Premium
-    margin-top: 25
+    margin-top: 30
     margin-left: 20
 
   CheckBox
