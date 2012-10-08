@@ -1,19 +1,3 @@
-SpelllistSettings = {
-  ['Default'] = { 
-    iconFile = 'icons.png',
-    iconSize = {width = 32, height = 32},
-	spellListWidth = 210,
-	spellWindowWidth = 550,
-	spellOrder = {'Animate Dead', 'Annihilation', 'Avalanche', 'Berserk', 'Blood Rage', 'Brutal Strike', 'Cancel Invisibility', 'Challenge', 'Chameleon', 'Charge', 'Conjure Arrow', 'Conjure Bolt', 'Conjure Explosive Arrow', 'Conjure Piercing Bolt', 'Conjure Poisoned Arrow', 'Conjure Power Bolt', 'Conjure Sniper Arrow', 'Convince Creature', 'Creature Illusion', 'Cure Bleeding', 'Cure Burning', 'Cure Curse', 'Cure Electrification', 'Cure Poison', 'Cure Poison Rune', 'Curser', 'Death Strike', 'Desintegrate', 'Destroy Field', 'Divine Caldera', 'Divine Healing', 'Divine Missile', 'Electrify', 'Enchant Party', 'Enchant Spear', 'Enchant Staff', 'Energy Beam', 'Energy Field', 'Energy Strike', 'Energy Wall', 'Energy Wave', 'Energybomb', 'Envenom', 'Eternal Winter', 'Ethereal Spear', 'Explosion', 'Fierce Berserk', 'Find Person', 'Fire Field', 'Fire Wall', 'Fire Wave', 'Fireball', 'Firebomb', 'Flame Strike', 'Food', 'Front Sweep', 'Great Energy Beam', 'Great Fireball', 'Great Light', 'Groundshaker', 'Haste', 'Heal Friend', 'Heal Party', 'Heavy Magic Missile', 'Hells Core', 'Holy Flash', 'Holy Missile', 'Ice Strike', 'Ice Wave', 'Icicle', 'Ignite', 'Inflict Wound', 'Intense Healing', 'Intense Healing Rune', 'Intense Recovery', 'Intense Wound Cleansing', 'Invisibility', 'Levitate', 'Light', 'Light Healing', 'Light Magic Missile', 'Lightning', 'Magic Rope', 'Magic Shield', 'Magic Wall', 'Mass Healing', 'Paralyze', 'Physical Strike', 'Poison Bomb', 'Poison Field', 'Poison Wall', 'Protect Party', 'Protector', 'Rage of the Skies', 'Recovery', 'Salvation', 'Sharpshooter', 'Soulfire', 'Stalagmite', 'Stone Shower', 'Strong Energy Strike', 'Strong Ethereal Spear', 'Strong Flame Strike', 'Strong Haste', 'Strong Ice Strike', 'Strong Ice Wave', 'Strong Terra Strike', 'Sudden Death', 'Summon Creature', 'Swift Foot', 'Terra Strike', 'Terra Wave', 'Thunderstorm', 'Train Party', 'Ultimate Energy Strike', 'Ultimate Flame Strike', 'Ultimate Healing', 'Ultimate Healing Rune', 'Ultimate Ice Strike', 'Ultimate Light', 'Ultimate Terra Strike', 'Whirlwind Throw', 'Wild Growth', 'Wound Cleansing', 'Wrath of Nature'}
-  },
-	
-  ['Sample'] =  { 
-    iconFile = 'sample.png', 
-    iconSize = {width = 64, height = 64},
-    spellOrder = {'Critical Strike', 'Firefly', 'Fire Breath', 'Moonglaives', 'Wind Walk'}
-  }
-}
-
 local SpelllistProfile = 'Default'
 
 spelllistWindow       = nil
@@ -99,9 +83,24 @@ function setOptions()
   end
 end
 
+function onSpellCooldown(iconId, duration)
+	local spellName = SpelllistSettings[SpelllistProfile].spellIcons[iconId]
+	if not spellName then return end
+		
+    local otcIconId = tonumber(SpellInfo[SpelllistProfile][spellName].icon)
+	if not otcIconId and SpellIcons[SpellInfo[SpelllistProfile][spellName].icon] then
+      otcIconId = SpellIcons[SpellInfo[SpelllistProfile][spellName].icon][1]
+    end
+	
+	if not otcIconId then return end
+	modules.game_interface.setCooldown(SpelllistSettings[SpelllistProfile].iconFile, otcIconId, spellName, duration)
+end
+
 function init()
   connect(g_game, { onGameStart = setOptions,
-                    onGameEnd 	= resetWindow })
+                    onGameEnd 	= resetWindow,
+                    onSpellGroupCooldown = modules.game_interface.setGroupCooldown,
+                    onSpellCooldown = onSpellCooldown })
           
   spelllistWindow = g_ui.displayUI('spelllist.otui', modules.game_interface.getRightPanel())
   spelllistWindow:hide()
@@ -173,7 +172,9 @@ end
 
 function terminate()
   disconnect(g_game, { onGameStart = setOptions,
-                       onGameEnd = resetWindow })
+                       onGameEnd 	= resetWindow,
+                       onSpellGroupCooldown = modules.game_interface.setGroupCooldown,
+                       onSpellCooldown = onSpellCooldown })
 
   disconnect(spellList, { onChildFocusChange = function(self, focusedChild)
                           if focusedChild == nil then return end
