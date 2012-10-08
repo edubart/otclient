@@ -191,10 +191,9 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
         itemType = ItemTypePtr(new ItemType);
         itemType->setServerId(serverId);
         addItemType(itemType);
-    }
+    } else
+        itemType = getItemType(serverId);
 
-    itemType = getItemType(serverId);
-    assert(itemType && "Internal error");
     itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
         std::string key = attrib->Attribute("key");
