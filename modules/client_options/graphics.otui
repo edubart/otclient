@@ -42,13 +42,17 @@ Panel
     id: fullscreen
     !text: tr('Fullscreen')
 
+  OptionCheckBox
+    id: dontStretchShrink
+    !text: tr('Don\'t stretch/shrink Game Window')
+
   Label
     id: backgroundFrameRateLabel
     !text: tr('Game framerate limit: %s', 'max')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 6
+    margin-top: 16
     @onSetup: |
       local value = Options.getOption('backgroundFrameRate')
       local text = value

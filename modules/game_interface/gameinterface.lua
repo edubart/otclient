@@ -10,6 +10,7 @@ mouseGrabberWidget = nil
 countWindow = nil
 logoutWindow = nil
 exitWindow = nil
+bottomSplitter = nil
 
 function init()
   g_ui.importStyle('styles/countwindow.otui')
@@ -25,6 +26,7 @@ function init()
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
   mouseGrabberWidget.onMouseRelease = onMouseGrabberRelease
 
+  bottomSplitter = gameRootPanel:getChildById('bottomSplitter')
   gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
   gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
   gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
@@ -90,6 +92,7 @@ function show()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
+  updateStretchShrink() 
 end
 
 function hide()
@@ -184,6 +187,16 @@ function smartWalk(defaultDir)
     end
   else
     g_game.walk(dir)
+  end
+end
+
+function updateStretchShrink() 
+  if Options.getOption('dontStretchShrink') then
+    gameMapPanel:setKeepAspectRatio(true)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    
+    -- Set gameMapPanel size to height = 11 * 32
+    bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() + (gameMapPanel:getHeight() - 32 * 11) - 10)
   end
 end
 

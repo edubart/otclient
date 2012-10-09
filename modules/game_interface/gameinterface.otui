@@ -63,7 +63,7 @@ UIWidget
     anchors.bottom: parent.bottom
     relative-margin: bottom
     margin-bottom: 172
-    @canUpdateMargin: function(self, newMargin) return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
+    @canUpdateMargin: function(self, newMargin) if Options.getOption('dontStretchShrink') then return self:getMarginBottom() end return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
     @onGeometryChange: function(self) self:setMarginBottom(math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) end
 
   UIWidget

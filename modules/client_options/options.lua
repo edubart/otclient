@@ -5,6 +5,7 @@ local defaultOptions = {
   showFps = true,
   showPing = true,
   fullscreen = false,
+  dontStretchShrink = false,
   classicControl = false,
   walkBooster = false,
   smartWalk = false,
@@ -144,6 +145,10 @@ function Options.setOption(key, value)
     end)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
+  elseif key == 'dontStretchShrink' then
+    addEvent(function()
+      modules.game_interface.updateStretchShrink()
+    end)
   elseif key == 'enableMusic' then
     g_sounds.enableMusic(value)
   elseif key == 'showLeftPanel' then
