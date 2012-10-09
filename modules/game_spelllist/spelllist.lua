@@ -89,7 +89,7 @@ end
 
 function init()
   connect(g_game, { onGameStart = setOptions,
-                    onGameEnd 	= resetWindow })
+                    onGameEnd   = resetWindow })
           
   spelllistWindow = g_ui.displayUI('spelllist.otui', modules.game_interface.getRightPanel())
   spelllistWindow:hide()
@@ -161,7 +161,7 @@ end
 
 function terminate()
   disconnect(g_game, { onGameStart = setOptions,
-                       onGameEnd 	= resetWindow,
+                       onGameEnd   = resetWindow,
                        onSpellGroupCooldown = modules.game_interface.setGroupCooldown,
                        onSpellCooldown = onSpellCooldown })
 
@@ -214,26 +214,26 @@ function initialiseSpelllist()
   for i = 1, #SpelllistSettings[SpelllistProfile].spellOrder do
     local spell = SpelllistSettings[SpelllistProfile].spellOrder[i]
     local info = SpellInfo[SpelllistProfile][spell]
-	
+  
     local tmpLabel = g_ui.createWidget('SpellListLabel', spellList)
     tmpLabel:setId(spell)
     tmpLabel:setText(spell .. '\n\'' .. info.words .. '\'')
     tmpLabel:setPhantom(false)
   
     local iconId = tonumber(info.icon)
-	if not iconId and SpellIcons[info.icon] then
+    if not iconId and SpellIcons[info.icon] then
       iconId = SpellIcons[info.icon][1]
     end
 
     if not(iconId) then
       perror('Spell icon \'' .. info.icon .. '\' not found.') 
-	end
-	
-	tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
-	tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
-	tmpLabel:setImageSource('/game_spelllist/icons/' .. SpelllistSettings[SpelllistProfile].iconFile)
+    end
+  
+    tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
+    tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
+    tmpLabel:setImageSource('/game_spelllist/icons/' .. SpelllistSettings[SpelllistProfile].iconFile)
     tmpLabel:setImageClip(getIconImageClip(iconId))
-	tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
+    tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
     tmpLabel.onClick = updateSpellInformation
   end
  
@@ -248,7 +248,7 @@ function changeSpelllistProfile(oldProfile)
   for i = 1, #SpelllistSettings[oldProfile].spellOrder do
     local spell = SpelllistSettings[oldProfile].spellOrder[i]
     local tmpLabel = spellList:getChildById(spell)
-	
+  
     tmpLabel:destroy()
   end
   
@@ -266,8 +266,6 @@ function updateSpelllist()
     local tmpLabel = spellList:getChildById(spell)
   
     local localPlayer = g_game.getLocalPlayer()
-	
-	if not info.level then print(spell) end
     if (not(filters.level) or info.level <= localPlayer:getLevel()) and (not(filters.vocation) or table.find(info.vocations, localPlayer:getVocation())) and (filters.vocationId == FILTER_VOCATION_ANY or table.find(info.vocations, filters.vocationId) or table.find(info.vocations, filters.vocationId+4)) and (filters.groupId == FILTER_GROUP_ANY or info.group[filters.groupId]) and (filters.premium == FILTER_PREMIUM_ANY or (info.premium and filters.premium == FILTER_PREMIUM_YES) or (not(info.premium) and filters.premium == FILTER_PREMIUM_NO)) then
       tmpLabel:setVisible(true)
     else
@@ -315,7 +313,7 @@ function updateSpellInformation(widget)
     level   = info.level
     mana    = info.mana .. ' / ' .. info.soul
     premium = (info.premium and 'yes' or 'no')
-	description = info.description or '-'
+    description = info.description or '-'
   end
     
   nameValueLabel:setText(name)

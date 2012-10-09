@@ -272,8 +272,8 @@ function addText(text, speaktype, tabName, creatureName)
 end
 
 -- Contains letter width for font "verdana-11px-antialised" as console is based on it
-local letterWidth = {
-  [32] = 4, [33] = 3, [34] = 6, [35] = 8, [36] = 7, [37] = 13, [38] = 9, [39] = 3, [40] = 5, [41] = 5, [42] = 6, [43] = 8, [44] = 4, [45] = 5, [46] = 3, [47] = 8,
+local letterWidth = {  -- New line (10) and Space (32) have width 1 because they are printed and not replaced with spacer
+  [10] = 1, [32] = 1, [33] = 3, [34] = 6, [35] = 8, [36] = 7, [37] = 13, [38] = 9, [39] = 3, [40] = 5, [41] = 5, [42] = 6, [43] = 8, [44] = 4, [45] = 5, [46] = 3, [47] = 8,
   [48] = 7, [49] = 6, [50] = 7, [51] = 7, [52] = 7, [53] = 7, [54] = 7, [55] = 7, [56] = 7, [57] = 7, [58] = 3, [59] = 4, [60] = 8, [61] = 8, [62] = 8, [63] = 6,
   [64] = 10, [65] = 9, [66] = 7, [67] = 7, [68] = 8, [69] = 7, [70] = 7, [71] = 8, [72] = 8, [73] = 5, [74] = 5, [75] = 7, [76] = 7, [77] = 9, [78] = 8, [79] = 8,
   [80] = 7, [81] = 8, [82] = 8, [83] = 7, [84] = 8, [85] = 8, [86] = 8, [87] = 12, [88] = 8, [89] = 8, [90] = 7, [91] = 5, [92] = 8, [93] = 5, [94] = 9, [95] = 8,
@@ -324,7 +324,7 @@ function addTabText(text, speaktype, tab, creatureName)
 
 
   local player = g_game.getLocalPlayer()
-  if speaktype.npcChat and player:getName() ~= creatureName then  -- Check if it is the npc who is talking
+  if speaktype.npcChat and (player:getName() ~= creatureName or player:getName() == 'Account Manager') then  -- Check if it is the npc who is talking
     local highlightData = getHighlightedText(text)
     if #highlightData == 0 then
       labelHighlight:setText("")
@@ -341,16 +341,30 @@ function addTabText(text, speaktype, tab, creatureName)
       label:setText(text)
 
       -- Calculate the positions of the highlighted text and fill with string.char(127) [Width: 1]
+      local drawText = label:getDrawText()
       local tmpText = ""
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
         local lastBlockEnd = (highlightData[(i-2)*3+2] or 1)
 
         for letter = lastBlockEnd, dataBlock._start-1 do
-          tmpText = tmpText .. string.rep(string.char(127), letterWidth[string.byte(text:sub(letter, letter))])
+          local tmpChar = string.byte(drawText:sub(letter, letter))
+          local fillChar = (tmpChar == 10 or tmpChar == 32) and string.char(tmpChar) or string.char(127)
+          
+          tmpText = tmpText .. string.rep(fillChar, letterWidth[tmpChar])
         end
         tmpText = tmpText .. dataBlock.words
       end
+      
+      -- Fill the highlight label to the same size as default label
+      local finalBlockEnd = (highlightData[(#highlightData/3-1)*3+2] or 1)
+      for letter = finalBlockEnd, drawText:len() do
+          local tmpChar = string.byte(drawText:sub(letter, letter))
+          local fillChar = (tmpChar == 10 or tmpChar == 32) and string.char(tmpChar) or string.char(127)
+          
+          tmpText = tmpText .. string.rep(fillChar, letterWidth[tmpChar])
+      end
+      
       labelHighlight:setText(tmpText)
     end
   else
@@ -536,8 +550,20 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
       mode == MessageModes.Spell or mode == MessageModes.MonsterSay or mode == MessageModes.MonsterYell or
       mode == MessageModes.NpcFrom or mode == MessageModes.BarkLow or mode == MessageModes.BarkLoud) and
      creaturePos then
+      -- Remove curly braces from screen message
+      local staticMessage = message
+      if mode == MessageModes.NpcFrom then
+        local highlightData = getHighlightedText(staticMessage)
+        if #highlightData > 0 then
+          for i = 1, #highlightData / 3 do
+            local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
+            staticMessage = staticMessage:gsub("{"..dataBlock.words.."}", dataBlock.words)
+          end
+        end
+      end
+      
     local staticText = StaticText.create()
-    staticText:addMessage(name, mode, message)
+    staticText:addMessage(name, mode, staticMessage)
     g_map.addThing(staticText, creaturePos, -1)
   end
 
@@ -557,7 +583,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
-    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
+    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then    
       modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
     end
   else
