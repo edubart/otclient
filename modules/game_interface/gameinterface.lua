@@ -10,7 +10,6 @@ mouseGrabberWidget = nil
 countWindow = nil
 logoutWindow = nil
 exitWindow = nil
-cooldownPanel = nil
 
 function init()
   g_ui.importStyle('styles/countwindow.otui')
@@ -23,8 +22,6 @@ function init()
   gameRootPanel:hide()
   gameRootPanel:lower()
 
-  cooldownPanel = gameRootPanel:getChildById('spellPanel')
-  
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
   mouseGrabberWidget.onMouseRelease = onMouseGrabberRelease
 
@@ -82,8 +79,6 @@ function terminate()
                        onLoginAdvice = onLoginAdvice })
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  cooldownPanel:destroy()
-  
   logoutButton:destroy()
   gameRootPanel:destroy()
 end
@@ -95,8 +90,6 @@ function show()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
-  
-  cooldownPanel:setVisible((g_game.getClientVersion() >= 870))
 end
 
 function hide()
@@ -550,32 +543,5 @@ function onLeftPanelVisibilityChange(leftPanel, visible)
     for i=1,#children do
       children[i]:setParent(gameRightPanel)
     end
-  end
-end
-
-function setGroupCooldown(groupId, duration)
-  if not SpellGroups[groupId] then return end
-  
-  local icon = gameRootPanel:getChildById('groupIcon' .. SpellGroups[groupId])
-  if icon then
-    icon:setOn(true)
-    removeEvent(icon.event)
-	icon.event = scheduleEvent(function() icon:setOn(false) end, duration)
-  end
-end
-
-function setCooldown(iconFile, iconId, spellformula, duration)
-  local icon = cooldownPanel:getChildById(spellformula)
-
-  if icon then
-    removeEvent(icon.event)
-	icon.event = scheduleEvent(function() icon:destroy() end, duration)
-  else
-    icon = g_ui.createWidget('SpellIcon', cooldownPanel)
-    icon:setId(spellformula)
-    icon:setImageSource('/game_spelllist/icons/' .. iconFile)
-    icon:setTooltip(spellformula)
-    icon:setImageClip(modules.game_spelllist.getIconImageClip(iconId))
-	icon.event = scheduleEvent(function() icon:destroy() end, duration)
   end
 end

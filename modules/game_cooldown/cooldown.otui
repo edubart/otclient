@@ -1,0 +1,104 @@
+SpellGroupIcon < UIWidget
+  size: 22 22
+  image-size: 22 22
+  image-source: /game_cooldown/icons/cooldownIcons.png
+  focusable: false
+
+SpellIcon < UIWidget
+  size: 22 22 
+  image-size: 22 22
+  margin-left: 2
+  anchors.top: prev.top
+  anchors.left: prev.right
+  focusable: false
+  
+  $first:
+    margin-top: 3
+    anchors.top: parent.top
+    anchors.left: parent.left
+
+ProgressRect < UIProgressRect
+  background: #585858AA
+  percent: 100
+  anchors.fill: parent
+  focusable: false
+  
+Panel
+  id: spellPanel
+  layout:
+    type: anchor
+  height: 28
+  width: 250
+  anchors.top: parent.top
+  anchors.left: parent.left
+  margin-top: 70
+  margin-left: 10
+  border-width: 1
+  border-color: #00000077
+  background-color: #ffffff11
+  focusable: false
+
+  SpellGroupIcon
+    id: groupIconAttack
+    image-clip: 0 0 20 20
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-top: 3
+    margin-left: 3
+    $on:
+      image-clip: 0 20 20 20
+
+  ProgressRect
+    id: progressRectAttack
+    anchors.fill: groupIconAttack
+    !tooltip: tr('Attack')
+
+  SpellGroupIcon
+    id: groupIconHealing
+    image-clip: 20 0 20 20
+    anchors.top: parent.top
+    anchors.left: groupIconAttack.right
+    margin-top: 3
+    margin-left: 3
+    $on:
+      image-clip: 20 20 20 20
+
+  ProgressRect
+    id: progressRectHealing
+    anchors.fill: groupIconHealing
+    !tooltip: tr('Healing')
+
+  SpellGroupIcon
+    id: groupIconSupport
+    image-clip: 40 0 20 20
+    anchors.top: parent.top
+    anchors.left: groupIconHealing.right
+    margin-top: 3
+    margin-left: 3
+    $on:
+      image-clip: 40 20 20 20
+
+  ProgressRect
+    id: progressRectSupport
+    anchors.fill: groupIconSupport
+    !tooltip: tr('Support')
+
+  SpellGroupIcon
+    id: groupIconSpecial
+    image-clip: 60 0 20 20
+    anchors.top: parent.top
+    anchors.left: groupIconSupport.right
+    margin-top: 3
+    margin-left: 3
+    $on:
+      image-clip: 60 20 20 20
+
+  ProgressRect
+    id: progressRectSpecial
+    anchors.fill: groupIconSpecial
+    !tooltip: tr('Special')
+
+  Panel
+    id: spellCooldownPanel
+    anchors.fill: parent
+    margin-left: 102
