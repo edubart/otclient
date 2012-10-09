@@ -29,5 +29,6 @@ Module
     - game_playermount
     - game_market
     - game_spelllist
+    - game_cooldown
   @onLoad: init()
   @onUnload: terminate()

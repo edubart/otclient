@@ -17,10 +17,10 @@ SpellIcon < UIWidget
     anchors.top: parent.top
     anchors.left: parent.left
 
-ProgressRect < UIProgressRect
+SpellProgressRect < UIProgressRect
+  anchors.fill: parent
   background: #585858AA
   percent: 100
-  anchors.fill: parent
   focusable: false
   
 Panel
@@ -48,7 +48,7 @@ Panel
     $on:
       image-clip: 0 20 20 20
 
-  ProgressRect
+  SpellProgressRect
     id: progressRectAttack
     anchors.fill: groupIconAttack
     !tooltip: tr('Attack')
@@ -63,7 +63,7 @@ Panel
     $on:
       image-clip: 20 20 20 20
 
-  ProgressRect
+  SpellProgressRect
     id: progressRectHealing
     anchors.fill: groupIconHealing
     !tooltip: tr('Healing')
@@ -78,7 +78,7 @@ Panel
     $on:
       image-clip: 40 20 20 20
 
-  ProgressRect
+  SpellProgressRect
     id: progressRectSupport
     anchors.fill: groupIconSupport
     !tooltip: tr('Support')
@@ -93,7 +93,7 @@ Panel
     $on:
       image-clip: 60 20 20 20
 
-  ProgressRect
+  SpellProgressRect
     id: progressRectSpecial
     anchors.fill: groupIconSpecial
     !tooltip: tr('Special')

@@ -66,12 +66,12 @@ function onSpellCooldown(iconId, duration)
     icon = g_ui.createWidget('SpellIcon', spellCooldownPanel)
     icon:setId(spellName)
     icon:setImageSource('/game_cooldown/icons/' .. SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].iconFile)
-    icon:setTooltip(spellformula)
     icon:setImageClip(modules.game_spelllist.getIconImageClip(otcIconId))
 	icon.event = scheduleEvent(function() icon:destroy() end, duration)
 	
-	local progressRect = g_ui.createWidget('ProgressRect', icon)
+	local progressRect = g_ui.createWidget('SpellProgressRect', icon)
 	updateProgressRect(progressRect, duration/25, true)
+    progressRect:setTooltip(spellName)
   end
 end
 
