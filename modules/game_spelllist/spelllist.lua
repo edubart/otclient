@@ -59,6 +59,10 @@ local filters = {
   groupId      = FILTER_GROUP_ANY
 }
 
+function getSpelllistProfile()
+  return SpelllistProfile
+end
+
 function setSpelllistProfile(name)
   if SpelllistProfile == name then return end
   
@@ -83,24 +87,9 @@ function setOptions()
   end
 end
 
-function onSpellCooldown(iconId, duration)
-	local spellName = SpelllistSettings[SpelllistProfile].spellIcons[iconId]
-	if not spellName then return end
-		
-    local otcIconId = tonumber(SpellInfo[SpelllistProfile][spellName].icon)
-	if not otcIconId and SpellIcons[SpellInfo[SpelllistProfile][spellName].icon] then
-      otcIconId = SpellIcons[SpellInfo[SpelllistProfile][spellName].icon][1]
-    end
-	
-	if not otcIconId then return end
-	modules.game_interface.setCooldown(SpelllistSettings[SpelllistProfile].iconFile, otcIconId, spellName, duration)
-end
-
 function init()
   connect(g_game, { onGameStart = setOptions,
-                    onGameEnd 	= resetWindow,
-                    onSpellGroupCooldown = modules.game_interface.setGroupCooldown,
-                    onSpellCooldown = onSpellCooldown })
+                    onGameEnd 	= resetWindow })
           
   spelllistWindow = g_ui.displayUI('spelllist.otui', modules.game_interface.getRightPanel())
   spelllistWindow:hide()

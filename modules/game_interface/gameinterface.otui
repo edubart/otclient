@@ -1,19 +1,4 @@
-SpellGroupIcon < UIWidget
-  size: 22 22
-  image-size: 22 22
-  image-source: /game_spelllist/icons/cooldownIcons.png
-  focusable: false
 
-SpellIcon < UIWidget
-  size: 22 22 
-  image-size: 22 22
-  margin-right: 3
-  margin-top: 6
-  margin-left: 3
-  focusable: false
-  $first:
-    margin-left: 100
-  
 GameSidePanel < UIMiniWindowContainer
   image-source: /images/sidepanel.png
   image-border: 4
@@ -71,67 +56,6 @@ UIWidget
     focusable: false
     on: true
 
-  Panel
-    id: spellPanel
-    layout:
-      type: horizontalBox
-    height: 32
-    width: 250
-    anchors.left: gameLeftPanel.right
-    anchors.bottom: parent.bottom
-    relative-margin: bottom
-    margin-bottom: 187
-    margin-left: 10
-    border-width: 1
-    border-color: #00000077
-    background-color: #ffffff11
-    focusable: false
-
-  SpellGroupIcon
-    id: groupIconAttack
-    parent: spellPanel
-    image-clip: 0 32 32 32
-    anchors.top: spellPanel.top
-    anchors.left: spellPanel.left
-    !tooltip: tr('Attack')
-    margin-top: 3
-    margin-left: 3
-    $on:
-      image-clip: 0 0 32 32
-
-  SpellGroupIcon
-    id: groupIconHealing
-    image-clip: 32 32 32 32
-    anchors.top: spellPanel.top
-    anchors.left: groupIconAttack.right
-    !tooltip: tr('Healing')
-    margin-top: 3
-    margin-left: 3
-    $on:
-      image-clip: 32 0 32 32
-
-  SpellGroupIcon
-    id: groupIconSupport
-    image-clip: 64 32 32 32
-    anchors.top: spellPanel.top
-    anchors.left: groupIconHealing.right
-    !tooltip: tr('Support')
-    margin-top: 3
-    margin-left: 3
-    $on:
-      image-clip: 64 0 32 32
-
-  SpellGroupIcon
-    id: groupIconSpecial
-    image-clip: 96 32 32 32
-    anchors.top: spellPanel.top
-    anchors.left: groupIconSupport.right
-    !tooltip: tr('Special')
-    margin-top: 3
-    margin-left: 3
-    $on:
-      image-clip: 96 0 32 32
-
   Splitter
     id: bottomSplitter
     anchors.left: gameLeftPanel.right
@@ -140,7 +64,7 @@ UIWidget
     relative-margin: bottom
     margin-bottom: 172
     @canUpdateMargin: function(self, newMargin) return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
-    @onGeometryChange: function(self) self:setMarginBottom(math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) self:getParent():getChildById('spellPanel'):setMarginBottom(15 + math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) end
+    @onGeometryChange: function(self) self:setMarginBottom(math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) end
 
   UIWidget
     id: mouseGrabber
