@@ -22,6 +22,7 @@ function init()
   gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
   gameRootPanel:lower()
+  gameRootPanel.onGeometryChange = updateStretchShrink
 
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
   mouseGrabberWidget.onMouseRelease = onMouseGrabberRelease

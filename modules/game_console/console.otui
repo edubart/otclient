@@ -78,6 +78,7 @@ Panel
     anchors.top: prev.top
     anchors.right: next.left
     margin-left: 5
+    moveable: true
 
   TabButton
     id: nextChannelButton

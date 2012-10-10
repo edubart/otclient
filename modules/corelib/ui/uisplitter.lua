@@ -9,7 +9,9 @@ function UISplitter.create()
 end
 
 function UISplitter:onHoverChange(hovered)
-  if hovered then
+  -- Check if margin can be changed
+  local margin = (self.vertical and self:getMarginBottom() or self:getMarginRight())
+  if hovered and (self:canUpdateMargin(margin + 1) ~= margin or self:canUpdateMargin(margin - 1) ~= margin) then
     if g_mouse.isCursorChanged() or g_mouse.isPressed() then return end
     if self:getWidth() > self:getHeight() then
       g_mouse.setVerticalCursor()
