@@ -1288,10 +1288,11 @@ void ProtocolGame::parseTutorialHint(const InputMessagePtr& msg)
 
 void ProtocolGame::parseAutomapFlag(const InputMessagePtr& msg)
 {
-    // ignored
-    getPosition(msg); // position
-    msg->getU8(); // icon
-    msg->getString(); // message
+    Position pos = getPosition(msg); // position
+    int icon = msg->getU8(); // icon
+    std::string description = msg->getString(); // message
+
+    g_game.processAutomapFlag(pos, icon, description);
 }
 
 void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)

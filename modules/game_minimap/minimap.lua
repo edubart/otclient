@@ -7,6 +7,8 @@ minimapWidget = nil
 minimapButton = nil
 minimapWindow = nil
 
+flagsPanel    = nil
+nextFlagId    = 0
 --[[
   Known Issue (TODO):
   If you move the minimap compass directions and
@@ -16,8 +18,10 @@ function init()
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
+    onAutomapFlag = addMapFlag
   })
-  connect(LocalPlayer, { onPositionChange = center })
+  connect(LocalPlayer, { onPositionChange = center, 
+                         onPositionChange = updateMapFlags })
 
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
@@ -38,18 +42,27 @@ function init()
   minimapWidget:setKeepAspectRatio(false)
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
+  flagsPanel = minimapWindow:recursiveGetChildById('flagsPanel')
 
   reset()
   minimapWindow:setup()
+  loadMapFlags()
+  
+  if g_game.isOnline() then
+    addEvent(function() updateMapFlags() end)
+  end
 end
 
 function terminate()
   disconnect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
+    onAutomapFlag = addMapFlag
   })
-  disconnect(LocalPlayer, { onPositionChange = center })
+  disconnect(LocalPlayer, { onPositionChange = center,
+                            onPositionChange = updateMapFlags })
 
+  saveMapFlags() 
   if g_game.isOnline() then
     saveMap()
   end
@@ -60,9 +73,122 @@ function terminate()
   minimapWindow:destroy()
 end
 
+function loadMapFlags()
+  mapFlags = {}
+
+  local flagSettings = g_settings.getNode('MapFlags')
+  if flagSettings then
+    for i = 1, #flagSettings do
+      local flag = flagSettings[i]
+      addMapFlag(flag.position, flag.icon, flag.description, flag.id, flag.version)
+      
+      if i == #flagSettings then
+        nextFlagId = flag.id + 1
+      end
+    end
+  end
+end
+
+function saveMapFlags()
+  local flagSettings = {}
+  
+  for i = 1, flagsPanel:getChildCount() do
+    local child = flagsPanel:getChildByIndex(i)
+    
+    table.insert(flagSettings, {  position = child.position,
+                                  icon = child.icon,
+                                  description = child.description,
+                                  id = child.id,
+                                  version = child.version })
+  end
+
+  g_settings.setNode('MapFlags', flagSettings)
+end
+
+function getFlagIconClip(id)
+  return (((id)%10)*11) .. ' ' .. ((math.ceil(id/10+0.1)-1)*11) .. ' 11 11'
+end
+
+function addMapFlag(pos, icon, message, flagId, version)
+  if not(icon >= 1 and icon <= 20) or not pos then
+    return 
+  end
+  
+  version = version or g_game.getClientVersion()
+  -- Check if flag is set for that position
+  for i = 1, flagsPanel:getChildCount() do
+    local flag = flagsPanel:getChildByIndex(i)
+    if flag.position.x == pos.x and flag.position.y == pos.y and flag.position.z == pos.z
+        and version == flag.version then
+      return
+    end
+  end 
+  
+  if not flagId then
+    flagId = nextFlagId
+    nextFlagId = nextFlagId + 1
+  end
+  
+  local flagWidget = g_ui.createWidget('FlagWidget', flagsPanel)
+  flagWidget:setIconClip(getFlagIconClip(icon - 1))
+  flagWidget:setId('flag' .. flagId)
+  flagWidget.position = pos
+  flagWidget.icon = icon
+  flagWidget.description = message
+  flagWidget:setTooltip(tr(message))
+  flagWidget.id = flagId
+  flagWidget.version = version
+  updateMapFlag(flagId)
+end
+
+function getMapArea()
+  return minimapWidget:getPosition( { x = 1 + minimapWidget:getX(), y = 1 + minimapWidget:getY() } ),
+            minimapWidget:getPosition( { x = -2 + minimapWidget:getWidth() + minimapWidget:getX(), y = -2 + minimapWidget:getHeight() + minimapWidget:getY() } )
+end
+
+function isFlagVisible(flag, firstPosition, lastPosition)
+  return flag.version == g_game.getClientVersion() and (minimapWidget:getZoom() >= 30 and minimapWidget:getZoom() <= 150) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
+end
+
+function updateMapFlag(id)  
+  local firstPosition, lastPosition = getMapArea()
+  if not firstPosition or not lastPosition then
+    return
+  end
+  
+  local flag = flagsPanel:getChildById('flag' .. id)
+  if isFlagVisible(flag, firstPosition, lastPosition) then
+    flag:setVisible(true)
+    flag:setMarginLeft( -5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
+    flag:setMarginTop( -5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
+  else
+    flag:setVisible(false)   
+  end
+end
+
+function updateMapFlags()
+  local firstPosition, lastPosition = getMapArea()
+  if not firstPosition or not lastPosition then
+    return
+  end
+  
+  for i = 1, flagsPanel:getChildCount() do
+    local flag = flagsPanel:getChildByIndex(i)
+    if isFlagVisible(flag, firstPosition, lastPosition) then
+      flag:setVisible(true)      
+      flag:setMarginLeft( -5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
+      flag:setMarginTop( -5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
+    else
+      flag:setVisible(false)   
+    end
+  end
+end
+
 function online()
   reset()
   loadMap()
+  
+  updateMapFlags()
 end
 
 function offline()
@@ -133,6 +259,8 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   local cameraPos = minimapWidget:getCameraPosition()
   local pos = {x = cameraPos.x + movex, y = cameraPos.y + movey, z = cameraPos.z}
   minimapWidget:setCameraPosition(pos)
+  
+  updateMapFlags()
 end
 
 function onButtonClick(id)
@@ -153,6 +281,8 @@ function onButtonClick(id)
       minimapWidget:setCameraPosition(pos)
     end
   end
+  
+  updateMapFlags()
 end
 
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
@@ -179,6 +309,7 @@ function onMinimapMouseWheel(self, mousePos, direction)
   else
     self:zoomOut()
   end
+  updateMapFlags()
 end
 
 function onMiniWindowClose()

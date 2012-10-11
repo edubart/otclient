@@ -359,6 +359,30 @@ namespace Otc
         PATHFIND_ALLOW_NONPATHABLE = 4,
         PATHFIND_ALLOW_NONWALKABLE = 8
     };
+
+    enum AutomapFlags
+    {
+        MAPMARK_TICK = 0,
+        MAPMARK_QUESTION,
+        MAPMARK_EXCLAMATION,
+        MAPMARK_STAR,
+        MAPMARK_CROSS,
+        MAPMARK_TEMPLE,
+        MAPMARK_KISS,
+        MAPMARK_SHOVEL,
+        MAPMARK_SWORD,
+        MAPMARK_FLAG,
+        MAPMARK_LOCK,
+        MAPMARK_BAG,
+        MAPMARK_SKULL,
+        MAPMARK_DOLLAR,
+        MAPMARK_REDNORTH,
+        MAPMARK_REDSOUTH,
+        MAPMARK_REDEAST,
+        MAPMARK_REDWEST,
+        MAPMARK_GREENNORTH,
+        MAPMARK_GREENSOUTH
+    };
 }
 
 #endif

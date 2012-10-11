@@ -7,6 +7,13 @@ MapControl < Button
 
   $hover !pressed:
     icon-clip: 0 16 16 16
+    
+FlagWidget < UIWidget
+  size: 11 11
+  icon-clip: 0 0 11 11
+  icon-source: /game_minimap/images/mapflags.png
+  anchors.left: parent.left
+  anchors.top: parent.top
 
 FloorUpControl < MapControl
   icon-source: /game_minimap/images/floor_up.png
@@ -26,6 +33,7 @@ MiniWindow
   height: 150
   icon: minimap.png
   @onClose: modules.game_minimap.onMiniWindowClose()
+  @onGeometryChange: updateMapFlags()
   &save: true
 
   Label
@@ -43,6 +51,11 @@ MiniWindow
       id: minimap
       anchors.fill: parent
 
+    Panel
+      id: flagsPanel
+      anchors.fill: minimap
+      phantom: true
+      
     FloorUpControl
       id: floorUp
       anchors.right: parent.right
