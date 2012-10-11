@@ -8,6 +8,7 @@ minimapButton = nil
 minimapWindow = nil
 
 flagsPanel    = nil
+flagWindow    = nil
 nextFlagId    = 0
 --[[
   Known Issue (TODO):
@@ -15,6 +16,8 @@ nextFlagId    = 0
   you change floor it will not update the minimap.
 ]]
 function init()
+  g_ui.importStyle('flagwindow.otui')
+
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
@@ -34,7 +37,9 @@ function init()
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)
-  g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
+  --g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
+  minimapWidget.onMousePress = createThingMenu
+  
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
   minimapWidget:setDrawMinimapColors(true)
@@ -62,6 +67,7 @@ function terminate()
   disconnect(LocalPlayer, { onPositionChange = center,
                             onPositionChange = updateMapFlags })
 
+  destroyFlagWindow()
   saveMapFlags() 
   if g_game.isOnline() then
     saveMap()
@@ -71,6 +77,69 @@ function terminate()
 
   minimapButton:destroy()
   minimapWindow:destroy()
+end
+
+function destroyFlagWindow()
+  if flagWindow then
+    flagWindow:destroy()
+    flagWindow = nil
+  end
+end
+
+function createThingMenu(widget, menuPosition, button)
+  if not g_game.isOnline() then return end
+  if button ~= MouseRightButton then return end
+  local menu = g_ui.createWidget('PopupMenu')
+
+  if widget == minimapWidget then
+    menu:addOption(tr('Create mark'), function() 
+                local position = minimapWidget:getPosition(menuPosition)
+                if position then
+                  showFlagDialog(position)
+                end
+              end)
+  else
+    menu:addOption(tr('Delete mark'), function()
+                  widget:destroy()
+              end)
+  end
+  
+  menu:display(menuPosition)
+end
+
+function showFlagDialog(position)
+  if flagWindow then return end
+  if not position then return end
+  flagWindow = g_ui.createWidget('FlagWindow', rootWidget)
+
+  local positionLabel = flagWindow:getChildById('position')
+  local description = flagWindow:getChildById('description')
+  local okButton = flagWindow:getChildById('okButton')
+  local cancelButton = flagWindow:getChildById('cancelButton')
+
+  positionLabel:setText(tr('Position: %i %i %i', position.x, position.y, position.z))
+
+  flagRadioGroup = UIRadioGroup.create()
+  local flagCheckbox = {}
+  for i = 1, 20 do
+    local checkbox = flagWindow:getChildById('flag' .. i)
+    table.insert(flagCheckbox, checkbox)
+    checkbox.icon = i
+    flagRadioGroup:addWidget(checkbox)
+  end
+  
+  flagRadioGroup:selectWidget(flagCheckbox[1])
+  
+  
+  cancelButton.onClick = function() 
+      flagRadioGroup:destroy()
+      destroyFlagWindow()
+    end
+  okButton.onClick = function() 
+      addMapFlag(position, flagRadioGroup:getSelectedWidget().icon, description:getText())
+      flagRadioGroup:destroy()
+      destroyFlagWindow()
+    end
 end
 
 function loadMapFlags()
@@ -135,10 +204,13 @@ function addMapFlag(pos, icon, message, flagId, version)
   flagWidget.position = pos
   flagWidget.icon = icon
   flagWidget.description = message
-  flagWidget:setTooltip(tr(message))
+  if message and message:len() > 0 then
+    flagWidget:setTooltip(tr(message))
+  end
   flagWidget.id = flagId
   flagWidget.version = version
   updateMapFlag(flagId)
+  flagWidget.onMousePress = createThingMenu
 end
 
 function getMapArea()
@@ -235,6 +307,8 @@ function center()
   local player = g_game.getLocalPlayer()
   if not player then return end
   minimapWidget:followCreature(player)
+  
+  updateMapFlags()
 end
 
 function compassClick(self, mousePos, mouseButton, elapsed)
