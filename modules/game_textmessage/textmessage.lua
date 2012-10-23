@@ -107,6 +107,10 @@ function displayGameMessage(text)
   displayMessage(MessageModes.Game, text)
 end
 
+function displayBroadcastMessage(text)
+  displayMessage(MessageModes.Warning, text)
+end
+
 function clearMessages()
   for _i,child in pairs(messagesPanel:recursiveGetChildren()) do
     if child:getId():match('Label') then

@@ -350,21 +350,21 @@ function addTabText(text, speaktype, tab, creatureName)
         for letter = lastBlockEnd, dataBlock._start-1 do
           local tmpChar = string.byte(drawText:sub(letter, letter))
           local fillChar = (tmpChar == 10 or tmpChar == 32) and string.char(tmpChar) or string.char(127)
-          
+
           tmpText = tmpText .. string.rep(fillChar, letterWidth[tmpChar])
         end
         tmpText = tmpText .. dataBlock.words
       end
-      
+
       -- Fill the highlight label to the same size as default label
       local finalBlockEnd = (highlightData[(#highlightData/3-1)*3+2] or 1)
       for letter = finalBlockEnd, drawText:len() do
           local tmpChar = string.byte(drawText:sub(letter, letter))
           local fillChar = (tmpChar == 10 or tmpChar == 32) and string.char(tmpChar) or string.char(127)
-          
+
           tmpText = tmpText .. string.rep(fillChar, letterWidth[tmpChar])
       end
-      
+
       labelHighlight:setText(tmpText)
     end
   else
@@ -544,6 +544,11 @@ function applyMessagePrefixies(name, level, message)
 end
 
 function onTalk(name, level, mode, message, channelId, creaturePos)
+  if mode == MessageModes.GamemasterBroadcast then
+    modules.game_textmessage.displayBroadcastMessage(name .. ': ' .. message)
+    return
+  end
+
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
 
   if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
@@ -561,7 +566,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
           end
         end
       end
-      
+
     local staticText = StaticText.create()
     staticText:addMessage(name, mode, staticMessage)
     g_map.addThing(staticText, creaturePos, -1)
@@ -583,7 +588,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
-    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then    
+    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
       modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
     end
   else
