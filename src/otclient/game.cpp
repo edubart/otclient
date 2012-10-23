@@ -710,7 +710,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    if(toThing->isCreature())
+    if(toThing->isCreature() && g_game.getClientVersion() >= 860)
         m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
