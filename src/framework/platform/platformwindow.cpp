@@ -103,6 +103,7 @@ void PlatformWindow::processKeyUp(Fw::Key keyCode)
 
     if(m_onInputEvent) {
         m_inputEvent.reset(Fw::KeyUpInputEvent);
+        m_inputEvent.keyCode = keyCode;
         m_onInputEvent(m_inputEvent);
     }
 }
