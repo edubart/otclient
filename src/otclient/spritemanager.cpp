@@ -102,16 +102,11 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         int read = 0;
 
         // decompress pixels
-        while(read < pixelDataSize) {
+        while(read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
             uint16 transparentPixels = m_spritesFile->getU16();
             uint16 coloredPixels = m_spritesFile->getU16();
 
-            if(writePos + transparentPixels*4 + coloredPixels*3 >= SPRITE_DATA_SIZE) {
-                g_logger.warning(stdext::format("corrupt sprite id %d", id));
-                return nullptr;
-            }
-
-            for(int i = 0; i < transparentPixels; i++) {
+            for(int i = 0; i < transparentPixels && writePos < SPRITE_DATA_SIZE; i++) {
                 pixels[writePos + 0] = 0x00;
                 pixels[writePos + 1] = 0x00;
                 pixels[writePos + 2] = 0x00;
@@ -119,12 +114,11 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 writePos += 4;
             }
 
-            for(int i = 0; i < coloredPixels; i++) {
+            for(int i = 0; i < coloredPixels && writePos < SPRITE_DATA_SIZE; i++) {
                 pixels[writePos + 0] = m_spritesFile->getU8();
                 pixels[writePos + 1] = m_spritesFile->getU8();
                 pixels[writePos + 2] = m_spritesFile->getU8();
                 pixels[writePos + 3] = 0xFF;
-
                 writePos += 4;
             }
 
