@@ -67,9 +67,9 @@ uint64_t hex_to_dec(const std::string& str)
     return num;
 }
 
-std::string utf8_to_latin1(uchar *utf8)
+std::string utf8_to_latin1(const std::string& src)
 {
-    auto utf8CharToLatin1 = [](uchar *utf8, int *read) -> char {
+    auto utf8CharToLatin1 = [](const uchar *utf8, int *read) -> char {
         char c = '?';
         uchar opt1 = utf8[0];
         *read = 1;
@@ -89,10 +89,10 @@ std::string utf8_to_latin1(uchar *utf8)
     };
 
     std::string out;
-    int len = strlen((char*)utf8);
+    int len = src.length();
     for(int i=0; i<len;) {
         int read = 0;
-        uchar *utf8char = &utf8[i];
+        uchar *utf8char = (uchar*)&src[i];
         out += utf8CharToLatin1(utf8char, &read);
         i += read;
     }

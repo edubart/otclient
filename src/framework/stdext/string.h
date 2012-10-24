@@ -42,7 +42,7 @@ std::string date_time_string();
 
 std::string dec_to_hex(uint64_t num);
 uint64_t hex_to_dec(const std::string& str);
-std::string utf8_to_latin1(uchar *utf8);
+std::string utf8_to_latin1(const std::string& src);
 void tolower(std::string& str);
 void toupper(std::string& str);
 void trim(std::string& str);

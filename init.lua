@@ -7,9 +7,6 @@ g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log"
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
---add base folder to search path
-g_resources.addSearchPath(g_resources.getWorkDir())
-
 -- add modules directory to the search path
 if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) then
   g_logger.fatal("Unable to add modules directory to the search path.")

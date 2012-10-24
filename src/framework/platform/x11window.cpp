@@ -1056,7 +1056,7 @@ std::string X11Window::getClipboardText()
                             &bytesLeft,
                             &data);
         if(len > 0) {
-            clipboardText = stdext::utf8_to_latin1(data);
+            clipboardText = stdext::utf8_to_latin1((char*)data);
         }
     }
 

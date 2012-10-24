@@ -946,7 +946,7 @@ std::string WIN32Window::getClipboardText()
     if(hglb) {
         LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
         if(lptstr) {
-            text = stdext::utf8_to_latin1((uchar*)lptstr);
+            text = stdext::utf8_to_latin1(lptstr);
             GlobalUnlock(hglb);
         }
     }

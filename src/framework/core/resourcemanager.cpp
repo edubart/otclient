@@ -34,6 +34,7 @@ ResourceManager g_resources;
 void ResourceManager::init(const char *argv0)
 {
     PHYSFS_init(argv0);
+    PHYSFS_permitSymbolicLinks(1);
 }
 
 void ResourceManager::terminate()
@@ -44,21 +45,23 @@ void ResourceManager::terminate()
 void ResourceManager::discoverWorkDir(const std::string& appName, const std::string& existentFile)
 {
     // search for modules directory
-    std::string sep = PHYSFS_getDirSeparator();
-    std::string possiblePaths[] = { boost::filesystem::current_path().generic_string() + sep,
-                                    g_resources.getBaseDir() + ".." + sep,
-                                    g_resources.getBaseDir() + ".." + sep + "share" + sep + appName + sep,
-                                    g_resources.getBaseDir() + appName + sep };
+    std::string possiblePaths[] = { g_resources.getCurrentDir(),
+                                    g_resources.getBaseDir() + "../",
+                                    g_resources.getBaseDir() + "../share/" + appName + "/",
+                                    g_resources.getBaseDir() + appName + "/" };
+
     bool found = false;
     for(const std::string& dir : possiblePaths) {
-        // try to directory to modules path to see if it exists
-        std::ifstream fin(dir + existentFile);
-        if(fin) {
+        if(!PHYSFS_addToSearchPath(dir.c_str(), 0))
+            continue;
+
+        if(PHYSFS_exists(existentFile.c_str())) {
             g_logger.debug(stdext::format("Found work dir at '%s'", dir.c_str()));
             m_workDir = dir;
             found = true;
             break;
         }
+        PHYSFS_removeFromSearchPath(dir.c_str());
     }
 
     if(!found)
@@ -75,13 +78,18 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
     dirName = appWriteDirName;
 #endif
     std::string writeDir = userDir + dirName;
+    
+    if(!PHYSFS_setWriteDir(writeDir.c_str())) {
+        if(!PHYSFS_setWriteDir(userDir.c_str()) || !PHYSFS_mkdir(dirName.c_str())) {
+            g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+            return false;
+        }
+    }
     return setWriteDir(writeDir);
 }
 
 bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
 {
-    boost::filesystem::create_directory(writeDir);
-
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
         return false;
@@ -113,7 +121,7 @@ bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
         }
 
         if(!found) {
-            g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getLastError()));
+            //g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getLastError()));
             return false;
         }
     }
@@ -121,7 +129,6 @@ bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
         m_searchPaths.push_front(savePath);
     else
         m_searchPaths.push_back(savePath);
-    m_hasSearchPath = true;
     return true;
 }
 
@@ -161,31 +168,21 @@ bool ResourceManager::directoryExists(const std::string& directoryName)
 void ResourceManager::loadFile(const std::string& fileName, std::iostream& out)
 {
     out.clear(std::ios::goodbit);
-    if(m_hasSearchPath) {
-        std::string fullPath = resolvePath(fileName);
-        PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
-        if(!file) {
-            out.clear(std::ios::failbit);
-            stdext::throw_exception(stdext::format("unable to load file '%s': %s", fullPath.c_str(), PHYSFS_getLastError()));
-        } else {
-            int fileSize = PHYSFS_fileLength(file);
-            if(fileSize > 0) {
-                std::vector<char> buffer(fileSize);
-                PHYSFS_read(file, (void*)&buffer[0], 1, fileSize);
-                out.write(&buffer[0], fileSize);
-            } else
-                out.clear(std::ios::eofbit);
-            PHYSFS_close(file);
-            out.seekg(0, std::ios::beg);
-        }
+    std::string fullPath = resolvePath(fileName);
+    PHYSFS_file* file = PHYSFS_openRead(fullPath.c_str());
+    if(!file) {
+        out.clear(std::ios::failbit);
+        stdext::throw_exception(stdext::format("unable to load file '%s': %s", fullPath.c_str(), PHYSFS_getLastError()));
     } else {
-        std::ifstream fin(fileName);
-        if(!fin) {
-            out.clear(std::ios::failbit);
-            stdext::throw_exception(stdext::format("unable to load file '%s': %s", fileName.c_str(), PHYSFS_getLastError()));
-        } else {
-            out << fin.rdbuf();
-        }
+        int fileSize = PHYSFS_fileLength(file);
+        if(fileSize > 0) {
+            std::vector<char> buffer(fileSize);
+            PHYSFS_read(file, (void*)&buffer[0], 1, fileSize);
+            out.write(&buffer[0], fileSize);
+        } else
+            out.clear(std::ios::eofbit);
+        PHYSFS_close(file);
+        out.seekg(0, std::ios::beg);
     }
 }
 
@@ -300,8 +297,17 @@ std::string ResourceManager::getRealDir(const std::string& path)
     return dir;
 }
 
+std::string ResourceManager::getCurrentDir()
+{
+    char buffer[2048];
+    PHYSFS_utf8FromLatin1((boost::filesystem::current_path().generic_string() + "/").c_str(), buffer, 2048);
+    return buffer;
+}
+
 std::string ResourceManager::getBaseDir()
 {
-    return PHYSFS_getBaseDir();
+    char buffer[2048];
+    PHYSFS_utf8FromLatin1(PHYSFS_getBaseDir(), buffer, 2048);
+    return buffer;
 }
 
