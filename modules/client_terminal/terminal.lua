@@ -1,5 +1,10 @@
 Terminal = { }
 
+local firstline = 1
+local lastLine = 1
+local visibleOnScreen = 20 --(window size/ line size)
+
+local currentFirst = 1
 -- configs
 local LogColors = { [LogInfo] = 'white',
                     [LogWarning] = 'yellow',
@@ -11,13 +16,16 @@ local MaxHistory = 1000
 -- private variables
 local terminalWindow
 local terminalButton
+local BufferScrollBar
 local logLocked = false
 local commandEnv = {}
 setmetatable(commandEnv, { __index = getfenv() } )
 local commandTextEdit
 local terminalBuffer
+local drawTerminalBuffer
 local commandHistory = { }
 local currentHistoryIndex = 0
+local consoleBuffer = {}
 
 -- private functions
 local function navigateCommand(step)
@@ -105,22 +113,56 @@ local function onLog(level, message, time)
   Terminal.addLine(message, LogColors[level])
   logLocked = false
 end
-
+function update(self --[[scroller]])
+                    local numLines = terminalBuffer:getChildCount() + 1
+	local drawnumLines = drawTerminalBuffer:getChildCount() 
+	
+  BufferScrollBar:setMinimum(1)
+  BufferScrollBar:setMaximum(numLines - 1 - visibleOnScreen)
+  
+	for k = 1, drawnumLines  do
+		local l = drawTerminalBuffer:getChildByIndex(k)
+		if l then l:destroy() end
+	end
+	firstLine = self:getValue()
+	for i = self:getValue(), self:getValue() + visibleOnScreen do
+		local label = terminalBuffer:getChildByIndex(i)
+		if label == nil then break end
+		local drawlabel = g_ui.createWidget('TerminalLabel', drawTerminalBuffer)
+		  drawlabel:setId('terminalLabel' .. i)
+		  drawlabel:setText(label:getText())
+		  drawlabel:setColor(label:getColor())
+		  drawlabel:show()
+	end
+end
+function clearCache()
+	  local numLines = terminalBuffer:getChildCount() + 1
+	  if numLines > MaxLogLines then
+		terminalBuffer:getChildByIndex(1):destroy()
+	  end
+end
 -- public functions
 function Terminal.init()
   terminalWindow = g_ui.displayUI('terminal.otui')
   terminalWindow:setVisible(false)
-
+	BufferScrollBar = terminalWindow:getChildById("BufferScrollBar")
+	
+	connect(BufferScrollBar, {
+		 onValueChange = onLineScroll
+	})
+	 visibleOnScreen = (g_window.getHeight()/14)
   local poped = false
   terminalWindow.onDoubleClick = function(self)
     if poped then
       self:fill('parent')
       self:getChildById('bottomResizeBorder'):disable()
       self:getChildById('rightResizeBorder'):disable()
+	  visibleOnScreen = (g_window.getHeight()/14)
       poped = false
     else
       self:breakAnchors()
       self:resize(g_window.getWidth()/2, g_window.getHeight()/2)
+	  visibleOnScreen = math.floor(g_window.getHeight()/2/14)
       self:move(g_window.getWidth()/2, g_window.getHeight()/2)
       self:getChildById('bottomResizeBorder'):enable()
       self:getChildById('rightResizeBorder'):enable()
@@ -141,8 +183,12 @@ function Terminal.init()
   g_keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
 
   terminalBuffer = terminalWindow:getChildById('terminalBuffer')
+  terminalBuffer:hide()
+  drawTerminalBuffer = terminalWindow:getChildById('drawTerminalBuffer')
+  drawTerminalBuffer:show()
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
+  update(BufferScrollBar)
 end
 
 function Terminal.terminate()
@@ -177,18 +223,29 @@ function Terminal.hide()
   terminalWindow:hide()
 end
 
+
+
+function onLineScroll(self)
+	if firstLine == nil then firstLine = 1 end
+	local change = (self:getValue()- firstLine) > 0 and 1 or -1
+	firstLine = self:getValue()
+	terminalBuffer:hide()
+	
+	update(self)
+
+end
 function Terminal.addLine(text, color)
   -- delete old lines if needed
+  clearCache()
   local numLines = terminalBuffer:getChildCount() + 1
-  if numLines > MaxLogLines then
-    terminalBuffer:getChildByIndex(1):destroy()
-  end
-
+  
   -- create new line label
+
   local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
   label:setId('terminalLabel' .. numLines)
   label:setText(text)
   label:setColor(color)
+  update(BufferScrollBar)
 end
 
 function Terminal.executeCommand(command)
