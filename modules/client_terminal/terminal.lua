@@ -12,7 +12,8 @@ local MaxHistory = 1000
 local terminalWindow
 local terminalButton
 local logLocked = false
-local commandEnv = newenv()
+local commandEnv = {}
+setmetatable(commandEnv, { __index = getfenv() } )
 local commandTextEdit
 local terminalBuffer
 local commandHistory = { }
