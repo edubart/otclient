@@ -10,8 +10,29 @@ UIWindow
   clipping: true
   anchors.fill: parent
 
+  VerticalScrollBar
+    id: BufferScrollBar
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 16
+    minimum: 1
+    maximum: 1
+    pixels-scroll: true
+
   Panel
     id: terminalBuffer
+    layout:
+      type: verticalBox
+      fit-children: true
+    focusable: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: commandSymbolLabel.top
+    margin-left: 2
+
+  Panel
+    id: drawTerminalBuffer
     layout:
       type: verticalBox
       fit-children: true
