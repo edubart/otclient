@@ -34,10 +34,49 @@ function debugContainersItems()
   function UIItem:onHoverChange(hovered)
     if hovered then
       local item = self:getItem()
-      if item then g_tooltip.display(item:getId()) end
+      if item then
+        local text = [[
+          id:]] ..item:getId() .. [[,
+          stackable:]] ..tostring(item:isStackable()) .. [[,
+          marketable:]] ..tostring(item:isMarketable()) .. [[,
+          vocation:]]..(item:getMarketData() and item:getMarketData().restrictVocation or 'none') ..[[,
+          cloth slot:]] ..item:getClothSlot() .. [[
+        ]]
+        g_tooltip.display(text)
+      end
     else
       g_tooltip.hide()
     end
+  end
+end
+
+function debugPosition(enable)
+  if enable == nil then enable = true end
+  local label = rootWidget:getChildById('debugPositionLabel')
+  if not label then
+    label = g_ui.createWidget('GameLabel', rootWidget)
+    label:setColor('pink')
+    label:setFont('terminus-14px-bold')
+    label:setId('debugPositionLabel')
+    label:setPosition({x= 10, y = 40 })
+    label:setPhantom(true)
+    label:setTextAutoResize(true)
+  end
+  if enable then
+    label.event = cycleEvent(function()
+      local player = g_game.getLocalPlayer()
+      if player then
+        local pos = g_game.getLocalPlayer():getPosition()
+        label:show()
+        label:setText('x: ' .. pos.x .. '\ny: ' .. pos.y .. '\nz: ' .. pos.z)
+      else
+        label:hide()
+      end
+    end, 100)
+  else
+    removeEvent(label.event)
+    label.event = nil
+    label:hide()
   end
 end
 
