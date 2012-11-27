@@ -30,5 +30,6 @@ Module
     - game_market
     - game_spelllist
     - game_cooldown
+    - game_modaldialog
   @onLoad: init()
   @onUnload: terminate()

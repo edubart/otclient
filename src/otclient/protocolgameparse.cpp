@@ -308,6 +308,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
+            // PROTOCOL>=970
+            case Proto::GameServerShowModalDialog:
+                parseShowModalDialog(msg);
+                break;
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
                 break;
@@ -1358,16 +1362,45 @@ void ProtocolGame::parsePlayerInventory(const InputMessagePtr& msg)
 
 void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
 {
-    msg->getU32(); // id
-    msg->getString(); // title
-    msg->getString(); // message
-    int size = msg->getU8();
-    for(int i=0;i<size;++i) {
-        msg->getString(); // button name
-        msg->getU8(); // button value
+    uint32 id = msg->getU32();
+    std::string title = msg->getString();
+    std::string message = msg->getString();
+
+    int sizeButtons = msg->getU8();
+    std::map<int, std::string > buttonList;
+    for(int i = 0; i < sizeButtons; ++i) {
+        std::string name = msg->getString();
+        int value = msg->getU8();
+        buttonList[value] = name;
     }
-    msg->getU8(); // default escape button
-    msg->getU8(); // default enter button
+
+    int sizeChoices = msg->getU8();
+    std::vector<std::tuple<int, std::string> > choiceList;
+    for(int i = 0; i < sizeChoices; ++i) {
+        std::string name = msg->getString();
+        int value = msg->getU8();
+        choiceList.push_back(std::make_tuple(value, name));
+    }
+
+    int enterButton = msg->getU8();
+    int escapeButton = msg->getU8();
+    msg->getU8(); // popup value (no clue what it is for)
+
+    std::map<int, std::string >::iterator itEnter = buttonList.find(enterButton);
+    if(itEnter == buttonList.end())
+    {
+        g_logger.info(stdext::format("Enter button does not exist for dialog id: %d", id));
+        return;
+    }
+
+    std::map<int, std::string >::iterator itEscape = buttonList.find(escapeButton);
+    if(itEscape == buttonList.end())
+    {
+        g_logger.info(stdext::format("Escape button does not exist for dialog id: %d", id));
+        return;
+    }
+
+    g_game.processModalDialog(id, title, message, itEnter->first, itEnter->second, itEscape->first, itEscape->second, choiceList);
 }
 
 void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)

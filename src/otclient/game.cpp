@@ -408,6 +408,11 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
+void Game::processModalDialog(uint32 id, std::string title, std::string message, int enterId, std::string enterText, int escapeId, std::string escapeText, std::vector<std::tuple<int, std::string> > choiceList)
+{
+    g_lua.callGlobalField("g_game", "onModalDialog", id, title, message, enterId, enterText, escapeId, escapeText, choiceList);
+}
+
 void Game::processAttackCancel(uint seq)
 {
     if(isAttacking() && (seq == 0 || m_seq == seq))
@@ -1125,6 +1130,14 @@ void Game::requestItemInfo(const ItemPtr& item, int index)
     m_protocolGame->sendRequestItemInfo(item->getId(), item->getSubType(), index);
 }
 
+void Game::answerModalDialog(int dialog, int button, int choice)
+{
+    if(!canPerformGameAction())
+        return;
+
+    m_protocolGame->sendAnswerModalDialog(dialog, button, choice);
+}
+
 void Game::ping()
 {
     if(!m_protocolGame || !m_protocolGame->isConnected())
@@ -1168,7 +1181,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 810 || version > 963))
+    if(version != 0 && (version < 810 || version > 970))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();

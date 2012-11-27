@@ -751,6 +751,16 @@ void ProtocolGame::sendRequestItemInfo(int itemId, int subType, int index)
     send(msg);
 }
 
+void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientAnswerModalDialog);
+    msg->addU32(dialog);
+    msg->addU8(button);
+    msg->addU8(choice);
+    send(msg);
+}
+
 void ProtocolGame::addPosition(const OutputMessagePtr& msg, const Position& position)
 {
     msg->addU16(position.x);

@@ -1,0 +1,61 @@
+TextScrollbar < VerticalScrollBar
+
+ChoiceListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+ModalDialog < MainWindow
+  id: modalDialog
+  !text: tr('Title')
+  size: 280 230
+  @onEscape: self:destroy()
+
+  Label
+    id: messageLabel
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-align: left
+    text: Message
+    height: 60
+
+  TextList
+    id: choiceList
+    vertical-scrollbar: choiceScrollBar
+    anchors.fill: parent
+    anchors.top: prev.bottom
+    anchors.bottom: next.top
+    margin-bottom: 10
+    margin-top: 10
+    padding: 1
+    focusable: false
+    
+  Button
+    id: enterButton
+    !text: tr('Ok')
+    anchors.top: next.top
+    anchors.right: next.left
+    margin-right: 8
+    width: 60
+
+  Button
+    id: escapeButton
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    margin-top: 10
+    width: 60
+
+  VerticalScrollBar
+    id: choiceScrollBar
+    anchors.top: choiceList.top
+    anchors.bottom: choiceList.bottom
+    anchors.right: choiceList.right
+    step: 14
+    pixels-scroll: true

@@ -1,0 +1,10 @@
+Module
+  name: game_modaldialog
+  description: Show and process modal dialogs
+  author: Summ
+  website: www.otclient.info
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ modaldialog.lua ]
+  @onLoad: init()
+  @onUnload: terminate()
