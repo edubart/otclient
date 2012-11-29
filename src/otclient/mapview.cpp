@@ -90,14 +90,6 @@ void MapView::draw(const Rect& rect)
 
     Size tileSize = Size(1,1) * m_tileSize;
 
-    if(m_drawLights) {
-        m_lightView->reset();
-        Light globalLight = g_map.getLight();
-        if(cameraPosition.z <= 7)
-            globalLight.intensity = std::min<uint8>(200, globalLight.intensity);
-        m_lightView->setGlobalLight(globalLight);
-    }
-
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
         m_framebuffer->bind();
 
@@ -105,6 +97,19 @@ void MapView::draw(const Rect& rect)
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
             g_painter->setColor(Color::black);
             g_painter->drawFilledRect(clearRect);
+
+            if(m_drawLights) {
+                m_lightView->reset();
+
+                if(cameraPosition.z <= 7)
+                    m_lightView->setGlobalLight(g_map.getLight());
+                else {
+                    Light undergroundLight;
+                    undergroundLight.color = 0;
+                    undergroundLight.intensity = 0;
+                    m_lightView->setGlobalLight(undergroundLight);
+                }
+            }
         }
         g_painter->setColor(Color::white);
 
@@ -139,18 +144,15 @@ void MapView::draw(const Rect& rect)
             }
         }
 
+        if(m_drawLights && m_updateTilesPos == 0)
+            m_lightView->draw(m_framebuffer->getSize());
+
         m_framebuffer->release();
 
         // generating mipmaps each frame can be slow in older cards
         //m_framebuffer->getTexture()->buildHardwareMipmaps();
 
         m_mustDrawVisibleTilesCache = false;
-    }
-
-    if(m_drawLights) {
-        m_framebuffer->bind();
-        m_lightView->draw(m_framebuffer->getSize());
-        m_framebuffer->release();
     }
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;

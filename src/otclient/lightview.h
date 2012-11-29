@@ -35,10 +35,6 @@ struct LightSource {
 
 class LightView : public LuaObject
 {
-    enum {
-        MAX_LIGHTS = 1024
-    };
-
 public:
     LightView();
 
@@ -48,16 +44,15 @@ public:
     void draw(Size size);
 
 private:
-    void drawGlobalLight(const Light& light);
+    void drawGlobalLight(const Light& light, const Size& size);
     void drawLightSource(const Point& center, const Color& color, int radius);
     void generateLightBuble();
 
     TexturePtr m_lightTexture;
     FrameBufferPtr m_lightbuffer;
     MapView* m_mapView;
-    int m_numLights;
     Light m_globalLight;
-    std::array<LightSource, MAX_LIGHTS> m_lightMap;
+    std::vector<LightSource> m_lightMap;
 };
 
 #endif // LIGHTVIEW_H
