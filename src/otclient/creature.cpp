@@ -29,6 +29,7 @@
 #include "game.h"
 #include "effect.h"
 #include "luavaluecasts.h"
+#include "lightview.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -58,7 +59,7 @@ Creature::Creature() : Thing()
     m_footStep = 0;
 }
 
-void Creature::draw(const Point& dest, float scaleFactor, bool animate)
+void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
 {
     if(!canBeSeen())
         return;
@@ -79,9 +80,12 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate)
 
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
     m_footStepDrawn = true;
+
+    if(lightView && m_light.intensity > 0)
+        lightView->addLightSource(dest + (animationOffset + Point(16,16)) * scaleFactor, scaleFactor, m_light);
 }
 
-void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction)
+void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView)
 {
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
@@ -105,7 +109,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getMount() != 0) {
             auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
             dest += getDisplacement() * scaleFactor;
             zPattern = 1;
         }
@@ -118,7 +122,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             auto datType = rawGetThingType();
-            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, yPattern == 0 ? lightView : nullptr);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
@@ -161,7 +165,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getCategory() == ThingCategoryEffect)
             animationPhase = std::min(animationPhase+1, animationPhases);
 
-        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase);
+        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
     }
 }
 

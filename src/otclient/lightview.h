@@ -20,39 +20,44 @@
  * THE SOFTWARE.
  */
 
-#ifndef EFFECT_H
-#define EFFECT_H
+#ifndef LIGHTVIEW_H
+#define LIGHTVIEW_H
 
-#include <framework/global.h>
-#include <framework/core/timer.h>
-#include "thing.h"
+#include "declarations.h"
+#include <framework/graphics/declarations.h>
+#include "thingtype.h"
 
-// @bindclass
-class Effect : public Thing
+struct LightSource {
+    Color color;
+    Point center;
+    int radius;
+};
+
+class LightView : public LuaObject
 {
     enum {
-        EFFECT_TICKS_PER_FRAME = 75
+        MAX_LIGHTS = 1024
     };
 
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    LightView();
 
-    void setId(uint32 id);
-    uint32 getId() { return m_id; }
-
-    EffectPtr asEffect() { return static_self_cast<Effect>(); }
-    bool isEffect() { return true; }
-
-    const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
-
-protected:
-    void onAppear();
+    void reset();
+    void setGlobalLight(const Light& light);
+    void addLightSource(const Point& center, float scaleFactor, const Light& light);
+    void draw(Size size);
 
 private:
-    Timer m_animationTimer;
-    uint m_phaseDuration;
-    uint16 m_id;
+    void drawGlobalLight(const Light& light);
+    void drawLightSource(const Point& center, const Color& color, int radius);
+    void generateLightBuble();
+
+    TexturePtr m_lightTexture;
+    FrameBufferPtr m_lightbuffer;
+    MapView* m_mapView;
+    int m_numLights;
+    Light m_globalLight;
+    std::array<LightSource, MAX_LIGHTS> m_lightMap;
 };
 
-#endif
+#endif // LIGHTVIEW_H

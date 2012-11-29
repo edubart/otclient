@@ -58,7 +58,7 @@ ItemPtr Item::createFromOtb(int id)
     return item;
 }
 
-void Item::draw(const Point& dest, float scaleFactor, bool animate)
+void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
 {
     if(m_clientId == 0)
         return;
@@ -76,7 +76,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate)
     int xPattern = 0, yPattern = 0, zPattern = 0;
     calculatePatterns(xPattern, yPattern, zPattern);
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, lightView);
 }
 
 void Item::setId(uint32 id)

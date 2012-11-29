@@ -23,6 +23,7 @@
 #include "thingtype.h"
 #include "spritemanager.h"
 #include "game.h"
+#include "lightview.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
@@ -138,7 +139,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView)
 {
     if(m_null)
         return;
@@ -160,6 +161,12 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
                     textureRect.size() * scaleFactor);
 
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
+
+    if(lightView && hasLight()) {
+        Light light = getLight();
+        if(light.intensity > 0)
+            lightView->addLightSource(screenRect.center(), scaleFactor, light);
+    }
 }
 
 const TexturePtr& ThingType::getTexture(int animationPhase)

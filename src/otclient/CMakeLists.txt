@@ -44,6 +44,8 @@ set(otclient_SOURCES ${otclient_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/mapio.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.h
+    ${CMAKE_CURRENT_LIST_DIR}/lightview.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/lightview.h
     ${CMAKE_CURRENT_LIST_DIR}/missile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/missile.h
     ${CMAKE_CURRENT_LIST_DIR}/outfit.cpp

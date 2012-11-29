@@ -29,11 +29,14 @@
 #include "animatedtext.h"
 #include "missile.h"
 #include "shadermanager.h"
+#include "lightview.h"
 
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/image.h>
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
+#include <framework/core/resourcemanager.h>
 
 
 enum {
@@ -86,6 +89,15 @@ void MapView::draw(const Rect& rect)
         drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
 
     Size tileSize = Size(1,1) * m_tileSize;
+
+    if(m_drawLights) {
+        m_lightView->reset();
+        Light globalLight = g_map.getLight();
+        if(cameraPosition.z <= 7)
+            globalLight.intensity = std::min<uint8>(200, globalLight.intensity);
+        m_lightView->setGlobalLight(globalLight);
+    }
+
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
         m_framebuffer->bind();
 
@@ -99,6 +111,7 @@ void MapView::draw(const Rect& rect)
         auto it = m_cachedVisibleTiles.begin();
         auto end = m_cachedVisibleTiles.end();
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
+
             while(it != end) {
                 const TilePtr& tile = *it;
                 Position tilePos = tile->getPosition();
@@ -108,7 +121,7 @@ void MapView::draw(const Rect& rect)
                     ++it;
 
                 if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
                 else {
                     uint8 c = tile->getMinimapColorByte();
                     if(c == 0)
@@ -121,7 +134,7 @@ void MapView::draw(const Rect& rect)
 
             if(drawFlags & Otc::DrawMissiles && !m_drawMinimapColors) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations);
+                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations, m_lightView.get());
                 }
             }
         }
@@ -134,6 +147,11 @@ void MapView::draw(const Rect& rect)
         m_mustDrawVisibleTilesCache = false;
     }
 
+    if(m_drawLights) {
+        m_framebuffer->bind();
+        m_lightView->draw(m_framebuffer->getSize());
+        m_framebuffer->release();
+    }
 
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(isFollowingCreature())
@@ -450,7 +468,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
     m_framebuffer->resize(bufferSize);
-
     requestVisibleTilesCacheUpdate();
 }
 
@@ -631,3 +648,11 @@ void MapView::setDrawMinimapColors(bool enable)
     m_framebuffer->setSmooth(m_smooth);
 }
 
+void MapView::setDrawLights(bool enable)
+{
+    if(enable)
+        m_lightView = LightViewPtr(new LightView);
+    else
+        m_lightView = nullptr;
+    m_drawLights = enable;
+}

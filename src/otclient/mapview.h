@@ -101,6 +101,9 @@ public:
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
     bool isAnimating() { return m_animated; }
 
+    void setDrawLights(bool enable);
+    bool isDrawingLights() { return m_drawLights; }
+
     void setShader(const PainterShaderProgramPtr& shader) { m_shader = shader; }
     PainterShaderProgramPtr getShader() { return m_shader; }
 
@@ -135,6 +138,7 @@ private:
     stdext::boolean<true> m_drawTexts;
     stdext::boolean<true> m_smooth;
     stdext::boolean<false> m_drawMinimapColors;
+    stdext::boolean<false> m_drawLights;
     stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
@@ -144,6 +148,7 @@ private:
     ViewMode m_viewMode;
     Otc::DrawFlags m_drawFlags;
     std::vector<Point> m_spiral;
+    LightViewPtr m_lightView;
 };
 
 #endif

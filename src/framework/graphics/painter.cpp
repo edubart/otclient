@@ -210,6 +210,9 @@ void Painter::updateGlCompositionMode()
         case CompositionMode_DestBlending:
             glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
             break;
+        case CompositionMode_Light:
+            glBlendFunc(GL_SRC_ALPHA, GL_SRC_COLOR);
+            break;
     }
 }
 

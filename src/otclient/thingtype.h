@@ -107,7 +107,7 @@ public:
 
     void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }

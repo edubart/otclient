@@ -81,7 +81,7 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate);
+    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
 
     void setId(uint32 id);
     void setOtbId(uint16 id);

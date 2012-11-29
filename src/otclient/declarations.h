@@ -31,6 +31,7 @@
 class Map;
 class Game;
 class MapView;
+class LightView;
 class Tile;
 class Thing;
 class Item;
@@ -52,6 +53,7 @@ class CreatureType;
 class Spawn;
 
 typedef stdext::shared_object_ptr<MapView> MapViewPtr;
+typedef stdext::shared_object_ptr<LightView> LightViewPtr;
 typedef stdext::shared_object_ptr<Tile> TilePtr;
 typedef stdext::shared_object_ptr<Thing> ThingPtr;
 typedef stdext::shared_object_ptr<Item> ItemPtr;

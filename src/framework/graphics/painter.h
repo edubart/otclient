@@ -36,7 +36,8 @@ public:
         CompositionMode_Multiply,
         CompositionMode_Add,
         CompositionMode_Replace,
-        CompositionMode_DestBlending
+        CompositionMode_DestBlending,
+        CompositionMode_Light
     };
     enum DrawMode {
         Triangles = GL_TRIANGLES,

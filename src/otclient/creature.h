@@ -26,6 +26,7 @@
 #include "thing.h"
 #include "outfit.h"
 #include "tile.h"
+#include "mapview.h"
 #include <framework/core/scheduledevent.h>
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
@@ -44,9 +45,9 @@ public:
     Creature();
 
 
-    virtual void draw(const Point& dest, float scaleFactor, bool animate);
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
 
-    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction);
+    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView = nullptr);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect);
 
