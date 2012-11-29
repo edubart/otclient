@@ -47,7 +47,8 @@ enum tileflags_t
     TILESTATE_MAILBOX = 1 << 19,
     TILESTATE_TRASHHOLDER = 1 << 20,
     TILESTATE_BED = 1 << 21,
-    TILESTATE_DEPOT = 1 << 22
+    TILESTATE_DEPOT = 1 << 22,
+    TILESTATE_TRANSLUECENT_LIGHT = 1 << 23 
 };
 
 #pragma pack(push,1) // disable memory alignment
@@ -101,6 +102,7 @@ public:
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
+    bool hasTranslucentLight() { return m_flags & TILESTATE_TRANSLUECENT_LIGHT; }
     bool mustHookSouth();
     bool mustHookEast();
     bool hasCreature();
@@ -118,6 +120,8 @@ public:
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
 private:
+    void checkTranslucentLight();
+
     stdext::packed_vector<CreaturePtr> m_walkingCreatures;
     stdext::packed_vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
     stdext::packed_vector<ThingPtr> m_things;

@@ -100,13 +100,14 @@ void MapView::draw(const Rect& rect)
 
             if(m_drawLights) {
                 m_lightView->reset();
+                m_lightView->resize(m_framebuffer->getSize());
 
                 if(cameraPosition.z <= 7)
                     m_lightView->setGlobalLight(g_map.getLight());
                 else {
                     Light undergroundLight;
-                    undergroundLight.color = 0;
-                    undergroundLight.intensity = 0;
+                    undergroundLight.color = 215;
+                    undergroundLight.intensity = 16;
                     m_lightView->setGlobalLight(undergroundLight);
                 }
             }
@@ -143,9 +144,6 @@ void MapView::draw(const Rect& rect)
                 }
             }
         }
-
-        if(m_drawLights && m_updateTilesPos == 0)
-            m_lightView->draw(m_framebuffer->getSize());
 
         m_framebuffer->release();
 
@@ -208,7 +206,13 @@ void MapView::draw(const Rect& rect)
 
             creature->drawInformation(p, g_map.isCovered(pos, m_cachedFirstVisibleFloor), rect);
         }
+    }
 
+    // lights are drawn after names and before texts
+    if(m_drawLights)
+        m_lightView->draw(rect, srcRect);
+
+    if(m_viewMode == NEAR_VIEW && m_drawTexts) {
         for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
             Position pos = staticText->getPosition();
 

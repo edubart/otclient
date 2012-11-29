@@ -39,6 +39,8 @@ public:
     void paste(const ImagePtr& other);
     bool nextMipmap();
 
+    void setPixel(int x, int y, uint8 *pixel) { memcpy(&m_pixels[(y * m_size.width() + x) * m_bpp], pixel, m_bpp);}
+
     std::vector<uint8>& getPixels() { return m_pixels; }
     uint8* getPixelData() { return &m_pixels[0]; }
     int getPixelCount() { return m_size.area(); }
@@ -46,7 +48,7 @@ public:
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     int getBpp() { return m_bpp; }
-    uint8* getPixel(int x, int y) { return &m_pixels[(y * m_size.width() + x) * 4]; }
+    uint8* getPixel(int x, int y) { return &m_pixels[(y * m_size.width() + x) * m_bpp]; }
 
 private:
     std::vector<uint8> m_pixels;

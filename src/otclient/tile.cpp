@@ -28,6 +28,7 @@
 #include "localplayer.h"
 #include "effect.h"
 #include "protocolgame.h"
+#include "lightview.h"
 #include <framework/graphics/fontmanager.h>
 
 Tile::Tile(const Position& position) :
@@ -92,7 +93,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
                     if(tile)
-                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags, lightView);
+                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
                 }
             }
         }
@@ -132,6 +133,13 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                 thing->draw(dest, scaleFactor, animate, lightView);
             }
         }
+    }
+
+    // draw translucent light (for tiles beneath holes)
+    if(hasTranslucentLight() && lightView) {
+        Light light;
+        light.intensity = 2;
+        lightView->addLightSource(dest + Point(16,16) * scaleFactor, scaleFactor, light);
     }
 }
 
@@ -213,6 +221,9 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
     thing->setPosition(m_position);
     thing->onAppear();
+
+    if(thing->isTranslucent())
+        checkTranslucentLight();
 }
 
 bool Tile::removeThing(ThingPtr thing)
@@ -238,6 +249,9 @@ bool Tile::removeThing(ThingPtr thing)
     }
 
     thing->onDisappear();
+
+    if(thing->isTranslucent())
+        checkTranslucentLight();
 
     return removed;
 }
@@ -567,7 +581,7 @@ bool Tile::limitsFloorsView()
 
 bool Tile::canErase()
 {
-    return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty();
+    return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty() && m_flags == 0;
 }
 
 bool Tile::hasElevation(int elevation)
@@ -577,4 +591,31 @@ bool Tile::hasElevation(int elevation)
         if(thing->getElevation() > 0)
             count++;
     return count >= elevation;
+}
+
+void Tile::checkTranslucentLight()
+{
+    if(m_position.z < Otc::SEA_FLOOR)
+        return;
+
+    Position downPos = m_position;
+    if(!downPos.down())
+        return;
+
+    TilePtr tile = g_map.getOrCreateTile(downPos);
+    if(!tile)
+        return;
+
+    bool translucent = false;
+    for(const ThingPtr& thing : m_things) {
+        if(thing->isTranslucent() || thing->hasLensHelp()) {
+            translucent = true;
+            break;
+        }
+    }
+
+    if(translucent)
+        tile->m_flags = tile->m_flags | TILESTATE_TRANSLUECENT_LIGHT;
+    else
+        tile->m_flags = tile->m_flags & ~TILESTATE_TRANSLUECENT_LIGHT;
 }

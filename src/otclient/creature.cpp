@@ -81,8 +81,19 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
     m_footStepDrawn = true;
 
-    if(lightView && m_light.intensity > 0)
-        lightView->addLightSource(dest + (animationOffset + Point(16,16)) * scaleFactor, scaleFactor, m_light);
+    if(lightView) {
+        Light light = m_light;
+
+        // local player always have a minimum light in complete darkness
+        if(isLocalPlayer() && (g_map.getLight().intensity < 40 || m_position.z > Otc::SEA_FLOOR)) {
+            light.intensity = std::max<uint8>(light.intensity, 2);
+            if(light.color == 0 || light.color > 215)
+                light.color = 215;
+        }
+
+        if(light.intensity > 0)
+            lightView->addLightSource(dest + (animationOffset + Point(16,16)) * scaleFactor, scaleFactor, light);
+    }
 }
 
 void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView)

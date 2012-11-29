@@ -41,14 +41,16 @@ public:
     void reset();
     void setGlobalLight(const Light& light);
     void addLightSource(const Point& center, float scaleFactor, const Light& light);
-    void draw(Size size);
+    void resize(const Size& size);
+    void draw(const Rect& dest, const Rect& src);
 
 private:
-    void drawGlobalLight(const Light& light, const Size& size);
+    void drawGlobalLight(const Light& light);
     void drawLightSource(const Point& center, const Color& color, int radius);
     void generateLightBuble();
 
     TexturePtr m_lightTexture;
+    int m_lightRadius;
     FrameBufferPtr m_lightbuffer;
     MapView* m_mapView;
     Light m_globalLight;

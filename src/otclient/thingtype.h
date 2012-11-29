@@ -96,6 +96,7 @@ struct MarketData {
 };
 
 struct Light {
+    Light() { intensity = 0; color = 215; }
     uint8 intensity;
     uint8 color;
 };
