@@ -138,7 +138,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     // draw translucent light (for tiles beneath holes)
     if(hasTranslucentLight() && lightView) {
         Light light;
-        light.intensity = 2;
+        light.intensity = 1;
         lightView->addLightSource(dest + Point(16,16) * scaleFactor, scaleFactor, light);
     }
 }
@@ -595,7 +595,7 @@ bool Tile::hasElevation(int elevation)
 
 void Tile::checkTranslucentLight()
 {
-    if(m_position.z < Otc::SEA_FLOOR)
+    if(m_position.z != Otc::SEA_FLOOR)
         return;
 
     Position downPos = m_position;
