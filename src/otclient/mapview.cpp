@@ -658,6 +658,8 @@ void MapView::setDrawMinimapColors(bool enable)
 
 void MapView::setDrawLights(bool enable)
 {
+    if(enable == m_drawLights)
+        return;
     if(enable)
         m_lightView = LightViewPtr(new LightView);
     else

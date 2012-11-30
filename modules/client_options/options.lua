@@ -21,6 +21,7 @@ local defaultOptions = {
   showLeftPanel = false,
   foregroundFrameRate = 61,
   backgroundFrameRate = 201,
+  ambientLight = 15,
   painterEngine = 0
 }
 
@@ -177,6 +178,17 @@ function Options.setOption(key, value)
       graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
     end
     g_app.setForegroundPaneMaxFps(value)
+  elseif key == 'ambientLight' then
+    addEvent(function()
+      local map = rootWidget:recursiveGetChildById('gameMapPanel')
+      if graphicsPanel then
+        graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
+      end
+      if map then
+        map:setMinimumAmbientLight(value/100)
+        map:setDrawLights(value < 100)
+      end
+    end)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
   end

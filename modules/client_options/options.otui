@@ -17,7 +17,7 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   !text: tr('Options')
-  size: 350 290
+  size: 350 310
 
   @onEnter: Options.hide()
   @onEscape: Options.hide()
