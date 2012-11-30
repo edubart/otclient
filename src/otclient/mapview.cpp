@@ -57,6 +57,7 @@ MapView::MapView()
     m_cachedFirstVisibleFloor = 7;
     m_cachedLastVisibleFloor = 7;
     m_updateTilesPos = 0;
+    m_minimumAmbientLight = 0;
     m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
@@ -102,14 +103,15 @@ void MapView::draw(const Rect& rect)
                 m_lightView->reset();
                 m_lightView->resize(m_framebuffer->getSize());
 
-                if(cameraPosition.z <= 7)
-                    m_lightView->setGlobalLight(g_map.getLight());
-                else {
-                    Light undergroundLight;
-                    undergroundLight.color = 215;
-                    undergroundLight.intensity = 16;
-                    m_lightView->setGlobalLight(undergroundLight);
+                Light ambientLight;
+                if(cameraPosition.z <= 7) {
+                    ambientLight = g_map.getLight();
+                } else {
+                    ambientLight.color = 215;
+                    ambientLight.intensity = 0;
                 }
+                ambientLight.intensity = std::max<int>(m_minimumAmbientLight*255, ambientLight.intensity);
+                m_lightView->setGlobalLight(ambientLight);
             }
         }
         g_painter->setColor(Color::white);

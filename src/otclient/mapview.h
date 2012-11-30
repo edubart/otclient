@@ -88,6 +88,9 @@ public:
     void setCameraPosition(const Position& pos);
     Position getCameraPosition();
 
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; }
+    float getMinimumAmbientLight() { return m_minimumAmbientLight; }
+
     // drawing related
     void setDrawFlags(Otc::DrawFlags drawFlags) { m_drawFlags = drawFlags; requestVisibleTilesCacheUpdate(); }
     Otc::DrawFlags getDrawFlags() { return m_drawFlags; }
@@ -149,6 +152,7 @@ private:
     Otc::DrawFlags m_drawFlags;
     std::vector<Point> m_spiral;
     LightViewPtr m_lightView;
+    float m_minimumAmbientLight;
 };
 
 #endif
