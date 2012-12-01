@@ -221,8 +221,10 @@ function CharacterList.create(characters, account, otui)
   characterList:focusChild(focusLabel, ActiveFocusReason)
 
   -- account
-  if account.premDays > 0 then
+  if account.premDays > 0 and account.premDays < 65535 then
     accountStatusLabel:setText(tr("Account Status:\nPremium Account (%s) days left", account.premDays))
+  elseif account.premDays >= 65535 then
+    accountStatusLabel:setText(tr("Account Status:\nLifetime Premium Account"))
   else
     accountStatusLabel:setText(tr('Account Status:\nFree Account'))
   end
