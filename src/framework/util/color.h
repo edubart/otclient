@@ -71,7 +71,7 @@ public:
     bool operator!=(const Color& other) const { return other.rgba() != rgba(); }
 
     static Color from8bit(int color) {
-        if(color >= 216 || color <= 0)
+        if(color >= 256 || color <= 0)
             return Color(0, 0, 0);
 
         int r = int(color / 36) % 6 * 51;

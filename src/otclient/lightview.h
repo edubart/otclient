@@ -47,7 +47,7 @@ public:
 private:
     void drawGlobalLight(const Light& light);
     void drawLightSource(const Point& center, const Color& color, int radius);
-    void generateLightBuble();
+    void generateLightBubble();
 
     TexturePtr m_lightTexture;
     int m_lightRadius;

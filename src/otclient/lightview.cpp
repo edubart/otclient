@@ -30,11 +30,11 @@
 LightView::LightView()
 {
     m_lightbuffer = g_framebuffers.createFrameBuffer();
-    generateLightBuble();
+    generateLightBubble();
     reset();
 }
 
-void LightView::generateLightBuble()
+void LightView::generateLightBubble()
 {
     m_lightRadius = 128;
     int circleDiameter = m_lightRadius * 2;
