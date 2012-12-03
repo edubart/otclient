@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2012 OTClient <https://github.com/edubart/client>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -47,14 +47,13 @@ public:
 private:
     void drawGlobalLight(const Light& light);
     void drawLightSource(const Point& center, const Color& color, int radius);
-    void generateLightBubble();
+    TexturePtr generateLightBubble(float centerFactor);
 
     TexturePtr m_lightTexture;
-    int m_lightRadius;
     FrameBufferPtr m_lightbuffer;
     MapView* m_mapView;
     Light m_globalLight;
     std::vector<LightSource> m_lightMap;
 };
 
-#endif // LIGHTVIEW_H
+#endif

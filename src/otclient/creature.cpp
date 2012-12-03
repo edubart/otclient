@@ -82,10 +82,12 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
     m_footStepDrawn = true;
 
     if(lightView) {
-        Light light = m_light;
+        Light light = rawGetThingType()->getLight();
+        if(m_light.intensity > light.intensity)
+            light = m_light;
 
         // local player always have a minimum light in complete darkness
-        if(isLocalPlayer() && (g_map.getLight().intensity < 40 || m_position.z > Otc::SEA_FLOOR)) {
+        if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
             light.intensity = std::max<uint8>(light.intensity, 2);
             if(light.color == 0 || light.color > 215)
                 light.color = 215;

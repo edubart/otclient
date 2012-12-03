@@ -104,7 +104,7 @@ void MapView::draw(const Rect& rect)
                 m_lightView->resize(m_framebuffer->getSize());
 
                 Light ambientLight;
-                if(cameraPosition.z <= 7) {
+                if(cameraPosition.z <= Otc::SEA_FLOOR) {
                     ambientLight = g_map.getLight();
                 } else {
                     ambientLight.color = 215;

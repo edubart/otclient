@@ -508,6 +508,17 @@ bool Tile::isFullyOpaque()
     return firstObject && firstObject->isFullGround();
 }
 
+bool Tile::isSingleDimension()
+{
+    if(!m_walkingCreatures.empty())
+        return false;
+    for(const ThingPtr& thing : m_things) {
+        if(thing->getHeight() != 1 || thing->getWidth() != 1)
+            return false;
+    }
+    return true;
+}
+
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things) {

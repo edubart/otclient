@@ -98,6 +98,7 @@ public:
     bool changesFloor();
     bool isFullGround();
     bool isFullyOpaque();
+    bool isSingleDimension();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();

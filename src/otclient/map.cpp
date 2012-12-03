@@ -375,16 +375,20 @@ bool Map::isCovered(const Position& pos, int firstFloor)
 
 bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
 {
+    const TilePtr& checkTile = getTile(pos);
     Position tilePos = pos;
     while(tilePos.coveredUp() && tilePos.z >= firstFloor) {
         bool covered = true;
+        bool done = false;
         // check in 2x2 range tiles that has no transparent pixels
-        for(int x=0;x<2;++x) {
-            for(int y=0;y<2;++y) {
+        for(int x=0;x<2 && !done;++x) {
+            for(int y=0;y<2 && !done;++y) {
                 const TilePtr& tile = getTile(tilePos.translated(-x, -y));
                 if(!tile || !tile->isFullyOpaque()) {
                     covered = false;
-                    break;
+                    done = true;
+                } else if(x==0 && y==0 && (!checkTile || checkTile->isSingleDimension())) {
+                    done = true;
                 }
             }
         }

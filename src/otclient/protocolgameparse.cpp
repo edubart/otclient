@@ -1642,19 +1642,9 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setSkull(skull);
             creature->setShield(shield);
             creature->setPassable(!unpass);
+            creature->setLight(light);
             if(emblem != -1)
                 creature->setEmblem(emblem);
-
-            ThingTypePtr thing = creature->getThingType();
-            if(thing) {
-                Light newLight = thing->getLight();
-                if(light.color > 0 && light.color != 215)
-                    newLight.color = light.color;
-                if(light.intensity > 0)
-                    newLight.intensity = light.intensity;
-
-                creature->setLight(newLight);
-            }
 
             if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);
