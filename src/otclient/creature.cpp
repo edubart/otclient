@@ -338,7 +338,7 @@ void Creature::onAppear()
         m_removed = false;
         callLuaField("onAppear");
     // walk
-    } else if(m_oldPosition != m_position && m_oldPosition.isInRange(m_position,1,1)) {
+    } else if(m_oldPosition != m_position && m_oldPosition.isInRange(m_position,1,1) && m_allowAppearWalk) {
         walk(m_oldPosition, m_position);
         callLuaField("onWalk", m_oldPosition, m_position);
     // teleport

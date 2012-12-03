@@ -519,6 +519,9 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
         return;
     }
 
+    CreaturePtr creature = thing->static_self_cast<Creature>();
+    creature->allowAppearWalk();
+
     g_map.addThing(thing, newPos, -1);
 }
 

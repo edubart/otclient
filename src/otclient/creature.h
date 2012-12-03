@@ -100,6 +100,7 @@ public:
     void turn(Otc::Direction direction);
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
+    void allowAppearWalk() { m_allowAppearWalk = true; }
 
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
@@ -155,6 +156,7 @@ protected:
     Timer m_footTimer;
     TilePtr m_walkingTile;
     stdext::boolean<false> m_walking;
+    stdext::boolean<false> m_allowAppearWalk;
     stdext::boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
     EventPtr m_disappearEvent;
