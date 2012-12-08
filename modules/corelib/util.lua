@@ -3,7 +3,7 @@
 function print(...)
   local msg = ""
   for i,v in ipairs({...}) do
-    msg = msg .. tostring(v) .. "\t"
+    msg = msg .. tostring(v) .. "    "
   end
   g_logger.log(LogInfo, msg)
 end

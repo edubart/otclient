@@ -388,7 +388,7 @@ function popupMenu(mousePos, mouseButton, creatureName, text)
     if creatureName then
       if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
-        if (not Player:hasVip(creatureName)) then
+        if not g_game.getLocalPlayer():hasVip(creatureName) then
           menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end)
         end
         -- TODO ignore creatureName
@@ -599,7 +599,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
     if channel then
       addText(composedMessage, speaktype, channel, name)
-    elseif channelId ~= 0 then
+    else
       -- server sent a message on a channel that is not open
       pwarning('message in channel id ' .. channelId .. ' which is unknown, this is a server bug, relogin if you want to see messages in this channel')
     end
@@ -685,7 +685,7 @@ function onGameStart()
     if savedChannels then
       for channelName, channelId in pairs(savedChannels) do
         channelId = tonumber(channelId)
-        if channelId ~= 0 and channelId < 100 then
+        if channelId ~= -1 and channelId < 100 then
           if not table.find(channels, channelId) then
             g_game.joinChannel(channelId)
           end
