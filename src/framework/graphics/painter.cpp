@@ -222,6 +222,7 @@ void Painter::updateGlClipRect()
         glEnable(GL_SCISSOR_TEST);
         glScissor(m_clipRect.left(), m_resolution.height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());
     } else {
+        glScissor(0, 0, m_resolution.width(), m_resolution.height());
         glDisable(GL_SCISSOR_TEST);
     }
 }

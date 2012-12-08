@@ -365,3 +365,16 @@ bool Graphics::canCacheBackbuffer()
     return m_cacheBackbuffer;
 #endif
 }
+
+bool Graphics::hasScissorBug()
+{
+#if OPENGL_ES==2
+    return false;
+#elif OPENGL_ES==1
+    return false;
+#else
+    if(!GLEW_VERSION_1_2)
+        return true;
+    return false;
+#endif
+}

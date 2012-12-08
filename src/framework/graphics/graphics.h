@@ -71,6 +71,7 @@ public:
     bool canUseClampToEdge();
     bool canUseBlendFuncSeparate();
     bool canCacheBackbuffer();
+    bool hasScissorBug();
 
 private:
     Size m_viewportSize;

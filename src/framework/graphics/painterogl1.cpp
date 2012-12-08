@@ -76,6 +76,10 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         updateGlTextureState();
     }
 
+    // GDI Generic driver has this bug
+    if(g_graphics.hasScissorBug())
+        updateGlClipRect();
+
     // use vertex arrays if possible, much faster
     if(g_graphics.canUseDrawArrays()) {
         // update coords buffer hardware caches if enabled
