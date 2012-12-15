@@ -36,9 +36,8 @@ function init()
   minimapWindow:setContentMaximumHeight(256)
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
-  g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)
-  --g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
-  minimapWidget.onMousePress = createThingMenu
+  --g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)
+  g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
   
   minimapWidget:setAutoViewMode(false)
   minimapWidget:setViewMode(1) -- mid view
@@ -360,6 +359,9 @@ function onButtonClick(id)
 end
 
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
+  -- Mapmark menu
+  createThingMenu(self,  mousePosition, mouseButton)
+  
   if navigating then
     navigating = false
     return
