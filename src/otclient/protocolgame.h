@@ -119,6 +119,8 @@ public:
 
 private:
     void parseMessage(const InputMessagePtr& msg);
+    void parsePendingGame(const InputMessagePtr& msg);
+    void parseEnterGame(const InputMessagePtr& msg);
     void parseInitGame(const InputMessagePtr& msg);
     void parseGMActions(const InputMessagePtr& msg);
     void parseLoginError(const InputMessagePtr& msg);
@@ -191,7 +193,7 @@ private:
     void parseFloorChangeDown(const InputMessagePtr& msg);
     void parseOpenOutfitWindow(const InputMessagePtr& msg);
     void parseVipAdd(const InputMessagePtr& msg);
-    void parseVipLogin(const InputMessagePtr& msg);
+    void parseVipState(const InputMessagePtr& msg);
     void parseVipLogout(const InputMessagePtr& msg);
     void parseTutorialHint(const InputMessagePtr& msg);
     void parseAutomapFlag(const InputMessagePtr& msg);

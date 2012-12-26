@@ -86,6 +86,13 @@ std::string InputMessage::getString()
     return std::string(v, stringLength);
 }
 
+double InputMessage::getDouble()
+{
+    uint8 precision = getU8();
+    uint32 v = getU32();
+    return (v / std::pow((float)10, precision));
+}
+
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);

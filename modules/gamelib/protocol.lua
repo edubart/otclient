@@ -1,9 +1,11 @@
 GameServerOpcodes = {
     GameServerInitGame                  = 10,
     GameServerGMActions                 = 11,
+    GameServerEnterGame                 = 15,
     GameServerLoginError                = 20,
     GameServerLoginAdvice               = 21,
     GameServerLoginWait                 = 22,
+    GameServerAddCreature               = 23,
     GameServerPingBack                  = 29,
     GameServerPing                      = 30,
     GameServerChallange                 = 31,
@@ -94,7 +96,8 @@ GameServerOpcodes = {
     GameServerMarketEnter               = 246, -- 944
     GameServerMarketLeave               = 247, -- 944
     GameServerMarketDetail              = 248, -- 944
-    GameServerMarketBrowse              = 249 -- 944
+    GameServerMarketBrowse              = 249, -- 944
+    GameServerShowModalDialog           = 250 -- 960
 }
 
 ClientOpcodes = {
@@ -184,5 +187,6 @@ ClientOpcodes = {
     ClientMarketBrowse                  = 245, -- 944
     ClientMarketCreate                  = 246, -- 944
     ClientMarketCancel                  = 247, -- 944
-    ClientMarketAccept                  = 248 -- 944
+    ClientMarketAccept                  = 248, -- 944
+    ClientAnswerModalDialog             = 249 -- 960
 }

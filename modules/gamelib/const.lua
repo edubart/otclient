@@ -65,6 +65,8 @@ GamePurseSlot = 21
 GameFormatCreatureName = 22
 GameSpellList = 23
 GameClientPing = 24
+GameLoginPending = 25
+GameNewSpeedLaw = 26
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

@@ -57,7 +57,15 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 
             switch(opcode) {
             case Proto::GameServerInitGame:
-                parseInitGame(msg);
+            case Proto::GameServerAddCreature:
+                if(opcode == Proto::GameServerInitGame && g_game.getFeature(Otc::GameLoginPending))
+                    parsePendingGame(msg);
+                else
+                    parseInitGame(msg);
+                break;
+            case Proto::GameServerEnterGame:
+                if(g_game.getFeature(Otc::GameLoginPending))
+                    parseEnterGame(msg);
                 break;
             case Proto::GameServerGMActions:
                 parseGMActions(msg);
@@ -262,8 +270,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerVipAdd:
                 parseVipAdd(msg);
                 break;
-            case Proto::GameServerVipLogin:
-                parseVipLogin(msg);
+            case Proto::GameServerVipState:
+                parseVipState(msg);
                 break;
             case Proto::GameServerVipLogout:
                 parseVipLogout(msg);
@@ -328,11 +336,28 @@ void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
 {
     uint playerId = msg->getU32();
     int serverBeat = msg->getU16();
+
+    if(g_game.getFeature(Otc::GameNewSpeedLaw))
+    {
+        double speedA = msg->getDouble();
+        double speedB = msg->getDouble();
+        double speedC = msg->getDouble();
+    }
     bool canReportBugs = msg->getU8();
 
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
+}
+
+void ProtocolGame::parsePendingGame(const InputMessagePtr& msg)
+{
+    //set player to pending game state
+}
+
+void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
+{
+    //set player to entered game state
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
@@ -618,7 +643,12 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
 {
     std::vector<std::tuple<ItemPtr, int>> goods;
 
-    int money = msg->getU32();
+    int money;
+    if(g_game.getClientVersion() >= 980)
+        money = msg->getU64();
+    else
+        money = msg->getU32();
+
     int size = msg->getU8();
     for(int i = 0; i < size; i++) {
         int itemId = msg->getU16();
@@ -1259,9 +1289,9 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 {
-    uint id, markId;
+    uint id, markId, status;
     std::string name, desc;
-    bool online, notifyLogin;
+    bool notifyLogin;
 
     id = msg->getU32();
     name = g_game.formatCreatureName(msg->getString());
@@ -1270,21 +1300,27 @@ void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
         markId = msg->getU32();
         notifyLogin = msg->getU8();
     }
-    online = msg->getU8();
+    status = msg->getU8();
 
-    g_game.processVipAdd(id, name, online);
+    g_game.processVipAdd(id, name, status);
 }
 
-void ProtocolGame::parseVipLogin(const InputMessagePtr& msg)
+void ProtocolGame::parseVipState(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
-    g_game.processVipStateChange(id, true);
+    if(g_game.getFeature(Otc::GameLoginPending)) {
+        uint status = msg->getU8();
+        g_game.processVipStateChange(id, status);
+    }
+    else {
+        g_game.processVipStateChange(id, 1);
+    }
 }
 
 void ProtocolGame::parseVipLogout(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
-    g_game.processVipStateChange(id, false);
+    g_game.processVipStateChange(id, 0);
 }
 
 void ProtocolGame::parseTutorialHint(const InputMessagePtr& msg)

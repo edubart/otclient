@@ -36,7 +36,7 @@
 
 #include <bitset>
 
-typedef std::tuple<std::string, bool> Vip;
+typedef std::tuple<std::string, uint> Vip;
 
 //@bindsingleton g_game
 class Game
@@ -93,8 +93,8 @@ protected:
     void processRuleViolationLock();
 
     // vip related
-    void processVipAdd(uint id, const std::string& name, bool online);
-    void processVipStateChange(uint id, bool online);
+    void processVipAdd(uint id, const std::string& name, uint status);
+    void processVipStateChange(uint id, uint status);
 
     // tutorial hint
     void processTutorialHint(int id);

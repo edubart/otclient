@@ -38,7 +38,13 @@ end
 
 -- parsing protocols
 local function parseMarketEnter(msg)
-  local balance = msg:getU32()
+  local balance
+  if(g_game.getClientVersion() >= 980) then
+    balance = msg:getU64()
+  else
+    balance = msg:getU32()
+  end
+
   local vocation = -1
   if g_game.getClientVersion() < 950 then
     vocation = msg:getU8() -- get vocation id

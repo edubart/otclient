@@ -340,6 +340,8 @@ namespace Otc
         GameFormatCreatureName = 22,
         GameSpellList = 23,
         GameClientPing = 24,
+        GameLoginPending = 25,
+        GameNewSpeedLaw = 26,
         // 23-50 unused yet
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
@@ -382,6 +384,13 @@ namespace Otc
         MAPMARK_REDWEST,
         MAPMARK_GREENNORTH,
         MAPMARK_GREENSOUTH
+    };
+
+    enum VipState
+    {
+        VIPSTATE_OFFLINE = 0,
+        VIPSTATE_ONLINE = 1,
+        VIPSTATE_PENDING = 2
     };
 }
 

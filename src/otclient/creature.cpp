@@ -83,7 +83,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
 
     if(lightView) {
         Light light = rawGetThingType()->getLight();
-        if(m_light.intensity > light.intensity)
+        if(m_light.intensity != light.intensity && m_light.color != light.color)
             light = m_light;
 
         // local player always have a minimum light in complete darkness

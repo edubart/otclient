@@ -46,6 +46,7 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString();
+    double getDouble();
 
     uint8 peekU8() { uint8 v = getU8(); m_readPos-=1; return v; }
     uint16 peekU16() { uint16 v = getU16(); m_readPos-=2; return v; }

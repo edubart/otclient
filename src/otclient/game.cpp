@@ -305,16 +305,16 @@ void Game::processRuleViolationLock()
     g_lua.callGlobalField("g_game", "onRuleViolationLock");
 }
 
-void Game::processVipAdd(uint id, const std::string& name, bool online)
+void Game::processVipAdd(uint id, const std::string& name, uint status)
 {
-    m_vips[id] = Vip(name, online);
-    g_lua.callGlobalField("g_game", "onAddVip", id, name, online);
+    m_vips[id] = Vip(name, status);
+    g_lua.callGlobalField("g_game", "onAddVip", id, name, status);
 }
 
-void Game::processVipStateChange(uint id, bool online)
+void Game::processVipStateChange(uint id, uint status)
 {
-    std::get<1>(m_vips[id]) = online;
-    g_lua.callGlobalField("g_game", "onVipStateChange", id, online);
+    std::get<1>(m_vips[id]) = status;
+    g_lua.callGlobalField("g_game", "onVipStateChange", id, status);
 }
 
 void Game::processTutorialHint(int id)
@@ -1181,7 +1181,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 810 || version > 970))
+    if(version != 0 && (version < 810 || version > 981))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
@@ -1231,6 +1231,11 @@ void Game::setClientVersion(int version)
     if(version >= 960) {
         enableFeature(Otc::GameSpritesU32);
         enableFeature(Otc::GameOfflineTrainingTime);
+    }
+
+    if(version >= 980) {
+        enableFeature(Otc::GameLoginPending);
+        enableFeature(Otc::GameNewSpeedLaw);
     }
 
     m_clientVersion = version;
