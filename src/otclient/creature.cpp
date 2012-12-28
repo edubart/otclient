@@ -672,9 +672,11 @@ Point Creature::getDrawOffset()
 
 int Creature::getStepDuration()
 {
-    int speed = m_speed * 2;
-    int groundSpeed = 0;
+    int speed = m_speed;
+    if(g_game.getFeature(Otc::GameNewSpeedLaw))
+        speed *= 2;
 
+    int groundSpeed = 0;
     Position tilePos = m_lastStepToPosition;
     if(!tilePos.isValid())
         tilePos = m_position;
