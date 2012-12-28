@@ -89,7 +89,7 @@ std::string InputMessage::getString()
 double InputMessage::getDouble()
 {
     uint8 precision = getU8();
-    uint32 v = getU32();
+    int32 v = getU32() - INT_MAX;
     return (v / std::pow((float)10, precision));
 }
 

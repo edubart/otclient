@@ -118,14 +118,14 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   end
   
   local newLineCount = string.count(textEdit:getText(), '\n')
-  if(newLineCount >= 9) then
+  if newLineCount >= 9 then
     textScroll:setMaximum(newLineCount-9)
   end
     
   local _prev, _next = 0, 11
   local scrollOnValueChange = function(widget, value, delta)
     local line = getLineByCursorPos(textEdit:getText(), textEdit:getCursorPos(), newLineCount)
-    if(delta > 0) then
+    if delta > 0 then
       textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), _next + delta - 1))
       if writeable then textEdit:setCursorPos(getCursorPosByNewLine(textEdit:getText(), line + delta)) end
     else
@@ -180,7 +180,7 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
     return false
   end
   
-  if(not writeable) then
+  if not writeable then
     textEdit:setCursorPos(0)
     textWindow.onKeyPress = onKeyPress  -- textEdit won't receive focus
   else

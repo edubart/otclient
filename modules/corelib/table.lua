@@ -92,3 +92,18 @@ function table.empty(t)
   end
   return true
 end
+
+function table.toString(t)
+  local maxn = #t
+  local str = ""
+  for k,v in pairs(t) do
+    if k == maxn and k ~= 1 then
+      str = str .. " and " .. v
+    elseif maxn > 1 and k ~= 1 then
+      str = str .. ", " .. v
+    else
+      str = str .. " " .. v
+    end
+  end
+  return str
+end

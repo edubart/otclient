@@ -44,7 +44,6 @@ public:
 
     Creature();
 
-
     virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView = nullptr);
@@ -65,6 +64,7 @@ public:
     void setShieldTexture(const std::string& filename, bool blink);
     void setEmblemTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
+    void setSpeedFormula(double speedA, double speedB, double speedC);
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
@@ -89,6 +89,9 @@ public:
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
+    double getSpeedFormula(Otc::SpeedFormula formula) { return m_speedFormula[formula]; }
+    bool hasSpeedFormula();
+    std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
     virtual Point getDisplacement();
     virtual int getDisplacementX();
     virtual int getDisplacementY();
@@ -147,6 +150,8 @@ protected:
     stdext::boolean<true> m_removed;
     CachedText m_nameCache;
     Color m_informationColor;
+
+    std::array<double, Otc::LastSpeedFormula> m_speedFormula;
 
     // walk related
     int m_walkAnimationPhase;

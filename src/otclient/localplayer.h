@@ -53,6 +53,7 @@ public:
     void setSoul(double soul);
     void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
+    void setPendingGame(bool pending) { m_pending = pending; }
     void setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item);
     void setVocation(int vocation);
     void setPremium(bool premium);
@@ -92,6 +93,7 @@ public:
     bool isPreWalking() { return m_preWalking; }
     bool isAutoWalking() { return m_autoWalking; }
     bool isPremium() { return m_premium; }
+    bool isPendingGame() { return m_pending; }
 
     LocalPlayerPtr asLocalPlayer() { return static_self_cast<LocalPlayer>(); }
     bool isLocalPlayer() { return true; }
@@ -113,27 +115,30 @@ protected:
 
 private:
     // walk related
-    bool m_preWalking;
-    bool m_lastPrewalkDone;
-    bool m_autoWalking;
-    bool m_premium;
-    Position m_lastPrewalkDestionation;
-    ItemPtr m_inventoryItems[Otc::LastInventorySlot];
-    ScheduledEventPtr m_autoWalkEndEvent;
-    stdext::boolean<false> m_waitingWalkPong;
     Timer m_walkPingTimer;
-    Timer m_idleTimer;
+    Position m_lastPrewalkDestionation;
+    ScheduledEventPtr m_autoWalkEndEvent;
+    ticks_t m_walkLockExpiration;
     int m_lastWalkPing;
+    stdext::boolean<false> m_preWalking;
+    stdext::boolean<true> m_lastPrewalkDone;
+    stdext::boolean<false> m_autoWalking;
+    stdext::boolean<false> m_waitingWalkPong;
+
+    stdext::boolean<false> m_premium;
+    stdext::boolean<false> m_known;
+    stdext::boolean<false> m_pending;
+
+    ItemPtr m_inventoryItems[Otc::LastInventorySlot];
+    Timer m_idleTimer;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
     std::vector<int> m_spells;
 
-    bool m_known;
     int m_states;
     int m_vocation;
-    ticks_t m_walkLockExpiration;
 
     double m_health;
     double m_maxHealth;

@@ -39,7 +39,7 @@ Game g_game;
 Game::Game()
 {
     resetGameStates();
-    m_clientVersion = 0;
+    m_protocolVersion = 0;
 }
 
 void Game::terminate()
@@ -116,6 +116,18 @@ void Game::processLoginAdvice(const std::string& message)
 void Game::processLoginWait(const std::string& message, int time)
 {
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
+}
+
+void Game::processPendingGame()
+{
+    m_localPlayer->setPendingGame(true);
+    g_lua.callGlobalField("g_game", "onPendingGame");
+}
+
+void Game::processEnterGame()
+{
+    m_localPlayer->setPendingGame(false);
+    g_lua.callGlobalField("g_game", "onEnterGame");
 }
 
 void Game::processGameStart()
@@ -432,7 +444,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     if(m_protocolGame || isOnline())
         stdext::throw_exception("Unable to login into a world while already online or logging.");
 
-    if(m_clientVersion == 0)
+    if(m_protocolVersion == 0)
         stdext::throw_exception("Must set a valid game protocol version before logging.");
 
     // reset the new game state
@@ -642,7 +654,7 @@ void Game::look(const ThingPtr& thing)
     if(!canPerformGameAction() || !thing)
         return;
 
-    if(thing->isCreature() && m_clientVersion >= 961)
+    if(thing->isCreature() && m_protocolVersion >= 961)
         m_protocolGame->sendLookCreature(thing->getId());
     else
         m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackpos());
@@ -715,7 +727,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    if(toThing->isCreature() && g_game.getClientVersion() >= 860)
+    if(toThing->isCreature() && g_game.getProtocolVersion() >= 860)
         m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
@@ -785,7 +797,7 @@ void Game::attack(CreaturePtr creature)
 
     setAttackingCreature(creature);
 
-    if(m_clientVersion >= 963) {
+    if(m_protocolVersion >= 963) {
         if(creature)
             m_seq = creature->getId();
     } else
@@ -808,7 +820,7 @@ void Game::follow(CreaturePtr creature)
 
     setFollowingCreature(creature);
 
-    if(m_clientVersion >= 963) {
+    if(m_protocolVersion >= 963) {
         if(creature)
             m_seq = creature->getId();
     } else
@@ -1173,15 +1185,15 @@ bool Game::canPerformGameAction()
     return m_online && m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
 }
 
-void Game::setClientVersion(int version)
+void Game::setProtocolVersion(int version)
 {
-    if(m_clientVersion == version)
+    if(m_protocolVersion == version)
         return;
 
     if(isOnline())
-        stdext::throw_exception("Unable to change client version while online");
+        stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 810 || version > 981))
+    if(version != 0 && (version < 810 || version > 973))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
@@ -1233,14 +1245,30 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameOfflineTrainingTime);
     }
 
-    if(version >= 980) {
+    if(version >= 973) {
         enableFeature(Otc::GameLoginPending);
         enableFeature(Otc::GameNewSpeedLaw);
     }
 
-    m_clientVersion = version;
+    m_protocolVersion = version;
 
     Proto::buildMessageModesMap(version);
+
+    g_lua.callGlobalField("g_game", "onProtocolVersionChange", version);
+}
+
+void Game::setClientVersion(int version)
+{
+    if(m_clientVersion == version)
+        return;
+
+    if(isOnline())
+        stdext::throw_exception("Unable to change client version while online");
+
+    if(version != 0 && (version < 981 || version > 981))
+        stdext::throw_exception(stdext::format("Client version %d not supported", version));
+
+    m_clientVersion = version;
 
     g_lua.callGlobalField("g_game", "onClientVersionChange", version);
 }

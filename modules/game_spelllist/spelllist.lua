@@ -80,7 +80,7 @@ function getIconImageClip(id)
 end
 
 function setOptions()
-  if g_game.getClientVersion() >= 950 then -- Vocation is only send in newer clients
+  if g_game.getProtocolVersion() >= 950 then -- Vocation is only send in newer clients
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)
   else
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(false)

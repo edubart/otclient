@@ -52,6 +52,11 @@ local function onCharacterList(protocol, characters, account, otui)
   end
 end
 
+local function onChangeProtocol(combobox, option)
+  local clients = g_game.getSupportedClients(option)
+  protocolBox:setTooltip("Supports Client" .. (#clients > 1 and "s" or "") .. ": " .. table.toString(clients))
+end
+
 -- public functions
 function EnterGame.init()
   enterGame = g_ui.displayUI('entergame.otui')
@@ -69,7 +74,7 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
-  local clientVersion = g_settings.getInteger('client-version')
+  local protocolVersion = g_settings.getInteger('protocol-version')
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -82,12 +87,13 @@ function EnterGame.init()
   enterGame:getChildById('accountNameTextEdit'):focus()
 
   protocolBox = enterGame:getChildById('protocolComboBox')
+  protocolBox.onOptionChange = onChangeProtocol  
   for _i, proto in pairs(g_game.getSupportedProtocols()) do
     protocolBox:addOption(proto)
   end
 
-  if clientVersion then
-    protocolBox:setCurrentOption(clientVersion)
+  if protocolVersion then
+    protocolBox:setCurrentOption(protocolVersion)
   end
 
   enterGame:hide()
@@ -153,7 +159,8 @@ function EnterGame.doLogin()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
-  local clientVersion = tonumber(protocolBox:getText())
+  local protocolVersion = tonumber(protocolBox:getText())
+  local clientVersions = g_game.getSupportedClients(protocolVersion)
   EnterGame.hide()
 
   if g_game.isOnline() then
@@ -178,7 +185,10 @@ function EnterGame.doLogin()
                                 end })
 
   g_game.chooseRsa(G.host)
-  g_game.setClientVersion(clientVersion)
+  g_game.setProtocolVersion(protocolVersion)
+  if #clientVersions > 0 then
+    g_game.setClientVersion(clientVersions[#clientVersions])
+  end
 
   if modules.game_tibiafiles.isLoaded() then
     protocolLogin:login(G.host, G.port, G.account, G.password)

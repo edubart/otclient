@@ -182,7 +182,7 @@ function addMapFlag(pos, icon, message, flagId, version)
     return 
   end
   
-  version = version or g_game.getClientVersion()
+  version = version or g_game.getProtocolVersion()
   -- Check if flag is set for that position
   for i = 1, flagsPanel:getChildCount() do
     local flag = flagsPanel:getChildByIndex(i)
@@ -218,7 +218,7 @@ function getMapArea()
 end
 
 function isFlagVisible(flag, firstPosition, lastPosition)
-  return flag.version == g_game.getClientVersion() and (minimapWidget:getZoom() >= 30 and minimapWidget:getZoom() <= 150) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
+  return flag.version == g_game.getProtocolVersion() and (minimapWidget:getZoom() >= 30 and minimapWidget:getZoom() <= 150) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
 end
 
 function updateMapFlag(id)  
@@ -267,8 +267,8 @@ function offline()
 end
 
 function loadMap()
-  local clientVersion = g_game.getClientVersion()
-  local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+  local protocolVersion = g_game.getProtocolVersion()
+  local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
   if g_resources.fileExists(minimapFile) then
     g_map.clean()
     g_map.loadOtcm(minimapFile)
@@ -276,8 +276,8 @@ function loadMap()
 end
 
 function saveMap()
-  local clientVersion = g_game.getClientVersion()
-  local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+  local protocolVersion = g_game.getProtocolVersion()
+  local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
   g_map.saveOtcm(minimapFile)
 end
 

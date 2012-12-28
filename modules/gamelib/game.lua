@@ -50,8 +50,16 @@ function g_game.getSupportedProtocols()
   return {
     810, 853, 854, 860, 861, 862, 870,
     910, 940, 944, 953, 954, 960, 961,
-    963, 970, 971, 980, 981
+    963, 970, 971, 973
   }
+end
+
+function g_game.getSupportedClients(protocol)
+  clients = {
+    [971] = {980},
+    [973] = {981}
+  }
+  return clients[protocol] or {protocol}
 end
 
 g_game.setRsa(OTSERV_RSA)

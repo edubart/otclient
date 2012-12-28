@@ -28,7 +28,12 @@ function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
   msg:addU8(ClientOpcodes.ClientEnterAccount)
   msg:addU16(g_game.getOsType())
-  msg:addU16(g_game.getClientVersion())
+  msg:addU16(g_game.getProtocolVersion())
+
+  if g_game.getProtocolVersion() >= 971 then
+    msg:addU32(g_game.getClientVersion())
+    msg:addU8(182) -- clientType
+  end
 
   msg:addU32(g_things.getDatSignature())
   msg:addU32(g_sprites.getSprSignature())
@@ -113,6 +118,11 @@ function ProtocolLogin:parseCharacterList(msg)
     character.worldIp = iptostring(msg:getU32())
     character.worldPort = msg:getU16()
     characters[i] = character
+
+    -- ??
+    if g_game.getProtocolVersion() >= 971 then
+      msg:getU8()
+    end
   end
 
   local account = {}

@@ -220,6 +220,8 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "getServerBeat", &Game::getServerBeat, &g_game);
     g_lua.bindSingletonFunction("g_game", "getLocalPlayer", &Game::getLocalPlayer, &g_game);
     g_lua.bindSingletonFunction("g_game", "getProtocolGame", &Game::getProtocolGame, &g_game);
+    g_lua.bindSingletonFunction("g_game", "getProtocolVersion", &Game::getProtocolVersion, &g_game);
+    g_lua.bindSingletonFunction("g_game", "setProtocolVersion", &Game::setProtocolVersion, &g_game);
     g_lua.bindSingletonFunction("g_game", "getClientVersion", &Game::getClientVersion, &g_game);
     g_lua.bindSingletonFunction("g_game", "setClientVersion", &Game::setClientVersion, &g_game);
     g_lua.bindSingletonFunction("g_game", "getCharacterName", &Game::getCharacterName, &g_game);

@@ -459,20 +459,20 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
 
-    result = Otc::PATHFIND_RESULT_NO_WAY;
+    result = Otc::PathFindResultNoWay;
 
     if(startPos == goalPos) {
-        result = Otc::PATHFIND_RESULT_SAME_POSITION;
+        result = Otc::PathFindResultSamePosition;
         return ret;
     }
 
     if(startPos.z != goalPos.z) {
-        result = Otc::PATHFIND_RESULT_IMPOSSIBLE;
+        result = Otc::PathFindResultImpossible;
         return ret;
     }
 
     if(startPos.distance(goalPos) > maxSteps) {
-        result = Otc::PATHFIND_RESULT_TOO_FAR;
+        result = Otc::PathFindResultTooFar;
         return ret;
     }
 
@@ -486,7 +486,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     while(currentNode) {
         // too far
         if(currentNode->steps >= maxSteps) {
-            result = Otc::PATHFIND_RESULT_TOO_FAR;
+            result = Otc::PathFindResultTooFar;
             break;
         }
 
@@ -507,14 +507,14 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 const TilePtr& tile = getTile(neighborPos);
 
                 if(neighborPos != goalPos) {
-                    if(!(flags & Otc::PATHFIND_ALLOW_NULLTILES) && !tile)
+                    if(!(flags & Otc::PathFindAllowNullTiles) && !tile)
                         continue;
                     if(tile) {
-                        if(!(flags & Otc::PATHFIND_ALLOW_CREATURES) && tile->hasCreature())
+                        if(!(flags & Otc::PathFindAllowCreatures) && tile->hasCreature())
                             continue;
-                        if(!(flags & Otc::PATHFIND_ALLOW_NONPATHABLE) && !tile->isPathable())
+                        if(!(flags & Otc::PathFindAllowNonPathable) && !tile->isPathable())
                             continue;
-                        if(!(flags & Otc::PATHFIND_ALLOW_NONWALKABLE) && !tile->isWalkable())
+                        if(!(flags & Otc::PathFindAllowNonWalkable) && !tile->isWalkable())
                             continue;
                     }
                 }
@@ -568,7 +568,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
         dirs.pop_back();
         std::reverse(dirs.begin(), dirs.end());
-        result = Otc::PATHFIND_RESULT_OK;
+        result = Otc::PathFineResultOk;
     }
 
     for(auto it : nodes)

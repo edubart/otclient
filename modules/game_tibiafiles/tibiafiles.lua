@@ -2,11 +2,11 @@ filename = 'Tibia'
 loaded = false
 
 function init()
-  connect(g_game, { onClientVersionChange = load })
+  connect(g_game, { onProtocolVersionChange = load })
 end
 
 function terminate()
-  disconnect(g_game, { onClientVersionChange = load })
+  disconnect(g_game, { onProtocolVersionChange = load })
 end
 
 function setFileName(name)
@@ -18,7 +18,7 @@ function isLoaded()
 end
 
 function load()
-  local version = g_game.getClientVersion()
+  local version = g_game.getProtocolVersion()
   local datPath = resolvepath(version .. '/' .. filename .. '.dat')
   local sprPath = resolvepath(version .. '/' .. filename .. '.spr')
 
@@ -36,8 +36,8 @@ function load()
     local messageBox = displayErrorBox(tr('Error'), errorMessage)
     addEvent(function() messageBox:raise() messageBox:focus() end)
 
-    disconnect(g_game, { onClientVersionChange = load })
-    g_game.setClientVersion(0)
-    connect(g_game, { onClientVersionChange = load })
+    disconnect(g_game, { onProtocolVersionChange = load })
+    g_game.setprotocolVersion(0)
+    connect(g_game, { onProtocolVersionChange = load })
   end
 end

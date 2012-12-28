@@ -59,6 +59,9 @@ protected:
     void processLoginAdvice(const std::string& message);
     void processLoginWait(const std::string& message, int time);
 
+    void processPendingGame();
+    void processEnterGame();
+
     void processGameStart();
     void processGameEnd();
     void processDeath(int penality);
@@ -248,6 +251,9 @@ public:
     void setFeature(Otc::GameFeature feature, bool enabled) { m_features.set(feature, enabled); }
     bool getFeature(Otc::GameFeature feature) { return m_features.test(feature); }
 
+    void setProtocolVersion(int version);
+    int getProtocolVersion() { return m_protocolVersion; }
+
     void setClientVersion(int version);
     int getClientVersion() { return m_clientVersion; }
 
@@ -308,6 +314,7 @@ private:
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
     ScheduledEventPtr m_pingEvent;
+    int m_protocolVersion;
     int m_clientVersion;
 };
 

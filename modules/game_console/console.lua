@@ -192,8 +192,8 @@ end
 
 function addTab(name, focus)
   local tab = getTab(name)
-  if(tab) then -- is channel already open
-    if(not focus) then focus = true end
+  if tab then -- is channel already open
+    if not focus then focus = true end
   else
     tab = consoleTabBar:addTab(name)
   end

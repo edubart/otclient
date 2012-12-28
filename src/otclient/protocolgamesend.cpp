@@ -51,7 +51,12 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     msg->addU8(Proto::ClientEnterGame);
 
     msg->addU16(g_lua.callGlobalField<int>("g_game", "getOsType"));
-    msg->addU16(g_game.getClientVersion());
+    msg->addU16(g_game.getProtocolVersion());
+
+    if(g_game.getProtocolVersion() >= 971) {
+        msg->addU32(g_game.getClientVersion());
+        msg->addU8(0); // clientType
+    }
 
     int paddingBytes = 128;
     msg->addU8(0); // first RSA byte must be 0
@@ -588,7 +593,7 @@ void ProtocolGame::sendShareExperience(bool active)
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
 
-    if(g_game.getClientVersion() < 910)
+    if(g_game.getProtocolVersion() < 910)
         msg->addU8(0);
 
     send(msg);

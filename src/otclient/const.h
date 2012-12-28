@@ -348,49 +348,57 @@ namespace Otc
     };
 
     enum PathFindResult {
-        PATHFIND_RESULT_OK = 0,
-        PATHFIND_RESULT_SAME_POSITION,
-        PATHFIND_RESULT_IMPOSSIBLE,
-        PATHFIND_RESULT_TOO_FAR,
-        PATHFIND_RESULT_NO_WAY
+        PathFineResultOk = 0,
+        PathFindResultSamePosition,
+        PathFindResultImpossible,
+        PathFindResultTooFar,
+        PathFindResultNoWay
     };
 
-    enum PathFindFlag {
-        PATHFIND_ALLOW_NULLTILES = 1,
-        PATHFIND_ALLOW_CREATURES = 2,
-        PATHFIND_ALLOW_NONPATHABLE = 4,
-        PATHFIND_ALLOW_NONWALKABLE = 8
+    enum PathFindFlags {
+        PathFindAllowNullTiles = 1,
+        PathFindAllowCreatures = 2,
+        PathFindAllowNonPathable = 4,
+        PathFindAllowNonWalkable = 8
     };
 
     enum AutomapFlags
     {
-        MAPMARK_TICK = 0,
-        MAPMARK_QUESTION,
-        MAPMARK_EXCLAMATION,
-        MAPMARK_STAR,
-        MAPMARK_CROSS,
-        MAPMARK_TEMPLE,
-        MAPMARK_KISS,
-        MAPMARK_SHOVEL,
-        MAPMARK_SWORD,
-        MAPMARK_FLAG,
-        MAPMARK_LOCK,
-        MAPMARK_BAG,
-        MAPMARK_SKULL,
-        MAPMARK_DOLLAR,
-        MAPMARK_REDNORTH,
-        MAPMARK_REDSOUTH,
-        MAPMARK_REDEAST,
-        MAPMARK_REDWEST,
-        MAPMARK_GREENNORTH,
-        MAPMARK_GREENSOUTH
+        MapMarkTick = 0,
+        MapMarkQuestion,
+        MapMarkExclamation,
+        MapMarkStar,
+        MapMarkCross,
+        MapMarkTemple,
+        MapMarkKiss,
+        MapMarkShovel,
+        MapMarkSword,
+        MapMarkFlag,
+        MapMarkLock,
+        MapMarkBag,
+        MapMarkSkull,
+        MapMarkDollar,
+        MapMarkRedNorth,
+        MapMarkRedSouth,
+        MapMarkRedEast,
+        MapMarkRedWest,
+        MapMarkGreenNorth,
+        MapMarkGreenSouth
     };
 
     enum VipState
     {
-        VIPSTATE_OFFLINE = 0,
-        VIPSTATE_ONLINE = 1,
-        VIPSTATE_PENDING = 2
+        VipStateOffline = 0,
+        VipStateOnline = 1,
+        VipStatePending = 2
+    };
+
+    enum SpeedFormula
+    {
+        SpeedFormulaA = 0,
+        SpeedFormulaB,
+        SpeedFormulaC,
+        LastSpeedFormula
     };
 }
 

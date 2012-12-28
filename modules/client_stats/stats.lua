@@ -64,7 +64,8 @@ function onConnect(protocol)
   post = post .. '&world_name='        .. g_game.getWorldName()
   post = post .. '&otserv_host='       .. G.host
   post = post .. '&otserv_port='       .. G.port
-  post = post .. '&otserv_protocol='   .. g_game.getClientVersion()
+  post = post .. '&otserv_protocol='   .. g_game.getProtocolVersion()
+  --post = post .. '&otserv_client='     .. g_game.getClientVersion()
   post = post .. '&build_version='     .. g_app.getVersion()
   post = post .. '&build_revision='    .. g_app.getBuildRevision()
   post = post .. '&build_commit='      .. g_app.getBuildCommit()

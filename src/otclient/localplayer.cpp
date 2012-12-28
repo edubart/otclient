@@ -28,12 +28,6 @@
 
 LocalPlayer::LocalPlayer()
 {
-    m_preWalking = false;
-    m_lastPrewalkDone = true;
-    m_autoWalking = false;
-    m_known = false;
-    m_premium = false;
-
     m_states = 0;
     m_vocation = 0;
     m_walkLockExpiration = 0;

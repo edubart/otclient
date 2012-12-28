@@ -342,6 +342,7 @@ void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
         double speedA = msg->getDouble();
         double speedB = msg->getDouble();
         double speedC = msg->getDouble();
+        m_localPlayer->setSpeedFormula(speedA, speedB, speedC);
     }
     bool canReportBugs = msg->getU8();
 
@@ -353,11 +354,13 @@ void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
 void ProtocolGame::parsePendingGame(const InputMessagePtr& msg)
 {
     //set player to pending game state
+    g_game.processPendingGame();
 }
 
 void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
 {
     //set player to entered game state
+    g_game.processEnterGame();
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
@@ -366,7 +369,7 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getClientVersion() >= 854)
+    if(g_game.getProtocolVersion() >= 854)
         numViolationReasons = 20;
     else
         numViolationReasons = 32;
@@ -489,7 +492,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
     Position pos = getPosition(msg);
     int stackPos = -1;
 
-    if(g_game.getClientVersion() >= 854)
+    if(g_game.getProtocolVersion() >= 854)
         stackPos = msg->getU8();
 
     ThingPtr thing = getThing(msg);
@@ -617,7 +620,7 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
 
     int listCount;
 
-    if(g_game.getClientVersion() >= 900)
+    if(g_game.getProtocolVersion() >= 900)
         listCount = msg->getU16();
     else
         listCount = msg->getU8();
@@ -644,7 +647,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
     std::vector<std::tuple<ItemPtr, int>> goods;
 
     int money;
-    if(g_game.getClientVersion() >= 980)
+    if(g_game.getProtocolVersion() >= 973)
         money = msg->getU64();
     else
         money = msg->getU32();
@@ -993,7 +996,7 @@ void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
 void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 {
     uint seq = 0;
-    if(g_game.getClientVersion() >= 860)
+    if(g_game.getProtocolVersion() >= 860)
         seq = msg->getU32();
 
     g_game.processAttackCancel(seq);
@@ -1295,7 +1298,7 @@ void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 
     id = msg->getU32();
     name = g_game.formatCreatureName(msg->getString());
-    if(g_game.getClientVersion() >= 963) {
+    if(g_game.getProtocolVersion() >= 963) {
         desc = msg->getString();
         markId = msg->getU32();
         notifyLogin = msg->getU8();
@@ -1614,7 +1617,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
 
             int creatureType;
-            if(g_game.getClientVersion() >= 910)
+            if(g_game.getProtocolVersion() >= 910)
                 creatureType = msg->getU8();
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
@@ -1670,7 +1673,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
             emblem = msg->getU8();
 
-        if(g_game.getClientVersion() >= 854)
+        if(g_game.getProtocolVersion() >= 854)
             unpass = msg->getU8();
 
         if(creature) {
@@ -1699,7 +1702,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(creature)
             creature->turn(direction);
 
-        if(g_game.getClientVersion() >= 953) {
+        if(g_game.getProtocolVersion() >= 953) {
             bool unpass = msg->getU8();
 
             if(creature)

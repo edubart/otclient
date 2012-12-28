@@ -57,6 +57,7 @@ Creature::Creature() : Thing()
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_nameCache.setAlign(Fw::AlignTopCenter);
     m_footStep = 0;
+    m_speedFormula.fill(-1);
 }
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
@@ -615,6 +616,19 @@ void Creature::setEmblemTexture(const std::string& filename)
     m_emblemTexture = g_textures.getTexture(filename);
 }
 
+void Creature::setSpeedFormula(double speedA, double speedB, double speedC)
+{
+    m_speedFormula[Otc::SpeedFormulaA] = speedA;
+    m_speedFormula[Otc::SpeedFormulaB] = speedB;
+    m_speedFormula[Otc::SpeedFormulaC] = speedC;
+}
+
+bool Creature::hasSpeedFormula()
+{
+    return m_speedFormula[Otc::SpeedFormulaA] != -1 && m_speedFormula[Otc::SpeedFormulaB] != -1
+            && m_speedFormula[Otc::SpeedFormulaC] != -1;
+}
+
 void Creature::addTimedSquare(uint8 color)
 {
     m_showTimedSquare = true;
@@ -658,27 +672,42 @@ Point Creature::getDrawOffset()
 
 int Creature::getStepDuration()
 {
+    int speed = m_speed * 2;
     int groundSpeed = 0;
 
     Position tilePos = m_lastStepToPosition;
     if(!tilePos.isValid())
         tilePos = m_position;
     const TilePtr& tile = g_map.getTile(tilePos);
-    if(tile)
+    if(tile) {
         groundSpeed = tile->getGroundSpeed();
+        if(groundSpeed == 0)
+            groundSpeed = 150;
+    }
 
     int interval = 1000;
-    if(groundSpeed > 0 && m_speed > 0)
-        interval = (1000 * groundSpeed) / m_speed;
+    if(groundSpeed > 0 && speed > 0)
+        interval = 1000 * groundSpeed;
 
-    if(g_game.getClientVersion() >= 900)
+    if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
+        int formulatedSpeed = 1;
+        if(speed > -m_speedFormula[Otc::SpeedFormulaB]) {
+            formulatedSpeed = std::max(1, (int)floor((m_speedFormula[Otc::SpeedFormulaA] * log((speed / 2)
+                 + m_speedFormula[Otc::SpeedFormulaB]) + m_speedFormula[Otc::SpeedFormulaC]) + 0.5));
+        }
+        interval = std::floor(interval / (double)formulatedSpeed);
+    }
+    else
+        interval /= speed;
+
+    if(g_game.getProtocolVersion() >= 900)
         interval = (interval / g_game.getServerBeat()) * g_game.getServerBeat();
+
+    interval = std::max(interval, g_game.getServerBeat());
 
     if(m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast)
         interval *= 3;
-
-    interval = std::max(interval, g_game.getServerBeat());
 
     return interval;
 }
