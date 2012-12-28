@@ -41,7 +41,7 @@ function UIPopupMenu:addOption(optionName, optionCallback)
     self:getParent():destroy()
   end
   optionWidget:setText(optionName)
-  local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 6
+  local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 15
   self:setWidth(math.max(self:getWidth(), width))
 end
 

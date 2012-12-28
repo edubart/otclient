@@ -35,13 +35,11 @@ function debugContainersItems()
     if hovered then
       local item = self:getItem()
       if item then
-        local text = [[
-          id:]] ..item:getId() .. [[,
-          stackable:]] ..tostring(item:isStackable()) .. [[,
-          marketable:]] ..tostring(item:isMarketable()) .. [[,
-          vocation:]]..(item:getMarketData() and item:getMarketData().restrictVocation or 'none') ..[[,
-          cloth slot:]] ..item:getClothSlot() .. [[
-        ]]
+        local text = "id: " ..item:getId() .. 
+                     "\n stackable: " ..tostring(item:isStackable()) ..
+                     "\n marketable: " ..tostring(item:isMarketable()) ..
+                     "\n vocation: "..(item:getMarketData() and item:getMarketData().restrictVocation or 'none') ..
+                     "\n cloth slot: " ..item:getClothSlot()
         g_tooltip.display(text)
       end
     else

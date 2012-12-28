@@ -130,7 +130,7 @@ function showFlagDialog(position)
   flagRadioGroup:selectWidget(flagCheckbox[1])
   
   
-  cancelButton.onClick = function() 
+  cancelButton.onClick = function()
       flagRadioGroup:destroy()
       destroyFlagWindow()
     end

@@ -1,5 +1,3 @@
-TextScrollbar < VerticalScrollBar
-
 ChoiceListLabel < Label
   font: verdana-11px-monochrome
   background-color: alpha

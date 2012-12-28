@@ -93,7 +93,7 @@ function show()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
-  updateStretchShrink() 
+  updateStretchShrink()
 end
 
 function hide()

@@ -91,9 +91,9 @@ function onSpellCooldown(iconId, duration)
     icon:setId(spellName)
     icon:setImageSource('/game_cooldown/icons/' .. SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].iconFile)
     icon:setImageClip(modules.game_spelllist.getIconImageClip(otcIconId))
-    icon.event = scheduleEvent(function() icon:destroy() end, duration)
+    icon.event = scheduleEvent(function() icon:destroy() icon = nil end, duration)
   
-    local progressRect = g_ui.createWidget('SpellProgressRect', icon)
+    local progressRect = g_ui.createWidget('SpellProgressRect')
     updateProgressRect(progressRect, duration/25, true)
     progressRect:setTooltip(spellName)
   end

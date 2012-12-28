@@ -3,7 +3,7 @@ Button < UIButton
   color: #f0ad4dff
   size: 106 22
   text-offset: 0 0
-  image-source: /images/button.png
+  image-source: /images/button_rounded.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2

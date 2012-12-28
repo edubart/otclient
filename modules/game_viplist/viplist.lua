@@ -71,7 +71,7 @@ function addVip()
   destroyAddWindow()
 end
 
-function onAddVip(id, name, online)
+function onAddVip(id, name, state)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local label = g_ui.createWidget('VipListLabel')
@@ -79,13 +79,15 @@ function onAddVip(id, name, online)
   label:setId('vip' .. id)
   label:setText(name)
 
-  if online then
+  if state == VipState.Online then
     label:setColor('#00ff00')
+  elseif state == VipState.Pending then
+    label:setColor('#ffca38')
   else
     label:setColor('#ff0000')
   end
 
-  label.vipOnline = online
+  label.vipState = state
 
   label:setPhantom(false)
   connect(label, { onDoubleClick = function () g_game.openPrivateChannel(label:getText()) return true end } )
@@ -95,12 +97,13 @@ function onAddVip(id, name, online)
 
   for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
-    if online and not child.vipOnline then
+    if state == VipState.Online and not child.vipState == VipState.Online then
       vipList:insertChild(i, label)
       return
     end
 
-    if (not online and not child.vipOnline) or (online and child.vipOnline) then
+    if (not state == VipState.Online and not child.vipState == VipState.Online)
+      or (state == VipState.Online and child.vipState == VipState.Online) then
       local childText = child:getText():lower()
       local length = math.min(childText:len(), nameLower:len())
 
@@ -118,13 +121,13 @@ function onAddVip(id, name, online)
   vipList:insertChild(childrenCount+1, label)
 end
 
-function onVipStateChange(id, online)
+function onVipStateChange(id, state)
   local vipList = vipWindow:getChildById('contentsPanel')
   local label = vipList:getChildById('vip' .. id)
   local text = label:getText()
   label:destroy()
 
-  onAddVip(id, text, online)
+  onAddVip(id, text, state)
 end
 
 function onVipListMousePress(widget, mousePos, mouseButton)
