@@ -629,10 +629,11 @@ void ProtocolGame::sendCancelAttackAndFollow()
     send(msg);
 }
 
-void ProtocolGame::sendRefreshContainer()
+void ProtocolGame::sendRefreshContainer(int containerId)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRefreshContainer);
+    msg->addU8(containerId);
     send(msg);
 }
 
@@ -694,7 +695,7 @@ void ProtocolGame::sendBugReport(const std::string& comment)
     send(msg);
 }
 
-void ProtocolGame::sendRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
+void ProtocolGame::sendRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRuleViolation);

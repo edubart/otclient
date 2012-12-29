@@ -1411,24 +1411,24 @@ void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
     int sizeButtons = msg->getU8();
     std::map<int, std::string > buttonList;
     for(int i = 0; i < sizeButtons; ++i) {
-        std::string name = msg->getString();
-        int value = msg->getU8();
-        buttonList[value] = name;
+        std::string value = msg->getString();
+        int id = msg->getU8();
+        buttonList[id] = value;
     }
 
     int sizeChoices = msg->getU8();
     std::vector<std::tuple<int, std::string> > choiceList;
     for(int i = 0; i < sizeChoices; ++i) {
-        std::string name = msg->getString();
-        int value = msg->getU8();
-        choiceList.push_back(std::make_tuple(value, name));
+        std::string value = msg->getString();
+        int id = msg->getU8();
+        choiceList.push_back(std::make_tuple(id, value));
     }
 
     int enterButton = msg->getU8();
     int escapeButton = msg->getU8();
     msg->getU8(); // popup value (no clue what it is for)
 
-    std::map<int, std::string >::iterator itEnter = buttonList.find(enterButton);
+    std::map<int, std::string>::iterator itEnter = buttonList.find(enterButton);
     if(itEnter == buttonList.end())
     {
         g_logger.info(stdext::format("Enter button does not exist for dialog id: %d", id));
@@ -1743,7 +1743,7 @@ Position ProtocolGame::getPosition(const InputMessagePtr& msg)
 {
     uint16 x = msg->getU16();
     uint16 y = msg->getU16();
-    uint8  z = msg->getU8();
+    uint8 z = msg->getU8();
 
     return Position(x, y, z);
 }

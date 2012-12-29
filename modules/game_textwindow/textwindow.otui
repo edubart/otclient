@@ -1,5 +1,3 @@
-TextScrollbar < VerticalScrollBar
-
 TextWindow < MainWindow
   id: textWindow
   size: 280 280
@@ -30,7 +28,7 @@ TextWindow < MainWindow
     margin-top: 30
     margin-bottom: 30
 
-  TextScrollbar
+  VerticalScrollBar
     id: textScroll
     anchors.left: prev.right
     anchors.top: prev.top

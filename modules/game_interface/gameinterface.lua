@@ -1,4 +1,4 @@
-WALK_AUTO_REPEAT_DELAY = 180
+WALK_AUTO_REPEAT_DELAY = 80
 
 gameRootPanel = nil
 gameMapPanel = nil
@@ -11,6 +11,18 @@ countWindow = nil
 logoutWindow = nil
 exitWindow = nil
 bottomSplitter = nil
+
+lastWalkDir = nil
+arrowKeys = {
+  [North] = "Up",
+  [South] = 'Down',
+  [East] = 'Right',
+  [West] = 'Left',
+  [NorthEast] = 'Numpad9',
+  [SouthEast] = 'Numpad3',
+  [NorthWest] = 'Numpad7',
+  [SouthWest] = 'Numpad1'
+}
 
 function init()
   g_ui.importStyle('styles/countwindow.otui')
@@ -49,6 +61,12 @@ function bindKeys()
   g_keyboard.bindKeyPress('Right', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Down', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Left', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+
+  g_keyboard.bindKeyDown('Up', function() smartWalk(North) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Right', function() smartWalk(East) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Down', function() smartWalk(South) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Left', function() smartWalk(West) end, gameRootPanel)
+
   g_keyboard.bindKeyPress('Numpad8', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad9', function() smartWalk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad6', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -164,7 +182,34 @@ function tryLogout()
 end
 
 function smartWalk(defaultDir)
-  local dir
+  --[[ TODO: Add walk event stack ]]
+  local rebindKey = false
+  local lastKey = arrowKeys[lastWalkDir]
+
+  -- choose a new direction
+  if not g_keyboard.isKeyPressed(arrowKeys[defaultDir]) then
+    local changeDir = false
+    for k,v in pairs(arrowKeys) do
+      if g_keyboard.isKeyPressed(v) then
+        defaultDir = k
+        changeDir = true
+        break
+      end
+    end
+    if not changeDir then
+      return
+    end
+  end
+
+  -- key is still pressed from previous walk event
+  if lastWalkDir and lastWalkDir ~= defaultDir and g_keyboard.isKeyPressed(lastKey) then
+    if g_keyboard.isKeySetPressed(arrowKeys) then
+      g_keyboard.unbindKeyPress(lastKey, gameRootPanel)
+      rebindKey = true
+    end
+  end
+
+  local dir = defaultDir
   if Options.getOption('smartWalk') then
     if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
       dir = NorthWest
@@ -176,9 +221,6 @@ function smartWalk(defaultDir)
       dir = SouthEast
     end
   end
-  if not dir then
-    dir = defaultDir
-  end
 
   if Options.getOption('walkBooster') then
     if g_game.getLocalPlayer():canWalk(dir) then
@@ -187,8 +229,17 @@ function smartWalk(defaultDir)
       g_game.forceWalk(dir)
     end
   else
-    g_game.walk(dir)
+    --if g_game.getLocalPlayer():canWalk(dir) then
+      g_game.walk(dir)
+    --else
+      
+    --end
   end
+
+  if rebindKey then
+    g_keyboard.bindKeyPress(lastKey, function() smartWalk(lastWalkDir) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  end
+  lastWalkDir = dir
 end
 
 function updateStretchShrink() 

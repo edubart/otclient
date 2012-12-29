@@ -25,11 +25,13 @@ local defaultOptions = {
   painterEngine = 0
 }
 
+local warningWindow
 local optionsWindow
 local optionsButton
 local optionsTabBar
 local options = {}
-local generalPanel
+local gamePanel
+local consolePanel
 local graphicsPanel
 
 local function setupGraphicsEngines()
@@ -62,6 +64,21 @@ local function setupGraphicsEngines()
   end
 end
 
+function displayWarning(widget, warning)
+  if warningWindow and warningWindow:isVisible() then
+    return
+  end
+  if g_game.isOfficialTibia() and widget:isChecked() then
+    local yesCallback = function() warningWindow:destroy() warningWindow=nil end
+    local noCallback = function() widget:setChecked(false) warningWindow:destroy() warningWindow=nil end
+
+    warningWindow = displayGeneralBox('Warning', tr(warning), {
+      { text='Yes', callback=yesCallback },
+      { text='No', callback=noCallback },
+      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+  end
+end
+
 function Options.init()
   -- load options
   for k,v in pairs(defaultOptions) do
@@ -83,14 +100,20 @@ function Options.init()
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  generalPanel = g_ui.loadUI('game.otui')
-  optionsTabBar:addTab(tr('Game'), generalPanel)
+  gamePanel = g_ui.loadUI('game.otui')
+  optionsTabBar:addTab(tr('Game'), gamePanel)
 
-  generalPanel = g_ui.loadUI('console.otui')
-  optionsTabBar:addTab(tr('Console'), generalPanel)
+  consolePanel = g_ui.loadUI('console.otui')
+  optionsTabBar:addTab(tr('Console'), consolePanel)
 
   graphicsPanel = g_ui.loadUI('graphics.otui')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
+
+  local optionWalkBooster = gamePanel:getChildById('walkBooster')
+  optionWalkBooster.onCheckChange = function(widget)
+    displayWarning(widget, "This feature could be detectable by official Tibia servers. Would like to continue?")
+    Options.setOption(widget:getId(), widget:isChecked())
+  end
 
   setupGraphicsEngines()
 end
@@ -103,7 +126,8 @@ function Options.terminate()
   optionsButton:destroy()
   optionsButton = nil
   optionsTabBar = nil
-  generalPanel = nil
+  gamePanel = nil
+  consolePanel = nil
   graphicsPanel = nil
   Options = nil
 end

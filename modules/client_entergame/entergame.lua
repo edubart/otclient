@@ -3,6 +3,7 @@ EnterGame = { }
 -- private variables
 local loadBox
 local enterGame
+local motdWindow
 local motdButton
 local enterGameButton
 local protocolBox
@@ -121,6 +122,8 @@ function EnterGame.terminate()
   enterGame = nil
   enterGameButton:destroy()
   enterGameButton = nil
+  motdWindow:destroy()
+  motdWindow = nil
   motdButton:destroy()
   motdButton = nil
   protocolBox = nil
@@ -200,7 +203,9 @@ function EnterGame.doLogin()
 end
 
 function EnterGame.displayMotd()
-  displayInfoBox(tr('Message of the day'), G.motdMessage)
+  if not motdWindow or not motdWindow:isVisible() then
+    motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
+  end
 end
 
 function EnterGame.setDefaultServer(host, port, protocol)

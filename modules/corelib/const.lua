@@ -171,6 +171,9 @@ KeyNumpad7 = 148
 KeyNumpad8 = 149
 KeyNumpad9 = 150
 
+FirstKey = KeyUnknown
+LastKey = KeyNumpad9
+
 ExtendedActivate = 0
 ExtendedLocales = 1
 ExtendedParticles = 2

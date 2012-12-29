@@ -214,6 +214,7 @@ namespace Proto {
         ClientInviteToOwnChannel            = 171,
         ClientExcludeFromOwnChannel         = 172,
         ClientCancelAttackAndFollow         = 190,
+        ClientUpdateTile                    = 201,
         ClientRefreshContainer              = 202,
         ClientRequestOutfit                 = 210,
         ClientChangeOutfit                  = 211,

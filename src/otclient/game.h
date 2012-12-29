@@ -140,7 +140,7 @@ public:
 
     // walk related
     bool walk(Otc::Direction direction);
-    void autoWalk(const std::vector<Otc::Direction>& dirs);
+    void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
     void stop();
@@ -159,7 +159,7 @@ public:
     void open(const ItemPtr& item, const ContainerPtr& previousContainer);
     void openParent(const ContainerPtr& container);
     void close(const ContainerPtr& container);
-    void refreshContainer();
+    void refreshContainer(const ContainerPtr& container);
 
     // attack/follow related
     void attack(CreaturePtr creature);
@@ -225,7 +225,7 @@ public:
 
     // reports
     void reportBug(const std::string& comment);
-    void reportRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
+    void reportRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
     void debugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
 
     // questlog related

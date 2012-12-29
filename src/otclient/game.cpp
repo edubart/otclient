@@ -495,7 +495,7 @@ bool Game::walk(Otc::Direction direction)
     if(isFollowing())
         cancelFollow();
 
-    // msut cancel auto walking and wait next try
+    // must cancel auto walking and wait next try
     if(m_localPlayer->isAutoWalking()) {
         m_protocolGame->sendStop();
         return false;
@@ -549,7 +549,7 @@ bool Game::walk(Otc::Direction direction)
     return true;
 }
 
-void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
+void Game::autoWalk(std::vector<Otc::Direction> dirs)
 {
     if(!canPerformGameAction())
         return;
@@ -567,11 +567,16 @@ void Game::autoWalk(const std::vector<Otc::Direction>& dirs)
     if(isFollowing())
         cancelFollow();
 
-    Otc::Direction direction = dirs.front();
+    auto it = dirs.begin();
+    Otc::Direction direction = *it;
     if(m_localPlayer->canWalk(direction)) {
         TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
         if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking())
+        {
             m_localPlayer->preWalk(direction);
+            forceWalk(direction);
+            dirs.erase(it);
+        }
     }
 
     g_lua.callGlobalField("g_game", "onAutoWalk", dirs);
@@ -777,11 +782,11 @@ void Game::close(const ContainerPtr& container)
     m_protocolGame->sendCloseContainer(container->getId());
 }
 
-void Game::refreshContainer()
+void Game::refreshContainer(const ContainerPtr& container)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendRefreshContainer();
+    m_protocolGame->sendRefreshContainer(container->getId());
 }
 
 void Game::attack(CreaturePtr creature)
@@ -1095,11 +1100,11 @@ void Game::reportBug(const std::string& comment)
     m_protocolGame->sendBugReport(comment);
 }
 
-void Game::reportRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
+void Game::reportRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendRuleVilation(target, reason, action, comment, statement, statementId, ipBanishment);
+    m_protocolGame->sendRuleViolation(target, reason, action, comment, statement, statementId, ipBanishment);
 }
 
 void Game::debugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d)

@@ -92,14 +92,14 @@ public:
     void sendInviteToOwnChannel(const std::string& name);
     void sendExcludeFromOwnChannel(const std::string& name);
     void sendCancelAttackAndFollow();
-    void sendRefreshContainer();
+    void sendRefreshContainer(int containerId);
     void sendRequestOutfit();
     void sendChangeOutfit(const Outfit& outfit);
     void sendMountStatus(bool mount);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
     void sendBugReport(const std::string& comment);
-    void sendRuleVilation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
+    void sendRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
     void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);

@@ -84,7 +84,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
 
     if(lightView) {
         Light light = rawGetThingType()->getLight();
-        if(m_light.intensity != light.intensity && m_light.color != light.color)
+        if(m_light.intensity != light.intensity || m_light.color != light.color)
             light = m_light;
 
         // local player always have a minimum light in complete darkness
@@ -384,7 +384,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     int footAnimPhases = getAnimationPhases() - 1;
     if(totalPixelsWalked == 32 || footAnimPhases == 0)
         m_walkAnimationPhase = 0;
-    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= getStepDuration() / 4 ) {
+    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= getStepDuration(true) / 4 ) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
         m_footStepDrawn = false;
@@ -459,8 +459,7 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk()
 {
-    int stepDuration = getStepDuration();
-    float walkTicksPerPixel = stepDuration / 32;
+    float walkTicksPerPixel = getStepDuration(true) / 32;
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // needed for paralyze effect
@@ -472,7 +471,7 @@ void Creature::updateWalk()
     updateWalkingTile();
 
     // terminate walk
-    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration)
+    if(m_walking && m_walkTimer.ticksElapsed() >= getStepDuration())
         terminateWalk();
 }
 
@@ -670,7 +669,7 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-int Creature::getStepDuration()
+int Creature::getStepDuration(bool ignoreDiagonal)
 {
     int speed = m_speed;
     if(g_game.getFeature(Otc::GameNewSpeedLaw))
@@ -707,8 +706,8 @@ int Creature::getStepDuration()
 
     interval = std::max(interval, g_game.getServerBeat());
 
-    if(m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
-       m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast)
+    if(!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
+       m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
         interval *= 3;
 
     return interval;

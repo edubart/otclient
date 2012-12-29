@@ -8,7 +8,7 @@ PopupMenuButton < UIButton
   text-offset: 0 0
   font: verdana-11px-antialised
   
-  image-source: /images/button_square.png
+  image-source: /images/menubutton.png
   image-color: white
   image-clip: 0 0 20 20
   image-border: 2

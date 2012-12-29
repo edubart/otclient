@@ -123,7 +123,7 @@ function report()
   elseif comment == "" then
     displayErrorBox(tr("Error"), tr("You must enter a comment."))
   else
-    g_game.reportRuleVilation(target, reason, action, comment, statement, statementId, ipBanishment)
+    g_game.reportRuleViolation(target, reason, action, comment, statement, statementId, ipBanishment)
     hide()
   end
 end

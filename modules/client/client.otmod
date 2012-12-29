@@ -11,10 +11,10 @@ Module
     //- client_particles
     - client_topmenu
     - client_background
+    - client_entergame
     - client_options
     - client_terminal
     - client_modulemanager
-    - client_entergame
     //- client_stats
 
   @onLoad: |

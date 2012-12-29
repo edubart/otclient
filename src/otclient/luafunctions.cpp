@@ -194,7 +194,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "acceptTrade", &Game::acceptTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "rejectTrade", &Game::rejectTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "reportBug", &Game::reportBug, &g_game);
-    g_lua.bindSingletonFunction("g_game", "reportRuleVilation", &Game::reportRuleVilation, &g_game);
+    g_lua.bindSingletonFunction("g_game", "reportRuleViolation", &Game::reportRuleViolation, &g_game);
     g_lua.bindSingletonFunction("g_game", "debugReport", &Game::debugReport, &g_game);
     g_lua.bindSingletonFunction("g_game", "editText", &Game::editText, &g_game);
     g_lua.bindSingletonFunction("g_game", "editList", &Game::editList, &g_game);

@@ -23,8 +23,7 @@ function init()
     onGameEnd = offline,
     onAutomapFlag = addMapFlag
   })
-  connect(LocalPlayer, { onPositionChange = center, 
-                         onPositionChange = updateMapFlags })
+  connect(LocalPlayer, { onPositionChange = center })
 
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
@@ -63,8 +62,7 @@ function terminate()
     onGameEnd = offline,
     onAutomapFlag = addMapFlag
   })
-  disconnect(LocalPlayer, { onPositionChange = center,
-                            onPositionChange = updateMapFlags })
+  disconnect(LocalPlayer, { onPositionChange = center })
 
   destroyFlagWindow()
   saveMapFlags() 
@@ -303,10 +301,7 @@ function reset()
 end
 
 function center()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  minimapWidget:followCreature(player)
-  
+  reset()
   updateMapFlags()
 end
 
