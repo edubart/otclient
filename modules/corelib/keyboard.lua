@@ -196,9 +196,9 @@ function g_keyboard.isKeySetPressed(keys, all)
   local result = {}
   for k,v in pairs(keys) do
     if type(v) == 'string' then
-      key = getKeyCode(v)
+      v = getKeyCode(v)
     end
-    if g_window.isKeyPressed(key) then
+    if g_window.isKeyPressed(v) then
       if not all then
         return true
       end

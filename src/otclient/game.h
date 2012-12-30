@@ -307,6 +307,7 @@ private:
     uint m_seq;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
+    Otc::Direction m_lastWalkDir;
     bool m_safeFight;
     bool m_canReportBugs;
     std::vector<uint8> m_gmActions;
@@ -314,6 +315,7 @@ private:
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;
     ScheduledEventPtr m_pingEvent;
+    ScheduledEventPtr m_walkEvent;
     int m_protocolVersion;
     int m_clientVersion;
 };

@@ -231,16 +231,12 @@ function CharacterList.create(characters, account, otui)
 end
 
 function CharacterList.destroy()
-  charactersWindow:hide()
+  CharacterList.hide(true)
 
   if charactersWindow then
     characterList = nil
     charactersWindow:destroy()
     charactersWindow = nil
-  end
-
-  if EnterGame and not g_game.isOnline() then
-    EnterGame.show()
   end
 end
 
@@ -252,8 +248,13 @@ function CharacterList.show()
   end
 end
 
-function CharacterList.hide()
+function CharacterList.hide(showLogin)
+  showLogin = showLogin or false
   charactersWindow:hide()
+
+  if showLogin and EnterGame and not g_game.isOnline() then
+    EnterGame.show()
+  end
 end
 
 function CharacterList.showAgain()

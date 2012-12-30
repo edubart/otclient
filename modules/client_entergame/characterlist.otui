@@ -46,7 +46,7 @@ MainWindow
   size: 250 248
   visible: false
   @onEnter: CharacterList.doLogin()
-  @onEscape: CharacterList.hide()
+  @onEscape: CharacterList.hide(true)
   @onSetup: |
     g_keyboard.bindKeyPress('Up', function() self:getChildById('characters'):focusPreviousChild(KeyboardFocusReason) end, self)
     g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
@@ -113,4 +113,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: CharacterList.destroy()
+    @onClick: CharacterList.hide(true)

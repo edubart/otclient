@@ -81,7 +81,7 @@ public:
     ThingPtr getTopUseThing();
     CreaturePtr getTopCreature();
     ThingPtr getTopMoveThing();
-    ThingPtr getTopMultiUseThing();
+    ThingPtr getTopMultiUseThing(bool ignoreCreature = true);
 
     const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }

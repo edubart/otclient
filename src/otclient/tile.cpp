@@ -433,15 +433,17 @@ ThingPtr Tile::getTopMoveThing()
     return m_things[0];
 }
 
-ThingPtr Tile::getTopMultiUseThing()
+ThingPtr Tile::getTopMultiUseThing(bool ignoreCreature)
 {
-    // this is related to classic controls, getting top item, forceuse or creature
+    // this is related to classic controls, getting top item, forceuse for creature
     if(isEmpty())
         return nullptr;
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature())) {
+        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())) {
+            if(thing->isCreature() && ignoreCreature)
+                continue;
             if(i > 0 && thing->isSplash())
                 return m_things[i-1];
             return thing;
@@ -450,8 +452,11 @@ ThingPtr Tile::getTopMultiUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop() && !thing->isCreature())
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop()) {
+            if(thing->isCreature() && ignoreCreature)
+                continue;
             return thing;
+        }
     }
 
     return m_things[0];

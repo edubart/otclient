@@ -1,4 +1,4 @@
-WALK_AUTO_REPEAT_DELAY = 80
+WALK_AUTO_REPEAT_DELAY = 150
 
 gameRootPanel = nil
 gameMapPanel = nil
@@ -14,7 +14,7 @@ bottomSplitter = nil
 
 lastWalkDir = nil
 arrowKeys = {
-  [North] = "Up",
+  [North] = 'Up',
   [South] = 'Down',
   [East] = 'Right',
   [West] = 'Left',
@@ -182,7 +182,6 @@ function tryLogout()
 end
 
 function smartWalk(defaultDir)
-  --[[ TODO: Add walk event stack ]]
   local rebindKey = false
   local lastKey = arrowKeys[lastWalkDir]
 
@@ -229,11 +228,7 @@ function smartWalk(defaultDir)
       g_game.forceWalk(dir)
     end
   else
-    --if g_game.getLocalPlayer():canWalk(dir) then
-      g_game.walk(dir)
-    --else
-      
-    --end
+    g_game.walk(dir)
   end
 
   if rebindKey then
@@ -284,7 +279,7 @@ function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.useWith(selectedThing, tile:getTopMultiUseThing())
+      g_game.useWith(selectedThing, tile:getTopMultiUseThing(false))
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
     g_game.useWith(selectedThing, clickedWidget:getItem())

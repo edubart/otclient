@@ -76,6 +76,11 @@ void Game::resetGameStates()
         m_pingEvent = nullptr;
     }
 
+    if(m_walkEvent) {
+        m_walkEvent->cancel();
+        m_walkEvent = nullptr;
+    }
+
     m_containers.clear();
     m_vips.clear();
     m_gmActions.clear();
@@ -501,8 +506,21 @@ bool Game::walk(Otc::Direction direction)
         return false;
     }
 
-    if(!m_localPlayer->canWalk(direction))
+    // must add a new walk event
+    if(!m_localPlayer->canWalk(direction)) {
+        if(m_lastWalkDir != direction) {
+            float ticks = m_localPlayer->getStepTicksLeft();
+            if(ticks < 0)
+                ticks = 0;
+
+            if(m_walkEvent) {
+                m_walkEvent->cancel();
+                m_walkEvent = nullptr;
+            }
+            m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+        }
         return false;
+    }
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
     TilePtr toTile = g_map.getTile(toPos);
@@ -546,6 +564,7 @@ bool Game::walk(Otc::Direction direction)
     g_lua.callGlobalField("g_game", "onWalk", direction);
 
     forceWalk(direction);
+    m_lastWalkDir = direction;
     return true;
 }
 

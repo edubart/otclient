@@ -364,6 +364,10 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);
     g_lua.bindClassMemberFunction<Creature>("getDirection", &Creature::getDirection);
+    g_lua.bindClassMemberFunction<Creature>("getStepDuration", &Creature::getStepDuration);
+    g_lua.bindClassMemberFunction<Creature>("getStepProgress", &Creature::getStepProgress);
+    g_lua.bindClassMemberFunction<Creature>("getWalkTicksElapsed", &Creature::getWalkTicksElapsed);
+    g_lua.bindClassMemberFunction<Creature>("getStepTicksLeft", &Creature::getStepTicksLeft);
     g_lua.bindClassMemberFunction<Creature>("setDirection", &Creature::setDirection);
     g_lua.bindClassMemberFunction<Creature>("setSkullTexture", &Creature::setSkullTexture);
     g_lua.bindClassMemberFunction<Creature>("setShieldTexture", &Creature::setShieldTexture);

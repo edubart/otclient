@@ -89,6 +89,8 @@ public:
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
+    float getStepTicksLeft() { return getStepDuration() - m_walkTimer.ticksElapsed(); }
+    ticks_t getWalkTicksElapsed() { return m_walkTimer.ticksElapsed(); }
     double getSpeedFormula(Otc::SpeedFormula formula) { return m_speedFormula[formula]; }
     bool hasSpeedFormula();
     std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
