@@ -37,7 +37,7 @@ function load()
     addEvent(function() messageBox:raise() messageBox:focus() end)
 
     disconnect(g_game, { onProtocolVersionChange = load })
-    g_game.setprotocolVersion(0)
+    g_game.setProtocolVersion(0)
     connect(g_game, { onProtocolVersionChange = load })
   end
 end

@@ -1054,7 +1054,7 @@ void Game::buyItem(const ItemPtr& item, int amount, bool ignoreCapacity, bool bu
 {
     if(!canPerformGameAction() || !item)
         return;
-    m_protocolGame->sendBuyItem(item->getId(), item->getSubType(), amount, ignoreCapacity, buyWithBackpack);
+    m_protocolGame->sendBuyItem(item->getId(), item->getCountOrSubType(), amount, ignoreCapacity, buyWithBackpack);
 }
 
 void Game::sellItem(const ItemPtr& item, int amount, bool ignoreEquipped)
