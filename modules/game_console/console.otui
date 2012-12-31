@@ -110,6 +110,7 @@ Panel
     @onClick: |
       local consoleTabBar = self:getParent():getChildById('consoleTabBar')
       consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
+      consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBufferHighlight'):destroyChildren()
 
   TabButton
     id: channelsButton

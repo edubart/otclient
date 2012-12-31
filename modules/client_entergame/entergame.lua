@@ -112,7 +112,7 @@ function EnterGame.firstShow()
   local host = g_settings.get('host')
   local autologin = g_settings.getBoolean('autologin')
   if #host > 0 and #password > 0 and #account > 0 and autologin then
-    autoLogiEvent = addEvent(EnterGame.doLogin)
+    autoLoginEvent = addEvent(EnterGame.doLogin)
   end
 end
 
@@ -122,10 +122,14 @@ function EnterGame.terminate()
   enterGame = nil
   enterGameButton:destroy()
   enterGameButton = nil
-  motdWindow:destroy()
-  motdWindow = nil
-  motdButton:destroy()
-  motdButton = nil
+  if motdWindow then
+    motdWindow:destroy()
+    motdWindow = nil
+  end
+  if motdButton then
+    motdButton:destroy()
+    motdButton = nil
+  end
   protocolBox = nil
   EnterGame = nil
 end
@@ -157,7 +161,7 @@ function EnterGame.clearAccountFields()
 end
 
 function EnterGame.doLogin()
-  autoLogiEvent = nil
+  autoLoginEvent = nil
   G.account = enterGame:getChildById('accountNameTextEdit'):getText()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
@@ -222,8 +226,8 @@ function EnterGame.setDefaultServer(host, port, protocol)
     accountTextEdit:setText('')
     passwordTextEdit:setText('')
 
-    if autoLogiEvent then
-      autoLogiEvent:cancel()
+    if autoLoginEvent then
+      autoLoginEvent:cancel()
     end
   end
 end

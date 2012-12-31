@@ -185,7 +185,7 @@ function smartWalk(defaultDir)
   local rebindKey = false
   local lastKey = arrowKeys[lastWalkDir]
 
-  -- choose a new direction
+  -- choose the new direction
   if not g_keyboard.isKeyPressed(arrowKeys[defaultDir]) then
     local changeDir = false
     for k,v in pairs(arrowKeys) do
