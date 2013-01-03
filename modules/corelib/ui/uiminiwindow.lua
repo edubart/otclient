@@ -95,8 +95,8 @@ function UIMiniWindow:setup()
             self.miniIndex = selfSettings.index
             parent:scheduleInsert(self, selfSettings.index)
           elseif selfSettings.position then
-            self:setParent(parent)
             self:setPosition(topoint(selfSettings.position))
+            self:setParent(parent)
             addEvent(function() self:bindRectToParent() end)
           end
         end

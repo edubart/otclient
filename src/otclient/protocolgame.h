@@ -36,6 +36,7 @@ public:
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
     void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
+    void sendEnterGame();
     void sendLogout();
     void sendPing();
     void sendPingBack();

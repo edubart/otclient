@@ -43,9 +43,11 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             opcode = msg->getU8();
 
             // must be > so extended will be enabled before GameStart.
-            if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode) {
-                g_game.processGameStart();
-                m_gameInitialized = true;
+            if(!g_game.getFeature(Otc::GameLoginPending)) {
+                if(!m_gameInitialized && opcode > Proto::GameServerFirstGameOpcode) {
+                    g_game.processGameStart();
+                    m_gameInitialized = true;
+                }
             }
 
             // try to parse in lua first
@@ -361,6 +363,11 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
 {
     //set player to entered game state
     g_game.processEnterGame();
+
+    if(!m_gameInitialized) {
+        g_game.processGameStart();
+        m_gameInitialized = true;
+    }
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)

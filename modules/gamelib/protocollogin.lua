@@ -32,12 +32,15 @@ function ProtocolLogin:sendLoginPacket()
 
   if g_game.getProtocolVersion() >= 971 then
     msg:addU32(g_game.getClientVersion())
-    msg:addU8(182) -- clientType
   end
 
   msg:addU32(g_things.getDatSignature())
   msg:addU32(g_sprites.getSprSignature())
   msg:addU32(PIC_SIGNATURE)
+
+  if g_game.getProtocolVersion() >= 971 then
+    msg:addU8(0) -- clientType
+  end
 
   local paddingBytes = 128
   msg:addU8(0) -- first RSA byte must be 0

@@ -145,7 +145,8 @@ namespace Proto {
     enum ClientOpcodes : uint8
     {
         ClientEnterAccount                  = 1,
-        ClientEnterGame                     = 10,
+        ClientPendingGame                   = 10,
+        ClientEnterGame                     = 15,
         ClientLeaveGame                     = 20,
         ClientPing                          = 29,
         ClientPingBack                      = 30,

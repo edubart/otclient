@@ -90,8 +90,9 @@ function Options.init()
     end
   end
 
+  g_keyboard.bindKeyDown('Ctrl+D', function() Options.toggle() end)
   g_keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
-  g_keyboard.bindKeyDown('Ctrl+D', function() Options.toggleOption('walkBooster') end)
+  g_keyboard.bindKeyDown('Ctrl+Shift+D', function() Options.toggleOption('walkBooster') end)
 
   optionsWindow = g_ui.displayUI('options.otui')
   optionsWindow:hide()

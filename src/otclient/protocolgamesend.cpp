@@ -48,7 +48,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
 {
     OutputMessagePtr msg(new OutputMessage);
 
-    msg->addU8(Proto::ClientEnterGame);
+    msg->addU8(Proto::ClientPendingGame);
 
     msg->addU16(g_lua.callGlobalField<int>("g_game", "getOsType"));
     msg->addU16(g_game.getProtocolVersion());
@@ -101,6 +101,13 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
     send(msg);
 
     enableXteaEncryption();
+}
+
+void ProtocolGame::sendEnterGame()
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientEnterGame);
+    send(msg);
 }
 
 void ProtocolGame::sendLogout()
@@ -444,7 +451,7 @@ void ProtocolGame::sendLook(const Position& position, int thingId, int stackpos)
 void ProtocolGame::sendLookCreature(uint32 creatureId)
 {
     OutputMessagePtr msg(new OutputMessage);
-    msg->addU8(0x8D);
+    msg->addU8(Proto::ClientLookCreature);
     msg->addU32(creatureId);
     send(msg);
 }

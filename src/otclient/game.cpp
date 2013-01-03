@@ -133,6 +133,8 @@ void Game::processPendingGame()
 void Game::processEnterGame()
 {
     m_localPlayer->setPendingGame(false);
+    m_protocolGame->sendEnterGame();
+
     g_lua.callGlobalField("g_game", "onEnterGame");
 }
 
@@ -156,7 +158,7 @@ void Game::processGameStart()
                 m_protocolGame->sendPing();
                 disableBotCall();
             }
-        }, 2000);
+        }, 4000);
     }
 }
 
