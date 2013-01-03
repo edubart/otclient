@@ -1,3 +1,5 @@
+local textWindow = nil
+
 function init()
   g_ui.importStyle('textwindow.otui')
 

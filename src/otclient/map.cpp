@@ -507,6 +507,12 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 const TilePtr& tile = getTile(neighborPos);
 
                 if(neighborPos != goalPos) {
+                    /*
+                      Known Issue with Otc::PathFindAllowNullTiles flag:
+                      If you are above ground floor this will attempt to path over null
+                      tiles, need to rework this for "fly servers" and blank map click,
+                      but it is breaking normal path finding.
+                    */
                     if(!(flags & Otc::PathFindAllowNullTiles) && !tile)
                         continue;
                     if(tile) {
@@ -568,7 +574,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
         dirs.pop_back();
         std::reverse(dirs.begin(), dirs.end());
-        result = Otc::PathFineResultOk;
+        result = Otc::PathFindResultOk;
     }
 
     for(auto it : nodes)

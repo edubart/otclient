@@ -15,6 +15,7 @@ Module
     - client_options
     - client_terminal
     - client_modulemanager
+    - client_exit
     //- client_stats
 
   @onLoad: |

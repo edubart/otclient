@@ -13,7 +13,6 @@ TabBarButton < UIButton
   padding: 5
   anchors.left: parent.left
 
-
   $hover !checked:
     image-clip: 0 20 20 20
     color: white
@@ -24,7 +23,7 @@ TabBarButton < UIButton
 
   $checked:
     image-clip: 0 40 20 20
-    color: #80c7f8
+    color: #D8E7F0
 
   $on !checked:
     color: #F55E5E

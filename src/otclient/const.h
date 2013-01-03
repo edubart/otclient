@@ -348,7 +348,7 @@ namespace Otc
     };
 
     enum PathFindResult {
-        PathFineResultOk = 0,
+        PathFindResultOk = 0,
         PathFindResultSamePosition,
         PathFindResultImpossible,
         PathFindResultTooFar,

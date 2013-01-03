@@ -6,8 +6,8 @@ ConsoleLabel < UILabel
   text-wrap: true
   text-auto-resize: true
 
-ConsoleTabBar < TabBarRounded
-ConsoleTabBarPanel < TabBarRoundedPanel
+ConsoleTabBar < TabBar
+ConsoleTabBarPanel < TabBarPanel
   id: consoleTab
 
   ScrollablePanel
@@ -57,7 +57,9 @@ ConsoleTabBarPanel < TabBarRoundedPanel
     step: 14
     pixels-scroll: true
 
-ConsoleTabBarButton < TabBarRoundedButton
+ConsoleTabBarButton < TabBarButton
+  height: 28
+  padding: 15
 
 Panel
   id: consolePanel
@@ -73,11 +75,12 @@ Panel
 
   ConsoleTabBar
     id: consoleTabBar
-    height: 20
+    height: 28
     anchors.left: prev.right
-    anchors.top: prev.top
+    anchors.top: parent.top
     anchors.right: next.left
     margin-left: 5
+    margin-top: 3
     moveable: true
 
   TabButton
@@ -109,8 +112,7 @@ Panel
     margin-top: 6
     @onClick: |
       local consoleTabBar = self:getParent():getChildById('consoleTabBar')
-      consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
-      consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBufferHighlight'):destroyChildren()
+      clearChannel(consoleTabBar)
 
   TabButton
     id: channelsButton

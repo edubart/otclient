@@ -68,7 +68,7 @@ function displayWarning(widget, warning)
   if warningWindow and warningWindow:isVisible() then
     return
   end
-  if g_game.isOfficialTibia() and widget:isChecked() then
+  if widget:isChecked() then
     local yesCallback = function() warningWindow:destroy() warningWindow=nil end
     local noCallback = function() widget:setChecked(false) warningWindow:destroy() warningWindow=nil end
 
@@ -109,10 +109,12 @@ function Options.init()
   graphicsPanel = g_ui.loadUI('graphics.otui')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
 
-  local optionWalkBooster = gamePanel:getChildById('walkBooster')
-  optionWalkBooster.onCheckChange = function(widget)
-    displayWarning(widget, "This feature could be detectable by official Tibia servers. Would like to continue?")
-    Options.setOption(widget:getId(), widget:isChecked())
+  if g_game.isOfficialTibia() then
+    local optionWalkBooster = gamePanel:getChildById('walkBooster')
+    optionWalkBooster.onCheckChange = function(widget)
+      displayWarning(widget, "This feature could be detectable by official Tibia servers. Would like to continue?")
+      Options.setOption(widget:getId(), widget:isChecked())
+    end
   end
 
   setupGraphicsEngines()
@@ -151,7 +153,12 @@ function Options.hide()
 end
 
 function Options.toggleOption(key)
-  Options.setOption(key, not Options.getOption(key))
+  local optionWidget = optionsWindow:recursiveGetChildById(key)
+  if optionWidget then
+    optionWidget:setChecked(not Options.getOption(key))
+  else
+    Options.setOption(key, not Options.getOption(key))
+  end
 end
 
 function Options.setOption(key, value)

@@ -77,6 +77,7 @@ function init()
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
   consoleTabBar:setContentWidget(consoleContentPanel)
+  consoleTabBar:setTabSpacing(0)
   channels = {}
 
   defaultTab = addTab(tr('Default'), true)
@@ -182,6 +183,11 @@ function clear()
   end
 end
 
+function clearChannel(consoleTabBar)
+  consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBufferHighlight'):destroyChildren()
+end
+
 function setTextEditText(text)
   consoleTextEdit:setText(text)
 end
@@ -195,7 +201,7 @@ function addTab(name, focus)
   if tab then -- is channel already open
     if not focus then focus = true end
   else
-    tab = consoleTabBar:addTab(name)
+    tab = consoleTabBar:addTab(name, nil, processChannelTabMenu)
   end
   if focus then
     consoleTabBar:selectTab(tab)
@@ -203,6 +209,23 @@ function addTab(name, focus)
     consoleTabBar:blinkTab(tab)
   end
   return tab
+end
+
+function removeTab(name)
+  local tab = consoleTabBar:getTab(name)
+  if tab == defaultTab or tab == serverTab then return end
+
+  -- notificate the server that we are leaving the channel
+  if tab.channelId then
+    for k, v in pairs(channels) do
+      if (k == tab.channelId) then channels[k] = nil end
+    end
+    g_game.leaveChannel(tab.channelId)
+  elseif tab:getText() == "NPCs" then
+    g_game.closeNpcChannel()
+  end
+
+  consoleTabBar:removeTab(tab)
 end
 
 function removeCurrentTab()
@@ -371,7 +394,7 @@ function addTabText(text, speaktype, tab, creatureName)
     labelHighlight:setText("")
   end
 
-  label.onMouseRelease = function (self, mousePos, mouseButton) popupMenu(mousePos, mouseButton, creatureName, text) end
+  label.onMouseRelease = function (self, mousePos, mouseButton) processMessageMenu(mousePos, mouseButton, creatureName, text) end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
@@ -382,7 +405,22 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 end
 
-function popupMenu(mousePos, mouseButton, creatureName, text)
+function processChannelTabMenu(tab, mousePos, mouseButton)
+  local menu = g_ui.createWidget('PopupMenu')
+
+  channelName = tab:getText()
+  if tab ~= defaultTab and tab ~= serverTab then
+    menu:addOption(tr('Close'), function() removeTab(channelName) end)
+    --menu:addOption(tr('Show Server Messages'), function() --[[TODO]] end)
+    menu:addSeparator()
+  end
+  menu:addOption(tr('Clear Messages'), function() clearChannel(consoleTabBar) end)
+  --menu:addOption(tr('Save Messages'), function() --[[TODO]] end)
+
+  menu:display(mousePos)
+end
+
+function processMessageMenu(mousePos, mouseButton, creatureName, text)
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
     if creatureName then

@@ -14,7 +14,7 @@ local function updateMargins(tabBar)
     if i == 1 then
       tabBar.tabs[i]:setMarginLeft(0)
     else
-      tabBar.tabs[i]:setMarginLeft(5 * (i - 1) + currentMargin)
+      tabBar.tabs[i]:setMarginLeft(tabBar.tabSpacing * (i - 1) + currentMargin)
     end
     currentMargin = currentMargin + tabBar.tabs[i]:getWidth()
   end
@@ -23,16 +23,18 @@ end
 local function onTabMousePress(tab, mousePos, mouseButton)
   if mouseButton == MouseLeftButton and tab.tabBar.tabsMoveable then
     tab.tabBar.selected = tab
+  elseif mouseButton == MouseRightButton then
+    if tab.menuCallback then tab.menuCallback(tab, mousePos, mouseButton) end
   end
 end
 
 local function onTabMouseRelease(tab, mousePos, mouseButton)
   local tabs = tab.tabBar.tabs
   if tab.tabBar.selected then
-    local lastMargin = -5
+    local lastMargin = -tab.tabBar.tabSpacing
     for i = 1, #tabs do
-      local nextMargin = tabs[i + 1] and (tabs[i + 1] == tab and (tabs[i]:getMarginLeft() + tabs[i]:getWidth() + 5) or tabs[i + 1]:getMarginLeft()) or tab.tabBar:getWidth()
-      if tab:getMarginLeft() >= lastMargin and tab:getMarginLeft() < nextMargin then
+      local nextMargin = tabs[i + 1] and (tabs[i + 1] == tab and (tabs[i]:getMarginLeft() + tabs[i]:getWidth() + tab.tabBar.tabSpacing) or tabs[i + 1]:getMarginLeft()) or tab.tabBar:getWidth()
+      if (tab:getMarginLeft()+(tabs[i]:getWidth()/2)) >= lastMargin and (tab:getMarginLeft()+(tabs[i]:getWidth()/2)) < nextMargin then
         if tabs[i] ~= tab then
           local newIndex = table.find(tab.tabBar.tabs, tab.tabBar.tabs[i])
           table.remove(tab.tabBar.tabs, table.find(tab.tabBar.tabs, tab))
@@ -44,7 +46,7 @@ local function onTabMouseRelease(tab, mousePos, mouseButton)
           break
         end
       end
-      lastMargin = tab.tabBar.tabs[i]:getMarginLeft() == 0 and -5 or tab.tabBar.tabs[i]:getMarginLeft()
+      lastMargin = tab.tabBar.tabs[i]:getMarginLeft() == 0 and -tab.tabBar.tabSpacing or tab.tabBar.tabs[i]:getMarginLeft()
     end
   end
   
@@ -54,7 +56,7 @@ end
 local function onTabMouseMove(tab, mousePos, mouseMoved)
   if tab == tab.tabBar.selected then
     local newMargin = tab:getMarginLeft() + mouseMoved.x
-    if newMargin >= -5 and newMargin < tab.tabBar:getWidth() - tab:getWidth() then
+    if newMargin >= -tab.tabBar.tabSpacing and newMargin < tab.tabBar:getWidth() - tab:getWidth() then
       tab:setMarginLeft(newMargin)
     end
   end
@@ -72,6 +74,7 @@ function UITabBar.create()
   tabbar:setFocusable(false)
   tabbar.tabs = {}
   tabbar.selected = nil  -- dragged tab
+  tabbar.tabSpacing = 5
   tabsMoveable = false
   return tabbar
 end
@@ -83,7 +86,12 @@ function UITabBar:setContentWidget(widget)
   end
 end
 
-function UITabBar:addTab(text, panel)
+function UITabBar:setTabSpacing(tabSpacing)
+  self.tabSpacing = tabSpacing
+  updateMargins(self)
+end
+
+function UITabBar:addTab(text, panel, menuCallback)
   if panel == nil then
     panel = g_ui.createWidget(self:getStyleName() .. 'Panel')
     panel:setId('tabPanel')
@@ -96,6 +104,7 @@ function UITabBar:addTab(text, panel)
   tab:setId('tab')
   tab:setText(text)
   tab:setWidth(tab:getTextSize().width + tab:getPaddingLeft() + tab:getPaddingRight())
+  tab.menuCallback = menuCallback or nil
   tab.onClick = onTabClick
   tab.onMousePress = onTabMousePress
   tab.onMouseRelease = onTabMouseRelease
@@ -107,7 +116,7 @@ function UITabBar:addTab(text, panel)
     self:selectTab(tab)
     tab:setMarginLeft(0)
   else
-    local newMargin = 5 * (#self.tabs - 1)
+    local newMargin = self.tabSpacing * (#self.tabs - 1)
     for i = 1, #self.tabs - 1 do
       newMargin = newMargin + self.tabs[i]:getWidth()
     end
