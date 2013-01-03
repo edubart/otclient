@@ -86,3 +86,9 @@ function autoReloadModule(name)
   reloadEvent()
 end
 
+function createDebugUIItem(id)
+  local uiitem = g_ui.createWidget('Item', rootWidget)
+  uiitem:setPosition({x= 200, y = 200 })
+  uiitem:setItemId(id)
+  uiitem:show()
+end
