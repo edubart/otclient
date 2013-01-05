@@ -77,7 +77,7 @@ function init()
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
   consoleTabBar:setContentWidget(consoleContentPanel)
-  consoleTabBar:setTabSpacing(0)
+  consoleTabBar:setTabSpacing(-1)
   channels = {}
 
   defaultTab = addTab(tr('Default'), true)

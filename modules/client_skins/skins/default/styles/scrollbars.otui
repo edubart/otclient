@@ -1,15 +1,16 @@
 ScrollBarSlider < UIButton
   id: sliderButton
   anchors.centerIn: parent
-  size: 13 13
+  size: 13 17
   image-source: /images/scrollbar.png
   image-clip: 0 26 13 13
   image-border: 2
-  image-color: #ffffffff
+  image-color: #ffffffbb
   $hover:
     image-clip: 13 26 13 13
   $pressed:
     image-clip: 26 26 13 13
+    image-color: #ffffff99
   $disabled:
     image-color: #ffffff66
 

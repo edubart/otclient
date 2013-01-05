@@ -124,6 +124,7 @@ end
 function Options.terminate()
   g_keyboard.unbindKeyDown('Ctrl+D')
   g_keyboard.unbindKeyDown('Ctrl+F')
+  g_keyboard.unbindKeyDown('Ctrl+Shift+D')
   optionsWindow:destroy()
   optionsWindow = nil
   optionsButton:destroy()

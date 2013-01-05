@@ -51,6 +51,15 @@ local function calcValues(self)
   return range, pxrange, px, offset, center
 end
 
+local function updateValueDisplay(widget)
+  if widget == nil then return end
+
+  if widget:getShowValue() then
+    local symbol = widget:getSymbol()
+    widget:setText(widget:getValue()..(symbol and symbol or ''))
+  end
+end
+
 local function updateSlider(self)
   local slider = self:getChildById('sliderButton')
   if slider == nil then return end
@@ -63,6 +72,7 @@ local function updateSlider(self)
     slider:setWidth(px)
     slider:setMarginLeft(offset)
   end
+  updateValueDisplay(self)
 
   local status = (self.maximum ~= self.minimum)
 
@@ -96,6 +106,8 @@ function UIScrollBar.create()
   scrollbar.step = 1
   scrollbar.orientation = 'vertical'
   scrollbar.pixelsScroll = false
+  scrollbar.showValue = false
+  scrollbar.symbol = nil
   return scrollbar
 end
 
@@ -105,6 +117,7 @@ function UIScrollBar:onSetup()
   g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end, 300)
   g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end, 300)
   g_mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos, mouseMoved) end)
+
   updateSlider(self)
 end
 
@@ -122,6 +135,10 @@ function UIScrollBar:onStyleApply(styleName, styleNode)
       self:setValue(value)
     elseif name == 'pixels-scroll' then
       self.pixelsScroll = true
+    elseif name == 'show-value' then
+      self.showValue = true
+    elseif name == 'symbol' then
+      self.symbol = value
     end
   end
 end
@@ -185,7 +202,7 @@ function UIScrollBar:onGeometryChange()
 end
 
 function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
-  if mouseWheel == MouseWheelUp then
+  if mouseWheel == MouseWheelDown then
     if self.orientation == 'vertical' then
       self:decrement()
     else
@@ -206,3 +223,5 @@ function UIScrollBar:getMinimum() return self.minimum end
 function UIScrollBar:getValue() return math.round(self.value) end
 function UIScrollBar:getStep() return self.step end
 function UIScrollBar:getOrientation() return self.orientation end
+function UIScrollBar:getShowValue() return self.showValue end
+function UIScrollBar:getSymbol() return self.symbol end
