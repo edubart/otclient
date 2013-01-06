@@ -41,7 +41,6 @@ function init()
   searchText = npcWindow:recursiveGetChildById('searchText')
 
   setupPanel = npcWindow:recursiveGetChildById('setupPanel')
-  quantityLabel = setupPanel:getChildById('quantity')
   quantityScroll = setupPanel:getChildById('quantityScroll')
   nameLabel = setupPanel:getChildById('name')
   priceLabel = setupPanel:getChildById('price')
@@ -117,8 +116,7 @@ function onItemBoxChecked(widget)
 end
 
 function onQuantityValueChange(quantity)
-  if quantityLabel and selectedItem then
-    quantityLabel:setText(quantity)
+  if selectedItem then
     weightLabel:setText(string.format('%.2f', selectedItem.weight*quantity) .. ' ' .. WEIGHT_UNIT)
     priceLabel:setText(getItemPrice(selectedItem) .. ' ' .. CURRENCY)
   end
@@ -191,7 +189,6 @@ function clearSelectedItem()
   nameLabel:clearText()
   weightLabel:clearText()
   priceLabel:clearText()
-  quantityLabel:clearText()
   tradeButton:disable()
   quantityScroll:setMaximum(1)
   if selectedItem then
@@ -208,17 +205,22 @@ function getCurrentTradeType()
   end
 end
 
-function getItemPrice(item)
+function getItemPrice(item, single)
+  local amount = 1
+  local single = single or false
+  if not single then
+    amount = quantityScroll:getValue()
+  end
   if getCurrentTradeType() == BUY then
     if buyWithBackpack:isChecked() then
       if item.ptr:isStackable() then
-        return item.price*quantityScroll:getValue() + 20;
+          return item.price*amount + 20
       else
-        return item.price*quantityScroll:getValue() + math.ceil(quantityScroll:getValue()/20)*20
+        return item.price*amount + math.ceil(amount/20)*20
       end
     end
   end
-  return item.price*quantityScroll:getValue()
+  return item.price*amount
 end
 
 function getSellQuantity(item)
@@ -241,7 +243,7 @@ end
 
 function canTradeItem(item)
   if getCurrentTradeType() == BUY then
-    return (ignoreCapacity:isChecked() or (not ignoreCapacity:isChecked() and playerFreeCapacity >= item.weight)) and playerMoney >= getItemPrice(item)
+    return (ignoreCapacity:isChecked() or (not ignoreCapacity:isChecked() and playerFreeCapacity >= item.weight)) and playerMoney >= getItemPrice(item, true)
   else
     return getSellQuantity(item) > 0
   end
@@ -252,16 +254,18 @@ function refreshItem(item)
   weightLabel:setText(string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT)
   priceLabel:setText(getItemPrice(item) .. ' ' .. CURRENCY)
 
-  quantityLabel:setText(1)
-  quantityScroll:setValue(1)
-
   if getCurrentTradeType() == BUY then
     local capacityMaxCount = math.floor(playerFreeCapacity / item.weight)
     if ignoreCapacity:isChecked() then
       capacityMaxCount = 100
     end
-    local priceMaxCount = math.floor(playerMoney / getItemPrice(item))
-    quantityScroll:setMaximum(math.max(0, math.min(100, math.min(priceMaxCount, capacityMaxCount))))
+    local priceMaxCount = math.floor(playerMoney / getItemPrice(item, true))
+    local finalCount = math.max(0, math.min(100, math.min(priceMaxCount, capacityMaxCount)))
+    quantityScroll:setMaximum(finalCount)
+
+    if quantityScroll:getValue() > finalCount then
+      quantityScroll:setValue(finalCount)
+    end
   else
     local removeAmount = 0
     if ignoreEquipped:isChecked() then
@@ -413,7 +417,7 @@ function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
   end
 end
 
-function onInventoryChange(inventory, item, oldeItem)
+function onInventoryChange(inventory, item, oldItem)
   if selectedItem then
     refreshItem(selectedItem)
   end

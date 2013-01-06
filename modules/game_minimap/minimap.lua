@@ -35,7 +35,6 @@ function init()
   minimapWindow:setContentMaximumHeight(256)
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
-  --g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseRightButton)
   g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
   
   minimapWidget:setAutoViewMode(false)
@@ -293,15 +292,18 @@ function isClickInRange(position, fromPosition, toPosition)
   return (position.x >= fromPosition.x and position.y >= fromPosition.y and position.x <= toPosition.x and position.y <= toPosition.y)
 end
 
-function reset()
+function reset(zoom)
+  if zoom == nil then zoom = true end
   local player = g_game.getLocalPlayer()
   if not player then return end
   minimapWidget:followCreature(player)
-  minimapWidget:setZoom(DEFAULT_ZOOM)
+  if zoom then
+    minimapWidget:setZoom(DEFAULT_ZOOM)
+  end
 end
 
 function center()
-  reset()
+  reset(false)
   updateMapFlags()
 end
 
@@ -319,10 +321,11 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   dx = dx/radius
   dy = dy/radius
 
-  if dx > 0.5 then movex = 1 end
-  if dx < -0.5 then movex = -1 end
-  if dy > 0.5 then movey = -1 end
-  if dy < -0.5 then movey = 1 end
+  local speed = math.ceil(minimapWidget:getZoom()/22)
+  if dx > 0.5 then movex = speed end
+  if dx < -0.5 then movex = -speed end
+  if dy > 0.5 then movey = -speed end
+  if dy < -0.5 then movey = speed end
 
   local cameraPos = minimapWidget:getCameraPosition()
   local pos = {x = cameraPos.x + movex, y = cameraPos.y + movey, z = cameraPos.z}
@@ -331,23 +334,39 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   updateMapFlags()
 end
 
+function miniMapZoomIn(zoom)
+  minimapWidget:setZoom(math.max(minimapWidget:getMaxZoomIn(), minimapWidget:getZoom()-zoom))
+end
+
+function miniMapZoomOut(zoom)
+  minimapWidget:setZoom(math.min(minimapWidget:getMaxZoomOut(), minimapWidget:getZoom()+zoom))
+end
+
+function minimapFloorUp(floors)
+  local pos = minimapWidget:getCameraPosition()
+  pos.z = pos.z - floors
+  if pos.z > MAX_FLOOR_UP then
+    minimapWidget:setCameraPosition(pos)
+  end
+end
+
+function minimapFloorDown(floors)
+  local pos = minimapWidget:getCameraPosition()
+  pos.z = pos.z + floors
+  if pos.z < MAX_FLOOR_DOWN then
+    minimapWidget:setCameraPosition(pos)
+  end
+end
+
 function onButtonClick(id)
   if id == "zoomIn" then
-    minimapWidget:setZoom(math.max(minimapWidget:getMaxZoomIn(), minimapWidget:getZoom()-15))
+    miniMapZoomIn(20)
   elseif id == "zoomOut" then
-    minimapWidget:setZoom(math.min(minimapWidget:getMaxZoomOut(), minimapWidget:getZoom()+15))
+    miniMapZoomOut(20)
   elseif id == "floorUp" then
-    local pos = minimapWidget:getCameraPosition()
-    pos.z = pos.z - 1
-    if pos.z > MAX_FLOOR_UP then
-      minimapWidget:setCameraPosition(pos)
-    end
+    minimapFloorUp(1)
   elseif id == "floorDown" then
-    local pos = minimapWidget:getCameraPosition()
-    pos.z = pos.z + 1
-    if pos.z < MAX_FLOOR_DOWN then
-      minimapWidget:setCameraPosition(pos)
-    end
+    minimapFloorDown(1)
   end
   
   updateMapFlags()
@@ -375,10 +394,16 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
 end
 
 function onMinimapMouseWheel(self, mousePos, direction)
-  if direction == MouseWheelUp then
-    self:zoomIn()
-  else
-    self:zoomOut()
+  local keyboardModifiers = g_keyboard.getModifiers()
+
+  if direction == MouseWheelUp and keyboardModifiers == KeyboardNoModifier then
+    miniMapZoomIn(10)
+  elseif direction == MouseWheelDown and keyboardModifiers == KeyboardNoModifier then
+    miniMapZoomOut(10)
+  elseif direction == MouseWheelDown and keyboardModifiers == KeyboardCtrlModifier then
+    minimapFloorUp(1)
+  elseif direction == MouseWheelUp and keyboardModifiers == KeyboardCtrlModifier then
+    minimapFloorDown(1)
   end
   updateMapFlags()
 end

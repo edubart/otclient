@@ -862,7 +862,14 @@ void Game::cancelAttackAndFollow()
     if(!canPerformGameAction())
         return;
 
+    if(isFollowing())
+        setFollowingCreature(nullptr);
+    if(isAttacking())
+        setAttackingCreature(nullptr);
+
     m_protocolGame->sendCancelAttackAndFollow();
+
+    g_lua.callGlobalField("g_game", "onCancelAttackAndFollow");
 }
 
 void Game::talk(const std::string& message)

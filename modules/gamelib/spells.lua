@@ -314,3 +314,21 @@ SpellGroups = {
   [3] = 'Support',
   [4] = 'Special'
 }
+
+Spells = {}
+
+function Spells.getSpellByName(name)
+  return SpellInfo[name:lower():trim()]
+end
+
+function Spells.getSpellByWords(words)
+  local words = words:lower():trim()
+  for i,category in pairs(SpellInfo) do
+    for k,spell in pairs(category) do
+      if spell.words == words then
+        return spell
+      end
+    end
+  end
+  return nil
+end

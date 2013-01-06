@@ -69,7 +69,7 @@ MainWindow
       anchors.top: parent.top
       anchors.bottom: parent.bottom
       anchors.right: parent.right
-      step: 16
+      step: 24
       pixels-scroll: true
 
     ScrollablePanel
@@ -154,17 +154,6 @@ MainWindow
     NPCOfferLabel
       id: capacity
 
-    Label
-      !text: tr('Quantity:')
-      anchors.left: parent.left
-      anchors.top: prev.bottom
-      margin-top: 5
-      margin-left: 5
-      width: 85
-
-    NPCOfferLabel
-      id: quantity
-
     HorizontalScrollBar
       id: quantityScroll
       anchors.left: parent.left
@@ -173,6 +162,7 @@ MainWindow
       margin-top: 5
       margin-left: 5
       margin-right: 5
+      show-value: true
       minimum: 1
       maximum: 100
       step: 1

@@ -95,9 +95,12 @@ function bindKeys()
 end
 
 function terminate()
-  disconnect(g_game, { onGameStart = show,
-                       onGameEnd = hide,
-                       onLoginAdvice = onLoginAdvice })
+  disconnect(g_game, { 
+    onGameStart = show,
+    onGameEnd = hide,
+    onLoginAdvice = onLoginAdvice
+  })
+
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton:destroy()
@@ -475,6 +478,8 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
       g_game.attack(creatureThing)
       return true
     end
+
+  -- classic control
   else
     if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       local player = g_game.getLocalPlayer()
@@ -493,14 +498,14 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         startUseWith(useThing)
         return true
       else
-        g_game.use(multiUseThing)
+        g_game.use(useThing)
       end
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.look(lookThing)
       return true
     elseif lookThing and ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
-       g_game.look(lookThing)
+      g_game.look(lookThing)
       return true
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       createThingMenu(menuPosition, lookThing, useThing, creatureThing)

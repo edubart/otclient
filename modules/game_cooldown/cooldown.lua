@@ -65,7 +65,7 @@ function updateProgressRect(progressRect, interval, init)
   if init then
     progressRect:setPercent(0)
   else
-    progressRect:setPercent(progressRect:getPercent() + 4)
+    progressRect:setPercent(progressRect:getPercent() + 5)
   end
   
   if progressRect:getPercent() < 100 then
@@ -78,6 +78,7 @@ function onSpellCooldown(iconId, duration)
   local spellName = SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].spellIcons[iconId]
   if not spellName then return end
   
+  local duration = duration - (g_game.getPing()/2)
   local otcIconId = tonumber(SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon)
   if not otcIconId and SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon] then
     otcIconId = SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon][1]
@@ -102,6 +103,7 @@ end
 function onSpellGroupCooldown(groupId, duration)
   if not SpellGroups[groupId] then return end
   
+  local duration = duration - (g_game.getPing()/2)
   local icon = contentsPanel:getChildById('groupIcon' .. SpellGroups[groupId])
   local progressRect = contentsPanel:getChildById('progressRect' .. SpellGroups[groupId])
   if icon then

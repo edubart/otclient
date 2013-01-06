@@ -34,6 +34,7 @@ function init()
   mouseWidget = g_ui.createWidget('UIButton')
   mouseWidget:setVisible(false)
   mouseWidget:setFocusable(false)
+  mouseWidget.cancelNextRelease = false
 
   battleWindow:setContentMinimumHeight(80)
   --battleWindow:setContentMaximumHeight(384)
@@ -220,21 +221,27 @@ function addCreature(creature)
 end
 
 function onMouseRelease(self, mousePosition, mouseButton)
-  if mouseButton == MouseRightButton then
+  if mouseWidget.cancelNextRelease then
+    mouseWidget.cancelNextRelease = false
+    return false
+  end
+  if ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) 
+    or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+    mouseWidget.cancelNextRelease = true
+    g_game.look(self.creature)
+    return true
+  elseif mouseButton == MouseRightButton and g_keyboard.isCtrlPressed() and not g_mouse.isPressed(MouseLeftButton) then
     modules.game_interface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
-  elseif mouseButton == MouseLeftButton then
-    if g_keyboard.isShiftPressed() then
-      g_game.look(self.creature)
+  elseif mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
+    if self.isTarget then
+      g_game.cancelAttack()
     else
-      if self.isTarget then
-        g_game.cancelAttack()
-      else
-        g_game.attack(self.creature)
-      end
+      g_game.attack(self.creature)
     end
     return true
   end
+  return false
 end
 
 function removeAllCreatures()
