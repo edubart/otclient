@@ -158,7 +158,7 @@ void Game::processGameStart()
                 m_protocolGame->sendPing();
                 disableBotCall();
             }
-        }, 4000);
+        }, 3000);
     }
 }
 

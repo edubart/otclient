@@ -5,6 +5,7 @@ function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()
   combobox.options = {}
   combobox.currentIndex = -1
+  combobox.mouseScroll = true
   return combobox
 end
 
@@ -76,6 +77,9 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
 end
 
 function UIComboBox:onMouseWheel(mousePos, direction)
+  if not self.mouseScroll then
+    return false
+  end
   if direction == MouseWheelUp and self.currentIndex > 1 then
     self:setCurrentIndex(self.currentIndex - 1)
   elseif direction == MouseWheelDown and self.currentIndex < #self.options then
@@ -90,6 +94,19 @@ function UIComboBox:onStyleApply(styleName, styleNode)
       self:addOption(option)
     end
   end
+  for name,value in pairs(styleNode) do
+    if name == 'mouse-scroll' then
+      self.mouseScroll = value
+    end
+  end
+end
+
+function UIComboBox:setMouseScroll(scroll)
+  self.mouseScroll = scroll
+end
+
+function UIComboBox:canMouseScroll()
+  return self.mouseScroll
 end
 
 function UIComboBox:onOptionChange(optionText, optionData)

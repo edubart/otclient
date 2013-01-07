@@ -78,7 +78,8 @@ function onSpellCooldown(iconId, duration)
   local spellName = SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].spellIcons[iconId]
   if not spellName then return end
   
-  local duration = duration - (g_game.getPing()/2)
+  local ping = g_game.getPing()
+  if ping > 0 then local duration = duration - (ping/2) end
   local otcIconId = tonumber(SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon)
   if not otcIconId and SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon] then
     otcIconId = SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon][1]
@@ -103,7 +104,8 @@ end
 function onSpellGroupCooldown(groupId, duration)
   if not SpellGroups[groupId] then return end
   
-  local duration = duration - (g_game.getPing()/2)
+  local ping = g_game.getPing()
+  if ping > 0 then local duration = duration - (ping/2) end
   local icon = contentsPanel:getChildById('groupIcon' .. SpellGroups[groupId])
   local progressRect = contentsPanel:getChildById('progressRect' .. SpellGroups[groupId])
   if icon then

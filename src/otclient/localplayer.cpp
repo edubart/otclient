@@ -160,6 +160,8 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
         setDirection(direction);
+
+    callLuaField("onCancelWalk", direction);
 }
 
 void LocalPlayer::stopWalk()

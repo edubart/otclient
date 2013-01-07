@@ -255,7 +255,9 @@ namespace Otc
         IconCursed = 2048,
         IconPartyBuff = 4096,
         IconPzBlock = 8192,
-        IconPz = 16384
+        IconPz = 16384,
+        IconBleeding = 32768,
+        IconHungry = 65536
     };
 
     enum MessageMode {

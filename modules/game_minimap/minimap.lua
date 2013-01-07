@@ -382,12 +382,8 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
   end
   local pos = self:getPosition(mousePosition)
   if pos and mouseButton == MouseLeftButton and self:isPressed() then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), pos, 127, PathFindFlags.AllowNullTiles)
-    if #dirs == 0 then
-      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
-      return true
-    end
-    g_game.autoWalk(dirs)
+    local player = g_game.getLocalPlayer()
+    if not player:autoWalk(pos) then return false end
     return true
   end
   return false

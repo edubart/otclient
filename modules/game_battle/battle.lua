@@ -230,10 +230,10 @@ function onMouseRelease(self, mousePosition, mouseButton)
     mouseWidget.cancelNextRelease = true
     g_game.look(self.creature)
     return true
-  elseif mouseButton == MouseRightButton and g_keyboard.isCtrlPressed() and not g_mouse.isPressed(MouseLeftButton) then
+  elseif mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
     modules.game_interface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
-  elseif mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
+  elseif mouseButton == MouseLeftButton and not g_mouse.isPressed(MouseRightButton) then
     if self.isTarget then
       g_game.cancelAttack()
     else

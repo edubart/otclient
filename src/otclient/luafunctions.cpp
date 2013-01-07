@@ -458,6 +458,7 @@ void OTClient::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("isKnown", &LocalPlayer::isKnown);
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("hasSight", &LocalPlayer::hasSight);
+    g_lua.bindClassMemberFunction<LocalPlayer>("isAutoWalking", &LocalPlayer::isAutoWalking);
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);

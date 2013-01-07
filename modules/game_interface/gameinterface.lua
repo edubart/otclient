@@ -1,4 +1,5 @@
 WALK_AUTO_REPEAT_DELAY = 150
+WALK_STEPS_RETRY = 10
 
 gameRootPanel = nil
 gameMapPanel = nil
@@ -27,9 +28,17 @@ arrowKeys = {
 function init()
   g_ui.importStyle('styles/countwindow.otui')
 
-  connect(g_game, { onGameStart = show,
-                    onGameEnd = hide,
-                    onLoginAdvice = onLoginAdvice }, true)
+  connect(g_game, {
+    onGameStart = show,
+    onGameEnd = hide,
+    onLoginAdvice = onLoginAdvice,
+    onWalk = onWalk,
+  }, true)
+
+  connect(LocalPlayer, {
+    onCancelWalk = onCancelWalk,
+    onPositionChange = onPositionChange
+  })
 
   gameRootPanel = g_ui.displayUI('gameinterface.otui')
   gameRootPanel:hide()
@@ -83,7 +92,7 @@ function bindKeys()
   g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Escape', function() cancelAutoWalkCheck() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
   g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
@@ -184,6 +193,45 @@ function tryLogout()
     anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
 end
 
+function onWalk(dir)
+  cancelAutoWalkCheck()
+end
+
+function onPositionChange(newPos, oldPos)
+  checkAutoWalking()
+end
+
+function onCancelWalk(dir)
+  checkAutoWalking(true)
+end
+
+function checkAutoWalking(stepCancelled)
+  local stepCancelled = stepCancelled or false
+  local player = g_game.getLocalPlayer()
+  if not player:isAutoWalking() then
+    player:clearWalkSteps()
+  end
+
+  local lastDestination = player:getLastDestination()
+  if not lastDestination then
+    return -- auto walk has been cancelled
+  end
+  player:setWalkStep(lastDestination)
+
+  local playerPos = player:getPosition()
+  local walkSteps = player:getWalkSteps(lastDestination)
+
+  if (not table.empty(walkSteps) and #walkSteps >= WALK_STEPS_RETRY) or stepCancelled then
+    if lastDestination then player:autoWalk(lastDestination) end
+  end
+end
+
+function cancelAutoWalkCheck()
+  local player = g_game.getLocalPlayer()
+  player:setLastDestination(nil) -- cancel retries
+  player:clearWalkSteps()
+end
+
 function smartWalk(defaultDir)
   local rebindKey = false
   local lastKey = arrowKeys[lastWalkDir]
@@ -233,6 +281,7 @@ function smartWalk(defaultDir)
   else
     g_game.walk(dir)
   end
+  cancelAutoWalkCheck() -- cancel the auto walker check
 
   if rebindKey then
     g_keyboard.bindKeyPress(lastKey, function() smartWalk(lastWalkDir) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -517,12 +566,10 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   end
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
-    local dirs = g_map.findPath(g_game.getLocalPlayer():getPosition(), autoWalkPos, 127, PathFindFlags.AllowNullTiles)
-    if #dirs == 0 then
-      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
-      return true
+    local player = g_game.getLocalPlayer()
+    if not player:autoWalk(autoWalkPos) then
+      return false
     end
-    g_game.autoWalk(dirs)
     return true
   end
 
