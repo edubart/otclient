@@ -94,16 +94,17 @@ function onAddVip(id, name, state)
 
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
-
+  
   for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
-    if state == VipState.Online and not child.vipState == VipState.Online then
+    if state == VipState.Online and child.vipState ~= VipState.Online then
       vipList:insertChild(i, label)
       return
     end
 
-    if (not state == VipState.Online and not child.vipState == VipState.Online)
+    if (state ~= VipState.Online and child.vipState ~= VipState.Online)
       or (state == VipState.Online and child.vipState == VipState.Online) then
+	  
       local childText = child:getText():lower()
       local length = math.min(childText:len(), nameLower:len())
 
@@ -113,6 +114,8 @@ function onAddVip(id, name, state)
           return
         elseif nameLower:byte(j) > childText:byte(j) then
           break
+        elseif j == nameLower:len() then -- We are at the end of nameLower, and its shorter than childText, thus insert before
+          vipList:insertChild(i, label)
         end
       end
     end
