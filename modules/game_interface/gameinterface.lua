@@ -32,7 +32,7 @@ function init()
     onGameStart = show,
     onGameEnd = hide,
     onLoginAdvice = onLoginAdvice,
-    onWalk = onWalk,
+    onWalk = onWalk
   }, true)
 
   connect(LocalPlayer, {

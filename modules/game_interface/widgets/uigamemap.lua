@@ -86,6 +86,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
 
   local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
   if ret then
+    modules.game_interface.cancelAutoWalkCheck()
     self.cancelNextRelease = true
   end
 
