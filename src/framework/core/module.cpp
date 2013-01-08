@@ -48,10 +48,10 @@ bool Module::load()
         for(const std::string& depName : m_dependencies) {
             ModulePtr dep = g_modules.getModule(depName);
             if(!dep)
-                stdext::throw_exception(stdext::format("dependency '%s' was not found", m_name, depName));
+                stdext::throw_exception(stdext::format("dependency '%s' was not found", depName));
 
             if(!dep->isLoaded() && !dep->load())
-                stdext::throw_exception(stdext::format("dependency '%s' has failed to load", m_name, depName));
+                stdext::throw_exception(stdext::format("dependency '%s' has failed to load", depName));
         }
 
         if(m_sandboxed)
@@ -199,8 +199,8 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     }
 
     if(OTMLNodePtr node = moduleNode->get("@onLoad"))
-        m_onLoadFunc = std::make_tuple(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        m_onLoadFunc = std::make_tuple(node->value(), "@" + node->source() + ":[" + node->tag() + "]");
 
     if(OTMLNodePtr node = moduleNode->get("@onUnload"))
-        m_onUnloadFunc = std::make_tuple(node->value(), "@" + node->source() + "[" + node->tag() + "]");
+        m_onUnloadFunc = std::make_tuple(node->value(), "@" + node->source() + ":[" + node->tag() + "]");
 }

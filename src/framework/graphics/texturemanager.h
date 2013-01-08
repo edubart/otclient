@@ -30,6 +30,7 @@ class TextureManager
 public:
     void init();
     void terminate();
+    void poll();
 
     void clearTexturesCache();
     TexturePtr getTexture(const std::string& fileName);
@@ -39,6 +40,7 @@ private:
     TexturePtr loadPNG(std::stringstream& file);
 
     std::unordered_map<std::string, TexturePtr> m_textures;
+    std::vector<AnimatedTexturePtr> m_animatedTextures;
     TexturePtr m_emptyTexture;
 };
 

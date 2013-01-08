@@ -31,7 +31,7 @@ class Image : public stdext::shared_object
 public:
     Image(const Size& size, int bpp = 4, uint8 *pixels = nullptr);
 
-    static ImagePtr load(const std::string& file);
+    static ImagePtr load(std::string file);
     static ImagePtr loadPNG(const std::string& file);
 
     void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);

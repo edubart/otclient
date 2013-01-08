@@ -149,6 +149,18 @@ void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
     drawCoords(m_coordsBuffer, TriangleStrip);
 }
 
+void PainterOGL1::drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
+{
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
+        return;
+
+    setTexture(texture.get());
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addUpsideDownQuad(dest, src);
+    drawCoords(m_coordsBuffer, TriangleStrip);
+}
+
 void PainterOGL1::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())

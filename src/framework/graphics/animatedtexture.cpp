@@ -24,53 +24,60 @@
 #include "graphics.h"
 
 #include <framework/core/eventdispatcher.h>
-/*
-AnimatedTexture::AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay) :
-    Texture(),
-    m_numFrames(numFrames)
+
+AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps, bool compress)
 {
-    m_size.resize(width, height);
+    if(!setupSize(size, buildMipmaps))
+        return;
 
-    m_framesTextureId.resize(numFrames);
-    m_framesDelay.resize(numFrames);
-
-    for(int i=0;i<numFrames;++i) {
-        uchar *framePixels = framesPixels + (i*height*width* channels);
-        uint id = internalLoadGLTexture(framePixels, channels, width, height);
-
-        m_framesTextureId[i] = id;
-        m_framesDelay[i] = framesDelay[i];
+    for(uint i=0;i<frames.size();++i) {
+        m_frames.push_back(new Texture(frames[i], buildMipmaps, compress));
     }
-    m_currentFrame = -1;
-    g_dispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, this), 0);
+
+    m_framesDelay = framesDelay;
+    m_hasMipmaps = buildMipmaps;
+    m_id = m_frames[0]->getId();
+    m_currentFrame = 0;
+    m_animTimer.restart();
 }
 
 AnimatedTexture::~AnimatedTexture()
 {
-    glDeleteTextures(m_numFrames, &m_framesTextureId[0]);
-    m_id = 0;
+
 }
 
-void AnimatedTexture::enableBilinearFilter()
+bool AnimatedTexture::buildHardwareMipmaps()
 {
-    for(int i=0;i<m_numFrames;++i) {
-        glBindTexture(GL_TEXTURE_2D, m_framesTextureId[i]);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    }
+    if(!g_graphics.canUseHardwareMipmaps())
+        return false;
+    for(const TexturePtr& frame : m_frames)
+        frame->buildHardwareMipmaps();
+    m_hasMipmaps = true;
+    return true;
 }
 
-void AnimatedTexture::processAnimation()
+void AnimatedTexture::setSmooth(bool smooth)
 {
+    for(const TexturePtr& frame : m_frames)
+        frame->setSmooth(smooth);
+    m_smooth = smooth;
+}
+
+void AnimatedTexture::setRepeat(bool repeat)
+{
+    for(const TexturePtr& frame : m_frames)
+        frame->setRepeat(repeat);
+    m_repeat = repeat;
+}
+
+void AnimatedTexture::updateAnimation()
+{
+    if(m_animTimer.ticksElapsed() < m_framesDelay[m_currentFrame])
+        return;
+
+    m_animTimer.restart();
     m_currentFrame++;
-    if(m_currentFrame >= m_numFrames)
+    if(m_currentFrame >= m_frames.size())
         m_currentFrame = 0;
-    m_id = m_framesTextureId[m_currentFrame];
-
-    AnimatedTexturePtr self = asAnimatedTexture();
-
-    // continue to animate only if something still referencing this texture
-    if(self->ref_count() > 1)
-        g_dispatcher.scheduleEvent(std::bind(&AnimatedTexture::processAnimation, self), m_framesDelay[m_currentFrame]);
+    m_id = m_frames[m_currentFrame]->getId();
 }
-*/

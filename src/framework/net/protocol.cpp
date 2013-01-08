@@ -110,11 +110,11 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     // read message size
     m_inputMessage->fillBuffer(buffer, size);
-    uint16 remainingSize = m_inputMessage->readSize();
+    uint16 reamaningSize = m_inputMessage->readSize();
 
-    // read remaining message data
+    // read reamaning message data
     if(m_connection)
-        m_connection->read(remainingSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read(reamaningSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)

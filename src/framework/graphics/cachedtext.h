@@ -39,8 +39,8 @@ public:
     void setAlign(Fw::AlignmentFlag align) { m_align = align; update(); }
 
     Size getTextSize() { return m_textSize; }
-    std::string getText() { return m_text; }
-    BitmapFontPtr getFont() { return m_font; }
+    std::string getText() const { return m_text; }
+    BitmapFontPtr getFont() const { return m_font; }
     Fw::AlignmentFlag getAlign() { return m_align; }
 
 private:

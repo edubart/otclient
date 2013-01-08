@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTERSHADER_H
-#define PAINTERSHADER_H
+#ifndef PAINTERSHADERPROGRAM_H
+#define PAINTERSHADERPROGRAM_H
 
 #include "shaderprogram.h"
 #include "coordsbuffer.h"
@@ -40,7 +40,9 @@ protected:
         TIME_UNIFORM = 4,
         TEX0_UNIFORM = 5,
         TEX1_UNIFORM = 6,
-        RESOLUTION_UNIFORM = 7,
+        TEX2_UNIFORM = 7,
+        TEX3_UNIFORM = 8,
+        RESOLUTION_UNIFORM = 9,
     };
 
     friend class PainterOGL2;

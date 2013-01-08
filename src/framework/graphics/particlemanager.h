@@ -29,7 +29,7 @@
 class ParticleManager
 {
 public:
-    bool importParticle(const std::string& file);
+    bool importParticle(std::string file);
     ParticleEffectPtr createEffect(const std::string& name);
     void terminate();
 

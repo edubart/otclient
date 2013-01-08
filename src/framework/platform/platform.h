@@ -20,39 +20,26 @@
  * THE SOFTWARE.
  */
 
-#include <framework/core/application.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/luaengine/luainterface.h>
-#include <client/client.h>
+#ifndef PLATFORM_H
+#define PLATFORM_H
 
-int main(int argc, const char* argv[])
+#include <string>
+#include <vector>
+
+class Platform
 {
-    std::vector<std::string> args(argv, argv + argc);
+public:
+    void processArgs(std::vector<std::string>& args);
+    bool spawnProcess(const std::string& process, const std::vector<std::string>& args);
+    int getProcessId();
+    std::string getTempPath();
+    void copyFile(std::string from, std::string to);
+    void openUrl(std::string url);
+    std::string getCPUName();
+    double getTotalSystemMemory();
+    std::string getOSName();
+};
 
-    // setup application name and version
-    g_app.setName("OTClient");
-    g_app.setCompactName("otclient");
-    g_app.setVersion(VERSION);
+extern Platform g_platform;
 
-    // initialize application framework and otclient
-    g_app.init(args);
-    g_client.init(args);
-
-    // find script init.lua and run it
-    if(!g_resources.discoverWorkDir("init.lua"))
-        g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
-
-    if(!g_lua.safeRunScript("init.lua"))
-        g_logger.fatal("Unable to run script init.lua!");
-
-    // the run application main loop
-    g_app.run();
-
-    // unload modules
-    g_app.deinit();
-
-    // terminate everything and free memory
-    g_client.terminate();
-    g_app.terminate();
-    return 0;
-}
+#endif

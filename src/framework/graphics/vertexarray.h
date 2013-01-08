@@ -61,6 +61,18 @@ public:
         addVertex(right, bottom);
     }
 
+    inline void addUpsideDownQuad(const Rect& rect) {
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
+
+        addVertex(left, bottom);
+        addVertex(right, bottom);
+        addVertex(left, top);
+        addVertex(right, top);
+    }
+
     void clear() { m_buffer.reset(); }
     float *vertices() const { return m_buffer.data(); }
     int vertexCount() const { return m_buffer.size() / 2; }

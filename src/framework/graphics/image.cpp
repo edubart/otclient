@@ -35,13 +35,11 @@ Image::Image(const Size& size, int bpp, uint8 *pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
 
-ImagePtr Image::load(const std::string& file)
+ImagePtr Image::load(std::string file)
 {
     ImagePtr image;
     try {
-        // currently only png images are supported
-        if(!stdext::ends_with(file, ".png"))
-            stdext::throw_exception("image file format no supported");
+        file = g_resources.guessFileType(file, "png");
 
         // load image file data
         image = loadPNG(file);
@@ -54,7 +52,7 @@ ImagePtr Image::load(const std::string& file)
 ImagePtr Image::loadPNG(const std::string& file)
 {
     std::stringstream fin;
-    g_resources.loadFile(file, fin);
+    g_resources.readFileStream(file, fin);
     ImagePtr image;
     apng_data apng;
     if(load_apng(fin, &apng) == 0) {

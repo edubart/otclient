@@ -36,6 +36,7 @@ class FileStream : public LuaObject
 {
 public:
     FileStream(const std::string& name, PHYSFS_File *fileHandle, bool writeable);
+    FileStream(const std::string& name, const std::string& buffer);
     ~FileStream();
 
     void cache();

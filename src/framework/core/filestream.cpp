@@ -35,6 +35,17 @@ FileStream::FileStream(const std::string& name, PHYSFS_File *fileHandle, bool wr
 {
 }
 
+FileStream::FileStream(const std::string& name, const std::string& buffer) :
+    m_name(name),
+    m_fileHandle(nullptr),
+    m_pos(0),
+    m_writeable(false),
+    m_caching(true)
+{
+    m_data.resize(buffer.length());
+    memcpy(&m_data[0], &buffer[0], buffer.length());
+}
+
 FileStream::~FileStream()
 {
 #ifndef NDEBUG
@@ -338,3 +349,4 @@ void FileStream::throwError(const std::string& message, bool physfsError)
         completeMessage += std::string(": ") + PHYSFS_getLastError();
     stdext::throw_exception(completeMessage);
 }
+

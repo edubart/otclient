@@ -59,6 +59,11 @@ public:
         m_textureCoordArray.addQuad(src);
         m_hardwareCached = false;
     }
+    void addUpsideDownQuad(const Rect& dest, const Rect& src) {
+        m_vertexArray.addUpsideDownQuad(dest);
+        m_textureCoordArray.addQuad(src);
+        m_hardwareCached = false;
+    }
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
     void addRepeatedRects(const Rect& dest, const Rect& src);

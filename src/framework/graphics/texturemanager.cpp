@@ -26,6 +26,7 @@
 #include "image.h"
 
 #include <framework/core/resourcemanager.h>
+#include <framework/core/clock.h>
 #include <framework/graphics/apngloader.h>
 
 TextureManager g_textures;
@@ -38,11 +39,26 @@ void TextureManager::init()
 void TextureManager::terminate()
 {
     m_textures.clear();
+    m_animatedTextures.clear();
     m_emptyTexture = nullptr;
+}
+
+void TextureManager::poll()
+{
+    // update only every 16msec, this allows upto 60 fps for animated textures
+    static ticks_t lastUpdate = 0;
+    ticks_t now = g_clock.millis();
+    if(now - lastUpdate < 16)
+        return;
+    lastUpdate = now;
+
+    for(const AnimatedTexturePtr& animatedTexture : m_animatedTextures)
+        animatedTexture->updateAnimation();
 }
 
 void TextureManager::clearTexturesCache()
 {
+    m_animatedTextures.clear();
     m_textures.clear();
 }
 
@@ -62,13 +78,11 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     // texture not found, load it
     if(!texture) {
         try {
-            // currently only png textures are supported
-            if(!stdext::ends_with(filePath, ".png"))
-                stdext::throw_exception("texture file format not supported");
+            std::string filePathEx = g_resources.guessFileType(filePath, "png");
 
             // load texture file data
             std::stringstream fin;
-            g_resources.loadFile(filePath, fin);
+            g_resources.readFileStream(filePathEx, fin);
             texture = loadPNG(fin);
         } catch(stdext::exception& e) {
             g_logger.error(stdext::format("Unable to load texture '%s': %s", fileName, e.what()));
@@ -88,12 +102,22 @@ TexturePtr TextureManager::loadPNG(std::stringstream& file)
 
     apng_data apng;
     if(load_apng(file, &apng) == 0) {
+        Size imageSize(apng.width, apng.height);
         if(apng.num_frames > 1) { // animated texture
-            //uchar *framesdata = apng.pdata + (apng.first_frame * apng.width * apng.height * apng.bpp);
-            //texture = TexturePtr(new AnimatedTexture(apng.width, apng.height, apng.bpp, apng.num_frames, framesdata, (int*)apng.frames_delay));
-            g_logger.error("animated textures is disabled for a while");
+            std::vector<ImagePtr> frames;
+            std::vector<int> framesDelay;
+            for(uint i=0;i<apng.num_frames;++i) {
+                uchar *frameData = apng.pdata + ((apng.first_frame+i) * imageSize.area() * apng.bpp);
+                int frameDelay = apng.frames_delay[i];
+
+                framesDelay.push_back(frameDelay);
+                frames.push_back(ImagePtr(new Image(imageSize, apng.bpp, frameData)));
+            }
+            AnimatedTexturePtr animatedTexture = new AnimatedTexture(imageSize, frames, framesDelay);
+            m_animatedTextures.push_back(animatedTexture);
+            texture = animatedTexture;
         } else {
-            ImagePtr image = ImagePtr(new Image(Size(apng.width, apng.height), apng.bpp, apng.pdata));
+            ImagePtr image = ImagePtr(new Image(imageSize, apng.bpp, apng.pdata));
             texture = TexturePtr(new Texture(image));
         }
         free_apng(&apng);

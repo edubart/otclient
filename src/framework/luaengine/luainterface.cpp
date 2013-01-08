@@ -328,7 +328,9 @@ void LuaInterface::loadScript(const std::string& fileName)
     if(!stdext::starts_with(fileName, "/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
-    std::string buffer = g_resources.loadFile(fileName);
+    filePath = g_resources.guessFileType(filePath, "lua");
+
+    std::string buffer = g_resources.readFileContents(filePath);
     std::string source = "@" + filePath;
     loadBuffer(buffer, source);
 }
@@ -560,12 +562,10 @@ int LuaInterface::luaScriptLoader(lua_State* L)
 
 int LuaInterface::lua_dofile(lua_State* L)
 {
-    std::string fileName = g_lua.popString();
-    if(!stdext::ends_with(fileName, ".lua"))
-        fileName += ".lua";
+    std::string file = g_lua.popString();
 
     try {
-        g_lua.loadScript(fileName);
+        g_lua.loadScript(file);
         g_lua.call(0, LUA_MULTRET);
         return g_lua.stackSize();
     } catch(stdext::exception& e) {
@@ -580,7 +580,7 @@ int LuaInterface::lua_dofiles(lua_State* L)
     std::string directory = g_lua.popString();
 
     for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
-        if(!stdext::ends_with(fileName, ".lua"))
+        if(!stdext::ends_with(fileName, ".lua") && !stdext::ends_with(fileName, ".bc"))
             continue;
 
         try {
@@ -1251,4 +1251,3 @@ int LuaInterface::getTop()
 {
     return lua_gettop(L);
 }
-

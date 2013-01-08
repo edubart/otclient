@@ -35,10 +35,10 @@ public:
 
     void bind();
     void copyFromScreen(const Rect& screenRect);
-    bool buildHardwareMipmaps();
+    virtual bool buildHardwareMipmaps();
 
-    void setSmooth(bool smooth);
-    void setRepeat(bool repeat);
+    virtual void setSmooth(bool smooth);
+    virtual void setRepeat(bool repeat);
     void setUpsideDown(bool upsideDown);
 
     uint getId()  { return m_id; }
@@ -50,6 +50,7 @@ public:
     bool isEmpty() { return m_id == 0; }
     bool hasRepeat() { return m_repeat; }
     bool hasMipmaps() { return m_hasMipmaps; }
+    virtual bool isAnimatedTexture() { return false; }
 
 protected:
     void createTexture();

@@ -59,6 +59,8 @@ public:
     std::string getVersion() { return (const char*)glGetString(GL_VERSION); }
     std::string getExtensions() { return (const char*)glGetString(GL_EXTENSIONS); }
 
+    void setShouldUseShaders(bool enable) { m_shouldUseShaders = enable; }
+
     bool ok() { return m_ok; }
     bool canUseDrawArrays();
     bool canUseShaders();
@@ -71,6 +73,7 @@ public:
     bool canUseClampToEdge();
     bool canUseBlendFuncSeparate();
     bool canCacheBackbuffer();
+    bool shouldUseShaders() { return m_shouldUseShaders; }
     bool hasScissorBug();
 
 private:
@@ -87,6 +90,7 @@ private:
     stdext::boolean<true> m_useMipmaps;
     stdext::boolean<true> m_useHardwareMipmaps;
     stdext::boolean<true> m_useClampToEdge;
+    stdext::boolean<true> m_shouldUseShaders;
     stdext::boolean<true> m_cacheBackbuffer;
     PainterEngine m_prefferedPainterEngine;
     PainterEngine m_selectedPainterEngine;

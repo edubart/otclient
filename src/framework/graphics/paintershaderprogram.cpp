@@ -45,6 +45,8 @@ void PainterShaderProgram::setupUniforms()
     bindUniformLocation(TIME_UNIFORM, "u_Time");
     bindUniformLocation(TEX0_UNIFORM, "u_Tex0");
     bindUniformLocation(TEX1_UNIFORM, "u_Tex1");
+    bindUniformLocation(TEX2_UNIFORM, "u_Tex2");
+    bindUniformLocation(TEX3_UNIFORM, "u_Tex3");
     bindUniformLocation(RESOLUTION_UNIFORM, "u_Resolution");
 
     setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
@@ -54,6 +56,8 @@ void PainterShaderProgram::setupUniforms()
     setUniformValue(TIME_UNIFORM, m_time);
     setUniformValue(TEX0_UNIFORM, 0);
     setUniformValue(TEX1_UNIFORM, 1);
+    setUniformValue(TEX2_UNIFORM, 2);
+    setUniformValue(TEX3_UNIFORM, 3);
     setUniformValue(RESOLUTION_UNIFORM, (float)m_resolution.width(), (float)m_resolution.height());
 }
 
@@ -154,7 +158,7 @@ void PainterShaderProgram::bindMultiTextures()
 
     int i=1;
     for(const TexturePtr& tex : m_multiTextures) {
-        glActiveTexture(GL_TEXTURE0 + 1);
+        glActiveTexture(GL_TEXTURE0 + i++);
         glBindTexture(GL_TEXTURE_2D, tex->getId());
     }
 

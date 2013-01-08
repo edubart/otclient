@@ -114,7 +114,7 @@ const HousePtr& HouseManager::getHouse(uint32 houseId)
 void HouseManager::load(const std::string& fileName)
 {
     TiXmlDocument doc;
-    doc.Parse(g_resources.loadFile(fileName).c_str());
+    doc.Parse(g_resources.readFileContents(fileName).c_str());
     if(doc.Error())
         stdext::throw_exception(stdext::format("failed to load '%s': %s (House XML)", fileName, doc.ErrorDesc()));
 

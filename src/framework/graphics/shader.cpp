@@ -80,7 +80,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
 bool Shader::compileSourceFile(const std::string& sourceFile)
 {
     try {
-        std::string sourceCode = g_resources.loadFile(sourceFile);
+        std::string sourceCode = g_resources.readFileContents(sourceFile);
         return compileSourceCode(sourceCode);
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("unable to load shader source form file: %s", sourceFile));

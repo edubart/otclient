@@ -76,7 +76,7 @@ void GraphicalApplication::terminate()
     // destroy particles
     g_particles.terminate();
 
-    // destroy any remaining widget
+    // destroy any reamaning widget
     g_ui.terminate();
 
     Application::terminate();

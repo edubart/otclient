@@ -139,7 +139,7 @@ void ThingTypeManager::loadXml(const std::string& file)
         stdext::throw_exception("OTB must be loaded before XML");
 
     TiXmlDocument doc;
-    doc.Parse(g_resources.loadFile(file).c_str());
+    doc.Parse(g_resources.readFileContents(file).c_str());
     if(doc.Error())
         stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
 

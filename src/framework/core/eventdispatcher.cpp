@@ -45,7 +45,7 @@ void EventDispatcher::poll()
     int loops = 0;
     for(int count = 0, max = m_scheduledEventList.size(); count < max && !m_scheduledEventList.empty(); ++count) {
         ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
-        if(scheduledEvent->remainingTicks() > 0)
+        if(scheduledEvent->reamaningTicks() > 0)
             break;
         m_scheduledEventList.pop();
         scheduledEvent->execute();

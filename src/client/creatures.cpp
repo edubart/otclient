@@ -165,7 +165,7 @@ void CreatureManager::clearSpawns()
 void CreatureManager::loadMonsters(const std::string& file)
 {
     TiXmlDocument doc;
-    doc.Parse(g_resources.loadFile(file).c_str());
+    doc.Parse(g_resources.readFileContents(file).c_str());
     if(doc.Error())
         stdext::throw_exception(stdext::format("cannot open monsters file '%s': '%s'", file, doc.ErrorDesc()));
 
@@ -187,7 +187,7 @@ void CreatureManager::loadMonsters(const std::string& file)
 
 void CreatureManager::loadSingleCreature(const std::string& file)
 {
-    loadCreatureBuffer(g_resources.loadFile(file));
+    loadCreatureBuffer(g_resources.readFileContents(file));
 }
 
 void CreatureManager::loadNpcs(const std::string& folder)
@@ -205,7 +205,7 @@ void CreatureManager::loadNpcs(const std::string& folder)
         if(boost::filesystem::is_directory(it->status()))
             continue;
 
-        loadCreatureBuffer(g_resources.loadFile(tmp + f));
+        loadCreatureBuffer(g_resources.readFileContents(tmp + f));
     }
 }
 
@@ -222,7 +222,7 @@ void CreatureManager::loadSpawns(const std::string& fileName)
     }
 
     TiXmlDocument doc;
-    doc.Parse(g_resources.loadFile(fileName).c_str());
+    doc.Parse(g_resources.readFileContents(fileName).c_str());
     if(doc.Error())
         stdext::throw_exception(stdext::format("cannot load spawns xml file '%s: '%s'", fileName, doc.ErrorDesc()));
 

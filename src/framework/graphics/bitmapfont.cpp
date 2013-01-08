@@ -52,9 +52,6 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     m_glyphsSize[32].setWidth(spaceWidth);
     m_glyphsSize[160].setWidth(spaceWidth);
 
-    // use 127 as spacer [Width: 1]
-    m_glyphsSize[127].setWidth(1);
-
     // new line actually has a size that will be useful in multiline algorithm
     m_glyphsSize[(uchar)'\n'] = Size(1, m_glyphHeight);
 
@@ -262,6 +259,9 @@ Size BitmapFont::calculateTextRectSize(const std::string& text)
 
 void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize)
 {
+    if(!image)
+        return;
+
     int numHorizontalGlyphs = image->getSize().width() / glyphSize.width();
     auto texturePixels = image->getPixels();
 

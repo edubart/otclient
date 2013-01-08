@@ -173,6 +173,8 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
     Painter *painter = nullptr;
     Painter *fallbackPainter = nullptr;
+    PainterEngine fallbackPainterEngine = Painter_Any;
+
 #ifdef PAINTER_OGL2
     // always prefer OpenGL 2 over OpenGL 1
     if(g_painterOGL2) {
@@ -181,6 +183,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
             painter = g_painterOGL2;
         }
         fallbackPainter = g_painterOGL2;
+        fallbackPainterEngine = Painter_OpenGL2;
     }
 #endif
 
@@ -192,11 +195,14 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
             painter = g_painterOGL1;
         }
         fallbackPainter = g_painterOGL1;
+        fallbackPainterEngine = Painter_OpenGL1;
     }
 #endif
 
-    if(!painter)
+    if(!painter) {
         painter = fallbackPainter;
+        m_selectedPainterEngine = fallbackPainterEngine;
+    }
 
     // switch painters GL state
     if(painter) {

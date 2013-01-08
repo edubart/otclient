@@ -24,24 +24,28 @@
 #define ANIMATEDTEXTURE_H
 
 #include "texture.h"
-/*
+#include <framework/core/timer.h>
+
 class AnimatedTexture : public Texture
 {
 public:
-    AnimatedTexture(int width, int height, int channels, int numFrames, uchar *framesPixels, int *framesDelay);
+    AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps = false, bool compress = false);
     virtual ~AnimatedTexture();
 
-    void enableBilinearFilter();
-    void processAnimation();
+    virtual bool buildHardwareMipmaps();
 
-    AnimatedTexturePtr asAnimatedTexture() { return static_self_cast<AnimatedTexture>(); }
+    virtual void setSmooth(bool smooth);
+    virtual void setRepeat(bool repeat);
+
+    void updateAnimation();
+
+    virtual bool isAnimatedTexture() { return true; }
 
 private:
-    std::vector<uint> m_framesTextureId;
+    std::vector<TexturePtr> m_frames;
     std::vector<int> m_framesDelay;
-    int m_numFrames;
-    int m_currentFrame;
-    ticks_t m_lastAnimCheckTicks;
+    uint m_currentFrame;
+    Timer m_animTimer;
 };
-*/
+
 #endif

@@ -34,7 +34,7 @@ public:
     // @dontbind
     void terminate();
 
-    void discoverWorkDir(const std::string& appName, const std::string& existentFile);
+    bool discoverWorkDir(const std::string& existentFile);
     bool setupUserWriteDir(const std::string& appWriteDirName);
     bool setWriteDir(const std::string& writeDir, bool create = false);
 
@@ -46,13 +46,13 @@ public:
     bool directoryExists(const std::string& directoryName);
 
     // @dontbind
-    void loadFile(const std::string& fileName, std::iostream& out);
-    std::string loadFile(const std::string& fileName);
+    void readFileStream(const std::string& fileName, std::iostream& out);
+    std::string readFileContents(const std::string& fileName);
     // @dontbind
-    bool saveFile(const std::string& fileName, const uchar* data, uint size);
-    bool saveFile(const std::string& fileName, const std::string& data);
+    bool writeFileBuffer(const std::string& fileName, const uchar* data, uint size);
+    bool writeFileContents(const std::string& fileName, const std::string& data);
     // @dontbind
-    bool saveFile(const std::string& fileName, std::iostream& in);
+    bool writeFileStream(const std::string& fileName, std::iostream& in);
 
     FileStreamPtr openFile(const std::string& fileName);
     FileStreamPtr appendFile(const std::string& fileName);
