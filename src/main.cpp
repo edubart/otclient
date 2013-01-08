@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,7 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
-#include <otclient/otclient.h>
+#include <client/client.h>
 
 int main(int argc, const char* argv[])
 {
@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
 
     // initialize application framework and otclient
     g_app.init(args);
-    g_otclient.init(args);
+    g_client.init(args);
 
     // find script init.lua and run it
     g_resources.discoverWorkDir(g_app.getCompactName(), "init.lua");
@@ -50,7 +50,7 @@ int main(int argc, const char* argv[])
     g_app.deinit();
 
     // terminate everything and free memory
-    g_otclient.terminate();
+    g_client.terminate();
     g_app.terminate();
     return 0;
 }

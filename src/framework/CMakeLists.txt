@@ -478,19 +478,5 @@ if(FRAMEWORK_SQL)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
 endif()
 
-if(FRAMEWORK_GIT)
-    find_package(Git2 REQUIRED)
-
-    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${GIT2_INCLUDE_DIR})
-    set(framework_LIBRARIES ${GIT2_LIBRARY} ${framework_LIBRARIES})
-
-    set(framework_SOURCES ${framework_SOURCES}
-        ${CMAKE_CURRENT_LIST_DIR}/git/declarations.h
-        ${CMAKE_CURRENT_LIST_DIR}/git/gitrepository.h
-        ${CMAKE_CURRENT_LIST_DIR}/git/gitrepository.cpp
-    )
-    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_GIT)
-endif()
-
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})

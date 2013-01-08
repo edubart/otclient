@@ -9,10 +9,10 @@ set(FRAMEWORK_XML ON)
 set(FRAMEWORK_NET ON)
 #set(FRAMEWORK_GIT ON)
 include(src/framework/CMakeLists.txt)
-include(src/otclient/CMakeLists.txt)
+include(src/client/CMakeLists.txt)
 
 # functions map for reading backtraces
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=otclient.map")
+set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=${PROJECT_NAME}.map")
 
 option(USE_PCH "Use precompiled header (speed up compile)" OFF)
 
@@ -32,25 +32,25 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
-# add otclient executable
-add_executable(otclient ${framework_SOURCES} ${otclient_SOURCES} ${executable_SOURCES})
+# add client executable
+add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
 
 # target link libraries
-target_link_libraries(otclient ${framework_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
 if(USE_PCH)
     include(cotire)
-    cotire(otclient)
+    cotire(${PROJECT_NAME})
     message(STATUS "Use precompiled header: ON")
 else()
     message(STATUS "Use precompiled header: OFF")
 endif()
 
 # installation
-set(DATA_INSTALL_DIR share/otclient)
-install(TARGETS otclient RUNTIME DESTINATION bin)
-install(FILES README.md BUGS LICENSE AUTHORS init.lua otclientrc.lua DESTINATION ${DATA_INSTALL_DIR})
+set(DATA_INSTALL_DIR share/${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+install(FILES README.md BUGS LICENSE AUTHORS init.lua ${PROJECT_NAME}rc.lua DESTINATION ${DATA_INSTALL_DIR})
 install(DIRECTORY modules DESTINATION ${DATA_INSTALL_DIR} PATTERN ".git" EXCLUDE)
 
 # add "make run"
-add_custom_target(run COMMAND otclient DEPENDS otclient WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
+add_custom_target(run COMMAND ${PROJECT_NAME} DEPENDS ${PROJECT_NAME} WORKING_DIRECTORY ${CMAKE_PROJECT_DIR})
