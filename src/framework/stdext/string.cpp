@@ -24,6 +24,8 @@
 #include "format.h"
 #include <boost/algorithm/string.hpp>
 #include <ctype.h>
+#include <physfs.h>
+#include <boost/locale.hpp>
 
 namespace stdext {
 
@@ -67,36 +69,44 @@ uint64_t hex_to_dec(const std::string& str)
     return num;
 }
 
+bool is_valid_utf8(const std::string& src)
+{
+    try {
+        boost::locale::conv::from_utf(src, "ISO-8859-1", boost::locale::conv::stop);
+        return true;
+    } catch(...) {
+        return false;
+    }
+}
+
 std::string utf8_to_latin1(const std::string& src)
 {
-    auto utf8CharToLatin1 = [](const uchar *utf8, int *read) -> char {
-        char c = '?';
-        uchar opt1 = utf8[0];
-        *read = 1;
-        if(opt1 == 0xc3) {
-            *read = 2;
-            uchar opt2 = utf8[1];
-            c = 64 + opt2;
-        } else if(opt1 == 0xc2) {
-            *read = 2;
-            uchar opt2 = utf8[1];
-            if(opt2 > 0xa1 && opt2 < 0xbb)
-                c = opt2;
-        } else if(opt1 < 0xc2) {
-            c = opt1;
-        }
-        return c;
-    };
+    return boost::locale::conv::from_utf(src, "ISO-8859-1");
+}
 
-    std::string out;
-    int len = src.length();
-    for(int i=0; i<len;) {
-        int read = 0;
-        uchar *utf8char = (uchar*)&src[i];
-        out += utf8CharToLatin1(utf8char, &read);
-        i += read;
-    }
-    return out;
+std::wstring utf8_to_utf16(const std::string& src)
+{
+    return boost::locale::conv::utf_to_utf<wchar_t>(src);
+}
+
+std::string utf16_to_utf8(const std::wstring& src)
+{
+    return boost::locale::conv::utf_to_utf<char>(src);
+}
+
+std::string utf16_to_latin1(const std::wstring& src)
+{
+    return boost::locale::conv::from_utf(src, "ISO-8859-1");
+}
+
+std::string latin1_to_utf8(const std::string& src)
+{
+    return boost::locale::conv::to_utf<char>(src, "ISO-8859-1");
+}
+
+std::wstring latin1_to_utf16(const std::string& src)
+{
+    return boost::locale::conv::to_utf<wchar_t>(src, "ISO-8859-1");
 }
 
 void tolower(std::string& str)

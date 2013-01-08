@@ -20,11 +20,12 @@
  * THE SOFTWARE.
  */
 
-#if defined __linux || defined __APPLE__
+#ifdef __linux
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
-#include <framework/graphics/apngloader.h>
+#include <framework/graphics/image.h>
+#include <unistd.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
 
@@ -320,13 +321,6 @@ void X11Window::internalCreateWindow()
 
 bool X11Window::internalSetupWindowInput()
 {
-    // try to set a latin1 locales, otherwise fallback to standard C locale
-    static char locales[4][32] = { "en_US.iso88591", "iso88591", "en_US", "C" };
-    for(int i=0;i<4;++i) {
-        if(setlocale(LC_ALL, locales[i]))
-            break;
-    }
-
     //  create input context (to have better key input handling)
     if(!XSupportsLocale()) {
         g_logger.error("X11 doesn't support the current locale");
@@ -515,8 +509,10 @@ bool X11Window::isExtensionSupported(const char *ext)
 void X11Window::move(const Point& pos)
 {
     m_position = pos;
-    if(m_visible)
+    if(m_visible) {
         XMoveWindow(m_display, m_window, m_position.x, m_position.y);
+        XFlush(m_display);
+    }
 }
 
 void X11Window::resize(const Size& size)
@@ -524,6 +520,7 @@ void X11Window::resize(const Size& size)
     if(size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
         return;
     XResizeWindow(m_display, m_window, size.width(), size.height());
+    XFlush(m_display);
 }
 
 void X11Window::show()
@@ -678,6 +675,7 @@ void X11Window::poll()
                     Atom typeList[] = { XInternAtom(m_display, "UTF8_STRING", False),
                                         XInternAtom(m_display, "TEXT", False),
                                         XInternAtom(m_display, "STRING", False),
+                                        XInternAtom(m_display, "text/plain;charset=UTF-8", False),
                                         XInternAtom(m_display, "text/plain", False),
                                         XInternAtom(m_display, "COMPOUND_TEXT", False),
                                         XA_STRING };
@@ -689,13 +687,14 @@ void X11Window::poll()
                                     sizeof(typeList));
                     respond.xselection.property = req->property;
                 } else {
+                    std::string clipboardText = stdext::latin1_to_utf8(m_clipboardText);
                     XChangeProperty(m_display,
                                     req->requestor,
                                     req->property, req->target,
                                     8,
                                     PropModeReplace,
-                                    (uchar *)m_clipboardText.c_str(),
-                                    m_clipboardText.length());
+                                    (uchar *)clipboardText.c_str(),
+                                    clipboardText.length());
                     respond.xselection.property = req->property;
                 }
 
@@ -766,14 +765,16 @@ void X11Window::poll()
                             m_inputEvent.type = Fw::MouseWheelInputEvent;
                             m_inputEvent.mouseButton = Fw::MouseMidButton;
                             m_inputEvent.wheelDirection = Fw::MouseWheelUp;
-                        }
+                        } else
+                            m_inputEvent.type = Fw::NoInputEvent;
                         break;
                     case Button5:
                         if(event.type == ButtonPress) {
                             m_inputEvent.type = Fw::MouseWheelInputEvent;
                             m_inputEvent.mouseButton = Fw::MouseMidButton;
                             m_inputEvent.wheelDirection = Fw::MouseWheelDown;
-                        }
+                        } else
+                            m_inputEvent.type = Fw::NoInputEvent;
                         break;
                     default:
                         m_inputEvent.type = Fw::NoInputEvent;
@@ -862,32 +863,28 @@ void X11Window::restoreMouseCursor()
 
 void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 {
-    std::stringstream fin;
-    g_resources.loadFile(file, fin);
+    ImagePtr image = Image::load(file);
 
-    apng_data apng;
-    if(load_apng(fin, &apng) != 0) {
-        g_logger.traceError(stdext::format("unable to load png file %s", file));
+    if(!image) {
+        g_logger.traceError(stdext::format("unable to load image file %s", file));
         return;
     }
 
-    if(apng.bpp != 4) {
-        g_logger.error("the cursor png must have 4 channels");
-        free_apng(&apng);
+    if(image->getBpp() != 4) {
+        g_logger.error("the cursor image must have 4 channels");
         return;
     }
 
-    if(apng.width != 32|| apng.height != 32) {
-        g_logger.error("the cursor png must have 32x32 dimension");
-        free_apng(&apng);
+    if(image->getWidth() != 32 || image->getHeight() != 32) {
+        g_logger.error("the cursor image must have 32x32 dimension");
         return;
     }
 
     if(m_cursor != None)
         restoreMouseCursor();
 
-    int width = apng.width;
-    int height = apng.height;
+    int width = image->getWidth();
+    int height = image->getHeight();
     int numbits = width * height;
     int numbytes = (width * height)/8;
 
@@ -903,7 +900,7 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = stdext::readLE32(apng.pdata + i*4);
+        uint32 rgba = stdext::readLE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
         } else if(rgba == 0xff000000) { //black, foreground
@@ -911,7 +908,6 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
             LSB_BIT_SET(maskBits, i);
         } //otherwise 0x00000000 => alpha
     }
-    free_apng(&apng);
 
     Pixmap cp = XCreateBitmapFromData(m_display, m_window, (char*)&mapBits[0], width, height);
     Pixmap mp = XCreateBitmapFromData(m_display, m_window, (char*)&maskBits[0], width, height);
@@ -978,40 +974,35 @@ void X11Window::setVerticalSync(bool enable)
 #endif
 }
 
-void X11Window::setIcon(const std::string& iconFile)
+void X11Window::setIcon(const std::string& file)
 {
-    std::stringstream fin;
-    g_resources.loadFile(iconFile, fin);
+    ImagePtr image = Image::load(file);
 
-    apng_data apng;
-    if(load_apng(fin, &apng) != 0) {
-        g_logger.error("Unable to load window icon");
+    if(!image) {
+        g_logger.traceError(stdext::format("unable to load icon file %s", file));
         return;
     }
 
-    if(apng.bpp != 4) {
-        g_logger.error("Could not set window icon, icon image must have 4 channels");
-        free_apng(&apng);
+    if(image->getBpp() != 4) {
+        g_logger.error("the app icon must have 4 channels");
         return;
     }
 
-    int n = apng.width * apng.height;
+    int n = image->getWidth() * image->getHeight();
     std::vector<unsigned long int> iconData(n + 2);
-    iconData[0] = apng.width;
-    iconData[1] = apng.height;
+    iconData[0] = image->getWidth();
+    iconData[1] = image->getHeight();
     for(int i=0; i < n;++i) {
         uint8 *pixel = (uint8*)&iconData[2 + i];
-        pixel[2] = *(apng.pdata + (i * 4) + 0);
-        pixel[1] = *(apng.pdata + (i * 4) + 1);
-        pixel[0] = *(apng.pdata + (i * 4) + 2);
-        pixel[3] = *(apng.pdata + (i * 4) + 3);
+        pixel[2] = *(image->getPixelData() + (i * 4) + 0);
+        pixel[1] = *(image->getPixelData() + (i * 4) + 1);
+        pixel[0] = *(image->getPixelData() + (i * 4) + 2);
+        pixel[3] = *(image->getPixelData() + (i * 4) + 3);
     }
 
     Atom property = XInternAtom(m_display, "_NET_WM_ICON", 0);
     if(!XChangeProperty(m_display, m_window, property, XA_CARDINAL, 32, PropModeReplace, (const unsigned char*)&iconData[0], iconData.size()))
         g_logger.error("Couldn't set app icon");
-
-    free_apng(&apng);
 }
 
 void X11Window::setClipboardText(const std::string& text)
@@ -1047,16 +1038,19 @@ std::string X11Window::getClipboardText()
         Atom type;
         int format;
         ulong len, bytesLeft;
-        uchar *data;
+        char *data;
         XGetWindowProperty(m_display, ownerWindow,
                             XA_PRIMARY, 0, 10000000L, 0, XA_STRING,
                             &type,
                             &format,
                             &len,
                             &bytesLeft,
-                            &data);
+                            (uchar**)&data);
         if(len > 0) {
-            clipboardText = stdext::utf8_to_latin1((char*)data);
+            if(stdext::is_valid_utf8(data))
+                clipboardText = stdext::utf8_to_latin1(data);
+            else
+                clipboardText = data;
         }
     }
 

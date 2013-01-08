@@ -35,7 +35,7 @@ class GraphicalApplication : public Application
     };
 
 public:
-    void init(const std::vector< std::string >& args);
+    void init(std::vector<std::string>& args);
     void deinit();
     void terminate();
     void run();

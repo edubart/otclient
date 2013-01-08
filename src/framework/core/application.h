@@ -33,7 +33,7 @@ public:
     Application();
     virtual ~Application() {}
 
-    virtual void init(const std::vector<std::string>& args);
+    virtual void init(std::vector<std::string>& args);
     virtual void deinit();
     virtual void terminate();
     virtual void run() = 0;

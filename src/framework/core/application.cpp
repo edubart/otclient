@@ -29,17 +29,15 @@
 #include <framework/core/configmanager.h>
 #include <framework/luaengine/luainterface.h>
 #include <framework/platform/crashhandler.h>
+#include <framework/platform/platform.h>
+
+#include <boost/locale.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+#include <locale>
 
 #ifdef FW_NET
 #include <framework/net/connection.h>
-#endif
-
-/* Ugly hack but works.  */
-#if defined __APPLE__ && defined CRASH_HANDLER
-/* UNIX Crash handler for some reason did not go as expected on a Mac system
- * TODO: RTFM it.
- */
-#undef CRASH_HANDLER
 #endif
 
 void exitSignalHandler(int sig)
@@ -48,7 +46,7 @@ void exitSignalHandler(int sig)
     switch(sig) {
         case SIGTERM:
         case SIGINT:
-            if(!signaled) {
+            if(!signaled && !g_app.isStopping() && !g_app.isTerminated()) {
                 signaled = true;
                 g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
             }
@@ -65,7 +63,7 @@ Application::Application()
     m_stopping = false;
 }
 
-void Application::init(const std::vector<std::string>& args)
+void Application::init(std::vector<std::string>& args)
 {
     // capture exit signals
     signal(SIGTERM, exitSignalHandler);
@@ -74,6 +72,15 @@ void Application::init(const std::vector<std::string>& args)
 #ifdef CRASH_HANDLER
     installCrashHandler();
 #endif
+
+    // setup locale
+    boost::locale::generator locgen;
+    std::locale::global(locgen.generate(""));
+    std::locale utf8Loc = locgen.generate("en_US.UTF-8");
+    boost::filesystem::path::imbue(utf8Loc);
+
+    // process args encoding
+    g_platform.processArgs(args);
 
     std::string startupOptions;
     for(uint i=1;i<args.size();++i) {
@@ -129,6 +136,9 @@ void Application::terminate()
     g_lua.terminate();
 
     m_terminated = true;
+
+    signal(SIGTERM, SIG_DFL);
+    signal(SIGINT, SIG_DFL);
 }
 
 void Application::poll()
@@ -142,8 +152,8 @@ void Application::poll()
 
 void Application::exit()
 {
-    g_logger.info("Exiting application..");
     m_stopping = true;
+    g_logger.info("Exiting application..");
 }
 
 void Application::close()
@@ -158,8 +168,10 @@ std::string Application::getOs()
     return "windows";
 #elif defined(__APPLE__)
     return "mac";
-#else
+#elif __linux
     return "linux";
+#else
+    return "unknown";
 #endif
 }
 

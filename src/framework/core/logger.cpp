@@ -23,8 +23,12 @@
 #include "logger.h"
 #include "eventdispatcher.h"
 
+#include <boost/regex.hpp>
+#include <framework/core/resourcemanager.h>
+
 #ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
+#include <framework/luaengine/luainterface.h>
 #endif
 
 Logger g_logger;
@@ -43,6 +47,21 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 
     std::string outmsg = logPrefixes[level] + message;
+
+#if !defined(NDEBUG) && !defined(WIN32)
+    // replace paths for improved debug with vim
+    std::stringstream tmp;
+    boost::smatch m;
+    boost::regex e ("/[^ :]+");
+    while(boost::regex_search(outmsg,m,e)) {
+        tmp << m.prefix().str();
+        tmp << g_resources.getRealDir(m.str()) << m.str();
+        outmsg = m.suffix().str();
+    }
+    if(!tmp.str().empty())
+        outmsg = tmp.str();
+#endif
+
     std::cout << outmsg << std::endl;
 
     if(m_outFile.good()) {
@@ -74,16 +93,21 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
 void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)
 {
-    std::stringstream ss;
     prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));
     if(prettyFunction.find_last_of(' ') != std::string::npos)
         prettyFunction = prettyFunction.substr(prettyFunction.find_last_of(' ') + 1);
 
-    if(!prettyFunction.empty())
-        ss << "[" << prettyFunction << "] ";
 
-    ss << message;
-    log(level, ss.str());
+    std::string out = message;
+
+    if(!prettyFunction.empty()) {
+        if(g_lua.isInCppCallback())
+            out = g_lua.traceback(out, 1);
+        else
+            out += "\nat:\t[C++]: " + prettyFunction;
+    }
+
+    log(level, out);
 }
 
 void Logger::fireOldMessages()

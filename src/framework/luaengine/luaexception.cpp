@@ -35,7 +35,7 @@ void LuaException::generateLuaErrorMessage(const std::string& error, int traceLe
     if(traceLevel >= 0)
         m_what = stdext::format("LUA ERROR: %s", g_lua.traceback(error, traceLevel));
     else
-        m_what = stdext::format("LUA ERROR: %s", error);
+        m_what = stdext::format("LUA ERROR:\n%s", error);
 }
 
 LuaBadNumberOfArgumentsException::LuaBadNumberOfArgumentsException(int expected, int got)

@@ -23,9 +23,8 @@
 #ifdef WIN32
 
 #include "win32window.h"
-
+#include <framework/graphics/image.h>
 #include <framework/core/application.h>
-#include <framework/graphics/apngloader.h>
 #include <framework/core/resourcemanager.h>
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
@@ -767,37 +766,33 @@ void WIN32Window::hideMouse()
 
 void WIN32Window::displayFatalError(const std::string& message)
 {
-    MessageBoxA(m_window, message.c_str(), "FATAL ERROR", MB_OK | MB_ICONERROR);
+    MessageBoxW(m_window, stdext::latin1_to_utf16(message).c_str(), L"FATAL ERROR", MB_OK | MB_ICONERROR);
 }
 
 void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 {
-    std::stringstream fin;
-    g_resources.loadFile(file, fin);
+    ImagePtr image = Image::load(file);
 
-    apng_data apng;
-    if(load_apng(fin, &apng) != 0) {
-        g_logger.traceError(stdext::format("unable to load png file %s", file));
+    if(!image) {
+        g_logger.traceError(stdext::format("unable to load cursor image file %s", file));
         return;
     }
 
-    if(apng.bpp != 4) {
-        g_logger.error("the cursor png must have 4 channels");
-        free_apng(&apng);
+    if(image->getBpp() != 4) {
+        g_logger.error("the cursor image must have 4 channels");
         return;
     }
 
-    if(apng.width != 32|| apng.height != 32) {
-        g_logger.error("the cursor png must have 32x32 dimension");
-        free_apng(&apng);
+    if(image->getWidth() != 32 || image->getHeight() != 32) {
+        g_logger.error("the cursor image must have 32x32 dimension");
         return;
     }
 
     if(m_cursor != NULL)
         DestroyCursor(m_cursor);
 
-    int width = apng.width;
-    int height = apng.height;
+    int width = image->getWidth();
+    int height = image->getHeight();
     int numbits = width * height;
     int numbytes = (width * height)/8;
 
@@ -805,14 +800,13 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
     std::vector<uchar> xorMask(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = stdext::readLE32(apng.pdata + i*4);
+        uint32 rgba = stdext::readLE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         } else if(rgba == 0x00000000) { //alpha
             HSB_BIT_SET(andMask, i);
         } // otherwise 0xff000000 => black
     }
-    free_apng(&apng);
 
     m_cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
     SetCursor(m_cursor);
@@ -820,7 +814,7 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
 void WIN32Window::setTitle(const std::string& title)
 {
-    SetWindowTextA(m_window, title.c_str());
+    SetWindowTextW(m_window, stdext::latin1_to_utf16(title).c_str());
 }
 
 void WIN32Window::setMinimumSize(const Size& minimumSize)
@@ -868,47 +862,46 @@ void WIN32Window::setVerticalSync(bool enable)
 #endif
 }
 
-void WIN32Window::setIcon(const std::string& pngIcon)
+void WIN32Window::setIcon(const std::string& file)
 {
-    apng_data apng;
-    std::stringstream fin;
-    g_resources.loadFile(pngIcon, fin);
-    if(load_apng(fin, &apng) == 0) {
-        if(apng.bpp != 4) {
-            g_logger.error("could not set app icon, icon image must have 4 channels");
-            free_apng(&apng);
-        }
+    ImagePtr image = Image::load(file);
 
-        int n = apng.width * apng.height;
-        std::vector<uint32> iconData(n);
-        for(int i=0; i < n;++i) {
-            uint8 *pixel = (uint8*)&iconData[i];
-            pixel[2] = *(apng.pdata + (i * 4) + 0);
-            pixel[1] = *(apng.pdata + (i * 4) + 1);
-            pixel[0] = *(apng.pdata + (i * 4) + 2);
-            pixel[3] = *(apng.pdata + (i * 4) + 3);
-        }
+    if(!image) {
+        g_logger.traceError(stdext::format("unable to load icon file %s", file));
+        return;
+    }
 
-        HBITMAP hbmColor = CreateBitmap(apng.width, apng.height, 1, 32, &iconData[0]);
-        HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), apng.width, apng.height);
+    if(image->getBpp() != 4) {
+        g_logger.error("the app icon must have 4 channels");
+        return;
+    }
 
-        ICONINFO ii;
-        ii.fIcon = TRUE;
-        ii.hbmColor = hbmColor;
-        ii.hbmMask = hbmMask;
-        ii.xHotspot = 0;
-        ii.yHotspot = 0;
+    int n = image->getWidth() * image->getHeight();
+    std::vector<uint32> iconData(n);
+    for(int i=0; i < n;++i) {
+        uint8 *pixel = (uint8*)&iconData[i];
+        pixel[2] = *(image->getPixelData() + (i * 4) + 0);
+        pixel[1] = *(image->getPixelData() + (i * 4) + 1);
+        pixel[0] = *(image->getPixelData() + (i * 4) + 2);
+        pixel[3] = *(image->getPixelData() + (i * 4) + 3);
+    }
 
-        HICON icon = CreateIconIndirect(&ii);
-        DeleteObject(hbmMask);
-        DeleteObject(hbmColor);
+    HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
+    HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), image->getWidth(), image->getHeight());
 
-        SendMessage(m_window, WM_SETICON, ICON_SMALL, (LPARAM)icon);
-        SendMessage(m_window, WM_SETICON, ICON_BIG, (LPARAM)icon);
+    ICONINFO ii;
+    ii.fIcon = TRUE;
+    ii.hbmColor = hbmColor;
+    ii.hbmMask = hbmMask;
+    ii.xHotspot = 0;
+    ii.yHotspot = 0;
 
-        free_apng(&apng);
-    } else
-        g_logger.error("could not load app icon");
+    HICON icon = CreateIconIndirect(&ii);
+    DeleteObject(hbmMask);
+    DeleteObject(hbmColor);
+
+    SendMessage(m_window, WM_SETICON, ICON_SMALL, (LPARAM)icon);
+    SendMessage(m_window, WM_SETICON, ICON_BIG, (LPARAM)icon);
 }
 
 void WIN32Window::setClipboardText(const std::string& text)
@@ -916,17 +909,19 @@ void WIN32Window::setClipboardText(const std::string& text)
     if(!OpenClipboard(m_window))
         return;
 
-    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(TCHAR));
+    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
     if(!hglb)
         return;
 
-    LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
-    memcpy(lptstr, &text[0], text.length() * sizeof(TCHAR));
-    lptstr[text.length()] = (TCHAR)0;
+    std::wstring wtext = stdext::latin1_to_utf16(text);
+
+    LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
+    memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
+    lpwstr[text.length()] = (WCHAR)0;
     GlobalUnlock(hglb);
 
     EmptyClipboard();
-    SetClipboardData(CF_TEXT, hglb);
+    SetClipboardData(CF_UNICODETEXT, hglb);
     CloseClipboard();
 }
 
@@ -942,11 +937,11 @@ std::string WIN32Window::getClipboardText()
     if(!OpenClipboard(m_window))
         return text;
 
-    HGLOBAL hglb = GetClipboardData(CF_TEXT);
+    HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if(hglb) {
-        LPTSTR lptstr = (LPTSTR)GlobalLock(hglb);
-        if(lptstr) {
-            text = stdext::utf8_to_latin1(lptstr);
+        LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
+        if(lpwstr) {
+            text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);
         }
     }
@@ -954,15 +949,15 @@ std::string WIN32Window::getClipboardText()
     return text;
 }
 
+
 std::string WIN32Window::getPlatformType()
 {
-#ifdef OPENGL_ES
+#ifndef OPENGL_ES
     return "WIN32-WGL";
 #else
     return "WIN32-EGL";
 #endif
 }
-
 
 Rect WIN32Window::getClientRect()
 {

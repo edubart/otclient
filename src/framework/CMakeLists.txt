@@ -143,18 +143,18 @@ else()
 endif()
 
 # gcc compile flags
-set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable")
+set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-variable -Wno-unused-result")
 set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} ${CPP2011_FLAGS} -pipe")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
 set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
+set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
 
 # process options
 if(USE_STATIC_LIBS)
     if(NOT APPLE)
-        set(CMAKE_CXX_LINK_FLAGS "-static-libgcc -static-libstdc++")
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -static-libgcc -static-libstdc++")
     endif()
     message(STATUS "Link to static libraries: ON")
 else()
@@ -169,7 +169,7 @@ message(STATUS "Build revision: ${BUILD_REVISION}")
 add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 # find boost
-set(REQUIRED_BOOST_COMPONENTS system filesystem)
+set(REQUIRED_BOOST_COMPONENTS system filesystem regex locale)
 if(WIN32)
     set(Boost_THREADAPI win32)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
@@ -177,7 +177,7 @@ if(WIN32)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost 1.46.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
+find_package(Boost 1.50.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
 #find lua
 if(LUAJIT)
@@ -232,12 +232,15 @@ if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
+    set(SYSTEM_LIBRARIES "")
 elseif(APPLE)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_REENTRANT) # enable thread safe code
+    set(SYSTEM_LIBRARIES "")
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic") # rdynamic is needed by backtrace.h used in crash handler
-    set(framework_LIBRARIES ${framework_LIBRARIES} dl)
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
+    set(SYSTEM_LIBRARIES dl)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
 
 if(FRAMEWORK_GRAPHICS)
@@ -375,6 +378,10 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
@@ -430,8 +437,12 @@ endif()
 
 if(FRAMEWORK_NET)
     if(WIN32)
-        set(framework_LIBRARIES ${framework_LIBRARIES} ws2_32 mswsock)
+        set(NET_LIBRARIES ws2_32 mswsock)
+    else()
+        set(NET_LIBRARIES "")
     endif()
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${NET_LIBRARIES})
+
     set(framework_SOURCES ${framework_SOURCES}
         ${CMAKE_CURRENT_LIST_DIR}/net/connection.cpp
         ${CMAKE_CURRENT_LIST_DIR}/net/connection.h

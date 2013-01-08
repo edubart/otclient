@@ -42,7 +42,6 @@ std::string date_time_string();
 
 std::string dec_to_hex(uint64_t num);
 uint64_t hex_to_dec(const std::string& str);
-std::string utf8_to_latin1(const std::string& src);
 void tolower(std::string& str);
 void toupper(std::string& str);
 void trim(std::string& str);
@@ -52,6 +51,14 @@ char lochar(char c);
 bool ends_with(const std::string& str, const std::string& test);
 bool starts_with(const std::string& str, const std::string& test);
 void replace_all(std::string& str, const std::string& search, const std::string& replacement);
+
+bool is_valid_utf8(const std::string& src);
+std::string utf8_to_latin1(const std::string& src);
+std::wstring utf8_to_utf16(const std::string& src);
+std::string utf16_to_utf8(const std::wstring& src);
+std::string utf16_to_latin1(const std::wstring& src);
+std::string latin1_to_utf8(const std::string& src);
+std::wstring latin1_to_utf16(const std::string& src);
 
 std::vector<std::string> split(const std::string& str, const std::string& separators = " ");
 template<typename T> std::vector<T> split(const std::string& str, const std::string& separators = " ") {

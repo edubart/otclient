@@ -28,6 +28,7 @@
 #include <framework/ui/uimanager.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/particlemanager.h>
+#include <framework/graphics/texturemanager.h>
 #include <framework/graphics/painter.h>
 
 #ifdef FW_SOUND
@@ -36,7 +37,7 @@
 
 GraphicalApplication g_app;
 
-void GraphicalApplication::init(const std::vector<std::string>& args)
+void GraphicalApplication::init(std::vector<std::string>& args)
 {
     Application::init(args);
 
@@ -78,13 +79,13 @@ void GraphicalApplication::terminate()
     // destroy any remaining widget
     g_ui.terminate();
 
+    Application::terminate();
+    m_terminated = false;
+
 #ifdef FW_SOUND
     // terminate sound
     g_sounds.terminate();
 #endif
-
-    Application::terminate();
-    m_terminated = false;
 
     // terminate graphics
     m_foreground = nullptr;
@@ -106,16 +107,21 @@ void GraphicalApplication::run()
     poll();
     g_clock.update();
 
-    g_lua.callGlobalField("g_app", "onRun");
-
+    // show window
     g_window.show();
+
+    // run the second poll
+    poll();
+    g_clock.update();
+
+    g_lua.callGlobalField("g_app", "onRun");
 
     while(!m_stopping) {
         // poll all events before rendering
         poll();
 
         if(g_window.isVisible()) {
-            // the otclient's screen consists of two panes
+            // the screen consists of two panes
             // background pane - high updated and animated pane (where the game are stuff happens)
             // foreground pane - steady pane with few animated stuff (UI)
             bool redraw = false;
