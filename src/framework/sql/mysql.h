@@ -73,6 +73,7 @@ public:
     std::string getDataString(const std::string &s);
 
     bool next();
+    int getRowCount() { return mysql_num_rows(m_res); }
 
 private:
     typedef std::map<const std::string, uint32_t> ListNames;

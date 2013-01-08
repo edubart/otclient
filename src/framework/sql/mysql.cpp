@@ -176,7 +176,7 @@ uint64_t DatabaseMySQL::getLastInsertedRowID()
 
 std::string DatabaseMySQL::escapeString(const std::string &s)
 {
-    return escapeBlob( s.c_str(), s.length() );
+    return escapeBlob(s.c_str(), s.length());
 }
 
 std::string DatabaseMySQL::escapeBlob(const char* s, uint32_t length)
@@ -254,9 +254,9 @@ std::string DBResult::getDataString(const std::string &s)
     ListNames::iterator it = m_listNames.find(s);
     if(it != m_listNames.end() ) {
         if(m_row[it->second] == NULL)
-        return std::string("");
+            return std::string("");
         else
-        return std::string(m_row[it->second]);
+            return std::string(m_row[it->second]);
     }
 
     g_logger.error(stdext::format("error during getDataString(%s).", s));
