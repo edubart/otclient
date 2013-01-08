@@ -4,8 +4,12 @@ local exitWindow
 local exitButton
 
 function Exit.init()
-  if not g_game.isOnline() then
-    exitButton = TopMenu.addRightButton('exitButton', tr('Exit Client'), 'exit.png', Exit.tryExit)
+  exitButton = TopMenu.addRightButton('exitButton', tr('Exit Client'), 'exit.png', Exit.tryExit)
+  
+  if g_game.isOnline() then
+    exitButton:hide()
+  else
+    exitButton:show()
   end
 
   connect(g_game, {

@@ -15,6 +15,17 @@ MiniWindow < UIMiniWindow
   $on:
     image-border-bottom: 2
 
+  UIWidget
+    id: miniwindowTopBar
+    anchors.top: parent.top
+    anchors.right: parent.right
+    anchors.left: parent.left
+    margin-right: 3
+    margin-left: 3
+    margin-top: 3
+    size: 258 18
+    phantom: true
+
   UIButton
     id: closeButton
     anchors.top: parent.top
