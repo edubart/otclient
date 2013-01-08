@@ -506,6 +506,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 Position neighborPos = currentNode->pos.translated(i, j);
                 const TilePtr& tile = getTile(neighborPos);
 
+                float walkFactor = 0;
                 if(neighborPos != goalPos) {
                     /*
                       Known Issue with Otc::PathFindAllowNullTiles flag:
@@ -514,7 +515,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                       but it is breaking normal path finding.
                     */
                     if(!(flags & Otc::PathFindAllowNullTiles) && !tile)
-                        continue;
+                        walkFactor = 1.0f;
                     if(tile) {
                         if(!(flags & Otc::PathFindAllowCreatures) && tile->hasCreature())
                             continue;
@@ -525,12 +526,11 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     }
                 }
 
-                float walkFactor;
                 Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
                 if(walkDir >= Otc::NorthEast)
-                    walkFactor = 3.0f;
+                    walkFactor += 3.0f;
                 else
-                    walkFactor = 1.0f;
+                    walkFactor += 1.0f;
 
                 int groundSpeed = tile ? tile->getGroundSpeed() : 100;
                 float cost = currentNode->cost + (groundSpeed * walkFactor) / 100.0f;

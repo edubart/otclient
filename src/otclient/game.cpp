@@ -158,7 +158,7 @@ void Game::processGameStart()
                 m_protocolGame->sendPing();
                 disableBotCall();
             }
-        }, 3000);
+        }, 2000);
     }
 }
 
@@ -564,6 +564,8 @@ bool Game::walk(Otc::Direction direction)
             return false;
     }
 
+    m_localPlayer->stopAutoWalkUpdate();
+
     g_lua.callGlobalField("g_game", "onWalk", direction);
 
     forceWalk(direction);
@@ -824,6 +826,7 @@ void Game::attack(CreaturePtr creature)
         cancelFollow();
 
     setAttackingCreature(creature);
+    m_localPlayer->stopAutoWalkUpdate();
 
     if(m_protocolVersion >= 963) {
         if(creature)
@@ -847,6 +850,7 @@ void Game::follow(CreaturePtr creature)
         cancelAttack();
 
     setFollowingCreature(creature);
+    m_localPlayer->stopAutoWalkUpdate();
 
     if(m_protocolVersion >= 963) {
         if(creature)
@@ -866,6 +870,8 @@ void Game::cancelAttackAndFollow()
         setFollowingCreature(nullptr);
     if(isAttacking())
         setAttackingCreature(nullptr);
+
+    m_localPlayer->stopAutoWalkUpdate();
 
     m_protocolGame->sendCancelAttackAndFollow();
 

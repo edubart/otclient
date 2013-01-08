@@ -37,6 +37,9 @@ public:
 
     void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
+    void stopAutoWalkUpdate();
+    void updateAutoWalkSteps(bool walkFailed = false);
+    bool autoWalk(const Position& destination);
     bool canWalk(Otc::Direction direction);
 
     void setStates(int states);
@@ -87,6 +90,7 @@ public:
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
+    std::vector<Position> getAutoWalkSteps() { return m_autoWalkSteps; }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -99,6 +103,7 @@ public:
     bool isLocalPlayer() { return true; }
 
     virtual void onAppear();
+    virtual void onPositionChange(const Position& newPos, const Position& oldPos);
 
 protected:
     void walk(const Position& oldPos, const Position& newPos);
@@ -117,6 +122,7 @@ private:
     // walk related
     Timer m_walkPingTimer;
     Position m_lastPrewalkDestionation;
+    Position m_lastAutoWalkDestination;
     ScheduledEventPtr m_autoWalkEndEvent;
     ticks_t m_walkLockExpiration;
     int m_lastWalkPing;
@@ -136,6 +142,7 @@ private:
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
     std::vector<int> m_spells;
+    std::vector<Position> m_autoWalkSteps;
 
     int m_states;
     int m_vocation;

@@ -47,7 +47,8 @@ namespace Otc
         ANIMATED_TEXT_DURATION = 1000,
         STATIC_DURATION_PER_CHARACTER = 60,
         MIN_STATIC_TEXT_DURATION = 3000,
-        MAX_STATIC_TEXT_WIDTH = 200
+        MAX_STATIC_TEXT_WIDTH = 200,
+        MAX_AUTOWALK_STEPS_RETRY = 10
     };
 
     enum DrawFlags {

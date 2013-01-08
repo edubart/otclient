@@ -161,12 +161,54 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     if(direction != Otc::InvalidDirection)
         setDirection(direction);
 
+    updateAutoWalkSteps(true);
+
     callLuaField("onCancelWalk", direction);
+}
+
+void LocalPlayer::updateAutoWalkSteps(bool walkFailed)
+{
+    if(!m_autoWalking) {
+        m_autoWalkSteps.clear();
+        return;
+    }
+
+    if(!m_lastAutoWalkDestination.isValid()) {
+        return;
+    }
+
+    // for now this cannot be done from lua, due to bot protection
+    m_autoWalkSteps.push_back(m_lastAutoWalkDestination);
+    if(m_autoWalkSteps.size() >= Otc::MAX_AUTOWALK_STEPS_RETRY || walkFailed) {
+        autoWalk(m_lastAutoWalkDestination);
+    }
+}
+
+bool LocalPlayer::autoWalk(const Position& destination)
+{
+    m_autoWalkSteps.clear();
+
+    m_lastAutoWalkDestination = destination;
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result = g_map.findPath(m_position, destination, 127, Otc::PathFindAllowNullTiles);
+
+    std::vector<Otc::Direction> dirs = std::get<0>(result);
+    if(dirs.size() == 0)
+        return false;
+
+    g_game.autoWalk(dirs);
+    return true;
+}
+
+void LocalPlayer::stopAutoWalkUpdate()
+{
+    m_lastAutoWalkDestination = Position();
+    m_autoWalkSteps.clear();
 }
 
 void LocalPlayer::stopWalk()
 {
     Creature::stopWalk(); // will call terminateWalk
+
     m_lastPrewalkDone = true;
     m_lastPrewalkDestionation = Position();
 }
@@ -229,6 +271,13 @@ void LocalPlayer::onAppear()
     // on teleports lock the walk
     if(!m_oldPosition.isInRange(m_position,1,1))
         lockWalk();
+}
+
+void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPos)
+{
+    Creature::onPositionChange(newPos, oldPos);
+
+    updateAutoWalkSteps();
 }
 
 void LocalPlayer::setStates(int states)

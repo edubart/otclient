@@ -383,7 +383,10 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
   local pos = self:getPosition(mousePosition)
   if pos and mouseButton == MouseLeftButton and self:isPressed() then
     local player = g_game.getLocalPlayer()
-    if not player:autoWalk(pos) then return false end
+    if not player:autoWalk(pos) then
+      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
+      return false
+    end
     return true
   end
   return false

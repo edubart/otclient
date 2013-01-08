@@ -87,7 +87,6 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
     self.cancelNextRelease = true
     return true
   elseif modules.game_interface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then
-    modules.game_interface.cancelAutoWalkCheck()
     return true
   end
   return false
