@@ -278,9 +278,10 @@ bool Tile::hasThing(const ThingPtr& thing)
 
 int Tile::getThingStackpos(const ThingPtr& thing)
 {
-    for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos)
+    for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos) {
         if(thing == m_things[stackpos])
             return stackpos;
+    }
     return -1;
 }
 

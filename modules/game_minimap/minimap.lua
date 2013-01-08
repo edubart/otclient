@@ -386,8 +386,9 @@ function onMinimapMouseRelease(self, mousePosition, mouseButton)
     if not player:autoWalk(pos) then
       modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
       return false
+    else
+      return true
     end
-    return true
   end
   return false
 end

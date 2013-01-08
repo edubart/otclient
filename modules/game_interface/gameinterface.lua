@@ -473,7 +473,6 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         return true
       else
         g_game.use(useThing)
-        return true
       end
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -524,8 +523,8 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     if not player:autoWalk(autoWalkPos) then
       modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
-      return true
     end
+    return true
   end
 
   return false
@@ -542,17 +541,23 @@ function moveStackableItem(item, toPos)
     g_game.move(item, toPos, 1)
     return
   end
-
   local count = item:getCount()
+
   countWindow = g_ui.createWidget('CountWindow', rootWidget)
-  local spinbox = countWindow:getChildById('countSpinBox')
+  local itembox = countWindow:getChildById('item')
   local scrollbar = countWindow:getChildById('countScrollBar')
-  spinbox:setMaximum(count)
-  spinbox:setMinimum(1)
-  spinbox:setValue(count)
+  itembox:setItemId(item:getId())
+  itembox:setItemCount(count)
   scrollbar:setMaximum(count)
   scrollbar:setMinimum(1)
   scrollbar:setValue(count)
+
+  local spinbox = countWindow:getChildById('spinBox')
+  spinbox:setMaximum(count)
+  spinbox:setMinimum(0)
+  spinbox:setValue(0)
+  spinbox:hideButtons()
+  spinbox:focus()
 
   local spinBoxValueChange = function(self, value)
     scrollbar:setValue(value)
@@ -560,6 +565,8 @@ function moveStackableItem(item, toPos)
   spinbox.onValueChange = spinBoxValueChange
 
   scrollbar.onValueChange = function(self, value)
+    item:setCount(count - value)
+    itembox:setItemCount(value)
     spinbox.onValueChange = nil
     spinbox:setValue(value)
     spinbox.onValueChange = spinBoxValueChange
@@ -567,7 +574,7 @@ function moveStackableItem(item, toPos)
 
   local okButton = countWindow:getChildById('buttonOk')
   local moveFunc = function()
-    g_game.move(item, toPos, spinbox:getValue())
+    g_game.move(item, toPos, itembox:getItemCount())
     okButton:getParent():destroy()
     countWindow = nil
   end

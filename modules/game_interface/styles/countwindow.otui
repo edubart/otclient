@@ -1,40 +1,52 @@
 CountWindow < MainWindow
   id: countWindow
   !text: tr('Move Stackable Item')
-  size: 196 122
+  size: 196 80
 
-  Label
-    !text: tr('Amount:')
-    text-auto-resize: true
+  SpinBox
+    id: spinBox
+    anchors.left: parent.left
+    anchors.top: parent.bottom
+    width: 0
+    height: 0
+    phantom: true
+    padding-bottom: -40
+
+  Item
+    id: item
     anchors.left: parent.left
     anchors.top: parent.top
     margin-top: 2
-
-  SpinBox
-    id: countSpinBox
-    margin-left: 5
-    anchors.left: prev.right
-    anchors.right: parent.right
-    anchors.top: parent.top
+    margin-left: -4
+    focusable: false
+    virtual: true
 
   HorizontalScrollBar
     id: countScrollBar
-    anchors.left: parent.left
+    anchors.left: prev.right
     anchors.right: parent.right
-    anchors.top: prev.bottom
-    margin-top: 8
+    anchors.top: prev.top
+    margin-left: 10
+    margin-top: -2
+    focusable: false
 
   Button
     id: buttonOk
     !text: tr('Ok')
-    width: 64
-    anchors.right: next.left
-    anchors.bottom: parent.bottom
-    margin-right: 5
+    height: 20
+    anchors.left: countScrollBar.horizontalCenter
+    anchors.right: countScrollBar.right
+    anchors.top: countScrollBar.bottom
+    margin-top: 7
+    focusable: false
 
   Button
     id: buttonCancel
     !text: tr('Cancel')
-    width: 64
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
+    height: 20
+    anchors.right: countScrollBar.horizontalCenter
+    anchors.left: countScrollBar.left
+    anchors.top: countScrollBar.bottom
+    margin-top: 7
+    margin-right: 6
+    focusable: false
