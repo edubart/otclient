@@ -311,3 +311,9 @@ std::string ResourceManager::getBaseDir()
     return buffer;
 }
 
+std::string ResourceManager::guessFileType(const std::string& filename, const std::string& type)
+{
+    if(g_resources.fileExists(filename))
+        return filename;
+    return filename + "." + type;
+}

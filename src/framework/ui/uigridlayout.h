@@ -46,6 +46,7 @@ public:
     void setFlow(bool enable) { m_flow = enable; update(); }
 
     Size getCellSize() { return m_cellSize; }
+    int getCellSpacing() { return m_cellSpacing; }
     int getNumColumns() { return m_numColumns; }
     int getNumLines() { return m_numLines; }
 

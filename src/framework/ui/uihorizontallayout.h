@@ -39,6 +39,7 @@ public:
 protected:
     bool internalUpdate();
 
+    Fw::AlignmentFlag m_alignChidren;
     stdext::boolean<false> m_alignRight;
 };
 

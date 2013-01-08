@@ -38,6 +38,7 @@ void UIWidget::initBaseStyle()
     m_iconColor = Color::white;
     m_color = Color::white;
     m_opacity = 1.0f;
+    m_iconAlign = Fw::AlignNone;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
     static unsigned long id = 1;
@@ -102,6 +103,8 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setIconRect(node->value<Rect>());
         else if(node->tag() == "icon-clip")
             setIconClip(node->value<Rect>());
+        else if(node->tag() == "icon-align")
+            setIconAlign(Fw::translateAlignment(node->value()));
         else if(node->tag() == "opacity")
             setOpacity(node->value<float>());
         else if(node->tag() == "enabled")
@@ -110,7 +113,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setVisible(node->value<bool>());
         else if(node->tag() == "checked")
             setChecked(node->value<bool>());
-        else if(node->tag() == "dragable")
+        else if(node->tag() == "draggable")
             setDraggable(node->value<bool>());
         else if(node->tag() == "on")
             setOn(node->value<bool>());
@@ -306,14 +309,14 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             // load once
             if(m_firstOnStyle) {
                 std::string funcName = node->tag().substr(1);
-                std::string funcOrigin = "@" + node->source() + "[" + node->tag() + "]";
+                std::string funcOrigin = "@" + node->source() + ": [" + node->tag() + "]";
                 g_lua.loadFunction(node->value(), funcOrigin);
                 luaSetField(funcName);
             }
         // lua fields value
         } else if(stdext::starts_with(node->tag(), "&")) {
             std::string fieldName = node->tag().substr(1);
-            std::string fieldOrigin = "@" + node->source() + "[" + node->tag() + "]";
+            std::string fieldOrigin = "@" + node->source() + ": [" + node->tag() + "]";
 
             g_lua.evaluateExpression(node->value(), fieldOrigin);
             luaSetField(fieldName);
@@ -375,7 +378,12 @@ void UIWidget::drawIcon(const Rect& screenCoords)
             drawRect.resize(m_iconRect.size());
         } else {
             drawRect.resize(m_iconClipRect.size());
-            drawRect.moveCenter(screenCoords.center());
+
+            if(m_iconAlign == Fw::AlignNone)
+                drawRect.moveCenter(screenCoords.center());
+            else
+                drawRect.alignIn(screenCoords, m_iconAlign);
+            drawRect.translate(m_iconOffset);
         }
         g_painter->setColor(m_iconColor);
         g_painter->drawTexturedRect(drawRect, m_icon, m_iconClipRect);
@@ -385,6 +393,6 @@ void UIWidget::drawIcon(const Rect& screenCoords)
 void UIWidget::setIcon(const std::string& iconFile)
 {
     m_icon = g_textures.getTexture(iconFile);
-    if(!m_iconClipRect.isValid())
+    if(m_icon && !m_iconClipRect.isValid())
         m_iconClipRect = Rect(0, 0, m_icon->getSize());
 }

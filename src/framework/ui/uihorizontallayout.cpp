@@ -46,8 +46,8 @@ bool UIHorizontalLayout::internalUpdate()
         std::reverse(widgets.begin(), widgets.end());
 
     bool changed = false;
-    Rect clippingRect = parentWidget->getPaddingRect();
-    Point pos = (m_alignRight) ? clippingRect.topRight() : clippingRect.topLeft();
+    Rect paddingRect = parentWidget->getPaddingRect();
+    Point pos = (m_alignRight) ? paddingRect.topRight() : paddingRect.topLeft();
     int preferredWidth = 0;
     int gap;
 
@@ -62,13 +62,19 @@ bool UIHorizontalLayout::internalUpdate()
         preferredWidth += gap;
 
         if(widget->isFixedSize()) {
-            // center it
-            pos.y = clippingRect.top() + (clippingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
-            pos.y = std::max(pos.y, parentWidget->getY());
+            if(widget->getTextAlign() & Fw::AlignTop) {
+                pos.y = paddingRect.top() + widget->getMarginTop();
+            } else if(widget->getTextAlign() & Fw::AlignBottom) {
+                pos.y = paddingRect.bottom() - widget->getHeight() - widget->getMarginBottom();
+                pos.y = std::max(pos.y, paddingRect.top());
+            } else { // center it
+                pos.y = paddingRect.top() + (paddingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
+                pos.y = std::max(pos.y, paddingRect.top());
+            }
         } else {
             // expand height
-            size.setHeight(clippingRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
-            pos.y = clippingRect.top() + (clippingRect.height() - size.height())/2;
+            size.setHeight(paddingRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
+            pos.y = paddingRect.top() + (paddingRect.height() - size.height())/2;
         }
 
         if(widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size)))

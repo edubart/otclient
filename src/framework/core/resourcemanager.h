@@ -70,6 +70,8 @@ public:
     std::string getWorkDir() { return m_workDir; }
     std::deque<std::string> getSearchPaths() { return m_searchPaths; }
 
+    std::string guessFileType(const std::string& filename, const std::string& type);
+
 private:
     std::string m_workDir;
     std::string m_writeDir;

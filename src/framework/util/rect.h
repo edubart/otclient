@@ -284,6 +284,27 @@ public:
             moveTop(r.top());
     }
 
+    void alignIn(const TRect<T> &r, Fw::AlignmentFlag align) {
+        if(align == Fw::AlignTopLeft)
+            moveTopLeft(r.topLeft());
+        else if(align == Fw::AlignTopRight)
+            moveTopRight(r.topRight());
+        else if(align == Fw::AlignTopCenter)
+            moveTopCenter(r.topCenter());
+        else if(align == Fw::AlignBottomLeft)
+            moveBottomLeft(r.bottomLeft());
+        else if(align == Fw::AlignBottomRight)
+            moveBottomRight(r.bottomRight());
+        else if(align == Fw::AlignBottomCenter)
+            moveBottomCenter(r.bottomCenter());
+        else if(align == Fw::AlignLeftCenter)
+            moveCenterLeft(r.centerLeft());
+        else if(align == Fw::AlignCenter)
+            moveCenter(r.center());
+        else if(align == Fw::AlignRightCenter)
+            moveCenterRight(r.centerRight());
+    }
+
     TRect<T>& operator=(const TRect<T>& other) { x1 = other.x1; y1 = other.y1; x2 = other.x2; y2 = other.y2; return *this;  }
     bool operator==(const TRect<T>& other) const { return (x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2); }
     bool operator!=(const TRect<T>& other) const { return (x1 != other.x1 || y1 != other.y1 || x2 != other.x2 || y2 != other.y2); }

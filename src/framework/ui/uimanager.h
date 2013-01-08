@@ -44,12 +44,12 @@ public:
     void updateHoveredWidget(bool now = false);
 
     void clearStyles();
-    bool importStyle(const std::string& file);
+    bool importStyle(std::string file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
     OTMLNodePtr getStyle(const std::string& styleName);
     std::string getStyleClass(const std::string& styleName);
 
-    UIWidgetPtr loadUI(const std::string& file, const UIWidgetPtr& parent);
+    UIWidgetPtr loadUI(std::string file, const UIWidgetPtr& parent);
     UIWidgetPtr displayUI(const std::string& file) { return loadUI(file, m_rootWidget); }
     UIWidgetPtr createWidget(const std::string& styleName, const UIWidgetPtr& parent);
     UIWidgetPtr createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);

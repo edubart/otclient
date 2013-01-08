@@ -124,17 +124,17 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
 void UIWidget::addChild(const UIWidgetPtr& child)
 {
     if(!child) {
-        g_logger.warning("attempt to add a null child into a UIWidget");
+        g_logger.traceWarning("attempt to add a null child into a UIWidget");
         return;
     }
 
     if(child->isDestroyed()) {
-        g_logger.warning("attemp to add a destroyed child into a UIWidget");
+        g_logger.traceWarning("attemp to add a destroyed child into a UIWidget");
         return;
     }
 
     if(hasChild(child)) {
-        g_logger.warning("attempt to add a child again into a UIWidget");
+        g_logger.traceWarning("attempt to add a child again into a UIWidget");
         return;
     }
 
@@ -165,20 +165,20 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 {
     if(!child) {
-        g_logger.warning("attempt to insert a null child into a UIWidget");
+        g_logger.traceWarning("attempt to insert a null child into a UIWidget");
         return;
     }
 
     if(hasChild(child)) {
-        g_logger.warning("attempt to insert a child again into a UIWidget");
+        g_logger.traceWarning("attempt to insert a child again into a UIWidget");
         return;
     }
 
     index = index <= 0 ? (m_children.size() + index) : index-1;
 
     if(!(index >= 0 && (uint)index <= m_children.size())) {
-        g_logger.traceError("attempt to insert a child in an invalid index");
-        return;
+        //g_logger.traceWarning("attempt to insert a child UIWidget into an invalid index, using nearest index...");
+        index = std::min(std::max(index, 0),  (int)m_children.size());
     }
 
     // retrieve child by index
@@ -232,7 +232,7 @@ void UIWidget::removeChild(UIWidgetPtr child)
 
         g_ui.onWidgetDisappear(child);
     } else
-        g_logger.error("attempt to remove an unknown child from a UIWidget");
+        g_logger.traceError("attempt to remove an unknown child from a UIWidget");
 }
 
 
@@ -376,7 +376,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
         return;
 
     if((uint)index - 1 > m_children.size()) {
-        g_logger.error(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
+        g_logger.traceError(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
         return;
     }
 
@@ -472,7 +472,11 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
 void UIWidget::mergeStyle(const OTMLNodePtr& styleNode)
 {
     applyStyle(styleNode);
+    std::string name = m_style->tag();
+    std::string source = m_style->source();
     m_style->merge(styleNode);
+    m_style->setTag(name);
+    m_style->setSource(source);
     updateStyle();
 }
 
@@ -491,7 +495,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
             if(node->tag()[0] == '!') {
                 std::string tag = node->tag().substr(1);
                 std::string code = stdext::format("tostring(%s)", node->value().c_str());
-                std::string origin = "@" + node->source() + "[" + node->tag() + "]";
+                std::string origin = "@" + node->source() + ": [" + node->tag() + "]";
                 g_lua.evaluateExpression(code, origin);
                 std::string value = g_lua.popString();
 
@@ -510,7 +514,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         }
         m_firstOnStyle = false;
     } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("failed to apply style to widget '%s': %s", m_id, e.what()));
+        g_logger.traceError(stdext::format("failed to apply style to widget '%s': %s", m_id, e.what()));
     }
     m_loadingStyle = false;
 }
@@ -523,7 +527,7 @@ void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedW
     if(UIAnchorLayoutPtr anchorLayout = getAnchoredLayout())
         anchorLayout->addAnchor(static_self_cast<UIWidget>(), anchoredEdge, hookedWidgetId, hookedEdge);
     else
-        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
+        g_logger.traceError(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::removeAnchor(Fw::AnchorEdge anchoredEdge)
@@ -540,7 +544,7 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorHorizontalCenter, hookedWidgetId, Fw::AnchorHorizontalCenter);
         anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorVerticalCenter, hookedWidgetId, Fw::AnchorVerticalCenter);
     } else
-        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
+        g_logger.traceError(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::fill(const std::string& hookedWidgetId)
@@ -554,7 +558,7 @@ void UIWidget::fill(const std::string& hookedWidgetId)
         anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorTop, hookedWidgetId, Fw::AnchorTop);
         anchorLayout->addAnchor(static_self_cast<UIWidget>(), Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
     } else
-        g_logger.error(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
+        g_logger.traceError(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
 void UIWidget::breakAnchors()
@@ -751,7 +755,8 @@ void UIWidget::destroyChildren()
         child->destroy();
     }
 
-    layout->enableUpdates();
+    if(layout)
+        layout->enableUpdates();
 }
 
 void UIWidget::setId(const std::string& id)
@@ -790,6 +795,9 @@ void UIWidget::setParent(const UIWidgetPtr& parent)
 
 void UIWidget::setLayout(const UILayoutPtr& layout)
 {
+    if(!layout)
+        stdext::throw_exception("attempt to set a nil layout to a widget");
+
     if(m_layout)
         m_layout->disableUpdates();
 
@@ -893,14 +901,13 @@ void UIWidget::setVisible(bool visible)
         updateParentLayout();
 
         updateState(Fw::ActiveState);
+        updateState(Fw::HiddenState);
 
         // visibility can change the current hovered widget
         if(visible)
             g_ui.onWidgetAppear(static_self_cast<UIWidget>());
         else
             g_ui.onWidgetDisappear(static_self_cast<UIWidget>());
-
-        callLuaField("onVisibilityChange", visible);
     }
 }
 
@@ -954,16 +961,6 @@ void UIWidget::setVirtualOffset(const Point& offset)
     m_virtualOffset = offset;
     if(m_layout)
         m_layout->update();
-}
-
-bool UIWidget::isVisible()
-{
-    if(!m_visible)
-        return false;
-    else if(UIWidgetPtr parent = getParent())
-        return parent->isVisible();
-    else
-        return static_self_cast<UIWidget>() == g_ui.getRootWidget();
 }
 
 bool UIWidget::isAnchored()
@@ -1289,6 +1286,19 @@ void UIWidget::updateState(Fw::WidgetState state)
             newStatus = (getParent() && (getParent()->getChildIndex(static_self_cast<UIWidget>()) % 2) == 1);
             break;
         }
+        case Fw::HiddenState: {
+            bool visible = true;
+            UIWidgetPtr widget = static_self_cast<UIWidget>();
+            do {
+                if(!widget->isExplicitlyVisible()) {
+                    visible = false;
+                    break;
+                }
+            } while((widget = widget->getParent()));
+            newStatus = !visible;
+            updateChildren = newStatus != oldStatus;
+            break;
+        }
         default:
             return;
     }
@@ -1304,6 +1314,8 @@ void UIWidget::updateState(Fw::WidgetState state)
         // disabled widgets cannot have hover state
         if(state == Fw::DisabledState && !newStatus && isHovered()) {
             g_ui.updateHoveredWidget();
+        } else if(state == Fw::HiddenState) {
+            onVisibilityChange(!newStatus);
         }
     }
 }
@@ -1414,7 +1426,7 @@ void UIWidget::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 
     // move children that is outside the parent rect to inside again
     for(const UIWidgetPtr& child : m_children) {
-        if(!child->isAnchored())
+        if(!child->isAnchored() && child->isVisible())
             child->bindRectToParent();
     }
 
@@ -1441,6 +1453,13 @@ void UIWidget::onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidge
 void UIWidget::onHoverChange(bool hovered)
 {
     callLuaField("onHoverChange", hovered);
+}
+
+void UIWidget::onVisibilityChange(bool visible)
+{
+    if(!isAnchored())
+        bindRectToParent();
+    callLuaField("onVisibilityChange", visible);
 }
 
 bool UIWidget::onDragEnter(const Point& mousePos)

@@ -44,7 +44,7 @@ void UIWidget::updateText()
     // update rect size
     if(!m_rect.isValid() || m_textAutoResize) {
         Size textBoxSize = getTextSize();
-        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom);
+        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
         if(size.width() <= 0 || (m_textAutoResize && !m_textWrap))
             size.setWidth(textBoxSize.width());
@@ -82,12 +82,13 @@ void UIWidget::drawText(const Rect& screenCoords)
         return;
 
     if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
+        Rect coords = Rect(screenCoords.topLeft() + m_textOffset, screenCoords.bottomRight());
         m_textMustRecache = false;
-        m_textCachedScreenCoords = screenCoords;
+        m_textCachedScreenCoords = coords;
 
         m_textCoordsBuffer.clear();
 
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, screenCoords.translated(m_textOffset), m_textAlign);
+        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, coords, m_textAlign);
     }
 
     g_painter->setColor(m_color);

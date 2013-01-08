@@ -83,7 +83,7 @@ bool UIGridLayout::internalUpdate()
 
     int numColumns = m_numColumns;
     if(m_flow && m_cellSize.width() > 0) {
-        numColumns = clippingRect.width() / (m_cellSize.width() + m_cellSpacing);
+        numColumns = (clippingRect.width() + m_cellSpacing) / (m_cellSize.width() + m_cellSpacing);
         if(numColumns > 0) {
             m_numColumns = numColumns;
             m_numLines = std::ceil(widgets.size() / (float)numColumns);

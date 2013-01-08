@@ -132,7 +132,6 @@ public:
     void setAutoRepeatDelay(int delay) { m_autoRepeatDelay = delay; }
     void setVirtualOffset(const Point& offset);
 
-    bool isVisible();
     bool isAnchored();
     bool isChildLocked(const UIWidgetPtr& child);
     bool hasChild(const UIWidgetPtr& child);
@@ -185,6 +184,7 @@ protected:
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
     virtual void onChildFocusChange(const UIWidgetPtr& focusedChild, const UIWidgetPtr& unfocusedChild, Fw::FocusReason reason);
     virtual void onHoverChange(bool hovered);
+    virtual void onVisibilityChange(bool visible);
     virtual bool onDragEnter(const Point& mousePos);
     virtual bool onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
     virtual bool onDragMove(const Point& mousePos, const Point& mouseMoved);
@@ -232,7 +232,8 @@ public:
     bool isChecked() { return hasState(Fw::CheckedState); }
     bool isOn() { return hasState(Fw::OnState); }
     bool isDragging() { return hasState(Fw::DraggingState); }
-    bool isHidden() { return !isVisible(); }
+    bool isVisible() { return !hasState(Fw::HiddenState); }
+    bool isHidden() { return hasState(Fw::HiddenState); }
     bool isExplicitlyEnabled() { return m_enabled; }
     bool isExplicitlyVisible() { return m_visible; }
     bool isFocusable() { return m_focusable; }
@@ -280,6 +281,7 @@ protected:
     Color m_iconColor;
     Rect m_iconRect;
     Rect m_iconClipRect;
+    Fw::AlignmentFlag m_iconAlign;
     EdgeGroup<Color> m_borderColor;
     EdgeGroup<int> m_borderWidth;
     EdgeGroup<int> m_margin;
@@ -306,14 +308,15 @@ public:
     void setBackgroundRect(const Rect& rect) { m_backgroundRect = rect; }
     void setIcon(const std::string& iconFile);
     void setIconColor(const Color& color) { m_iconColor = color; }
-    void setIconOffsetX(int x) { m_iconRect.setX(x); }
-    void setIconOffsetY(int y) { m_iconRect.setX(y); }
-    void setIconOffset(const Point& pos) { m_iconRect.move(pos); }
+    void setIconOffsetX(int x) { m_iconOffset.x = x; }
+    void setIconOffsetY(int y) { m_iconOffset.y = y; }
+    void setIconOffset(const Point& pos) { m_iconOffset = pos; }
     void setIconWidth(int width) { m_iconRect.setWidth(width); }
     void setIconHeight(int height) { m_iconRect.setHeight(height); }
     void setIconSize(const Size& size) { m_iconRect.resize(size); }
     void setIconRect(const Rect& rect) { m_iconRect = rect; }
     void setIconClip(const Rect& rect) { m_iconClipRect = rect; }
+    void setIconAlign(Fw::AlignmentFlag align) { m_iconAlign = align; }
     void setBorderWidth(int width) { m_borderWidth.set(width); updateLayout(); }
     void setBorderWidthTop(int width) { m_borderWidth.top = width; }
     void setBorderWidthRight(int width) { m_borderWidth.right = width; }
@@ -404,6 +407,7 @@ protected:
     Rect m_imageClipRect;
     Rect m_imageRect;
     Color m_imageColor;
+    Point m_iconOffset;
     stdext::boolean<false> m_imageFixedRatio;
     stdext::boolean<false> m_imageRepeated;
     stdext::boolean<false> m_imageSmooth;

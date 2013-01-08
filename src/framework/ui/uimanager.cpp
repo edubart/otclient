@@ -28,6 +28,7 @@
 #include <framework/platform/platformwindow.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
+#include <framework/core/resourcemanager.h>
 
 UIManager g_ui;
 
@@ -149,7 +150,7 @@ void UIManager::inputEvent(const InputEvent& event)
             break;
         }
         case Fw::MouseWheelInputEvent:
-            m_mouseReceiver->propagateOnMouseEvent(event.mousePos, widgetList);
+            m_rootWidget->propagateOnMouseEvent(event.mousePos, widgetList);
             for(const UIWidgetPtr& widget : widgetList) {
                 if(widget->onMouseWheel(event.mousePos, event.wheelDirection))
                     break;
@@ -219,9 +220,12 @@ void UIManager::updateHoveredWidget(bool now)
             return;
 
         m_hoverUpdateScheduled = false;
-        UIWidgetPtr hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition(), false);
-        if(hoveredWidget && !hoveredWidget->isEnabled())
-            hoveredWidget = nullptr;
+        UIWidgetPtr hoveredWidget;
+        //if(!g_window.isMouseButtonPressed(Fw::MouseLeftButton) && !g_window.isMouseButtonPressed(Fw::MouseRightButton)) {
+            hoveredWidget = m_rootWidget->recursiveGetChildByPos(g_window.getMousePosition(), false);
+            if(hoveredWidget && !hoveredWidget->isEnabled())
+                hoveredWidget = nullptr;
+        //}
 
         if(hoveredWidget != m_hoveredWidget) {
             UIWidgetPtr oldHovered = m_hoveredWidget;
@@ -304,9 +308,11 @@ void UIManager::clearStyles()
     m_styles.clear();
 }
 
-bool UIManager::importStyle(const std::string& file)
+bool UIManager::importStyle(std::string file)
 {
     try {
+        file = g_resources.guessFileType(file, "otui");
+
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
 
         for(const OTMLNodePtr& styleNode : doc->children())
@@ -385,9 +391,11 @@ std::string UIManager::getStyleClass(const std::string& styleName)
     return "";
 }
 
-UIWidgetPtr UIManager::loadUI(const std::string& file, const UIWidgetPtr& parent)
+UIWidgetPtr UIManager::loadUI(std::string file, const UIWidgetPtr& parent)
 {
     try {
+        file = g_resources.guessFileType(file, "otui");
+
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         UIWidgetPtr widget;
         for(const OTMLNodePtr& node : doc->children()) {
