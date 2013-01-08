@@ -94,7 +94,7 @@ function onAddVip(id, name, state)
 
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
-
+  
   for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
     if state == VipState.Online and child.vipState ~= VipState.Online then

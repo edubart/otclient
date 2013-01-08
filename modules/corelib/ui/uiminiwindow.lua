@@ -81,6 +81,15 @@ function UIMiniWindow:setup()
         self:minimize()
       end
     end
+    
+  self:getChildById('miniwindowTopBar').onDoubleClick =
+    function()
+      if self:isOn() then
+        self:maximize()
+      else
+        self:minimize()
+      end
+    end
 
   local oldParent = self:getParent()
 

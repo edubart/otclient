@@ -376,7 +376,7 @@ function onOpenNpcTrade(items)
       newItem.price = item[5]
       table.insert(tradeItems[SELL], newItem)
     else
-      error("server error: item name " .. item[1] .. " has neither buy or sell price.")
+      error("server error: item name " .. item[2] .. " has neither buy or sell price.")
     end
   end
 
