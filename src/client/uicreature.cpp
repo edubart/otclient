@@ -33,7 +33,7 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
 
     if(m_creature) {
         Rect drawRect = getPaddingRect();
-        g_painter->setColor(Color::white);
+        g_painter->setColor(m_imageColor);
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
     }
 }
@@ -53,5 +53,30 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "fixed-creature-size")
             setFixedCreatureSize(node->value<bool>());
+        else if(node->tag() == "outfit-id") {
+            Outfit outfit = (m_creature ? m_creature->getOutfit() : Outfit());
+            outfit.setId(node->value<int>());
+            setOutfit(outfit);
+        }
+        else if(node->tag() == "outfit-head") {
+            Outfit outfit = (m_creature ? m_creature->getOutfit() : Outfit());
+            outfit.setHead(node->value<int>());
+            setOutfit(outfit);
+        }
+        else if(node->tag() == "outfit-body") {
+            Outfit outfit = (m_creature ? m_creature->getOutfit() : Outfit());
+            outfit.setBody(node->value<int>());
+            setOutfit(outfit);
+        }
+        else if(node->tag() == "outfit-legs") {
+            Outfit outfit = (m_creature ? m_creature->getOutfit() : Outfit());
+            outfit.setLegs(node->value<int>());
+            setOutfit(outfit);
+        }
+        else if(node->tag() == "outfit-feet") {
+            Outfit outfit = (m_creature ? m_creature->getOutfit() : Outfit());
+            outfit.setFeet(node->value<int>());
+            setOutfit(outfit);
+        }
     }
 }

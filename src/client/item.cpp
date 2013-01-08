@@ -65,6 +65,12 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView *l
 
     // determine animation phase
     int animationPhase = calculateAnimationPhase(animate);
+    if(getAnimationPhases() > 1) {
+        if(animate)
+            animationPhase = (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+        else
+            animationPhase = getAnimationPhases()-1;
+    }
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
@@ -353,9 +359,12 @@ int Item::calculateAnimationPhase(bool animate)
 
 int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
+    int exactSize = 0;
     calculatePatterns(xPattern, yPattern, zPattern);
     animationPhase = calculateAnimationPhase(true);
-    return Thing::getExactSize(0, xPattern, yPattern, zPattern, animationPhase);
+    for(layer = 0; layer < getLayers(); ++layer)
+        exactSize = std::max(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
+    return exactSize;
 }
 
 const ThingTypePtr& Item::getThingType()

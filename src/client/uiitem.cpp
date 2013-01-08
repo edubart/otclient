@@ -44,7 +44,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
 
     drawImage(m_rect);
 
-    if(m_item) {
+    if(m_itemVisible && m_item) {
         Rect drawRect = getPaddingRect();
         Point dest = drawRect.bottomRight() + Point(1,1);
 
@@ -97,6 +97,8 @@ void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& style
             setItemId(node->value<int>());
         else if(node->tag() == "item-count")
             setItemCount(node->value<int>());
+        else if(node->tag() == "item-visible")
+            setItemVisible(node->value<bool>());
         else if(node->tag() == "virtual")
             setVirtual(node->value<bool>());
     }

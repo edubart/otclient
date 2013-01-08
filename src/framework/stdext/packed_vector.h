@@ -58,10 +58,10 @@ public:
     const_iterator cend() const { return m_data + m_size; }
 
     reverse_iterator rbegin() { return reverse_iterator(end()); }
-    const_reverse_iterator rbegin() const { return reverse_iterator(end()); }
+    const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
     const_reverse_iterator crbegin() const { return const_reverse_iterator(end()); }
     reverse_iterator rend() { return reverse_iterator(begin()); }
-    const_reverse_iterator rend() const { return reverse_iterator(begin()); }
+    const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
     const_reverse_iterator crend() const { return const_reverse_iterator(begin()); }
 
     size_type size() const { return m_size; }
@@ -140,7 +140,7 @@ public:
         return tmp + i;
     }
 
-    void swap(packed_vector<T,U>& other) { std::swap(m_size, other.m_size); std::swap(m_data, other.m_data); return *this; }
+    void swap(packed_vector<T,U>& other) { std::swap(m_size, other.m_size); std::swap(m_data, other.m_data); }
 
     operator std::vector<T>() const { return std::vector<T>(begin(), end()); }
 

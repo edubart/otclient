@@ -24,6 +24,7 @@
 #define RECT_H
 
 #include "../stdext/types.h"
+#include "../const.h"
 #include <sstream>
 
 template<class T>
@@ -108,6 +109,10 @@ public:
     void moveBottomRight(const TPoint<T> &p) { moveRight(p.x); moveBottom(p.y); }
     void moveTopRight(const TPoint<T> &p) { moveRight(p.x); moveTop(p.y); }
     void moveBottomLeft(const TPoint<T> &p) { moveLeft(p.x); moveBottom(p.y); }
+    void moveTopCenter(const TPoint<T> &p) { moveHorizontalCenter(p.x); moveTop(p.y); }
+    void moveBottomCenter(const TPoint<T> &p) { moveHorizontalCenter(p.x); moveBottom(p.y); }
+    void moveCenterLeft(const TPoint<T> &p) { moveLeft(p.x); moveVerticalCenter(p.y); }
+    void moveCenterRight(const TPoint<T> &p) { moveRight(p.x); moveVerticalCenter(p.y); }
 
     TRect<T> translated(int x, int y) const { return TRect<T>(TPoint<T>(x1 + x, y1 + y), TPoint<T>(x2 + x, y2 + y)); }
     TRect<T> translated(const TPoint<T> &p) const { return TRect<T>(TPoint<T>(x1 + p.x, y1 + p.y), TPoint<T>(x2 + p.x, y2 + p.y)); }

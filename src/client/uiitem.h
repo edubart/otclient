@@ -36,6 +36,7 @@ public:
     void setItemId(int id);
     void setItemCount(int count) { if(m_item) m_item->setCount(count); }
     void setItemSubType(int subType) { if(m_item) m_item->setSubType(subType); }
+    void setItemVisible(bool visible) { m_itemVisible = visible; }
     void setItem(const ItemPtr& item) { m_item = item; }
     void setVirtual(bool virt) { m_virtual = virt; }
     void clearItem() { setItemId(0); }
@@ -45,12 +46,14 @@ public:
     int getItemSubType() { return m_item ? m_item->getSubType() : 0; }
     ItemPtr getItem() { return m_item; }
     bool isVirtual() { return m_virtual; }
+    bool isItemVisible() { return m_itemVisible; }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
     ItemPtr m_item;
     stdext::boolean<false> m_virtual;
+    stdext::boolean<true> m_itemVisible;
 };
 
 #endif
