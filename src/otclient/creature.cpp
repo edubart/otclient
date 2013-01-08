@@ -672,6 +672,9 @@ Point Creature::getDrawOffset()
 int Creature::getStepDuration(bool ignoreDiagonal)
 {
     int speed = m_speed;
+    if(speed < 1)
+        return 0;
+
     if(g_game.getFeature(Otc::GameNewSpeedLaw))
         speed *= 2;
 

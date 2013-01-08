@@ -104,7 +104,7 @@ function onAddVip(id, name, state)
 
     if (state ~= VipState.Online and child.vipState ~= VipState.Online)
       or (state == VipState.Online and child.vipState == VipState.Online) then
-	  
+      
       local childText = child:getText():lower()
       local length = math.min(childText:len(), nameLower:len())
 
