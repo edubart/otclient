@@ -364,19 +364,23 @@ function onOpenNpcTrade(items)
   tradeItems[SELL] = {}
 
   for key,item in pairs(items) do
-    local newItem = {}
-    newItem.ptr = item[1]
-    newItem.name = item[2]
-    newItem.weight = item[3] / 100
-
+    
     if item[4] > 0 then
+      local newItem = {}
+      newItem.ptr = item[1]
+      newItem.name = item[2]
+      newItem.weight = item[3] / 100
       newItem.price = item[4]
       table.insert(tradeItems[BUY], newItem)
-    elseif item[5] > 0 then
+    end
+    
+    if item[5] > 0 then
+      local newItem = {}
+      newItem.ptr = item[1]
+      newItem.name = item[2]
+      newItem.weight = item[3] / 100
       newItem.price = item[5]
       table.insert(tradeItems[SELL], newItem)
-    else
-      error("server error: item name " .. item[2] .. " has neither buy or sell price.")
     end
   end
 
