@@ -38,7 +38,6 @@ Game g_game;
 
 Game::Game()
 {
-    resetGameStates();
     m_protocolVersion = 0;
     m_clientVersion = 0;
     m_online = false;

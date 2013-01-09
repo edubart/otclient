@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_CONST_H
-#define OTCLIENT_CONST_H
+#ifndef CLIENT_CONST_H
+#define CLIENT_CONST_H
 
 namespace Otc
 {

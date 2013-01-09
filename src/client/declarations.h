@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_DECLARATIONS_H
-#define OTCLIENT_DECLARATIONS_H
+#ifndef CLIENT_DECLARATIONS_H
+#define CLIENT_DECLARATIONS_H
 
 #include "global.h"
 #include <framework/net/declarations.h>

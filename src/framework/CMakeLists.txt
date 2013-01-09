@@ -169,11 +169,14 @@ message(STATUS "Build revision: ${BUILD_REVISION}")
 add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 # find boost
-set(REQUIRED_BOOST_COMPONENTS system filesystem regex locale)
+set(REQUIRED_BOOST_COMPONENTS locale system filesystem regex thread)
 if(WIN32)
     set(Boost_THREADAPI win32)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
-    set(REQUIRED_BOOST_COMPONENTS ${REQUIRED_BOOST_COMPONENTS} thread chrono) # mingw32 does not have std::thread
+    set(REQUIRED_BOOST_COMPONENTS ${REQUIRED_BOOST_COMPONENTS} chrono) # mingw32 does not have std::thread
+else()
+    find_package(ICU)
+    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${ICU_LIBRARIES})
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})

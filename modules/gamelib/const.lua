@@ -148,10 +148,7 @@ CIPSOFT_RSA = "1321277432058722840622950990822933849527763264961655079678763618"
               "88792221429527047321331896351555606801473202394175817"
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-PIC_SIGNATURE = 1337606793
-if g_game.getClientVersion() < 970 then
-  PIC_SIGNATURE = 1353074333
-end
+PIC_SIGNATURE = 0x50a6469d
 
 OsTypes = {
   Linux = 1,

@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTCLIENT_GLOBAL_H
-#define OTCLIENT_GLOBAL_H
+#ifndef CLIENT_GLOBAL_H
+#define CLIENT_GLOBAL_H
 
 #include <framework/global.h>
 
