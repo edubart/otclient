@@ -26,6 +26,7 @@
 #include "declarations.h"
 
 #include <framework/core/declarations.h>
+#include <framework/otml/declarations.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/luaengine/luaobject.h>
@@ -75,6 +76,11 @@ enum ThingAttr : uint8 {
     ThingAttrLook             = 31,
     ThingAttrCloth            = 32,
     ThingAttrMarket           = 33,
+
+    // additional
+    ThingAttrOpacity          = 100,
+    ThingAttrNotPreWalkable   = 101,
+
     ThingAttrChargeable       = 254, // deprecated
     ThingLastAttr             = 255
 };
@@ -107,6 +113,7 @@ public:
     ThingType();
 
     void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
+    void unserializeOtml(const OTMLNodePtr& node);
 
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView = nullptr);
 
@@ -172,6 +179,10 @@ public:
     bool isCloth() { return m_attribs.has(ThingAttrCloth); }
     bool isMarketable() { return m_attribs.has(ThingAttrMarket); }
 
+    // additional
+    float getOpacity() { return m_opacity; }
+    bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
+
 private:
     const TexturePtr& getTexture(int animationPhase);
     Size getBestTextureDimension(int w, int h, int count);
@@ -190,6 +201,7 @@ private:
     int m_animationPhases;
     int m_layers;
     int m_elevation;
+    float m_opacity;
 
     std::vector<int> m_spritesIndex;
     std::vector<TexturePtr> m_textures;

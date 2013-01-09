@@ -37,6 +37,7 @@ void Client::init(std::vector<std::string>& args)
     // register needed lua functions
     registerLuaFunctions();
 
+    g_map.init();
     g_game.init();
     g_shaders.init();
     g_things.init();

@@ -22,6 +22,8 @@
 
 #include "protocolgame.h"
 #include "game.h"
+#include "client.h"
+#include <framework/core/application.h>
 
 void ProtocolGame::send(const OutputMessagePtr& outputMessage)
 {
@@ -50,7 +52,16 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
 
     msg->addU8(Proto::ClientPendingGame);
 
-    msg->addU16(g_lua.callGlobalField<int>("g_game", "getOsType"));
+    msg->addU16(g_game.getOs());
+
+    if(g_game.getFeature(Otc::GameUpdater)) {
+        msg->addString(g_app.getOs());
+        msg->addString(g_game.getUpdaterSignature());
+    }
+
+    if(g_game.getFeature(Otc::GameLoginLocale))
+        msg->addString(m_locale);
+
     msg->addU16(g_game.getProtocolVersion());
 
     if(g_game.getProtocolVersion() >= 971) {
@@ -92,6 +103,12 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
         paddingBytes -= 5;
     }
 
+    if(paddingBytes < 0) {
+        g_game.processLoginError("AccountName or Password or CharacterName are too big!\nPlease contact game support.");
+        g_game.processDisconnect();
+        return;
+    }
+
     // complete the 128 bytes for rsa encryption with zeros
     msg->addPaddingBytes(paddingBytes);
 
@@ -119,10 +136,14 @@ void ProtocolGame::sendLogout()
 
 void ProtocolGame::sendPing()
 {
-    OutputMessagePtr msg(new OutputMessage);
-    msg->addU8(Proto::ClientPing);
+    if(g_game.getFeature(Otc::GameExtendedClientPing))
+        sendExtendedOpcode(2, "");
+    else {
+        OutputMessagePtr msg(new OutputMessage);
+        msg->addU8(Proto::ClientPing);
+        Protocol::send(msg);
+    }
     m_pingTimer.restart();
-    Protocol::send(msg);
 }
 
 void ProtocolGame::sendPingBack()
@@ -771,6 +792,18 @@ void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
     msg->addU32(dialog);
     msg->addU8(button);
     msg->addU8(choice);
+    send(msg);
+}
+
+void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
+{
+    if(!g_game.getFeature(Otc::GameChangeMapAwareRange))
+        return;
+
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientChangeMapAwareRange);
+    msg->addU8(xrange);
+    msg->addU8(yrange);
     send(msg);
 }
 

@@ -33,7 +33,8 @@ namespace Proto {
         LoginServerCharacterList = 100
     };
 
-    enum CreatureOpcode {
+    enum ItemOpcode {
+        StaticText = 96,
         UnknownCreature = 97,
         OutdatedCreature = 98,
         Creature = 99
@@ -44,6 +45,7 @@ namespace Proto {
         GameServerInitGame                  = 10,
         GameServerGMActions                 = 11,
         GameServerEnterGame                 = 15,
+        GameServerUpdateNeeded              = 17,
         GameServerLoginError                = 20,
         GameServerLoginAdvice               = 21,
         GameServerLoginWait                 = 22,
@@ -61,6 +63,7 @@ namespace Proto {
 
         // NOTE: add any custom opcodes in this range
         // 51 - 99
+        GameServerChangeMapAwareRange       = 51,
 
         // original tibia ONLY
         GameServerFullMap                   = 100,
@@ -156,6 +159,7 @@ namespace Proto {
 
         // otclient ONLY
         ClientExtendedOpcode                = 50,
+        ClientChangeMapAwareRange           = 51,
 
         // NOTE: add any custom opcodes in this range
         // 51 - 99

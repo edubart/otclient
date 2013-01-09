@@ -22,6 +22,7 @@
 
 #include "animatedtext.h"
 #include "map.h"
+#include "game.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
@@ -34,15 +35,32 @@ AnimatedText::AnimatedText()
 
 void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
 {
+    static float tf = Otc::ANIMATED_TEXT_DURATION;
+    static float tftf = Otc::ANIMATED_TEXT_DURATION * Otc::ANIMATED_TEXT_DURATION;
+
     Point p = dest;
     Size textSize = m_cachedText.getTextSize();
-    p.x += 20 - textSize.width() / 2;
-    p.y += (-20 * m_animationTimer.ticksElapsed()) / Otc::ANIMATED_TEXT_DURATION;
+    float t = m_animationTimer.ticksElapsed();
+    p.x += (24 - textSize.width() / 2);
+
+    if(g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
+        p.x -= (4 * t / tf) + (8 * t * t / tftf);
+    }
+
+    p.y += 8 + (-48 * t) / tf;
+    p += m_offset;
     Rect rect(p, textSize);
 
     if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
-        g_painter->setColor(m_color);
+        float t0 = tf / 1.2;
+        if(t > t0) {
+            Color color = m_color;
+            color.setAlpha((float)(1 - (t - t0) / (tf - t0)));
+            g_painter->setColor(color);
+        }
+        else
+            g_painter->setColor(m_color);
         m_cachedText.draw(rect);
     }
 }
@@ -64,4 +82,28 @@ void AnimatedText::setColor(int color)
 void AnimatedText::setText(const std::string& text)
 {
     m_cachedText.setText(text);
+}
+
+bool AnimatedText::merge(const AnimatedTextPtr& other)
+{
+    if(other->getColor() != m_color)
+        return false;
+
+    if(other->getCachedText().getFont() != m_cachedText.getFont())
+        return false;
+
+    if(m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5)
+        return false;
+
+    try {
+        int number = stdext::safe_cast<int>(m_cachedText.getText());
+        int otherNumber = stdext::safe_cast<int>(other->getCachedText().getText());
+
+        std::string text = stdext::format("%d", number + otherNumber);
+        m_cachedText.setText(text);
+        return true;
+    }
+    catch(...) {
+        return false;
+    }
 }

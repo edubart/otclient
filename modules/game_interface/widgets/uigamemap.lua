@@ -81,10 +81,9 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     lookThing = tile:getTopLookThing()
     useThing = tile:getTopUseThing()
     creatureThing = tile:getTopCreature()
-    multiUseThing = tile:getTopMultiUseThing()
   end
 
-  local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
+  local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
   if ret then
     self.cancelNextRelease = true
   end

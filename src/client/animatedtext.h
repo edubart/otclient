@@ -38,6 +38,14 @@ public:
 
     void setColor(int color);
     void setText(const std::string& text);
+    void setOffset(const Point& offset) { m_offset = offset; }
+
+    Color getColor() { return m_color; }
+    const CachedText& getCachedText() const { return m_cachedText; }
+    Point getOffset() { return m_offset; }
+    Timer getTimer() { return m_animationTimer; }
+
+    bool merge(const AnimatedTextPtr& other);
 
     AnimatedTextPtr asAnimatedText() { return static_self_cast<AnimatedText>(); }
     bool isAnimatedText() { return true; }
@@ -49,6 +57,7 @@ private:
     Color m_color;
     Timer m_animationTimer;
     CachedText m_cachedText;
+    Point m_offset;
 };
 
 #endif

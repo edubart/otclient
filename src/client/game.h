@@ -56,6 +56,7 @@ protected:
     void processPing();
     void processPingBack(int elapsed);
 
+    void processUpdateNeeded(const std::string& signature);
     void processLoginError(const std::string& error);
     void processLoginAdvice(const std::string& message);
     void processLoginWait(const std::string& message, int time);
@@ -134,7 +135,7 @@ protected:
 
 public:
     // login related
-    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName);
+    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& locale);
     void cancelLogin();
     void forceLogout();
     void safeLogout();
@@ -157,7 +158,7 @@ public:
     void useInventoryItemWith(int itemId, const ThingPtr& toThing);
 
     // container related
-    void open(const ItemPtr& item, const ContainerPtr& previousContainer);
+    int open(const ItemPtr& item, const ContainerPtr& previousContainer);
     void openParent(const ContainerPtr& container);
     void close(const ContainerPtr& container);
     void refreshContainer(const ContainerPtr& container);
@@ -246,6 +247,9 @@ public:
     //void reportRuleViolation2();
     void ping();
 
+    // otclient only
+    void changeMapAwareRange(int xrange, int yrange);
+
     // dynamic support for game features
     void enableFeature(Otc::GameFeature feature) { m_features.set(feature, true); }
     void disableFeature(Otc::GameFeature feature) { m_features.set(feature, false); }
@@ -257,6 +261,12 @@ public:
 
     void setClientVersion(int version);
     int getClientVersion() { return m_clientVersion; }
+
+    void setCustomOs(int os) { m_clientCustomOs = os; }
+    int getOs();
+
+    void setUpdaterSignature(const std::string& sig) { m_clientSignature = sig; }
+    std::string getUpdaterSignature() { return m_clientSignature; }
 
     bool canPerformGameAction();
     bool checkBotProtection();
@@ -281,6 +291,7 @@ public:
     std::string getCharacterName() { return m_characterName; }
     std::string getWorldName() { return m_worldName; }
     std::vector<uint8> getGMActions() { return m_gmActions; }
+    bool isGM() { return m_gmActions.size() > 0; }
 
     std::string formatCreatureName(const std::string &name);
     int findEmptyContainerId();
@@ -319,6 +330,8 @@ private:
     ScheduledEventPtr m_walkEvent;
     int m_protocolVersion;
     int m_clientVersion;
+    std::string m_clientSignature;
+    int m_clientCustomOs;
 };
 
 extern Game g_game;

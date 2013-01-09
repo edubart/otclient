@@ -43,6 +43,8 @@ uint32_t adler32(const uint8_t *buffer, size_t size);
 long random_range(long min, long max);
 float random_range(float min, float max);
 
+double round(double r);
+
 }
 
 #endif

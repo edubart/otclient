@@ -31,18 +31,21 @@ class ShaderManager
 {
 public:
     enum {
-        ITEM_ID_UNIFORM = 10
+        ITEM_ID_UNIFORM = 10,
+        MAP_CENTER_COORD = 10,
+        MAP_GLOBAL_COORD = 11,
+        MAP_ZOOM = 12
     };
 
     void init();
     void terminate();
 
     PainterShaderProgramPtr createShader(const std::string& name);
-    PainterShaderProgramPtr createFragmentShader(const std::string& name, const std::string& file);
+    PainterShaderProgramPtr createFragmentShader(const std::string& name, std::string file);
     PainterShaderProgramPtr createFragmentShaderFromCode(const std::string& name, const std::string& code);
 
     PainterShaderProgramPtr createItemShader(const std::string& name, const std::string& file);
-    PainterShaderProgramPtr createMapShader(const std::string& name, const std::string& file) { return createFragmentShader(name, file); }
+    PainterShaderProgramPtr createMapShader(const std::string& name, const std::string& file);
 
     const PainterShaderProgramPtr& getDefaultItemShader() { return m_defaultItemShader; }
     const PainterShaderProgramPtr& getDefaultMapShader() { return m_defaultMapShader; }
@@ -51,6 +54,7 @@ public:
 
 private:
     void setupItemShader(const PainterShaderProgramPtr& shader);
+    void setupMapShader(const PainterShaderProgramPtr& shader);
 
     PainterShaderProgramPtr m_defaultItemShader;
     PainterShaderProgramPtr m_defaultMapShader;
@@ -61,3 +65,4 @@ private:
 extern ShaderManager g_shaders;
 
 #endif
+

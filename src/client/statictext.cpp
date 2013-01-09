@@ -29,6 +29,8 @@
 
 StaticText::StaticText()
 {
+    m_mode = Otc::MessageNone;
+    m_color = Color::white;
     m_cachedText.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_cachedText.setAlign(Fw::AlignCenter);
 }
@@ -45,6 +47,16 @@ void StaticText::drawText(const Point& dest, const Rect& parentRect)
         g_painter->setColor(m_color);
         m_cachedText.draw(boundRect);
     //}
+}
+
+void StaticText::setFont(const std::string& fontName)
+{
+    m_cachedText.setFont(g_fonts.getFont(fontName));
+}
+
+void StaticText::setText(const std::string& text)
+{
+    m_cachedText.setText(text);
 }
 
 bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text)

@@ -30,6 +30,7 @@
 #include <framework/graphics/image.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/core/filestream.h>
+#include <framework/otml/otml.h>
 
 ThingType::ThingType()
 {
@@ -41,6 +42,7 @@ ThingType::ThingType()
     m_animationPhases = 0;
     m_layers = 0;
     m_elevation = 0;
+    m_opacity = 1.0f;
 }
 
 void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
@@ -139,6 +141,16 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
+void ThingType::unserializeOtml(const OTMLNodePtr& node)
+{
+    for(const OTMLNodePtr& node2 : node->children()) {
+        if(node2->tag() == "opacity")
+            m_opacity = node2->value<float>();
+        if(node2->tag() == "notprewalkable")
+            m_attribs.set(ThingAttrNotPreWalkable, node2->value<bool>());
+    }
+}
+
 void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView)
 {
     if(m_null)
@@ -160,6 +172,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
                     textureRect.size() * scaleFactor);
 
+    g_painter->setOpacity(m_opacity);
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
 
     if(lightView && hasLight()) {

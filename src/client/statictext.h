@@ -41,10 +41,15 @@ public:
 
     bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
 
+    void setText(const std::string& text);
+    void setFont(const std::string& fontName);
     bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
 
     StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
     bool isStaticText() { return true; }
+
+    void setColor(const Color& color) { m_color = color; }
+    Color getColor() { return m_color; }
 
 private:
     void update();

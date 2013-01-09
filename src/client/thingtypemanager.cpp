@@ -32,6 +32,7 @@
 #include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
 #include <framework/xml/tinyxml.h>
+#include <framework/otml/otml.h>
 
 ThingTypeManager g_things;
 
@@ -60,11 +61,13 @@ void ThingTypeManager::terminate()
     m_nullItemType = nullptr;
 }
 
-bool ThingTypeManager::loadDat(const std::string& file)
+bool ThingTypeManager::loadDat(std::string file)
 {
     m_datLoaded = false;
     m_datSignature = 0;
     try {
+        file = g_resources.guessFileType(file, "dat");
+
         FileStreamPtr fin = g_resources.openFile(file);
 
         m_datSignature = fin->getU32();
@@ -91,6 +94,41 @@ bool ThingTypeManager::loadDat(const std::string& file)
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to read dat '%s': %s'", file, e.what()));
+        return false;
+    }
+}
+
+bool ThingTypeManager::loadOtml(std::string file)
+{
+    try {
+        file = g_resources.guessFileType(file, "otml");
+
+        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        for(const OTMLNodePtr& node : doc->children()) {
+            ThingCategory category;
+            if(node->tag() == "creatures")
+                category = ThingCategoryCreature;
+            else if(node->tag() == "items")
+                category = ThingCategoryItem;
+            else if(node->tag() == "effects")
+                category = ThingCategoryEffect;
+            else if(node->tag() == "missiles")
+                category = ThingCategoryMissile;
+            else {
+                throw OTMLException(node, "not a valid thing category");
+            }
+
+            for(const OTMLNodePtr& node2 : node->children()) {
+                uint16 id = stdext::safe_cast<uint16>(node2->tag());
+                ThingTypePtr type = getThingType(id, category);
+                if(!type)
+                    throw OTMLException(node2, "thing not found");
+                type->unserializeOtml(node2);
+            }
+        }
+        return true;
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to read dat otml '%s': %s'", file, e.what()));
         return false;
     }
 }

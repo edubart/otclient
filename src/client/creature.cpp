@@ -58,6 +58,7 @@ Creature::Creature() : Thing()
     m_nameCache.setAlign(Fw::AlignTopCenter);
     m_footStep = 0;
     m_speedFormula.fill(-1);
+    m_outfitColor = Color::white;
 }
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
@@ -89,7 +90,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
 
         // local player always have a minimum light in complete darkness
         if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
-            light.intensity = std::max<uint8>(light.intensity, 2);
+            light.intensity = std::max<uint8>(light.intensity, 3);
             if(light.color == 0 || light.color > 215)
                 light.color = 215;
         }
@@ -101,6 +102,8 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
 
 void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView)
 {
+    g_painter->setColor(m_outfitColor);
+
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
@@ -127,6 +130,9 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             dest += getDisplacement() * scaleFactor;
             zPattern = 1;
         }
+
+        PointF jumpOffset = m_jumpOffset * scaleFactor;
+        dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
 
         // yPattern => creature addon
         for(int yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
@@ -181,6 +187,8 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
         type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
     }
+
+    g_painter->resetColor();
 }
 
 void Creature::drawOutfit(const Rect& destRect, bool resize)
@@ -250,6 +258,11 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     g_painter->setColor(Color::black);
     g_painter->drawFilledRect(backgroundRect);
 
+    if(g_game.getFeature(Otc::GameBlueNpcNameColor) && isNpc() && m_healthPercent == 100 && !useGray)
+        g_painter->setColor(Color(0x66, 0xcc, 0xff));
+    else
+        g_painter->setColor(fillColor);
+
     g_painter->setColor(fillColor);
     g_painter->drawFilledRect(healthRect);
 
@@ -318,6 +331,58 @@ void Creature::stopWalk()
 
     // stops the walk right away
     terminateWalk();
+}
+
+void Creature::jump(int height, int duration)
+{
+    if(!m_jumpOffset.isNull())
+        return;
+
+    m_jumpTimer.restart();
+    m_jumpHeight = height;
+    m_jumpDuration = duration;
+
+    updateJump();
+}
+
+void Creature::updateJump()
+{
+    int t = m_jumpTimer.ticksElapsed();
+    double a = -4 * m_jumpHeight / (m_jumpDuration * m_jumpDuration);
+    double b = +4 * m_jumpHeight / (m_jumpDuration);
+
+    double height = a*t*t + b*t;
+    int roundHeight = stdext::round(height);
+    int halfJumpDuration = m_jumpDuration / 2;
+
+    // schedules next update
+    if(m_jumpTimer.ticksElapsed() < m_jumpDuration) {
+        m_jumpOffset = PointF(height, height);
+
+        int diff = 0;
+        if(m_jumpTimer.ticksElapsed() < halfJumpDuration)
+            diff = 1;
+        else if(m_jumpTimer.ticksElapsed() > halfJumpDuration)
+            diff = -1;
+
+        int nextT, i = 1;
+        do {
+            nextT = stdext::round((-b + std::sqrt(std::max(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
+            ++i;
+
+            if(nextT < halfJumpDuration)
+                diff = 1;
+            else if(nextT > halfJumpDuration)
+                diff = -1;
+        } while(nextT - m_jumpTimer.ticksElapsed() == 0 && i < 3);
+
+        auto self = static_self_cast<Creature>();
+        g_dispatcher.scheduleEvent([self] {
+            self->updateJump();
+        }, nextT - m_jumpTimer.ticksElapsed());
+    }
+    else
+        m_jumpOffset = PointF(0, 0);
 }
 
 void Creature::onPositionChange(const Position& newPos, const Position& oldPos)
@@ -560,6 +625,37 @@ void Creature::setOutfit(const Outfit& outfit)
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 }
 
+void Creature::setOutfitColor(const Color& color, int duration)
+{
+    if(m_outfitColorUpdateEvent) {
+        m_outfitColorUpdateEvent->cancel();
+        m_outfitColorUpdateEvent = nullptr;
+    }
+
+    if(duration > 0) {
+        Color delta = (color - m_outfitColor) / (float)duration;
+        m_outfitColorTimer.restart();
+        updateOutfitColor(m_outfitColor, color, delta, duration);
+    }
+    else
+        m_outfitColor = color;
+}
+
+void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int duration)
+{
+    if(m_outfitColorTimer.ticksElapsed() < duration) {
+        m_outfitColor = color + delta * m_outfitColorTimer.ticksElapsed();
+
+        auto self = static_self_cast<Creature>();
+        m_outfitColorUpdateEvent = g_dispatcher.scheduleEvent([=] {
+            self->updateOutfitColor(color, finalColor, delta, duration);
+        }, 100);
+    }
+    else {
+        m_outfitColor = finalColor;
+    }
+}
+
 void Creature::setSpeed(uint16 speed)
 {
     uint16 oldSpeed = m_speed;
@@ -707,11 +803,15 @@ int Creature::getStepDuration(bool ignoreDiagonal)
     if(g_game.getProtocolVersion() >= 900)
         interval = (interval / g_game.getServerBeat()) * g_game.getServerBeat();
 
+    float factor = 3;
+    if(g_game.getProtocolVersion() <= 810)
+        factor = 2;
+
     interval = std::max(interval, g_game.getServerBeat());
 
     if(!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
-        interval *= 3;
+        interval *= factor;
 
     return interval;
 }

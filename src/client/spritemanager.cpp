@@ -39,12 +39,14 @@ void SpriteManager::terminate()
     unload();
 }
 
-bool SpriteManager::loadSpr(const std::string& file)
+bool SpriteManager::loadSpr(std::string file)
 {
     m_spritesCount = 0;
     m_signature = 0;
     m_loaded = false;
     try {
+        file = g_resources.guessFileType(file, "spr");
+
         m_spritesFile = g_resources.openFile(file);
         // cache file buffer to avoid lags from hard drive
         m_spritesFile->cache();

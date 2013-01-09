@@ -513,5 +513,5 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
 
 bool LocalPlayer::hasSight(const Position& pos)
 {
-    return m_position.isInRange(pos, (Otc::VISIBLE_X_TILES - 1)/2, (Otc::VISIBLE_Y_TILES - 1)/2);
+    return m_position.isInRange(pos, g_map.getAwareRange().left - 1, g_map.getAwareRange().top - 1);
 }

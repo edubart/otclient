@@ -278,14 +278,13 @@ bool Tile::hasThing(const ThingPtr& thing)
 
 int Tile::getThingStackpos(const ThingPtr& thing)
 {
-    for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos) {
+    for(uint stackpos = 0; stackpos < m_things.size(); ++stackpos)
         if(thing == m_things[stackpos])
             return stackpos;
-    }
     return -1;
 }
 
-ThingPtr Tile:: getTopThing()
+ThingPtr Tile::getTopThing()
 {
     if(isEmpty())
         return nullptr;
@@ -374,6 +373,12 @@ ThingPtr Tile::getTopUseThing()
             return thing;
     }
 
+    for(uint i = 0; i < m_things.size(); ++i) {
+        ThingPtr thing = m_things[i];
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isCreature())
+            return thing;
+    }
+
     return m_things[0];
 }
 
@@ -434,30 +439,34 @@ ThingPtr Tile::getTopMoveThing()
     return m_things[0];
 }
 
-ThingPtr Tile::getTopMultiUseThing(bool ignoreCreature)
+ThingPtr Tile::getTopMultiUseThing()
 {
-    // this is related to classic controls, getting top item, forceuse for creature
     if(isEmpty())
         return nullptr;
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())) {
-            if(thing->isCreature() && ignoreCreature)
-                continue;
+        if(thing->isForceUse())
+            return thing;
+    }
+
+    if(CreaturePtr topCreature = getTopCreature())
+        return topCreature;
+
+    for(uint i = 0; i < m_things.size(); ++i) {
+        ThingPtr thing = m_things[i];
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()) {
             if(i > 0 && thing->isSplash())
                 return m_things[i-1];
             return thing;
         }
     }
 
+
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop()) {
-            if(thing->isCreature() && ignoreCreature)
-                continue;
+        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop())
             return thing;
-        }
     }
 
     return m_things[0];

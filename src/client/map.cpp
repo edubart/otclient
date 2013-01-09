@@ -35,6 +35,11 @@
 Map g_map;
 TilePtr Map::m_nulltile;
 
+void Map::init()
+{
+    resetAwareRange();
+}
+
 void Map::terminate()
 {
     clean();
@@ -100,14 +105,39 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        tile->addThing(thing, stackPos);
+        if(tile)
+            tile->addThing(thing, stackPos);
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
             thing->onAppear();
         } else if(thing->isAnimatedText()) {
+            // this code will stack animated texts of the same color
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
-            m_animatedTexts.push_back(animatedText);
+            AnimatedTextPtr prevAnimatedText;
+            bool merged = false;
+            for(auto other : m_animatedTexts) {
+                if(other->getPosition() == pos) {
+                    prevAnimatedText = other;
+                    if(other->merge(animatedText)) {
+                        merged = true;
+                        break;
+                    }
+                }
+            }
+            if(!merged) {
+                if(prevAnimatedText) {
+                    Point offset = prevAnimatedText->getOffset();
+                    float t = prevAnimatedText->getTimer().ticksElapsed();
+                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
+                        int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
+                        offset += Point(0, y);
+                    }
+                    offset.y = std::min(offset.y, 12);
+                    animatedText->setOffset(offset);
+                }
+                m_animatedTexts.push_back(animatedText);
+            }
         } else if(thing->isStaticText()) {
             StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             bool mustAdd = true;
@@ -119,10 +149,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 }
             }
 
-            if(mustAdd) {
+            if(mustAdd)
                 m_staticTexts.push_back(staticText);
-                staticText->onAppear();
-            }
+            else
+                return;
         }
 
         thing->setPosition(pos);
@@ -179,6 +209,16 @@ bool Map::removeThingByPos(const Position& pos, int stackPos)
     if(TilePtr tile = getTile(pos))
         return removeThing(tile->getThing(stackPos));
     return false;
+}
+
+StaticTextPtr Map::getStaticText(const Position& pos)
+{
+    for(auto staticText : m_staticTexts) {
+        // try to combine messages
+        if(staticText->getPosition() == pos)
+            return staticText;
+    }
+    return nullptr;
 }
 
 const TilePtr& Map::createTile(const Position& pos)
@@ -251,6 +291,13 @@ void Map::cleanTile(const Position& pos)
             notificateTileUpdateToMapViews(pos);
         }
     }
+    for(auto it = m_staticTexts.begin();it != m_staticTexts.end();) {
+        const StaticTextPtr& staticText = *it;
+        if(staticText->getPosition() == pos && staticText->getMessageMode() == Otc::MessageNone)
+            it = m_staticTexts.erase(it);
+        else
+            ++it;
+    }
 }
 
 void Map::addCreature(const CreaturePtr& creature)
@@ -276,16 +323,33 @@ void Map::removeCreatureById(uint32 id)
         m_knownCreatures.erase(it);
 }
 
-void Map::setCentralPosition(const Position& centralPosition)
+void Map::removeUnawareThings()
 {
-    m_centralPosition = centralPosition;
-
     // remove creatures from tiles that we are not aware anymore
     for(const auto& pair : m_knownCreatures) {
         const CreaturePtr& creature = pair.second;
         if(!isAwareOfPosition(creature->getPosition()))
             removeThing(creature);
     }
+
+    // remove static texts from tiles that we are not aware anymore
+    for(auto it = m_staticTexts.begin(); it != m_staticTexts.end();) {
+        const StaticTextPtr& staticText = *it;
+        if(staticText->getMessageMode() == Otc::MessageNone && !isAwareOfPosition(staticText->getPosition()))
+            it = m_staticTexts.erase(it);
+        else
+            ++it;
+    }
+}
+
+void Map::setCentralPosition(const Position& centralPosition)
+{
+    if(m_centralPosition == centralPosition)
+        return;
+
+    m_centralPosition = centralPosition;
+
+    removeUnawareThings();
 
     // this fixes local player position when the local player is removed from the map,
     // the local player is removed from the map when there are too many creatures on his tile,
@@ -313,9 +377,14 @@ void Map::setCentralPosition(const Position& centralPosition)
         mapView->onMapCenterChange(centralPosition);
 }
 
+std::vector<CreaturePtr> Map::getSightSpectators(const Position& centerPos, bool multiFloor)
+{
+    return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2);
+}
+
 std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)
 {
-    return getSpectatorsInRange(centerPos, multiFloor, (Otc::VISIBLE_X_TILES - 1)/2, (Otc::VISIBLE_Y_TILES - 1)/2);
+    return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
 }
 
 std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange)
@@ -410,10 +479,26 @@ bool Map::isAwareOfPosition(const Position& pos)
         else
             groundedPos.coveredDown();
     }
-    return m_centralPosition.isInRange(groundedPos, Otc::AWARE_X_LEFT_TILES,
-                                                    Otc::AWARE_X_RIGHT_TILES,
-                                                    Otc::AWARE_Y_TOP_TILES,
-                                                    Otc::AWARE_Y_BOTTOM_TILES);
+    return m_centralPosition.isInRange(groundedPos, m_awareRange.left,
+                                                    m_awareRange.right,
+                                                    m_awareRange.top,
+                                                    m_awareRange.bottom);
+}
+
+void Map::setAwareRange(const AwareRange& range)
+{
+    m_awareRange = range;
+    removeUnawareThings();
+}
+
+void Map::resetAwareRange()
+{
+    AwareRange range;
+    range.left = 8;
+    range.top = 6;
+    range.bottom = 7;
+    range.right = 9;
+    setAwareRange(range);
 }
 
 int Map::getFirstAwareFloor()

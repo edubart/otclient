@@ -119,10 +119,22 @@ private:
     std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> m_tiles;
 };
 
+struct AwareRange
+{
+    int top;
+    int right;
+    int bottom;
+    int left;
+
+    int horizontal() { return left + right + 1; }
+    int vertical() { return top + bottom + 1; }
+};
+
 //@bindsingleton g_map
 class Map
 {
 public:
+    void init();
     void terminate();
 
     void addMapView(const MapViewPtr& mapView);
@@ -157,6 +169,8 @@ public:
     bool removeThing(const ThingPtr& thing);
     bool removeThingByPos(const Position& pos, int stackPos);
 
+    StaticTextPtr getStaticText(const Position& pos);
+
     // tile related
     const TilePtr& createTile(const Position& pos);
     template <typename... Items>
@@ -169,6 +183,7 @@ public:
     void addCreature(const CreaturePtr& creature);
     CreaturePtr getCreatureById(uint32 id);
     void removeCreatureById(uint32 id);
+    std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
@@ -180,6 +195,10 @@ public:
     bool isCovered(const Position& pos, int firstFloor = 0);
     bool isCompletelyCovered(const Position& pos, int firstFloor = 0);
     bool isAwareOfPosition(const Position& pos);
+
+    void setAwareRange(const AwareRange& range);
+    void resetAwareRange();
+    AwareRange getAwareRange() { return m_awareRange; }
 
     Light getLight() { return m_light; }
     Position getCentralPosition() { return m_centralPosition; }
@@ -193,6 +212,7 @@ public:
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxSteps, int flags = 0);
 
 private:
+    void removeUnawareThings();
     uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z+1];
@@ -208,6 +228,7 @@ private:
     Rect m_tilesRect;
 
     stdext::packed_storage<uint8> m_attribs;
+    AwareRange m_awareRange;
     static TilePtr m_nulltile;
 };
 

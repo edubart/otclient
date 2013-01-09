@@ -32,6 +32,7 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/stdext/net.h>
+#include <framework/platform/platform.h>
 
 #ifdef FW_GRAPHICS
 #include <framework/graphics/graphics.h>
@@ -68,6 +69,17 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("listSubnetAddresses", [](uint32 a, uint8 b) { return stdext::listSubnetAddresses(a, b); });
     g_lua.bindGlobalFunction("ucwords", [](std::string s) { return stdext::ucwords(s); });
 
+    // Platform
+    g_lua.registerSingletonClass("g_platform");
+    g_lua.bindSingletonFunction("g_platform", "spawnProcess", &Platform::spawnProcess, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "getProcessId", &Platform::getProcessId, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "copyFile", &Platform::copyFile, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "getTempPath", &Platform::getTempPath, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "openUrl", &Platform::openUrl, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "getCPUName", &Platform::getCPUName, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "getTotalSystemMemory", &Platform::getTotalSystemMemory, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "getOSName", &Platform::getOSName, &g_platform);
+
     // Application
     g_lua.registerSingletonClass("g_app");
     g_lua.bindSingletonFunction("g_app", "setName", &Application::setName, static_cast<Application*>(&g_app));
@@ -85,6 +97,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getBuildType", &Application::getBuildType, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getBuildArch", &Application::getBuildArch, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getOs", &Application::getOs, static_cast<Application*>(&g_app));
+    g_lua.bindSingletonFunction("g_app", "getStartupOptions", &Application::getStartupOptions, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "exit", &Application::exit, static_cast<Application*>(&g_app));
 
     // Crypt
@@ -160,6 +173,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "getWorkDir", &ResourceManager::getWorkDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getSearchPaths", &ResourceManager::getSearchPaths, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "listDirectoryFiles", &ResourceManager::listDirectoryFiles, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "readFileContents", &ResourceManager::readFileContents, &g_resources);
 
     // Module
     g_lua.registerClass<Module>();
@@ -212,6 +226,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_window", "resize", &PlatformWindow::resize, &g_window);
     g_lua.bindSingletonFunction("g_window", "show", &PlatformWindow::show, &g_window);
     g_lua.bindSingletonFunction("g_window", "hide", &PlatformWindow::hide, &g_window);
+    g_lua.bindSingletonFunction("g_window", "poll", &PlatformWindow::poll, &g_window);
     g_lua.bindSingletonFunction("g_window", "maximize", &PlatformWindow::maximize, &g_window);
     g_lua.bindSingletonFunction("g_window", "restoreMouseCursor", &PlatformWindow::restoreMouseCursor, &g_window);
     g_lua.bindSingletonFunction("g_window", "showMouse", &PlatformWindow::showMouse, &g_window);
@@ -261,6 +276,8 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_graphics", "selectPainterEngine", &Graphics::selectPainterEngine, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "canCacheBackbuffer", &Graphics::canCacheBackbuffer, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "canUseShaders", &Graphics::canUseShaders, &g_graphics);
+    g_lua.bindSingletonFunction("g_graphics", "shouldUseShaders", &Graphics::shouldUseShaders, &g_graphics);
+    g_lua.bindSingletonFunction("g_graphics", "setShouldUseShaders", &Graphics::setShouldUseShaders, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "getPainterEngine", &Graphics::getPainterEngine, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "getViewportSize", &Graphics::getViewportSize, &g_graphics);
     g_lua.bindSingletonFunction("g_graphics", "getVendor", &Graphics::getVendor, &g_graphics);
@@ -607,6 +624,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIGridLayout>("getNumColumns", &UIGridLayout::getNumColumns);
     g_lua.bindClassMemberFunction<UIGridLayout>("getNumLines", &UIGridLayout::getNumLines);
     g_lua.bindClassMemberFunction<UIGridLayout>("getCellSize", &UIGridLayout::getCellSize);
+    g_lua.bindClassMemberFunction<UIGridLayout>("getCellSpacing", &UIGridLayout::getCellSpacing);
     g_lua.bindClassMemberFunction<UIGridLayout>("isUIGridLayout", &UIGridLayout::isUIGridLayout);
 
     // UIAnchorLayout
@@ -756,7 +774,9 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<DBResult>("getDataInt", &DBResult::getDataInt);
     g_lua.bindClassMemberFunction<DBResult>("getDataLong", &DBResult::getDataLong);
     g_lua.bindClassMemberFunction<DBResult>("getDataString", &DBResult::getDataString);
+    g_lua.bindClassMemberFunction<DBResult>("getRowCount", &DBResult::getRowCount);
     g_lua.bindClassMemberFunction<DBResult>("next", &DBResult::next);
+
 
     // Mysql
     g_lua.registerClass<DatabaseMySQL, Database>();

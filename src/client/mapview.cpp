@@ -57,8 +57,10 @@ MapView::MapView()
     m_cachedFirstVisibleFloor = 7;
     m_cachedLastVisibleFloor = 7;
     m_updateTilesPos = 0;
+    m_fadeOutTime = 0;
+    m_fadeInTime = 0;
     m_minimumAmbientLight = 0;
-    m_optimizedSize = Size(Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES) * Otc::TILE_PIXELS;
+    m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
     setVisibleDimension(Size(15, 11));
@@ -155,6 +157,21 @@ void MapView::draw(const Rect& rect)
         m_mustDrawVisibleTilesCache = false;
     }
 
+
+    float fadeOpacity = 1.0f;
+    if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
+        fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
+        if(fadeOpacity < 0.0f) {
+            m_shader = m_nextShader;
+            m_nextShader = nullptr;
+            m_shaderSwitchDone = true;
+            m_fadeTimer.restart();
+        }
+    }
+
+    if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
+        fadeOpacity = std::min(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
+
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
@@ -166,9 +183,20 @@ void MapView::draw(const Rect& rect)
     drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
     Rect srcRect = Rect(drawOffset, srcSize);
 
+    if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
+        Rect framebufferRect = Rect(0,0, m_drawDimension * m_tileSize);
+        Point center = srcRect.center();
+        Point globalCoord = Point(cameraPosition.x - m_drawDimension.width()/2, -(cameraPosition.y - m_drawDimension.height()/2)) * m_tileSize;
+        m_shader->bind();
+        m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / (float)framebufferRect.width(), 1.0f - center.y / (float)framebufferRect.height());
+        m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / (float)framebufferRect.height(), globalCoord.y / (float)framebufferRect.height());
+        m_shader->setUniformValue(ShaderManager::MAP_ZOOM, scaleFactor);
+        g_painter->setShaderProgram(m_shader);
+    }
+
     g_painter->setColor(Color::white);
+    g_painter->setOpacity(fadeOpacity);
     glDisable(GL_BLEND);
-    g_painter->setShaderProgram(m_shader);
 #if 0
     // debug source area
     g_painter->saveAndResetState();
@@ -182,6 +210,7 @@ void MapView::draw(const Rect& rect)
     m_framebuffer->draw(rect, srcRect);
 #endif
     g_painter->resetShaderProgram();
+    g_painter->resetOpacity();
     glEnable(GL_BLEND);
 
 
@@ -198,10 +227,11 @@ void MapView::draw(const Rect& rect)
             if(!creature->canBeSeen())
                 continue;
 
+            PointF jumpOffset = creature->getJumpOffset() * scaleFactor;
             Point creatureOffset = Point(16 - creature->getDisplacementX(), -3 - creature->getDisplacementY());
             Position pos = creature->getPosition();
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p += (creature->getDrawOffset() + creatureOffset) * scaleFactor;
+            p += (creature->getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
@@ -222,6 +252,9 @@ void MapView::draw(const Rect& rect)
             //if(pos.z != cameraPosition.z && !staticText->isYell())
             //    continue;
 
+            if(pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
+                continue;
+
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p.x = p.x * horizontalStretchFactor;
             p.y = p.y * verticalStretchFactor;
@@ -232,12 +265,16 @@ void MapView::draw(const Rect& rect)
         for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
             Position pos = animatedText->getPosition();
 
+            /*
             // only draw animated texts from visible floors
             if(pos.z < m_cachedFirstVisibleFloor || pos.z > m_cachedLastVisibleFloor)
                 continue;
 
             // dont draw animated texts from covered tiles
             if(pos.z != cameraPosition.z && g_map.isCovered(pos, m_cachedFirstVisibleFloor))
+                continue;
+            */
+            if(pos.z != cameraPosition.z)
                 continue;
 
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
@@ -408,7 +445,7 @@ void MapView::updateVisibleTilesCache(int start)
     }
 
     if(start == 0 && m_viewMode <= NEAR_VIEW)
-        m_cachedFloorVisibleCreatures = g_map.getSpectators(cameraPosition, false);
+        m_cachedFloorVisibleCreatures = g_map.getSightSpectators(cameraPosition, false);
 }
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
@@ -459,7 +496,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     }
 
     // draw actually more than what is needed to avoid massive recalculations on huge views
-        /*
+    /*
     if(viewMode >= HUGE_VIEW) {
         Size oldDimension = drawDimension;
         drawDimension = (m_framebuffer->getSize() / tileSize);
@@ -656,10 +693,30 @@ void MapView::setDrawMinimapColors(bool enable)
     m_framebuffer->setSmooth(m_smooth);
 }
 
+void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout)
+{
+    if((m_shader == shader && m_shaderSwitchDone) || (m_nextShader == shader && !m_shaderSwitchDone))
+        return;
+
+    if(fadeout > 0.0f && m_shader) {
+        m_nextShader = shader;
+        m_shaderSwitchDone = false;
+    } else {
+        m_shader = shader;
+        m_nextShader = nullptr;
+        m_shaderSwitchDone = true;
+    }
+    m_fadeTimer.restart();
+    m_fadeInTime = fadein;
+    m_fadeOutTime = fadeout;
+}
+
+
 void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights)
         return;
+
     if(enable)
         m_lightView = LightViewPtr(new LightView);
     else

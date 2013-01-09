@@ -284,7 +284,7 @@ function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.useWith(selectedThing, tile:getTopMultiUseThing(false))
+      g_game.useWith(selectedThing, tile:getTopMultiUseThing())
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
     g_game.useWith(selectedThing, clickedWidget:getItem())
@@ -450,7 +450,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   menu:display(menuPosition)
 end
 
-function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, multiUseThing)
+function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if not Options.getOption('classicControl') then
@@ -482,20 +482,20 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
 
   -- classic control
   else
-    if multiUseThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
+    if useThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       local player = g_game.getLocalPlayer()
       if creatureThing and creatureThing ~= player then
         g_game.attack(creatureThing)
         return true
-      elseif multiUseThing:isContainer() then
-        if multiUseThing:getParentContainer() then
-          g_game.open(multiUseThing, multiUseThing:getParentContainer())
+      elseif useThing:isContainer() then
+        if useThing:getParentContainer() then
+          g_game.open(useThing, useThing:getParentContainer())
           return true
         else
-          g_game.open(multiUseThing)
+          g_game.open(useThing)
           return true
         end
-      elseif multiUseThing:isMultiUse() then
+      elseif useThing:isMultiUse() then
         startUseWith(useThing)
         return true
       else

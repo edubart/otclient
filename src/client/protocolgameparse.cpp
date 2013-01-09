@@ -72,6 +72,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerGMActions:
                 parseGMActions(msg);
                 break;
+            case Proto::GameServerUpdateNeeded:
+                parseUpdateNeeded(msg);
+                break;
             case Proto::GameServerLoginError:
                 parseLoginError(msg);
                 break;
@@ -314,13 +317,16 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPlayerDataBasic:
                 parsePlayerInfo(msg);
                 break;
+            // PROTOCOL>=970
+            case Proto::GameServerShowModalDialog:
+                parseShowModalDialog(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
-            // PROTOCOL>=970
-            case Proto::GameServerShowModalDialog:
-                parseShowModalDialog(msg);
+            case Proto::GameServerChangeMapAwareRange:
+                parseChangeMapAwareRange(msg);
                 break;
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
@@ -386,6 +392,12 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
     g_game.processGMActions(actions);
 }
 
+void ProtocolGame::parseUpdateNeeded(const InputMessagePtr& msg)
+{
+    std::string signature = msg->getString();
+    g_game.processUpdateNeeded(signature);
+}
+
 void ProtocolGame::parseLoginError(const InputMessagePtr& msg)
 {
     std::string error = msg->getString();
@@ -441,7 +453,9 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
         m_localPlayer->setPosition(pos);
 
     g_map.setCentralPosition(pos);
-    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES);
+
+    AwareRange range = g_map.getAwareRange();
+    setMapDescription(msg, pos.x - range.left, pos.y - range.top, pos.z, range.horizontal(), range.vertical());
 
     if(!m_mapKnown) {
         g_dispatcher.addEvent([] { g_lua.callGlobalField("g_game", "onMapKnown"); });
@@ -453,37 +467,57 @@ void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
 
 void ProtocolGame::parseMapMoveNorth(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
     pos.y--;
 
-    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, Otc::AWARE_X_TILES, 1);
+    AwareRange range = g_map.getAwareRange();
+    setMapDescription(msg, pos.x - range.left, pos.y - range.top, pos.z, range.horizontal(), 1);
     g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMapMoveEast(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
     pos.x++;
 
-    setMapDescription(msg, pos.x + Otc::AWARE_X_RIGHT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
+    AwareRange range = g_map.getAwareRange();
+    setMapDescription(msg, pos.x + range.right, pos.y - range.top, pos.z, 1, range.vertical());
     g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMapMoveSouth(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
     pos.y++;
 
-    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y + Otc::AWARE_Y_BOTTOM_TILES, pos.z, Otc::AWARE_X_TILES, 1);
+    AwareRange range = g_map.getAwareRange();
+    setMapDescription(msg, pos.x - range.left, pos.y + range.bottom, pos.z, range.horizontal(), 1);
     g_map.setCentralPosition(pos);
 }
 
 void ProtocolGame::parseMapMoveWest(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
     pos.x--;
 
-    setMapDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z, 1, Otc::AWARE_Y_TILES);
+    AwareRange range = g_map.getAwareRange();
+    setMapDescription(msg, pos.x - range.left, pos.y - range.top, pos.z, 1, range.vertical());
     g_map.setCentralPosition(pos);
 }
 
@@ -914,8 +948,16 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 {
-    double health = msg->getU16();
-    double maxHealth = msg->getU16();
+    double health;
+    double maxHealth;
+
+    if(g_game.getFeature(Otc::GameDoubleHealth)) {
+        health = msg->getU32();
+        maxHealth = msg->getU32();
+    } else {
+        health = msg->getU16();
+        maxHealth = msg->getU16();
+    }
 
     double freeCapacity;
     if(g_game.getFeature(Otc::GameDoubleFreeCapacity))
@@ -935,8 +977,17 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 
     double level = msg->getU16();
     double levelPercent = msg->getU8();
-    double mana = msg->getU16();
-    double maxMana = msg->getU16();
+    double mana;
+    double maxMana;
+
+    if(g_game.getFeature(Otc::GameDoubleHealth)) {
+        mana = msg->getU32();
+        maxMana = msg->getU32();
+    } else {
+        mana = msg->getU16();
+        maxMana = msg->getU16();
+    }
+
     double magicLevel = msg->getU8();
 
     double baseMagicLevel;
@@ -979,10 +1030,16 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 {
     for(int skill = 0; skill < Otc::LastSkill; skill++) {
-        int level = msg->getU8();
+        int level;
+
+        if(g_game.getFeature(Otc::GameDoubleSkills))
+            level = msg->getU16();
+        else
+            level = msg->getU8();
+
         int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            baseLevel = msg->getU8(); // base
+            baseLevel = msg->getU8();
         else
             baseLevel = level;
 
@@ -1002,7 +1059,7 @@ void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
 void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 {
     uint seq = 0;
-    if(g_game.getProtocolVersion() >= 860)
+    if(g_game.getFeature(Otc::GameAttackSeq))
         seq = msg->getU32();
 
     g_game.processAttackCancel(seq);
@@ -1234,15 +1291,20 @@ void ProtocolGame::parseWalkWait(const InputMessagePtr& msg)
 
 void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
+    AwareRange range = g_map.getAwareRange();
     pos.z--;
 
     int skip = 0;
     if(pos.z == Otc::SEA_FLOOR)
         for(int i = Otc::SEA_FLOOR - Otc::AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; i--)
-            skip = setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 8 - i, skip);
+            skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, i, range.horizontal(), range.vertical(), 8 - i, skip);
     else if(pos.z > Otc::SEA_FLOOR)
-        skip = setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, 3, skip);
+        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), 3, skip);
 
     pos.x++;
     pos.y++;
@@ -1251,17 +1313,22 @@ void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)
 
 void ProtocolGame::parseFloorChangeDown(const InputMessagePtr& msg)
 {
-    Position pos = g_map.getCentralPosition();
+    Position pos;
+    if(g_game.getFeature(Otc::GameMapMovePosition))
+        pos = getPosition(msg);
+    else
+        pos = g_map.getCentralPosition();
+    AwareRange range = g_map.getAwareRange();
     pos.z++;
 
     int skip = 0;
     if(pos.z == Otc::UNDERGROUND_FLOOR) {
         int j, i;
         for(i = pos.z, j = -1; i <= pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
-            skip = setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, i, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, j, skip);
+            skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, i, range.horizontal(), range.vertical(), j, skip);
     }
     else if(pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z-1)
-        skip = setFloorDescription(msg, pos.x - Otc::AWARE_X_LEFT_TILES, pos.y - Otc::AWARE_Y_TOP_TILES, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::AWARE_X_TILES, Otc::AWARE_Y_TILES, -3, skip);
+        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), -3, skip);
 
     pos.x--;
     pos.y--;
@@ -1458,8 +1525,25 @@ void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)
 
     if(opcode == 0)
         m_enableSendExtendedOpcode = true;
+    else if(opcode == 2)
+        parsePingBack(msg);
     else
         callLuaField("onExtendedOpcode", opcode, buffer);
+}
+
+void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
+{
+    int xrange = msg->getU8();
+    int yrange = msg->getU8();
+
+    AwareRange range;
+    range.left = xrange/2 - ((xrange+1) % 2);
+    range.right = xrange/2;
+    range.top = yrange/2 - ((yrange+1) % 2);
+    range.bottom = yrange/2;
+
+    g_map.setAwareRange(range);
+    g_lua.callGlobalField("g_game", "onMapChangeAwareRange", xrange, yrange);
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
@@ -1502,7 +1586,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
 {
     g_map.cleanTile(position);
 
-    bool gotEffect = 0;
+    bool gotEffect = false;
     for(int stackPos=0;stackPos<256;stackPos++) {
         if(msg->peekU16()  >= 0xff00)
             return msg->getU16() & 0xff;
@@ -1558,6 +1642,7 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         int mount = msg->getU16();
         outfit.setMount(mount);
     }
+
     return outfit;
 }
 
@@ -1571,6 +1656,8 @@ ThingPtr ProtocolGame::getThing(const InputMessagePtr& msg)
         stdext::throw_exception("invalid thing id");
     else if(id == Proto::UnknownCreature || id == Proto::OutdatedCreature || id == Proto::Creature)
         thing = getCreature(msg, id);
+    else if(id == Proto::StaticText) // otclient only
+        thing = getStaticText(msg, id);
     else // item
         thing = getItem(msg, id);
 
@@ -1743,6 +1830,19 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
     }
 
     return item;
+}
+
+StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int id)
+{
+    int colorByte = msg->getU8();
+    Color color = Color::from8bit(colorByte);
+    std::string fontName = msg->getString();
+    std::string text = msg->getString();
+    StaticTextPtr staticText = StaticTextPtr(new StaticText);
+    staticText->setText(text);
+    staticText->setFont(fontName);
+    staticText->setColor(color);
+    return staticText;
 }
 
 Position ProtocolGame::getPosition(const InputMessagePtr& msg)

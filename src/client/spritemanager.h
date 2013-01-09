@@ -34,7 +34,7 @@ public:
 
     void terminate();
 
-    bool loadSpr(const std::string& file);
+    bool loadSpr(std::string file);
     void unload();
 
     uint32 getSignature() { return m_signature; }

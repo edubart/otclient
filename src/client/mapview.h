@@ -107,9 +107,8 @@ public:
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
-    void setShader(const PainterShaderProgramPtr& shader) { m_shader = shader; }
+    void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }
-
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
@@ -153,6 +152,11 @@ private:
     std::vector<Point> m_spiral;
     LightViewPtr m_lightView;
     float m_minimumAmbientLight;
+    Timer m_fadeTimer;
+    PainterShaderProgramPtr m_nextShader;
+    float m_fadeInTime;
+    float m_fadeOutTime;
+    stdext::boolean<true> m_shaderSwitchDone;
 };
 
 #endif

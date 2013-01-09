@@ -32,15 +32,7 @@ namespace Otc
         SEA_FLOOR = 7,
         MAX_Z = 15,
         UNDERGROUND_FLOOR = SEA_FLOOR+1,
-        VISIBLE_X_TILES = 15,
-        VISIBLE_Y_TILES = 11,
         AWARE_UNDEGROUND_FLOOR_RANGE = 2,
-        AWARE_X_TILES = VISIBLE_X_TILES + 3,
-        AWARE_Y_TILES = VISIBLE_Y_TILES + 3,
-        AWARE_X_LEFT_TILES = AWARE_X_TILES/2 - 1,
-        AWARE_X_RIGHT_TILES = AWARE_X_TILES/2,
-        AWARE_Y_TOP_TILES = AWARE_Y_TILES/2 - 1,
-        AWARE_Y_BOTTOM_TILES = AWARE_Y_TILES/2,
 
         INVISIBLE_TICKS_PER_FRAME = 500,
         ITEM_TICKS_PER_FRAME = 500,
@@ -343,9 +335,18 @@ namespace Otc
         GameFormatCreatureName = 22,
         GameSpellList = 23,
         GameClientPing = 24,
-        GameLoginPending = 25,
-        GameNewSpeedLaw = 26,
-        // 23-50 unused yet
+        GameExtendedClientPing = 25,
+        GameUpdater = 26,
+        GameLoginLocale = 27,
+        GameDoubleHealth = 28,
+        GameDoubleSkills = 29,
+        GameChangeMapAwareRange = 30,
+        GameMapMovePosition = 31,
+        GameAttackSeq = 32,
+        GameBlueNpcNameColor = 33,
+        GameDiagonalAnimatedText = 34,
+        GameLoginPending = 35,
+        GameNewSpeedLaw = 36,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };

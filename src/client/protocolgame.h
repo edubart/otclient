@@ -31,7 +31,7 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
+    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& locale);
     void send(const OutputMessagePtr& outputMessage);
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
@@ -107,6 +107,7 @@ public:
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
     void sendAnswerModalDialog(int dialog, int button, int choice);
+    void sendChangeMapAwareRange(int xrange, int yrange);
 
 protected:
     void onConnect();
@@ -124,6 +125,7 @@ private:
     void parseEnterGame(const InputMessagePtr& msg);
     void parseInitGame(const InputMessagePtr& msg);
     void parseGMActions(const InputMessagePtr& msg);
+    void parseUpdateNeeded(const InputMessagePtr& msg);
     void parseLoginError(const InputMessagePtr& msg);
     void parseLoginAdvice(const InputMessagePtr& msg);
     void parseLoginWait(const InputMessagePtr& msg);
@@ -205,6 +207,7 @@ private:
     void parsePlayerInventory(const InputMessagePtr& msg);
     void parseShowModalDialog(const InputMessagePtr& msg);
     void parseExtendedOpcode(const InputMessagePtr& msg);
+    void parseChangeMapAwareRange(const InputMessagePtr& msg);
 
 public:
     void setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height);
@@ -215,6 +218,7 @@ public:
     ThingPtr getThing(const InputMessagePtr& msg);
     ThingPtr getMappedThing(const InputMessagePtr& msg);
     CreaturePtr getCreature(const InputMessagePtr& msg, int type = 0);
+    StaticTextPtr getStaticText(const InputMessagePtr& msg, int type = 0);
     ItemPtr getItem(const InputMessagePtr& msg, int id = 0);
     Position getPosition(const InputMessagePtr& msg);
 
@@ -226,6 +230,7 @@ private:
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;
+    std::string m_locale;
     stdext::timer m_pingTimer;
     LocalPlayerPtr m_localPlayer;
 };

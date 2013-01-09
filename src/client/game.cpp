@@ -39,6 +39,7 @@ Game g_game;
 Game::Game()
 {
     m_protocolVersion = 0;
+    m_clientCustomOs = -1;
     m_clientVersion = 0;
     m_online = false;
     m_denyBotCall = false;
@@ -98,6 +99,7 @@ void Game::resetGameStates()
     m_containers.clear();
     m_vips.clear();
     m_gmActions.clear();
+    g_map.resetAwareRange();
 }
 
 void Game::processConnectionError(const boost::system::error_code& ec)
@@ -121,6 +123,11 @@ void Game::processDisconnect()
         m_protocolGame->disconnect();
         m_protocolGame = nullptr;
     }
+}
+
+void Game::processUpdateNeeded(const std::string& signature)
+{
+    g_lua.callGlobalField("g_game", "onUpdateNeeded", signature);
 }
 
 void Game::processLoginError(const std::string& error)
@@ -164,7 +171,7 @@ void Game::processGameStart()
     g_lua.callGlobalField("g_game", "onGameStart");
     disableBotCall();
 
-    if(g_game.getFeature(Otc::GameClientPing)) {
+    if(g_game.getFeature(Otc::GameClientPing) || g_game.getFeature(Otc::GameExtendedClientPing)) {
         m_protocolGame->sendPing();
         m_pingEvent = g_dispatcher.cycleEvent([this] {
             if(m_protocolGame && m_protocolGame->isConnected()) {
@@ -464,7 +471,7 @@ void Game::processWalkCancel(Otc::Direction direction)
     m_localPlayer->cancelWalk(direction);
 }
 
-void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
+void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& locale)
 {
     if(m_protocolGame || isOnline())
         stdext::throw_exception("Unable to login into a world while already online or logging.");
@@ -479,7 +486,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_localPlayer->setName(characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
+    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName, locale);
     m_characterName = characterName;
     m_worldName = worldName;
 }
@@ -608,15 +615,13 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
     if(isFollowing())
         cancelFollow();
 
-    auto it = dirs.begin();
-    Otc::Direction direction = *it;
+    Otc::Direction direction = dirs.front();
     if(m_localPlayer->canWalk(direction)) {
         TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-        if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking())
-        {
+        if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking()) {
             m_localPlayer->preWalk(direction);
-            forceWalk(direction);
-            dirs.erase(it);
+            //forceWalk(direction);
+            //dirs.erase(it);
         }
     }
 
@@ -774,7 +779,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    if(toThing->isCreature() && g_game.getProtocolVersion() >= 860)
+    if(toThing->isCreature())
         m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
@@ -793,10 +798,10 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
         m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackpos());
 }
 
-void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
+int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
 {
     if(!canPerformGameAction() || !item)
-        return;
+        return -1;
 
     int id = 0;
     if(!previousContainer)
@@ -805,6 +810,7 @@ void Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
         id = previousContainer->getId();
 
     m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), id);
+    return id;
 }
 
 void Game::openParent(const ContainerPtr& container)
@@ -1218,6 +1224,13 @@ void Game::ping()
     m_denyBotCall = true;
 }
 
+void Game::changeMapAwareRange(int xrange, int yrange)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendChangeMapAwareRange(xrange, yrange);
+}
+
 bool Game::checkBotProtection()
 {
 #ifdef BOT_PROTECTION
@@ -1267,6 +1280,10 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameChallangeOnLogin);
         enableFeature(Otc::GameDoubleFreeCapacity);
         enableFeature(Otc::GameCreatureEmblems);
+    }
+
+    if(version >= 860) {
+        enableFeature(Otc::GameAttackSeq);
     }
 
     if(version >= 862) {
@@ -1350,8 +1367,18 @@ void Game::setFollowingCreature(const CreaturePtr& creature)
 std::string Game::formatCreatureName(const std::string& name)
 {
     std::string formatedName = name;
-    if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0)
-        formatedName[0] = stdext::upchar(formatedName[0]);
+    if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0) {
+        bool upnext = true;
+        for(uint i=0;i<formatedName.length();++i) {
+            char ch = formatedName[i];
+            if(upnext) {
+                formatedName[i] = stdext::upchar(ch);
+                upnext = false;
+            }
+            if(ch == ' ')
+                upnext = true;
+        }
+    }
     return formatedName;
 }
 
@@ -1361,4 +1388,17 @@ int Game::findEmptyContainerId()
     while(m_containers[id] != nullptr)
         id++;
     return id;
+}
+
+int Game::getOs()
+{
+    if(m_clientCustomOs >= 0)
+        return m_clientCustomOs;
+
+    if(g_app.getOs() == "windows")
+        return 10;
+    else if(g_app.getOs() == "mac")
+        return 12;
+    else
+        return 10;
 }

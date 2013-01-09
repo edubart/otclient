@@ -24,6 +24,7 @@
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/painterogl2_shadersources.h>
+#include <framework/core/resourcemanager.h>
 
 ShaderManager g_shaders;
 
@@ -59,11 +60,13 @@ PainterShaderProgramPtr ShaderManager::createShader(const std::string& name)
     return shader;
 }
 
-PainterShaderProgramPtr ShaderManager::createFragmentShader(const std::string& name, const std::string& file)
+PainterShaderProgramPtr ShaderManager::createFragmentShader(const std::string& name, std::string file)
 {
     PainterShaderProgramPtr shader = createShader(name);
     if(!shader)
         return nullptr;
+
+    file = g_resources.guessFileType(file, "frag");
 
     shader->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     if(!shader->addShaderFromSourceFile(Shader::Fragment, file)) {
@@ -109,11 +112,28 @@ PainterShaderProgramPtr ShaderManager::createItemShader(const std::string& name,
     return shader;
 }
 
+PainterShaderProgramPtr ShaderManager::createMapShader(const std::string& name, const std::string& file)
+{
+    PainterShaderProgramPtr shader = createFragmentShader(name, file);
+    if(shader)
+        setupMapShader(shader);
+    return shader;
+}
+
 void ShaderManager::setupItemShader(const PainterShaderProgramPtr& shader)
 {
     if(!shader)
         return;
     shader->bindUniformLocation(ITEM_ID_UNIFORM, "u_ItemId");
+}
+
+void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)
+{
+    if(!shader)
+        return;
+    shader->bindUniformLocation(MAP_CENTER_COORD, "u_MapCenterCoord");
+    shader->bindUniformLocation(MAP_GLOBAL_COORD, "u_MapGlobalCoord");
+    shader->bindUniformLocation(MAP_ZOOM, "u_MapZoom");
 }
 
 PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)
@@ -123,3 +143,4 @@ PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)
         return it->second;
     return nullptr;
 }
+

@@ -55,7 +55,7 @@ public:
     void setDrawLights(bool enable) { m_mapView->setDrawLights(enable); }
     void setAnimated(bool enable) { m_mapView->setAnimated(enable); }
     void setKeepAspectRatio(bool enable);
-    void setMapShader(const PainterShaderProgramPtr& shader) { m_mapView->setShader(shader); }
+    void setMapShader(const PainterShaderProgramPtr& shader, float fadeout, float fadein) { m_mapView->setShader(shader, fadein, fadeout); }
     void setMinimumAmbientLight(float intensity) { m_mapView->setMinimumAmbientLight(intensity); }
 
     bool isMultifloor() { return m_mapView->isMultifloor(); }

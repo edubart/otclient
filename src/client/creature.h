@@ -55,6 +55,7 @@ public:
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit);
+    void setOutfitColor(const Color& color, int duration);
     void setLight(const Light& light) { m_light = light; }
     void setSpeed(uint16 speed);
     void setSkull(uint8 skull);
@@ -98,11 +99,13 @@ public:
     virtual int getDisplacementX();
     virtual int getDisplacementY();
     virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
+    PointF getJumpOffset() { return m_jumpOffset; }
 
     void updateShield();
 
     // walk related
     void turn(Otc::Direction direction);
+    void jump(int height, int duration);
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
     void allowAppearWalk() { m_allowAppearWalk = true; }
@@ -129,6 +132,9 @@ protected:
     virtual void updateWalk();
     virtual void terminateWalk();
 
+    void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
+    void updateJump();
+
     uint32 m_id;
     std::string m_name;
     uint8 m_healthPercent;
@@ -152,6 +158,9 @@ protected:
     stdext::boolean<true> m_removed;
     CachedText m_nameCache;
     Color m_informationColor;
+    Color m_outfitColor;
+    ScheduledEventPtr m_outfitColorUpdateEvent;
+    Timer m_outfitColorTimer;
 
     std::array<double, Otc::LastSpeedFormula> m_speedFormula;
 
@@ -173,6 +182,12 @@ protected:
     Position m_lastStepFromPosition;
     Position m_lastStepToPosition;
     Position m_oldPosition;
+
+    // jump related
+    float m_jumpHeight;
+    float m_jumpDuration;
+    PointF m_jumpOffset;
+    Timer m_jumpTimer;
 };
 
 // @bindclass
