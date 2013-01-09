@@ -52,6 +52,9 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     m_glyphsSize[32].setWidth(spaceWidth);
     m_glyphsSize[160].setWidth(spaceWidth);
 
+    // use 127 as spacer [Width: 1], Important for the current NPC highlighting system
+    m_glyphsSize[127].setWidth(1);
+
     // new line actually has a size that will be useful in multiline algorithm
     m_glyphsSize[(uchar)'\n'] = Size(1, m_glyphHeight);
 

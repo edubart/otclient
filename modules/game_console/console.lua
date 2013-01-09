@@ -781,8 +781,6 @@ function onClickIgnoreButton()
   ignoreWindow = g_ui.displayUI('ignorewindow.otui')
   local ignoreListPanel = ignoreWindow:getChildById('ignoreList')
   ignoreWindow.onDestroy = function() ignoreWindow = nil end
-  g_keyboard.bindKeyPress('Down', function() ignoreListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
-  g_keyboard.bindKeyPress('Up', function() ignoreListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
   
   local removeButton = ignoreWindow:getChildById('buttonRemove')
   removeButton:disable()
