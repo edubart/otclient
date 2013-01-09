@@ -103,6 +103,10 @@ function displayStatusMessage(text)
   displayMessage(MessageModes.Status, text)
 end
 
+function displayFailureMessage(text)
+  displayMessage(MessageModes.Failure, text)
+end
+
 function displayGameMessage(text)
   displayMessage(MessageModes.Game, text)
 end

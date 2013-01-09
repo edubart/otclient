@@ -1,0 +1,98 @@
+IgnoreListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+MainWindow
+  id: ignoreWindow
+  !text: tr('Ignore List')
+  size: 500 240
+  @onEscape: self:destroy()
+
+  Label
+    !text: tr('Ignored players:')
+    anchors.left: parent.left
+    anchors.top: parent.top
+    
+  TextList
+    id: ignoreList
+    vertical-scrollbar: ignoreListScrollBar
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    height: 150
+    width: 230
+    margin-bottom: 10
+    margin-top: 3
+    padding: 1
+    focusable: false
+
+  Button
+    id: buttonRemove
+    !text: tr('Remove')
+    width: 64
+    anchors.right: prev.right
+    anchors.bottom: parent.bottom
+    
+  TextEdit
+    id: ignoreNameEdit
+    anchors.left: ignoreList.right
+    anchors.top: ignoreList.top
+    width: 180
+    margin-left: 8
+    margin-right: 3
+    
+  Button
+    id: buttonAdd
+    !text: tr('Add')
+    width: 48
+    height: 20
+    anchors.right: parent.right
+    anchors.top: prev.top
+    
+  CheckBox
+    id: checkboxIgnorePrivateMessages
+    !text: tr('Ignore Private Messages')
+    anchors.left: ignoreList.right
+    anchors.top: ignoreList.top
+    width: 180
+    margin-top: 25
+    margin-left: 8
+    
+  CheckBox
+    id: checkboxIgnoreYelling
+    !text: tr('Ignore Yelling')
+    anchors.left: ignoreList.right
+    anchors.top: prev.top
+    width: 180
+    margin-top: 25
+    margin-left: 8
+    
+  Button
+    id: buttonSave
+    !text: tr('Save')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: self:getParent():onEnter()
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: self:getParent():destroy()
+
+  VerticalScrollBar
+    id: ignoreListScrollBar
+    anchors.top: ignoreList.top
+    anchors.bottom: ignoreList.bottom
+    anchors.right: ignoreList.right
+    step: 14
+    pixels-scroll: true

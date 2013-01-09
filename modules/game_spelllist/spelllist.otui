@@ -215,7 +215,7 @@ MainWindow
     margin-top: 3
     margin-left: 3
     text: Any 
-    width: 50
+    width: 75
 
   CheckBox
     id: vocationBoxSorcerer
@@ -223,7 +223,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Sorcerer 
-    width: 50
+    width: 75
 
   CheckBox
     id: vocationBoxDruid
@@ -231,7 +231,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Druid
-    width: 50
+    width: 75
 
   CheckBox
     id: vocationBoxPaladin
@@ -239,7 +239,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Paladin 
-    width: 50
+    width: 75
 
   CheckBox
     id: vocationBoxKnight
@@ -247,7 +247,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Knight 
-    width: 50
+    width: 75
 
   Label
     id: labelGroupFilter
@@ -266,7 +266,7 @@ MainWindow
     margin-top: 3
     margin-left: 3
     text: Any 
-    width: 50
+    width: 75
 
   CheckBox
     id: groupBoxAttack
@@ -274,7 +274,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Attack
-    width: 50
+    width: 75
 
   CheckBox
     id: groupBoxHealing
@@ -282,7 +282,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Healing
-    width: 50
+    width: 75
 
   CheckBox
     id: groupBoxSupport
@@ -290,7 +290,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Support 
-    width: 50
+    width: 75
 
   Label
     id: labelPremiumFilter
@@ -309,7 +309,7 @@ MainWindow
     margin-top: 3
     margin-left: 3
     text: Any 
-    width: 50
+    width: 75
 
   CheckBox
     id: premiumBoxNo
@@ -317,7 +317,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: No
-    width: 50
+    width: 75
 
   CheckBox
     id: premiumBoxYes
@@ -325,4 +325,4 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     text: Yes
-    width: 50
+    width: 75

@@ -55,12 +55,19 @@ consoleTabBar = nil
 consoleTextEdit = nil
 channels = nil
 channelsWindow = nil
+ignoreWindow = nil
 ownPrivateName = nil
 messageHistory = {}
 currentMessageIndex = 0
 ignoreNpcMessages = false
 defaultTab = nil
 serverTab = nil
+
+local ignoreSettings = {
+    privateMessages = false,
+    yelling = false,
+    players = {}
+}
 
 function init()
   connect(g_game, { onTalk = onTalk,
@@ -99,6 +106,9 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
   g_keyboard.bindKeyDown('Ctrl+E', removeCurrentTab)
   g_keyboard.bindKeyDown('Ctrl+H', openHelp)
+  
+  -- Ignore List
+  loadIgnoreSettings()
 end
 
 function terminate()
@@ -117,9 +127,16 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+E')
   g_keyboard.unbindKeyDown('Ctrl+H')
 
+  saveIgnoreSettings()
+  
   if channelsWindow then
     channelsWindow:destroy()
     channelsWindow = nil
+  end
+  
+  if ignoreWindow then
+    ignoreWindow:destroy()
+    ignoreWindow = nil
   end
 
   consolePanel:destroy()
@@ -588,6 +605,14 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   end
 
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
+  
+  speaktype = SpeakTypes[mode]
+  if ((mode == MessageModes.Yell and isIgnoringYelling()) or
+        (speaktype.private and isIgnoringPrivate()) or
+            (isIgnored(name) or isIgnored(name:lower()))) and
+                name ~= g_game.getLocalPlayer():getName() then
+    return
+  end
 
   if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
       mode == MessageModes.Spell or mode == MessageModes.MonsterSay or mode == MessageModes.MonsterYell or
@@ -611,7 +636,6 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   end
 
   local defaultMessage = mode <= 3 and true or false
-  speaktype = SpeakTypes[mode]
 
   if not speaktype then
     perror('unhandled onTalk message mode ' .. mode .. ': ' .. message)
@@ -677,7 +701,11 @@ function doChannelListSubmit()
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
-    g_game.openPrivateChannel(openPrivateChannelWith)
+    if openPrivateChannelWith:lower() ~= g_game.getLocalPlayer():getName():lower() then
+      g_game.openPrivateChannel(openPrivateChannelWith)
+    else
+      modules.game_textmessage.displayFailureMessage('You cannot create a private chat channel with yourself.')
+    end
   else
     local selectedChannelLabel = channelListPanel:getFocusedChild()
     if not selectedChannelLabel then return end
@@ -712,6 +740,100 @@ function onChannelList(channelList)
       label:setPhantom(false)
       label.onDoubleClick = doChannelListSubmit
     end
+  end
+end
+
+function loadIgnoreSettings()
+  local ignoreNode = g_settings.getNode('IgnorePlayers')
+  if ignoreNode then
+    for i = 1, #ignoreNode do
+      table.insert(ignoreSettings.players, ignoreNode[i])
+    end
+  end
+  ignoreSettings.privateMessages = g_settings.getBoolean('IgnorePrivateMessages')
+  ignoreSettings.yelling = g_settings.getBoolean('IgnoreYelling')
+end
+
+function saveIgnoreSettings()
+  local tmpSettings = {}
+  for i = 1, #ignoreSettings.players do    
+    table.insert(tmpSettings, ignoreSettings.players[i])
+  end
+  g_settings.set('IgnorePrivateMessages', ignoreSettings.privateMessages)
+  g_settings.set('IgnoreYelling', ignoreSettings.yelling)
+  g_settings.setNode('IgnorePlayers', tmpSettings)
+end
+
+function isIgnored(name)
+    return table.find(ignoreSettings.players, name)
+end
+
+function isIgnoringPrivate()
+    return ignoreSettings.privateMessages
+end
+
+function isIgnoringYelling()
+    return ignoreSettings.yelling
+end
+
+function onClickIgnoreButton()
+  if ignoreWindow then return end
+  ignoreWindow = g_ui.displayUI('ignorewindow.otui')
+  local ignoreListPanel = ignoreWindow:getChildById('ignoreList')
+  ignoreWindow.onDestroy = function() ignoreWindow = nil end
+  g_keyboard.bindKeyPress('Down', function() ignoreListPanel:focusNextChild(KeyboardFocusReason) end, channelsWindow)
+  g_keyboard.bindKeyPress('Up', function() ignoreListPanel:focusPreviousChild(KeyboardFocusReason) end, channelsWindow)
+  
+  local removeButton = ignoreWindow:getChildById('buttonRemove')
+  removeButton:disable()
+  ignoreListPanel.onChildFocusChange = function() removeButton:enable() end
+  removeButton.onClick = function() 
+            local selection = ignoreListPanel:getFocusedChild() 
+            if selection then
+                ignoreListPanel:removeChild(selection)
+            end
+            if ignoreListPanel:getChildCount() == 0 then
+                removeButton:disable()
+            end
+        end
+  
+  local newlyIgnoredPlayers = {}
+  local addName = ignoreWindow:getChildById('ignoreNameEdit')
+  local addButton = ignoreWindow:getChildById('buttonAdd')
+  local addFunction = function() 
+            if addName:getText() == '' then return end
+            if table.find(ignoreSettings.players, addName:getText()) then return end
+            if table.find(newlyIgnoredPlayers, addName:getText()) then return end
+            local label = g_ui.createWidget('IgnoreListLabel', ignoreListPanel)
+            label:setText(addName:getText())
+            table.insert(newlyIgnoredPlayers, addName:getText())
+            label:setPhantom(false)
+            addName:setText('')
+        end
+  addButton.onClick = addFunction
+  ignoreWindow.onEnter = addFunction
+    
+  local ignorePrivateMessageBox = ignoreWindow:getChildById('checkboxIgnorePrivateMessages')
+  ignorePrivateMessageBox:setChecked(ignoreSettings.privateMessages)
+  local ignoreYellingBox = ignoreWindow:getChildById('checkboxIgnoreYelling')
+  ignoreYellingBox:setChecked(ignoreSettings.yelling)
+    
+  local saveButton = ignoreWindow:getChildById('buttonSave')
+  saveButton.onClick = function()
+                ignoreSettings.players = {}
+                for i = 1, ignoreListPanel:getChildCount() do
+                    table.insert(ignoreSettings.players, ignoreListPanel:getChildByIndex(i):getText())
+                end
+                
+                ignoreSettings.yelling = ignoreYellingBox:isChecked()
+                ignoreSettings.privateMessages = ignorePrivateMessageBox:isChecked()
+                ignoreWindow:destroy()
+            end
+    
+  for _, name in pairs(ignoreSettings.players) do
+      local label = g_ui.createWidget('IgnoreListLabel', ignoreListPanel)
+      label:setText(name)
+      label:setPhantom(false)
   end
 end
 

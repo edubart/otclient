@@ -118,12 +118,22 @@ Panel
     id: channelsButton
     !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
     icon: icons/channels.png
-    anchors.right: parent.right
+    anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
     margin-top: 6
     @onClick: g_game.requestChannels()
 
+  TabButton
+    id: ignoreButton
+    !tooltip: tr('Ignore players')
+    icon: icons/ignore.png
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-right: 5
+    margin-top: 6
+    @onClick: onClickIgnoreButton()
+    
   Panel
     id: consoleContentPanel
     anchors.top: prev.bottom
