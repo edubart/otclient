@@ -4,6 +4,6 @@ Module
   author: andrefaramir, BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [ hotkeys_manager.lua ]
+  scripts: [ hotkeys_manager ]
   @onLoad: init()
   @onUnload: terminate()

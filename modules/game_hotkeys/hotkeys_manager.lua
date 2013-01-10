@@ -32,11 +32,11 @@ hotkeyList = {}
 
 -- public functions
 function init()
-  hotkeysWindow = g_ui.displayUI('hotkeys_manager.otui')
+  hotkeysWindow = g_ui.displayUI('hotkeys_manager')
   local hotkeyListPanel = hotkeysWindow:getChildById('currentHotkeys')
 
   hotkeysWindow:setVisible(false)
-  hotkeysButton = TopMenu.addLeftGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', '/game_hotkeys/icon.png', toggle)
+  hotkeysButton = TopMenu.addLeftGameButton('hotkeysButton', tr('Hotkeys') .. ' (Ctrl+K)', 'icon.png', toggle)
   g_keyboard.bindKeyDown('Ctrl+K', toggle)
   g_keyboard.bindKeyPress('Down', function() hotkeyListPanel:focusNextChild(KeyboardFocusReason) end, hotkeysWindow)
   g_keyboard.bindKeyPress('Up', function() hotkeyListPanel:focusPreviousChild(KeyboardFocusReason) end, hotkeysWindow)
@@ -59,21 +59,19 @@ function init()
   itemWidget:setVisible(false)
   itemWidget:setFocusable(false)
 
-  connect(g_game, { onGameEnd = hide })
+  connect(g_game, { onGameStart = onGameStart,
+    onGameEnd = hide })
   connect(currentHotkeysList, { onChildFocusChange = function (self, focusedChild) checkSelectedHotkey(focusedChild) end } )
 
   hotkeysManagerLoaded = true
-
-  load()
 end
 
 function terminate()
   hotkeysManagerLoaded = false
 
-  disconnect(g_game, { onGameEnd = hide })
+  disconnect(g_game, { onGameStart = onGameStart,
+    onGameEnd = hide })
   g_keyboard.unbindKeyDown('Ctrl+K')
-
-  save()
 
   for keyCombo,v in pairs(hotkeyList) do
     g_keyboard.unbindKeyPress(keyCombo)
@@ -119,9 +117,7 @@ function save()
 end
 
 function toggle()
-  if hotkeysWindow:isVisible() then
-    hide()
-  else
+  if not hotkeysWindow:isVisible() then
     show()
   end
 end
@@ -139,7 +135,28 @@ function hide()
   hotkeysWindow:hide()
 end
 
+function ok()
+  save()
+  hide()
+end
+
+function cancel()
+  local children = currentHotkeysList:getChildren()
+  for i=1,#children do
+    hotkeyList[children[i].keyCombo] = nil
+    g_keyboard.unbindKeyPress(children[i].keyCombo)
+  end
+  currentHotkeysList:destroyChildren()
+  hotkeyLabelSelectedOnList = nil
+  load()
+  hide()
+end
+
 -- private functions
+function onGameStart()
+  load()
+end
+
 function onChooseItemMouseRelease(self, mousePosition, mouseButton)
   local item = nil
   if mouseButton == MouseLeftButton then
@@ -164,8 +181,9 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
     hotkeyLabelSelectedOnList.itemId = item:getId()
     changeUseType(HOTKEY_MANAGER_USEONSELF)
     checkSelectedHotkey(hotkeyLabelSelectedOnList)
-    show()
   end
+
+  show()
 
   g_mouse.restoreCursor()
   self:ungrabMouse()
@@ -196,56 +214,13 @@ function clearObject()
 end
 
 function addHotkey()
-  local widget
+  local assignWindow = g_ui.createWidget('HotkeyAssignWindow', rootWidget)
+  assignWindow:grabKeyboard()
 
-  messageBox = g_ui.createWidget('MainWindow', rootWidget)
-  messageBox:grabKeyboard()
-  messageBox:setId('assignWindow')
-  messageBox:setText(tr('Button Assign'))
-  messageBox:setWidth(420)
-  messageBox:setHeight(140)
-  messageBox:setDraggable(false)
+  local comboLabel = assignWindow:getChildById('comboPreview')
+  comboLabel.keyCombo = ''
 
-  widget = g_ui.createWidget('Label', messageBox)
-  widget:setText(tr('Please, press the key you wish to add onto your hotkeys manager'))
-  widget:resizeToText()
-  widget:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-  widget:addAnchor(AnchorTop, 'parent', AnchorTop)
-
-  widget = g_ui.createWidget('Label', messageBox)
-  widget:setId('comboPreview')
-  widget:setText(tr('Current hotkey to add: %s', 'none'))
-  widget.keyCombo = ''
-  widget:resizeToText()
-  widget:addAnchor(AnchorHorizontalCenter, 'parent', AnchorHorizontalCenter)
-  widget:addAnchor(AnchorTop, 'prev', AnchorBottom)
-  widget:setMarginTop(20)
-
-  widget = g_ui.createWidget('Button', messageBox)
-  widget:setId('cancelButton')
-  widget:setText(tr('Cancel'))
-  widget:setWidth(64)
-  widget:addAnchor(AnchorBottom, 'parent', AnchorBottom)
-  widget:addAnchor(AnchorRight, 'parent', AnchorRight)
-  widget.onClick =  function (self)
-                      messageBox = nil
-                      self:getParent():destroy()
-                    end
-
-  widget = g_ui.createWidget('Button', messageBox)
-  widget:setId('addButton')
-  widget:setText(tr('Add'))
-  widget:setWidth(64)
-  widget:disable()
-  widget:addAnchor(AnchorBottom, 'cancelButton', AnchorBottom)
-  widget:addAnchor(AnchorRight, 'cancelButton', AnchorLeft)
-  widget:setMarginRight(10)
-  widget.onClick =  function (self)
-                      messageBox = nil
-                      addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
-                    end
-
-  connect(messageBox, { onKeyDown = hotkeyCapture }, true)
+  connect(assignWindow, { onKeyDown = hotkeyCapture }, true)
 end
 
 function addKeyCombo(messageBox, keyCombo, keySettings)

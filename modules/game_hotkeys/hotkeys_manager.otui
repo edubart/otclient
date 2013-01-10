@@ -11,10 +11,10 @@ HotkeyListLabel < UILabel
 MainWindow
   id: hotkeysWindow
   !text: tr('Hotkeys')
-  size: 340 460
+  size: 340 410
 
-  @onEnter: modules.game_hotkeys.hide()
-  @onEscape: modules.game_hotkeys.hide()
+  @onEnter: modules.game_hotkeys.ok()
+  @onEscape: modules.game_hotkeys.cancel()
 
   Label
     id: currentHotkeysLabel
@@ -38,7 +38,6 @@ MainWindow
     anchors.right: prev.left
     anchors.top: prev.top
     anchors.bottom: prev.bottom
-    padding: 1
     focusable: false
 
   Label
@@ -52,9 +51,9 @@ MainWindow
     id: addHotkeyButton
     !text: tr('Add')
     width: 64
-    anchors.left: parent.left
-    anchors.top: prev.bottom
-    margin-top: 2
+    anchors.right: next.left
+    anchors.top: next.top
+    margin-right: 5
     @onClick: modules.game_hotkeys.addHotkey()
 
   Button
@@ -62,9 +61,9 @@ MainWindow
     !text: tr('Remove')
     width: 64
     enabled: false
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin-left: 10
+    anchors.right: parent.right
+    anchors.top: currentHotkeys.bottom
+    margin-top: 8
     @onClick: modules.game_hotkeys.removeHotkey()
 
   Label
@@ -74,7 +73,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 20
+    margin-top: 10
 
   TextEdit
     id: hotkeyText
@@ -82,7 +81,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-bottom: 2
+    margin-top: 2
     @onTextChange: modules.game_hotkeys.onHotkeyTextChange(self:getId(), self:getText())
 
   CheckBox
@@ -92,7 +91,7 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     enabled:false
-    margin-top: 10
+    margin-top: 5
     @onCheckChange: modules.game_hotkeys.setSendAutomatically(self:isChecked())
 
   Item
@@ -167,8 +166,61 @@ MainWindow
     margin-bottom: 10
 
   Button
-    !text: tr('Close')
+    !text: tr('Ok')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    @onClick: modules.game_hotkeys.ok()
+    margin-right: 10
+
+  Button
+    !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: modules.game_hotkeys.hide()
+    @onClick: modules.game_hotkeys.cancel()
+
+HotkeyAssignWindow < MainWindow
+  id: assignWindow
+  !text: tr('Button Assign')
+  size: 360 150
+  @onEscape: self:destroy()
+
+  Label
+    !text: tr('Please, press the key you wish to add onto your hotkeys manager')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    text-auto-resize: true
+    text-align: left
+
+  Label
+    id: comboPreview
+    !text: tr('Current hotkey to add: %s', 'none')
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 10
+    text-auto-resize: true
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: addButton
+    !text: tr('Add')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    @onClick: modules.game_hotkeys.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
+    margin-right: 10
+
+  Button
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: self:getParent():destroy()
