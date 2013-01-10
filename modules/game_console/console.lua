@@ -612,7 +612,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   
   speaktype = SpeakTypes[mode]
   if ((mode == MessageModes.Yell and isIgnoringYelling()) or
-        (speaktype.private and isIgnoringPrivate()) or
+        (speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom) or
             (isIgnored(name) or isIgnored(name:lower()))) and
                 name ~= g_game.getLocalPlayer():getName() then
     return
