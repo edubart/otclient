@@ -446,7 +446,11 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text)
         if not g_game.getLocalPlayer():hasVip(creatureName) then
           menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end)
         end
-        -- TODO ignore creatureName
+        if isIgnored(creatureName) then
+		  menu:addOption(tr('Unignore') .. ' ' .. creatureName, function() removeIgnoredPlayer(creatureName) end)
+		else
+		  menu:addOption(tr('Ignore') .. ' ' .. creatureName, function() addIgnoredPlayer(creatureName) end)
+		end
         menu:addSeparator()
       end
       --TODO select all
@@ -765,15 +769,25 @@ function saveIgnoreSettings()
 end
 
 function isIgnored(name)
-    return table.find(ignoreSettings.players, name)
+  return table.find(ignoreSettings.players, name)
+end
+
+function addIgnoredPlayer(name)
+  if not isIgnored(name) then
+    table.insert(ignoreSettings.players, name)
+  end
+end
+
+function removeIgnoredPlayer(name)
+  table.removevalue(ignoreSettings.players, name)
 end
 
 function isIgnoringPrivate()
-    return ignoreSettings.privateMessages
+  return ignoreSettings.privateMessages
 end
 
 function isIgnoringYelling()
-    return ignoreSettings.yelling
+  return ignoreSettings.yelling
 end
 
 function onClickIgnoreButton()
@@ -789,6 +803,7 @@ function onClickIgnoreButton()
             local selection = ignoreListPanel:getFocusedChild() 
             if selection then
                 ignoreListPanel:removeChild(selection)
+                selection:destroy()
             end
             if ignoreListPanel:getChildCount() == 0 then
                 removeButton:disable()
@@ -820,7 +835,8 @@ function onClickIgnoreButton()
   saveButton.onClick = function()
                 ignoreSettings.players = {}
                 for i = 1, ignoreListPanel:getChildCount() do
-                    table.insert(ignoreSettings.players, ignoreListPanel:getChildByIndex(i):getText())
+					addIgnoredPlayer(ignoreListPanel:getChildByIndex(i):getText())
+                    --table.insert(ignoreSettings.players, ignoreListPanel:getChildByIndex(i):getText())
                 end
                 
                 ignoreSettings.yelling = ignoreYellingBox:isChecked()

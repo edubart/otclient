@@ -411,6 +411,12 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         if (not Player:hasVip(creatureName)) then
           menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
+		
+		if modules.game_console.isIgnored(creatureName) then
+		  menu:addOption(tr('Unignore') .. ' ' .. creatureName, function() modules.game_console.removeIgnoredPlayer(creatureName) end)
+		else
+		  menu:addOption(tr('Ignore') .. ' ' .. creatureName, function() modules.game_console.addIgnoredPlayer(creatureName) end)
+		end
 
         local localPlayerShield = localPlayer:getShield()
         local creatureShield = creatureThing:getShield()
