@@ -31,8 +31,8 @@ CountWindow < MainWindow
     focusable: false
 
   Button
-    id: buttonOk
-    !text: tr('Ok')
+    id: buttonCancel
+    !text: tr('Cancel')
     height: 20
     anchors.left: countScrollBar.horizontalCenter
     anchors.right: countScrollBar.right
@@ -41,8 +41,8 @@ CountWindow < MainWindow
     focusable: false
 
   Button
-    id: buttonCancel
-    !text: tr('Cancel')
+    id: buttonOk
+    !text: tr('Ok')
     height: 20
     anchors.right: countScrollBar.horizontalCenter
     anchors.left: countScrollBar.left

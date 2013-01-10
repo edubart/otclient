@@ -98,3 +98,67 @@ function Player:dismount()
     g_game.mount(false)
   end
 end
+
+function Player:getItem(itemid)
+  for i=InventorySlotFirst,InventorySlotLast do
+    local item = self:getInventoryItem(i)
+    if item and item:getId() == itemid then
+      return item
+    end
+  end
+
+  for i, container in pairs(g_game.getContainers()) do
+    for j, item in pairs(container:getItems()) do
+      if item:getId() == itemid then
+        item.container = container
+        return item
+      end
+    end
+  end
+  return items
+end
+
+function Player:getItems(itemid)
+  local items = {}
+  for i=InventorySlotFirst,InventorySlotLast do
+    local item = self:getInventoryItem(i)
+    if item and item:getId() == itemid then
+      table.insert(items, item)
+    end
+  end
+
+  for i, container in pairs(g_game.getContainers()) do
+    for j, item in pairs(container:getItems()) do
+      if item:getId() == itemid then
+        item.container = container
+        table.insert(items, item)
+      end
+    end
+  end
+  return items
+end
+
+function Player:getItemsCount(itemid)
+  local items, count = self:getItems(itemid), 0
+  for i=1,#items do
+    count = count + items[i]:getCount()
+  end
+  return count
+end
+
+function Player:hasState(_state, states)
+  if not states then
+    states = self:getStates()
+  end
+
+  for i = 1, 32 do
+    local pow = math.pow(2, i-1)
+    if pow > states then break end
+    
+    local states = bit32.band(states, pow)
+    if states == _state then
+      return true
+    end
+  end
+  return false
+end

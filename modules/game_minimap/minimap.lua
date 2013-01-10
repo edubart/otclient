@@ -75,32 +75,24 @@ function terminate()
   minimapWindow:destroy()
 end
 
+function onFlagMousePress(widget, mousePosition, mouseButton)
+  if mouseButton == MouseRightButton then
+    local menu = g_ui.createWidget('PopupMenu')
+    menu:addOption(tr('Delete mark'), function()
+        widget:destroy()
+    end)
+    menu:display(mousePosition)
+  elseif mouseButton == MouseLeftButton then
+    minimapAutoWalk(widget.position)
+  end
+  return true
+end
+
 function destroyFlagWindow()
   if flagWindow then
     flagWindow:destroy()
     flagWindow = nil
   end
-end
-
-function createThingMenu(widget, menuPosition, button)
-  if not g_game.isOnline() then return end
-  if button ~= MouseRightButton then return end
-  local menu = g_ui.createWidget('PopupMenu')
-
-  if widget == minimapWidget then
-    menu:addOption(tr('Create mark'), function() 
-                local position = minimapWidget:getPosition(menuPosition)
-                if position then
-                  showFlagDialog(position)
-                end
-              end)
-  else
-    menu:addOption(tr('Delete mark'), function()
-                  widget:destroy()
-              end)
-  end
-  
-  menu:display(menuPosition)
 end
 
 function showFlagDialog(position)
@@ -126,14 +118,15 @@ function showFlagDialog(position)
   
   flagRadioGroup:selectWidget(flagCheckbox[1])
   
-  
   cancelButton.onClick = function()
       flagRadioGroup:destroy()
+      flagRadioGroup = nil
       destroyFlagWindow()
     end
   okButton.onClick = function() 
       addMapFlag(position, flagRadioGroup:getSelectedWidget().icon, description:getText())
       flagRadioGroup:destroy()
+      flagRadioGroup = nil
       destroyFlagWindow()
     end
 end
@@ -206,7 +199,7 @@ function addMapFlag(pos, icon, message, flagId, version)
   flagWidget.id = flagId
   flagWidget.version = version
   updateMapFlag(flagId)
-  flagWidget.onMousePress = createThingMenu
+  flagWidget.onMousePress = onFlagMousePress
 end
 
 function getMapArea()
@@ -358,6 +351,16 @@ function minimapFloorDown(floors)
   end
 end
 
+function minimapAutoWalk(pos)
+  local player = g_game.getLocalPlayer()
+  if not player:autoWalk(pos) then
+    modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
+    return false
+  else
+    return true
+  end
+end
+
 function onButtonClick(id)
   if id == "zoomIn" then
     miniMapZoomIn(20)
@@ -374,21 +377,24 @@ end
 
 function onMinimapMouseRelease(self, mousePosition, mouseButton)
   -- Mapmark menu
-  createThingMenu(self,  mousePosition, mouseButton)
+  local pos = self:getPosition(mousePosition)
+  if mouseButton == MouseRightButton then
+    local menu = g_ui.createWidget('PopupMenu')
+    menu:addOption(tr('Create mark'), function() 
+      local pos = self:getPosition(mousePosition)
+      if pos then
+        showFlagDialog(pos)
+      end
+    end)
+    menu:display(mousePosition)
+  end
   
   if navigating then
     navigating = false
     return
   end
-  local pos = self:getPosition(mousePosition)
   if pos and mouseButton == MouseLeftButton and self:isPressed() then
-    local player = g_game.getLocalPlayer()
-    if not player:autoWalk(pos) then
-      modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
-      return false
-    else
-      return true
-    end
+    minimapAutoWalk(pos)
   end
   return false
 end

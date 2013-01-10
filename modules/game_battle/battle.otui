@@ -56,7 +56,6 @@ MiniWindow
       anchors.horizontalCenter: parent.horizontalCenter
       height: 20
       width: 120
-      // width*count + spacing*(count-1)
       layout:
         type: horizontalBox
         spacing: 5

@@ -37,7 +37,6 @@ function init()
   mouseWidget.cancelNextRelease = false
 
   battleWindow:setContentMinimumHeight(80)
-  --battleWindow:setContentMaximumHeight(384)
 
   connect(Creature, {
     onSkullChange = updateCreatureSkull,
@@ -199,6 +198,7 @@ end
 function addCreature(creature)
   local creatureId = creature:getId()
   local battleButton = battleButtonsByCreaturesList[creatureId]
+
   if not battleButton then
     battleButton = g_ui.createWidget('BattleButton', battlePanel)
     battleButton:setup(creature)
@@ -251,9 +251,9 @@ function removeAllCreatures()
 end
 
 function removeCreature(creature)
-  local creatureId = creature:getId()
+  if hasCreature(creature) then
+    local creatureId = creature:getId()
 
-  if battleButtonsByCreaturesList[creatureId] ~= nil then
     if lastBattleButtonSwitched == battleButtonsByCreaturesList[creatureId] then
       lastBattleButtonSwitched = nil
     end

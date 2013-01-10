@@ -447,10 +447,10 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text)
           menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end)
         end
         if isIgnored(creatureName) then
-		  menu:addOption(tr('Unignore') .. ' ' .. creatureName, function() removeIgnoredPlayer(creatureName) end)
-		else
-		  menu:addOption(tr('Ignore') .. ' ' .. creatureName, function() addIgnoredPlayer(creatureName) end)
-		end
+          menu:addOption(tr('Unignore') .. ' ' .. creatureName, function() removeIgnoredPlayer(creatureName) end)
+        else
+          menu:addOption(tr('Ignore') .. ' ' .. creatureName, function() addIgnoredPlayer(creatureName) end)
+        end
         menu:addSeparator()
       end
       --TODO select all
@@ -611,11 +611,14 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
   
   speaktype = SpeakTypes[mode]
-  if ((mode == MessageModes.Yell and isIgnoringYelling()) or
-        (speaktype.private and isIgnoringPrivate()) or
-            (isIgnored(name) or isIgnored(name:lower()))) and
-                name ~= g_game.getLocalPlayer():getName() then
-    return
+  if name ~= g_game.getLocalPlayer():getName() then
+    if mode == MessageModes.Yell and isIgnoringYelling() then
+      return
+    elseif speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom then
+      return
+    elseif isIgnored(name) or isIgnored(name:lower()) then
+      return
+    end
   end
 
   if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
@@ -835,7 +838,7 @@ function onClickIgnoreButton()
   saveButton.onClick = function()
                 ignoreSettings.players = {}
                 for i = 1, ignoreListPanel:getChildCount() do
-					addIgnoredPlayer(ignoreListPanel:getChildByIndex(i):getText())
+                    addIgnoredPlayer(ignoreListPanel:getChildByIndex(i):getText())
                     --table.insert(ignoreSettings.players, ignoreListPanel:getChildByIndex(i):getText())
                 end
                 
