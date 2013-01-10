@@ -789,6 +789,7 @@ function onClickIgnoreButton()
             local selection = ignoreListPanel:getFocusedChild() 
             if selection then
                 ignoreListPanel:removeChild(selection)
+				selection:destroy()
             end
             if ignoreListPanel:getChildCount() == 0 then
                 removeButton:disable()
