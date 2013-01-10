@@ -835,7 +835,7 @@ function onClickIgnoreButton()
   saveButton.onClick = function()
                 ignoreSettings.players = {}
                 for i = 1, ignoreListPanel:getChildCount() do
-					addIgnorePlayer(ignoreListPanel:getChildByIndex(i):getText())
+					addIgnoredPlayer(ignoreListPanel:getChildByIndex(i):getText())
                     --table.insert(ignoreSettings.players, ignoreListPanel:getChildByIndex(i):getText())
                 end
                 
