@@ -84,13 +84,16 @@ function terminate()
 end
 
 function load()
-  local hotkeySettings = g_settings.getNode('HotkeysManager')
+  local hotkeySettings = g_settings.getNode('HotkeysManager') or {}
+  if hotkeySettings then
+    local playerHotkeySettings = hotkeySettings[g_game.getLocalPlayer():getName()]
 
-  local hasCombos = false
-  if hotkeySettings ~= nil then
-    for i, v in pairs(hotkeySettings) do
-      addKeyCombo(nil, v.keyCombo, v)
-      hasCombos = true
+    local hasCombos = false
+    if playerHotkeySettings ~= nil then
+      for k, setting in pairs(playerHotkeySettings) do
+        addKeyCombo(nil, setting.keyCombo, setting)
+        hasCombos = true
+      end
     end
   end
 
@@ -99,18 +102,25 @@ function load()
     for i=1,12 do
       addKeyCombo(nil, 'F' .. i)
     end
+    for i=1,4 do
+      addKeyCombo(nil, 'Shift+F' .. i)
+    end
   end
 end
 
 function save()
-  local hotkeySettings = {}
+  local char = g_game.getLocalPlayer():getName()
+  local hotkeySettings = g_settings.getNode('HotkeysManager') or {}
+  hotkeySettings[char] = {}
   for i=1, currentHotkeysList:getChildCount() do
     local child = currentHotkeysList:getChildByIndex(i)
-    table.insert(hotkeySettings, {keyCombo = child.keyCombo,
-                                  autoSend = child.autoSend,
-                                  itemId = child.itemId,
-                                  useType = child.useType,
-                                  value = child.value})
+    table.insert(hotkeySettings[char], {
+      keyCombo = child.keyCombo,
+      autoSend = child.autoSend,
+      itemId = child.itemId,
+      useType = child.useType,
+      value = child.value
+    })
   end
 
   g_settings.setNode('HotkeysManager', hotkeySettings)

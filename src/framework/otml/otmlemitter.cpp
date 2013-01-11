@@ -38,7 +38,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
             ss << node->tag();
 
             // add ':' to if the node is unique or has value
-            if(node->hasValue() || node->isUnique() || node->isNull())
+            if(node->hasValue() || node->isUnique() || node->isNull() || node->hasChildren())
                 ss << ":";
         } else
             ss << "-";
