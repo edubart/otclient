@@ -85,7 +85,7 @@ end
 
 function load()
   local hotkeySettings = g_settings.getNode('HotkeysManager') or {}
-  if hotkeySettings then
+  if hotkeySettings ~= nil then
     local playerHotkeySettings = hotkeySettings[g_game.getLocalPlayer():getName()]
 
     local hasCombos = false

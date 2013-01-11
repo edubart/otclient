@@ -108,6 +108,7 @@ function UIScrollBar.create()
   scrollbar.pixelsScroll = false
   scrollbar.showValue = false
   scrollbar.symbol = nil
+  scrollbar.mouseScroll = true
   return scrollbar
 end
 
@@ -139,6 +140,8 @@ function UIScrollBar:onStyleApply(styleName, styleNode)
       self.showValue = true
     elseif name == 'symbol' then
       self.symbol = value
+    elseif name == 'mouse-scroll' then
+      self.mouseScroll = value
     end
   end
 end
@@ -189,6 +192,10 @@ function UIScrollBar:setValue(value)
   end
 end
 
+function UIScrollBar:setMouseScroll(scroll)
+  self.mouseScroll = scroll
+end
+
 function UIScrollBar:setStep(step)
   self.step = step
 end
@@ -202,6 +209,9 @@ function UIScrollBar:onGeometryChange()
 end
 
 function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
+  if not self.mouseScroll then
+    return false
+  end
   if mouseWheel == MouseWheelDown then
     if self.orientation == 'vertical' then
       self:decrement()
@@ -225,3 +235,4 @@ function UIScrollBar:getStep() return self.step end
 function UIScrollBar:getOrientation() return self.orientation end
 function UIScrollBar:getShowValue() return self.showValue end
 function UIScrollBar:getSymbol() return self.symbol end
+function UIScrollBar:getMouseScroll() return self.mouseScroll end

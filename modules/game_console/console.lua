@@ -359,9 +359,9 @@ function addTabText(text, speaktype, tab, creatureName)
   -- Overlay for consoleBuffer which shows highlighted words only
   local consoleBufferHighlight = panel:getChildById('consoleBufferHighlight')
   local labelHighlight = g_ui.createWidget('ConsoleLabel', consoleBufferHighlight)
+
   labelHighlight:setId('consoleLabel' .. panel:getChildCount())
   labelHighlight:setColor("#1f9ffe")
-
 
   local player = g_game.getLocalPlayer()
   if speaktype.npcChat and (player:getName() ~= creatureName or player:getName() == 'Account Manager') then  -- Check if it is the npc who is talking
@@ -411,7 +411,9 @@ function addTabText(text, speaktype, tab, creatureName)
     labelHighlight:setText("")
   end
 
-  label.onMouseRelease = function (self, mousePos, mouseButton) processMessageMenu(mousePos, mouseButton, creatureName, text) end
+  label.onMouseRelease = function (self, mousePos, mouseButton)
+    processMessageMenu(mousePos, mouseButton, creatureName, text)
+  end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
@@ -476,8 +478,12 @@ function sendCurrentMessage()
   if #message == 0 then return end
   consoleTextEdit:clearText()
 
-  -- get current channel
-  local tab = getCurrentTab()
+  -- send message
+  sendMessage(message)
+end
+
+function sendMessage(message, tab)
+  local tab = tab or getCurrentTab()
 
   -- handling chat commands
   local originalMessage = message
