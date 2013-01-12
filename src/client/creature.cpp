@@ -440,6 +440,11 @@ void Creature::onDisappear()
     });
 }
 
+void Creature::onDeath()
+{
+    callLuaField("onDeath");
+}
+
 void Creature::updateWalkAnimation(int totalPixelsWalked)
 {
     // update outfit animation
@@ -599,6 +604,9 @@ void Creature::setHealthPercent(uint8 healthPercent)
 
     m_healthPercent = healthPercent;
     callLuaField("onHealthPercentChange", healthPercent);
+
+    if(healthPercent < 1)
+        onDeath();
 }
 
 void Creature::setDirection(Otc::Direction direction)

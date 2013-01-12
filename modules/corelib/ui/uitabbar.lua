@@ -163,6 +163,7 @@ function UITabBar:removeTab(tab)
     removeEvent(tab.blinkEvent)
   end
   tab:destroy()
+  updateMargins(self)
 end
 
 function UITabBar:getTab(text)

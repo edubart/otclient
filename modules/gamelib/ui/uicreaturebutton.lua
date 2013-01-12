@@ -11,9 +11,9 @@ local LifeBarColors = {} -- Must be sorted by percentAbove
 table.insert(LifeBarColors, {percentAbove = 92, color = '#00BC00' } )
 table.insert(LifeBarColors, {percentAbove = 60, color = '#50A150' } )
 table.insert(LifeBarColors, {percentAbove = 30, color = '#A1A100' } )
-table.insert(LifeBarColors, {percentAbove = 8, color = '#3C2727' } )
-table.insert(LifeBarColors, {percentAbove = 3, color = '#3C0000' } )
-table.insert(LifeBarColors, {percentAbove = -1, color = '#4F0000' } )
+table.insert(LifeBarColors, {percentAbove = 8, color = '#BF0A0A' } )
+table.insert(LifeBarColors, {percentAbove = 3, color = '#910F0F' } )
+table.insert(LifeBarColors, {percentAbove = -1, color = '#850C0C' } )
 
 function UICreatureButton.create()
   local button = UICreatureButton.internalCreate()

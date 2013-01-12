@@ -123,6 +123,7 @@ public:
     virtual void onPositionChange(const Position& newPos, const Position& oldPos);
     virtual void onAppear();
     virtual void onDisappear();
+    virtual void onDeath();
 
 protected:
     virtual void updateWalkAnimation(int totalPixelsWalked);
