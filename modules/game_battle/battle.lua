@@ -97,21 +97,26 @@ function onMiniWindowClose()
 end
 
 function checkCreatures()
-  removeAllCreatures()
-
-  local spectators = {}
   local player = g_game.getLocalPlayer()
   if g_game.isOnline() then
     creatures = g_map.getSpectators(player:getPosition(), false)
     for i, creature in ipairs(creatures) do
       if creature ~= player and doCreatureFitFilters(creature) then
-        table.insert(spectators, creature)
+        if not hasCreature(creature) then
+          addCreature(creature)
+        end
       end
     end
-  end
-
-  for i, v in pairs(spectators) do
-    addCreature(v)
+    local toRemove = {}
+    for i, b in pairs(battleButtonsByCreaturesList) do
+      if (not table.contains(creatures, b.creature)) or (not doCreatureFitFilters(b.creature)) then
+        table.insert(toRemove, b.creature)
+      end
+    end
+    
+    for i, creature in pairs(toRemove) do
+      removeCreature(creature)
+    end
   end
 end
 
