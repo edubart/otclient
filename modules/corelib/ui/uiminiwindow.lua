@@ -104,9 +104,8 @@ function UIMiniWindow:setup()
             self.miniIndex = selfSettings.index
             parent:scheduleInsert(self, selfSettings.index)
           elseif selfSettings.position then
+            self:setParent(parent, true)
             self:setPosition(topoint(selfSettings.position))
-            self:setParent(parent)
-            addEvent(function() self:bindRectToParent() end)
           end
         end
       end
@@ -334,9 +333,11 @@ function UIMiniWindow:fitOnParent()
   end
 end
 
-function UIMiniWindow:setParent(parent)
+function UIMiniWindow:setParent(parent, dontsave)
   UIWidget.setParent(self, parent)
-  self:saveParent(parent)
+  if not dontsave then
+    self:saveParent(parent)
+  end
   self:fitOnParent()
 end
 
