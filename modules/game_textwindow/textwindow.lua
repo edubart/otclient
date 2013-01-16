@@ -1,31 +1,30 @@
-local textWindow = nil
+local windows = {}
 
 function init()
   g_ui.importStyle('textwindow.otui')
 
   connect(g_game, { onEditText = onGameEditText,
                     onEditList = onGameEditList,
-                    onGameEnd = destroy })
+                    onGameEnd = destroyWindows })
 end
 
 function terminate()
   disconnect(g_game, { onEditText = onGameEditText,
                        onEditList = onGameEditList,
-                       onGameEnd = destroy })
+                       onGameEnd = destroyWindows })
 
-  destroy()
+  destroyWindows()
 end
 
-function destroy()
-  if textWindow then
-    textWindow:destroy()
-    textWindow = nil
+function destroyWindows()
+  for _,window in pairs(windows) do
+    window:destroy()
   end
+  windows = {}
 end
 
 function onGameEditText(id, itemId, maxLength, text, writter, time)
-  if textWindow then return end
-  textWindow = g_ui.createWidget('TextWindow', rootWidget)
+  local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local writeable = (maxLength ~= #text) and maxLength > 0
   local textItem = textWindow:getChildById('textItem')
@@ -72,6 +71,11 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
     textWindow:setText(tr('Edit Text'))
   end
 
+  local function destroy()
+    textWindow:destroy()
+    table.removevalue(windows, textWindow)
+  end
+
   local doneFunc = function()
     if writeable then
       g_game.editText(id, textEdit:getText())
@@ -87,11 +91,12 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   end
 
   textWindow.onEscape = destroy
+
+  table.insert(windows, textWindow)
 end
 
 function onGameEditList(id, doorId, text)
-  if textWindow then return end
-  textWindow = g_ui.createWidget('TextWindow', rootWidget)
+  local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local textEdit = textWindow:getChildById('text')
   local description = textWindow:getChildById('description')
@@ -104,6 +109,11 @@ function onGameEditList(id, doorId, text)
   description:setText(tr('Enter one name per line.'))
   textWindow:setText(tr('Edit List'))
 
+  local function destroy()
+    textWindow:destroy()
+    table.removevalue(windows, textWindow)
+  end
+
   doneFunc = function()
     g_game.editList(id, doorId, textEdit:getText())
     destroy()
@@ -112,5 +122,6 @@ function onGameEditList(id, doorId, text)
   okButton.onClick = doneFunc
   textWindow.onEnter = doneFunc
   textWindow.onEscape = destroy
-end
 
+  table.insert(windows, textWindow)
+end
