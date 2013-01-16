@@ -22,10 +22,14 @@ function UIPopupMenu:display(pos)
     currentMenu:destroy()
   end
 
+  if pos == nil then
+    pos = g_window.getMousePosition()
+  end
+
   rootWidget:addChild(self)
   self:setPosition(pos)
   self:grabMouse()
-  self:grabKeyboard()
+  --self:grabKeyboard()
   currentMenu = self
 end
 

@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef UILINEEDIT_H
-#define UILINEEDIT_H
+#ifndef UITEXTEDIT_H
+#define UITEXTEDIT_H
 
 #include "uiwidget.h"
 
@@ -34,32 +34,37 @@ public:
     void drawSelf(Fw::DrawPane drawPane);
 
 private:
-    void update();
+    void update(bool focusCursor = false);
 
 public:
-    void setTextHorizontalMargin(int margin);
     void setCursorPos(int pos);
-    void setCursorEnabled(bool enable);
+    void setCursorVisible(bool enable) { m_cursorVisible = false; }
     void setTextHidden(bool hidden);
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
     void setMultiline(bool enable) { m_multiline = enable; }
     void setMaxLength(uint maxLength) { m_maxLength = maxLength; }
+    void setTextVirtualOffset(const Point& offset);
+    void setEditable(bool editable) { m_editable = editable; }
 
     void moveCursor(bool right);
     void appendText(std::string text);
     void appendCharacter(char c);
     void removeCharacter(bool right);
 
+    void wrapText();
     std::string getDisplayedText();
     int getTextPos(Point pos);
-    int getTextHorizontalMargin() { return m_textHorizontalMargin; }
     int getCursorPos() { return m_cursorPos; }
+    Point getTextVirtualOffset() { return m_textVirtualOffset; }
+    Size getTextVirtualSize() { return m_textVirtualSize; }
+    Size getTextTotalSize() { return m_textTotalSize; }
     uint getMaxLength() { return m_maxLength; }
-    bool isCursorEnabled() { return m_cursorPos != -1; }
+    bool isCursorVisible() { return m_cursorVisible; }
     bool isTextHidden() { return m_textHidden; }
     bool isShiftNavigation() { return m_shiftNavigation; }
     bool isMultiline() { return m_multiline; }
+    bool isEditable() { return m_editable; }
 
 protected:
     virtual void onHoverChange(bool hovered);
@@ -71,19 +76,23 @@ protected:
     virtual bool onKeyText(const std::string& keyText);
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
+    virtual void onTextAreaUpdate(const Point& vitualOffset, const Size& virtualSize, const Size& totalSize);
 
 private:
     void blinkCursor();
 
     Rect m_drawArea;
     int m_cursorPos;
-    Point m_startInternalPos;
-    int m_startRenderPos;
+    Point m_textVirtualOffset;
+    Size m_textVirtualSize;
+    Size m_textTotalSize;
     ticks_t m_cursorTicks;
-    int m_textHorizontalMargin;
     bool m_textHidden;
     bool m_shiftNavigation;
     bool m_multiline;
+    bool m_cursorInRange;
+    bool m_cursorVisible;
+    bool m_editable;
     std::string m_validCharacters;
     uint m_maxLength;
 

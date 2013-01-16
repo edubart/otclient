@@ -193,6 +193,9 @@ function UITabBar:selectTab(tab)
   tab:setChecked(true)
   tab:setOn(false)
   tab.blinking = false
+
+  local parent = tab:getParent()
+  parent:focusChild(tab, MouseFocusReason)
 end
 
 function UITabBar:selectNextTab()

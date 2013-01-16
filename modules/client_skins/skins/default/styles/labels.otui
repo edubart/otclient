@@ -10,7 +10,6 @@ FlatLabel < UILabel
   color: #aaaaaa
   size: 86 20
   text-offset: 3 3
-  text-margin: 3
   image-source: /images/panel_flat.png
   image-border: 1
 

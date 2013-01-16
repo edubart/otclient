@@ -93,6 +93,24 @@ function table.empty(t)
   return true
 end
 
+function table.permute(t, n, count)
+  n = n or #t
+  for i=1,count or n do
+    local j = math.random(i, n)
+    t[i], t[j] = t[j], t[i]
+  end
+  return t
+end
+
+function table.findbyfield(t, fieldname, fieldvalue)
+  for _i,subt in pairs(t) do
+    if subt[fieldname] == fieldvalue then
+      return subt
+    end
+  end
+  return nil
+end
+
 function table.toString(t)
   local maxn = #t
   local str = ""

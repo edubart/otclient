@@ -12,7 +12,7 @@ local function moveToolTip(first)
   local pos = g_window.getMousePosition()
   pos.y = pos.y + 1
   local xdif = g_window.getSize().width - (pos.x + toolTipLabel:getWidth())
-  if xdif < 2 then
+  if xdif < 10 then
     pos.x = pos.x - toolTipLabel:getWidth() - 3
   else
     pos.x = pos.x + 10

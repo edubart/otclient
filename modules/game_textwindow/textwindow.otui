@@ -1,12 +1,10 @@
 TextWindow < MainWindow
   id: textWindow
-  size: 280 280
-  @onEscape: self:destroy()
+  size: 300 280
 
-  UIItem
+  Item
     id: textItem
     virtual: true
-    size: 32 32
     anchors.top: parent.top
     anchors.left: parent.left
 
@@ -15,43 +13,40 @@ TextWindow < MainWindow
     anchors.top: parent.top
     anchors.left: textItem.right
     anchors.right: parent.right
-    anchors.bottom: text.top
-    text-align: left
     margin-left: 8
-    margin-bottom: 10
+    text-auto-resize: true
+    text-align: left
+    text-wrap: true
 
   MultilineTextEdit
     id: text
-    anchors.fill: parent
-    anchors.top: textItem.bottom
-    margin-right: 10
-    margin-top: 30
-    margin-bottom: 30
+    anchors.top: textScroll.top
+    anchors.left: parent.left
+    anchors.right: textScroll.left
+    anchors.bottom: textScroll.bottom
+    vertical-scrollbar: textScroll
 
   VerticalScrollBar
     id: textScroll
-    anchors.left: prev.right
-    anchors.top: prev.top
-    anchors.bottom: prev.bottom
-    minimum: 0
-    maximum: 0
-    step: 1
-    value: 0
+    anchors.top: description.bottom
+    anchors.bottom: okButton.top
+    anchors.right: parent.right
+    margin-top: 10
+    margin-bottom: 10
+    step: 16
     pixels-scroll: true
-
-  Button
-    id: cancelButton
-    !text: tr('Cancel')
-    anchors.top: next.top
-    anchors.right: next.left
-    margin-right: 8
-    width: 60
-    @onClick: self:getParent():destroy()
 
   Button
     id: okButton
     !text: tr('Ok')
-    anchors.top: text.bottom
-    anchors.right: text.right
-    margin-top: 10
+    anchors.bottom: parent.bottom
+    anchors.right: next.left
+    margin-right: 10
+    width: 60
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
     width: 60

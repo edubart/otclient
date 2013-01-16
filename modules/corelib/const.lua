@@ -301,7 +301,11 @@ KeyCodeDescs = {
 
 NetworkMessageTypes = {
   Boolean = 1,
-  Number = 2,
-  String = 3,
-  Table = 4
+  U8 = 2,
+  U16 = 3,
+  U32 = 4,
+  U64 = 5,
+  NumberString = 6,
+  String = 7,
+  Table = 8
 }

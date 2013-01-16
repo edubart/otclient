@@ -3,6 +3,7 @@ UIComboBox = extends(UIWidget)
 
 function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()
+  combobox:setFocusable(false)
   combobox.options = {}
   combobox.currentIndex = -1
   combobox.mouseScroll = true
@@ -15,6 +16,15 @@ function UIComboBox:clearOptions()
   self:clearText()
 end
 
+function UIComboBox:getOption(text)
+  if not self.options then return nil end
+  for i,v in ipairs(self.options) do
+    if v.text == text then
+      return nil
+    end
+  end
+end
+
 function UIComboBox:setCurrentOption(text)
   if not self.options then return end
   for i,v in ipairs(self.options) do
@@ -22,6 +32,18 @@ function UIComboBox:setCurrentOption(text)
       self.currentIndex = i
       self:setText(text)
       self:onOptionChange(text, v.data)
+      return
+    end
+  end
+end
+
+function UIComboBox:setCurrentOptionByData(data)
+  if not self.options then return end
+  for i,v in ipairs(self.options) do
+    if v.data == data and self.currentIndex ~= i then
+      self.currentIndex = i
+      self:setText(v.text)
+      self:onOptionChange(v.text, v.data)
       return
     end
   end

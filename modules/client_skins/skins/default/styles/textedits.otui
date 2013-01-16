@@ -3,7 +3,7 @@ TextEdit < UITextEdit
   color: #aaaaaa
   size: 86 20
   text-offset: 0 3
-  text-margin: 3
+  padding: 3
   image-source: /images/textedit.png
   image-border: 1
 

@@ -228,10 +228,16 @@ function resolvepath(filePath, depth)
   end
 end
 
-function toboolean(str)
-  str = str:trim():lower()
-  if str == '1' or str == 'true' then
-    return true
+function toboolean(v)
+  if type(v) == 'string' then
+    v = v:trim():lower()
+    if v == '1' or v == 'true' then
+      return true
+    end
+  elseif type(v) == 'number' then
+    if v == 1 then
+      return true
+    end
   end
   return false
 end

@@ -24,3 +24,10 @@ function g_mouse.bindPressMove(widget, callback)
     return true
   end })
 end
+
+function g_mouse.bindPress(widget, callback)
+  connect(widget, { onMousePress = function(widget, mousePos, mouseButton)
+    callback(mousePos, mouseButton)
+    return true
+  end })
+end
