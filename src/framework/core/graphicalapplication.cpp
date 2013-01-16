@@ -206,6 +206,7 @@ void GraphicalApplication::poll()
     // poll window input events
     g_window.poll();
     g_particles.update();
+    g_textures.poll();
 
     Application::poll();
 }

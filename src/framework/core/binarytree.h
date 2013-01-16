@@ -26,7 +26,6 @@
 #include "declarations.h"
 #include <framework/util/databuffer.h>
 #include <client/position.h>
-#include <boost/concept_check.hpp>
 
 enum {
     BINARYTREE_ESCAPE_CHAR = 0xFD,

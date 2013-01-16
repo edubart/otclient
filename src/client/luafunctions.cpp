@@ -228,6 +228,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "getClientVersion", &Game::getClientVersion, &g_game);
     g_lua.bindSingletonFunction("g_game", "setClientVersion", &Game::setClientVersion, &g_game);
     g_lua.bindSingletonFunction("g_game", "setUpdaterSignature", &Game::setUpdaterSignature, &g_game);
+    g_lua.bindSingletonFunction("g_game", "getUpdaterSignature", &Game::getUpdaterSignature, &g_game);
     g_lua.bindSingletonFunction("g_game", "setCustomOs", &Game::setCustomOs, &g_game);
     g_lua.bindSingletonFunction("g_game", "getOs", &Game::getOs, &g_game);
     g_lua.bindSingletonFunction("g_game", "getCharacterName", &Game::getCharacterName, &g_game);
