@@ -174,9 +174,6 @@ if(WIN32)
     set(Boost_THREADAPI win32)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
     set(REQUIRED_BOOST_COMPONENTS ${REQUIRED_BOOST_COMPONENTS} chrono) # mingw32 does not have std::thread
-else()
-    find_package(ICU)
-    set(Boost_LIBRARIES ${Boost_LIBRARIES} ${ICU_LIBRARIES})
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
@@ -243,7 +240,8 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
     set(SYSTEM_LIBRARIES dl)
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
+    find_package(ICU)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${ICU_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
 
 if(FRAMEWORK_GRAPHICS)
