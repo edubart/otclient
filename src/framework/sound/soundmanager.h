@@ -24,6 +24,7 @@
 #define SOUNDMANAGER_H
 
 #include "declarations.h"
+#include "soundchannel.h"
 
 //@bindsingleton g_sounds
 class SoundManager
@@ -32,38 +33,34 @@ class SoundManager
         MAX_CACHE_SIZE = 100000,
         POLL_DELAY = 100
     };
-
 public:
     void init();
     void terminate();
     void poll();
 
+    void setAudioEnabled(bool enable);
+    bool isAudioEnabled() { return m_device && m_context && m_audioEnabled ; }
+    void enableAudio() { setAudioEnabled(true); }
+    void disableAudio() { setAudioEnabled(true); }
+    void stopAll();
+
     void preload(std::string filename);
-    void enableSound(bool enable);
-    void play(std::string filename);
+    SoundSourcePtr play(std::string filename, float fadetime = 0, float gain = 0);
+    SoundChannelPtr getChannel(int channel);
 
-    void enableMusic(bool enable);
-    void playMusic(std::string filename, float fadetime);
-    void stopMusic(float fadetime = 0);
-
-    bool isMusicEnabled() { return m_musicEnabled; }
-    bool isSoundEnabled() { return m_soundEnabled; }
-    bool isAudioEnabled() { return m_device && m_context; }
-    std::string getCurrentMusic() { return m_currentMusic; }
+    std::string resolveSoundFile(std::string file);
+    void ensureContext();
 
 private:
-    StreamSoundSourcePtr createStreamSoundSource(const std::string& filename);
     SoundSourcePtr createSoundSource(const std::string& filename);
-    uint loadFileIntoBuffer(const SoundFilePtr& soundFile);
+
+    ALCdevice *m_device;
+    ALCcontext *m_context;
 
     std::unordered_map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
-    SoundSourcePtr m_musicSource;
-    ALCdevice *m_device;
-    ALCcontext *m_context;
-    stdext::boolean<false> m_musicEnabled;
-    stdext::boolean<false> m_soundEnabled;
-    std::string m_currentMusic;
+    stdext::boolean<true> m_audioEnabled;
+    std::unordered_map<int, SoundChannelPtr> m_channels;
 };
 
 extern SoundManager g_sounds;

@@ -426,6 +426,8 @@ if(FRAMEWORK_SOUND)
         ${CMAKE_CURRENT_LIST_DIR}/sound/oggsoundfile.h
         ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.cpp
         ${CMAKE_CURRENT_LIST_DIR}/sound/soundbuffer.h
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundchannel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/sound/soundchannel.h
         ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.cpp
         ${CMAKE_CURRENT_LIST_DIR}/sound/soundfile.h
         ${CMAKE_CURRENT_LIST_DIR}/sound/soundmanager.cpp

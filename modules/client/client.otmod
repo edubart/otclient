@@ -4,6 +4,10 @@ Module
   author: edubart
   website: www.otclient.info
   reloadable: false
+  sandboxed: true
+  scripts: [ client ]
+  @onLoad: init()
+  @onUnload: terminate()
 
   load-later:
     - client_skins
@@ -18,9 +22,3 @@ Module
     - client_exit
     //- client_stats
 
-  @onLoad: |
-    dofile 'client'
-    Client.init()
-
-  @onUnload: |
-    Client.terminate()

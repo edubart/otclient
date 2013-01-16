@@ -28,9 +28,12 @@
 SoundSource::SoundSource()
 {
     m_sourceId = 0;
+    m_channel = 0;
     m_fadeState = NoFading;
     m_fadeTime = 0;
     m_fadeStartTime = 0;
+    m_fadeGain = 0;
+    m_gain = 1.0f;
 
     alGenSources(1, &m_sourceId);
     assert(alGetError() == AL_NO_ERROR);
@@ -95,6 +98,7 @@ void SoundSource::setReferenceDistance(float distance)
 void SoundSource::setGain(float gain)
 {
     alSourcef(m_sourceId, AL_GAIN, gain);
+    m_gain = gain;
 }
 
 void SoundSource::setPitch(float pitch)
@@ -114,7 +118,7 @@ void SoundSource::setVelocity(const Point& velocity)
 
 void SoundSource::setFading(FadeState state, float fadeTime)
 {
-    float now = g_clock.seconds();
+    float now = stdext::millis() / 1000.0f;
     if(m_fadeState != NoFading) {
         float elapsed = now - m_fadeStartTime;
         float add;
@@ -128,26 +132,30 @@ void SoundSource::setFading(FadeState state, float fadeTime)
 
     m_fadeState = state;
     m_fadeTime = fadeTime;
+    m_fadeGain = m_gain;
+
+    if(m_fadeState == FadingOn)
+        setGain(0.0);
 }
 
 void SoundSource::update()
 {
-    float now = g_clock.seconds();
+    float now = stdext::millis() / 1000.0f;
     if(m_fadeState == FadingOn) {
         float elapsed = now - m_fadeStartTime;
         if(elapsed >= m_fadeTime) {
-            setGain(1.0);
             m_fadeState = NoFading;
         } else {
-            setGain(elapsed / m_fadeTime);
+            setGain((elapsed / m_fadeTime)  * m_fadeGain);
         }
     } else if(m_fadeState == FadingOff) {
-        float time = now - m_fadeStartTime;
-        if(time >= m_fadeTime) {
+        float elapsed = now - m_fadeStartTime;
+        if(elapsed >= m_fadeTime) {
+            setGain(m_fadeGain);
             stop();
             m_fadeState = NoFading;
         } else {
-            setGain((m_fadeTime - time) / m_fadeTime);
+            setGain(((m_fadeTime - elapsed) / m_fadeTime) * m_fadeGain);
         }
     }
 }

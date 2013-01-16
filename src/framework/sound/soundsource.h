@@ -25,8 +25,9 @@
 
 #include "declarations.h"
 #include "soundbuffer.h"
+#include <framework/luaengine/luaobject.h>
 
-class SoundSource : public stdext::shared_object
+class SoundSource : public LuaObject
 {
 protected:
     SoundSource(uint sourceId) : m_sourceId(sourceId) { }
@@ -43,6 +44,7 @@ public:
     virtual bool isBuffering();
     virtual bool isPlaying() { return isBuffering(); }
 
+    void setName(const std::string& name) { m_name == name; }
     virtual void setLooping(bool looping);
     virtual void setRelative(bool relative);
     virtual void setReferenceDistance(float distance);
@@ -52,18 +54,27 @@ public:
     virtual void setVelocity(const Point& velocity);
     virtual void setFading(FadeState state, float fadetime);
 
+    std::string getName() { return m_name; }
+    uchar getChannel() { return m_channel; }
+    float getGain() { return m_gain; }
+
 protected:
     void setBuffer(const SoundBufferPtr& buffer);
+    void setChannel(uchar channel) { m_channel = channel; }
 
     virtual void update();
     friend class SoundManager;
     friend class CombinedSoundSource;
 
     uint m_sourceId;
+    uchar m_channel;
+    std::string m_name;
     SoundBufferPtr m_buffer;
     FadeState m_fadeState;
     float m_fadeStartTime;
     float m_fadeTime;
+    float m_fadeGain;
+    float m_gain;
 };
 
 #endif

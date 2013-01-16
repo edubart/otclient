@@ -1,30 +1,33 @@
-Client = {}
+local musicFilename = "startup"
+local musicChannel = g_sounds.getChannel(1)
 
-local musicFilename = "startup.ogg"
-
-function Client.setMusic(filename)
+function setMusic(filename)
   musicFilename = filename
-  g_sounds.stopMusic(0)
 
   if not g_game.isOnline() then
-    g_sounds.playMusic(musicFilename, 3)
+    musicChannel:stop()
+    musicChannel:enqueue(musicFilename, 3)
   end
 end
 
-function Client.reloadScripts()
+function reloadScripts()
+  g_textures.clearTexturesCache()
   g_modules.reloadModules()
-  dofile '/otclientrc'
+  dofile('/' .. g_app.getCompactName() .. 'rc')
   local message = tr('All modules and scripts were reloaded.')
 
   modules.game_textmessage.displayGameMessage(message)
   print(message)
 end
 
-function Client.startup()
+function startup()
   -- Play startup music (The Silver Tree, by Mattias Westlund)
-  g_sounds.playMusic(musicFilename, 3)
-  connect(g_game, { onGameStart = function() g_sounds.stopMusic(3) end })
-  connect(g_game, { onGameEnd = function() g_sounds.playMusic(musicFilename, 3) end })
+  musicChannel:enqueue(musicFilename, 3)
+  connect(g_game, { onGameStart = function() musicChannel:stop(3) end })
+  connect(g_game, { onGameEnd = function()
+      g_sounds.stopAll()
+      musicChannel:enqueue(musicFilename, 3)
+  end })
 
   -- Check for startup errors
   local errtitle = nil
@@ -44,7 +47,7 @@ function Client.startup()
   end
 end
 
-function Client.init()
+function init()
   g_window.setMinimumSize({ width = 600, height = 480 })
   g_sounds.preload(musicFilename)
 
@@ -62,6 +65,8 @@ function Client.init()
     local defaultPos = { x = (displaySize.width - size.width)/2,
                          y = (displaySize.height - size.height)/2 }
     local pos = g_settings.getPoint('window-pos', defaultPos)
+    pos.x = math.max(pos.x, 0)
+    pos.y = math.max(pos.y, 0)
     g_window.move(pos)
 
     -- window maximized?
@@ -69,23 +74,25 @@ function Client.init()
     if maximized then g_window.maximize() end
   end
 
-  g_window.setTitle('OTClient')
-  g_window.setIcon(resolvepath('clienticon.png'))
-  g_keyboard.bindKeyDown('Ctrl+Shift+R', Client.reloadScripts)
+  g_window.setTitle(g_app.getName())
+  g_window.setIcon(resolvepath('clienticon'))
 
-  connect(g_app, { onRun = Client.startup })
+  -- poll resize events
+  g_window.poll()
+
+  g_keyboard.bindKeyDown('Ctrl+Shift+R', reloadScripts)
+
+  connect(g_app, { onRun = startup })
 end
 
-function Client.terminate()
+function terminate()
   -- save window configs
   g_settings.set('window-size', g_window.getUnmaximizedSize())
   g_settings.set('window-pos', g_window.getUnmaximizedPos())
   g_settings.set('window-maximized', g_window.isMaximized())
 
-  local protocolVersion = g_game.getProtocolVersion()
-  if protocolVersion ~= 0 then
-    g_settings.set('protocol-version', protocolVersion)
+  local clientVersion = g_game.getProtocolVersion()
+  if clientVersion ~= 0 then
+    g_settings.set('client-version', clientVersion)
   end
-
-  Client = nil
 end
