@@ -64,7 +64,7 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
 
   if not writeable then
     textWindow:setText(tr('Show Text'))
-    --textEdit:wrapText()
+    textEdit:wrapText()
     cancelButton:hide()
     cancelButton:setWidth(0)
     okButton:setMarginRight(0)

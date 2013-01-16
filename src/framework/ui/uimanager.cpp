@@ -122,7 +122,7 @@ void UIManager::inputEvent(const InputEvent& event)
             }
 
             if(m_pressedWidget && event.mouseButton == Fw::MouseLeftButton)
-                updatePressedWidget(nullptr, event.mousePos);
+                updatePressedWidget(nullptr, event.mousePos, !accepted);
             break;
         }
         case Fw::MouseMoveInputEvent: {
@@ -161,13 +161,13 @@ void UIManager::inputEvent(const InputEvent& event)
     };
 }
 
-void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos)
+void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos, bool fireClicks)
 {
     UIWidgetPtr oldPressedWidget = m_pressedWidget;
     m_pressedWidget = newPressedWidget;
 
     // when releasing mouse inside pressed widget area send onClick event
-    if(oldPressedWidget && oldPressedWidget->isEnabled() && oldPressedWidget->containsPoint(clickedPos))
+    if(fireClicks && oldPressedWidget && oldPressedWidget->isEnabled() && oldPressedWidget->containsPoint(clickedPos))
         oldPressedWidget->onClick(clickedPos);
 
     if(newPressedWidget)

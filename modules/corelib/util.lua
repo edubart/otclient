@@ -238,6 +238,8 @@ function toboolean(v)
     if v == 1 then
       return true
     end
+  elseif type(v) == 'boolean' then
+    return v
   end
   return false
 end

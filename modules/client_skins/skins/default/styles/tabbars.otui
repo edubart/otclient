@@ -10,8 +10,8 @@ TabBarButton < UIButton
   icon-color: white
   color: #aaaaaa
   anchors.top: parent.top
-  padding: 5
   anchors.left: parent.left
+  padding: 5
 
   $hover !checked:
     image-clip: 0 20 20 20
