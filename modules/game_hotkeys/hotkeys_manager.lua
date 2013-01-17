@@ -8,7 +8,7 @@ HotkeyColors = {
   itemUse = '#8888FF',
   itemUseSelf = '#00FF00',
   itemUseTarget = '#FF0000',
-  itemUseWith = '#CC0000',
+  itemUseWith = '#F5B325',
 }
 
 hotkeysManagerLoaded = false
@@ -59,8 +59,10 @@ function init()
   itemWidget:setVisible(false)
   itemWidget:setFocusable(false)
 
-  connect(g_game, { onGameStart = onGameStart,
-    onGameEnd = hide })
+  connect(g_game, { 
+    onGameStart = onGameStart,
+    onGameEnd = hide
+  })
   connect(currentHotkeysList, { onChildFocusChange = function (self, focusedChild) checkSelectedHotkey(focusedChild) end } )
 
   hotkeysManagerLoaded = true
@@ -69,8 +71,10 @@ end
 function terminate()
   hotkeysManagerLoaded = false
 
-  disconnect(g_game, { onGameStart = onGameStart,
-    onGameEnd = hide })
+  disconnect(g_game, {
+    onGameStart = onGameStart,
+    onGameEnd = hide
+  })
   g_keyboard.unbindKeyDown('Ctrl+K')
 
   for keyCombo,v in pairs(hotkeyList) do
@@ -84,12 +88,12 @@ function terminate()
 end
 
 function load()
-  local hotkeySettings = g_settings.getNode('HotkeysManager') or {}
-  if hotkeySettings ~= nil then
+  local hotkeySettings = g_settings.getNode('HotkeysManager')
+  local hasCombos = false
+  if not table.empty(hotkeySettings) then
     local playerHotkeySettings = hotkeySettings[g_game.getLocalPlayer():getName()]
 
-    local hasCombos = false
-    if playerHotkeySettings ~= nil then
+    if not table.empty(playerHotkeySettings) then
       for k, setting in pairs(playerHotkeySettings) do
         addKeyCombo(nil, setting.keyCombo, setting)
         hasCombos = true
@@ -99,12 +103,7 @@ function load()
 
   -- add default F keys combos
   if not hasCombos then
-    for i=1,12 do
-      addKeyCombo(nil, 'F' .. i)
-    end
-    for i=1,4 do
-      addKeyCombo(nil, 'Shift+F' .. i)
-    end
+    loadDefautComboKeys()
   end
 end
 
@@ -122,7 +121,7 @@ function save()
       value = child.value
     })
   end
-
+  
   g_settings.setNode('HotkeysManager', hotkeySettings)
 end
 
@@ -150,7 +149,7 @@ function ok()
   hide()
 end
 
-function cancel()
+function reload()
   local children = currentHotkeysList:getChildren()
   for i=1,#children do
     hotkeyList[children[i].keyCombo] = nil
@@ -162,9 +161,18 @@ function cancel()
   hide()
 end
 
+function loadDefautComboKeys()
+  for i=1,12 do
+    addKeyCombo(nil, 'F' .. i)
+  end
+  for i=1,4 do
+    addKeyCombo(nil, 'Shift+F' .. i)
+  end
+end
+
 -- private functions
 function onGameStart()
-  load()
+  reload()
 end
 
 function onChooseItemMouseRelease(self, mousePosition, mouseButton)

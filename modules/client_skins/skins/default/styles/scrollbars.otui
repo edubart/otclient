@@ -63,6 +63,9 @@ HorizontalScrollBar < UIScrollBar
   image-clip: 0 65 52 13
   image-border: 1
 
+  $disabled:
+    color: #bbbbbb88
+
   UIButton
     id: decrementButton
     anchors.top: parent.top

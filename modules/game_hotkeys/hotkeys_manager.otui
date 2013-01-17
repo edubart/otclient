@@ -14,7 +14,7 @@ MainWindow
   size: 340 410
 
   @onEnter: modules.game_hotkeys.ok()
-  @onEscape: modules.game_hotkeys.cancel()
+  @onEscape: modules.game_hotkeys.reload()
 
   Label
     id: currentHotkeysLabel
@@ -178,7 +178,7 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: modules.game_hotkeys.cancel()
+    @onClick: modules.game_hotkeys.reload()
 
 HotkeyAssignWindow < MainWindow
   id: assignWindow
