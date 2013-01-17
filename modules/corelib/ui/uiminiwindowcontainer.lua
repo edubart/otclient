@@ -115,8 +115,10 @@ function UIMiniWindowContainer:swapInsert(widget, index)
 
   if oldParent == self and oldIndex ~= index then
     local oldWidget = self:getChildByIndex(index)
-    self:removeChild(oldWidget)
-    self:insertChild(oldIndex, oldWidget)
+    if oldWidget then
+      self:removeChild(oldWidget)
+      self:insertChild(oldIndex, oldWidget)
+    end
     self:removeChild(widget)
     self:insertChild(index, widget)
   end

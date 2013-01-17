@@ -53,7 +53,7 @@ end
 function UIItem:onHoverChange(hovered)
   UIWidget.onHoverChange(self, hovered)
 
-  if self:isVirtual() then return end
+  if self:isVirtual() or not self:isDraggable() then return end
 
   local draggingWidget = g_ui.getDraggingWidget()
   if draggingWidget and self ~= draggingWidget then
@@ -93,7 +93,7 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
 end
 
 function UIItem:canAcceptDrop(widget, mousePos)
-  if self:isVirtual() then return false end
+  if self:isVirtual() or not self:isDraggable() then return false end
   if not widget or not widget.currentDragThing then return false end
 
   local children = rootWidget:recursiveGetChildrenByPos(mousePos)

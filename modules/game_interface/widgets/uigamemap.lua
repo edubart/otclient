@@ -17,6 +17,7 @@ function UIGameMap:onDragEnter(mousePos)
 
   self.currentDragThing = thing
   g_mouse.setTargetCursor()
+  self.cancelNextRelease = true
   return true
 end
 
