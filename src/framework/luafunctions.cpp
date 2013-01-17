@@ -213,7 +213,7 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<ScheduledEvent, Event>();
     g_lua.bindClassMemberFunction<ScheduledEvent>("nextCycle", &ScheduledEvent::nextCycle);
     g_lua.bindClassMemberFunction<ScheduledEvent>("ticks", &ScheduledEvent::ticks);
-    g_lua.bindClassMemberFunction<ScheduledEvent>("reamaningTicks", &ScheduledEvent::reamaningTicks);
+    g_lua.bindClassMemberFunction<ScheduledEvent>("remainingTicks", &ScheduledEvent::remainingTicks);
     g_lua.bindClassMemberFunction<ScheduledEvent>("delay", &ScheduledEvent::delay);
     g_lua.bindClassMemberFunction<ScheduledEvent>("cyclesExecuted", &ScheduledEvent::cyclesExecuted);
     g_lua.bindClassMemberFunction<ScheduledEvent>("maxCycles", &ScheduledEvent::maxCycles);

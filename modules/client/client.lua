@@ -91,8 +91,8 @@ function terminate()
   g_settings.set('window-pos', g_window.getUnmaximizedPos())
   g_settings.set('window-maximized', g_window.isMaximized())
 
-  local clientVersion = g_game.getProtocolVersion()
-  if clientVersion ~= 0 then
-    g_settings.set('client-version', clientVersion)
+  local protocolVersion = g_game.getProtocolVersion()
+  if protocolVersion ~= 0 then
+    g_settings.set('protocol-version', protocolVersion)
   end
 end

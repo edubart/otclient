@@ -127,7 +127,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
             read += 4 + (3 * coloredPixels);
         }
 
-        // fill reamaning pixels with alpha
+        // fill remaining pixels with alpha
         while(writePos < SPRITE_DATA_SIZE) {
             pixels[writePos + 0] = 0x00;
             pixels[writePos + 1] = 0x00;

@@ -109,10 +109,10 @@ void Application::deinit()
     g_modules.unloadModules();
     g_modules.clear();
 
-    // release reamaning lua object references
+    // release remaining lua object references
     g_lua.collectGarbage();
 
-    // poll reamaning events
+    // poll remaining events
     poll();
 
     // disable dispatcher events
