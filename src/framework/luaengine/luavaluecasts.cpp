@@ -295,7 +295,7 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
                 OTMLNodePtr cnode;
                 if(luavalue_cast(-1, cnode)) {
                     if(cnodeName.empty())
-                        node->setUnique(false);
+                        cnode->setUnique(false);
                     else
                         cnode->setTag(cnodeName);
                     node->addChild(cnode);
