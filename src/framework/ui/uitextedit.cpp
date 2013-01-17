@@ -368,7 +368,7 @@ void UITextEdit::removeCharacter(bool right)
 
 void UITextEdit::wrapText()
 {
-    m_text = m_font->wrapText(m_text, getPaddingRect().width());
+    setText(m_font->wrapText(m_text, getPaddingRect().width()));
 }
 
 void UITextEdit::moveCursor(bool right)
@@ -427,7 +427,8 @@ void UITextEdit::onHoverChange(bool hovered)
 
 void UITextEdit::onTextChange(const std::string& text, const std::string& oldText)
 {
-    m_cursorPos = text.length();
+    if(m_cursorPos > (int)text.length())
+        m_cursorPos = text.length();
     blinkCursor();
     update(true);
     UIWidget::onTextChange(text, oldText);
@@ -435,7 +436,7 @@ void UITextEdit::onTextChange(const std::string& text, const std::string& oldTex
 
 void UITextEdit::onFontChange(const std::string& font)
 {
-    update();
+    update(true);
     UIWidget::onFontChange(font);
 }
 
@@ -464,7 +465,7 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
 
 void UITextEdit::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 {
-    update();
+    update(true);
     UIWidget::onGeometryChange(oldRect, newRect);
 }
 

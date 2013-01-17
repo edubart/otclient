@@ -26,7 +26,7 @@ end
 function onGameEditText(id, itemId, maxLength, text, writter, time)
   local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
-  local writeable = (maxLength ~= #text) and maxLength > 0
+  local writeable = #text < maxLength and maxLength > 0
   local textItem = textWindow:getChildById('textItem')
   local description = textWindow:getChildById('description')
   local textEdit = textWindow:getChildById('text')
@@ -38,7 +38,9 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   textItem:setItemId(itemId)
   textEdit:setMaxLength(maxLength)
   textEdit:setText(text)
-  textEdit:setEnabled(writeable)
+  textEdit:setEditable(writeable)
+  textEdit:setCursorVisible(writeable)
+  textEdit:wrapText()
   
   local desc = ''
   if #writter > 0 then
@@ -63,7 +65,6 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
 
   if not writeable then
     textWindow:setText(tr('Show Text'))
-    textEdit:wrapText()
     cancelButton:hide()
     cancelButton:setWidth(0)
     okButton:setMarginRight(0)
@@ -105,7 +106,7 @@ function onGameEditList(id, doorId, text)
 
   textEdit:setMaxLength(8192)
   textEdit:setText(text)
-  textEdit:setEnabled(true)
+  textEdit:setEditable(true)
   description:setText(tr('Enter one name per line.'))
   textWindow:setText(tr('Edit List'))
 

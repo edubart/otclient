@@ -38,7 +38,7 @@ private:
 
 public:
     void setCursorPos(int pos);
-    void setCursorVisible(bool enable) { m_cursorVisible = false; }
+    void setCursorVisible(bool enable) { m_cursorVisible = enable; }
     void setTextHidden(bool hidden);
     void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
