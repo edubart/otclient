@@ -184,7 +184,7 @@ function Options.setOption(key, value)
       modules.game_interface.updateStretchShrink()
     end)
   elseif key == 'enableMusic' then
-    g_sounds.enableAudio(value)
+    g_sounds.setAudioEnabled(value)
   elseif key == 'showLeftPanel' then
     addEvent(function()
       modules.game_interface.getLeftPanel():setOn(value)
