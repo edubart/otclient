@@ -8,7 +8,7 @@ GameServerOpcodes = {
     GameServerAddCreature               = 23,
     GameServerPingBack                  = 29,
     GameServerPing                      = 30,
-    GameServerChallange                 = 31,
+    GameServerChallenge                 = 31,
     GameServerDeath                     = 40,
 
     -- all in game opcodes must be greater than 50

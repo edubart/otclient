@@ -35,7 +35,7 @@ public:
     void send(const OutputMessagePtr& outputMessage);
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
-    void sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom);
+    void sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom);
     void sendEnterGame();
     void sendLogout();
     void sendPing();
@@ -123,7 +123,7 @@ private:
     void parseMessage(const InputMessagePtr& msg);
     void parsePendingGame(const InputMessagePtr& msg);
     void parseEnterGame(const InputMessagePtr& msg);
-    void parseInitGame(const InputMessagePtr& msg);
+    void parseLogin(const InputMessagePtr& msg);
     void parseGMActions(const InputMessagePtr& msg);
     void parseUpdateNeeded(const InputMessagePtr& msg);
     void parseLoginError(const InputMessagePtr& msg);
@@ -131,7 +131,7 @@ private:
     void parseLoginWait(const InputMessagePtr& msg);
     void parsePing(const InputMessagePtr& msg);
     void parsePingBack(const InputMessagePtr& msg);
-    void parseChallange(const InputMessagePtr& msg);
+    void parseChallenge(const InputMessagePtr& msg);
     void parseDeath(const InputMessagePtr& msg);
     void parseMapDescription(const InputMessagePtr& msg);
     void parseMapMoveNorth(const InputMessagePtr& msg);

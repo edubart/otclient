@@ -4,11 +4,8 @@ Module
   author: baxnie, edubart
   website: www.otclient.info
   sandboxed: true
-  scripts:
-    - skills.lua
-
-  dependencies:
-    - game_interface
-
+  scripts: [ skills.lua ]
   @onLoad: init()
   @onUnload: terminate()
+  dependencies:
+    - game_interface

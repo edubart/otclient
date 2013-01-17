@@ -145,17 +145,21 @@ void Game::processLoginWait(const std::string& message, int time)
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
 }
 
+void Game::processLogin()
+{
+    g_lua.callGlobalField("g_game", "onLogin");
+}
+
 void Game::processPendingGame()
 {
     m_localPlayer->setPendingGame(true);
     g_lua.callGlobalField("g_game", "onPendingGame");
+    m_protocolGame->sendEnterGame();
 }
 
 void Game::processEnterGame()
 {
     m_localPlayer->setPendingGame(false);
-    m_protocolGame->sendEnterGame();
-
     g_lua.callGlobalField("g_game", "onEnterGame");
 }
 
@@ -1277,7 +1281,7 @@ void Game::setProtocolVersion(int version)
     if(version >= 854) {
         enableFeature(Otc::GameProtocolChecksum);
         enableFeature(Otc::GameAccountNames);
-        enableFeature(Otc::GameChallangeOnLogin);
+        enableFeature(Otc::GameChallengeOnLogin);
         enableFeature(Otc::GameDoubleFreeCapacity);
         enableFeature(Otc::GameCreatureEmblems);
     }
@@ -1399,6 +1403,6 @@ int Game::getOs()
         return 10;
     else if(g_app.getOs() == "mac")
         return 12;
-    else
-        return 10;
+    else // linux
+        return 11;
 }

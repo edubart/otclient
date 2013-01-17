@@ -313,7 +313,7 @@ namespace Otc
         // 1-50 defined in c++
         GameProtocolChecksum = 1,
         GameAccountNames = 2,
-        GameChallangeOnLogin = 3,
+        GameChallengeOnLogin = 3,
         GamePenalityOnDeath = 4,
         GameNameOnNpcTrade = 5,
         GameDoubleFreeCapacity = 6,

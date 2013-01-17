@@ -1,19 +1,21 @@
 local currentRsa
-local enableCreatureNameFormat = true
 
 function g_game.getRsa()
   return currentRsa
 end
 
-function g_game.isCreatureNameFormatEnabled()
-  return enableCreatureNameFormat
-end
-
 function g_game.chooseRsa(host)
   if string.ends(host, '.tibia.com') or string.ends(host, '.cipsoft.com') then
     g_game.setRsa(CIPSOFT_RSA)
+
+    if g_app.getOs() == 'windows' then
+      g_game.setCustomOs(OsTypes.Windows)
+    else
+      g_game.setCustomOs(OsTypes.Linux)
+    end
   else
     g_game.setRsa(OTSERV_RSA)
+    g_game.setCustomOs(-1)
   end
 end
 
@@ -26,24 +28,6 @@ end
 
 function g_game.isOfficialTibia()
   return currentRsa == CIPSOFT_RSA
-end
-
-function g_game.getOsType()
-  if g_game.isOfficialTibia() then
-    if g_app.getOs() == 'windows' then
-      return OsTypes.Windows
-    else
-      return OsTypes.Linux
-    end
-  else
-    if g_app.getOs() == 'windows' then
-      return OsTypes.OtclientWindows
-    elseif g_app.getOs() == 'mac' then
-      return OsTypes.OtclientMac
-    else
-      return OsTypes.OtclientLinux
-    end
-  end
 end
 
 function g_game.getSupportedProtocols()

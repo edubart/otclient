@@ -151,6 +151,7 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = g_ui.createWidget('PopupMenu')
+  menu:addOption(tr('Send Message'), function() g_game.openPrivateChannel(widget:getText()) end)
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()

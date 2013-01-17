@@ -46,7 +46,7 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
     }
 }
 
-void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRandom)
+void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom)
 {
     OutputMessagePtr msg(new OutputMessage);
 
@@ -64,7 +64,7 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
 
     msg->addU16(g_game.getProtocolVersion());
 
-    if(g_game.getProtocolVersion() >= 971) {
+    if(g_game.getProtocolVersion() >= 970) {
         msg->addU32(g_game.getClientVersion());
         msg->addU8(0); // clientType
     }
@@ -97,9 +97,9 @@ void ProtocolGame::sendLoginPacket(uint challangeTimestamp, uint8 challangeRando
         paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
     }
 
-    if(g_game.getFeature(Otc::GameChallangeOnLogin)) {
-        msg->addU32(challangeTimestamp);
-        msg->addU8(challangeRandom);
+    if(g_game.getFeature(Otc::GameChallengeOnLogin)) {
+        msg->addU32(challengeTimestamp);
+        msg->addU8(challengeRandom);
         paddingBytes -= 5;
     }
 

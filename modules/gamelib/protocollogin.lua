@@ -27,7 +27,7 @@ end
 function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
   msg:addU8(ClientOpcodes.ClientEnterAccount)
-  msg:addU16(g_game.getOsType())
+  msg:addU16(g_game.getOs())
   msg:addU16(g_game.getProtocolVersion())
 
   if g_game.getProtocolVersion() >= 971 then

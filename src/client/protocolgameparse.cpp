@@ -58,16 +58,11 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 msg->setReadPos(readPos); // restore read pos
 
             switch(opcode) {
-            case Proto::GameServerInitGame:
-            case Proto::GameServerAddCreature:
-                if(opcode == Proto::GameServerInitGame && g_game.getFeature(Otc::GameLoginPending))
+            case Proto::GameServerLoginOrPendingState:
+                if(g_game.getFeature(Otc::GameLoginPending))
                     parsePendingGame(msg);
                 else
-                    parseInitGame(msg);
-                break;
-            case Proto::GameServerEnterGame:
-                if(g_game.getFeature(Otc::GameLoginPending))
-                    parseEnterGame(msg);
+                    parseLogin(msg);
                 break;
             case Proto::GameServerGMActions:
                 parseGMActions(msg);
@@ -92,8 +87,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 else
                     parsePing(msg);
                 break;
-            case Proto::GameServerChallange:
-                parseChallange(msg);
+            case Proto::GameServerChallenge:
+                parseChallenge(msg);
                 break;
             case Proto::GameServerDeath:
                 parseDeath(msg);
@@ -321,6 +316,13 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerShowModalDialog:
                 parseShowModalDialog(msg);
                 break;
+            // PROTOCOL>=980
+            case Proto::GameServerLoginSuccess:
+                parseLogin(msg);
+                break;
+            case Proto::GameServerEnterGame:
+                parseEnterGame(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -340,13 +342,12 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
     }
 }
 
-void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
+void ProtocolGame::parseLogin(const InputMessagePtr& msg)
 {
     uint playerId = msg->getU32();
     int serverBeat = msg->getU16();
 
-    if(g_game.getFeature(Otc::GameNewSpeedLaw))
-    {
+    if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
         double speedA = msg->getDouble();
         double speedB = msg->getDouble();
         double speedC = msg->getDouble();
@@ -357,6 +358,8 @@ void ProtocolGame::parseInitGame(const InputMessagePtr& msg)
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
+
+    g_game.processLogin();
 }
 
 void ProtocolGame::parsePendingGame(const InputMessagePtr& msg)
@@ -430,7 +433,7 @@ void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
     g_game.processPingBack(m_pingTimer.elapsed_millis());
 }
 
-void ProtocolGame::parseChallange(const InputMessagePtr& msg)
+void ProtocolGame::parseChallenge(const InputMessagePtr& msg)
 {
     uint timestamp = msg->getU32();
     uint8 random = msg->getU8();
