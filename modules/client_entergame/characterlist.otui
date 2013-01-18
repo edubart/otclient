@@ -56,7 +56,7 @@ MainWindow
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left
-    anchors.bottom: accountStatusLabel.top
+    anchors.bottom: accountStatusCaption.top
     margin-bottom: 5
     padding: 1
     focusable: false
@@ -65,20 +65,31 @@ MainWindow
   VerticalScrollBar
     id: characterListScrollBar
     anchors.top: parent.top
-    anchors.bottom: accountStatusLabel.top
+    anchors.bottom: accountStatusCaption.top
     anchors.right: parent.right
     margin-bottom: 5
     step: 14
     pixels-scroll: true
 
   Label
+    id: accountStatusCaption
+    !text: tr('Account Status:')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 1
+    
+  Label
     id: accountStatusLabel
-    !text: tr('Account Status:\nFree Account')
+    !text: tr('Free Account')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: separator.top
     margin-bottom: 5
     text-auto-resize: true
+
+    $on:
+      color: #FF0000
 
   HorizontalSeparator
     id: separator
