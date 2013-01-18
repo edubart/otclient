@@ -210,7 +210,9 @@ int Item::getSubType()
 {
     if(isSplash() || isFluidContainer())
         return m_countOrSubType;
-    return 0;
+    if(g_game.getProtocolVersion() >= 860)
+        return 0;
+    return 1;
 }
 
 int Item::getCount()

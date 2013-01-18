@@ -85,13 +85,13 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   end
 
   okButton.onClick = doneFunc
-  cancelButton.onClick = destroyWindows
+  cancelButton.onClick = destroy
 
   if not writeable then
     textWindow.onEnter = doneFunc
   end
 
-  textWindow.onEscape = destroyWindows
+  textWindow.onEscape = destroy
 
   table.insert(windows, textWindow)
 end
@@ -121,10 +121,10 @@ function onGameEditList(id, doorId, text)
   end
 
   okButton.onClick = doneFunc
-  cancelButton.onClick = destroyWindows
+  cancelButton.onClick = destroy
   
   textWindow.onEnter = doneFunc
-  textWindow.onEscape = destroyWindows
+  textWindow.onEscape = destroy
 
   table.insert(windows, textWindow)
 end

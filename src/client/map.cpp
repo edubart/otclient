@@ -600,13 +600,15 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                       but it is breaking normal path finding.
                     */
                     if(!(flags & Otc::PathFindAllowNullTiles) && !tile)
-                        walkFactor = 2.0f;
+                        walkFactor = 3.0f;
                     if(tile) {
                         if(!(flags & Otc::PathFindAllowCreatures) && tile->hasCreature())
                             continue;
                         if(!(flags & Otc::PathFindAllowNonPathable) && !tile->isPathable())
                             continue;
                         if(!(flags & Otc::PathFindAllowNonWalkable) && !tile->isWalkable())
+                            continue;
+                        if(!(flags & Otc::PathFindAllowChangeFloor) && tile->changesFloor())
                             continue;
                     }
                 }

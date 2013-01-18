@@ -619,13 +619,17 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
     if(isFollowing())
         cancelFollow();
 
-    Otc::Direction direction = dirs.front();
+    auto it = dirs.begin();
+    Otc::Direction direction = *it;
     if(m_localPlayer->canWalk(direction)) {
         TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
         if(toTile && toTile->isWalkable() && !m_localPlayer->isAutoWalking()) {
             m_localPlayer->preWalk(direction);
-            //forceWalk(direction);
-            //dirs.erase(it);
+
+            if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
+                forceWalk(direction);
+                dirs.erase(it);
+            }
         }
     }
 

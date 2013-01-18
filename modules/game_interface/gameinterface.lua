@@ -29,8 +29,8 @@ function init()
   g_ui.importStyle('styles/countwindow.otui')
 
   connect(g_game, {
-    onGameStart = show,
-    onGameEnd = hide,
+    onGameStart = onGameStart,
+    onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice
   }, true)
 
@@ -98,8 +98,8 @@ end
 
 function terminate()
   disconnect(g_game, { 
-    onGameStart = show,
-    onGameEnd = hide,
+    onGameStart = onGameStart,
+    onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice
   })
 
@@ -107,6 +107,19 @@ function terminate()
 
   logoutButton:destroy()
   gameRootPanel:destroy()
+end
+
+function onGameStart()
+  show()
+
+  -- open tibia has delay in auto walking
+  if not g_game.isOfficialTibia() then
+    g_game.enableFeature(GameForceFirstAutoWalkStep)
+  end
+end
+
+function onGameEnd()
+  hide()
 end
 
 function show()

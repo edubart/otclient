@@ -347,6 +347,7 @@ namespace Otc
         GameDiagonalAnimatedText = 34,
         GameLoginPending = 35,
         GameNewSpeedLaw = 36,
+        GameForceFirstAutoWalkStep = 37,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };
@@ -363,7 +364,8 @@ namespace Otc
         PathFindAllowNullTiles = 1,
         PathFindAllowCreatures = 2,
         PathFindAllowNonPathable = 4,
-        PathFindAllowNonWalkable = 8
+        PathFindAllowNonWalkable = 8,
+        PathFindAllowChangeFloor = 16
     };
 
     enum AutomapFlags
