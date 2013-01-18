@@ -10,9 +10,9 @@ function init()
 
   g_keyboard.bindKeyDown('Ctrl+P', toggle)
 
-  vipButton = TopMenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', 'viplist.png', toggle)
+  vipButton = modules.client_topmenu.addRightGameToggleButton('vipListButton', tr('VIP list') .. ' (Ctrl+P)', '/images/topbuttons/viplist', toggle)
   vipButton:setOn(true)
-  vipWindow = g_ui.loadUI('viplist.otui', modules.game_interface.getRightPanel())
+  vipWindow = g_ui.loadUI('viplist', modules.game_interface.getRightPanel())
 
   refresh()
   vipWindow:setup()
@@ -58,7 +58,7 @@ function onMiniWindowClose()
 end
 
 function createAddWindow()
-  addVipWindow = g_ui.displayUI('addvip.otui')
+  addVipWindow = g_ui.displayUI('addvip')
 end
 
 function destroyAddWindow()
@@ -69,6 +69,22 @@ end
 function addVip()
   g_game.addVip(addVipWindow:getChildById('name'):getText())
   destroyAddWindow()
+end
+
+function hideOffline(state)
+  settings = {}
+  settings['hideOffline'] = state
+  g_settings.mergeNode('VipList', settings)
+
+  refresh()
+end
+
+function isHiddingOffline()
+  local settings = g_settings.getNode('VipList')
+  if not settings then
+    return false
+  end
+  return settings['hideOffline']
 end
 
 function onAddVip(id, name, state)
@@ -91,6 +107,10 @@ function onAddVip(id, name, state)
 
   label:setPhantom(false)
   connect(label, { onDoubleClick = function () g_game.openPrivateChannel(label:getText()) return true end } )
+
+  if state == VipState.Offline and isHiddingOffline() then
+    label:setVisible(false)
+  end
 
   local nameLower = name:lower()
   local childrenCount = vipList:getChildCount()
@@ -140,6 +160,13 @@ function onVipListMousePress(widget, mousePos, mouseButton)
 
   local menu = g_ui.createWidget('PopupMenu')
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
+
+  if not isHiddingOffline() then
+    menu:addOption(tr('Hide Offline'), function() hideOffline(true) end)
+  else
+    menu:addOption(tr('Show Offline'), function() hideOffline(false) end)
+  end
+
   menu:display(mousePos)
 
   return true
@@ -155,7 +182,16 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
-  menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end)
+  menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end)  if modules.game_console.getOwnPrivateTab() then
+    menu:addSeparator()
+    menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
+    menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end)
+  end
+  if not isHiddingOffline() then
+    menu:addOption(tr('Hide Offline'), function() hideOffline(true) end)
+  else
+    menu:addOption(tr('Show Offline'), function() hideOffline(false) end)
+  end
   menu:display(mousePos)
 
   return true

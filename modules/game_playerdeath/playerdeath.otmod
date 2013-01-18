@@ -4,6 +4,6 @@ Module
   author: BeniS, edubart
   website: www.otclient.info
   sandboxed: true
-  scripts: [ playerdeath.lua ]
+  scripts: [ playerdeath ]
   @onLoad: init()
   @onUnload: terminate()

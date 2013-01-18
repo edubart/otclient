@@ -32,59 +32,56 @@ EmblemBlue = 3
 function getSkullImagePath(skullId)
   local path
   if skullId == SkullYellow then
-    path = 'icons/skull_yellow.png'
+    path = '/images/game/skulls/skull_yellow'
   elseif skullId == SkullGreen then
-    path = 'icons/skull_green.png'
+    path = '/images/game/skulls/skull_green'
   elseif skullId == SkullWhite then
-    path = 'icons/skull_white.png'
+    path = '/images/game/skulls/skull_white'
   elseif skullId == SkullRed then
-    path = 'icons/skull_red.png'
+    path = '/images/game/skulls/skull_red'
   elseif skullId == SkullBlack then
-    path = 'icons/skull_black.png'
+    path = '/images/game/skulls/skull_black'
   elseif skullId == SkullOrange then
-    path = 'icons/skull_orange.png'
+    path = '/images/game/skulls/skull_orange'
   end
-  path = resolvepath(path)
   return path
 end
 
 function getShieldImagePathAndBlink(shieldId)
   local path, blink
   if shieldId == ShieldWhiteYellow then
-    path, blink = 'icons/shield_yellow_white.png', false
+    path, blink = '/images/game/shields/shield_yellow_white', false
   elseif shieldId == ShieldWhiteBlue then
-    path, blink = 'icons/shield_blue_white.png', false
+    path, blink = '/images/game/shields//shield_blue_white', false
   elseif shieldId == ShieldBlue then
-    path, blink = 'icons/shield_blue.png', false
+    path, blink = '/images/game/shields//shield_blue', false
   elseif shieldId == ShieldYellow then
-    path, blink = 'icons/shield_yellow.png', false
+    path, blink = '/images/game/shields//shield_yellow', false
   elseif shieldId == ShieldBlueSharedExp then
-    path, blink = 'icons/shield_blue_shared.png', false
+    path, blink = '/images/game/shields//shield_blue_shared', false
   elseif shieldId == ShieldYellowSharedExp then
-    path, blink = 'icons/shield_yellow_shared.png', false
+    path, blink = '/images/game/shields//shield_yellow_shared', false
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    path, blink = 'icons/shield_blue_not_shared.png', true
+    path, blink = '/images/game/shields//shield_blue_not_shared', true
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    path, blink = 'icons/shield_yellow_not_shared.png', true
+    path, blink = '/images/game/shields//shield_yellow_not_shared', true
   elseif shieldId == ShieldBlueNoSharedExp then
-    path, blink = 'icons/shield_blue_not_shared.png', false
+    path, blink = '/images/game/shields//shield_blue_not_shared', false
   elseif shieldId == ShieldYellowNoSharedExp then
-    path, blink = 'icons/shield_yellow_not_shared.png', false
+    path, blink = '/images/game/shields//shield_yellow_not_shared', false
   end
-  path = resolvepath(path)
   return path, blink
 end
 
 function getEmblemImagePath(emblemId)
   local path
   if emblemId == EmblemGreen then
-    path = 'icons/emblem_green.png'
+    path = '/images/game/emblems/emblem_green'
   elseif emblemId == EmblemRed then
-    path = 'icons/emblem_red.png'
+    path = '/images/game/emblems/emblem_red'
   elseif emblemId == EmblemBlue then
-    path = 'icons/emblem_blue.png'
+    path = '/images/game/emblems/emblem_blue'
   end
-  path = resolvepath(path)
   return path
 end
 

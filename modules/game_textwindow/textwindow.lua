@@ -1,7 +1,7 @@
 local windows = {}
 
 function init()
-  g_ui.importStyle('textwindow.otui')
+  g_ui.importStyle('textwindow')
 
   connect(g_game, { onEditText = onGameEditText,
                     onEditList = onGameEditList,

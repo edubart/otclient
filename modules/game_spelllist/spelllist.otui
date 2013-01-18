@@ -7,7 +7,7 @@ SpellListLabel < Label
   image-clip: 0 0 32 32
   image-size: 32 32
   image-offset: 2 2
-  image-source: /game_spelllist/icons/icons.png
+  image-source: /images/game/spells/defaultspells
 
   $focus:
     background-color: #ffffff22

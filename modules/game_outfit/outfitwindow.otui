@@ -1,14 +1,7 @@
 NextOutfitButton < NextButton
-  icon-source: /images/arrow_right.png
-
 PrevOutfitButton < PreviousButton
-  icon-source: /images/arrow_left.png
-
 NextMountButton < NextButton
-  icon-source: /images/arrow_right.png
-
 PrevMountButton < PreviousButton
-  icon-source: /images/arrow_left.png
 
 MainWindow
   !text: tr('Select Outfit')

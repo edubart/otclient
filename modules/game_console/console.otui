@@ -67,7 +67,7 @@ Panel
 
   TabButton
     id: prevChannelButton
-    icon: icons/leftarrow.png
+    icon: /images/game/console/leftarrow
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 6
@@ -85,7 +85,7 @@ Panel
 
   TabButton
     id: nextChannelButton
-    icon: icons/rightarrow.png
+    icon: /images/game/console/rightarrow
     anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
@@ -94,7 +94,7 @@ Panel
   TabButton
     id: closeChannelButton
     !tooltip: tr('Close this channel') .. ' (Ctrl+E)'
-    icon: icons/closechannel.png
+    icon: /images/game/console/closechannel
     anchors.right: next.left
     anchors.top: parent.top
     enabled: false
@@ -105,7 +105,7 @@ Panel
   TabButton
     id: clearChannelButton
     !tooltip: tr('Clear current message window')
-    icon: icons/clearchannel.png
+    icon: /images/game/console/clearchannel
     anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
@@ -117,7 +117,7 @@ Panel
   TabButton
     id: channelsButton
     !tooltip: tr('Open new channel') .. ' (Ctrl+O)'
-    icon: icons/channels.png
+    icon: /images/game/console/channels
     anchors.right: next.left
     anchors.top: parent.top
     margin-right: 5
@@ -127,7 +127,7 @@ Panel
   TabButton
     id: ignoreButton
     !tooltip: tr('Ignore players')
-    icon: icons/ignore.png
+    icon: /images/game/console/ignore
     anchors.right: parent.right
     anchors.top: parent.top
     margin-right: 5
@@ -149,7 +149,7 @@ Panel
 
   TabButton
     id: sayModeButton
-    icon: icons/say.png
+    icon: /images/game/console/say
     !tooltip: tr('Adjust volume')
     &sayMode: 2
     size: 20 20

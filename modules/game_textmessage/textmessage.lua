@@ -54,7 +54,7 @@ messagesPanel = nil
 function init()
   connect(g_game, 'onTextMessage', displayMessage)
   connect(g_game, 'onGameEnd', clearMessages)
-  messagesPanel = g_ui.loadUI('textmessage.otui', modules.game_interface.getRootPanel())
+  messagesPanel = g_ui.loadUI('textmessage', modules.game_interface.getRootPanel())
 end
 
 function terminate()
@@ -80,7 +80,7 @@ function displayMessage(mode, text)
 
   if msgtype == MessageSettings.none then return end
 
-  if msgtype.consoleTab ~= nil and (msgtype.consoleOption == nil or Options.getOption(msgtype.consoleOption)) then
+  if msgtype.consoleTab ~= nil and (msgtype.consoleOption == nil or modules.client_options.getOption(msgtype.consoleOption)) then
     modules.game_console.addText(text, msgtype, tr(msgtype.consoleTab))
     --TODO move to game_console
   end

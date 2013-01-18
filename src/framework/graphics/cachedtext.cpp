@@ -43,7 +43,9 @@ void CachedText::draw(const Rect& rect)
         m_textCoordsBuffer.clear();
         m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, rect, Fw::AlignCenter);
     }
-    g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
+
+    if(m_font->getTexture())
+        g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
 }
 
 void CachedText::update()

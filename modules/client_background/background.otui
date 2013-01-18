@@ -1,6 +1,6 @@
 Panel
   id: background
-  image-source: /client_background/background.png
+  image-source: /images/background
   image-smooth: true
   image-fixed-ratio: true
   anchors.top: topMenu.bottom

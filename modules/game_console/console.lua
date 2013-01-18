@@ -40,9 +40,9 @@ SpeakTypes = {
 }
 
 SayModes = {
-  [1] = { speakTypeDesc = 'whisper', icon = 'icons/whisper.png' },
-  [2] = { speakTypeDesc = 'say', icon = 'icons/say.png' },
-  [3] = { speakTypeDesc = 'yell', icon = 'icons/yell.png' }
+  [1] = { speakTypeDesc = 'whisper', icon = '/images/game/console/icons/whisper' },
+  [2] = { speakTypeDesc = 'say', icon = '/images/game/console/icons/say' },
+  [3] = { speakTypeDesc = 'yell', icon = '/images/game/console/icons/yell' }
 }
 
 MAX_HISTORY = 1000
@@ -79,7 +79,7 @@ function init()
                     onGameStart = onGameStart,
                     onGameEnd = clear })
 
-  consolePanel = g_ui.loadUI('console.otui', modules.game_interface.getBottomPanel())
+  consolePanel = g_ui.loadUI('console', modules.game_interface.getBottomPanel())
   consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
@@ -210,7 +210,11 @@ function setTextEditText(text)
 end
 
 function openHelp()
-  g_game.joinChannel(HELP_CHANNEL)
+  local helpChannel = 9
+  if g_game.getProtocolVersion() <= 810 then
+    helpChannel = 8
+  end
+  g_game.joinChannel(helpChannel)
 end
 
 function addTab(name, focus)
@@ -291,7 +295,7 @@ function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
 
   local privateTab = getTab(name)
   if privateTab == nil then
-    if (Options.getOption('showPrivateMessagesInConsole') and not focus) or (isPrivateCommand and not privateTab) then
+    if (modules.client_options.getOption('showPrivateMessagesInConsole') and not focus) or (isPrivateCommand and not privateTab) then
       privateTab = defaultTab
     else
       privateTab = addTab(name, focus)
@@ -344,7 +348,7 @@ function getHighlightedText(text)
 end
 
 function addTabText(text, speaktype, tab, creatureName)
-  if Options.getOption('showTimestampsInConsole') then
+  if modules.client_options.getOption('showTimestampsInConsole') then
     text = os.date('%H:%M') .. ' ' .. text
   end
 
@@ -447,6 +451,11 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text)
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
         if not g_game.getLocalPlayer():hasVip(creatureName) then
           menu:addOption(tr('Add to VIP list'), function () g_game.addVip(creatureName) end)
+        end
+        if modules.game_console.getOwnPrivateTab() then
+          menu:addSeparator()
+          menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
+          menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end)
         end
         if isIgnored(creatureName) then
           menu:addOption(tr('Unignore') .. ' ' .. creatureName, function() removeIgnoredPlayer(creatureName) end)
@@ -599,7 +608,7 @@ end
 
 function applyMessagePrefixies(name, level, message)
   if name then
-    if Options.getOption('showLevelsInConsole') and level > 0 then
+    if modules.client_options.getOption('showLevelsInConsole') and level > 0 then
       message = name .. ' [' .. level .. ']: ' .. message
     else
       message = name .. ': ' .. message
@@ -663,7 +672,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
-    if Options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
+    if modules.client_options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
       modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
     end
   else
@@ -734,7 +743,7 @@ end
 
 function onChannelList(channelList)
   if channelsWindow then channelsWindow:destroy() end
-  channelsWindow = g_ui.displayUI('channelswindow.otui')
+  channelsWindow = g_ui.displayUI('channelswindow')
   local channelListPanel = channelsWindow:getChildById('channelList')
   channelsWindow.onEnter = doChannelListSubmit
   channelsWindow.onDestroy = function() channelsWindow = nil end
@@ -801,7 +810,7 @@ end
 
 function onClickIgnoreButton()
   if ignoreWindow then return end
-  ignoreWindow = g_ui.displayUI('ignorewindow.otui')
+  ignoreWindow = g_ui.displayUI('ignorewindow')
   local ignoreListPanel = ignoreWindow:getChildById('ignoreList')
   ignoreWindow.onDestroy = function() ignoreWindow = nil end
   

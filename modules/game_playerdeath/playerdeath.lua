@@ -1,7 +1,7 @@
 deathWindow = nil
 
 function init()
-  g_ui.importStyle('deathwindow.otui')
+  g_ui.importStyle('deathwindow')
 
   connect(g_game, { onDeath = display,
                     onGameEnd = reset })

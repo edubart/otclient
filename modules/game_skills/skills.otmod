@@ -4,7 +4,7 @@ Module
   author: baxnie, edubart
   website: www.otclient.info
   sandboxed: true
-  scripts: [ skills.lua ]
+  scripts: [ skills ]
   @onLoad: init()
   @onUnload: terminate()
   dependencies:

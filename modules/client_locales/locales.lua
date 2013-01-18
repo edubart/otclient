@@ -1,88 +1,86 @@
-Locales = { }
-
-dofile 'neededtranslations.lua'
+dofile 'neededtranslations'
 
 -- private variables
 local defaultLocaleName = 'en'
 local installedLocales
 local currentLocale
-local localeComboBox
 
--- private functions
-local function sendLocale(localeName)
+LocaleExtendedId = 1
+
+function sendLocale(localeName)
   local protocolGame = g_game.getProtocolGame()
   if protocolGame then
-    protocolGame:sendExtendedOpcode(ExtendedLocales, localeName)
+    protocolGame:sendExtendedOpcode(LocaleExtendedId, localeName)
     return true
   end
   return false
 end
 
-local function onLocaleComboBoxOptionChange(self, optionText, optionData)
-  if Locales.setLocale(optionData) then
-    g_settings.set('locale', optionData)
-    sendLocale(currentLocale.name)
+function createWindow()
+  localesWindow = g_ui.displayUI('locales')
+  local localesPanel = localesWindow:getChildById('localesPanel')
+
+  for name,locale in pairs(installedLocales) do
+    local widget = g_ui.createWidget('LocalesButton', localesPanel)
+    widget:setImageSource('/images/flags/' .. name .. '')
+    widget:setText(locale.languageName)
+    widget.onClick = function() selectFirstLocale(name) end
+  end
+
+  addEvent(function() addEvent(function() localesWindow:raise() localesWindow:focus() end) end)
+end
+
+function selectFirstLocale(name)
+  if localesWindow then
+    localesWindow:destroy()
+    localesWindow = nil
+  end
+  if setLocale(name) then
     g_modules.reloadModules()
   end
 end
 
 -- hooked functions
-local function onGameStart()
+function onGameStart()
   sendLocale(currentLocale.name)
 end
 
-local function onExtendedLocales(protocol, opcode, buffer)
+function onExtendedLocales(protocol, opcode, buffer)
   local locale = installedLocales[buffer]
-  if locale then
-    localeComboBox:setCurrentOption(locale.languageName)
+  if locale and setLocale(locale.name) then
+    g_modules.reloadModules()
   end
 end
 
 -- public functions
-function Locales.init()
+function init()
   installedLocales = {}
 
-  Locales.installLocales('locales')
+  installLocales('/locales')
 
   local userLocaleName = g_settings.get('locale', 'false')
-  if userLocaleName ~= 'false' and Locales.setLocale(userLocaleName) then
+  if userLocaleName ~= 'false' and setLocale(userLocaleName) then
     pdebug('Using configured locale: ' .. userLocaleName)
   else
-    pdebug('Using default locale: ' .. defaultLocaleName)
-    Locales.setLocale(defaultLocaleName)
-    g_settings.set('locale', defaultLocaleName)
+    setLocale(defaultLocaleName)
+    connect(g_app, {onRun = createWindow})
   end
 
-  addEvent( function()
-              localeComboBox = g_ui.createWidget('ComboBoxRounded', rootWidget:recursiveGetChildById('rightButtonsPanel'))
-              localeComboBox:setFixedSize(true)
-              for key,value in pairs(installedLocales) do
-                localeComboBox:addOption(value.languageName, value.name)
-              end
-              localeComboBox:setCurrentOption(currentLocale.languageName)
-              localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
-            end, false)
-
-  Extended.register(ExtendedLocales, onExtendedLocales)
+  ProtocolGame.registerExtendedOpcode(LocaleExtendedId, onExtendedLocales)
   connect(g_game, { onGameStart = onGameStart })
 end
 
-function Locales.terminate()
+function terminate()
   installedLocales = nil
   currentLocale = nil
 
-  if localeComboBox then
-    localeComboBox:destroy()
-    localeComboBox = nil
-  end
-
-  Extended.unregister(ExtendedLocales)
+  ProtocolGame.unregisterExtendedOpcode(LocaleExtendedId)
   disconnect(g_game, { onGameStart = onGameStart })
 end
 
 function generateNewTranslationTable(localename)
   local locale = installedLocales[localename]
-  for _i,k in pairs(Locales.neededTranslations) do
+  for _i,k in pairs(neededTranslations) do
     local trans = locale.translation[k]
     k = k:gsub('\n','\\n')
     k = k:gsub('\t','\\t')
@@ -100,15 +98,16 @@ function generateNewTranslationTable(localename)
   end
 end
 
-function Locales.installLocale(locale)
+function installLocale(locale)
   if not locale or not locale.name then
     error('Unable to install locale.')
   end
 
   if locale.name ~= defaultLocaleName then
-    for _i,k in pairs(Locales.neededTranslations) do
+    for _i,k in pairs(neededTranslations) do
       if locale.translation[k] == nil then
-        pwarning('Translation for locale \'' .. locale.name .. '\' not found: \"' .. k.. '\"')
+        local ktext =  string.gsub(k, "\n", "\\n")
+        pwarning('Translation for locale \'' .. locale.name .. '\' not found: \"' .. ktext .. '\"')
       end
     end
   end
@@ -120,35 +119,35 @@ function Locales.installLocale(locale)
     end
   else
     installedLocales[locale.name] = locale
-    if localeComboBox then
-      localeComboBox.onOptionChange = nil
-      localeComboBox:addOption(locale.languageName, locale.name)
-      localeComboBox.onOptionChange = onLocaleComboBoxOptionChange
-    end
   end
 end
 
-function Locales.installLocales(directory)
+function installLocales(directory)
   dofiles(directory)
 end
 
-function Locales.setLocale(name)
+function setLocale(name)
   local locale = installedLocales[name]
   if not locale then
     pwarning("Locale " .. name .. ' does not exist.')
     return false
   end
   currentLocale = locale
-  if Locales.onLocaleChanged then Locales.onLocaleChanged(name) end
+  g_settings.set('locale', name)
+  if onLocaleChanged then onLocaleChanged(name) end
   return true
 end
 
-function Locales.getComboBox()
-  return localeComboBox
+function getInstalledLocales()
+  return installedLocales
+end
+
+function getCurrentLocale()
+  return currentLocale
 end
 
 -- global function used to translate texts
-function tr(text, ...)
+function _G.tr(text, ...)
   if currentLocale then
     if tonumber(text) then
       -- todo: use locale information to calculate this. also detect floating numbers
@@ -164,8 +163,10 @@ function tr(text, ...)
     elseif tostring(text) then
       local translation = currentLocale.translation[text]
       if not translation then
-        if currentLocale.name ~= defaultLocaleName then
-          pwarning('Unable to translate: \"' .. text .. '\"')
+        if translation == nil then
+          if currentLocale.name ~= defaultLocaleName then
+            pwarning('Unable to translate: \"' .. text .. '\"')
+          end
         end
         translation = text
       end

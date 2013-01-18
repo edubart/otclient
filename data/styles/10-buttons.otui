@@ -1,0 +1,69 @@
+Button < UIButton
+  font: verdana-11px-antialised
+  color: #f0ad4dff
+  size: 106 22
+  text-offset: 0 0
+  image-source: /images/ui/button_rounded
+  image-color: white
+  image-clip: 0 0 20 20
+  image-border: 2
+  padding: 5 10 5 10
+
+  $hover !disabled:
+    image-clip: 0 20 20 20
+
+  $pressed:
+    image-clip: 0 40 20 20
+    text-offset: 1 1
+
+  $disabled:
+    color: #f0ad4d88
+
+TabButton < UIButton
+  size: 20 20
+  image-source: /images/ui/tabbutton_rounded
+  image-color: white
+  image-clip: 0 0 20 20
+  image-border: 2
+  icon-color: white
+  color: #aaaaaa
+
+  $hover !on:
+    image-clip: 0 20 20 20
+    color: white
+
+  $disabled:
+    image-color: #ffffff66
+    icon-color: #888888
+
+  $on:
+    image-clip: 0 40 20 20
+    color: #80c7f8
+
+NextButton < UIButton
+  size: 12 21
+  image-source: /images/ui/arrow_horizontal
+  image-clip: 12 0 12 21
+
+  $hover !disabled:
+    image-clip: 12 21 12 21
+
+  $pressed:
+    image-clip: 12 21 12 21
+
+  $disabled:
+    image-color: #ffffff55
+
+PreviousButton < UIButton
+  size: 12 21
+  image-source: /images/ui/arrow_horizontal
+  image-clip: 0 0 12 21
+
+  $hover !disabled:
+    image-clip: 0 21 12 21
+
+  $pressed:
+    image-clip: 0 21 12 21
+
+  $disabled:
+    image-color: #ffffff55

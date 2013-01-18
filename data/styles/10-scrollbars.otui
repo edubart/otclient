@@ -1,0 +1,99 @@
+ScrollBarSlider < UIButton
+  id: sliderButton
+  anchors.centerIn: parent
+  size: 13 17
+  image-source: /images/ui/scrollbar
+  image-clip: 0 26 13 13
+  image-border: 2
+  image-color: #ffffffbb
+  $hover:
+    image-clip: 13 26 13 13
+  $pressed:
+    image-clip: 26 26 13 13
+    image-color: #ffffff99
+  $disabled:
+    image-color: #ffffff66
+
+VerticalScrollBar < UIScrollBar
+  orientation: vertical
+  width: 13
+  height: 39
+  image-source: /images/ui/scrollbar
+  image-clip: 39 0 13 65
+  image-border: 1
+  pixels-scroll: true
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    image-source: /images/ui/scrollbar
+    image-clip: 0 0 13 13
+    image-color: #ffffffff
+    size: 13 13
+    $hover:
+      image-clip: 13 0 13 13
+    $pressed:
+      image-clip: 26 0 13 13
+    $disabled:
+      image-color: #ffffff66
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 13 13
+    image-source: /images/ui/scrollbar
+    image-clip: 0 13 13 13
+    image-color: #ffffffff
+    $hover:
+      image-clip: 13 13 13 13
+    $pressed:
+      image-clip: 26 13 13 13
+    $disabled:
+      image-color: #ffffff66
+
+  ScrollBarSlider
+
+HorizontalScrollBar < UIScrollBar
+  orientation: horizontal
+  height: 13
+  width: 39
+  image-source: /images/ui/scrollbar
+  image-clip: 0 65 52 13
+  image-border: 1
+
+  $disabled:
+    color: #bbbbbb88
+
+  UIButton
+    id: decrementButton
+    anchors.top: parent.top
+    anchors.left: parent.left
+    image-source: /images/ui/scrollbar
+    image-clip: 0 39 13 13
+    image-color: #ffffffff
+    size: 13 13
+    $hover:
+      image-clip: 13 39 13 13
+    $pressed:
+      image-clip: 26 39 13 13
+    $disabled:
+      image-color: #ffffff66
+
+  UIButton
+    id: incrementButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    size: 13 13
+    image-source: /images/ui/scrollbar
+    image-clip: 0 52 13 13
+    image-color: #ffffffff
+    $hover:
+      image-clip: 13 52 13 13
+    $pressed:
+      image-clip: 26 52 13 13
+    $disabled:
+      image-color: #ffffff66
+
+  ScrollBarSlider

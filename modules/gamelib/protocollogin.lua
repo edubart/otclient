@@ -2,12 +2,13 @@
 ProtocolLogin = extends(Protocol)
 
 LoginServerError = 10
+LoginServerUpdate = 17
 LoginServerMotd = 20
 LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
 LoginServerExtendedCharacterList = 101
 
-function ProtocolLogin:login(host, port, accountName, accountPassword)
+function ProtocolLogin:login(host, port, accountName, accountPassword, locale)
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onError, self, tr("You must enter a valid server address and port."))
     return
@@ -16,6 +17,7 @@ function ProtocolLogin:login(host, port, accountName, accountPassword)
   self.accountName = accountName
   self.accountPassword = accountPassword
   self.connectCallback = sendLoginPacket
+  self.locale = locale
 
   self:connect(host, port)
 end
@@ -28,6 +30,16 @@ function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
   msg:addU8(ClientOpcodes.ClientEnterAccount)
   msg:addU16(g_game.getOs())
+
+  if g_game.getFeature(GameUpdater) then
+    msg:addString(g_app.getOs())
+    msg:addString(g_game.getUpdaterSignature())
+  end
+
+  if g_game.getFeature(GameLoginLocale) then
+    msg:addString(self.locale)
+  end
+
   msg:addU16(g_game.getProtocolVersion())
 
   if g_game.getProtocolVersion() >= 971 then
@@ -94,6 +106,9 @@ function ProtocolLogin:onRecv(msg)
       self:parseCharacterList(msg)
     elseif opcode == LoginServerExtendedCharacterList then
       self:parseExtendedCharacterList(msg)
+    elseif opcode == LoginServerUpdate then
+      local signature = msg:getString()
+      signalcall(self.onUpdateNeeded, self, signature)
     else
       self:parseOpcode(opcode, msg)
     end

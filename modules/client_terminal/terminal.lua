@@ -1,5 +1,3 @@
-Terminal = { }
-
 -- configs
 local LogColors = { [LogInfo] = 'white',
                     [LogWarning] = 'yellow',
@@ -86,7 +84,7 @@ end
 
 local function doCommand()
   local currentCommand = commandTextEdit:getText()
-  Terminal.executeCommand(currentCommand)
+  executeCommand(currentCommand)
 
   if commandTextEdit then
     commandTextEdit:clearText()
@@ -102,13 +100,13 @@ local function onLog(level, message, time)
   if logLocked then return end
 
   logLocked = true
-  Terminal.addLine(message, LogColors[level])
+  addLine(message, LogColors[level])
   logLocked = false
 end
 
 -- public functions
-function Terminal.init()
-  terminalWindow = g_ui.displayUI('terminal.otui')
+function init()
+  terminalWindow = g_ui.displayUI('terminal')
   terminalWindow:setVisible(false)
 
   local poped = false
@@ -128,8 +126,8 @@ function Terminal.init()
     end
   end
 
-  terminalButton = TopMenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', 'terminal.png', Terminal.toggle)
-  g_keyboard.bindKeyDown('Ctrl+T', Terminal.toggle)
+  terminalButton = modules.client_topmenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', '/images/topbuttons/terminal', toggle)
+  g_keyboard.bindKeyDown('Ctrl+T', toggle)
 
   commandHistory = g_settings.getList('terminal-history')
 
@@ -138,14 +136,14 @@ function Terminal.init()
   g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
   g_keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
-  g_keyboard.bindKeyDown('Escape', Terminal.hide, terminalWindow)
+  g_keyboard.bindKeyDown('Escape', hide, terminalWindow)
 
   terminalBuffer = terminalWindow:getChildById('terminalBuffer')
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
 end
 
-function Terminal.terminate()
+function terminate()
   g_settings.setList('terminal-history', commandHistory)
   g_keyboard.unbindKeyDown('Ctrl+T')
   g_logger.setOnLog(nil)
@@ -156,28 +154,31 @@ function Terminal.terminate()
   terminalWindow:destroy()
   terminalWindow = nil
   commandEnv = nil
-  Terminal = nil
 end
 
-function Terminal.toggle()
+function hideButton()
+  terminalButton:hide()
+end
+
+function toggle()
   if terminalWindow:isVisible() then
-    Terminal.hide()
+    hide()
   else
-    Terminal.show()
+    show()
   end
 end
 
-function Terminal.show()
+function show()
   terminalWindow:show()
   terminalWindow:raise()
   terminalWindow:focus()
 end
 
-function Terminal.hide()
+function hide()
   terminalWindow:hide()
 end
 
-function Terminal.addLine(text, color)
+function addLine(text, color)
   -- delete old lines if needed
   local numLines = terminalBuffer:getChildCount() + 1
   if numLines > MaxLogLines then
@@ -191,7 +192,7 @@ function Terminal.addLine(text, color)
   label:setColor(color)
 end
 
-function Terminal.executeCommand(command)
+function executeCommand(command)
   if command == nil or #command == 0 then return end
 
   logLocked = true
@@ -218,7 +219,7 @@ function Terminal.executeCommand(command)
   end
 
   -- add command line
-  --Terminal.addLine(">> " .. command, "#ffffff")
+  --addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
   local func, err = loadstring(realCommand, "@")

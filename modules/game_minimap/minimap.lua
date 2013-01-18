@@ -16,7 +16,7 @@ nextFlagId    = 0
   you change floor it will not update the minimap.
 ]]
 function init()
-  g_ui.importStyle('flagwindow.otui')
+  g_ui.importStyle('flagwindow')
 
   connect(g_game, {
     onGameStart = online,
@@ -27,10 +27,10 @@ function init()
 
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
-  minimapButton = TopMenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', 'minimap.png', toggle)
+  minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
   minimapButton:setOn(true)
 
-  minimapWindow = g_ui.loadUI('minimap.otui', modules.game_interface.getRightPanel())
+  minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
   minimapWindow:setContentMinimumHeight(64)
   minimapWindow:setContentMaximumHeight(256)
 

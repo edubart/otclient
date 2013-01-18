@@ -1,0 +1,13 @@
+ProgressBar < UIProgressBar
+  height: 16
+  background-color: red
+  border: 1 black
+  image-source: /images/ui/progressbar
+  image-border: 1
+
+ProgressRect < UIProgressRect
+  anchors.fill: parent
+  phantom: true
+  color: white
+  background-color: #00000088
+  font: verdana-11px-rounded

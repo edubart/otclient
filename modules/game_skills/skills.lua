@@ -24,9 +24,9 @@ function init()
     onGameStart = refresh
   })
 
-  skillsButton = TopMenu.addRightGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', 'skills.png', toggle)
+  skillsButton = modules.client_topmenu.addRightGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', '/images/topbuttons/skills', toggle)
   skillsButton:setOn(true)
-  skillsWindow = g_ui.loadUI('skills.otui', modules.game_interface.getRightPanel())
+  skillsWindow = g_ui.loadUI('skills', modules.game_interface.getRightPanel())
 
   g_keyboard.bindKeyDown('Ctrl+S', toggle)
 

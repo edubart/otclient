@@ -80,7 +80,7 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
   local item = self:getItem()
   if not item or not self:containsPoint(mousePosition) then return false end
 
-  if Options.getOption('classicControl') and
+  if modules.client_options.getOption('classicControl') and
      ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
       (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     g_game.look(item)

@@ -2,10 +2,10 @@ questLogButton = nil
 questLineWindow = nil
 
 function init()
-  g_ui.importStyle('questlogwindow.otui')
-  g_ui.importStyle('questlinewindow.otui')
+  g_ui.importStyle('questlogwindow')
+  g_ui.importStyle('questlinewindow')
 
-  questLogButton = TopMenu.addLeftGameButton('questLogButton', tr('Quest Log'), 'questlog.png', function() g_game.requestQuestLog() end)
+  questLogButton = modules.client_topmenu.addLeftGameButton('questLogButton', tr('Quest Log'), '/images/topbuttons/questlog', function() g_game.requestQuestLog() end)
 
   connect(g_game, { onQuestLog = onGameQuestLog,
                     onQuestLine = onGameQuestLine,

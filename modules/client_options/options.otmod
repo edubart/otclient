@@ -3,13 +3,8 @@ Module
   description: Create the options window
   author: edubart, BeniS
   website: www.otclient.info
-
-  dependencies:
-    - client_topmenu
-
-  @onLoad: |
-    dofile 'options'
-    Options.init()
-
-  @onUnload: |
-    Options.terminate()
+  sandboxed: true
+  dependencies: [ client_topmenu ]
+  scripts: [ options ]
+  @onLoad: init()
+  @onUnload: terminate()

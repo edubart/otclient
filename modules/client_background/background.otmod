@@ -3,13 +3,8 @@ Module
   description: Handles the background of the login screen
   author: edubart
   website: www.otclient.info
-
-  dependencies:
-    - client_topmenu
-
-  @onLoad: |
-    dofile 'background'
-    Background.init()
-
-  @onUnload: |
-    Background.terminate()
+  sandboxed: true
+  scripts: [ background ]
+  dependencies: [ client_topmenu ]
+  @onLoad: init()
+  @onUnload: terminate()

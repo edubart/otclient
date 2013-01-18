@@ -4,6 +4,6 @@ Module
   author: OTClient team
   website: www.otclient.info
   sandboxed: true
-  scripts: [ cooldown.lua ]
+  scripts: [ cooldown ]
   @onLoad: init()
   @onUnload: terminate()

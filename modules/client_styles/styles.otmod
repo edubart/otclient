@@ -1,0 +1,9 @@
+Module
+  name: client_styles
+  description: Load client fonts and styles
+  author: edubart
+  website: www.otclient.info
+  scripts: [ styles ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()

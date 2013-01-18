@@ -1,9 +1,9 @@
 FrameRateScrollbar < HorizontalScrollBar
   step: 1
-  @onValueChange: Options.setOption(self:getId(), self:getValue())
+  @onValueChange: modules.client_options.setOption(self:getId(), self:getValue())
   @onSetup: |
     UIScrollBar.onSetup(self)
-    local value = Options.getOption(self:getId())
+    local value = modules.client_options.getOption(self:getId())
     if value == 0 then value = self:getMaximum() end
     self:setValue(value)
 
@@ -54,7 +54,7 @@ Panel
     anchors.top: prev.bottom
     margin-top: 16
     @onSetup: |
-      local value = Options.getOption('backgroundFrameRate')
+      local value = modules.client_options.getOption('backgroundFrameRate')
       local text = value
       if value <= 0 or value >= 201 then
         text = 'max'
@@ -78,7 +78,7 @@ Panel
     anchors.top: prev.bottom
     margin-top: 6
     @onSetup: |
-      local value = Options.getOption('foregroundFrameRate')
+      local value = modules.client_options.getOption('foregroundFrameRate')
       local text = value
       if value <= 0 or value >= 61 then
         text = 'max'
@@ -102,7 +102,7 @@ Panel
     anchors.top: prev.bottom
     margin-top: 6
     @onSetup: |
-      local value = Options.getOption('ambientLight')
+      local value = modules.client_options.getOption('ambientLight')
       self:setText(tr('Ambient light: %s%%', value))
 
   FrameRateScrollbar

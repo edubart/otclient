@@ -19,7 +19,7 @@ QuestLineWindow < MainWindow
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: missionListScrollBar.left
-    height: 200
+    height: 100
     padding: 1
     focusable: false
     vertical-scrollbar: missionListScrollBar
@@ -28,7 +28,7 @@ QuestLineWindow < MainWindow
     id: missionListScrollBar
     anchors.top: parent.top
     anchors.right: parent.right
-    height: 200
+    height: 100
     step: 14
     pixels-scroll: true
 

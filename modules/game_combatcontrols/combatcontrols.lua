@@ -8,9 +8,9 @@ safeFightButton = nil
 fightModeRadioGroup = nil
 
 function init()
-  combatControlsButton = TopMenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), 'combatcontrols.png', toggle)
+  combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), '/images/topbuttons/combatcontrols', toggle)
   combatControlsButton:setOn(true)
-  combatControlsWindow = g_ui.loadUI('combatcontrols.otui', modules.game_interface.getRightPanel())
+  combatControlsWindow = g_ui.loadUI('combatcontrols', modules.game_interface.getRightPanel())
   combatControlsWindow:disableResize()
 
   fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
@@ -82,7 +82,7 @@ function update()
 end
 
 function check()
-  if Options.getOption('autoChaseOverride') then
+  if modules.client_options.getOption('autoChaseOverride') then
     if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
       g_game.setChaseMode(DontChase)
     end

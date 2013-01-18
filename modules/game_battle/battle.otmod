@@ -4,6 +4,6 @@ Module
   author: andrefaramir, BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [ battle.lua ]
+  scripts: [ battle ]
   @onLoad: init()
   @onUnload: terminate()

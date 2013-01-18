@@ -9,11 +9,11 @@ function init()
                     onSpellGroupCooldown = onSpellGroupCooldown,
                     onSpellCooldown = onSpellCooldown })
 
-  cooldownButton = TopMenu.addRightGameToggleButton('cooldownButton', tr('Cooldowns'), 'cooldown.png', toggle)
+  cooldownButton = modules.client_topmenu.addRightGameToggleButton('cooldownButton', tr('Cooldowns'), '/images/topbuttons/cooldowns', toggle)
   cooldownButton:setOn(true)
   cooldownButton:hide()
 
-  cooldownWindow = g_ui.loadUI('cooldown.otui', modules.game_interface.getRightPanel())
+  cooldownWindow = g_ui.loadUI('cooldown', modules.game_interface.getRightPanel())
   cooldownWindow:disableResize()
   cooldownWindow:setup() 
   
@@ -91,7 +91,7 @@ function onSpellCooldown(iconId, duration)
   if not icon then
     icon = g_ui.createWidget('SpellIcon', spellCooldownPanel)
     icon:setId(spellName)
-    icon:setImageSource('/game_cooldown/icons/' .. SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].iconFile)
+    icon:setImageSource('/images/game/spells/' .. SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].iconFile)
     icon:setImageClip(modules.game_spelllist.getIconImageClip(otcIconId))
     icon.event = scheduleEvent(function() icon:destroy() icon = nil end, duration)
   

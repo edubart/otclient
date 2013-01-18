@@ -37,7 +37,7 @@ actionsTextList = nil
 function init()
   connect(g_game, { onGMActions = loadReasons })
 
-  ruleViolationWindow = g_ui.displayUI('ruleviolation.otui')
+  ruleViolationWindow = g_ui.displayUI('ruleviolation')
   ruleViolationWindow:setVisible(false)
 
   reasonsTextList = ruleViolationWindow:getChildById('reasonList')

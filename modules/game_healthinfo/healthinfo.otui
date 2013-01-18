@@ -63,7 +63,7 @@ ConditionWidget < UIWidget
     margin-left: 2
 
 MiniWindow
-  icon: healthinfo.png
+  icon: /images/topbuttons/healthinfo
   id: healthInfoWindow
   !text: tr('Health Info')
   height: 102

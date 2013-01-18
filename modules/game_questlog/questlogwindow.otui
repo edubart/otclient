@@ -1,22 +1,22 @@
 QuestLabel < Label
   font: verdana-11px-monochrome
-  background-color: alpha
   text-offset: 2 0
   focusable: true
-  color: #cccccc
-
-  $focus:
-    color: #ffffff
+  color: #aaaaaa
+  background-color: alpha
 
   $on:
-    background-color: #006600
+    color: #00aa00
   $!on:
-    background-color: #660000
+    color: #aaaaaa
+
+  $focus:
+    background-color: #444444
 
   $on focus:
-    background-color: #004400
+    color: #00ff00
   $!on focus:
-    background-color: #440000
+    color: #ffffff
 
 QuestLogWindow < MainWindow
   id: questLogWindow
@@ -31,7 +31,6 @@ QuestLogWindow < MainWindow
     anchors.left: parent.left
     anchors.right: questListScrollBar.left
     margin-bottom: 10
-    padding: 1
     focusable: false
     vertical-scrollbar: questListScrollBar
 

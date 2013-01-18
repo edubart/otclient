@@ -1,0 +1,10 @@
+Creature < UICreature
+  size: 80 80
+  padding: 1
+  image-source: /images/ui/panel_flat
+  image-border: 1
+  border-width: 1
+  border-color: alpha
+
+  $checked:
+    border-color: white

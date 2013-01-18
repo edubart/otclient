@@ -1,4 +1,4 @@
-local musicFilename = "startup"
+local musicFilename = "/sounds/startup"
 local musicChannel = g_sounds.getChannel(1)
 
 function setMusic(filename)
@@ -75,7 +75,7 @@ function init()
   end
 
   g_window.setTitle(g_app.getName())
-  g_window.setIcon(resolvepath('clienticon'))
+  g_window.setIcon('/images/clienticon')
 
   -- poll resize events
   g_window.poll()

@@ -1,0 +1,21 @@
+Panel < UIWidget
+  phantom: true
+
+ScrollablePanel < UIScrollArea
+  phantom: true
+
+FlatPanel < Panel
+  image-source: /images/ui/panel_flat
+  image-border: 1
+
+ScrollableFlatPanel < ScrollablePanel
+  image-source: /images/ui/panel_flat
+  image-border: 1
+
+ParticlesFlatPanel < Panel
+  image-source: /images/ui/panel_flat
+  image-border: 1
+
+LightFlatPanel < Panel
+  image-source: /images/ui/panel_lightflat
+  image-border: 1

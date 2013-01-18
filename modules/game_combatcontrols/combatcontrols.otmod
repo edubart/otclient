@@ -4,6 +4,6 @@ Module
   author: edubart, BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [ combatcontrols.lua ]
+  scripts: [ combatcontrols ]
   @onLoad: init()
   @onUnload: terminate()

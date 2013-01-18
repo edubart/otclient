@@ -3,11 +3,7 @@ Module
   description: Terminal for executing lua functions
   author: edubart
   website: www.otclient.info
-
-  @onLoad: |
-    dofile 'terminal'
-    dofile 'commands'
-    Terminal.init()
-
-  @onUnload: |
-    Terminal.terminate()
+  scripts: [ terminal, commands ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()

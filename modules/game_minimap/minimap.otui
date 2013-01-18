@@ -11,27 +11,27 @@ MapControl < Button
 FlagWidget < UIWidget
   size: 11 11
   icon-clip: 0 0 11 11
-  icon-source: /game_minimap/images/mapflags.png
+  icon-source: /images/game/minimap/mapflags
   anchors.left: parent.left
   anchors.top: parent.top
 
 FloorUpControl < MapControl
-  icon-source: /game_minimap/images/floor_up.png
+  icon-source: /images/game/minimap/floor_up
 
 FloorDownControl < MapControl
-  icon-source: /game_minimap/images/floor_down.png
+  icon-source: /images/game/minimap/floor_down
 
 ZoomOutControl < MapControl
-  //image-source: /game_minimap/images/zoom_out.png
+  //image-source: /images/game/minimap/zoom_out
 
 ZoomInControl < MapControl
-  //image-source: /game_minimap/images/zoom_in.png
+  //image-source: /images/game/minimap/zoom_in
 
 MiniWindow
   id: minimapWindow
   !text: tr('Minimap')
   height: 150
-  icon: minimap.png
+  icon: /images/topbuttons/minimap
   @onClose: modules.game_minimap.onMiniWindowClose()
   @onGeometryChange: updateMapFlags()
   &save: true

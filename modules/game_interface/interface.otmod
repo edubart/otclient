@@ -4,7 +4,7 @@ Module
   author: OTClient team
   website: www.otclient.info
   sandboxed: true
-  scripts: [ widgets/uigamemap.lua, widgets/uiitem.lua, gameinterface.lua ]
+  scripts: [ widgets/uigamemap, widgets/uiitem, gameinterface ]
   load-later:
     - game_hotkeys
     - game_questlog
@@ -24,7 +24,6 @@ Module
     - game_playertrade
     - game_ruleviolation
     - game_bugreport
-    - game_shaders
     - game_playerdeath
     - game_playermount
     - game_market

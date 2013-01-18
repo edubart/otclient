@@ -1,60 +1,61 @@
-ModuleManager = {}
-
 local moduleManagerWindow
 local moduleManagerButton
 local moduleList
 
-function ModuleManager.init()
-  moduleManagerWindow = g_ui.displayUI('modulemanager.otui')
+function init()
+  moduleManagerWindow = g_ui.displayUI('modulemanager')
   moduleManagerWindow:hide()
   moduleList = moduleManagerWindow:getChildById('moduleList')
   connect(moduleList, { onChildFocusChange = function(self, focusedChild)
                           if focusedChild == nil then return end
-                          ModuleManager.updateModuleInfo(focusedChild:getText())
+                          updateModuleInfo(focusedChild:getText())
                         end })
 
   g_keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
   g_keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
-  moduleManagerButton = TopMenu.addLeftButton('moduleManagerButton', tr('Module Manager'), 'modulemanager.png', ModuleManager.toggle)
+  moduleManagerButton = modules.client_topmenu.addLeftButton('moduleManagerButton', tr('Module Manager'), '/images/topbuttons/modulemanager', toggle)
 
   -- refresh modules only after all modules are loaded
-  addEvent(ModuleManager.listModules)
+  addEvent(listModules)
 end
 
-function ModuleManager.terminate()
+function hideButton()
+  moduleManagerButton:hide()
+end
+
+function terminate()
   moduleManagerWindow:destroy()
   moduleManagerWindow = nil
   moduleManagerButton:destroy()
   moduleManagerButton = nil
   moduleList = nil
-  ModuleManager = nil
 end
 
-function ModuleManager.hide()
+function hide()
   moduleManagerWindow:hide()
 end
 
-function ModuleManager.show()
+function show()
   moduleManagerWindow:show()
   moduleManagerWindow:raise()
   moduleManagerWindow:focus()
 end
 
-function ModuleManager.toggle()
+function toggle()
   if moduleManagerWindow:isVisible() then
-    ModuleManager.hide()
+    hide()
   else
-    ModuleManager.show()
+    show()
   end
 end
 
-function ModuleManager.refreshModules()
+function refreshModules()
   g_modules.discoverModules()
-  ModuleManager.listModules()
+  listModules()
 end
 
-function ModuleManager.listModules()
+function listModules()
   if not moduleManagerWindow then return end
 
   moduleList:destroyChildren()
@@ -69,7 +70,7 @@ function ModuleManager.listModules()
   moduleList:focusChild(moduleList:getFirstChild(), ActiveFocusReason)
 end
 
-function ModuleManager.refreshLoadedModules()
+function refreshLoadedModules()
   if not moduleManagerWindow then return end
 
   for i,child in ipairs(moduleList:getChildren()) do
@@ -78,7 +79,7 @@ function ModuleManager.refreshLoadedModules()
   end
 end
 
-function ModuleManager.updateModuleInfo(moduleName)
+function updateModuleInfo(moduleName)
   if not moduleManagerWindow then return end
 
   local name = ''
@@ -118,36 +119,36 @@ function ModuleManager.updateModuleInfo(moduleName)
   unloadButton:setEnabled(canUnload)
 end
 
-function ModuleManager.reloadCurrentModule()
+function reloadCurrentModule()
   local focusedChild = moduleList:getFocusedChild()
   if focusedChild then
     local module = g_modules.getModule(focusedChild:getText())
     if module then
       module:reload()
-      if ModuleManager == nil then return end
-      ModuleManager.updateModuleInfo(module:getName())
-      ModuleManager.refreshLoadedModules()
-      ModuleManager.show()
+      if modules.client_modulemanager == nil then return end
+      updateModuleInfo(module:getName())
+      refreshLoadedModules()
+      show()
     end
   end
 end
 
-function ModuleManager.unloadCurrentModule()
+function unloadCurrentModule()
   local focusedChild = moduleList:getFocusedChild()
   if focusedChild then
     local module = g_modules.getModule(focusedChild:getText())
     if module then
       module:unload()
       if ModuleManager == nil then return end
-      ModuleManager.updateModuleInfo(module:getName())
-      ModuleManager.refreshLoadedModules()
+      updateModuleInfo(module:getName())
+      refreshLoadedModules()
     end
   end
 end
 
-function ModuleManager.reloadAllModules()
+function reloadAllModules()
   g_modules.reloadModules()
-  ModuleManager.refreshLoadedModules()
-  ModuleManager.show()
+  refreshLoadedModules()
+  show()
 end
 

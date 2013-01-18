@@ -21,10 +21,10 @@ function init()
 
   g_keyboard.bindKeyDown('Ctrl+I', toggle)
 
-  inventoryButton = TopMenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', 'inventory.png', toggle)
+  inventoryButton = modules.client_topmenu.addRightGameToggleButton('inventoryButton', tr('Inventory') .. ' (Ctrl+I)', '/images/topbuttons/inventory', toggle)
   inventoryButton:setOn(true)
 
-  inventoryWindow = g_ui.loadUI('inventory.otui', modules.game_interface.getRightPanel())
+  inventoryWindow = g_ui.loadUI('inventory', modules.game_interface.getRightPanel())
   inventoryWindow:disableResize()
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
 

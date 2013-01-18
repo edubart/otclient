@@ -1,5 +1,3 @@
-Options = {}
-
 local defaultOptions = {
   vsync = false,
   showFps = true,
@@ -52,9 +50,9 @@ local function setupGraphicsEngines()
 
   enginesRadioGroup.onSelectionChange = function(self, selected)
     if selected == ogl1 then
-      Options.setOption('painterEngine', 1)
+      setOption('painterEngine', 1)
     elseif selected == ogl2 then
-      Options.setOption('painterEngine', 2)
+      setOption('painterEngine', 2)
     end
   end
 
@@ -79,49 +77,49 @@ function displayWarning(widget, warning)
   end
 end
 
-function Options.init()
+function init()
   -- load options
   for k,v in pairs(defaultOptions) do
     g_settings.setDefault(k, v)
     if type(v) == 'boolean' then
-      Options.setOption(k, g_settings.getBoolean(k))
+      setOption(k, g_settings.getBoolean(k))
     elseif type(v) == 'number' then
-      Options.setOption(k, g_settings.getNumber(k))
+      setOption(k, g_settings.getNumber(k))
     end
   end
 
-  g_keyboard.bindKeyDown('Ctrl+D', function() Options.toggle() end)
-  g_keyboard.bindKeyDown('Ctrl+F', function() Options.toggleOption('fullscreen') end)
-  g_keyboard.bindKeyDown('Ctrl+Shift+D', function() Options.toggleOption('walkBooster') end)
+  g_keyboard.bindKeyDown('Ctrl+D', function() toggle() end)
+  g_keyboard.bindKeyDown('Ctrl+F', function() toggleOption('fullscreen') end)
+  g_keyboard.bindKeyDown('Ctrl+Shift+D', function() toggleOption('walkBooster') end)
 
-  optionsWindow = g_ui.displayUI('options.otui')
+  optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
-  optionsButton = TopMenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', 'options.png', Options.toggle)
+  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', '/images/topbuttons/options', toggle)
 
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  gamePanel = g_ui.loadUI('game.otui')
+  gamePanel = g_ui.loadUI('game')
   optionsTabBar:addTab(tr('Game'), gamePanel)
 
-  consolePanel = g_ui.loadUI('console.otui')
+  consolePanel = g_ui.loadUI('console')
   optionsTabBar:addTab(tr('Console'), consolePanel)
 
-  graphicsPanel = g_ui.loadUI('graphics.otui')
+  graphicsPanel = g_ui.loadUI('graphics')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
 
   if g_game.isOfficialTibia() then
     local optionWalkBooster = gamePanel:getChildById('walkBooster')
     optionWalkBooster.onCheckChange = function(widget)
       displayWarning(widget, "This feature could be detectable by official Tibia servers. Would like to continue?")
-      Options.setOption(widget:getId(), widget:isChecked())
+      setOption(widget:getId(), widget:isChecked())
     end
   end
 
   setupGraphicsEngines()
 end
 
-function Options.terminate()
+function terminate()
   g_keyboard.unbindKeyDown('Ctrl+D')
   g_keyboard.unbindKeyDown('Ctrl+F')
   g_keyboard.unbindKeyDown('Ctrl+Shift+D')
@@ -133,37 +131,36 @@ function Options.terminate()
   gamePanel = nil
   consolePanel = nil
   graphicsPanel = nil
-  Options = nil
 end
 
-function Options.toggle()
+function toggle()
   if optionsWindow:isVisible() then
-    Options.hide()
+    hide()
   else
-    Options.show()
+    show()
   end
 end
 
-function Options.show()
+function show()
   optionsWindow:show()
   optionsWindow:raise()
   optionsWindow:focus()
 end
 
-function Options.hide()
+function hide()
   optionsWindow:hide()
 end
 
-function Options.toggleOption(key)
+function toggleOption(key)
   local optionWidget = optionsWindow:recursiveGetChildById(key)
   if optionWidget then
-    optionWidget:setChecked(not Options.getOption(key))
+    optionWidget:setChecked(not getOption(key))
   else
-    Options.setOption(key, not Options.getOption(key))
+    setOption(key, not getOption(key))
   end
 end
 
-function Options.setOption(key, value)
+function setOption(key, value)
   if options[key] == value then return end
   if key == 'vsync' then
     g_window.setVerticalSync(value)
@@ -229,7 +226,7 @@ function Options.setOption(key, value)
   options[key] = value
 end
 
-function Options.getOption(key)
+function getOption(key)
   return options[key]
 end
 

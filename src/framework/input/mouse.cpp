@@ -28,25 +28,26 @@ Mouse g_mouse;
 
 void Mouse::setTargetCursor()
 {
-    g_window.setMouseCursor("/cursors/targetcursor.png", Point(9, 9));
+    //TODO: configure this in lua
+    g_window.setMouseCursor("/images/cursors/targetcursor", Point(9, 9));
     m_cursorChanged = true;
 }
 
 void Mouse::setHorizontalCursor()
 {
-    g_window.setMouseCursor("/cursors/horizontal.png", Point(9, 4));
+    g_window.setMouseCursor("/images/cursors/horizontal", Point(9, 4));
     m_cursorChanged = true;
 }
 
 void Mouse::setVerticalCursor()
 {
-    g_window.setMouseCursor("/cursors/vertical.png", Point(4, 9));
+    g_window.setMouseCursor("/images/cursors/vertical", Point(4, 9));
     m_cursorChanged = true;
 }
 
 void Mouse::setTextCursor()
 {
-    g_window.setMouseCursor("/cursors/text.png", Point(4, 9));
+    g_window.setMouseCursor("/images/cursors/text", Point(4, 9));
     m_cursorChanged = true;
 }
 

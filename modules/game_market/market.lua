@@ -23,7 +23,7 @@
 
 Market = {}
 
-local protocol = runinsandbox('marketprotocol.lua')
+local protocol = runinsandbox('marketprotocol')
 
 marketWindow = nil
 mainTabBar = nil
@@ -602,41 +602,41 @@ local function initInterface()
   mainTabBar:setContentWidget(marketWindow:getChildById('mainTabContent'))
 
   -- setup 'Market Offer' section tabs
-  marketOffersPanel = g_ui.loadUI('ui/marketoffers.otui')
+  marketOffersPanel = g_ui.loadUI('ui/marketoffers')
   mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
 
   selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
   selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
 
-  browsePanel = g_ui.loadUI('ui/marketoffers/browse.otui')
+  browsePanel = g_ui.loadUI('ui/marketoffers/browse')
   selectionTabBar:addTab(tr('Browse'), browsePanel)
 
-  overviewPanel = g_ui.loadUI('ui/marketoffers/overview.otui')
+  overviewPanel = g_ui.loadUI('ui/marketoffers/overview')
   selectionTabBar:addTab(tr('Overview'), overviewPanel)
 
   displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
   displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
 
-  itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers.otui')
+  itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers')
   displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
 
-  itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails.otui')
+  itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails')
   displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
 
-  itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats.otui')
+  itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats')
   displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
 
   -- setup 'My Offer' section tabs
-  myOffersPanel = g_ui.loadUI('ui/myoffers.otui')
+  myOffersPanel = g_ui.loadUI('ui/myoffers')
   mainTabBar:addTab(tr('My Offers'), myOffersPanel)
 
   offersTabBar = myOffersPanel:getChildById('offersTabBar')
   offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
 
-  currentOffersPanel = g_ui.loadUI('ui/myoffers/currentoffers.otui')
+  currentOffersPanel = g_ui.loadUI('ui/myoffers/currentoffers')
   offersTabBar:addTab(tr('Current Offers'), currentOffersPanel)
 
-  offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory.otui')
+  offerHistoryPanel = g_ui.loadUI('ui/myoffers/offerhistory')
   offersTabBar:addTab(tr('Offer History'), offerHistoryPanel)
 
   balanceLabel = marketWindow:getChildById('balanceLabel')
@@ -711,11 +711,11 @@ local function initInterface()
 end
 
 function init()
-  g_ui.importStyle('market.otui')
-  g_ui.importStyle('ui/general/markettabs.otui')
-  g_ui.importStyle('ui/general/marketbuttons.otui')
-  g_ui.importStyle('ui/general/marketcombobox.otui')
-  g_ui.importStyle('ui/general/amountwindow.otui')
+  g_ui.importStyle('market')
+  g_ui.importStyle('ui/general/markettabs')
+  g_ui.importStyle('ui/general/marketbuttons')
+  g_ui.importStyle('ui/general/marketcombobox')
+  g_ui.importStyle('ui/general/amountwindow')
 
   offerExhaust[MarketAction.Sell] = 10
   offerExhaust[MarketAction.Buy] = 20

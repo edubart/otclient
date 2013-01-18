@@ -5,6 +5,6 @@ Module
   website: www.otclient.info
   sandboxed: true
   dependencies: [ game_interface ]
-  scripts: [ textwindow.lua ]
+  scripts: [ textwindow ]
   @onLoad: init()
   @onUnload: terminate()

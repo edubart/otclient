@@ -7,6 +7,11 @@ g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log"
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
+-- add data directory to the search path
+if not g_resources.addSearchPath(g_resources.getWorkDir() .. "data", true) then
+  g_logger.fatal("Unable to add data directory to the search path.")
+end
+
 -- add modules directory to the search path
 if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) then
   g_logger.fatal("Unable to add modules directory to the search path.")
@@ -42,7 +47,7 @@ g_modules.ensureModuleLoaded("game_interface")
 -- mods 1000-9999
 g_modules.autoLoadModules(9999)
 
-if g_resources.fileExists("/otclientrc.lua") then
-  dofile("/otclientrc.lua")
+if g_resources.fileExists("/otclientrc") then
+  dofile("/otclientrc")
 end
 

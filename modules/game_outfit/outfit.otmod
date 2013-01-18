@@ -4,6 +4,6 @@ Module
   author: baxnie, edubart
   website: www.otclient.info
   sandboxed: true
-  scripts: [ outfit.lua ]
+  scripts: [ outfit ]
   @onLoad: init()
   @onUnload: terminate()

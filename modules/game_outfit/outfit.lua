@@ -57,7 +57,7 @@ function create(creatureOutfit, outfitList, creatureMount, mountList)
   mounts = mountList
   destroy()
 
-  outfitWindow = g_ui.displayUI('outfitwindow.otui')
+  outfitWindow = g_ui.displayUI('outfitwindow')
   local colorBoxPanel = outfitWindow:getChildById('colorBoxPanel')
 
   -- setup outfit/mount display boxs

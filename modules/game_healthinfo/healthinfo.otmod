@@ -4,6 +4,6 @@ Module
   author: edubart, BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [ healthinfo.lua ]
+  scripts: [ healthinfo ]
   @onLoad: init()
   @onUnload: terminate()

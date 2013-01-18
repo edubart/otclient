@@ -91,10 +91,10 @@ function init()
   connect(g_game, { onGameStart = setOptions,
                     onGameEnd   = resetWindow })
           
-  spelllistWindow = g_ui.displayUI('spelllist.otui', modules.game_interface.getRightPanel())
+  spelllistWindow = g_ui.displayUI('spelllist', modules.game_interface.getRightPanel())
   spelllistWindow:hide()
   
-  spelllistButton = TopMenu.addRightGameToggleButton('spelllistButton', tr('Spell List'), 'spelllist.png', toggle)
+  spelllistButton = modules.client_topmenu.addRightGameToggleButton('spelllistButton', tr('Spell List'), '/images/topbuttons/spelllist', toggle)
   spelllistButton:setOn(false)
   
   nameValueLabel        = spelllistWindow:getChildById('labelNameValue')
@@ -231,7 +231,7 @@ function initialiseSpelllist()
   
     tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
     tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
-    tmpLabel:setImageSource('/game_spelllist/icons/' .. SpelllistSettings[SpelllistProfile].iconFile)
+    tmpLabel:setImageSource('/images/game/spells/' .. SpelllistSettings[SpelllistProfile].iconFile)
     tmpLabel:setImageClip(getIconImageClip(iconId))
     tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
     tmpLabel.onClick = updateSpellInformation

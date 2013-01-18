@@ -10,7 +10,7 @@ Module
   @onUnload: terminate()
 
   load-later:
-    - client_skins
+    - client_styles
     - client_locales
     //- client_particles
     - client_topmenu

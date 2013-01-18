@@ -92,7 +92,9 @@ void UIWidget::drawText(const Rect& screenCoords)
     }
 
     g_painter->setColor(m_color);
-    g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
+
+    if(m_font->getTexture())
+        g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)

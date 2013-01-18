@@ -16,7 +16,7 @@ ContainerWindow < MiniWindow
     anchors.right: minimizeButton.left
     margin-right: 3
     size: 14 14
-    image-source: /images/miniwindowbuttons.png
+    image-source: /images/ui/miniwindow_buttons
     image-clip: 42 0 14 14
 
     $hover:

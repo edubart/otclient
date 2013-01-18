@@ -1,15 +1,13 @@
-Background = { }
-
 -- private variables
 local background
 
 -- public functions
-function Background.init()
-  background = g_ui.displayUI('background.otui')
+function init()
+  background = g_ui.displayUI('background')
   background:lower()
 
   local clientVersionLabel = background:getChildById('clientVersionLabel')
-  clientVersionLabel:setText('OTClient ' .. g_app.getVersion() .. '\n' ..
+  clientVersionLabel:setText(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' ..
                              'Rev  ' .. g_app.getBuildRevision() .. ' ('.. g_app.getBuildCommit() .. ')\n' ..
                              'Built on ' .. g_app.getBuildDate())
 
@@ -17,13 +15,13 @@ function Background.init()
     g_effects.fadeIn(clientVersionLabel, 1500)
   end
 
-  connect(g_game, { onGameStart = Background.hide })
-  connect(g_game, { onGameEnd = Background.show })
+  connect(g_game, { onGameStart = hide })
+  connect(g_game, { onGameEnd = show })
 end
 
-function Background.terminate()
-  disconnect(g_game, { onGameStart = Background.hide })
-  disconnect(g_game, { onGameEnd = Background.show })
+function terminate()
+  disconnect(g_game, { onGameStart = hide })
+  disconnect(g_game, { onGameEnd = show })
 
   g_effects.cancelFade(background:getChildById('clientVersionLabel'))
   background:destroy()
@@ -32,14 +30,14 @@ function Background.terminate()
   Background = nil
 end
 
-function Background.hide()
+function hide()
   background:hide()
 end
 
-function Background.show()
+function show()
   background:show()
 end
 
-function Background.hideVersionLabel()
+function hideVersionLabel()
   background:getChildById('clientVersionLabel'):hide()
 end

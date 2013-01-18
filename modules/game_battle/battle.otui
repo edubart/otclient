@@ -22,25 +22,25 @@ BattleIcon < UICheckBox
     image-color: #ffffff88
 
 BattlePlayers < BattleIcon
-  image-source: /game_battle/images/battle_players.png
+  image-source: /images/game/battle/battle_players
 
 BattleNPCs < BattleIcon
-  image-source: /game_battle/images/battle_npcs.png
+  image-source: /images/game/battle/battle_npcs
 
 BattleMonsters < BattleIcon
-  image-source: /game_battle/images/battle_monsters.png
+  image-source: /images/game/battle/battle_monsters
 
 BattleSkulls < BattleIcon
-  image-source: /game_battle/images/battle_skulls.png
+  image-source: /images/game/battle/battle_skulls
 
 BattleParty < BattleIcon
-  image-source: /game_battle/images/battle_party.png
+  image-source: /images/game/battle/battle_party
 
 MiniWindow
   id: battleWindow
   !text: tr('Battle')
   height: 166
-  icon: battle.png
+  icon: /images/topbuttons/battle
   @onClose: modules.game_battle.onMiniWindowClose()
   &save: true
 

@@ -1,0 +1,12 @@
+TextList < UIScrollArea
+  layout: verticalBox
+  border-width: 1
+  border-color: #1d222b
+  background-color: #222833
+  padding: 1
+
+HorizontalList < UIScrollArea
+  layout: horizontalBox
+  border-width: 1
+  border-color: #1d222b
+  background-color: #222833

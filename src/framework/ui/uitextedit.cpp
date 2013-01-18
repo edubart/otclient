@@ -57,6 +57,8 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
 
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
+    if(!texture)
+        return;
 
     g_painter->setColor(m_color);
     for(int i=0;i<textLength;++i)

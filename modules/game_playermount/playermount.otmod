@@ -4,6 +4,6 @@ Module
   author: BeniS
   website: www.otclient.info
   sandboxed: true
-  scripts: [ playermount.lua ]
+  scripts: [ playermount ]
   @onLoad: init()
   @onUnload: terminate()

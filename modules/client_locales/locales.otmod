@@ -1,16 +1,10 @@
 Module
   name: client_locales
   description: Translates texts to selected language
-  author: baxnie
+  author: baxnie, edubart
   website: www.otclient.info
-
-  dependencies:
-    - client_extended
-    - client_topmenu
-
-  @onLoad: |
-    dofile 'locales'
-    Locales.init()
-
-  @onUnload: |
-    Locales.terminate()
+  sandboxed: true
+  scripts: [ locales ]
+  dependencies: [ client_topmenu ]
+  @onLoad: init()
+  @onUnload: terminate()

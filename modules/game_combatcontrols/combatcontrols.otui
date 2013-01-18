@@ -12,20 +12,20 @@ CombatBox < UICheckBox
     image-clip: 0 20 20 20
 
 FightOffensiveBox < CombatBox
-  image-source: /game_combatcontrols/icons/fightoffensive.png
+  image-source: /images/game/combatmodes/fightoffensive
 FightBalancedBox < CombatBox
-  image-source: /game_combatcontrols/icons/fightbalanced.png
+  image-source: /images/game/combatmodes/fightbalanced
 FightDefensiveBox < CombatBox
-  image-source: /game_combatcontrols/icons/fightdefensive.png
+  image-source: /images/game/combatmodes/fightdefensive
 ChaseModeBox < CombatBox
-  image-source: /game_combatcontrols/icons/chasemode.png
+  image-source: /images/game/combatmodes/chasemode
 SafeFightBox < CombatBox
-  image-source: /game_combatcontrols/icons/safefight.png
+  image-source: /images/game/combatmodes/safefight
 
 MiniWindow
   id: combatControlsWindow
   !text: tr('Combat Controls')
-  icon: combatcontrols.png
+  icon: /images/topbuttons/combatcontrols
   height: 48
   &save: true
   @onClose: modules.game_combatcontrols.onMiniWindowClose()

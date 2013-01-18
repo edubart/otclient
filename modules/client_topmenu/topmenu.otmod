@@ -3,10 +3,8 @@ Module
   description: Create the top menu
   author: edubart
   website: www.otclient.info
+  scripts: [ topmenu ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate()
 
-  @onLoad: |
-    dofile 'topmenu'
-    TopMenu.init()
-
-  @onUnload: |
-    TopMenu.terminate()

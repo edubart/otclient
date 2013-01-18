@@ -5,7 +5,7 @@ bugReportWindow = nil
 bugTextEdit = nil
 
 function init()
-  g_ui.importStyle('bugreport.otui')
+  g_ui.importStyle('bugreport')
 
   bugReportWindow = g_ui.createWidget('BugReportWindow', rootWidget)
   bugReportWindow:hide()

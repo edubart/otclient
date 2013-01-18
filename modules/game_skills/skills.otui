@@ -34,7 +34,7 @@ MiniWindow
   id: skillWindow
   !text: tr('Skills')
   height: 150
-  icon: skills.png
+  icon: /images/topbuttons/skills
   @onClose: modules.game_skills.onMiniWindowClose()
   &save: true
 

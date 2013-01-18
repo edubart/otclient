@@ -1,10 +1,10 @@
 FlagButton < CheckBox
   size: 15 15
   margin-left: 2
-  image-source: images/flagcheckbox.png
+  image-source: /images/game/minimap/flagcheckbox
   image-size: 15 15
   image-border: 3
-  icon-source: images/mapflags.png
+  icon-source: /images/game/minimap/mapflags
   icon-size: 11 11
   icon-clip: 0 0 11 11
   icon-offset: 2 4

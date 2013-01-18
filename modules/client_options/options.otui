@@ -1,6 +1,6 @@
 OptionCheckBox < CheckBox
-  @onCheckChange: Options.setOption(self:getId(), self:isChecked())
-  @onSetup: self:setChecked(Options.getOption(self:getId()))
+  @onCheckChange: modules.client_options.setOption(self:getId(), self:isChecked())
+  @onSetup: self:setChecked(modules.client_options.getOption(self:getId()))
   height: 16
 
   $first:
@@ -19,8 +19,8 @@ MainWindow
   !text: tr('Options')
   size: 350 310
 
-  @onEnter: Options.hide()
-  @onEscape: Options.hide()
+  @onEnter: modules.client_options.hide()
+  @onEscape: modules.client_options.hide()
 
   TabBarRounded
     id: optionsTabBar
@@ -41,4 +41,4 @@ MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: Options.hide()
+    @onClick: modules.client_options.hide()

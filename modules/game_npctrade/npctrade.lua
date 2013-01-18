@@ -34,7 +34,7 @@ playerItems = nil
 selectedItem = nil
 
 function init()
-  npcWindow = g_ui.displayUI('npctrade.otui')
+  npcWindow = g_ui.displayUI('npctrade')
   npcWindow:setVisible(false)
 
   itemsPanel = npcWindow:recursiveGetChildById('itemsPanel')

@@ -4,6 +4,6 @@ Module
   author: andrefaramir, baxnie
   website: www.otclient.info
   sandboxed: true
-  scripts: [ npctrade.lua ]
+  scripts: [ npctrade ]
   @onLoad: init()
   @onUnload: terminate()

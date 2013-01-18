@@ -1,6 +1,6 @@
 SpelllistSettings = {
   ['Default'] = { 
-    iconFile = 'icons.png',
+    iconFile = 'defaultspells',
     iconSize = {width = 32, height = 32},
     spellListWidth = 210,
     spellWindowWidth = 550,
@@ -9,7 +9,7 @@ SpelllistSettings = {
   },
   
   ['Sample'] =  { 
-    iconFile = 'sample.png', 
+    iconFile = 'sample', 
     iconSize = {width = 64, height = 64},
     spellIcons = {[1] = 'Wind Walk', [2] = 'Fire Breath', [3] = 'Moonglaives', [5] = 'Firefly', [4] = 'Critical Strike'},
     spellOrder = {'Critical Strike', 'Firefly', 'Fire Breath', 'Moonglaives', 'Wind Walk'}

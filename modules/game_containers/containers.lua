@@ -1,5 +1,5 @@
 function init()
-  g_ui.importStyle('container.otui')
+  g_ui.importStyle('container')
 
   connect(Container, { onOpen = onContainerOpen,
                        onClose = onContainerClose,

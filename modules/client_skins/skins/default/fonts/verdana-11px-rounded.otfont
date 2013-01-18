@@ -1,8 +1,0 @@
-Font
-  name: verdana-11px-rounded
-  texture: verdana-11px-rounded_cp1252.png
-  height: 16
-  glyph-size: 16 16
-  y-offset: -2
-  spacing: -1 -3
-  space-width: 4

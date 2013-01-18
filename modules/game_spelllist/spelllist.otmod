@@ -4,6 +4,6 @@ Module
   author: Summ, Edubart
   website: www.otclient.info
   sandboxed: true
-  scripts: [ spelllist.lua ]
+  scripts: [ spelllist ]
   @onLoad: init()
   @onUnload: terminate()

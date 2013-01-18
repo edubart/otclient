@@ -4,6 +4,6 @@ Module
   author: edubart, baxnie
   website: www.otclient.info
   sandboxed: true
-  scripts: [containers.lua]
+  scripts: [containers]
   @onLoad: init()
   @onUnload: terminate()

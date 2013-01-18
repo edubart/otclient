@@ -26,7 +26,7 @@ arrowKeys = {
 }
 
 function init()
-  g_ui.importStyle('styles/countwindow.otui')
+  g_ui.importStyle('styles/countwindow')
 
   connect(g_game, {
     onGameStart = onGameStart,
@@ -34,7 +34,7 @@ function init()
     onLoginAdvice = onLoginAdvice
   }, true)
 
-  gameRootPanel = g_ui.displayUI('gameinterface.otui')
+  gameRootPanel = g_ui.displayUI('gameinterface')
   gameRootPanel:hide()
   gameRootPanel:lower()
   gameRootPanel.onGeometryChange = updateStretchShrink
@@ -49,7 +49,7 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = TopMenu.addLeftButton('logoutButton', 'Logout', '/images/logout.png', tryLogout, true)
+  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', 'Logout', '/images/topbuttons/logout', tryLogout, true)
 
   bindKeys()
 
@@ -125,7 +125,7 @@ end
 
 function show()
   connect(g_app, { onClose = tryExit })
-  Background.hide()
+  modules.client_background.hide()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
@@ -147,7 +147,7 @@ function hide()
     countWindow = nil
   end
   gameRootPanel:hide()
-  Background.show()
+  modules.client_background.show()
 end
 
 function onLoginAdvice(message)
@@ -230,7 +230,7 @@ function smartWalk(defaultDir)
   end
 
   local dir = defaultDir
-  if Options.getOption('smartWalk') then
+  if modules.client_options.getOption('smartWalk') then
     if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
       dir = NorthWest
     elseif g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Right') then
@@ -242,7 +242,7 @@ function smartWalk(defaultDir)
     end
   end
 
-  if Options.getOption('walkBooster') then
+  if modules.client_options.getOption('walkBooster') then
     if g_game.getLocalPlayer():canWalk(dir) then
       g_game.walk(dir)
     else
@@ -259,7 +259,7 @@ function smartWalk(defaultDir)
 end
 
 function updateStretchShrink() 
-  if Options.getOption('dontStretchShrink') then
+  if modules.client_options.getOption('dontStretchShrink') then
     gameMapPanel:setKeepAspectRatio(true)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
     
@@ -475,7 +475,7 @@ end
 function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
   local keyboardModifiers = g_keyboard.getModifiers()
 
-  if not Options.getOption('classicControl') then
+  if not modules.client_options.getOption('classicControl') then
     if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
       createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true

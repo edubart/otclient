@@ -1,5 +1,5 @@
 function init()
-  g_ui.importStyle('modaldialog.otui')
+  g_ui.importStyle('modaldialog')
 
   connect(g_game, { onModalDialog = onModalDialog,
                     onGameEnd = destroy })

@@ -3,7 +3,7 @@ Module
   description: Bug report interface (Ctrl+Z)
   author: edubart
   website: www.otclient.info
-  scripts: [ bugreport.lua ]
+  scripts: [ bugreport ]
   sandboxed: true
   @onLoad: init()
   @onUnload: terminate()

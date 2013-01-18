@@ -13,10 +13,10 @@ hideSkullsButton = nil
 hidePartyButton = nil
 
 function init()
-  g_ui.importStyle('battlebutton.otui')
-  battleButton = TopMenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', 'battle.png', toggle)
+  g_ui.importStyle('battlebutton')
+  battleButton = modules.client_topmenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', '/images/topbuttons/battle', toggle)
   battleButton:setOn(true)
-  battleWindow = g_ui.loadUI('battle.otui', modules.game_interface.getRightPanel())
+  battleWindow = g_ui.loadUI('battle', modules.game_interface.getRightPanel())
   g_keyboard.bindKeyDown('Ctrl+B', toggle)
 
   -- this disables scrollbar auto hiding

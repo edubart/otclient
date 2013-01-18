@@ -1,7 +1,7 @@
 tradeWindow = nil
 
 function init()
-  g_ui.importStyle('tradewindow.otui')
+  g_ui.importStyle('tradewindow')
 
   connect(g_game, { onOwnTrade = onGameOwnTrade,
                     onCounterTrade = onGameCounterTrade,

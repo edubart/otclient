@@ -1,17 +1,17 @@
 
 GameSidePanel < UIMiniWindowContainer
-  image-source: /images/sidepanel.png
+  image-source: /images/ui/panel_side
   image-border: 4
   padding: 4
   width: 198
 
 GameBottomPanel < Panel
-  image-source: /images/bottompanel.png
+  image-source: /images/ui/panel_bottom
   image-border: 4
 
 GameMapPanel < UIGameMap
   padding: 4
-  image-source: /images/mappanel.png
+  image-source: /images/ui/panel_map
   image-border: 4
 
 UIWidget
@@ -63,7 +63,7 @@ UIWidget
     anchors.bottom: parent.bottom
     relative-margin: bottom
     margin-bottom: 172
-    @canUpdateMargin: function(self, newMargin) if Options.getOption('dontStretchShrink') then return self:getMarginBottom() end return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
+    @canUpdateMargin: function(self, newMargin) if modules.client_options.getOption('dontStretchShrink') then return self:getMarginBottom() end return math.max(math.min(newMargin, self:getParent():getHeight() - 300), 100) end
     @onGeometryChange: function(self) self:setMarginBottom(math.min(math.max(self:getParent():getHeight() - 300, 100), self:getMarginBottom())) end
 
   UIWidget

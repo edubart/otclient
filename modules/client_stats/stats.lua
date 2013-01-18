@@ -1,9 +1,11 @@
+UUID = nil
 HOST = 'otclient.herokuapp.com'
 PORT = 80
-UUID = nil
+FIRST_REPORT_DELAY = 15
 REPORT_DELAY = 60
 
 sendReportEvent = nil
+firstReportEvent = nil
 
 function initUUID()
   UUID = g_settings.getString('report-uuid')
@@ -25,7 +27,15 @@ function terminate()
                        onGameEnd = onGameEnd })
 end
 
+function configure(host, port, delay)
+  if not host then return end
+  HOST = host
+  PORT = port or PORT
+  REPORT_DELAY = delay or REPORT_DELAY
+end
+
 function sendReport()
+  if not HOST then return end
   local protocolHttp = ProtocolHttp.create()
   protocolHttp.onConnect = onConnect
   protocolHttp.onRecv = onRecv
@@ -34,11 +44,14 @@ function sendReport()
 end
 
 function onGameStart()
+  if not HOST then return end
+  firstReportEvent = addEvent(sendReport, FIRST_REPORT_DELAY*1000)
   sendReportEvent = cycleEvent(sendReport, REPORT_DELAY*1000)
 end
 
 function onGameEnd()
   removeEvent(sendReportEvent)
+  removeEvent(firstReportEvent)
 end
 
 function onConnect(protocol)
@@ -60,18 +73,17 @@ function onConnect(protocol)
   post = post .. '&fullscreen='        .. tostring(g_window.isFullscreen())
   post = post .. '&window_width='      .. g_window.getWidth()
   post = post .. '&window_height='     .. g_window.getHeight()
-  post = post .. '&player_name='       .. g_game.getLocalPlayer():getName()
+  post = post .. '&player_name='       .. g_game.getCharacterName()
   post = post .. '&world_name='        .. g_game.getWorldName()
-  post = post .. '&otserv_host='       .. G.host
-  post = post .. '&otserv_port='       .. G.port
-  post = post .. '&otserv_protocol='   .. g_game.getProtocolVersion()
-  --post = post .. '&otserv_client='     .. g_game.getClientVersion()
   post = post .. '&build_version='     .. g_app.getVersion()
   post = post .. '&build_revision='    .. g_app.getBuildRevision()
   post = post .. '&build_commit='      .. g_app.getBuildCommit()
   post = post .. '&build_date='        .. g_app.getBuildDate()
   post = post .. '&display_width='     .. g_window.getDisplayWidth()
   post = post .. '&display_height='    .. g_window.getDisplayHeight()
+  post = post .. '&cpu='               .. g_platform.getCPUName()
+  post = post .. '&mem='               .. g_platform.getTotalSystemMemory()
+  post = post .. '&os_name='           .. g_platform.getOSName()
 
   local message = ''
   message = message .. "POST /report HTTP/1.1\r\n"

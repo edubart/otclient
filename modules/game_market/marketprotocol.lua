@@ -4,7 +4,7 @@ MarketProtocol = {}
 
 local silent
 local protocol
-local statistics = runinsandbox('offerstatistic.lua')
+local statistics = runinsandbox('offerstatistic')
 
 local function send(msg)
   if protocol and not silent then

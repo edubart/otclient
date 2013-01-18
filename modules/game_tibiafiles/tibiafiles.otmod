@@ -3,6 +3,6 @@ Module
   description: Contains tibia spr and dat
   reloadable: false
   sandboxed: true
-  scripts: [tibiafiles.lua]
+  scripts: [tibiafiles]
   @onLoad: init()
   @onUnload: terminate()
