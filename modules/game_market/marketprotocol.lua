@@ -37,7 +37,7 @@ local function readMarketOffer(msg, action, var)
 end
 
 -- parsing protocols
-local function parseMarketEnter(msg)
+local function parseMarketEnter(protocol, msg)
   local balance
   if g_game.getProtocolVersion() >= 973 then
     balance = msg:getU64()
@@ -64,12 +64,12 @@ local function parseMarketEnter(msg)
   return true
 end
 
-local function parseMarketLeave(msg)
+local function parseMarketLeave(protocol, msg)
   Market.onMarketLeave()
   return true
 end
 
-local function parseMarketDetail(msg)
+local function parseMarketDetail(protocol, msg)
   local itemId = msg:getU16()
 
   local descriptions = {}
@@ -110,7 +110,7 @@ local function parseMarketDetail(msg)
   return true
 end
 
-local function parseMarketBrowse(msg)
+local function parseMarketBrowse(protocol, msg)
   local var = msg:getU16()
   local offers = {}
 
