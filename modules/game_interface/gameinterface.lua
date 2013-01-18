@@ -96,6 +96,8 @@ function bindKeys()
 end
 
 function terminate()
+  hide()
+
   disconnect(g_game, { 
     onGameStart = onGameStart,
     onGameEnd = onGameEnd,
