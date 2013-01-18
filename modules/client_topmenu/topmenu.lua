@@ -8,7 +8,7 @@ local leftGameButtonsPanel
 local rightGameButtonsPanel
 
 -- private functions
-local function addButton(id, description, icon, callback, panel, toggle)
+local function addButton(id, description, icon, callback, panel, toggle, front)
   local class
   if toggle then
     class = 'TopToggleButton'
@@ -16,7 +16,12 @@ local function addButton(id, description, icon, callback, panel, toggle)
     class = 'TopButton'
   end
 
-  local button = g_ui.createWidget(class, panel)
+  local button = g_ui.createWidget(class)
+  if front then
+    panel:insertChild(1, button)
+  else
+    panel:addChild(button)
+  end
   button:setId(id)
   button:setTooltip(description)
   button:setIcon(resolvepath(icon, 3))
@@ -57,36 +62,36 @@ function TopMenu.terminate()
   TopMenu = nil
 end
 
-function TopMenu.addLeftButton(id, description, icon, callback)
-  return addButton(id, description, icon, callback, leftButtonsPanel, false)
+function TopMenu.addLeftButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, leftButtonsPanel, false, front)
 end
 
-function TopMenu.addLeftToggleButton(id, description, icon, callback, right)
-  return addButton(id, description, icon, callback, leftButtonsPanel, true)
+function TopMenu.addLeftToggleButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, leftButtonsPanel, true, front)
 end
 
-function TopMenu.addRightButton(id, description, icon, callback)
-  return addButton(id, description, icon, callback, rightButtonsPanel, false)
+function TopMenu.addRightButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, rightButtonsPanel, false, front)
 end
 
-function TopMenu.addRightToggleButton(id, description, icon, callback, right)
-  return addButton(id, description, icon, callback, rightButtonsPanel, true)
+function TopMenu.addRightToggleButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, rightButtonsPanel, true, front)
 end
 
-function TopMenu.addLeftGameButton(id, description, icon, callback)
-  return addButton(id, description, icon, callback, leftGameButtonsPanel, false)
+function TopMenu.addLeftGameButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, leftGameButtonsPanel, false, front)
 end
 
-function TopMenu.addLeftGameToggleButton(id, description, icon, callback, right)
-  return addButton(id, description, icon, callback, leftGameButtonsPanel, true)
+function TopMenu.addLeftGameToggleButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, leftGameButtonsPanel, true, front)
 end
 
-function TopMenu.addRightGameButton(id, description, icon, callback)
-  return addButton(id, description, icon, callback, rightGameButtonsPanel, false)
+function TopMenu.addRightGameButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, rightGameButtonsPanel, false, front)
 end
 
-function TopMenu.addRightGameToggleButton(id, description, icon, callback, right)
-  return addButton(id, description, icon, callback, rightGameButtonsPanel, true)
+function TopMenu.addRightGameToggleButton(id, description, icon, callback, front)
+  return addButton(id, description, icon, callback, rightGameButtonsPanel, true, front)
 end
 
 function TopMenu.hideGameButtons()

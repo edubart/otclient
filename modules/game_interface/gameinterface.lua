@@ -49,8 +49,7 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = TopMenu.addRightButton('logoutButton', 'Logout', '/images/logout.png', tryLogout)
-  logoutButton:hide()
+  logoutButton = TopMenu.addLeftButton('logoutButton', 'Logout', '/images/logout.png', tryLogout, true)
 
   bindKeys()
 
@@ -124,7 +123,6 @@ end
 
 function show()
   connect(g_app, { onClose = tryExit })
-  logoutButton:show()
   Background.hide()
   gameRootPanel:show()
   gameRootPanel:focus()
@@ -147,7 +145,6 @@ function hide()
     countWindow = nil
   end
   gameRootPanel:hide()
-  logoutButton:hide()
   Background.show()
 end
 
@@ -186,6 +183,10 @@ function logout()
 end
 
 function tryLogout()
+  if not g_game.isOnline() then
+    exit()
+  end
+
   if logoutWindow then
     return
   end
