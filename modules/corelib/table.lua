@@ -47,8 +47,11 @@ function table.merge(t, src)
   end
 end
 
-function table.find(t, value)
+function table.find(t, value, lowercase)
   for k,v in pairs(t) do
+    if lowercase and type(value) == 'string' and type(v) == 'string' then 
+      if v:lower() == value:lower() then return k end
+    end
     if v == value then return k end
   end
 end

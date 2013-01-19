@@ -631,7 +631,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
       return
     elseif speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom then
       return
-    elseif isIgnored(name) or isIgnored(name:lower()) then
+    elseif isIgnored(name) then
       return
     end
   end
@@ -787,7 +787,7 @@ function saveIgnoreSettings()
 end
 
 function isIgnored(name)
-  return table.find(ignoreSettings.players, name)
+  return table.find(ignoreSettings.players, name, true)
 end
 
 function addIgnoredPlayer(name)
