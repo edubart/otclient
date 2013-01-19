@@ -43,6 +43,7 @@ protected:
         TEX2_UNIFORM = 7,
         TEX3_UNIFORM = 8,
         RESOLUTION_UNIFORM = 9,
+        TRANSFORM_MATRIX_UNIFORM = 10
     };
 
     friend class PainterOGL2;
@@ -54,6 +55,7 @@ public:
 
     bool link();
 
+    void setTransformMatrix(const Matrix3& transformMatrix);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setTextureMatrix(const Matrix3& textureMatrix);
     void setColor(const Color& color);
@@ -69,6 +71,7 @@ private:
 
     Color m_color;
     float m_opacity;
+    Matrix3 m_transformMatrix;
     Matrix3 m_projectionMatrix;
     Matrix3 m_textureMatrix;
     Size m_resolution;

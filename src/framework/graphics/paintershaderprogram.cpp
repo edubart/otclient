@@ -38,6 +38,7 @@ PainterShaderProgram::PainterShaderProgram()
 
 void PainterShaderProgram::setupUniforms()
 {
+    bindUniformLocation(TRANSFORM_MATRIX_UNIFORM, "u_TransformMatrix");
     bindUniformLocation(PROJECTION_MATRIX_UNIFORM, "u_ProjectionMatrix");
     bindUniformLocation(TEXTURE_MATRIX_UNIFORM, "u_TextureMatrix");
     bindUniformLocation(COLOR_UNIFORM, "u_Color");
@@ -49,6 +50,7 @@ void PainterShaderProgram::setupUniforms()
     bindUniformLocation(TEX3_UNIFORM, "u_Tex3");
     bindUniformLocation(RESOLUTION_UNIFORM, "u_Resolution");
 
+    setUniformValue(TRANSFORM_MATRIX_UNIFORM, m_transformMatrix);
     setUniformValue(PROJECTION_MATRIX_UNIFORM, m_projectionMatrix);
     setUniformValue(TEXTURE_MATRIX_UNIFORM, m_textureMatrix);
     setUniformValue(COLOR_UNIFORM, m_color);
@@ -73,6 +75,16 @@ bool PainterShaderProgram::link()
         return true;
     }
     return false;
+}
+
+void PainterShaderProgram::setTransformMatrix(const Matrix3& transformMatrix)
+{
+    if(transformMatrix == m_transformMatrix)
+        return;
+
+    bind();
+    setUniformValue(TRANSFORM_MATRIX_UNIFORM, transformMatrix);
+    m_transformMatrix = transformMatrix;
 }
 
 void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)

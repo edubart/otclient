@@ -46,6 +46,7 @@ public:
 
     struct PainterState {
         Size resolution;
+        Matrix3 transformMatrix;
         Matrix3 projectionMatrix;
         Matrix3 textureMatrix;
         Color color;
@@ -82,6 +83,7 @@ public:
     virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
     virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
+    virtual void setTransformMatrix(const Matrix3& transformMatrix) { m_transformMatrix = transformMatrix; }
     virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
     virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
     virtual void setColor(const Color& color) { m_color = color; }
@@ -96,6 +98,11 @@ public:
     void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
     void setResolution(const Size& resolution);
 
+    void scale(double x, double y);
+    void translate(double x, double y);
+    void rotate(double x, double y, double angle);
+
+    Matrix3 getTransformMatrix() { return m_transformMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
     Matrix3 getTextureMatrix() { return m_textureMatrix; }
     Color getColor() { return m_color; }
@@ -104,7 +111,7 @@ public:
     Rect getClipRect() { return m_clipRect; }
     PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
     bool getAlphaWriting() { return m_alphaWriting; }
-    Size getResolution() { return m_resolution; };
+    Size getResolution() { return m_resolution; }
 
     void resetColor() { setColor(Color::white); }
     void resetOpacity() { setOpacity(1.0f); }
@@ -125,6 +132,7 @@ protected:
 
     CoordsBuffer m_coordsBuffer;
 
+    Matrix3 m_transformMatrix;
     Matrix3 m_projectionMatrix;
     Matrix3 m_textureMatrix;
     Color m_color;

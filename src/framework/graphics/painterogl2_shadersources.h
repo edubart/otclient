@@ -42,9 +42,10 @@ static const std::string glslMainWithTexCoordsVertexShader = "\n\
 
 static std::string glslPositionOnlyVertexShader = "\n\
     attribute highp vec2 a_Vertex;\n\
+    uniform highp mat3 u_TransformMatrix;\n\
     uniform highp mat3 u_ProjectionMatrix;\n\
     highp vec4 calculatePosition() {\n\
-        return vec4(u_ProjectionMatrix * vec3(a_Vertex.xy, 1.0), 1.0);\n\
+        return vec4(u_TransformMatrix * u_ProjectionMatrix * vec3(a_Vertex.xy, 1.0), 1.0);\n\
     }\n";
 
 static const std::string glslMainFragmentShader = "\n\

@@ -79,6 +79,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
     // update shader with the current painter state
     m_drawProgram->bind();
+    m_drawProgram->setTransformMatrix(m_transformMatrix);
     m_drawProgram->setProjectionMatrix(m_projectionMatrix);
     if(textured) {
         m_drawProgram->setTextureMatrix(m_textureMatrix);

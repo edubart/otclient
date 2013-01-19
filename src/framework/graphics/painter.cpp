@@ -64,6 +64,7 @@ void Painter::saveState()
 {
     assert(m_oldStateIndex<10);
     m_olderStates[m_oldStateIndex].resolution = m_resolution;
+    m_olderStates[m_oldStateIndex].transformMatrix = m_transformMatrix;
     m_olderStates[m_oldStateIndex].projectionMatrix = m_projectionMatrix;
     m_olderStates[m_oldStateIndex].textureMatrix = m_textureMatrix;
     m_olderStates[m_oldStateIndex].color = m_color;
@@ -86,6 +87,7 @@ void Painter::restoreSavedState()
 {
     m_oldStateIndex--;
     setResolution(m_olderStates[m_oldStateIndex].resolution);
+    setTransformMatrix(m_olderStates[m_oldStateIndex].transformMatrix);
     setProjectionMatrix(m_olderStates[m_oldStateIndex].projectionMatrix);
     setTextureMatrix(m_olderStates[m_oldStateIndex].textureMatrix);
     setColor(m_olderStates[m_oldStateIndex].color);
@@ -181,6 +183,34 @@ void Painter::setResolution(const Size& resolution)
     setProjectionMatrix(projectionMatrix);
     if(g_painter == this)
         updateGlViewport();
+}
+
+void Painter::scale(double x, double y)
+{
+    m_transformMatrix.data()[0] *= x;
+    m_transformMatrix.data()[4] *= y;
+}
+
+void Painter::translate(double x, double y)
+{
+    m_transformMatrix.data()[6] += x / m_resolution.width();
+    m_transformMatrix.data()[7] -= y / m_resolution.height();
+}
+
+void Painter::rotate(double x, double y, double angle)
+{
+    // TODO: use x, y vectors to properly rotate.
+    if(m_transformMatrix.data()[1] == 0)
+        m_transformMatrix.data()[1] = 1;
+    if(m_transformMatrix.data()[3] == 0)
+        m_transformMatrix.data()[3] = 1;
+
+    double s = sin(angle);
+    double c = cos(angle);
+    m_transformMatrix.data()[0] *= c;
+    m_transformMatrix.data()[1] *= s;
+    m_transformMatrix.data()[3] *= -s;
+    m_transformMatrix.data()[4] *= c;
 }
 
 void Painter::updateGlTexture()

@@ -108,6 +108,20 @@ public:
         return pos;
     }
 
+    double getAngleFromPosition(const Position& position) const {
+        // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
+        int dx = position.x - x;
+        int dy = position.y - y;
+        if(dx == 0 && dy == 0)
+            return -1;
+
+        float angle = std::atan2(dy * -1, dx);
+        if(angle < 0)
+            angle += 2 * Fw::pi;
+
+        return angle;
+    }
+
     Otc::Direction getDirectionFromPosition(const Position& position) const {
         int dx = position.x - x;
         int dy = position.y - y;

@@ -35,6 +35,8 @@ class LocalPlayer : public Player
 public:
     LocalPlayer();
 
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+
     void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
     void stopAutoWalkUpdate();
