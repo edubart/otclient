@@ -33,6 +33,7 @@ class Matrix
 {
 public:
     Matrix() { setIdentity(); }
+    Matrix(int) {} // construct without initializing identity matrix
     Matrix(const Matrix<N,M,T>& other) = default;
     template<typename U>
     Matrix(const std::initializer_list<U>& values) { *this = values; }
@@ -65,7 +66,6 @@ public:
     bool operator!=(const Matrix<N,M,T>& other) const;
 
 private:
-    Matrix(int) {} // construct without initializing identity matrix
     T m[N][M];
 };
 
@@ -176,10 +176,10 @@ bool Matrix<N,M,T>::operator!=(const Matrix<N,M,T>& other) const
 template<int N, int M, typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<N,M,T>& mat)
 {
-    for(int i=0;i<N;++i) {
-        for(int j=0;j<M;++j) {
+    for(int i=1;i<=N;++i) {
+        for(int j=1;j<=M;++j) {
             out << mat(i,j);
-            if(j+1 != M)
+            if(j != M)
                 out << " ";
         }
         out << "\n";
@@ -206,6 +206,34 @@ inline bool Matrix<3,3,float>::operator==(const Matrix<3,3,float>& other) const
            m[1][0] == other.m[1][0] && m[0][1] == other.m[0][1] &&
            m[2][2] == other.m[2][2];
 }
+
+template<int M, int N, int P, int Q, typename T>
+Matrix<M, Q, T> operator*(const Matrix<M,N,T>& a, const Matrix<P,Q,T>& b)
+{
+    static_assert(N==P, "N==P");
+    Matrix<M,Q,T> c(1);
+    for(int i=1;i<=M;++i) {
+        for(int j=1;j<=Q;++j) {
+            T sum = 0;
+            for(int k=1;k<=N;++k)
+                sum += a(i,k) * b(k,j);
+            c(i,j) = sum;
+        }
+    }
+    return c;
+}
+
+template<int M, int N, typename T>
+Matrix<M, N, T> operator+(const Matrix<M,N,T>& a, const Matrix<M,N,T>& b) {  Matrix<M,N,T> c(a); c += b; return c; }
+
+template<int M, int N, typename T>
+Matrix<M, N, T> operator-(const Matrix<M,N,T>& a, const Matrix<M,N,T>& b) {  Matrix<M,N,T> c(a); c -= b; return c; }
+
+template<int M, int N, typename T>
+Matrix<M, N, T> operator*(const Matrix<M,N,T>& a, float b) {  Matrix<M,N,T> c(a); c *= b; return c; }
+
+template<int M, int N, typename T>
+Matrix<M, N, T> operator/(const Matrix<M,N,T>& a, float b) {  Matrix<M,N,T> c = a; c /= b; return c; }
 
 typedef Matrix<4,4> Matrix4x4;
 typedef Matrix<3,3> Matrix3x3;
