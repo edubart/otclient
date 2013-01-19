@@ -226,6 +226,19 @@ void Painter::rotate(float x, float y, float angle)
     translate(x, y);
 }
 
+void Painter::pushTransformMatrix()
+{
+    m_transformMatrixStack.push_back(m_transformMatrix);
+    assert(m_transformMatrixStack.size() < 100);
+}
+
+void Painter::popTransformMatrix()
+{
+    assert(m_transformMatrixStack.size() > 0);
+    setTransformMatrix(m_transformMatrixStack.back());
+    m_transformMatrixStack.pop_back();
+}
+
 void Painter::updateGlTexture()
 {
     if(m_glTextureId != 0)

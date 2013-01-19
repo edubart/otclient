@@ -38,6 +38,7 @@ void UIWidget::initBaseStyle()
     m_iconColor = Color::white;
     m_color = Color::white;
     m_opacity = 1.0f;
+    m_rotation = 0.0f;
     m_iconAlign = Fw::AlignNone;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
@@ -107,6 +108,8 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             setIconAlign(Fw::translateAlignment(node->value()));
         else if(node->tag() == "opacity")
             setOpacity(node->value<float>());
+        else if(node->tag() == "rotation")
+            setRotation(node->value<float>());
         else if(node->tag() == "enabled")
             setEnabled(node->value<bool>());
         else if(node->tag() == "visible")

@@ -89,8 +89,10 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
             texture = g_textures.getEmptyTexture();
         }
 
-        if(texture)
+        if(texture) {
+            texture->setSmooth(true);
             m_textures[filePath] = texture;
+        }
     }
 
     return texture;

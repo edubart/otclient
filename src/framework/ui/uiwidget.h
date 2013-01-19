@@ -214,6 +214,7 @@ protected:
 public:
     void resize(int width, int height) { setRect(Rect(getPosition(), Size(width, height))); }
     void move(int x, int y) { setRect(Rect(x, y, getSize())); }
+    void rotate(float degrees) { setRotation(degrees); }
     void hide() { setVisible(false); }
     void show() { setVisible(true); }
     void disable() { setEnabled(false); }
@@ -287,6 +288,7 @@ protected:
     EdgeGroup<int> m_margin;
     EdgeGroup<int> m_padding;
     float m_opacity;
+    float m_rotation;
     int m_autoRepeatDelay;
     Point m_lastClickPosition;
 
@@ -342,6 +344,7 @@ public:
     void setPaddingBottom(int padding) { m_padding.bottom = padding; updateLayout(); }
     void setPaddingLeft(int padding) { m_padding.left = padding; updateLayout(); }
     void setOpacity(float opacity) { m_opacity = std::min(std::max(opacity, 0.0f), 1.0f); }
+    void setRotation(float degrees) { m_rotation = degrees; }
 
     int getX() { return m_rect.x(); }
     int getY() { return m_rect.y(); }
@@ -385,6 +388,7 @@ public:
     int getPaddingBottom() { return m_padding.bottom; }
     int getPaddingLeft() { return m_padding.left; }
     float getOpacity() { return m_opacity; }
+    float getRotation() { return m_rotation; }
 
 
 // image

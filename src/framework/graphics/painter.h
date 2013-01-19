@@ -106,6 +106,9 @@ public:
     void rotate(float x, float y, float angle);
     void rotate(const Point& p, float angle) { rotate(p.x, p.y, angle); }
 
+    void pushTransformMatrix();
+    void popTransformMatrix();
+
     Matrix3 getTransformMatrix() { return m_transformMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
     Matrix3 getTextureMatrix() { return m_textureMatrix; }
@@ -137,6 +140,7 @@ protected:
 
     CoordsBuffer m_coordsBuffer;
 
+    std::vector<Matrix3> m_transformMatrixStack;
     Matrix3 m_transformMatrix;
     Matrix3 m_projectionMatrix;
     Matrix3 m_textureMatrix;
