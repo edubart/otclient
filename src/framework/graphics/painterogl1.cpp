@@ -38,6 +38,7 @@ void PainterOGL1::refreshState()
     Painter::refreshState();
     updateGlColor();
     updateGlMatrixMode();
+    updateGlTransformMatrix();
     updateGlProjectionMatrix();
     updateGlTextureMatrix();
     updateGlTextureState();
@@ -217,6 +218,13 @@ void PainterOGL1::setMatrixMode(PainterOGL1::MatrixMode matrixMode)
     updateGlMatrixMode();
 }
 
+void PainterOGL1::setTransformMatrix(const Matrix3& transformMatrix)
+{
+    m_transformMatrix = transformMatrix;
+    if(g_painter == this)
+        updateGlTransformMatrix();
+}
+
 void PainterOGL1::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
     m_projectionMatrix = projectionMatrix;
@@ -259,12 +267,25 @@ void PainterOGL1::updateGlMatrixMode()
     glMatrixMode(m_matrixMode);
 }
 
+void PainterOGL1::updateGlTransformMatrix()
+{
+    float glTransformMatrix[] = {
+        m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
+        m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
+                          0.0f,                   0.0f,                    1.0f,                   0.0f,
+        m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
+    };
+
+    setMatrixMode(MatrixTransform);
+    glLoadMatrixf(glTransformMatrix);
+}
+
 void PainterOGL1::updateGlProjectionMatrix()
 {
     float glProjectionMatrix[] = {
         m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
         m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
-                         0.0f,                      0.0f,                    1.0f,                    0.0f,
+                           0.0f,                    0.0f,                    1.0f,                    0.0f,
         m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
     };
 

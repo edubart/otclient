@@ -49,6 +49,7 @@ void Painter::resetState()
     resetShaderProgram();
     resetTexture();
     resetAlphaWriting();
+    resetTransformMatrix();
 }
 
 void Painter::refreshState()
@@ -185,32 +186,44 @@ void Painter::setResolution(const Size& resolution)
         updateGlViewport();
 }
 
-void Painter::scale(double x, double y)
+void Painter::scale(float x, float y)
 {
-    m_transformMatrix.data()[0] *= x;
-    m_transformMatrix.data()[4] *= y;
+    Matrix3 scaleMatrix = {
+           x,  0.0f,  0.0f,
+        0.0f,     y,  0.0f,
+        0.0f,  0.0f,  1.0f
+    };
+
+    setTransformMatrix(m_transformMatrix * scaleMatrix.transposed());
 }
 
-void Painter::translate(double x, double y)
+void Painter::translate(float x, float y)
 {
-    m_transformMatrix.data()[6] += x / m_resolution.width();
-    m_transformMatrix.data()[7] -= y / m_resolution.height();
+    Matrix3 translateMatrix = {
+        1.0f,  0.0f,     x,
+        0.0f,  1.0f,     y,
+        0.0f,  0.0f,  1.0f
+    };
+
+    setTransformMatrix(m_transformMatrix * translateMatrix.transposed());
 }
 
-void Painter::rotate(double x, double y, double angle)
+void Painter::rotate(float angle)
 {
-    // TODO: use x, y vectors to properly rotate.
-    if(m_transformMatrix.data()[1] == 0)
-        m_transformMatrix.data()[1] = 1;
-    if(m_transformMatrix.data()[3] == 0)
-        m_transformMatrix.data()[3] = 1;
+    Matrix3 rotationMatrix = {
+        std::cos(angle), -std::sin(angle),  0.0f,
+        std::sin(angle),  std::cos(angle),  0.0f,
+                   0.0f,             0.0f,  1.0f
+    };
 
-    double s = sin(angle);
-    double c = cos(angle);
-    m_transformMatrix.data()[0] *= c;
-    m_transformMatrix.data()[1] *= s;
-    m_transformMatrix.data()[3] *= -s;
-    m_transformMatrix.data()[4] *= c;
+    setTransformMatrix(m_transformMatrix * rotationMatrix.transposed());
+}
+
+void Painter::rotate(float x, float y, float angle)
+{
+    translate(-x, -y);
+    rotate(angle);
+    translate(x, y);
 }
 
 void Painter::updateGlTexture()

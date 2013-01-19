@@ -39,6 +39,7 @@ public:
     enum MatrixMode {
         MatrixProjection = 0x1701, //GL_PROJECTION
         MatrixTexture = 0x1702, //GL_TEXTURE
+        MatrixTransform = 0x1700 // GL_MODELVIEW
     };
 
     PainterOGL1();
@@ -58,6 +59,7 @@ public:
     void drawBoundingRect(const Rect& dest, int innerLineWidth);
 
     void setMatrixMode(MatrixMode matrixMode);
+    void setTransformMatrix(const Matrix3& projectionMatrix);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setTextureMatrix(const Matrix3& textureMatrix);
     void setColor(const Color& color);
@@ -69,6 +71,7 @@ private:
     void updateGlColor();
     void updateGlMatrixMode();
     void updateGlProjectionMatrix();
+    void updateGlTransformMatrix();
     void updateGlTextureMatrix();
     void updateGlTextureState();
 

@@ -63,32 +63,11 @@ void LocalPlayer::draw(const Point& dest, float scaleFactor, bool animate, Light
 
     // This is a test to rotation, translate and scale transformations.
     /*
-    g_painter->saveAndResetState();
-    g_painter->rotate(dest.x, dest.y, Fw::pi / 4.);
+    Point rotateOffset = dest;
+    rotateOffset += ((animate ? m_walkOffset : Point(0,0)) + Point(16,16)) * scaleFactor;
+    g_painter->rotate(rotateOffset, Fw::pi * std::sin(g_clock.millis()/1000.0f));
     Creature::draw(dest, scaleFactor, animate, lightView);
-    g_painter->restoreSavedState();
-    */
-
-    // This depends on rotation to get done.
-    // Textured arrow pointing to desired position.
-    /*
-    Position pos = Position(1029, 997, 7);
-
-    int radius = 8;
-    double angle = m_position.getAngleFromPosition(pos);
-    if(angle < 0) {
-        radius = 0;
-        angle = 0;
-    }
-
-    Point animationOffset = animate ? m_walkOffset : Point(0,0);
-    Point center = Point(dest + (animationOffset - getDisplacement() -8 + Otc::TILE_PIXELS)*scaleFactor);
-    g_painter->setColor(Color::red);
-    g_painter->drawFilledRect(Rect(center, Size(3, 3)*scaleFactor));
-    center.x += radius * cos(angle);
-    center.y -= radius * sin(angle);
-    g_painter->setColor(Color::white);
-    g_painter->drawFilledRect(Rect(center, Size(3, 3)*scaleFactor));
+    g_painter->resetTransformMatrix();
     */
 }
 

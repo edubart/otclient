@@ -98,9 +98,13 @@ public:
     void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
     void setResolution(const Size& resolution);
 
-    void scale(double x, double y);
-    void translate(double x, double y);
-    void rotate(double x, double y, double angle);
+    void scale(float x, float y);
+    void scale(float factor) { scale(factor, factor); }
+    void translate(float x, float y);
+    void translate(const Point& p) { translate(p.x, p.y); }
+    void rotate(float angle);
+    void rotate(float x, float y, float angle);
+    void rotate(const Point& p, float angle) { rotate(p.x, p.y, angle); }
 
     Matrix3 getTransformMatrix() { return m_transformMatrix; }
     Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
@@ -120,6 +124,7 @@ public:
     void resetShaderProgram() { setShaderProgram(nullptr); }
     void resetTexture() { setTexture(nullptr); }
     void resetAlphaWriting() { setAlphaWriting(false); }
+    void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
 
     virtual bool hasShaders() = 0;
 
