@@ -22,7 +22,7 @@ local function addButton(id, description, icon, callback, panel, toggle, front)
   end
   button:setId(id)
   button:setTooltip(description)
-  button:setIcon(icon, 3)
+  button:setIcon(resolvepath(icon, 3))
   button.onMouseRelease = function(widget, mousePos, mouseButton)
     if widget:containsPoint(mousePos) and mouseButton ~= MouseMiddleButton then
       callback()
