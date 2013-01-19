@@ -25,7 +25,6 @@
 
 #include "declarations.h"
 #include "painter.h"
-#include <framework/global.h>
 
 class Particle : public stdext::shared_object
 {

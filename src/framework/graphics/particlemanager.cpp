@@ -35,13 +35,14 @@ bool ParticleManager::importParticle(std::string file)
         for(const OTMLNodePtr& node : doc->children()) {
             if(node->tag() == "Effect") {
                 ParticleEffectTypePtr particleEffectType = ParticleEffectTypePtr(new ParticleEffectType);
-                if(particleEffectType->load(node)) {
-                    particleEffectType->setFile(g_resources.resolvePath(file));
-                    m_effectsTypes[particleEffectType->getName()] = particleEffectType;
-                }
+                particleEffectType->load(node);
+                m_effectsTypes[particleEffectType->getName()] = particleEffectType;
             }
             else if(node->tag() == "Particle") {
-                // nothing yet
+                ParticleTypePtr particleType = ParticleTypePtr(new ParticleType);
+                particleType->load(node);
+                m_particleTypes[particleType->getName()] = particleType;
+                dump << particleType->getName();
             }
         }
         return true;
@@ -53,29 +54,34 @@ bool ParticleManager::importParticle(std::string file)
 
 ParticleEffectPtr ParticleManager::createEffect(const std::string& name)
 {
-    ParticleEffectPtr particleEffect = ParticleEffectPtr(new ParticleEffect);
-    if(particleEffect->load(m_effectsTypes[name]))
+    try {
+        ParticleEffectPtr particleEffect = ParticleEffectPtr(new ParticleEffect);
+        particleEffect->load(m_effectsTypes[name]);
+        m_effects.push_back(particleEffect);
         return particleEffect;
-    return nullptr;
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("failed to create effect '%s': %s", name, e.what()));
+        return nullptr;
+    }
 }
 
 void ParticleManager::terminate()
 {
     m_effects.clear();
     m_effectsTypes.clear();
+    m_particleTypes.clear();
 }
 
-void ParticleManager::update()
+void ParticleManager::poll()
 {
-    for(auto it = m_effects.begin(), end = m_effects.end(); it != end;) {
+    for(auto it = m_effects.begin(); it != m_effects.end();) {
         const ParticleEffectPtr& particleEffect = *it;
 
         if(particleEffect->hasFinished()) {
             it = m_effects.erase(it);
-            continue;
+        } else {
+            particleEffect->update();
+            ++it;
         }
-
-        particleEffect->update();
-        ++it;
     }
 }

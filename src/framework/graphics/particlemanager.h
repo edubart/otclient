@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "particleeffect.h"
+#include "particletype.h"
 
 class ParticleManager
 {
@@ -33,13 +34,18 @@ public:
     ParticleEffectPtr createEffect(const std::string& name);
     void terminate();
 
-    void update();
+    void poll();
 
-    std::map<std::string, ParticleEffectTypePtr> getEffectsTypes() { return m_effectsTypes; }
+    ParticleTypePtr getParticleType(std::string name) { return m_particleTypes[name]; }
+    ParticleEffectTypePtr getParticleEffectType(std::string name) { return m_effectsTypes[name]; }
+
+    const std::map<std::string, ParticleTypePtr>& getParticleTypes() { return m_particleTypes; }
+    const std::map<std::string, ParticleEffectTypePtr>& getEffectsTypes() { return m_effectsTypes; }
 
 private:
     std::list<ParticleEffectPtr> m_effects;
     std::map<std::string, ParticleEffectTypePtr> m_effectsTypes;
+    std::map<std::string, ParticleTypePtr> m_particleTypes;
 };
 
 extern ParticleManager g_particles;

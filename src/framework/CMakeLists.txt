@@ -320,11 +320,13 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particletype.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/particletype.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleemitter.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleeffect.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/particle.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp

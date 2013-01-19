@@ -32,7 +32,7 @@ class ParticleSystem : public stdext::shared_object {
 public:
     ParticleSystem();
 
-    bool load(const OTMLNodePtr& node);
+    void load(const OTMLNodePtr& node);
 
     void addParticle(const ParticlePtr& particle);
 

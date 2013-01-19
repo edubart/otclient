@@ -20,47 +20,53 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLEAFFECTOR_H
-#define PARTICLEAFFECTOR_H
+#ifndef PARTICLETYPE_H
+#define PARTICLETYPE_H
 
 #include "declarations.h"
+#include <framework/graphics/painter.h>
+#include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 
-class ParticleAffector : public stdext::shared_object
+class ParticleType : public LuaObject
 {
 public:
-    ParticleAffector();
+    ParticleType();
 
-    void update(float elapsedTime);
-    virtual void load(const OTMLNodePtr& node);
-    virtual void updateParticle(const ParticlePtr&, float) {}
+    void load(const OTMLNodePtr& node);
 
-    bool hasFinished() { return m_finished; }
+    std::string getName() { return pName; }
 
 protected:
-    bool m_finished, m_active;
-    float m_delay, m_duration;
-    float m_elapsedTime;
-};
+    // name
+    std::string pName;
 
-class GravityAffector : public ParticleAffector {
-public:
-    void load(const OTMLNodePtr& node);
-    void updateParticle(const ParticlePtr& particle, float elapsedTime);
+    // size
+    Size pStartSize, pFinalSize;
 
-private:
-    float m_angle, m_gravity;
-};
+    // initial position related to emitter position
+    float pMinPositionRadius, pMaxPositionRadius;
+    float pMinPositionAngle, pMaxPositionAngle;
 
-class AttractionAffector : public ParticleAffector {
-public:
-    void load(const OTMLNodePtr& node);
-    void updateParticle(const ParticlePtr& particle, float elapsedTime);
+    // initial velocity
+    float pMinVelocity, pMaxVelocity;
+    float pMinVelocityAngle, pMaxVelocityAngle;
 
-private:
-    Point m_position;
-    float m_acceleration, m_reduction;
-    bool m_repelish;
+    // initial acceleration
+    float pMinAcceleration, pMaxAcceleration;
+    float pMinAccelerationAngle, pMaxAccelerationAngle;
+
+    // duration
+    float pMinDuration, pMaxDuration, pIgnorePhysicsAfter;
+
+    // visual ralated
+    std::vector<Color> pColors;
+    std::vector<float> pColorsStops;
+    TexturePtr pTexture;
+    ParticleTypePtr particleType;
+    Painter::CompositionMode pCompositionMode;
+
+    friend class ParticleEmitter;
 };
 
 #endif

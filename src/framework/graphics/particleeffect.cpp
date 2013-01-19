@@ -27,34 +27,29 @@ ParticleEffectType::ParticleEffectType()
 
 }
 
-bool ParticleEffectType::load(const OTMLNodePtr& node)
+void ParticleEffectType::load(const OTMLNodePtr& node)
 {
-    m_node = node;
+    m_node = node->clone();
     for(const OTMLNodePtr& childNode : node->children()) {
-        if(childNode->tag() == "name") {
-            setName(childNode->value());
-        }
-        else if(childNode->tag() == "description") {
-            setDescription(childNode->value());
-        }
+        if(childNode->tag() == "name")
+            m_name = childNode->value();
+        else if(childNode->tag() == "description")
+            m_description = childNode->value();
     }
-    return !m_name.empty();
 }
 
-bool ParticleEffect::load(const ParticleEffectTypePtr& effectType)
+void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 {
     if(!effectType)
-        return false;
+        stdext::throw_exception("effect type not found");
 
     for(const OTMLNodePtr& childNode : effectType->getNode()->children()) {
         if(childNode->tag() == "System") {
             ParticleSystemPtr system = ParticleSystemPtr(new ParticleSystem);
-            if(system->load(childNode)) {
-                m_systems.push_back(system);
-            }
+            system->load(childNode);
+            m_systems.push_back(system);
         }
     }
-    return true;
 }
 
 void ParticleEffect::render()
@@ -65,15 +60,14 @@ void ParticleEffect::render()
 
 void ParticleEffect::update()
 {
-    for(auto it = m_systems.begin(), end = m_systems.end(); it != end;) {
+    for(auto it = m_systems.begin(); it != m_systems.end();) {
         const ParticleSystemPtr& system = *it;
 
         if(system->hasFinished()) {
             it = m_systems.erase(it);
-            continue;
+        } else {
+            system->update();
+            ++it;
         }
-
-        system->update();
-        ++it;
     }
 }

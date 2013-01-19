@@ -46,7 +46,7 @@ void ParticleAffector::update(float elapsedTime)
     m_elapsedTime += elapsedTime;
 }
 
-bool ParticleAffector::load(const OTMLNodePtr& node)
+void ParticleAffector::load(const OTMLNodePtr& node)
 {
     float minDelay = 0, maxDelay = 0;
     float minDuration = -1, maxDuration = -1;
@@ -55,17 +55,14 @@ bool ParticleAffector::load(const OTMLNodePtr& node)
         if(childNode->tag() == "delay") {
             minDelay = childNode->value<float>();
             maxDelay = childNode->value<float>();
-        }
-        else if(childNode->tag() == "min-delay")
+        } else if(childNode->tag() == "min-delay")
             minDelay = childNode->value<float>();
         else if(childNode->tag() == "max-delay")
             maxDelay = childNode->value<float>();
-
-        if(childNode->tag() == "duration") {
+        else if(childNode->tag() == "duration") {
             minDuration = childNode->value<float>();
             maxDuration = childNode->value<float>();
-        }
-        else if(childNode->tag() == "min-duration")
+        } else if(childNode->tag() == "min-duration")
             minDuration = childNode->value<float>();
         else if(childNode->tag() == "max-duration")
             maxDuration = childNode->value<float>();
@@ -73,14 +70,11 @@ bool ParticleAffector::load(const OTMLNodePtr& node)
 
     m_delay = stdext::random_range(minDelay, maxDelay);
     m_duration = stdext::random_range(minDuration, maxDuration);
-
-    return true;
 }
 
-bool GravityAffector::load(const OTMLNodePtr& node)
+void GravityAffector::load(const OTMLNodePtr& node)
 {
-    if(!ParticleAffector::load(node))
-        return false;
+    ParticleAffector::load(node);
 
     m_angle = 270 * DEG_TO_RAD;
     m_gravity = 9.8;
@@ -91,7 +85,6 @@ bool GravityAffector::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "gravity")
             m_gravity = childNode->value<float>();
     }
-    return true;
 }
 
 void GravityAffector::updateParticle(const ParticlePtr& particle, float elapsedTime)
@@ -100,14 +93,13 @@ void GravityAffector::updateParticle(const ParticlePtr& particle, float elapsedT
         return;
 
     PointF velocity = particle->getVelocity();
-    velocity += PointF(m_gravity * elapsedTime * cos(m_angle), m_gravity * elapsedTime * sin(m_angle));
+    velocity += PointF(m_gravity * elapsedTime * std::cos(m_angle), m_gravity * elapsedTime * std::sin(m_angle));
     particle->setVelocity(velocity);
 }
 
-bool AttractionAffector::load(const OTMLNodePtr& node)
+void AttractionAffector::load(const OTMLNodePtr& node)
 {
-    if(!ParticleAffector::load(node))
-        return false;
+    ParticleAffector::load(node);
 
     m_acceleration = 32;
     m_reduction = 0;
@@ -123,7 +115,6 @@ bool AttractionAffector::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "repelish")
             m_repelish = childNode->value<bool>();
     }
-    return true;
 }
 
 void AttractionAffector::updateParticle(const ParticlePtr& particle, float elapsedTime)

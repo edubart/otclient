@@ -682,7 +682,6 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<ParticleEffectType>();
     g_lua.bindClassStaticFunction<ParticleEffectType>("create", []{ return ParticleEffectTypePtr(new ParticleEffectType); });
     g_lua.bindClassMemberFunction<ParticleEffectType>("getName", &ParticleEffectType::getName);
-    g_lua.bindClassMemberFunction<ParticleEffectType>("getFile", &ParticleEffectType::getFile);
     g_lua.bindClassMemberFunction<ParticleEffectType>("getDescription", &ParticleEffectType::getDescription);
 
     // UIParticles

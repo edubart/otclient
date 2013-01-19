@@ -34,7 +34,7 @@ class ParticleEmitter : public stdext::shared_object
 public:
     ParticleEmitter();
 
-    bool load(const OTMLNodePtr& node);
+    void load(const OTMLNodePtr& node);
 
     void update(float elapsedTime, const ParticleSystemPtr& system);
 
@@ -48,30 +48,7 @@ private:
     bool m_finished, m_active;
     float m_burstRate;
     int m_currentBurst, m_burstCount;
-
-    // particles size
-    Size m_pStartSize, m_pFinalSize;
-
-    // particles initial position related to emitter position
-    float m_pMinPositionRadius, m_pMaxPositionRadius;
-    float m_pMinPositionAngle, m_pMaxPositionAngle;
-
-    // particles initial velocity
-    float m_pMinVelocity, m_pMaxVelocity;
-    float m_pMinVelocityAngle, m_pMaxVelocityAngle;
-
-    // particles initial acceleration
-    float m_pMinAcceleration, m_pMaxAcceleration;
-    float m_pMinAccelerationAngle, m_pMaxAccelerationAngle;
-
-    // particles duration
-    float m_pMinDuration, m_pMaxDuration, m_pIgnorePhysicsAfter;
-
-    // visual ralated
-    std::vector<Color> m_pColors;
-    std::vector<float> m_pColorsStops;
-    TexturePtr m_pTexture;
-    Painter::CompositionMode m_pCompositionMode;
+    ParticleTypePtr m_particleType;
 };
 
 #endif

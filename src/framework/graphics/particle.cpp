@@ -50,10 +50,8 @@ void Particle::render()
     if(!m_texture)
         g_painter->drawFilledRect(m_rect);
     else {
-        g_painter->saveState();
         g_painter->setCompositionMode(m_compositionMode);
         g_painter->drawTexturedRect(m_rect, m_texture);
-        g_painter->restoreSavedState();
     }
 }
 
@@ -94,31 +92,22 @@ void Particle::updatePosition(float elapsedTime)
 
 void Particle::updateSize()
 {
-    Size size = m_startSize + (m_finalSize - m_startSize) / m_duration * m_elapsedTime;
-    if(m_size != size) {
-        m_size = size;
-    }
-
+    m_size = m_startSize + (m_finalSize - m_startSize) / m_duration * m_elapsedTime;
     m_rect.resize(m_size);
 }
 
 void Particle::updateColor()
 {
-    if(m_elapsedTime < m_colorsStops[1]) {
-        Color color = Color(m_colors[0].r() + (m_colors[1].r() - m_colors[0].r()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
-                            m_colors[0].g() + (m_colors[1].g() - m_colors[0].g()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
-                            m_colors[0].b() + (m_colors[1].b() - m_colors[0].b()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]),
-                            m_colors[0].a() + (m_colors[1].a() - m_colors[0].a()) / (m_colorsStops[1] - m_colorsStops[0]) * (m_elapsedTime - m_colorsStops[0]));
-        if(m_color != color) {
-            m_color = color;
-        }
-    }
-    else {
+    float currentLife = m_elapsedTime / m_duration;
+    if(currentLife < m_colorsStops[1]) {
+        float range = m_colorsStops[1] - m_colorsStops[0];
+        float factor = (currentLife - m_colorsStops[0])/range;
+        m_color = m_colors[0] * (1.0f - factor) + m_colors[1] * factor;
+    } else {
         if(m_colors.size() > 1) {
             m_colors.erase(m_colors.begin());
             m_colorsStops.erase(m_colorsStops.begin());
-        }
-        else {
+        } else {
             if(m_color != m_colors[0]) {
                 m_color = m_colors[0];
             }

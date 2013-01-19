@@ -33,20 +33,14 @@ class ParticleEffectType : public LuaObject
 public:
     ParticleEffectType();
 
-    bool load(const OTMLNodePtr& node);
-
-    void setName(const std::string& name) { m_name = name; }
-    void setFile(const std::string& file) { m_file = file; }
-    void setDescription(const std::string& description) { m_description = description; }
+    void load(const OTMLNodePtr& node);
 
     std::string getName() { return m_name; }
-    std::string getFile() { return m_file; }
     std::string getDescription() { return m_description; }
     OTMLNodePtr getNode() { return m_node; }
 
 private:
     std::string m_name;
-    std::string m_file;
     std::string m_description;
     OTMLNodePtr m_node;
 };
@@ -56,7 +50,7 @@ class ParticleEffect : public LuaObject
 public:
     ParticleEffect() {}
 
-    bool load(const ParticleEffectTypePtr& effectType);
+    void load(const ParticleEffectTypePtr& effectType);
     bool hasFinished() { return m_systems.size() == 0; }
     void render();
     void update();

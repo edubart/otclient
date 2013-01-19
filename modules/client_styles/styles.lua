@@ -13,7 +13,12 @@ function init()
     end
   end
 
-  -- TODO load particles
+  local particles = g_resources.listDirectoryFiles('/particles')
+  for _i,particle in pairs(particles) do
+    if string.ends(particle, '.otps') then
+      g_particles.importParticle('/particles/' .. particle)
+    end
+  end
 end
 
 function terminate()

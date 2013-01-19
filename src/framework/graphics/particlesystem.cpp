@@ -30,13 +30,12 @@ ParticleSystem::ParticleSystem()
     m_lastUpdateTime = g_clock.seconds();
 }
 
-bool ParticleSystem::load(const OTMLNodePtr& node)
+void ParticleSystem::load(const OTMLNodePtr& node)
 {
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "Emitter") {
             ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter());
-            if(!emitter->load(childNode))
-                return false;
+            emitter->load(childNode);
             m_emitters.push_back(emitter);
         }
         else if(childNode->tag().find("Affector") != std::string::npos) {
@@ -48,13 +47,11 @@ bool ParticleSystem::load(const OTMLNodePtr& node)
                 affector = ParticleAffectorPtr(new AttractionAffector);
 
             if(affector) {
-                if(!affector->load(childNode))
-                    return false;
+                affector->load(childNode);
                 m_affectors.push_back(affector);
             }
         }
     }
-    return true;
 }
 
 void ParticleSystem::addParticle(const ParticlePtr& particle)
@@ -66,11 +63,17 @@ void ParticleSystem::render()
 {
     for(auto it = m_particles.begin(), end = m_particles.end(); it != end; ++it)
         (*it)->render();
+    g_painter->resetCompositionMode();
 }
 
 void ParticleSystem::update()
 {
     static const float delay = 0.0166; // 60 updates/s
+
+    // check time
+    float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
+    if(elapsedTime < delay)
+        return;
 
     // check if finished
     if(m_particles.empty() && m_emitters.empty()) {
@@ -78,51 +81,46 @@ void ParticleSystem::update()
         return;
     }
 
-    // check time
-    float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
-    if(elapsedTime < delay)
-        return;
     m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
     auto self = static_self_cast<ParticleSystem>();
-    for(int i = 0; i < elapsedTime / delay; ++i) {
+    for(int i = 0; i < std::floor(elapsedTime / delay); ++i) {
 
         // update emitters
-        for(auto it = m_emitters.begin(), end = m_emitters.end(); it != end;) {
+        for(auto it = m_emitters.begin(); it != m_emitters.end();) {
             const ParticleEmitterPtr& emitter = *it;
             if(emitter->hasFinished()) {
                 it = m_emitters.erase(it);
-                continue;
+            } else {
+                emitter->update(delay, self);
+                ++it;
             }
-            emitter->update(delay, self);
-            ++it;
         }
 
         // update affectors
-        for(auto it = m_affectors.begin(), end = m_affectors.end(); it != end;) {
+        for(auto it = m_affectors.begin(); it != m_affectors.end();) {
             const ParticleAffectorPtr& affector = *it;
             if(affector->hasFinished()) {
                 it = m_affectors.erase(it);
-                continue;
+            } else {
+                affector->update(delay);
+                ++it;
             }
-            affector->update(delay);
-            ++it;
         }
 
         // update particles
-        for(auto it = m_particles.begin(), end = m_particles.end(); it != end;) {
+        for(auto it = m_particles.begin(); it != m_particles.end();) {
             const ParticlePtr& particle = *it;
             if(particle->hasFinished()) {
                 it = m_particles.erase(it);
-                continue;
+            } else {
+                // pass particles through affectors
+                for(const ParticleAffectorPtr& particleAffector : m_affectors)
+                    particleAffector->updateParticle(particle, delay);
+
+                particle->update(delay);
+                ++it;
             }
-
-            // pass particles through affectors
-            for(const ParticleAffectorPtr& particleAffector : m_affectors)
-                particleAffector->updateParticle(particle, delay);
-
-            particle->update(delay);
-            ++it;
         }
     }
 }
