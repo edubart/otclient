@@ -714,7 +714,7 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             if(UIWidgetPtr parent = getParent())
                 parent->focusPreviousChild(Fw::KeyboardFocusReason);
             return true;
-        } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyLeft || keyCode == Fw::KeyUp || keyCode == Fw::KeyDown) {
+        } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyLeft) {
 
             int oldCursorPos = m_cursorPos;
 
@@ -722,10 +722,6 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
                 moveCursorHorizontally(true);
             else if(keyCode == Fw::KeyLeft) // move cursor left
                 moveCursorHorizontally(false);
-            else if(keyCode == Fw::KeyUp) // move cursor right
-                moveCursorVertically(true);
-            else if(keyCode == Fw::KeyDown) // move cursor left
-                moveCursorVertically(false);
 
             if(m_shiftNavigation)
                 clearSelection();

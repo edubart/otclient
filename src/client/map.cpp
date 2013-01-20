@@ -540,6 +540,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
     };
 
+    const uint MAX_COMPLEXITY = 100000;
+
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
@@ -571,6 +573,11 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     while(currentNode) {
         // too far
         if(currentNode->steps >= maxSteps) {
+            result = Otc::PathFindResultTooFar;
+            break;
+        }
+
+        if(nodes.size() > MAX_COMPLEXITY) {
             result = Otc::PathFindResultTooFar;
             break;
         }
