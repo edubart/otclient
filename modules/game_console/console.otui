@@ -1,10 +1,22 @@
-ConsoleLabel < UILabel
+ConsoleLabel < UITextEdit
   font: verdana-11px-antialised
   height: 14
   color: yellow
   margin-left: 2
   text-wrap: true
   text-auto-resize: true
+  selection-color: #111416
+  selection-background-color: #999999
+
+ConsolePhantomLabel < UILabel
+  font: verdana-11px-antialised
+  height: 14
+  color: yellow
+  margin-left: 2
+  text-wrap: true
+  text-auto-resize: true
+  selection-color: #111416
+  selection-background-color: #999999
 
 ConsoleTabBar < TabBar
 ConsoleTabBarPanel < TabBarPanel
@@ -168,3 +180,4 @@ Panel
     margin-left: 6
     margin-bottom: 6
     shift-navigation: true
+    max-length: 255

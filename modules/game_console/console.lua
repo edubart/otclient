@@ -87,6 +87,22 @@ function init()
   consoleTabBar:setTabSpacing(-1)
   channels = {}
 
+  consolePanel.onKeyPress = function(self, keyCode, keyboardModifiers)
+    if not (keyboardModifiers == KeyboardCtrlModifier and keyCode == KeyC) then return false end
+
+    local tab = consoleTabBar:getCurrentTab()
+    if not tab then return false end
+
+    local consoleBuffer = tab.tabPanel:getChildById('consoleBuffer')
+    if not consoleBuffer then return false end
+
+    local consoleLabel = consoleBuffer:getFocusedChild()
+    if not consoleLabel or not consoleLabel:hasSelection() then return false end
+
+    g_window.setClipboardText(consoleLabel:getSelection())
+    return true
+  end
+
   defaultTab = addTab(tr('Default'), true)
   serverTab = addTab(tr('Server Log'), false)
 
@@ -355,16 +371,16 @@ function addTabText(text, speaktype, tab, creatureName)
   local panel = consoleTabBar:getTabPanel(tab)
   local consoleBuffer = panel:getChildById('consoleBuffer')
   local label = g_ui.createWidget('ConsoleLabel', consoleBuffer)
-  label:setId('consoleLabel' .. panel:getChildCount())
+  label:setId('consoleLabel' .. consoleBuffer:getChildCount())
   label:setText(text)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
 
   -- Overlay for consoleBuffer which shows highlighted words only
   local consoleBufferHighlight = panel:getChildById('consoleBufferHighlight')
-  local labelHighlight = g_ui.createWidget('ConsoleLabel', consoleBufferHighlight)
+  local labelHighlight = g_ui.createWidget('ConsolePhantomLabel', consoleBufferHighlight)
 
-  labelHighlight:setId('consoleLabel' .. panel:getChildCount())
+  labelHighlight:setId('consoleLabel' .. consoleBufferHighlight:getChildCount())
   labelHighlight:setColor("#1f9ffe")
 
   local player = g_game.getLocalPlayer()

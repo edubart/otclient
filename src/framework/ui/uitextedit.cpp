@@ -136,6 +136,17 @@ void UITextEdit::update(bool focusCursor)
     const Size *glyphsSize = m_font->getGlyphsSize();
     int glyph;
 
+    // update rect size
+    if(!m_rect.isValid() || m_textAutoResize) {
+        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
+        Size size = getSize();
+        if(size.width() <= 0 || (m_textAutoResize && !m_textWrap))
+            size.setWidth(textBoxSize.width());
+        if(size.height() <= 0 || m_textAutoResize)
+            size.setHeight(textBoxSize.height());
+        setSize(size);
+    }
+
     // resize just on demand
     if(textLength > (int)m_glyphsCoords.size()) {
         m_glyphsCoords.resize(textLength);
@@ -143,6 +154,11 @@ void UITextEdit::update(bool focusCursor)
     }
 
     Point oldTextAreaOffset = m_textVirtualOffset;
+
+    if(textBoxSize.width() <= getPaddingRect().width())
+        m_textVirtualOffset.x = 0;
+    if(textBoxSize.height() <= getPaddingRect().height())
+        m_textVirtualOffset.y = 0;
 
     // readjust start view area based on cursor position
     m_cursorInRange = false;
@@ -331,8 +347,6 @@ void UITextEdit::setSelection(int start, int end)
 
     m_selectionStart = std::min(std::max(start, 0), (int)m_text.length());
     m_selectionEnd = std::min(std::max(end, 0), (int)m_text.length());
-
-    onSelectionChange(getSelection(), m_selectionStart, m_selectionEnd);
 }
 
 void UITextEdit::setTextHidden(bool hidden)
@@ -355,8 +369,9 @@ void UITextEdit::appendText(std::string text)
     if(m_cursorPos >= 0) {
         // replace characters that are now allowed
         if(!m_multiline)
-            stdext::replace_all(text, "\n", "");
-        stdext::replace_all(text, "\r", "    ");
+            stdext::replace_all(text, "\n", " ");
+        stdext::replace_all(text, "\r", "");
+        stdext::replace_all(text, "\t", "    ");
 
         if(text.length() > 0) {
             // only add text if textedit can add it
@@ -371,10 +386,10 @@ void UITextEdit::appendText(std::string text)
                 }
             }
 
-            std::string oldText = m_text;
-            m_text.insert(m_cursorPos, text);
+            std::string tmp = m_text;
+            tmp.insert(m_cursorPos, text);
             m_cursorPos += text.length();
-            onTextChange(m_text, oldText);
+            setText(tmp);
         }
     }
 }
@@ -396,26 +411,26 @@ void UITextEdit::appendCharacter(char c)
 
         std::string tmp;
         tmp = c;
-        std::string oldText = m_text;
-        m_text.insert(m_cursorPos, tmp);
+        std::string tmp2 = m_text;
+        tmp2.insert(m_cursorPos, tmp);
         m_cursorPos++;
-        onTextChange(m_text, oldText);
+        setText(tmp2);
     }
 }
 
 void UITextEdit::removeCharacter(bool right)
 {
-    std::string oldText = m_text;
-    if(m_cursorPos >= 0 && m_text.length() > 0) {
-        if((uint)m_cursorPos >= m_text.length()) {
-            m_text.erase(m_text.begin() + (--m_cursorPos));
+    std::string tmp = m_text;
+    if(m_cursorPos >= 0 && tmp.length() > 0) {
+        if((uint)m_cursorPos >= tmp.length()) {
+            tmp.erase(tmp.begin() + (--m_cursorPos));
         } else {
             if(right)
-                m_text.erase(m_text.begin() + m_cursorPos);
+                tmp.erase(tmp.begin() + m_cursorPos);
             else if(m_cursorPos > 0)
-                m_text.erase(m_text.begin() + --m_cursorPos);
+                tmp.erase(tmp.begin() + --m_cursorPos);
         }
-        onTextChange(m_text, oldText);
+        setText(tmp);
     }
 }
 
@@ -428,12 +443,12 @@ void UITextEdit::blinkCursor()
 void UITextEdit::del(bool right)
 {
     if(hasSelection()) {
-        std::string oldText = m_text;
-        m_text.erase(m_selectionStart, m_selectionEnd - m_selectionStart);
+        std::string tmp = m_text;
+        tmp.erase(m_selectionStart, m_selectionEnd - m_selectionStart);
 
         setCursorPos(m_selectionStart);
         clearSelection();
-        onTextChange(m_text, oldText);
+        setText(tmp);
     } else
         removeCharacter(right);
 }
@@ -494,28 +509,51 @@ int UITextEdit::getTextPos(Point pos)
 
     // find any glyph that is actually on the
     int candidatePos = -1;
+    Rect firstGlyphRect, lastGlyphRect;
     for(int i=0;i<textLength;++i) {
         Rect clickGlyphRect = m_glyphsCoords[i];
+        if(!clickGlyphRect.isValid())
+            continue;
+        if(!firstGlyphRect.isValid())
+            firstGlyphRect = clickGlyphRect;
+        lastGlyphRect = clickGlyphRect;
         clickGlyphRect.expandTop(m_font->getYOffset() + m_font->getGlyphSpacing().height());
         clickGlyphRect.expandLeft(m_font->getGlyphSpacing().width()+1);
-        if(clickGlyphRect.contains(pos))
-            return i;
+        if(clickGlyphRect.contains(pos)) {
+            candidatePos = i;
+            break;
+        }
         else if(pos.y >= clickGlyphRect.top() && pos.y <= clickGlyphRect.bottom()) {
-            if(pos.x <= clickGlyphRect.left())
+            if(pos.x <= clickGlyphRect.left()) {
                 candidatePos = i;
-            else if(pos.x >= clickGlyphRect.right())
+                break;
+            } else if(pos.x >= clickGlyphRect.right())
                 candidatePos = i+1;
         }
     }
+
+    if(textLength > 0) {
+        if(pos.y < firstGlyphRect.top())
+            return 0;
+        else if(pos.y > lastGlyphRect.bottom())
+            return textLength;
+    }
+
     return candidatePos;
 }
 
 std::string UITextEdit::getDisplayedText()
 {
+    std::string text;
     if(m_textHidden)
-        return std::string(m_text.length(), '*');
+        text = std::string(m_text.length(), '*');
     else
-        return m_text;
+        text = m_text;
+
+    if(m_textWrap && m_rect.isValid())
+        text = m_font->wrapText(text, getWidth() - m_textOffset.x);
+
+    return text;
 }
 
 std::string UITextEdit::getSelection()
@@ -525,35 +563,27 @@ std::string UITextEdit::getSelection()
     return m_text.substr(m_selectionStart, m_selectionEnd - m_selectionStart);
 }
 
+void UITextEdit::updateText()
+{
+    if(m_cursorPos > (int)m_text.length())
+        m_cursorPos = m_text.length();
+
+    // any text changes reset the selection
+    if(m_selectable) {
+        m_selectionEnd = 0;
+        m_selectionStart = 0;
+    }
+
+    blinkCursor();
+    update(true);
+}
+
 void UITextEdit::onHoverChange(bool hovered)
 {
     if(hovered)
         g_mouse.setTextCursor();
     else
         g_mouse.restoreCursor();
-}
-
-void UITextEdit::onTextChange(const std::string& text, const std::string& oldText)
-{
-    if(m_cursorPos > (int)text.length())
-        m_cursorPos = text.length();
-
-    // any text changes reset the selection
-    if(m_selectable) {
-        m_selectionEnd = 0;
-        m_selectionStart = 0;
-        onSelectionChange(std::string(), 0, 0);
-    }
-
-    blinkCursor();
-    update(true);
-    UIWidget::onTextChange(text, oldText);
-}
-
-void UITextEdit::onFontChange(const std::string& font)
-{
-    update(true);
-    UIWidget::onFontChange(font);
 }
 
 void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
@@ -615,11 +645,15 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
 
     if(keyboardModifiers == Fw::KeyboardNoModifier) {
         if(keyCode == Fw::KeyDelete && m_editable) { // erase right character
-            del(true);
-            return true;
-        } else if(keyCode == Fw::KeyBackspace && m_editable) { // erase left character {
-            del(false);
-            return true;
+            if(hasSelection() || !m_text.empty()) {
+                del(true);
+                return true;
+            }
+        } else if(keyCode == Fw::KeyBackspace && m_editable) { // erase left character
+            if(hasSelection() || !m_text.empty()) {
+                del(false);
+                return true;
+            }
         } else if(keyCode == Fw::KeyRight && !m_shiftNavigation) { // move cursor right
             clearSelection();
             moveCursorHorizontally(true);
@@ -629,13 +663,17 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             moveCursorHorizontally(false);
             return true;
         } else if(keyCode == Fw::KeyHome) { // move cursor to first character
-            clearSelection();
-            setCursorPos(0);
-            return true;
+            if(m_cursorPos != 0) {
+                clearSelection();
+                setCursorPos(0);
+                return true;
+            }
         } else if(keyCode == Fw::KeyEnd) { // move cursor to last character
-            clearSelection();
-            setCursorPos(m_text.length());
-            return true;
+            if(m_cursorPos != (int)m_text.length()) {
+                clearSelection();
+                setCursorPos(m_text.length());
+                return true;
+            }
         } else if(keyCode == Fw::KeyTab && !m_shiftNavigation) {
             clearSelection();
             if(UIWidgetPtr parent = getParent())
@@ -656,14 +694,20 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             paste(g_window.getClipboardText());
             return true;
         } else if(keyCode == Fw::KeyX && m_editable && m_selectable) {
-            cut();
-            return true;
+            if(hasSelection()) {
+                cut();
+                return true;
+            }
         } else if(keyCode == Fw::KeyC && m_selectable) {
-            copy();
-            return true;
+            if(hasSelection()) {
+                copy();
+                return true;
+            }
         } else if(keyCode == Fw::KeyA && m_selectable) {
-            selectAll();
-            return true;
+            if(m_text.length() > 0) {
+                selectAll();
+                return true;
+            }
         }
     } else if(keyboardModifiers == Fw::KeyboardShiftModifier) {
         if(keyCode == Fw::KeyTab && !m_shiftNavigation) {
@@ -708,6 +752,9 @@ bool UITextEdit::onKeyText(const std::string& keyText)
 
 bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
+    if(UIWidget::onMousePress(mousePos, button))
+        return true;
+
     if(button == Fw::MouseLeftButton) {
         int pos = getTextPos(mousePos);
         if(pos >= 0) {
@@ -720,7 +767,8 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
         }
         return true;
     }
-    return UIWidget::onMousePress(mousePos, button);
+
+    return false;
 }
 
 bool UITextEdit::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
@@ -741,13 +789,16 @@ bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
     return UIWidget::onMouseMove(mousePos, mouseMoved);
 }
 
+bool UITextEdit::onDoubleClick(const Point& mousePos)
+{
+    if(m_selectable && m_text.length() > 0) {
+        selectAll();
+        return true;
+    }
+    return UIWidget::onDoubleClick(mousePos);
+}
+
 void UITextEdit::onTextAreaUpdate(const Point& offset, const Size& visibleSize, const Size& totalSize)
 {
     callLuaField("onTextAreaUpdate", offset, visibleSize, totalSize);
-}
-
-void UITextEdit::onSelectionChange(const std::string& text, int start, int end)
-{
-    update(true);
-    callLuaField("onSelectionChange", text, start, end);
 }

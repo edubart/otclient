@@ -120,6 +120,7 @@ void UIWidget::setText(std::string text)
     m_text = text;
     updateText();
 
+    text = m_text;
     onTextChange(text, oldText);
 }
 

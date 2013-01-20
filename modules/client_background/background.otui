@@ -9,68 +9,6 @@ Panel
   anchors.bottom: parent.bottom
   margin-top: 1
   focusable: false
-  @onSetup: |
-    scheduleEvent(function()
-      local count = 0
-      cycleEvent(function()
-        if count > 360 then return end
-        self:setRotation(count)
-        count = count + 5
-      end, 10)
-    end, 10)
-
-  UIParticles
-    anchors.fill: parent
-    effect: background-effect
-    reference-pos: 0.5 0.25
-
-  Label
-    text: :O Just For Fun LOL ^.^
-    font: sans-bold-16px
-    color: black
-    background: #ffffff60
-    anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-left: 10
-    margin-top: 40
-    height: 24
-    rotation: -15
-    @onSetup: |
-      local count = 0
-      cycleEvent(function()
-        local text = ':O Just For Fun LOL ^.^'
-        self:setText(string.sub(text, 0, count))
-        if count > #text + 10 then count = 0 end
-        count = count + 1
-      end, 100)
-
-  Label
-    text: PLEASE REMOVE THAT SHIT!
-    font: sans-bold-16px
-    color: black
-    background: #ffffff60
-    anchors.bottom: parent.bottom
-    anchors.horizontalCenter: parent.horizontalCenter
-    margin-left: 10
-    margin-bottom: 40
-    height: 24
-    rotation: 15
-    visible: false
-    @onSetup: scheduleEvent(function() self:show() end, 4000)
-
-  Label
-    text: WTF IS WRONG WITH THIS BACKGROUND?
-    font: sans-bold-16px
-    color: pink
-    background: #ffffff99
-    anchors.top: parent.top
-    anchors.right: parent.right
-    margin-left: 10
-    margin-top: 80
-    height: 24
-    rotation: 10
-    visible: false
-    @onSetup: scheduleEvent(function() self:show() end, 8000)
 
   UILabel
     id: clientVersionLabel

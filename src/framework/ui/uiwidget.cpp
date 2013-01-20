@@ -1513,7 +1513,7 @@ bool UIWidget::onKeyUp(uchar keyCode, int keyboardModifiers)
 bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
 {
     if(button == Fw::MouseLeftButton) {
-        if(m_clickTimer.running() && m_clickTimer.ticksElapsed() <= 500) {
+        if(m_clickTimer.running() && m_clickTimer.ticksElapsed() <= 200) {
             if(onDoubleClick(mousePos))
                 return true;
             m_clickTimer.stop();

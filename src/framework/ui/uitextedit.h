@@ -88,9 +88,9 @@ public:
     bool isSelectable() { return m_selectable; }
 
 protected:
+    void updateText();
+
     virtual void onHoverChange(bool hovered);
-    virtual void onTextChange(const std::string& text, const std::string& oldText);
-    virtual void onFontChange(const std::string& font);
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
@@ -99,8 +99,8 @@ protected:
     virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
+    virtual bool onDoubleClick(const Point& mousePos);
     virtual void onTextAreaUpdate(const Point& vitualOffset, const Size& virtualSize, const Size& totalSize);
-    virtual void onSelectionChange(const std::string& text, int start, int end);
 
 private:
     void disableUpdates() { m_updatesEnabled = false; }

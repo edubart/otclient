@@ -456,7 +456,6 @@ public:
 // text related
 private:
     void initText();
-    void updateText();
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
     stdext::boolean<true> m_textMustRecache;
@@ -464,6 +463,7 @@ private:
     Rect m_textCachedScreenCoords;
 
 protected:
+    virtual void updateText();
     void drawText(const Rect& screenCoords);
 
     virtual void onTextChange(const std::string& text, const std::string& oldText);

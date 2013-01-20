@@ -360,8 +360,6 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/ui/uimanager.h
         ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ui/uiparticles.h
-        ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/ui/uirichtext.h
         ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ui/uitextedit.h
         ${CMAKE_CURRENT_LIST_DIR}/ui/uitranslator.cpp

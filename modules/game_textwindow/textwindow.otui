@@ -25,6 +25,7 @@ TextWindow < MainWindow
     anchors.right: textScroll.left
     anchors.bottom: textScroll.bottom
     vertical-scrollbar: textScroll
+    text-wrap: true
 
   VerticalScrollBar
     id: textScroll

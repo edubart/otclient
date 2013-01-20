@@ -40,7 +40,6 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   textEdit:setText(text)
   textEdit:setEditable(writeable)
   textEdit:setCursorVisible(writeable)
-  textEdit:wrapText()
   
   local desc = ''
   if #writter > 0 then
