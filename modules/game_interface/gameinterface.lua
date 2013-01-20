@@ -49,7 +49,7 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', 'Logout', '/images/topbuttons/logout', tryLogout, true)
+  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', 'Exit', '/images/topbuttons/logout', tryLogout, true)
 
   bindKeys()
 
@@ -111,6 +111,7 @@ function terminate()
 end
 
 function onGameStart()
+  logoutButton:setTooltip('Logout')
   show()
 
   -- open tibia has delay in auto walking
@@ -120,6 +121,7 @@ function onGameStart()
 end
 
 function onGameEnd()
+  logoutButton:setTooltip('Exit')
   hide()
 end
 

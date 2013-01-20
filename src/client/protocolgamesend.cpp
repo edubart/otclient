@@ -390,16 +390,16 @@ void ProtocolGame::sendUseItem(const Position& position, int itemId, int stackpo
     send(msg);
 }
 
-void ProtocolGame::sendUseItemWith(const Position& fromPos, int itemId, int fromStackpos, const Position& toPos, int toThingId, int toStackpos)
+void ProtocolGame::sendUseItemWith(const Position& fromPos, int itemId, int fromStackPos, const Position& toPos, int toThingId, int toStackPos)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientUseItemWith);
     addPosition(msg, fromPos);
     msg->addU16(itemId);
-    msg->addU8(fromStackpos);
+    msg->addU8(fromStackPos);
     addPosition(msg, toPos);
     msg->addU16(toThingId);
-    msg->addU8(toStackpos);
+    msg->addU8(toStackPos);
     send(msg);
 }
 

@@ -717,7 +717,7 @@ void Game::look(const ThingPtr& thing)
     if(thing->isCreature() && m_protocolVersion >= 961)
         m_protocolGame->sendLookCreature(thing->getId());
     else
-        m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackpos());
+        m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackPos());
 }
 
 void Game::move(const ThingPtr& thing, const Position& toPos, int count)
@@ -734,7 +734,7 @@ void Game::move(const ThingPtr& thing, const Position& toPos, int count)
         id = Proto::Creature;
     }
 
-    m_protocolGame->sendMove(thing->getPosition(), id, thing->getStackpos(), toPos, count);
+    m_protocolGame->sendMove(thing->getPosition(), id, thing->getStackPos(), toPos, count);
 }
 
 void Game::moveToParentContainer(const ThingPtr& thing, int count)
@@ -751,7 +751,7 @@ void Game::rotate(const ThingPtr& thing)
     if(!canPerformGameAction() || !thing)
         return;
 
-    m_protocolGame->sendRotateItem(thing->getPosition(), thing->getId(), thing->getStackpos());
+    m_protocolGame->sendRotateItem(thing->getPosition(), thing->getId(), thing->getStackPos());
 }
 
 void Game::use(const ThingPtr& thing)
@@ -765,7 +765,7 @@ void Game::use(const ThingPtr& thing)
 
     // some itens, e.g. parcel, are not set as containers but they are.
     // always try to use these items in free container slots.
-    m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackpos(), findEmptyContainerId());
+    m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackPos(), findEmptyContainerId());
 }
 
 void Game::useInventoryItem(int itemId)
@@ -788,9 +788,9 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     if(toThing->isCreature())
-        m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackpos(), toThing->getId());
+        m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackPos(), toThing->getId());
     else
-        m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackpos(), toThing->getPosition(), toThing->getId(), toThing->getStackpos());
+        m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackPos(), toThing->getPosition(), toThing->getId(), toThing->getStackPos());
 }
 
 void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
@@ -803,7 +803,7 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
     if(toThing->isCreature())
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, toThing->getId());
     else
-        m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackpos());
+        m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackPos());
 }
 
 int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
@@ -817,7 +817,7 @@ int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
     else
         id = previousContainer->getId();
 
-    m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackpos(), id);
+    m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackPos(), id);
     return id;
 }
 
@@ -1121,7 +1121,7 @@ void Game::requestTrade(const ItemPtr& item, const CreaturePtr& creature)
 {
     if(!canPerformGameAction() || !item || !creature)
         return;
-    m_protocolGame->sendRequestTrade(item->getPosition(), item->getId(), item->getStackpos(), creature->getId());
+    m_protocolGame->sendRequestTrade(item->getPosition(), item->getId(), item->getStackPos(), creature->getId());
 }
 
 void Game::inspectTrade(bool counterOffer, int index)

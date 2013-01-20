@@ -209,7 +209,7 @@ function addCreature(creature)
     battleButton:setup(creature)
 
     battleButton.onHoverChange = onBattleButtonHoverChange
-    battleButton.onMouseRelease = onMouseRelease
+    battleButton.onMouseRelease = onBattleButtonMouseRelease
 
     battleButtonsByCreaturesList[creatureId] = battleButton
 
@@ -225,7 +225,27 @@ function addCreature(creature)
   end
 end
 
-function onMouseRelease(self, mousePosition, mouseButton)
+function removeAllCreatures()
+  for i, v in pairs(battleButtonsByCreaturesList) do
+    removeCreature(v.creature)
+  end
+end
+
+function removeCreature(creature)
+  if hasCreature(creature) then
+    local creatureId = creature:getId()
+
+    if lastBattleButtonSwitched == battleButtonsByCreaturesList[creatureId] then
+      lastBattleButtonSwitched = nil
+    end
+
+    battleButtonsByCreaturesList[creatureId].creature:hideStaticSquare()
+    battleButtonsByCreaturesList[creatureId]:destroy()
+    battleButtonsByCreaturesList[creatureId] = nil
+  end
+end
+
+function onBattleButtonMouseRelease(self, mousePosition, mouseButton)
   if mouseWidget.cancelNextRelease then
     mouseWidget.cancelNextRelease = false
     return false
@@ -247,26 +267,6 @@ function onMouseRelease(self, mousePosition, mouseButton)
     return true
   end
   return false
-end
-
-function removeAllCreatures()
-  for i, v in pairs(battleButtonsByCreaturesList) do
-    removeCreature(v.creature)
-  end
-end
-
-function removeCreature(creature)
-  if hasCreature(creature) then
-    local creatureId = creature:getId()
-
-    if lastBattleButtonSwitched == battleButtonsByCreaturesList[creatureId] then
-      lastBattleButtonSwitched = nil
-    end
-
-    battleButtonsByCreaturesList[creatureId].creature:hideStaticSquare()
-    battleButtonsByCreaturesList[creatureId]:destroy()
-    battleButtonsByCreaturesList[creatureId] = nil
-  end
 end
 
 function onBattleButtonHoverChange(widget, hovered)

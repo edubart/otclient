@@ -553,7 +553,7 @@ void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
     }
 
     Position pos = thing->getPosition();
-    int stackpos = thing->getStackpos();
+    int stackpos = thing->getStackPos();
 
     if(!g_map.removeThing(thing)) {
         g_logger.traceError("unable to remove thing");

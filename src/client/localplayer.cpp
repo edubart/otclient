@@ -184,32 +184,40 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 void LocalPlayer::updateAutoWalkSteps(bool walkFailed)
 {
-    if(!m_autoWalking) {
-        m_autoWalkSteps.clear();
-        return;
-    }
-
     if(!m_lastAutoWalkDestination.isValid()) {
         return;
     }
 
-    // for now this cannot be done from lua, due to bot protection
-    m_autoWalkSteps.push_back(m_lastAutoWalkDestination);
-    if(m_autoWalkSteps.size() >= Otc::MAX_AUTOWALK_STEPS_RETRY || walkFailed) {
+    m_autoWalkSteps.push_back(m_position);
+    if(m_lastAutoWalkDestination != m_position && (m_autoWalkSteps.size() >= Otc::MAX_AUTOWALK_STEPS_RETRY || walkFailed)) {
         autoWalk(m_lastAutoWalkDestination);
+    }
+    else if(m_position == m_lastAutoWalkDestination && !m_autoWalkQueue.empty()) {
+        m_autoWalkQueue.pop_back();
+
+        // task the next destination
+        if(!m_autoWalkQueue.empty()) {
+            std::vector<Position> destinations = m_position.translatedToDirections(m_autoWalkQueue.back());
+            autoWalk(destinations.back());
+        }
     }
 }
 
 bool LocalPlayer::autoWalk(const Position& destination)
 {
     m_autoWalkSteps.clear();
-
     m_lastAutoWalkDestination = destination;
-    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result = g_map.findPath(m_position, destination, 127, Otc::PathFindAllowNullTiles);
+
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNullTiles);
 
     std::vector<Otc::Direction> dirs = std::get<0>(result);
     if(dirs.size() == 0)
         return false;
+
+    if(dirs.size() > Otc::MAX_AUTOWALK_DIST) {
+        dirs = calculateAutoWalk(dirs);
+        m_lastAutoWalkDestination = m_position.translatedToDirections(dirs).back();
+    }
 
     g_game.autoWalk(dirs);
     return true;
@@ -219,6 +227,7 @@ void LocalPlayer::stopAutoWalkUpdate()
 {
     m_lastAutoWalkDestination = Position();
     m_autoWalkSteps.clear();
+    m_autoWalkQueue.clear();
 }
 
 void LocalPlayer::stopWalk()
@@ -227,6 +236,29 @@ void LocalPlayer::stopWalk()
 
     m_lastPrewalkDone = true;
     m_lastPrewalkDestionation = Position();
+}
+
+std::vector<Otc::Direction> LocalPlayer::calculateAutoWalk(std::vector<Otc::Direction>& dirs)
+{
+    if(dirs.size() > Otc::MAX_AUTOWALK_DIST) {
+        // populate auto walk queue
+        m_autoWalkQueue.clear();
+        size_t blocks = std::ceil((float)dirs.size() / Otc::MAX_AUTOWALK_DIST);
+
+        size_t size = Otc::MAX_AUTOWALK_DIST;
+        for(size_t i = 0, offset=0 ; i < blocks ; ++i) {
+            std::vector<Otc::Direction>::iterator next = dirs.begin() + offset;
+            if((offset + size) < dirs.size())
+                m_autoWalkQueue.push_back(std::vector<Otc::Direction>(next, next + size));
+            else
+                m_autoWalkQueue.push_back(std::vector<Otc::Direction>(next, dirs.end()));
+            offset += size;
+        }
+        std::reverse(m_autoWalkQueue.begin(), m_autoWalkQueue.end());
+
+        return m_autoWalkQueue.back();
+    }
+    return dirs;
 }
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)

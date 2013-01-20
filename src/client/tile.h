@@ -74,7 +74,7 @@ public:
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);
-    int getThingStackpos(const ThingPtr& thing);
+    int getThingStackPos(const ThingPtr& thing);
     ThingPtr getTopThing();
 
     ThingPtr getTopLookThing();

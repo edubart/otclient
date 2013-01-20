@@ -285,6 +285,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("getId", &Thing::getId);
     g_lua.bindClassMemberFunction<Thing>("getPosition", &Thing::getPosition);
     g_lua.bindClassMemberFunction<Thing>("getStackPriority", &Thing::getStackPriority);
+    g_lua.bindClassMemberFunction<Thing>("getStackPos", &Thing::getStackPos);
     g_lua.bindClassMemberFunction<Thing>("getAnimationPhases", &Thing::getAnimationPhases);
     g_lua.bindClassMemberFunction<Thing>("getTile", &Thing::getTile);
     g_lua.bindClassMemberFunction<Thing>("isItem", &Thing::isItem);
@@ -486,7 +487,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getThing", &Tile::getThing);
     g_lua.bindClassMemberFunction<Tile>("getThings", &Tile::getThings);
     g_lua.bindClassMemberFunction<Tile>("getItems", &Tile::getItems);
-    g_lua.bindClassMemberFunction<Tile>("getThingStackpos", &Tile::getThingStackpos);
+    g_lua.bindClassMemberFunction<Tile>("getThingStackPos", &Tile::getThingStackPos);
     g_lua.bindClassMemberFunction<Tile>("getThingCount", &Tile::getThingCount);
     g_lua.bindClassMemberFunction<Tile>("getTopThing", &Tile::getTopThing);
     g_lua.bindClassMemberFunction<Tile>("removeThing", &Tile::removeThing);

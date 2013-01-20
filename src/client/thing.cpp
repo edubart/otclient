@@ -73,12 +73,12 @@ ContainerPtr Thing::getParentContainer()
     return nullptr;
 }
 
-int Thing::getStackpos()
+int Thing::getStackPos()
 {
     if(m_position.x == 65535 && isItem()) // is inside a container
         return m_position.z;
     else if(const TilePtr& tile = getTile())
-        return tile->getThingStackpos(static_self_cast<Thing>());
+        return tile->getThingStackPos(static_self_cast<Thing>());
     else {
         g_logger.traceError("got a thing with invalid stackpos");
         return -1;

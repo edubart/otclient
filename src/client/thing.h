@@ -46,7 +46,7 @@ public:
     int getStackPriority();
     const TilePtr& getTile();
     ContainerPtr getParentContainer();
-    int getStackpos();
+    int getStackPos();
 
     virtual bool isItem() { return false; }
     virtual bool isEffect() { return false; }

@@ -28,6 +28,8 @@
 #include <framework/const.h>
 #include <framework/util/point.h>
 
+#include <vector>
+
 class Position
 {
 public:
@@ -120,6 +122,22 @@ public:
             angle += 2 * Fw::pi;
 
         return angle;
+    }
+
+    std::vector<Position> translatedToDirections(const std::vector<Otc::Direction>& dirs) const {
+        Position lastPos = *this;
+        std::vector<Position> positions;
+
+        positions.push_back(lastPos);
+
+        for(auto dir : dirs) {
+            if(lastPos.isValid()) {
+                positions.push_back(lastPos);
+            }
+            lastPos = lastPos.translatedToDirection(dir);
+        }
+
+        return positions;
     }
 
     Otc::Direction getDirectionFromPosition(const Position& position) const {
