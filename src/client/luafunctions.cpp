@@ -43,6 +43,7 @@
 #include "uiitem.h"
 #include "uicreature.h"
 #include "uimap.h"
+#include "uiminimap.h"
 #include "uiprogressrect.h"
 #include "outfit.h"
 
@@ -548,7 +549,6 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setAutoViewMode", &UIMap::setAutoViewMode);
     g_lua.bindClassMemberFunction<UIMap>("setDrawFlags", &UIMap::setDrawFlags);
     g_lua.bindClassMemberFunction<UIMap>("setDrawTexts", &UIMap::setDrawTexts);
-    g_lua.bindClassMemberFunction<UIMap>("setDrawMinimapColors", &UIMap::setDrawMinimapColors);
     g_lua.bindClassMemberFunction<UIMap>("setDrawLights", &UIMap::setDrawLights);
     g_lua.bindClassMemberFunction<UIMap>("setAnimated", &UIMap::setAnimated);
     g_lua.bindClassMemberFunction<UIMap>("setKeepAspectRatio", &UIMap::setKeepAspectRatio);
@@ -557,7 +557,6 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("isMultifloor", &UIMap::isMultifloor);
     g_lua.bindClassMemberFunction<UIMap>("isAutoViewModeEnabled", &UIMap::isAutoViewModeEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingTexts", &UIMap::isDrawingTexts);
-    g_lua.bindClassMemberFunction<UIMap>("isDrawingMinimapColors", &UIMap::isDrawingMinimapColors);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingLights", &UIMap::isDrawingLights);
     g_lua.bindClassMemberFunction<UIMap>("isAnimating", &UIMap::isAnimating);
     g_lua.bindClassMemberFunction<UIMap>("isKeepAspectRatioEnabled", &UIMap::isKeepAspectRatioEnabled);
@@ -573,6 +572,25 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getZoom", &UIMap::getZoom);
     g_lua.bindClassMemberFunction<UIMap>("getMapShader", &UIMap::getMapShader);
     g_lua.bindClassMemberFunction<UIMap>("getMinimumAmbientLight", &UIMap::getMinimumAmbientLight);
+
+    g_lua.registerClass<UIMinimap, UIWidget>();
+    g_lua.bindClassStaticFunction<UIMinimap>("create", []{ return UIMinimapPtr(new UIMinimap); });
+    g_lua.bindClassMemberFunction<UIMinimap>("zoomIn", &UIMinimap::zoomIn);
+    g_lua.bindClassMemberFunction<UIMinimap>("zoomOut", &UIMinimap::zoomOut);
+    g_lua.bindClassMemberFunction<UIMinimap>("setZoom", &UIMinimap::setZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("setMixZoom", &UIMinimap::setMinZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("setMaxZoom", &UIMinimap::setMaxZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("setCameraPosition", &UIMinimap::setCameraPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("setCross", &UIMinimap::setCross);
+    g_lua.bindClassMemberFunction<UIMinimap>("followCreature", &UIMinimap::followCreature);
+    g_lua.bindClassMemberFunction<UIMinimap>("getPosition", &UIMinimap::getPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("getCameraPosition", &UIMinimap::getCameraPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("getFollowingCreature", &UIMinimap::getFollowingCreature);
+    g_lua.bindClassMemberFunction<UIMinimap>("getMinZoom", &UIMinimap::getMinZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("getMaxZoom", &UIMinimap::getMaxZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("getZoom", &UIMinimap::getZoom);
+    g_lua.bindClassMemberFunction<UIMinimap>("getCross", &UIMinimap::getCross);
+    g_lua.bindClassMemberFunction<UIMinimap>("getScale", &UIMinimap::getScale);
 
     g_lua.registerClass<UIProgressRect, UIWidget>();
     g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );

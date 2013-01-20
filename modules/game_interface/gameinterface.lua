@@ -111,7 +111,7 @@ function terminate()
 end
 
 function onGameStart()
-  logoutButton:setTooltip('Logout')
+  logoutButton:setTooltip(tr('Logout'))
   show()
 
   -- open tibia has delay in auto walking
@@ -121,7 +121,7 @@ function onGameStart()
 end
 
 function onGameEnd()
-  logoutButton:setTooltip('Exit')
+  logoutButton:setTooltip(tr('Exit'))
   hide()
 end
 
@@ -153,7 +153,7 @@ function hide()
 end
 
 function onLoginAdvice(message)
-  displayInfoBox("For Your Information", message)
+  displayInfoBox(tr("For Your Information"), message)
 end
 
 function forceExit()
@@ -170,10 +170,10 @@ function tryExit()
   local logoutFunc = function() logout() exitWindow:destroy() exitWindow = nil end
   local cancelFunc = function() exitWindow:destroy() exitWindow = nil end
 
-  exitWindow = displayGeneralBox('Exit', tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."),
-  { { text='Force Exit', callback=exitFunc },
-    { text='Logout', callback=logoutFunc },
-    { text='Cancel', callback=cancelFunc },
+  exitWindow = displayGeneralBox(tr('Exit'), tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."),
+  { { text=tr('Force Exit'), callback=exitFunc },
+    { text=tr('Logout'), callback=logoutFunc },
+    { text=tr('Cancel'), callback=cancelFunc },
     anchor=AnchorHorizontalCenter }, logoutFunc, cancelFunc)
 
   return true
@@ -198,9 +198,9 @@ function tryLogout()
   local yesCallback = function() logout() logoutWindow:destroy() logoutWindow=nil end
   local noCallback = function() logoutWindow:destroy() logoutWindow=nil end
 
-  logoutWindow = displayGeneralBox('Logout', tr('Are you sure you want to logout?'), {
-    { text='Yes', callback=yesCallback },
-    { text='No', callback=noCallback },
+  logoutWindow = displayGeneralBox(tr('Logout'), tr('Are you sure you want to logout?'), {
+    { text=tr('Yes'), callback=yesCallback },
+    { text=tr('No'), callback=noCallback },
     anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
 end
 

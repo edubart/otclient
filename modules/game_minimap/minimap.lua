@@ -1,4 +1,4 @@
-DEFAULT_ZOOM = 60
+DEFAULT_ZOOM = 0
 MAX_FLOOR_UP = 0
 MAX_FLOOR_DOWN = 15
 
@@ -32,16 +32,11 @@ function init()
 
   minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
   minimapWindow:setContentMinimumHeight(64)
-  minimapWindow:setContentMaximumHeight(256)
+  --minimapWindow:setContentMaximumHeight(256)
 
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
   g_mouse.bindAutoPress(minimapWidget, compassClick, nil, MouseLeftButton)
-  
-  minimapWidget:setAutoViewMode(false)
-  minimapWidget:setViewMode(1) -- mid view
-  minimapWidget:setDrawMinimapColors(true)
-  minimapWidget:setMultifloor(false)
-  minimapWidget:setKeepAspectRatio(false)
+
   minimapWidget.onMouseRelease = onMinimapMouseRelease
   minimapWidget.onMouseWheel = onMinimapMouseWheel
   flagsPanel = minimapWindow:recursiveGetChildById('flagsPanel')
@@ -204,11 +199,11 @@ end
 
 function getMapArea()
   return minimapWidget:getPosition( { x = 1 + minimapWidget:getX(), y = 1 + minimapWidget:getY() } ),
-            minimapWidget:getPosition( { x = -2 + minimapWidget:getWidth() + minimapWidget:getX(), y = -2 + minimapWidget:getHeight() + minimapWidget:getY() } )
+         minimapWidget:getPosition( { x = -2 + minimapWidget:getWidth() + minimapWidget:getX(), y = -2 + minimapWidget:getHeight() + minimapWidget:getY() } )
 end
 
 function isFlagVisible(flag, firstPosition, lastPosition)
-  return flag.version == g_game.getProtocolVersion() and (minimapWidget:getZoom() >= 30 and minimapWidget:getZoom() <= 150) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
+  return flag.version == g_game.getProtocolVersion() and (minimapWidget:getZoom() >= 0 and minimapWidget:getZoom() <= 2) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
 end
 
 function updateMapFlag(id)  
@@ -314,7 +309,7 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   dx = dx/radius
   dy = dy/radius
 
-  local speed = math.ceil(minimapWidget:getZoom()/22)
+  local speed = math.ceil((1.0 / minimapWidget:getScale()) * 3)
   if dx > 0.5 then movex = speed end
   if dx < -0.5 then movex = -speed end
   if dy > 0.5 then movey = -speed end
@@ -327,12 +322,12 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   updateMapFlags()
 end
 
-function miniMapZoomIn(zoom)
-  minimapWidget:setZoom(math.max(minimapWidget:getMaxZoomIn(), minimapWidget:getZoom()-zoom))
+function miniMapZoomIn()
+  minimapWidget:zoomIn()
 end
 
-function miniMapZoomOut(zoom)
-  minimapWidget:setZoom(math.min(minimapWidget:getMaxZoomOut(), minimapWidget:getZoom()+zoom))
+function miniMapZoomOut()
+  minimapWidget:zoomOut()
 end
 
 function minimapFloorUp(floors)
@@ -363,9 +358,9 @@ end
 
 function onButtonClick(id)
   if id == "zoomIn" then
-    miniMapZoomIn(20)
+    miniMapZoomIn()
   elseif id == "zoomOut" then
-    miniMapZoomOut(20)
+    miniMapZoomOut()
   elseif id == "floorUp" then
     minimapFloorUp(1)
   elseif id == "floorDown" then
@@ -403,9 +398,9 @@ function onMinimapMouseWheel(self, mousePos, direction)
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if direction == MouseWheelUp and keyboardModifiers == KeyboardNoModifier then
-    miniMapZoomIn(10)
+    miniMapZoomIn()
   elseif direction == MouseWheelDown and keyboardModifiers == KeyboardNoModifier then
-    miniMapZoomOut(10)
+    miniMapZoomOut()
   elseif direction == MouseWheelDown and keyboardModifiers == KeyboardCtrlModifier then
     minimapFloorUp(1)
   elseif direction == MouseWheelUp and keyboardModifiers == KeyboardCtrlModifier then

@@ -502,7 +502,7 @@ void Creature::updateWalkingTile()
 
             // recache visible tiles in map views
             if(newWalkingTile->isEmpty())
-                g_map.notificateTileUpdateToMapViews(newWalkingTile->getPosition());
+                g_map.notificateTileUpdate(newWalkingTile->getPosition());
         }
         m_walkingTile = newWalkingTile;
     }

@@ -139,7 +139,7 @@ public:
 
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
-    void notificateTileUpdateToMapViews(const Position& pos);
+    void notificateTileUpdate(const Position& pos);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);

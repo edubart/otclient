@@ -24,19 +24,51 @@
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
-#include "global.h"
-#include <framework/graphics/image.h>
-/*
+#include "declarations.h"
+#include <framework/graphics/declarations.h>
+
 enum {
-    MINIMAP_AREA_SIZE = 32
+    MMBLOCK_SIZE = 64
 };
 
-struct MinimapArea
+enum MinimapTileFlags {
+    MinimapTilePathable = 1,
+    MinimapTileWalkable = 2,
+    MinimapTileChangesFloor = 4
+};
+
+#pragma pack(push,1) // disable memory alignment
+struct MinimapTile
 {
-    ImagePtr img;
-    TexturePtr tex;
-    uint8 colors[MINIMAP_AREA_SIZE][MINIMAP_AREA_SIZE];
-    stdext::boolean<true> mustUpdate;
+    MinimapTile() : flags(0), color(0) { }
+    uint8 flags;
+    uint8 color;
+
+    bool operator==(const MinimapTile& other) { return color == other.color && flags == other.flags; }
+};
+#pragma pack(pop)
+
+class MinimapBlock
+{
+public:
+    void updateImage();
+    void updateTexture();
+    void clean();
+    void update();
+    void updateTile(int x, int y, const MinimapTile& tile);
+    MinimapTile& getTile(int x, int y) { return m_tiles[getTileIndex(x,y)]; }
+    void resetTile(int x, int y) { m_tiles[getTileIndex(x,y)] = MinimapTile(); }
+    uint getTileIndex(int x, int y) { return ((y % MMBLOCK_SIZE) * MMBLOCK_SIZE) + (x % MMBLOCK_SIZE); }
+    const TexturePtr& getTexture() { return m_texture; }
+    std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE> getTiles() { return m_tiles; }
+    bool shouldDraw() { return m_shouldDraw; }
+
+private:
+    ImagePtr m_image;
+    TexturePtr m_texture;
+    stdext::boolean<false> m_shouldDraw;
+    std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE> m_tiles;
+    stdext::boolean<true> m_mustUpdate;
 };
 
 class Minimap
@@ -46,21 +78,25 @@ public:
     void init();
     void terminate();
 
-    void loadOtmm();
-    void saveOtmm();
+    void clean();
 
-    void updateTile(const Position& pos, uint8 color);
+    void draw(const Rect& screenRect, const Position& mapCenter, float scale);
+    Position getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale);
+
+    void updateTile(const Position& pos, const TilePtr& tile);
+    bool checkTileProperty(const Position& pos, int flags);
+
+    void loadOtmm(const std::string& fileName);
+    void saveOtmm(const std::string& fileName);
 
 private:
-
-    struct MinimaAreaHasher : std::unary_function<Position, std::size_t> {
-        std::size_t operator()(const Position& pos) const {
-            return ((pos.x/MINIMAP_AREA_SIZE) * 0x8000 + (pos.y/MINIMAP_AREA_SIZE)) * 16 + pos.z;
-        }
-    };
-    std::unordered_map<Position, ImagePtr, MinimaAreaHasher> m_areas;
+    MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
+    Point getBlockOffset(const Point& pos) { return Point(pos.x - pos.x % MMBLOCK_SIZE,
+                                                          pos.y - pos.y % MMBLOCK_SIZE); }
+    uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
+    std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z+1];
 };
 
 extern Minimap g_minimap;
-*/
+
 #endif

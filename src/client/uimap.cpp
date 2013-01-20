@@ -179,8 +179,6 @@ void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleN
             setAutoViewMode(node->value<bool>());
         else if(node->tag() == "draw-texts")
             setDrawTexts(node->value<bool>());
-        else if(node->tag() == "draw-minimap-colors")
-            setDrawMinimapColors(node->value<bool>());
         else if(node->tag() == "draw-lights")
             setDrawLights(node->value<bool>());
         else if(node->tag() == "animated")

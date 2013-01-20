@@ -33,6 +33,7 @@ public:
     Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
     virtual ~Texture();
 
+    void uploadPixels(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
     void bind();
     void copyFromScreen(const Rect& screenRect);
     virtual bool buildHardwareMipmaps();

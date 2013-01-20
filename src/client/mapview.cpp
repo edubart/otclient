@@ -130,19 +130,10 @@ void MapView::draw(const Rect& rect)
                 else
                     ++it;
 
-                if(!m_drawMinimapColors)
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
-                else {
-                    uint8 c = tile->getMinimapColorByte();
-                    if(c == 0)
-                        continue;
-
-                    g_painter->setColor(Color::from8bit(c));
-                    g_painter->drawFilledRect(Rect(transformPositionTo2D(tilePos, cameraPosition), tileSize));
-                }
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
             }
 
-            if(drawFlags & Otc::DrawMissiles && !m_drawMinimapColors) {
+            if(drawFlags & Otc::DrawMissiles) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                     missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, drawFlags & Otc::DrawAnimations, m_lightView.get());
                 }
@@ -283,36 +274,6 @@ void MapView::draw(const Rect& rect)
             p += rect.topLeft();
             animatedText->drawText(p, rect);
         }
-    } else if(m_viewMode > NEAR_VIEW) {
-        // draw a cross in the center instead of our creature
-        /*
-            Known Issue: Changing Z axis causes the cross to go off a little bit.
-        */
-        Rect vRect(0, 0, 2, 10);
-        Rect hRect(0, 0, 10, 2);
-        g_painter->setColor(Color::white);
-
-        if(!m_follow && m_followingCreature)
-        {
-            Position pos = m_followingCreature->getPosition();
-            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p.x = p.x * horizontalStretchFactor;
-            p.y = p.y * verticalStretchFactor;
-            p += rect.topLeft();
-
-            vRect.setX(p.x); vRect.setY(p.y - 4);
-            hRect.setX(p.x - 4); hRect.setY(p.y);
-
-            hRect.setWidth(10); hRect.setHeight(2);
-            vRect.setWidth(2); vRect.setHeight(10);
-        }
-        else {
-            vRect.moveCenter(rect.center());
-            hRect.moveCenter(rect.center());
-        }
-
-        g_painter->drawFilledRect(vRect);
-        g_painter->drawFilledRect(hRect);
     }
 }
 
@@ -453,25 +414,20 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     int tileSize = 0;
     Size bufferSize;
 
-    if(!m_drawMinimapColors) {
-        int possiblesTileSizes[] = {1,2,4,8,16,32};
-        for(int candidateTileSize : possiblesTileSizes) {
-            bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
-            if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
-                break;
+    int possiblesTileSizes[] = {1,2,4,8,16,32};
+    for(int candidateTileSize : possiblesTileSizes) {
+        bufferSize = (visibleDimension + Size(3,3)) * candidateTileSize;
+        if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
+            break;
 
-            tileSize = candidateTileSize;
-            if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
-                break;
-        }
+        tileSize = candidateTileSize;
+        if(optimizedSize.width() < bufferSize.width() - 3*candidateTileSize && optimizedSize.height() < bufferSize.height() - 3*candidateTileSize)
+            break;
+    }
 
-        if(tileSize == 0) {
-            g_logger.traceError("reached max zoom out");
-            return;
-        }
-    } else {
-        tileSize = 1;
-        bufferSize = visibleDimension + Size(3,3);
+    if(tileSize == 0) {
+        g_logger.traceError("reached max zoom out");
+        return;
     }
 
     Size drawDimension = visibleDimension + Size(3,3);
@@ -518,8 +474,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onTileUpdate(const Position& pos)
 {
-    if(!m_drawMinimapColors)
-        requestVisibleTilesCacheUpdate();
+    requestVisibleTilesCacheUpdate();
 }
 
 void MapView::onMapCenterChange(const Position& pos)
@@ -680,17 +635,6 @@ Position MapView::getCameraPosition()
         return m_followingCreature->getPosition();
 
     return m_customCameraPosition;
-}
-
-void MapView::setDrawMinimapColors(bool enable)
-{
-    if(m_drawMinimapColors == enable)
-        return;
-    m_drawMinimapColors = enable;
-    updateGeometry(m_visibleDimension, m_optimizedSize);
-    requestVisibleTilesCacheUpdate();
-    m_smooth = !enable;
-    m_framebuffer->setSmooth(m_smooth);
 }
 
 void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout)

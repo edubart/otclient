@@ -28,6 +28,7 @@
 #include "map.h"
 #include "shadermanager.h"
 #include "spritemanager.h"
+#include "minimap.h"
 #include <framework/core/configmanager.h>
 
 Client g_client;
@@ -38,6 +39,7 @@ void Client::init(std::vector<std::string>& args)
     registerLuaFunctions();
 
     g_map.init();
+    g_minimap.init();
     g_game.init();
     g_shaders.init();
     g_things.init();
@@ -84,6 +86,7 @@ void Client::terminate()
     g_creatures.terminate();
     g_game.terminate();
     g_map.terminate();
+    g_minimap.terminate();
     g_things.terminate();
     g_sprites.terminate();
     g_shaders.terminate();

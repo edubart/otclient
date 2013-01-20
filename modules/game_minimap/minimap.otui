@@ -47,9 +47,10 @@ MiniWindow
     size: 14 14
 
   MiniWindowContents
-    UIMap
+    UIMinimap
       id: minimap
       anchors.fill: parent
+      cross: true
 
     Panel
       id: flagsPanel

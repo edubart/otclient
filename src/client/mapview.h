@@ -98,9 +98,6 @@ public:
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawMinimapColors(bool enable);
-    bool isDrawingMinimapColors() { return m_drawMinimapColors; }
-
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
     bool isAnimating() { return m_animated; }
 
@@ -139,7 +136,6 @@ private:
     stdext::boolean<true> m_autoViewMode;
     stdext::boolean<true> m_drawTexts;
     stdext::boolean<true> m_smooth;
-    stdext::boolean<false> m_drawMinimapColors;
     stdext::boolean<false> m_drawLights;
     stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;

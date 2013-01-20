@@ -44,6 +44,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/mapio.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.h
+    ${CMAKE_CURRENT_LIST_DIR}/minimap.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/minimap.h
     ${CMAKE_CURRENT_LIST_DIR}/lightview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/lightview.h
     ${CMAKE_CURRENT_LIST_DIR}/missile.cpp
@@ -92,6 +94,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/uiitem.h
     ${CMAKE_CURRENT_LIST_DIR}/uimap.cpp
     ${CMAKE_CURRENT_LIST_DIR}/uimap.h
+    ${CMAKE_CURRENT_LIST_DIR}/uiminimap.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uiminimap.h
     ${CMAKE_CURRENT_LIST_DIR}/uiprogressrect.cpp
     ${CMAKE_CURRENT_LIST_DIR}/uiprogressrect.h
 

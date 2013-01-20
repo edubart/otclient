@@ -92,11 +92,13 @@ typedef stdext::shared_object_ptr<ProtocolLogin> ProtocolLoginPtr;
 class UIItem;
 class UICreature;
 class UIMap;
+class UIMinimap;
 class UIProgressRect;
 
 typedef stdext::shared_object_ptr<UIItem> UIItemPtr;
 typedef stdext::shared_object_ptr<UICreature> UICreaturePtr;
 typedef stdext::shared_object_ptr<UIMap> UIMapPtr;
+typedef stdext::shared_object_ptr<UIMinimap> UIMinimapPtr;
 typedef stdext::shared_object_ptr<UIProgressRect> UIProgressRectPtr;
 
 #endif

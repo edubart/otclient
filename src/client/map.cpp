@@ -28,6 +28,7 @@
 #include "missile.h"
 #include "statictext.h"
 #include "mapview.h"
+#include "minimap.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
@@ -57,10 +58,14 @@ void Map::removeMapView(const MapViewPtr& mapView)
         m_mapViews.erase(it);
 }
 
-void Map::notificateTileUpdateToMapViews(const Position& pos)
+void Map::notificateTileUpdate(const Position& pos)
 {
+    if(!pos.isMapPosition())
+        return;
+
     for(const MapViewPtr& mapView : m_mapViews)
         mapView->onTileUpdate(pos);
+    g_minimap.updateTile(pos, getTile(pos));
 }
 
 void Map::clean()
@@ -159,7 +164,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         thing->onAppear();
     }
 
-    notificateTileUpdateToMapViews(pos);
+    notificateTileUpdate(pos);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
@@ -174,7 +179,7 @@ bool Map::removeThing(const ThingPtr& thing)
     if(!thing)
         return false;
 
-    notificateTileUpdateToMapViews(thing->getPosition());
+    notificateTileUpdate(thing->getPosition());
 
     if(thing->isMissile()) {
         MissilePtr missile = thing->static_self_cast<Missile>();
@@ -288,7 +293,7 @@ void Map::cleanTile(const Position& pos)
             if(tile->canErase())
                 block.remove(pos);
 
-            notificateTileUpdateToMapViews(pos);
+            notificateTileUpdate(pos);
         }
     }
     for(auto it = m_staticTexts.begin();it != m_staticTexts.end();) {

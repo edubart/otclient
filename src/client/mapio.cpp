@@ -440,6 +440,8 @@ bool Map::loadOtcm(const std::string& fileName)
                 if(item->isValid())
                     tile->addThing(item, stackPos++);
             }
+
+            g_map.notificateTileUpdate(pos);
         }
 
         fin->close();

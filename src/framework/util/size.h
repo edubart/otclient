@@ -95,7 +95,7 @@ public:
             }
         }
     }
-    void scale(int w, int h, Fw::AspectRatioMode mode) { scale(TSize<T>(w, h)); }
+    void scale(int w, int h, Fw::AspectRatioMode mode) { scale(TSize<T>(w, h), mode); }
 
     float ratio() const { return (float)wd/ht; }
     T area() const { return wd*ht; }

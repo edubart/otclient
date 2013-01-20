@@ -55,6 +55,21 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress)
 
     createTexture();
 
+    uploadPixels(image, buildMipmaps, compress);
+}
+
+Texture::~Texture()
+{
+#ifndef NDEBUG
+    assert(!g_app.isTerminated());
+#endif
+    // free texture from gl memory
+    if(g_graphics.ok() && m_id != 0)
+        glDeleteTextures(1, &m_id);
+}
+
+void Texture::uploadPixels(const ImagePtr& image, bool buildMipmaps, bool compress)
+{
     ImagePtr glImage = image;
     if(m_size != m_glSize) {
         glImage = ImagePtr(new Image(m_glSize, image->getBpp()));
@@ -75,16 +90,6 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress)
 
     setupWrap();
     setupFilters();
-}
-
-Texture::~Texture()
-{
-#ifndef NDEBUG
-    assert(!g_app.isTerminated());
-#endif
-    // free texture from gl memory
-    if(g_graphics.ok() && m_id != 0)
-        glDeleteTextures(1, &m_id);
 }
 
 void Texture::bind()
