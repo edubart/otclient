@@ -6,7 +6,8 @@ TextEdit < UITextEdit
   padding: 3
   image-source: /images/ui/textedit
   image-border: 1
-
+  selection-color: #111416
+  selection-background-color: #999999
   $disabled:
     color: #aaaaaa88
 

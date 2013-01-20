@@ -42,7 +42,6 @@ bool ParticleManager::importParticle(std::string file)
                 ParticleTypePtr particleType = ParticleTypePtr(new ParticleType);
                 particleType->load(node);
                 m_particleTypes[particleType->getName()] = particleType;
-                dump << particleType->getName();
             }
         }
         return true;
