@@ -141,46 +141,26 @@ public:
     }
 
     Otc::Direction getDirectionFromPosition(const Position& position) const {
-        int dx = position.x - x;
-        int dy = position.y - y;
+        float angle = getAngleFromPosition(position) * RAD_TO_DEC;
 
-        if(dx == 0 && dy == 0)
+        if(angle >= 360 - 22.5 || angle < 0 + 22.5)
+            return Otc::East;
+        else if(angle >= 45 - 22.5 && angle < 45 + 22.5)
+            return Otc::NorthEast;
+        else if(angle >= 90 - 22.5 && angle < 90 + 22.5)
+            return Otc::North;
+        else if(angle >= 135 - 22.5 && angle < 135 + 22.5)
+            return Otc::NorthWest;
+        else if(angle >= 180 - 22.5 && angle < 180 + 22.5)
+            return Otc::West;
+        else if(angle >= 225 - 22.5 && angle < 225 + 22.5)
+            return Otc::SouthWest;
+        else if(angle >= 270 - 22.5 && angle < 270 + 22.5)
+            return Otc::South;
+        else if(angle >= 315 - 22.5 && angle < 315 + 22.5)
+            return Otc::SouthEast;
+        else
             return Otc::InvalidDirection;
-        else if(dx == 0) {
-            if(dy < 0)
-                return Otc::North;
-            else if(dy > 0)
-                return Otc::South;
-        }
-        else if(dy == 0) {
-            if(dx < 0)
-                return Otc::West;
-            else if(dx > 0)
-                return Otc::East;
-        }
-        else {
-            float angle = std::atan2(dy * -1, dx) * RAD_TO_DEC;
-            if(angle < 0)
-                angle += 360;
-
-            if(angle >= 360 - 22.5 || angle < 0 + 22.5)
-                return Otc::East;
-            else if(angle >= 45 - 22.5 && angle < 45 + 22.5)
-                return Otc::NorthEast;
-            else if(angle >= 90 - 22.5 && angle < 90 + 22.5)
-                return Otc::North;
-            else if(angle >= 135 - 22.5 && angle < 135 + 22.5)
-                return Otc::NorthWest;
-            else if(angle >= 180 - 22.5 && angle < 180 + 22.5)
-                return Otc::West;
-            else if(angle >= 225 - 22.5 && angle < 225 + 22.5)
-                return Otc::SouthWest;
-            else if(angle >= 270 - 22.5 && angle < 270 + 22.5)
-                return Otc::South;
-            else if(angle >= 315 - 22.5 && angle < 315 + 22.5)
-                return Otc::SouthEast;
-        }
-        return Otc::InvalidDirection;
     }
 
     bool isMapPosition() const { return (x < 65535 && y < 65535 && z <= Otc::MAX_Z); }

@@ -57,21 +57,6 @@ LocalPlayer::LocalPlayer()
     m_totalCapacity = -1;
 }
 
-void LocalPlayer::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
-{
-    Creature::draw(dest, scaleFactor, animate, lightView);
-
-    /*
-    // This is a test to rotation, translate and scale transformations.
-    Point rotateOffset = dest;
-    rotateOffset += ((animate ? m_walkOffset : Point(0,0)) + Point(16,16)) * scaleFactor;
-    g_painter->pushTransformMatrix();
-    g_painter->rotate(rotateOffset, Fw::pi * std::sin(g_clock.millis()/1000.0f));
-    Creature::draw(dest, scaleFactor, animate, lightView);
-    g_painter->popTransformMatrix();
-    */
-}
-
 void LocalPlayer::lockWalk(int millis)
 {
     m_walkLockExpiration = std::max(m_walkLockExpiration, (ticks_t) g_clock.millis() + millis);

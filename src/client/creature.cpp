@@ -576,36 +576,23 @@ void Creature::setName(const std::string& name)
 
 void Creature::setHealthPercent(uint8 healthPercent)
 {
-    m_informationColor = Color::black;
-
-    if(healthPercent > 92) {
-        m_informationColor.setGreen(188);
-    }
-    else if(healthPercent > 60) {
-        m_informationColor.setRed(80);
-        m_informationColor.setGreen(161);
-        m_informationColor.setBlue(80);
-    }
-    else if(healthPercent > 30) {
-        m_informationColor.setRed(161);
-        m_informationColor.setGreen(161);
-    }
-    else if(healthPercent > 8) {
-        m_informationColor.setRed(160);
-        m_informationColor.setGreen(39);
-        m_informationColor.setBlue(39);
-    }
-    else if(healthPercent > 3) {
-        m_informationColor.setRed(160);
-    }
-    else {
-        m_informationColor.setRed(79);
-    }
+    if(healthPercent > 92)
+        m_informationColor = Color(0, 188, 0);
+    else if(healthPercent > 60)
+        m_informationColor = Color(80, 161, 80);
+    else if(healthPercent > 30)
+        m_informationColor = Color(80, 161, 0);
+    else if(healthPercent > 8)
+        m_informationColor = Color(160, 39, 39);
+    else if(healthPercent > 3)
+        m_informationColor = Color(160, 0, 0);
+    else
+        m_informationColor = Color(79, 0, 0);
 
     m_healthPercent = healthPercent;
     callLuaField("onHealthPercentChange", healthPercent);
 
-    if(healthPercent < 1)
+    if(healthPercent <= 0)
         onDeath();
 }
 
@@ -826,11 +813,7 @@ int Creature::getStepDuration(bool ignoreDiagonal)
 
 Point Creature::getDisplacement()
 {
-    if(m_outfit.getCategory() == ThingCategoryEffect)
-        return Point(8, 8);
-    else if(m_outfit.getCategory() == ThingCategoryItem)
-        return Point(0, 0);
-    return Thing::getDisplacement();
+    return Point(getDisplacementX(), getDisplacementY());
 }
 
 int Creature::getDisplacementX()
