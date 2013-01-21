@@ -40,9 +40,9 @@ SpeakTypes = {
 }
 
 SayModes = {
-  [1] = { speakTypeDesc = 'whisper', icon = '/images/game/console/icons/whisper' },
-  [2] = { speakTypeDesc = 'say', icon = '/images/game/console/icons/say' },
-  [3] = { speakTypeDesc = 'yell', icon = '/images/game/console/icons/yell' }
+  [1] = { speakTypeDesc = 'whisper', icon = '/images/game/console/whisper' },
+  [2] = { speakTypeDesc = 'say', icon = '/images/game/console/say' },
+  [3] = { speakTypeDesc = 'yell', icon = '/images/game/console/yell' }
 }
 
 MAX_HISTORY = 1000
