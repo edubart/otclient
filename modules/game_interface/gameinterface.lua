@@ -64,11 +64,6 @@ function bindKeys()
   g_keyboard.bindKeyPress('Down', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Left', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
 
-  g_keyboard.bindKeyDown('Up', function() smartWalk(North) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Right', function() smartWalk(East) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Down', function() smartWalk(South) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Left', function() smartWalk(West) end, gameRootPanel)
-
   g_keyboard.bindKeyPress('Numpad8', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad9', function() smartWalk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Numpad6', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -91,8 +86,8 @@ function bindKeys()
   g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+.', toggleAspectRatio, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+N', function() gameMapPanel:setDrawTexts(not gameMapPanel:isDrawingTexts()) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+.', toggleAlternativeView, gameRootPanel)
 end
 
 function terminate()
@@ -324,6 +319,7 @@ function onTradeWith(clickedWidget, mousePosition)
 end
 
 function startUseWith(thing)
+  if not thing then return end
   selectedType = 'use'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
@@ -497,6 +493,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         return true
       else
         g_game.use(useThing)
+        return true
       end
       return true
     elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -641,5 +638,40 @@ function onLeftPanelVisibilityChange(leftPanel, visible)
     for i=1,#children do
       children[i]:setParent(gameRightPanel)
     end
+  end
+end
+
+function toggleAlternativeView()
+  if gameMapPanel:isKeepAspectRatioEnabled() then
+    gameMapPanel:setKeepAspectRatio(false)
+    gameMapPanel:setZoom(14)
+    gameMapPanel:fill('parent')
+    gameRootPanel:fill('parent')
+    gameLeftPanel:setImageColor('alpha')
+    gameRightPanel:setImageColor('alpha')
+    gameLeftPanel:setMarginTop(36)
+    gameRightPanel:setMarginTop(36)
+    gameLeftPanel:setOn(true)
+    gameLeftPanel:setVisible(true)
+    gameRightPanel:setOn(true)
+    gameBottomPanel:setImageColor('#00000099')
+    modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
+    g_game.changeMapAwareRange(24, 20)
+  else
+    gameMapPanel:setKeepAspectRatio(true)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    gameMapPanel:addAnchor(AnchorLeft, 'gameLeftPanel', AnchorRight)
+    gameMapPanel:addAnchor(AnchorRight, 'gameRightPanel', AnchorLeft)
+    gameMapPanel:addAnchor(AnchorBottom, 'gameBottomPanel', AnchorTop)
+    gameRootPanel:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+    gameLeftPanel:setOn(false)
+    gameLeftPanel:setVisible(false)
+    gameLeftPanel:setImageColor('white')
+    gameRightPanel:setImageColor('white')
+    gameLeftPanel:setMarginTop(0)
+    gameRightPanel:setMarginTop(0)
+    gameBottomPanel:setImageColor('white')
+    modules.client_topmenu.getTopMenu():setImageColor('white')
+    g_game.changeMapAwareRange(18, 14)
   end
 end

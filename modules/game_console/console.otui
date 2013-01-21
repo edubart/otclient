@@ -18,8 +18,8 @@ ConsolePhantomLabel < UILabel
   selection-color: #111416
   selection-background-color: #999999
 
-ConsoleTabBar < TabBar
-ConsoleTabBarPanel < TabBarPanel
+ConsoleTabBar < MoveableTabBar
+ConsoleTabBarPanel < MoveableTabBarPanel
   id: consoleTab
 
   ScrollablePanel
@@ -69,7 +69,7 @@ ConsoleTabBarPanel < TabBarPanel
     step: 14
     pixels-scroll: true
 
-ConsoleTabBarButton < TabBarButton
+ConsoleTabBarButton < MoveableTabBarButton
   height: 28
   padding: 15
 

@@ -191,4 +191,10 @@ VipState = {
   Pending = 2
 }
 
+ExtendedIds = {
+  Activate = 0,
+  Locale = 1,
+  Ping = 2
+}
+
 -- @}

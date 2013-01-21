@@ -58,6 +58,17 @@ local function onChangeProtocol(combobox, option)
   protocolBox:setTooltip("Supports Client" .. (#clients > 1 and "s" or "") .. ": " .. table.toString(clients))
 end
 
+local function onUpdateNeeded(protocol, signature)
+  loadBox:destroy()
+  loadBox = nil
+
+  if updateFunc then
+    local continueFunc = EnterGame.show
+    local cancelFunc = EnterGame.show
+    updateFunc(signature, continueFunc, cancelFunc)
+  end
+end
+
 -- public functions
 function EnterGame.init()
   enterGame = g_ui.displayUI('entergame')
@@ -118,6 +129,7 @@ end
 
 function EnterGame.terminate()
   g_keyboard.unbindKeyDown('Ctrl+G')
+  removeEvent(autoLoginEvent)
   enterGame:destroy()
   enterGame = nil
   enterGameButton:destroy()
@@ -183,6 +195,7 @@ function EnterGame.doLogin()
   protocolLogin.onError = onError
   protocolLogin.onMotd = onMotd
   protocolLogin.onCharacterList = onCharacterList
+  protocolLogin.onUpdateNeeded = onUpdateNeeded
 
   loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
   connect(loadBox, { onCancel = function(msgbox)
@@ -197,8 +210,9 @@ function EnterGame.doLogin()
     g_game.setClientVersion(clientVersions[#clientVersions])
   end
 
-  if modules.game_tibiafiles.isLoaded() then
-    protocolLogin:login(G.host, G.port, G.account, G.password)
+  if modules.game_things.isLoaded() then
+    local locale = modules.client_locales.getCurrentLocale().name
+    protocolLogin:login(G.host, G.port, G.account, G.password, locale)
   else
     loadBox:destroy()
     loadBox = nil
@@ -264,3 +278,9 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   if not windowHeight then windowHeight = 200 end
   enterGame:setHeight(windowHeight)
 end
+
+function EnterGame.setServerInfo(message)
+  local label = enterGame:getChildById('serverInfoLabel')
+  label:setText(message)
+end
+

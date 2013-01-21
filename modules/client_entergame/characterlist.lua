@@ -30,7 +30,8 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.destroyLoadBox()
 
-  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+  local locale = modules.client_locales.getCurrentLocale().name
+  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName, locale)
 
   loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
   connect(loadBox, { onCancel = function()
@@ -82,6 +83,7 @@ local function resendWait()
       if selected then
         local charInfo = { worldHost = selected.worldHost,
                            worldPort = selected.worldPort,
+                           worldName = selected.worldName,
                            characterName = selected.characterName }
         tryLogin(charInfo)
       end
@@ -119,9 +121,19 @@ function onGameConnectionError(message, code)
   end
 end
 
+function onGameUpdateNeeded(signature)
+  CharacterList.destroyLoadBox()
+  errorBox = displayErrorBox(tr("Update needed"), tr('Enter with your account again to update your client.'))
+  errorBox.onOk = function()
+    errorBox = nil
+    CharacterList.showAgain()
+  end
+end
+
 -- public functions
 function CharacterList.init()
   connect(g_game, { onLoginError = onGameLoginError })
+  connect(g_game, { onUpdateNeeded = onGameUpdateNeeded })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
   connect(g_game, { onLoginWait = onLoginWait })
@@ -134,6 +146,7 @@ end
 
 function CharacterList.terminate()
   disconnect(g_game, { onLoginError = onGameLoginError })
+  disconnect(g_game, { onUpdateNeeded = onGameUpdateNeeded })
   disconnect(g_game, { onConnectionError = onGameConnectionError })
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })
   disconnect(g_game, { onLoginWait = onLoginWait })
@@ -208,6 +221,7 @@ function CharacterList.create(characters, account, otui)
 
     -- these are used by login
     widget.characterName = characterInfo.name
+    widget.worldName = characterInfo.worldName
     widget.worldHost = characterInfo.worldIp
     widget.worldPort = characterInfo.worldPort
 
@@ -281,6 +295,7 @@ function CharacterList.doLogin()
   if selected then
     local charInfo = { worldHost = selected.worldHost,
                        worldPort = selected.worldPort,
+                       worldName = selected.worldName,
                        characterName = selected.characterName }
     charactersWindow:hide()
     tryLogin(charInfo)

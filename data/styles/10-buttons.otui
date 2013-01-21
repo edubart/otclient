@@ -24,7 +24,7 @@ TabButton < UIButton
   image-source: /images/ui/tabbutton_rounded
   image-color: white
   image-clip: 0 0 20 20
-  image-border: 2
+  image-border: 1
   icon-color: white
   color: #aaaaaa
 

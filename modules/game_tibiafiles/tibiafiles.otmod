@@ -1,8 +1,0 @@
-Module
-  name: game_tibiafiles
-  description: Contains tibia spr and dat
-  reloadable: false
-  sandboxed: true
-  scripts: [tibiafiles]
-  @onLoad: init()
-  @onUnload: terminate()

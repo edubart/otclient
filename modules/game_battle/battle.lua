@@ -97,28 +97,24 @@ function onMiniWindowClose()
 end
 
 function checkCreatures()
+  removeAllCreatures()
+
+  local spectators = {}
   local player = g_game.getLocalPlayer()
   if g_game.isOnline() then
     creatures = g_map.getSpectators(player:getPosition(), false)
     for i, creature in ipairs(creatures) do
       if creature ~= player and doCreatureFitFilters(creature) then
-        if not hasCreature(creature) then
-          addCreature(creature)
-        end
+        table.insert(spectators, creature)
       end
-    end
-    local toRemove = {}
-    for i, b in pairs(battleButtonsByCreaturesList) do
-      if (not table.contains(creatures, b.creature)) or (not doCreatureFitFilters(b.creature)) then
-        table.insert(toRemove, b.creature)
-      end
-    end
-    
-    for i, creature in pairs(toRemove) do
-      removeCreature(creature)
     end
   end
+
+  for i, v in pairs(spectators) do
+    addCreature(v)
+  end
 end
+
 
 function doCreatureFitFilters(creature)
   local localPlayer = g_game.getLocalPlayer()
@@ -129,11 +125,7 @@ function doCreatureFitFilters(creature)
   local pos = creature:getPosition()
   if not pos then return false end
 
-  if pos.z ~= localPlayer:getPosition().z or not localPlayer:hasSight(pos) then
-    return false
-  end
-
-  if not creature:canBeSeen() then return false end
+  if pos.z ~= localPlayer:getPosition().z or not creature:canBeSeen() then return false end
 
   local hidePlayers = hidePlayersButton:isChecked()
   local hideNPCs = hideNPCsButton:isChecked()
@@ -165,24 +157,32 @@ end
 
 function onCreaturePositionChange(creature, newPos, oldPos)
   if creature:isLocalPlayer() then
-    checkCreatures()
+    if oldPos and newPos and newPos.z ~= oldPos.z then
+      checkCreatures()
+    else
+      for id, creatureButton in pairs(battleButtonsByCreaturesList) do
+        addCreature(creatureButton.creature)
+      end
+    end
   else
     local has = hasCreature(creature)
     local fit = doCreatureFitFilters(creature)
     if has and not fit then
       removeCreature(creature)
-    elseif not has and fit then
+    elseif fit then
       addCreature(creature)
     end
   end
 end
 
+
 function onCreatureOutfitChange(creature, outfit, oldOutfit)
-  if not creature:canBeSeen() then
-    removeCreature(creature)
-  elseif doCreatureFitFilters(creature) then
-    removeCreature(creature)
-    addCreature(creature)
+  if hasCreature(creature) then
+    if doCreatureFitFilters(creature) then
+      addCreature(creature)
+    else
+      removeCreature(creature)
+    end
   end
 end
 
@@ -223,6 +223,9 @@ function addCreature(creature)
   else
     battleButton:setLifeBarPercent(creature:getHealthPercent())
   end
+
+  local localPlayer = g_game.getLocalPlayer()
+  battleButton:setVisible(localPlayer:hasSight(creature:getPosition()) and creature:canBeSeen())
 end
 
 function removeAllCreatures()

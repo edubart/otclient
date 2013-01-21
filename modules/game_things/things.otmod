@@ -1,0 +1,8 @@
+Module
+  name: game_things
+  description: Contains things spr and dat
+  reloadable: false
+  sandboxed: true
+  scripts: [things]
+  @onLoad: init()
+  @onUnload: terminate()

@@ -42,9 +42,9 @@ namespace Proto {
 
     enum GameServerOpcodes : uint8
     {
-        GameServerLoginOrPendingState    = 10,
+        GameServerLoginOrPendingState       = 10,
         GameServerGMActions                 = 11,
-        GameServerEnterGame              = 15,
+        GameServerEnterGame                 = 15,
         GameServerUpdateNeeded              = 17,
         GameServerLoginError                = 20,
         GameServerLoginAdvice               = 21,

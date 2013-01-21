@@ -107,6 +107,8 @@ public:
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
     void sendAnswerModalDialog(int dialog, int button, int choice);
+
+    // otclient only
     void sendChangeMapAwareRange(int xrange, int yrange);
 
 protected:

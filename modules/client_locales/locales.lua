@@ -5,12 +5,10 @@ local defaultLocaleName = 'en'
 local installedLocales
 local currentLocale
 
-LocaleExtendedId = 1
-
 function sendLocale(localeName)
   local protocolGame = g_game.getProtocolGame()
   if protocolGame then
-    protocolGame:sendExtendedOpcode(LocaleExtendedId, localeName)
+    protocolGame:sendExtendedOpcode(ExtendedIds.Locale, localeName)
     return true
   end
   return false
@@ -66,7 +64,7 @@ function init()
     connect(g_app, {onRun = createWindow})
   end
 
-  ProtocolGame.registerExtendedOpcode(LocaleExtendedId, onExtendedLocales)
+  ProtocolGame.registerExtendedOpcode(ExtendedIds.Locale, onExtendedLocales)
   connect(g_game, { onGameStart = onGameStart })
 end
 
@@ -74,7 +72,7 @@ function terminate()
   installedLocales = nil
   currentLocale = nil
 
-  ProtocolGame.unregisterExtendedOpcode(LocaleExtendedId)
+  ProtocolGame.unregisterExtendedOpcode(ExtendedIds.Locale)
   disconnect(g_game, { onGameStart = onGameStart })
 end
 

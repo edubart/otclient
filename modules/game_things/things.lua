@@ -1,4 +1,4 @@
-filename = 'Tibia'
+filename =  nil
 loaded = false
 
 function init()
@@ -19,8 +19,15 @@ end
 
 function load()
   local version = g_game.getProtocolVersion()
-  local datPath = resolvepath(version .. '/' .. filename .. '.dat')
-  local sprPath = resolvepath(version .. '/' .. filename .. '.spr')
+
+  local datPath, sprPath
+  if filename then
+    datPath = resolvepath('/things/' .. filename)
+    sprPath = resolvepath('/things/' .. filename)
+  else
+    datPath = resolvepath('/things/' .. version .. '/Tibia')
+    sprPath = resolvepath('/things/' .. version .. '/Tibia')
+  end
 
   local errorMessage = ''
   if not g_things.loadDat(datPath) then

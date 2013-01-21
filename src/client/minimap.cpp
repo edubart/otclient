@@ -79,13 +79,13 @@ void MinimapBlock::update()
 
 void MinimapBlock::updateTile(int x, int y, const MinimapTile& tile)
 {
-    if(!(m_tiles[getTileIndex(x,y)] == tile)) {
-        m_tiles[getTileIndex(x,y)] = tile;
+    if(tile.color != 0)
+        m_shouldDraw = true;
 
-        if(tile.color != 0)
-            m_shouldDraw = true;
+    if(m_tiles[getTileIndex(x,y)].color != tile.color)
         m_mustUpdate = true;
-    }
+
+    m_tiles[getTileIndex(x,y)] = tile;
 }
     
 void Minimap::init()

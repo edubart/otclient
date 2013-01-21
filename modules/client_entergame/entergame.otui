@@ -12,7 +12,7 @@ EnterGameWindow
     anchors.top: parent.top
     text-auto-resize: true
 
-  TextEdit
+  PasswordTextEdit
     id: accountNameTextEdit
     anchors.left: parent.left
     anchors.right: parent.right
@@ -86,7 +86,7 @@ EnterGameWindow
   CheckBox
     id: rememberPasswordBox
     !text: tr('Remember password')
-    !tooltip: tr('Remember account and password when starts otclient')
+    !tooltip: tr('Remember account and password when starts client')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -97,7 +97,7 @@ EnterGameWindow
     id: autoLoginBox
     enabled: false
     !text: tr('Auto login')
-    !tooltip: tr('Open charlist automatically when starting otclient')
+    !tooltip: tr('Open charlist automatically when starting client')
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
@@ -109,3 +109,10 @@ EnterGameWindow
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: EnterGame.doLogin()
+
+  Label
+    id: serverInfoLabel
+    font: verdana-11px-rounded
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    color: green

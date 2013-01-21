@@ -5,7 +5,7 @@ Module
   website: www.otclient.info
 
   dependencies:
-    - game_tibiafiles
+    - game_things
 
   @onLoad: |
     dofile 'const'

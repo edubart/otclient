@@ -14,8 +14,10 @@ function g_game.chooseRsa(host)
       g_game.setCustomOs(OsTypes.Linux)
     end
   else
+    if currentRsa == CIPSOFT_RSA then
+      g_game.setCustomOs(-1)
+    end
     g_game.setRsa(OTSERV_RSA)
-    g_game.setCustomOs(-1)
   end
 end
 

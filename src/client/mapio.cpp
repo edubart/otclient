@@ -166,7 +166,7 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
                     }
 
                     if(house && item->isMoveable()) {
-                        g_logger.warning(stdext::format("Movable item found in house: %d at pos %s - escaping...", item->getId(), stdext::to_string(pos)));
+                        g_logger.warning(stdext::format("Moveable item found in house: %d at pos %s - escaping...", item->getId(), stdext::to_string(pos)));
                         item.reset();
                     }
 
