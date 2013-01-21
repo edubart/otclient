@@ -122,6 +122,10 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 )
 
 # some build options
@@ -379,10 +383,6 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-        ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
