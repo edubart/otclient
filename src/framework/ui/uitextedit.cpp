@@ -123,6 +123,7 @@ void UITextEdit::update(bool focusCursor)
         return;
 
     std::string text = getDisplayedText();
+    m_drawText = text;
     int textLength = text.length();
 
     // prevent glitches
