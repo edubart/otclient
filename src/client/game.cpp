@@ -761,9 +761,9 @@ void Game::use(const ThingPtr& thing)
 
     Position pos = thing->getPosition();
     if(!pos.isValid()) // virtual item
-        pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+        pos = Position(0xFFFF, 0, 0); // inventory item
 
-    // some itens, e.g. parcel, are not set as containers but they are.
+    // some items, e.g. parcel, are not set as containers but they are.
     // always try to use these items in free container slots.
     m_protocolGame->sendUseItem(pos, thing->getId(), thing->getStackPos(), findEmptyContainerId());
 }

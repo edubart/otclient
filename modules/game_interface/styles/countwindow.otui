@@ -11,6 +11,7 @@ CountWindow < MainWindow
     height: 0
     phantom: true
     padding-bottom: -40
+    focusable: true
 
   Item
     id: item

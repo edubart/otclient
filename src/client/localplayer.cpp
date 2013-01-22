@@ -223,7 +223,7 @@ void LocalPlayer::stopWalk()
     m_lastPrewalkDestionation = Position();
 }
 
-std::vector<Otc::Direction> LocalPlayer::calculateAutoWalk(std::vector<Otc::Direction>& dirs)
+std::vector<Otc::Direction>& LocalPlayer::calculateAutoWalk(std::vector<Otc::Direction>& dirs)
 {
     if(dirs.size() > Otc::MAX_AUTOWALK_DIST) {
         // populate auto walk queue

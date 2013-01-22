@@ -41,7 +41,7 @@ public:
     void updateAutoWalkSteps(bool walkFailed = false);
     bool autoWalk(const Position& destination);
     bool canWalk(Otc::Direction direction);
-    std::vector<Otc::Direction> calculateAutoWalk(std::vector<Otc::Direction>& dirs);
+    std::vector<Otc::Direction>& calculateAutoWalk(std::vector<Otc::Direction>& dirs);
 
     void setStates(int states);
     void setSkill(Otc::Skill skill, int level, int levelPercent);
