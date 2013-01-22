@@ -158,6 +158,17 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     m_walkPingTimer.restart();
     m_idleTimer.restart();
 
+    if(m_autoWalkDestination.isValid()) {
+        g_game.stop();
+        auto self = asLocalPlayer();
+        if(m_autoWalkContinueEvent)
+            m_autoWalkContinueEvent->cancel();
+        m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([self]() {
+            if(self->m_autoWalkDestination.isValid())
+                self->autoWalk(self->m_autoWalkDestination);
+        }, 500);
+    }
+
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
         setDirection(direction);
@@ -167,24 +178,42 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 bool LocalPlayer::autoWalk(const Position& destination)
 {
-    m_autoWalkDestination = destination;
-
-    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNullTiles);
-    if(std::get<1>(result) != Otc::PathFindResultOk)
-        return false;
-
-    Position currentPos = m_position;
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result;
     std::vector<Otc::Direction> limitedPath;
 
-    for(auto dir : std::get<0>(result)) {
-        currentPos = currentPos.translatedToDirection(dir);
-        if(!hasSight(currentPos))
-            break;
-        else
-            limitedPath.push_back(dir);
+    if(destination == m_position)
+        return true;
+
+    // try to find a path that we know
+    result = g_map.findPath(m_position, destination, 1000, 0);
+    if(std::get<1>(result) == Otc::PathFindResultOk) {
+        limitedPath = std::get<0>(result);
+        // limit to 127 steps
+        if(limitedPath.size() > 127)
+            limitedPath.resize(127);
+    } else {
+        // no known path found, try to discover one
+        result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNullTiles);
+        if(std::get<1>(result) != Otc::PathFindResultOk)
+            return false;
+
+        Position currentPos = m_position;
+        for(auto dir : std::get<0>(result)) {
+            currentPos = currentPos.translatedToDirection(dir);
+            if(!hasSight(currentPos))
+                break;
+            else
+                limitedPath.push_back(dir);
+        }
     }
 
+    m_autoWalkDestination = destination;
     m_lastAutoWalkPosition = m_position.translatedToDirections(limitedPath).back();
+
+    for(auto pos : m_position.translatedToDirections(limitedPath)) {
+        g_map.getOrCreateTile(pos)->overwriteMinimapColor(16);
+        g_map.notificateTileUpdate(pos);
+    }
 
     g_game.autoWalk(limitedPath);
     return true;
@@ -194,6 +223,9 @@ void LocalPlayer::stopAutoWalk()
 {
     m_autoWalkDestination = Position();
     m_lastAutoWalkPosition = Position();
+
+    if(m_autoWalkContinueEvent)
+        m_autoWalkContinueEvent->cancel();
 }
 
 void LocalPlayer::stopWalk()

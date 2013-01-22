@@ -469,9 +469,6 @@ void Game::processAttackCancel(uint seq)
 
 void Game::processWalkCancel(Otc::Direction direction)
 {
-    if(m_localPlayer->isAutoWalking())
-        m_protocolGame->sendStop();
-
     m_localPlayer->cancelWalk(direction);
 }
 

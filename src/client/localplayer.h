@@ -123,6 +123,7 @@ private:
     Position m_autoWalkDestination;
     Position m_lastAutoWalkPosition;
     ScheduledEventPtr m_autoWalkEndEvent;
+    ScheduledEventPtr m_autoWalkContinueEvent;
     ticks_t m_walkLockExpiration;
     int m_lastWalkPing;
     stdext::boolean<false> m_preWalking;

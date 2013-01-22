@@ -611,8 +611,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                       tiles, need to rework this for "fly servers" and blank map click,
                       but it is breaking normal path finding.
                     */
-                    if(!(flags & Otc::PathFindAllowNullTiles) && !tile)
-                        walkFactor = 3.0f;
+                    if(!(flags & Otc::PathFindAllowNullTiles) && (!tile || tile->isEmpty()))
+                        continue;
                     if(tile) {
                         if(!(flags & Otc::PathFindAllowCreatures) && tile->hasCreature())
                             continue;

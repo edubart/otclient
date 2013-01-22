@@ -128,13 +128,16 @@ public:
         Position lastPos = *this;
         std::vector<Position> positions;
 
+        if(!lastPos.isValid())
+            return positions;
+
         positions.push_back(lastPos);
 
         for(auto dir : dirs) {
-            if(lastPos.isValid()) {
-                positions.push_back(lastPos);
-            }
             lastPos = lastPos.translatedToDirection(dir);
+            if(!lastPos.isValid())
+                break;
+            positions.push_back(lastPos);
         }
 
         return positions;
