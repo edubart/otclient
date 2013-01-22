@@ -401,7 +401,7 @@ function addTabText(text, speaktype, tab, creatureName)
       label:setText(text)
 
       -- Calculate the positions of the highlighted text and fill with string.char(127) [Width: 1]
-      local drawText = label:getDrawText()
+      local drawText = label:getText()
       local tmpText = ""
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
