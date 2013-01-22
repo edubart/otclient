@@ -539,7 +539,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   end
 
   local player = g_game.getLocalPlayer()
-  player:stopAutoWalkUpdate()
+  player:stopAutoWalk()
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
     if not player:autoWalk(autoWalkPos) then

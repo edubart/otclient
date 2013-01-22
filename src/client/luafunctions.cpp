@@ -477,10 +477,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("hasSight", &LocalPlayer::hasSight);
     g_lua.bindClassMemberFunction<LocalPlayer>("isAutoWalking", &LocalPlayer::isAutoWalking);
-    g_lua.bindClassMemberFunction<LocalPlayer>("stopAutoWalkUpdate", &LocalPlayer::stopAutoWalkUpdate);
-    g_lua.bindClassMemberFunction<LocalPlayer>("updateAutoWalkSteps", &LocalPlayer::updateAutoWalkSteps);
+    g_lua.bindClassMemberFunction<LocalPlayer>("stopAutoWalk", &LocalPlayer::stopAutoWalk);
     g_lua.bindClassMemberFunction<LocalPlayer>("autoWalk", &LocalPlayer::autoWalk);
-    g_lua.bindClassMemberFunction<LocalPlayer>("getAutoWalkSteps", &LocalPlayer::getAutoWalkSteps);
 
     g_lua.registerClass<Tile>();
     g_lua.bindClassMemberFunction<Tile>("clean", &Tile::clean);
@@ -508,6 +506,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("hasCreature", &Tile::hasCreature);
     g_lua.bindClassMemberFunction<Tile>("isEmpty", &Tile::isEmpty);
     g_lua.bindClassMemberFunction<Tile>("isClickable", &Tile::isClickable);
+    g_lua.bindClassMemberFunction<Tile>("overwriteMinimapColor", &Tile::overwriteMinimapColor);
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); });

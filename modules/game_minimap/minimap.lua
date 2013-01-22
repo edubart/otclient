@@ -398,9 +398,9 @@ function onMinimapMouseWheel(self, mousePos, direction)
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if direction == MouseWheelUp and keyboardModifiers == KeyboardNoModifier then
-    miniMapZoomIn()
-  elseif direction == MouseWheelDown and keyboardModifiers == KeyboardNoModifier then
     miniMapZoomOut()
+  elseif direction == MouseWheelDown and keyboardModifiers == KeyboardNoModifier then
+    miniMapZoomIn()
   elseif direction == MouseWheelDown and keyboardModifiers == KeyboardCtrlModifier then
     minimapFloorUp(1)
   elseif direction == MouseWheelUp and keyboardModifiers == KeyboardCtrlModifier then

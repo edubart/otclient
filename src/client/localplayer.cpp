@@ -162,57 +162,38 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     if(direction != Otc::InvalidDirection)
         setDirection(direction);
 
-    updateAutoWalkSteps(true);
-
     callLuaField("onCancelWalk", direction);
-}
-
-void LocalPlayer::updateAutoWalkSteps(bool walkFailed)
-{
-    if(!m_lastAutoWalkDestination.isValid()) {
-        return;
-    }
-
-    m_autoWalkSteps.push_back(m_position);
-    if(m_lastAutoWalkDestination != m_position && (m_autoWalkSteps.size() >= Otc::MAX_AUTOWALK_STEPS_RETRY || walkFailed)) {
-        autoWalk(m_lastAutoWalkDestination);
-    }
-    else if(m_position == m_lastAutoWalkDestination && !m_autoWalkQueue.empty()) {
-        m_autoWalkQueue.pop_back();
-
-        // task the next destination
-        if(!m_autoWalkQueue.empty()) {
-            std::vector<Position> destinations = m_position.translatedToDirections(m_autoWalkQueue.back());
-            autoWalk(destinations.back());
-        }
-    }
 }
 
 bool LocalPlayer::autoWalk(const Position& destination)
 {
-    m_autoWalkSteps.clear();
-    m_lastAutoWalkDestination = destination;
+    m_autoWalkDestination = destination;
 
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNullTiles);
-
-    std::vector<Otc::Direction> dirs = std::get<0>(result);
-    if(dirs.size() == 0)
+    if(std::get<1>(result) != Otc::PathFindResultOk)
         return false;
 
-    if(dirs.size() > Otc::MAX_AUTOWALK_DIST) {
-        dirs = calculateAutoWalk(dirs);
-        m_lastAutoWalkDestination = m_position.translatedToDirections(dirs).back();
+    Position currentPos = m_position;
+    std::vector<Otc::Direction> limitedPath;
+
+    for(auto dir : std::get<0>(result)) {
+        currentPos = currentPos.translatedToDirection(dir);
+        if(!hasSight(currentPos))
+            break;
+        else
+            limitedPath.push_back(dir);
     }
 
-    g_game.autoWalk(dirs);
+    m_lastAutoWalkPosition = m_position.translatedToDirections(limitedPath).back();
+
+    g_game.autoWalk(limitedPath);
     return true;
 }
 
-void LocalPlayer::stopAutoWalkUpdate()
+void LocalPlayer::stopAutoWalk()
 {
-    m_lastAutoWalkDestination = Position();
-    m_autoWalkSteps.clear();
-    m_autoWalkQueue.clear();
+    m_autoWalkDestination = Position();
+    m_lastAutoWalkPosition = Position();
 }
 
 void LocalPlayer::stopWalk()
@@ -221,29 +202,6 @@ void LocalPlayer::stopWalk()
 
     m_lastPrewalkDone = true;
     m_lastPrewalkDestionation = Position();
-}
-
-std::vector<Otc::Direction>& LocalPlayer::calculateAutoWalk(std::vector<Otc::Direction>& dirs)
-{
-    if(dirs.size() > Otc::MAX_AUTOWALK_DIST) {
-        // populate auto walk queue
-        m_autoWalkQueue.clear();
-        size_t blocks = std::ceil((float)dirs.size() / Otc::MAX_AUTOWALK_DIST);
-
-        size_t size = Otc::MAX_AUTOWALK_DIST;
-        for(size_t i = 0, offset=0 ; i < blocks ; ++i) {
-            std::vector<Otc::Direction>::iterator next = dirs.begin() + offset;
-            if((offset + size) < dirs.size())
-                m_autoWalkQueue.push_back(std::vector<Otc::Direction>(next, next + size));
-            else
-                m_autoWalkQueue.push_back(std::vector<Otc::Direction>(next, dirs.end()));
-            offset += size;
-        }
-        std::reverse(m_autoWalkQueue.begin(), m_autoWalkQueue.end());
-
-        return m_autoWalkQueue.back();
-    }
-    return dirs;
 }
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
@@ -310,7 +268,8 @@ void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPo
 {
     Creature::onPositionChange(newPos, oldPos);
 
-    updateAutoWalkSteps();
+    if(m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
+        autoWalk(m_autoWalkDestination);
 }
 
 void LocalPlayer::setStates(int states)
@@ -318,6 +277,7 @@ void LocalPlayer::setStates(int states)
     if(m_states != states) {
         int oldStates = m_states;
         m_states = states;
+
         callLuaField("onStatesChange", states, oldStates);
     }
 }

@@ -37,11 +37,9 @@ public:
 
     void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
-    void stopAutoWalkUpdate();
-    void updateAutoWalkSteps(bool walkFailed = false);
+    void stopAutoWalk();
     bool autoWalk(const Position& destination);
     bool canWalk(Otc::Direction direction);
-    std::vector<Otc::Direction>& calculateAutoWalk(std::vector<Otc::Direction>& dirs);
 
     void setStates(int states);
     void setSkill(Otc::Skill skill, int level, int levelPercent);
@@ -91,7 +89,6 @@ public:
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
-    std::vector<Position> getAutoWalkSteps() { return m_autoWalkSteps; }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -123,7 +120,8 @@ private:
     // walk related
     Timer m_walkPingTimer;
     Position m_lastPrewalkDestionation;
-    Position m_lastAutoWalkDestination;
+    Position m_autoWalkDestination;
+    Position m_lastAutoWalkPosition;
     ScheduledEventPtr m_autoWalkEndEvent;
     ticks_t m_walkLockExpiration;
     int m_lastWalkPing;
@@ -143,8 +141,6 @@ private:
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
     std::vector<int> m_spells;
-    std::vector<Position> m_autoWalkSteps;
-    std::vector<std::vector<Otc::Direction> > m_autoWalkQueue;
 
     int m_states;
     int m_vocation;

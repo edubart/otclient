@@ -592,7 +592,7 @@ bool Game::walk(Otc::Direction direction)
             return false;
     }
 
-    m_localPlayer->stopAutoWalkUpdate();
+    m_localPlayer->stopAutoWalk();
 
     g_lua.callGlobalField("g_game", "onWalk", direction);
 
@@ -857,7 +857,7 @@ void Game::attack(CreaturePtr creature)
         cancelFollow();
 
     setAttackingCreature(creature);
-    m_localPlayer->stopAutoWalkUpdate();
+    m_localPlayer->stopAutoWalk();
 
     if(m_protocolVersion >= 963) {
         if(creature)
@@ -881,7 +881,7 @@ void Game::follow(CreaturePtr creature)
         cancelAttack();
 
     setFollowingCreature(creature);
-    m_localPlayer->stopAutoWalkUpdate();
+    m_localPlayer->stopAutoWalk();
 
     if(m_protocolVersion >= 963) {
         if(creature)
@@ -902,7 +902,7 @@ void Game::cancelAttackAndFollow()
     if(isAttacking())
         setAttackingCreature(nullptr);
 
-    m_localPlayer->stopAutoWalkUpdate();
+    m_localPlayer->stopAutoWalk();
 
     m_protocolGame->sendCancelAttackAndFollow();
 

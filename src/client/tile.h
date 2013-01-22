@@ -110,6 +110,7 @@ public:
     bool limitsFloorsView();
     bool canErase();
     bool hasElevation(int elevation = 1);
+    void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 
     void setFlags(tileflags_t flags) { m_flags |= (uint32)flags; }
     uint32 getFlags() { return m_flags; }
@@ -128,6 +129,7 @@ private:
     stdext::packed_vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
+    uint8 m_minimapColor;
     uint32 m_flags, m_houseId;
 };
 #pragma pack(pop)

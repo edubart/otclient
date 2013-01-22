@@ -34,6 +34,7 @@
 Tile::Tile(const Position& position) :
     m_position(position),
     m_drawElevation(0),
+    m_minimapColor(0),
     m_flags(0)
 {
 }
@@ -338,6 +339,10 @@ int Tile::getGroundSpeed()
 uint8 Tile::getMinimapColorByte()
 {
     uint8 color = 0;
+    if(m_minimapColor != 0) {
+        return m_minimapColor;
+    }
+
     for(const ThingPtr& thing : m_things) {
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
             break;
