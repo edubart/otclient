@@ -272,6 +272,7 @@ public:
     bool checkBotProtection();
 
     bool isOnline() { return m_online; }
+    bool isLogging() { return !m_online && m_protocolGame; }
     bool isDead() { return m_dead; }
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }

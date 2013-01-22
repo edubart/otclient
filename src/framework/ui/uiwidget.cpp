@@ -55,8 +55,11 @@ UIWidget::~UIWidget()
 
 void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
-    if(m_clipping)
+    Rect oldClipRect;
+    if(m_clipping) {
+        oldClipRect = g_painter->getClipRect();
         g_painter->setClipRect(visibleRect);
+    }
 
     if(m_rotation != 0.0f) {
         g_painter->pushTransformMatrix();
@@ -75,8 +78,9 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
     if(m_rotation != 0.0f)
         g_painter->popTransformMatrix();
 
-    if(m_clipping)
-        g_painter->resetClipRect();
+    if(m_clipping) {
+        g_painter->setClipRect(oldClipRect);
+    }
 }
 
 void UIWidget::drawSelf(Fw::DrawPane drawPane)

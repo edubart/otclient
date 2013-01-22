@@ -261,11 +261,10 @@ function CharacterList.destroy()
 end
 
 function CharacterList.show()
-  if not loadBox and not errorBox and charactersWindow then
-    charactersWindow:show()
-    charactersWindow:raise()
-    charactersWindow:focus()
-  end
+  if loadBox or errorBox or not charactersWindow then return end
+  charactersWindow:show()
+  charactersWindow:raise()
+  charactersWindow:focus()
 end
 
 function CharacterList.hide(showLogin)

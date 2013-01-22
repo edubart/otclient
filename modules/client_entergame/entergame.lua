@@ -147,6 +147,7 @@ function EnterGame.terminate()
 end
 
 function EnterGame.show()
+  if loadBox then return end
   enterGame:show()
   enterGame:raise()
   enterGame:focus()
@@ -159,7 +160,7 @@ end
 function EnterGame.openWindow()
   if g_game.isOnline() then
     CharacterList.show()
-  elseif not CharacterList.isVisible() then
+  elseif not g_game.isLogging() and not CharacterList.isVisible() then
     EnterGame.show()
   end
 end
@@ -223,6 +224,7 @@ end
 function EnterGame.displayMotd()
   if not motdWindow or not motdWindow:isVisible() then
     motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
+    motdWindow.onOk = function() motdWindow = nil end
   end
 end
 
