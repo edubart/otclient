@@ -313,6 +313,12 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     m_walkTimer.restart();
     m_walkedPixels = 0;
 
+    if(m_walkFinishAnimEvent) {
+        m_walkFinishAnimEvent->cancel();
+        m_walkFinishAnimEvent = nullptr;
+    }
+
+
     // no direction need to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
 
@@ -452,14 +458,27 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         return;
 
     int footAnimPhases = getAnimationPhases() - 1;
-    if(totalPixelsWalked == 32 || footAnimPhases == 0)
+    int footDelay = getStepDuration(true) / 3;
+    if(footAnimPhases == 0)
         m_walkAnimationPhase = 0;
-    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= getStepDuration(true) / 4 ) {
+    else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
         m_footStepDrawn = false;
         m_footTimer.restart();
+    } else if(m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
+        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
     }
+
+    if(totalPixelsWalked == 32 && !m_walkFinishAnimEvent) {
+        auto self = static_self_cast<Creature>();
+        m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
+            if(!self->m_walking || self->m_walkTimer.ticksElapsed() >= self->getStepDuration(true))
+                self->m_walkAnimationPhase = 0;
+            self->m_walkFinishAnimEvent = nullptr;
+        }, std::min(footDelay, 200));
+    }
+
 }
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
@@ -813,7 +832,11 @@ int Creature::getStepDuration(bool ignoreDiagonal)
 
 Point Creature::getDisplacement()
 {
-    return Point(getDisplacementX(), getDisplacementY());
+    if(m_outfit.getCategory() == ThingCategoryEffect)
+        return Point(8, 8);
+    else if(m_outfit.getCategory() == ThingCategoryItem)
+        return Point(0, 0);
+    return Thing::getDisplacement();
 }
 
 int Creature::getDisplacementX()

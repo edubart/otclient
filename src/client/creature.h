@@ -176,6 +176,7 @@ protected:
     stdext::boolean<false> m_allowAppearWalk;
     stdext::boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
+    ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;
     Point m_walkOffset;
     Otc::Direction m_walkTurnDirection;

@@ -211,7 +211,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
     m_lastAutoWalkPosition = m_position.translatedToDirections(limitedPath).back();
 
     for(auto pos : m_position.translatedToDirections(limitedPath)) {
-        g_map.getOrCreateTile(pos)->overwriteMinimapColor(16);
+        g_map.getOrCreateTile(pos)->overwriteMinimapColor(215);
         g_map.notificateTileUpdate(pos);
     }
 
@@ -300,7 +300,9 @@ void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPo
 {
     Creature::onPositionChange(newPos, oldPos);
 
-    if(m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
+    if(newPos == m_autoWalkDestination)
+        stopAutoWalk();
+    else if(m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
         autoWalk(m_autoWalkDestination);
 }
 
