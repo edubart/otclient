@@ -102,11 +102,15 @@ function installLocale(locale)
   end
 
   if locale.name ~= defaultLocaleName then
+    local updatesNeeded = 0
     for _i,k in pairs(neededTranslations) do
       if locale.translation[k] == nil then
-        local ktext =  string.gsub(k, "\n", "\\n")
-        pwarning('Translation for locale \'' .. locale.name .. '\' not found: \"' .. ktext .. '\"')
+        updatesNeeded = updatesNeeded + 1
       end
+    end
+
+    if updatesNeeded > 0 then
+      pwarning('Locale \'' .. locale.name .. '\' is missing ' .. updatesNeeded .. ' translations.')
     end
   end
 

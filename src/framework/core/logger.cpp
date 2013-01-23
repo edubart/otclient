@@ -23,7 +23,7 @@
 #include "logger.h"
 #include "eventdispatcher.h"
 
-#include <boost/regex.hpp>
+//#include <boost/regex.hpp>
 #include <framework/core/resourcemanager.h>
 
 #ifdef FW_GRAPHICS
@@ -48,6 +48,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
     std::string outmsg = logPrefixes[level] + message;
 
+    /*
 #if !defined(NDEBUG) && !defined(WIN32)
     // replace paths for improved debug with vim
     std::stringstream tmp;
@@ -61,6 +62,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     if(!tmp.str().empty())
         outmsg = tmp.str();
 #endif
+    */
 
     std::cout << outmsg << std::endl;
 

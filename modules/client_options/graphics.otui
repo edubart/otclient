@@ -44,7 +44,7 @@ Panel
 
   OptionCheckBox
     id: dontStretchShrink
-    !text: tr('Don\'t stretch/shrink Game Window')
+    !text: tr("Don't stretch or shrink Game Window")
 
   Label
     id: backgroundFrameRateLabel

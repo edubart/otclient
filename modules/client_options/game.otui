@@ -6,7 +6,7 @@ Panel
   OptionCheckBox
     id: autoChaseOverride
     !text: tr('Allow auto chase override')
-    
+
   OptionCheckBox
     id: smartWalk
     !text: tr('Enable smart walking')
@@ -20,7 +20,7 @@ Panel
   OptionCheckBox
     id: enableMusic
     !text: tr('Enable music')
-    
+
   OptionCheckBox
     id: showPing
     !text: tr('Show connection ping')
@@ -29,3 +29,11 @@ Panel
   OptionCheckBox
     id: showLeftPanel
     !text: tr('Show left panel')
+
+  Button
+    id: changeLocale
+    !text: tr('Change language')
+    @onClick: modules.client_locales.createWindow()
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 5

@@ -2,8 +2,13 @@
 
 function print(...)
   local msg = ""
-  for i,v in ipairs({...}) do
-    msg = msg .. tostring(v) .. "    "
+  local args = {...}
+  local appendSpace = #args > 1
+  for i,v in ipairs(args) do
+    msg = msg .. tostring(v)
+    if appendSpace and i < #args then
+      msg = msg .. '    '
+    end
   end
   g_logger.log(LogInfo, msg)
 end
