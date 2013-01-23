@@ -21,6 +21,5 @@
  */
 
 #include "platform.h"
-#include <boost/filesystem.hpp>
 
 Platform g_platform;

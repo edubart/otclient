@@ -33,7 +33,7 @@ tradeItems = {}
 playerItems = nil
 selectedItem = nil
 
-mouseWidget = nil
+cancelNextRelease = nil
 
 function init()
   npcWindow = g_ui.displayUI('npctrade')
@@ -65,10 +65,7 @@ function init()
   radioTabs:selectWidget(buyTab)
   radioTabs.onSelectionChange = onTradeTypeChange
 
-  mouseWidget = g_ui.createWidget('UIButton')
-  mouseWidget:setVisible(false)
-  mouseWidget:setFocusable(false)
-  mouseWidget.cancelNextRelease = false
+  cancelNextRelease = false
 
   if g_game.isOnline() then
     playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity()
@@ -157,8 +154,8 @@ function onSearchTextChange()
 end
 
 function itemPopup(self, mousePosition, mouseButton)
-  if mouseWidget.cancelNextRelease then
-    mouseWidget.cancelNextRelease = false
+  if cancelNextRelease then
+    cancelNextRelease = false
     return false
   end
 
@@ -169,7 +166,7 @@ function itemPopup(self, mousePosition, mouseButton)
     return true
   elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) 
     or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
-    mouseWidget.cancelNextRelease = true
+    cancelNextRelease = true
     g_game.inspectNpcTrade(self:getItem())
     return true
   end
