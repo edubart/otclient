@@ -538,8 +538,7 @@ bool Game::walk(Otc::Direction direction)
         if(m_lastWalkDir != direction) {
             // must add a new walk event
             float ticks = m_localPlayer->getStepTicksLeft();
-            if(ticks < 0)
-                ticks = 0;
+            if(ticks < 0) { ticks = 0; }
 
             if(m_walkEvent) {
                 m_walkEvent->cancel();

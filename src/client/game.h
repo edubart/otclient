@@ -293,6 +293,7 @@ public:
     std::string getWorldName() { return m_worldName; }
     std::vector<uint8> getGMActions() { return m_gmActions; }
     bool isGM() { return m_gmActions.size() > 0; }
+    Otc::Direction getLastWalkDir() { return m_lastWalkDir; }
 
     std::string formatCreatureName(const std::string &name);
     int findEmptyContainerId();

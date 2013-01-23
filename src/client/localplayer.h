@@ -119,7 +119,7 @@ protected:
 private:
     // walk related
     Timer m_walkPingTimer;
-    Position m_lastPrewalkDestionation;
+    Position m_lastPrewalkDestination;
     Position m_autoWalkDestination;
     Position m_lastAutoWalkPosition;
     ScheduledEventPtr m_autoWalkEndEvent;

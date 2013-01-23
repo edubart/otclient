@@ -95,7 +95,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
     // a prewalk was going on
     if(m_preWalking) {
         if(m_waitingWalkPong) {
-            if(newPos == m_lastPrewalkDestionation)
+            if(newPos == m_lastPrewalkDestination)
                 m_lastWalkPing = m_walkPingTimer.ticksElapsed();
 
             m_waitingWalkPong = false;
@@ -105,7 +105,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
         m_preWalking = false;
         m_lastPrewalkDone = true;
         // if is to the last prewalk destination, updates the walk preserving the animation
-        if(newPos == m_lastPrewalkDestionation) {
+        if(newPos == m_lastPrewalkDestination) {
             updateWalk();
         // was to another direction, replace the walk
         } else
@@ -127,7 +127,7 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     Position newPos = m_position.translatedToDirection(direction);
 
     // avoid reanimating prewalks
-    if(m_preWalking && m_lastPrewalkDestionation == newPos)
+    if(m_preWalking && m_lastPrewalkDestination == newPos)
         return;
 
     m_waitingWalkPong = false;
@@ -143,7 +143,7 @@ void LocalPlayer::preWalk(Otc::Direction direction)
 
     // start walking to direction
     m_lastPrewalkDone = false;
-    m_lastPrewalkDestionation = newPos;
+    m_lastPrewalkDestination = newPos;
     Creature::walk(m_position, newPos);
 }
 
@@ -233,7 +233,7 @@ void LocalPlayer::stopWalk()
     Creature::stopWalk(); // will call terminateWalk
 
     m_lastPrewalkDone = true;
-    m_lastPrewalkDestionation = Position();
+    m_lastPrewalkDestination = Position();
 }
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)

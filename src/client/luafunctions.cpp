@@ -242,6 +242,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "disableFeature", &Game::disableFeature, &g_game);
     g_lua.bindSingletonFunction("g_game", "isGM", &Game::isGM, &g_game);
     g_lua.bindSingletonFunction("g_game", "answerModalDialog", &Game::answerModalDialog, &g_game);
+    g_lua.bindSingletonFunction("g_game", "getLastWalkDir", &Game::getLastWalkDir, &g_game);
 
     g_lua.registerSingletonClass("g_shaders");
     g_lua.bindSingletonFunction("g_shaders", "createShader", &ShaderManager::createShader, &g_shaders);

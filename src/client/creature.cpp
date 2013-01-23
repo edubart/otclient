@@ -318,7 +318,6 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
         m_walkFinishAnimEvent = nullptr;
     }
 
-
     // no direction need to be changed when the walk ends
     m_walkTurnDirection = Otc::InvalidDirection;
 
