@@ -9,7 +9,22 @@ mingwplatform="i486-mingw32"
 mingwbin="/usr/$mingwplatform/bin"
 makejobs=4
 
-[ "$1" == "--replace" ] && replace=true || replace=false
+replace=false
+rebuild=true
+for arg in "$@"; do
+    case "$arg" in
+        --no-rebuild)
+            rebuild=false
+            ;;
+        --replace)
+            replace=true
+            ;;
+        *)
+            echo "usage: $0 [--replace] [--no-rebuild]"
+            exit
+            ;;
+    esac
+done
 
 # setup work directory
 mkdir -p $workdir
@@ -25,58 +40,71 @@ fi
 
 cd $workdir/otclient
 revision=`git rev-list --all | wc -l`
-commit=`git describe --dirty --always`
+commit=`git describe --always`
 version=`cat CMakeLists.txt | grep "set(VERSION" | sed 's/.*"\([^"]*\)".*/\1/'`
 
-# set flags
+# build for i686
 export CFLAGS="-march=i686 -m32"
 export CXXFLAGS="-march=i686 -m32"
 export LDFLAGS="-march=i686 -m32"
 
+LIBPATH=/usr/lib
+if [ -d /usr/lib32 ]; then
+    LIBPATH=/usr/lib32
+fi
+
+if $rebuild; then
+    rm -rf build.win32
+    rm -rf build.win32dx9
+    rm -rf build.linux32
+fi
+
 # compile for win32
-rm -rf build.win32
-mkdir build.win32
+mkdir -p build.win32
 cd build.win32
-cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DBOT_PROTECTION=OFF \
-    -DBUILD_REVISION=$revision \
-    -DBUILD_COMMIT=$commit \
-    .. || exit
+if $rebuild; then
+    cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        .. || exit
+fi
 make -j$makejobs || exit
 cd ..
 
 # compile for win32
-rm -rf build.win32dx9
-mkdir build.win32dx9
+mkdir -p build.win32dx9
 cd build.win32dx9
-cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DBOT_PROTECTION=OFF \
-    -DOPENGLES=2.0 \
-    -DBUILD_REVISION=$revision \
-    -DBUILD_COMMIT=$commit \
-    .. || exit
+if $rebuild; then
+    cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DOPENGLES=2.0 \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        .. || exit
+fi
 make -j$makejobs || exit
 cd ..
 
-# compile for linux 64
-rm -rf build.linux32
-mkdir build.linux32
+# compile for linux32
+mkdir -p build.linux32
 cd build.linux32
-export CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2"
-export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro"
-cmake -DCMAKE_BUILD_TYPE=Release \
-    -DBOT_PROTECTION=OFF \
-    -DBUILD_REVISION=$revision \
-    -DBUILD_COMMIT=$commit \
-    .. || exit
+if $rebuild; then
+    cmake -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        -DCMAKE_LIBRARY_PATH=$LIBPATH \
+        .. || exit
+fi
 make -j$makejobs || exit
 cd ..
 
 ##################################################
 # create win32 package
-pkg_suffix="-linux64-$version"
+pkg_suffix="-linux32-$version"
 pkgname="$name$pkg_suffix"
 pkgzip="$pkgname.tgz"
 cd $workdir
@@ -85,10 +113,12 @@ mkdir $pkgname
 cd $pkgname
 
 # copy otclient files
-cp -R $workdir/otclient/mods .
+mkdir mods
+cp $workdir/otclient/mods/README.txt mods/
 cp -R $workdir/otclient/modules .
-cp $workdir/otclient/build.linux64/otclient .
-cp $workdir/otclient/build.linux64/otclient.map .
+cp -R $workdir/otclient/data .
+cp $workdir/otclient/build.linux32/otclient .
+cp $workdir/otclient/build.linux32/otclient.map .
 cp $workdir/otclient/init.lua .
 cp $workdir/otclient/otclientrc.lua .
 cp $workdir/otclient/BUGS .
@@ -129,7 +159,8 @@ mkdir $pkgname
 cd $pkgname
 
 # copy otclient files
-cp -R $workdir/otclient/mods .
+mkdir mods
+cp $workdir/otclient/mods/README.txt mods/
 cp -R $workdir/otclient/modules .
 cp -R $workdir/otclient/data .
 cp $mingwbin/libEGL.dll .
@@ -146,7 +177,7 @@ cp $workdir/otclient/AUTHORS AUTHORS.txt
 cp $workdir/otclient/BUGS BUGS.txt
 cp $workdir/otclient/LICENSE LICENSE.txt
 cp $workdir/otclient/README.md README.txt
-unix2dos LICENSE.txt README.txt BUGS.txt AUTHORS.txt
+unix2dos LICENSE.txt README.txt BUGS.txt AUTHORS.txt mods/README.txt
 
 # remove git files
 find -name '.git*' -exec rm -rf {} \;
@@ -171,11 +202,6 @@ zip -9 -qr $pkgzip $pkgname
 echo "Package generated to $pkgzip"
 
 # test win32 otclient
-mkdir otclient/modules/game_tibiafiles/860/
-cp $workdir/Tibia/*.spr otclient/modules/game_tibiafiles/860/
-cp $workdir/Tibia/*.dat otclient/modules/game_tibiafiles/860/
-
-
 cd otclient
 wine build.win32/otclient.exe
 rm -f *.log

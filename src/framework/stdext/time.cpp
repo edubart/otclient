@@ -21,19 +21,19 @@
  */
 
 #include "time.h"
-#include <chrono>
+#include <boost/chrono.hpp>
 #include <unistd.h>
 
 namespace stdext {
 
-const static auto startup_time = std::chrono::high_resolution_clock::now();
+const static auto startup_time = boost::chrono::high_resolution_clock::now();
 
 ticks_t millis()
 {
-    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
+    return boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::high_resolution_clock::now() - startup_time).count();
 }
 ticks_t micros() {
-    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
+    return boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::high_resolution_clock::now() - startup_time).count();
 }
 
 void millisleep(size_t ms)
