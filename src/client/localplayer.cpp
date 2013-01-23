@@ -210,10 +210,13 @@ bool LocalPlayer::autoWalk(const Position& destination)
     m_autoWalkDestination = destination;
     m_lastAutoWalkPosition = m_position.translatedToDirections(limitedPath).back();
 
+    /*
+    // debug calculated path using minimap
     for(auto pos : m_position.translatedToDirections(limitedPath)) {
         g_map.getOrCreateTile(pos)->overwriteMinimapColor(215);
         g_map.notificateTileUpdate(pos);
     }
+    */
 
     g_game.autoWalk(limitedPath);
     return true;
