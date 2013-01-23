@@ -48,7 +48,7 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
     std::string possiblePaths[] = { g_resources.getCurrentDir(),
                                     g_resources.getBaseDir(),
                                     g_resources.getBaseDir() + "../",
-                                    g_resources.getBaseDir() + "../share/" + g_app.getCompactName() };
+                                    g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/" };
     bool found = false;
     for(const std::string& dir : possiblePaths) {
         if(!PHYSFS_addToSearchPath(dir.c_str(), 0))
