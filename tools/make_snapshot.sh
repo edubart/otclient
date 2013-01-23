@@ -23,17 +23,15 @@ else
     git clone $gitroot otclient || exit
 fi
 
-# get spr and dat
-cd $workdir
-if [ ! -d Tibia ]; then
-    wget http://tibiaclient.com/files/tibia860.tar
-    tar xf tibia860.tar
-fi
-
 cd $workdir/otclient
 revision=`git rev-list --all | wc -l`
 commit=`git describe --dirty --always`
 version=`cat CMakeLists.txt | grep "set(VERSION" | sed 's/.*"\([^"]*\)".*/\1/'`
+
+# set flags
+export CFLAGS="-march=i686 -m32"
+export CXXFLAGS="-march=i686 -m32"
+export LDFLAGS="-march=i686 -m32"
 
 # compile for win32
 rm -rf build.win32
@@ -63,9 +61,9 @@ make -j$makejobs || exit
 cd ..
 
 # compile for linux 64
-rm -rf build.linux64
-mkdir build.linux64
-cd build.linux64
+rm -rf build.linux32
+mkdir build.linux32
+cd build.linux32
 export CXXFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fstack-protector --param=ssp-buffer-size=4 -D_FORTIFY_SOURCE=2"
 export LDFLAGS="-Wl,-O1,--sort-common,--as-needed,-z,relro"
 cmake -DCMAKE_BUILD_TYPE=Release \
@@ -120,10 +118,6 @@ tar czf $pkgzip $pkgname
 
 echo "Package generated to $pkgzip"
 
-mkdir $pkgname/modules/game_tibiafiles/860/
-cp $workdir/Tibia/*.spr $pkgname/modules/game_tibiafiles/860/
-cp $workdir/Tibia/*.dat $pkgname/modules/game_tibiafiles/860/
-
 ##################################################
 # create win32 package
 pkg_suffix="-win32-$version"
@@ -137,6 +131,7 @@ cd $pkgname
 # copy otclient files
 cp -R $workdir/otclient/mods .
 cp -R $workdir/otclient/modules .
+cp -R $workdir/otclient/data .
 cp $mingwbin/libEGL.dll .
 cp $mingwbin/libGLESv2.dll .
 cp $mingwbin/d3dcompiler_43.dll .

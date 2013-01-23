@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
-set(VERSION "0.5.6")
+set(VERSION "0.6.0")
 
 set(FRAMEWORK_SOUND ON)
 set(FRAMEWORK_GRAPHICS ON)
 set(FRAMEWORK_XML ON)
 set(FRAMEWORK_NET ON)
-#set(FRAMEWORK_GIT ON)
 include(src/framework/CMakeLists.txt)
 include(src/client/CMakeLists.txt)
 
