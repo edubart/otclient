@@ -17,15 +17,16 @@ NPCItemBox < UICheckBox
     phantom: true
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter
+    image-color: #ffffffff
     margin-top: 5
 
-  $checked:
+  $checked on:
     border-color: #ffffff
 
-  $hover !checked:
-    border-color: #aaaaaa
+  $!checked:
+    border-color: #000000
 
-  $disabled:
+  $!on:
     image-color: #ffffff88
     color: #aaaaaa88
 

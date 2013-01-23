@@ -33,6 +33,8 @@ tradeItems = {}
 playerItems = nil
 selectedItem = nil
 
+mouseWidget = nil
+
 function init()
   npcWindow = g_ui.displayUI('npctrade')
   npcWindow:setVisible(false)
@@ -62,6 +64,11 @@ function init()
   radioTabs:addWidget(sellTab)
   radioTabs:selectWidget(buyTab)
   radioTabs.onSelectionChange = onTradeTypeChange
+
+  mouseWidget = g_ui.createWidget('UIButton')
+  mouseWidget:setVisible(false)
+  mouseWidget:setFocusable(false)
+  mouseWidget.cancelNextRelease = false
 
   if g_game.isOnline() then
     playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity()
@@ -150,10 +157,20 @@ function onSearchTextChange()
 end
 
 function itemPopup(self, mousePosition, mouseButton)
+  if mouseWidget.cancelNextRelease then
+    mouseWidget.cancelNextRelease = false
+    return false
+  end
+
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
     menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
     menu:display(mousePosition)
+    return true
+  elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) 
+    or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
+    mouseWidget.cancelNextRelease = true
+    g_game.inspectNpcTrade(self:getItem())
     return true
   end
   return false
@@ -339,7 +356,7 @@ function refreshPlayerGoods()
     local item = itemWidget.item
 
     local canTrade = canTradeItem(item)
-    itemWidget:setEnabled(canTrade)
+    itemWidget:setOn(canTrade)
 
     local searchCondition = (searchFilter == '') or (searchFilter ~= '' and string.find(item.name:lower(), searchFilter) ~= nil)
     local showAllItemsCondition = (currentTradeType == BUY) or (showAllItems:isChecked()) or (currentTradeType == SELL and not showAllItems:isChecked() and canTrade)
@@ -426,4 +443,3 @@ function onInventoryChange(inventory, item, oldItem)
     refreshItem(selectedItem)
   end
 end
-

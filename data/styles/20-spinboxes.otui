@@ -1,6 +1,7 @@
 SpinBox < TextEdit
   __class: UISpinBox
   size: 86 20
+  padding: 0
 
   Button
     id: up
