@@ -53,6 +53,8 @@ function show()
   if g_game.getFeature(GameSpellList) then
     cooldownWindow:show()
     cooldownButton:show()
+  else
+    hide()
   end
 end
 

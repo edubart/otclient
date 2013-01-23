@@ -1500,20 +1500,26 @@ void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
         choiceList.push_back(std::make_tuple(id, value));
     }
 
-    int enterButton = msg->getU8();
-    int escapeButton = msg->getU8();
+    int enterButton, escapeButton;
+    if(g_game.getProtocolVersion() > 970) {
+        escapeButton = msg->getU8();
+        enterButton = msg->getU8();
+    }
+    else {
+        enterButton = msg->getU8();
+        escapeButton = msg->getU8();
+    }
+
     msg->getU8(); // popup value (no clue what it is for)
 
     std::map<int, std::string>::iterator itEnter = buttonList.find(enterButton);
-    if(itEnter == buttonList.end())
-    {
+    if(itEnter == buttonList.end()) {
         g_logger.info(stdext::format("Enter button does not exist for dialog id: %d", id));
         return;
     }
 
     std::map<int, std::string >::iterator itEscape = buttonList.find(escapeButton);
-    if(itEscape == buttonList.end())
-    {
+    if(itEscape == buttonList.end()) {
         g_logger.info(stdext::format("Escape button does not exist for dialog id: %d", id));
         return;
     }

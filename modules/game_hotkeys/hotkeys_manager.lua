@@ -91,10 +91,14 @@ function load()
   local hotkeySettings = g_settings.getNode('HotkeysManager')
   local hasCombos = false
   if not table.empty(hotkeySettings) then
-    local playerHotkeySettings = hotkeySettings[g_game.getLocalPlayer():getName()]
+    local serverHotkeys = hotkeySettings[G.host]
 
-    if not table.empty(playerHotkeySettings) then
-      for k, setting in pairs(playerHotkeySettings) do
+    local hotkeys
+    if not table.empty(serverHotkeys) then
+      hotkeys = serverHotkeys[g_game.getLocalPlayer():getName()]
+    end
+    if not table.empty(hotkeys) then
+      for k, setting in pairs(hotkeys) do
         addKeyCombo(nil, setting.keyCombo, setting)
         hasCombos = true
       end
@@ -109,11 +113,15 @@ end
 
 function save()
   local char = g_game.getLocalPlayer():getName()
+  local server = G.host
+
   local hotkeySettings = g_settings.getNode('HotkeysManager') or {}
-  hotkeySettings[char] = {}
+  hotkeySettings[server] = {}
+  hotkeySettings[server][char] = {}
+
   for i=1, currentHotkeysList:getChildCount() do
     local child = currentHotkeysList:getChildByIndex(i)
-    table.insert(hotkeySettings[char], {
+    table.insert(hotkeySettings[server][char], {
       keyCombo = child.keyCombo,
       autoSend = child.autoSend,
       itemId = child.itemId,

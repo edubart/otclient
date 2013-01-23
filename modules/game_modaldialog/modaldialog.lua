@@ -59,6 +59,8 @@ function onModalDialog(id, title, message, enterId, enterText, escapeId, escapeT
     g_game.answerModalDialog(id, escapeId, choiceList:getFocusedChild().choiceId)
     destroy()
   end
+
+  choiceList.onDoubleClick = enterFunc
   
   enterButton.onClick = enterFunc
   modalDialog.onEnter = enterFunc
