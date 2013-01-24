@@ -33,9 +33,11 @@ UIMap::UIMap()
     m_draggable = true;
     m_mapView = MapViewPtr(new MapView);
     m_zoom = m_mapView->getVisibleDimension().height();
-    m_aspectRatio = 0.0f;
+    m_keepAspectRatio = true;
+    m_limitVisibleRange = false;
+    m_aspectRatio = m_mapView->getVisibleDimension().ratio();
     m_maxZoomIn = 3;
-    m_maxZoomOut = 512;
+    m_maxZoomOut = 513;
     m_mapRect.resize(1,1);
     g_map.addMapView(m_mapView);
 }
@@ -78,7 +80,10 @@ bool UIMap::setZoom(int zoom)
 bool UIMap::zoomIn()
 {
     int delta = 2;
-    if(m_zoom - delta <= m_maxZoomIn)
+    if(m_zoom - delta < m_maxZoomIn)
+        delta--;
+
+    if(m_zoom - delta < m_maxZoomIn)
         return false;
 
     m_zoom -= delta;
@@ -89,7 +94,10 @@ bool UIMap::zoomIn()
 bool UIMap::zoomOut()
 {
     int delta = 2;
-    if(m_zoom + delta >= m_maxZoomOut)
+    if(m_zoom + delta > m_maxZoomOut)
+        delta--;
+
+    if(m_zoom + delta > m_maxZoomOut)
         return false;
 
     m_zoom += 2;
@@ -100,19 +108,17 @@ bool UIMap::zoomOut()
 void UIMap::setVisibleDimension(const Size& visibleDimension)
 {
     m_mapView->setVisibleDimension(visibleDimension);
+    m_aspectRatio = visibleDimension.ratio();
 
-    if(m_aspectRatio != 0.0f) {
-        m_aspectRatio = visibleDimension.ratio();
+    if(m_keepAspectRatio)
         updateMapSize();
-    }
 }
 
 void UIMap::setKeepAspectRatio(bool enable)
 {
+    m_keepAspectRatio = enable;
     if(enable)
         m_aspectRatio = getVisibleDimension().ratio();
-    else
-        m_aspectRatio = 0.0f;
     updateMapSize();
 }
 
@@ -196,8 +202,8 @@ void UIMap::updateVisibleDimension()
 {
     int dimensionHeight = m_zoom;
 
-    float ratio = 1;
-    if(!m_mapRect.isEmpty())
+    float ratio = m_aspectRatio;
+    if(!m_limitVisibleRange && !m_mapRect.isEmpty() && !m_keepAspectRatio)
         ratio = m_mapRect.size().ratio();
 
     if(dimensionHeight % 2 == 0)
@@ -208,7 +214,7 @@ void UIMap::updateVisibleDimension()
 
     m_mapView->setVisibleDimension(Size(dimensionWidth, dimensionHeight));
 
-    if(m_aspectRatio != 0.0f)
+    if(m_keepAspectRatio)
         updateMapSize();
 }
 
@@ -216,7 +222,7 @@ void UIMap::updateMapSize()
 {
     Rect clippingRect = getPaddingRect();
     Size mapSize;
-    if(m_aspectRatio != 0.0f) {
+    if(m_keepAspectRatio) {
         Rect mapRect = clippingRect.expanded(-1);
         mapSize = Size(m_aspectRatio*m_zoom, m_zoom);
         mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
@@ -228,6 +234,6 @@ void UIMap::updateMapSize()
     m_mapRect.moveCenter(clippingRect.center());
     m_mapView->optimizeForSize(mapSize);
 
-    if(m_aspectRatio == 0.0f)
+    if(!m_keepAspectRatio)
         updateVisibleDimension();
 }

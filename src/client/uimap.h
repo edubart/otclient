@@ -56,13 +56,15 @@ public:
     void setKeepAspectRatio(bool enable);
     void setMapShader(const PainterShaderProgramPtr& shader, float fadeout, float fadein) { m_mapView->setShader(shader, fadein, fadeout); }
     void setMinimumAmbientLight(float intensity) { m_mapView->setMinimumAmbientLight(intensity); }
+    void setLimitVisibleRange(bool limitVisibleRange) { m_limitVisibleRange = limitVisibleRange; updateVisibleDimension(); }
 
     bool isMultifloor() { return m_mapView->isMultifloor(); }
     bool isAutoViewModeEnabled() { return m_mapView->isAutoViewModeEnabled(); }
     bool isDrawingTexts() { return m_mapView->isDrawingTexts(); }
     bool isDrawingLights() { return m_mapView->isDrawingLights(); }
     bool isAnimating() { return m_mapView->isAnimating(); }
-    bool isKeepAspectRatioEnabled() { return m_aspectRatio != 0.0f; }
+    bool isKeepAspectRatioEnabled() { return m_keepAspectRatio; }
+    bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }
 
     Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
     MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }
@@ -89,6 +91,8 @@ private:
     MapViewPtr m_mapView;
     Rect m_mapRect;
     float m_aspectRatio;
+    bool m_keepAspectRatio;
+    bool m_limitVisibleRange;
     int m_maxZoomIn;
     int m_maxZoomOut;
 };

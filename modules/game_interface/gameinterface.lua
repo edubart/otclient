@@ -12,6 +12,8 @@ countWindow = nil
 logoutWindow = nil
 exitWindow = nil
 bottomSplitter = nil
+limitZoom = false
+currentViewMode = 0
 
 lastDir = nil
 walkEvent = nil
@@ -51,6 +53,8 @@ function init()
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
   logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), '/images/topbuttons/logout', tryLogout, true)
+
+  setupViewMode(0)
 
   bindKeys()
 
@@ -93,7 +97,7 @@ function bindKeys()
   g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+N', function() gameMapPanel:setDrawTexts(not gameMapPanel:isDrawingTexts()) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+.', toggleAlternativeView, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
 end
 
 function terminate()
@@ -270,21 +274,11 @@ function smartWalk(defaultDir)
 end
 
 function updateStretchShrink() 
-  if modules.client_options.getOption('dontStretchShrink') then
-    gameMapPanel:setKeepAspectRatio(true)
+  if modules.client_options.getOption('dontStretchShrink') and not alternativeView then
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
-    
-    -- Set gameMapPanel size to height = 11 * 32
-    bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() + (gameMapPanel:getHeight() - 32 * 11) - 10)
-  end
-end
 
-function toggleAspectRatio()
-  if gameMapPanel:isKeepAspectRatioEnabled() then
-    gameMapPanel:setKeepAspectRatio(false)
-  else
-    gameMapPanel:setKeepAspectRatio(true)
-    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    -- Set gameMapPanel size to height = 11 * 32 + 2
+    bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() + (gameMapPanel:getHeight() - 32 * 11) - 10)
   end
 end
 
@@ -311,7 +305,6 @@ function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-        print('use on' .. tile:getTopMultiUseThing():getClassName())
       g_game.useWith(selectedThing, tile:getTopMultiUseThing())
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
@@ -655,25 +648,14 @@ function onLeftPanelVisibilityChange(leftPanel, visible)
   end
 end
 
-function toggleAlternativeView()
-  if gameMapPanel:isKeepAspectRatioEnabled() then
-    gameMapPanel:setKeepAspectRatio(false)
-    gameMapPanel:setZoom(14)
-    gameMapPanel:fill('parent')
-    gameRootPanel:fill('parent')
-    gameLeftPanel:setImageColor('alpha')
-    gameRightPanel:setImageColor('alpha')
-    gameLeftPanel:setMarginTop(36)
-    gameRightPanel:setMarginTop(36)
-    gameLeftPanel:setOn(true)
-    gameLeftPanel:setVisible(true)
-    gameRightPanel:setOn(true)
-    gameBottomPanel:setImageColor('#00000099')
-    modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
-    g_game.changeMapAwareRange(24, 20)
-  else
-    gameMapPanel:setKeepAspectRatio(true)
-    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+function nextViewMode()
+  setupViewMode((currentViewMode + 1) % 3)
+end
+
+function setupViewMode(mode)
+  if mode == currentViewMode then return end
+
+  if currentViewMode == 2 then
     gameMapPanel:addAnchor(AnchorLeft, 'gameLeftPanel', AnchorRight)
     gameMapPanel:addAnchor(AnchorRight, 'gameRightPanel', AnchorLeft)
     gameMapPanel:addAnchor(AnchorBottom, 'gameBottomPanel', AnchorTop)
@@ -688,4 +670,42 @@ function toggleAlternativeView()
     modules.client_topmenu.getTopMenu():setImageColor('white')
     g_game.changeMapAwareRange(18, 14)
   end
+
+  if mode == 0 then
+    gameMapPanel:setKeepAspectRatio(true)
+    gameMapPanel:setLimitVisibleRange(false)
+    gameMapPanel:setZoom(11)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+  elseif mode == 1 then
+    gameMapPanel:setKeepAspectRatio(false)
+    gameMapPanel:setLimitVisibleRange(true)
+    gameMapPanel:setZoom(11)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+  elseif mode == 2 then
+    gameMapPanel:setLimitVisibleRange(limitZoom)
+    gameMapPanel:setZoom(11)
+    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    gameMapPanel:fill('parent')
+    gameRootPanel:fill('parent')
+    gameLeftPanel:setImageColor('alpha')
+    gameRightPanel:setImageColor('alpha')
+    gameLeftPanel:setMarginTop(36)
+    gameRightPanel:setMarginTop(36)
+    gameLeftPanel:setOn(true)
+    gameLeftPanel:setVisible(true)
+    gameRightPanel:setOn(true)
+    gameBottomPanel:setImageColor('#00000099')
+    modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
+    if not limitZoom then
+      g_game.changeMapAwareRange(24, 20)
+    end
+  end
+
+  currentViewMode = mode
+end
+
+function limitZoom()
+  limitZoom = true
+  gameMapPanel:setMaxZoomOut(11)
+  gameMapPanel:setLimitVisibleRange(true)
 end
