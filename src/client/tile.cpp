@@ -449,14 +449,14 @@ ThingPtr Tile::getTopMultiUseThing()
     if(isEmpty())
         return nullptr;
 
+    if(CreaturePtr topCreature = getTopCreature())
+        return topCreature;
+
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(thing->isForceUse())
             return thing;
     }
-
-    if(CreaturePtr topCreature = getTopCreature())
-        return topCreature;
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
@@ -466,7 +466,6 @@ ThingPtr Tile::getTopMultiUseThing()
             return thing;
         }
     }
-
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];

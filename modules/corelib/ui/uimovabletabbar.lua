@@ -11,15 +11,40 @@ local function updateMargins(tabBar, ignored)
  
   local currentMargin = 0
   for i = 1, #tabBar.tabs do
-    if tabBar.tabs[i] ~= ignored then 
-      if i == 1 then
-        tabBar.tabs[i]:setMarginLeft(0)
-      else
-        tabBar.tabs[i]:setMarginLeft(tabBar.tabSpacing * (i - 1) + currentMargin)
-      end
-    end
-    currentMargin = currentMargin + tabBar.tabs[i]:getWidth()
+    tabBar.tabs[i]:setMarginLeft(currentMargin)
+    currentMargin = currentMargin + tabBar.tabSpacing + tabBar.tabs[i]:getWidth()
   end
+end
+
+local function updateIndexes(tabBar, tab, xoff)
+  local tabs = tabBar.tabs
+  local currentMargin = 0
+  local prevIndex = table.find(tabs, tab)
+  local newIndex = prevIndex
+  local xmid = xoff + tab:getWidth()/2
+  for i = 1, #tabs do
+    local nextTab = tabs[i]
+    if xmid >= currentMargin + nextTab:getWidth()/2 then
+      newIndex = table.find(tabs, nextTab)
+    end
+    currentMargin = currentMargin + tabBar.tabSpacing * (i - 1) + tabBar.tabs[i]:getWidth()
+  end
+  if newIndex ~= prevIndex then
+    table.remove(tabs, table.find(tabs, tab))
+    table.insert(tabs, newIndex, tab)
+  end
+end
+
+local function getMaxMargin(tabBar, tab)
+  if #tabBar.tabs == 0 then return end
+
+  local maxMargin = 0
+  for i = 1, #tabBar.tabs do
+    if tabBar.tabs[i] ~= tab then
+      maxMargin = maxMargin + tabBar.tabs[i]:getWidth()
+    end
+  end
+  return maxMargin + tabBar.tabSpacing * (#tabBar.tabs- 1)
 end
 
 local function onTabMousePress(tab, mousePos, mouseButton)
@@ -29,8 +54,9 @@ local function onTabMousePress(tab, mousePos, mouseButton)
   end
 end
 
-local function onTabDragEnter(tab)
+local function onTabDragEnter(tab, mousePos)
   tab:raise()
+  tab.hotSpot = mousePos.x - tab:getMarginLeft()
   tab.tabBar.selected = tab
   return true
 end
@@ -43,29 +69,17 @@ end
 
 local function onTabDragMove(tab, mousePos, mouseMoved)
   if tab == tab.tabBar.selected then
-    local newMargin = tab:getMarginLeft() + mouseMoved.x
-    if newMargin >= -tab.tabBar.tabSpacing and newMargin < tab.tabBar:getWidth() - tab:getWidth() then
-      tab:setMarginLeft(newMargin)
-    end
+    local xoff = mousePos.x - tab.hotSpot
 
-    local tabs = tab.tabBar.tabs
-    local lastMargin = -tab.tabBar.tabSpacing
-    for i = 1, #tabs do
-      local nextMargin = tabs[i + 1] and (tabs[i + 1] == tab and (tabs[i]:getMarginLeft() + tabs[i]:getWidth() + tab.tabBar.tabSpacing) or tabs[i + 1]:getMarginLeft()) or tab.tabBar:getWidth()
-      if (tab:getMarginLeft()+(tabs[i]:getWidth()/2)) >= lastMargin and (tab:getMarginLeft()+(tabs[i]:getWidth()/2)) < nextMargin then
-        if tabs[i] ~= tab then
-          local newIndex = table.find(tab.tabBar.tabs, tab.tabBar.tabs[i])
-          table.remove(tab.tabBar.tabs, table.find(tab.tabBar.tabs, tab))
-          table.insert(tab.tabBar.tabs, newIndex, tab)
-          updateMargins(tab.tabBar, tab)
-          break
-        else
-          updateMargins(tab.tabBar, tab)
-          break
-        end
-      end
-      lastMargin = tab.tabBar.tabs[i]:getMarginLeft() == 0 and -tab.tabBar.tabSpacing or tab.tabBar.tabs[i]:getMarginLeft()
-    end
+    -- update indexes
+    updateIndexes(tab.tabBar, tab, xoff)
+    updateIndexes(tab.tabBar, tab, xoff)
+
+    -- update margins
+    updateMargins(tab.tabBar)
+    xoff = math.max(xoff, 0)
+    xoff = math.min(xoff, getMaxMargin(tab.tabBar, tab))
+    tab:setMarginLeft(xoff)
   end
 end
 
@@ -81,7 +95,7 @@ function UIMoveableTabBar.create()
   tabbar:setFocusable(false)
   tabbar.tabs = {}
   tabbar.selected = nil  -- dragged tab
-  tabbar.tabSpacing = 5
+  tabbar.tabSpacing = 0
   tabbar.tabsMoveable = false
   return tabbar
 end

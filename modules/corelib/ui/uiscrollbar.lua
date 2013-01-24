@@ -82,18 +82,30 @@ local function updateSlider(self)
   end
 end
 
-local function parseSliderPos(self, pos, move)
-  local point, delta
+local function parseSliderPos(self, slider, pos, move)
+  local delta, hotDistance
   if self.orientation == 'vertical' then
-    point = pos.y
     delta = move.y
+    hotDistance = pos.y - slider:getY()
   else
-    point = pos.x
     delta = move.x
+    hotDistance = pos.x - slider:getX()
   end
-  local range, pxrange, px, offset, center = calcValues(self)
-  local newvalue = self.value + delta * (range / (pxrange - px))
-  self:setValue(newvalue)
+
+  if (delta > 0 and hotDistance + delta > self.hotDistance) or
+     (delta < 0 and hotDistance + delta < self.hotDistance) then
+    local range, pxrange, px, offset, center = calcValues(self)
+    local newvalue = self.value + delta * (range / (pxrange - px))
+    self:setValue(newvalue)
+  end
+end
+
+local function parseSliderPress(self, slider, pos, button)
+  if self.orientation == 'vertical' then
+    self.hotDistance = pos.y - slider:getY()
+  else
+    self.hotDistance = pos.x - slider:getX()
+  end
 end
 
 -- public functions
@@ -114,10 +126,11 @@ end
 
 function UIScrollBar:onSetup()
   self.setupDone = true
-  --signalcall(self.onValueChange, self, self.value)
+  local sliderButton = self:getChildById('sliderButton')
   g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end, 300)
   g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end, 300)
-  g_mouse.bindPressMove(self:getChildById('sliderButton'), function(mousePos, mouseMoved) parseSliderPos(self, mousePos, mouseMoved) end)
+  g_mouse.bindPressMove(sliderButton, function(mousePos, mouseMoved) parseSliderPos(self, sliderButton, mousePos, mouseMoved) end)
+  g_mouse.bindPress(sliderButton, function(mousePos, mouseButton) parseSliderPress(self, sliderButton, mousePos, mouseButton) end)
 
   updateSlider(self)
 end

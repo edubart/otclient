@@ -311,6 +311,7 @@ function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
+        print('use on' .. tile:getTopMultiUseThing():getClassName())
       g_game.useWith(selectedThing, tile:getTopMultiUseThing())
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
