@@ -20,16 +20,16 @@ function init()
   addEvent(listModules)
 end
 
-function hideButton()
-  moduleManagerButton:hide()
-end
-
 function terminate()
   moduleManagerWindow:destroy()
   moduleManagerWindow = nil
   moduleManagerButton:destroy()
   moduleManagerButton = nil
   moduleList = nil
+end
+
+function disable()
+  moduleManagerButton:hide()
 end
 
 function hide()

@@ -88,6 +88,8 @@ function setOptions()
 end
 
 function init()
+  if g_game.getProtocolVersion() < 870 then return end
+
   connect(g_game, { onGameStart = setOptions,
                     onGameEnd   = resetWindow })
           
@@ -160,6 +162,8 @@ function init()
 end
 
 function terminate()
+  if g_game.getProtocolVersion() < 870 then return end
+
   disconnect(g_game, { onGameStart = setOptions,
                        onGameEnd   = resetWindow,
                        onSpellGroupCooldown = modules.game_interface.setGroupCooldown,

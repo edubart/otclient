@@ -37,3 +37,4 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     margin-top: 5
+    width: 120

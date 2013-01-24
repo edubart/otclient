@@ -130,6 +130,7 @@ end
 
 function setLocale(name)
   local locale = installedLocales[name]
+  if locale == currentLocale then return end
   if not locale then
     pwarning("Locale " .. name .. ' does not exist.')
     return false

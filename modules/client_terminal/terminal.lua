@@ -178,6 +178,11 @@ function hide()
   terminalWindow:hide()
 end
 
+function disable()
+  terminalButton:hide()
+  g_keyboard.unbindKeyDown('Ctrl+T')
+end
+
 function addLine(text, color)
   -- delete old lines if needed
   local numLines = terminalBuffer:getChildCount() + 1

@@ -15,13 +15,15 @@ quantityScroll = nil
 nameLabel = nil
 priceLabel = nil
 moneyLabel = nil
+weightDesc = nil
 weightLabel = nil
+capacityDesc = nil
 capacityLabel = nil
 tradeButton = nil
 buyTab = nil
 sellTab = nil
 
-showCapacity = true
+showWeight = true
 buyWithBackpack = nil
 ignoreCapacity = nil
 ignoreEquipped = nil
@@ -47,7 +49,9 @@ function init()
   nameLabel = setupPanel:getChildById('name')
   priceLabel = setupPanel:getChildById('price')
   moneyLabel = setupPanel:getChildById('money')
+  weightDesc = setupPanel:getChildById('weightDesc')
   weightLabel = setupPanel:getChildById('weight')
+  capacityDesc = setupPanel:getChildById('capacityDesc')
   capacityLabel = setupPanel:getChildById('capacity')
   tradeButton = npcWindow:recursiveGetChildById('tradeButton')
 
@@ -195,8 +199,16 @@ function setCurrency(currency)
   CURRENCY = currency
 end
 
-function showCapacity(state)
-  showCapacity = state
+function setShowWeight(state)
+  showWeight = state
+  weightDesc:setVisible(state)
+  weightLabel:setVisible(state)
+end
+
+function setShowYourCapacity(state)
+  capacityDesc:setVisible(state)
+  capacityLabel:setVisible(state)
+  ignoreCapacity:setVisible(state)
 end
 
 function clearSelectedItem()
@@ -320,7 +332,7 @@ function refreshTradeItems()
     local text = ''
     local name = item.name
     text = text .. name
-    if showCapacity then
+    if showWeight then
       local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
       text = text .. '\n' .. weight
     end
@@ -378,7 +390,6 @@ function onOpenNpcTrade(items)
   tradeItems[SELL] = {}
 
   for key,item in pairs(items) do
-    
     if item[4] > 0 then
       local newItem = {}
       newItem.ptr = item[1]
@@ -387,7 +398,7 @@ function onOpenNpcTrade(items)
       newItem.price = item[4]
       table.insert(tradeItems[BUY], newItem)
     end
-    
+
     if item[5] > 0 then
       local newItem = {}
       newItem.ptr = item[1]

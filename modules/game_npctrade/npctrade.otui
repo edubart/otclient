@@ -134,6 +134,7 @@ MainWindow
       id: money
 
     Label
+      id: weightDesc
       !text: tr('Weight') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
@@ -145,6 +146,7 @@ MainWindow
       id: weight
 
     Label
+      id: capacityDesc
       !text: tr('Your Capacity') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
