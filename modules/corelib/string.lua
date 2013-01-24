@@ -50,3 +50,20 @@ function string:explode(sep, limit)
   return t
 end
 
+function string:operatorLess(other)
+  local selfLower = self:lower()
+  local otherLower = other:lower()
+  local selfLen = self:len()
+  local otherLen = other:len()
+  local minLen = math.min(selfLen, otherLen)
+  for i=1,minLen do
+    local selfByteI = string.byte(selfLower, i)
+    local otherByteI = string.byte(otherLower, i)
+    if selfByteI < otherByteI then
+      return true
+    elseif selfByteI > otherByteI then
+      return false
+    end
+  end
+  return selfLen < otherLen
+end

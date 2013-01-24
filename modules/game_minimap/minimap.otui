@@ -104,4 +104,3 @@ MiniWindow
       anchors.top: parent.top
       margin: 4
       @onClick: center()
-
