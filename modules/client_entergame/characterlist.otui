@@ -73,7 +73,7 @@ MainWindow
 
   Label
     id: accountStatusCaption
-    !text: tr('Account Status:')
+    !text: tr('Account Status') .. ':'
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top

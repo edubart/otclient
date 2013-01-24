@@ -27,7 +27,7 @@ MarketWindow < MainWindow
 
   Label
     id: balanceLabel
-    !text: tr('Balance:')
+    !text: tr('Balance') .. ':'
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: parent.top

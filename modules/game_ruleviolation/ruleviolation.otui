@@ -35,20 +35,20 @@ MainWindow
   text: Rule Violation
 
   RVLabel
-    !text: tr('Name:')
+    !text: tr('Name') .. ':'
 
   RVTextEdit
     id: nameText
 
   RVLabel
-    !text: tr('Statement:')
+    !text: tr('Statement') .. ':'
 
   RVTextEdit
     id: statementText
     enabled: false
 
   RVLabel
-    !text: tr('Reason:')
+    !text: tr('Reason') .. ':'
 
   TextList
     id: reasonList
@@ -69,7 +69,7 @@ MainWindow
     pixels-scroll: true
 
   RVLabel
-    !text: tr('Action:')
+    !text: tr('Action') .. ':'
 
   TextList
     id: actionList
@@ -98,7 +98,7 @@ MainWindow
     anchors.right: parent.right
 
   RVLabel
-    !text: tr('Comment:')
+    !text: tr('Comment') .. ':'
 
   RVTextEdit
     id: commentText

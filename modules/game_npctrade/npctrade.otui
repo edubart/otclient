@@ -101,7 +101,7 @@ MainWindow
     image-color: #ffffff88
 
     Label
-      !text: tr('Name:')
+      !text: tr('Name') .. ':'
       anchors.left: parent.left
       anchors.top: parent.top
       margin-top: 5
@@ -112,7 +112,7 @@ MainWindow
       id: name
 
     Label
-      !text: tr('Price:')
+      !text: tr('Price') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
       margin-top: 5
@@ -123,7 +123,7 @@ MainWindow
       id: price
 
     Label
-      !text: tr('Your Money:')
+      !text: tr('Your Money') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
       margin-top: 5
@@ -134,7 +134,7 @@ MainWindow
       id: money
 
     Label
-      !text: tr('Weight:')
+      !text: tr('Weight') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
       margin-top: 5
@@ -145,7 +145,7 @@ MainWindow
       id: weight
 
     Label
-      !text: tr('Your Capacity:')
+      !text: tr('Your Capacity') .. ':'
       anchors.left: parent.left
       anchors.top: prev.bottom
       margin-top: 5
@@ -180,7 +180,7 @@ MainWindow
 
     Label
       id: searchLabel
-      !text: tr('Search:')
+      !text: tr('Search') .. ':'
       anchors.left: parent.left
       anchors.top: parent.top
       text-auto-resize: true

@@ -12,7 +12,7 @@ Particle
   colors: #ffffff00 #ffffffff #00000000
   colors-stops: 0 0.1 1
   size: 24 24
-  texture: /data/particles/particle
+  texture: /particles/particle
   composition-mode: normal
 
 Effect

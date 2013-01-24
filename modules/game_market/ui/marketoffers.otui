@@ -67,7 +67,7 @@ Panel
 
   Label
     id: offerTypeLabel
-    !text: tr('Offer Type:')
+    !text: tr('Offer Type') .. ':'
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: prev.bottom
@@ -87,7 +87,7 @@ Panel
 
   Label
     id: totalPriceLabel
-    !text: tr('Total Price:')
+    !text: tr('Total Price') .. ':'
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: offerTypeLabel.top
@@ -108,7 +108,7 @@ Panel
 
   Label
     id: piecePriceLabel
-    !text: tr('Piece Price:')
+    !text: tr('Piece Price') .. ':'
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: offerTypeLabel.top
@@ -129,7 +129,7 @@ Panel
 
   Label
     id: amountLabel
-    !text: tr('Amount:')
+    !text: tr('Amount') .. ':'
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: offerTypeLabel.top

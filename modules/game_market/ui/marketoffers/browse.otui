@@ -133,7 +133,7 @@ Panel
         auto-spacing: true
 
   Label
-    !text: tr('Find:')
+    !text: tr('Find') .. ':'
     anchors.top: prev.bottom
     anchors.left: prev.left
     margin-top: 9

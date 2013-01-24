@@ -63,7 +63,7 @@ MainWindow
     id: labelName
     anchors.left: spellList.right
     anchors.top: spellList.top
-    text: Name:
+    !text: tr('Name') .. ':'
 
   Button
     id: buttonFilterLevel
@@ -97,56 +97,56 @@ MainWindow
     id: labelFormula
     anchors.left: spellList.right
     anchors.top: labelName.bottom
-    text: Formula:
+    !text: tr('Formula') .. ':'
 
 
   SpellInfoLabel
     id: labelVocation
     anchors.left: spellList.right
     anchors.top: labelFormula.bottom
-    text: Vocation:
+    !text: tr('Vocation') .. ':'
 
   SpellInfoLabel
     id: labelGroup
     anchors.left: spellList.right
     anchors.top: labelVocation.bottom
-    text: Group:
+    !text: tr('Group') .. ':'
 
   SpellInfoLabel
     id: labelType
     anchors.left: spellList.right
     anchors.top: labelGroup.bottom
-    text: Type:
+    !text: tr('Type') .. ':'
 
   SpellInfoLabel
     id: labelCooldown
     anchors.left: spellList.right
     anchors.top: labelType.bottom
-    text: Cooldown:
+    !text: tr('Cooldown') .. ':'
 
   SpellInfoLabel
     id: labelLevel
     anchors.left: spellList.right
     anchors.top: labelCooldown.bottom
-    text: Level:
+    !text: tr('Level') .. ':'
 
   SpellInfoLabel
     id: labelMana
     anchors.left: spellList.right
     anchors.top: labelLevel.bottom
-    text: Mana / Soul:
+    !text: tr('Mana') .. ' / ' .. tr('Soul') .. ':'
 
   SpellInfoLabel
     id: labelPremium
     anchors.left: spellList.right
     anchors.top: labelMana.bottom
-    text: Premium:
+    !text: tr('Premium') .. ':'
 
   SpellInfoLabel
     id: labelDescription
     anchors.left: spellList.right
     anchors.top: labelPremium.bottom
-    text: Description:
+    !text: tr('Description') .. ':'
 
   SpellInfoValueLabel
     id: labelNameValue
@@ -204,7 +204,7 @@ MainWindow
     anchors.left: spellList.right
     width: 70
     font: verdana-11px-monochrome
-    text: Vocation
+    !text: tr('Vocation')
     margin-top: 30
     margin-left: 20
 
@@ -214,7 +214,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     margin-left: 3
-    text: Any 
+    !text: tr('Any')
     width: 75
 
   CheckBox
@@ -222,7 +222,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Sorcerer 
+    !text: tr('Sorcerer')
     width: 75
 
   CheckBox
@@ -230,7 +230,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Druid
+    !text: tr('Druid')
     width: 75
 
   CheckBox
@@ -238,7 +238,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Paladin 
+    !text: tr('Paladin')
     width: 75
 
   CheckBox
@@ -246,7 +246,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Knight 
+    !text: tr('Knight')
     width: 75
 
   Label
@@ -255,7 +255,7 @@ MainWindow
     anchors.left: labelVocationFilter.right
     width: 70
     font: verdana-11px-monochrome
-    text: Group
+    !text: tr('Group')
     margin-top: 30
     margin-left: 20
 
@@ -265,7 +265,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     margin-left: 3
-    text: Any 
+    !text: tr('Any')
     width: 75
 
   CheckBox
@@ -273,7 +273,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Attack
+    !text: tr('Attack')
     width: 75
 
   CheckBox
@@ -281,7 +281,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Healing
+    !text: tr('Healing')
     width: 75
 
   CheckBox
@@ -289,7 +289,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Support 
+    !text: tr('Support')
     width: 75
 
   Label
@@ -298,7 +298,7 @@ MainWindow
     anchors.left: labelGroupFilter.right
     width: 70
     font: verdana-11px-monochrome
-    text: Premium
+    !text: tr('Premium')
     margin-top: 30
     margin-left: 20
 
@@ -308,7 +308,7 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     margin-left: 3
-    text: Any 
+    !text: tr('Any')
     width: 75
 
   CheckBox
@@ -316,7 +316,7 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: No
+    !text: tr('No')
     width: 75
 
   CheckBox
@@ -324,5 +324,5 @@ MainWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 3
-    text: Yes
+    !text: tr('Yes')
     width: 75

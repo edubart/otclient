@@ -30,14 +30,14 @@ FlagWindow < MainWindow
 
   Label
     id: position
-    !text: tr('Position:')
+    !text: tr('Position') .. ':'
     text-auto-resize: true
     anchors.top: parent.top
     anchors.left: parent.left
     margin-top: 2
 
   Label
-    !text: tr('Description:')
+    !text: tr('Description') .. ':'
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 7
