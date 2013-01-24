@@ -294,6 +294,7 @@ void Application::registerLuaFunctions()
 
     // Textures
     g_lua.registerSingletonClass("g_textures");
+    g_lua.bindSingletonFunction("g_textures", "preload", &TextureManager::preload, &g_textures);
     g_lua.bindSingletonFunction("g_textures", "clearTexturesCache", &TextureManager::clearTexturesCache, &g_textures);
 
     // UI

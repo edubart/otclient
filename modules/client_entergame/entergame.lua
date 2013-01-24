@@ -91,6 +91,7 @@ function EnterGame.init()
   if port == nil or port == 0 then port = 7171 end
 
   enterGame:getChildById('accountNameTextEdit'):setText(account)
+  enterGame:getChildById('accountNameTextEdit'):setCursorPos(-1)
   enterGame:getChildById('accountPasswordTextEdit'):setText(password)
   enterGame:getChildById('serverHostTextEdit'):setText(host)
   enterGame:getChildById('serverPortTextEdit'):setText(port)

@@ -223,6 +223,7 @@ end
 
 function setTextEditText(text)
   consoleTextEdit:setText(text)
+  consoleTextEdit:setCursorPos(-1)
 end
 
 function openHelp()
@@ -529,7 +530,7 @@ function sendMessage(message, tab)
     if chatCommandInitial == chatCommandEnd then
       chatCommandPrivateRepeat = false
       if chatCommandInitial == "*" then
-        consoleTextEdit:setText('*'.. chatCommandPrivate .. '* ')
+        setTextEditText('*'.. chatCommandPrivate .. '* ')
       end
       message = chatCommandMessage:trim()
       chatCommandPrivateReady = true
@@ -615,7 +616,7 @@ function navigateMessageHistory(step)
     currentMessageIndex = math.min(math.max(currentMessageIndex + step, 0), numCommands)
     if currentMessageIndex > 0 then
       local command = messageHistory[numCommands - currentMessageIndex + 1]
-      consoleTextEdit:setText(command)
+      setTextEditText(command)
     else
       consoleTextEdit:clearText()
     end

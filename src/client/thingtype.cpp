@@ -146,8 +146,10 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     for(const OTMLNodePtr& node2 : node->children()) {
         if(node2->tag() == "opacity")
             m_opacity = node2->value<float>();
-        if(node2->tag() == "notprewalkable")
+        else if(node2->tag() == "notprewalkable")
             m_attribs.set(ThingAttrNotPreWalkable, node2->value<bool>());
+        else if(node2->tag() == "image")
+            m_customImage = node2->value();
     }
 }
 
@@ -186,6 +188,10 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
 {
     TexturePtr& animationPhaseTexture = m_textures[animationPhase];
     if(!animationPhaseTexture) {
+        bool useCustomImage = false;
+        if(animationPhase == 0 && !m_customImage.empty())
+            useCustomImage = true;
+
         // we don't need layers in common items, they will be pre-drawn
         int textureLayers = 1;
         int numLayers = m_layers;
@@ -197,7 +203,12 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
 
         int indexSize = textureLayers * m_numPatternX * m_numPatternY * m_numPatternZ;
         Size textureSize = getBestTextureDimension(m_size.width(), m_size.height(), indexSize);
-        ImagePtr fullImage = ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
+        ImagePtr fullImage;
+
+        if(useCustomImage)
+            fullImage = Image::load(m_customImage);
+        else
+            fullImage = ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
 
         m_texturesFramesRects[animationPhase].resize(indexSize);
         m_texturesFramesOriginRects[animationPhase].resize(indexSize);
@@ -212,19 +223,21 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                         Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
                                                frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * Otc::TILE_PIXELS;
 
-                        for(int h = 0; h < m_size.height(); ++h) {
-                            for(int w = 0; w < m_size.width(); ++w) {
-                                uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
-                                ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
-                                if(spriteImage) {
-                                    if(spriteMask) {
-                                        static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
-                                        spriteImage->overwriteMask(maskColors[l - 1]);
-                                    }
-                                    Point spritePos = Point(m_size.width()  - w - 1,
-                                                            m_size.height() - h - 1) * Otc::TILE_PIXELS;
+                        if(!useCustomImage) {
+                            for(int h = 0; h < m_size.height(); ++h) {
+                                for(int w = 0; w < m_size.width(); ++w) {
+                                    uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
+                                    ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
+                                    if(spriteImage) {
+                                        if(spriteMask) {
+                                            static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
+                                            spriteImage->overwriteMask(maskColors[l - 1]);
+                                        }
+                                        Point spritePos = Point(m_size.width()  - w - 1,
+                                                                m_size.height() - h - 1) * Otc::TILE_PIXELS;
 
-                                    fullImage->blit(framePos + spritePos, spriteImage);
+                                        fullImage->blit(framePos + spritePos, spriteImage);
+                                    }
                                 }
                             }
                         }

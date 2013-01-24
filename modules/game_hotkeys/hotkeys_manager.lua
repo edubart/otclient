@@ -289,7 +289,7 @@ function call(keyCombo)
     local hotKey = hotkeyList[keyCombo]
     if hotKey ~= nil and hotKey.itemId == nil and hotKey.value ~= '' then
       if hotKey.autoSend then
-        g_game.talk(hotKey.value)
+        modules.game_console.sendMessage(hotKey.value)
       else
         modules.game_console.setTextEditText(hotKey.value)
       end

@@ -33,6 +33,7 @@ public:
     void poll();
 
     void clearTexturesCache();
+    void preload(const std::string& fileName) { getTexture(fileName); }
     TexturePtr getTexture(const std::string& fileName);
     const TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 

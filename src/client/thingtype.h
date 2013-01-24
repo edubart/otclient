@@ -202,6 +202,7 @@ private:
     int m_layers;
     int m_elevation;
     float m_opacity;
+    std::string m_customImage;
 
     std::vector<int> m_spritesIndex;
     std::vector<TexturePtr> m_textures;

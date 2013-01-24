@@ -327,6 +327,9 @@ void UITextEdit::update(bool focusCursor)
 
 void UITextEdit::setCursorPos(int pos)
 {
+    if(pos < 0)
+        pos = m_text.length();
+
     if(pos != m_cursorPos) {
         if(pos < 0)
             m_cursorPos = 0;
