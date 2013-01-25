@@ -17,24 +17,24 @@ OptionCheckBox < CheckBox
 MainWindow
   id: optionsWindow
   !text: tr('Options')
-  size: 350 310
+  size: 480 340
 
   @onEnter: modules.client_options.hide()
   @onEscape: modules.client_options.hide()
 
-  TabBarRounded
+  TabBarVertical
     id: optionsTabBar
     anchors.top: parent.top
     anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.bottom: parent.bottom
 
   Panel
     id: optionsTabContent
-    anchors.top: optionsTabBar.bottom
-    anchors.left: parent.left
+    anchors.top: optionsTabBar.top
+    anchors.left: optionsTabBar.right
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
-    margin-top: 10
+    anchors.bottom: optionsTabBar.bottom
+    margin-left: 10
 
   Button
     !text: tr('Ok')

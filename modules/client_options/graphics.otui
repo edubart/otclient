@@ -8,24 +8,26 @@ FrameRateScrollbar < HorizontalScrollBar
     self:setValue(value)
 
 Panel
-  Label
-    !text: tr('Graphics Engine:')
-    anchors.left: parent.left
-    anchors.top: parent.top
-
   ButtonBox
     id: opengl1
-    anchors.left: prev.right
-    anchors.verticalCenter: prev.verticalCenter
+    anchors.left: parent.left
+    anchors.top: parent.top
     text: OpenGL 1
     size: 80 20
-    margin-left: 6
 
   ButtonBox
     id: opengl2
     anchors.left: prev.right
     anchors.verticalCenter: prev.verticalCenter
     text: OpenGL 2
+    size: 80 20
+    margin-left: 4
+
+  ButtonBox
+    id: directx9
+    anchors.left: prev.right
+    anchors.verticalCenter: prev.verticalCenter
+    text: DirectX 9
     size: 80 20
     margin-left: 4
 
@@ -39,12 +41,17 @@ Panel
     !text: tr('Show frame rate')
 
   OptionCheckBox
-    id: fullscreen
-    !text: tr('Fullscreen')
+    id: enableLights
+    !text: tr('Enable lights')
 
   OptionCheckBox
-    id: dontStretchShrink
-    !text: tr("Don't stretch or shrink Game Window")
+    id: enableShaders
+    !text: tr('Enable shader effects')
+
+  OptionCheckBox
+    id: fullscreen
+    !text: tr('Fullscreen')
+    tooltip: Ctrl+Shift+F
 
   Label
     id: backgroundFrameRateLabel
@@ -52,7 +59,7 @@ Panel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 16
+    margin-top: 6
     @onSetup: |
       local value = modules.client_options.getOption('backgroundFrameRate')
       local text = value

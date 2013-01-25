@@ -1,9 +1,8 @@
 local defaultOptions = {
   vsync = false,
-  showFps = true,
-  showPing = true,
+  showFps = false,
+  showPing = false,
   fullscreen = false,
-  dontStretchShrink = false,
   classicControl = false,
   walkBooster = false,
   smartWalk = false,
@@ -15,38 +14,58 @@ local defaultOptions = {
   showLevelsInConsole = true,
   showPrivateMessagesInConsole = false,
   showPrivateMessagesOnScreen = true,
-  enableMusic = true,
   showLeftPanel = false,
   foregroundFrameRate = 61,
   backgroundFrameRate = 201,
-  ambientLight = 15,
-  painterEngine = 0
+  painterEngine = 0,
+  enableAudio = true,
+  enableMusicSound = true,
+  enableShaders = true,
+  musicSoundVolume = 100,
+  enableLights = true,
+  enableShaders = true,
+  ambientLight = 25,
+  enableEffectsSound = 0
 }
 
-local warningWindow
 local optionsWindow
 local optionsButton
 local optionsTabBar
 local options = {}
-local gamePanel
+local generalPanel
 local consolePanel
 local graphicsPanel
+local soundPanel
+local audioButton
 
 local function setupGraphicsEngines()
   local enginesRadioGroup = UIRadioGroup.create()
   local ogl1 = graphicsPanel:getChildById('opengl1')
   local ogl2 = graphicsPanel:getChildById('opengl2')
+  local dx9 = graphicsPanel:getChildById('directx9')
   enginesRadioGroup:addWidget(ogl1)
   enginesRadioGroup:addWidget(ogl2)
+  enginesRadioGroup:addWidget(dx9)
 
-  if g_graphics.getPainterEngine() == 2 then
-    enginesRadioGroup:selectWidget(ogl2)
+  if g_window.getPlatformType() == 'WIN32-EGL' then
+    enginesRadioGroup:selectWidget(dx9)
+    ogl1:setEnabled(false)
+    ogl2:setEnabled(false)
+    dx9:setEnabled(true)
   else
-    enginesRadioGroup:selectWidget(ogl1)
-  end
+    ogl1:setEnabled(g_graphics.isPainterEngineAvailable(1))
+    ogl2:setEnabled(g_graphics.isPainterEngineAvailable(2))
+    dx9:setEnabled(false)
+    if g_graphics.getPainterEngine() == 2 then
+      enginesRadioGroup:selectWidget(ogl2)
+    else
+      enginesRadioGroup:selectWidget(ogl1)
+    end
 
-  ogl1:setEnabled(g_graphics.isPainterEngineAvailable(1))
-  ogl2:setEnabled(g_graphics.isPainterEngineAvailable(2))
+    if g_app.getOs() ~= 'windows' then
+      dx9:hide()
+    end
+  end
 
   enginesRadioGroup.onSelectionChange = function(self, selected)
     if selected == ogl1 then
@@ -60,21 +79,9 @@ local function setupGraphicsEngines()
     graphicsPanel:getChildById('foregroundFrameRate'):disable()
     graphicsPanel:getChildById('foregroundFrameRateLabel'):disable()
   end
-end
 
-function displayWarning(widget, warning)
-  if warningWindow and warningWindow:isVisible() then
-    return
-  end
-  if widget:isChecked() then
-    local yesCallback = function() warningWindow:destroy() warningWindow=nil end
-    local noCallback = function() widget:setChecked(false) warningWindow:destroy() warningWindow=nil end
-
-    warningWindow = displayGeneralBox('Warning', tr(warning), {
-      { text='Yes', callback=yesCallback },
-      { text='No', callback=noCallback },
-      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
-  end
+  local shadersBox = graphicsPanel:getChildById('enableShaders')
+  shadersBox:setEnabled(g_graphics.getPainterEngine() == 2)
 end
 
 function init()
@@ -88,49 +95,45 @@ function init()
     end
   end
 
-  g_keyboard.bindKeyDown('Ctrl+D', function() toggle() end)
-  g_keyboard.bindKeyDown('Ctrl+F', function() toggleOption('fullscreen') end)
-  g_keyboard.bindKeyDown('Ctrl+Shift+D', function() toggleOption('walkBooster') end)
+  g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
+  --g_keyboard.bindKeyDown('Ctrl+D', function() toggleOption('walkBooster') end)
 
   optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
-  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options') .. ' (Ctrl+D)', '/images/topbuttons/options', toggle)
+  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
 
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  gamePanel = g_ui.loadUI('game')
-  optionsTabBar:addTab(tr('Game'), gamePanel)
+  generalPanel = g_ui.loadUI('game')
+  optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')
 
   consolePanel = g_ui.loadUI('console')
-  optionsTabBar:addTab(tr('Console'), consolePanel)
+  optionsTabBar:addTab(tr('Console'), consolePanel, '/images/optionstab/console')
 
   graphicsPanel = g_ui.loadUI('graphics')
-  optionsTabBar:addTab(tr('Graphics'), graphicsPanel)
+  optionsTabBar:addTab(tr('Graphics'), graphicsPanel, '/images/optionstab/graphics')
 
-  if g_game.isOfficialTibia() then
-    local optionWalkBooster = gamePanel:getChildById('walkBooster')
-    optionWalkBooster.onCheckChange = function(widget)
-      displayWarning(widget, "This feature could be detectable by official Tibia servers. Would like to continue?")
-      setOption(widget:getId(), widget:isChecked())
-    end
-  end
+  audioPanel = g_ui.loadUI('audio')
+  optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
+
+  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
 
   setupGraphicsEngines()
 end
 
 function terminate()
-  g_keyboard.unbindKeyDown('Ctrl+D')
-  g_keyboard.unbindKeyDown('Ctrl+F')
-  g_keyboard.unbindKeyDown('Ctrl+Shift+D')
+  --g_keyboard.unbindKeyDown('Ctrl+D')
+  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
   optionsWindow:destroy()
   optionsWindow = nil
   optionsButton:destroy()
   optionsButton = nil
   optionsTabBar = nil
-  gamePanel = nil
+  generalPanel = nil
   consolePanel = nil
   graphicsPanel = nil
+  audioPanel = nil
 end
 
 function toggle()
@@ -152,12 +155,7 @@ function hide()
 end
 
 function toggleOption(key)
-  local optionWidget = optionsWindow:recursiveGetChildById(key)
-  if optionWidget then
-    optionWidget:setChecked(not getOption(key))
-  else
-    setOption(key, not getOption(key))
-  end
+  setOption(key, not getOption(key))
 end
 
 function setOption(key, value)
@@ -176,12 +174,22 @@ function setOption(key, value)
     end)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
-  elseif key == 'dontStretchShrink' then
-    addEvent(function()
-      modules.game_interface.updateStretchShrink()
-    end)
-  elseif key == 'enableMusic' then
+  elseif key == 'enableAudio' then
     g_sounds.setAudioEnabled(value)
+    addEvent(function()
+      if value then
+        audioButton:setIcon('/images/topbuttons/audio')
+      else
+        audioButton:setIcon('/images/topbuttons/audio_mute')
+      end
+    end)
+  elseif key == 'enableMusicSound' then
+    g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
+  elseif key == 'musicSoundVolume' then
+    g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
+    if audioPanel then
+      audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
+    end
   elseif key == 'showLeftPanel' then
     addEvent(function()
       modules.game_interface.getLeftPanel():setOn(value)
@@ -208,19 +216,35 @@ function setOption(key, value)
       graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
     end
     g_app.setForegroundPaneMaxFps(value)
+  elseif key == 'enableLights' then
+    addEvent(function()
+      local map = modules.game_interface.getMapPanel()
+      map:setDrawLights(value and options['ambientLight'] < 100)
+
+      if graphicsPanel then
+        graphicsPanel:getChildById('ambientLight'):setEnabled(value)
+        graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
+      end
+    end)
+  elseif key == 'enableShaders' then
+    g_graphics.setShouldUseShaders(value)
   elseif key == 'ambientLight' then
     addEvent(function()
-      local map = rootWidget:recursiveGetChildById('gameMapPanel')
+      local map = modules.game_interface.getMapPanel()
       if graphicsPanel then
         graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
       end
-      if map then
-        map:setMinimumAmbientLight(value/100)
-        map:setDrawLights(value < 100)
-      end
+      map:setMinimumAmbientLight(value/100)
+      map:setDrawLights(options['enableLights'] and value < 100)
     end)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
+    addEvent(function()
+      if graphicsPanel then
+        local shadersBox = graphicsPanel:getChildById('enableShaders')
+        shadersBox:setEnabled(value == 2)
+      end
+    end)
   end
   g_settings.set(key, value)
   options[key] = value
@@ -230,4 +254,6 @@ function getOption(key)
   return options[key]
 end
 
-
+function addTab(name, panel, icon)
+  optionsTabBar:addTab(name, panel, icon)
+end

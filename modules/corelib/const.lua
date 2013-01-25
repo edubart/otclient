@@ -296,7 +296,7 @@ KeyCodeDescs = {
   [KeyNumpad6] = 'Numpad6',
   [KeyNumpad7] = 'Numpad7',
   [KeyNumpad8] = 'Numpad8',
-  [KeyNumpad9] = 'Numpad9'
+  [KeyNumpad9] = 'Numpad9',
 }
 
 NetworkMessageTypes = {
@@ -307,5 +307,10 @@ NetworkMessageTypes = {
   U64 = 5,
   NumberString = 6,
   String = 7,
-  Table = 8
+  Table = 8,
+}
+
+SoundChannels = {
+  Music = 1,
+  Ambient = 2,
 }
