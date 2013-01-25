@@ -253,27 +253,28 @@ function addKeyCombo(messageBox, keyCombo, keySettings)
   local label = nil
   if currentHotkeysList:getChildById(keyCombo) == nil then
     local label = g_ui.createWidget('HotkeyListLabel')
-
-    local children = currentHotkeysList:getChildren()
-    if #children == 0 then
-      currentHotkeysList:addChild(label)
-    else
-      local add = false
-      for i=1,#children do
-        if keyCombo:operatorLess(children[i]:getId()) then
-          currentHotkeysList:insertChild(i, label)
-          add = true
-          break
-        end
-      end
-      if not add then
-        currentHotkeysList:addChild(label)
-      end
-    end
-
     label:setId(keyCombo)
     label:setColor(HotkeyColors.text)
     label:setText(keyCombo .. ': ')
+
+    local children = currentHotkeysList:getChildren()
+    children[#children+1] = label
+    table.sort(children, function(a,b)
+      if a:getId():len() < b:getId():len() then
+        return true
+      elseif a:getId():len() == b:getId():len() then
+        return a:getId() < b:getId()
+      else
+        return false
+      end
+    end)
+    for i=1,#children do
+      if children[i] == label then
+        currentHotkeysList:insertChild(i, label)
+        break
+      end
+    end
+
     if keySettings then
       hotkeyLabelSelectedOnList = label
       label.keyCombo = keyCombo
