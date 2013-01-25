@@ -189,6 +189,7 @@ void Game::processGameStart()
 
 void Game::processGameEnd()
 {
+    m_online = false;
     g_lua.callGlobalField("g_game", "onGameEnd");
 
     // reset game state

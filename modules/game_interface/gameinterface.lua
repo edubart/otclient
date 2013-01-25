@@ -640,7 +640,7 @@ function getBottomPanel()
 end
 
 function onLeftPanelVisibilityChange(leftPanel, visible)
-  if not visible then
+  if not visible and g_game.isOnline() then
     local children = leftPanel:getChildren()
     for i=1,#children do
       children[i]:setParent(gameRightPanel)
