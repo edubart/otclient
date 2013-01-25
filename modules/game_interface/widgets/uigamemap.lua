@@ -17,7 +17,7 @@ function UIGameMap:onDragEnter(mousePos)
 
   self.currentDragThing = thing
 
-  g_mouse.setCursor('target')
+  g_mouse.pushCursor('target')
   self.allowNextRelease = false
   return true
 end
@@ -25,7 +25,7 @@ end
 function UIGameMap:onDragLeave(droppedWidget, mousePos)
   self.currentDragThing = nil
   self.hoveredWho = nil
-  g_mouse.restoreCursor()
+  g_mouse.popCursor('target')
   return true
 end
 

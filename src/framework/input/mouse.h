@@ -30,8 +30,8 @@ public:
 
     void loadCursors(std::string filename);
     void addCursor(const std::string& name, const std::string& file, const Point& hotSpot);
-    bool setCursor(const std::string& name);
-    void restoreCursor();
+    bool pushCursor(const std::string& name);
+    void popCursor(const std::string& name);
     bool isCursorChanged();
     bool isPressed(Fw::MouseButton mouseButton);
 
@@ -39,7 +39,7 @@ private:
     void checkStackSize();
 
     std::map<std::string, int> m_cursors;
-    std::vector<int> m_cursorStack;
+    std::deque<int> m_cursorStack;
 };
 
 extern Mouse g_mouse;

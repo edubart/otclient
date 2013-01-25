@@ -222,7 +222,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
 
   show()
 
-  g_mouse.restoreCursor()
+  g_mouse.popCursor('target')
   self:ungrabMouse()
   self:destroy()
 end
@@ -235,7 +235,7 @@ function startChooseItem()
   connect(mouseGrabberWidget, { onMouseRelease = onChooseItemMouseRelease })
 
   mouseGrabberWidget:grabMouse()
-  g_mouse.setCursor('target-cursor')
+  g_mouse.pushCursor('target-cursor')
 
   hide()
 end

@@ -296,7 +296,7 @@ function onMouseGrabberRelease(self, mousePosition, mouseButton)
   end
 
   selectedThing = nil
-  g_mouse.restoreCursor()
+  g_mouse.popCursor('target')
   self:ungrabMouse()
   return true
 end
@@ -331,14 +331,14 @@ function startUseWith(thing)
   selectedType = 'use'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  g_mouse.setCursor('target')
+  g_mouse.pushCursor('target')
 end
 
 function startTradeWith(thing)
   selectedType = 'trade'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  g_mouse.setCursor('target')
+  g_mouse.pushCursor('target')
 end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
