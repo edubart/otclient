@@ -38,7 +38,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
     end
   end
 
-  local selfHeight = self:getHeight() - (self:getMarginTop() + self:getMarginBottom() + self:getPaddingTop() + self:getPaddingBottom())
+  local selfHeight = self:getHeight() - (self:getPaddingTop() + self:getPaddingBottom())
   if sumHeight <= selfHeight then
     return
   end

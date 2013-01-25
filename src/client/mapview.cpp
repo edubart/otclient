@@ -37,6 +37,7 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
+#include <boost/concept_check.hpp>
 
 
 enum {
@@ -163,16 +164,8 @@ void MapView::draw(const Rect& rect)
     if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
         fadeOpacity = std::min(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
-    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
-    if(isFollowingCreature())
-        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
-
-    Size srcSize = rect.size();
-    Size srcVisible = m_visibleDimension * m_tileSize;
-    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
-    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
-    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
-    Rect srcRect = Rect(drawOffset, srcSize);
+    Rect srcRect = calcFramebufferSource(rect.size());
+    Point drawOffset = srcRect.topLeft();
 
     if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
         Rect framebufferRect = Rect(0,0, m_drawDimension * m_tileSize);
@@ -542,6 +535,49 @@ void MapView::setCameraPosition(const Position& pos)
     m_follow = false;
     m_customCameraPosition = pos;
     requestVisibleTilesCacheUpdate();
+}
+
+Position MapView::getPosition(const Point& point, const Size& mapSize)
+{
+    Position cameraPosition = getCameraPosition();
+
+    // if we have no camera, its impossible to get the tile
+    if(!cameraPosition.isValid())
+        return Position();
+
+    Rect srcRect = calcFramebufferSource(mapSize);
+    float sh = srcRect.width() / (float)mapSize.width();
+    float sv = srcRect.height() / (float)mapSize.height();
+
+    Point framebufferPos = Point(point.x * sh, point.y * sv);
+    Point centerOffset = (framebufferPos + srcRect.topLeft()) / m_tileSize;
+
+    Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2,2);
+    if(tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
+        return Position();
+
+    Position position = Position(tilePos2D.x, tilePos2D.y, 0) + cameraPosition;
+
+    if(!position.isValid())
+        return Position();
+
+    return position;
+}
+
+Rect MapView::calcFramebufferSource(const Size& destSize)
+{
+    float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
+    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
+    if(isFollowingCreature())
+        drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
+
+    Size srcSize = destSize;
+    Size srcVisible = m_visibleDimension * m_tileSize;
+    srcSize.scale(srcVisible, Fw::KeepAspectRatio);
+    drawOffset.x += (srcVisible.width() - srcSize.width()) / 2;
+    drawOffset.y += (srcVisible.height() - srcSize.height()) / 2;
+
+    return Rect(drawOffset, srcSize);
 }
 
 int MapView::calcFirstVisibleFloor()

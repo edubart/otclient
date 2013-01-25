@@ -15,10 +15,6 @@ Panel
     id: enableMusicSound
     !text: tr('Enable music sound')
 
-  OptionCheckBox
-    id: enableEffectsSound
-    !text: tr('Enable effects sound')
-
   Label
     id: musicSoundVolumeLabel
     !text: tr('Music volume: %d', 100)

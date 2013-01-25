@@ -21,7 +21,8 @@ function init()
     onBaseSkillChange = onBaseSkillChange
   })
   connect(g_game, {
-    onGameStart = refresh
+    onGameStart = refresh,
+    onGameEnd = offline
   })
 
   skillsButton = modules.client_topmenu.addRightGameToggleButton('skillsButton', tr('Skills') .. ' (Ctrl+S)', '/images/topbuttons/skills', toggle)
@@ -55,12 +56,20 @@ function terminate()
   })
   disconnect(g_game, {
     onGameStart = refresh,
-    onGameEnd = refresh
+    onGameEnd = offline
   })
 
   g_keyboard.unbindKeyDown('Ctrl+S')
   skillsButton:destroy()
   skillsWindow:destroy()
+end
+
+function expForLevel(level)
+  return math.floor((50*level*level*level)/3 - 100*level*level + (850*level)/3 - 200)
+end
+
+function expToAdvance(currentLevel, currentExp)
+  return expForLevel(currentLevel+1) - currentExp
 end
 
 function resetSkillColor(id)
@@ -180,6 +189,9 @@ function refresh()
   local player = g_game.getLocalPlayer()
   if not player then return end
 
+  if expSpeedEvent then expSpeedEvent:cancel() end
+  expSpeedEvent = cycleEvent(checkExpSpeed, 30*1000)
+
   onExperienceChange(player, player:getExperience())
   onLevelChange(player, player:getLevel(), player:getLevelPercent())
   onHealthChange(player, player:getHealth(), player:getMaxHealth())
@@ -204,6 +216,10 @@ function refresh()
   skillsWindow:setContentMaximumHeight(contentsPanel:getChildrenRect().height)
 end
 
+function offline()
+  expSpeedEvent:cancel()
+end
+
 function toggle()
   if skillsButton:isOn() then
     skillsWindow:close()
@@ -211,6 +227,22 @@ function toggle()
   else
     skillsWindow:open()
     skillsButton:setOn(true)
+  end
+end
+
+function checkExpSpeed()
+  local player = g_game.getLocalPlayer()
+  local currentExp = player:getExperience()
+  local currentTime = g_clock.seconds()
+  if player.lastExps ~= nil then
+    player.expSpeed = (currentExp - player.lastExps[1][1])/(currentTime - player.lastExps[1][2])
+    onLevelChange(player, player:getLevel(), player:getLevelPercent())
+  else
+    player.lastExps = {}
+  end
+  table.insert(player.lastExps, {currentExp, currentTime})
+  if #player.lastExps > 10 then
+    table.remove(player.lastExps, 1)
   end
 end
 
@@ -231,21 +263,36 @@ function onSkillButtonClick(button)
 end
 
 function onExperienceChange(localPlayer, value)
-  setSkillValue('experience', tr(value))
+  setSkillValue('experience', value)
 end
 
 function onLevelChange(localPlayer, value, percent)
-  setSkillValue('level', tr(value))
-  setSkillPercent('level', percent, tr('You have %s percent to go', 100 - percent))
+  setSkillValue('level', value)
+  local text = tr('You have %s percent to go', 100 - percent) .. '\n' ..
+               tr('%s of experience left', expToAdvance(localPlayer:getLevel(), localPlayer:getExperience()))
+
+  if localPlayer.expSpeed ~= nil then
+     local expPerHour = math.floor(localPlayer.expSpeed * 3600)
+     if expPerHour > 0 then
+        local nextLevelExp = expForLevel(localPlayer:getLevel()+1)
+        local hoursLeft = (nextLevelExp - localPlayer:getExperience()) / expPerHour
+        local minutesLeft = math.floor((hoursLeft - math.floor(hoursLeft))*60)
+        hoursLeft = math.floor(hoursLeft)
+        text = text .. '\n' .. tr('%d of experience per hour', expPerHour)
+        text = text .. '\n' .. tr('Next level in %d hours and %d minutes', hoursLeft, minutesLeft)
+     end
+  end
+
+  setSkillPercent('level', percent, text)
 end
 
 function onHealthChange(localPlayer, health, maxHealth)
-  setSkillValue('health', tr(health))
+  setSkillValue('health', health)
   checkAlert('health', health, maxHealth, 30)
 end
 
 function onManaChange(localPlayer, mana, maxMana)
-  setSkillValue('mana', tr(mana))
+  setSkillValue('mana', mana)
   checkAlert('mana', mana, maxMana, 30)
 end
 

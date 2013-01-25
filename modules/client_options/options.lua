@@ -25,7 +25,6 @@ local defaultOptions = {
   enableLights = true,
   enableShaders = true,
   ambientLight = 25,
-  enableEffectsSound = 0
 }
 
 local optionsWindow

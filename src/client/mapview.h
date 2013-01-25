@@ -107,9 +107,12 @@ public:
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }
 
+    Position getPosition(const Point& point, const Size& mapSize);
+
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
 private:
+    Rect calcFramebufferSource(const Size& destSize);
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
     Point transformPositionTo2D(const Position& position, const Position& relativePosition) {

@@ -4,6 +4,9 @@ GameSidePanel < UIMiniWindowContainer
   image-border: 4
   padding: 4
   width: 198
+  layout:
+    type: verticalBox
+    //spacing: 1
 
 GameBottomPanel < Panel
   image-source: /images/ui/panel_bottom
@@ -13,6 +16,9 @@ GameMapPanel < UIGameMap
   padding: 4
   image-source: /images/ui/panel_map
   image-border: 4
+
+  $on:
+    padding: 0
 
 UIWidget
   id: gameRootPanel
@@ -36,7 +42,6 @@ UIWidget
 
   GameSidePanel
     id: gameLeftPanel
-    layout: verticalBox
     anchors.left: parent.left
     anchors.top: parent.top
     anchors.bottom: parent.bottom
@@ -49,7 +54,6 @@ UIWidget
 
   GameSidePanel
     id: gameRightPanel
-    layout: verticalBox
     anchors.right: parent.right
     anchors.top: parent.top
     anchors.bottom: parent.bottom

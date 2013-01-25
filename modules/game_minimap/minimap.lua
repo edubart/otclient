@@ -189,7 +189,7 @@ function addMapFlag(pos, icon, message, flagId, version)
   flagWidget.icon = icon
   flagWidget.description = message
   if message and message:len() > 0 then
-    flagWidget:setTooltip(tr(message))
+    flagWidget:setTooltip(message)
   end
   flagWidget.id = flagId
   flagWidget.version = version

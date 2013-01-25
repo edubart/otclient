@@ -33,7 +33,7 @@ ConsoleTabBarPanel < MoveableTabBarPanel
       align-bottom: true
     border-width: 1
     border-color: #202327
-    background: #00000044
+    background: #00000066
     inverted-scroll: true
     padding: 1
 
@@ -45,8 +45,6 @@ ConsoleTabBarPanel < MoveableTabBarPanel
     layout:
       type: verticalBox
       align-bottom: true
-    border-width: 1
-    border-color: #202327
     inverted-scroll: true
     padding: 1
     @onScrollbarChange: |

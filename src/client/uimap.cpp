@@ -128,29 +128,7 @@ Position UIMap::getPosition(const Point& mousePos)
         return Position();
 
     Point relativeMousePos = mousePos - m_mapRect.topLeft();
-    Size visibleSize = getVisibleDimension() * m_mapView->getTileSize();
-    Position cameraPosition = getCameraPosition();
-
-    // if we have no camera, its impossible to get the tile
-    if(!cameraPosition.isValid())
-        return Position();
-
-    float scaleFactor = m_mapView->getTileSize() / (float)Otc::TILE_PIXELS;
-    float horizontalStretchFactor = visibleSize.width() / (float)m_mapRect.width();
-    float verticalStretchFactor = visibleSize.height() / (float)m_mapRect.height();
-
-    Point tilePos2D = Point(relativeMousePos.x * horizontalStretchFactor, relativeMousePos.y * verticalStretchFactor);
-
-    if(m_mapView->isFollowingCreature())
-        tilePos2D += getFollowingCreature()->getWalkOffset() * scaleFactor;
-    tilePos2D /= m_mapView->getTileSize();
-
-    Point visibleCenterOffset = m_mapView->getVisibleCenterOffset();
-    Position position = Position(1 + (int)tilePos2D.x - visibleCenterOffset.x, 1 + (int)tilePos2D.y - visibleCenterOffset.y, 0) + cameraPosition;
-    if(!position.isValid())
-        return Position();
-
-    return position;
+    return m_mapView->getPosition(relativeMousePos, m_mapRect.size());
 }
 
 TilePtr UIMap::getTile(const Point& mousePos)
