@@ -270,10 +270,9 @@ void Application::registerLuaFunctions()
 
     // Input
     g_lua.registerSingletonClass("g_mouse");
-    g_lua.bindSingletonFunction("g_mouse", "setTargetCursor", &Mouse::setTargetCursor, &g_mouse);
-    g_lua.bindSingletonFunction("g_mouse", "setHorizontalCursor", &Mouse::setHorizontalCursor, &g_mouse);
-    g_lua.bindSingletonFunction("g_mouse", "setVerticalCursor", &Mouse::setVerticalCursor, &g_mouse);
-    g_lua.bindSingletonFunction("g_mouse", "setTextCursor", &Mouse::setTextCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "loadCursors", &Mouse::loadCursors, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "addCursor", &Mouse::addCursor, &g_mouse);
+    g_lua.bindSingletonFunction("g_mouse", "setCursor", &Mouse::setCursor, &g_mouse);
     g_lua.bindSingletonFunction("g_mouse", "restoreCursor", &Mouse::restoreCursor, &g_mouse);
     g_lua.bindSingletonFunction("g_mouse", "isCursorChanged", &Mouse::isCursorChanged, &g_mouse);
     g_lua.bindSingletonFunction("g_mouse", "isPressed", &Mouse::isPressed, &g_mouse);

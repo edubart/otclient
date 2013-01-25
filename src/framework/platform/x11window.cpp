@@ -37,6 +37,7 @@ X11Window::X11Window()
     m_rootWindow = 0;
     m_colormap = 0;
     m_cursor = 0;
+    m_hiddenCursor = 0;
     m_xim = 0;
     m_xic = 0;
     m_screen = 0;
@@ -218,6 +219,20 @@ void X11Window::init()
 
 void X11Window::terminate()
 {
+    if(m_cursor != None) {
+        XUndefineCursor(m_display, m_window);
+        m_cursor = None;
+    }
+
+    if(m_hiddenCursor) {
+        XFreeCursor(m_display, m_hiddenCursor);
+        m_hiddenCursor = 0;
+    }
+
+    for(Cursor cursor : m_cursors)
+        XFreeCursor(m_display, cursor);
+    m_cursors.clear();
+
     if(m_window) {
         XDestroyWindow(m_display, m_window);
         m_window = 0;
@@ -842,47 +857,40 @@ void X11Window::hideMouse()
     if(m_cursor != None)
         restoreMouseCursor();
 
-    char bm[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-    Pixmap pix = XCreateBitmapFromData(m_display, m_window, bm, 8, 8);
-    XColor black;
-    memset(&black, 0, sizeof(black));
-    black.flags = DoRed | DoGreen | DoBlue;
-    m_cursor = XCreatePixmapCursor(m_display, pix, pix, &black, &black, 0, 0);
-    XFreePixmap(m_display, pix);
+    if(m_hiddenCursor == None) {
+        char bm[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+        Pixmap pix = XCreateBitmapFromData(m_display, m_window, bm, 8, 8);
+        XColor black;
+        memset(&black, 0, sizeof(black));
+        black.flags = DoRed | DoGreen | DoBlue;
+        m_hiddenCursor = XCreatePixmapCursor(m_display, pix, pix, &black, &black, 0, 0);
+        XFreePixmap(m_display, pix);
+    }
+
+    m_cursor = m_hiddenCursor;
+    XDefineCursor(m_display, m_window, m_cursor);
+}
+
+void X11Window::setMouseCursor(int cursorId)
+{
+    if(cursorId >= (int)m_cursors.size() || cursorId < 0)
+        return;
+
+    if(m_cursor != None)
+        restoreMouseCursor();
+
+    m_cursor = m_cursors[cursorId];
     XDefineCursor(m_display, m_window, m_cursor);
 }
 
 void X11Window::restoreMouseCursor()
 {
     XUndefineCursor(m_display, m_window);
-    if(m_cursor != None) {
-        XFreeCursor(m_display, m_cursor);
-        m_cursor = None;
-    }
+    m_cursor = None;
 }
 
-void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
+int X11Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
 {
-    ImagePtr image = Image::load(file);
-
-    if(!image) {
-        g_logger.traceError(stdext::format("unable to load image file %s", file));
-        return;
-    }
-
-    if(image->getBpp() != 4) {
-        g_logger.error("the cursor image must have 4 channels");
-        return;
-    }
-
-    if(image->getWidth() != 32 || image->getHeight() != 32) {
-        g_logger.error("the cursor image must have 32x32 dimension");
-        return;
-    }
-
-    if(m_cursor != None)
-        restoreMouseCursor();
-
     int width = image->getWidth();
     int height = image->getHeight();
     int numbits = width * height;
@@ -911,10 +919,12 @@ void X11Window::setMouseCursor(const std::string& file, const Point& hotSpot)
 
     Pixmap cp = XCreateBitmapFromData(m_display, m_window, (char*)&mapBits[0], width, height);
     Pixmap mp = XCreateBitmapFromData(m_display, m_window, (char*)&maskBits[0], width, height);
-    m_cursor = XCreatePixmapCursor(m_display, cp, mp, &fg, &bg, hotSpot.x, hotSpot.y);
-    XDefineCursor(m_display, m_window, m_cursor);
+    Cursor cursor = XCreatePixmapCursor(m_display, cp, mp, &fg, &bg, hotSpot.x, hotSpot.y);
     XFreePixmap(m_display, cp);
     XFreePixmap(m_display, mp);
+
+    m_cursors.push_back(cursor);
+    return m_cursors.size()-1;
 }
 
 void X11Window::setTitle(const std::string& title)

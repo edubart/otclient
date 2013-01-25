@@ -26,6 +26,7 @@
 #include <framework/global.h>
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
+#include <framework/graphics/declarations.h>
 
 //@bindsingleton g_window
 class PlatformWindow
@@ -48,12 +49,14 @@ public:
     virtual void maximize() = 0;
     virtual void poll() = 0;
     virtual void swapBuffers() = 0;
-    virtual void restoreMouseCursor() = 0;
     virtual void showMouse() = 0;
     virtual void hideMouse() = 0;
     virtual void displayFatalError(const std::string& message) { }
 
-    virtual void setMouseCursor(const std::string& file, const Point& hotSpot) = 0;
+    int loadMouseCursor(const std::string& file, const Point& hotSpot);
+    virtual void setMouseCursor(int cursorId) = 0;
+    virtual void restoreMouseCursor() = 0;
+
     virtual void setTitle(const std::string& title) = 0;
     virtual void setMinimumSize(const Size& minimumSize) = 0;
     virtual void setFullscreen(bool fullscreen) = 0;
@@ -92,6 +95,8 @@ public:
     void setOnInputEvent(const OnInputEventCallback& onInputEvent) { m_onInputEvent = onInputEvent; }
 
 protected:
+    virtual int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) = 0;
+
     void updateUnmaximizedCoords();
 
     void processKeyDown(Fw::Key keyCode);

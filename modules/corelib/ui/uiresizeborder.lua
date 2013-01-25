@@ -27,10 +27,10 @@ function UIResizeBorder:onHoverChange(hovered)
   if hovered then
     if g_mouse.isCursorChanged() or g_mouse.isPressed() then return end
     if self:getWidth() > self:getHeight() then
-      g_mouse.setVerticalCursor()
+      g_mouse.setCursor('vertical')
       self.vertical = true
     else
-      g_mouse.setHorizontalCursor()
+      g_mouse.setCursor('horizontal')
       self.vertical = false
     end
     self.hovering = true

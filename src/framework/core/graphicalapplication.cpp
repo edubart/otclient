@@ -33,6 +33,7 @@
 
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
+#include <framework/input/mouse.h>
 #endif
 
 GraphicalApplication g_app;
@@ -47,6 +48,8 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnResize(std::bind(&GraphicalApplication::resize, this, std::placeholders::_1));
     g_window.setOnInputEvent(std::bind(&GraphicalApplication::inputEvent, this, std::placeholders::_1));
     g_window.setOnClose(std::bind(&GraphicalApplication::close, this));
+
+    g_mouse.init();
 
     // initialize ui
     g_ui.init();
@@ -86,6 +89,8 @@ void GraphicalApplication::terminate()
     // terminate sound
     g_sounds.terminate();
 #endif
+
+    g_mouse.terminate();
 
     // terminate graphics
     m_foreground = nullptr;

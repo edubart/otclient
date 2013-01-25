@@ -211,17 +211,22 @@ void WIN32Window::init()
 
 void WIN32Window::terminate()
 {
+    SetCursor(NULL);
+    if(m_defaultCursor) {
+        DestroyCursor(m_defaultCursor);
+        m_defaultCursor = NULL;
+    }
+
+    for(HCURSOR& cursor : m_cursors)
+        DestroyCursor(cursor);
+    m_cursors.clear();
+
     internalDestroyGLContext();
 
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
             g_logger.error("Release device context failed.");
         m_deviceContext = NULL;
-    }
-
-    if(m_cursor) {
-        DestroyCursor(m_cursor);
-        m_cursor = NULL;
     }
 
     if(m_window) {
@@ -744,16 +749,6 @@ void WIN32Window::swapBuffers()
 #endif
 }
 
-void WIN32Window::restoreMouseCursor()
-{
-    if(m_cursor) {
-        DestroyCursor(m_cursor);
-        m_cursor = NULL;
-        SetCursor(m_defaultCursor);
-        ShowCursor(true);
-    }
-}
-
 void WIN32Window::showMouse()
 {
     ShowCursor(true);
@@ -769,28 +764,8 @@ void WIN32Window::displayFatalError(const std::string& message)
     MessageBoxW(m_window, stdext::latin1_to_utf16(message).c_str(), L"FATAL ERROR", MB_OK | MB_ICONERROR);
 }
 
-void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
+int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
 {
-    ImagePtr image = Image::load(file);
-
-    if(!image) {
-        g_logger.traceError(stdext::format("unable to load cursor image file %s", file));
-        return;
-    }
-
-    if(image->getBpp() != 4) {
-        g_logger.error("the cursor image must have 4 channels");
-        return;
-    }
-
-    if(image->getWidth() != 32 || image->getHeight() != 32) {
-        g_logger.error("the cursor image must have 32x32 dimension");
-        return;
-    }
-
-    if(m_cursor != NULL)
-        DestroyCursor(m_cursor);
-
     int width = image->getWidth();
     int height = image->getHeight();
     int numbits = width * height;
@@ -808,8 +783,28 @@ void WIN32Window::setMouseCursor(const std::string& file, const Point& hotSpot)
         } // otherwise 0xff000000 => black
     }
 
-    m_cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    m_cursors.push_back(cursor);
+    return m_cursors.size()-1;
+}
+
+void WIN32Window::setMouseCursor(int cursorId)
+{
+    if(cursorId >= (int)m_cursors.size() || cursorId < 0)
+        return;
+
+    m_cursor = m_cursors[cursorId];
     SetCursor(m_cursor);
+    ShowCursor(true);
+}
+
+void WIN32Window::restoreMouseCursor()
+{
+    if(m_cursor) {
+        m_cursor = NULL;
+        SetCursor(m_defaultCursor);
+        ShowCursor(true);
+    }
 }
 
 void WIN32Window::setTitle(const std::string& title)

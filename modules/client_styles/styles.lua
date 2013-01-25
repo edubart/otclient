@@ -19,6 +19,8 @@ function init()
       g_particles.importParticle('/particles/' .. particle)
     end
   end
+
+  g_mouse.loadCursors('/cursors/cursors')
 end
 
 function terminate()

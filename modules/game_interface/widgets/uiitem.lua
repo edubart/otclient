@@ -6,7 +6,7 @@ function UIItem:onDragEnter(mousePos)
 
   self:setBorderWidth(1)
   self.currentDragThing = item
-  g_mouse.setTargetCursor()
+  g_mouse.setCursor('target')
   return true
 end
 

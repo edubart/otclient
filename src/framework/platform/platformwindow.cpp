@@ -32,8 +32,31 @@ X11Window window;
 #endif
 
 #include <framework/core/clock.h>
+#include <framework/graphics/image.h>
 
 PlatformWindow& g_window = window;
+
+int PlatformWindow::loadMouseCursor(const std::string& file, const Point& hotSpot)
+{
+    ImagePtr image = Image::load(file);
+
+    if(!image) {
+        g_logger.traceError(stdext::format("unable to load cursor image file %s", file));
+        return -1;
+    }
+
+    if(image->getBpp() != 4) {
+        g_logger.error("the cursor image must have 4 channels");
+        return -1;
+    }
+
+    if(image->getWidth() != 32 || image->getHeight() != 32) {
+        g_logger.error("the cursor image must have 32x32 dimension");
+        return -1;
+    }
+
+    return internalLoadMouseCursor(image, hotSpot);
+}
 
 void PlatformWindow::updateUnmaximizedCoords()
 {

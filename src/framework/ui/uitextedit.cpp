@@ -590,7 +590,7 @@ void UITextEdit::onHoverChange(bool hovered)
 {
     if(m_changeCursorImage) {
         if(hovered)
-            g_mouse.setTextCursor();
+            g_mouse.setCursor("text");
         else
             g_mouse.restoreCursor();
     }

@@ -25,16 +25,21 @@
 class Mouse
 {
 public:
-    void setTargetCursor();
-    void setHorizontalCursor();
-    void setVerticalCursor();
-    void setTextCursor();
+    void init();
+    void terminate();
+
+    void loadCursors(std::string filename);
+    void addCursor(const std::string& name, const std::string& file, const Point& hotSpot);
+    bool setCursor(const std::string& name);
     void restoreCursor();
     bool isCursorChanged();
     bool isPressed(Fw::MouseButton mouseButton);
 
 private:
-    bool m_cursorChanged;
+    void checkStackSize();
+
+    std::map<std::string, int> m_cursors;
+    std::vector<int> m_cursorStack;
 };
 
 extern Mouse g_mouse;

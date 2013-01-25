@@ -331,14 +331,14 @@ function startUseWith(thing)
   selectedType = 'use'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  g_mouse.setTargetCursor()
+  g_mouse.setCursor('target')
 end
 
 function startTradeWith(thing)
   selectedType = 'trade'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
-  g_mouse.setTargetCursor()
+  g_mouse.setCursor('target')
 end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)

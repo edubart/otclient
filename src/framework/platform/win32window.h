@@ -61,12 +61,13 @@ public:
     void maximize();
     void poll();
     void swapBuffers();
-    void restoreMouseCursor();
     void showMouse();
     void hideMouse();
     void displayFatalError(const std::string& message);
 
-    void setMouseCursor(const std::string& file, const Point& hotSpot);
+    void setMouseCursor(int cursorId);
+    void restoreMouseCursor();
+
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);
     void setFullscreen(bool fullscreen);
@@ -78,11 +79,15 @@ public:
     std::string getClipboardText();
     std::string getPlatformType();
 
+protected:
+    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
+
 private:
     Rect getClientRect();
     Rect getWindowRect();
     Rect adjustWindowRect(const Rect& rect);
 
+    std::vector<HCURSOR> m_cursors;
     HWND m_window;
     HINSTANCE m_instance;
     HDC m_deviceContext;

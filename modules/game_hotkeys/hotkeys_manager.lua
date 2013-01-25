@@ -235,7 +235,7 @@ function startChooseItem()
   connect(mouseGrabberWidget, { onMouseRelease = onChooseItemMouseRelease })
 
   mouseGrabberWidget:grabMouse()
-  g_mouse.setTargetCursor()
+  g_mouse.setCursor('target-cursor')
 
   hide()
 end

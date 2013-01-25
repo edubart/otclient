@@ -23,46 +23,82 @@
 #include "mouse.h"
 #include <framework/ui/uiwidget.h>
 #include <framework/platform/platformwindow.h>
+#include <framework/core/resourcemanager.h>
 
 Mouse g_mouse;
 
-void Mouse::setTargetCursor()
+void Mouse::init()
 {
-    //TODO: configure this in lua
-    g_window.setMouseCursor("/images/cursors/targetcursor", Point(9, 9));
-    m_cursorChanged = true;
 }
 
-void Mouse::setHorizontalCursor()
+void Mouse::terminate()
 {
-    g_window.setMouseCursor("/images/cursors/horizontal", Point(9, 4));
-    m_cursorChanged = true;
+    m_cursors.clear();
 }
 
-void Mouse::setVerticalCursor()
+void Mouse::loadCursors(std::string filename)
 {
-    g_window.setMouseCursor("/images/cursors/vertical", Point(4, 9));
-    m_cursorChanged = true;
+    filename = g_resources.guessFileType(filename, "otml");
+    try {
+        OTMLDocumentPtr doc = OTMLDocument::parse(filename);
+        OTMLNodePtr cursorsNode = doc->at("Cursors");
+
+        for(const OTMLNodePtr& cursorNode : cursorsNode->children())
+            addCursor(cursorNode->tag(),
+                      stdext::resolve_path(cursorNode->valueAt("image"), cursorNode->source()),
+                      cursorNode->valueAt<Point>("hot-spot"));
+    } catch(stdext::exception& e) {
+        g_logger.error(stdext::format("unable to load cursors file: %s", e.what()));
+    }
 }
 
-void Mouse::setTextCursor()
+void Mouse::addCursor(const std::string& name, const std::string& file, const Point& hotSpot)
 {
-    g_window.setMouseCursor("/images/cursors/text", Point(4, 9));
-    m_cursorChanged = true;
+    int cursorId = g_window.loadMouseCursor(file, hotSpot);
+    if(cursorId >= 0) {
+        m_cursors[name] = cursorId;
+    } else
+        g_logger.error(stdext::format("unable to load cursor %s", name));
+}
+
+bool Mouse::setCursor(const std::string& name)
+{
+    auto it = m_cursors.find(name);
+    if(it == m_cursors.end())
+        return false;
+
+    int cursorId = it->second;
+    g_window.setMouseCursor(cursorId);
+    m_cursorStack.push_back(cursorId);
+    return true;
 }
 
 void Mouse::restoreCursor()
 {
-    g_window.restoreMouseCursor();
-    m_cursorChanged = false;
+    if(m_cursorStack.size() == 0)
+        return;
+
+    m_cursorStack.pop_back();
+    if(m_cursorStack.size() > 0)
+        g_window.setMouseCursor(m_cursorStack.back());
+    else
+        g_window.restoreMouseCursor();
 }
 
 bool Mouse::isCursorChanged()
 {
-    return m_cursorChanged;
+    return m_cursorStack.size() > 0;
 }
 
 bool Mouse::isPressed(Fw::MouseButton mouseButton)
 {
     return g_window.isMouseButtonPressed(mouseButton);
+}
+
+void Mouse::checkStackSize()
+{
+    if(m_cursorStack.size() > 5) {
+        g_logger.error("mouse cursor stack is too long");
+        m_cursorStack.resize(5);
+    }
 }
