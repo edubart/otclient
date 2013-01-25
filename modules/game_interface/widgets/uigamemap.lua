@@ -51,7 +51,9 @@ function UIGameMap:onDrop(widget, mousePos)
 end
 
 function UIGameMap:onMousePress()
-  self.allowNextRelease = true
+  if not self:isDragging() then
+    self.allowNextRelease = true
+  end
 end
 
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)

@@ -529,6 +529,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         return true
       else
         g_game.use(useThing)
+        return true
       end
       return true
     elseif lookThing and keyboardModifiers == KeyboardShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
