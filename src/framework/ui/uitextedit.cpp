@@ -41,6 +41,7 @@ UITextEdit::UITextEdit()
     m_maxLength = 0;
     m_editable = true;
     m_selectable = true;
+    m_changeCursorImage = true;
     m_selectionReference = 0;
     m_selectionStart = 0;
     m_selectionEnd = 0;
@@ -349,6 +350,9 @@ void UITextEdit::setSelection(int start, int end)
     if(start > end)
         std::swap(start, end);
 
+    if(end == -1)
+        end = m_text.length();
+
     m_selectionStart = std::min(std::max(start, 0), (int)m_text.length());
     m_selectionEnd = std::min(std::max(end, 0), (int)m_text.length());
 }
@@ -584,10 +588,12 @@ void UITextEdit::updateText()
 
 void UITextEdit::onHoverChange(bool hovered)
 {
-    if(hovered)
-        g_mouse.setTextCursor();
-    else
-        g_mouse.restoreCursor();
+    if(m_changeCursorImage) {
+        if(hovered)
+            g_mouse.setTextCursor();
+        else
+            g_mouse.restoreCursor();
+    }
 }
 
 void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
@@ -620,6 +626,8 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
         }
         else if(node->tag() == "cursor-visible")
             setCursorVisible(node->value<bool>());
+        else if(node->tag() == "change-cursor-image")
+            setChangeCursorImage(node->value<bool>());
     }
 }
 
@@ -735,6 +743,18 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
                 setSelection(m_selectionReference, m_cursorPos);
             }
             return true;
+        } else if(keyCode == Fw::KeyHome) { // move cursor to first character
+            if(m_cursorPos != 0) {
+                setSelection(m_cursorPos, 0);
+                setCursorPos(0);
+                return true;
+            }
+        } else if(keyCode == Fw::KeyEnd) { // move cursor to last character
+            if(m_cursorPos != (int)m_text.length()) {
+                setSelection(m_cursorPos, m_text.length());
+                setCursorPos(m_text.length());
+                return true;
+            }
         }
     }
 

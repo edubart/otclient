@@ -39,6 +39,8 @@ UIWindow
     anchors.right: parent.right
     margin-left: 5
     font: terminus-14px-bold
+    selection-color: black
+    selection-background-color: white
 
   ResizeBorder
     id: bottomResizeBorder

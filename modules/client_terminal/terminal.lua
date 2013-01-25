@@ -25,6 +25,7 @@ local function navigateCommand(step)
     if currentHistoryIndex > 0 then
       local command = commandHistory[numCommands - currentHistoryIndex + 1]
       commandTextEdit:setText(command)
+      commandTextEdit:setCursorPos(-1)
     else
       commandTextEdit:clearText()
     end
@@ -52,6 +53,7 @@ local function completeCommand()
   -- complete command with one match
   if #possibleCommands == 1 then
     commandTextEdit:setText(possibleCommands[1])
+    commandTextEdit:setCursorPos(-1)
   -- show command matches
   elseif #possibleCommands > 0 then
     print('>> ' .. commandBegin)
@@ -75,6 +77,7 @@ local function completeCommand()
       end
     end
     commandTextEdit:setText(commandBegin)
+      commandTextEdit:setCursorPos(-1)
 
     for i,v in ipairs(possibleCommands) do
       print(v)

@@ -219,7 +219,7 @@ void MapView::draw(const Rect& rect)
                 continue;
 
             PointF jumpOffset = creature->getJumpOffset() * scaleFactor;
-            Point creatureOffset = Point(16 - creature->getDisplacementX(), -3 - creature->getDisplacementY());
+            Point creatureOffset = Point(16 - creature->getDisplacementX(), - creature->getDisplacementY() - 2);
             Position pos = creature->getPosition();
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
             p += (creature->getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
