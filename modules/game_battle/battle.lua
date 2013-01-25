@@ -258,6 +258,9 @@ function onBattleButtonMouseRelease(self, mousePosition, mouseButton)
     mouseWidget.cancelNextRelease = true
     g_game.look(self.creature)
     return true
+  elseif mouseButton == MouseLeftButton and g_keyboard.isShiftPressed() then
+    g_game.look(self.creature)
+    return true
   elseif mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
     modules.game_interface.createThingMenu(mousePosition, nil, nil, self.creature)
     return true
