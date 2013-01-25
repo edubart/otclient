@@ -28,6 +28,7 @@ clearObjectButton = nil
 useOnSelf = nil
 useOnTarget = nil
 useWith = nil
+defaultComboKeys = nil
 hotkeyList = {}
 
 -- public functions
@@ -170,12 +171,22 @@ function reload()
 end
 
 function loadDefautComboKeys()
-  for i=1,12 do
-    addKeyCombo(nil, 'F' .. i)
+  if not defaultComboKeys then
+    for i=1,12 do
+      addKeyCombo(nil, 'F' .. i)
+    end
+    for i=1,4 do
+      addKeyCombo(nil, 'Shift+F' .. i)
+    end
+  else
+    for keyCombo, keySettings in pairs(defaultComboKeys) do
+      addKeyCombo(nil, keyCombo, keySettings)
+    end
   end
-  for i=1,4 do
-    addKeyCombo(nil, 'Shift+F' .. i)
-  end
+end
+
+function setDefaultComboKeys(combo)
+  defaultComboKeys = combo
 end
 
 -- private functions

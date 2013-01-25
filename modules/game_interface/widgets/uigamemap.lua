@@ -17,7 +17,7 @@ function UIGameMap:onDragEnter(mousePos)
 
   self.currentDragThing = thing
   g_mouse.setTargetCursor()
-  self.cancelNextRelease = true
+  self.allowNextRelease = false
   return true
 end
 
@@ -50,12 +50,11 @@ function UIGameMap:onDrop(widget, mousePos)
 end
 
 function UIGameMap:onMousePress()
-  self.cancelNextRelease = false
+  self.allowNextRelease = true
 end
 
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)
-  if self.cancelNextRelease then
-    self.cancelNextRelease = false
+  if not self.allowNextRelease then
     return true
   end
   
@@ -86,7 +85,7 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
 
   local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
   if ret then
-    self.cancelNextRelease = true
+    self.allowNextRelease = false
   end
 
   return ret
