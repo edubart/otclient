@@ -46,9 +46,15 @@ bool Module::load()
         g_lua.pop();
 
         for(const std::string& depName : m_dependencies) {
+            if(depName == m_name)
+                stdext::throw_exception(stdext::format("cannot depend on itself"));
+
             ModulePtr dep = g_modules.getModule(depName);
             if(!dep)
                 stdext::throw_exception(stdext::format("dependency '%s' was not found", depName));
+
+            if(dep->hasDependency(m_name, true))
+                stdext::throw_exception(stdext::format("dependency '%s' is recursively depending on itself", depName));
 
             if(!dep->isLoaded() && !dep->load())
                 stdext::throw_exception(stdext::format("dependency '%s' has failed to load", depName));
@@ -158,10 +164,19 @@ bool Module::isDependent()
     return false;
 }
 
-bool Module::hasDependency(const std::string& name)
+bool Module::hasDependency(const std::string& name, bool recursive)
 {
     if(std::find(m_dependencies.begin(), m_dependencies.end(), name) != m_dependencies.end())
         return true;
+
+    if(recursive) {
+        for(const std::string& depName : m_dependencies) {
+            ModulePtr dep = g_modules.getModule(depName);
+            if(dep && dep->hasDependency(name, true))
+                return true;
+        }
+    }
+
     return false;
 }
 
