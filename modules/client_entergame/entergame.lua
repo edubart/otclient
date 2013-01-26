@@ -97,7 +97,6 @@ function EnterGame.init()
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
   enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
-  enterGame:getChildById('accountNameTextEdit'):focus()
 
   protocolBox = enterGame:getChildById('protocolComboBox')
   protocolBox.onOptionChange = onChangeProtocol  

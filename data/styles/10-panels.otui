@@ -1,8 +1,10 @@
 Panel < UIWidget
   phantom: true
+  auto-focus: first
 
 ScrollablePanel < UIScrollArea
   phantom: true
+  auto-focus: first
 
 FlatPanel < Panel
   image-source: /images/ui/panel_flat

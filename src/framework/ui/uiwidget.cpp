@@ -36,6 +36,7 @@ UIWidget::UIWidget()
 {
     m_lastFocusReason = Fw::ActiveFocusReason;
     m_states = Fw::DefaultState;
+    m_autoFocusPolicy = Fw::AutoFocusLast;
     m_clickTimer.stop();
     m_autoRepeatDelay = 500;
 
@@ -239,8 +240,8 @@ void UIWidget::removeChild(UIWidgetPtr child)
         child->updateStates();
         updateChildrenIndexStates();
 
-        if(focusAnother && !m_focusedChild)
-            focusPreviousChild(Fw::ActiveFocusReason);
+        if(m_autoFocusPolicy != Fw::AutoFocusNone && focusAnother && !m_focusedChild)
+            focusPreviousChild(Fw::ActiveFocusReason, true);
 
         g_ui.onWidgetDisappear(child);
     } else
@@ -283,60 +284,89 @@ void UIWidget::focusChild(const UIWidgetPtr& child, Fw::FocusReason reason)
     onChildFocusChange(child, oldFocused, reason);
 }
 
-void UIWidget::focusNextChild(Fw::FocusReason reason)
+void UIWidget::focusNextChild(Fw::FocusReason reason, bool rotate)
 {
     if(m_destroyed)
         return;
 
     UIWidgetPtr toFocus;
-    UIWidgetList rotatedChildren(m_children);
 
-    if(m_focusedChild) {
-        auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
-        if(focusedIt != rotatedChildren.end()) {
-            std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
-            rotatedChildren.pop_front();
+    if(rotate) {
+        UIWidgetList rotatedChildren(m_children);
+
+        if(m_focusedChild) {
+            auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
+            if(focusedIt != rotatedChildren.end()) {
+                std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
+                rotatedChildren.pop_front();
+            }
+        }
+
+        // finds next child to focus
+        for(const UIWidgetPtr& child : rotatedChildren) {
+            if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
+                toFocus = child;
+                break;
+            }
+        }
+    } else {
+        auto it = m_children.begin();
+        if(m_focusedChild)
+            it = std::find(m_children.begin(), m_children.end(), m_focusedChild);
+
+        for(; it != m_children.end(); ++it) {
+            const UIWidgetPtr& child = *it;
+            if(child != m_focusedChild && child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
+                toFocus = child;
+                break;
+            }
         }
     }
 
-    // finds next child to focus
-    for(const UIWidgetPtr& child : rotatedChildren) {
-        if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
-            toFocus = child;
-            break;
-        }
-    }
-
-    if(toFocus)
+    if(toFocus && toFocus != m_focusedChild)
         focusChild(toFocus, reason);
 }
 
-void UIWidget::focusPreviousChild(Fw::FocusReason reason)
+void UIWidget::focusPreviousChild(Fw::FocusReason reason, bool rotate)
 {
     if(m_destroyed)
         return;
 
     UIWidgetPtr toFocus;
-    UIWidgetList rotatedChildren(m_children);
-    std::reverse(rotatedChildren.begin(), rotatedChildren.end());
+    if(rotate) {
+        UIWidgetList rotatedChildren(m_children);
+        std::reverse(rotatedChildren.begin(), rotatedChildren.end());
 
-    if(m_focusedChild) {
-        auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
-        if(focusedIt != rotatedChildren.end()) {
-            std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
-            rotatedChildren.pop_front();
+        if(m_focusedChild) {
+            auto focusedIt = std::find(rotatedChildren.begin(), rotatedChildren.end(), m_focusedChild);
+            if(focusedIt != rotatedChildren.end()) {
+                std::rotate(rotatedChildren.begin(), focusedIt, rotatedChildren.end());
+                rotatedChildren.pop_front();
+            }
+        }
+
+        // finds next child to focus
+        for(const UIWidgetPtr& child : rotatedChildren) {
+            if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
+                toFocus = child;
+                break;
+            }
+        }
+    } else {
+        auto it = m_children.rbegin();
+        if(m_focusedChild)
+            it = std::find(m_children.rbegin(), m_children.rend(), m_focusedChild);
+
+        for(; it != m_children.rend(); ++it) {
+            const UIWidgetPtr& child = *it;
+            if(child != m_focusedChild && child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
+                toFocus = child;
+                break;
+            }
         }
     }
 
-    // finds next child to focus
-    for(const UIWidgetPtr& child : rotatedChildren) {
-        if(child->isFocusable() && child->isExplicitlyEnabled() && child->isVisible()) {
-            toFocus = child;
-            break;
-        }
-    }
-
-    if(toFocus)
+    if(toFocus && toFocus != m_focusedChild)
         focusChild(toFocus, reason);
 }
 
@@ -520,10 +550,14 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         callLuaField("onStyleApply", styleNode->tag(), styleNode);
 
         if(m_firstOnStyle) {
-            // always focus new child
-            if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled())
+            UIWidgetPtr parent = getParent();
+            if(isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled() &&
+               parent && ((!parent->getFocusedChild() && parent->getAutoFocusPolicy() == Fw::AutoFocusFirst) ||
+                           parent->getAutoFocusPolicy() == Fw::AutoFocusLast)) {
                 focus();
+            }
         }
+
         m_firstOnStyle = false;
     } catch(stdext::exception& e) {
         g_logger.traceError(stdext::format("failed to apply style to widget '%s': %s", m_id, e.what()));
@@ -906,7 +940,7 @@ void UIWidget::setVisible(bool visible)
         // hiding a widget make it lose focus
         if(!visible && isFocused()) {
             if(UIWidgetPtr parent = getParent())
-                parent->focusPreviousChild(Fw::ActiveFocusReason);
+                parent->focusPreviousChild(Fw::ActiveFocusReason, true);
         }
 
         // visibility can change change parent layout
@@ -940,9 +974,12 @@ void UIWidget::setFocusable(bool focusable)
         m_focusable = focusable;
 
         // make parent focus another child
-        if(!focusable && isFocused()) {
-            if(UIWidgetPtr parent = getParent())
-                parent->focusPreviousChild(Fw::ActiveFocusReason);
+        if(UIWidgetPtr parent = getParent()) {
+            if(!focusable && isFocused()) {
+                parent->focusPreviousChild(Fw::ActiveFocusReason, true);
+            } else if(focusable && (!parent->getFocusedChild() && parent->getAutoFocusPolicy() != Fw::AutoFocusNone)) {
+                focus();
+            }
         }
     }
 }
@@ -966,6 +1003,11 @@ void UIWidget::setFixedSize(bool fixed)
 void UIWidget::setLastFocusReason(Fw::FocusReason reason)
 {
     m_lastFocusReason = reason;
+}
+
+void UIWidget::setAutoFocusPolicy(Fw::AutoFocusPolicy policy)
+{
+    m_autoFocusPolicy = policy;
 }
 
 void UIWidget::setVirtualOffset(const Point& offset)

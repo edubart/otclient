@@ -98,6 +98,16 @@ Fw::WidgetState Fw::translateState(std::string state)
         return Fw::DraggingState;
     else if(state == "hidden")
         return Fw::HiddenState;
-    else
-        return Fw::InvalidState;
+    return Fw::InvalidState;
+}
+
+Fw::AutoFocusPolicy Fw::translateAutoFocusPolicy(std::string policy)
+{
+    boost::to_lower(policy);
+    boost::trim(policy);
+    if(policy == "first")
+        return Fw::AutoFocusFirst;
+    else if(policy == "last")
+        return Fw::AutoFocusLast;
+    return Fw::AutoFocusNone;
 }

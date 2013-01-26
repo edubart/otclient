@@ -19,6 +19,10 @@ KeyboardFocusReason = 1
 ActiveFocusReason = 2
 OtherFocusReason = 3
 
+AutoFocusNone = 0
+AutoFocusFirst = 1
+AutoFocusLast = 2
+
 KeyboardNoModifier = 0
 KeyboardCtrlModifier = 1
 KeyboardAltModifier = 2

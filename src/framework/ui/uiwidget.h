@@ -77,14 +77,15 @@ protected:
     OTMLNodePtr m_style;
     Timer m_clickTimer;
     Fw::FocusReason m_lastFocusReason;
+    Fw::AutoFocusPolicy m_autoFocusPolicy;
 
 public:
     void addChild(const UIWidgetPtr& child);
     void insertChild(int index, const UIWidgetPtr& child);
     void removeChild(UIWidgetPtr child);
     void focusChild(const UIWidgetPtr& child, Fw::FocusReason reason);
-    void focusNextChild(Fw::FocusReason reason);
-    void focusPreviousChild(Fw::FocusReason reason);
+    void focusNextChild(Fw::FocusReason reason, bool rotate = false);
+    void focusPreviousChild(Fw::FocusReason reason, bool rotate = false);
     void lowerChild(UIWidgetPtr child);
     void raiseChild(UIWidgetPtr child);
     void moveChildToIndex(const UIWidgetPtr& child, int index);
@@ -129,6 +130,7 @@ public:
     void setFixedSize(bool fixed);
     void setClipping(bool clipping) { m_clipping = clipping; }
     void setLastFocusReason(Fw::FocusReason reason);
+    void setAutoFocusPolicy(Fw::AutoFocusPolicy policy);
     void setAutoRepeatDelay(int delay) { m_autoRepeatDelay = delay; }
     void setVirtualOffset(const Point& offset);
 
@@ -259,6 +261,7 @@ public:
     OTMLNodePtr getStyle() { return m_style; }
     int getChildCount() { return m_children.size(); }
     Fw::FocusReason getLastFocusReason() { return m_lastFocusReason; }
+    Fw::AutoFocusPolicy getAutoFocusPolicy() { return m_autoFocusPolicy; }
     int getAutoRepeatDelay() { return m_autoRepeatDelay; }
     Point getVirtualOffset() { return m_virtualOffset; }
     std::string getStyleName() { return m_style->tag(); }

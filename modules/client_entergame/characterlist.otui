@@ -13,21 +13,21 @@ CharacterWidget < UIWidget
 
   Label
     id: name
-    color: #ffffff
+    color: #aaaaaa
     anchors.top: parent.top
     anchors.left: parent.left
     font: verdana-11px-monochrome
     text-auto-resize: true
     background-color: alpha
     text-offset: 2 0
-    on: true
 
-    $!on:
-      color: #aaaaaa
+    $on:
+      color: #ffffff
 
   Label
     id: worldName
     color: #ffffff
+    color: #aaaaaa
     anchors.top: parent.top
     anchors.right: parent.right
     margin-right: 5
@@ -35,10 +35,9 @@ CharacterWidget < UIWidget
     text-auto-resize: true
     background-color: alpha
     &baseText: '(%s)'
-    on: true
 
-    $!on:
-      color: #aaaaaa
+    $on:
+      color: #ffffff
 
 MainWindow
   id: charactersWindow

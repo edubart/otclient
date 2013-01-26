@@ -5,6 +5,7 @@ function UIWindow.create()
   local window = UIWindow.internalCreate()
   window:setTextAlign(AlignTopCenter)
   window:setDraggable(true)
+  window:setAutoFocusPolicy(AutoFocusFirst)
   return window
 end
 

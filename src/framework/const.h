@@ -226,6 +226,12 @@ namespace Fw
         OtherFocusReason
     };
 
+    enum AutoFocusPolicy {
+        AutoFocusNone = 0,
+        AutoFocusFirst,
+        AutoFocusLast
+    };
+
     enum InputEventType {
         NoInputEvent = 0,
         KeyTextInputEvent,
