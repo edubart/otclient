@@ -71,8 +71,11 @@ end
 
 local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return false end
-  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
-  local callback = widget.boundKeyDownCombos[keyComboDesc]
+  local callback = widget.boundAloneKeyDownCombos[determineKeyComboDesc(keyCode, KeyboardNoModifier)]
+  if callback then
+    callback(widget, keyCode)
+  end
+  callback = widget.boundKeyDownCombos[determineKeyComboDesc(keyCode, keyboardModifiers)]
   if callback then
     callback(widget, keyCode)
     return true
@@ -82,8 +85,11 @@ end
 
 local function onWidgetKeyUp(widget, keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return false end
-  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
-  local callback = widget.boundKeyUpCombos[keyComboDesc]
+  local callback = widget.boundAloneKeyUpCombos[determineKeyComboDesc(keyCode, KeyboardNoModifier)]
+  if callback then
+    callback(widget, keyCode)
+  end
+  callback = widget.boundKeyUpCombos[determineKeyComboDesc(keyCode, keyboardModifiers)]
   if callback then
     callback(widget, keyCode)
     return true
@@ -106,12 +112,14 @@ local function connectKeyDownEvent(widget)
   if widget.boundKeyDownCombos then return end
   connect(widget, { onKeyDown = onWidgetKeyDown })
   widget.boundKeyDownCombos = {}
+  widget.boundAloneKeyDownCombos = {}
 end
 
 local function connectKeyUpEvent(widget)
   if widget.boundKeyUpCombos then return end
   connect(widget, { onKeyUp = onWidgetKeyUp })
   widget.boundKeyUpCombos = {}
+  widget.boundAloneKeyUpCombos = {}
 end
 
 local function connectKeyPressEvent(widget)
@@ -121,24 +129,32 @@ local function connectKeyPressEvent(widget)
 end
 
 -- public functions
-function g_keyboard.bindKeyDown(keyComboDesc, callback, widget)
+function g_keyboard.bindKeyDown(keyComboDesc, callback, widget, alone)
   widget = widget or rootWidget
   connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   if widget.boundKeyDownCombos[keyComboDesc] then
     pwarning('KeyDown event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
   end
-  widget.boundKeyDownCombos[keyComboDesc] = callback
+  if alone then
+    widget.boundAloneKeyDownCombos[keyComboDesc] = callback
+  else
+    widget.boundKeyDownCombos[keyComboDesc] = callback
+  end
 end
 
-function g_keyboard.bindKeyUp(keyComboDesc, callback, widget)
+function g_keyboard.bindKeyUp(keyComboDesc, callback, widget, alone)
   widget = widget or rootWidget
   connectKeyUpEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   if widget.boundKeyUpCombos[keyComboDesc] then
     pwarning('KeyUp event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
   end
-  widget.boundKeyUpCombos[keyComboDesc] = callback
+  if alone then
+    widget.boundAloneKeyUpCombos[keyComboDesc] = callback
+  else
+    widget.boundKeyUpCombos[keyComboDesc] = callback
+  end
 end
 
 function g_keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)

@@ -76,9 +76,10 @@ function table.removevalue(t, value)
   for k,v in pairs(t) do
     if v == value then
       table.remove(t, k)
-      break
+      return true
     end
   end
+  return false
 end
 
 function table.popvalue(value)

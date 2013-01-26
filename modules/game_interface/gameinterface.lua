@@ -1,4 +1,4 @@
-WALK_REPEAT_DELAY = 60
+WALK_REPEAT_DELAY = 90
 WALK_STEPS_RETRY = 10
 
 gameRootPanel = nil
@@ -31,7 +31,7 @@ function init()
   gameRootPanel:hide()
   gameRootPanel:lower()
   gameRootPanel.onGeometryChange = updateStretchShrink
-  gameRootPanel.onFocusChange = cancelSmartWalk
+  gameRootPanel.onFocusChange = stopSmartWalk
 
   mouseGrabberWidget = gameRootPanel:getChildById('mouseGrabber')
   mouseGrabberWidget.onMouseRelease = onMouseGrabberRelease
@@ -55,35 +55,35 @@ function init()
 end
 
 function bindKeys()
-  g_keyboard.bindKeyDown('Up', function() changeWalkDir(North) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Right', function() changeWalkDir(East) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Down', function() changeWalkDir(South) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Left', function() changeWalkDir(West) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad8', function() changeWalkDir(North) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad9', function() changeWalkDir(NorthEast) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad6', function() changeWalkDir(East) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad3', function() changeWalkDir(SouthEast) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad2', function() changeWalkDir(South) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad1', function() changeWalkDir(SouthWest) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad4', function() changeWalkDir(West) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Numpad7', function() changeWalkDir(NorthWest) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Up', function() changeWalkDir(North, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Right', function() changeWalkDir(East, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Down', function() changeWalkDir(South, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Left', function() changeWalkDir(West, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad8', function() changeWalkDir(North, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad9', function() changeWalkDir(NorthEast, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad6', function() changeWalkDir(East, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad3', function() changeWalkDir(SouthEast, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad2', function() changeWalkDir(South, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad1', function() changeWalkDir(SouthWest, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad4', function() changeWalkDir(West, true) end, gameRootPanel)
-  g_keyboard.bindKeyUp('Numpad7', function() changeWalkDir(NorthWest, true) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Up', function() changeWalkDir(North) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Right', function() changeWalkDir(East) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Down', function() changeWalkDir(South) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Left', function() changeWalkDir(West) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad8', function() changeWalkDir(North) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad9', function() changeWalkDir(NorthEast) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad6', function() changeWalkDir(East) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad3', function() changeWalkDir(SouthEast) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad2', function() changeWalkDir(South) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad1', function() changeWalkDir(SouthWest) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad4', function() changeWalkDir(West) end, gameRootPanel, true)
+  g_keyboard.bindKeyDown('Numpad7', function() changeWalkDir(NorthWest) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Up', function() changeWalkDir(North, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Right', function() changeWalkDir(East, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Down', function() changeWalkDir(South, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Left', function() changeWalkDir(West, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad8', function() changeWalkDir(North, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad9', function() changeWalkDir(NorthEast, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad6', function() changeWalkDir(East, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad3', function() changeWalkDir(SouthEast, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad2', function() changeWalkDir(South, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad1', function() changeWalkDir(SouthWest, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad4', function() changeWalkDir(West, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp('Numpad7', function() changeWalkDir(NorthWest, true) end, gameRootPanel, true)
 
-  g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
@@ -101,7 +101,7 @@ end
 function terminate()
   hide()
 
-  cancelSmartWalk()
+  stopSmartWalk()
 
   disconnect(g_game, {
     onGameStart = onGameStart,
@@ -209,7 +209,7 @@ function tryLogout()
     anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
 end
 
-function cancelSmartWalk()
+function stopSmartWalk()
   if smartWalkEvent then
     smartWalkEvent:cancel()
     smartWalkEvent = nil
@@ -218,11 +218,10 @@ function cancelSmartWalk()
 end
 
 function changeWalkDir(dir, pop)
+  while table.removevalue(smartWalkDirs, dir) do end
   if pop then
-    table.removevalue(smartWalkDirs, dir)
-    if #smartWalkDirs == 0 and smartWalkEvent then
-      smartWalkEvent:cancel()
-      smartWalkEvent = nil
+    if #smartWalkDirs == 0 then
+      stopSmartWalk()
       return
     end
   else
@@ -253,20 +252,9 @@ function changeWalkDir(dir, pop)
 end
 
 function smartWalk()
-  local dir = smartWalkDir
-  if modules.client_options.getOption('smartWalk') then
-    if g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Left') then
-      dir = NorthWest
-    elseif g_keyboard.isKeyPressed('Up') and g_keyboard.isKeyPressed('Right') then
-      dir = NorthEast
-    elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Left') then
-      dir = SouthWest
-    elseif g_keyboard.isKeyPressed('Down') and g_keyboard.isKeyPressed('Right') then
-      dir = SouthEast
-    end
+  if g_keyboard.getModifiers() == KeyboardNoModifier and gameRootPanel:isFocused() then
+    g_game.walk(smartWalkDir)
   end
-
-  g_game.walk(dir)
 end
 
 function updateStretchShrink()
