@@ -433,7 +433,7 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 
   label.onMouseRelease = function (self, mousePos, mouseButton)
-    processMessageMenu(mousePos, mouseButton, creatureName, text)
+    processMessageMenu(mousePos, mouseButton, creatureName, text, self)
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
@@ -460,7 +460,7 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
   menu:display(mousePos)
 end
 
-function processMessageMenu(mousePos, mouseButton, creatureName, text)
+function processMessageMenu(mousePos, mouseButton, creatureName, text, label)
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
     if creatureName then
@@ -481,20 +481,18 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text)
         end
         menu:addSeparator()
       end
-      --TODO select all
-      menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
-
       if modules.game_ruleviolation.hasWindowAccess() then
-        menu:addSeparator()
         menu:addOption(tr('Rule Violation'), function() modules.game_ruleviolation.show(creatureName, text:match('.+%:%s(.+)')) end)
+        menu:addSeparator()
       end
 
-      menu:addSeparator()
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
-    else
-      --TODO select all
-      menu:addOption(tr('Copy message'), function () g_window.setClipboardText(text) end)
     end
+    if label:hasSelection() then
+      menu:addOption(tr('Copy'), function() g_window.setClipboardText(label:getSelection()) end, '(Ctrl+C)')
+    end
+    menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
+    menu:addOption(tr('Select all'), function() label:selectAll() end)
     menu:display(mousePos)
   end
 end

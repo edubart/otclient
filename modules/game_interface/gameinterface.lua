@@ -344,24 +344,28 @@ end
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if not g_game.isOnline() then return end
   local menu = g_ui.createWidget('PopupMenu')
+  local classic = modules.client_options.getOption('classicControl')
+  local shortcut = nil
 
+  if not classic then shortcut = '(Shift)' else shortcut = nil end
   if lookThing then
-    menu:addOption(tr('Look'), function() g_game.look(lookThing) end)
+    menu:addOption(tr('Look'), function() g_game.look(lookThing) end, shortcut)
   end
 
+  if not classic then shortcut = '(Ctrl)' else shortcut = nil end
   if useThing then
     if useThing:isContainer() then
       if useThing:getParentContainer() then
-        menu:addOption(tr('Open'), function() g_game.open(useThing, useThing:getParentContainer()) end)
+        menu:addOption(tr('Open'), function() g_game.open(useThing, useThing:getParentContainer()) end, shortcut)
         menu:addOption(tr('Open in new window'), function() g_game.open(useThing) end)
       else
-        menu:addOption(tr('Open'), function() g_game.open(useThing) end)
+        menu:addOption(tr('Open'), function() g_game.open(useThing) end, shortcut)
       end
     else
       if useThing:isMultiUse() then
-        menu:addOption(tr('Use with ...'), function() startUseWith(useThing) end)
+        menu:addOption(tr('Use with ...'), function() startUseWith(useThing) end, shortcut)
       else
-        menu:addOption(tr('Use'), function() g_game.use(useThing) end)
+        menu:addOption(tr('Use'), function() g_game.use(useThing) end, shortcut)
       end
     end
 
@@ -410,10 +414,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
 
     else
+      if not classic then shortcut = '(Alt)' else shortcut = nil end
       if g_game.getAttackingCreature() ~= creatureThing then
-        menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end)
+        menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
       else
-        menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end)
+        menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
       end
 
       if g_game.getFollowingCreature() ~= creatureThing then
@@ -472,7 +477,6 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
     menu:addSeparator()
     menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
-
   end
 
   menu:display(menuPosition)
