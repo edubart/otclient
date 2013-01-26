@@ -81,6 +81,11 @@ std::string format(const std::string& format, const Args&... args) {
     }
 }
 
+template<>
+inline std::string format(const std::string& format) {
+    return format;
+}
+
 }
 
 #endif

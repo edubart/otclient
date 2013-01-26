@@ -47,7 +47,7 @@ bool Module::load()
 
         for(const std::string& depName : m_dependencies) {
             if(depName == m_name)
-                stdext::throw_exception(stdext::format("cannot depend on itself"));
+                stdext::throw_exception("cannot depend on itself");
 
             ModulePtr dep = g_modules.getModule(depName);
             if(!dep)
