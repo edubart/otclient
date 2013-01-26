@@ -81,6 +81,20 @@ function table.removevalue(t, value)
   end
 end
 
+function table.popvalue(value)
+  local index = nil
+  for k,v in pairs(t) do
+    if v == value or not value then
+      index = k
+    end
+  end
+  if index then
+    table.remove(t, index)
+    return true
+  end
+  return false
+end
+
 function table.compare(t, other)
   if #t ~= #other then return false end
   for k,v in pairs(t) do

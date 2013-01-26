@@ -12,11 +12,6 @@ Panel
     !text: tr('Enable smart walking')
     !tooltip: tr('Will detect when to use diagonal step based on the\nkeys you are pressing')
 
-  //OptionCheckBox
-    //id: walkBooster
-    //!text: tr('Enable walk booster')
-    //!tooltip: tr('Also known as dash in community, recommended\nfor playing characters with high speed')
-
   OptionCheckBox
     id: showPing
     !text: tr('Show connection ping')

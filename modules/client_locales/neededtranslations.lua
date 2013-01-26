@@ -339,7 +339,7 @@ neededTranslations = {
   "You are dazzled",
   "You are dead.",
   "You are dead",
-  "You are drowing",
+  "You are drowning",
   "You are drunk",
   "You are electrified",
   "You are freezing",

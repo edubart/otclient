@@ -74,7 +74,7 @@ local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local callback = widget.boundKeyDownCombos[keyComboDesc]
   if callback then
-    callback()
+    callback(widget, keyCode)
     return true
   end
   return false
@@ -85,7 +85,7 @@ local function onWidgetKeyUp(widget, keyCode, keyboardModifiers)
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local callback = widget.boundKeyUpCombos[keyComboDesc]
   if callback then
-    callback()
+    callback(widget, keyCode)
     return true
   end
   return false
@@ -96,7 +96,7 @@ local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, autoRepeatTi
   local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
   local comboConf = widget.boundKeyPressCombos[keyComboDesc]
   if comboConf and (autoRepeatTicks >= comboConf.autoRepeatDelay or autoRepeatTicks == 0) and comboConf.callback then
-    comboConf.callback()
+    comboConf.callback(widget, keyCode)
     return true
   end
   return false

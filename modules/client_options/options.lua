@@ -4,7 +4,6 @@ local defaultOptions = {
   showPing = false,
   fullscreen = false,
   classicControl = false,
-  walkBooster = false,
   smartWalk = false,
   autoChaseOverride = true,
   showStatusMessagesInConsole = true,
@@ -95,7 +94,6 @@ function init()
   end
 
   g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
-  --g_keyboard.bindKeyDown('Ctrl+D', function() toggleOption('walkBooster') end)
 
   optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
