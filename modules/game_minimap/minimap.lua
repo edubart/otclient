@@ -41,6 +41,11 @@ function init()
   minimapWidget.onMouseWheel = onMinimapMouseWheel
   flagsPanel = minimapWindow:recursiveGetChildById('flagsPanel')
 
+  g_keyboard.bindKeyPress('Alt+Left', function() move(-1,0) end)
+  g_keyboard.bindKeyPress('Alt+Right', function() move(1,0) end)
+  g_keyboard.bindKeyPress('Alt+Up', function() move(0,-1) end)
+  g_keyboard.bindKeyPress('Alt+Down', function() move(0,1) end)
+
   reset()
   minimapWindow:setup()
   loadMapFlags()
@@ -319,6 +324,14 @@ function compassClick(self, mousePos, mouseButton, elapsed)
   local pos = {x = cameraPos.x + movex, y = cameraPos.y + movey, z = cameraPos.z}
   minimapWidget:setCameraPosition(pos)
   
+  updateMapFlags()
+end
+
+function move(x,y)
+  local speed = math.ceil((1.0 / minimapWidget:getScale()) * 3)
+  local cameraPos = minimapWidget:getCameraPosition()
+  local pos = {x = cameraPos.x + x*speed, y = cameraPos.y + y*speed, z = cameraPos.z}
+  minimapWidget:setCameraPosition(pos)
   updateMapFlags()
 end
 
