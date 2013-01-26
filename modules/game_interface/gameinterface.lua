@@ -504,7 +504,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         return true
       end
       return true
-    elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+    elseif creatureThing and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.attack(creatureThing)
       return true
     end
@@ -541,7 +541,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
-    elseif creatureThing and keyboardModifiers == KeyboardAltModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+    elseif creatureThing and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.attack(creatureThing)
       return true
     end
