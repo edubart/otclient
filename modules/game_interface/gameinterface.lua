@@ -127,6 +127,7 @@ end
 
 function onGameEnd()
   logoutButton:setTooltip(tr('Exit'))
+  setupViewMode(0)
   hide()
 end
 

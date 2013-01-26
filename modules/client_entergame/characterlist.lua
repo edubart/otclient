@@ -13,22 +13,19 @@ local resendWaitEvent
 local function tryLogin(charInfo, tries)
   tries = tries or 1
 
-  if tries > 4 then
-    CharacterList.destroyLoadBox()
-    displayErrorBox(tr('Error'), tr('Unable to logout.'))
+  if tries > 50 then
     return
   end
 
   if g_game.isOnline() then
     if tries == 1 then
       g_game.safeLogout()
-      loadBox = displayCancelBox(tr('Please wait'), tr('Logging out...'))
     end
-    scheduleEvent(function() tryLogin(charInfo, tries+1) end, 250)
+    scheduleEvent(function() tryLogin(charInfo, tries+1) end, 100)
     return
   end
 
-  CharacterList.destroyLoadBox()
+  CharacterList.hide()
 
   local locale = modules.client_locales.getCurrentLocale().name
   g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName, locale)
