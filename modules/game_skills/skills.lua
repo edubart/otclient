@@ -213,7 +213,7 @@ function refresh()
 
   local contentsPanel = skillsWindow:getChildById('contentsPanel')
   skillsWindow:setContentMinimumHeight(44)
-  skillsWindow:setContentMaximumHeight(contentsPanel:getChildrenRect().height)
+  skillsWindow:setContentMaximumHeight(390)
 end
 
 function offline()

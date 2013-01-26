@@ -68,7 +68,7 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
 
 bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 {
-    std::string userDir = PHYSFS_getUserDir();
+    std::string userDir = getUserDir();
     std::string dirName;
 #ifndef WIN32
     dirName = stdext::format(".%s", appWriteDirName);
@@ -304,6 +304,11 @@ std::string ResourceManager::getCurrentDir()
 std::string ResourceManager::getBaseDir()
 {
     return PHYSFS_getBaseDir();
+}
+
+std::string ResourceManager::getUserDir()
+{
+    return PHYSFS_getUserDir();
 }
 
 std::string ResourceManager::guessFileType(const std::string& filename, const std::string& type)

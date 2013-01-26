@@ -66,6 +66,7 @@ public:
     std::string getRealDir(const std::string& path);
     std::string getCurrentDir();
     std::string getBaseDir();
+    std::string getUserDir();
     std::string getWriteDir() { return m_writeDir; }
     std::string getWorkDir() { return m_workDir; }
     std::deque<std::string> getSearchPaths() { return m_searchPaths; }

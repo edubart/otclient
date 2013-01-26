@@ -24,6 +24,8 @@
 #include "game.h"
 #include "client.h"
 #include <framework/core/application.h>
+#include <framework/platform/platform.h>
+#include <framework/util/crypt.h>
 
 void ProtocolGame::send(const OutputMessagePtr& outputMessage)
 {
@@ -95,6 +97,12 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         msg->addString(m_characterName);
         msg->addString(m_accountPassword);
         paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
+    }
+
+    if(g_game.getFeature(Otc::GameLoginUUID)) {
+        std::string uuid = g_crypt.getMachineUUID();
+        msg->addString(uuid);
+        paddingBytes -= 2 + uuid.length();
     }
 
     if(g_game.getFeature(Otc::GameChallengeOnLogin)) {

@@ -82,6 +82,14 @@ function init()
 
   g_keyboard.bindKeyDown('Ctrl+Shift+R', reloadScripts)
 
+  -- generate machine uuid, this is a security measure for storing passwords
+  if not g_crypt.setMachineUUID(g_configs.get('uuid')) then
+    local uuid = g_crypt.genUUID()
+    g_crypt.setMachineUUID(uuid)
+    g_configs.set('uuid', uuid)
+    g_configs.save()
+  end
+
   connect(g_app, { onRun = startup })
 end
 

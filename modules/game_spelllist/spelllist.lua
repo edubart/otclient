@@ -79,7 +79,12 @@ function getIconImageClip(id)
   return (((id-1)%12)*SpelllistSettings[SpelllistProfile].iconSize.width) .. ' ' .. ((math.ceil(id/12)-1)*SpelllistSettings[SpelllistProfile].iconSize.height) .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height
 end
 
-function setOptions()
+function online()
+  if g_game.getProtocolVersion() < 870 then
+    spelllistButton:setVisible(false)
+  else
+    spelllistButton:setVisible(true)
+  end
   if g_game.getProtocolVersion() >= 950 then -- Vocation is only send in newer clients
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)
   else
@@ -87,11 +92,13 @@ function setOptions()
   end
 end
 
-function init()
-  if g_game.getProtocolVersion() < 870 then return end
+function offline()
+  resetWindow()
+end
 
-  connect(g_game, { onGameStart = setOptions,
-                    onGameEnd   = resetWindow })
+function init()
+  connect(g_game, { onGameStart = online,
+                    onGameEnd   = offline })
           
   spelllistWindow = g_ui.displayUI('spelllist', modules.game_interface.getRightPanel())
   spelllistWindow:hide()
@@ -157,17 +164,12 @@ function init()
   g_keyboard.bindKeyPress('Up', function() spellList:focusPreviousChild(KeyboardFocusReason) end, spelllistWindow)
   
   initialiseSpelllist() 
-  setOptions()
   resizeWindow()
 end
 
 function terminate()
-  if g_game.getProtocolVersion() < 870 then return end
-
-  disconnect(g_game, { onGameStart = setOptions,
-                       onGameEnd   = resetWindow,
-                       onSpellGroupCooldown = modules.game_interface.setGroupCooldown,
-                       onSpellCooldown = onSpellCooldown })
+  disconnect(g_game, { onGameStart = online,
+                       onGameEnd   = offline })
 
   disconnect(spellList, { onChildFocusChange = function(self, focusedChild)
                           if focusedChild == nil then return end
