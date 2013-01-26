@@ -16,7 +16,6 @@ limitZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
-smartWalkEvent = nil
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -79,15 +78,27 @@ function bindKeys()
   g_keyboard.bindKeyUp('Numpad1', function() changeWalkDir(SouthWest, true) end, gameRootPanel, true)
   g_keyboard.bindKeyUp('Numpad4', function() changeWalkDir(West, true) end, gameRootPanel, true)
   g_keyboard.bindKeyUp('Numpad7', function() changeWalkDir(NorthWest, true) end, gameRootPanel, true)
+  g_keyboard.bindKeyPress('Up', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Right', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Down', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Left', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad8', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad9', function() smartWalk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad6', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad3', function() smartWalk(SouthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad2', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad1', function() smartWalk(SouthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad4', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Numpad7', function() smartWalk(NorthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
 
   g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
@@ -211,11 +222,8 @@ function tryLogout()
 end
 
 function stopSmartWalk()
-  if smartWalkEvent then
-    smartWalkEvent:cancel()
-    smartWalkEvent = nil
-  end
   smartWalkDirs = {}
+  smartWalkDir = nil
 end
 
 function changeWalkDir(dir, pop)
@@ -227,9 +235,6 @@ function changeWalkDir(dir, pop)
     end
   else
     table.insert(smartWalkDirs, 1, dir)
-    if not smartWalkEvent then
-      smartWalkEvent = cycleEvent(smartWalk, WALK_REPEAT_DELAY)
-    end
   end
 
   smartWalkDir = smartWalkDirs[1]
@@ -252,10 +257,16 @@ function changeWalkDir(dir, pop)
   end
 end
 
-function smartWalk()
-  if g_keyboard.getModifiers() == KeyboardNoModifier and gameRootPanel:isFocused() then
-    g_game.walk(smartWalkDir)
+function smartWalk(dir)
+  if g_keyboard.getModifiers() == KeyboardNoModifier then
+    if smartWalkDir then
+      g_game.walk(smartWalkDir)
+    else
+      g_game.walk(dir)
+    end
+    return true
   end
+  return false
 end
 
 function updateStretchShrink()
