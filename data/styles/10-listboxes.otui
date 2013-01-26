@@ -4,6 +4,7 @@ TextList < UIScrollArea
   border-color: #1d222b
   background-color: #222833
   padding: 1
+  auto-focus: none
 
 HorizontalList < UIScrollArea
   layout: horizontalBox

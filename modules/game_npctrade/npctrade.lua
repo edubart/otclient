@@ -352,6 +352,8 @@ function refreshTradeItems()
 end
 
 function refreshPlayerGoods()
+  if not g_game.isOnline() then return end
+
   moneyLabel:setText(playerMoney .. ' ' .. CURRENCY)
   capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)
 

@@ -1,12 +1,15 @@
 CharacterWidget < UIWidget
   height: 14
-  focusable: true
   background-color: alpha
-  @onFocusChange: |
-    local children = self:getChildren()
-    for i=1,#children do
-      children[i]:setOn(self:isFocused())
+  &updateOnStates: |
+    function(self)
+      local children = self:getChildren()
+      for i=1,#children do
+        children[i]:setOn(self:isFocused())
+      end
     end
+  @onFocusChange: self:updateOnStates()
+  @onSetup: self:updateOnStates()
 
   $focus:
     background-color: #ffffff22
@@ -60,6 +63,7 @@ MainWindow
     padding: 1
     focusable: false
     vertical-scrollbar: characterListScrollBar
+    auto-focus: first
 
   VerticalScrollBar
     id: characterListScrollBar

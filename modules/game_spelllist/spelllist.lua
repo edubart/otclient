@@ -80,10 +80,10 @@ function getIconImageClip(id)
 end
 
 function online()
-  if g_game.getProtocolVersion() < 870 then
-    spelllistButton:setVisible(false)
+  if g_game.getFeature(GameSpellList) then
+    spelllistButton:show()
   else
-    spelllistButton:setVisible(true)
+    spelllistButton:hide()
   end
   if g_game.getProtocolVersion() >= 950 then -- Vocation is only send in newer clients
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)

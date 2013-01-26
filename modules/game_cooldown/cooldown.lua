@@ -4,8 +4,8 @@ contentsPanel = nil
 spellCooldownPanel = nil
 
 function init()
-  connect(g_game, { onGameStart = show,
-                    onGameEnd = hide,
+  connect(g_game, { onGameStart = online,
+                    onGameEnd = offline,
                     onSpellGroupCooldown = onSpellGroupCooldown,
                     onSpellCooldown = onSpellCooldown })
 
@@ -19,15 +19,15 @@ function init()
   
   contentsPanel = cooldownWindow:getChildById('contentsPanel')
   spellCooldownPanel = contentsPanel:getChildById('spellCooldownPanel')
-  
+
   if g_game.isOnline() then
-    show()
+    online()
   end
 end
 
 function terminate()
-  disconnect(g_game, { onGameStart = show,
-                       onGameEnd = hide,
+  disconnect(g_game, { onGameStart = online,
+                       onGameEnd = offline,
                        onSpellGroupCooldown = onSpellGroupCooldown,
                        onSpellCooldown = onSpellCooldown })
 
@@ -49,18 +49,16 @@ function toggle()
   end
 end
 
-function show()
+function online()
   if g_game.getFeature(GameSpellList) then
-    cooldownWindow:show()
     cooldownButton:show()
   else
-    hide()
+    cooldownButton:hide()
+    cooldownWindow:close()
   end
 end
 
-function hide()
-  cooldownWindow:hide()
-  cooldownButton:hide()
+function offline()
 end
 
 function updateProgressRect(progressRect, interval, init)

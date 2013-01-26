@@ -977,7 +977,7 @@ void UIWidget::setFocusable(bool focusable)
         if(UIWidgetPtr parent = getParent()) {
             if(!focusable && isFocused()) {
                 parent->focusPreviousChild(Fw::ActiveFocusReason, true);
-            } else if(focusable && (!parent->getFocusedChild() && parent->getAutoFocusPolicy() != Fw::AutoFocusNone)) {
+            } else if(focusable && !parent->getFocusedChild() && parent->getAutoFocusPolicy() != Fw::AutoFocusNone) {
                 focus();
             }
         }

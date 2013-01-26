@@ -48,6 +48,26 @@ void UIWidget::initBaseStyle()
 
 void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
 {
+    // parse lua variables and callbacks first
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        // lua functions
+        if(stdext::starts_with(node->tag(), "@")) {
+            // load once
+            if(m_firstOnStyle) {
+                std::string funcName = node->tag().substr(1);
+                std::string funcOrigin = "@" + node->source() + ": [" + node->tag() + "]";
+                g_lua.loadFunction(node->value(), funcOrigin);
+                luaSetField(funcName);
+            }
+        // lua fields value
+        } else if(stdext::starts_with(node->tag(), "&")) {
+            std::string fieldName = node->tag().substr(1);
+            std::string fieldOrigin = "@" + node->source() + ": [" + node->tag() + "]";
+
+            g_lua.evaluateExpression(node->value(), fieldOrigin);
+            luaSetField(fieldName);
+        }
+    }
     // load styles used by all widgets
     for(const OTMLNodePtr& node : styleNode->children()) {
         if(node->tag() == "color")
@@ -309,22 +329,6 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                     addAnchor(anchoredEdge, hookedWidgetId, hookedEdge);
                 }
             }
-        // lua functions
-        } else if(stdext::starts_with(node->tag(), "@")) {
-            // load once
-            if(m_firstOnStyle) {
-                std::string funcName = node->tag().substr(1);
-                std::string funcOrigin = "@" + node->source() + ": [" + node->tag() + "]";
-                g_lua.loadFunction(node->value(), funcOrigin);
-                luaSetField(funcName);
-            }
-        // lua fields value
-        } else if(stdext::starts_with(node->tag(), "&")) {
-            std::string fieldName = node->tag().substr(1);
-            std::string fieldOrigin = "@" + node->source() + ": [" + node->tag() + "]";
-
-            g_lua.evaluateExpression(node->value(), fieldOrigin);
-            luaSetField(fieldName);
         }
     }
 }
