@@ -510,28 +510,29 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
 
     // lParam will have this state when receiving insert,end,down,etc presses from numpad
     if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
+        bool numlockOn = GetKeyState(VK_NUMLOCK);
         // retranslate numpad keys
         switch(wParam) {
             case VK_INSERT:
-                return Fw::KeyNumpad0;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad0;
             case VK_END:
-                return Fw::KeyNumpad1;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad1;
             case VK_DOWN:
-                return Fw::KeyNumpad2;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad2;
             case VK_NEXT:
-                return Fw::KeyNumpad3;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad3;
             case VK_LEFT:
-                return Fw::KeyNumpad4;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad4;
             case VK_CLEAR:
-                return Fw::KeyNumpad5;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad5;
             case VK_RIGHT:
-                return Fw::KeyNumpad6;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad6;
             case VK_HOME:
-                return Fw::KeyNumpad7;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad7;
             case VK_UP:
-                return Fw::KeyNumpad8;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad8;
             case VK_PRIOR:
-                return Fw::KeyNumpad9;
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad9;
         }
     }
 

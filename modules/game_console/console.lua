@@ -496,10 +496,8 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 
   label.name = creatureName
-  if creatureName and #creatureName > 0 then
-    label.onMouseRelease = function (self, mousePos, mouseButton)
-      processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
-    end
+  label.onMouseRelease = function (self, mousePos, mouseButton)
+    processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
@@ -542,7 +540,7 @@ end
 function processMessageMenu(mousePos, mouseButton, creatureName, text, label, tab)
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
-    if creatureName then
+    if creatureName and #creatureName > 0 then
       if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
         if not g_game.getLocalPlayer():hasVip(creatureName) then
