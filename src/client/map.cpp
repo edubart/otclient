@@ -600,27 +600,39 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 if(i == 0 && j == 0)
                     continue;
 
+                bool wasSeen = false;
+                bool hasCreature = false;
+                bool isNotWalkable = true;
+                bool isNotPathable = true;
+                int speed = 100;
+
                 Position neighborPos = currentNode->pos.translated(i, j);
-                const TilePtr& tile = getTile(neighborPos);
+                if(g_map.isAwareOfPosition(neighborPos)) {
+                    wasSeen = true;
+                    if(const TilePtr& tile = getTile(neighborPos)) {
+                        hasCreature = tile->hasCreature();
+                        isNotWalkable = !tile->isWalkable();
+                        isNotPathable = !tile->isPathable();
+                        speed = tile->getGroundSpeed();
+                    }
+                } else {
+                    const MinimapTile& mtile = g_minimap.getTile(neighborPos);
+                    wasSeen = mtile.hasFlag(MinimapTileWasSeen);
+                    isNotWalkable = mtile.hasFlag(MinimapTileNotWalkable);
+                    isNotPathable = mtile.hasFlag(MinimapTileNotPathable);
+                    speed = mtile.getSpeed();
+                }
 
                 float walkFactor = 0;
                 if(neighborPos != goalPos) {
-                    /*
-                      Known Issue with Otc::PathFindAllowNullTiles flag:
-                      If you are above ground floor this will attempt to path over null
-                      tiles, need to rework this for "fly servers" and blank map click,
-                      but it is breaking normal path finding.
-                    */
-                    if(!(flags & Otc::PathFindAllowNullTiles) && (!tile || tile->isEmpty()))
+                    if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
                         continue;
-                    if(tile) {
-                        if(!(flags & Otc::PathFindAllowCreatures) && tile->hasCreature())
+                    if(wasSeen) {
+                        if(!(flags & Otc::PathFindAllowCreatures) && hasCreature)
                             continue;
-                        if(!(flags & Otc::PathFindAllowNonPathable) && !tile->isPathable())
+                        if(!(flags & Otc::PathFindAllowNonPathable) && isNotPathable)
                             continue;
-                        if(!(flags & Otc::PathFindAllowNonWalkable) && !tile->isWalkable())
-                            continue;
-                        if(!(flags & Otc::PathFindAllowChangeFloor) && tile->changesFloor())
+                        if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
                             continue;
                     }
                 }
@@ -631,8 +643,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 else
                     walkFactor += 1.0f;
 
-                int groundSpeed = tile ? tile->getGroundSpeed() : 100;
-                float cost = currentNode->cost + (groundSpeed * walkFactor) / 100.0f;
+                float cost = currentNode->cost + (speed * walkFactor) / 100.0f;
 
                 Node *neighborNode;
                 if(nodes.find(neighborPos) == nodes.end()) {

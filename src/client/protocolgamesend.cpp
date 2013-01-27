@@ -563,7 +563,6 @@ void ProtocolGame::sendCloseRuleViolation(const std::string& reporter)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientCloseRuleViolation);
     msg->addString(reporter);
-    dump << "ProtocolGame::sendCloseRuleViolation" << reporter;
     send(msg);
 }
 
@@ -571,7 +570,6 @@ void ProtocolGame::sendCancelRuleViolation()
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientCancelRuleViolation);
-    dump << "ProtocolGame::sendCancelRuleViolation";
     send(msg);
 }
 

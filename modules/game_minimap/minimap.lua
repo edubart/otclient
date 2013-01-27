@@ -6,7 +6,7 @@ navigating = false
 minimapWidget = nil
 minimapButton = nil
 minimapWindow = nil
-
+otmm = false
 flagsPanel    = nil
 flagWindow    = nil
 nextFlagId    = 0
@@ -49,6 +49,7 @@ function init()
   reset()
   minimapWindow:setup()
   loadMapFlags()
+  useOTMM()
   
   if g_game.isOnline() then
     addEvent(function() updateMapFlags() end)
@@ -263,17 +264,32 @@ end
 
 function loadMap()
   local protocolVersion = g_game.getProtocolVersion()
-  local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
-  if g_resources.fileExists(minimapFile) then
-    g_map.clean()
-    g_map.loadOtcm(minimapFile)
+  g_map.clean()
+  g_minimap.clean()
+
+  if otmm then
+    local minimapFile = '/minimap.otmm'
+    if g_resources.fileExists(minimapFile) then
+      g_minimap.loadOtmm(minimapFile)
+    end
+  else
+    local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
+    if g_resources.fileExists(minimapFile) then
+      g_map.loadOtcm(minimapFile)
+    end
   end
 end
 
 function saveMap()
   local protocolVersion = g_game.getProtocolVersion()
-  local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
-  g_map.saveOtcm(minimapFile)
+
+  if otmm then
+    local minimapFile = '/minimap.otmm'
+    g_minimap.saveOtmm(minimapFile)
+  else
+    local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
+    g_map.saveOtcm(minimapFile)
+  end
 end
 
 function toggle()
@@ -284,6 +300,10 @@ function toggle()
     minimapWindow:open()
     minimapButton:setOn(true)
   end
+end
+
+function useOTMM()
+  otmm = true
 end
 
 function isClickInRange(position, fromPosition, toPosition)

@@ -363,11 +363,10 @@ namespace Otc
     };
 
     enum PathFindFlags {
-        PathFindAllowNullTiles = 1,
+        PathFindAllowNotSeenTiles = 1,
         PathFindAllowCreatures = 2,
         PathFindAllowNonPathable = 4,
-        PathFindAllowNonWalkable = 8,
-        PathFindAllowChangeFloor = 16
+        PathFindAllowNonWalkable = 8
     };
 
     enum AutomapFlags

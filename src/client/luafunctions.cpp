@@ -36,6 +36,7 @@
 #include "player.h"
 #include "localplayer.h"
 #include "map.h"
+#include "minimap.h"
 #include "thingtypemanager.h"
 #include "spritemanager.h"
 #include "shadermanager.h"
@@ -116,7 +117,12 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getSpawnFile", &Map::getSpawnFile, &g_map);
     g_lua.bindSingletonFunction("g_map", "setSpawnFile", &Map::setSpawnFile, &g_map);
     g_lua.bindSingletonFunction("g_map", "createTile", &Map::createTile, &g_map);
-    g_lua.bindSingletonFunction("g_map", "getSize", &Map::getSize, &g_map);;
+    g_lua.bindSingletonFunction("g_map", "getSize", &Map::getSize, &g_map);
+
+    g_lua.registerSingletonClass("g_minimap");
+    g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
+    g_lua.bindSingletonFunction("g_minimap", "loadOtmm", &Minimap::loadOtmm, &g_minimap);
+    g_lua.bindSingletonFunction("g_minimap", "saveOtmm", &Minimap::saveOtmm, &g_minimap);
 
     g_lua.registerSingletonClass("g_creatures");
     g_lua.bindSingletonFunction("g_creatures", "getCreatures", &CreatureManager::getCreatures, &g_creatures);

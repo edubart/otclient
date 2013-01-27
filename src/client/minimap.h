@@ -28,31 +28,33 @@
 #include <framework/graphics/declarations.h>
 
 enum {
-    MMBLOCK_SIZE = 64
+    MMBLOCK_SIZE = 64,
+    OTMM_SIGNATURE = 0x4D4d544F,
+    OTMM_VERSION = 1
 };
 
 enum MinimapTileFlags {
-    MinimapTilePathable = 1,
-    MinimapTileWalkable = 2,
-    MinimapTileChangesFloor = 4
+    MinimapTileWasSeen = 1,
+    MinimapTileNotPathable = 2,
+    MinimapTileNotWalkable = 4
 };
 
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : flags(0), color(0) { }
+    MinimapTile() : flags(0), color(0), speed(100) { }
     uint8 flags;
     uint8 color;
-
-    bool operator==(const MinimapTile& other) { return color == other.color && flags == other.flags; }
+    uint8 speed;
+    bool hasFlag(MinimapTileFlags flag) const { return flags & flag; }
+    int getSpeed() const { return speed * 10; }
+    bool operator==(const MinimapTile& other) const { return color == other.color && flags == other.flags && speed == other.speed; }
+    bool operator!=(const MinimapTile& other) const { return !(*this == other); }
 };
-#pragma pack(pop)
 
 class MinimapBlock
 {
 public:
-    void updateImage();
-    void updateTexture();
     void clean();
     void update();
     void updateTile(int x, int y, const MinimapTile& tile);
@@ -60,16 +62,15 @@ public:
     void resetTile(int x, int y) { m_tiles[getTileIndex(x,y)] = MinimapTile(); }
     uint getTileIndex(int x, int y) { return ((y % MMBLOCK_SIZE) * MMBLOCK_SIZE) + (x % MMBLOCK_SIZE); }
     const TexturePtr& getTexture() { return m_texture; }
-    std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE> getTiles() { return m_tiles; }
-    bool shouldDraw() { return m_shouldDraw; }
-
+    std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE>& getTiles() { return m_tiles; }
+    void mustUpdate() { m_mustUpdate = true; }
 private:
-    ImagePtr m_image;
     TexturePtr m_texture;
-    stdext::boolean<false> m_shouldDraw;
     std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE> m_tiles;
     stdext::boolean<true> m_mustUpdate;
 };
+
+#pragma pack(pop)
 
 class Minimap
 {
@@ -84,15 +85,18 @@ public:
     Position getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale);
 
     void updateTile(const Position& pos, const TilePtr& tile);
-    bool checkTileProperty(const Position& pos, int flags);
+    const MinimapTile& getTile(const Position& pos);
 
-    void loadOtmm(const std::string& fileName);
+    bool loadOtmm(const std::string& fileName);
     void saveOtmm(const std::string& fileName);
 
 private:
+    bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].find(getBlockIndex(pos)) != m_tileBlocks[pos.z].end(); }
     MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
     Point getBlockOffset(const Point& pos) { return Point(pos.x - pos.x % MMBLOCK_SIZE,
                                                           pos.y - pos.y % MMBLOCK_SIZE); }
+    Position getIndexPosition(int index, int z) { return Position((index % (65536 / MMBLOCK_SIZE))*MMBLOCK_SIZE,
+                                                                  (index / (65536 / MMBLOCK_SIZE))*MMBLOCK_SIZE, z); }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z+1];
 };

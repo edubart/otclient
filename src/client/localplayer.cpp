@@ -193,9 +193,11 @@ bool LocalPlayer::autoWalk(const Position& destination)
             limitedPath.resize(127);
     } else {
         // no known path found, try to discover one
-        result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNullTiles);
-        if(std::get<1>(result) != Otc::PathFindResultOk)
+        result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNotSeenTiles);
+        if(std::get<1>(result) != Otc::PathFindResultOk) {
+            callLuaField("onAutoWalkFail");
             return false;
+        }
 
         Position currentPos = m_position;
         for(auto dir : std::get<0>(result)) {

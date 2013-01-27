@@ -530,7 +530,10 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
     --menu:addOption(tr('Show Server Messages'), function() --[[TODO]] end)
     menu:addSeparator()
   end
-  menu:addOption(tr('Clear Messages'), function() clearChannel(consoleTabBar) end)
+
+  if consoleTabBar:getCurrentTab() == tab then
+    menu:addOption(tr('Clear Messages'), function() clearChannel(consoleTabBar) end)
+  end
   --menu:addOption(tr('Save Messages'), function() --[[TODO]] end)
 
   menu:display(mousePos)

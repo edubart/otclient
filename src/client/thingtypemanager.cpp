@@ -72,7 +72,6 @@ bool ThingTypeManager::loadDat(std::string file)
 
         m_datSignature = fin->getU32();
 
-        int numThings[ThingLastCategory];
         for(int category = 0; category < ThingLastCategory; ++category) {
             int count = fin->getU16() + 1;
             m_thingTypes[category].clear();

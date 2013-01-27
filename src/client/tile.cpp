@@ -476,7 +476,7 @@ ThingPtr Tile::getTopMultiUseThing()
     return m_things[0];
 }
 
-bool Tile::isWalkable()
+bool Tile::isWalkable(bool ignoreCreatures)
 {
     if(!getGround())
         return false;
@@ -485,22 +485,15 @@ bool Tile::isWalkable()
         if(thing->isNotWalkable())
             return false;
 
-        if(thing->isCreature()) {
-            CreaturePtr creature = thing->static_self_cast<Creature>();
-            if(!creature->isPassable() && creature->canBeSeen())
-                return false;
+        if(!ignoreCreatures) {
+            if(thing->isCreature()) {
+                CreaturePtr creature = thing->static_self_cast<Creature>();
+                if(!creature->isPassable() && creature->canBeSeen())
+                    return false;
+            }
         }
     }
     return true;
-}
-
-bool Tile::changesFloor()
-{
-    for(const ThingPtr& thing : m_things) {
-        if(thing->isTranslucent() || (thing->isOnBottom() && thing->hasElevation()))
-            return true;
-    }
-    return false;
 }
 
 bool Tile::isPathable()
