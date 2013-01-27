@@ -301,7 +301,7 @@ end
 
 function removeTab(tab)
   if type(tab) == 'string' then 
-    tab = consoleTabBar:getTab(name)
+    tab = consoleTabBar:getTab(tab)
   end
 
   if tab == defaultTab or tab == serverTab then return end
