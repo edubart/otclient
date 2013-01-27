@@ -79,6 +79,9 @@ public:
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);
     void sendOpenPrivateChannel(const std::string& receiver);
+    void sendOpenRuleViolation(const std::string& reporter);
+    void sendCloseRuleViolation(const std::string& reporter);
+    void sendCancelRuleViolation();
     void sendCloseNpcChannel();
     void sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight);
     void sendAttack(uint creatureId, uint seq);

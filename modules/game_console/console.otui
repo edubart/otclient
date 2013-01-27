@@ -8,6 +8,8 @@ ConsoleLabel < UITextEdit
   selection-color: #111416
   selection-background-color: #999999
   change-cursor-image: false
+  cursor-visible: false
+  editable: false
 
 ConsolePhantomLabel < UILabel
   font: verdana-11px-antialised

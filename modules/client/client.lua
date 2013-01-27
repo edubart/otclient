@@ -13,7 +13,12 @@ end
 function reloadScripts()
   g_textures.clearTexturesCache()
   g_modules.reloadModules()
-  dofile('/' .. g_app.getCompactName() .. 'rc')
+
+  local script = '/' .. g_app.getCompactName() .. 'rc'
+  if g_resources.fileExists(script) then
+    dofile(script)
+  end
+
   local message = tr('All modules and scripts were reloaded.')
 
   modules.game_textmessage.displayGameMessage(message)

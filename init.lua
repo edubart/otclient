@@ -47,7 +47,8 @@ g_modules.ensureModuleLoaded("game_interface")
 -- mods 1000-9999
 g_modules.autoLoadModules(9999)
 
-if g_resources.fileExists("/otclientrc") then
-  dofile("/otclientrc")
+local script = '/' .. g_app.getCompactName() .. 'rc'
+if g_resources.fileExists(script) then
+  dofile(script)
 end
 

@@ -1156,6 +1156,27 @@ void Game::editList(uint id, int doorId, const std::string& text)
     m_protocolGame->sendEditList(id, doorId, text);
 }
 
+void Game::openRuleViolation(const std::string& reporter)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendOpenRuleViolation(reporter);
+}
+
+void Game::closeRuleViolation(const std::string& reporter)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendCloseRuleViolation(reporter);
+}
+
+void Game::cancelRuleViolation()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendCancelRuleViolation();
+}
+
 void Game::reportBug(const std::string& comment)
 {
     if(!canPerformGameAction())

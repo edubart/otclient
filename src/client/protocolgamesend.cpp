@@ -502,6 +502,7 @@ void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::str
     switch(mode) {
     case Otc::MessagePrivateTo:
     case Otc::MessageGamemasterPrivateTo:
+    case Otc::MessageRVRAnswer:
         msg->addString(receiver);
         break;
     case Otc::MessageChannel:
@@ -546,6 +547,31 @@ void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientOpenPrivateChannel);
     msg->addString(receiver);
+    send(msg);
+}
+
+void ProtocolGame::sendOpenRuleViolation(const std::string& reporter)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientOpenRuleViolation);
+    msg->addString(reporter);
+    send(msg);
+}
+
+void ProtocolGame::sendCloseRuleViolation(const std::string& reporter)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientCloseRuleViolation);
+    msg->addString(reporter);
+    dump << "ProtocolGame::sendCloseRuleViolation" << reporter;
+    send(msg);
+}
+
+void ProtocolGame::sendCancelRuleViolation()
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientCancelRuleViolation);
+    dump << "ProtocolGame::sendCancelRuleViolation";
     send(msg);
 }
 

@@ -225,6 +225,11 @@ public:
     void editText(uint id, const std::string& text);
     void editList(uint id, int doorId, const std::string& text);
 
+    // rule violations (only gms)
+    void openRuleViolation(const std::string& reporter);
+    void closeRuleViolation(const std::string& reporter);
+    void cancelRuleViolation();
+    
     // reports
     void reportBug(const std::string& comment);
     void reportRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);

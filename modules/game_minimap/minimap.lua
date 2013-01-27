@@ -56,6 +56,11 @@ function init()
 end
 
 function terminate()
+  g_keyboard.unbindKeyPress('Alt+Left')
+  g_keyboard.unbindKeyPress('Alt+Right')
+  g_keyboard.unbindKeyPress('Alt+Up')
+  g_keyboard.unbindKeyPress('Alt+Down')
+
   disconnect(g_game, {
     onGameStart = online,
     onGameEnd = offline,

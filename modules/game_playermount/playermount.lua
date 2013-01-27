@@ -1,9 +1,28 @@
 function init()
-  g_keyboard.bindKeyDown('Ctrl+R', toggleMount, gameRootPanel)
+  connect(g_game, {
+    onGameStart = online,
+    onGameEnd = offline
+  })
+  if g_game.isOnline() then online() end
 end
 
 function terminate()
-  g_keyboard.unbindKeyDown('Ctrl+R', gameRootPanel)
+  disconnect(g_game, {
+    onGameStart = online,
+    onGameEnd = offline
+  })
+end
+
+function online()
+  if g_game.getFeature(GamePlayerMounts) then
+    g_keyboard.bindKeyDown('Ctrl+R', toggleMount)
+  end
+end
+
+function offline()
+  if g_game.getFeature(GamePlayerMounts) then
+    g_keyboard.unbindKeyDown('Ctrl+R')
+  end
 end
 
 function toggleMount()

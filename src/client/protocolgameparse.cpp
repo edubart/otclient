@@ -1123,6 +1123,8 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
         case Otc::MessagePrivateFrom:
         case Otc::MessageGamemasterBroadcast:
         case Otc::MessageGamemasterPrivateFrom:
+        case Otc::MessageRVRAnswer:
+        case Otc::MessageRVRContinue:
             break;
         case Otc::MessageRVRChannel:
             msg->getU32();

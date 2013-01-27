@@ -22,6 +22,7 @@ capacityLabel = nil
 tradeButton = nil
 buyTab = nil
 sellTab = nil
+initialized = false
 
 showWeight = true
 buyWithBackpack = nil
@@ -82,9 +83,12 @@ function init()
 
   connect(LocalPlayer, { onFreeCapacityChange = onFreeCapacityChange,
                          onInventoryChange = onInventoryChange } )
+
+  initialized = true
 end
 
 function terminate()
+  initialized = false
   npcWindow:destroy()
 
   disconnect(g_game, {  onGameEnd = hide,
@@ -352,7 +356,7 @@ function refreshTradeItems()
 end
 
 function refreshPlayerGoods()
-  if not g_game.isOnline() then return end
+  if not initialized then return end
 
   moneyLabel:setText(playerMoney .. ' ' .. CURRENCY)
   capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)

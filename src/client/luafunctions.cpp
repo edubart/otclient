@@ -196,6 +196,9 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "inspectTrade", &Game::inspectTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "acceptTrade", &Game::acceptTrade, &g_game);
     g_lua.bindSingletonFunction("g_game", "rejectTrade", &Game::rejectTrade, &g_game);
+    g_lua.bindSingletonFunction("g_game", "openRuleViolation", &Game::openRuleViolation, &g_game);
+    g_lua.bindSingletonFunction("g_game", "closeRuleViolation", &Game::closeRuleViolation, &g_game);
+    g_lua.bindSingletonFunction("g_game", "cancelRuleViolation", &Game::cancelRuleViolation, &g_game);
     g_lua.bindSingletonFunction("g_game", "reportBug", &Game::reportBug, &g_game);
     g_lua.bindSingletonFunction("g_game", "reportRuleViolation", &Game::reportRuleViolation, &g_game);
     g_lua.bindSingletonFunction("g_game", "debugReport", &Game::debugReport, &g_game);

@@ -15,6 +15,9 @@ SpeakTypesSettings = {
   channelOrange = { speakType = MessageModes.ChannelHighlight, color = '#FE6500' },
   monsterSay = { speakType = MessageModes.MonsterSay, color = '#FE6500', hideInConsole = true},
   monsterYell = { speakType = MessageModes.MonsterYell, color = '#FE6500', hideInConsole = true},
+  rvrAnswerFrom = { speakType = MessageModes.RVRAnswer, color = '#FE6500' },
+  rvrAnswerTo = { speakType = MessageModes.RVRAnswer, color = '#FE6500' },
+  rvrContinue = { speakType = MessageModes.RVRContinue, color = '#FFFF00' },
 }
 
 SpeakTypes = {
@@ -32,6 +35,9 @@ SpeakTypes = {
   [MessageModes.ChannelHighlight] = SpeakTypesSettings.channelOrange,
   [MessageModes.MonsterSay] = SpeakTypesSettings.monsterSay,
   [MessageModes.MonsterYell] = SpeakTypesSettings.monsterYell,
+  [MessageModes.RVRChannel] = SpeakTypesSettings.channelWhite,
+  [MessageModes.RVRContinue] = SpeakTypesSettings.rvrContinue,
+  [MessageModes.RVRAnswer] = SpeakTypesSettings.rvrAnswerFrom,
 
   -- ignored types
   [MessageModes.Spell] = SpeakTypesSettings.none,
@@ -62,6 +68,9 @@ currentMessageIndex = 0
 ignoreNpcMessages = false
 defaultTab = nil
 serverTab = nil
+violationsChannelId = nil
+violationWindow = nil
+violationReportTab = nil
 
 local ignoreSettings = {
     privateMessages = false,
@@ -76,8 +85,12 @@ function init()
                     onOpenPrivateChannel = onOpenPrivateChannel,
                     onOpenOwnPrivateChannel = onOpenOwnPrivateChannel,
                     onCloseChannel = onCloseChannel,
-                    onGameStart = onGameStart,
-                    onGameEnd = clear })
+                    onRuleViolationChannel = onRuleViolationChannel,
+                    onRuleViolationRemove = onRuleViolationRemove,
+                    onRuleViolationCancel = onRuleViolationCancel,
+                    onRuleViolationLock = onRuleViolationLock,
+                    onGameStart = online,
+                    onGameEnd = offline })
 
   consolePanel = g_ui.loadUI('console', modules.game_interface.getBottomPanel())
   consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
@@ -134,8 +147,12 @@ function terminate()
                        onOpenPrivateChannel = onOpenPrivateChannel,
                        onOpenOwnPrivateChannel = onOpenPrivateChannel,
                        onCloseChannel = onCloseChannel,
-                       onGameStart = onGameStart,
-                       onGameEnd = clear })
+                       onRuleViolationChannel = onRuleViolationChannel,
+                       onRuleViolationRemove = onRuleViolationRemove,
+                       onRuleViolationCancel = onRuleViolationCancel,
+                       onRuleViolationLock = onRuleViolationLock,
+                       onGameStart = online,
+                       onGameEnd = offline })
 
   if g_game.isOnline() then clear() end
 
@@ -153,6 +170,11 @@ function terminate()
   if ignoreWindow then
     ignoreWindow:destroy()
     ignoreWindow = nil
+  end
+
+  if violationWindow then
+    violationWindow:destroy()
+    violationWindow = nil
   end
 
   consolePanel:destroy()
@@ -208,7 +230,17 @@ function clear()
     consoleTabBar:removeTab(npcTab)
   end
 
+  if violationReportTab then
+    consoleTabBar:removeTab(violationReportTab)
+    violationReportTab = nil
+  end
+
   consoleTextEdit:clearText()
+
+  if violationWindow then
+    violationWindow:destroy()
+    violationWindow = nil
+  end
 
   if channelsWindow then
     channelsWindow:destroy()
@@ -234,6 +266,24 @@ function openHelp()
   g_game.joinChannel(helpChannel)
 end
 
+function openPlayerReportRuleViolationWindow()
+  if violationWindow or violationReportTab then return end
+  violationWindow = g_ui.loadUI('violationwindow', rootWidget)
+  violationWindow.onEscape = function()
+    violationWindow:destroy()
+    violationWindow = nil
+  end
+  violationWindow.onEnter = function()
+    local text = violationWindow:getChildById('text'):getText()
+    g_game.talkChannel(MessageModes.RVRChannel, 0, text)
+    violationReportTab = addTab(tr('Report Rule') .. '...', true)
+    addTabText(tr('Please wait patiently for a gamemaster to reply') .. '.', SpeakTypesSettings.privateRed, violationReportTab)
+    violationReportTab.locked = true
+    violationWindow:destroy()
+    violationWindow = nil
+  end
+end
+
 function addTab(name, focus)
   local tab = getTab(name)
   if tab then -- is channel already open
@@ -249,12 +299,20 @@ function addTab(name, focus)
   return tab
 end
 
-function removeTab(name)
-  local tab = consoleTabBar:getTab(name)
+function removeTab(tab)
+  if type(tab) == 'string' then 
+    tab = consoleTabBar:getTab(name)
+  end
+
   if tab == defaultTab or tab == serverTab then return end
 
+  if tab == violationReportTab then
+    g_game.cancelRuleViolation()
+    violationReportTab = nil
+  elseif tab.violationChatName then
+    g_game.closeRuleViolation(tab.violationChatName)
   -- notificate the server that we are leaving the channel
-  if tab.channelId then
+  elseif tab.channelId then
     for k, v in pairs(channels) do
       if (k == tab.channelId) then channels[k] = nil end
     end
@@ -268,23 +326,26 @@ end
 
 function removeCurrentTab()
   local tab = consoleTabBar:getCurrentTab()
-  if tab == defaultTab or tab == serverTab then return end
-
-  -- notificate the server that we are leaving the channel
-  if tab.channelId then
-    for k, v in pairs(channels) do
-      if (k == tab.channelId) then channels[k] = nil end
-    end
-    g_game.leaveChannel(tab.channelId)
-  elseif tab:getText() == "NPCs" then
-    g_game.closeNpcChannel()
-  end
-
-  consoleTabBar:removeTab(tab)
+  removeTab(tab)
 end
 
 function getTab(name)
   return consoleTabBar:getTab(name)
+end
+
+function getChannelTab(channelId)
+  local channel = channels[channelId]
+  if channel then
+    return getTab(channel)
+  end
+  return nil
+end
+
+function getRuleViolationsTab()
+  if violationsChannelId then
+    return getChannelTab(violationsChannelId)
+  end
+  return nil
 end
 
 function getCurrentTab()
@@ -365,6 +426,8 @@ function getHighlightedText(text)
 end
 
 function addTabText(text, speaktype, tab, creatureName)
+  if not tab or tab.locked or not text or #text == 0 then return end
+
   if modules.client_options.getOption('showTimestampsInConsole') then
     text = os.date('%H:%M') .. ' ' .. text
   end
@@ -432,8 +495,11 @@ function addTabText(text, speaktype, tab, creatureName)
     labelHighlight:setText("")
   end
 
-  label.onMouseRelease = function (self, mousePos, mouseButton)
-    processMessageMenu(mousePos, mouseButton, creatureName, text, self)
+  label.name = creatureName
+  if creatureName and #creatureName > 0 then
+    label.onMouseRelease = function (self, mousePos, mouseButton)
+      processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
+    end
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
@@ -442,6 +508,16 @@ function addTabText(text, speaktype, tab, creatureName)
 
   if consoleBufferHighlight:getChildCount() > MAX_LINES then
     consoleBufferHighlight:getFirstChild():destroy()
+  end
+end
+
+function removeTabLabelByName(tab, name)
+  local panel = consoleTabBar:getTabPanel(tab)
+  local consoleBuffer = panel:getChildById('consoleBuffer')
+  for _,label in pairs(consoleBuffer:getChildren()) do
+    if label.name == name then
+      label:destroy()
+    end
   end
 end
 
@@ -460,7 +536,7 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
   menu:display(mousePos)
 end
 
-function processMessageMenu(mousePos, mouseButton, creatureName, text, label)
+function processMessageMenu(mousePos, mouseButton, creatureName, text, label, tab)
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
     if creatureName then
@@ -493,6 +569,11 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label)
     end
     menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
     menu:addOption(tr('Select all'), function() label:selectAll() end)
+    if tab.violations then
+      menu:addSeparator()
+      menu:addOption(tr('Process') .. ' ' .. creatureName, function() processViolation(creatureName, text) end)
+      menu:addOption(tr('Remove') .. ' ' .. creatureName, function() g_game.closeRuleViolation(creatureName) end)
+    end
     menu:display(mousePos)
   end
 end
@@ -508,6 +589,8 @@ end
 
 function sendMessage(message, tab)
   local tab = tab or getCurrentTab()
+
+  if tab == getRuleViolationsTab() then return end
 
   -- handling chat commands
   local originalMessage = message
@@ -567,12 +650,21 @@ function sendMessage(message, tab)
     return
   else
     local isPrivateCommand = false
+    local priv = true
+    local tabname = name
     if chatCommandPrivateReady then
       speaktypedesc = 'privatePlayerToPlayer'
       name = chatCommandPrivate
       isPrivateCommand = true
     elseif tab.npcChat then
       speaktypedesc = 'privatePlayerToNpc'
+    elseif tab == violationReportTab then
+      speaktypedesc = 'rvrContinue'
+      tabname = tr('Report Rule') .. '...'
+    elseif tab.violationChatName then
+      speaktypedesc = 'rvrAnswerTo'
+      name = tab.violationChatName
+      tabname = tab.violationChatName .. '\'...'
     else
       speaktypedesc = 'privatePlayerToPlayer'
     end
@@ -583,7 +675,7 @@ function sendMessage(message, tab)
     g_game.talkPrivate(speaktype.speakType, name, message)
 
     message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
-    addPrivateText(message, speaktype, name, isPrivateCommand, g_game.getCharacterName())
+    addPrivateText(message, speaktype, tabname, isPrivateCommand, g_game.getCharacterName())
   end
 end
 
@@ -641,6 +733,12 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
   
   speaktype = SpeakTypes[mode]
+
+  if not speaktype then
+    perror('unhandled onTalk message mode ' .. mode .. ': ' .. message)
+    return
+  end
+
   if name ~= g_game.getLocalPlayer():getName() then
     if mode == MessageModes.Yell and isIgnoringYelling() then
       return
@@ -649,6 +747,10 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
     elseif isIgnored(name) then
       return
     end
+  end
+
+  if mode == MessageModes.RVRChannel then
+    channelId = violationsChannelId
   end
 
   if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
@@ -674,18 +776,18 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   local defaultMessage = mode <= 3 and true or false
 
-  if not speaktype then
-    perror('unhandled onTalk message mode ' .. mode .. ': ' .. message)
-    return
-  end
-
   if speaktype == SpeakTypesSettings.none then return end
 
   if speaktype.hideInConsole then return end
 
   local composedMessage = applyMessagePrefixies(name, level, message)
 
-  if speaktype.private then
+  if mode == MessageModes.RVRAnswer then
+    violationReportTab.locked = false
+    addTabText(composedMessage, speaktype, violationReportTab, name)
+  elseif mode == MessageModes.RVRContinue then
+    addText(composedMessage, speaktype, name .. '\'...', name)
+  elseif speaktype.private then
     addPrivateText(composedMessage, speaktype, name, false, name)
     if modules.client_options.getOption('showPrivateMessagesOnScreen') and speaktype ~= SpeakTypesSettings.privateNpcToPlayer then
       modules.game_textmessage.displayPrivateMessage(name .. ':\n' .. message)
@@ -732,6 +834,40 @@ function onCloseChannel(channelId)
       if (k == tab.channelId) then channels[k] = nil end
     end
   end
+end
+
+function processViolation(name, text)
+  local tabname = name .. '\'...'
+  local tab = addTab(tabname, true)
+  channels[tabname] = tabname
+  tab.violationChatName = name
+  g_game.openRuleViolation(name)
+  addTabText(text, SpeakTypesSettings.say, tab)
+end
+
+function onRuleViolationChannel(channelId)
+  violationsChannelId = channelId
+  local tab = addChannel(tr('Rule Violations'), channelId)
+  tab.violations = true
+end
+
+function onRuleViolationRemove(name)
+  local tab = getRuleViolationsTab()
+  if not tab then return end
+  removeTabLabelByName(tab, name)
+end
+
+function onRuleViolationCancel(name)
+  local tab = getTab(name .. '\'...')
+  if not tab then return end
+  addTabText(tr('%s has finished the request', name) .. '.', SpeakTypesSettings.privateRed, tab)
+  tab.locked = true
+end
+
+function onRuleViolationLock()
+  if not violationReportTab then return end
+  addTabText(tr('Your request has been closed') .. '.', SpeakTypesSettings.privateRed, violationReportTab)
+  violationReportTab.locked = true
 end
 
 function doChannelListSubmit()
@@ -884,7 +1020,10 @@ function onClickIgnoreButton()
   end
 end
 
-function onGameStart()
+function online()
+  if g_game.getProtocolVersion() < 862 then
+    g_keyboard.bindKeyDown('Ctrl+R', openPlayerReportRuleViolationWindow)
+  end
   -- open last channels
   local lastChannelsOpen = g_settings.getNode('lastChannelsOpen')
   if lastChannelsOpen then
@@ -913,3 +1052,9 @@ function onGameStart()
   end
 end
 
+function offline()
+  if g_game.getProtocolVersion() < 862 then
+    g_keyboard.unbindKeyDown('Ctrl+R')
+  end
+  clear()
+end
