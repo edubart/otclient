@@ -21,11 +21,11 @@ FloorUpControl < MapControl
 FloorDownControl < MapControl
   icon-source: /images/game/minimap/floor_down
 
-ZoomOutControl < MapControl
-  //image-source: /images/game/minimap/zoom_out
-
 ZoomInControl < MapControl
   //image-source: /images/game/minimap/zoom_in
+
+ZoomOutControl < MapControl
+  //image-source: /images/game/minimap/zoom_out
 
 MiniWindow
   id: minimapWindow
@@ -75,7 +75,7 @@ MiniWindow
       enabled: true
       @onClick: onButtonClick(self:getId())
 
-    ZoomOutControl
+    ZoomInControl
       id: zoomIn
       text: +
       font: terminus-14px-bold
@@ -86,7 +86,7 @@ MiniWindow
       enabled: true
       @onClick: onButtonClick(self:getId())
 
-    ZoomInControl
+    ZoomOutControl
       id: zoomOut
       text: -
       anchors.right: parent.right

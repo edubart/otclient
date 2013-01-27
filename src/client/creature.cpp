@@ -263,7 +263,6 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     else
         g_painter->setColor(fillColor);
 
-    g_painter->setColor(fillColor);
     g_painter->drawFilledRect(healthRect);
 
     m_nameCache.draw(textRect);
