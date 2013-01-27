@@ -635,6 +635,13 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                         if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
                             continue;
                     }
+                } else {
+                    if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
+                        continue;
+                    if(wasSeen) {
+                        if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
+                            continue;
+                    }
                 }
 
                 Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);

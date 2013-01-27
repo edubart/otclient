@@ -195,7 +195,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
         // no known path found, try to discover one
         result = g_map.findPath(m_position, destination, 1000, Otc::PathFindAllowNotSeenTiles);
         if(std::get<1>(result) != Otc::PathFindResultOk) {
-            callLuaField("onAutoWalkFail");
+            callLuaField("onAutoWalkFail", std::get<1>(result));
             return false;
         }
 
