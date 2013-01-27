@@ -522,7 +522,7 @@ int Map::getLastAwareFloor()
         return Otc::SEA_FLOOR;
 }
 
-std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxSteps, int flags)
+std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxComplexity, int flags)
 {
     // pathfinding using A* search algorithm
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
@@ -545,8 +545,6 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
     };
 
-    const uint MAX_COMPLEXITY = 100000;
-
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
@@ -563,11 +561,6 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         return ret;
     }
 
-    if(startPos.distance(goalPos) > maxSteps) {
-        result = Otc::PathFindResultTooFar;
-        return ret;
-    }
-
     std::unordered_map<Position, Node*, PositionHasher> nodes;
     std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
 
@@ -576,13 +569,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     nodes[startPos] = currentNode;
     Node *foundNode = nullptr;
     while(currentNode) {
-        // too far
-        if(currentNode->steps >= maxSteps) {
-            result = Otc::PathFindResultTooFar;
-            break;
-        }
-
-        if(nodes.size() > MAX_COMPLEXITY) {
+        if((int)nodes.size() > maxComplexity) {
             result = Otc::PathFindResultTooFar;
             break;
         }

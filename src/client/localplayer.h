@@ -130,6 +130,7 @@ private:
     stdext::boolean<true> m_lastPrewalkDone;
     stdext::boolean<false> m_autoWalking;
     stdext::boolean<false> m_waitingWalkPong;
+    stdext::boolean<false> m_knownCompletePath;
 
     stdext::boolean<false> m_premium;
     stdext::boolean<false> m_known;

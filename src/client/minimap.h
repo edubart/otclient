@@ -42,7 +42,7 @@ enum MinimapTileFlags {
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : flags(0), color(0), speed(100) { }
+    MinimapTile() : flags(0), color(0), speed(10) { }
     uint8 flags;
     uint8 color;
     uint8 speed;
