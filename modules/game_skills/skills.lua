@@ -217,7 +217,7 @@ function refresh()
 end
 
 function offline()
-  expSpeedEvent:cancel()
+  if expSpeedEvent then expSpeedEvent:cancel() expSpeedEvent = nil end
 end
 
 function toggle()

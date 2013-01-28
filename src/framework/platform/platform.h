@@ -33,7 +33,7 @@ public:
     bool spawnProcess(const std::string& process, const std::vector<std::string>& args);
     int getProcessId();
     std::string getTempPath();
-    void copyFile(std::string from, std::string to);
+    bool copyFile(std::string from, std::string to);
     void openUrl(std::string url);
     std::string getCPUName();
     double getTotalSystemMemory();

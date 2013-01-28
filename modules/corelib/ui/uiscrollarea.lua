@@ -116,30 +116,36 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
   return true
 end
 
-function UIScrollArea:onChildFocusChange(focusedChild, oldFocused, reason)
-  if focusedChild and (reason == MouseFocusReason or reason == KeyboardFocusReason) then
+function UIScrollArea:ensureChildVisible(child)
+  if child then
     local paddingRect = self:getPaddingRect()
     if self.verticalScrollBar then
-      local deltaY = paddingRect.y - focusedChild:getY()
+      local deltaY = paddingRect.y - child:getY()
       if deltaY > 0 then
         self.verticalScrollBar:decrement(deltaY)
       end
 
-      deltaY = (focusedChild:getY() + focusedChild:getHeight()) - (paddingRect.y + paddingRect.height)
+      deltaY = (child:getY() + child:getHeight()) - (paddingRect.y + paddingRect.height)
       if deltaY > 0 then
         self.verticalScrollBar:increment(deltaY)
       end
     else
-      local deltaX = paddingRect.x - focusedChild:getX()
+      local deltaX = paddingRect.x - child:getX()
       if deltaX > 0 then
         self.horizontalScrollBar:decrement(deltaX)
       end
 
-      deltaX = (focusedChild:getX() + focusedChild:getWidth()) - (paddingRect.x + paddingRect.width)
+      deltaX = (child:getX() + child:getWidth()) - (paddingRect.x + paddingRect.width)
       if deltaX > 0 then
         self.horizontalScrollBar:increment(deltaX)
       end
     end
+  end
+end
+
+function UIScrollArea:onChildFocusChange(focusedChild, oldFocused, reason)
+  if focusedChild and (reason == MouseFocusReason or reason == KeyboardFocusReason) then
+    self:ensureChildVisible(focusedChild)
   end
 end
 

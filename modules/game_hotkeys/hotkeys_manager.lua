@@ -213,7 +213,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
     end
   end
 
-  if item then
+  if item and hotkeyLabelSelectedOnList then
     currentItemPreview:setItemId(item:getId())
     hotkeyLabelSelectedOnList.itemId = item:getId()
     changeUseType(HOTKEY_MANAGER_USEONSELF)
@@ -235,7 +235,7 @@ function startChooseItem()
   connect(mouseGrabberWidget, { onMouseRelease = onChooseItemMouseRelease })
 
   mouseGrabberWidget:grabMouse()
-  g_mouse.pushCursor('target-cursor')
+  g_mouse.pushCursor('target')
 
   hide()
 end
@@ -260,10 +260,11 @@ function addHotkey()
   connect(assignWindow, { onKeyDown = hotkeyCapture }, true)
 end
 
-function addKeyCombo(messageBox, keyCombo, keySettings)
-  local label = nil
-  if currentHotkeysList:getChildById(keyCombo) == nil then
-    local label = g_ui.createWidget('HotkeyListLabel')
+function addKeyCombo(messageBox, keyCombo, keySettings, focus)
+  if not keyCombo then return end
+  local label = currentHotkeysList:getChildById(keyCombo)
+  if not label then
+    label = g_ui.createWidget('HotkeyListLabel')
     label:setId(keyCombo)
     label:setColor(HotkeyColors.text)
     label:setText(keyCombo .. ': ')
@@ -289,10 +290,9 @@ function addKeyCombo(messageBox, keyCombo, keySettings)
     if keySettings then
       hotkeyLabelSelectedOnList = label
       label.keyCombo = keyCombo
-      setSendAutomatically(keySettings.autoSend)
+      label.autoSend = keySettings.autoSend
       label.itemId = keySettings.itemId
-      currentItemPreview:setItemId(keySettings.itemId)
-      changeUseType(tonumber(keySettings.useType))
+      label.useType = tonumber(keySettings.useType)
       label.value = keySettings.value
     else
       label.keyCombo = keyCombo
@@ -306,6 +306,11 @@ function addKeyCombo(messageBox, keyCombo, keySettings)
 
     hotkeyList[keyCombo] = label
     g_keyboard.bindKeyPress(keyCombo, function () call(keyCombo) end, nil, 350)
+  end
+
+  if focus then
+    currentHotkeysList:focusChild(label)
+    currentHotkeysList:ensureChildVisible(label)
   end
 
   if messageBox then
@@ -340,7 +345,6 @@ function call(keyCombo)
 end
 
 function checkSelectedHotkey(focused)
-  if not focused then return end
   if hotkeysManagerLoaded then
     hotkeyLabelSelectedOnList = focused
 
@@ -352,6 +356,7 @@ function checkSelectedHotkey(focused)
         hotkeyText:focus()
         hotKeyTextLabel:enable()
         hotkeyText:setText(hotkeyLabelSelectedOnList.value)
+        hotkeyText:setCursorPos(-1)
 
         if hotkeyLabelSelectedOnList.value ~= '' then
           sendAutomatically:setChecked(hotkeyLabelSelectedOnList.autoSend)
@@ -452,6 +457,7 @@ function removeHotkey()
     hotkeyList[hotkeyLabelSelectedOnList.keyCombo] = nil
     g_keyboard.unbindKeyPress(hotkeyLabelSelectedOnList.keyCombo)
     hotkeyLabelSelectedOnList:destroy()
+    hotkeyLabelSelectedOnList = nil
   end
 end
 
@@ -470,11 +476,13 @@ function onHotkeyTextChange(id, value)
 end
 
 function setSendAutomatically(value)
-  hotkeyLabelSelectedOnList.autoSend = value
-  if value then
-    hotkeyLabelSelectedOnList:setColor(HotkeyColors.autoSend)
-  else
-    hotkeyLabelSelectedOnList:setColor(HotkeyColors.text)
+  if hotkeyLabelSelectedOnList ~= nil then
+    hotkeyLabelSelectedOnList.autoSend = value
+    if value then
+      hotkeyLabelSelectedOnList:setColor(HotkeyColors.autoSend)
+    else
+      hotkeyLabelSelectedOnList:setColor(HotkeyColors.text)
+    end
   end
 end
 

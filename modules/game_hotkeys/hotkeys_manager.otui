@@ -215,7 +215,7 @@ HotkeyAssignWindow < MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    @onClick: modules.game_hotkeys.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
+    @onClick: modules.game_hotkeys.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo, nil, true)
     margin-right: 10
 
   Button

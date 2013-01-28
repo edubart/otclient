@@ -62,10 +62,13 @@ local function onUpdateNeeded(protocol, signature)
   loadBox:destroy()
   loadBox = nil
 
-  if updateFunc then
+  if EnterGame.updateFunc then
     local continueFunc = EnterGame.show
     local cancelFunc = EnterGame.show
-    updateFunc(signature, continueFunc, cancelFunc)
+    EnterGame.updateFunc(signature, continueFunc, cancelFunc)
+  else
+    local errorBox = displayErrorBox(tr('Update needed'), tr('Your client needs update, try redownloading it.'))
+    connect(errorBox, { onOk = EnterGame.show })
   end
 end
 

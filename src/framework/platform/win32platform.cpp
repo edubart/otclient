@@ -68,11 +68,13 @@ std::string Platform::getTempPath()
     return stdext::utf16_to_utf8(path);
 }
 
-void Platform::copyFile(std::string from, std::string to)
+bool Platform::copyFile(std::string from, std::string to)
 {
     boost::replace_all(from, "/", "\\");
     boost::replace_all(to, "/", "\\");
-    CopyFileW(stdext::utf8_to_utf16(from).c_str(), stdext::utf8_to_utf16(to).c_str(), false);
+    if(CopyFileW(stdext::utf8_to_utf16(from).c_str(), stdext::utf8_to_utf16(to).c_str(), FALSE) == 0)
+        return false;
+    return true;
 }
 
 void Platform::openUrl(std::string url)

@@ -28,6 +28,8 @@
 #include <string.h>
 #include <framework/stdext/stdext.h>
 
+#include <sys/stat.h>
+
 void Platform::processArgs(std::vector<std::string>& args)
 {
     //nothing todo, linux args are already utf8 encoded
@@ -35,6 +37,10 @@ void Platform::processArgs(std::vector<std::string>& args)
 
 bool Platform::spawnProcess(const std::string& process, const std::vector<std::string>& args)
 {
+    struct stat sts;
+    if(stat(process.c_str(), &sts) == -1 && errno == ENOENT)
+        return false;
+
     pid_t pid = fork();
     if(pid == -1)
         return false;
@@ -46,7 +52,8 @@ bool Platform::spawnProcess(const std::string& process, const std::vector<std::s
             cargs[i] = (char*)args[i-1].c_str();
         cargs[args.size()+1] = 0;
 
-        execv(process.c_str(), cargs);
+        if(execv(process.c_str(), cargs) == -1)
+            _exit(EXIT_FAILURE);
     }
 
     return true;
@@ -62,9 +69,9 @@ std::string Platform::getTempPath()
     return "/tmp/";
 }
 
-void Platform::copyFile(std::string from, std::string to)
+bool Platform::copyFile(std::string from, std::string to)
 {
-    system(stdext::format("/bin/cp '%s' '%s'", from, to).c_str());
+    return system(stdext::format("/bin/cp '%s' '%s'", from, to).c_str()) == 0;
 }
 
 void Platform::openUrl(std::string url)
