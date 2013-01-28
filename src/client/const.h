@@ -337,8 +337,6 @@ namespace Otc
         GameSpellList = 23,
         GameClientPing = 24,
         GameExtendedClientPing = 25,
-        GameUpdater = 26,
-        GameLoginLocale = 27,
         GameDoubleHealth = 28,
         GameDoubleSkills = 29,
         GameChangeMapAwareRange = 30,
@@ -349,7 +347,6 @@ namespace Otc
         GameLoginPending = 35,
         GameNewSpeedLaw = 36,
         GameForceFirstAutoWalkStep = 37,
-        GameLoginUUID = 38,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };

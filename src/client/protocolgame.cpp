@@ -26,12 +26,11 @@
 #include "item.h"
 #include "localplayer.h"
 
-void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& locale)
+void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName)
 {
     m_accountName = accountName;
     m_accountPassword = accountPassword;
     m_characterName = characterName;
-    m_locale = locale;
 
     connect(host, port);
 }

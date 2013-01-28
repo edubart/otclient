@@ -89,12 +89,14 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     m_messageSize += bytes;
 }
 
-void OutputMessage::encryptRsa(int size)
+void OutputMessage::encryptRsa()
 {
+    int size = g_crypt.rsaGetSize();
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");
 
-    g_crypt.rsaEncrypt((unsigned char*)m_buffer + m_writePos - size, size);
+    if(!g_crypt.rsaEncrypt((unsigned char*)m_buffer + m_writePos - size, size))
+        throw stdext::exception("rsa encryption failed");
 }
 
 void OutputMessage::writeChecksum()

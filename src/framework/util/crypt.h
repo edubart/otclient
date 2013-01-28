@@ -49,11 +49,13 @@ public:
     std::string sha256Encode(const std::string& decoded_string, bool upperCase);
     std::string sha512Encode(const std::string& decoded_string, bool upperCase);
 
+    void rsaGenerateKey(int bits, int e);
     void rsaSetPublicKey(const std::string& n, const std::string& e);
     void rsaSetPrivateKey(const std::string &p, const std::string &q, const std::string &d);
     bool rsaCheckKey();
     bool rsaEncrypt(unsigned char *msg, int size);
     bool rsaDecrypt(unsigned char *msg, int size);
+    int rsaGetSize();
 
 private:
     std::string getMachineKey();

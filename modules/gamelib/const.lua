@@ -66,8 +66,6 @@ GameFormatCreatureName = 22
 GameSpellList = 23
 GameClientPing = 24
 GameExtendedClientPing = 25
-GameUpdater = 26
-GameLoginLocale = 27
 GameDoubleHealth = 28
 GameDoubleSkills = 29
 GameChangeMapAwareRange = 30
@@ -78,7 +76,6 @@ GameDiagonalAnimatedText = 34
 GameLoginPending = 35
 GameNewSpeedLaw = 36
 GameForceFirstAutoWalkStep = 37
-GameLoginUUID = 38
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

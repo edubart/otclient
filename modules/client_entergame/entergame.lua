@@ -215,8 +215,7 @@ function EnterGame.doLogin()
   end
 
   if modules.game_things.isLoaded() then
-    local locale = modules.client_locales.getCurrentLocale().name
-    protocolLogin:login(G.host, G.port, G.account, G.password, locale)
+    protocolLogin:login(G.host, G.port, G.account, G.password)
   else
     loadBox:destroy()
     loadBox = nil

@@ -27,8 +27,7 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.hide()
 
-  local locale = modules.client_locales.getCurrentLocale().name
-  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName, locale)
+  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
 
   loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
   connect(loadBox, { onCancel = function()

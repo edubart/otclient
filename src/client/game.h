@@ -135,7 +135,7 @@ protected:
 
 public:
     // login related
-    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& locale);
+    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName);
     void cancelLogin();
     void forceLogout();
     void safeLogout();
@@ -269,9 +269,6 @@ public:
 
     void setCustomOs(int os) { m_clientCustomOs = os; }
     int getOs();
-
-    void setUpdaterSignature(const std::string& sig) { m_clientSignature = sig; }
-    std::string getUpdaterSignature() { return m_clientSignature; }
 
     bool canPerformGameAction();
     bool checkBotProtection();

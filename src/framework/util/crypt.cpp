@@ -292,11 +292,21 @@ std::string Crypt::sha512Encode(const std::string& decoded_string, bool upperCas
     return result;
 }
 
+
+void Crypt::rsaGenerateKey(int bits, int e)
+{
+    RSA *rsa = RSA_generate_key(bits, e, nullptr, nullptr);
+    g_logger.info(stdext::format("%d bits (%d bytes) RSA key generated", bits, bits / 8));
+    g_logger.info(std::string("p = ") + BN_bn2dec(m_rsa->p));
+    g_logger.info(std::string("q = ") + BN_bn2dec(m_rsa->q));
+    g_logger.info(std::string("d = ") + BN_bn2dec(m_rsa->d));
+    g_logger.info(std::string("n = ") + BN_bn2dec(m_rsa->n));
+    g_logger.info(std::string("e = ") + BN_bn2dec(m_rsa->e));
+    RSA_free(rsa);
+}
+
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
-    RSA_free(m_rsa);
-    m_rsa = RSA_new();
-
     BN_dec2bn(&m_rsa->n, n.c_str());
     BN_dec2bn(&m_rsa->e, e.c_str());
 }
@@ -331,12 +341,20 @@ bool Crypt::rsaCheckKey()
 
 bool Crypt::rsaEncrypt(unsigned char *msg, int size)
 {
-    assert(size <= 128);
+    if(size != RSA_size(m_rsa))
+        return false;
     return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }
 
 bool Crypt::rsaDecrypt(unsigned char *msg, int size)
 {
-    assert(size <= 128);
+    if(size != RSA_size(m_rsa))
+        return false;
     return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }
+
+int Crypt::rsaGetSize()
+{
+    return RSA_size(m_rsa);
+}
+

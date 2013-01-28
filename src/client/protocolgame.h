@@ -31,7 +31,7 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& locale);
+    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
     void send(const OutputMessagePtr& outputMessage);
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
@@ -235,7 +235,6 @@ private:
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;
-    std::string m_locale;
     stdext::timer m_pingTimer;
     LocalPlayerPtr m_localPlayer;
 };

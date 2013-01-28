@@ -53,17 +53,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     OutputMessagePtr msg(new OutputMessage);
 
     msg->addU8(Proto::ClientPendingGame);
-
     msg->addU16(g_game.getOs());
-
-    if(g_game.getFeature(Otc::GameUpdater)) {
-        msg->addString(g_app.getOs());
-        msg->addString(g_game.getUpdaterSignature());
-    }
-
-    if(g_game.getFeature(Otc::GameLoginLocale))
-        msg->addString(m_locale);
-
     msg->addU16(g_game.getProtocolVersion());
 
     if(g_game.getProtocolVersion() >= 971) {
@@ -71,9 +61,9 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         msg->addU8(0); // clientType
     }
 
-    int paddingBytes = 128;
+    int offset = msg->getMessageSize();
+
     msg->addU8(0); // first RSA byte must be 0
-    paddingBytes -= 1;
 
     // xtea key
     generateXteaKey();
@@ -82,46 +72,34 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addU32(m_xteaKey[2]);
     msg->addU32(m_xteaKey[3]);
     msg->addU8(0); // is gm set?
-    paddingBytes -= 17;
 
-    if(g_game.getFeature(Otc::GameProtocolChecksum))
-        enableChecksum();
-
-    if(g_game.getFeature(Otc::GameAccountNames)) {
+    if(g_game.getFeature(Otc::GameAccountNames))
         msg->addString(m_accountName);
-        msg->addString(m_characterName);
-        msg->addString(m_accountPassword);
-        paddingBytes -= 6 + m_accountName.length() + m_characterName.length() + m_accountPassword.length();
-    } else {
+    else
         msg->addU32(stdext::from_string<uint32>(m_accountName));
-        msg->addString(m_characterName);
-        msg->addString(m_accountPassword);
-        paddingBytes -= 8 + m_characterName.length() + m_accountPassword.length();
-    }
 
-    if(g_game.getFeature(Otc::GameLoginUUID)) {
-        std::string uuid = g_crypt.getMachineUUID();
-        msg->addString(uuid);
-        paddingBytes -= 2 + uuid.length();
-    }
+    msg->addString(m_characterName);
+    msg->addString(m_accountPassword);
 
     if(g_game.getFeature(Otc::GameChallengeOnLogin)) {
         msg->addU32(challengeTimestamp);
         msg->addU8(challengeRandom);
-        paddingBytes -= 5;
     }
 
-    if(paddingBytes < 0) {
-        g_game.processLoginError("AccountName or Password or CharacterName are too big!\nPlease contact game support.");
-        g_game.processDisconnect();
-        return;
-    }
+    std::string extended = callLuaField<std::string>("getLoginExtendedData");
+    if(!extended.empty())
+        msg->addString(extended);
 
-    // complete the 128 bytes for rsa encryption with zeros
+    // complete the bytes for rsa encryption with zeros
+    int paddingBytes = g_crypt.rsaGetSize() - (msg->getMessageSize() - offset);
+    assert(paddingBytes >= 0);
     msg->addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    msg->encryptRsa(128);
+    msg->encryptRsa();
+
+    if(g_game.getFeature(Otc::GameProtocolChecksum))
+        enableChecksum();
 
     send(msg);
 

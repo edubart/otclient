@@ -8,7 +8,7 @@ LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
 LoginServerExtendedCharacterList = 101
 
-function ProtocolLogin:login(host, port, accountName, accountPassword, locale)
+function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onError, self, tr("You must enter a valid server address and port."))
     return
@@ -17,7 +17,6 @@ function ProtocolLogin:login(host, port, accountName, accountPassword, locale)
   self.accountName = accountName
   self.accountPassword = accountPassword
   self.connectCallback = sendLoginPacket
-  self.locale = locale
 
   self:connect(host, port)
 end
@@ -26,21 +25,11 @@ function ProtocolLogin:cancelLogin()
   self:disconnect()
 end
 
-function ProtocolLogin:sendLoginPacket()
+function ProtocolLogin:sendLoginPacket(extended)
   local msg = OutputMessage.create()
 
   msg:addU8(ClientOpcodes.ClientEnterAccount)
   msg:addU16(g_game.getOs())
-
-  if g_game.getFeature(GameUpdater) then
-    msg:addString(g_app.getOs())
-    msg:addString(g_game.getUpdaterSignature())
-  end
-
-  if g_game.getFeature(GameLoginLocale) then
-    msg:addString(self.locale)
-  end
-
   msg:addU16(g_game.getProtocolVersion())
 
   if g_game.getProtocolVersion() >= 971 then
@@ -55,9 +44,10 @@ function ProtocolLogin:sendLoginPacket()
     msg:addU8(0) -- clientType
   end
 
-  local paddingBytes = 128
-  msg:addU8(0) -- first RSA byte must be 0
-  paddingBytes = paddingBytes - 1
+  local offset = msg:getMessageSize()
+
+   -- first RSA byte must be 0
+  msg:addU8(0)
 
   -- xtea key
   self:generateXteaKey()
@@ -66,24 +56,28 @@ function ProtocolLogin:sendLoginPacket()
   msg:addU32(xteaKey[2])
   msg:addU32(xteaKey[3])
   msg:addU32(xteaKey[4])
-  paddingBytes = paddingBytes - 16
+
+  if g_game.getFeature(GameAccountNames) then
+    msg:addString(self.accountName)
+  else
+    msg:addU32(tonumber(self.accountName))
+  end
+
+  msg:addString(self.accountPassword)
+
+  if self.getLoginExtendedData then
+    local data = self:getLoginExtendedData()
+    msg:addString(data)
+  end
+
+  local paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
+  assert(paddingBytes >= 0)
+  msg:addPaddingBytes(paddingBytes, 0)
+  msg:encryptRsa()
 
   if g_game.getFeature(GameProtocolChecksum) then
     self:enableChecksum()
   end
-
-  if g_game.getFeature(GameAccountNames) then
-    msg:addString(self.accountName)
-    msg:addString(self.accountPassword)
-    paddingBytes = paddingBytes - (4 + string.len(self.accountName) + string.len(self.accountPassword))
-  else
-    msg:addU32(tonumber(self.accountName))
-    msg:addString(self.accountPassword)
-    paddingBytes = paddingBytes - (6 + string.len(self.accountPassword))
-  end
-
-  msg:addPaddingBytes(paddingBytes, 0)
-  msg:encryptRsa(128)
 
   self:send(msg)
   self:enableXteaEncryption()
