@@ -29,7 +29,7 @@ ParticleManager g_particles;
 bool ParticleManager::importParticle(std::string file)
 {
     try {
-        file = g_resources.guessFileType(file, "otps");
+        file = g_resources.guessFilePath(file, "otps");
 
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         for(const OTMLNodePtr& node : doc->children()) {

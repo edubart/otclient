@@ -78,7 +78,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     // texture not found, load it
     if(!texture) {
         try {
-            std::string filePathEx = g_resources.guessFileType(filePath, "png");
+            std::string filePathEx = g_resources.guessFilePath(filePath, "png");
 
             // load texture file data
             std::stringstream fin;

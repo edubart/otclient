@@ -311,9 +311,16 @@ std::string ResourceManager::getUserDir()
     return PHYSFS_getUserDir();
 }
 
-std::string ResourceManager::guessFileType(const std::string& filename, const std::string& type)
+std::string ResourceManager::guessFilePath(const std::string& filename, const std::string& type)
 {
-    if(g_resources.fileExists(filename))
+    if(isFileType(filename, type))
         return filename;
     return filename + "." + type;
+}
+
+bool ResourceManager::isFileType(const std::string& filename, const std::string& type)
+{
+    if(stdext::ends_with(filename, std::string(".") + type))
+        return true;
+    return false;
 }

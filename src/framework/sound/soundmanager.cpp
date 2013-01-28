@@ -252,7 +252,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
 
 std::string SoundManager::resolveSoundFile(std::string file)
 {
-    file = g_resources.guessFileType(file, "ogg");
+    file = g_resources.guessFilePath(file, "ogg");
     file = g_resources.resolvePath(file);
     return file;
 }

@@ -66,7 +66,7 @@ PainterShaderProgramPtr ShaderManager::createFragmentShader(const std::string& n
     if(!shader)
         return nullptr;
 
-    file = g_resources.guessFileType(file, "frag");
+    file = g_resources.guessFilePath(file, "frag");
 
     shader->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
     if(!shader->addShaderFromSourceFile(Shader::Fragment, file)) {

@@ -45,7 +45,7 @@ bool SpriteManager::loadSpr(std::string file)
     m_signature = 0;
     m_loaded = false;
     try {
-        file = g_resources.guessFileType(file, "spr");
+        file = g_resources.guessFilePath(file, "spr");
 
         m_spritesFile = g_resources.openFile(file);
         // cache file buffer to avoid lags from hard drive

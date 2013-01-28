@@ -66,7 +66,7 @@ bool ThingTypeManager::loadDat(std::string file)
     m_datLoaded = false;
     m_datSignature = 0;
     try {
-        file = g_resources.guessFileType(file, "dat");
+        file = g_resources.guessFilePath(file, "dat");
 
         FileStreamPtr fin = g_resources.openFile(file);
 
@@ -100,7 +100,7 @@ bool ThingTypeManager::loadDat(std::string file)
 bool ThingTypeManager::loadOtml(std::string file)
 {
     try {
-        file = g_resources.guessFileType(file, "otml");
+        file = g_resources.guessFilePath(file, "otml");
 
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         for(const OTMLNodePtr& node : doc->children()) {

@@ -43,7 +43,7 @@ void ModuleManager::discoverModules()
     for(const std::string& moduleDir : moduleDirs) {
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
         for(const std::string& moduleFile : moduleFiles) {
-            if(stdext::ends_with(moduleFile, ".otmod")) {
+            if(g_resources.isFileType(moduleFile, "otmod")) {
                 ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
                 if(module && module->isAutoLoad())
                     m_autoLoadModules.insert(std::make_pair(module->getAutoLoadPriority(), module));

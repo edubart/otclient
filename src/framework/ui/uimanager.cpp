@@ -311,7 +311,7 @@ void UIManager::clearStyles()
 bool UIManager::importStyle(std::string file)
 {
     try {
-        file = g_resources.guessFileType(file, "otui");
+        file = g_resources.guessFilePath(file, "otui");
 
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
 
@@ -394,7 +394,7 @@ std::string UIManager::getStyleClass(const std::string& styleName)
 UIWidgetPtr UIManager::loadUI(std::string file, const UIWidgetPtr& parent)
 {
     try {
-        file = g_resources.guessFileType(file, "otui");
+        file = g_resources.guessFilePath(file, "otui");
 
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         UIWidgetPtr widget;

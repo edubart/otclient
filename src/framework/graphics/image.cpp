@@ -39,7 +39,7 @@ ImagePtr Image::load(std::string file)
 {
     ImagePtr image;
     try {
-        file = g_resources.guessFileType(file, "png");
+        file = g_resources.guessFilePath(file, "png");
 
         // load image file data
         image = loadPNG(file);

@@ -48,7 +48,7 @@ void FontManager::clearFonts()
 bool FontManager::importFont(std::string file)
 {
     try {
-        file = g_resources.guessFileType(file, "otfont");
+        file = g_resources.guessFilePath(file, "otfont");
 
         OTMLDocumentPtr doc = OTMLDocument::parse(file);
         OTMLNodePtr fontNode = doc->at("Font");
