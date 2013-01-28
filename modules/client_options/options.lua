@@ -131,6 +131,8 @@ function terminate()
   consolePanel = nil
   graphicsPanel = nil
   audioPanel = nil
+  audioButton:destroy()
+  audioButton = nil
 end
 
 function toggle()
