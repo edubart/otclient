@@ -902,7 +902,6 @@ void LuaInterface::setEnv(int index)
 {
     assert(hasIndex(index));
     lua_setfenv(L, index);
-    assert(ret == 1);
 }
 
 void LuaInterface::getTable(int index)

@@ -129,7 +129,7 @@ set(framework_SOURCES ${framework_SOURCES}
 )
 
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
-                            PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -O0")
+                            PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -Os")
 
 # some build options
 option(CRASH_HANDLER "Generate crash reports" ON)
