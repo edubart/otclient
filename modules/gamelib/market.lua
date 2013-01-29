@@ -83,7 +83,7 @@ MarketCategoryStrings = {
 }
 
 function getMarketCategoryName(id)
-  if table.hasKey(MarketCategoryStrings, id) then
+  if table.haskey(MarketCategoryStrings, id) then
     return MarketCategoryStrings[id]
   end
 end
@@ -135,7 +135,7 @@ MarketItemDescriptionStrings = {
 }
 
 function getMarketDescriptionName(id)
-  if table.hasKey(MarketItemDescriptionStrings, id) then
+  if table.haskey(MarketItemDescriptionStrings, id) then
     return MarketItemDescriptionStrings[id]
   end
 end
@@ -171,7 +171,7 @@ function getMarketSlotFilterId(name)
 end
 
 function getMarketSlotFilterName(id)
-  if table.hasKey(MarketSlotFilters, id) then
+  if table.haskey(MarketSlotFilters, id) then
     return MarketSlotFilters[id]
   end
 end

@@ -75,29 +75,27 @@ function updateProgressRect(progressRect, interval, init)
 end
 
 function onSpellCooldown(iconId, duration)
-  local spellName = SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].spellIcons[iconId]
+  local spell, profile, spellName = Spells.getSpellByIcon(iconId)
   if not spellName then return end
   
   local ping = g_game.getPing()
   if ping > 0 then duration = duration - (ping/2) end
-  local otcIconId = tonumber(SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon)
-  if not otcIconId and SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon] then
-    otcIconId = SpellIcons[SpellInfo[modules.game_spelllist.getSpelllistProfile()][spellName].icon][1]
-  end
   
-  if not otcIconId then return end
+  clientIconId = Spells.getClientId(spellName)
+  if not clientIconId then return end
   
   local icon = spellCooldownPanel:getChildById(spellName)
   if not icon then
     icon = g_ui.createWidget('SpellIcon', spellCooldownPanel)
     icon:setId(spellName)
-    icon:setImageSource('/images/game/spells/' .. SpelllistSettings[modules.game_spelllist.getSpelllistProfile()].iconFile)
-    icon:setImageClip(modules.game_spelllist.getIconImageClip(otcIconId))
+    icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
+    icon:setImageClip(Spells.getImageClip(clientIconId, profile))
     icon.event = scheduleEvent(function() icon:destroy() icon = nil end, duration)
   
-    local progressRect = g_ui.createWidget('SpellProgressRect')
-    updateProgressRect(progressRect, duration/25, true)
+    local progressRect = g_ui.createWidget('SpellProgressRect', icon)
+    progressRect:fill('parent')
     progressRect:setTooltip(spellName)
+    updateProgressRect(progressRect, duration/25, true)
   end
 end
 

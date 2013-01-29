@@ -216,7 +216,7 @@ end
 
 function UITable:setHeaderColumnStyle(style)
   self.headerColumnBaseStyle = style
-  if table.hasKey(HEADER_ID) then
+  if table.haskey(HEADER_ID) then
     self.columns[HEADER_ID]:setStyle(style)
   end
 end

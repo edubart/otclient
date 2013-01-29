@@ -75,10 +75,6 @@ function setSpelllistProfile(name)
   end
 end
 
-function getIconImageClip(id)
-  return (((id-1)%12)*SpelllistSettings[SpelllistProfile].iconSize.width) .. ' ' .. ((math.ceil(id/12)-1)*SpelllistSettings[SpelllistProfile].iconSize.height) .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height
-end
-
 function online()
   if g_game.getFeature(GameSpellList) then
     spelllistButton:show()
@@ -238,7 +234,7 @@ function initialiseSpelllist()
     tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
     tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
     tmpLabel:setImageSource('/images/game/spells/' .. SpelllistSettings[SpelllistProfile].iconFile)
-    tmpLabel:setImageClip(getIconImageClip(iconId))
+    tmpLabel:setImageClip(Spells.getImageClip(iconId, SpelllistProfile))
     tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
     tmpLabel.onClick = updateSpellInformation
   end

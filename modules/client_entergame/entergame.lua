@@ -55,7 +55,7 @@ end
 
 local function onChangeProtocol(combobox, option)
   local clients = g_game.getSupportedClients(option)
-  protocolBox:setTooltip("Supports Client" .. (#clients > 1 and "s" or "") .. ": " .. table.toString(clients))
+  protocolBox:setTooltip("Supports Client" .. (#clients > 1 and "s" or "") .. ": " .. table.tostring(clients))
 end
 
 local function onUpdateNeeded(protocol, signature)

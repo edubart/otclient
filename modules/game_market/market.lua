@@ -518,7 +518,7 @@ local function onChangeSubCategory(combobox, option)
   local subId = getMarketCategoryId(subCategoryList:getCurrentOption().text)
   local slots = MarketCategoryWeapons[subId].slots
   for _, slot in pairs(slots) do
-    if table.hasKey(MarketSlotFilters, slot) then
+    if table.haskey(MarketSlotFilters, slot) then
       slotFilterList:addOption(MarketSlotFilters[slot])
     end
   end

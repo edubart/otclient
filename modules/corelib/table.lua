@@ -56,11 +56,20 @@ function table.find(t, value, lowercase)
   end
 end
 
+function table.findbykey(t, key, lowercase)
+  for k,v in pairs(t) do
+    if lowercase and type(key) == 'string' and type(k) == 'string' then 
+      if k:lower() == key:lower() then return v end
+    end
+    if k == key then return v end
+  end
+end
+
 function table.contains(t, value)
   return table.find(t, value) ~= nil
 end
 
-function table.findKey(t, key)
+function table.findkey(t, key)
   if t and type(t) == 'table' then
     for k,v in pairs(t) do
       if k == key then return k end
@@ -68,8 +77,8 @@ function table.findKey(t, key)
   end
 end
 
-function table.hasKey(t, key)
-  return table.findKey(t, key) ~= nil
+function table.haskey(t, key)
+  return table.findkey(t, key) ~= nil
 end
 
 function table.removevalue(t, value)
@@ -129,7 +138,7 @@ function table.findbyfield(t, fieldname, fieldvalue)
   return nil
 end
 
-function table.toString(t)
+function table.tostring(t)
   local maxn = #t
   local str = ""
   for k,v in pairs(t) do
