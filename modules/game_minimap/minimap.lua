@@ -387,7 +387,7 @@ end
 function minimapAutoWalk(pos)
   local player = g_game.getLocalPlayer()
   if not player:autoWalk(pos) then
-    modules.game_textmessage.displayStatusMessage(tr('There is no way.'))
+    player.onAutoWalkFail = function() modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end
     return false
   else
     return true

@@ -25,6 +25,7 @@
 #include <framework/core/logger.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/platform/platform.h>
+#include <framework/core/application.h>
 
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -158,46 +159,57 @@ std::string Crypt::genUUID()
     return boost::uuids::to_string(u);
 }
 
-bool Crypt::setMachineUUID(const std::string& uuidstr)
+bool Crypt::setMachineUUID(std::string uuidstr)
 {
     if(uuidstr.empty())
         return false;
-    std::stringstream ss;
-    ss << uuidstr;
-    ss >> m_machineUUID;
-    return !m_machineUUID.is_nil();
+    uuidstr = _decrypt(uuidstr, false);
+    if(uuidstr.length() != 16)
+        return false;
+    std::copy(uuidstr.begin(), uuidstr.end(), m_machineUUID.begin());
+    return true;
 }
 
 std::string Crypt::getMachineUUID()
 {
-    return boost::uuids::to_string(m_machineUUID);
+    if(m_machineUUID.is_nil()) {
+        boost::uuids::random_generator gen;
+        m_machineUUID = gen();
+    }
+    return _encrypt(std::string(m_machineUUID.begin(), m_machineUUID.end()), false);
 }
 
-std::string Crypt::getMachineKey()
+std::string Crypt::getCryptKey(bool useMachineUUID)
 {
     boost::hash<boost::uuids::uuid> uuid_hasher;
-
-    boost::uuids::name_generator gen(m_machineUUID);
-    boost::uuids::uuid u = gen(g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
+    boost::uuids::uuid uuid;
+    if(useMachineUUID) {
+        uuid = m_machineUUID;
+    } else {
+        boost::uuids::nil_generator nilgen;
+        uuid = nilgen();
+    }
+    boost::uuids::name_generator namegen(uuid);
+    boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
     std::size_t hash = uuid_hasher(u);
     std::string key;
     key.assign((const char *)&hash, sizeof(hash));
     return key;
 }
 
-std::string Crypt::encrypt(const std::string& decrypted_string)
+std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachineUUID)
 {
     std::string tmp = "0000" + decrypted_string;
     uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
     stdext::writeLE32((uint8*)&tmp[0], sum);
-    std::string encrypted = base64Encode(xorCrypt(tmp, getMachineKey()));
+    std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
 }
 
-std::string Crypt::decrypt(const std::string& encrypted_string)
+std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachineUUID)
 {
     std::string decoded = base64Decode(encrypted_string);
-    std::string tmp = xorCrypt(base64Decode(encrypted_string), getMachineKey());
+    std::string tmp = xorCrypt(base64Decode(encrypted_string), getCryptKey(useMachineUUID));
     if(tmp.length() >= 4) {
         uint32 readsum = stdext::readLE32((const uint8*)tmp.c_str());
         std::string decrypted_string = tmp.substr(4);

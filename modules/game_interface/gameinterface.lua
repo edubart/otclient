@@ -553,7 +553,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   player:stopAutoWalk()
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
-    player.onAutoWalkFail = function() modules.game_textmessage.displayStatusMessage(tr('There is no way.')) end
+    player.onAutoWalkFail = function() modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end
     player:autoWalk(autoWalkPos)
     return true
   end
