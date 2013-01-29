@@ -16,6 +16,7 @@ limitZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
+walkFunction = g_game.walk
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -262,9 +263,9 @@ end
 function smartWalk(dir)
   if g_keyboard.getModifiers() == KeyboardNoModifier then
     if smartWalkDir then
-      g_game.walk(smartWalkDir)
+      walkFunction(smartWalkDir)
     else
-      g_game.walk(dir)
+      walkFunction(dir)
     end
     return true
   end

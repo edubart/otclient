@@ -58,7 +58,6 @@ public:
 private:
     int m_frames;
     int m_partialFrames;
-    ticks_t m_partialFpsDelta;
     float m_partialFps;
     float m_maxPartialFps;
     ticks_t m_frameDelaySum;

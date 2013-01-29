@@ -51,7 +51,6 @@ private:
 
     TexturePtr m_lightTexture;
     FrameBufferPtr m_lightbuffer;
-    MapView* m_mapView;
     Light m_globalLight;
     std::vector<LightSource> m_lightMap;
 };

@@ -95,7 +95,6 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
             Position basePos = nodeMapData->getPosition();
-            unsigned int pbarvalue=0;
 
             for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();

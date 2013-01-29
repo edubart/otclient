@@ -92,8 +92,6 @@ void MapView::draw(const Rect& rect)
     else
         drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
 
-    Size tileSize = Size(1,1) * m_tileSize;
-
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
         m_framebuffer->bind();
 

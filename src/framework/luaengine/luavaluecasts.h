@@ -99,6 +99,10 @@ bool luavalue_cast(int index, OTMLNodePtr& node);
 
 // enum
 template<class T>
+typename std::enable_if<std::is_enum<T>::value, int>::type
+push_luavalue(T e) { return push_luavalue((int)e); }
+
+template<class T>
 typename std::enable_if<std::is_enum<T>::value, bool>::type
 luavalue_cast(int index, T& myenum);
 
