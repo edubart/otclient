@@ -1,3 +1,8 @@
+local ProgressCallback = {
+  update = 1,
+  finish = 2
+}
+
 cooldownWindow = nil
 cooldownButton = nil
 contentsPanel = nil
@@ -5,7 +10,6 @@ spellCooldownPanel = nil
 
 function init()
   connect(g_game, { onGameStart = online,
-                    onGameEnd = offline,
                     onSpellGroupCooldown = onSpellGroupCooldown,
                     onSpellCooldown = onSpellCooldown })
 
@@ -27,7 +31,6 @@ end
 
 function terminate()
   disconnect(g_game, { onGameStart = online,
-                       onGameEnd = offline,
                        onSpellGroupCooldown = onSpellGroupCooldown,
                        onSpellCooldown = onSpellCooldown })
 
@@ -58,19 +61,42 @@ function online()
   end
 end
 
-function offline()
+function removeCooldown(progressRect)
+  removeEvent(progressRect.event)
+  if progressRect.icon then
+    progressRect.icon:destroy()
+    progressRect.icon = nil
+  end
+  progressRect = nil
 end
 
-function updateProgressRect(progressRect, interval, init)
-  if init then
-    progressRect:setPercent(0)
-  else
-    progressRect:setPercent(progressRect:getPercent() + 5)
+function turnOffCooldown(progressRect)
+  removeEvent(progressRect.event)
+  if progressRect.icon then
+    progressRect.icon:setOn(false)
+    progressRect.icon = nil
   end
+  progressRect = nil
+end
+
+function initCooldown(progressRect, updateCallback, finishCallback)
+  progressRect:setPercent(0)
+
+  progressRect.callback = {}
+  progressRect.callback[ProgressCallback.update] = updateCallback
+  progressRect.callback[ProgressCallback.finish] = finishCallback
+
+  updateCallback()
+end
+
+function updateCooldown(progressRect, interval)
+  progressRect:setPercent(progressRect:getPercent() + 5)
   
   if progressRect:getPercent() < 100 then
-     removeEvent(progressRect.event)
-     progressRect.event = scheduleEvent(function() updateProgressRect(progressRect, interval) end, interval)
+    removeEvent(progressRect.event)
+    progressRect.event = scheduleEvent(function() progressRect.callback[ProgressCallback.update]() end, interval)
+  else
+    progressRect.callback[ProgressCallback.finish]()
   end
 end
 
@@ -78,8 +104,8 @@ function onSpellCooldown(iconId, duration)
   local spell, profile, spellName = Spells.getSpellByIcon(iconId)
   if not spellName then return end
   
-  local ping = g_game.getPing()
-  if ping > 0 then duration = duration - (ping/2) end
+  --local ping = g_game.getPing()
+  --if ping > 0 then duration = duration + ping end
   
   clientIconId = Spells.getClientId(spellName)
   if not clientIconId then return end
@@ -90,30 +116,44 @@ function onSpellCooldown(iconId, duration)
     icon:setId(spellName)
     icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
     icon:setImageClip(Spells.getImageClip(clientIconId, profile))
-    icon.event = scheduleEvent(function() icon:destroy() icon = nil end, duration)
   
     local progressRect = g_ui.createWidget('SpellProgressRect', icon)
+    progressRect.icon = icon
     progressRect:fill('parent')
     progressRect:setTooltip(spellName)
-    updateProgressRect(progressRect, duration/25, true)
+
+    local updateFunc = function()
+      updateCooldown(progressRect, duration/25)
+    end
+    local finishFunc = function()
+      removeCooldown(progressRect)
+    end
+    initCooldown(progressRect, updateFunc, finishFunc)
   end
 end
 
 function onSpellGroupCooldown(groupId, duration)
   if not SpellGroups[groupId] then return end
   
-  local ping = g_game.getPing()
-  if ping > 0 then duration = duration - (ping/2) end
+  --local ping = g_game.getPing()
+  --if ping > 0 then duration = duration + ping end
+
   local icon = contentsPanel:getChildById('groupIcon' .. SpellGroups[groupId])
   local progressRect = contentsPanel:getChildById('progressRect' .. SpellGroups[groupId])
   if icon then
     icon:setOn(true)
     removeEvent(icon.event)
-    icon.event = scheduleEvent(function() icon:setOn(false) end, duration)
   end
-  
+
+  progressRect.icon = icon
   if progressRect then
     removeEvent(progressRect.event)
-    updateProgressRect(progressRect, duration/25, true)
+    local updateFunc = function()
+      updateCooldown(progressRect, duration/25)
+    end
+    local finishFunc = function()
+      turnOffCooldown(progressRect)
+    end
+    initCooldown(progressRect, updateFunc, finishFunc)
   end
 end
