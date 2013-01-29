@@ -6,27 +6,25 @@ SpellGroupIcon < UIWidget
   margin-top: 3
 
 SpellIcon < UIWidget
-  size: 22 22 
-  image-size: 22 22
-  margin-left: 2
-  anchors.top: prev.top
-  anchors.left: prev.right
+  size: 24 24 
+  image-size: 24 24
   focusable: false
-  
-  $first:
-    margin-top: 3
-    anchors.top: parent.top
-    anchors.left: parent.left
+
+  $!first:
+    margin-left: 1
 
 SpellProgressRect < UIProgressRect
   background: #585858AA
   percent: 100
   focusable: false
+
+GroupCooldownParticles < UIParticles
+  effect: groupcooldown-effect
   
 MiniWindow
   id: cooldownWindow
   !text: tr('Spell Cooldowns')
-  height: 85
+  height: 82
   icon: /images/topbuttons/cooldowns
   @onClose: modules.game_cooldown.onMiniWindowClose()
   &save: true
@@ -37,7 +35,7 @@ MiniWindow
       image-clip: 0 0 20 20
       anchors.top: parent.top
       anchors.left: parent.left
-      margin-left: 3
+      margin-left: 2
       $on:
         image-clip: 0 20 20 20
 
@@ -90,13 +88,16 @@ MiniWindow
 
     Panel
       id: spellCooldownPanel
-      margin-top: 5
+      layout:
+        type: horizontalBox
+      height: 30
+      margin-top: 3
+      padding: 3
       anchors.top: groupIconSpecial.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      height: 30
-      padding: 1
-      margin-left: 2
-      margin-right: 2
-      border: 1 #444444
+      //border-width: 1
+      //border-color: #00000077
+      background-color: #ffffff11
+      
       

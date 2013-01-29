@@ -76,6 +76,11 @@ function turnOffCooldown(progressRect)
     progressRect.icon:setOn(false)
     progressRect.icon = nil
   end
+  
+  -- create particles
+  local particle = g_ui.createWidget('GroupCooldownParticles', progressRect)
+  particle:fill('parent')
+
   progressRect = nil
 end
 

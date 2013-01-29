@@ -1,35 +1,36 @@
 Particle
-  name: default_particle
+  name: groupcooldown_particle
 
-  duration: 10
+  duration: 0.4
   min-position-radius: 0
-  max-position-radius: 256
+  max-position-radius: 32
   min-position-angle: 0
   max-position-angle: 360
   velocity: 10
   min-velocity-angle: 0
   max-velocity-angle: 360
-  colors: #ffffff00 #ffffffff #00000000
+  colors: #ffffff00 #ffffffff #fff13000
   colors-stops: 0 0.1 1
-  size: 24 24
+  size: 1 1
   texture: /particles/particle
   composition-mode: normal
 
 Effect
-  name: background-effect
-  description: Effect for the game background
+  name: groupcooldown-effect
+  description: Effect for group cooldowns in the cooldown module
 
   System
     position: 0 0
 
     Emitter
       position: 0 0
-      delay: 0
-      duration: 0
-      burst-rate: 50
-      burst-count: 1
-      particle-type: default_particle
+      delay: 0.06
+      duration: 0.2
+      burst-rate: 350
+      burst-count: 50
+      particle-type: groupcooldown_particle
 
     AttractionAffector
       position: 0 0
       acceleration: 1000
+
