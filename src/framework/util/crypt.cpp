@@ -309,6 +309,9 @@ void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
     BN_dec2bn(&m_rsa->n, n.c_str());
     BN_dec2bn(&m_rsa->e, e.c_str());
+
+    // clear rsa cache
+    if(m_rsa->_method_mod_n) { BN_MONT_CTX_free(m_rsa->_method_mod_n); m_rsa->_method_mod_n = NULL; }
 }
 
 void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
@@ -316,6 +319,10 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
     BN_dec2bn(&m_rsa->p, p.c_str());
     BN_dec2bn(&m_rsa->q, q.c_str());
     BN_dec2bn(&m_rsa->d, d.c_str());
+
+    // clear rsa cache
+    if(m_rsa->_method_mod_p) { BN_MONT_CTX_free(m_rsa->_method_mod_p); m_rsa->_method_mod_p = NULL; }
+    if(m_rsa->_method_mod_q) { BN_MONT_CTX_free(m_rsa->_method_mod_q); m_rsa->_method_mod_q = NULL; }
 }
 
 bool Crypt::rsaCheckKey()
