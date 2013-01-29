@@ -76,6 +76,7 @@ GameDiagonalAnimatedText = 34
 GameLoginPending = 35
 GameNewSpeedLaw = 36
 GameForceFirstAutoWalkStep = 37
+GameMinimapRemove = 38
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

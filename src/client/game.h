@@ -103,7 +103,8 @@ protected:
 
     // tutorial hint
     void processTutorialHint(int id);
-    void processAutomapFlag(const Position& pos, int icon, const std::string& message);
+    void processAddAutomapFlag(const Position& pos, int icon, const std::string& message);
+    void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
     void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,

@@ -371,9 +371,14 @@ void Game::processTutorialHint(int id)
     g_lua.callGlobalField("g_game", "onTutorialHint", id);
 }
 
-void Game::processAutomapFlag(const Position& pos, int icon, const std::string& message)
+void Game::processAddAutomapFlag(const Position& pos, int icon, const std::string& message)
 {
-    g_lua.callGlobalField("g_game", "onAutomapFlag", pos, icon, message);
+    g_lua.callGlobalField("g_game", "onAddAutomapFlag", pos, icon, message);
+}
+
+void Game::processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message)
+{
+    g_lua.callGlobalField("g_game", "onRemoveAutomapFlag", pos, icon, message);
 }
 
 void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,

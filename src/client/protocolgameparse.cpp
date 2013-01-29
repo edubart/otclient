@@ -1406,17 +1406,24 @@ void ProtocolGame::parseVipLogout(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTutorialHint(const InputMessagePtr& msg)
 {
-    int id = msg->getU8(); // tutorial id
+    int id = msg->getU8();
     g_game.processTutorialHint(id);
 }
 
 void ProtocolGame::parseAutomapFlag(const InputMessagePtr& msg)
 {
-    Position pos = getPosition(msg); // position
-    int icon = msg->getU8(); // icon
-    std::string description = msg->getString(); // message
+    Position pos = getPosition(msg);
+    int icon = msg->getU8();
+    std::string description = msg->getString();
 
-    g_game.processAutomapFlag(pos, icon, description);
+    bool remove = false;
+    if(g_game.getFeature(Otc::GameMinimapRemove))
+        remove = msg->getU8() != 0;
+
+    if(!remove)
+        g_game.processAddAutomapFlag(pos, icon, description);
+    else
+        g_game.processRemoveAutomapFlag(pos, icon, description);
 }
 
 void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)

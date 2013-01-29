@@ -21,7 +21,8 @@ function init()
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
-    onAutomapFlag = addMapFlag
+    onAddAutomapFlag = addMapFlag,
+    onRemoveAutomapFlag = removeMapFlag,
   })
   connect(LocalPlayer, { onPositionChange = center })
 
@@ -65,7 +66,8 @@ function terminate()
   disconnect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
-    onAutomapFlag = addMapFlag
+    onAddAutomapFlag = addMapFlag,
+    onRemoveAutomapFlag = removeMapFlag,
   })
   disconnect(LocalPlayer, { onPositionChange = center })
 
@@ -118,7 +120,7 @@ function showFlagDialog(position)
   for i = 1, 20 do
     local checkbox = flagWindow:getChildById('flag' .. i)
     table.insert(flagCheckbox, checkbox)
-    checkbox.icon = i
+    checkbox.icon = i - 1
     flagRadioGroup:addWidget(checkbox)
   end
   
@@ -174,7 +176,7 @@ function getFlagIconClip(id)
 end
 
 function addMapFlag(pos, icon, message, flagId, version)
-  if not(icon >= 1 and icon <= 20) or not pos then
+  if not (icon >= 0 and icon <= 19) or not pos then
     return 
   end
   
@@ -194,7 +196,7 @@ function addMapFlag(pos, icon, message, flagId, version)
   end
   
   local flagWidget = g_ui.createWidget('FlagWidget', flagsPanel)
-  flagWidget:setIconClip(getFlagIconClip(icon - 1))
+  flagWidget:setIconClip(getFlagIconClip(icon))
   flagWidget:setId('flag' .. flagId)
   flagWidget.position = pos
   flagWidget.icon = icon
@@ -208,13 +210,23 @@ function addMapFlag(pos, icon, message, flagId, version)
   flagWidget.onMousePress = onFlagMousePress
 end
 
+function removeMapFlag(pos, icon, message)
+  for i=1, flagsPanel:getChildCount() do
+    local flag = flagsPanel:getChildByIndex(i)
+    if flag.position.x == pos.x and flag.position.y == pos.y and flag.position.z == pos.z and flag.icon == icon and flag.description == message then
+      flag:destroy()
+      break
+    end
+  end
+end
+
 function getMapArea()
   return minimapWidget:getPosition( { x = 1 + minimapWidget:getX(), y = 1 + minimapWidget:getY() } ),
          minimapWidget:getPosition( { x = -2 + minimapWidget:getWidth() + minimapWidget:getX(), y = -2 + minimapWidget:getHeight() + minimapWidget:getY() } )
 end
 
 function isFlagVisible(flag, firstPosition, lastPosition)
-  return flag.version == g_game.getProtocolVersion() and (minimapWidget:getZoom() >= 0 and minimapWidget:getZoom() <= 2) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
+  return flag.version == g_game.getProtocolVersion() and (minimapWidget:getZoom() >= -2 and minimapWidget:getZoom() <= 4) and flag.position.x >= firstPosition.x and flag.position.x <= lastPosition.x and flag.position.y >= firstPosition.y and flag.position.y <= lastPosition.y and flag.position.z == firstPosition.z
 end
 
 function updateMapFlag(id)  
@@ -226,8 +238,8 @@ function updateMapFlag(id)
   local flag = flagsPanel:getChildById('flag' .. id)
   if isFlagVisible(flag, firstPosition, lastPosition) then
     flag:setVisible(true)
-    flag:setMarginLeft( -5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
-    flag:setMarginTop( -5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
+    flag:setMarginLeft(-5.5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
+    flag:setMarginTop(-5.5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
   else
     flag:setVisible(false)   
   end
@@ -239,12 +251,12 @@ function updateMapFlags()
     return
   end
   
-  for i = 1, flagsPanel:getChildCount() do
+  for i=1, flagsPanel:getChildCount() do
     local flag = flagsPanel:getChildByIndex(i)
     if isFlagVisible(flag, firstPosition, lastPosition) then
       flag:setVisible(true)      
-      flag:setMarginLeft( -5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
-      flag:setMarginTop( -5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
+      flag:setMarginLeft(-5.5 + (minimapWidget:getWidth() / (lastPosition.x - firstPosition.x)) * (flag.position.x - firstPosition.x))
+      flag:setMarginTop(-5.5 + (minimapWidget:getHeight() / (lastPosition.y - firstPosition.y)) * (flag.position.y - firstPosition.y))
     else
       flag:setVisible(false)   
     end

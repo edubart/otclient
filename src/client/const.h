@@ -347,6 +347,7 @@ namespace Otc
         GameLoginPending = 35,
         GameNewSpeedLaw = 36,
         GameForceFirstAutoWalkStep = 37,
+        GameMinimapRemove = 38,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };
