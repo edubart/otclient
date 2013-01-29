@@ -96,5 +96,5 @@ bool UIHorizontalLayout::internalUpdate()
         });
     }
 
-    return true;
+    return changed;
 }

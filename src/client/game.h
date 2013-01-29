@@ -98,7 +98,7 @@ protected:
     void processRuleViolationLock();
 
     // vip related
-    void processVipAdd(uint id, const std::string& name, uint status);
+    void processVipAdd(uint id, const std::string& name, uint status, int iconId, bool notifyLogin);
     void processVipStateChange(uint id, uint status);
 
     // tutorial hint

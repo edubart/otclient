@@ -128,6 +128,9 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 )
 
+set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
+                            PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -O0")
+
 # some build options
 option(CRASH_HANDLER "Generate crash reports" ON)
 option(LUAJIT "Use lua jit" OFF)
@@ -149,6 +152,7 @@ endif()
 # gcc compile flags
 set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-variable -Wno-unused-result")
 set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} ${CPP2011_FLAGS} -pipe")
+set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
@@ -493,3 +497,4 @@ endif()
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
+

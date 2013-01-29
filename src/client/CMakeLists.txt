@@ -102,3 +102,6 @@ set(client_SOURCES ${client_SOURCES}
     # util
     ${CMAKE_CURRENT_LIST_DIR}/position.h
 )
+
+set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
+                            PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -O0")

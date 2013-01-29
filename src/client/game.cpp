@@ -354,10 +354,10 @@ void Game::processRuleViolationLock()
     g_lua.callGlobalField("g_game", "onRuleViolationLock");
 }
 
-void Game::processVipAdd(uint id, const std::string& name, uint status)
+void Game::processVipAdd(uint id, const std::string& name, uint status, int iconId, bool notifyLogin)
 {
     m_vips[id] = Vip(name, status);
-    g_lua.callGlobalField("g_game", "onAddVip", id, name, status);
+    g_lua.callGlobalField("g_game", "onAddVip", id, name, status, iconId, notifyLogin);
 }
 
 void Game::processVipStateChange(uint id, uint status)

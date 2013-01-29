@@ -513,8 +513,8 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
     unsigned int    i, j;
     unsigned int    rowbytes;
     int             imagesize, zbuf_size, zsize, trns_idx;
-    unsigned int    len, chunk, crc;
-    unsigned int    w, h, seq, w0, h0, x0, y0;
+    unsigned int    len, chunk/*, crc, seq*/;
+    unsigned int    w, h, w0, h0, x0, y0;
     unsigned int    frames, loops, first_frame, cur_frame;
     unsigned int    outrow1, outrow2, outimg1, outimg2;
     unsigned short  d1, d2;
@@ -573,7 +573,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
             file.read((char*)&compr, 1);
             file.read((char*)&filter, 1);
             file.read((char*)&interl, 1);
-            crc = read32(file);
+            /*crc = */read32(file);
 
             channels = 1;
             if (coltype == 2)
@@ -633,7 +633,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                             palsize = col+1;
                         }
                     }
-                    crc = read32(file);
+                    /*crc = */read32(file);
                 }
                 else if (chunk == 0x74524E53) /* tRNS */
                 {
@@ -670,7 +670,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                                 trns[5] = trns[4]; trns[4] = 0;
                             }
                         }
-                        crc = read32(file);
+                        /*crc = */read32(file);
                 }
                 else if (chunk == 0x6163544C) /* acTL */
                 {
@@ -679,7 +679,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                         free(frames_delay);
                     frames_delay = (unsigned short*)malloc(frames*sizeof(int));
                     loops  = read32(file);
-                    crc = read32(file);
+                    /*crc = */read32(file);
                     if (pOut1)
                         free(pOut1);
                     if (pOut2)
@@ -747,7 +747,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                         }
                     }
 
-                    seq = read32(file);
+                    /*seq = */read32(file);
                     w0  = read32(file);
                     h0  = read32(file);
                     x0  = read32(file);
@@ -756,7 +756,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                     d2  = read16(file);
                     file.read((char*)&dop, 1);
                     file.read((char*)&bop, 1);
-                    crc = read32(file);
+                    /*crc = */read32(file);
 
                     if(d2 == 0)
                         d2 = 100;
@@ -781,15 +781,15 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                 {
                     file.read((char*)(pData + zsize), len);
                     zsize += len;
-                    crc = read32(file);
+                    /*crc = */read32(file);
                 }
                 else if (chunk == 0x66644154) /* fdAT */
                 {
-                    seq = read32(file);
+                    /*seq = */read32(file);
                     len -= 4;
                     file.read((char*)(pData + zsize), len);
                     zsize += len;
-                    crc = read32(file);
+                    /*crc = */read32(file);
                 }
                 else if (chunk == 0x49454E44) /* IEND */
                 {
@@ -818,7 +818,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
                     if (notabc(c)) break;
 
                     file.seekg(len, std::ios_base::cur);
-                    crc = read32(file);
+                    /*crc = */read32(file);
                 }
             }
             /* apng decoding - end */

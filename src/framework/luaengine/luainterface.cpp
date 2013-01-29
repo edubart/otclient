@@ -901,8 +901,7 @@ void LuaInterface::getEnv(int index)
 void LuaInterface::setEnv(int index)
 {
     assert(hasIndex(index));
-    int ret;
-    ret = lua_setfenv(L, index);
+    lua_setfenv(L, index);
     assert(ret == 1);
 }
 
