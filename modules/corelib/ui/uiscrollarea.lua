@@ -14,11 +14,17 @@ function UIScrollArea:onStyleApply(styleName, styleNode)
   for name,value in pairs(styleNode) do
     if name == 'vertical-scrollbar' then
       addEvent(function()
-        self:setVerticalScrollBar(self:getParent():getChildById(value))
+        local parent = self:getParent()
+        if parent then
+          self:setVerticalScrollBar(parent:getChildById(value))
+        end
       end)
     elseif name == 'horizontal-scrollbar' then
       addEvent(function()
-        self:setHorizontalScrollBar(self:getParent():getChildById(value))
+        local parent = self:getParent()
+        if parent then
+          self:setHorizontalScrollBar(self:getParent():getChildById(value))
+        end
       end)
     elseif name == 'inverted-scroll' then
       self:setInverted(value)

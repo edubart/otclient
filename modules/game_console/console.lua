@@ -199,7 +199,7 @@ end
 function clear()
   -- save last open channels
   local lastChannelsOpen = g_settings.getNode('lastChannelsOpen') or {}
-  local char = g_game.getLocalPlayer():getName()
+  local char = g_game.getCharacterName()
   local savedChannels = {}
   local set = false
   for channelId, channelName in pairs(channels) do
@@ -447,8 +447,7 @@ function addTabText(text, speaktype, tab, creatureName)
   labelHighlight:setId('consoleLabel' .. consoleBufferHighlight:getChildCount())
   labelHighlight:setColor("#1f9ffe")
 
-  local player = g_game.getLocalPlayer()
-  if speaktype.npcChat and (player:getName() ~= creatureName or player:getName() == 'Account Manager') then  -- Check if it is the npc who is talking
+  if speaktype.npcChat and (g_game.getCharacterName() ~= creatureName or g_game.getCharacterName() == 'Account Manager') then  -- Check if it is the npc who is talking
     local highlightData = getHighlightedText(text)
     if #highlightData == 0 then
       labelHighlight:setText("")
@@ -675,7 +674,7 @@ function sendMessage(message, tab)
     local player = g_game.getLocalPlayer()
     g_game.talkPrivate(speaktype.speakType, name, message)
 
-    message = applyMessagePrefixies(player:getName(), player:getLevel(), message)
+    message = applyMessagePrefixies(g_game.getCharacterName(), player:getLevel(), message)
     addPrivateText(message, speaktype, tabname, isPrivateCommand, g_game.getCharacterName())
   end
 end
@@ -740,7 +739,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
     return
   end
 
-  if name ~= g_game.getLocalPlayer():getName() then
+  if name ~= g_game.getCharacterName() then
     if mode == MessageModes.Yell and isIgnoringYelling() then
       return
     elseif speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom then
@@ -875,7 +874,7 @@ function doChannelListSubmit()
   local channelListPanel = channelsWindow:getChildById('channelList')
   local openPrivateChannelWith = channelsWindow:getChildById('openPrivateChannelWith'):getText()
   if openPrivateChannelWith ~= '' then
-    if openPrivateChannelWith:lower() ~= g_game.getLocalPlayer():getName():lower() then
+    if openPrivateChannelWith:lower() ~= g_game.getCharacterName():lower() then
       g_game.openPrivateChannel(openPrivateChannelWith)
     else
       modules.game_textmessage.displayFailureMessage('You cannot create a private chat channel with yourself.')
@@ -1028,7 +1027,7 @@ function online()
   -- open last channels
   local lastChannelsOpen = g_settings.getNode('lastChannelsOpen')
   if lastChannelsOpen then
-    local savedChannels = lastChannelsOpen[g_game.getLocalPlayer():getName()]
+    local savedChannels = lastChannelsOpen[g_game.getCharacterName()]
     if savedChannels then
       for channelName, channelId in pairs(savedChannels) do
         channelId = tonumber(channelId)

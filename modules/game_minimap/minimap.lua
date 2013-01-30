@@ -42,10 +42,11 @@ function init()
   minimapWidget.onMouseWheel = onMinimapMouseWheel
   flagsPanel = minimapWindow:recursiveGetChildById('flagsPanel')
 
-  g_keyboard.bindKeyPress('Alt+Left', function() move(-1,0) end)
-  g_keyboard.bindKeyPress('Alt+Right', function() move(1,0) end)
-  g_keyboard.bindKeyPress('Alt+Up', function() move(0,-1) end)
-  g_keyboard.bindKeyPress('Alt+Down', function() move(0,1) end)
+  local gameRootPanel = modules.game_interface.getRootPanel()
+  g_keyboard.bindKeyPress('Alt+Left', function() move(-1,0) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Right', function() move(1,0) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Up', function() move(0,-1) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Down', function() move(0,1) end, gameRootPanel)
 
   reset()
   minimapWindow:setup()
@@ -58,10 +59,11 @@ function init()
 end
 
 function terminate()
-  g_keyboard.unbindKeyPress('Alt+Left')
-  g_keyboard.unbindKeyPress('Alt+Right')
-  g_keyboard.unbindKeyPress('Alt+Up')
-  g_keyboard.unbindKeyPress('Alt+Down')
+  local gameRootPanel = modules.game_interface.getRootPanel()
+  g_keyboard.unbindKeyPress('Alt+Left', gameRootPanel)
+  g_keyboard.unbindKeyPress('Alt+Right', gameRootPanel)
+  g_keyboard.unbindKeyPress('Alt+Up', gameRootPanel)
+  g_keyboard.unbindKeyPress('Alt+Down', gameRootPanel)
 
   disconnect(g_game, {
     onGameStart = online,

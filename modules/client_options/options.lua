@@ -19,10 +19,8 @@ local defaultOptions = {
   painterEngine = 0,
   enableAudio = true,
   enableMusicSound = true,
-  enableShaders = true,
   musicSoundVolume = 100,
   enableLights = true,
-  enableShaders = true,
   ambientLight = 25,
 }
 
@@ -77,9 +75,6 @@ local function setupGraphicsEngines()
     graphicsPanel:getChildById('foregroundFrameRate'):disable()
     graphicsPanel:getChildById('foregroundFrameRateLabel'):disable()
   end
-
-  local shadersBox = graphicsPanel:getChildById('enableShaders')
-  shadersBox:setEnabled(g_graphics.getPainterEngine() == 2)
 end
 
 function init()
@@ -225,8 +220,6 @@ function setOption(key, value)
         graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
       end
     end)
-  elseif key == 'enableShaders' then
-    g_graphics.setShouldUseShaders(value)
   elseif key == 'ambientLight' then
     addEvent(function()
       local map = modules.game_interface.getMapPanel()
@@ -238,12 +231,6 @@ function setOption(key, value)
     end)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
-    addEvent(function()
-      if graphicsPanel then
-        local shadersBox = graphicsPanel:getChildById('enableShaders')
-        shadersBox:setEnabled(value == 2)
-      end
-    end)
   end
   g_settings.set(key, value)
   options[key] = value

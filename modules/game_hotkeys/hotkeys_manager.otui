@@ -14,7 +14,7 @@ MainWindow
   size: 340 410
 
   @onEnter: modules.game_hotkeys.ok()
-  @onEscape: modules.game_hotkeys.reload()
+  @onEscape: modules.game_hotkeys.cancel()
 
   Label
     id: currentHotkeysLabel
@@ -40,12 +40,14 @@ MainWindow
     anchors.bottom: prev.bottom
     focusable: false
 
-  Label
-    !text: tr('Manage hotkeys:')
+  Button
+    id: resetButton
+    width: 96
+    !text: tr('Reset All')
     anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    margin-top: 10
+    anchors.top: next.top
+    @onClick: modules.game_hotkeys.reset()
+    margin-right: 10
 
   Button
     id: addHotkeyButton
@@ -82,7 +84,7 @@ MainWindow
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 2
-    @onTextChange: modules.game_hotkeys.onHotkeyTextChange(self:getId(), self:getText())
+    @onTextChange: modules.game_hotkeys.onHotkeyTextChange(self:getText())
 
   CheckBox
     id: sendAutomatically
@@ -92,7 +94,7 @@ MainWindow
     anchors.top: prev.bottom
     enabled:false
     margin-top: 5
-    @onCheckChange: modules.game_hotkeys.setSendAutomatically(self:isChecked())
+    @onCheckChange: modules.game_hotkeys.onSendAutomaticallyChange(self:isChecked())
 
   Item
     id: itemPreview
@@ -132,7 +134,6 @@ MainWindow
     anchors.top: selectObjectButton.top
     checked: false
     margin-left: 10
-    @onCheckChange: modules.game_hotkeys.changeUseType(HOTKEY_MANAGER_USEONSELF, self:isChecked())
 
   ButtonBox
     id: useOnTarget
@@ -144,7 +145,6 @@ MainWindow
     anchors.top: prev.bottom
     checked: false
     margin-top: 2
-    @onCheckChange: modules.game_hotkeys.changeUseType(HOTKEY_MANAGER_USEONTARGET, self:isChecked())
 
   ButtonBox
     id: useWith
@@ -156,7 +156,6 @@ MainWindow
     anchors.top: prev.bottom
     checked: false
     margin-top: 2
-    @onCheckChange: modules.game_hotkeys.changeUseType(HOTKEY_MANAGER_USEWITH, self:isChecked())
 
   HorizontalSeparator
     id: separator
@@ -166,6 +165,7 @@ MainWindow
     margin-bottom: 10
 
   Button
+    id: okButton
     !text: tr('Ok')
     width: 64
     anchors.right: next.left
@@ -174,11 +174,12 @@ MainWindow
     margin-right: 10
 
   Button
+    id: cancelButton
     !text: tr('Cancel')
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: modules.game_hotkeys.reload()
+    @onClick: modules.game_hotkeys.cancel()
 
 HotkeyAssignWindow < MainWindow
   id: assignWindow
@@ -215,10 +216,11 @@ HotkeyAssignWindow < MainWindow
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom
-    @onClick: modules.game_hotkeys.addKeyCombo(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo, nil, true)
     margin-right: 10
+    @onClick: modules.game_hotkeys.hotkeyCaptureOk(self:getParent(), self:getParent():getChildById('comboPreview').keyCombo)
 
   Button
+    id: cancelButton
     !text: tr('Cancel')
     width: 64
     anchors.right: parent.right

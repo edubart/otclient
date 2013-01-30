@@ -18,6 +18,11 @@ function UIPopupMenu:display(pos)
     return
   end
 
+  if g_ui.isMouseGrabbed() then
+    self:destroy()
+    return
+  end
+
   if currentMenu then
     currentMenu:destroy()
   end

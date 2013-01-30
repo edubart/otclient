@@ -92,7 +92,7 @@ end
 function online()
   local player = g_game.getLocalPlayer()
   if player then
-    local char = player:getName()
+    local char = g_game.getCharacterName()
 
     local lastCombatControls = g_settings.getNode('LastCombatControls')
 
@@ -116,7 +116,7 @@ function offline()
 
   local player = g_game.getLocalPlayer()
   if player then
-    local char = player:getName()
+    local char = g_game.getCharacterName()
     lastCombatControls[char] = {
       fightMode = g_game.getFightMode(),
       chaseMode = g_game.getChaseMode(),

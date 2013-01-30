@@ -8,6 +8,7 @@ g_settings.getNode = g_configs.getNode
 g_settings.remove = g_configs.remove
 g_settings.setList = g_configs.setList
 g_settings.getList = g_configs.getList
+g_settings.save = g_configs.save
 
 local function convertSettingValue(value)
   if type(value) == 'table' then

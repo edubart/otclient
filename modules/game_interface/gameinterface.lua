@@ -326,7 +326,7 @@ function onTradeWith(clickedWidget, mousePosition)
 end
 
 function startUseWith(thing)
-  if not thing then return end
+  if g_ui.isMouseGrabbed() or not thing then return end
   selectedType = 'use'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
@@ -334,6 +334,7 @@ function startUseWith(thing)
 end
 
 function startTradeWith(thing)
+  if g_ui.isMouseGrabbed() or not thing then return end
   selectedType = 'trade'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
@@ -434,7 +435,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
           menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
           menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
         end
-        if (not Player:hasVip(creatureName)) then
+        if not localPlayer:hasVip(creatureName) then
           menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
 

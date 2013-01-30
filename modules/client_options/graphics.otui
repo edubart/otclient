@@ -45,10 +45,6 @@ Panel
     !text: tr('Enable lights')
 
   OptionCheckBox
-    id: enableShaders
-    !text: tr('Enable shader effects')
-
-  OptionCheckBox
     id: fullscreen
     !text: tr('Fullscreen')
     tooltip: Ctrl+Shift+F

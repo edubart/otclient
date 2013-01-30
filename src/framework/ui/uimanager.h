@@ -65,6 +65,8 @@ public:
     UIWidgetPtr getHoveredWidget() { return m_hoveredWidget; }
     UIWidgetPtr getPressedWidget() { return m_pressedWidget; }
     UIWidgetPtr getRootWidget() { return m_rootWidget; }
+    bool isMouseGrabbed() { return m_mouseReceiver != m_rootWidget; }
+    bool isKeyboardGrabbed() { return m_keyboardReceiver != m_rootWidget; }
 
     bool isDrawingDebugBoxes() { return m_drawDebugBoxes; }
 

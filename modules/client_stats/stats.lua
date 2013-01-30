@@ -106,5 +106,5 @@ function onRecv(protocol, message)
 end
 
 function onError(protocol, message, code)
-  perror('Could not send statistics: ' .. message)
+  pdebug('Could not send statistics: ' .. message)
 end
