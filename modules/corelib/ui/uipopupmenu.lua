@@ -58,8 +58,8 @@ function UIPopupMenu:addOption(optionName, optionCallback, shortcut)
   local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self)
   local lastOptionWidget = self:getLastChild()
   optionWidget.onClick = function(self)
-    optionCallback()
     self:getParent():destroy()
+    optionCallback()
   end
   optionWidget:setText(optionName)
   local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 15
@@ -81,6 +81,7 @@ function UIPopupMenu:onDestroy()
   if currentMenu == self then
     currentMenu = nil
   end
+  self:ungrabMouse()
 end
 
 function UIPopupMenu:onMousePress(mousePos, mouseButton)
