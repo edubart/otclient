@@ -35,9 +35,17 @@ end
 
 function InputMessage:getColor()
   local color = {}
-  color.r = msg:getU8()
-  color.g = msg:getU8()
-  color.b = msg:getU8()
-  color.a = msg:getU8()
+  color.r = self:getU8()
+  color.g = self:getU8()
+  color.b = self:getU8()
+  color.a = self:getU8()
   return color
+end
+
+function InputMessage:getPosition()
+  local position = {}
+  position.x = self:getU16()
+  position.y = self:getU16()
+  position.z = self:getU8()
+  return position
 end

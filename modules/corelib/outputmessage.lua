@@ -61,3 +61,9 @@ function OutputMessage:addColor(color)
   self:addU8(color.b)
   self:addU8(color.a)
 end
+
+function OutputMessage:addPosition(position)
+  self:addU16(position.x)
+  self:addU16(position.y)
+  self:addU8(position.z)
+end
