@@ -7,6 +7,7 @@ local motdWindow
 local motdButton
 local enterGameButton
 local protocolBox
+local protocolLogin
 
 -- private functions
 local function onError(protocol, message, errorCode)
@@ -47,8 +48,8 @@ local function onCharacterList(protocol, characters, account, otui)
   local lastMotdNumber = g_settings.getNumber("motd")
   if G.motdNumber and G.motdNumber ~= lastMotdNumber then
     g_settings.set("motd", motdNumber)
-    local motdBox = displayInfoBox(tr('Message of the day'), G.motdMessage)
-    connect(motdBox, { onOk = CharacterList.show })
+    motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
+    connect(motdWindow, { onOk = function() CharacterList.show() motdWindow = nil end })
     CharacterList.hide()
   end
 end
@@ -137,6 +138,7 @@ function EnterGame.terminate()
   enterGame = nil
   enterGameButton:destroy()
   enterGameButton = nil
+  protocolBox = nil
   if motdWindow then
     motdWindow:destroy()
     motdWindow = nil
@@ -145,7 +147,14 @@ function EnterGame.terminate()
     motdButton:destroy()
     motdButton = nil
   end
-  protocolBox = nil
+  if loadBox then
+    loadBox:destroy()
+    loadBox = nil
+  end
+  if protocolLogin then
+    protocolLogin:cancelLogin()
+    protocolLogin = nil
+  end
   EnterGame = nil
 end
 
@@ -195,7 +204,7 @@ function EnterGame.doLogin()
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
 
-  local protocolLogin = ProtocolLogin.create()
+  protocolLogin = ProtocolLogin.create()
   protocolLogin.onError = onError
   protocolLogin.onMotd = onMotd
   protocolLogin.onCharacterList = onCharacterList
@@ -224,7 +233,7 @@ function EnterGame.doLogin()
 end
 
 function EnterGame.displayMotd()
-  if not motdWindow or not motdWindow:isVisible() then
+  if not motdWindow then
     motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
     motdWindow.onOk = function() motdWindow = nil end
   end

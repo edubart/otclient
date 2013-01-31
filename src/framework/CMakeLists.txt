@@ -221,7 +221,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
     message(STATUS "Debug information: ON")
 else()
     message(STATUS "Debug information: OFF")
-    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "CompileSpeed")
+        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
+    endif()
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed -Wl,-s") # strip all debug information
 endif()
 
