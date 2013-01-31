@@ -1,39 +1,9 @@
-MapControl < Button
-  size: 20 20
-  icon-clip: 0 32 16 16
-
-  $pressed:
-    icon-clip: 0 0 16 16
-
-  $hover !pressed:
-    icon-clip: 0 16 16 16
-    
-FlagWidget < UIWidget
-  size: 11 11
-  icon-clip: 0 0 11 11
-  icon-source: /images/game/minimap/mapflags
-  anchors.left: parent.left
-  anchors.top: parent.top
-
-FloorUpControl < MapControl
-  icon-source: /images/game/minimap/floor_up
-
-FloorDownControl < MapControl
-  icon-source: /images/game/minimap/floor_down
-
-ZoomInControl < MapControl
-  //image-source: /images/game/minimap/zoom_in
-
-ZoomOutControl < MapControl
-  //image-source: /images/game/minimap/zoom_out
-
 MiniWindow
   id: minimapWindow
   !text: tr('Minimap')
   height: 150
   icon: /images/topbuttons/minimap
   @onClose: modules.game_minimap.onMiniWindowClose()
-  @onGeometryChange: updateMapFlags()
   &save: true
 
   Label
@@ -47,60 +17,6 @@ MiniWindow
     size: 14 14
 
   MiniWindowContents
-    UIMinimap
+    Minimap
       id: minimap
       anchors.fill: parent
-      cross: true
-
-    Panel
-      id: flagsPanel
-      anchors.fill: minimap
-      phantom: true
-      
-    FloorUpControl
-      id: floorUp
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-right: 28
-      margin-bottom: 28
-      enabled: true
-      @onClick: onButtonClick(self:getId())
-
-    FloorDownControl
-      id: floorDown
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-right: 28
-      margin-bottom: 4
-      enabled: true
-      @onClick: onButtonClick(self:getId())
-
-    ZoomInControl
-      id: zoomIn
-      text: +
-      font: terminus-14px-bold
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-right: 4
-      margin-bottom: 28
-      enabled: true
-      @onClick: onButtonClick(self:getId())
-
-    ZoomOutControl
-      id: zoomOut
-      text: -
-      anchors.right: parent.right
-      anchors.bottom: parent.bottom
-      margin-right: 4
-      margin-bottom: 4
-      enabled: true
-      @onClick: onButtonClick(self:getId())
-
-    Button
-      id: reset
-      !text: tr('Center')
-      width: 44
-      anchors.left: parent.left
-      anchors.top: parent.top
-      margin: 4
-      @onClick: center()

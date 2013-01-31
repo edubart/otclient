@@ -1,5 +1,8 @@
 -- @docconsts @{
 
+FloorHigher = 0
+FloorLower = 15
+
 SkullNone = 0
 SkullYellow = 1
 SkullGreen = 2

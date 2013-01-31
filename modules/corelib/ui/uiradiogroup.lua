@@ -58,3 +58,7 @@ end
 function UIRadioGroup:getSelectedWidget()
   return self.selectedWidget
 end
+
+function UIRadioGroup:getFirstWidget()
+  return self.widgets[1]
+end

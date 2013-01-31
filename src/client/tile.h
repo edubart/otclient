@@ -51,7 +51,6 @@ enum tileflags_t
     TILESTATE_TRANSLUECENT_LIGHT = 1 << 23 
 };
 
-#pragma pack(push,1) // disable memory alignment
 class Tile : public LuaObject
 {
 public:
@@ -131,6 +130,5 @@ private:
     uint8 m_minimapColor;
     uint32 m_flags, m_houseId;
 };
-#pragma pack(pop)
 
 #endif
