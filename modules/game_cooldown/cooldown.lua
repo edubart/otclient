@@ -133,7 +133,7 @@ function onSpellCooldown(iconId, duration)
   progressRect:setTooltip(spellName)
 
   local updateFunc = function()
-    updateCooldown(progressRect, duration/20)
+    updateCooldown(progressRect, duration/19)
   end
   local finishFunc = function()
     removeCooldown(progressRect)
@@ -155,7 +155,7 @@ function onSpellGroupCooldown(groupId, duration)
   if progressRect then
     removeEvent(progressRect.event)
     local updateFunc = function()
-      updateCooldown(progressRect, duration/20)
+      updateCooldown(progressRect, duration/19)
     end
     local finishFunc = function()
       turnOffCooldown(progressRect)
