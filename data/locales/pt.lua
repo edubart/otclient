@@ -271,6 +271,7 @@ locale = {
     ["Remove"] = "Remover",
     ["Report Bug"] = "Reportar defeito",
     ["Reserved for more functionality later."] = "Reservado para futura maior funcionalidade.",
+    ["Reset All"] = "Resetar Todos",
     ["Reset Market"] = "Resetar Mercado",
     ["Revoke %s's Invitation"] = "Não aceitar o convite do %s",
     ["Rotate"] = "Girar",

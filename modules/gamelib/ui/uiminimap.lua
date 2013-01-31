@@ -7,6 +7,7 @@ function UIMinimap:onSetup()
   self.zoomOutWidget = self:getChildById('zoomOut')
   self.dx = 0
   self.dy = 0
+  self.autowalk = true
   self.onPositionChange = function() self:followLocalPlayer() end
   self.onAddAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
   self.onRemoveAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
@@ -24,6 +25,36 @@ function UIMinimap:onDestroy()
     onRemoveAutomapFlag = self.onRemoveAutomapFlag,
   })
   self:destroyFlagWindow()
+  self:destroyFullPanel()
+end
+
+function UIMinimap:onVisibilityChange()
+  if not self:isVisible() then
+    self:destroyFlagWindow()
+    self:destroyFullPanel()
+  end
+end
+
+function UIMinimap:hideFlags()
+  self.flagsWidget:hide()
+end
+
+function UIMinimap:hideFloor()
+  self.floorUpWidget:hide()
+  self.floorDownWidget:hide()
+end
+
+function UIMinimap:hideZoom()
+  self.zoomInWidget:hide()
+  self.zoomOutWidget:hide()
+end
+
+function UIMinimap:disableAutoWalk()
+  self.autowalk = false
+end
+
+function UIMinimap:enableFullPanel(image)
+  self.fullImage = image
 end
 
 function UIMinimap:load()
@@ -192,8 +223,7 @@ function UIMinimap:onMousePress(pos, button)
 end
 
 function UIMinimap:onMouseRelease(pos, button)
-  -- TODO:
-  --if not self.allowNextRelease then return true end
+  if not self.allowNextRelease then return true end
   self.allowNextRelease = false
 
   local mapPos = self:getPosition(pos)
@@ -201,15 +231,14 @@ function UIMinimap:onMouseRelease(pos, button)
 
   if button == MouseLeftButton then
     local player = g_game.getLocalPlayer()
-    if not player:autoWalk(mapPos) then
+    if self.autowalk and not player:autoWalk(mapPos) then
       player.onAutoWalkFail = function() modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end
     end
     return true
   elseif button == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
-    menu:addOption(tr('Create mark'), function() 
-        self:createFlagWindow(mapPos)
-    end)
+    menu:addOption(tr('Create mark'), function() self:createFlagWindow(mapPos) end)
+    if self.fullImage then menu:addOption(tr('Full map'), function() self:createFullPanel() end) end
     menu:display(pos)
     return true
   end
@@ -227,6 +256,19 @@ end
 
 function UIMinimap:onDragLeave(widget, pos)
   return true
+end
+
+function UIMinimap:createFullPanel()
+  self.fullPanel = g_ui.createWidget('MinimapFullPanel', rootWidget)
+  self.fullPanel:setImageSource(self.fullImage)
+  self.fullPanel.onDestroy = function() self.fullPanel = nil end
+end
+
+function UIMinimap:destroyFullPanel()
+  if self.fullPanel then
+    self.fullPanel:destroy()
+    self.fullPanel = nil
+  end
 end
 
 function UIMinimap:createFlagWindow(pos)

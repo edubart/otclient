@@ -141,7 +141,7 @@ MinimapFlagWindow < MainWindow
     margin-top: 3
     anchors.left: parent.left
     anchors.top: prev.bottom
-    width: 158
+    anchors.right: parent.right
 
   MinimapFlagCheckBox
     id: flag0
@@ -245,3 +245,20 @@ MinimapFlagWindow < MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
+
+// Minimap Full Panel
+
+MinimapFullPanel < UIWidget
+  image-smooth: true
+  border-width: 2
+  border-color: #000000
+  anchors.fill: parent
+  anchors.top: topMenu.bottom
+
+  Button
+    !text: tr('Close')
+    margin-right: 4
+    margin-top: 4
+    anchors.right: parent.right
+    anchors.top: parent.top
+    @onClick: self:getParent():destroy()

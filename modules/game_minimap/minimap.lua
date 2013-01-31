@@ -13,10 +13,10 @@ function init()
   minimapWidget = minimapWindow:recursiveGetChildById('minimap')
 
   local gameRootPanel = modules.game_interface.getRootPanel()
-  g_keyboard.bindKeyPress('Alt+Left', function() minimapWidget:move(-1,0) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Right', function() minimapWidget:move(1,0) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Up', function() minimapWidget:move(0,-1) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Down', function() minimapWidget:move(0,1) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Left', function() minimapWidget:move(1,0) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Right', function() minimapWidget:move(-1,0) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Up', function() minimapWidget:move(0,1) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Alt+Down', function() minimapWidget:move(0,-1) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
 
   minimapWindow:setup()
@@ -104,4 +104,8 @@ function saveMap()
     g_map.saveOtcm(minimapFile)
   end
   minimapWidget:save()
+end
+
+function getMinimap()
+  return minimapWidget
 end
