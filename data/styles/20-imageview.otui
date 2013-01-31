@@ -1,0 +1,6 @@
+ImageView < UIImageView
+  image-smooth: false
+  image-fixed-ratio: true
+  draggable: true
+  border-width: 2
+  border-color: #000000

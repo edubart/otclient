@@ -27,7 +27,7 @@ function init()
   })
 
   if g_game.isOnline() then
-    loadMap()
+    online()
   end
 end
 
@@ -77,7 +77,6 @@ end
 
 function loadMap()
   local protocolVersion = g_game.getProtocolVersion()
-  g_map.clean()
   g_minimap.clean()
 
   if otmm then

@@ -455,6 +455,8 @@ public:
     int getImageBorderRight() { return m_imageBorder.right; }
     int getImageBorderBottom() { return m_imageBorder.bottom; }
     int getImageBorderLeft() { return m_imageBorder.left; }
+    int getImageTextureWidth() { return m_imageTexture ? m_imageTexture->getWidth() : 0; }
+    int getImageTextureHeight() { return m_imageTexture ? m_imageTexture->getHeight() : 0; }
 
 // text related
 private:

@@ -248,12 +248,14 @@ MinimapFlagWindow < MainWindow
 
 // Minimap Full Panel
 
-MinimapFullPanel < UIWidget
-  image-smooth: true
-  border-width: 2
-  border-color: #000000
+MinimapFullPanel < FlatPanel
+  phantom: false
   anchors.fill: parent
   anchors.top: topMenu.bottom
+
+  ImageView
+    id: image
+    anchors.fill: parent
 
   Button
     !text: tr('Close')

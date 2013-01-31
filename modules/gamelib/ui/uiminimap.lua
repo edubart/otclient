@@ -146,15 +146,21 @@ function UIMinimap:updateFlags()
   end
 end
 
-UIMinimap.realZoomIn = UIMinimap.zoomIn
+UIMinimap.realZoomIn = UIMinimap.realZoomIn or UIMinimap.zoomIn
 function UIMinimap:zoomIn()
   self:realZoomIn()
   self:updateFlags()
 end
 
-UIMinimap.realZoomOut = UIMinimap.zoomOut
+UIMinimap.realZoomOut = UIMinimap.realZoomOut or UIMinimap.zoomOut
 function UIMinimap:zoomOut()
   self:realZoomOut()
+  self:updateFlags()
+end
+
+UIMinimap.realSetZoom = UIMinimap.realSetZoom or UIMinimap.setZoom
+function UIMinimap:setZoom(zoom)
+  self:realSetZoom(zoom)
   self:updateFlags()
 end
 
@@ -177,9 +183,11 @@ function UIMinimap:floorDown(floors)
 end
 
 function UIMinimap:followLocalPlayer()
-  local player = g_game.getLocalPlayer()
-  self:followCreature(player)
-  self:updateFlags()
+  if not self:isDragging() then
+    local player = g_game.getLocalPlayer()
+    self:followCreature(player)
+    self:updateFlags()
+  end
 end
 
 function UIMinimap:reset()
@@ -231,8 +239,9 @@ function UIMinimap:onMouseRelease(pos, button)
 
   if button == MouseLeftButton then
     local player = g_game.getLocalPlayer()
-    if self.autowalk and not player:autoWalk(mapPos) then
+    if self.autowalk then
       player.onAutoWalkFail = function() modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end
+      player:autoWalk(mapPos)
     end
     return true
   elseif button == MouseRightButton then
@@ -260,8 +269,9 @@ end
 
 function UIMinimap:createFullPanel()
   self.fullPanel = g_ui.createWidget('MinimapFullPanel', rootWidget)
-  self.fullPanel:setImageSource(self.fullImage)
   self.fullPanel.onDestroy = function() self.fullPanel = nil end
+  local image = self.fullPanel:getChildById('image')
+  image:setImage(self.fullImage)
 end
 
 function UIMinimap:destroyFullPanel()
@@ -316,5 +326,3 @@ function UIMinimap:getArea()
   local bottomRight = self:getPosition({ x = self:getX() + self:getWidth() - 2, y = self:getY() + self:getHeight() - 2 })
   return topLeft, bottomRight
 end
-
-
