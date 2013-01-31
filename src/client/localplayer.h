@@ -93,7 +93,8 @@ public:
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
-    bool isAutoWalking() { return m_autoWalking; }
+    bool isAutoWalking() { return m_autoWalkDestination.isValid(); }
+    bool isServerWalking() { return m_serverWalking; }
     bool isPremium() { return m_premium; }
     bool isPendingGame() { return m_pending; }
 
@@ -122,13 +123,13 @@ private:
     Position m_lastPrewalkDestination;
     Position m_autoWalkDestination;
     Position m_lastAutoWalkPosition;
-    ScheduledEventPtr m_autoWalkEndEvent;
+    ScheduledEventPtr m_serverWalkEndEvent;
     ScheduledEventPtr m_autoWalkContinueEvent;
     ticks_t m_walkLockExpiration;
     int m_lastWalkPing;
     stdext::boolean<false> m_preWalking;
     stdext::boolean<true> m_lastPrewalkDone;
-    stdext::boolean<false> m_autoWalking;
+    stdext::boolean<false> m_serverWalking;
     stdext::boolean<false> m_waitingWalkPong;
     stdext::boolean<false> m_knownCompletePath;
 

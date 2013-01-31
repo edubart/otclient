@@ -114,9 +114,9 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
     // no prewalk was going on, this must be an server side automated walk
     else {
         m_walkPingTimer.restart();
-        m_autoWalking = true;
-        if(m_autoWalkEndEvent)
-            m_autoWalkEndEvent->cancel();
+        m_serverWalking = true;
+        if(m_serverWalkEndEvent)
+            m_serverWalkEndEvent->cancel();
 
         Creature::walk(oldPos, newPos);
     }
@@ -138,8 +138,8 @@ void LocalPlayer::preWalk(Otc::Direction direction)
 
     m_preWalking = true;
 
-    if(m_autoWalkEndEvent)
-        m_autoWalkEndEvent->cancel();
+    if(m_serverWalkEndEvent)
+        m_serverWalkEndEvent->cancel();
 
     // start walking to direction
     m_lastPrewalkDone = false;
@@ -207,6 +207,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
         result = g_map.findPath(m_position, destination, 50000, Otc::PathFindAllowNotSeenTiles);
         if(std::get<1>(result) != Otc::PathFindResultOk) {
             callLuaField("onAutoWalkFail", std::get<1>(result));
+            stopAutoWalk();
             return false;
         }
 
@@ -295,11 +296,11 @@ void LocalPlayer::terminateWalk()
 
     auto self = asLocalPlayer();
 
-    if(m_autoWalking) {
-        if(m_autoWalkEndEvent)
-            m_autoWalkEndEvent->cancel();
-        m_autoWalkEndEvent = g_dispatcher.scheduleEvent([self] {
-            self->m_autoWalking = false;
+    if(m_serverWalking) {
+        if(m_serverWalkEndEvent)
+            m_serverWalkEndEvent->cancel();
+        m_serverWalkEndEvent = g_dispatcher.scheduleEvent([self] {
+            self->m_serverWalking = false;
         }, 100);
     }
 }

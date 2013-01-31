@@ -533,9 +533,11 @@ bool Game::walk(Otc::Direction direction)
     if(isFollowing())
         cancelFollow();
 
-    // must cancel auto walking and wait next try
-    if(m_localPlayer->isAutoWalking()) {
+    // must cancel auto walking, and wait next try
+    if(m_localPlayer->isAutoWalking() || m_localPlayer->isServerWalking()) {
         m_protocolGame->sendStop();
+        if(m_localPlayer->isAutoWalking())
+            m_localPlayer->stopAutoWalk();
         return false;
     }
 
@@ -558,10 +560,10 @@ bool Game::walk(Otc::Direction direction)
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
     TilePtr toTile = g_map.getTile(toPos);
     // only do prewalks to walkable tiles (like grounds and not walls)
-    if(toTile && toTile->isWalkable())
+    if(toTile && toTile->isWalkable()) {
         m_localPlayer->preWalk(direction);
     // check walk to another floor (e.g: when above 3 parcels)
-    else {
+    } else {
         // check if can walk to a lower floor
         auto canChangeFloorDown = [&]() -> bool {
             Position pos = toPos;
