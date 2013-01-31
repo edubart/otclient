@@ -589,8 +589,14 @@ end
 
 function sendMessage(message, tab)
   local tab = tab or getCurrentTab()
+  if not tab then return end
 
-  if tab == getRuleViolationsTab() then return end
+  -- when talking on server log, the message goes to default channel
+  local name = tab:getText()
+  if tab == serverTab or tab == getRuleViolationsTab() then
+    tab = defaultTab
+    name = defaultTab:getText()
+  end
 
   -- handling chat commands
   local originalMessage = message
@@ -628,13 +634,6 @@ function sendMessage(message, tab)
     if #messageHistory > MAX_HISTORY then
       table.remove(messageHistory, 1)
     end
-  end
-
-  -- when talking on server log, the message goes to default channel
-  local name = tab:getText()
-  if tab == serverTab then
-    tab = defaultTab
-    name = defaultTab:getText()
   end
 
   local speaktypedesc

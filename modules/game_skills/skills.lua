@@ -241,7 +241,7 @@ function checkExpSpeed()
     player.lastExps = {}
   end
   table.insert(player.lastExps, {currentExp, currentTime})
-  if #player.lastExps > 10 then
+  if #player.lastExps > 30 then
     table.remove(player.lastExps, 1)
   end
 end
