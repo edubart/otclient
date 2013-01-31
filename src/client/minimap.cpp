@@ -97,18 +97,10 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 {
     if(screenRect.isEmpty())
         return;
-
     if(MMBLOCK_SIZE*scale <= 1)
         return;
 
-    Size mapSize = screenRect.size() / scale;
-    while(mapSize.width() > 8192 || mapSize.height() > 8192) {
-        scale *= 2;
-        mapSize = screenRect.size() / scale;
-    }
-    Rect mapRect(0, 0, mapSize);
-    mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
-
+    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_painter->saveState();
     g_painter->setColor(Color::black);
     g_painter->drawFilledRect(screenRect);
@@ -119,14 +111,15 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     Point p = getBlockOffset(mapRect.topLeft() - Point(1,1));
     g_painter->translate(-(mapRect.topLeft() - p)*scale);
 
-    if(scale > 1.0f)
-        g_painter->translate(Point(1,1) * scale * 0.5f);
+    Size wantedSize = mapRect.size() * scale;
+    Point off = Point(wantedSize.toPoint() - screenRect.size().toPoint())/2;
+    g_painter->translate(-off);
 
-    for(int y = p.y, ys = 0;y<=mapRect.bottom();y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
+    for(int y = p.y, ys = 0;y<=mapRect.bottom()+1;y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
         if(y < 0 || y >= 65536 - MMBLOCK_SIZE)
             continue;
 
-        for(int x = p.x, xs = 0;x<=mapRect.right();x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
+        for(int x = p.x, xs = 0;x<=mapRect.right()+1;x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
             if(x < 0 || x >= 65536 - MMBLOCK_SIZE)
                 continue;
 
@@ -151,31 +144,49 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     g_painter->restoreSavedState();
 }
 
+Point Minimap::getPoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
+{
+    if(screenRect.isEmpty())
+        return Point(-1,-1);
+    if(MMBLOCK_SIZE*scale <= 1)
+        return Point(-1,-1);
+
+    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
+    Point posoff = (Point(pos.x,pos.y) - mapRect.topLeft())*scale;
+    return posoff + screenRect.topLeft() - off + (Point(1,1)*scale)/2;
+}
+
 Position Minimap::getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty())
         return Position();
-
     if(MMBLOCK_SIZE*scale <= 1)
         return Position();
 
-    Position pos(mapCenter);
-
-    Size mapSize = screenRect.size() / scale;
-    while(mapSize.width() > 8192 || mapSize.height() > 8192) {
-        scale *= 2;
-        mapSize = screenRect.size() / scale;
-    }
-    Rect mapRect(0, 0, mapSize);
-    mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
-
-    Point p = (point - screenRect.topLeft() - Point(1,1) * scale * 0.5f)/scale + mapRect.topLeft();
-
-    pos.x = p.x;
-    pos.y = p.y;
-
-    return pos;
+    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
+    Point pos2d = (point - screenRect.topLeft() + off)/scale + mapRect.topLeft();
+    return Position(pos2d.x, pos2d.y, mapCenter.z);
 }
+
+Rect Minimap::calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale)
+{
+    int w, h;
+    do {
+        w = std::ceil(screenRect.width() / scale);
+        h = std::ceil(screenRect.height() / scale);
+        if(w % 2 == 0)
+            w++;
+        if(h % 2 == 0)
+            h++;
+        scale *= 2;
+    } while(w > 8192 || h > 8192);
+    Rect mapRect(0,0,h,w);
+    mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
+    return mapRect;
+}
+
 
 void Minimap::updateTile(const Position& pos, const TilePtr& tile)
 {

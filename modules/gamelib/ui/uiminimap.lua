@@ -129,11 +129,11 @@ function UIMinimap:removeFlag(pos, icon, description)
 end
 
 function UIMinimap:updateFlag(flag)
-  local topLeft, bottomRight = self:getArea()
-  if self:isFlagVisible(flag, topLeft, bottomRight) then
+  local point = self:getPoint(flag.pos)
+  if self:containsPoint(point) and self:getZoom() > 0 then
     flag:setVisible(true)
-    flag:setMarginLeft(-5.5 + (self:getWidth() / (bottomRight.x - topLeft.x)) * (flag.pos.x - topLeft.x))
-    flag:setMarginTop(-5.5 + (self:getHeight() / (bottomRight.y - topLeft.y)) * (flag.pos.y - topLeft.y))
+    flag:setMarginLeft(point.x - self:getX() - flag:getWidth()/2)
+    flag:setMarginTop(point.y - self:getY() - flag:getHeight()/2)
   else
     flag:setVisible(false)   
   end
@@ -317,6 +317,4 @@ function UIMinimap:getArea()
   return topLeft, bottomRight
 end
 
-function UIMinimap:isFlagVisible(flag, topLeft, bottomRight)
-  return flag.pos.x >= topLeft.x and flag.pos.x <= bottomRight.x and flag.pos.y >= topLeft.y and flag.pos.y <= bottomRight.y and flag.pos.z == topLeft.z
-end
+

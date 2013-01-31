@@ -43,6 +43,7 @@ public:
     void setCross(bool enable) { m_crossEnabled = enable; }
     void followCreature(const CreaturePtr& creature);
 
+    Point getPoint(const Position& pos);
     Position getPosition(const Point& mousePos);
     Position getCameraPosition();
     CreaturePtr getFollowingCreature() { return m_followingCreature; }

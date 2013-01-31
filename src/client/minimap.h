@@ -82,6 +82,7 @@ public:
     void clean();
 
     void draw(const Rect& screenRect, const Position& mapCenter, float scale);
+    Point getPoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale);
     Position getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale);
 
     void updateTile(const Position& pos, const TilePtr& tile);
@@ -91,6 +92,7 @@ public:
     void saveOtmm(const std::string& fileName);
 
 private:
+    Rect calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale);
     bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].find(getBlockIndex(pos)) != m_tileBlocks[pos.z].end(); }
     MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
     Point getBlockOffset(const Point& pos) { return Point(pos.x - pos.x % MMBLOCK_SIZE,

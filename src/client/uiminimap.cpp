@@ -80,6 +80,11 @@ void UIMinimap::setCameraPosition(const Position& pos)
     m_cameraPosition = pos;
 }
 
+Point UIMinimap::getPoint(const Position& pos)
+{
+    return g_minimap.getPoint(pos, getPaddingRect(), getCameraPosition(), m_scale);
+}
+
 Position UIMinimap::getPosition(const Point& mousePos)
 {
     return g_minimap.getPosition(mousePos, getPaddingRect(), getCameraPosition(), m_scale);

@@ -593,6 +593,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMinimap>("setCameraPosition", &UIMinimap::setCameraPosition);
     g_lua.bindClassMemberFunction<UIMinimap>("setCross", &UIMinimap::setCross);
     g_lua.bindClassMemberFunction<UIMinimap>("followCreature", &UIMinimap::followCreature);
+    g_lua.bindClassMemberFunction<UIMinimap>("getPoint", &UIMinimap::getPoint);
     g_lua.bindClassMemberFunction<UIMinimap>("getPosition", &UIMinimap::getPosition);
     g_lua.bindClassMemberFunction<UIMinimap>("getCameraPosition", &UIMinimap::getCameraPosition);
     g_lua.bindClassMemberFunction<UIMinimap>("getFollowingCreature", &UIMinimap::getFollowingCreature);
