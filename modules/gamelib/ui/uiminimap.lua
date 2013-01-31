@@ -8,6 +8,7 @@ function UIMinimap:onSetup()
   self.dx = 0
   self.dy = 0
   self.autowalk = true
+  self.allowFollowLocalPlayer = true
   self.onPositionChange = function() self:followLocalPlayer() end
   self.onAddAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
   self.onRemoveAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
@@ -51,6 +52,10 @@ end
 
 function UIMinimap:disableAutoWalk()
   self.autowalk = false
+end
+
+function UIMinimap:disableFollowPlayer()
+  self.allowFollowLocalPlayer = false
 end
 
 function UIMinimap:enableFullPanel(image)
@@ -130,7 +135,7 @@ end
 
 function UIMinimap:updateFlag(flag)
   local point = self:getPoint(flag.pos)
-  if self:containsPoint(point) and self:getZoom() > 0 then
+  if self:containsPoint(point) and self:getZoom() >= 0 and flag.pos.z == self:getCameraPosition().z then
     flag:setVisible(true)
     flag:setMarginLeft(point.x - self:getX() - flag:getWidth()/2)
     flag:setMarginTop(point.y - self:getY() - flag:getHeight()/2)
@@ -144,6 +149,12 @@ function UIMinimap:updateFlags()
   for i=1,#children do
     self:updateFlag(children[i])
   end
+end
+
+UIMinimap.realSetCameraPosition = UIMinimap.realSetCameraPosition or UIMinimap.setCameraPosition
+function UIMinimap:setCameraPosition(pos)
+  self:realSetCameraPosition(pos)
+  self:updateFlags()
 end
 
 UIMinimap.realZoomIn = UIMinimap.realZoomIn or UIMinimap.zoomIn
@@ -183,7 +194,7 @@ function UIMinimap:floorDown(floors)
 end
 
 function UIMinimap:followLocalPlayer()
-  if not self:isDragging() then
+  if not self:isDragging() and self.allowFollowLocalPlayer then
     local player = g_game.getLocalPlayer()
     self:followCreature(player)
     self:updateFlags()

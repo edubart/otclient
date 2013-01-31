@@ -4,6 +4,8 @@ UIImageView = extends(UIWidget)
 function UIImageView.create()
   local imageView = UIImageView.internalCreate()
   imageView.zoom = 1
+  imageView.minZoom = math.pow(10, -2)
+  imageView.maxZoom = math.pow(10,  2)
   imageView:setClipping(true)
   return imageView
 end
@@ -36,6 +38,7 @@ function UIImageView:setImage(image)
 end
 
 function UIImageView:setZoom(zoom, x, y)
+  zoom = math.max(math.min(zoom, self.maxZoom), self.minZoom)
   local posX, posY = self:getImagePosition(x, y)
   local textureWidth = self:getImageTextureWidth()
   local textureHeight = self:getImageTextureHeight()
