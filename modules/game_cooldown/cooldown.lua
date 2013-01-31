@@ -61,7 +61,7 @@ function online()
     cooldownWindow:close()
   end
 
-  if lastPlayer ~= g_game.getCharacterName() then
+  if not lastPlayer or lastPlayer ~= g_game.getCharacterName() then
     refresh()
     lastPlayer = g_game.getCharacterName()
   end
