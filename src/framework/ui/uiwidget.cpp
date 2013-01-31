@@ -1568,10 +1568,7 @@ bool UIWidget::onMousePress(const Point& mousePos, Fw::MouseButton button)
         m_lastClickPosition = mousePos;
     }
 
-    if(hasLuaField("onMousePress"))
-        return callLuaField<bool>("onMousePress", mousePos, button);
-
-    return false;
+    return callLuaField<bool>("onMousePress", mousePos, button);
 }
 
 bool UIWidget::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
@@ -1591,20 +1588,12 @@ bool UIWidget::onMouseWheel(const Point& mousePos, Fw::MouseWheelDirection direc
 
 bool UIWidget::onClick(const Point& mousePos)
 {
-    if(hasLuaField("onClick")) {
-        callLuaField("onClick", mousePos);
-        return true;
-    }
-    return false;
+    return callLuaField<bool>("onClick", mousePos);
 }
 
 bool UIWidget::onDoubleClick(const Point& mousePos)
 {
-    if(hasLuaField("onDoubleClick")) {
-        callLuaField("onDoubleClick", mousePos);
-        return true;
-    }
-    return false;
+    return callLuaField<bool>("onDoubleClick", mousePos);
 }
 
 bool UIWidget::propagateOnKeyText(const std::string& keyText)
