@@ -106,21 +106,17 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     g_painter->drawFilledRect(screenRect);
     g_painter->resetColor();
     g_painter->setClipRect(screenRect);
-    g_painter->translate(screenRect.topLeft());
 
-    Point p = getBlockOffset(mapRect.topLeft() - Point(1,1));
-    g_painter->translate(-(mapRect.topLeft() - p)*scale);
+    Point blockOff = getBlockOffset(mapRect.topLeft());
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
+    Point start = screenRect.topLeft() -(mapRect.topLeft() - blockOff)*scale - off;
 
-    Size wantedSize = mapRect.size() * scale;
-    Point off = Point(wantedSize.toPoint() - screenRect.size().toPoint())/2;
-    g_painter->translate(-off);
-
-    for(int y = p.y, ys = 0;y<=mapRect.bottom()+1;y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
-        if(y < 0 || y >= 65536 - MMBLOCK_SIZE)
+    for(int y = blockOff.y, ys = start.y;ys<screenRect.bottom();y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
+        if(y < 0 || y >= 65536)
             continue;
 
-        for(int x = p.x, xs = 0;x<=mapRect.right()+1;x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
-            if(x < 0 || x >= 65536 - MMBLOCK_SIZE)
+        for(int x = blockOff.x, xs = start.x;xs<screenRect.right();x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
+            if(x < 0 || x >= 65536)
                 continue;
 
             Position blockPos(x, y, mapCenter.z);
@@ -182,7 +178,7 @@ Rect Minimap::calcMapRect(const Rect& screenRect, const Position& mapCenter, flo
             h++;
         scale *= 2;
     } while(w > 8192 || h > 8192);
-    Rect mapRect(0,0,h,w);
+    Rect mapRect(0,0,w,h);
     mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
     return mapRect;
 }
