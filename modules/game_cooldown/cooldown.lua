@@ -7,6 +7,7 @@ cooldownWindow = nil
 cooldownButton = nil
 contentsPanel = nil
 spellCooldownPanel = nil
+lastPlayer = nil
 
 function init()
   connect(g_game, { onGameStart = online,
@@ -59,6 +60,15 @@ function online()
     cooldownButton:hide()
     cooldownWindow:close()
   end
+
+  if lastPlayer ~= g_game.getCharacterName() then
+    refresh()
+    lastPlayer = g_game.getCharacterName()
+  end
+end
+
+function refresh()
+  spellCooldownPanel:destroyChildren()
 end
 
 function removeCooldown(progressRect)
