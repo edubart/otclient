@@ -134,7 +134,7 @@ function onGameStart()
   -- open tibia has delay in auto walking
   if not g_game.isOfficialTibia() then
     g_game.enableFeature(GameForceFirstAutoWalkStep)
-   else
+  else
     g_game.disableFeature(GameForceFirstAutoWalkStep)
   end
 end

@@ -78,8 +78,9 @@ function turnOffCooldown(progressRect)
   end
   
   -- create particles
-  local particle = g_ui.createWidget('GroupCooldownParticles', progressRect)
+  --[[local particle = g_ui.createWidget('GroupCooldownParticles', progressRect)
   particle:fill('parent')
+  scheduleEvent(function() particle:destroy() end, 1000) -- hack until onEffectEnd]]
 
   progressRect = nil
 end
@@ -109,9 +110,6 @@ function onSpellCooldown(iconId, duration)
   local spell, profile, spellName = Spells.getSpellByIcon(iconId)
   if not spellName then return end
   
-  --local ping = g_game.getPing()
-  --if ping > 0 then duration = duration + ping end
-  
   clientIconId = Spells.getClientId(spellName)
   if not clientIconId then return end
   
@@ -119,29 +117,32 @@ function onSpellCooldown(iconId, duration)
   if not icon then
     icon = g_ui.createWidget('SpellIcon', spellCooldownPanel)
     icon:setId(spellName)
-    icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
-    icon:setImageClip(Spells.getImageClip(clientIconId, profile))
-  
-    local progressRect = g_ui.createWidget('SpellProgressRect', icon)
+  end
+  icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
+  icon:setImageClip(Spells.getImageClip(clientIconId, profile))
+
+  local progressRect = icon:getChildById(spellName)
+  if not progressRect then
+    progressRect = g_ui.createWidget('SpellProgressRect', icon)
+    progressRect:setId(spellName)
     progressRect.icon = icon
     progressRect:fill('parent')
-    progressRect:setTooltip(spellName)
-
-    local updateFunc = function()
-      updateCooldown(progressRect, duration/25)
-    end
-    local finishFunc = function()
-      removeCooldown(progressRect)
-    end
-    initCooldown(progressRect, updateFunc, finishFunc)
+  else
+    progressRect:setPercent(0)
   end
+  progressRect:setTooltip(spellName)
+
+  local updateFunc = function()
+    updateCooldown(progressRect, duration/20)
+  end
+  local finishFunc = function()
+    removeCooldown(progressRect)
+  end
+  initCooldown(progressRect, updateFunc, finishFunc)
 end
 
 function onSpellGroupCooldown(groupId, duration)
   if not SpellGroups[groupId] then return end
-  
-  --local ping = g_game.getPing()
-  --if ping > 0 then duration = duration + ping end
 
   local icon = contentsPanel:getChildById('groupIcon' .. SpellGroups[groupId])
   local progressRect = contentsPanel:getChildById('progressRect' .. SpellGroups[groupId])
@@ -154,7 +155,7 @@ function onSpellGroupCooldown(groupId, duration)
   if progressRect then
     removeEvent(progressRect.event)
     local updateFunc = function()
-      updateCooldown(progressRect, duration/25)
+      updateCooldown(progressRect, duration/20)
     end
     local finishFunc = function()
       turnOffCooldown(progressRect)
