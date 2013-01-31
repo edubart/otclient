@@ -95,10 +95,8 @@ void Minimap::clean()
 
 void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scale)
 {
-    if(screenRect.isEmpty())
-        return;
-    if(MMBLOCK_SIZE*scale <= 1)
-        return;
+    if(screenRect.isEmpty() || MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition())
+        return ;
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_painter->saveState();
@@ -142,9 +140,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 
 Point Minimap::getPoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
-    if(screenRect.isEmpty())
-        return Point(-1,-1);
-    if(MMBLOCK_SIZE*scale <= 1)
+    if(screenRect.isEmpty() || MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition())
         return Point(-1,-1);
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
@@ -155,9 +151,7 @@ Point Minimap::getPoint(const Position& pos, const Rect& screenRect, const Posit
 
 Position Minimap::getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale)
 {
-    if(screenRect.isEmpty())
-        return Position();
-    if(MMBLOCK_SIZE*scale <= 1)
+    if(screenRect.isEmpty() || MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition())
         return Position();
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
