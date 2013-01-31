@@ -11,7 +11,7 @@ function UIMinimap:onSetup()
   self.allowFollowLocalPlayer = true
   self.onPositionChange = function() self:followLocalPlayer() end
   self.onAddAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
-  self.onRemoveAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
+  self.onRemoveAutomapFlag = function(pos, icon, description) self:removeFlag(pos, icon, description) end
   connect(g_game, {
     onAddAutomapFlag = self.onAddAutomapFlag,
     onRemoveAutomapFlag = self.onRemoveAutomapFlag,
@@ -120,7 +120,7 @@ function UIMinimap:getFlag(pos, icon, description)
   local children = self.flagsWidget:getChildren()
   for i=1,#children do
     local flag = children[i]
-    if flag.pos.x == pos.x and flag.pos.y == pos.y and flag.pos.z == pos.z and flag.icon == icon and flag.description == description then
+    if flag.pos.x == pos.x and flag.pos.y == pos.y and flag.pos.z == pos.z then
       return flag
     end
   end

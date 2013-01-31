@@ -67,7 +67,7 @@ function g_tooltip.terminate()
 end
 
 function g_tooltip.display(text)
-  if text == nil then return end
+  if text == nil or text:len() == 0 then return end
   if not toolTipLabel then return end
 
   toolTipLabel:setText(text)
