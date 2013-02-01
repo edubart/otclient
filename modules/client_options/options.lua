@@ -85,6 +85,9 @@ function init()
   optionsWindow:hide()
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
 
+  optionsTabBar = optionsWindow:getChildById('optionsTabBar')
+  optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
+
   addEvent(function() setup() end)
 
   g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
@@ -116,9 +119,6 @@ function setup()
       setOption(k, g_settings.getNumber(k))
     end
   end
-
-  optionsTabBar = optionsWindow:getChildById('optionsTabBar')
-  optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
   generalPanel = g_ui.loadUI('game')
   optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')

@@ -116,6 +116,16 @@ function UIComboBox:onStyleApply(styleName, styleNode)
       self:addOption(option)
     end
   end
+
+  if styleNode.data then
+    for k,data in pairs(styleNode.data) do
+      local option = self.options[k]
+      if option then
+        option.data = data
+      end
+    end
+  end
+
   for name,value in pairs(styleNode) do
     if name == 'mouse-scroll' then
       self.mouseScroll = value
