@@ -118,6 +118,10 @@ function UISpinBox:setValue(value)
   signalcall(self.onValueChange, self, value)
 end
 
+function UISpinBox:getValue()
+  return self.value
+end
+
 function UISpinBox:setMinimum(minimum)
   minimum = minimum or -9223372036854775808
   self.minimum = minimum
@@ -129,6 +133,10 @@ function UISpinBox:setMinimum(minimum)
   end
 end
 
+function UISpinBox:getMinimum()
+  return self.minimum
+end
+
 function UISpinBox:setMaximum(maximum)
   maximum = maximum or 9223372036854775807
   self.maximum = maximum
@@ -137,10 +145,10 @@ function UISpinBox:setMaximum(maximum)
   end
 end
 
-function UISpinBox:setStep(step)
-  self.step = step or 1
+function UISpinBox:getMaximum()
+  return self.maximum
 end
 
-function UISpinBox:getValue()
-  return self.value
+function UISpinBox:setStep(step)
+  self.step = step or 1
 end

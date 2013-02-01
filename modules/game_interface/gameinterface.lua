@@ -591,11 +591,23 @@ function moveStackableItem(item, toPos)
   spinbox:setValue(0)
   spinbox:hideButtons()
   spinbox:focus()
+  spinbox.firstEdit = true
 
   local spinBoxValueChange = function(self, value)
     scrollbar:setValue(value)
   end
   spinbox.onValueChange = spinBoxValueChange
+
+  local check = function()
+    if spinbox.firstEdit then
+      spinbox:setValue(spinbox:getMaximum())
+      spinbox.firstEdit = false
+    end
+  end
+  g_keyboard.bindKeyPress("Up", function() check() spinbox:up() end, spinbox)
+  g_keyboard.bindKeyPress("Down", function() check() spinbox:down() end, spinbox)
+  g_keyboard.bindKeyPress("PageUp", function() check() spinbox:setValue(spinbox:getValue()+10) end, spinbox)
+  g_keyboard.bindKeyPress("PageDown", function() check() spinbox:setValue(spinbox:getValue()-10) end, spinbox)
 
   scrollbar.onValueChange = function(self, value)
     itembox:setItemCount(value)
