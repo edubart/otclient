@@ -35,7 +35,6 @@ function terminate()
                        onSpellGroupCooldown = onSpellGroupCooldown,
                        onSpellCooldown = onSpellCooldown })
 
-  cooldownButton:destroy()
   cooldownWindow:destroy()
 end
 

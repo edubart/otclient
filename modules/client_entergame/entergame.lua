@@ -136,16 +136,10 @@ function EnterGame.terminate()
   removeEvent(autoLoginEvent)
   enterGame:destroy()
   enterGame = nil
-  enterGameButton:destroy()
-  enterGameButton = nil
   protocolBox = nil
   if motdWindow then
     motdWindow:destroy()
     motdWindow = nil
-  end
-  if motdButton then
-    motdButton:destroy()
-    motdButton = nil
   end
   if loadBox then
     loadBox:destroy()

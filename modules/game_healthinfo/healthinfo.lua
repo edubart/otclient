@@ -70,7 +70,6 @@ function terminate()
   disconnect(g_game, { onGameEnd = offline })
 
   healthInfoWindow:destroy()
-  healthInfoButton:destroy()
   healthInfoWindow = nil
   healthInfoButton = nil
 

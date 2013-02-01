@@ -14,11 +14,14 @@ local function addButton(id, description, icon, callback, panel, toggle, front)
     class = 'TopButton'
   end
 
-  local button = g_ui.createWidget(class)
-  if front then
-    panel:insertChild(1, button)
-  else
-    panel:addChild(button)
+  local button = panel:getChildById(id)
+  if not button then
+    button = g_ui.createWidget(class)
+    if front then
+      panel:insertChild(1, button)
+    else
+      panel:addChild(button)
+    end
   end
   button:setId(id)
   button:setTooltip(description)

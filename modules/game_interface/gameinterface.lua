@@ -123,7 +123,6 @@ function terminate()
 
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton:destroy()
   gameRootPanel:destroy()
 end
 

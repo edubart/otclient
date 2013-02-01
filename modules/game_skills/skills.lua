@@ -60,7 +60,6 @@ function terminate()
   })
 
   g_keyboard.unbindKeyDown('Ctrl+S')
-  skillsButton:destroy()
   skillsWindow:destroy()
 end
 

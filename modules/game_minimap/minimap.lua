@@ -48,7 +48,6 @@ function terminate()
   g_keyboard.unbindKeyPress('Alt+Down', gameRootPanel)
   g_keyboard.unbindKeyDown('Ctrl+M')
 
-  minimapButton:destroy()
   minimapWindow:destroy()
 end
 

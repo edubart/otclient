@@ -50,7 +50,6 @@ function terminate()
   end
 
   fightModeRadioGroup:destroy()
-  combatControlsButton:destroy()
   combatControlsWindow:destroy()
 
   disconnect(g_game, {

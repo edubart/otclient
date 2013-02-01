@@ -172,8 +172,6 @@ function terminate()
                           updateSpellInformation(focusedChild)
                         end })   
 
-  spelllistButton:destroy()
-  spelllistButton       = nil
   spelllistWindow:destroy()
   spelllistWindow       = nil
   

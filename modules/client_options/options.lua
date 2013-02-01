@@ -119,15 +119,11 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+Shift+F')
   optionsWindow:destroy()
   optionsWindow = nil
-  optionsButton:destroy()
-  optionsButton = nil
   optionsTabBar = nil
   generalPanel = nil
   consolePanel = nil
   graphicsPanel = nil
   audioPanel = nil
-  audioButton:destroy()
-  audioButton = nil
 end
 
 function toggle()

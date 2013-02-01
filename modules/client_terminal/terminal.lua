@@ -150,8 +150,6 @@ function terminate()
   g_settings.setList('terminal-history', commandHistory)
   g_keyboard.unbindKeyDown('Ctrl+T')
   g_logger.setOnLog(nil)
-  terminalButton:destroy()
-  terminalButton = nil
   commandTextEdit = nil
   terminalBuffer = nil
   terminalWindow:destroy()
