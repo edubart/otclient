@@ -22,6 +22,9 @@ local defaultOptions = {
   musicSoundVolume = 100,
   enableLights = true,
   ambientLight = 25,
+  displayNames = true,
+  displayHealth = true,
+  displayText = true
 }
 
 local optionsWindow
@@ -78,6 +81,32 @@ local function setupGraphicsEngines()
 end
 
 function init()
+  optionsWindow = g_ui.displayUI('options')
+  optionsWindow:hide()
+  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
+
+  addEvent(function() setup() end)
+
+  g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
+  g_keyboard.bindKeyDown('Ctrl+N', toggleDisplays)
+
+  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
+end
+
+function terminate()
+  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
+  g_keyboard.unbindKeyDown('Ctrl+N')
+  optionsWindow:destroy()
+  optionsButton:destroy()
+  audioButton:destroy()
+  optionsTabBar = nil
+  generalPanel = nil
+  consolePanel = nil
+  graphicsPanel = nil
+  audioPanel = nil
+end
+
+function setup()
   -- load options
   for k,v in pairs(defaultOptions) do
     g_settings.setDefault(k, v)
@@ -87,12 +116,6 @@ function init()
       setOption(k, g_settings.getNumber(k))
     end
   end
-
-  g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
-
-  optionsWindow = g_ui.displayUI('options')
-  optionsWindow:hide()
-  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
 
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
@@ -109,22 +132,7 @@ function init()
   audioPanel = g_ui.loadUI('audio')
   optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
 
-  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
-
   setupGraphicsEngines()
-end
-
-function terminate()
-  --g_keyboard.unbindKeyDown('Ctrl+D')
-  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
-  optionsWindow:destroy()
-  optionsButton:destroy()
-  audioButton:destroy()
-  optionsTabBar = nil
-  generalPanel = nil
-  consolePanel = nil
-  graphicsPanel = nil
-  audioPanel = nil
 end
 
 function toggle()
@@ -145,12 +153,29 @@ function hide()
   optionsWindow:hide()
 end
 
+function toggleDisplays()
+  if options['displayNames'] and options['displayHealth'] then
+    setOption('displayNames', false)
+  elseif options['displayHealth'] then
+    setOption('displayHealth', false)
+  else
+    if not options['displayNames'] and not options['displayHealth'] then
+      setOption('displayNames', true)
+    else
+      setOption('displayHealth', true)
+    end
+  end
+end
+
 function toggleOption(key)
   setOption(key, not getOption(key))
 end
 
 function setOption(key, value)
   if options[key] == value then return end
+  local gameMapPanel = modules.game_interface.getMapPanel()
+
+  local panel = nil
   if key == 'vsync' then
     g_window.setVerticalSync(value)
   elseif key == 'showFps' then
@@ -165,6 +190,7 @@ function setOption(key, value)
     end)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
+    panel = graphicsPanel
   elseif key == 'enableAudio' then
     g_sounds.setAudioEnabled(value)
     addEvent(function()
@@ -228,7 +254,25 @@ function setOption(key, value)
     end)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
+  elseif key == 'displayNames' then
+    gameMapPanel:setDrawNames(value)
+    panel = generalPanel
+  elseif key == 'displayHealth' then
+    gameMapPanel:setDrawHealthBars(value)
+    panel = generalPanel
+  elseif key == 'displayText' then
+    gameMapPanel:setDrawTexts(value)
+    panel = generalPanel
   end
+
+  -- change value for keybind updates
+  if panel then
+    local widget = panel:recursiveGetChildById(key)
+    if widget and widget:getStyle().__class == 'UICheckBox' then
+      widget:setChecked(value)
+    end
+  end
+
   g_settings.set(key, value)
   options[key] = value
 end

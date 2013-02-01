@@ -226,7 +226,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     }
 }
 
-void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect)
+void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
 {
     if(m_healthPercent < 1) // creature is dead
         return;
@@ -255,17 +255,22 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     healthRect.setWidth((m_healthPercent / 100.0) * 25);
 
     // draw
-    g_painter->setColor(Color::black);
-    g_painter->drawFilledRect(backgroundRect);
-
     if(g_game.getFeature(Otc::GameBlueNpcNameColor) && isNpc() && m_healthPercent == 100 && !useGray)
-        g_painter->setColor(Color(0x66, 0xcc, 0xff));
-    else
+        fillColor = Color(0x66, 0xcc, 0xff);
+
+    if(drawFlags & Otc::DrawBars) {
+        g_painter->setColor(Color::black);
+        g_painter->drawFilledRect(backgroundRect);
+
         g_painter->setColor(fillColor);
+        g_painter->drawFilledRect(healthRect);
+    }
 
-    g_painter->drawFilledRect(healthRect);
-
-    m_nameCache.draw(textRect);
+    if(drawFlags & Otc::DrawNames) {
+        if(g_painter->getColor() != fillColor)
+            g_painter->setColor(fillColor);
+        m_nameCache.draw(textRect);
+    }
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter->setColor(Color::white);

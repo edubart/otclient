@@ -57,10 +57,14 @@ namespace Otc
         DrawStaticTexts = 512,
         DrawAnimatedTexts = 1024,
         DrawAnimations = 2048,
+        DrawBars = 4096,
+        DrawNames = 8192,
+        DrawLights = 16384,
         DrawWalls = DrawOnBottom | DrawOnTop,
         DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
                          DrawCreatures | DrawEffects | DrawMissiles | DrawCreaturesInformation |
-                         DrawStaticTexts | DrawAnimatedTexts | DrawAnimations
+                         DrawStaticTexts | DrawAnimatedTexts | DrawAnimations | DrawBars | DrawNames |
+                         DrawLights
     };
 
     enum DatOpts {

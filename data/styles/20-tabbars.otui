@@ -104,7 +104,7 @@ TabBarVerticalButton < UIButton
     anchors.top: parent.top
   $!first:
     anchors.top: prev.bottom
-    margin-top: 5
+    margin-top: 10
   $hover !checked:
     color: white
     icon-color: #cccccc

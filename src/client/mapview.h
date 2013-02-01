@@ -98,11 +98,17 @@ public:
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
-    bool isAnimating() { return m_animated; }
+    void setDrawNames(bool enable) { m_drawNames = enable; }
+    bool isDrawingNames() { return m_drawNames; }
+
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; }
+    bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
+
+    void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
+    bool isAnimating() { return m_animated; }
 
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }
@@ -138,8 +144,11 @@ private:
     stdext::boolean<true> m_animated;
     stdext::boolean<true> m_autoViewMode;
     stdext::boolean<true> m_drawTexts;
-    stdext::boolean<true> m_smooth;
+    stdext::boolean<true> m_drawNames;
+    stdext::boolean<true> m_drawHealthBars;
     stdext::boolean<false> m_drawLights;
+    stdext::boolean<true> m_smooth;
+
     stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;

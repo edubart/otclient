@@ -204,7 +204,7 @@ void MapView::draw(const Rect& rect)
     float verticalStretchFactor = rect.height() / (float)srcRect.height();
 
     // avoid drawing texts on map in far zoom outs
-    if(m_viewMode == NEAR_VIEW && m_drawTexts) {
+    if(m_viewMode == NEAR_VIEW) {
         for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
             if(!creature->canBeSeen())
                 continue;
@@ -218,7 +218,10 @@ void MapView::draw(const Rect& rect)
             p.y = p.y * verticalStretchFactor;
             p += rect.topLeft();
 
-            creature->drawInformation(p, g_map.isCovered(pos, m_cachedFirstVisibleFloor), rect);
+            int flags = 0;
+            if(m_drawNames){ flags = Otc::DrawNames; }
+            if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+            creature->drawInformation(p, g_map.isCovered(pos, m_cachedFirstVisibleFloor), rect, flags);
         }
     }
 

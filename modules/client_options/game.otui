@@ -21,6 +21,18 @@ Panel
     id: showLeftPanel
     !text: tr('Show left panel')
 
+  OptionCheckBox
+    id: displayNames
+    !text: tr('Display creature names')
+
+  OptionCheckBox
+    id: displayHealth
+    !text: tr('Display creature health bars')
+
+  OptionCheckBox
+    id: displayText
+    !text: tr('Display text messages')
+
   Button
     id: changeLocale
     !text: tr('Change language')

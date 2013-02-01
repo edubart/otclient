@@ -106,7 +106,6 @@ function bindKeys()
   g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+N', function() gameMapPanel:setDrawTexts(not gameMapPanel:isDrawingTexts()) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
 end
 
