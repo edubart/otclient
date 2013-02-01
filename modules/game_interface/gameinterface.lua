@@ -594,6 +594,7 @@ function moveStackableItem(item, toPos)
   spinbox.firstEdit = true
 
   local spinBoxValueChange = function(self, value)
+    spinbox.firstEdit = false
     scrollbar:setValue(value)
   end
   spinbox.onValueChange = spinBoxValueChange

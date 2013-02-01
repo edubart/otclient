@@ -17,6 +17,9 @@ function terminate()
                        onQuestLine = onGameQuestLine,
                        onGameEnd = destroyWindows})
 
+  if questLogButton then
+    questLogButton:destroy()
+  end
   destroyWindows()
 end
 
