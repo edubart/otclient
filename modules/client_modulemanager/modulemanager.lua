@@ -22,7 +22,7 @@ end
 
 function terminate()
   moduleManagerWindow:destroy()
-  moduleManagerWindow = nil
+  moduleManagerButton:destroy()
   moduleList = nil
 end
 

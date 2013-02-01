@@ -49,6 +49,7 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+M')
 
   minimapWindow:destroy()
+  minimapButton:destroy()
 end
 
 function toggle()

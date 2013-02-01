@@ -11,6 +11,7 @@ function terminate()
     onGameStart = online,
     onGameEnd = offline
   })
+  offline()
 end
 
 function online()

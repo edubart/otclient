@@ -173,41 +173,11 @@ function terminate()
                         end })   
 
   spelllistWindow:destroy()
-  spelllistWindow       = nil
+  spelllistButton:destroy()
   
   vocationRadioGroup:destroy()
-  vocationRadioGroup    = nil
   groupRadioGroup:destroy()
-  groupRadioGroup       = nil
   premiumRadioGroup:destroy()
-  premiumRadioGroup     = nil
-  
-  spellList             = nil
-  nameValueLabel        = nil
-  formulaValueLabel     = nil
-  vocationValueLabel    = nil
-  groupValueLabel       = nil
-  typeValueLabel        = nil
-  cooldownValueLabel    = nil
-  levelValueLabel       = nil
-  manaValueLabel        = nil
-  premiumValueLabel     = nil
-  descriptionValueLabel = nil
-
-  vocationBoxAny        = nil
-  vocationBoxSorcerer   = nil
-  vocationBoxDruid      = nil
-  vocationBoxPaladin    = nil
-  vocationBoxKnight     = nil
-
-  groupBoxAny           = nil
-  groupBoxAttack        = nil
-  groupBoxHealing       = nil
-  groupBoxSupport       = nil
-
-  premiumBoxAny         = nil
-  premiumBoxNo          = nil
-  premiumBoxYes         = nil
 end
 
 function initialiseSpelllist()

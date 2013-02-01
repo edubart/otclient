@@ -39,6 +39,7 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+I')
 
   inventoryWindow:destroy()
+  inventoryButton:destroy()
 end
 
 function refresh()

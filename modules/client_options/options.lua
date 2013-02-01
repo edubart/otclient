@@ -118,7 +118,8 @@ function terminate()
   --g_keyboard.unbindKeyDown('Ctrl+D')
   g_keyboard.unbindKeyDown('Ctrl+Shift+F')
   optionsWindow:destroy()
-  optionsWindow = nil
+  optionsButton:destroy()
+  audioButton:destroy()
   optionsTabBar = nil
   generalPanel = nil
   consolePanel = nil

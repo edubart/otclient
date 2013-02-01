@@ -88,6 +88,7 @@ function terminate()
   unload()
 
   hotkeysWindow:destroy()
+  hotkeysButton:destroy()
   mouseGrabberWidget:destroy()
 end
 

@@ -70,19 +70,7 @@ function terminate()
   disconnect(g_game, { onGameEnd = offline })
 
   healthInfoWindow:destroy()
-  healthInfoWindow = nil
-  healthInfoButton = nil
-
-  healthBar = nil
-  manaBar = nil
-  soulBar = nil
-
-  healthLabel = nil
-  manaLabel = nil
-  soulLabel = nil
-  capLabel = nil
-
-  HealthInfo = nil
+  healthInfoButton:destroy()
 end
 
 function toggle()

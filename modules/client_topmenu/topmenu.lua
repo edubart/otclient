@@ -57,13 +57,7 @@ function terminate()
   disconnect(g_game, { onGameStart = showGameButtons,
                        onGameEnd = hideGameButtons })
 
-  leftButtonsPanel = nil
-  rightButtonsPanel = nil
-  leftGameButtonsPanel = nil
-  rightGameButtonsPanel = nil
-
   topMenu:destroy()
-  topMenu = nil
 end
 
 function addLeftButton(id, description, icon, callback, front)

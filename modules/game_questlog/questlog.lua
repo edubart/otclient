@@ -18,17 +18,16 @@ function terminate()
                        onGameEnd = destroyWindows})
 
   destroyWindows()
+  questLogButton:destroy()
 end
 
 function destroyWindows()
   if questLogWindow then
     questLogWindow:destroy()
-    questLogWindow = nil
   end
 
   if questLineWindow then
     questLineWindow:destroy()
-    questLineWindow = nil
   end
 end
 

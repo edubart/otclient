@@ -737,9 +737,7 @@ function terminate()
   disconnect(g_game, { onGameEnd = Market.reset })
   disconnect(g_game, { onGameEnd = Market.close })
 
-  if marketWindow then
-    marketWindow:destroy()
-  end
+  marketWindow:destroy()
 
   Market = nil
 end

@@ -36,6 +36,7 @@ function terminate()
                        onSpellCooldown = onSpellCooldown })
 
   cooldownWindow:destroy()
+  cooldownButton:destroy()
 end
 
 function onMiniWindowClose()

@@ -51,6 +51,7 @@ function terminate()
 
   fightModeRadioGroup:destroy()
   combatControlsWindow:destroy()
+  combatControlsButton:destroy()
 
   disconnect(g_game, {
     onGameStart = online,

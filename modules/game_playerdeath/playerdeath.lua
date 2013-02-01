@@ -17,7 +17,6 @@ end
 function reset()
   if deathWindow then
     deathWindow:destroy()
-    deathWindow = nil
   end
 end
 

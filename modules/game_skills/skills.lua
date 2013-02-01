@@ -61,6 +61,7 @@ function terminate()
 
   g_keyboard.unbindKeyDown('Ctrl+S')
   skillsWindow:destroy()
+  skillsButton:destroy()
 end
 
 function expForLevel(level)
@@ -231,6 +232,8 @@ end
 
 function checkExpSpeed()
   local player = g_game.getLocalPlayer()
+  if not player then return end
+  
   local currentExp = player:getExperience()
   local currentTime = g_clock.seconds()
   if player.lastExps ~= nil then

@@ -123,11 +123,11 @@ function terminate()
 
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
+  logoutButton:destroy()
   gameRootPanel:destroy()
 end
 
 function onGameStart()
-  logoutButton:setTooltip(tr('Logout'))
   show()
 
   -- open tibia has delay in auto walking
@@ -139,7 +139,6 @@ function onGameStart()
 end
 
 function onGameEnd()
-  logoutButton:setTooltip(tr('Exit'))
   setupViewMode(0)
   hide()
 end
@@ -151,10 +150,13 @@ function show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
   updateStretchShrink()
+  logoutButton:setTooltip(tr('Logout'))
 end
 
 function hide()
   disconnect(g_app, { onClose = tryExit })
+  logoutButton:setTooltip(tr('Exit'))
+  
   if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil

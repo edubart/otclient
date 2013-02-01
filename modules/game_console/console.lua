@@ -73,9 +73,9 @@ violationWindow = nil
 violationReportTab = nil
 
 local ignoreSettings = {
-    privateMessages = false,
-    yelling = false,
-    players = {}
+  privateMessages = false,
+  yelling = false,
+  players = {}
 }
 
 function init()
@@ -164,25 +164,17 @@ function terminate()
   
   if channelsWindow then
     channelsWindow:destroy()
-    channelsWindow = nil
   end
   
   if ignoreWindow then
     ignoreWindow:destroy()
-    ignoreWindow = nil
   end
 
   if violationWindow then
     violationWindow:destroy()
-    violationWindow = nil
   end
-
+  
   consolePanel:destroy()
-  consolePanel = nil
-  consoleTextEdit = nil
-  consoleContentPanel = nil
-  consoleTabBar = nil
-
   ownPrivateName = nil
 
   Console = nil
