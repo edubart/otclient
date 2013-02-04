@@ -326,7 +326,14 @@ function onTradeWith(clickedWidget, mousePosition)
 end
 
 function startUseWith(thing)
-  if g_ui.isMouseGrabbed() or not thing then return end
+  if not thing then return end
+  if g_ui.isMouseGrabbed() then
+    if selectedThing then
+      selectedThing = thing
+      selectedType = 'use'
+    end
+    return
+  end
   selectedType = 'use'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()
@@ -334,7 +341,14 @@ function startUseWith(thing)
 end
 
 function startTradeWith(thing)
-  if g_ui.isMouseGrabbed() or not thing then return end
+  if not thing then return end
+  if g_ui.isMouseGrabbed() then
+    if selectedThing then
+      selectedThing = thing
+      selectedType = 'trade'
+    end
+    return
+  end
   selectedType = 'trade'
   selectedThing = thing
   mouseGrabberWidget:grabMouse()

@@ -71,6 +71,7 @@ serverTab = nil
 violationsChannelId = nil
 violationWindow = nil
 violationReportTab = nil
+ignoredChannels = {}
 
 local ignoreSettings = {
   privateMessages = false,
@@ -346,14 +347,15 @@ end
 
 function addChannel(name, id)
   channels[id] = name
-  local tab = addTab(name, true)
+  local focus = not table.find(ignoredChannels, id)
+  local tab = addTab(name, focus)
   tab.channelId = id
   return tab
 end
 
 function addPrivateChannel(receiver)
   channels[receiver] = receiver
-  return addTab(receiver, true)
+  return addTab(receiver, false)
 end
 
 function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
@@ -833,7 +835,7 @@ function processViolation(name, text)
   channels[tabname] = tabname
   tab.violationChatName = name
   g_game.openRuleViolation(name)
-  addTabText(text, SpeakTypesSettings.say, tab)
+  addTabText(text, SpeakTypesSettings.say, tab, name)
 end
 
 function onRuleViolationChannel(channelId)
@@ -1025,22 +1027,13 @@ function online()
         if channelId ~= -1 and channelId < 100 then
           if not table.find(channels, channelId) then
             g_game.joinChannel(channelId)
+            table.insert(ignoredChannels, channelId)
           end
         end
       end
     end
   end
-
-  local tab = defaultTab
-  if tab then
-    --[[
-      Known Issue: The server is calling to open channels after
-      onGameStart is executed causing it to focus the last tab opened.
-
-      Fix: Don't save channels to the settings that are opened by the server.
-    ]]
-    addEvent(function() consoleTabBar:selectTab(tab) end, true)
-  end
+  scheduleEvent(function() ignoredChannels = {} end, 3000)
 end
 
 function offline()

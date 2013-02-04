@@ -175,14 +175,11 @@ function onCreaturePositionChange(creature, newPos, oldPos)
   end
 end
 
-
 function onCreatureOutfitChange(creature, outfit, oldOutfit)
-  if hasCreature(creature) then
-    if doCreatureFitFilters(creature) then
-      addCreature(creature)
-    else
-      removeCreature(creature)
-    end
+  if doCreatureFitFilters(creature) then
+    addCreature(creature)
+  else
+    removeCreature(creature)
   end
 end
 
