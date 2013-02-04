@@ -174,8 +174,15 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
                     textureRect.size() * scaleFactor);
 
-    g_painter->setOpacity(m_opacity);
+    bool useOpacity = m_opacity < 1.0f;
+
+    if(useOpacity)
+        g_painter->setColor(Color(1.0f,1.0f,1.0f,m_opacity));
+
     g_painter->drawTexturedRect(screenRect, texture, textureRect);
+
+    if(useOpacity)
+        g_painter->setColor(Color::white);
 
     if(lightView && hasLight()) {
         Light light = getLight();

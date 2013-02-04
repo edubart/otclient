@@ -23,6 +23,7 @@ function init()
 
   connect(g_game, {
     onGameStart = onGameStart,
+    onGMActions = onGMActions,
     onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice
   }, true)
@@ -116,6 +117,7 @@ function terminate()
 
   disconnect(g_game, {
     onGameStart = onGameStart,
+    onGMActions = onGMActions,
     onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice
   })
@@ -148,6 +150,9 @@ function show()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
+  gameMapPanel:setMaxZoomOut(11)
+  gameMapPanel:setLimitVisibleRange(true)
+  setupViewMode(0)
   updateStretchShrink()
   logoutButton:setTooltip(tr('Logout'))
 end
@@ -712,7 +717,8 @@ function setupViewMode(mode)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
   elseif mode == 2 then
-    gameMapPanel:setLimitVisibleRange(limitZoom)
+    local limit = limitZoom and not g_game.isGM()
+    gameMapPanel:setLimitVisibleRange(limit)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
     gameMapPanel:fill('parent')
@@ -727,7 +733,7 @@ function setupViewMode(mode)
     gameMapPanel:setOn(true)
     gameBottomPanel:setImageColor('#ffffff88')
     modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
-    if not limitZoom then
+    if not limit then
       g_game.changeMapAwareRange(24, 20)
     end
   end
@@ -737,6 +743,10 @@ end
 
 function limitZoom()
   limitZoom = true
-  gameMapPanel:setMaxZoomOut(11)
-  gameMapPanel:setLimitVisibleRange(true)
+end
+
+function onGMActions()
+  if not limitZoom then return end
+  gameMapPanel:setMaxZoomOut(513)
+  gameMapPanel:setLimitVisibleRange(false)
 end

@@ -286,8 +286,6 @@ function addTab(name, focus)
   end
   if focus then
     consoleTabBar:selectTab(tab)
-  elseif not serverTab or name ~= serverTab:getText() then
-    consoleTabBar:blinkTab(tab)
   end
   return tab
 end
