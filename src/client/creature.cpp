@@ -599,17 +599,17 @@ void Creature::setName(const std::string& name)
 void Creature::setHealthPercent(uint8 healthPercent)
 {
     if(healthPercent > 92)
-        m_informationColor = Color(0, 188, 0);
+        m_informationColor = Color(0x00, 0xBC, 0x00);
     else if(healthPercent > 60)
-        m_informationColor = Color(80, 161, 80);
+        m_informationColor = Color(0x50, 0xA1, 0x50);
     else if(healthPercent > 30)
-        m_informationColor = Color(80, 161, 0);
+        m_informationColor = Color(0xA1, 0xA1, 0x00);
     else if(healthPercent > 8)
-        m_informationColor = Color(160, 39, 39);
+        m_informationColor = Color(0xBF, 0x0A, 0x0A);
     else if(healthPercent > 3)
-        m_informationColor = Color(160, 0, 0);
+        m_informationColor = Color(0x91, 0x0F, 0x0F);
     else
-        m_informationColor = Color(79, 0, 0);
+        m_informationColor = Color(0x85, 0x0C, 0x0C);
 
     m_healthPercent = healthPercent;
     callLuaField("onHealthPercentChange", healthPercent);
