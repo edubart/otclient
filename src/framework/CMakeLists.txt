@@ -132,11 +132,12 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
                             PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -Os")
 
 # some build options
-option(CRASH_HANDLER "Generate crash reports" ON)
 option(LUAJIT "Use lua jit" OFF)
 if(NOT APPLE)
+    option(CRASH_HANDLER "Generate crash reports" ON)
     option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
 else()
+    set(CRASH_HANDLER OFF)
     set(USE_STATIC_LIBS OFF)
 endif()
 set(BUILD_COMMIT "devel" CACHE "Git commit string (intended for releases)" STRING)
@@ -241,7 +242,6 @@ else()
     message(STATUS "Crash handler: OFF")
 endif()
 
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
