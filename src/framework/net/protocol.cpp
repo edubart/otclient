@@ -23,6 +23,7 @@
 #include "protocol.h"
 #include "connection.h"
 #include <framework/core/application.h>
+#include <random>
 
 Protocol::Protocol()
 {

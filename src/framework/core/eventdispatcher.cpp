@@ -75,16 +75,6 @@ void EventDispatcher::poll()
         }
         m_pollEventsSize = m_eventList.size();
     }
-
-    for(auto it = m_coroutines.begin(); it != m_coroutines.end();) {
-        stdext::coroutine& coroutine = (*it);
-        if(coroutine.is_finished())
-            it = m_coroutines.erase(it);
-        else {
-            coroutine.resume();
-            ++it;
-        }
-    }
 }
 
 ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
@@ -125,7 +115,3 @@ EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool p
     return event;
 }
 
-void EventDispatcher::addCoroutine(const stdext::coroutine& coroutine)
-{
-    m_coroutines.push_back(coroutine);
-}

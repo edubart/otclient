@@ -24,6 +24,7 @@
 #define STDEXT_TYPES_H
 
 #include <cstdint>
+#include <cstddef>
 
 typedef unsigned char uchar;
 typedef unsigned short ushort;

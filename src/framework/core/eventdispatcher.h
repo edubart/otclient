@@ -27,7 +27,6 @@
 #include "scheduledevent.h"
 
 #include <queue>
-#include <framework/stdext/coroutine.h>
 
 // @bindsingleton g_dispatcher
 class EventDispatcher
@@ -36,7 +35,6 @@ public:
     void shutdown();
     void poll();
 
-    void addCoroutine(const stdext::coroutine& coroutine);
     EventPtr addEvent(const std::function<void()>& callback, bool pushFront = false);
     ScheduledEventPtr scheduleEvent(const std::function<void()>& callback, int delay);
     ScheduledEventPtr cycleEvent(const std::function<void()>& callback, int delay);
@@ -46,7 +44,6 @@ private:
     int m_pollEventsSize;
     stdext::boolean<false> m_disabled;
     std::priority_queue<ScheduledEventPtr, std::vector<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
-    std::list<stdext::coroutine> m_coroutines;
 };
 
 extern EventDispatcher g_dispatcher;

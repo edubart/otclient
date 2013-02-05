@@ -205,7 +205,7 @@ namespace luabinder
     template<typename C>
     LuaCppFunction bind_mem_fun(int (C::*f)(LuaInterface*)) {
         auto mf = std::mem_fn(f);
-        return [=](LuaInterface* lua) -> int {
+        return [=](LuaInterface* lua) mutable -> int {
             auto obj = lua->castValue<stdext::shared_object_ptr<C>>(1);
             lua->remove(1);
             return mf(obj, lua);
