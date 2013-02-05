@@ -111,7 +111,7 @@ void crashHandler(int signum, siginfo_t* info, void* secret)
         fout << ss.str();
         fout << "\n";
         fout.close();
-        g_logger.info(stdext::format("Crash report saved to file %s", fileName.c_str()));
+        g_logger.info(stdext::format("Crash report saved to file %s", fileName));
     } else
         g_logger.error("Failed to save crash report!");
 

@@ -48,6 +48,7 @@ typename std::enable_if<std::is_integral<T>::value ||
                         std::is_pointer<T>::value ||
                         std::is_floating_point<T>::value ||
                         std::is_enum<T>::value, T>::type sprintf_cast(const T& t) { return t; }
+inline const char *sprintf_cast(const char *s) { return s; }
 inline const char *sprintf_cast(const std::string& s) { return s.c_str(); }
 
 template<int N> struct expand_snprintf {

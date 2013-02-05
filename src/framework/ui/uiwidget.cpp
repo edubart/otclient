@@ -536,7 +536,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         for(const OTMLNodePtr& node : styleNode->children()) {
             if(node->tag()[0] == '!') {
                 std::string tag = node->tag().substr(1);
-                std::string code = stdext::format("tostring(%s)", node->value().c_str());
+                std::string code = stdext::format("tostring(%s)", node->value());
                 std::string origin = "@" + node->source() + ": [" + node->tag() + "]";
                 g_lua.evaluateExpression(code, origin);
                 std::string value = g_lua.popString();
