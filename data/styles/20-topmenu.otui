@@ -6,6 +6,9 @@ TopButton < UIButton
   image-color: #ffffffff
   icon-color: #ffffffff
 
+  $on:
+    image-source: /images/ui/button_top_blink
+
   $hover !disabled:
     image-color: #ffffff99
     image-clip: 26 0 26 26

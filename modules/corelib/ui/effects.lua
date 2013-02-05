@@ -35,3 +35,33 @@ function g_effects.cancelFade(widget)
   removeEvent(widget.fadeEvent)
   widget.fadeEvent = nil
 end
+
+function g_effects.startBlink(widget, duration, interval, clickCancel)
+  duration = duration or 0 -- until stop is called
+  interval = interval or 500
+  clickCancel = clickCancel or true
+
+  removeEvent(widget.blinkEvent)
+  removeEvent(widget.blinkStopEvent)
+
+  widget.blinkEvent = cycleEvent(function()
+    widget:setOn(not widget:isOn())
+  end, interval)
+
+  if duration > 0 then
+    widget.blinkStopEvent = scheduleEvent(function()
+      g_effects.stopBlink(widget)
+    end, duration)
+  end
+
+  connect(widget, { onClick = g_effects.stopBlink })
+end
+
+function g_effects.stopBlink(widget)
+  disconnect(widget, { onClick = g_effects.stopBlink })
+  removeEvent(widget.blinkEvent)
+  removeEvent(widget.blinkStopEvent)
+  widget.blinkEvent = nil
+  widget.blinkStopEvent = nil
+  widget:setOn(false)
+end

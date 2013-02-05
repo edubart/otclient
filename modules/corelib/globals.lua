@@ -25,8 +25,8 @@ function addEvent(callback, front)
   return event
 end
 
-function cycleEvent(callback, front)
-  local event = g_dispatcher.cycleEvent(callback, front)
+function cycleEvent(callback, interval)
+  local event = g_dispatcher.cycleEvent(callback, interval)
   -- must hold a reference to the callback, otherwise it would be collected
   event._callback = callback
   return event
