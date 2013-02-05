@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifdef __linux
+#ifndef WIN32
 
 #include "platform.h"
 #include <fstream>

@@ -134,7 +134,11 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 # some build options
 option(CRASH_HANDLER "Generate crash reports" ON)
 option(LUAJIT "Use lua jit" OFF)
-option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
+if(NOT APPLE)
+    option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
+else()
+    set(USE_STATIC_LIBS OFF)
+endif()
 set(BUILD_COMMIT "devel" CACHE "Git commit string (intended for releases)" STRING)
 set(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
 
@@ -244,7 +248,7 @@ if(WIN32)
     set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
     set(SYSTEM_LIBRARIES "")
 elseif(APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -Wno-deprecated-declarations")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_REENTRANT) # enable thread safe code
     set(SYSTEM_LIBRARIES "")
 else()

@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifdef __linux
+#ifndef WIN32
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>

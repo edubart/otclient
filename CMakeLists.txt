@@ -11,7 +11,9 @@ include(src/framework/CMakeLists.txt)
 include(src/client/CMakeLists.txt)
 
 # functions map for reading backtraces
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=${PROJECT_NAME}.map")
+if(NOT APPLE)
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-Map=${PROJECT_NAME}.map")
+endif()
 
 option(USE_PCH "Use precompiled header (speed up compile)" OFF)
 

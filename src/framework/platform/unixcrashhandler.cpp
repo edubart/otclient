@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifdef __linux
+#ifndef WIN32
 
 #include "crashhandler.h"
 #include <framework/global.h>
