@@ -392,8 +392,8 @@ void UIWidget::drawIcon(const Rect& screenCoords)
                 drawRect.moveCenter(screenCoords.center());
             else
                 drawRect.alignIn(screenCoords, m_iconAlign);
-            drawRect.translate(m_iconOffset);
         }
+        drawRect.translate(m_iconOffset);
         g_painter->setColor(m_iconColor);
         g_painter->drawTexturedRect(drawRect, m_icon, m_iconClipRect);
     }
