@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include <framework/graphics/declarations.h>
+#include <framework/graphics/painter.h>
 #include "thingtype.h"
 
 struct LightSource {
@@ -44,11 +45,14 @@ public:
     void resize(const Size& size);
     void draw(const Rect& dest, const Rect& src);
 
+    void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
+
 private:
     void drawGlobalLight(const Light& light);
     void drawLightSource(const Point& center, const Color& color, int radius);
     TexturePtr generateLightBubble(float centerFactor);
 
+    Painter::BlendEquation m_blendEquation;
     TexturePtr m_lightTexture;
     FrameBufferPtr m_lightbuffer;
     Light m_globalLight;

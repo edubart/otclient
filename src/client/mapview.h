@@ -28,6 +28,7 @@
 #include <framework/graphics/declarations.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
+#include "lightview.h"
 
 // @bindclass
 class MapView : public LuaObject
@@ -109,6 +110,8 @@ public:
 
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
     bool isAnimating() { return m_animated; }
+
+    void setAddLightMethod(bool add) { m_lightView->setBlendEquation(add ? Painter::BlendEquation_Add : Painter::BlendEquation_Max); }
 
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }

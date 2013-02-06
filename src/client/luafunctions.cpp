@@ -565,6 +565,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setMapShader", &UIMap::setMapShader);
     g_lua.bindClassMemberFunction<UIMap>("setMinimumAmbientLight", &UIMap::setMinimumAmbientLight);
     g_lua.bindClassMemberFunction<UIMap>("setLimitVisibleRange", &UIMap::setLimitVisibleRange);
+    g_lua.bindClassMemberFunction<UIMap>("setAddLightMethod", &UIMap::setAddLightMethod);
     g_lua.bindClassMemberFunction<UIMap>("isMultifloor", &UIMap::isMultifloor);
     g_lua.bindClassMemberFunction<UIMap>("isAutoViewModeEnabled", &UIMap::isAutoViewModeEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingTexts", &UIMap::isDrawingTexts);

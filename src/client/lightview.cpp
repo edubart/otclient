@@ -36,6 +36,7 @@ LightView::LightView()
 {
     m_lightbuffer = g_framebuffers.createFrameBuffer();
     m_lightTexture = generateLightBubble(0.1f);
+    m_blendEquation = Painter::BlendEquation_Add;
     reset();
 }
 
@@ -87,6 +88,12 @@ void LightView::addLightSource(const Point& center, float scaleFactor, const Lig
     color.setGreen(color.gF() * brightness);
     color.setBlue(color.bF() * brightness);
 
+    if(m_blendEquation == Painter::BlendEquation_Add && m_lightMap.size() > 0) {
+        LightSource prevSource = m_lightMap.back();
+        if(prevSource.center == center && prevSource.color == color && prevSource.radius == radius)
+            return;
+    }
+
     LightSource source;
     source.center = center;
     source.color = color;
@@ -126,7 +133,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_lightbuffer->bind();
     g_painter->setCompositionMode(Painter::CompositionMode_Replace);
     drawGlobalLight(m_globalLight);
-    g_painter->setBlendEquation(Painter::BlendEquation_Max);
+    g_painter->setBlendEquation(m_blendEquation);
     g_painter->setCompositionMode(Painter::CompositionMode_Add);
     for(const LightSource& source : m_lightMap)
         drawLightSource(source.center, source.color, source.radius);
