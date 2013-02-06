@@ -126,6 +126,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_lightbuffer->bind();
     g_painter->setCompositionMode(Painter::CompositionMode_Replace);
     drawGlobalLight(m_globalLight);
+    g_painter->setBlendEquation(Painter::BlendEquation_Max);
     g_painter->setCompositionMode(Painter::CompositionMode_Add);
     for(const LightSource& source : m_lightMap)
         drawLightSource(source.center, source.color, source.radius);

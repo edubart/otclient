@@ -37,11 +37,15 @@ public:
         CompositionMode_Add,
         CompositionMode_Replace,
         CompositionMode_DestBlending,
-        CompositionMode_Light
+        CompositionMode_Light,
     };
     enum DrawMode {
         Triangles = GL_TRIANGLES,
         TriangleStrip = GL_TRIANGLE_STRIP
+    };
+    enum BlendEquation {
+        BlendEquation_Add,
+        BlendEquation_Max,
     };
 
     struct PainterState {
@@ -52,6 +56,7 @@ public:
         Color color;
         float opacity;
         Painter::CompositionMode compositionMode;
+        Painter::BlendEquation blendEquation;
         Rect clipRect;
         Texture *texture;
         PainterShaderProgram *shaderProgram;
@@ -89,6 +94,7 @@ public:
     virtual void setColor(const Color& color) { m_color = color; }
     virtual void setOpacity(float opacity) { m_opacity = opacity; }
     virtual void setCompositionMode(CompositionMode compositionMode);
+    virtual void setBlendEquation(BlendEquation blendEquation);
     virtual void setClipRect(const Rect& clipRect);
     virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
     virtual void setTexture(Texture *texture);
@@ -115,6 +121,7 @@ public:
     Color getColor() { return m_color; }
     float getOpacity() { return m_opacity; }
     CompositionMode getCompositionMode() { return m_compositionMode; }
+    BlendEquation getBlendEquation() { return m_blendEquation; }
     Rect getClipRect() { return m_clipRect; }
     PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
     bool getAlphaWriting() { return m_alphaWriting; }
@@ -124,6 +131,7 @@ public:
     void resetOpacity() { setOpacity(1.0f); }
     void resetClipRect() { setClipRect(Rect()); }
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
+    void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
     void resetShaderProgram() { setShaderProgram(nullptr); }
     void resetTexture() { setTexture(nullptr); }
     void resetAlphaWriting() { setAlphaWriting(false); }
@@ -134,6 +142,7 @@ public:
 protected:
     void updateGlTexture();
     void updateGlCompositionMode();
+    void updateGlBlendEquation();
     void updateGlClipRect();
     void updateGlAlphaWriting();
     void updateGlViewport();
@@ -147,6 +156,7 @@ protected:
     Color m_color;
     float m_opacity;
     CompositionMode m_compositionMode;
+    BlendEquation m_blendEquation;
     Rect m_clipRect;
     Texture *m_texture;
     PainterShaderProgram *m_shaderProgram;

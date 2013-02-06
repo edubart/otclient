@@ -357,6 +357,19 @@ bool Graphics::canUseBlendFuncSeparate()
 #endif
 }
 
+bool Graphics::canUseBlendEquation()
+{
+#if OPENGL_ES==2
+    return true;
+#elif OPENGL_ES==1
+    return true;
+#else
+    if(!GLEW_VERSION_1_4)
+        return false;
+    return true;
+#endif
+}
+
 bool Graphics::canCacheBackbuffer()
 {
     if(!m_alphaBits)

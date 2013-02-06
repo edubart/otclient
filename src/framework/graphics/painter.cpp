@@ -34,6 +34,7 @@ Painter::Painter()
     m_color = Color::white;
     m_opacity = 1.0f;
     m_compositionMode = CompositionMode_Normal;
+    m_blendEquation = BlendEquation_Add;
     m_shaderProgram = nullptr;
     m_texture = nullptr;
     m_alphaWriting = false;
@@ -45,6 +46,7 @@ void Painter::resetState()
     resetColor();
     resetOpacity();
     resetCompositionMode();
+    resetBlendEquation();
     resetClipRect();
     resetShaderProgram();
     resetTexture();
@@ -56,6 +58,7 @@ void Painter::refreshState()
 {
     updateGlViewport();
     updateGlCompositionMode();
+    updateGlBlendEquation();
     updateGlClipRect();
     updateGlTexture();
     updateGlAlphaWriting();
@@ -71,6 +74,7 @@ void Painter::saveState()
     m_olderStates[m_oldStateIndex].color = m_color;
     m_olderStates[m_oldStateIndex].opacity = m_opacity;
     m_olderStates[m_oldStateIndex].compositionMode = m_compositionMode;
+    m_olderStates[m_oldStateIndex].blendEquation = m_blendEquation;
     m_olderStates[m_oldStateIndex].clipRect = m_clipRect;
     m_olderStates[m_oldStateIndex].shaderProgram = m_shaderProgram;
     m_olderStates[m_oldStateIndex].texture = m_texture;
@@ -94,6 +98,7 @@ void Painter::restoreSavedState()
     setColor(m_olderStates[m_oldStateIndex].color);
     setOpacity(m_olderStates[m_oldStateIndex].opacity);
     setCompositionMode(m_olderStates[m_oldStateIndex].compositionMode);
+    setBlendEquation(m_olderStates[m_oldStateIndex].blendEquation);
     setClipRect(m_olderStates[m_oldStateIndex].clipRect);
     setShaderProgram(m_olderStates[m_oldStateIndex].shaderProgram);
     setTexture(m_olderStates[m_oldStateIndex].texture);
@@ -121,6 +126,14 @@ void Painter::setCompositionMode(Painter::CompositionMode compositionMode)
         return;
     m_compositionMode = compositionMode;
     updateGlCompositionMode();
+}
+
+void Painter::setBlendEquation(Painter::BlendEquation blendEquation)
+{
+    if(m_blendEquation == blendEquation)
+        return;
+    m_blendEquation = blendEquation;
+    updateGlBlendEquation();
 }
 
 void Painter::setClipRect(const Rect& clipRect)
@@ -268,6 +281,20 @@ void Painter::updateGlCompositionMode()
             break;
         case CompositionMode_Light:
             glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+            break;
+    }
+}
+
+void Painter::updateGlBlendEquation()
+{
+    if(!g_graphics.canUseBlendEquation())
+        return;
+    switch(m_blendEquation) {
+        case BlendEquation_Max:
+            glBlendEquation(GL_MAX);
+            break;
+        case BlendEquation_Add:
+            glBlendEquation(GL_FUNC_ADD);
             break;
     }
 }

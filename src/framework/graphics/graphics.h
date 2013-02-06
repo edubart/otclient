@@ -72,6 +72,7 @@ public:
     bool canUseHardwareMipmaps();
     bool canUseClampToEdge();
     bool canUseBlendFuncSeparate();
+    bool canUseBlendEquation();
     bool canCacheBackbuffer();
     bool shouldUseShaders() { return m_shouldUseShaders; }
     bool hasScissorBug();
