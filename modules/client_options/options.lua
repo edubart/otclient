@@ -284,3 +284,7 @@ end
 function addTab(name, panel, icon)
   optionsTabBar:addTab(name, panel, icon)
 end
+
+function addButton(name, func, icon)
+  optionsTabBar:addButton(name, func, icon)
+end

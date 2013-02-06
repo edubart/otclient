@@ -37,6 +37,7 @@ public:
     Color(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) : m_r(r/255.0f), m_g(g/255.0f), m_b(b/255.0f), m_a(a/255.0f) { }
     Color(int r, int g, int b, int a = 0xFF) : m_r(r/255.0f), m_g(g/255.0f), m_b(b/255.0f), m_a(a/255.0f) { }
     Color(float r, float g, float b, float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) { }
+    Color(const std::string& coltext);
 
     uint8 a() const { return m_a*255.0f; }
     uint8 b() const { return m_b*255.0f; }
@@ -75,6 +76,14 @@ public:
     Color& operator=(const Color& other) { m_r = other.m_r; m_g = other.m_g; m_b = other.m_b; m_a = other.m_a; return *this; }
     bool operator==(const Color& other) const { return other.rgba() == rgba(); }
     bool operator!=(const Color& other) const { return other.rgba() != rgba(); }
+
+    static uint8 to8bit(const Color& color) {
+        uint8 c = 0;
+        c += (color.r() / 51) * 36;
+        c += (color.g() / 51) * 6;
+        c += (color.b() / 51);
+        return c;
+    };
 
     static Color from8bit(int color) {
         if(color >= 216 || color <= 0)

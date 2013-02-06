@@ -40,7 +40,7 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   textEdit:setText(text)
   textEdit:setEditable(writeable)
   textEdit:setCursorVisible(writeable)
-  
+
   local desc = ''
   if #writter > 0 then
     desc = tr('You read the following, written by \n%s\n', writter)
@@ -69,6 +69,10 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
     okButton:setMarginRight(0)
   else
     textWindow:setText(tr('Edit Text'))
+  end
+
+  if description:getHeight() < 64 then
+    description:setHeight(64)
   end
 
   local function destroy()
@@ -109,20 +113,22 @@ function onGameEditList(id, doorId, text)
   description:setText(tr('Enter one name per line.'))
   textWindow:setText(tr('Edit List'))
 
+  if description:getHeight() < 64 then
+    description:setHeight(64)
+  end
+
   local function destroy()
     textWindow:destroy()
     table.removevalue(windows, textWindow)
   end
 
-  doneFunc = function()
+  local doneFunc = function()
     g_game.editList(id, doorId, textEdit:getText())
     destroy()
   end
 
   okButton.onClick = doneFunc
   cancelButton.onClick = destroy
-  
-  textWindow.onEnter = doneFunc
   textWindow.onEscape = destroy
 
   table.insert(windows, textWindow)

@@ -176,7 +176,10 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
 void UIWidget::setImageSource(const std::string& source)
 {
-    m_imageTexture = g_textures.getTexture(source);
+    if(source.empty())
+        m_imageTexture = nullptr;
+    else
+        m_imageTexture = g_textures.getTexture(source);
     m_imageMustRecache = true;
 }
 

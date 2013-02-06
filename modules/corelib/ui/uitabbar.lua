@@ -60,6 +60,18 @@ function UITabBar:addTab(text, panel, icon)
   return tab
 end
 
+function UITabBar:addButton(text, func, icon)
+  local button = g_ui.createWidget(self:getStyleName() .. 'Button', self.buttonsPanel)
+  button:setText(text)
+
+  local style = {}
+  style['icon-source'] = icon
+  button:mergeStyle(style)
+
+  button.onClick = func
+  return button
+end
+
 function UITabBar:removeTab(tab)
   local index = table.find(self.tabs, tab)
   if index == nil then return end

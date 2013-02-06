@@ -374,6 +374,7 @@ public:
     Size getIconSize() { return m_iconRect.size(); }
     Rect getIconRect() { return m_iconRect; }
     Rect getIconClip() { return m_iconClipRect; }
+    Fw::AlignmentFlag getIconAlign() { return m_iconAlign; }
     Color getBorderTopColor() { return m_borderColor.top; }
     Color getBorderRightColor() { return m_borderColor.right; }
     Color getBorderBottomColor() { return m_borderColor.bottom; }

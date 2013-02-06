@@ -23,7 +23,7 @@
 #include "color.h"
 
 // NOTE: AABBGGRR order
-const Color Color::alpha      = 0x00000000;
+const Color Color::alpha      = 0x00000000U;
 const Color Color::white      = 0xffffffff;
 const Color Color::black      = 0xff000000;
 const Color Color::red        = 0xff0000ff;
@@ -42,3 +42,9 @@ const Color Color::gray       = 0xffa0a0a0;
 const Color Color::darkGray   = 0xff808080;
 const Color Color::lightGray  = 0xffc0c0c0;
 const Color Color::orange     = 0xffff8c00;
+
+Color::Color(const std::string& coltext)
+{
+    std::stringstream ss(coltext);
+    ss >> *this;
+}
