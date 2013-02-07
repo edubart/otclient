@@ -44,8 +44,8 @@ public:
         TriangleStrip = GL_TRIANGLE_STRIP
     };
     enum BlendEquation {
-        BlendEquation_Add,
-        BlendEquation_Max,
+        BlendEquation_Add = 0x8006, // GL_FUNC_ADD
+        BlendEquation_Max = 0x8008, // GL_MAX
     };
 
     struct PainterState {

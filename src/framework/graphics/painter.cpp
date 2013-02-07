@@ -289,14 +289,7 @@ void Painter::updateGlBlendEquation()
 {
     if(!g_graphics.canUseBlendEquation())
         return;
-    switch(m_blendEquation) {
-        case BlendEquation_Max:
-            glBlendEquation(GL_MAX);
-            break;
-        case BlendEquation_Add:
-            glBlendEquation(GL_FUNC_ADD);
-            break;
-    }
+    glBlendEquation(m_blendEquation);
 }
 
 void Painter::updateGlClipRect()

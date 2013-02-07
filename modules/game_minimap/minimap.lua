@@ -2,6 +2,7 @@ minimapWidget = nil
 minimapButton = nil
 minimapWindow = nil
 otmm = true
+preloaded = false
 
 function init()
   minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
@@ -66,8 +67,13 @@ function onMiniWindowClose()
   minimapButton:setOn(false)
 end
 
+function preload()
+  loadMap(false)
+  preloaded = true
+end
+
 function online()
-  loadMap()
+  loadMap(not preloaded)
   minimapWidget:followLocalPlayer()
 end
 
@@ -75,9 +81,12 @@ function offline()
   saveMap()
 end
 
-function loadMap()
+function loadMap(clean)
   local protocolVersion = g_game.getProtocolVersion()
-  g_minimap.clean()
+
+  if clean then
+    g_minimap.clean()
+  end
 
   if otmm then
     local minimapFile = '/minimap.otmm'

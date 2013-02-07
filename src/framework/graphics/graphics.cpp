@@ -360,9 +360,9 @@ bool Graphics::canUseBlendFuncSeparate()
 bool Graphics::canUseBlendEquation()
 {
 #if OPENGL_ES==2
-    return true;
+    return false;
 #elif OPENGL_ES==1
-    return true;
+    return false;
 #else
     if(!GLEW_VERSION_1_4)
         return false;
