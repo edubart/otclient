@@ -150,6 +150,12 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
             m_attribs.set(ThingAttrNotPreWalkable, node2->value<bool>());
         else if(node2->tag() == "image")
             m_customImage = node2->value();
+        else if(node2->tag() == "full-ground") {
+            if(node2->value<bool>())
+                m_attribs.set(ThingAttrFullGround, true);
+            else
+                m_attribs.remove(ThingAttrFullGround);
+        }
     }
 }
 
