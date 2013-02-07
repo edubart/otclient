@@ -59,8 +59,6 @@ public:
     virtual bool isAnimatedText() { return false; }
     virtual bool isStaticText() { return false; }
 
-    virtual bool isValid() { return rawGetThingType() != nullptr; }
-
     // type shortcuts
     virtual const ThingTypePtr& getThingType();
     virtual ThingType *rawGetThingType();

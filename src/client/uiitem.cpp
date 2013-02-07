@@ -44,7 +44,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
 
     drawImage(m_rect);
 
-    if(m_itemVisible && m_item && m_item->isValid()) {
+    if(m_itemVisible && m_item) {
         Rect drawRect = getPaddingRect();
         Point dest = drawRect.bottomRight() + Point(1,1);
 

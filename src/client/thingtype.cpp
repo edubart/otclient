@@ -336,6 +336,9 @@ uint ThingType::getTextureIndex(int l, int x, int y, int z) {
 
 int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
+    if(m_null)
+        return 0;
+
     getTexture(animationPhase); // we must calculate it anyway.
     int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
     Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
