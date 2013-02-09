@@ -5,34 +5,71 @@ function UIProgressBar.create()
   local progressbar = UIProgressBar.internalCreate()
   progressbar:setFocusable(false)
   progressbar:setPhantom(true)
-  progressbar.percent = 0
+  progressbar.min = 0
+  progressbar.max = 100
+  progressbar.value = 0
   progressbar.bgBorderLeft = 0
   progressbar.bgBorderRight = 0
   progressbar.bgBorderTop = 0
   progressbar.bgBorderBottom = 0
-  progressbar:updateBackground()
   return progressbar
 end
 
-function UIProgressBar:setPercent(percent)
-  self.percent = math.max(math.min(percent, 100), 0)
+function UIProgressBar:setMinimum(minimum)
+  self.minimum = minimum
+  if self.value < minimum then
+    self:setValue(minimum)
+  end
+end
+
+function UIProgressBar:setMaximum(maximum)
+  self.maximum = maximum
+  if self.value > maximum then
+    self:setValue(maximum)
+  end
+end
+
+function UIProgressBar:setValue(value, minimum, maximum)
+  if minimum then
+    self:setMinimum(minimum)
+  end
+
+  if maximum then
+    self:setMaximum(maximum)
+  end
+
+  self.value = math.max(math.min(value, self.maximum), self.minimum)
   self:updateBackground()
 end
 
+function UIProgressBar:setPercent(percent)
+  self:setValue(percent, 0, 100)
+end
 
 function UIProgressBar:getPercent()
-  return self.percent
+  return self.value
 end
 
 function UIProgressBar:getPercentPixels()
-  return 100 / self:getWidth()
+  return (self.maximum - self.minimum) / self:getWidth()
+end
+
+function UIProgressBar:getProgress()
+  if self.minimum == self.maximum then return 1 end
+  return (self.value - self.minimum) / (self.maximum - self.minimum)
 end
 
 function UIProgressBar:updateBackground()
-  local width = math.round(math.max((self.percent * (self:getWidth() - self.bgBorderLeft - self.bgBorderRight))/100, 1))
-  local height = self:getHeight() - self.bgBorderTop - self.bgBorderBottom
-  local rect = { x = self.bgBorderLeft, y = self.bgBorderTop, width = width, height = height }
-  self:setBackgroundRect(rect)
+  if self:isOn() then
+    local width = math.round(math.max((self:getProgress() * (self:getWidth() - self.bgBorderLeft - self.bgBorderRight)), 1))
+    local height = self:getHeight() - self.bgBorderTop - self.bgBorderBottom
+    local rect = { x = self.bgBorderLeft, y = self.bgBorderTop, width = width, height = height }
+    self:setBackgroundRect(rect)
+  end
+end
+
+function UIProgressBar:onSetup()
+  self:updateBackground()
 end
 
 function UIProgressBar:onStyleApply(name, node)
@@ -55,5 +92,8 @@ function UIProgressBar:onStyleApply(name, node)
 end
 
 function UIProgressBar:onGeometryChange(oldRect, newRect)
+  if not self:isOn() then
+    self:setHeight(0)
+  end
   self:updateBackground()
 end

@@ -1,6 +1,5 @@
 HealthBar < ProgressBar
   id: healthBar
-  height: 15
   background-color: #ff4444
   anchors.top: parent.top
   anchors.left: parent.left
@@ -8,48 +7,19 @@ HealthBar < ProgressBar
 
 ManaBar < ProgressBar
   id: manaBar
-  height: 15
   background-color: #4444ff
   anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
-  margin-top: 4
+  margin-top: 3
   
 ExperienceBar < ProgressBar
   id: experienceBar
-  height: 15
   background-color: yellow
   anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
-  margin-top: 4
-
-HealthLabel < GameLabel
-  id: healthLabel
-  color: white
-  text-align: center
-  font: verdana-11px-rounded
-  anchors.fill: healthBar
-  margin-top: 2
-  text: 0 / 0
-
-ManaLabel < GameLabel
-  id: manaLabel
-  color: white
-  text-align: center
-  font: verdana-11px-rounded
-  anchors.fill: manaBar
-  margin-top: 2
-  text: 0 / 0
-  
-ExperienceLabel < GameLabel
-  id: experienceLabel
-  color: white
-  text-align: center
-  font: verdana-11px-rounded
-  anchors.fill: experienceBar
-  margin-top: 2
-  text: 0 / 0
+  margin-top: 3
 
 SoulLabel < GameLabel
   id: soulLabel
@@ -61,7 +31,12 @@ SoulLabel < GameLabel
   anchors.left: parent.horizontalCenter
   margin-top: 5
   margin-right: 3
-  text: Soul:
+  on: true
+
+  $!on:
+    visible: false
+    margin-top: 0
+    height: 0
 
 CapLabel < GameLabel
   id: capLabel
@@ -72,7 +47,12 @@ CapLabel < GameLabel
   anchors.right: parent.horizontalCenter
   margin-top: 5
   margin-left: 3
-  text: Cap:
+  on: true
+
+  $!on:
+    visible: false
+    margin-top: 0
+    height: 0
 
 ConditionWidget < UIWidget
   size: 18 18
@@ -84,17 +64,14 @@ MiniWindow
   icon: /images/topbuttons/healthinfo
   id: healthInfoWindow
   !text: tr('Health Info')
-  height: 117
+  height: 121
   @onClose: modules.game_healthinfo.onMiniWindowClose()
   &save: true
 
   MiniWindowContents
     HealthBar
-    HealthLabel
     ManaBar
-    ManaLabel
     ExperienceBar
-    ExperienceLabel
     Panel
       id: conditionPanel
       layout:

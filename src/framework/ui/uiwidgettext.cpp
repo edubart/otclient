@@ -42,13 +42,13 @@ void UIWidget::updateText()
         m_drawText = m_text;
 
     // update rect size
-    if(!m_rect.isValid() || m_textAutoResize) {
+    if(!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
         Size textBoxSize = getTextSize();
         textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
-        if(size.width() <= 0 || (m_textAutoResize && !m_textWrap))
+        if(size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
             size.setWidth(textBoxSize.width());
-        if(size.height() <= 0 || m_textAutoResize)
+        if(size.height() <= 0 || m_textVerticalAutoResize)
             size.setHeight(textBoxSize.height());
         setSize(size);
     }
@@ -69,6 +69,10 @@ void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
             setTextWrap(node->value<bool>());
         else if(node->tag() == "text-auto-resize")
             setTextAutoResize(node->value<bool>());
+        else if(node->tag() == "text-horizontal-auto-resize")
+            setTextHorizontalAutoResize(node->value<bool>());
+        else if(node->tag() == "text-vertical-auto-resize")
+            setTextVerticalAutoResize(node->value<bool>());
         else if(node->tag() == "text-only-upper-case")
             setTextOnlyUpperCase(node->value<bool>());
         else if(node->tag() == "font")

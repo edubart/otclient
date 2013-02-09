@@ -21,10 +21,6 @@ healthInfoWindow = nil
 healthBar = nil
 manaBar = nil
 experienceBar = nil
-soulBar = nil
-healthLabel = nil
-manaLabel = nil
-experienceLabel = nil
 soulLabel = nil
 capLabel = nil
 
@@ -46,10 +42,6 @@ function init()
   healthBar = healthInfoWindow:recursiveGetChildById('healthBar')
   manaBar = healthInfoWindow:recursiveGetChildById('manaBar')
   experienceBar = healthInfoWindow:recursiveGetChildById('experienceBar')
-  healthLabel = healthInfoWindow:recursiveGetChildById('healthLabel')
-  manaLabel = healthInfoWindow:recursiveGetChildById('manaLabel')
-  experienceLabel = healthInfoWindow:recursiveGetChildById('experienceLabel')
-  soulBar = healthInfoWindow:recursiveGetChildById('soulBar')
   soulLabel = healthInfoWindow:recursiveGetChildById('soulLabel')
   capLabel = healthInfoWindow:recursiveGetChildById('capLabel')
 
@@ -90,22 +82,31 @@ function toggle()
   end
 end
 
+function toggleIcon(bitChanged)
+  local content = healthInfoWindow:recursiveGetChildById('conditionPanel')
+
+  local icon = content:getChildById(Icons[bitChanged].id)
+  if icon then
+    icon:destroy()
+  else
+    icon = g_ui.createWidget('ConditionWidget', content)
+    icon:setId(Icons[bitChanged].id)
+    icon:setImageSource(Icons[bitChanged].path)
+    icon:setTooltip(Icons[bitChanged].tooltip)
+  end
+end
+
 function hideLabels()
-  capLabel:hide()
-  soulLabel:hide()
-  local removeHeight = capLabel:getHeight() + capLabel:getMarginTop() + capLabel:getMarginBottom()
+  local removeHeight = math.max(capLabel:getMarginRect().height, soulLabel:getMarginRect().height)
+  capLabel:setOn(false)
+  soulLabel:setOn(false)
   healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
 end
 
 function hideExperience()
-  experienceBar:hide()
-  experienceLabel:hide()
-  local removeHeight = experienceBar:getHeight() + experienceBar:getMarginTop() + experienceBar:getMarginBottom()
+  local removeHeight = experienceBar:getMarginRect().height
+  experienceBar:setOn(false)
   healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
-end
-
-function onMiniWindowClose()
-  healthInfoButton:setOn(false)
 end
 
 function offline()
@@ -113,25 +114,22 @@ function offline()
 end
 
 -- hooked events
+function onMiniWindowClose()
+  healthInfoButton:setOn(false)
+end
+
 function onHealthChange(localPlayer, health, maxHealth)
-  healthLabel:setText(health .. ' / ' .. maxHealth)
-  healthBar:setPercent(health / maxHealth * 100)
+  healthBar:setText(health .. ' / ' .. maxHealth)
+  healthBar:setValue(health, 0, maxHealth)
 end
 
 function onManaChange(localPlayer, mana, maxMana)
-  manaLabel:setText(mana .. ' / ' .. maxMana)
-
-  local percent
-  if maxMana == 0 then
-    percent = 100
-  else
-    percent = (mana * 100)/maxMana
-  end
-  manaBar:setPercent(percent)
+  manaBar:setText(mana .. ' / ' .. maxMana)
+  manaBar:setValue(mana, 0, maxMana)
 end
 
 function onLevelChange(localPlayer, value, percent)
-  experienceLabel:setText(percent .. "%")
+  experienceBar:setText(percent .. "%")
   experienceBar:setPercent(percent)
 end
 
@@ -142,7 +140,6 @@ end
 function onFreeCapacityChange(player, freeCapacity)
   capLabel:setText(tr('Cap') .. ': ' .. freeCapacity)
 end
-
 
 function onStatesChange(localPlayer, now, old)
   if now == old then return end
@@ -155,19 +152,5 @@ function onStatesChange(localPlayer, now, old)
     if bitChanged ~= 0 then
       toggleIcon(bitChanged)
     end
-  end
-end
-
-function toggleIcon(bitChanged)
-  local content = healthInfoWindow:recursiveGetChildById('conditionPanel')
-
-  local icon = content:getChildById(Icons[bitChanged].id)
-  if icon then
-    icon:destroy()
-  else
-    icon = g_ui.createWidget('ConditionWidget', content)
-    icon:setId(Icons[bitChanged].id)
-    icon:setImageSource(Icons[bitChanged].path)
-    icon:setTooltip(Icons[bitChanged].tooltip)
   end
 end

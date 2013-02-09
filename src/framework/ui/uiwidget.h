@@ -480,7 +480,8 @@ protected:
     Fw::AlignmentFlag m_textAlign;
     Point m_textOffset;
     stdext::boolean<false> m_textWrap;
-    stdext::boolean<false> m_textAutoResize;
+    stdext::boolean<false> m_textVerticalAutoResize;
+    stdext::boolean<false> m_textHorizontalAutoResize;
     stdext::boolean<false> m_textOnlyUpperCase;
     BitmapFontPtr m_font;
 
@@ -492,7 +493,9 @@ public:
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
     void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
     void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }
-    void setTextAutoResize(bool textAutoResize) { m_textAutoResize = textAutoResize; updateText(); }
+    void setTextAutoResize(bool textAutoResize) { m_textHorizontalAutoResize = textAutoResize; m_textVerticalAutoResize = textAutoResize; updateText(); }
+    void setTextHorizontalAutoResize(bool textAutoResize) { m_textHorizontalAutoResize = textAutoResize; updateText(); }
+    void setTextVerticalAutoResize(bool textAutoResize) { m_textVerticalAutoResize = textAutoResize; updateText(); }
     void setTextOnlyUpperCase(bool textOnlyUpperCase) { m_textOnlyUpperCase = textOnlyUpperCase; setText(m_text); }
     void setFont(const std::string& fontName);
 
