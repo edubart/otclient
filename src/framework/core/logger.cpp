@@ -129,7 +129,5 @@ void Logger::setLogFile(const std::string& file)
         g_logger.error(stdext::format("Unable to save log to '%s'", file));
         return;
     }
-
-    m_outFile << "\n== application started at " << stdext::date_time_string() << std::endl;
     m_outFile.flush();
 }

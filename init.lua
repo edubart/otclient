@@ -3,6 +3,7 @@
 
 -- setup logger
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
+g_logger.info(os.date("== application started at %b %d %Y %X"))
 
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
@@ -48,7 +49,7 @@ g_modules.ensureModuleLoaded("game_interface")
 g_modules.autoLoadModules(9999)
 
 local script = '/' .. g_app.getCompactName() .. 'rc'
+
 if g_resources.fileExists(script) then
   dofile(script)
 end
-

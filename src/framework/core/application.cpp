@@ -153,7 +153,6 @@ void Application::poll()
 void Application::exit()
 {
     m_stopping = true;
-    g_logger.info("Exiting application..");
 }
 
 void Application::close()
