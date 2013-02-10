@@ -93,7 +93,10 @@ function init()
     g_configs.save()
   end
 
-  connect(g_app, { onRun = startup })
+  connect(g_app, { 
+  onRun = startup, 
+  onClose = exit,
+  })
 end
 
 function terminate()
@@ -106,4 +109,8 @@ function terminate()
   if protocolVersion ~= 0 then
     g_settings.set('protocol-version', protocolVersion)
   end
+end
+
+function exit()
+  g_logger.info("Exiting application..")
 end

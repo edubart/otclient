@@ -3,13 +3,14 @@
 
 -- setup logger
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
+g_logger.info(os.date("== application started at %b %d %Y %X"))
 
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
 -- add data directory to the search path
 if not g_resources.addSearchPath(g_resources.getWorkDir() .. "data", true) then
-  g_logger.fatal("Unable to add data directory to the search path.")
+  g_logger.fatal("Unable to add data directory to the search path.")   
 end
 
 -- add modules directory to the search path
@@ -51,4 +52,3 @@ local script = '/' .. g_app.getCompactName() .. 'rc'
 if g_resources.fileExists(script) then
   dofile(script)
 end
-
