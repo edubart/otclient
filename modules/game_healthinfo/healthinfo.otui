@@ -14,6 +14,15 @@ ManaBar < ProgressBar
   anchors.left: parent.left
   anchors.right: parent.right
   margin-top: 4
+  
+ExperienceBar < ProgressBar
+  id: experienceBar
+  height: 15
+  background-color: yellow
+  anchors.top: prev.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+  margin-top: 4
 
 HealthLabel < GameLabel
   id: healthLabel
@@ -30,6 +39,15 @@ ManaLabel < GameLabel
   text-align: center
   font: verdana-11px-rounded
   anchors.fill: manaBar
+  margin-top: 2
+  text: 0 / 0
+  
+ExperienceLabel < GameLabel
+  id: experienceLabel
+  color: white
+  text-align: center
+  font: verdana-11px-rounded
+  anchors.fill: experienceBar
   margin-top: 2
   text: 0 / 0
 
@@ -66,7 +84,7 @@ MiniWindow
   icon: /images/topbuttons/healthinfo
   id: healthInfoWindow
   !text: tr('Health Info')
-  height: 102
+  height: 117
   @onClose: modules.game_healthinfo.onMiniWindowClose()
   &save: true
 
@@ -75,6 +93,8 @@ MiniWindow
     HealthLabel
     ManaBar
     ManaLabel
+    ExperienceBar
+    ExperienceLabel
     Panel
       id: conditionPanel
       layout:
