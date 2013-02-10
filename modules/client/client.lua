@@ -53,6 +53,9 @@ function startup()
 end
 
 function init()
+  connect(g_app, { onRun = startup, 
+                   onClose = exit })
+                   
   g_window.setMinimumSize({ width = 600, height = 480 })
   g_sounds.preload(musicFilename)
 
@@ -91,15 +94,12 @@ function init()
   if not g_crypt.setMachineUUID(g_configs.get('uuid')) then
     g_configs.set('uuid', g_crypt.getMachineUUID())
     g_configs.save()
-  end
-
-  connect(g_app, { 
-  onRun = startup, 
-  onClose = exit,
-  })
+  end                   
 end
 
 function terminate()
+  disconnect(g_app, { onRun = startup, 
+                      onClose = exit })
   -- save window configs
   g_settings.set('window-size', g_window.getUnmaximizedSize())
   g_settings.set('window-pos', g_window.getUnmaximizedPos())
@@ -108,7 +108,7 @@ function terminate()
   local protocolVersion = g_game.getProtocolVersion()
   if protocolVersion ~= 0 then
     g_settings.set('protocol-version', protocolVersion)
-  end
+  end                    
 end
 
 function exit()

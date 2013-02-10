@@ -49,6 +49,7 @@ g_modules.ensureModuleLoaded("game_interface")
 g_modules.autoLoadModules(9999)
 
 local script = '/' .. g_app.getCompactName() .. 'rc'
+
 if g_resources.fileExists(script) then
   dofile(script)
 end
