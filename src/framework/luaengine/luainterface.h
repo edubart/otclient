@@ -189,7 +189,10 @@ public:
     int newSandboxEnv();
 
     template<typename... T>
-    int callGlobalField(const std::string& global, const std::string& field, const T&... args);
+    int luaCallGlobalField(const std::string& global, const std::string& field, const T&... args);
+
+    template<typename... T>
+    void callGlobalField(const std::string& global, const std::string& field, const T&... args);
 
     template<typename R, typename... T>
     R callGlobalField(const std::string& global, const std::string& field, const T&... args);
@@ -425,7 +428,7 @@ T LuaInterface::castValue(int index) {
 }
 
 template<typename... T>
-int LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
+int LuaInterface::luaCallGlobalField(const std::string& global, const std::string& field, const T&... args) {
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
         int numArgs = g_lua.polymorphicPush(args...);
@@ -435,10 +438,17 @@ int LuaInterface::callGlobalField(const std::string& global, const std::string& 
     return 0;
 }
 
+template<typename... T>
+void LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
+    int rets = luaCallGlobalField(global, field, args...);
+    if(rets > 0)
+        pop(rets);
+}
+
 template<typename R, typename... T>
 R LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
     R result;
-    int rets = callGlobalField(global, field, args...);
+    int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();
