@@ -375,6 +375,7 @@ locale = {
     ["You are strengthened"] = "Você está reforçado",
     ["You are within a protection zone"] = "Você está dentro de uma zona de proteção",
     ["You can enter new text."] = "Você pode entrar com um novo texto.",
+    ["You have %d%% to advance to level %d."] = "Você tem %d%% para avançar para o nível %d.",
     ["You have %s percent to go"] = "Você tem %s porcento para avançar",
     ["You have %s percent"] = "Você tem %s porcento",
     ["You may not logout during a fight"] = "Você não pode sair durante um combate",
@@ -385,6 +386,8 @@ locale = {
     ["You read the following, written by \n%s\n"] = "Você lê o seguinte, escrito por \n%s\n",
     ["You read the following, written on \n%s.\n"] = "Você lê o seguinte, escrito em \n%s.\n",
     ["Your Capacity"] = "Sua capacidade",
+    ["Your character health is %d out of %d."] = "A vida do seu personagem é %d de %d.",
+    ["Your character mana is %d out of %d."] = "A mana do seu personagem é %d de %d.",
     ["Your Money"] = "Seu dinheiro",
   }
 }

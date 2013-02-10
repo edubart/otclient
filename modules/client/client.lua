@@ -54,7 +54,7 @@ end
 
 function init()
   connect(g_app, { onRun = startup, 
-                   onClose = exit })
+                   onExit = exit })
                    
   g_window.setMinimumSize({ width = 600, height = 480 })
   g_sounds.preload(musicFilename)
@@ -99,7 +99,7 @@ end
 
 function terminate()
   disconnect(g_app, { onRun = startup, 
-                      onClose = exit })
+                      onExit = exit })
   -- save window configs
   g_settings.set('window-size', g_window.getUnmaximizedSize())
   g_settings.set('window-pos', g_window.getUnmaximizedPos())

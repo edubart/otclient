@@ -152,6 +152,7 @@ void Application::poll()
 
 void Application::exit()
 {
+    g_lua.callGlobalField<bool>("g_app", "onExit");
     m_stopping = true;
 }
 

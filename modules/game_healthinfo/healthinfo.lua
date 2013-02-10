@@ -23,6 +23,9 @@ manaBar = nil
 experienceBar = nil
 soulLabel = nil
 capLabel = nil
+healthTooltip = 'Your character health is %d out of %d.'
+manaTooltip = 'Your character mana is %d out of %d.'
+experienceTooltip = 'You have %d%% to advance to level %d.'
 
 function init()
   connect(LocalPlayer, { onHealthChange = onHealthChange,
@@ -96,19 +99,6 @@ function toggleIcon(bitChanged)
   end
 end
 
-function hideLabels()
-  local removeHeight = math.max(capLabel:getMarginRect().height, soulLabel:getMarginRect().height)
-  capLabel:setOn(false)
-  soulLabel:setOn(false)
-  healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
-end
-
-function hideExperience()
-  local removeHeight = experienceBar:getMarginRect().height
-  experienceBar:setOn(false)
-  healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
-end
-
 function offline()
   healthInfoWindow:recursiveGetChildById('conditionPanel'):destroyChildren()
 end
@@ -120,16 +110,19 @@ end
 
 function onHealthChange(localPlayer, health, maxHealth)
   healthBar:setText(health .. ' / ' .. maxHealth)
+  healthBar:setTooltip(tr(healthTooltip, health, maxHealth))
   healthBar:setValue(health, 0, maxHealth)
 end
 
 function onManaChange(localPlayer, mana, maxMana)
   manaBar:setText(mana .. ' / ' .. maxMana)
+  manaBar:setTooltip(tr(manaTooltip, mana, maxMana))
   manaBar:setValue(mana, 0, maxMana)
 end
 
 function onLevelChange(localPlayer, value, percent)
-  experienceBar:setText(percent .. "%")
+  experienceBar:setText(percent .. '%')
+  experienceBar:setTooltip(tr(experienceTooltip, percent, value+1))
   experienceBar:setPercent(percent)
 end
 
@@ -153,4 +146,30 @@ function onStatesChange(localPlayer, now, old)
       toggleIcon(bitChanged)
     end
   end
+end
+
+-- personalization functions
+function hideLabels()
+  local removeHeight = math.max(capLabel:getMarginRect().height, soulLabel:getMarginRect().height)
+  capLabel:setOn(false)
+  soulLabel:setOn(false)
+  healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
+end
+
+function hideExperience()
+  local removeHeight = experienceBar:getMarginRect().height
+  experienceBar:setOn(false)
+  healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
+end
+
+function setHealthTooltip(tooltip)
+  healthTooltip = tooltip
+end
+
+function setManaTooltip(tooltip)
+  manaTooltip = tooltip
+end
+
+function setExperienceTooltip(tooltip)
+  experienceTooltip = tooltip
 end

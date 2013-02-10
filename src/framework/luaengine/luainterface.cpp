@@ -506,7 +506,7 @@ int LuaInterface::signalCall(int numArgs, int numRets)
             }
             pop(numArgs + 1); // pops the table of function and arguments
 
-            if(numRets == 1) {
+            if(numRets == 1 || numRets == -1) {
                 rets = 1;
                 pushBoolean(done);
             }
