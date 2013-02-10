@@ -17,13 +17,21 @@ end
 function createWindow()
   localesWindow = g_ui.displayUI('locales')
   local localesPanel = localesWindow:getChildById('localesPanel')
+  local layout = localesPanel:getLayout()
+  local spacing = layout:getCellSpacing()
+  local size = layout:getCellSize()
 
+  local count = 0
   for name,locale in pairs(installedLocales) do
     local widget = g_ui.createWidget('LocalesButton', localesPanel)
     widget:setImageSource('/images/flags/' .. name .. '')
     widget:setText(locale.languageName)
     widget.onClick = function() selectFirstLocale(name) end
+    count = count + 1
   end
+
+  count = math.max(1, math.min(count, 3))
+  localesPanel:setWidth(size.width*count + spacing*(count-1))
 
   addEvent(function() addEvent(function() localesWindow:raise() localesWindow:focus() end) end)
 end
@@ -61,7 +69,7 @@ function init()
     pdebug('Using configured locale: ' .. userLocaleName)
   else
     setLocale(defaultLocaleName)
-    connect(g_app, {onRun = createWindow})
+    connect(g_app, { onRun = createWindow })
   end
 
   ProtocolGame.registerExtendedOpcode(ExtendedIds.Locale, onExtendedLocales)
@@ -73,6 +81,7 @@ function terminate()
   currentLocale = nil
 
   ProtocolGame.unregisterExtendedOpcode(ExtendedIds.Locale)
+  disconnect(g_app, { onRun = createWindow })
   disconnect(g_game, { onGameStart = onGameStart })
 end
 
@@ -100,6 +109,8 @@ function installLocale(locale)
   if not locale or not locale.name then
     error('Unable to install locale.')
   end
+
+  if _G.allowedLocales and not _G.allowedLocales[locale.name] then return end
 
   if locale.name ~= defaultLocaleName then
     local updatesNeeded = 0

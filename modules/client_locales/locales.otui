@@ -24,8 +24,6 @@ UIWindow
 
   Panel
     id: localesPanel
-    !width: 96*3 + 32*3
-    margin-left: 16
     margin-top: 50
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: prev.bottom
