@@ -10,7 +10,7 @@ g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.g
 
 -- add data directory to the search path
 if not g_resources.addSearchPath(g_resources.getWorkDir() .. "data", true) then
-  g_logger.fatal("Unable to add data directory to the search path.")   
+  g_logger.fatal("Unable to add data directory to the search path.")
 end
 
 -- add modules directory to the search path
