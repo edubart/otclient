@@ -139,6 +139,12 @@ function init()
   
   -- Ignore List
   loadIgnoreSettings()
+  
+  -- Load messages history
+  local file = g_resources.getWorkDir() .. "messagesHistory.txt"
+  for line in io.lines(file) do 
+      messageHistory[#messageHistory + 1] = line
+  end
 end
 
 function terminate()
@@ -179,6 +185,12 @@ function terminate()
   ownPrivateName = nil
 
   Console = nil
+  local file_dir = g_resources.getWorkDir() .. "messagesHistory.txt"
+  local file = io.open(file_dir,"w")
+  for _,v in pairs(messageHistory) do
+  file:write("\n"..v)
+  end
+  file:close()
 end
 
 function onTabChange(tabBar, tab)
