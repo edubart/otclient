@@ -412,7 +412,7 @@ local function openAmountWindow(callback, type, actionText)
 
   local max = selectedOffer[type]:getAmount(item:getId())
   if type == MarketAction.Sell then
-    local depot = Market.depotContains()
+    local depot = Market.depotContains(item:getId())
     if max > depot then
       max = depot
     end
@@ -807,8 +807,10 @@ function Market.enableCreateOffer(enable)
   amountEdit:setEnabled(enable)
   anonymous:setEnabled(enable)
   createOfferButton:setEnabled(enable)
+
   local prevAmountButton = marketOffersPanel:recursiveGetChildById('prevAmountButton')
   local nextAmountButton = marketOffersPanel:recursiveGetChildById('nextAmountButton')
+  
   prevAmountButton:setEnabled(enable)
   nextAmountButton:setEnabled(enable)
 end
@@ -851,6 +853,7 @@ end
 function Market.refreshItemsWidget(selectItem)
   local selectItem = selectItem or 0
   itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
+
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
 
@@ -1005,6 +1008,7 @@ function Market.createNewOffer()
 
   local piecePrice = piecePriceEdit:getValue()
   local totalPrice = totalPriceEdit:getValue()
+
   local amount = amountEdit:getValue()
   local anonymous = anonymous:isChecked() and 1 or 0
 
