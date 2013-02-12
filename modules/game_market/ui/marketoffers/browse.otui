@@ -8,7 +8,8 @@ MarketItemBox < UICheckBox
   Item
     id: item
     phantom: true
-    text-offset: 0 13
+    virtual: true
+    text-offset: 0 22
     text-align: right
     anchors.top: parent.top
     anchors.horizontalCenter: parent.horizontalCenter

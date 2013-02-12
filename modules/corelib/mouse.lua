@@ -25,9 +25,12 @@ function g_mouse.bindPressMove(widget, callback)
   end })
 end
 
-function g_mouse.bindPress(widget, callback)
+function g_mouse.bindPress(widget, callback, button)
   connect(widget, { onMousePress = function(widget, mousePos, mouseButton)
-    callback(mousePos, mouseButton)
-    return true
+    if not button or button == mouseButton then
+      callback(mousePos, mouseButton)
+      return true
+    end
+    return false
   end })
 end

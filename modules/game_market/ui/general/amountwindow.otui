@@ -1,39 +1,45 @@
 AmountWindow < MainWindow
   id: amountWindow
   !text: tr('Amount')
-  size: 196 112
+  size: 196 80
 
-  Label
-    !text: tr('Amount:')
-    width: 64
+  Item
+    id: item
+    text-offset: 0 22
+    text-align: right
     anchors.left: parent.left
     anchors.top: parent.top
     margin-top: 2
-
-  SpinBox
-    id: amountSpinBox
-    anchors.left: prev.right
-    anchors.right: parent.right
-    anchors.top: parent.top
+    margin-left: -4
+    focusable: false
+    virtual: true
 
   HorizontalScrollBar
     id: amountScrollBar
-    anchors.left: parent.left
+    anchors.left: prev.right
     anchors.right: parent.right
-    anchors.top: prev.bottom
-    margin-top: 8
-
-  Button
-    id: buttonOk
-    !text: tr('Ok')
-    width: 64
-    anchors.right: next.left
-    anchors.bottom: parent.bottom
-    margin-right: 5
+    anchors.top: prev.top
+    margin-left: 10
+    margin-top: -2
+    focusable: false
 
   Button
     id: buttonCancel
     !text: tr('Cancel')
-    width: 64
-    anchors.right: parent.right
-    anchors.bottom: parent.bottom
+    height: 20
+    anchors.left: amountScrollBar.horizontalCenter
+    anchors.right: amountScrollBar.right
+    anchors.top: amountScrollBar.bottom
+    margin-top: 7
+    focusable: false
+
+  Button
+    id: buttonOk
+    !text: tr('Ok')
+    height: 20
+    anchors.right: amountScrollBar.horizontalCenter
+    anchors.left: amountScrollBar.left
+    anchors.top: amountScrollBar.bottom
+    margin-top: 7
+    margin-right: 6
+    focusable: false

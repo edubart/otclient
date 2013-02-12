@@ -200,6 +200,7 @@ function setOption(key, value)
         audioButton:setIcon('/images/topbuttons/audio_mute')
       end
     end)
+    panel = audioPanel
   elseif key == 'enableMusicSound' then
     g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
   elseif key == 'musicSoundVolume' then

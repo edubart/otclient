@@ -408,34 +408,40 @@ local function openAmountWindow(callback, type, actionText)
   end
   amountWindow = g_ui.createWidget('AmountWindow', rootWidget)
   amountWindow:lock()
-  local max = selectedOffer[type]:getAmount()
+  local item = selectedOffer[type]:getItem()
+
+  local max = selectedOffer[type]:getAmount(item:getId())
   if type == MarketAction.Sell then
-    local depot = Market.depotContains(selectedOffer[type]:getItem():getId())
+    local depot = Market.depotContains()
     if max > depot then
       max = depot
     end
   end
 
-  local spinbox = amountWindow:getChildById('amountSpinBox')
-  spinbox:setMaximum(max)
-  spinbox:setMinimum(1)
-  spinbox:setValue(1)
+  local itembox = amountWindow:getChildById('item')
+  itembox:setItemId(item:getId())
+  itembox:setText(1)
 
   local scrollbar = amountWindow:getChildById('amountScrollBar')
+  scrollbar:setText(tostring(selectedOffer[type]:getPrice())..'gp')
   scrollbar:setMaximum(max)
   scrollbar:setMinimum(1)
   scrollbar:setValue(1)
 
-  scrollbar.onValueChange = function(self, value) spinbox:setValue(value) end
-  spinbox.onValueChange = function(self, value) scrollbar:setValue(value) end
+  scrollbar.onValueChange = function(widget, value)
+    widget:setText(tostring(value*selectedOffer[type]:getPrice())..'gp')
+    itembox:setText(tostring(value))
+  end
   
   local okButton = amountWindow:getChildById('buttonOk')
-  if actionText ~= '' then okButton:setText(actionText) end
+  if actionText ~= '' then
+    okButton:setText(actionText)
+  end
 
   local okFunc = function()
     local counter = selectedOffer[type]:getCounter()
     local timestamp = selectedOffer[type]:getTimeStamp()
-    callback(spinbox:getValue(), timestamp, counter)
+    callback(scrollbar:getValue(), timestamp, counter)
     okButton:getParent():destroy()
     amountWindow = nil
   end

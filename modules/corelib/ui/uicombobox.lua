@@ -31,7 +31,7 @@ function UIComboBox:setCurrentOption(text)
     if v.text == text and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(text)
-      self:onOptionChange(text, v.data)
+      signalcall(self.onOptionChange, self, text, v.data)
       return
     end
   end
@@ -43,7 +43,7 @@ function UIComboBox:setCurrentOptionByData(data)
     if v.data == data and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(v.text)
-      self:onOptionChange(v.text, v.data)
+      signalcall(self.onOptionChange, self, v.text, v.data)
       return
     end
   end
@@ -54,7 +54,7 @@ function UIComboBox:setCurrentIndex(index)
     local v = self.options[index]
     self.currentIndex = index
     self:setText(v.text)
-    self:onOptionChange(v.text, v.data)
+    signalcall(self.onOptionChange, self, v.text, v.data)
   end
 end
 
@@ -139,8 +139,4 @@ end
 
 function UIComboBox:canMouseScroll()
   return self.mouseScroll
-end
-
-function UIComboBox:onOptionChange(optionText, optionData)
-  -- nothing todo
 end

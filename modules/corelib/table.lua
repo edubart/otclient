@@ -65,8 +65,8 @@ function table.findbykey(t, key, lowercase)
   end
 end
 
-function table.contains(t, value)
-  return table.find(t, value) ~= nil
+function table.contains(t, value, lowercase)
+  return table.find(t, value, lowercase) ~= nil
 end
 
 function table.findkey(t, key)

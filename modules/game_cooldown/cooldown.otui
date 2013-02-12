@@ -96,8 +96,6 @@ MiniWindow
       anchors.top: groupIconSpecial.bottom
       anchors.left: parent.left
       anchors.right: parent.right
-      //border-width: 1
-      //border-color: #00000077
       background-color: #ffffff11
       
       

@@ -176,7 +176,7 @@ Panel
     margin-bottom: 6
     @onSetup: self:setChecked(false)
     height: 16
-    width: 70
+    width: 90
 
   Label
     id: feeLabel
