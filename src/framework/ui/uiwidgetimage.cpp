@@ -182,4 +182,3 @@ void UIWidget::setImageSource(const std::string& source)
         m_imageTexture = g_textures.getTexture(source);
     m_imageMustRecache = true;
 }
-

@@ -95,8 +95,8 @@ void Minimap::clean()
 
 void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scale)
 {
-    if(screenRect.isEmpty() || MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition())
-        return ;
+    if(screenRect.isEmpty())
+        return;
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_painter->saveState();
@@ -104,6 +104,11 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     g_painter->drawFilledRect(screenRect);
     g_painter->resetColor();
     g_painter->setClipRect(screenRect);
+
+    if(MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition()) {
+        g_painter->restoreSavedState();
+        return;
+    }
 
     Point blockOff = getBlockOffset(mapRect.topLeft());
     Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
