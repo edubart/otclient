@@ -515,6 +515,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("hasCreature", &Tile::hasCreature);
     g_lua.bindClassMemberFunction<Tile>("isEmpty", &Tile::isEmpty);
     g_lua.bindClassMemberFunction<Tile>("isClickable", &Tile::isClickable);
+    g_lua.bindClassMemberFunction<Tile>("isPathable", &Tile::isPathable);
     g_lua.bindClassMemberFunction<Tile>("overwriteMinimapColor", &Tile::overwriteMinimapColor);
 
     g_lua.registerClass<UIItem, UIWidget>();

@@ -66,14 +66,6 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   -- happens when clicking outside of map boundaries
   if not autoWalkPos then return false end
   
-  local localPlayerPos = g_game.getLocalPlayer():getPosition()
-  if autoWalkPos.z ~= localPlayerPos.z then
-    local dz = autoWalkPos.z - localPlayerPos.z
-    autoWalkPos.x = autoWalkPos.x + dz
-    autoWalkPos.y = autoWalkPos.y + dz
-    autoWalkPos.z = localPlayerPos.z
-  end
-
   local lookThing
   local useThing
   local creatureThing
@@ -84,6 +76,18 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     lookThing = tile:getTopLookThing()
     useThing = tile:getTopUseThing()
     creatureThing = tile:getTopCreature()
+
+    if tile:isWalkable() then
+      local localPlayerPos = g_game.getLocalPlayer():getPosition()
+      if autoWalkPos.z ~= localPlayerPos.z then
+        local dz = autoWalkPos.z - localPlayerPos.z
+        autoWalkPos.x = autoWalkPos.x + dz
+        autoWalkPos.y = autoWalkPos.y + dz
+        autoWalkPos.z = localPlayerPos.z
+      end
+    else
+      autoWalkPos = nil
+    end
   end
 
   local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
