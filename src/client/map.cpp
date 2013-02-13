@@ -561,6 +561,20 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         return ret;
     }
 
+    // check the goal pos is walkable
+    if(g_map.isAwareOfPosition(goalPos)) {
+        const TilePtr goalTile = getTile(goalPos);
+        if(!goalTile || !goalTile->isWalkable()) {
+            return ret;
+        }
+    }
+    else {
+        const MinimapTile& goalTile = g_minimap.getTile(goalPos);
+        if(goalTile.hasFlag(MinimapTileNotWalkable)) {
+            return ret;
+        }
+    }
+
     std::unordered_map<Position, Node*, PositionHasher> nodes;
     std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
 
