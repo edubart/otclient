@@ -605,18 +605,36 @@ function sendMessage(message, tab)
   end
 
   -- handling chat commands
+  local channel = tab.channelId
   local originalMessage = message
   local chatCommandSayMode
   local chatCommandPrivate
   local chatCommandPrivateReady
+  local chatCommandMessage
 
-  local chatCommandMessage = message:match("^%#y (.*)")
-  if chatCommandMessage ~= nil then chatCommandSayMode = 'yell' end -- player used yell command
-  message = chatCommandMessage or message
+  -- player used yell command
+  chatCommandMessage = message:match("^%#y (.*)")
+  if chatCommandMessage ~= nil then
+    chatCommandSayMode = 'yell'
+    channel = 0
+    message = chatCommandMessage
+  end
 
+   -- player used whisper
   local chatCommandMessage = message:match("^%#w (.*)")
-  if chatCommandMessage ~= nil then chatCommandSayMode = 'whisper' end -- player used whisper
-  message = chatCommandMessage or message
+  if chatCommandMessage ~= nil then
+    chatCommandSayMode = 'whisper'
+    message = chatCommandMessage
+    channel = 0
+  end
+
+  -- player say
+  local chatCommandMessage = message:match("^%#s (.*)")
+  if chatCommandMessage ~= nil then
+    chatCommandSayMode = 'say'
+    message = chatCommandMessage
+    channel = 0
+  end
 
   local findIni, findEnd, chatCommandInitial, chatCommandPrivate, chatCommandEnd, chatCommandMessage = message:find("([%*%@])(.+)([%*%@])(.*)")
   if findIni ~= nil and findIni == 1 then -- player used private chat command
@@ -643,15 +661,15 @@ function sendMessage(message, tab)
   end
 
   local speaktypedesc
-  if (tab.channelId or tab == defaultTab) and not chatCommandPrivateReady then
+  if (channel or tab == defaultTab) and not chatCommandPrivateReady then
     if tab == defaultTab then
       speaktypedesc = chatCommandSayMode or SayModes[consolePanel:getChildById('sayModeButton').sayMode].speakTypeDesc
       if speaktypedesc ~= 'say' then sayModeChange(2) end -- head back to say mode
     else
-      speaktypedesc = 'channelYellow'
+      speaktypedesc = chatCommandSayMode or 'channelYellow'
     end
 
-    g_game.talkChannel(SpeakTypesSettings[speaktypedesc].speakType, tab.channelId, message)
+    g_game.talkChannel(SpeakTypesSettings[speaktypedesc].speakType, channel, message)
     return
   else
     local isPrivateCommand = false

@@ -4,6 +4,7 @@ HealthBar < ProgressBar
   anchors.top: parent.top
   anchors.left: parent.left
   anchors.right: parent.right
+  margin: 1
 
 ManaBar < ProgressBar
   id: manaBar
@@ -11,6 +12,7 @@ ManaBar < ProgressBar
   anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
+  margin: 1
   margin-top: 3
   
 ExperienceBar < ProgressBar
@@ -19,9 +21,8 @@ ExperienceBar < ProgressBar
   anchors.top: prev.bottom
   anchors.left: parent.left
   anchors.right: parent.right
+  margin: 1
   margin-top: 3
-  //margin-top: 6
-  //height: 12
 
 SoulLabel < GameLabel
   id: soulLabel

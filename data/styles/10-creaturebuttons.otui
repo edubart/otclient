@@ -38,7 +38,7 @@ CreatureButton < UICreatureButton
     margin-left: 2
     phantom: true
 
-  ProgressBar
+  LifeProgressBar
     id: lifeBar
     height: 5
     anchors.left: spacer.right

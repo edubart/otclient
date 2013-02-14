@@ -4,6 +4,7 @@ UIProgressBar = extends(UIWidget)
 function UIProgressBar.create()
   local progressbar = UIProgressBar.internalCreate()
   progressbar:setFocusable(false)
+  progressbar:setOn(true)
   progressbar.min = 0
   progressbar.max = 100
   progressbar.value = 0
