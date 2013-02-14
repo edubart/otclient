@@ -49,6 +49,7 @@ function init()
   setupViewMode(0)
 
   bindKeys()
+  load()
 
   if g_game.isOnline() then
     show()
@@ -111,6 +112,7 @@ function bindKeys()
 end
 
 function terminate()
+  save()
   hide()
 
   stopSmartWalk()
@@ -175,6 +177,21 @@ function hide()
   end
   gameRootPanel:hide()
   modules.client_background.show()
+end
+
+function save()
+  local settings = {}
+  settings.splitterMarginBottom = bottomSplitter:getMarginBottom()
+  g_settings.setNode('GameInterface', settings)
+end
+
+function load()
+  local settings = g_settings.getNode('GameInterface')
+  if settings then
+    if settings.splitterMarginBottom then
+      bottomSplitter:setMarginBottom(settings.splitterMarginBottom)
+    end
+  end
 end
 
 function onLoginAdvice(message)
