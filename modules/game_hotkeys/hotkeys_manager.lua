@@ -206,7 +206,7 @@ function save()
   end
 
   hotkeyList = hotkeys
-  g_settings.setNode('hotkeys', hotkeySettings)
+  g_settings.setNode('game_hotkeys', hotkeySettings)
   --g_settings.save()
 end
 
