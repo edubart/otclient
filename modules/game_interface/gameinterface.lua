@@ -182,11 +182,11 @@ end
 function save()
   local settings = {}
   settings.splitterMarginBottom = bottomSplitter:getMarginBottom()
-  g_settings.setNode('GameInterface', settings)
+  g_settings.setNode('game_interface', settings)
 end
 
 function load()
-  local settings = g_settings.getNode('GameInterface')
+  local settings = g_settings.getNode('game_interface')
   if settings then
     if settings.splitterMarginBottom then
       bottomSplitter:setMarginBottom(settings.splitterMarginBottom)

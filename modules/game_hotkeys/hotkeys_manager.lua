@@ -138,7 +138,7 @@ end
 function load(forceDefaults)
   hotkeysManagerLoaded = false
 
-  local hotkeySettings = g_settings.getNode('hotkeys')
+  local hotkeySettings = g_settings.getNode('game_hotkeys')
   local hotkeys = {}
 
   if not table.empty(hotkeySettings) then hotkeys = hotkeySettings end
@@ -183,7 +183,7 @@ function reload()
 end
 
 function save()
-  local hotkeySettings = g_settings.getNode('hotkeys') or {}
+  local hotkeySettings = g_settings.getNode('game_hotkeys') or {}
   local hotkeys = hotkeySettings
 
   if perServer then

@@ -137,11 +137,11 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+E', removeCurrentTab)
   g_keyboard.bindKeyDown('Ctrl+H', openHelp)
   
-  -- Ignore List
-  loadIgnoreSettings()
+  load()
 end
 
 function terminate()
+  save()
   disconnect(g_game, { onTalk = onTalk,
                        onChannelList = onChannelList,
                        onOpenChannel = onOpenChannel,
@@ -179,6 +179,20 @@ function terminate()
   ownPrivateName = nil
 
   Console = nil
+end
+
+function save()
+  local settings = {}
+  settings.messageHistory = messageHistory
+  g_settings.setNode('game_console', settings)
+end
+
+function load()
+  local settings = g_settings.getNode('game_console')
+  if settings then
+    messageHistory = settings.messageHistory or {}
+  end
+  loadIgnoreSettings()
 end
 
 function onTabChange(tabBar, tab)
