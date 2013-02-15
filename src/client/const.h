@@ -352,6 +352,7 @@ namespace Otc
         GameNewSpeedLaw = 36,
         GameForceFirstAutoWalkStep = 37,
         GameMinimapRemove = 38,
+        GameDoubleShopSellAmount = 39,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };

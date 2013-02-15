@@ -244,6 +244,15 @@ MainWindow
       @onCheckChange: modules.game_npctrade.onShowAllItemsChange()
 
   Button
+    id: sellAllButton
+    !text: tr('Sell All')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: modules.game_npctrade.sellAll()
+
+  Button
     id: tradeButton
     !text: tr('Buy')
     width: 64

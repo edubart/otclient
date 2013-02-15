@@ -1,6 +1,7 @@
 BUY = 1
 SELL = 2
 CURRENCY = 'gold'
+CURRENCY_DECIMAL = false
 WEIGHT_UNIT = 'oz'
 LAST_INVENTORY = 10
 
@@ -29,6 +30,7 @@ buyWithBackpack = nil
 ignoreCapacity = nil
 ignoreEquipped = nil
 showAllItems = nil
+sellAllButton = nil
 
 playerFreeCapacity = nil
 playerMoney = nil
@@ -60,6 +62,7 @@ function init()
   ignoreCapacity = npcWindow:recursiveGetChildById('ignoreCapacity')
   ignoreEquipped = npcWindow:recursiveGetChildById('ignoreEquipped')
   showAllItems = npcWindow:recursiveGetChildById('showAllItems')
+  sellAllButton = npcWindow:recursiveGetChildById('sellAllButton')
 
   buyTab = npcWindow:getChildById('buyTab')
   sellTab = npcWindow:getChildById('sellTab')
@@ -130,7 +133,7 @@ end
 function onQuantityValueChange(quantity)
   if selectedItem then
     weightLabel:setText(string.format('%.2f', selectedItem.weight*quantity) .. ' ' .. WEIGHT_UNIT)
-    priceLabel:setText(getItemPrice(selectedItem) .. ' ' .. CURRENCY)
+    priceLabel:setText(formatCurrency(getItemPrice(selectedItem)))
   end
 end
 
@@ -144,6 +147,7 @@ function onTradeTypeChange(radioTabs, selected, deselected)
   ignoreCapacity:setVisible(currentTradeType == BUY)
   ignoreEquipped:setVisible(currentTradeType == SELL)
   showAllItems:setVisible(currentTradeType == SELL)
+  sellAllButton:setVisible(currentTradeType == SELL)
 
   refreshTradeItems()
   refreshPlayerGoods()
@@ -199,8 +203,9 @@ function onShowAllItemsChange()
   refreshPlayerGoods()
 end
 
-function setCurrency(currency)
+function setCurrency(currency, decimal)
   CURRENCY = currency
+  CURRENCY_DECIMAL = decimal
 end
 
 function setShowWeight(state)
@@ -254,43 +259,40 @@ function getItemPrice(item, single)
 end
 
 function getSellQuantity(item)
-  if not playerItems[item.ptr:getId()] then
-    return 0
-  end
-
+  if not item or not playerItems[item:getId()] then return 0 end
   local removeAmount = 0
   if ignoreEquipped:isChecked() then
     local localPlayer = g_game.getLocalPlayer()
     for i=1,LAST_INVENTORY do
       local inventoryItem = localPlayer:getInventoryItem(i)
-      if inventoryItem and inventoryItem:getId() == item.ptr:getId() then
+      if inventoryItem and inventoryItem:getId() == item:getId() then
         removeAmount = removeAmount + inventoryItem:getCount()
       end
     end
   end
-  return playerItems[item.ptr:getId()] - removeAmount
+  return playerItems[item:getId()] - removeAmount
 end
 
 function canTradeItem(item)
   if getCurrentTradeType() == BUY then
     return (ignoreCapacity:isChecked() or (not ignoreCapacity:isChecked() and playerFreeCapacity >= item.weight)) and playerMoney >= getItemPrice(item, true)
   else
-    return getSellQuantity(item) > 0
+    return getSellQuantity(item.ptr) > 0
   end
 end
 
 function refreshItem(item)
   nameLabel:setText(item.name)
   weightLabel:setText(string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT)
-  priceLabel:setText(getItemPrice(item) .. ' ' .. CURRENCY)
+  priceLabel:setText(formatCurrency(getItemPrice(item)))
 
   if getCurrentTradeType() == BUY then
     local capacityMaxCount = math.floor(playerFreeCapacity / item.weight)
     if ignoreCapacity:isChecked() then
-      capacityMaxCount = 100
+      capacityMaxCount = 65535
     end
     local priceMaxCount = math.floor(playerMoney / getItemPrice(item, true))
-    local finalCount = math.max(0, math.min(100, math.min(priceMaxCount, capacityMaxCount)))
+    local finalCount = math.max(0, math.min(getMaxAmount(), math.min(priceMaxCount, capacityMaxCount)))
     quantityScroll:setMaximum(finalCount)
 
     if quantityScroll:getValue() > finalCount then
@@ -307,7 +309,7 @@ function refreshItem(item)
         end
       end
     end
-    quantityScroll:setMaximum(math.max(0, math.min(100, getSellQuantity(item))))
+    quantityScroll:setMaximum(math.max(0, math.min(getMaxAmount(), getSellQuantity(item.ptr))))
   end
 
   setupPanel:enable()
@@ -340,7 +342,7 @@ function refreshTradeItems()
       local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
       text = text .. '\n' .. weight
     end
-    local price = item.price .. ' ' .. CURRENCY
+    local price = formatCurrency(item.price)
     text = text .. '\n' .. price
     itemBox:setText(text)
 
@@ -358,7 +360,7 @@ end
 function refreshPlayerGoods()
   if not initialized then return end
 
-  moneyLabel:setText(playerMoney .. ' ' .. CURRENCY)
+  moneyLabel:setText(formatCurrency(playerMoney))
   capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)
 
   local currentTradeType = getCurrentTradeType()
@@ -455,5 +457,31 @@ end
 function onInventoryChange(inventory, item, oldItem)
   if selectedItem then
     refreshItem(selectedItem)
+  end
+end
+
+function formatCurrency(amount)
+  if CURRENCY_DECIMAL then
+    return string.format("%.02f", amount/100.0) .. ' ' .. CURRENCY
+  else
+    return amount .. ' ' .. CURRENCY
+  end
+end
+
+function getMaxAmount()
+  if getCurrentTradeType() == SELL and g_game.getFeature(GameDoubleShopSellAmount) then
+    return 10000
+  end
+  return 100
+end
+
+function sellAll()
+  for itemid,item in pairs(playerItems) do
+    local item = Item.create(itemid)
+    local amount = getSellQuantity(item)
+    if amount > 0 then
+      g_game.sellItem(item, amount, ignoreEquipped:isChecked())
+      print(amount)
+    end
   end
 end

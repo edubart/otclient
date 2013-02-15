@@ -698,9 +698,14 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
     int size = msg->getU8();
     for(int i = 0; i < size; i++) {
         int itemId = msg->getU16();
-        int count = msg->getU8();
+        int amount;
 
-        goods.push_back(std::make_tuple(Item::create(itemId), count));
+        if(g_game.getFeature(Otc::GameDoubleShopSellAmount))
+            amount = msg->getU16();
+        else
+            amount = msg->getU8();
+
+        goods.push_back(std::make_tuple(Item::create(itemId), amount));
     }
 
     g_game.processPlayerGoods(money, goods);
