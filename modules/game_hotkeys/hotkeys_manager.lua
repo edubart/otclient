@@ -34,6 +34,7 @@ perCharacter = true
 mouseGrabberWidget = nil
 useRadioGroup = nil
 currentHotkeys = nil
+boundCombosCallback = {}
 hotkeysList = {}
 
 -- public functions
@@ -149,6 +150,7 @@ function load(forceDefaults)
   if not forceDefaults then
     if not table.empty(hotkeys) then
       for keyCombo, setting in pairs(hotkeys) do
+        keyCombo = tostring(keyCombo)
         addKeyCombo(keyCombo, setting)
         hotkeyList[keyCombo] = setting
       end
@@ -163,12 +165,13 @@ function load(forceDefaults)
 end
 
 function unload()
-  for _,child in pairs(currentHotkeys:getChildren()) do
-    g_keyboard.unbindKeyPress(child.keyCombo)
+  for keyCombo,callback in pairs(boundCombosCallback) do
+    g_keyboard.unbindKeyPress(keyCombo, callback)
   end
+  boundCombosCallback = {}
   currentHotkeys:destroyChildren()
   currentHotkeyLabel = nil
-  updateHotkeyForm()
+  updateHotkeyForm(true)
   hotkeyList = {}
 end
 
@@ -196,6 +199,8 @@ function save()
     hotkeys = hotkeys[g_game.getCharacterName()]
   end
 
+  table.clear(hotkeys)
+
   for _,child in pairs(currentHotkeys:getChildren()) do
     hotkeys[child.keyCombo] = {
       autoSend = child.autoSend,
@@ -207,7 +212,7 @@ function save()
 
   hotkeyList = hotkeys
   g_settings.setNode('game_hotkeys', hotkeySettings)
-  --g_settings.save()
+  g_settings.save()
 end
 
 function loadDefautComboKeys()
@@ -258,7 +263,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
     currentHotkeyLabel.value = nil
     currentHotkeyLabel.autoSend = false
     updateHotkeyLabel(currentHotkeyLabel)
-    updateHotkeyForm()
+    updateHotkeyForm(true)
   end
 
   show()
@@ -281,7 +286,7 @@ function clearObject()
   currentHotkeyLabel.autoSend = nil
   currentHotkeyLabel.value = nil
   updateHotkeyLabel(currentHotkeyLabel)
-  updateHotkeyForm()
+  updateHotkeyForm(true)
 end
 
 function addHotkey()
@@ -294,6 +299,7 @@ function addHotkey()
 end
 
 function addKeyCombo(keyCombo, keySettings, focus)
+  if keyCombo == nil or #keyCombo == 0 then return end
   if not keyCombo then return end
   local hotkeyLabel = currentHotkeys:getChildById(keyCombo)
   if not hotkeyLabel then
@@ -321,27 +327,28 @@ function addKeyCombo(keyCombo, keySettings, focus)
     if keySettings then
       currentHotkeyLabel = hotkeyLabel
       hotkeyLabel.keyCombo = keyCombo
-      hotkeyLabel.autoSend = keySettings.autoSend
-      hotkeyLabel.itemId = keySettings.itemId
+      hotkeyLabel.autoSend = toboolean(keySettings.autoSend)
+      hotkeyLabel.itemId = tonumber(keySettings.itemId)
       hotkeyLabel.useType = tonumber(keySettings.useType)
-      hotkeyLabel.value = keySettings.value
+      if keySettings.value then hotkeyLabel.value = tostring(keySettings.value) end
     else
       hotkeyLabel.keyCombo = keyCombo
-      hotkeyLabel.autoSend = nil
+      hotkeyLabel.autoSend = false
       hotkeyLabel.itemId = nil
       hotkeyLabel.useType = nil
-      hotkeyLabel.value = nil
+      hotkeyLabel.value = ''
     end
 
     updateHotkeyLabel(hotkeyLabel)
 
-    g_keyboard.bindKeyPress(keyCombo, function() doKeyCombo(keyCombo) end, nil, 350)
+    boundCombosCallback[keyCombo] = function() doKeyCombo(keyCombo) end
+    g_keyboard.bindKeyPress(keyCombo, boundCombosCallback[keyCombo])
   end
 
   if focus then
     currentHotkeys:focusChild(hotkeyLabel)
     currentHotkeys:ensureChildVisible(hotkeyLabel)
-    updateHotkeyForm()
+    updateHotkeyForm(true)
   end
 end
 
@@ -398,7 +405,7 @@ function updateHotkeyLabel(hotkeyLabel)
   end
 end
 
-function updateHotkeyForm()
+function updateHotkeyForm(reset)
   if currentHotkeyLabel then
     removeHotkeyButton:enable()
     if currentHotkeyLabel.itemId ~= nil then
@@ -435,8 +442,10 @@ function updateHotkeyForm()
       hotkeyText:enable()
       hotkeyText:focus()
       hotKeyTextLabel:enable()
+      if reset then
+        hotkeyText:setCursorPos(-1)
+      end
       hotkeyText:setText(currentHotkeyLabel.value)
-      hotkeyText:setCursorPos(-1)
       sendAutomatically:setChecked(currentHotkeyLabel.autoSend)
       sendAutomatically:setEnabled(currentHotkeyLabel.value and #currentHotkeyLabel.value > 0)
       selectObjectButton:enable()
@@ -461,7 +470,8 @@ end
 
 function removeHotkey()
   if currentHotkeyLabel == nil then return end
-  g_keyboard.unbindKeyPress(currentHotkeyLabel.keyCombo)
+  g_keyboard.unbindKeyPress(currentHotkeyLabel.keyCombo, boundCombosCallback[currentHotkeyLabel.keyCombo])
+  boundCombosCallback[currentHotkeyLabel.keyCombo] = nil
   currentHotkeyLabel:destroy()
   currentHotkeyLabel = nil
 end
@@ -504,7 +514,7 @@ end
 
 function onSelectHotkeyLabel(hotkeyLabel)
   currentHotkeyLabel = hotkeyLabel
-  updateHotkeyForm()
+  updateHotkeyForm(true)
 end
 
 function hotkeyCapture(assignWindow, keyCode, keyboardModifiers)

@@ -42,7 +42,7 @@ enum MinimapTileFlags {
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : flags(0), color(0), speed(10) { }
+    MinimapTile() : flags(0), color(255), speed(10) { }
     uint8 flags;
     uint8 color;
     uint8 speed;
@@ -64,10 +64,13 @@ public:
     const TexturePtr& getTexture() { return m_texture; }
     std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE>& getTiles() { return m_tiles; }
     void mustUpdate() { m_mustUpdate = true; }
+    void justSaw() { m_wasSeen = true; }
+    bool wasSeen() { return m_wasSeen; }
 private:
     TexturePtr m_texture;
     std::array<MinimapTile, MMBLOCK_SIZE *MMBLOCK_SIZE> m_tiles;
     stdext::boolean<true> m_mustUpdate;
+    stdext::boolean<false> m_wasSeen;
 };
 
 #pragma pack(pop)
@@ -81,13 +84,16 @@ public:
 
     void clean();
 
-    void draw(const Rect& screenRect, const Position& mapCenter, float scale);
-    Point getPoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale);
-    Position getPosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale);
+    void draw(const Rect& screenRect, const Position& mapCenter, float scale, const Color& color);
+    Point getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale);
+    Position getTilePosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale);
+    Rect getTileRect(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale);
 
     void updateTile(const Position& pos, const TilePtr& tile);
     const MinimapTile& getTile(const Position& pos);
 
+    bool loadImage(const std::string& fileName, const Position& topLeft, float colorFactor);
+    void saveImage(const std::string& fileName, const Rect& mapRect);
     bool loadOtmm(const std::string& fileName);
     void saveOtmm(const std::string& fileName);
 

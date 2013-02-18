@@ -45,6 +45,7 @@
 #include "uicreature.h"
 #include "uimap.h"
 #include "uiminimap.h"
+#include "uimapanchorlayout.h"
 #include "uiprogressrect.h"
 #include "outfit.h"
 
@@ -121,6 +122,8 @@ void Client::registerLuaFunctions()
 
     g_lua.registerSingletonClass("g_minimap");
     g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
+    g_lua.bindSingletonFunction("g_minimap", "loadImage", &Minimap::loadImage, &g_minimap);
+    g_lua.bindSingletonFunction("g_minimap", "saveImage", &Minimap::saveImage, &g_minimap);
     g_lua.bindSingletonFunction("g_minimap", "loadOtmm", &Minimap::loadOtmm, &g_minimap);
     g_lua.bindSingletonFunction("g_minimap", "saveOtmm", &Minimap::saveOtmm, &g_minimap);
 
@@ -597,20 +600,24 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMinimap>("setMixZoom", &UIMinimap::setMinZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("setMaxZoom", &UIMinimap::setMaxZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("setCameraPosition", &UIMinimap::setCameraPosition);
-    g_lua.bindClassMemberFunction<UIMinimap>("setCross", &UIMinimap::setCross);
-    g_lua.bindClassMemberFunction<UIMinimap>("followCreature", &UIMinimap::followCreature);
-    g_lua.bindClassMemberFunction<UIMinimap>("getPoint", &UIMinimap::getPoint);
-    g_lua.bindClassMemberFunction<UIMinimap>("getPosition", &UIMinimap::getPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("floorUp", &UIMinimap::floorUp);
+    g_lua.bindClassMemberFunction<UIMinimap>("floorDown", &UIMinimap::floorDown);
+    g_lua.bindClassMemberFunction<UIMinimap>("getTilePoint", &UIMinimap::getTilePoint);
+    g_lua.bindClassMemberFunction<UIMinimap>("getTilePosition", &UIMinimap::getTilePosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("getTileRect", &UIMinimap::getTileRect);
     g_lua.bindClassMemberFunction<UIMinimap>("getCameraPosition", &UIMinimap::getCameraPosition);
-    g_lua.bindClassMemberFunction<UIMinimap>("getFollowingCreature", &UIMinimap::getFollowingCreature);
     g_lua.bindClassMemberFunction<UIMinimap>("getMinZoom", &UIMinimap::getMinZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("getMaxZoom", &UIMinimap::getMaxZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("getZoom", &UIMinimap::getZoom);
-    g_lua.bindClassMemberFunction<UIMinimap>("getCross", &UIMinimap::getCross);
-    g_lua.bindClassMemberFunction<UIMinimap>("getScale", &UIMinimap::getScale);
+    g_lua.bindClassMemberFunction<UIMinimap>("getScale", &UIMinimap::getScale); 
+    g_lua.bindClassMemberFunction<UIMinimap>("anchorPosition", &UIMinimap::anchorPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("fillPosition", &UIMinimap::fillPosition);
+    g_lua.bindClassMemberFunction<UIMinimap>("centerInPosition", &UIMinimap::centerInPosition);
 
     g_lua.registerClass<UIProgressRect, UIWidget>();
     g_lua.bindClassStaticFunction<UIProgressRect>("create", []{ return UIProgressRectPtr(new UIProgressRect); } );
     g_lua.bindClassMemberFunction<UIProgressRect>("setPercent", &UIProgressRect::setPercent);
     g_lua.bindClassMemberFunction<UIProgressRect>("getPercent", &UIProgressRect::getPercent);
+
+    g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
 }

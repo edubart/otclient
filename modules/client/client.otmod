@@ -12,7 +12,6 @@ Module
   load-later:
     - client_styles
     - client_locales
-    //- client_particles
     - client_topmenu
     - client_background
     - client_entergame

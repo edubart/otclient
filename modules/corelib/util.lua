@@ -67,6 +67,11 @@ function connect(object, arg1, arg2, arg3)
     elseif type(object[signal]) == 'function' then
       object[signal] = { object[signal] }
     end
+
+    if type(slot) ~= 'function' then
+      perror(debug.traceback('unable to connect a non function value'))
+    end
+
     if type(object[signal]) == 'table' then
       if pushFront then
         table.insert(object[signal], 1, slot)
@@ -80,9 +85,15 @@ end
 function disconnect(object, arg1, arg2)
   local signalsAndSlots
   if type(arg1) == 'string' then
+    if arg2 == nil then
+      object[arg1] = nil
+      return
+    end
     signalsAndSlots = { [arg1] = arg2 }
-  else
+  elseif type(arg1) == 'table' then
     signalsAndSlots = arg1
+  else
+    perror(debug.traceback('unable to disconnect'))
   end
 
   for signal,slot in pairs(signalsAndSlots) do

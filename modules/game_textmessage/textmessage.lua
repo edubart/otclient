@@ -123,3 +123,7 @@ function clearMessages()
     end
   end
 end
+
+function LocalPlayer:onAutoWalkFail(player)
+  modules.game_textmessage.displayFailureMessage(tr('There is no way.'))
+end

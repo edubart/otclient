@@ -164,9 +164,17 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(m_null)
         return;
 
-    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
+    if(animationPhase >= m_animationPhases)
+        return;
 
-    int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
+    if(!texture)
+        return;
+
+    uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    if(frameIndex >= m_texturesFramesRects[animationPhase].size())
+        return;
+
     Point textureOffset;
     Rect textureRect;
 

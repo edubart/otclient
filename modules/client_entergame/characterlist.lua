@@ -111,7 +111,7 @@ end
 
 function onGameConnectionError(message, code)
   CharacterList.destroyLoadBox()
-  errorBox = displayErrorBox(tr("Login Error"), message)
+  errorBox = displayErrorBox(tr("Connection Error"), message)
   errorBox.onOk = function()
     errorBox = nil
     CharacterList.showAgain()

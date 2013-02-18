@@ -31,6 +31,7 @@
 #include <framework/platform/platformwindow.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/core/application.h>
+#include <framework/luaengine/luainterface.h>
 
 UIWidget::UIWidget()
 {

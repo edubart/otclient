@@ -25,6 +25,8 @@ end
 function terminate()
   disconnect(g_game, { onGameStart = onGameStart,
                        onGameEnd = onGameEnd })
+  removeEvent(firstReportEvent)
+  removeEvent(sendReportEvent)
 end
 
 function configure(host, port, delay)
@@ -45,13 +47,15 @@ end
 
 function onGameStart()
   if not HOST then return end
+  removeEvent(firstReportEvent)
+  removeEvent(sendReportEvent)
   firstReportEvent = addEvent(sendReport, FIRST_REPORT_DELAY*1000)
   sendReportEvent = cycleEvent(sendReport, REPORT_DELAY*1000)
 end
 
 function onGameEnd()
-  removeEvent(sendReportEvent)
   removeEvent(firstReportEvent)
+  removeEvent(sendReportEvent)
 end
 
 function onConnect(protocol)
@@ -84,6 +88,7 @@ function onConnect(protocol)
   post = post .. '&cpu='               .. g_platform.getCPUName()
   post = post .. '&mem='               .. g_platform.getTotalSystemMemory()
   post = post .. '&os_name='           .. g_platform.getOSName()
+  post = post .. getAdditionalData()
 
   local message = ''
   message = message .. "POST /report HTTP/1.1\r\n"
@@ -96,6 +101,10 @@ function onConnect(protocol)
 
   protocol:send(message)
   protocol:recv()
+end
+
+function getAdditionalData()
+  return ''
 end
 
 function onRecv(protocol, message)

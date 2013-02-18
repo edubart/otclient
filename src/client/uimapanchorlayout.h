@@ -20,37 +20,36 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#ifndef UIMAPANCHORLAYOUT_H
+#define UIMAPANCHORLAYOUT_H
 
-#include <framework/global.h>
+#include "declarations.h"
+#include <framework/ui/uianchorlayout.h>
 
-class UIManager;
-class UIWidget;
-class UITextEdit;
-class UILayout;
-class UIBoxLayout;
-class UIHorizontalLayout;
-class UIVerticalLayout;
-class UIGridLayout;
-class UIAnchor;
-class UIAnchorGroup;
-class UIAnchorLayout;
-class UIParticles;
+class UIPositionAnchor : public UIAnchor
+{
+public:
+    UIPositionAnchor(Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge) :
+        UIAnchor(anchoredEdge, std::string(), hookedEdge), m_hookedPosition(hookedPosition) { }
 
-typedef stdext::shared_object_ptr<UIWidget> UIWidgetPtr;
-typedef stdext::shared_object_ptr<UIParticles> UIParticlesPtr;
-typedef stdext::shared_object_ptr<UITextEdit> UITextEditPtr;
-typedef stdext::shared_object_ptr<UILayout> UILayoutPtr;
-typedef stdext::shared_object_ptr<UIBoxLayout> UIBoxLayoutPtr;
-typedef stdext::shared_object_ptr<UIHorizontalLayout> UIHorizontalLayoutPtr;
-typedef stdext::shared_object_ptr<UIVerticalLayout> UIVerticalLayoutPtr;
-typedef stdext::shared_object_ptr<UIGridLayout> UIGridLayoutPtr;
-typedef stdext::shared_object_ptr<UIAnchor> UIAnchorPtr;
-typedef stdext::shared_object_ptr<UIAnchorGroup> UIAnchorGroupPtr;
-typedef stdext::shared_object_ptr<UIAnchorLayout> UIAnchorLayoutPtr;
+    UIWidgetPtr getHookedWidget(const UIWidgetPtr& widget, const UIWidgetPtr& parentWidget) { return parentWidget; }
+    int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget);
 
-typedef std::deque<UIWidgetPtr> UIWidgetList;
-typedef std::vector<UIAnchorPtr> UIAnchorList;
+private:
+    Position m_hookedPosition;
+};
+
+class UIMapAnchorLayout : public UIAnchorLayout
+{
+public:
+    UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(parentWidget) { }
+
+    void addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
+                           const Position& hookedPosition, Fw::AnchorEdge hookedEdge);
+    void centerInPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
+    void fillPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
+
+protected:
+};
 
 #endif

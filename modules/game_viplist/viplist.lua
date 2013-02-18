@@ -3,7 +3,8 @@ vipButton = nil
 addVipWindow = nil
 
 function init()
-  connect(g_game, { onGameEnd = clear,
+  connect(g_game, { onGameStart = refresh,
+                    onGameEnd = clear,
                     onAddVip = onAddVip,
                     onVipStateChange = onVipStateChange })
 
@@ -20,7 +21,8 @@ end
 
 function terminate()
   g_keyboard.unbindKeyDown('Ctrl+P')
-  disconnect(g_game, { onGameEnd = clear,
+  disconnect(g_game, { onGameStart = refresh,
+                       onGameEnd = clear,
                        onAddVip = onAddVip,
                        onVipStateChange = onVipStateChange })
 

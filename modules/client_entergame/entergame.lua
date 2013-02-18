@@ -8,6 +8,7 @@ local motdButton
 local enterGameButton
 local protocolBox
 local protocolLogin
+local motdEnabled = true
 
 -- private functions
 local function onError(protocol, message, errorCode)
@@ -27,7 +28,9 @@ end
 local function onMotd(protocol, motd)
   G.motdNumber = tonumber(motd:sub(0, motd:find("\n")))
   G.motdMessage = motd:sub(motd:find("\n") + 1, #motd)
-  motdButton:show()
+  if motdEnabled then
+    motdButton:show()
+  end
 end
 
 local function onCharacterList(protocol, characters, account, otui)
@@ -45,12 +48,14 @@ local function onCharacterList(protocol, characters, account, otui)
   CharacterList.create(characters, account, otui)
   CharacterList.show()
 
-  local lastMotdNumber = g_settings.getNumber("motd")
-  if G.motdNumber and G.motdNumber ~= lastMotdNumber then
-    g_settings.set("motd", motdNumber)
-    motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
-    connect(motdWindow, { onOk = function() CharacterList.show() motdWindow = nil end })
-    CharacterList.hide()
+  if motdEnabled then
+    local lastMotdNumber = g_settings.getNumber("motd")
+    if G.motdNumber and G.motdNumber ~= lastMotdNumber then
+      g_settings.set("motd", motdNumber)
+      motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
+      connect(motdWindow, { onOk = function() CharacterList.show() motdWindow = nil end })
+      CharacterList.hide()
+    end
   end
 end
 
@@ -81,7 +86,7 @@ function EnterGame.init()
   motdButton:hide()
   g_keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
 
-  if G.motdNumber then
+  if motdEnabled and G.motdNumber then
     motdButton:show()
   end
 
@@ -127,13 +132,15 @@ function EnterGame.firstShow()
   local host = g_settings.get('host')
   local autologin = g_settings.getBoolean('autologin')
   if #host > 0 and #password > 0 and #account > 0 and autologin then
-    autoLoginEvent = addEvent(EnterGame.doLogin)
+    connect(g_app, { onRun = function()
+      if not g_settings.getBoolean('autologin') then return end
+      EnterGame.doLogin()
+    end})
   end
 end
 
 function EnterGame.terminate()
   g_keyboard.unbindKeyDown('Ctrl+G')
-  removeEvent(autoLoginEvent)
   enterGame:destroy()
   enterGame = nil
   enterGameButton:destroy()
@@ -186,7 +193,6 @@ function EnterGame.clearAccountFields()
 end
 
 function EnterGame.doLogin()
-  autoLoginEvent = nil
   G.account = enterGame:getChildById('accountNameTextEdit'):getText()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
@@ -252,10 +258,6 @@ function EnterGame.setDefaultServer(host, port, protocol)
     protocolBox:setCurrentOption(protocol)
     accountTextEdit:setText('')
     passwordTextEdit:setText('')
-
-    if autoLoginEvent then
-      autoLoginEvent:cancel()
-    end
   end
 end
 
@@ -297,3 +299,7 @@ function EnterGame.setServerInfo(message)
   label:setText(message)
 end
 
+function EnterGame.disableMotd()
+  motdEnabled = false
+  motdButton:hide()
+end

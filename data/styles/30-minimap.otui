@@ -2,9 +2,13 @@ MinimapFlag < UIWidget
   size: 11 11
   anchors.left: parent.left
   anchors.top: parent.top
+  focusable: false
 
-MinimapFlags < UIWidget
-  anchors.fill: parent
+MinimapCross < UIWidget
+  focusable: false
+  phantom: true
+  image: /images/game/minimap/cross
+  size: 16 16
 
 MinimapFloorUpButton < Button
   size: 20 20
@@ -61,12 +65,7 @@ Minimap < UIMinimap
   draggable: true
   focusable: false
   cross: true
-  @onGeometryChange: self:updateFlags()
-
-  MinimapFlags
-    id: flags
-    phantom: true
-    focusable: false
+  color: black
 
   MinimapFloorUpButton
     id: floorUp
@@ -245,22 +244,3 @@ MinimapFlagWindow < MainWindow
     width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-
-// Minimap Full Panel
-
-MinimapFullPanel < FlatPanel
-  phantom: false
-  anchors.fill: parent
-  anchors.top: topMenu.bottom
-
-  ImageView
-    id: image
-    anchors.fill: parent
-
-  Button
-    !text: tr('Close')
-    margin-right: 4
-    margin-top: 4
-    anchors.right: parent.right
-    anchors.top: parent.top
-    @onClick: self:getParent():destroy()

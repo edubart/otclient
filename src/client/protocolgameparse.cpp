@@ -763,6 +763,9 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
     else
         effectId = msg->getU8();
 
+    if(!g_things.isValidDatId(effectId, ThingCategoryEffect))
+        g_logger.traceError("invalid effect id");
+
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
     g_map.addThing(effect, pos);
@@ -785,6 +788,9 @@ void ProtocolGame::parseDistanceMissile(const InputMessagePtr& msg)
     Position fromPos = getPosition(msg);
     Position toPos = getPosition(msg);
     int shotId = msg->getU8();
+
+    if(!g_things.isValidDatId(shotId, ThingCategoryMissile))
+        g_logger.traceError("invalid effect id");
 
     MissilePtr missile = MissilePtr(new Missile());
     missile->setId(shotId);
@@ -1642,6 +1648,9 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         int feet = msg->getU8();
         int addons = msg->getU8();
 
+        if(!g_things.isValidDatId(lookType, ThingCategoryCreature))
+            lookType = 0;
+
         outfit.setId(lookType);
         outfit.setHead(head);
         outfit.setBody(body);
@@ -1653,9 +1662,11 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         int lookTypeEx = msg->getU16();
         if(lookTypeEx == 0) {
             outfit.setCategory(ThingCategoryEffect);
-            outfit.setAuxId(13);
+            outfit.setAuxId(13); // invisible effect id
         }
         else {
+            if(!g_things.isValidDatId(lookTypeEx, ThingCategoryItem))
+                lookTypeEx = 0;
             outfit.setCategory(ThingCategoryItem);
             outfit.setAuxId(lookTypeEx);
         }

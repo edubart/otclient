@@ -289,8 +289,12 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
         g_lua.pushNil();
         while(g_lua.next(index < 0 ? index-1 : index)) {
             std::string cnodeName;
-            if(!g_lua.isNumber(-2))
-                cnodeName = g_lua.toString(-2);
+            if(g_lua.isString(-2)) {
+                g_lua.pushValue(-2);
+                cnodeName = g_lua.toString();
+                g_lua.pop();
+            } else
+                assert(g_lua.isNumber());
             if(g_lua.isTable()) {
                 OTMLNodePtr cnode;
                 if(luavalue_cast(-1, cnode)) {

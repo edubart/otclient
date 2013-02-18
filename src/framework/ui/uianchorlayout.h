@@ -25,30 +25,30 @@
 
 #include "uilayout.h"
 
-class UIAnchor
+class UIAnchor : public stdext::shared_object
 {
 public:
     UIAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge) :
         m_anchoredEdge(anchoredEdge), m_hookedEdge(hookedEdge), m_hookedWidgetId(hookedWidgetId) { }
 
     Fw::AnchorEdge getAnchoredEdge() const { return m_anchoredEdge; }
-    std::string getHookedWidgetId() const { return m_hookedWidgetId; }
     Fw::AnchorEdge getHookedEdge() const { return m_hookedEdge; }
 
-private:
+    virtual UIWidgetPtr getHookedWidget(const UIWidgetPtr& widget, const UIWidgetPtr& parentWidget);
+    virtual int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget);
+
+protected:
     Fw::AnchorEdge m_anchoredEdge;
     Fw::AnchorEdge m_hookedEdge;
     std::string m_hookedWidgetId;
 };
 
-typedef std::vector<UIAnchor> UIAnchorList;
-
-class UIAnchorGroup
+class UIAnchorGroup : public stdext::shared_object
 {
 public:
     UIAnchorGroup() : m_updated(true) { }
 
-    void addAnchor(const UIAnchor& anchor);
+    void addAnchor(const UIAnchorPtr& anchor);
     const UIAnchorList& getAnchors() { return m_anchors; }
     bool isUpdated() { return m_updated; }
     void setUpdated(bool updated) { m_updated = updated; }
@@ -77,11 +77,9 @@ public:
     bool isUIAnchorLayout() { return true; }
 
 protected:
-    bool internalUpdate();
-
-private:
-    bool updateWidget(const UIWidgetPtr& widget, UIAnchorGroup& anchorGroup, UIWidgetPtr first = nullptr);
-    std::unordered_map<UIWidgetPtr, UIAnchorGroup> m_anchorsGroups;
+    virtual bool internalUpdate();
+    virtual bool updateWidget(const UIWidgetPtr& widget, const UIAnchorGroupPtr& anchorGroup, UIWidgetPtr first = nullptr);
+    std::unordered_map<UIWidgetPtr, UIAnchorGroupPtr> m_anchorsGroups;
 };
 
 #endif

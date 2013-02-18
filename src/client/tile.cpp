@@ -338,7 +338,7 @@ int Tile::getGroundSpeed()
 
 uint8 Tile::getMinimapColorByte()
 {
-    uint8 color = 0;
+    uint8 color = 255; // alpha
     if(m_minimapColor != 0) {
         return m_minimapColor;
     }
@@ -542,18 +542,8 @@ bool Tile::isLookPossible()
 
 bool Tile::isClickable()
 {
-    bool hasGround = false;
-    bool hasOnBottom = false;
-    bool hasIgnoreLook = false;
     for(const ThingPtr& thing : m_things) {
-        if(thing->isGround())
-            hasGround = true;
-        if(thing->isOnBottom())
-            hasOnBottom = true;
-        if(thing->isIgnoreLook())
-            hasIgnoreLook = true;
-
-        if((hasGround || hasOnBottom) && !hasIgnoreLook)
+        if(!thing->isOnTop() && !thing->isIgnoreLook())
             return true;
     }
     return false;

@@ -1,18 +1,19 @@
 -- private variables
 local background
+local clientVersionLabel
 
 -- public functions
 function init()
   background = g_ui.displayUI('background')
   background:lower()
 
-  local clientVersionLabel = background:getChildById('clientVersionLabel')
+  clientVersionLabel = background:getChildById('clientVersionLabel')
   clientVersionLabel:setText(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' ..
                              'Rev  ' .. g_app.getBuildRevision() .. ' ('.. g_app.getBuildCommit() .. ')\n' ..
                              'Built on ' .. g_app.getBuildDate())
 
   if not g_game.isOnline() then
-    g_effects.fadeIn(clientVersionLabel, 1500)
+    addEvent(function() g_effects.fadeIn(clientVersionLabel, 1500) end)
   end
 
   connect(g_game, { onGameStart = hide })
@@ -39,4 +40,8 @@ end
 
 function hideVersionLabel()
   background:getChildById('clientVersionLabel'):hide()
+end
+
+function setVersionText(text)
+  clientVersionLabel:setText(text)
 end

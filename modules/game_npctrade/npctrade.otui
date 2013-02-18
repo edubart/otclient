@@ -252,6 +252,7 @@ MainWindow
     margin-right: 10
     visible: false
     @onClick: modules.game_npctrade.sellAll()
+    visible: false
 
   Button
     id: tradeButton

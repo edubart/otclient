@@ -3,6 +3,9 @@ minimapButton = nil
 minimapWindow = nil
 otmm = true
 preloaded = false
+fullmapView = false
+oldZoom = nil
+oldPos = nil
 
 function init()
   minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
@@ -19,12 +22,17 @@ function init()
   g_keyboard.bindKeyPress('Alt+Up', function() minimapWidget:move(0,1) end, gameRootPanel)
   g_keyboard.bindKeyPress('Alt+Down', function() minimapWidget:move(0,-1) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+M', toggle)
+  g_keyboard.bindKeyDown('Ctrl+Shift+M', toggleFullMap)
 
   minimapWindow:setup()
 
   connect(g_game, {
     onGameStart = online,
     onGameEnd = offline,
+  })
+
+  connect(LocalPlayer, {
+    onPositionChange = updateCameraPosition
   })
 
   if g_game.isOnline() then
@@ -48,6 +56,7 @@ function terminate()
   g_keyboard.unbindKeyPress('Alt+Up', gameRootPanel)
   g_keyboard.unbindKeyPress('Alt+Down', gameRootPanel)
   g_keyboard.unbindKeyDown('Ctrl+M')
+  g_keyboard.unbindKeyDown('Ctrl+Shift+M')
 
   minimapWindow:destroy()
   minimapButton:destroy()
@@ -74,7 +83,6 @@ end
 
 function online()
   loadMap(not preloaded)
-  minimapWidget:followLocalPlayer()
 end
 
 function offline()
@@ -114,6 +122,36 @@ function saveMap()
   minimapWidget:save()
 end
 
-function getMinimap()
-  return minimapWidget
+function updateCameraPosition()
+  local player = g_game.getLocalPlayer()
+  if not minimapWidget:isDragging() then
+    if not fullmapView then
+      minimapWidget:setCameraPosition(player:getPosition())
+    end
+    minimapWidget:setCrossPosition(player:getPosition())
+  end
+end
+
+function toggleFullMap()
+  if not fullmapView then
+    fullmapView = true
+    minimapWindow:hide()
+    minimapWidget:setParent(modules.game_interface.getRootPanel())
+    minimapWidget:fill('parent')
+    minimapWidget:setAlternativeWidgetsVisible(true)
+  else
+    fullmapView = false
+    minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
+    minimapWidget:fill('parent')
+    minimapWindow:show()
+    minimapWidget:setAlternativeWidgetsVisible(false)
+  end
+
+  local zoom = oldZoom or 0
+  local pos = oldPos or minimapWidget:getCameraPosition()
+  pos.z = 7
+  oldZoom = minimapWidget:getZoom()
+  oldPos = minimapWidget:getCameraPosition()
+  minimapWidget:setZoom(zoom)
+  minimapWidget:setCameraPosition(pos)
 end

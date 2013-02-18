@@ -23,16 +23,19 @@
 #include "uiminimap.h"
 #include "minimap.h"
 #include "game.h"
+#include "uimapanchorlayout.h"
+#include "luavaluecasts.h"
 
 #include <framework/graphics/painter.h>
+#include "uimapanchorlayout.h"
 
 UIMinimap::UIMinimap()
 {
-    m_crossEnabled = true;
     m_zoom = 0;
     m_scale = 1.0f;
     m_minZoom = -5;
     m_maxZoom = 5;
+    m_layout = UIMapAnchorLayoutPtr(new UIMapAnchorLayout(static_self_cast<UIWidget>()));
 }
 
 void UIMinimap::drawSelf(Fw::DrawPane drawPane)
@@ -42,22 +45,18 @@ void UIMinimap::drawSelf(Fw::DrawPane drawPane)
     if((drawPane & Fw::ForegroundPane) == 0)
         return;
 
-    g_minimap.draw(getPaddingRect(), getCameraPosition(), m_scale);
-
-    // draw a cross in the center
-    Rect vRect(0, 0, 2, 10);
-    Rect hRect(0, 0, 10, 2);
-    vRect.moveCenter(m_rect.center());
-    hRect.moveCenter(m_rect.center());
-    g_painter->setColor(Color::white);
-    g_painter->drawFilledRect(vRect);
-    g_painter->drawFilledRect(hRect);
+    g_minimap.draw(getPaddingRect(), getCameraPosition(), m_scale, m_color);
 }
 
 bool UIMinimap::setZoom(int zoom)
 {
+    if(zoom == m_zoom)
+        return true;
+
     if(zoom < m_minZoom || zoom > m_maxZoom)
         return false;
+
+    int oldZoom = m_zoom;
     m_zoom = zoom;
     if(m_zoom < 0)
         m_scale = 1.0f / (1 << std::abs(zoom));
@@ -65,37 +64,83 @@ bool UIMinimap::setZoom(int zoom)
         m_scale = 1.0f * (1 << std::abs(zoom));
     else
         m_scale = 1;
+    m_layout->update();
+    
+    onZoomChange(zoom, oldZoom);
     return true;
-}
-
-void UIMinimap::followCreature(const CreaturePtr& creature)
-{
-    m_followingCreature = creature;
-    m_cameraPosition = Position();
 }
 
 void UIMinimap::setCameraPosition(const Position& pos)
 {
-    m_followingCreature = nullptr;
+    Position oldPos = m_cameraPosition;
     m_cameraPosition = pos;
+    m_layout->update();
+
+    onCameraPositionChange(pos, oldPos);
 }
 
-Point UIMinimap::getPoint(const Position& pos)
+bool UIMinimap::floorUp()
 {
-    return g_minimap.getPoint(pos, getPaddingRect(), getCameraPosition(), m_scale);
+    Position pos = getCameraPosition();
+    if(!pos.up())
+        return false;
+    setCameraPosition(pos);
+    return true;
 }
 
-Position UIMinimap::getPosition(const Point& mousePos)
+bool UIMinimap::floorDown()
 {
-    return g_minimap.getPosition(mousePos, getPaddingRect(), getCameraPosition(), m_scale);
+    Position pos = getCameraPosition();
+    if(!pos.down())
+        return false;
+    setCameraPosition(pos);
+    return true;
 }
 
-Position UIMinimap::getCameraPosition()
+Point UIMinimap::getTilePoint(const Position& pos)
 {
-    if(m_followingCreature)
-        return m_followingCreature->getPosition();
-    else
-        return m_cameraPosition;
+    return g_minimap.getTilePoint(pos, getPaddingRect(), getCameraPosition(), m_scale);
+}
+
+Rect UIMinimap::getTileRect(const Position& pos)
+{
+    return g_minimap.getTileRect(pos, getPaddingRect(), getCameraPosition(), m_scale);
+}
+
+Position UIMinimap::getTilePosition(const Point& mousePos)
+{
+    return g_minimap.getTilePosition(mousePos, getPaddingRect(), getCameraPosition(), m_scale);
+}
+
+void UIMinimap::anchorPosition(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge)
+{
+    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    assert(layout);
+    layout->addPositionAnchor(anchoredWidget, anchoredEdge, hookedPosition, hookedEdge);
+}
+
+void UIMinimap::fillPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition)
+{
+    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    assert(layout);
+    layout->fillPosition(anchoredWidget, hookedPosition);
+}
+
+void UIMinimap::centerInPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition)
+{
+    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    assert(layout);
+    layout->centerInPosition(anchoredWidget, hookedPosition);
+}
+
+void UIMinimap::onZoomChange(int zoom, int oldZoom)
+{
+    callLuaField("onZoomChange", zoom, oldZoom);
+}
+
+void UIMinimap::onCameraPositionChange(const Position& position, const Position& oldPosition)
+{
+    callLuaField("onCameraPositionChange", position, oldPosition);
 }
 
 void UIMinimap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
@@ -108,7 +153,5 @@ void UIMinimap::onStyleApply(const std::string& styleName, const OTMLNodePtr& st
             setMaxZoom(node->value<int>());
         else if(node->tag() == "min-zoom")
             setMinZoom(node->value<int>());
-        else if(node->tag() == "cross")
-            setCross(node->value<bool>());
     }
 }

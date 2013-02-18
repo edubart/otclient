@@ -1,4 +1,3 @@
-WALK_AUTO_REPEAT_DELAY = 90
 WALK_STEPS_RETRY = 10
 
 gameRootPanel = nil
@@ -25,7 +24,7 @@ function init()
     onGameStart = onGameStart,
     onGMActions = onGMActions,
     onGameEnd = onGameEnd,
-    onLoginAdvice = onLoginAdvice
+    onLoginAdvice = onLoginAdvice,
   }, true)
 
   gameRootPanel = g_ui.displayUI('gameinterface')
@@ -57,6 +56,7 @@ function init()
 end
 
 function bindKeys()
+  gameRootPanel:setAutoRepeatDelay(250)
   g_keyboard.bindKeyDown('Up', function() changeWalkDir(North) end, gameRootPanel, true)
   g_keyboard.bindKeyDown('Right', function() changeWalkDir(East) end, gameRootPanel, true)
   g_keyboard.bindKeyDown('Down', function() changeWalkDir(South) end, gameRootPanel, true)
@@ -81,30 +81,30 @@ function bindKeys()
   g_keyboard.bindKeyUp('Numpad1', function() changeWalkDir(SouthWest, true) end, gameRootPanel, true)
   g_keyboard.bindKeyUp('Numpad4', function() changeWalkDir(West, true) end, gameRootPanel, true)
   g_keyboard.bindKeyUp('Numpad7', function() changeWalkDir(NorthWest, true) end, gameRootPanel, true)
-  g_keyboard.bindKeyPress('Up', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Right', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Down', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Left', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad8', function() smartWalk(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad9', function() smartWalk(NorthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad6', function() smartWalk(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad3', function() smartWalk(SouthEast) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad2', function() smartWalk(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad1', function() smartWalk(SouthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad4', function() smartWalk(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Numpad7', function() smartWalk(NorthWest) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
+  g_keyboard.bindKeyPress('Up', function() smartWalk(North) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Right', function() smartWalk(East) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Down', function() smartWalk(South) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Left', function() smartWalk(West) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad8', function() smartWalk(North) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad9', function() smartWalk(NorthEast) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad6', function() smartWalk(East) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad3', function() smartWalk(SouthEast) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad2', function() smartWalk(South) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad1', function() smartWalk(SouthWest) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad4', function() smartWalk(West) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Numpad7', function() smartWalk(NorthWest) end, gameRootPanel)
 
-  g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel, WALK_AUTO_REPEAT_DELAY)
-  g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel, 250)
-  g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel, 250)
+  g_keyboard.bindKeyPress('Ctrl+Up', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Right', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Down', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Left', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Numpad8', function() g_game.turn(North) changeWalkDir(North) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Numpad6', function() g_game.turn(East) changeWalkDir(East) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Numpad2', function() g_game.turn(South) changeWalkDir(South) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+Numpad4', function() g_game.turn(West) changeWalkDir(West) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
@@ -591,7 +591,6 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   player:stopAutoWalk()
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
-    player.onAutoWalkFail = function() modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end
     player:autoWalk(autoWalkPos)
     return true
   end

@@ -224,7 +224,9 @@ end
 
 function UIScrollBar:setText(text)
   local valueLabel = self:getChildById('valueLabel')
-  valueLabel:setText(text)
+  if valueLabel then
+    valueLabel:setText(text)
+  end
 end
 
 function UIScrollBar:onGeometryChange()

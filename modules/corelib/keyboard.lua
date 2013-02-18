@@ -4,7 +4,6 @@ g_keyboard = {}
 -- private functions
 function translateKeyCombo(keyCombo)
   if not keyCombo or #keyCombo == 0 then return nil end
-  table.sort(keyCombo)
   local keyComboDesc = ''
   for k,v in pairs(keyCombo) do
     local keyDesc = KeyCodeDescs[v]
@@ -65,47 +64,29 @@ function determineKeyComboDesc(keyCode, keyboardModifiers)
     end
     table.insert(keyCombo, keyCode)
   end
-  table.sort(keyCombo)
   return translateKeyCombo(keyCombo)
 end
 
 local function onWidgetKeyDown(widget, keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return false end
   local callback = widget.boundAloneKeyDownCombos[determineKeyComboDesc(keyCode, KeyboardNoModifier)]
-  if callback then
-    callback(widget, keyCode)
-  end
+  signalcall(callback, widget, keyCode)
   callback = widget.boundKeyDownCombos[determineKeyComboDesc(keyCode, keyboardModifiers)]
-  if callback then
-    callback(widget, keyCode)
-    return true
-  end
-  return false
+  return signalcall(callback, widget, keyCode)
 end
 
 local function onWidgetKeyUp(widget, keyCode, keyboardModifiers)
   if keyCode == KeyUnknown then return false end
   local callback = widget.boundAloneKeyUpCombos[determineKeyComboDesc(keyCode, KeyboardNoModifier)]
-  if callback then
-    callback(widget, keyCode)
-  end
+  signalcall(callback, widget, keyCode)
   callback = widget.boundKeyUpCombos[determineKeyComboDesc(keyCode, keyboardModifiers)]
-  if callback then
-    callback(widget, keyCode)
-    return true
-  end
-  return false
+  return signalcall(callback, widget, keyCode)
 end
 
 local function onWidgetKeyPress(widget, keyCode, keyboardModifiers, autoRepeatTicks)
   if keyCode == KeyUnknown then return false end
-  local keyComboDesc = determineKeyComboDesc(keyCode, keyboardModifiers)
-  local comboConf = widget.boundKeyPressCombos[keyComboDesc]
-  if comboConf and (autoRepeatTicks >= comboConf.autoRepeatDelay or autoRepeatTicks == 0) and comboConf.callback then
-    comboConf.callback(widget, keyCode)
-    return true
-  end
-  return false
+  local callback = widget.boundKeyPressCombos[determineKeyComboDesc(keyCode, keyboardModifiers)]
+  return signalcall(callback, widget, keyCode, autoRepeatTicks)
 end
 
 local function connectKeyDownEvent(widget)
@@ -133,13 +114,10 @@ function g_keyboard.bindKeyDown(keyComboDesc, callback, widget, alone)
   widget = widget or rootWidget
   connectKeyDownEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if widget.boundKeyDownCombos[keyComboDesc] then
-    pwarning('KeyDown event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
-  end
   if alone then
-    widget.boundAloneKeyDownCombos[keyComboDesc] = callback
+    connect(widget.boundAloneKeyDownCombos, keyComboDesc, callback)
   else
-    widget.boundKeyDownCombos[keyComboDesc] = callback
+    connect(widget.boundKeyDownCombos, keyComboDesc, callback)
   end
 end
 
@@ -147,53 +125,50 @@ function g_keyboard.bindKeyUp(keyComboDesc, callback, widget, alone)
   widget = widget or rootWidget
   connectKeyUpEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if widget.boundKeyUpCombos[keyComboDesc] then
-    pwarning('KeyUp event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
-  end
   if alone then
-    widget.boundAloneKeyUpCombos[keyComboDesc] = callback
+    connect(widget.boundAloneKeyUpCombos, keyComboDesc, callback)
   else
-    widget.boundKeyUpCombos[keyComboDesc] = callback
+    connect(widget.boundKeyUpCombos, keyComboDesc, callback)
   end
 end
 
-function g_keyboard.bindKeyPress(keyComboDesc, callback, widget, autoRepeatDelay)
-  autoRepeatDelay = autoRepeatDelay or 500
+function g_keyboard.bindKeyPress(keyComboDesc, callback, widget)
   widget = widget or rootWidget
   connectKeyPressEvent(widget)
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if widget.boundKeyPressCombos[keyComboDesc] then
-    pwarning('KeyPress event \'' .. keyComboDesc .. '\' redefined on widget ' .. widget:getId())
-  end
-  widget.boundKeyPressCombos[keyComboDesc] = { callback = callback, autoRepeatDelay = autoRepeatDelay }
-  widget:setAutoRepeatDelay(math.min(autoRepeatDelay, widget:getAutoRepeatDelay()))
+  connect(widget.boundKeyPressCombos, keyComboDesc, callback)
 end
 
-function g_keyboard.unbindKeyDown(keyComboDesc, widget)
+local function getUnbindArgs(arg1, arg2)
+  local callback
+  local widget
+  if type(arg1) == 'function' then callback = arg1
+  elseif type(arg2) == 'function' then callback = arg2 end
+  if type(arg1) == 'userdata' then widget = arg1
+  elseif type(arg2) == 'userdata' then widget = arg2 end
   widget = widget or rootWidget
+  return callback, widget
+end
+
+function g_keyboard.unbindKeyDown(keyComboDesc, arg1, arg2)
+  local callback, widget = getUnbindArgs(arg1, arg2)
   if widget.boundKeyDownCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc then
-    widget.boundKeyDownCombos[keyComboDesc] = nil
-  end
+  disconnect(widget.boundKeyDownCombos, keyComboDesc, callback)
 end
 
 function g_keyboard.unbindKeyUp(keyComboDesc, widget)
-  widget = widget or rootWidget
+  local callback, widget = getUnbindArgs(arg1, arg2)
   if widget.boundKeyUpCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc then
-    widget.boundKeyUpCombos[keyComboDesc] = nil
-  end
+  disconnect(widget.boundKeyUpCombos, keyComboDesc, callback)
 end
 
-function g_keyboard.unbindKeyPress(keyComboDesc, widget)
-  widget = widget or rootWidget
+function g_keyboard.unbindKeyPress(keyComboDesc, widget, callback)
+  local callback, widget = getUnbindArgs(arg1, arg2)
   if widget.boundKeyPressCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
-  if keyComboDesc then
-    widget.boundKeyPressCombos[keyComboDesc] = nil
-  end
+  disconnect(widget.boundKeyPressCombos, keyComboDesc, callback)
 end
 
 function g_keyboard.getModifiers()

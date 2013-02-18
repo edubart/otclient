@@ -621,6 +621,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     wasSeen = mtile.hasFlag(MinimapTileWasSeen);
                     isNotWalkable = mtile.hasFlag(MinimapTileNotWalkable);
                     isNotPathable = mtile.hasFlag(MinimapTileNotPathable);
+                    if(isNotWalkable || isNotPathable)
+                        wasSeen = true;
                     speed = mtile.getSpeed();
                 }
 
