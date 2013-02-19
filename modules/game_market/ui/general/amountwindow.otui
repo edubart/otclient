@@ -1,7 +1,7 @@
 AmountWindow < MainWindow
   id: amountWindow
   !text: tr('Amount')
-  size: 196 80
+  size: 270 80
 
   Item
     id: item

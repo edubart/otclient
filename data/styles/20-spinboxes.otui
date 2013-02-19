@@ -1,7 +1,9 @@
 SpinBox < TextEdit
   __class: UISpinBox
+  text-align: left
   size: 86 20
   padding: 0
+  padding-left: 2
 
   Button
     id: up
@@ -11,7 +13,7 @@ SpinBox < TextEdit
     image-clip: 0 0 10 10
     anchors.top: parent.top
     anchors.right: parent.right
-    @onClick: self:getParent():up()
+    @onPress: self:getParent():up()
 
     $hover:
       image-clip: 0 10 10 10
@@ -26,7 +28,7 @@ SpinBox < TextEdit
     image-clip: 0 0 10 10
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    @onClick: self:getParent():down()
+    @onPress: self:getParent():down()
 
     $hover:
       image-clip: 0 10 10 10
