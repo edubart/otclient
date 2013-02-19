@@ -146,6 +146,9 @@ function setLocale(name)
     pwarning("Locale " .. name .. ' does not exist.')
     return false
   end
+  if currentLocale then
+    sendLocale(locale.name)
+  end
   currentLocale = locale
   g_settings.set('locale', name)
   if onLocaleChanged then onLocaleChanged(name) end

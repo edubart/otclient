@@ -67,7 +67,7 @@ MiniWindow
   icon: /images/topbuttons/healthinfo
   id: healthInfoWindow
   !text: tr('Health Info')
-  height: 121
+  height: 126
   @onClose: modules.game_healthinfo.onMiniWindowClose()
   &save: true
 

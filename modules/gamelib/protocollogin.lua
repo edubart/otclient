@@ -25,7 +25,7 @@ function ProtocolLogin:cancelLogin()
   self:disconnect()
 end
 
-function ProtocolLogin:sendLoginPacket(extended)
+function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
 
   msg:addU8(ClientOpcodes.ClientEnterAccount)
@@ -130,12 +130,12 @@ function ProtocolLogin:parseCharacterList(msg)
     character.worldName = msg:getString()
     character.worldIp = iptostring(msg:getU32())
     character.worldPort = msg:getU16()
-    characters[i] = character
 
-    -- ??
     if g_game.getProtocolVersion() >= 971 then
-      msg:getU8()
+      character.unknown = msg:getU8()
     end
+
+    characters[i] = character
   end
 
   local account = {}

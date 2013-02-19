@@ -92,7 +92,7 @@ TextColors = {
   --blue1     = '#6e50dc',
   --blue2     = '#3264c8',
   --blue3     = '#0096c8',
-  white     = '#ffffff' --'#bebebe'
+  white     = '#ffffff', --'#bebebe'
 }
 
 MessageModes = {
@@ -146,7 +146,7 @@ MessageModes = {
   RVRAnswer               = 47,
   RVRContinue             = 48,
   Last                    = 49,
-  Invalid                 = 255
+  Invalid                 = 255,
 }
 
 OTSERV_RSA  = "1091201329673994292788609605089955415282375029027981291234687579" ..
@@ -170,7 +170,7 @@ OsTypes = {
   Flash = 3,
   OtclientLinux = 10,
   OtclientWindows = 11,
-  OtclientMac = 12
+  OtclientMac = 12,
 }
 
 PathFindResults = {
@@ -178,26 +178,31 @@ PathFindResults = {
   Position = 1,
   Impossible = 2,
   TooFar = 3,
-  NoWay = 4
+  NoWay = 4,
 }
 
 PathFindFlags = {
   AllowNullTiles = 1,
   AllowCreatures = 2,
   AllowNonPathable = 4,
-  AllowNonWalkable = 8
+  AllowNonWalkable = 8,
 }
 
 VipState = {
   Offline = 0,
   Online = 1,
-  Pending = 2
+  Pending = 2,
 }
 
 ExtendedIds = {
   Activate = 0,
   Locale = 1,
-  Ping = 2
+  Ping = 2,
+  Sound = 3,
+  Game = 4,
+  Particles = 5,
+  MapShader = 6,
+  NeedsUpdate = 7
 }
 
 -- @}

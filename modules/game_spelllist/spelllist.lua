@@ -161,6 +161,10 @@ function init()
   
   initialiseSpelllist() 
   resizeWindow()
+
+  if g_game.isOnline() then
+    online()
+  end
 end
 
 function terminate()

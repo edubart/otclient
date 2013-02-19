@@ -317,4 +317,5 @@ NetworkMessageTypes = {
 SoundChannels = {
   Music = 1,
   Ambient = 2,
+  Effect = 3,
 }
