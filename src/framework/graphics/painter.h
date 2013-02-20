@@ -37,7 +37,7 @@ public:
         CompositionMode_Add,
         CompositionMode_Replace,
         CompositionMode_DestBlending,
-        CompositionMode_Light,
+        CompositionMode_Light
     };
     enum DrawMode {
         Triangles = GL_TRIANGLES,
@@ -45,7 +45,7 @@ public:
     };
     enum BlendEquation {
         BlendEquation_Add = 0x8006, // GL_FUNC_ADD
-        BlendEquation_Max = 0x8008, // GL_MAX
+        BlendEquation_Max = 0x8008 // GL_MAX
     };
 
     struct PainterState {

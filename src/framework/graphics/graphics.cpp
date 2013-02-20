@@ -31,6 +31,10 @@
 #include "painterogl2.h"
 #endif
 
+#if defined(WIN32) && defined(DIRECTX)
+#include "painterdx9.h"
+#endif
+
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
 #include "texturemanager.h"
@@ -49,6 +53,10 @@ void Graphics::init()
 {
     g_logger.info(stdext::format("GPU %s", glGetString(GL_RENDERER)));
     g_logger.info(stdext::format("OpenGL %s", glGetString(GL_VERSION)));
+
+#if defined(WIN32) && defined(DIRECTX)
+    g_painterDX9 = new PainterDX9;
+#endif
 
 #if OPENGL_ES==2
     g_painterOGL2 = new PainterOGL2;
@@ -157,6 +165,11 @@ bool Graphics::parseOption(const std::string& option)
 
 bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 {
+#if defined(WIN32) && defined(DIRECTX)
+    if(g_painterDX9 && painterEngine == Painter_DirectX9)
+        return true;
+#endif
+
 #ifdef PAINTER_OGL2
     if(g_painterOGL2 && painterEngine == Painter_OpenGL2)
         return true;
@@ -174,6 +187,21 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
     Painter *painter = nullptr;
     Painter *fallbackPainter = nullptr;
     PainterEngine fallbackPainterEngine = Painter_Any;
+
+#ifdef PAINTER_DX9
+    // use this to force directx if its enabled (avoid changes in options module, etc, will be removed)
+    painterEngine = Painter_DirectX9;
+
+    // always prefer DirectX9 on Windows
+    if(g_painterDX9) {
+        if(!painter && (painterEngine == Painter_DirectX9 || painterEngine == Painter_Any)) {
+            m_selectedPainterEngine = Painter_DirectX9;
+            painter = g_painterDX9;
+        }
+        fallbackPainter = g_painterDX9;
+        fallbackPainterEngine = Painter_DirectX9;
+    }
+#endif
 
 #ifdef PAINTER_OGL2
     // always prefer OpenGL 2 over OpenGL 1

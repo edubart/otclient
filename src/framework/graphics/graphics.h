@@ -35,7 +35,8 @@ public:
     enum PainterEngine {
         Painter_Any = 0,
         Painter_OpenGL1,
-        Painter_OpenGL2
+        Painter_OpenGL2,
+        Painter_DirectX9
     };
 
     // @dontbind

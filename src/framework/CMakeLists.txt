@@ -346,6 +346,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterdx9.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterdx9.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2_shadersources.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.h
