@@ -5,7 +5,7 @@ ScrollBarSlider < UIButton
   image-source: /images/ui/scrollbar
   image-clip: 0 26 13 13
   image-border: 2
-  image-color: #ffffffbb
+  image-color: #ffffffff
   $hover:
     image-clip: 13 26 13 13
   $pressed:
@@ -13,6 +13,12 @@ ScrollBarSlider < UIButton
     image-color: #ffffff99
   $disabled:
     image-color: #ffffff66
+
+ScrollBarValueLabel < Label
+  id: valueLabel
+  anchors.fill: parent
+  color: white
+  text-align: center
 
 VerticalScrollBar < UIScrollBar
   orientation: vertical
@@ -54,6 +60,8 @@ VerticalScrollBar < UIScrollBar
       image-color: #ffffff66
 
   ScrollBarSlider
+
+  ScrollBarValueLabel
 
 HorizontalScrollBar < UIScrollBar
   orientation: horizontal
@@ -97,3 +105,5 @@ HorizontalScrollBar < UIScrollBar
       image-color: #ffffff66
 
   ScrollBarSlider
+
+  ScrollBarValueLabel

@@ -55,8 +55,9 @@ local function updateValueDisplay(widget)
   if widget == nil then return end
 
   if widget:getShowValue() then
+    local valueLabel = widget:getChildById('valueLabel')
     local symbol = widget:getSymbol()
-    widget:setText(widget:getValue()..(symbol and symbol or ''))
+    valueLabel:setText(widget:getValue() .. (symbol or ''))
   end
 end
 
@@ -171,7 +172,10 @@ end
 
 function UIScrollBar:setMaximum(maximum)
   if maximum == self.maximum then return end
-  self.maximum  = maximum
+  self.maximum = maximum
+  if self.minimum > maximum then
+    self:setMinimum(maximum)
+  end
   if self.value > maximum then
     self:setValue(maximum)
   else
@@ -182,6 +186,9 @@ end
 function UIScrollBar:setMinimum(minimum)
   if minimum == self.minimum then return end
   self.minimum = minimum
+  if self.maximum < minimum then
+    self:setMaximum(minimum)
+  end
   if self.value < minimum then
     self:setValue(minimum)
   else

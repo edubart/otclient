@@ -5,6 +5,7 @@ locale = {
 
   -- As traduções devem vir sempre em ordem alfabética.
   translation = {
+    ["%d of experience per hour"] = "%d de experiência por hora",
     ["%s of experience left"] = "%s de experiência faltando",
     ["%s: (use object on target)"] = "%s: (usar objeto no alvo)",
     ["%s: (use object on yourself)"] = "%s: (usar objeto em si)",
@@ -221,6 +222,7 @@ locale = {
     ["Name Report + Banishment"] = "Reportar Nome + Banimento",
     ["Name Report"] = "Reportar Nome",
     ["Name"] = "Nome",
+    ["Next level in %d hours and %d minutes"] = "Próximo nível em %d horas e %d minutos",
     ["No graphics card detected, everything will be drawn using the CPU,\nthus the performance will be really bad.\nPlease update your graphics driver to have a better performance."] = false,
     ["No item selected."] = "Nenhum item selecionado",
     ["No Mount"] = "Sem montaria",
@@ -287,6 +289,7 @@ locale = {
     ["Select object"] = "Selecionar objeto",
     ["Select Outfit"] = "Selecionar Roupa",
     ["Select your language"] = "Selecione sua língua",
+    ["Sell All"] = "Vender Todos",
     ["Sell Now"] = "Vender agora",
     ["Sell Offers"] = "Ofertas de venda",
     ["Sell"] = "Vender",

@@ -127,6 +127,10 @@ function onItemBoxChecked(widget)
     selectedItem = item
     refreshItem(item)
     tradeButton:enable()
+
+    if getCurrentTradeType() == SELL then
+      quantityScroll:setValue(quantityScroll:getMaximum())
+    end
   end
 end
 
@@ -225,7 +229,8 @@ function clearSelectedItem()
   weightLabel:clearText()
   priceLabel:clearText()
   tradeButton:disable()
-  quantityScroll:setMaximum(1)
+  quantityScroll:setMinimum(0)
+  quantityScroll:setMaximum(0)
   if selectedItem then
     radioItems:selectWidget(nil)
     selectedItem = nil
@@ -293,22 +298,10 @@ function refreshItem(item)
     end
     local priceMaxCount = math.floor(playerMoney / getItemPrice(item, true))
     local finalCount = math.max(0, math.min(getMaxAmount(), math.min(priceMaxCount, capacityMaxCount)))
+    quantityScroll:setMinimum(1)
     quantityScroll:setMaximum(finalCount)
-
-    if quantityScroll:getValue() > finalCount then
-      quantityScroll:setValue(finalCount)
-    end
   else
-    local removeAmount = 0
-    if ignoreEquipped:isChecked() then
-      local localPlayer = g_game.getLocalPlayer()
-      for i=1,LAST_INVENTORY do
-        local inventoryItem = localPlayer:getInventoryItem(i)
-        if inventoryItem and inventoryItem:getId() == item.ptr:getId() then
-          removeAmount = removeAmount + inventoryItem:getCount()
-        end
-      end
-    end
+    quantityScroll:setMinimum(1)
     quantityScroll:setMaximum(math.max(0, math.min(getMaxAmount(), getSellQuantity(item.ptr))))
   end
 
@@ -481,7 +474,6 @@ function sellAll()
     local amount = getSellQuantity(item)
     if amount > 0 then
       g_game.sellItem(item, amount, ignoreEquipped:isChecked())
-      print(amount)
     end
   end
 end
