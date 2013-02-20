@@ -41,7 +41,6 @@ selectedItem = nil
 cancelNextRelease = nil
 
 function init()
-  connect(LocalPlayer, {onInventoryChange = refreshPlayerGoods})
   npcWindow = g_ui.displayUI('npctrade')
   npcWindow:setVisible(false)
 
@@ -454,6 +453,7 @@ function onInventoryChange(inventory, item, oldItem)
   if selectedItem then
     refreshItem(selectedItem)
   end
+  refreshPlayerGoods()
 end
 
 function getTradeItemData(id, type)
