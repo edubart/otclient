@@ -32,10 +32,10 @@ ignoreEquipped = nil
 showAllItems = nil
 sellAllButton = nil
 
-playerFreeCapacity = nil
-playerMoney = nil
+playerFreeCapacity = 0
+playerMoney = 0
 tradeItems = {}
-playerItems = nil
+playerItems = {}
 selectedItem = nil
 
 cancelNextRelease = nil
@@ -369,6 +369,7 @@ function refreshPlayerGoods()
 
     local canTrade = canTradeItem(item)
     itemWidget:setOn(canTrade)
+    itemWidget:setEnabled(canTrade)
 
     local searchCondition = (searchFilter == '') or (searchFilter ~= '' and string.find(item.name:lower(), searchFilter) ~= nil)
     local showAllItemsCondition = (currentTradeType == BUY) or (showAllItems:isChecked()) or (currentTradeType == SELL and not showAllItems:isChecked() and canTrade)
@@ -450,9 +451,6 @@ function onFreeCapacityChange(localPlayer, freeCapacity, oldFreeCapacity)
 end
 
 function onInventoryChange(inventory, item, oldItem)
-  if selectedItem then
-    refreshItem(selectedItem)
-  end
   refreshPlayerGoods()
 end
 

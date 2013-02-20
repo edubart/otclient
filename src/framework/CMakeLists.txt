@@ -157,7 +157,7 @@ else()
 endif()
 
 # gcc compile flags
-set(WARNS_FLAGS "-Wall -Wextra -Werror -Wno-unused-parameter -Wno-unused-variable -Wno-unused-result")
+set(WARNS_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -Wno-unused-result")
 set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} ${CPP2011_FLAGS} -pipe")
 set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
@@ -303,6 +303,16 @@ if(FRAMEWORK_GRAPHICS)
             set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -mwindows")
             message(STATUS "Windows console: OFF")
         endif()
+
+        # native dx9 support while its under development
+        option(DIRECTX "Use DX9 support" OFF)
+        if(DIRECTX)
+            find_package(DirectX REQUIRED)
+            set(framework_DEFINITIONS ${framework_DEFINITIONS} -DDIRECTX)
+            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${DirectX_INCLUDE_DIR})
+            set(framework_LIBRARIES ${framework_LIBRARIES} ${DirectX_LIBRARY} ${DirectX_LIBRARIES})
+        endif()
+
     else()
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
     endif()

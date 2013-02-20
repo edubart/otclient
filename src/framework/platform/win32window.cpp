@@ -204,6 +204,26 @@ void WIN32Window::init()
 {
     m_instance = GetModuleHandle(NULL);
 
+#ifdef DIRECTX
+    m_d3d = Direct3DCreate9(D3D_SDK_VERSION);    // create the Direct3D interface
+
+    D3DPRESENT_PARAMETERS d3dpp;    // create a struct to hold various device information
+
+    ZeroMemory(&d3dpp, sizeof(d3dpp));    // clear out the struct for use
+    d3dpp.Windowed = TRUE;    // program windowed, not fullscreen
+    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;    // discard old frames
+    d3dpp.hDeviceWindow = m_window;    // set the window to be used by Direct3D
+
+    // create a device class using this information and information from the d3dpp stuct
+    m_d3d->CreateDevice(D3DADAPTER_DEFAULT,
+                      D3DDEVTYPE_HAL,
+                      m_window,
+                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                      &d3dpp,
+                      &m_d3ddev);
+
+#endif
+
     internalCreateWindow();
     internalCreateGLContext();
     internalRestoreGLContext();
