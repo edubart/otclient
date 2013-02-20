@@ -55,9 +55,7 @@ local function updateValueDisplay(widget)
   if widget == nil then return end
 
   if widget:getShowValue() then
-    local valueLabel = widget:getChildById('valueLabel')
-    local symbol = widget:getSymbol()
-    valueLabel:setText(widget:getValue() .. (symbol or ''))
+    widget:setText(widget:getValue() .. (widget:getSymbol() or ''))
   end
 end
 
@@ -222,6 +220,11 @@ end
 
 function UIScrollBar:setOrientation(orientation)
   self.orientation = orientation
+end
+
+function UIScrollBar:setText(text)
+  local valueLabel = self:getChildById('valueLabel')
+  valueLabel:setText(text)
 end
 
 function UIScrollBar:onGeometryChange()

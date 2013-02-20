@@ -21,7 +21,6 @@ AmountWindow < MainWindow
     anchors.top: prev.top
     margin-left: 10
     margin-top: -2
-    focusable: false
 
   Button
     id: buttonCancel

@@ -1082,7 +1082,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
   if player then
     information.player = player
   end
-  if vocation < 0 then
+  if vocation == -1 then
     if player then
       information.vocation = player:getVocation()
     end
