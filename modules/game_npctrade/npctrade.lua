@@ -488,16 +488,19 @@ function checkSellAllTooltip()
   local first = true
 
   for key, amount in pairs(playerItems) do
-    if amount > 0 then
-      local data = getTradeItemData(key, SELL)
-      if data and canTradeItem(data) then
-        info = info..(not first and "\n" or "")..
-               amount.." "..
-               data.name.." ("..
-               data.price*amount.." gold)"
+    local data = getTradeItemData(key, SELL)
+    if data then
+      amount = getSellQuantity(data.ptr)
+      if amount > 0 then
+        if data and amount > 0 then
+          info = info..(not first and "\n" or "")..
+                 amount.." "..
+                 data.name.." ("..
+                 data.price*amount.." gold)"
 
-        total = total+(data.price*amount)
-        if first then first = false end
+          total = total+(data.price*amount)
+          if first then first = false end
+        end
       end
     end
   end
