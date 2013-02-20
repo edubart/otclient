@@ -41,6 +41,7 @@ selectedItem = nil
 cancelNextRelease = nil
 
 function init()
+  connect(LocalPlayer, {onInventoryChange = refreshPlayerGoods})
   npcWindow = g_ui.displayUI('npctrade')
   npcWindow:setVisible(false)
 
@@ -353,6 +354,8 @@ end
 function refreshPlayerGoods()
   if not initialized then return end
 
+  checkSellAllTooltip()
+
   moneyLabel:setText(formatCurrency(playerMoney))
   capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)
 
@@ -435,22 +438,7 @@ function onPlayerGoods(money, items)
       playerItems[id] = playerItems[id] + item[2]
     end
   end
-
-  local first = true
-  local info = ''
-  for key, amount in pairs(playerItems) do
-    if amount > 0 then
-      local data = getTradeItemData(key, SELL)
-      if data then
-        info = info..(not first and "\n" or "")..amount.." "..data.name.." ("..data.price*amount.." gold)"
-        if first then first = false end
-      end
-    end
-  end
-  if info ~= '' then
-    sellAllButton:setTooltip(info)
-  end
-
+  
   refreshPlayerGoods()
 end
 
@@ -489,6 +477,36 @@ function getTradeItemData(id, type)
     end
   end
   return false
+end
+
+function checkSellAllTooltip()
+  sellAllButton:setEnabled(true)
+  sellAllButton:removeTooltip()
+  
+  local total = 0
+  local info = ''
+  local first = true
+
+  for key, amount in pairs(playerItems) do
+    if amount > 0 then
+      local data = getTradeItemData(key, SELL)
+      if data and canTradeItem(data) then
+        info = info..(not first and "\n" or "")..
+               amount.." "..
+               data.name.." ("..
+               data.price*amount.." gold)"
+
+        total = total+(data.price*amount)
+        if first then first = false end
+      end
+    end
+  end
+  if info ~= '' then
+    info = info.."\nTotal: "..total.." gold"
+    sellAllButton:setTooltip(info)
+  else
+    sellAllButton:setEnabled(false)
+  end
 end
 
 function formatCurrency(amount)
