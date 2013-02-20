@@ -168,13 +168,15 @@ index 2e4dc2c..7508591 100644
  	Scheduler::getInstance().addEvent(createSchedulerTask(checkExpiredMarketOffersEachMinutes * 60 * 1000, boost::bind(&Game::checkExpiredMarketOffers, this)));
  }
 +
-+void Game::parsePlayerExtendedOpcode(Player *player, uint8_t opcode, const std::string& buffer)
++void Game::parsePlayerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::string& buffer)
 +{
-+	if(player) {
-+		CreatureEventList extendedOpcodeEvents = player->getCreatureEvents(CREATURE_EVENT_EXTENDED_OPCODE);
-+		for(CreatureEventList::iterator it = extendedOpcodeEvents.begin(); it != extendedOpcodeEvents.end(); ++it)
-+			(*it)->executeExtendedOpcode(player, opcode, buffer);
-+	}
++ Player* player = getPlayerByID(playerId);
++ if(!player || player->isRemoved())
++  return;
++
++	CreatureEventList extendedOpcodeEvents = player->getCreatureEvents(CREATURE_EVENT_EXTENDED_OPCODE);
++	for(CreatureEventList::iterator it = extendedOpcodeEvents.begin(); it != extendedOpcodeEvents.end(); ++it)
++		(*it)->executeExtendedOpcode(player, opcode, buffer);
 +}
 diff --git a/game.h b/game.h
 index 51fa397..7192549 100644
@@ -184,7 +186,7 @@ index 51fa397..7192549 100644
  		std::map<Item*, int32_t> grounds;
  #endif
  
-+		void parsePlayerExtendedOpcode(Player *player, uint8_t opcode, const std::string& buffer);
++		void parsePlayerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::string& buffer);
 +
  	protected:
  		bool playerWhisper(Player* player, const std::string& text, uint32_t statementId);
@@ -363,7 +365,7 @@ index b980be0..7a84f61 100644
 +	std::string buffer = msg.getString();
 +
 +	// process additional opcodes via lua script event
-+	addGameTask(&Game::parsePlayerExtendedOpcode, player, opcode, buffer);
++	addGameTask(&Game::parsePlayerExtendedOpcode, player->getId(), opcode, buffer);
 +}
 +
 +void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
