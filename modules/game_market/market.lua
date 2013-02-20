@@ -76,6 +76,8 @@ currentItems = {}
 lastCreatedOffer = 0
 fee = 0
 
+loaded = false
+
 local offerTableHeader = {
   {['text'] = 'Player Name', ['width'] = 100},
   {['text'] = 'Amount', ['width'] = 60},
@@ -126,10 +128,7 @@ local function isItemValid(item, category, searchFilter)
     return false
   end
   if searchFilter then
-    local checkString = marketData.name:lower()
-    if not checkString:find(searchFilter) then
-      return false
-    end
+    return marketData.name:lower():find(searchFilter)
   end
   return true
 end
@@ -580,22 +579,30 @@ local function onAmountChange()
 end
 
 local function initMarketItems(category)
-  -- initialize market category
-  marketItems[category] = {}
+  for c = MarketCategory.First, MarketCategory.Last do
+    marketItems[c] = {}
+  end
 
   -- populate all market items
   local types = g_things.findThingTypeByAttr(ThingAttrMarket, 0)
   for i = 1, #types do
     local t = types[i]
+
     local newItem = Item.create(t:getId())
     if newItem then
       local marketData = t:getMarketData()
-      if not table.empty(marketData) and marketData.category == category then
-        local item = {
-          ptr = newItem,
-          marketData = marketData
-        }
-        marketItems[marketData.category][#marketItems[category]+1] = item
+      if not table.empty(marketData) then
+        if marketData.category == category or category == MarketCategory.All then
+
+          -- create new item block
+          local item = {
+            ptr = newItem,
+            marketData = marketData
+          }
+
+          -- add new market item
+          table.insert(marketItems[marketData.category], item)
+        end
       end
     end
   end
@@ -733,9 +740,6 @@ function init()
   marketWindow:hide()
 
   initInterface() -- build interface
-  for category = MarketCategory.First, MarketCategory.Last do
-    initMarketItems(category)
-  end
 end
 
 function terminate()
@@ -904,19 +908,14 @@ end
 
 
 function Market.loadMarketItems(category)
-  if table.empty(marketItems[category]) then
-    initMarketItems(category)
-  end
   clearItems()
 
   -- check search filter
-  local searchFilter = searchEdit:getText():lower()
-  if not searchFilter or searchFilter:len() < 3 then
-    searchFilter = nil
-  end
-  local filterSearchAll = filterButtons[MarketFilters.SearchAll]:isChecked()
-  if filterSearchAll and searchFilter then
-    category = MarketCategory.All
+  local searchFilter = searchEdit:getText()
+  if searchFilter and searchFilter:len() > 2 then
+    if filterButtons[MarketFilters.SearchAll]:isChecked() then
+      category = MarketCategory.All
+    end
   end
 
   if category == MarketCategory.All then
@@ -1070,6 +1069,11 @@ end
 -- protocol callback functions
 
 function Market.onMarketEnter(depotItems, offers, balance, vocation)
+  if not loaded then
+    initMarketItems(MarketCategory.All)
+    loaded = true
+  end
+
   Market.clearSelectedItem()
   updateBalance(balance)
   
