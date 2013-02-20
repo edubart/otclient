@@ -436,6 +436,21 @@ function onPlayerGoods(money, items)
     end
   end
 
+  local first = true
+  local info = ''
+  for key, amount in pairs(playerItems) do
+    if amount > 0 then
+      local data = getTradeItemData(key, SELL)
+      if data then
+        info = info..(not first and "\n" or "")..amount.." "..data.name.." ("..data.price*amount.." gold)"
+        if first then first = false end
+      end
+    end
+  end
+  if info ~= '' then
+    sellAllButton:setTooltip(info)
+  end
+
   refreshPlayerGoods()
 end
 
@@ -451,6 +466,29 @@ function onInventoryChange(inventory, item, oldItem)
   if selectedItem then
     refreshItem(selectedItem)
   end
+end
+
+function getTradeItemData(id, type)
+  if table.empty(tradeItems[type]) then
+    return false
+  end
+
+  if type then
+    for key,item in pairs(tradeItems[type]) do
+      if item.ptr and item.ptr:getId() == id then
+        return item
+      end
+    end
+  else
+    for _,items in pairs(tradeItems) do
+      for key,item in pairs(items) do
+        if item.ptr and item.ptr:getId() == id then
+          return item
+        end
+      end
+    end
+  end
+  return false
 end
 
 function formatCurrency(amount)

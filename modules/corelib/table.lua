@@ -138,6 +138,15 @@ function table.findbyfield(t, fieldname, fieldvalue)
   return nil
 end
 
+function table.size(t)
+  local size = 0
+  for i, n in pairs(table) do
+    size = size + 1
+  end
+ 
+  return size
+end
+
 function table.tostring(t)
   local maxn = #t
   local str = ""

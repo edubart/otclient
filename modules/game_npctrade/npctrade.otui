@@ -250,6 +250,7 @@ MainWindow
     anchors.right: next.left
     anchors.bottom: parent.bottom
     margin-right: 10
+    visible: false
     @onClick: modules.game_npctrade.sellAll()
 
   Button

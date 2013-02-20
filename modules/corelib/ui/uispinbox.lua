@@ -15,6 +15,11 @@ function UISpinBox.create()
   return spinbox
 end
 
+function UISpinBox:onSetup()
+  g_mouse.bindAutoPress(self:getChildById('up'), function() self:up() end, 300)
+  g_mouse.bindAutoPress(self:getChildById('down'), function() self:down() end, 300)
+end
+
 function UISpinBox:onMouseWheel(mousePos, direction)
   if direction == MouseWheelUp then
     self:up()
