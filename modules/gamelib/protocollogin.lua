@@ -10,7 +10,7 @@ LoginServerExtendedCharacterList = 101
 
 function ProtocolLogin:login(host, port, accountName, accountPassword)
   if string.len(host) == 0 or port == nil or port == 0 then
-    signalcall(self.onError, self, tr("You must enter a valid server address and port."))
+    signalcall(self.onLoginError, self, tr("You must enter a valid server address and port."))
     return
   end
 
@@ -96,7 +96,7 @@ function ProtocolLogin:onRecv(msg)
     elseif opcode == LoginServerMotd then
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
-      signalcall(self.onError, self, tr("Client needs update."))
+      signalcall(self.onLoginError, self, tr("Client needs update."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
     elseif opcode == LoginServerExtendedCharacterList then
@@ -113,7 +113,7 @@ end
 
 function ProtocolLogin:parseError(msg)
   local errorMessage = msg:getString()
-  signalcall(self.onError, self, errorMessage)
+  signalcall(self.onLoginError, self, errorMessage)
 end
 
 function ProtocolLogin:parseMotd(msg)
@@ -152,4 +152,9 @@ end
 
 function ProtocolLogin:parseOpcode(opcode, msg)
   signalcall(self.onOpcode, self, opcode, msg)
+end
+
+function ProtocolLogin:onError(msg, code)
+  local text = tr('Your connection has been lost. (err: %d)', code)
+  signalcall(self.onLoginError, self, opcode, text)
 end

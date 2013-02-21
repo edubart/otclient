@@ -763,8 +763,10 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
     else
         effectId = msg->getU8();
 
-    if(!g_things.isValidDatId(effectId, ThingCategoryEffect))
-        g_logger.traceError("invalid effect id");
+    if(!g_things.isValidDatId(effectId, ThingCategoryEffect)) {
+        g_logger.traceError(stdext::format("invalid effect id %d", effectId));
+        return;
+    }
 
     EffectPtr effect = EffectPtr(new Effect());
     effect->setId(effectId);
@@ -789,8 +791,10 @@ void ProtocolGame::parseDistanceMissile(const InputMessagePtr& msg)
     Position toPos = getPosition(msg);
     int shotId = msg->getU8();
 
-    if(!g_things.isValidDatId(shotId, ThingCategoryMissile))
-        g_logger.traceError("invalid effect id");
+    if(!g_things.isValidDatId(shotId, ThingCategoryMissile)) {
+        g_logger.traceError(stdext::format("invalid missile id %d", shotId));
+        return;
+    }
 
     MissilePtr missile = MissilePtr(new Missile());
     missile->setId(shotId);
@@ -1648,8 +1652,10 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         int feet = msg->getU8();
         int addons = msg->getU8();
 
-        if(!g_things.isValidDatId(lookType, ThingCategoryCreature))
+        if(!g_things.isValidDatId(lookType, ThingCategoryCreature)) {
+            g_logger.traceError(stdext::format("invalid outfit looktype %d", lookType));
             lookType = 0;
+        }
 
         outfit.setId(lookType);
         outfit.setHead(head);
@@ -1665,8 +1671,10 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
             outfit.setAuxId(13); // invisible effect id
         }
         else {
-            if(!g_things.isValidDatId(lookTypeEx, ThingCategoryItem))
+            if(!g_things.isValidDatId(lookTypeEx, ThingCategoryItem)) {
+                g_logger.traceError(stdext::format("invalid outfit looktypeex %d", lookTypeEx));
                 lookTypeEx = 0;
+            }
             outfit.setCategory(ThingCategoryItem);
             outfit.setAuxId(lookTypeEx);
         }

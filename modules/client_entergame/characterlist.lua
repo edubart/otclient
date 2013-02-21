@@ -111,7 +111,8 @@ end
 
 function onGameConnectionError(message, code)
   CharacterList.destroyLoadBox()
-  errorBox = displayErrorBox(tr("Connection Error"), message)
+  local text = tr('Your connection has been lost. (err: %d)', code)
+  errorBox = displayErrorBox(tr("Connection Error"), text)
   errorBox.onOk = function()
     errorBox = nil
     CharacterList.showAgain()
