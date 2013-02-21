@@ -164,12 +164,27 @@ end
 
 function setHealthTooltip(tooltip)
   healthTooltip = tooltip
+
+  local localPlayer = g_game.getLocalPlayer()
+  if localPlayer then
+    healthBar:setTooltip(tr(healthTooltip, localPlayer:getHealth(), localPlayer:getMaxHealth()))
+  end
 end
 
 function setManaTooltip(tooltip)
   manaTooltip = tooltip
+
+  local localPlayer = g_game.getLocalPlayer()
+  if localPlayer then
+    manaBar:setTooltip(tr(manaTooltip, localPlayer:getMana(), localPlayer:getMaxMana()))
+  end
 end
 
 function setExperienceTooltip(tooltip)
   experienceTooltip = tooltip
+
+  local localPlayer = g_game.getLocalPlayer()
+  if localPlayer then
+    experienceBar:setTooltip(tr(experienceTooltip, localPlayer:getLevelPercent(), localPlayer:getLevel()+1))
+  end
 end
