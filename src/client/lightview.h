@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 #include <framework/graphics/declarations.h>
-#include <framework/graphics/painter.h>
+#include <framework/graphics/painterogl.h>
 #include "thingtype.h"
 
 struct LightSource {

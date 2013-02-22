@@ -50,7 +50,7 @@ PainterOGL2::PainterOGL2()
 
 void PainterOGL2::bind()
 {
-    Painter::bind();
+    PainterOGL::bind();
 
     // vertex and texture coord attributes are always enabled
     // to avoid massive enable/disables, thus improving frame rate
@@ -113,7 +113,10 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         m_drawProgram->setAttributeArray(PainterShaderProgram::VERTEX_ATTR, coordsBuffer.getVertexArray(), 2);
 
     // draw the element in coords buffers
-    glDrawArrays(drawMode, 0, vertexCount);
+    if(drawMode == Triangles)
+        glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+    else if(drawMode == TriangleStrip)
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
 
     if(!textured)
         PainterShaderProgram::enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);

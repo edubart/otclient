@@ -31,6 +31,10 @@
 class Painter
 {
 public:
+    enum BlendEquation {
+        BlendEquation_Add,
+        BlendEquation_Max
+    };
     enum CompositionMode {
         CompositionMode_Normal,
         CompositionMode_Multiply,
@@ -43,130 +47,75 @@ public:
         Triangles = GL_TRIANGLES,
         TriangleStrip = GL_TRIANGLE_STRIP
     };
-    enum BlendEquation {
-        BlendEquation_Add = 0x8006, // GL_FUNC_ADD
-        BlendEquation_Max = 0x8008 // GL_MAX
-    };
 
-    struct PainterState {
-        Size resolution;
-        Matrix3 transformMatrix;
-        Matrix3 projectionMatrix;
-        Matrix3 textureMatrix;
-        Color color;
-        float opacity;
-        Painter::CompositionMode compositionMode;
-        Painter::BlendEquation blendEquation;
-        Rect clipRect;
-        Texture *texture;
-        PainterShaderProgram *shaderProgram;
-        bool alphaWriting;
-    };
 
     Painter();
     virtual ~Painter() { }
 
-    virtual void bind() { refreshState(); }
+    virtual void bind() { }
     virtual void unbind() { }
 
-    void resetState();
-    virtual void refreshState();
-    void saveState();
-    void saveAndResetState();
-    void restoreSavedState();
+    virtual void saveState() = 0;
+    virtual void saveAndResetState() = 0;
+    virtual void restoreSavedState() = 0;
 
-    void clear(const Color& color);
-    void clearRect(const Color& color, const Rect& rect);
+    virtual void clear(const Color& color) = 0;
 
     virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles) = 0;
     virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture) = 0;
     virtual void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    virtual void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
+    virtual void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawFilledRect(const Rect& dest) = 0;
     virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
     virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
-    virtual void setTransformMatrix(const Matrix3& transformMatrix) { m_transformMatrix = transformMatrix; }
-    virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
-    virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
+    virtual void setTexture(Texture *texture) = 0;
+    virtual void setClipRect(const Rect& clipRect) = 0;
     virtual void setColor(const Color& color) { m_color = color; }
-    virtual void setOpacity(float opacity) { m_opacity = opacity; }
-    virtual void setCompositionMode(CompositionMode compositionMode);
-    virtual void setBlendEquation(BlendEquation blendEquation);
-    virtual void setClipRect(const Rect& clipRect);
+    virtual void setAlphaWriting(bool enable) = 0;
+    virtual void setBlendEquation(BlendEquation blendEquation) = 0;
     virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
-    virtual void setTexture(Texture *texture);
-    void setAlphaWriting(bool enable);
-
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram) { setShaderProgram(shaderProgram.get()); }
-    void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
-    void setResolution(const Size& resolution);
 
-    void scale(float x, float y);
+    virtual void scale(float x, float y) = 0;
     void scale(float factor) { scale(factor, factor); }
-    void translate(float x, float y);
+    virtual void translate(float x, float y) = 0;
     void translate(const Point& p) { translate(p.x, p.y); }
-    void rotate(float angle);
-    void rotate(float x, float y, float angle);
+    virtual void rotate(float angle) = 0;
+    virtual void rotate(float x, float y, float angle) = 0;
     void rotate(const Point& p, float angle) { rotate(p.x, p.y, angle); }
 
-    void pushTransformMatrix();
-    void popTransformMatrix();
+    virtual void setOpacity(float opacity) { m_opacity = opacity; }
+    virtual void setResolution(const Size& resolution) { m_resolution = resolution; }
 
-    Matrix3 getTransformMatrix() { return m_transformMatrix; }
-    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
-    Matrix3 getTextureMatrix() { return m_textureMatrix; }
+    Size getResolution() { return m_resolution; }
     Color getColor() { return m_color; }
     float getOpacity() { return m_opacity; }
-    CompositionMode getCompositionMode() { return m_compositionMode; }
-    BlendEquation getBlendEquation() { return m_blendEquation; }
     Rect getClipRect() { return m_clipRect; }
-    PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
-    bool getAlphaWriting() { return m_alphaWriting; }
-    Size getResolution() { return m_resolution; }
+    CompositionMode getCompositionMode() { return m_compositionMode; }
 
-    void resetColor() { setColor(Color::white); }
-    void resetOpacity() { setOpacity(1.0f); }
+    virtual void setCompositionMode(CompositionMode compositionMode) = 0;
+
+    virtual void pushTransformMatrix() = 0;
+    virtual void popTransformMatrix() = 0;
+
     void resetClipRect() { setClipRect(Rect()); }
+    void resetOpacity() { setOpacity(1.0f); }
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
-    void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
+    void resetColor() { setColor(Color::white); }
     void resetShaderProgram() { setShaderProgram(nullptr); }
-    void resetTexture() { setTexture(nullptr); }
-    void resetAlphaWriting() { setAlphaWriting(false); }
-    void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
 
     virtual bool hasShaders() = 0;
 
 protected:
-    void updateGlTexture();
-    void updateGlCompositionMode();
-    void updateGlBlendEquation();
-    void updateGlClipRect();
-    void updateGlAlphaWriting();
-    void updateGlViewport();
-
-    CoordsBuffer m_coordsBuffer;
-
-    std::vector<Matrix3> m_transformMatrixStack;
-    Matrix3 m_transformMatrix;
-    Matrix3 m_projectionMatrix;
-    Matrix3 m_textureMatrix;
-    Color m_color;
-    float m_opacity;
-    CompositionMode m_compositionMode;
-    BlendEquation m_blendEquation;
-    Rect m_clipRect;
-    Texture *m_texture;
     PainterShaderProgram *m_shaderProgram;
-    bool m_alphaWriting;
+    CompositionMode m_compositionMode;
+    Color m_color;
     Size m_resolution;
-
-    PainterState m_olderStates[10];
-    int m_oldStateIndex;
-
-    uint m_glTextureId;
+    float m_opacity;
+    Rect m_clipRect;
 };
 
 extern Painter *g_painter;

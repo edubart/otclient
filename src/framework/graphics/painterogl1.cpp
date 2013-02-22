@@ -35,7 +35,7 @@ PainterOGL1::PainterOGL1()
 
 void PainterOGL1::refreshState()
 {
-    Painter::refreshState();
+    PainterOGL::refreshState();
     updateGlColor();
     updateGlMatrixMode();
     updateGlTransformMatrix();
@@ -46,7 +46,7 @@ void PainterOGL1::refreshState()
 
 void PainterOGL1::bind()
 {
-    Painter::bind();
+    PainterOGL::bind();
 
     // vertex and texture coord arrays are always enabled
     // to avoid massive enable/disables, thus improving frame rate
@@ -107,7 +107,10 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
             HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
 
         // draw the element in coords buffers
-        glDrawArrays(drawMode, 0, vertexCount);
+        if(drawMode == Triangles)
+            glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+        else if(drawMode == TriangleStrip)
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
     }
 #ifndef OPENGL_ES
     else {
@@ -118,7 +121,10 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         // use glBegin/glEnd, this is not available in OpenGL ES
         // and is considered much slower then glDrawArrays,
         // but this code is executed in really old graphics cards
-        glBegin(drawMode);
+        if(drawMode == Triangles)
+            glBegin(GL_TRIANGLES);
+        else if(drawMode == TriangleStrip)
+            glBegin(GL_TRIANGLE_STRIP);
         for(int i=0;i<verticesSize;i+=2) {
             if(textured)
                 glTexCoord2f(texCoords[i], texCoords[i+1]);

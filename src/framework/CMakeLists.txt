@@ -342,6 +342,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp

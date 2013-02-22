@@ -184,8 +184,8 @@ bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
-    Painter *painter = nullptr;
-    Painter *fallbackPainter = nullptr;
+    PainterOGL *painter = nullptr;
+    PainterOGL *fallbackPainter = nullptr;
     PainterEngine fallbackPainterEngine = Painter_Any;
 
 #ifdef PAINTER_DX9

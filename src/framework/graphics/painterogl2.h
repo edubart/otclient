@@ -25,14 +25,14 @@
 
 #define PAINTER_OGL2
 
-#include "painter.h"
+#include "painterogl.h"
 
 /**
  * Painter using OpenGL 2.0 programmable rendering pipeline,
  * compatible with OpenGL ES 2.0. Only recent cards support
  * this painter engine.
  */
-class PainterOGL2 : public Painter
+class PainterOGL2 : public PainterOGL
 {
 public:
     PainterOGL2();

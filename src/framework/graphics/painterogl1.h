@@ -25,7 +25,7 @@
 
 #define PAINTER_OGL1
 
-#include "painter.h"
+#include "painterogl.h"
 
 /**
  * Painter using OpenGL 1.1 fixed-function rendering pipeline,
@@ -33,7 +33,7 @@
  * older graphics cards. Shaders are not available
  * for this painter engine.
  */
-class PainterOGL1 : public Painter
+class PainterOGL1 : public PainterOGL
 {
 public:
     enum MatrixMode {
