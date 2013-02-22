@@ -32,8 +32,11 @@ public:
     void processArgs(std::vector<std::string>& args);
     bool spawnProcess(const std::string& process, const std::vector<std::string>& args);
     int getProcessId();
+    bool isProcessRunning(const std::string& name);
+    bool killProcess(const std::string& name);
     std::string getTempPath();
     bool copyFile(std::string from, std::string to);
+    bool fileExists(const std::string& file);
     void openUrl(std::string url);
     std::string getCPUName();
     double getTotalSystemMemory();

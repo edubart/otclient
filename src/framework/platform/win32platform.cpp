@@ -61,11 +61,39 @@ int Platform::getProcessId()
     return GetCurrentProcessId();
 }
 
+bool Platform::isProcessRunning(const std::string& name)
+{
+    if(FindWindowA(name.c_str(), NULL) != NULL)
+        return true;
+    return false;
+}
+
+bool Platform::killProcess(const std::string& name)
+{
+    HWND window = FindWindowA(name.c_str(), NULL);
+    if(window == NULL)
+        return false;
+    DWORD pid = GetProcessId(window);
+    HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
+    if(handle == NULL)
+        return false;
+    bool ok = TerminateProcess(handle, 1) != 0;
+    CloseHandle(handle);
+    return ok;
+}
+
 std::string Platform::getTempPath()
 {
     wchar_t path[MAX_PATH];
     GetTempPathW(MAX_PATH, path);
     return stdext::utf16_to_utf8(path);
+}
+
+bool Platform::fileExists(const std::string& file)
+{
+    std::wstring wfile = stdext::utf8_to_utf16(file);
+    DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&  !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
 bool Platform::copyFile(std::string from, std::string to)

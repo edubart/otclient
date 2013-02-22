@@ -81,7 +81,10 @@ void Application::registerLuaFunctions()
     g_lua.registerSingletonClass("g_platform");
     g_lua.bindSingletonFunction("g_platform", "spawnProcess", &Platform::spawnProcess, &g_platform);
     g_lua.bindSingletonFunction("g_platform", "getProcessId", &Platform::getProcessId, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "isProcessRunning", &Platform::isProcessRunning, &g_platform);
     g_lua.bindSingletonFunction("g_platform", "copyFile", &Platform::copyFile, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "fileExists", &Platform::fileExists, &g_platform);
+    g_lua.bindSingletonFunction("g_platform", "killProcess", &Platform::killProcess, &g_platform);
     g_lua.bindSingletonFunction("g_platform", "getTempPath", &Platform::getTempPath, &g_platform);
     g_lua.bindSingletonFunction("g_platform", "openUrl", &Platform::openUrl, &g_platform);
     g_lua.bindSingletonFunction("g_platform", "getCPUName", &Platform::getCPUName, &g_platform);

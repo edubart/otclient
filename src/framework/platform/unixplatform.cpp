@@ -64,6 +64,16 @@ int Platform::getProcessId()
     return getpid();
 }
 
+bool Platform::isProcessRunning(const std::string& name)
+{
+    return false;
+}
+
+bool Platform::killProcess(const std::string& name)
+{
+    return false;
+}
+
 std::string Platform::getTempPath()
 {
     return "/tmp/";
@@ -72,6 +82,12 @@ std::string Platform::getTempPath()
 bool Platform::copyFile(std::string from, std::string to)
 {
     return system(stdext::format("/bin/cp '%s' '%s'", from, to).c_str()) == 0;
+}
+
+bool Platform::fileExists(const std::string& file)
+{
+    struct stat buffer;
+    return (stat(file.c_str(), &buffer) == 0);
 }
 
 void Platform::openUrl(std::string url)

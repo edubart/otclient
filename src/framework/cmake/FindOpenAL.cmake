@@ -4,7 +4,7 @@
 #  OPENAL_LIBRARY - the OPENAL library
 
 SET(OPENAL_APPLE_PATHS ~/Library/Frameworks /Library/Frameworks)
-FIND_PATH(OPENAL_INCLUDE_DIR NAMES AL/al.h PATHS ${OPENAL_APPLE_PATHS})
+FIND_PATH(OPENAL_INCLUDE_DIR al.h PATH_SUFFIXES AL OpenAL PATHS ${OPENAL_APPLE_PATHS})
 SET(_OPENAL_STATIC_LIBS libOpenAL.a libal.a libopenal.a libOpenAL32.a)
 SET(_OPENAL_SHARED_LIBS libOpenAL.dll.a libal.dll.a libopenal.dll.a libOpenAL32.dll.a OpenAL al openal OpenAL32)
 IF(USE_STATIC_LIBS)
