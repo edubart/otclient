@@ -23,11 +23,7 @@
 #ifndef PAINTEROGL_H
 #define PAINTEROGL_H
 
-#include "declarations.h"
-#include "coordsbuffer.h"
-#include "paintershaderprogram.h"
-#include "texture.h"
-#include "painter.h"
+#include <framework/graphics/painter.h>
 
 class PainterOGL : public Painter
 {

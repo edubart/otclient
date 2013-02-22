@@ -23,16 +23,16 @@
 #include "fontmanager.h"
 
 #if OPENGL_ES==2
-#include "painterogl2.h"
+#include "ogl/painterogl2.h"
 #elif OPENGL_ES==1
-#include "painterogl1.h"
+#include "ogl/painterogl1.h"
 #else
-#include "painterogl1.h"
-#include "painterogl2.h"
+#include "ogl/painterogl1.h"
+#include "ogl/painterogl2.h"
 #endif
 
 #if defined(WIN32) && defined(DIRECTX)
-#include "painterdx9.h"
+#include "dx/painterdx9.h"
 #endif
 
 #include <framework/graphics/graphics.h>
@@ -184,8 +184,8 @@ bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
-    PainterOGL *painter = nullptr;
-    PainterOGL *fallbackPainter = nullptr;
+    Painter *painter = nullptr;
+    Painter *fallbackPainter = nullptr;
     PainterEngine fallbackPainterEngine = Painter_Any;
 
 #ifdef PAINTER_DX9

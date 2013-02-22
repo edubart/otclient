@@ -24,7 +24,7 @@
 #define PARTICLETYPE_H
 
 #include "declarations.h"
-#include <framework/graphics/painterogl.h>
+#include <framework/graphics/painter.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 

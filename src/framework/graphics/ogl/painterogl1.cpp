@@ -23,7 +23,7 @@
 #if !defined(OPENGL_ES) || OPENGL_ES==1
 
 #include "painterogl1.h"
-#include "graphics.h"
+#include <framework/graphics/graphics.h>
 
 PainterOGL1 *g_painterOGL1 = nullptr;
 

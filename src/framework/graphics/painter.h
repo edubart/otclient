@@ -23,10 +23,10 @@
 #ifndef PAINTER_H
 #define PAINTER_H
 
-#include "declarations.h"
-#include "coordsbuffer.h"
-#include "paintershaderprogram.h"
-#include "texture.h"
+#include <framework/graphics/declarations.h>
+#include <framework/graphics/coordsbuffer.h>
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/texture.h>
 
 class Painter
 {

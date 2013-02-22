@@ -21,8 +21,7 @@
  */
 
 #include "painterogl.h"
-#include "graphics.h"
-
+#include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 
 PainterOGL::PainterOGL()

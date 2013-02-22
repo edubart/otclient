@@ -24,7 +24,7 @@
 #define PARTICLE_H
 
 #include "declarations.h"
-#include "painterogl.h"
+#include "painter.h"
 
 class Particle : public stdext::shared_object
 {

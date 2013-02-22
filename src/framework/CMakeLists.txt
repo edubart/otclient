@@ -311,6 +311,10 @@ if(FRAMEWORK_GRAPHICS)
             set(framework_DEFINITIONS ${framework_DEFINITIONS} -DDIRECTX)
             set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${DirectX_INCLUDE_DIR})
             set(framework_LIBRARIES ${framework_LIBRARIES} ${DirectX_LIBRARY} ${DirectX_LIBRARIES})
+            set(framework_SOURCES ${framework_SOURCES}
+                ${CMAKE_CURRENT_LIST_DIR}/graphics/dx/painterdx9.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/graphics/dx/painterdx9.h
+            )
         endif()
 
     else()
@@ -342,15 +346,13 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl1.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterdx9.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterdx9.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/painterogl2_shadersources.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl1.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl2.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/painterogl2_shadersources.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/paintershaderprogram.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particleaffector.cpp
