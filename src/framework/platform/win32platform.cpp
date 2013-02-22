@@ -88,6 +88,16 @@ std::string Platform::getTempPath()
     return stdext::utf16_to_utf8(path);
 }
 
+std::string Platform::getCurrentDir()
+{
+    std::string ret;
+    wchar_t path[MAX_PATH];
+    GetCurrentDirectoryW(MAX_PATH, path);
+    ret = stdext::utf16_to_utf8(path);
+    boost::replace_all(ret, "\\", "/");
+    return ret;
+}
+
 bool Platform::fileExists(const std::string& file)
 {
     std::wstring wfile = stdext::utf8_to_utf16(file);

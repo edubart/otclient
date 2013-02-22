@@ -26,7 +26,6 @@
 
 #include <framework/xml/tinyxml.h>
 #include <framework/core/resourcemanager.h>
-#include <boost/filesystem.hpp>
 
 CreatureManager g_creatures;
 
@@ -196,6 +195,8 @@ void CreatureManager::loadNpcs(const std::string& folder)
     if(!stdext::ends_with(tmp, "/"))
         tmp += "/";
 
+    // FIXME: filesystem is not supported anymore, rework the following code with g_resources
+    /*
     boost::filesystem::path npcPath(boost::filesystem::current_path().generic_string() + tmp);
     if(!boost::filesystem::exists(npcPath))
         stdext::throw_exception(stdext::format("NPCs folder '%s' was not found.", folder));
@@ -207,6 +208,7 @@ void CreatureManager::loadNpcs(const std::string& folder)
 
         loadCreatureBuffer(g_resources.readFileContents(tmp + f));
     }
+    */
 }
 
 void CreatureManager::loadSpawns(const std::string& fileName)

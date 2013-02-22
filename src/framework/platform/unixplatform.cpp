@@ -79,6 +79,15 @@ std::string Platform::getTempPath()
     return "/tmp/";
 }
 
+std::string Platform::getCurrentDir()
+{
+    std::string res;
+    char cwd[2048];
+    if(getcwd(cwd, sizeof(cwd)) != NULL)
+        res = cwd;
+    return res;
+}
+
 bool Platform::copyFile(std::string from, std::string to)
 {
     return system(stdext::format("/bin/cp '%s' '%s'", from, to).c_str()) == 0;

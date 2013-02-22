@@ -31,9 +31,6 @@
 #include <framework/platform/crashhandler.h>
 #include <framework/platform/platform.h>
 
-#include <boost/locale.hpp>
-#include <boost/filesystem.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <locale>
 
 #ifdef FW_NET
@@ -75,8 +72,6 @@ void Application::init(std::vector<std::string>& args)
 
     // setup locale
     std::locale::global(std::locale());
-    std::locale utf8("en_US.UTF-8");
-    boost::filesystem::path::imbue(utf8);
 
     // process args encoding
     g_platform.processArgs(args);

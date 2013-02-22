@@ -35,6 +35,7 @@ public:
     bool isProcessRunning(const std::string& name);
     bool killProcess(const std::string& name);
     std::string getTempPath();
+    std::string getCurrentDir();
     bool copyFile(std::string from, std::string to);
     bool fileExists(const std::string& file);
     void openUrl(std::string url);

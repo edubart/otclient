@@ -25,9 +25,9 @@
 
 #include <framework/core/application.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/platform/platform.h>
 
 #include <physfs.h>
-#include <boost/filesystem.hpp>
 
 ResourceManager g_resources;
 
@@ -298,7 +298,7 @@ std::string ResourceManager::getRealDir(const std::string& path)
 
 std::string ResourceManager::getCurrentDir()
 {
-    return boost::filesystem::current_path().generic_string<std::string>() + "/";
+    return g_platform.getCurrentDir();
 }
 
 std::string ResourceManager::getBaseDir()
