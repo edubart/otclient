@@ -231,7 +231,10 @@ else()
     if(NOT CMAKE_BUILD_TYPE STREQUAL "CompileSpeed")
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
     endif()
-    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed -Wl,-s") # strip all debug information
+    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-s") # strip all debug information
+    if(NOT APPLE)
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed") # only link needed libraries
+    endif()
 endif()
 
 if(CRASH_HANDLER)
