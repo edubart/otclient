@@ -184,7 +184,7 @@ message(STATUS "Build revision: ${BUILD_REVISION}")
 add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 # find boost
-set(REQUIRED_BOOST_COMPONENTS locale system filesystem regex thread chrono)
+set(REQUIRED_BOOST_COMPONENTS system filesystem thread chrono)
 if(WIN32)
     set(Boost_THREADAPI win32)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_USE_LIB) # fix boost thread linkage
@@ -262,8 +262,7 @@ else()
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
         set(SYSTEM_LIBRARIES dl)
     endif()
-    find_package(ICU)
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${ICU_LIBRARIES} ${SYSTEM_LIBRARIES})
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
 
 if(FRAMEWORK_GRAPHICS)

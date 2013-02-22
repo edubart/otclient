@@ -211,7 +211,7 @@ function EnterGame.doLogin()
   g_settings.set('port', G.port)
 
   protocolLogin = ProtocolLogin.create()
-  protocolLogin.onError = onError
+  protocolLogin.onLoginError = onError
   protocolLogin.onMotd = onMotd
   protocolLogin.onCharacterList = onCharacterList
   protocolLogin.onUpdateNeeded = onUpdateNeeded

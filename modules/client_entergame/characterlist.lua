@@ -111,7 +111,12 @@ end
 
 function onGameConnectionError(message, code)
   CharacterList.destroyLoadBox()
-  local text = tr('Your connection has been lost. (err: %d)', code)
+  local text
+  if g_game.getProtocolGame() and g_game.getProtocolGame():isConnecting() then
+    text = tr('Unable to establish a connection. (err: %d)%s', code)
+  else
+    text = tr('Your connection has been lost. (err: %d)', code)
+  end
   errorBox = displayErrorBox(tr("Connection Error"), text)
   errorBox.onOk = function()
     errorBox = nil

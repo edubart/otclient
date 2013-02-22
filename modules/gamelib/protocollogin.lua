@@ -85,6 +85,7 @@ function ProtocolLogin:sendLoginPacket()
 end
 
 function ProtocolLogin:onConnect()
+  self.gotConnection = true
   self:sendLoginPacket()
 end
 
@@ -155,6 +156,11 @@ function ProtocolLogin:parseOpcode(opcode, msg)
 end
 
 function ProtocolLogin:onError(msg, code)
-  local text = tr('Your connection has been lost. (err: %d)', code)
-  signalcall(self.onLoginError, self, opcode, text)
+  local text
+  if self:isConnecting() then
+    text = tr('Unable to establish a connection. (err: %d)', code)
+  else
+    text = tr('Your connection has been lost. (err: %d)', code)
+  end
+  signalcall(self.onLoginError, self, text)
 end

@@ -28,7 +28,6 @@
 #include <boost/algorithm/string.hpp>
 #include <tchar.h>
 
-
 void Platform::processArgs(std::vector<std::string>& args)
 {
     int nargs;

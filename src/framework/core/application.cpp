@@ -74,10 +74,9 @@ void Application::init(std::vector<std::string>& args)
 #endif
 
     // setup locale
-    boost::locale::generator locgen;
-    std::locale::global(locgen.generate(""));
-    std::locale utf8Loc = locgen.generate("en_US.UTF-8");
-    boost::filesystem::path::imbue(utf8Loc);
+    std::locale::global(std::locale());
+    std::locale utf8("en_US.UTF-8");
+    boost::filesystem::path::imbue(utf8);
 
     // process args encoding
     g_platform.processArgs(args);

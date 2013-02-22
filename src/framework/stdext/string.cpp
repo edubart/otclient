@@ -25,7 +25,6 @@
 #include <boost/algorithm/string.hpp>
 #include <ctype.h>
 #include <physfs.h>
-#include <boost/locale.hpp>
 
 namespace stdext {
 
@@ -71,43 +70,143 @@ uint64_t hex_to_dec(const std::string& str)
 
 bool is_valid_utf8(const std::string& src)
 {
-    try {
-        boost::locale::conv::from_utf(src, "ISO-8859-1", boost::locale::conv::stop);
-        return true;
-    } catch(...) {
+    const unsigned char *bytes = (const unsigned char *)src.c_str();
+    while(*bytes) {
+        if( (// ASCII
+             // use bytes[0] <= 0x7F to allow ASCII control characters
+                bytes[0] == 0x09 ||
+                bytes[0] == 0x0A ||
+                bytes[0] == 0x0D ||
+                (0x20 <= bytes[0] && bytes[0] <= 0x7E)
+            )
+        ) {
+            bytes += 1;
+            continue;
+        }
+        if( (// non-overlong 2-byte
+                (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF)
+            )
+        ) {
+            bytes += 2;
+            continue;
+        }
+        if( (// excluding overlongs
+                bytes[0] == 0xE0 &&
+                (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            ) ||
+            (// straight 3-byte
+                ((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
+                    bytes[0] == 0xEE ||
+                    bytes[0] == 0xEF) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            ) ||
+            (// excluding surrogates
+                bytes[0] == 0xED &&
+                (0x80 <= bytes[1] && bytes[1] <= 0x9F) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+            )
+        ) {
+            bytes += 3;
+            continue;
+        }
+        if( (// planes 1-3
+                bytes[0] == 0xF0 &&
+                (0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            ) ||
+            (// planes 4-15
+                (0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
+                (0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            ) ||
+            (// plane 16
+                bytes[0] == 0xF4 &&
+                (0x80 <= bytes[1] && bytes[1] <= 0x8F) &&
+                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+            )
+        ) {
+            bytes += 4;
+            continue;
+        }
         return false;
     }
+    return true;
 }
 
 std::string utf8_to_latin1(const std::string& src)
 {
-    return boost::locale::conv::from_utf(src, "ISO-8859-1");
-}
-
-std::wstring utf8_to_utf16(const std::string& src)
-{
-    return boost::locale::conv::utf_to_utf<wchar_t>(src);
-}
-
-std::string utf16_to_utf8(const std::wstring& src)
-{
-    return boost::locale::conv::utf_to_utf<char>(src);
-}
-
-std::string utf16_to_latin1(const std::wstring& src)
-{
-    return boost::locale::conv::from_utf(src, "ISO-8859-1");
+    std::string out;
+    for(uint i=0;i<src.length();) {
+        uchar c = src[i++];
+        if(c >= 32 && c < 128)
+            out += c;
+        else if(c == 0xc2 || c == 0xc3) {
+            uchar c2 = src[i++];
+            if(c == 0xc2) {
+                if(c2 > 0xa1 && c2 < 0xbb)
+                    out += c2;
+            } else if(c == 0xc3)
+                out += 64 + c2;
+        } else if(c >= 0xc4 && c <= 0xdf)
+            i += 1;
+        else if(c >= 0xe0 && c <= 0xed)
+            i += 2;
+        else if(c >= 0xf0 && c <= 0xf4)
+            i += 3;
+    }
+    return out;
 }
 
 std::string latin1_to_utf8(const std::string& src)
 {
-    return boost::locale::conv::to_utf<char>(src, "ISO-8859-1");
+    std::string out;
+    for(uchar c : src) {
+        if(c >= 32 && c < 128)
+            out += c;
+        else {
+            out += 0xc2 + (c > 0xbf);
+            out += 0x80 + (c & 0x3f);
+        }
+    }
+    return out;
+}
+
+#ifdef WIN32
+#include <windows.h>
+std::wstring utf8_to_utf16(const std::string& src)
+{
+    std::wstring res;
+    wchar_t out[4096];
+    if(MultiByteToWideChar(CP_UTF8, 0, src.c_str(), -1, out, 4096))
+        res = out;
+    return res;
+}
+
+std::string utf16_to_utf8(const std::wstring& src)
+{
+    std::string res;
+    char out[4096];
+    if(WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, out, 4096, NULL, NULL))
+        res = out;
+    return res;
 }
 
 std::wstring latin1_to_utf16(const std::string& src)
 {
-    return boost::locale::conv::to_utf<wchar_t>(src, "ISO-8859-1");
+    return utf8_to_utf16(latin1_to_utf8(src));
 }
+
+std::string utf16_to_latin1(const std::wstring& src)
+{
+    return utf8_to_latin1(utf16_to_utf8(src));
+}
+#endif
 
 void tolower(std::string& str)
 {
