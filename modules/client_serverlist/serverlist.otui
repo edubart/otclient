@@ -44,7 +44,7 @@ ServerWidget < UIWidget
 
   Button
     id: remove
-    !text: tr('x')
+    text: x
     width: 12
     height: 12
     anchors.top: parent.top

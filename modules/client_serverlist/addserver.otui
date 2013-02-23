@@ -9,7 +9,7 @@ MainWindow
 
   Label
     id: hostLabel
-    !text: tr('Host:')
+    !text: tr('Host') .. ':'
     anchors.top: parent.top
     anchors.left: parent.left
     margin-bottom: 2
@@ -23,7 +23,7 @@ MainWindow
 
   Label
     id: portLabel
-    !text: tr('Port:')
+    !text: tr('Port') .. ':'
     anchors.top: host.bottom
     anchors.left: host.left
     margin-top: 3
@@ -38,7 +38,7 @@ MainWindow
 
   Label
     id: protocolLabel
-    !text: tr('Protocol:')
+    !text: tr('Protocol') .. ':'
     anchors.top: port.bottom
     anchors.left: port.left
     margin-top: 3
