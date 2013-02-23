@@ -371,6 +371,17 @@ function Spells.getSpellIconIds()
   return ids
 end
 
+function Spells.getSpellProfileById(id)
+  for profile,data in pairs(SpellInfo) do
+    for k,spell in pairs(data) do
+      if spell.id == id then
+        return profile
+      end
+    end
+  end
+  return nil
+end
+
 function Spells.getSpellProfileByWords(words)
   for profile,data in pairs(SpellInfo) do
     for k,spell in pairs(data) do

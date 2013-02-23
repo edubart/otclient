@@ -25,10 +25,9 @@ function init()
   contentsPanel = cooldownWindow:getChildById('contentsPanel')
   cooldownPanel = contentsPanel:getChildById('cooldownPanel')
 
-  -- load cooldown icons
-  local iconIds = Spells.getSpellIconIds()
-  for k,id in pairs(iconIds) do
-    loadIcon(id):destroy()
+  -- preload cooldown images
+  for k,v in pairs(SpelllistSettings) do
+    g_textures.preload(v.iconFile)
   end
 
   if g_game.isOnline() then
@@ -58,7 +57,7 @@ function loadIcon(iconId)
     icon:setId(iconId)
   end
 
-  icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
+  icon:setImageSource('/images/game/spells/'..SpelllistSettings[profile].iconFile)
   icon:setImageClip(Spells.getImageClip(clientIconId, profile))
   return icon
 end

@@ -50,7 +50,7 @@ function init()
 
   -- load condition icons
   for k,v in pairs(Icons) do
-    loadIcon(k):destroy()
+    g_textures.preload(v.path)
   end
 
   if g_game.isOnline() then
