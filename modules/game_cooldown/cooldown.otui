@@ -87,7 +87,7 @@ MiniWindow
       !tooltip: tr('Special')
 
     Panel
-      id: spellCooldownPanel
+      id: cooldownPanel
       layout:
         type: horizontalBox
       height: 30
@@ -97,5 +97,4 @@ MiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       background-color: #ffffff11
-      
       

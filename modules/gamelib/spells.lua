@@ -361,6 +361,16 @@ function Spells.getSpellByIcon(iconId)
   return nil
 end
 
+function Spells.getSpellIconIds()
+  local ids = {}
+  for profile,data in pairs(SpellInfo) do
+    for k,spell in pairs(data) do
+      table.insert(ids, spell.id)
+    end
+  end
+  return ids
+end
+
 function Spells.getSpellProfileByWords(words)
   for profile,data in pairs(SpellInfo) do
     for k,spell in pairs(data) do

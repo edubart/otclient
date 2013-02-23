@@ -6,7 +6,7 @@ local ProgressCallback = {
 cooldownWindow = nil
 cooldownButton = nil
 contentsPanel = nil
-spellCooldownPanel = nil
+cooldownPanel = nil
 lastPlayer = nil
 
 function init()
@@ -23,7 +23,13 @@ function init()
   cooldownWindow:setup() 
   
   contentsPanel = cooldownWindow:getChildById('contentsPanel')
-  spellCooldownPanel = contentsPanel:getChildById('spellCooldownPanel')
+  cooldownPanel = contentsPanel:getChildById('cooldownPanel')
+
+  -- load cooldown icons
+  local iconIds = Spells.getSpellIconIds()
+  for k,id in pairs(iconIds) do
+    loadIcon(id):destroy()
+  end
 
   if g_game.isOnline() then
     online()
@@ -37,6 +43,24 @@ function terminate()
 
   cooldownWindow:destroy()
   cooldownButton:destroy()
+end
+
+function loadIcon(iconId)
+  local spell, profile, spellName = Spells.getSpellByIcon(iconId)
+  if not spellName then return end
+  
+  clientIconId = Spells.getClientId(spellName)
+  if not clientIconId then return end
+  
+  local icon = cooldownPanel:getChildById(iconId)
+  if not icon then
+    icon = g_ui.createWidget('SpellIcon')
+    icon:setId(iconId)
+  end
+
+  icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
+  icon:setImageClip(Spells.getImageClip(clientIconId, profile))
+  return icon
 end
 
 function onMiniWindowClose()
@@ -68,7 +92,7 @@ function online()
 end
 
 function refresh()
-  spellCooldownPanel:destroyChildren()
+  cooldownPanel:destroyChildren()
 end
 
 function removeCooldown(progressRect)
@@ -117,24 +141,16 @@ function updateCooldown(progressRect, interval)
 end
 
 function onSpellCooldown(iconId, duration)
-  local spell, profile, spellName = Spells.getSpellByIcon(iconId)
-  if not spellName then return end
-  
-  clientIconId = Spells.getClientId(spellName)
-  if not clientIconId then return end
-  
-  local icon = spellCooldownPanel:getChildById(spellName)
+  local icon = loadIcon(iconId)
   if not icon then
-    icon = g_ui.createWidget('SpellIcon', spellCooldownPanel)
-    icon:setId(spellName)
+    return
   end
-  icon:setImageSource('/images/game/spells/' .. SpelllistSettings[profile].iconFile)
-  icon:setImageClip(Spells.getImageClip(clientIconId, profile))
+  icon:setParent(cooldownPanel)
 
-  local progressRect = icon:getChildById(spellName)
+  local progressRect = icon:getChildById(iconId)
   if not progressRect then
     progressRect = g_ui.createWidget('SpellProgressRect', icon)
-    progressRect:setId(spellName)
+    progressRect:setId(iconId)
     progressRect.icon = icon
     progressRect:fill('parent')
   else

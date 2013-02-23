@@ -48,6 +48,11 @@ function init()
   soulLabel = healthInfoWindow:recursiveGetChildById('soulLabel')
   capLabel = healthInfoWindow:recursiveGetChildById('capLabel')
 
+  -- load condition icons
+  for k,v in pairs(Icons) do
+    loadIcon(k):destroy()
+  end
+
   if g_game.isOnline() then
     local localPlayer = g_game.getLocalPlayer()
     onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
@@ -92,11 +97,17 @@ function toggleIcon(bitChanged)
   if icon then
     icon:destroy()
   else
-    icon = g_ui.createWidget('ConditionWidget', content)
-    icon:setId(Icons[bitChanged].id)
-    icon:setImageSource(Icons[bitChanged].path)
-    icon:setTooltip(Icons[bitChanged].tooltip)
+    icon = loadIcon(bitChanged)
+    icon:setParent(content)
   end
+end
+
+function loadIcon(bitChanged)
+  local icon = g_ui.createWidget('ConditionWidget', content)
+  icon:setId(Icons[bitChanged].id)
+  icon:setImageSource(Icons[bitChanged].path)
+  icon:setTooltip(Icons[bitChanged].tooltip)
+  return icon
 end
 
 function offline()
