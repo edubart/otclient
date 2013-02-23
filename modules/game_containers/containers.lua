@@ -29,11 +29,15 @@ end
 
 function clean()
   for containerid,container in pairs(g_game.getContainers()) do
-    if container.window then
-      container.window:destroy()
-      container.window = nil
-      container.itemsPanel = nil
-    end
+    destroy(container)
+  end
+end
+
+function destroy(container)
+  if container.window then
+    container.window:destroy()
+    container.window = nil
+    container.itemsPanel = nil
   end
 end
 
@@ -103,7 +107,7 @@ function onContainerOpen(container, previousContainer)
 end
 
 function onContainerClose(container)
-  if container.window then container.window:destroy() end
+  destroy(container)
 end
 
 function onContainerAddItem(container, slot, item)
