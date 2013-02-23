@@ -5,23 +5,6 @@ local serverListWindow = nil
 local serverTextList = nil
 local servers = {}
 
--- private functions
-function getServer(host)
-  for k,server in pairs(servers) do
-    if server.host == host then
-      return server
-    end
-  end
-end
-
-function getServerKey(host)
-  for k,server in pairs(servers) do
-    if server.host == host then
-      return k
-    end
-  end
-end
-
 -- public functions
 function ServerList.init()
   serverListWindow = g_ui.displayUI('serverlist')
@@ -41,16 +24,16 @@ end
 
 function ServerList.load()
   for k,server in pairs(servers) do
-    ServerList.add(server.host, server.port, server.protocol, true)
+    ServerList.add(k, server.port, server.protocol, true)
   end
 end
 
 function ServerList.select()
   local selected = serverTextList:getFocusedChild()
   if selected then
-    local server = servers[getServerKey(selected:getId())]
+    local server = servers[selected:getId()]
     if server then
-      EnterGame.setDefaultServer(server.host, server.port, server.protocol)
+      EnterGame.setDefaultServer(selected:getId(), server.port, server.protocol)
       EnterGame.setAccountName(server.account)
       EnterGame.setPassword(server.password)
       ServerList.hide()
@@ -59,7 +42,7 @@ function ServerList.select()
 end
 
 function ServerList.add(host, port, protocol, load)
-  if not load and getServerKey(host) then
+  if not load and servers[host] then
     return false, 'Server already exists'
   elseif host == '' or port == '' then
     return false, 'Required fields are missing'
@@ -68,8 +51,7 @@ function ServerList.add(host, port, protocol, load)
   widget:setId(host)
   
   if not load then
-    servers[table.size(servers)+1] = {
-      host = host,
+    servers[host] = {
       port = port,
       protocol = protocol,
       account = '',
@@ -88,7 +70,7 @@ function ServerList.add(host, port, protocol, load)
 end
 
 function ServerList.remove(host)
-  servers[getServerKey(host)] = nil
+  servers[host] = nil
 end
 
 function ServerList.destroy()
@@ -113,15 +95,13 @@ function ServerList.hide()
 end
 
 function ServerList.setServerAccount(host, account)
-  local key = getServerKey(host)
-  if servers[key] then
-    servers[key].account = account
+  if servers[host] then
+    servers[host].account = account
   end
 end
 
 function ServerList.setServerPassword(host, password)
-  local key = getServerKey(host)
-  if servers[key] then
-    servers[key].password = password
+  if servers[host] then
+    servers[host].password = password
   end
 end
