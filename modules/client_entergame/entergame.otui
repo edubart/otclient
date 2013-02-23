@@ -1,5 +1,19 @@
 EnterGameWindow < MainWindow
 
+ServerListButton < UIButton
+  size: 17 17
+  image-source: /images/topbuttons/minimap
+  image-color: #ffffffff
+
+  $hover !disabled:
+    image-color: #ffffff99
+
+  $pressed:
+    image-color: #ffffff44
+
+  $disabled:
+    image-color: #ffffff55
+
 EnterGameWindow
   id: enterGame
   !text: tr('Enter Game')
@@ -41,13 +55,21 @@ EnterGameWindow
     margin-top: 8
     text-auto-resize: true
 
+  ServerListButton
+    id: serverListButton
+    anchors.right: parent.right
+    anchors.top: serverLabel.bottom
+    margin-top: 3
+    @onClick: ServerList.show()
+
   TextEdit
     id: serverHostTextEdit
     !tooltip: tr('Make sure that your client uses\nthe correct game protocol version')
     anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.right: serverListButton.left
     anchors.top: serverLabel.bottom
     margin-top: 2
+    margin-right: 4
 
   MenuLabel
     id: protocolLabel

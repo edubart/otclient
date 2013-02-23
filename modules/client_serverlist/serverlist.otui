@@ -1,0 +1,113 @@
+ServerWidget < UIWidget
+  height: 14
+  background-color: alpha
+  &updateOnStates: |
+    function(self)
+      local children = self:getChildren()
+      for i=1,#children do
+        children[i]:setOn(self:isFocused())
+      end
+    end
+  @onFocusChange: self:updateOnStates()
+  @onSetup: self:updateOnStates()
+
+  $focus:
+    background-color: #ffffff22
+
+  Label
+    id: details
+    color: #aaaaaa
+    anchors.top: parent.top
+    anchors.left: parent.left
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    text-offset: 2 0
+
+    $on:
+      color: #ffffff
+
+  Label
+    id: protocol
+    color: #ffffff
+    color: #aaaaaa
+    anchors.top: parent.top
+    anchors.right: next.left
+    margin-right: 5
+    font: verdana-11px-monochrome
+    text-auto-resize: true
+    background-color: alpha
+    &baseText: '(%s)'
+
+    $on:
+      color: #ffffff
+
+  Button
+    id: remove
+    !text: tr('x')
+    width: 12
+    height: 12
+    anchors.top: parent.top
+    anchors.right: parent.right
+    margin-right: 4
+    margin-top: 1
+    @onClick: |
+      local parent = self:getParent()
+      ServerList.remove(parent:getId())
+      parent:destroy()
+
+MainWindow
+  id: serverListWindow
+  !text: tr('Server List')
+  size: 340 290
+  visible: false
+  @onEnter: ServerList.select()
+  @onEscape: ServerList.hide()
+  @onSetup: |
+    g_keyboard.bindKeyPress('Up', function() self:getChildById('serverList'):focusPreviousChild(KeyboardFocusReason) end, self)
+    g_keyboard.bindKeyPress('Down', function() self:getChildById('serverList'):focusNextChild(KeyboardFocusReason) end, self)
+
+  TextList
+    id: serverList
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: serverListScrollBar.left
+    anchors.bottom: buttonOk.top
+    margin-bottom: 5
+    padding: 1
+    focusable: false
+    vertical-scrollbar: serverListScrollBar
+    auto-focus: first
+
+  VerticalScrollBar
+    id: serverListScrollBar
+    anchors.top: parent.top
+    anchors.bottom: buttonOk.top
+    anchors.right: parent.right
+    margin-bottom: 5
+    step: 14
+    pixels-scroll: true
+
+  AddButton
+    id: buttonAdd
+    !tooltip: tr('Add new server')
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    @onClick: AddServer.show()
+
+  Button
+    id: buttonOk
+    !text: tr('Select')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: ServerList.select()
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: ServerList.hide()

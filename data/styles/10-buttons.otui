@@ -67,3 +67,17 @@ PreviousButton < UIButton
 
   $disabled:
     image-color: #ffffff55
+
+AddButton < UIButton
+  size: 20 20
+  image-source: /images/ui/icon_add
+  image-color: #ffffffff
+
+  $hover !disabled:
+    image-color: #ffffff99
+
+  $pressed:
+    image-color: #ffffff44
+
+  $disabled:
+    image-color: #ffffff55

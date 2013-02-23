@@ -146,7 +146,7 @@ end
 
 function table.size(t)
   local size = 0
-  for i, n in pairs(table) do
+  for i, n in pairs(t) do
     size = size + 1
   end
  

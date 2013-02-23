@@ -1,0 +1,73 @@
+MainWindow
+  id: addServerWindow
+  !text: tr('New Server')
+  size: 180 180
+  visible: false
+  @onEscape: AddServer.hide()
+  @onEnter: |
+    AddServer.add()
+
+  Label
+    id: hostLabel
+    !text: tr('Host:')
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-bottom: 2
+
+  TextEdit
+    id: host
+    anchors.top: hostLabel.bottom
+    anchors.left: hostLabel.left
+    anchors.right: parent.right
+    auto-focus: first
+
+  Label
+    id: portLabel
+    !text: tr('Port:')
+    anchors.top: host.bottom
+    anchors.left: host.left
+    margin-top: 3
+    margin-bottom: 2
+
+  TextEdit
+    id: port
+    text: 7171
+    anchors.top: portLabel.bottom
+    anchors.left: portLabel.left
+    anchors.right: host.right
+
+  Label
+    id: protocolLabel
+    !text: tr('Protocol:')
+    anchors.top: port.bottom
+    anchors.left: port.left
+    margin-top: 3
+    margin-bottom: 2
+
+  ComboBox
+    id: protocol
+    anchors.top: protocolLabel.bottom
+    anchors.left: protocolLabel.left
+    anchors.right: port.right
+    @onSetup: |
+      for _, proto in pairs(g_game.getSupportedProtocols()) do
+        self:addOption(proto)
+      end
+
+  Button
+    id: buttonAdd
+    !text: tr('Add')
+    width: 64
+    anchors.right: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    margin-right: 5
+    @onClick: |
+      AddServer.add()
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.left: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    @onClick: AddServer.hide()

@@ -34,9 +34,19 @@ local function onMotd(protocol, motd)
 end
 
 local function onCharacterList(protocol, characters, account, otui)
+  -- Try add server to the server list
+  ServerList.add(G.host, G.port, g_game.getProtocolVersion())
+
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
-    g_settings.set('account', g_crypt.encrypt(G.account))
-    g_settings.set('password', g_crypt.encrypt(G.password))
+    local account = g_crypt.encrypt(G.account)
+    local password = g_crypt.encrypt(G.password)
+
+    g_settings.set('account', account)
+    g_settings.set('password', password)
+
+    ServerList.setServerAccount(G.host, account)
+    ServerList.setServerPassword(G.host, password)
+
     g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
     EnterGame.clearAccountFields()
@@ -90,8 +100,8 @@ function EnterGame.init()
     motdButton:show()
   end
 
-  local account = g_crypt.decrypt(g_settings.get('account'))
-  local password = g_crypt.decrypt(g_settings.get('password'))
+  local account = g_settings.get('account')
+  local password = g_settings.get('password')
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
@@ -99,16 +109,15 @@ function EnterGame.init()
 
   if port == nil or port == 0 then port = 7171 end
 
-  enterGame:getChildById('accountNameTextEdit'):setText(account)
-  enterGame:getChildById('accountNameTextEdit'):setCursorPos(-1)
-  enterGame:getChildById('accountPasswordTextEdit'):setText(password)
+  EnterGame.setAccountName(account)
+  EnterGame.setPassword(password)
+
   enterGame:getChildById('serverHostTextEdit'):setText(host)
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
-  enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
 
   protocolBox = enterGame:getChildById('protocolComboBox')
-  protocolBox.onOptionChange = onChangeProtocol  
+  protocolBox.onOptionChange = onChangeProtocol
   for _i, proto in pairs(g_game.getSupportedProtocols()) do
     protocolBox:addOption(proto)
   end
@@ -182,6 +191,18 @@ function EnterGame.openWindow()
   elseif not g_game.isLogging() and not CharacterList.isVisible() then
     EnterGame.show()
   end
+end
+
+function EnterGame.setAccountName(account)
+  local account = g_crypt.decrypt(account)
+  enterGame:getChildById('accountNameTextEdit'):setText(account)
+  enterGame:getChildById('accountNameTextEdit'):setCursorPos(-1)
+  enterGame:getChildById('rememberPasswordBox'):setChecked(#account > 0)
+end
+
+function EnterGame.setPassword(password)
+  local password = g_crypt.decrypt(password)
+  enterGame:getChildById('accountPasswordTextEdit'):setText(password)
 end
 
 function EnterGame.clearAccountFields()
@@ -284,6 +305,11 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   local protocolLabel = enterGame:getChildById('protocolLabel')
   protocolLabel:setVisible(false)
   protocolLabel:setHeight(0)
+
+  local serverListButton = enterGame:getChildById('serverListButton')
+  serverListButton:setVisible(false)
+  serverListButton:setHeight(0)
+  serverListButton:setWidth(0)
 
   local rememberPasswordBox = enterGame:getChildById('rememberPasswordBox')
   rememberPasswordBox:setMarginTop(-5)
