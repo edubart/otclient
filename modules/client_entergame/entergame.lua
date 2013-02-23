@@ -49,6 +49,10 @@ local function onCharacterList(protocol, characters, account, otui)
 
     g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
+    -- reset server list account/password
+    ServerList.setServerAccount(G.host, '')
+    ServerList.setServerPassword(G.host, '')
+
     EnterGame.clearAccountFields()
   end
 
