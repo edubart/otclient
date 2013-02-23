@@ -205,7 +205,7 @@ function initialiseSpelllist()
   
     tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
     tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
-    tmpLabel:setImageSource('/images/game/spells/' .. SpelllistSettings[SpelllistProfile].iconFile)
+    tmpLabel:setImageSource(SpelllistSettings[SpelllistProfile].iconFile)
     tmpLabel:setImageClip(Spells.getImageClip(iconId, SpelllistProfile))
     tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
     tmpLabel.onClick = updateSpellInformation

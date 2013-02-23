@@ -57,7 +57,7 @@ function loadIcon(iconId)
     icon:setId(iconId)
   end
 
-  icon:setImageSource('/images/game/spells/'..SpelllistSettings[profile].iconFile)
+  icon:setImageSource(SpelllistSettings[profile].iconFile)
   icon:setImageClip(Spells.getImageClip(clientIconId, profile))
   return icon
 end
