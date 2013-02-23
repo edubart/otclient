@@ -3,6 +3,7 @@ ServerList = {}
 -- private variables
 local serverListWindow = nil
 local serverTextList = nil
+local removeWindow = nil
 local servers = {}
 
 -- public functions
@@ -69,8 +70,28 @@ function ServerList.add(host, port, protocol, load)
   return true
 end
 
-function ServerList.remove(host)
-  servers[host] = nil
+function ServerList.remove(widget)
+  local host = widget:getId()
+
+  if removeWindow then
+    return
+  end
+
+  local yesCallback = function()
+    widget:destroy()
+    servers[host] = nil
+    removeWindow:destroy()
+    removeWindow=nil
+  end
+  local noCallback = function()
+    removeWindow:destroy()
+    removeWindow=nil
+  end
+
+  removeWindow = displayGeneralBox(tr('Remove'), tr('Remove '..host..'?'), {
+      { text=tr('Yes'), callback=yesCallback },
+      { text=tr('No'), callback=noCallback },
+      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
 end
 
 function ServerList.destroy()

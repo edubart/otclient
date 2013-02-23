@@ -51,10 +51,7 @@ ServerWidget < UIWidget
     anchors.right: parent.right
     margin-right: 4
     margin-top: 1
-    @onClick: |
-      local parent = self:getParent()
-      ServerList.remove(parent:getId())
-      parent:destroy()
+    @onClick: ServerList.remove(self:getParent())
 
 MainWindow
   id: serverListWindow
