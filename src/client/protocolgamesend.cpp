@@ -129,7 +129,6 @@ void ProtocolGame::sendPing()
         msg->addU8(Proto::ClientPing);
         Protocol::send(msg);
     }
-    m_pingTimer.restart();
 }
 
 void ProtocolGame::sendPingBack()

@@ -113,6 +113,7 @@ function UIMinimap:addFlag(pos, icon, description)
   flag:setIcon('/images/game/minimap/flag' .. icon)
   flag:setTooltip(description)
   flag.onMouseRelease = onFlagMouseRelease
+  flag.onDestroy = function() table.removevalue(self.flags, flag) end
   table.insert(self.flags, flag)
   self:centerInPosition(flag, pos)
 end
@@ -162,7 +163,6 @@ function UIMinimap:removeFlag(pos, icon, description)
   local flag = self:getFlag(pos)
   if flag then
     flag:destroy()
-    table.removevalue(self.flags, flag)
   end
 end
 

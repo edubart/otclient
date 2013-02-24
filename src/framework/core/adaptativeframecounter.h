@@ -43,7 +43,7 @@ public:
 
     bool shouldProcessNextFrame();
     void processNextFrame();
-    void update();
+    bool update();
     void setMaxFps(int maxFps);
     bool isFpsLimitActive() { return m_maxFps != 0; }
 

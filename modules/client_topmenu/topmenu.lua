@@ -37,8 +37,10 @@ end
 
 -- public functions
 function init()
-  connect(g_game, { onGameStart = showGameButtons,
-                    onGameEnd = hideGameButtons })
+  connect(g_game, { onGameStart = online,
+                    onGameEnd = offline,
+                    onPingBack = updatePing })
+  connect(g_app, { onFps = updateFps })
 
   topMenu = g_ui.displayUI('topmenu')
 
@@ -46,18 +48,73 @@ function init()
   rightButtonsPanel = topMenu:getChildById('rightButtonsPanel')
   leftGameButtonsPanel = topMenu:getChildById('leftGameButtonsPanel')
   rightGameButtonsPanel = topMenu:getChildById('rightGameButtonsPanel')
+  pingLabel = topMenu:getChildById('pingLabel')
+  fpsLabel = topMenu:getChildById('fpsLabel')
 
   if g_game.isOnline() then
-    leftGameButtonsPanel:show()
-    rightGameButtonsPanel:show()
+    online()
   end
 end
 
 function terminate()
-  disconnect(g_game, { onGameStart = showGameButtons,
-                       onGameEnd = hideGameButtons })
+  disconnect(g_game, { onGameStart = online,
+                       onGameEnd = offline,
+                       onPingBack = updatePing })
+  disconnect(g_app, { onFps = updateFps })
 
   topMenu:destroy()
+end
+
+function online()
+  showGameButtons()
+
+  if modules.client_options.getOption('showFps') then
+    pingLabel:show()
+  end
+end
+
+function offline()
+  hideGameButtons()
+  pingLabel:hide()
+end
+
+function updateFps(fps)
+  text = 'FPS: ' .. fps
+  fpsLabel:setText(text)
+end
+
+function updatePing(ping)
+  local ping = -1
+  if g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing) then
+    ping = g_game.getPing()
+  else
+    ping = g_game.getLocalPlayer():getWalkPing()
+  end
+  local text = 'Ping: '
+  local color
+  if ping < 0 then
+    text = text .. "??"
+    color = 'yellow'
+  else
+    text = text .. ping .. ' ms'
+    if ping >= 500 then
+      color = 'red'
+    elseif ping >= 250 then
+      color = 'yellow'
+    else
+      color = 'green'
+    end
+  end
+  pingLabel:setColor(color)
+  pingLabel:setText(text)
+end
+
+function setPingVisible(enable)
+  pingLabel:setVisible(enable)
+end
+
+function setFpsVisible(enable)
+  fpsLabel:setVisible(enable)
 end
 
 function addLeftButton(id, description, icon, callback, front)
@@ -92,14 +149,14 @@ function addRightGameToggleButton(id, description, icon, callback, front)
   return addButton(id, description, icon, callback, rightGameButtonsPanel, true, front)
 end
 
-function hideGameButtons()
-  leftGameButtonsPanel:hide()
-  rightGameButtonsPanel:hide()
-end
-
 function showGameButtons()
   leftGameButtonsPanel:show()
   rightGameButtonsPanel:show()
+end
+
+function hideGameButtons()
+  leftGameButtonsPanel:hide()
+  rightGameButtonsPanel:hide()
 end
 
 function getButton(id)

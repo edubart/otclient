@@ -24,7 +24,6 @@
 #define CONNECTION_H
 
 #include "declarations.h"
-#include <boost/asio.hpp>
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/timer.h>
 #include <framework/core/declarations.h>

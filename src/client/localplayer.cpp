@@ -77,7 +77,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration() + PREWALK_TIMEOUT;
+    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration() + 5*PREWALK_TIMEOUT;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
     if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
@@ -127,8 +127,9 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     Position newPos = m_position.translatedToDirection(direction);
 
     // avoid reanimating prewalks
-    if(m_preWalking && m_lastPrewalkDestination == newPos)
+    if(m_preWalking && m_lastPrewalkDestination == newPos) {
         return;
+    }
 
     m_waitingWalkPong = false;
     if(m_walkPingTimer.ticksElapsed() > getStepDuration() && m_idleTimer.ticksElapsed() > getStepDuration()*2) {
@@ -157,6 +158,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     m_waitingWalkPong = false;
     m_walkPingTimer.restart();
     m_idleTimer.restart();
+    lockWalk();
 
     if(m_autoWalkDestination.isValid()) {
         g_game.stop();

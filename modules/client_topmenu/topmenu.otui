@@ -18,17 +18,17 @@ TopMenuPanel
     visible: false
 
   TopMenuFrameCounterLabel
-    id: frameCounter
+    id: fpsLabel
     text-auto-resize: true
     anchors.top: parent.top
     anchors.left: leftGameButtonsPanel.right
 
-  PingLabel
+  TopMenuPingLabel
     color: white
     id: pingLabel
     text-auto-resize: true
-    anchors.top: frameCounter.bottom
-    anchors.left: frameCounter.left
+    anchors.top: fpsLabel.bottom
+    anchors.left: fpsLabel.left
 
   TopMenuButtonsPanel
     id: rightButtonsPanel

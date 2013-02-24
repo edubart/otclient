@@ -37,7 +37,6 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
-#include <boost/concept_check.hpp>
 
 
 enum {

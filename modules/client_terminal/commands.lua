@@ -92,3 +92,8 @@ function createDebugUIItem(id)
   uiitem:setItemId(id)
   uiitem:show()
 end
+
+function debugPings()
+  g_game.setPingDelay(0)
+  connect(g_game, { onPingBack = function(ping) print(g_game.getWorldName() .. ' => ' .. ping .. ' ms') end })
+end

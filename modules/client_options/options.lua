@@ -179,15 +179,9 @@ function setOption(key, value)
   if key == 'vsync' then
     g_window.setVerticalSync(value)
   elseif key == 'showFps' then
-    addEvent(function()
-      local frameCounter = rootWidget:recursiveGetChildById('frameCounter')
-      if frameCounter then frameCounter:setVisible(value) end
-    end)
+    modules.client_topmenu.setFpsVisible(value)
   elseif key == 'showPing' then
-    addEvent(function()
-      local ping = rootWidget:recursiveGetChildById('pingLabel')
-      if ping then ping:setVisible(value) end
-    end)
+    modules.client_topmenu.setPingVisible(value)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
     panel = graphicsPanel

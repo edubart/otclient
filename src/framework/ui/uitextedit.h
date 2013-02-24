@@ -24,7 +24,6 @@
 #define UITEXTEDIT_H
 
 #include "uiwidget.h"
-#include <boost/concept_check.hpp>
 
 // @bindclass
 class UITextEdit : public UIWidget

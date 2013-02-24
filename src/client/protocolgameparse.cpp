@@ -430,7 +430,7 @@ void ProtocolGame::parsePing(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
 {
-    g_game.processPingBack(m_pingTimer.elapsed_millis());
+    g_game.processPingBack();
 }
 
 void ProtocolGame::parseChallenge(const InputMessagePtr& msg)

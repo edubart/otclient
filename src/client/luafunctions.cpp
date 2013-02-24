@@ -219,6 +219,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "mount", &Game::mount, &g_game);
     g_lua.bindSingletonFunction("g_game", "requestItemInfo", &Game::requestItemInfo, &g_game);
     g_lua.bindSingletonFunction("g_game", "ping", &Game::ping, &g_game);
+    g_lua.bindSingletonFunction("g_game", "setPingDelay", &Game::setPingDelay, &g_game);
     g_lua.bindSingletonFunction("g_game", "changeMapAwareRange", &Game::changeMapAwareRange, &g_game);
     g_lua.bindSingletonFunction("g_game", "canPerformGameAction", &Game::canPerformGameAction, &g_game);
     g_lua.bindSingletonFunction("g_game", "canReportBugs", &Game::canReportBugs, &g_game);

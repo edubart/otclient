@@ -235,7 +235,6 @@ private:
     std::string m_accountName;
     std::string m_accountPassword;
     std::string m_characterName;
-    stdext::timer m_pingTimer;
     LocalPlayerPtr m_localPlayer;
 };
 

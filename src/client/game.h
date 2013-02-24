@@ -54,7 +54,7 @@ protected:
     void processConnectionError(const boost::system::error_code& error);
     void processDisconnect();
     void processPing();
-    void processPingBack(int elapsed);
+    void processPingBack();
 
     void processUpdateNeeded(const std::string& signature);
     void processLoginError(const std::string& error);
@@ -252,6 +252,7 @@ public:
 
     //void reportRuleViolation2();
     void ping();
+    void setPingDelay(int delay) { m_pingDelay = delay; }
 
     // otclient only
     void changeMapAwareRange(int xrange, int yrange);
@@ -280,7 +281,7 @@ public:
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
 
-    int getPing() { return m_ping; }
+    int getPing() { return m_ping >= 0 ? std::max(m_ping, m_pingTimer.elapsed_millis()) : -1; }
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
     std::map<int, Vip> getVips() { return m_vips; }
@@ -320,8 +321,12 @@ private:
     bool m_denyBotCall;
     bool m_dead;
     int m_serverBeat;
-    int m_ping;
+    ticks_t m_ping;
+    uint m_pingSent;
+    uint m_pingReceived;
+    stdext::timer m_pingTimer;
     uint m_seq;
+    int m_pingDelay;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
     Otc::Direction m_lastWalkDir;

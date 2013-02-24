@@ -83,8 +83,10 @@ std::string Platform::getCurrentDir()
 {
     std::string res;
     char cwd[2048];
-    if(getcwd(cwd, sizeof(cwd)) != NULL)
+    if(getcwd(cwd, sizeof(cwd)) != NULL) {
         res = cwd;
+        res += "/";
+    }
     return res;
 }
 
@@ -93,10 +95,17 @@ bool Platform::copyFile(std::string from, std::string to)
     return system(stdext::format("/bin/cp '%s' '%s'", from, to).c_str()) == 0;
 }
 
-bool Platform::fileExists(const std::string& file)
+bool Platform::fileExists(std::string file)
 {
     struct stat buffer;
     return (stat(file.c_str(), &buffer) == 0);
+}
+
+bool Platform::removeFile(std::string file)
+{
+    if(unlink(file.c_str()) == 0)
+        return true;
+    return false;
 }
 
 void Platform::openUrl(std::string url)

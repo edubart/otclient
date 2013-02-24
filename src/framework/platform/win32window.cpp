@@ -590,8 +590,12 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_ACTIVATE: {
             m_focused = !(wParam == WA_INACTIVE);
-            if(!m_focused)
-                releaseAllKeys();
+            releaseAllKeys();
+            break;
+        }
+        case WM_SETFOCUS:
+        case WM_KILLFOCUS: {
+            releaseAllKeys();
             break;
         }
         case WM_CHAR: {

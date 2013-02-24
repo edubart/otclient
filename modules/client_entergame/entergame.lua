@@ -145,10 +145,10 @@ function EnterGame.firstShow()
   local host = g_settings.get('host')
   local autologin = g_settings.getBoolean('autologin')
   if #host > 0 and #password > 0 and #account > 0 and autologin then
-    connect(g_app, { onRun = function()
+    addEvent(function()
       if not g_settings.getBoolean('autologin') then return end
       EnterGame.doLogin()
-    end})
+    end)
   end
 end
 

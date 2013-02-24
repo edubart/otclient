@@ -64,7 +64,6 @@ public:
 
     std::string resolvePath(const std::string& path);
     std::string getRealDir(const std::string& path);
-    std::string getCurrentDir();
     std::string getBaseDir();
     std::string getUserDir();
     std::string getWriteDir() { return m_writeDir; }

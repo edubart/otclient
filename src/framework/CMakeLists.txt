@@ -137,6 +137,7 @@ if(NOT APPLE)
     option(CRASH_HANDLER "Generate crash reports" ON)
     option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
     option(USE_LIBCPP "Use the new libc++ library instead of stdc++" OFF)
+    option(USE_LTO "Use link time optimizations" OFF)
 else()
     set(CRASH_HANDLER OFF)
     set(USE_STATIC_LIBS OFF)
@@ -162,9 +163,17 @@ set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_
 set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
-set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-set(CMAKE_CXX_FLAGS_MINSIZEREL        "-Os")
+set(CMAKE_CXX_FLAGS_RELEASE           "-Os")
 set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
+
+if(USE_LTO)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwhole-program -flto")
+    if(WIN32)
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-O1,--gc-sections,--sort-common,--relax")
+    else()
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-O1,--gc-sections,--sort-common,--relax,-z,relro")
+    endif()
+endif()
 
 # process options
 if(USE_STATIC_LIBS)
@@ -231,8 +240,8 @@ else()
     if(NOT CMAKE_BUILD_TYPE STREQUAL "CompileSpeed")
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DNDEBUG) # NDEBUG disable asserts
     endif()
-    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-s") # strip all debug information
     if(NOT APPLE)
+        set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-s") # strip all debug information
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--as-needed") # only link needed libraries
     endif()
 endif()

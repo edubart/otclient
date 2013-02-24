@@ -45,10 +45,11 @@ void ResourceManager::terminate()
 bool ResourceManager::discoverWorkDir(const std::string& existentFile)
 {
     // search for modules directory
-    std::string possiblePaths[] = { g_resources.getCurrentDir(),
+    std::string possiblePaths[] = { g_platform.getCurrentDir(),
                                     g_resources.getBaseDir(),
                                     g_resources.getBaseDir() + "../",
                                     g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/" };
+
     bool found = false;
     for(const std::string& dir : possiblePaths) {
         if(!PHYSFS_addToSearchPath(dir.c_str(), 0))
@@ -294,11 +295,6 @@ std::string ResourceManager::getRealDir(const std::string& path)
     if(cdir)
         dir = cdir;
     return dir;
-}
-
-std::string ResourceManager::getCurrentDir()
-{
-    return g_platform.getCurrentDir();
 }
 
 std::string ResourceManager::getBaseDir()

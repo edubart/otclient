@@ -60,7 +60,7 @@ void AdaptativeFrameCounter::processNextFrame()
     m_lastFrame = now ;
 }
 
-void AdaptativeFrameCounter::update()
+bool AdaptativeFrameCounter::update()
 {
     ticks_t now = g_clock.micros();
     ticks_t delta = now - m_lastPartialFpsUpdate;
@@ -82,7 +82,9 @@ void AdaptativeFrameCounter::update()
         m_frameDelaySum = 0;
 
         //dump << stdext::format("FPS => %d  Partial FPS => %d  Frame Delay Hit => %.2f%%", m_lastFps, (int)m_partialFps, getFrameDelayHit());
+        return true;
     }
+    return false;
 }
 
 void AdaptativeFrameCounter::setMaxFps(int maxFps)

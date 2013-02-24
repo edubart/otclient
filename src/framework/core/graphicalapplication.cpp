@@ -184,7 +184,8 @@ void GraphicalApplication::run()
             // only update the current time once per frame to gain performance
             g_clock.update();
 
-            m_backgroundFrameCounter.update();
+            if(m_backgroundFrameCounter.update())
+                g_lua.callGlobalField("g_app", "onFps", m_backgroundFrameCounter.getLastFps());
             m_foregroundFrameCounter.update();
 
             int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();

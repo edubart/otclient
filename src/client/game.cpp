@@ -47,6 +47,7 @@ Game::Game()
     m_serverBeat = 50;
     m_seq = 0;
     m_ping = -1;
+    m_pingDelay = 1000;
     m_canReportBugs = false;
     m_fightMode = Otc::FightBalanced;
     m_chaseMode = Otc::DontChase;
@@ -79,6 +80,8 @@ void Game::resetGameStates()
     m_followingCreature = nullptr;
     m_attackingCreature = nullptr;
     m_localPlayer = nullptr;
+    m_pingSent = 0;
+    m_pingReceived = 0;
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -176,14 +179,9 @@ void Game::processGameStart()
     disableBotCall();
 
     if(g_game.getFeature(Otc::GameClientPing) || g_game.getFeature(Otc::GameExtendedClientPing)) {
-        m_protocolGame->sendPing();
-        m_pingEvent = g_dispatcher.cycleEvent([this] {
-            if(m_protocolGame && m_protocolGame->isConnected()) {
-                enableBotCall();
-                m_protocolGame->sendPing();
-                disableBotCall();
-            }
-        }, 2000);
+        m_pingEvent = g_dispatcher.scheduleEvent([this] {
+            g_game.ping();
+        }, m_pingDelay);
     }
 }
 
@@ -224,10 +222,20 @@ void Game::processPing()
     disableBotCall();
 }
 
-void Game::processPingBack(int elapsed)
+void Game::processPingBack()
 {
-    m_ping = elapsed;
-    g_lua.callGlobalField("g_game", "onPingBack", elapsed);
+    m_pingReceived++;
+
+    if(m_pingReceived == m_pingSent)
+        m_ping = m_pingTimer.elapsed_millis();
+    else
+        g_logger.error("got an invalid ping from server");
+
+    g_lua.callGlobalField("g_game", "onPingBack", m_ping);
+
+    m_pingEvent = g_dispatcher.scheduleEvent([this] {
+        g_game.ping();
+    }, m_pingDelay);
 }
 
 void Game::processTextMessage(Otc::MessageMode mode, const std::string& text)
@@ -1252,9 +1260,14 @@ void Game::ping()
     if(!m_protocolGame || !m_protocolGame->isConnected())
         return;
 
+    if(m_pingReceived != m_pingSent)
+        return;
+
     m_denyBotCall = false;
     m_protocolGame->sendPing();
     m_denyBotCall = true;
+    m_pingSent++;
+    m_pingTimer.restart();
 }
 
 void Game::changeMapAwareRange(int xrange, int yrange)

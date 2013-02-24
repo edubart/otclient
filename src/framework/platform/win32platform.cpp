@@ -95,11 +95,13 @@ std::string Platform::getCurrentDir()
     GetCurrentDirectoryW(MAX_PATH, path);
     ret = stdext::utf16_to_utf8(path);
     boost::replace_all(ret, "\\", "/");
+    ret += "/";
     return ret;
 }
 
-bool Platform::fileExists(const std::string& file)
+bool Platform::fileExists(std::string file)
 {
+    boost::replace_all(file, "/", "\\");
     std::wstring wfile = stdext::utf8_to_utf16(file);
     DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES &&  !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
@@ -110,6 +112,14 @@ bool Platform::copyFile(std::string from, std::string to)
     boost::replace_all(from, "/", "\\");
     boost::replace_all(to, "/", "\\");
     if(CopyFileW(stdext::utf8_to_utf16(from).c_str(), stdext::utf8_to_utf16(to).c_str(), FALSE) == 0)
+        return false;
+    return true;
+}
+
+bool Platform::removeFile(std::string file)
+{
+    boost::replace_all(file, "/", "\\");
+    if(DeleteFileW(stdext::utf8_to_utf16(file).c_str()) == 0)
         return false;
     return true;
 }

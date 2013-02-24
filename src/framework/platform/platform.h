@@ -37,7 +37,8 @@ public:
     std::string getTempPath();
     std::string getCurrentDir();
     bool copyFile(std::string from, std::string to);
-    bool fileExists(const std::string& file);
+    bool fileExists(std::string file);
+    bool removeFile(std::string file);
     void openUrl(std::string url);
     std::string getCPUName();
     double getTotalSystemMemory();
