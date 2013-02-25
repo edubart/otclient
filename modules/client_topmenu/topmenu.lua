@@ -84,12 +84,6 @@ function updateFps(fps)
 end
 
 function updatePing(ping)
-  local ping = -1
-  if g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing) then
-    ping = g_game.getPing()
-  else
-    ping = g_game.getLocalPlayer():getWalkPing()
-  end
   local text = 'Ping: '
   local color
   if ping < 0 then

@@ -29,7 +29,7 @@
 class LocalPlayer : public Player
 {
     enum {
-        PREWALK_TIMEOUT = 1000
+        PREWALK_TIMEOUT = 5000
     };
 
 public:
@@ -69,7 +69,6 @@ public:
     int getSkillBaseLevel(Otc::Skill skill) { return m_skillsBaseLevel[skill]; }
     int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
     int getVocation() { return m_vocation; }
-    int getWalkPing() { return m_lastWalkPing; }
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
     double getFreeCapacity() { return m_freeCapacity; }
@@ -119,18 +118,15 @@ protected:
 
 private:
     // walk related
-    Timer m_walkPingTimer;
     Position m_lastPrewalkDestination;
     Position m_autoWalkDestination;
     Position m_lastAutoWalkPosition;
     ScheduledEventPtr m_serverWalkEndEvent;
     ScheduledEventPtr m_autoWalkContinueEvent;
     ticks_t m_walkLockExpiration;
-    int m_lastWalkPing;
     stdext::boolean<false> m_preWalking;
     stdext::boolean<true> m_lastPrewalkDone;
     stdext::boolean<false> m_serverWalking;
-    stdext::boolean<false> m_waitingWalkPong;
     stdext::boolean<false> m_knownCompletePath;
 
     stdext::boolean<false> m_premium;
