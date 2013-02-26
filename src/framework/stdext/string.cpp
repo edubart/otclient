@@ -144,7 +144,7 @@ std::string utf8_to_latin1(const std::string& src)
     std::string out;
     for(uint i=0;i<src.length();) {
         uchar c = src[i++];
-        if(c >= 32 && c < 128)
+        if((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
             out += c;
         else if(c == 0xc2 || c == 0xc3) {
             uchar c2 = src[i++];
@@ -167,7 +167,7 @@ std::string latin1_to_utf8(const std::string& src)
 {
     std::string out;
     for(uchar c : src) {
-        if(c >= 32 && c < 128)
+        if((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
             out += c;
         else {
             out += 0xc2 + (c > 0xbf);
