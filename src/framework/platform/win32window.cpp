@@ -36,7 +36,9 @@ WIN32Window::WIN32Window()
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
     m_hidden = true;
+    m_deviceContext = 0;
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextWGL);
+    std::cout << "lal3: \"" << m_graphicsContext->getName().c_str() << "\" aa" << std::endl;
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -212,6 +214,12 @@ void WIN32Window::terminate()
 
     internalDestroyContext();
 
+    if(m_deviceContext) {
+        if(!ReleaseDC(m_window, m_deviceContext))
+            g_logger.error("Release device context failed.");
+        m_deviceContext = NULL;
+    }
+
     if(m_window) {
         if(!DestroyWindow(m_window))
             g_logger.error("ERROR: Destroy window failed.");
@@ -275,32 +283,26 @@ void WIN32Window::internalCreateWindow()
         g_logger.fatal("Unable to create window");
 
     ShowWindow(m_window, SW_HIDE);
+
+    m_deviceContext = GetDC(m_window);
+    if(!m_deviceContext)
+        g_logger.fatal("GetDC failed");
 }
 
 void WIN32Window::internalCreateContext()
 {
     dump << m_graphicsContext->getName().c_str();
-    m_graphicsContext->create(m_window);
+    m_graphicsContext->create(m_window, m_deviceContext);
 }
 
 void WIN32Window::internalDestroyContext()
 {
-    m_graphicsContext->destroy(m_window);
+    m_graphicsContext->destroy();
 }
 
 void WIN32Window::internalRestoreContext()
 {
     m_graphicsContext->restore();
-}
-
-bool WIN32Window::isExtensionSupported(const char *ext)
-{
-   return m_graphicsContext->isExtensionSupported(ext);
-}
-
-void *WIN32Window::getExtensionProcAddress(const char *ext)
-{
-    return m_graphicsContext->getExtensionProcAddress(ext);
 }
 
 void WIN32Window::move(const Point& pos)

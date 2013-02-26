@@ -31,8 +31,8 @@ class GraphicsContextWGL : public GraphicsContext
 public:
     GraphicsContextWGL();
 
-    void create(WindowType window);
-    void destroy(WindowType window);
+    void create(WindowType window, DisplayType display);
+    void destroy();
     void restore();
 
     bool isExtensionSupported(const char *ext);
@@ -43,7 +43,6 @@ public:
     void setVerticalSync(bool enable);
 
 private:
-    HDC m_deviceContext;
     HGLRC m_wglContext;
 };
 

@@ -35,9 +35,6 @@ class WIN32Window : public PlatformWindow
     void internalDestroyContext();
     void internalRestoreContext();
 
-    void *getExtensionProcAddress(const char *ext);
-    bool isExtensionSupported(const char *ext);
-
     LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     friend class WindowProcProxy;
 
@@ -83,6 +80,7 @@ private:
     Rect adjustWindowRect(const Rect& rect);
 
     std::vector<HCURSOR> m_cursors;
+    HDC m_deviceContext;
     HWND m_window;
     HINSTANCE m_instance;
     HCURSOR m_cursor;

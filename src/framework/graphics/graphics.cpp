@@ -238,7 +238,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
             if(g_painter)
                 g_painter->unbind();
             painter->bind();
-            g_window.setGraphicsContext(painter->getGraphicsContext());
+            //g_window.setGraphicsContext(painter->getGraphicsContext());
             g_painter = painter;
         }
 
@@ -254,6 +254,11 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 void Graphics::resize(const Size& size)
 {
     m_viewportSize = size;
+#ifdef PAINTER_DX9
+    if(g_painterDX9)
+        g_painterDX9->setResolution(size);
+#endif
+
 #ifdef PAINTER_OGL1
     if(g_painterOGL1)
         g_painterOGL1->setResolution(size);

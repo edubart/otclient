@@ -66,8 +66,8 @@ int PlatformWindow::loadMouseCursor(const std::string& file, const Point& hotSpo
 void PlatformWindow::setGraphicsContext(const GraphicsContextPtr& graphicsContext)
 {
     // TODO
-    //if(m_graphicsContext && m_graphicsContext->getName() == graphicsContext->getName())
-        //return;
+    if(m_graphicsContext && m_graphicsContext->getName() == graphicsContext->getName())
+        return;
 
     if(m_graphicsContext)
         internalDestroyContext();

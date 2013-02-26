@@ -25,15 +25,13 @@
 GraphicsContextWGL::GraphicsContextWGL() :
     GraphicsContext("WGL")
 {
-    m_deviceContext = 0;
     m_wglContext = 0;
 }
 
-void GraphicsContextWGL::create(WindowType window)
+void GraphicsContextWGL::create(WindowType window, DisplayType display)
 {
-    m_deviceContext = GetDC(window);
-    if(!m_deviceContext)
-        g_logger.fatal("GetDC failed");
+    m_window = window;
+    m_display = display;
 
     uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
@@ -53,18 +51,18 @@ void GraphicsContextWGL::create(WindowType window)
                                          0,                          // Reserved
                                          0, 0, 0 };                  // Layer Masks Ignored
 
-    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
+    pixelFormat = ChoosePixelFormat(display, &pfd);
     if(!pixelFormat)
         g_logger.fatal("Could not find a suitable pixel format");
 
-    if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
+    if(!SetPixelFormat(display, pixelFormat, &pfd))
         g_logger.fatal("Could not set the pixel format");
 
-    if(!(m_wglContext = wglCreateContext(m_deviceContext)))
+    if(!(m_wglContext = wglCreateContext(display)))
         g_logger.fatal("Unable to create GL context");
 }
 
-void GraphicsContextWGL::destroy(WindowType window)
+void GraphicsContextWGL::destroy()
 {
     if(m_wglContext) {
         if(!wglMakeCurrent(NULL, NULL))
@@ -73,17 +71,11 @@ void GraphicsContextWGL::destroy(WindowType window)
             g_logger.error("Release rendering context failed.");
         m_wglContext = NULL;
     }
-
-    if(m_deviceContext) {
-        if(!ReleaseDC(window, m_deviceContext))
-            g_logger.error("Release device context failed.");
-        m_deviceContext = NULL;
-    }
 }
 
 void GraphicsContextWGL::restore()
 {
-    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
+    if(!wglMakeCurrent(m_display, m_wglContext))
         g_logger.fatal("Unable to make current WGL context");
 }
 
@@ -108,7 +100,7 @@ void *GraphicsContextWGL::getExtensionProcAddress(const char *ext)
 
 void GraphicsContextWGL::swapBuffers()
 {
-    SwapBuffers(m_deviceContext);
+    SwapBuffers(m_display);
 }
 
 void GraphicsContextWGL::setVerticalSync(bool enable)
