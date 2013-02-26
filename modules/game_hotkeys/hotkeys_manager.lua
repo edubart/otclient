@@ -364,7 +364,7 @@ function doKeyCombo(keyCombo)
       modules.game_console.setTextEditText(hotKey.value)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USE then
-    g_game.useInventoryItemWith(hotKey.itemId)
+    g_game.useInventoryItem(hotKey.itemId)
   elseif hotKey.useType == HOTKEY_MANAGER_USEONSELF then
     g_game.useInventoryItemWith(hotKey.itemId, g_game.getLocalPlayer())
   elseif hotKey.useType == HOTKEY_MANAGER_USEONTARGET then
