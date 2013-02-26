@@ -15,7 +15,6 @@ ConsolePhantomLabel < UILabel
   font: verdana-11px-antialised
   height: 14
   color: yellow
-  margin-left: 2
   text-wrap: true
   text-auto-resize: true
   selection-color: #111416
@@ -38,29 +37,6 @@ ConsoleTabBarPanel < MoveableTabBarPanel
     background: #00000066
     inverted-scroll: true
     padding: 1
-
-  ScrollablePanel
-    id: consoleBufferHighlight
-    anchors.fill: parent
-    margin-right: 12
-    vertical-scrollbar: consoleScrollBarHighlight
-    layout:
-      type: verticalBox
-      align-bottom: true
-    inverted-scroll: true
-    padding: 1
-    @onScrollbarChange: |
-      local consoleScrollBar = self:getParent():getChildById('consoleScrollBar')
-      local consoleScrollBarHighlight = self:getParent():getChildById('consoleScrollBarHighlight')
-      consoleScrollBar:setValue(consoleScrollBarHighlight:getValue())
-
-  VerticalScrollBar
-    id: consoleScrollBarHighlight
-    anchors.top: parent.top
-    anchors.bottom: parent.bottom
-    anchors.right: parent.right
-    step: 14
-    pixels-scroll: true
 
   VerticalScrollBar
     id: consoleScrollBar

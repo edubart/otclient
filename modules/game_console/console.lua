@@ -257,7 +257,6 @@ end
 
 function clearChannel(consoleTabBar)
   consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
-  consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBufferHighlight'):destroyChildren()
 end
 
 function setTextEditText(text)
@@ -447,17 +446,16 @@ function addTabText(text, speaktype, tab, creatureName)
   consoleTabBar:blinkTab(tab)
 
   -- Overlay for consoleBuffer which shows highlighted words only
-  local consoleBufferHighlight = panel:getChildById('consoleBufferHighlight')
-  local labelHighlight = g_ui.createWidget('ConsolePhantomLabel', consoleBufferHighlight)
 
-  labelHighlight:setId('consoleLabel' .. consoleBufferHighlight:getChildCount())
-  labelHighlight:setColor("#1f9ffe")
-
-  if speaktype.npcChat and (g_game.getCharacterName() ~= creatureName or g_game.getCharacterName() == 'Account Manager') then  -- Check if it is the npc who is talking
+  if speaktype.npcChat and (g_game.getCharacterName() ~= creatureName or g_game.getCharacterName() == 'Account Manager') then
     local highlightData = getHighlightedText(text)
-    if #highlightData == 0 then
-      labelHighlight:setText("")
-    else
+    if #highlightData > 0 then
+      local labelHighlight = g_ui.createWidget('ConsolePhantomLabel', label)
+      labelHighlight:fill('parent')
+
+      labelHighlight:setId('consoleLabelHighlight' .. consoleBuffer:getChildCount())
+      labelHighlight:setColor("#1f9ffe")
+
       -- Remove the curly braces
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
@@ -496,8 +494,6 @@ function addTabText(text, speaktype, tab, creatureName)
 
       labelHighlight:setText(tmpText)
     end
-  else
-    labelHighlight:setText("")
   end
 
   label.name = creatureName
@@ -507,10 +503,6 @@ function addTabText(text, speaktype, tab, creatureName)
 
   if consoleBuffer:getChildCount() > MAX_LINES then
     consoleBuffer:getFirstChild():destroy()
-  end
-
-  if consoleBufferHighlight:getChildCount() > MAX_LINES then
-    consoleBufferHighlight:getFirstChild():destroy()
   end
 end
 
