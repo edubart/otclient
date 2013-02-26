@@ -5,6 +5,7 @@ local defaultOptions = {
   fullscreen = false,
   classicControl = false,
   smartWalk = false,
+  dashWalk = false,
   autoChaseOverride = true,
   showStatusMessagesInConsole = true,
   showEventMessagesInConsole = true,

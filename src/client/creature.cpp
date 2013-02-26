@@ -782,7 +782,7 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-int Creature::getStepDuration(bool ignoreDiagonal)
+int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
     int speed = m_speed;
     if(speed < 1)
@@ -792,7 +792,13 @@ int Creature::getStepDuration(bool ignoreDiagonal)
         speed *= 2;
 
     int groundSpeed = 0;
-    Position tilePos = m_lastStepToPosition;
+    Position tilePos;
+
+    if(dir == Otc::InvalidDirection)
+        tilePos = m_lastStepToPosition;
+    else
+        tilePos = m_position.translatedToDirection(dir);
+
     if(!tilePos.isValid())
         tilePos = m_position;
     const TilePtr& tile = g_map.getTile(tilePos);

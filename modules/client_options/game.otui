@@ -13,6 +13,11 @@ Panel
     !tooltip: tr('Will detect when to use diagonal step based on the\nkeys you are pressing')
 
   OptionCheckBox
+    id: dashWalk
+    !text: tr('Enable dash walking')
+    !tooltip: tr('Will boost your walk on high speed characters')
+
+  OptionCheckBox
     id: showPing
     !text: tr('Show connection ping')
     !tooltip: tr('Display connection speed to the server (milliseconds)')

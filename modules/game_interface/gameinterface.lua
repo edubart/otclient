@@ -15,14 +15,13 @@ limitZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
-walkFunction = g_game.walk
+walkFunction = nil
 
 function init()
   g_ui.importStyle('styles/countwindow')
 
   connect(g_game, {
     onGameStart = onGameStart,
-    onGMActions = onGMActions,
     onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice,
   }, true)
@@ -119,7 +118,6 @@ function terminate()
 
   disconnect(g_game, {
     onGameStart = onGameStart,
-    onGMActions = onGMActions,
     onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice
   })
@@ -139,6 +137,16 @@ function onGameStart()
   else
     g_game.disableFeature(GameForceFirstAutoWalkStep)
   end
+
+  addEvent(function()
+    if not limitZoom or g_game.isGM() then
+      gameMapPanel:setMaxZoomOut(513)
+      gameMapPanel:setLimitVisibleRange(false)
+    else
+      gameMapPanel:setMaxZoomOut(11)
+      gameMapPanel:setLimitVisibleRange(true)
+    end
+  end)
 end
 
 function onGameEnd()
@@ -152,8 +160,6 @@ function show()
   gameRootPanel:show()
   gameRootPanel:focus()
   gameMapPanel:followCreature(g_game.getLocalPlayer())
-  gameMapPanel:setMaxZoomOut(11)
-  gameMapPanel:setLimitVisibleRange(true)
   setupViewMode(0)
   updateStretchShrink()
   logoutButton:setTooltip(tr('Logout'))
@@ -199,6 +205,7 @@ function onLoginAdvice(message)
 end
 
 function forceExit()
+  g_game.cancelLogin()
   scheduleEvent(exit, 10)
   return true
 end
@@ -284,11 +291,16 @@ end
 
 function smartWalk(dir)
   if g_keyboard.getModifiers() == KeyboardNoModifier then
-    if smartWalkDir then
-      walkFunction(smartWalkDir)
-    else
-      walkFunction(dir)
+    local func = walkFunction
+    if not func then
+      if modules.client_options.getOption('dashWalk') then
+        func = g_game.dashWalk
+      else
+        func = g_game.walk
+      end
     end
+    local dire = smartWalkDir or dir
+    func(dire)
     return true
   end
   return false
@@ -759,10 +771,4 @@ end
 
 function limitZoom()
   limitZoom = true
-end
-
-function onGMActions()
-  if not limitZoom then return end
-  gameMapPanel:setMaxZoomOut(513)
-  gameMapPanel:setLimitVisibleRange(false)
 end

@@ -143,6 +143,7 @@ public:
 
     // walk related
     bool walk(Otc::Direction direction);
+    bool dashWalk(Otc::Direction direction);
     void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
@@ -325,6 +326,7 @@ private:
     uint m_pingSent;
     uint m_pingReceived;
     stdext::timer m_pingTimer;
+    Timer m_dashTimer;
     uint m_seq;
     int m_pingDelay;
     Otc::FightModes m_fightMode;

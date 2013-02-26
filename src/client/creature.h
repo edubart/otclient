@@ -85,7 +85,7 @@ public:
     uint8 getEmblem() { return m_emblem; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
-    int getStepDuration(bool ignoreDiagonal = false);
+    int getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getWalkOffset() { return m_walkOffset; }
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }

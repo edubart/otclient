@@ -50,6 +50,10 @@ function terminate()
     onGameEnd = offline,
   })
 
+  disconnect(LocalPlayer, {
+    onPositionChange = updateCameraPosition
+  })
+
   local gameRootPanel = modules.game_interface.getRootPanel()
   g_keyboard.unbindKeyPress('Alt+Left', gameRootPanel)
   g_keyboard.unbindKeyPress('Alt+Right', gameRootPanel)
