@@ -68,7 +68,7 @@ end
 function online()
   showGameButtons()
 
-  if modules.client_options.getOption('showFps') then
+  if modules.client_options.getOption('showFps') and (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
     pingLabel:show()
   end
 end

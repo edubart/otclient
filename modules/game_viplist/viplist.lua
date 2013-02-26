@@ -183,11 +183,14 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:addOption(tr('Remove %s', widget:getText()), function() if widget then g_game.removeVip(widget:getId():sub(4)) vipList:removeChild(widget) end end)
   menu:addSeparator()
-  menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end)  if modules.game_console.getOwnPrivateTab() then
+  menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(widget:getText()) end) 
+
+  if modules.game_console.getOwnPrivateTab() then
     menu:addSeparator()
     menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
     menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end)
   end
+
   if not isHiddingOffline() then
     menu:addOption(tr('Hide Offline'), function() hideOffline(true) end)
   else
