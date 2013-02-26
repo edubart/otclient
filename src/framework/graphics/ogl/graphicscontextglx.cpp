@@ -29,9 +29,18 @@ GraphicsContextGLX::GraphicsContextGLX() :
     m_glxContext = 0;
 }
 
-void GraphicsContextGLX::create()
+void GraphicsContextGLX::create(WindowType window, DisplayType display)
 {
+    m_window = window;
+    m_display = display;
 
+    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+
+    if(!m_glxContext)
+        g_logger.fatal("Unable to create GLX context");
+
+    if(!glXIsDirect(m_display, m_glxContext))
+        g_logger.warning("GL direct rendering is not possible");
 }
 
 void GraphicsContextGLX::destroy()
@@ -45,14 +54,16 @@ void GraphicsContextGLX::destroy()
 
 void GraphicsContextGLX::restore()
 {
-
+    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
+        g_logger.fatal("Unable to set GLX context on X11 window");
 }
 
 bool GraphicsContextGLX::isExtensionSupported(const char *ext)
 {
-    const char *exts = glXQueryExtensionsString(m_display, m_screen);
+    const char *exts = glXQueryExtensionsString(m_display, DefaultScreen(m_display));
     if(strstr(exts, ext))
         return true;
+    return false;
 }
 
 void *GraphicsContextGLX::getExtensionProcAddress(const char *ext)

@@ -31,9 +31,12 @@ GraphicsContextEGL::GraphicsContextEGL() :
     m_eglSurface = 0;
 }
 
-void GraphicsContextEGL::create()
+void GraphicsContextEGL::create(WindowType window, DisplayType display)
 {
-    m_eglDisplay = eglGetDisplay(m_deviceContext);
+    m_window = window;
+    m_display = display;
+
+    m_eglDisplay = eglGetDisplay(display);
     if(m_eglDisplay == EGL_NO_DISPLAY)
         g_logger.fatal("EGL not supported");
 
@@ -73,7 +76,7 @@ void GraphicsContextEGL::create()
         EGL_NONE
     };
 
-    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
+    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
         g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
 
@@ -102,18 +105,6 @@ void GraphicsContextEGL::restore()
 {
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         g_logger.fatal("Unable to make current EGL context");
-}
-
-bool GraphicsContextEGL::isExtensionSupported(const char *ext)
-{
-    //TODO
-    return false;
-}
-
-void *GraphicsContextEGL::getExtensionProcAddress(const char *ext)
-{
-    //TODO
-    return NULL;
 }
 
 void GraphicsContextEGL::swapBuffers()

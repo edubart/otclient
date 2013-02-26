@@ -28,8 +28,11 @@
 #ifdef WIN32
 #include <windows.h>
 typedef HWND WindowType;
+typedef HDC DisplayType;
 #else
+#include <X11/Xlib.h>
 typedef Window WindowType;
+typedef Display *DisplayType;
 #endif
 
 class GraphicsContext
@@ -40,19 +43,18 @@ public:
 
     std::string getName() { return m_name; }
 
-    virtual void create(WindowType window) = 0;
-    virtual void destroy(WindowType window) = 0;
+    virtual void create(WindowType window, DisplayType display) = 0;
+    virtual void destroy() = 0;
     virtual void restore() = 0;
-
-    virtual bool isExtensionSupported(const char *ext) = 0;
-    virtual void *getExtensionProcAddress(const char *ext) = 0;
 
     virtual void swapBuffers() = 0;
 
     virtual void setVerticalSync(bool enable) = 0;
 
-private:
+protected:
     std::string m_name;
+    WindowType m_window;
+    DisplayType m_display;
 
 };
 

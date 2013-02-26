@@ -31,12 +31,9 @@ class GraphicsContextEGL : public GraphicsContext
 public:
     GraphicsContextEGL();
 
-    void create();
+    void create(WindowType window, DisplayType display);
     void destroy();
     void restore();
-
-    bool isExtensionSupported(const char *ext);
-    void *getExtensionProcAddress(const char *ext);
 
     void swapBuffers();
 

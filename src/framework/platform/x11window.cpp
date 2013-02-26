@@ -23,6 +23,7 @@
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
+#include <framework/graphics/ogl/graphicscontextglx.h>
 #include <unistd.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
@@ -42,6 +43,7 @@ X11Window::X11Window()
     m_wmDelete = 0;
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextGLX);
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
@@ -201,7 +203,7 @@ void X11Window::init()
     internalOpenDisplay();
     internalCheckGL();
     internalChooseGLVisual();
-    internalCreateGLContext();
+    internalCreateContext();
     internalCreateWindow();
 }
 
@@ -231,7 +233,7 @@ void X11Window::terminate()
         m_colormap = 0;
     }
 
-    internalDestroyGLContext();
+    internalDestroyContext();
 
     if(m_visual) {
         XFree(m_visual);
@@ -319,7 +321,7 @@ void X11Window::internalCreateWindow()
     if(!internalSetupWindowInput())
         g_logger.warning("Input of special keys may be messed up, because window input initialization failed");
 
-    internalConnectGLContext();
+    internalRestoreContext();
 }
 
 bool X11Window::internalSetupWindowInput()
@@ -422,59 +424,19 @@ void X11Window::internalChooseGLVisual()
 #endif
 }
 
-void X11Window::internalCreateGLContext()
+void X11Window::internalCreateContext()
 {
-#ifdef OPENGL_ES
-    EGLint attrList[] = {
-#if OPENGL_ES==2
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-#else
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-#endif
-        EGL_NONE
-    };
-
-    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, attrList);
-    if(m_eglContext == EGL_NO_CONTEXT )
-        g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
-#else
-    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
-
-    if(!m_glxContext)
-        g_logger.fatal("Unable to create GLX context");
-
-    if(!glXIsDirect(m_display, m_glxContext))
-        g_logger.warning("GL direct rendering is not possible");
-#endif
+    m_graphicsContext->create(m_window, m_display);
 }
 
-void X11Window::internalDestroyGLContext()
+void X11Window::internalDestroyContext()
 {
     m_graphicsContext->destroy();
 }
 
-void X11Window::internalConnectGLContext()
+void X11Window::internalRestoreContext()
 {
-#ifdef OPENGL_ES
-    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
-    if(m_eglSurface == EGL_NO_SURFACE)
-        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
-    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        g_logger.fatal("Unable to connect EGL context into X11 window");
-#else
-    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
-        g_logger.fatal("Unable to set GLX context on X11 window");
-#endif
-}
-
-void *X11Window::getExtensionProcAddress(const char *ext)
-{
-    return m_graphicsContext->getExtensionProcAddress(ext);
-}
-
-bool X11Window::isExtensionSupported(const char *ext)
-{
-    return m_graphicsContext->isExtensionSupported(ext);
+    m_graphicsContext->restore();
 }
 
 void X11Window::move(const Point& pos)

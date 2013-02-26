@@ -31,7 +31,7 @@ class GraphicsContextGLX : public GraphicsContext
 public:
     GraphicsContextGLX();
 
-    void create();
+    void create(WindowType window, DisplayType display);
     void destroy();
     void restore();
 

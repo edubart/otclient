@@ -28,6 +28,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 
 typedef Window WindowType;
 
@@ -39,12 +40,9 @@ class X11Window : public PlatformWindow
 
     void internalCheckGL();
     void internalChooseGLVisual();
-    void internalCreateGLContext();
-    void internalDestroyGLContext();
-    void internalConnectGLContext();
-
-    void *getExtensionProcAddress(const char *ext);
-    bool isExtensionSupported(const char *ext);
+    void internalCreateContext();
+    void internalDestroyContext();
+    void internalRestoreContext();
 
 public:
     X11Window();
