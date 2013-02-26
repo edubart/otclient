@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32
-
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
@@ -1075,5 +1073,3 @@ std::string X11Window::getPlatformType()
     return "X11-EGL";
 #endif
 }
-
-#endif

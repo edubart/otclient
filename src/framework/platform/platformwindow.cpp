@@ -22,6 +22,10 @@
 
 #include "platformwindow.h"
 
+#ifdef SDL
+#include "sdlwindow.h"
+SDLWindow window;
+#else
 #ifdef WIN32
 #include "win32window.h"
 WIN32Window window;
@@ -29,6 +33,7 @@ WIN32Window window;
 #include "x11window.h"
 #include <framework/core/clock.h>
 X11Window window;
+#endif
 #endif
 
 #include <framework/core/clock.h>

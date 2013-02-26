@@ -123,14 +123,19 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/otml/otmlparser.h
 
     # crash handler
-    ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
-    ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 )
+
+if(WIN32)
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
+    )
+else()
+    set(framework_SOURCES ${framework_SOURCES}
+        ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
+    )
+endif()
 
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
                             PROPERTIES LANGUAGE CXX COMPILE_FLAGS "-g0 -Os")
@@ -258,6 +263,15 @@ if(CRASH_HANDLER)
     message(STATUS "Crash handler: ON")
     if(WIN32)
         set(framework_LIBRARIES ${framework_LIBRARIES} imagehlp)
+        set(framework_SOURCES ${framework_SOURCES}
+            ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
+            ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
+        )
+    else()
+        set(framework_SOURCES ${framework_SOURCES}
+            ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
+            ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
+        )
     endif()
 else()
     message(STATUS "Crash handler: OFF")
@@ -341,6 +355,32 @@ if(FRAMEWORK_GRAPHICS)
 
     else()
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
+    endif()
+
+    option(SDL "Use SDL support" OFF)
+    if(SDL)
+        find_package(SDL REQUIRED)
+        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DSDL)
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL_LIBRARY})
+        set(framework_SOURCES ${framework_SOURCES}
+            ${CMAKE_CURRENT_LIST_DIR}/graphics/sdl/paintersdl.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/graphics/sdl/paintersdl.h
+            ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.h
+        )
+    else()
+        if(WIN32)
+            set(framework_SOURCES ${framework_SOURCES}
+                ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
+            )
+        else()
+            set(framework_SOURCES ${framework_SOURCES}
+                ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
+                ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+            )
+        endif()
     endif()
 
     set(framework_SOURCES ${framework_SOURCES}
@@ -435,10 +475,6 @@ if(FRAMEWORK_GRAPHICS)
         # platform window
         ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/platformwindow.h
-        ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
-        ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp

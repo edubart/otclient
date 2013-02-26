@@ -23,8 +23,6 @@
 #ifndef CRASHHANDLER_H
 #define CRASHHANDLER_H
 
-#ifdef CRASH_HANDLER
 void installCrashHandler();
-#endif
 
 #endif

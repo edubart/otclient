@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32
-
 #include "platform.h"
 #include <fstream>
 #include <unistd.h>
@@ -167,6 +165,3 @@ std::string Platform::getOSName()
     }
     return std::string();
 }
-
-
-#endif

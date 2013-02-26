@@ -23,4 +23,48 @@
 #ifndef SDLWINDOW_H
 #define SDLWINDOW_H
 
+#include "platformwindow.h"
+#include <SDL.h>
+#include <framework/graphics/glutil.h>
+
+class SDLWindow : public PlatformWindow
+{
+public:
+    SDLWindow();
+
+    void init();
+    void terminate();
+
+    void move(const Point& pos);
+    void resize(const Size& size);
+    void show();
+    void hide();
+    void maximize();
+    void poll();
+    void swapBuffers();
+    void showMouse();
+    void hideMouse();
+
+    void setMouseCursor(int cursorId);
+    void restoreMouseCursor();
+
+    void setTitle(const std::string& title);
+    void setMinimumSize(const Size& minimumSize);
+    void setFullscreen(bool fullscreen);
+    void setVerticalSync(bool enable);
+    void setIcon(const std::string& file);
+    void setClipboardText(const std::string& text);
+
+    Size getDisplaySize();
+    std::string getClipboardText();
+    std::string getPlatformType();
+
+protected:
+    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
+
+private:
+    const SDL_VideoInfo *m_visual;
+    SDL_Surface *m_display;
+};
+
 #endif

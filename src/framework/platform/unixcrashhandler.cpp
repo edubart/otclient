@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#if !defined(WIN32) && defined(CRASH_HANDLER)
-
 #include "crashhandler.h"
 #include <framework/global.h>
 #include <framework/core/application.h>
@@ -133,5 +131,3 @@ void installCrashHandler()
     sigaction(SIGFPE, &sa, NULL);   // floating-point exception
     sigaction(SIGABRT, &sa, NULL);  // process aborted (asserts)
 }
-
-#endif

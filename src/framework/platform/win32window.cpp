@@ -20,8 +20,6 @@
  * THE SOFTWARE.
  */
 
-#ifdef WIN32
-
 #include "win32window.h"
 #include <framework/graphics/image.h>
 #include <framework/core/application.h>
@@ -1019,5 +1017,3 @@ Rect WIN32Window::adjustWindowRect(const Rect& clientRect)
     }
     return rect;
 }
-
-#endif
