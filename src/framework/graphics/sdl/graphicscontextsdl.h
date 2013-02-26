@@ -20,52 +20,30 @@
  * THE SOFTWARE.
  */
 
-#ifndef SDLWINDOW_H
-#define SDLWINDOW_H
+#ifndef GRAPHICSCONTEXTEGL_H
+#define GRAPHICSCONTEXTEGL_H
 
-#include "platformwindow.h"
-#include <SDL2/SDL.h>
-#include <framework/graphics/glutil.h>
+#include <framework/graphics/graphicscontext.h>
+#include <EGL/egl.h>
 
-class SDLWindow : public PlatformWindow
+class GraphicsContextEGL : public GraphicsContext
 {
 public:
-    SDLWindow();
+    GraphicsContextEGL();
 
-    void init();
-    void terminate();
+    void create(WindowType window, DisplayType display);
+    void destroy();
+    void restore();
 
-    void move(const Point& pos);
-    void resize(const Size& size);
-    void show();
-    void hide();
-    void maximize();
-    void poll();
     void swapBuffers();
-    void showMouse();
-    void hideMouse();
 
-    void setMouseCursor(int cursorId);
-    void restoreMouseCursor();
-
-    void setTitle(const std::string& title);
-    void setMinimumSize(const Size& minimumSize);
-    void setFullscreen(bool fullscreen);
     void setVerticalSync(bool enable);
-    void setIcon(const std::string& file);
-    void setClipboardText(const std::string& text);
-
-    Size getDisplaySize();
-    std::string getClipboardText();
-    std::string getPlatformType();
-
-protected:
-    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
 
 private:
-    SDL_Window *m_window;
-    SDL_Renderer *m_renderer;
-    SDL_GLContext m_context;
+    EGLConfig m_eglConfig;
+    EGLContext m_eglContext;
+    EGLDisplay m_eglDisplay;
+    EGLSurface m_eglSurface;
 };
 
 #endif

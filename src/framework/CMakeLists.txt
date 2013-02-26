@@ -359,12 +359,12 @@ if(FRAMEWORK_GRAPHICS)
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
     endif()
 
-    option(SDL "Use SDL support" OFF)
+    option(SDL "Use SDL 2.0 support" OFF)
     if(SDL)
-        find_package(SDL REQUIRED)
+        find_package(SDL2 REQUIRED)
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DSDL)
-        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL_INCLUDE_DIR})
-        set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL_LIBRARY})
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL2_LIBRARY})
         set(framework_SOURCES ${framework_SOURCES}
             ${CMAKE_CURRENT_LIST_DIR}/graphics/sdl/paintersdl.cpp
             ${CMAKE_CURRENT_LIST_DIR}/graphics/sdl/paintersdl.h
