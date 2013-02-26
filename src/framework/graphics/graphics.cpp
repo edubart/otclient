@@ -184,14 +184,14 @@ bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
+    // TODO: remove this
+    painterEngine = Painter_OpenGL2;
+
     Painter *painter = nullptr;
     Painter *fallbackPainter = nullptr;
     PainterEngine fallbackPainterEngine = Painter_Any;
 
 #ifdef PAINTER_DX9
-    // use this to force directx if its enabled (avoid changes in options module, etc, will be removed)
-    painterEngine = Painter_DirectX9;
-
     // always prefer DirectX9 on Windows
     if(g_painterDX9) {
         if(!painter && (painterEngine == Painter_DirectX9 || painterEngine == Painter_Any)) {
@@ -238,6 +238,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
             if(g_painter)
                 g_painter->unbind();
             painter->bind();
+            g_window.setGraphicsContext(painter->getGraphicsContext());
             g_painter = painter;
         }
 

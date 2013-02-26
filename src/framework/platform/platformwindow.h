@@ -27,12 +27,13 @@
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/declarations.h>
+#include <framework/graphics/graphicscontext.h>
 
 //@bindsingleton g_window
 class PlatformWindow
 {
     enum {
-        KEY_PRESS_REPEAT_INTERVAL = 30,
+        KEY_PRESS_REPEAT_INTERVAL = 30
     };
 
     typedef std::function<void(const Size&)> OnResizeCallback;
@@ -63,6 +64,7 @@ public:
     virtual void setVerticalSync(bool enable) = 0;
     virtual void setIcon(const std::string& iconFile) = 0;
     virtual void setClipboardText(const std::string& text) = 0;
+    void setGraphicsContext(const GraphicsContextPtr& graphicsContext);
 
     virtual Size getDisplaySize() = 0;
     virtual std::string getClipboardText() = 0;
@@ -95,6 +97,9 @@ public:
     void setOnInputEvent(const OnInputEventCallback& onInputEvent) { m_onInputEvent = onInputEvent; }
 
 protected:
+    virtual void internalCreateContext() = 0;
+    virtual void internalDestroyContext() = 0;
+    virtual void internalRestoreContext() = 0;
     virtual int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) = 0;
 
     void updateUnmaximizedCoords();
@@ -127,6 +132,8 @@ protected:
     std::function<void()> m_onClose;
     OnResizeCallback m_onResize;
     OnInputEventCallback m_onInputEvent;
+
+    GraphicsContextPtr m_graphicsContext;
 };
 
 extern PlatformWindow& g_window;

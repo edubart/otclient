@@ -24,25 +24,16 @@
 #define WIN32WINDOW_H
 
 #include "platformwindow.h"
-
 #include <windows.h>
-
-#ifdef OPENGL_ES
-#include <EGL/egl.h>
-#endif
-
-#ifdef DIRECTX
-#include <d3d9.h>
-#endif
 
 struct WindowProcProxy;
 
 class WIN32Window : public PlatformWindow
 {
     void internalCreateWindow();
-    void internalCreateGLContext();
-    void internalDestroyGLContext();
-    void internalRestoreGLContext();
+    void internalCreateContext();
+    void internalDestroyContext();
+    void internalRestoreContext();
 
     void *getExtensionProcAddress(const char *ext);
     bool isExtensionSupported(const char *ext);
@@ -94,24 +85,9 @@ private:
     std::vector<HCURSOR> m_cursors;
     HWND m_window;
     HINSTANCE m_instance;
-    HDC m_deviceContext;
     HCURSOR m_cursor;
     HCURSOR m_defaultCursor;
     bool m_hidden;
-
-#ifdef DIRECTX
-    LPDIRECT3D9 m_d3d;    // the pointer to our Direct3D interface
-    LPDIRECT3DDEVICE9 m_d3ddev;    // the pointer to the device class
-#endif
-
-#ifdef OPENGL_ES
-    EGLConfig m_eglConfig;
-    EGLContext m_eglContext;
-    EGLDisplay m_eglDisplay;
-    EGLSurface m_eglSurface;
-#else
-    HGLRC m_wglContext;
-#endif
 };
 
 #endif

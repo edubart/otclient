@@ -63,6 +63,20 @@ int PlatformWindow::loadMouseCursor(const std::string& file, const Point& hotSpo
     return internalLoadMouseCursor(image, hotSpot);
 }
 
+void PlatformWindow::setGraphicsContext(const GraphicsContextPtr& graphicsContext)
+{
+    // TODO
+    //if(m_graphicsContext && m_graphicsContext->getName() == graphicsContext->getName())
+        //return;
+
+    if(m_graphicsContext)
+        internalDestroyContext();
+
+    m_graphicsContext = graphicsContext;
+    internalCreateContext();
+    internalRestoreContext();
+}
+
 void PlatformWindow::updateUnmaximizedCoords()
 {
     if(!isMaximized() && !isFullscreen()) {

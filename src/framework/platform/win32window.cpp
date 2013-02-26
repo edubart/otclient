@@ -24,6 +24,7 @@
 #include <framework/graphics/image.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/graphics/ogl/graphicscontextwgl.h>
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
 
@@ -31,20 +32,11 @@ WIN32Window::WIN32Window()
 {
     m_window = 0;
     m_instance = 0;
-    m_deviceContext = 0;
     m_cursor = 0;
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
     m_hidden = true;
-
-#ifdef OPENGL_ES
-    m_eglConfig = 0;
-    m_eglContext = 0;
-    m_eglDisplay = 0;
-    m_eglSurface = 0;
-#else
-    m_wglContext = 0;
-#endif
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextWGL);
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -201,30 +193,9 @@ WIN32Window::WIN32Window()
 void WIN32Window::init()
 {
     m_instance = GetModuleHandle(NULL);
-
-#ifdef DIRECTX
-    m_d3d = Direct3DCreate9(D3D_SDK_VERSION);    // create the Direct3D interface
-
-    D3DPRESENT_PARAMETERS d3dpp;    // create a struct to hold various device information
-
-    ZeroMemory(&d3dpp, sizeof(d3dpp));    // clear out the struct for use
-    d3dpp.Windowed = TRUE;    // program windowed, not fullscreen
-    d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;    // discard old frames
-    d3dpp.hDeviceWindow = m_window;    // set the window to be used by Direct3D
-
-    // create a device class using this information and information from the d3dpp stuct
-    m_d3d->CreateDevice(D3DADAPTER_DEFAULT,
-                      D3DDEVTYPE_HAL,
-                      m_window,
-                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-                      &d3dpp,
-                      &m_d3ddev);
-
-#endif
-
     internalCreateWindow();
-    internalCreateGLContext();
-    internalRestoreGLContext();
+    internalCreateContext();
+    internalRestoreContext();
 }
 
 void WIN32Window::terminate()
@@ -239,13 +210,7 @@ void WIN32Window::terminate()
         DestroyCursor(cursor);
     m_cursors.clear();
 
-    internalDestroyGLContext();
-
-    if(m_deviceContext) {
-        if(!ReleaseDC(m_window, m_deviceContext))
-            g_logger.error("Release device context failed.");
-        m_deviceContext = NULL;
-    }
+    internalDestroyContext();
 
     if(m_window) {
         if(!DestroyWindow(m_window))
@@ -310,158 +275,32 @@ void WIN32Window::internalCreateWindow()
         g_logger.fatal("Unable to create window");
 
     ShowWindow(m_window, SW_HIDE);
-
-    m_deviceContext = GetDC(m_window);
-    if(!m_deviceContext)
-        g_logger.fatal("GetDC failed");
 }
 
-void WIN32Window::internalCreateGLContext()
+void WIN32Window::internalCreateContext()
 {
-#ifdef OPENGL_ES
-    m_eglDisplay = eglGetDisplay(m_deviceContext);
-    if(m_eglDisplay == EGL_NO_DISPLAY)
-        g_logger.fatal("EGL not supported");
-
-    if(!eglInitialize(m_eglDisplay, NULL, NULL))
-        g_logger.fatal("Unable to initialize EGL");
-
-    static int configList[] = {
-#if OPENGL_ES==2
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#else
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-#endif
-        EGL_RED_SIZE, 4,
-        EGL_GREEN_SIZE, 4,
-        EGL_BLUE_SIZE, 4,
-        EGL_ALPHA_SIZE, 4,
-        EGL_NONE
-    };
-
-    EGLint numConfig;
-
-    if(!eglGetConfigs(m_eglDisplay, NULL, 0, &numConfig))
-        g_logger.fatal("No valid GL configurations");
-
-    if(!eglChooseConfig(m_eglDisplay, configList, &m_eglConfig, 1, &numConfig))
-        g_logger.fatal("Failed to choose EGL config");
-
-    if(numConfig != 1)
-        g_logger.warning("Didn't got the exact EGL config");
-
-    EGLint contextAtrrList[] = {
-#if OPENGL_ES==2
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-#else
-        EGL_CONTEXT_CLIENT_VERSION, 1,
-#endif
-        EGL_NONE
-    };
-
-    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, m_window, NULL);
-    if(m_eglSurface == EGL_NO_SURFACE)
-        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
-
-    m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAtrrList);
-    if(m_eglContext == EGL_NO_CONTEXT )
-        g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
-
-#else
-    uint pixelFormat;
-    static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
-                                         1,
-                                         PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-                                         PFD_TYPE_RGBA,
-                                         32,                         // Select Our Color Depth
-                                         8, 0, 8, 0, 8, 0,           // Color Bits Ignored
-                                         8,                          // Alpha Buffer Bits
-                                         0,                          // Shift Bit Ignored
-                                         0,                          // No Accumulation Buffer
-                                         0, 0, 0, 0,                 // Accumulation Bits Ignored
-                                         0,                          // Z-Buffer (Depth Buffer)
-                                         0,                          // No Stencil Buffer
-                                         0,                          // No Auxiliary Buffer
-                                         PFD_MAIN_PLANE,             // Main Drawing Layer
-                                         0,                          // Reserved
-                                         0, 0, 0 };                  // Layer Masks Ignored
-
-    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
-    if(!pixelFormat)
-        g_logger.fatal("Could not find a suitable pixel format");
-
-    if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
-        g_logger.fatal("Could not set the pixel format");
-
-    if(!(m_wglContext = wglCreateContext(m_deviceContext)))
-        g_logger.fatal("Unable to create GL context");
-#endif
+    dump << m_graphicsContext->getName().c_str();
+    m_graphicsContext->create(m_window);
 }
 
-void WIN32Window::internalDestroyGLContext()
+void WIN32Window::internalDestroyContext()
 {
-#ifdef OPENGL_ES
-    if(m_eglDisplay) {
-        if(m_eglContext) {
-            eglDestroyContext(m_eglDisplay, m_eglContext);
-            m_eglContext = 0;
-        }
-        if(m_eglSurface) {
-            eglDestroySurface(m_eglDisplay, m_eglSurface);
-            m_eglSurface = 0;
-        }
-        eglTerminate(m_eglDisplay);
-        m_eglDisplay = 0;
-    }
-#else
-    if(m_wglContext) {
-        if(!wglMakeCurrent(NULL, NULL))
-            g_logger.error("Release of dc and rc failed.");
-        if(!wglDeleteContext(m_wglContext))
-            g_logger.error("Release rendering context failed.");
-        m_wglContext = NULL;
-    }
-#endif
+    m_graphicsContext->destroy(m_window);
 }
 
-void WIN32Window::internalRestoreGLContext()
+void WIN32Window::internalRestoreContext()
 {
-#ifdef OPENGL_ES
-    if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
-        g_logger.fatal("Unable to make current EGL context");
-#else
-    if(!wglMakeCurrent(m_deviceContext, m_wglContext))
-        g_logger.fatal("Unable to make current WGL context");
-#endif
+    m_graphicsContext->restore();
 }
 
 bool WIN32Window::isExtensionSupported(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return false;
-#else
-    typedef const char* (WINAPI * wglGetExtensionsStringProc)();
-    wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
-    if(!wglGetExtensionsString)
-        return false;
-
-    const char *exts = wglGetExtensionsString();
-    if(exts && strstr(exts, ext))
-        return true;
-
-    return false;
-#endif
+   return m_graphicsContext->isExtensionSupported(ext);
 }
 
 void *WIN32Window::getExtensionProcAddress(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return NULL;
-#else
-    return (void*)wglGetProcAddress(ext);
-#endif
+    return m_graphicsContext->getExtensionProcAddress(ext);
 }
 
 void WIN32Window::move(const Point& pos)
@@ -737,8 +576,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                     break;
             }
 
-            if(m_visible && m_deviceContext)
-                internalRestoreGLContext();
+            if(m_visible)
+                internalRestoreContext();
 
             Size size = Size(LOWORD(lParam), HIWORD(lParam));
             size.setWidth(std::max(std::min(size.width(), 7680), 32));
@@ -760,11 +599,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 void WIN32Window::swapBuffers()
 {
-#ifdef OPENGL_ES
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
-#else
-    SwapBuffers(m_deviceContext);
-#endif
+    m_graphicsContext->swapBuffers();
 }
 
 void WIN32Window::showMouse()
@@ -860,19 +695,7 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
 void WIN32Window::setVerticalSync(bool enable)
 {
-#ifdef OPENGL_ES
-    eglSwapInterval(m_eglDisplay, enable ? 1 : 0);
-#else
-    if(!isExtensionSupported("WGL_EXT_swap_control"))
-        return;
-
-    typedef BOOL (WINAPI * wglSwapIntervalProc)(int);
-    wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
-    if(!wglSwapInterval)
-        return;
-
-    wglSwapInterval(enable ? 1 : 0);
-#endif
+    m_graphicsContext->setVerticalSync(enable);
 }
 
 void WIN32Window::setIcon(const std::string& file)
@@ -965,11 +788,7 @@ std::string WIN32Window::getClipboardText()
 
 std::string WIN32Window::getPlatformType()
 {
-#ifndef OPENGL_ES
-    return "WIN32-WGL";
-#else
-    return "WIN32-EGL";
-#endif
+    return stdext::format("WIN32-%s", m_graphicsContext->getName());
 }
 
 Rect WIN32Window::getClientRect()

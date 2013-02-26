@@ -25,6 +25,7 @@
 
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/coordsbuffer.h>
+#include <framework/graphics/graphicscontext.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/texture.h>
 
@@ -50,7 +51,7 @@ public:
 
 
     Painter();
-    virtual ~Painter() { }
+    virtual ~Painter() {}
 
     virtual void bind() { }
     virtual void unbind() { }
@@ -95,6 +96,7 @@ public:
     float getOpacity() { return m_opacity; }
     Rect getClipRect() { return m_clipRect; }
     CompositionMode getCompositionMode() { return m_compositionMode; }
+    GraphicsContextPtr getGraphicsContext() { return m_graphicsContext; }
 
     virtual void setCompositionMode(CompositionMode compositionMode) = 0;
 
@@ -116,6 +118,7 @@ protected:
     Size m_resolution;
     float m_opacity;
     Rect m_clipRect;
+    GraphicsContextPtr m_graphicsContext;
 };
 
 extern Painter *g_painter;

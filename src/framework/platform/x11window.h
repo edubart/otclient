@@ -29,11 +29,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
-#ifdef OPENGL_ES
-#include <EGL/egl.h>
-#else
-#include <GL/glx.h>
-#endif
+typedef Window WindowType;
 
 class X11Window : public PlatformWindow
 {
@@ -97,16 +93,6 @@ private:
     int m_screen;
     Atom m_wmDelete;
     std::string m_clipboardText;
-
-#ifndef OPENGL_ES
-    GLXContext m_glxContext;
-    GLXFBConfig *m_fbConfig;
-#else
-    EGLConfig m_eglConfig;
-    EGLContext m_eglContext;
-    EGLDisplay m_eglDisplay;
-    EGLSurface m_eglSurface;
-#endif
 };
 
 #endif

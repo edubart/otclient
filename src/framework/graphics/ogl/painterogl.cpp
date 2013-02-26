@@ -24,8 +24,24 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 
+#ifdef OPENGL_ES
+#include <framework/graphics/ogl/graphicscontextegl.h>
+#elif WIN32
+#include <framework/graphics/ogl/graphicscontextwgl.h>
+#else
+#include <framework/graphics/ogl/graphicscontextglx.h>
+#endif
+
 PainterOGL::PainterOGL()
 {
+#ifdef OPENGL_ES
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextEGL);
+#elif WIN32
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextWGL);
+#else
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextGLX);
+#endif
+
     m_glTextureId = 0;
     m_oldStateIndex = 0;
     m_color = Color::white;
@@ -35,6 +51,7 @@ PainterOGL::PainterOGL()
     m_shaderProgram = nullptr;
     m_texture = nullptr;
     m_alphaWriting = false;
+
     setResolution(g_window.getSize());
 }
 

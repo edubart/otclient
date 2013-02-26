@@ -43,16 +43,6 @@ X11Window::X11Window()
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
 
-#ifdef OPENGL_ES
-    m_eglConfig = 0;
-    m_eglContext = 0;
-    m_eglDisplay = 0;
-    m_eglSurface = 0;
-#else
-    m_fbConfig = 0;
-    m_glxContext = 0;
-#endif
-
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
     m_keyMap[XK_Return] = Fw::KeyEnter;
@@ -460,26 +450,7 @@ void X11Window::internalCreateGLContext()
 
 void X11Window::internalDestroyGLContext()
 {
-#ifdef OPENGL_ES
-    if(m_eglDisplay) {
-        if(m_eglContext) {
-            eglDestroyContext(m_eglDisplay, m_eglContext);
-            m_eglContext = 0;
-        }
-        if(m_eglSurface) {
-            eglDestroySurface(m_eglDisplay, m_eglSurface);
-            m_eglSurface = 0;
-        }
-        eglTerminate(m_eglDisplay);
-        m_eglDisplay = 0;
-    }
-#else
-    if(m_glxContext) {
-        glXMakeCurrent(m_display, None, NULL);
-        glXDestroyContext(m_display, m_glxContext);
-        m_glxContext = 0;
-    }
-#endif
+    m_graphicsContext->destroy();
 }
 
 void X11Window::internalConnectGLContext()
@@ -498,25 +469,12 @@ void X11Window::internalConnectGLContext()
 
 void *X11Window::getExtensionProcAddress(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return NULL;
-#else
-    return (void *)glXGetProcAddressARB((const GLubyte*)ext);
-#endif
+    return m_graphicsContext->getExtensionProcAddress(ext);
 }
 
 bool X11Window::isExtensionSupported(const char *ext)
 {
-#ifdef OPENGL_ES
-    //TODO
-    return false;
-#else
-    const char *exts = glXQueryExtensionsString(m_display, m_screen);
-    if(strstr(exts, ext))
-        return true;
-#endif
-    return false;
+    return m_graphicsContext->isExtensionSupported(ext);
 }
 
 void X11Window::move(const Point& pos)
@@ -838,11 +796,7 @@ void X11Window::poll()
 
 void X11Window::swapBuffers()
 {
-#ifdef OPENGL_ES
-    eglSwapBuffers(m_eglDisplay, m_eglSurface);
-#else
-    glXSwapBuffers(m_display, m_window);
-#endif
+    m_graphicsContext->swapBuffers();
 }
 
 void X11Window::showMouse()
@@ -966,20 +920,7 @@ void X11Window::setFullscreen(bool fullscreen)
 
 void X11Window::setVerticalSync(bool enable)
 {
-#ifdef OPENGL_ES
-    //TODO
-#else
-    typedef GLint (*glSwapIntervalProc)(GLint);
-    glSwapIntervalProc glSwapInterval = NULL;
-
-    if(isExtensionSupported("GLX_MESA_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalMESA");
-    else if(isExtensionSupported("GLX_SGI_swap_control"))
-        glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalSGI");
-
-    if(glSwapInterval)
-        glSwapInterval(enable ? 1 : 0);
-#endif
+    m_graphicsContext->setVerticalSync(enable);
 }
 
 void X11Window::setIcon(const std::string& file)
@@ -1067,9 +1008,5 @@ std::string X11Window::getClipboardText()
 
 std::string X11Window::getPlatformType()
 {
-#ifndef OPENGL_ES
-    return "X11-GLX";
-#else
-    return "X11-EGL";
-#endif
+    return stdext::format("X11-%s", m_graphicsContext->getName());
 }
