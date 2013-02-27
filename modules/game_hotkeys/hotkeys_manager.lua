@@ -202,7 +202,7 @@ function save()
   if perCharacter then
     local char = g_game.getCharacterName()
     if not hotkeys[char] then
-      hotkeys[hotkeys[char]] = {}
+      hotkeys[char] = {}
     end
     hotkeys = hotkeys[char]
   end
