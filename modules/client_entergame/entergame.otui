@@ -57,6 +57,7 @@ EnterGameWindow
 
   ServerListButton
     id: serverListButton
+    !tooltip: tr('Server list')
     anchors.right: parent.right
     anchors.top: serverLabel.bottom
     margin-top: 3
@@ -88,6 +89,10 @@ EnterGameWindow
     margin-top: 2
     margin-right: 3
     width: 90
+    @onSetup: |
+      for _, proto in pairs(g_game.getSupportedProtocols()) do
+        self:addOption(proto)
+      end
 
   MenuLabel
     id: portLabel

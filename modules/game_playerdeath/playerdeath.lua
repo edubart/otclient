@@ -33,7 +33,10 @@ function displayDeadMessage()
 end
 
 function openWindow()
-  if deathWindow then return end
+  if deathWindow then
+    deathWindow:destroy()
+    return
+  end
   deathWindow = g_ui.createWidget('DeathWindow', rootWidget)
   local okButton = deathWindow:getChildById('buttonOk')
   local cancelButton = deathWindow:getChildById('buttonCancel')

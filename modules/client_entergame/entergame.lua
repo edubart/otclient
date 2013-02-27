@@ -122,10 +122,6 @@ function EnterGame.init()
 
   protocolBox = enterGame:getChildById('protocolComboBox')
   protocolBox.onOptionChange = onChangeProtocol
-  for _i, proto in pairs(g_game.getSupportedProtocols()) do
-    protocolBox:addOption(proto)
-  end
-
   if protocolVersion then
     protocolBox:setCurrentOption(protocolVersion)
   end

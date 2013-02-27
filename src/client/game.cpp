@@ -1380,14 +1380,17 @@ void Game::setProtocolVersion(int version)
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
+    if(version >= 840) {
+        enableFeature(Otc::GameProtocolChecksum);
+        enableFeature(Otc::GameChallengeOnLogin);
+        enableFeature(Otc::GameAccountNames);
+    }
+
     if(version <= 854) {
         enableFeature(Otc::GameChargeableItems);
     }
 
     if(version >= 854) {
-        enableFeature(Otc::GameProtocolChecksum);
-        enableFeature(Otc::GameAccountNames);
-        enableFeature(Otc::GameChallengeOnLogin);
         enableFeature(Otc::GameDoubleFreeCapacity);
         enableFeature(Otc::GameCreatureEmblems);
     }

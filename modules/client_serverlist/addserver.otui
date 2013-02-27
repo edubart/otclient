@@ -4,8 +4,7 @@ MainWindow
   size: 180 180
   visible: false
   @onEscape: AddServer.hide()
-  @onEnter: |
-    AddServer.add()
+  @onEnter: AddServer.add()
 
   Label
     id: hostLabel
@@ -60,9 +59,8 @@ MainWindow
     width: 64
     anchors.right: parent.horizontalCenter
     anchors.bottom: parent.bottom
-    margin-right: 5
-    @onClick: |
-      AddServer.add()
+    margin-right: 2
+    @onClick: AddServer.add()
 
   Button
     id: buttonCancel
@@ -70,4 +68,5 @@ MainWindow
     width: 64
     anchors.left: parent.horizontalCenter
     anchors.bottom: parent.bottom
+    margin-left: 2
     @onClick: AddServer.hide()

@@ -109,6 +109,9 @@ function offline()
 end
 
 function show()
+  if not g_game.isOnline() then
+    return
+  end
   hotkeysWindow:show()
   hotkeysWindow:raise()
   hotkeysWindow:focus()
@@ -190,7 +193,6 @@ function save()
   local hotkeys = hotkeySettings
 
   if perServer then
-    hotkeys[G.host] = {}
     hotkeys = hotkeys[G.host]
   end
 
@@ -209,6 +211,8 @@ function save()
       value = child.value
     }
   end
+
+  table.dump(hotkeys)
 
   hotkeyList = hotkeys
   g_settings.setNode('game_hotkeys', hotkeySettings)
