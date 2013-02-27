@@ -288,6 +288,7 @@ function openPlayerReportRuleViolationWindow()
     g_game.talkChannel(MessageModes.RVRChannel, 0, text)
     violationReportTab = addTab(tr('Report Rule') .. '...', true)
     addTabText(tr('Please wait patiently for a gamemaster to reply') .. '.', SpeakTypesSettings.privateRed, violationReportTab)
+    addTabText(applyMessagePrefixies(g_game.getCharacterName(), 0, text),  SpeakTypesSettings.say, violationReportTab, g_game.getCharacterName())
     violationReportTab.locked = true
     violationWindow:destroy()
     violationWindow = nil

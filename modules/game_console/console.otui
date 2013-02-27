@@ -21,6 +21,8 @@ ConsolePhantomLabel < UILabel
   selection-background-color: #999999
 
 ConsoleTabBar < MoveableTabBar
+  height: 28
+
 ConsoleTabBarPanel < MoveableTabBarPanel
   id: consoleTab
 
@@ -64,7 +66,6 @@ Panel
 
   ConsoleTabBar
     id: consoleTabBar
-    height: 28
     anchors.left: prev.right
     anchors.top: parent.top
     anchors.right: next.left

@@ -157,11 +157,6 @@ function ProtocolLogin:parseOpcode(opcode, msg)
 end
 
 function ProtocolLogin:onError(msg, code)
-  local text
-  if self:isConnecting() then
-    text = tr('Unable to establish a connection. (err: %d)', code)
-  else
-    text = tr('Your connection has been lost. (err: %d)', code)
-  end
+  local text = translateNetworkError(code, self:isConnecting(), msg)
   signalcall(self.onLoginError, self, text)
 end

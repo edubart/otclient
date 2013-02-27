@@ -71,7 +71,6 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
 
 void ProtocolGame::onError(const boost::system::error_code& error)
 {
-    Protocol::onError(error);
-
     g_game.processConnectionError(error);
+    disconnect();
 }

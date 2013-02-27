@@ -35,7 +35,7 @@ void Platform::processArgs(std::vector<std::string>& args)
     //nothing todo, linux args are already utf8 encoded
 }
 
-bool Platform::spawnProcess(const std::string& process, const std::vector<std::string>& args)
+bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     struct stat sts;
     if(stat(process.c_str(), &sts) == -1 && errno == ENOENT)

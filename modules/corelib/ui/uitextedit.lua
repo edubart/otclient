@@ -19,14 +19,15 @@ function UITextEdit:onMouseWheel(mousePos, mouseWheel)
     else
       self.verticalScrollBar:increment()
     end
+    return true
   elseif self.horizontalScrollBar then
     if mouseWheel == MouseWheelUp then
       self.horizontalScrollBar:increment()
     else
       self.horizontalScrollBar:decrement()
     end
+    return true
   end
-  return true
 end
 
 function UITextEdit:onTextAreaUpdate(virtualOffset, virtualSize, totalSize)

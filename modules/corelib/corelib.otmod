@@ -17,6 +17,7 @@ Module
     dofile 'settings'
     dofile 'keyboard'
     dofile 'mouse'
+    dofile 'net'
 
     dofiles 'ui'
 

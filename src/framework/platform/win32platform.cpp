@@ -42,11 +42,16 @@ void Platform::processArgs(std::vector<std::string>& args)
     }
 }
 
-bool Platform::spawnProcess(const std::string& process, const std::vector<std::string>& args)
+bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     std::string commandLine;
     for(uint i = 0; i < args.size(); ++i)
         commandLine += stdext::format(" \"%s\"", args[i]);
+
+    boost::replace_all(process, "/", "\\");
+    if(!boost::ends_with(process, ".exe"))
+        process += ".exe";
+
     std::wstring wfile = stdext::utf8_to_utf16(process);
     std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
 
@@ -83,9 +88,12 @@ bool Platform::killProcess(const std::string& name)
 
 std::string Platform::getTempPath()
 {
+    std::string ret;
     wchar_t path[MAX_PATH];
     GetTempPathW(MAX_PATH, path);
-    return stdext::utf16_to_utf8(path);
+    ret = stdext::utf16_to_utf8(path);
+    boost::replace_all(ret, "\\", "/");
+    return ret;
 }
 
 std::string Platform::getCurrentDir()

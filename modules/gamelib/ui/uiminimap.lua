@@ -34,6 +34,12 @@ function UIMinimap:onVisibilityChange()
   end
 end
 
+function UIMinimap:onCameraPositionChange(cameraPos)
+  if self.cross then
+    self:setCrossPosition(self.cross.pos)
+  end
+end
+
 function UIMinimap:hideFloor()
   self.floorUpWidget:hide()
   self.floorDownWidget:hide()
@@ -91,6 +97,7 @@ function UIMinimap:setCrossPosition(pos)
     self.cross = cross
   end
 
+  pos.z = self:getCameraPosition().z
   cross.pos = pos
   if pos then
     self:centerInPosition(cross, pos)
@@ -106,7 +113,8 @@ function UIMinimap:addFlag(pos, icon, description)
     return
   end
 
-  flag = g_ui.createWidget('MinimapFlag', self)
+  flag = g_ui.createWidget('MinimapFlag')
+  self:insertChild(1, flag)
   flag.pos = pos
   flag.description = description
   flag.icon = icon
@@ -130,7 +138,7 @@ function UIMinimap:setAlternativeWidgetsVisible(show)
   layout:disableUpdates()
   for _,widget in pairs(self.alternatives) do
     if show then
-      self:addChild(widget)
+      self:insertChild(1, widget)
       self:centerInPosition(widget, widget.pos)
     else
       self:removeChild(widget)

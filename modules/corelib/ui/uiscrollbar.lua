@@ -237,7 +237,7 @@ function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
   if not self.mouseScroll then
     return false
   end
-  if mouseWheel == MouseWheelDown then
+  if mouseWheel == MouseWheelUp then
     if self.orientation == 'vertical' then
       self:decrement()
     else

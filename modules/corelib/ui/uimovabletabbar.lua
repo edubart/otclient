@@ -83,10 +83,17 @@ local function onTabDragMove(tab, mousePos, mouseMoved)
   end
 end
 
-local function tabBlink(tab)
-  if not tab.blinking then return end
+local function tabBlink(tab, step)
+  step = step or 0
   tab:setOn(not tab:isOn())
-  tab.blinkEvent = scheduleEvent(function() tabBlink(tab) end, 500)
+
+  removeEvent(tab.blinkEvent)
+  if step < 4 then
+    tab.blinkEvent = scheduleEvent(function() tabBlink(tab, step+1) end, 500)
+  else
+    tab:setOn(true)
+    tab.blinkEvent = nil
+  end
 end
 
 -- public functions
@@ -240,7 +247,7 @@ function UIMoveableTabBar:selectPrevTab()
 end
 
 function UIMoveableTabBar:blinkTab(tab)
-  if tab:isChecked() or tab.blinking then return end
+  if tab:isChecked() then return end
   tab.blinking = true
   tabBlink(tab)
 end

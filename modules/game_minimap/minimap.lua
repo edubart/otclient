@@ -87,6 +87,7 @@ end
 
 function online()
   loadMap(not preloaded)
+  updateCameraPosition()
 end
 
 function offline()
@@ -128,6 +129,9 @@ end
 
 function updateCameraPosition()
   local player = g_game.getLocalPlayer()
+  if not player then return end
+  local pos = player:getPosition()
+  if not pos then return end
   if not minimapWidget:isDragging() then
     if not fullmapView then
       minimapWidget:setCameraPosition(player:getPosition())
@@ -153,7 +157,6 @@ function toggleFullMap()
 
   local zoom = oldZoom or 0
   local pos = oldPos or minimapWidget:getCameraPosition()
-  pos.z = 7
   oldZoom = minimapWidget:getZoom()
   oldPos = minimapWidget:getCameraPosition()
   minimapWidget:setZoom(zoom)

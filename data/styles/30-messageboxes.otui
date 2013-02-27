@@ -1,8 +1,9 @@
 MessageBoxLabel < Label
   id: messageBoxLabel
-  text-auto-resize: true
   anchors.horizontalCenter: parent.horizontalCenter
   anchors.top: parent.top
+  text-wrap: true
+  text-auto-resize: true
 
 MessageBoxButtonHolder < UIWidget
   id: buttonHolder
