@@ -51,7 +51,7 @@ SayModes = {
   [3] = { speakTypeDesc = 'yell', icon = '/images/game/console/yell' }
 }
 
-MAX_HISTORY = 1000
+MAX_HISTORY = 500
 MAX_LINES = 100
 HELP_CHANNEL = 9
 
@@ -80,18 +80,20 @@ local ignoreSettings = {
 }
 
 function init()
-  connect(g_game, { onTalk = onTalk,
-                    onChannelList = onChannelList,
-                    onOpenChannel = onOpenChannel,
-                    onOpenPrivateChannel = onOpenPrivateChannel,
-                    onOpenOwnPrivateChannel = onOpenOwnPrivateChannel,
-                    onCloseChannel = onCloseChannel,
-                    onRuleViolationChannel = onRuleViolationChannel,
-                    onRuleViolationRemove = onRuleViolationRemove,
-                    onRuleViolationCancel = onRuleViolationCancel,
-                    onRuleViolationLock = onRuleViolationLock,
-                    onGameStart = online,
-                    onGameEnd = offline })
+  connect(g_game, {
+    onTalk = onTalk,
+    onChannelList = onChannelList,
+    onOpenChannel = onOpenChannel,
+    onOpenPrivateChannel = onOpenPrivateChannel,
+    onOpenOwnPrivateChannel = onOpenOwnPrivateChannel,
+    onCloseChannel = onCloseChannel,
+    onRuleViolationChannel = onRuleViolationChannel,
+    onRuleViolationRemove = onRuleViolationRemove,
+    onRuleViolationCancel = onRuleViolationCancel,
+    onRuleViolationLock = onRuleViolationLock,
+    onGameStart = online,
+    onGameEnd = offline
+  })
 
   consolePanel = g_ui.loadUI('console', modules.game_interface.getBottomPanel())
   consoleTextEdit = consolePanel:getChildById('consoleTextEdit')
@@ -142,18 +144,20 @@ end
 
 function terminate()
   save()
-  disconnect(g_game, { onTalk = onTalk,
-                       onChannelList = onChannelList,
-                       onOpenChannel = onOpenChannel,
-                       onOpenPrivateChannel = onOpenPrivateChannel,
-                       onOpenOwnPrivateChannel = onOpenPrivateChannel,
-                       onCloseChannel = onCloseChannel,
-                       onRuleViolationChannel = onRuleViolationChannel,
-                       onRuleViolationRemove = onRuleViolationRemove,
-                       onRuleViolationCancel = onRuleViolationCancel,
-                       onRuleViolationLock = onRuleViolationLock,
-                       onGameStart = online,
-                       onGameEnd = offline })
+  disconnect(g_game, {
+    onTalk = onTalk,
+    onChannelList = onChannelList,
+    onOpenChannel = onOpenChannel,
+    onOpenPrivateChannel = onOpenPrivateChannel,
+    onOpenOwnPrivateChannel = onOpenPrivateChannel,
+    onCloseChannel = onCloseChannel,
+    onRuleViolationChannel = onRuleViolationChannel,
+    onRuleViolationRemove = onRuleViolationRemove,
+    onRuleViolationCancel = onRuleViolationCancel,
+    onRuleViolationLock = onRuleViolationLock,
+    onGameStart = online,
+    onGameEnd = offline
+  })
 
   if g_game.isOnline() then clear() end
 
@@ -308,15 +312,17 @@ function removeTab(tab)
     tab = consoleTabBar:getTab(tab)
   end
 
-  if tab == defaultTab or tab == serverTab then return end
+  if tab == defaultTab or tab == serverTab then
+    return
+  end
 
   if tab == violationReportTab then
     g_game.cancelRuleViolation()
     violationReportTab = nil
   elseif tab.violationChatName then
     g_game.closeRuleViolation(tab.violationChatName)
-  -- notificate the server that we are leaving the channel
   elseif tab.channelId then
+    -- notificate the server that we are leaving the channel
     for k, v in pairs(channels) do
       if (k == tab.channelId) then channels[k] = nil end
     end
@@ -329,8 +335,7 @@ function removeTab(tab)
 end
 
 function removeCurrentTab()
-  local tab = consoleTabBar:getCurrentTab()
-  removeTab(tab)
+  removeTab(consoleTabBar:getCurrentTab())
 end
 
 function getTab(name)
@@ -984,15 +989,15 @@ function onClickIgnoreButton()
   removeButton:disable()
   ignoreListPanel.onChildFocusChange = function() removeButton:enable() end
   removeButton.onClick = function() 
-            local selection = ignoreListPanel:getFocusedChild() 
-            if selection then
-                ignoreListPanel:removeChild(selection)
-                selection:destroy()
-            end
-            if ignoreListPanel:getChildCount() == 0 then
-                removeButton:disable()
-            end
-        end
+    local selection = ignoreListPanel:getFocusedChild() 
+    if selection then
+        ignoreListPanel:removeChild(selection)
+        selection:destroy()
+    end
+    if ignoreListPanel:getChildCount() == 0 then
+        removeButton:disable()
+    end
+  end
   
   local newlyIgnoredPlayers = {}
   local addName = ignoreWindow:getChildById('ignoreNameEdit')

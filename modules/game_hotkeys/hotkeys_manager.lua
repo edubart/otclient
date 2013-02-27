@@ -193,12 +193,18 @@ function save()
   local hotkeys = hotkeySettings
 
   if perServer then
+    if not hotkeys[G.host] then
+      hotkeys[G.host] = {}
+    end
     hotkeys = hotkeys[G.host]
   end
 
   if perCharacter then
-    hotkeys[g_game.getCharacterName()] = {}
-    hotkeys = hotkeys[g_game.getCharacterName()]
+    local char = g_game.getCharacterName()
+    if not hotkeys[char] then
+      hotkeys[hotkeys[char]] = {}
+    end
+    hotkeys = hotkeys[char]
   end
 
   table.clear(hotkeys)
