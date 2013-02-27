@@ -212,8 +212,6 @@ function save()
     }
   end
 
-  table.dump(hotkeys)
-
   hotkeyList = hotkeys
   g_settings.setNode('game_hotkeys', hotkeySettings)
   g_settings.save()

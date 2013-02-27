@@ -37,14 +37,15 @@ function g_game.getSupportedProtocols()
     810, 811, 840, 842, 850, 853, 854,
     860, 861, 862, 870, 910, 940, 944,
     953, 954, 960, 961, 963, 970, 971,
-    973
+    973, 974
   }
 end
 
 function g_game.getSupportedClients(protocol)
   clients = {
     [971] = {980},
-    [973] = {981}
+    [973] = {981},
+    [974] = {982}
   }
   return clients[protocol] or {protocol}
 end
