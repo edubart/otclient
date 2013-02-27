@@ -4,3 +4,7 @@ Item < UIItem
   image-source: /images/ui/item
   font: verdana-11px-rounded
   border-color: white
+  color: white
+
+  $disabled:
+    color: #646464
