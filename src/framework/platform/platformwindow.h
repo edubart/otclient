@@ -97,9 +97,6 @@ public:
     void setOnInputEvent(const OnInputEventCallback& onInputEvent) { m_onInputEvent = onInputEvent; }
 
 protected:
-    virtual void internalCreateContext() = 0;
-    virtual void internalDestroyContext() = 0;
-    virtual void internalRestoreContext() = 0;
     virtual int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) = 0;
 
     void updateUnmaximizedCoords();

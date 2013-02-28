@@ -38,12 +38,6 @@ class X11Window : public PlatformWindow
     void internalCreateWindow();
     bool internalSetupWindowInput();
 
-    void internalCheckGL();
-    void internalChooseGLVisual();
-    void internalCreateContext();
-    void internalDestroyContext();
-    void internalRestoreContext();
-
 public:
     X11Window();
 
@@ -98,6 +92,8 @@ private:
     Atom m_wmDelete;
     std::string m_clipboardText;
 };
+
+extern X11Window& g_x11Window;
 
 #endif
 

@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 
-class GraphicsContext
+class GraphicsContext : public stdext::shared_object
 {
 public:
     GraphicsContext(const std::string& name);

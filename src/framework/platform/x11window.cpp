@@ -24,6 +24,7 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/ogl/graphicscontextglx.h>
+#include <framework/graphics/ogl/graphicscontextegl.h>
 #include <unistd.h>
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
@@ -43,9 +44,11 @@ X11Window::X11Window()
     m_wmDelete = 0;
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
+#ifndef OPENGL_ES
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextGLX);
-    dump << GraphicsContextPtr(new GraphicsContextGLX())->getName().c_str();
-    dump << (new GraphicsContextGLX())->getName().c_str();
+#else
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextEGL);
+#endif
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
@@ -203,9 +206,7 @@ X11Window::X11Window()
 void X11Window::init()
 {
     internalOpenDisplay();
-    internalCheckGL();
-    internalChooseGLVisual();
-    internalCreateContext();
+    m_graphicsContext->create();
     internalCreateWindow();
 }
 
@@ -235,7 +236,7 @@ void X11Window::terminate()
         m_colormap = 0;
     }
 
-    internalDestroyContext();
+    m_graphicsContext->destroy();
 
     if(m_visual) {
         XFree(m_visual);
@@ -323,7 +324,7 @@ void X11Window::internalCreateWindow()
     if(!internalSetupWindowInput())
         g_logger.warning("Input of special keys may be messed up, because window input initialization failed");
 
-    internalRestoreContext();
+    m_graphicsContext->restore();
 }
 
 bool X11Window::internalSetupWindowInput()
@@ -348,78 +349,6 @@ bool X11Window::internalSetupWindowInput()
     }
 
     return true;
-}
-
-void X11Window::internalCheckGL()
-{
-#ifdef OPENGL_ES
-    m_eglDisplay = eglGetDisplay((EGLNativeDisplayType)m_display);
-    if(m_eglDisplay == EGL_NO_DISPLAY)
-        g_logger.fatal("EGL not supported");
-
-    if(!eglInitialize(m_eglDisplay, NULL, NULL))
-        g_logger.fatal("Unable to initialize EGL");
-#else
-    if(!glXQueryExtension(m_display, NULL, NULL))
-        g_logger.fatal("GLX not supported");
-#endif
-}
-
-void X11Window::internalChooseGLVisual()
-{
-#ifdef OPENGL_ES
-    static int attrList[] = {
-#if OPENGL_ES==2
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#else
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES_BIT,
-#endif
-        EGL_RED_SIZE, 4,
-        EGL_GREEN_SIZE, 4,
-        EGL_BLUE_SIZE, 4,
-        EGL_ALPHA_SIZE, 4,
-        EGL_NONE
-    };
-
-    EGLint numConfig;
-    XVisualInfo visTemplate;
-    int numVisuals;
-
-    if(!eglChooseConfig(m_eglDisplay, attrList, &m_eglConfig, 1, &numConfig))
-        g_logger.fatal("Failed to choose EGL config");
-
-    if(numConfig != 1)
-        g_logger.warning("Didn't got the exact EGL config");
-
-    EGLint vid;
-    if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
-        g_logger.fatal("Unable to get visual EGL visual id");
-
-    memset(&visTemplate, 0, sizeof(visTemplate));
-    visTemplate.visualid = vid;
-    m_visual = XGetVisualInfo(m_display, VisualIDMask, &visTemplate, &numVisuals);
-    if(!m_visual)
-        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
-
-    m_rootWindow = DefaultRootWindow(m_display);
-#else
-
-#endif
-}
-
-void X11Window::internalCreateContext()
-{
-    m_graphicsContext->create();
-}
-
-void X11Window::internalDestroyContext()
-{
-    m_graphicsContext->destroy();
-}
-
-void X11Window::internalRestoreContext()
-{
-    m_graphicsContext->restore();
 }
 
 void X11Window::move(const Point& pos)

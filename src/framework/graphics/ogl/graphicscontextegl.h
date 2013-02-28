@@ -31,7 +31,7 @@ class GraphicsContextEGL : public GraphicsContext
 public:
     GraphicsContextEGL();
 
-    void create(WindowType window, DisplayType display);
+    void create();
     void destroy();
     void restore();
 

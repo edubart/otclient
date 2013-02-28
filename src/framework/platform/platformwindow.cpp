@@ -33,6 +33,7 @@ WIN32Window window;
 #include "x11window.h"
 #include <framework/core/clock.h>
 X11Window window;
+X11Window& g_x11Window = window;
 #endif
 #endif
 

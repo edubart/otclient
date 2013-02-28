@@ -21,6 +21,7 @@
  */
 
 #include "graphicscontextegl.h"
+#include <framework/platform/x11window.h>
 
 GraphicsContextEGL::GraphicsContextEGL() :
     GraphicsContext("EGL")
@@ -31,10 +32,13 @@ GraphicsContextEGL::GraphicsContextEGL() :
     m_eglSurface = 0;
 }
 
-void GraphicsContextEGL::create(WindowType window, DisplayType display)
+void GraphicsContextEGL::create()
 {
-    m_window = window;
-    m_display = display;
+#ifdef WIN32
+    // TODO
+#else
+    Display *display = g_x11Window.getDisplay();
+#endif
 
     m_eglDisplay = eglGetDisplay(display);
     if(m_eglDisplay == EGL_NO_DISPLAY)
@@ -58,14 +62,32 @@ void GraphicsContextEGL::create(WindowType window, DisplayType display)
 
     EGLint numConfig;
 
+#ifdef WIN32
     if(!eglGetConfigs(m_eglDisplay, NULL, 0, &numConfig))
         g_logger.fatal("No valid GL configurations");
+#endif
 
     if(!eglChooseConfig(m_eglDisplay, configList, &m_eglConfig, 1, &numConfig))
         g_logger.fatal("Failed to choose EGL config");
 
     if(numConfig != 1)
         g_logger.warning("Didn't got the exact EGL config");
+
+    EGLint vid;
+    if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
+        g_logger.fatal("Unable to get visual EGL visual id");
+
+#ifndef WIN32
+    XVisualInfo visTemplate;
+    int numVisuals;
+    memset(&visTemplate, 0, sizeof(visTemplate));
+    visTemplate.visualid = vid;
+    g_x11Window.setVisual(XGetVisualInfo(display, VisualIDMask, &visTemplate, &numVisuals));
+    if(!g_x11Window.getVisual())
+        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
+
+    g_x11Window.setRootWindow(DefaultRootWindow(display));
+#endif
 
     EGLint contextAtrrList[] = {
 #if OPENGL_ES==2
@@ -76,9 +98,11 @@ void GraphicsContextEGL::create(WindowType window, DisplayType display)
         EGL_NONE
     };
 
+#ifdef WIN32
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
         g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
+#endif
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAtrrList);
     if(m_eglContext == EGL_NO_CONTEXT )
@@ -103,6 +127,13 @@ void GraphicsContextEGL::destroy()
 
 void GraphicsContextEGL::restore()
 {
+#ifndef WIN32
+    Window window = g_x11Window.getWindow();
+    m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, window, NULL);
+    if(m_eglSurface == EGL_NO_SURFACE)
+        g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
+#endif
+
     if(!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         g_logger.fatal("Unable to make current EGL context");
 }

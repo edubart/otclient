@@ -44,6 +44,7 @@
 typedef char             GLchar;
 
 // define OpenGL ES 2.0 API just to make compile, it wont actually be used
+inline void glBlendEquation (GLenum mode) { }
 inline void glBlendFuncSeparate (GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha) { }
 inline void glBindFramebuffer (GLenum target, GLuint framebuffer) { }
 inline void glDeleteFramebuffers (GLsizei n, const GLuint* framebuffers) { }

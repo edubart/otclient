@@ -304,18 +304,24 @@ endif()
 
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-    if(OPENGLES STREQUAL "2.0")
-        find_package(OpenGLES2 REQUIRED)
-        find_package(EGL REQUIRED)
-        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
-        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
-        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
-    ELSEif(OPENGLES STREQUAL "1.0")
-        find_package(OpenGLES1 REQUIRED)
-        find_package(EGL REQUIRED)
-        set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
-        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
-        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
+    if(OPENGLES)
+        set(framework_SOURCES ${framework_SOURCES}
+            ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextegl.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextegl.h
+        )
+        if(OPENGLES STREQUAL "2.0")
+            find_package(OpenGLES2 REQUIRED)
+            find_package(EGL REQUIRED)
+            set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
+            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
+            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
+        elseif(OPENGLES STREQUAL "1.0")
+            find_package(OpenGLES1 REQUIRED)
+            find_package(EGL REQUIRED)
+            set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
+            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
+            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
+        endif()
     else()
         ## TODO: CMake Documentation says that this is not the right
         # Thing for Mac OS X, but it works for now.
@@ -381,11 +387,15 @@ if(FRAMEWORK_GRAPHICS)
             )
         else()
             set(framework_SOURCES ${framework_SOURCES}
-                ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextglx.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextglx.h
                 ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
                 ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
             )
+            if(NOT OPENGLES)
+                set(framework_SOURCES ${framework_SOURCES}
+                    ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextglx.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextglx.h
+                )
+            endif()
         endif()
     endif()
 

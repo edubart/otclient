@@ -22,7 +22,6 @@
 
 #include "graphicscontextglx.h"
 
-
 GraphicsContextGLX::GraphicsContextGLX() :
     GraphicsContext("GLX"), m_window(dynamic_cast<X11Window&>(g_window))
 {
@@ -32,6 +31,9 @@ GraphicsContextGLX::GraphicsContextGLX() :
 
 void GraphicsContextGLX::create()
 {
+    if(!glXQueryExtension(m_window.getDisplay(), NULL, NULL))
+        g_logger.fatal("GLX not supported");
+
     static int attrList[] = {
         GLX_RENDER_TYPE, GLX_RGBA_BIT,
         GLX_DOUBLEBUFFER, True,

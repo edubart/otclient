@@ -303,6 +303,7 @@ void PainterOGL::updateGlBlendEquation()
 {
     if(!g_graphics.canUseBlendEquation())
         return;
+
     if(m_blendEquation == BlendEquation_Add)
         glBlendEquation(0x8006); // GL_FUNC_ADD
     else if(m_blendEquation == BlendEquation_Max)
