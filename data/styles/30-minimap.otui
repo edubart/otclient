@@ -1,7 +1,5 @@
 MinimapFlag < UIWidget
   size: 11 11
-  anchors.left: parent.left
-  anchors.top: parent.top
   focusable: false
 
 MinimapCross < UIWidget

@@ -1,3 +1,8 @@
+local function pcolored(text, color)
+  color = color or 'white'
+  modules.client_terminal.addLine(text, color)
+end
+
 function draw_debug_boxes(enable)
   if enable == nil then enable = true end
   g_ui.setDebugBoxesDrawing(enable)
@@ -51,21 +56,32 @@ function ls(path)
   local files = g_resources.listDirectoryFiles(path)
   for k,v in pairs(files) do
     if g_resources.directoryExists(path .. v) then
-      modules.client_terminal.addLine(path .. v, 'blue')
+      pcolored(path .. v, 'blue')
     else
-      pinfo(path .. v)
+      pcolored(path .. v)
     end
   end
 end
 
 function about_version()
-  pinfo(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' ..
+  pcolored(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' ..
         'Rev  ' .. g_app.getBuildRevision() .. ' ('.. g_app.getBuildCommit() .. ')\n' ..
         'Built on ' .. g_app.getBuildDate())
 end
 
 function about_graphics()
-  pinfo('Vendor ' .. g_graphics.getVendor() )
-  pinfo('Renderer' .. g_graphics.getRenderer())
-  pinfo('Version' .. g_graphics.getVersion())
+  pcolored('Vendor ' .. g_graphics.getVendor() )
+  pcolored('Renderer' .. g_graphics.getRenderer())
+  pcolored('Version' .. g_graphics.getVersion())
+end
+
+function about_modules()
+  for k,m in pairs(g_modules.getModules()) do
+    local loadedtext
+    if m:isLoaded() then
+      pcolored(m:getName() .. ' => loaded', 'green')
+    else
+      pcolored(m:getName() .. ' => not loaded', 'red')
+    end
+  end
 end
