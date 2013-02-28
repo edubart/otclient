@@ -47,7 +47,7 @@ public:
     bool hasChildAt(const std::string& childTag) { return !!get(childTag); }
     bool hasChildAtIndex(int childIndex) { return !!getIndex(childIndex); }
 
-    void setTag(std::string tag) { m_tag = tag; }
+    void setTag(const std::string& tag) { m_tag = tag; }
     void setValue(const std::string& value) { m_value = value; }
     void setNull(bool null) { m_null = null; }
     void setUnique(bool unique) { m_unique = unique; }

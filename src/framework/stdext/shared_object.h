@@ -59,7 +59,11 @@ public:
     typedef T element_type;
 
     shared_object_ptr(): px(nullptr) { }
-    shared_object_ptr(T* p, bool add_ref = true) : px(p) {  if(px != nullptr && add_ref) this->add_ref(); }
+    shared_object_ptr(T* p, bool add_ref = true) : px(p) { 
+        static_assert(std::is_base_of<shared_object, T>::value, "classes using shared_object_ptr must be a derived of stdext::shared_object");
+        if(px != nullptr && add_ref)
+            this->add_ref();
+    }
     shared_object_ptr(shared_object_ptr const& rhs): px(rhs.px) { if(px != nullptr) add_ref(); }
     template<class U>
     shared_object_ptr(shared_object_ptr<U> const& rhs, typename std::is_convertible<U,T>::type* = nullptr) : px(rhs.get()) { if(px != nullptr) add_ref(); }
