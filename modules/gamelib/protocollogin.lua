@@ -16,7 +16,7 @@ function ProtocolLogin:login(host, port, accountName, accountPassword)
 
   self.accountName = accountName
   self.accountPassword = accountPassword
-  self.connectCallback = sendLoginPacket
+  self.connectCallback = self.sendLoginPacket
 
   self:connect(host, port)
 end
@@ -86,7 +86,8 @@ end
 
 function ProtocolLogin:onConnect()
   self.gotConnection = true
-  self:sendLoginPacket()
+  self:connectCallback()
+  self.connectCallback = nil
 end
 
 function ProtocolLogin:onRecv(msg)

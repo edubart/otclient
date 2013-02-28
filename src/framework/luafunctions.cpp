@@ -27,7 +27,6 @@
 #include <framework/otml/otml.h>
 #include <framework/core/modulemanager.h>
 #include <framework/core/module.h>
-#include <framework/sound/soundmanager.h>
 #include <framework/util/crypt.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>

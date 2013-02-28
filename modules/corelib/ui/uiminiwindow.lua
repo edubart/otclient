@@ -166,9 +166,10 @@ end
 
 function UIMiniWindow:onDragLeave(droppedWidget, mousePos)
   if self.movedWidget then
-    self.setMovedChildMargin(0)
+    self.setMovedChildMargin(self.movedOldMargin or 0)
     self.movedWidget = nil
     self.setMovedChildMargin = nil
+    self.movedOldMargin = nil
     self.movedIndex = nil
   end
 
@@ -190,14 +191,16 @@ function UIMiniWindow:onDragMove(mousePos, mouseMoved)
       end
 
       if self.movedWidget then
-        self.setMovedChildMargin(0)
+        self.setMovedChildMargin(self.movedOldMargin or 0)
         self.setMovedChildMargin = nil
       end
 
       if mousePos.y < childCenterY then
+        self.movedOldMargin = child:getMarginTop()
         self.setMovedChildMargin = function(v) child:setMarginTop(v) end
         self.movedIndex = 0
       else
+        self.movedOldMargin = child:getMarginBottom()
         self.setMovedChildMargin = function(v) child:setMarginBottom(v) end
         self.movedIndex = 1
       end
@@ -209,7 +212,7 @@ function UIMiniWindow:onDragMove(mousePos, mouseMoved)
   end
 
   if not overAnyWidget and self.movedWidget then
-    self.setMovedChildMargin(0)
+    self.setMovedChildMargin(self.movedOldMargin or 0)
     self.movedWidget = nil
   end
 

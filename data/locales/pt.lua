@@ -303,6 +303,7 @@ locale = {
     ["Send Message"] = "Enviar Mensagem",
     ["Send"] = "Enviar",
     ["Server List"] = "Lista de Servidores",
+    ["Server list"] = "Lista de servidores",
     ["Server Log"] = "Registro do servidor",
     ["Server"] = "Servidor",
     ["Set Outfit"] = "Escolher Roupa",
