@@ -23,13 +23,30 @@ UIWindow
   opacity: 0.85
   clipping: true
   anchors.fill: parent
+  border: 0 white
+  $on:
+    border: 1 black
+
+  Label
+    id: titleBar
+    !text: tr('Terminal')
+    border: 1 black
+    color: white
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    background-color: #ffffff11
+    text-align: left
+    text-offset: 4 0
+    height: 18
+    visible: false
 
   ScrollablePanel
     id: terminalScrollArea
     focusable: false
     anchors.left: parent.left
     anchors.right: terminalScroll.left
-    anchors.top: parent.top
+    anchors.top: terminalScroll.top
     anchors.bottom: commandSymbolLabel.top
     vertical-scrollbar: terminalScroll
     inverted-scroll: true

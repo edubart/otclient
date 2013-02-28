@@ -20,6 +20,10 @@ local commandTextEdit
 local terminalBuffer
 local commandHistory = { }
 local currentHistoryIndex = 0
+local poped = false
+local oldPos
+local oldSize
+local firstShown = false
 
 -- private functions
 local function navigateCommand(step)
@@ -113,22 +117,7 @@ function init()
   terminalWindow = g_ui.displayUI('terminal')
   terminalWindow:setVisible(false)
 
-  local poped = false
-  terminalWindow.onDoubleClick = function(self)
-    if poped then
-      self:fill('parent')
-      self:getChildById('bottomResizeBorder'):disable()
-      self:getChildById('rightResizeBorder'):disable()
-      poped = false
-    else
-      self:breakAnchors()
-      self:resize(g_window.getWidth()/2, g_window.getHeight()/2)
-      self:move(g_window.getWidth()/2, g_window.getHeight()/2)
-      self:getChildById('bottomResizeBorder'):enable()
-      self:getChildById('rightResizeBorder'):enable()
-      poped = true
-    end
-  end
+  terminalWindow.onDoubleClick = popWindow
 
   terminalButton = modules.client_topmenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', '/images/topbuttons/terminal', toggle)
   g_keyboard.bindKeyDown('Ctrl+T', toggle)
@@ -150,6 +139,7 @@ function init()
 
   terminalBuffer = terminalWindow:recursiveGetChildById('terminalBuffer')
   terminalSelectText = terminalWindow:recursiveGetChildById('terminalSelectText')
+  terminalSelectText.onDoubleClick = popWindow
 
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
@@ -157,6 +147,18 @@ end
 
 function terminate()
   g_settings.setList('terminal-history', commandHistory)
+
+  if poped then
+    oldPos = terminalWindow:getPosition()
+    oldSize = terminalWindow:getSize()
+  end
+  local settings = {
+    size = oldSize,
+    pos = oldPos,
+    poped = poped
+  }
+  g_settings.setNode('terminal-window', settings)
+
   g_keyboard.unbindKeyDown('Ctrl+T')
   g_logger.setOnLog(nil)
   terminalWindow:destroy()
@@ -168,10 +170,50 @@ function hideButton()
   terminalButton:hide()
 end
 
+function popWindow()
+  if poped then
+    oldPos = terminalWindow:getPosition()
+    oldSize = terminalWindow:getSize()
+    terminalWindow:fill('parent')
+    terminalWindow:setOn(false)
+    terminalWindow:getChildById('bottomResizeBorder'):disable()
+    terminalWindow:getChildById('rightResizeBorder'):disable()
+    terminalWindow:getChildById('titleBar'):hide()
+    terminalWindow:getChildById('terminalScroll'):setMarginTop(0)
+    terminalWindow:getChildById('terminalScroll'):setMarginBottom(0)
+    terminalWindow:getChildById('terminalScroll'):setMarginRight(0)
+    poped = false
+  else
+    terminalWindow:breakAnchors()
+    terminalWindow:setOn(true)
+    local size = oldSize or { width = g_window.getWidth()/2, height = g_window.getHeight()/2 }
+    terminalWindow:setSize(size)
+    local pos = oldPos or { x = (g_window.getWidth() - terminalWindow:getWidth())/2, y = (g_window.getHeight() - terminalWindow:getHeight())/2 }
+    terminalWindow:setPosition(pos)
+    terminalWindow:getChildById('bottomResizeBorder'):enable()
+    terminalWindow:getChildById('rightResizeBorder'):enable()
+    terminalWindow:getChildById('titleBar'):show()
+    terminalWindow:getChildById('terminalScroll'):setMarginTop(18)
+    terminalWindow:getChildById('terminalScroll'):setMarginBottom(1)
+    terminalWindow:getChildById('terminalScroll'):setMarginRight(1)
+    terminalWindow:bindRectToParent()
+    poped = true
+  end
+end
+
 function toggle()
   if terminalWindow:isVisible() then
     hide()
   else
+    if not firstShow then
+      local settings = g_settings.getNode('terminal-window')
+      if settings then
+        if settings.size then  oldSize = size end
+        if settings.pos then oldPos = settings.pos end
+        if settings.poped then popWindow() end
+      end
+      firstShown = true
+    end
     show()
   end
 end
@@ -210,29 +252,8 @@ end
 function executeCommand(command)
   if command == nil or #command == 0 then return end
 
-  logLocked = true
-  g_logger.log(LogInfo, '> ' .. command)
-  logLocked = false
-
-  local func
-  local err
-
-  -- detect terminal commands
-  local command_name = command:match('^([%w_]+)[%s]*.*')
-  if command_name then
-    local args = string.split(command:match('^[%w]+[%s]*(.*)'), ' ')
-    if commandEnv[command_name] and type(commandEnv[command_name]) == 'function' then
-      func = function() modules.client_terminal.commandEnv[command_name](unpack(args)) end
-    end
-  end
-
-  -- detect and convert commands with simple syntax
-  local realCommand
-  if string.sub(command, 1, 1) == '=' then
-    realCommand = 'print(' .. string.sub(command,2) .. ')'
-  else
-    realCommand = command
-  end
+  -- add command line
+  addLine("> " .. command, "#ffffff")
 
   -- reset current history index
   currentHistoryIndex = 0
@@ -245,33 +266,47 @@ function executeCommand(command)
     end
   end
 
-  -- add command line
-  --addLine(">> " .. command, "#ffffff")
+  -- detect and convert commands with simple syntax
+  local realCommand
+  if string.sub(command, 1, 1) == '=' then
+    realCommand = 'print(' .. string.sub(command,2) .. ')'
+  else
+    realCommand = command
+  end
 
-  -- load command buffer
+  local func, err = loadstring(realCommand, "@")
+
+  -- detect terminal commands
   if not func then
-    func, err = loadstring(realCommand, "@")
-
-    -- check for syntax errors
-    if not func then
-      g_logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
-      return
+    local command_name = command:match('^([%w_]+)[%s]*.*')
+    if command_name then
+      local args = string.split(command:match('^[%w]+[%s]*(.*)'), ' ')
+      if commandEnv[command_name] and type(commandEnv[command_name]) == 'function' then
+        func = function() modules.client_terminal.commandEnv[command_name](unpack(args)) end
+      elseif command_name == command then
+        addLine('ERROR: command not found', 'red')
+        return
+      end
     end
+  end
+
+  -- check for syntax errors
+  if not func then
+    addLine('ERROR: incorrect lua syntax: ' .. err:sub(5), 'red')
+    return
   end
 
   -- setup func env to commandEnv
   setfenv(func, commandEnv)
 
   -- execute the command
-  addEvent(function()
-    local ok, ret = pcall(func)
-    if ok then
-      -- if the command returned a value, print it
-      if ret then print(ret) end
-    else
-      g_logger.log(LogError, 'command failed: ' .. ret)
-    end
-  end)
+  local ok, ret = pcall(func)
+  if ok then
+    -- if the command returned a value, print it
+    if ret then print(ret) end
+  else
+    addLine('ERROR: command failed: ' .. ret, 'red')
+  end
 end
 
 function clear()

@@ -3,9 +3,8 @@ local function pcolored(text, color)
   modules.client_terminal.addLine(text, color)
 end
 
-function draw_debug_boxes(enable)
-  if enable == nil then enable = true end
-  g_ui.setDebugBoxesDrawing(enable)
+function draw_debug_boxes()
+  g_ui.setDebugBoxesDrawing(not g_ui.isDrawingDebugBoxes())
 end
 
 function hide_map()
@@ -24,23 +23,28 @@ function auto_reload_module(name)
   reloadEvent()
 end
 
-local function pingBack(ping) print(g_game.getWorldName() .. ' => ' .. ping .. ' ms') end
 local pinging = false
+local function pingBack(ping)
+  if ping < 300 then color = 'green'
+  elseif ping < 600 then color = 'yellow'
+  else color = 'red' end
+  pcolored(g_game.getWorldName() .. ' => ' .. ping .. ' ms', color)
+end
 function ping()
   if pinging then
-    pdebug('Ping stopped.')
+    pcolored('Ping stopped.')
     g_game.setPingDelay(1000)
     disconnect(g_game, 'onPingBack', pingBack)
   else
     if not (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
-      perror('this server does not support ping')
+      pcolored('this server does not support ping', 'red')
       return
     elseif not g_game.isOnline() then
-      perror('ping command is only allowed when online')
+      pcolored('ping command is only allowed when online', 'red')
       return
     end
 
-    pdebug('Starting ping...')
+    pcolored('Starting ping...')
     g_game.setPingDelay(0)
     connect(g_game, 'onPingBack', pingBack)
   end

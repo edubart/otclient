@@ -814,11 +814,13 @@ bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 
 bool UITextEdit::onDoubleClick(const Point& mousePos)
 {
+    if(UIWidget::onDoubleClick(mousePos))
+        return true;
     if(m_selectable && m_text.length() > 0) {
         selectAll();
         return true;
     }
-    return UIWidget::onDoubleClick(mousePos);
+    return false;
 }
 
 void UITextEdit::onTextAreaUpdate(const Point& offset, const Size& visibleSize, const Size& totalSize)
