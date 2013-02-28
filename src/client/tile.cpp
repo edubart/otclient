@@ -542,8 +542,15 @@ bool Tile::isLookPossible()
 
 bool Tile::isClickable()
 {
+    bool hasGround = false;
+    bool hasOnBottom = false;
+    bool hasIgnoreLook = false;
     for(const ThingPtr& thing : m_things) {
-        if(!thing->isOnTop() && !thing->isIgnoreLook())
+        if(thing->isGround())
+            hasGround = true;
+        if(thing->isOnBottom())
+            hasOnBottom = true;
+        if((hasGround || hasOnBottom) && !hasIgnoreLook)
             return true;
     }
     return false;

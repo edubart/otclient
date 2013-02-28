@@ -68,11 +68,13 @@ end
 function online()
   showGameButtons()
 
-  if g_settings.getBoolean('showPing') and (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
-    pingLabel:show()
-  else
-    pingLabel:hide()
-  end
+  addEvent(function()
+    if modules.client_options.getOption('showPing') and (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
+      pingLabel:show()
+    else
+      pingLabel:hide()
+    end
+  end)
 end
 
 function offline()

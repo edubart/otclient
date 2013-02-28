@@ -121,7 +121,7 @@ function installLocale(locale)
     end
 
     if updatesNeeded > 0 then
-      pwarning('Locale \'' .. locale.name .. '\' is missing ' .. updatesNeeded .. ' translations.')
+      pdebug('Locale \'' .. locale.name .. '\' is missing ' .. updatesNeeded .. ' translations.')
     end
   end
 
@@ -182,7 +182,7 @@ function _G.tr(text, ...)
       if not translation then
         if translation == nil then
           if currentLocale.name ~= defaultLocaleName then
-            pwarning('Unable to translate: \"' .. text .. '\"')
+            pdebug('Unable to translate: \"' .. text .. '\"')
           end
         end
         translation = text

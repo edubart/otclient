@@ -5,6 +5,5 @@ Module
   website: www.otclient.info
   sandboxed: true
   scripts: [ locales ]
-  dependencies: [ client_topmenu ]
   @onLoad: init()
   @onUnload: terminate()

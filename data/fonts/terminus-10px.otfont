@@ -1,0 +1,8 @@
+Font
+  name: terminus-10px
+  texture: terminus-10px
+  height: 12
+  y-offset: 0
+  glyph-size: 16 16
+  fixed-glyph-width: 6
+  space-width: 6

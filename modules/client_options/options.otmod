@@ -4,7 +4,6 @@ Module
   author: edubart, BeniS
   website: www.otclient.info
   sandboxed: true
-  dependencies: [ client_topmenu ]
   scripts: [ options ]
   @onLoad: init()
   @onUnload: terminate()

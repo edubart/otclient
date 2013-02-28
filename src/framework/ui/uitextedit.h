@@ -51,6 +51,7 @@ public:
     void setSelectable(bool selectable) { m_selectable = selectable; }
     void setSelectionColor(const Color& color) { m_selectionColor = color; }
     void setSelectionBackgroundColor(const Color& color) { m_selectionBackgroundColor = color; }
+    void setAutoScroll(bool autoScroll) { m_autoScroll = autoScroll; }
 
     void moveCursorHorizontally(bool right);
     void moveCursorVertically(bool up);
@@ -87,6 +88,7 @@ public:
     bool isMultiline() { return m_multiline; }
     bool isEditable() { return m_editable; }
     bool isSelectable() { return m_selectable; }
+    bool isAutoScrolling() { return m_autoScroll; }
 
 protected:
     void updateText();
@@ -123,6 +125,7 @@ private:
     std::string m_validCharacters;
     uint m_maxLength;
     bool m_updatesEnabled;
+    bool m_autoScroll;
 
     bool m_selectable;
     int m_selectionReference;

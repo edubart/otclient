@@ -10,7 +10,7 @@ MiniWindow
     text: ?
     text-align: center
     phantom: false
-    !tooltip: tr('Hold left mouse button to navigate\nScroll mouse middle button to zoom\nRight mouse button to create map marks\nPress Ctrl+Shift+M to view the entire game map')')
+    !tooltip: tr('Hold left mouse button to navigate\nScroll mouse middle button to zoom\nRight mouse button to create map marks\nPress Ctrl+Shift+M to view the entire game map')
     anchors.top: minimizeButton.top
     anchors.right: minimizeButton.left
     margin-right: 3

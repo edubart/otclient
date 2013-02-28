@@ -10,6 +10,7 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
+    max-length: 255
 
   TextEdit
     id: text

@@ -1,7 +1,21 @@
 TerminalLabel < UILabel
-  font: terminus-14px-bold
+  font: terminus-10px
   text-wrap: true
   text-auto-resize: true
+  phantom: true
+
+TerminalSelectText < UITextEdit
+  font: terminus-10px
+  text-wrap: true
+  text-align: bottomLeft
+  editable: false
+  change-cursor-image: false
+  cursor-visible: false
+  selection-color: black
+  selection-background-color: white
+  color: alpha
+  focusable: false
+  auto-scroll: false
 
 UIWindow
   id: terminalWindow
@@ -10,35 +24,57 @@ UIWindow
   clipping: true
   anchors.fill: parent
 
-  Panel
-    id: terminalBuffer
-    layout:
-      type: verticalBox
-      fit-children: true
+  ScrollablePanel
+    id: terminalScrollArea
     focusable: false
     anchors.left: parent.left
-    anchors.right: parent.right
+    anchors.right: terminalScroll.left
+    anchors.top: parent.top
     anchors.bottom: commandSymbolLabel.top
+    vertical-scrollbar: terminalScroll
+    inverted-scroll: true
     margin-left: 2
+
+    Panel
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      id: terminalBuffer
+      layout:
+        type: verticalBox
+        fit-children: true
+      focusable: false
+
+    TerminalSelectText
+      id: terminalSelectText
+      anchors.fill: terminalBuffer
+
+  VerticalScrollBar
+    id: terminalScroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 48
+    pixels-scroll: true
 
   UILabel
     id: commandSymbolLabel
-    size: 12 16
+    size: 12 12
     fixed-size: true
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     margin-left: 2
-    font: terminus-14px-bold
+    font: terminus-10px
     text: >
 
   UITextEdit
     id: commandTextEdit
-    height: 16
+    height: 12
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right
     anchors.right: parent.right
-    margin-left: 5
-    font: terminus-14px-bold
+    margin-left: 1
+    font: terminus-10px
     selection-color: black
     selection-background-color: white
 

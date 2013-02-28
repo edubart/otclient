@@ -41,6 +41,7 @@ UITextEdit::UITextEdit()
     m_maxLength = 0;
     m_editable = true;
     m_selectable = true;
+    m_autoScroll = false;
     m_changeCursorImage = true;
     m_selectionReference = 0;
     m_selectionStart = 0;
@@ -164,7 +165,7 @@ void UITextEdit::update(bool focusCursor)
 
     // readjust start view area based on cursor position
     m_cursorInRange = false;
-    if(focusCursor) {
+    if(focusCursor && m_autoScroll) {
         if(m_cursorPos > 0 && textLength > 0) {
                 assert(m_cursorPos <= textLength);
                 Rect virtualRect(m_textVirtualOffset, m_rect.size() - Size(m_padding.left+m_padding.right, 0)); // previous rendered virtual rect
@@ -628,6 +629,8 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
             setCursorVisible(node->value<bool>());
         else if(node->tag() == "change-cursor-image")
             setChangeCursorImage(node->value<bool>());
+        else if(node->tag() == "auto-scroll")
+            setAutoScroll(node->value<bool>());
     }
 }
 

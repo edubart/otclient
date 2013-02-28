@@ -82,44 +82,19 @@ local function setupGraphicsEngines()
 end
 
 function init()
+  for k,v in pairs(defaultOptions) do
+    g_settings.setDefault(k, v)
+    options[k] = v
+  end
+
   optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
-  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
 
   optionsTabBar = optionsWindow:getChildById('optionsTabBar')
   optionsTabBar:setContentWidget(optionsWindow:getChildById('optionsTabContent'))
 
-  addEvent(function() setup() end)
-
   g_keyboard.bindKeyDown('Ctrl+Shift+F', function() toggleOption('fullscreen') end)
   g_keyboard.bindKeyDown('Ctrl+N', toggleDisplays)
-
-  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
-end
-
-function terminate()
-  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
-  g_keyboard.unbindKeyDown('Ctrl+N')
-  optionsWindow:destroy()
-  optionsButton:destroy()
-  audioButton:destroy()
-  optionsTabBar = nil
-  generalPanel = nil
-  consolePanel = nil
-  graphicsPanel = nil
-  audioPanel = nil
-end
-
-function setup()
-  -- load options
-  for k,v in pairs(defaultOptions) do
-    g_settings.setDefault(k, v)
-    if type(v) == 'boolean' then
-      setOption(k, g_settings.getBoolean(k))
-    elseif type(v) == 'number' then
-      setOption(k, g_settings.getNumber(k))
-    end
-  end
 
   generalPanel = g_ui.loadUI('game')
   optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')
@@ -133,7 +108,31 @@ function setup()
   audioPanel = g_ui.loadUI('audio')
   optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
 
+  optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
+  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
+
+  addEvent(function() setup() end)
+end
+
+function terminate()
+  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
+  g_keyboard.unbindKeyDown('Ctrl+N')
+  optionsWindow:destroy()
+  optionsButton:destroy()
+  audioButton:destroy()
+end
+
+function setup()
   setupGraphicsEngines()
+
+  -- load options
+  for k,v in pairs(defaultOptions) do
+    if type(v) == 'boolean' then
+      setOption(k, g_settings.getBoolean(k), true)
+    elseif type(v) == 'number' then
+      setOption(k, g_settings.getNumber(k), true)
+    end
+  end
 end
 
 function toggle()
@@ -172,8 +171,8 @@ function toggleOption(key)
   setOption(key, not getOption(key))
 end
 
-function setOption(key, value)
-  if options[key] == value then return end
+function setOption(key, value, force)
+  if not force and options[key] == value then return end
   local gameMapPanel = modules.game_interface.getMapPanel()
 
   local panel = nil
@@ -188,66 +187,37 @@ function setOption(key, value)
     panel = graphicsPanel
   elseif key == 'enableAudio' then
     g_sounds.setAudioEnabled(value)
-    addEvent(function()
-      if value then
-        audioButton:setIcon('/images/topbuttons/audio')
-      else
-        audioButton:setIcon('/images/topbuttons/audio_mute')
-      end
-    end)
+    if value then
+      audioButton:setIcon('/images/topbuttons/audio')
+    else
+      audioButton:setIcon('/images/topbuttons/audio_mute')
+    end
     panel = audioPanel
   elseif key == 'enableMusicSound' then
     g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
   elseif key == 'musicSoundVolume' then
     g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
-    if audioPanel then
-      audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
-    end
+    audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
   elseif key == 'showLeftPanel' then
-    addEvent(function()
-      modules.game_interface.getLeftPanel():setOn(value)
-    end)
+    modules.game_interface.getLeftPanel():setOn(value)
   elseif key == 'backgroundFrameRate' then
     local text = value
-    if value <= 0 or value >= 201 then
-      text = 'max'
-      value = 0
-    end
-
-    if graphicsPanel then
-      graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
-    end
+    if value <= 0 or value >= 201 then text = 'max'  value = 0  end
+    graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
     g_app.setBackgroundPaneMaxFps(value)
   elseif key == 'foregroundFrameRate' then
     local text = value
-    if value <= 0 or value >= 61 then
-      text = 'max'
-      value = 0
-    end
-
-    if graphicsPanel then
-      graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
-    end
+    if value <= 0 or value >= 61 then text = 'max' value = 0 end
+    graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
     g_app.setForegroundPaneMaxFps(value)
   elseif key == 'enableLights' then
-    addEvent(function()
-      local map = modules.game_interface.getMapPanel()
-      map:setDrawLights(value and options['ambientLight'] < 100)
-
-      if graphicsPanel then
-        graphicsPanel:getChildById('ambientLight'):setEnabled(value)
-        graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
-      end
-    end)
+    gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
+    graphicsPanel:getChildById('ambientLight'):setEnabled(value)
+    graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
   elseif key == 'ambientLight' then
-    addEvent(function()
-      local map = modules.game_interface.getMapPanel()
-      if graphicsPanel then
-        graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
-      end
-      map:setMinimumAmbientLight(value/100)
-      map:setDrawLights(options['enableLights'] and value < 100)
-    end)
+    graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
+    gameMapPanel:setMinimumAmbientLight(value/100)
+    gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
   elseif key == 'displayNames' then

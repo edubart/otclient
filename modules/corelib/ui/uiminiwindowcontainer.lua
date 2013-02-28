@@ -127,7 +127,7 @@ end
 function UIMiniWindowContainer:scheduleInsert(widget, index)
   if index - 1 > self:getChildCount() then
     if self.scheduledWidgets[index] then
-      pwarning('replacing scheduled widget id ' .. widget:getId())
+      pdebug('replacing scheduled widget id ' .. widget:getId())
     end
     self.scheduledWidgets[index] = widget
   else

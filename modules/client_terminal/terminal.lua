@@ -1,17 +1,21 @@
 -- configs
-local LogColors = { [LogInfo] = 'white',
+local LogColors = { [LogDebug] = 'pink',
+                    [LogInfo] = 'white',
                     [LogWarning] = 'yellow',
                     [LogError] = 'red' }
-local MaxLogLines = 80
+local MaxLogLines = 512
 local LabelHeight = 16
 local MaxHistory = 1000
+
+local oldenv = getfenv(0)
+setfenv(0, _G)
+commandEnv = runinsandbox('commands')
+setfenv(0, oldenv)
 
 -- private variables
 local terminalWindow
 local terminalButton
 local logLocked = false
-local commandEnv = {}
-setmetatable(commandEnv, { __index = getfenv() } )
 local commandTextEdit
 local terminalBuffer
 local commandHistory = { }
@@ -96,9 +100,6 @@ local function doCommand()
 end
 
 local function onLog(level, message, time)
-  -- debug messages are ignored
-  if level == LogDebug then return end
-
   -- avoid logging while reporting logs (would cause a infinite loop)
   if logLocked then return end
 
@@ -137,11 +138,19 @@ function init()
   commandTextEdit = terminalWindow:getChildById('commandTextEdit')
   g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
   g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
+  g_keyboard.bindKeyPress('Ctrl+C', 
+    function() 
+      if commandTextEdit:hasSelection() or not terminalSelectText:hasSelection() then return false end
+      g_window.setClipboardText(terminalSelectText:getSelection())
+    return true 
+    end, commandTextEdit)
   g_keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Escape', hide, terminalWindow)
 
-  terminalBuffer = terminalWindow:getChildById('terminalBuffer')
+  terminalBuffer = terminalWindow:recursiveGetChildById('terminalBuffer')
+  terminalSelectText = terminalWindow:recursiveGetChildById('terminalSelectText')
+
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
 end
@@ -194,6 +203,8 @@ function addLine(text, color)
   label:setId('terminalLabel' .. numLines)
   label:setText(text)
   label:setColor(color)
+
+  terminalSelectText:setText(terminalSelectText:getText() .. '\n' .. text)
 end
 
 function executeCommand(command)
@@ -202,6 +213,18 @@ function executeCommand(command)
   logLocked = true
   g_logger.log(LogInfo, '> ' .. command)
   logLocked = false
+
+  local func
+  local err
+
+  -- detect terminal commands
+  local command_name = command:match('^([%w_]+)[%s]*.*')
+  if command_name then
+    local args = string.split(command:match('^[%w]+[%s]*(.*)'), ' ')
+    if commandEnv[command_name] and type(commandEnv[command_name]) == 'function' then
+      func = function() modules.client_terminal.commandEnv[command_name](unpack(args)) end
+    end
+  end
 
   -- detect and convert commands with simple syntax
   local realCommand
@@ -226,23 +249,32 @@ function executeCommand(command)
   --addLine(">> " .. command, "#ffffff")
 
   -- load command buffer
-  local func, err = loadstring(realCommand, "@")
-
-  -- check for syntax errors
   if not func then
-    g_logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
-    return
+    func, err = loadstring(realCommand, "@")
+
+    -- check for syntax errors
+    if not func then
+      g_logger.log(LogError, 'incorrect lua syntax: ' .. err:sub(5))
+      return
+    end
   end
 
   -- setup func env to commandEnv
   setfenv(func, commandEnv)
 
   -- execute the command
-  local ok, ret = pcall(func)
-  if ok then
-    -- if the command returned a value, print it
-    if ret then print(ret) end
-  else
-    g_logger.log(LogError, 'command failed: ' .. ret)
-  end
+  addEvent(function()
+    local ok, ret = pcall(func)
+    if ok then
+      -- if the command returned a value, print it
+      if ret then print(ret) end
+    else
+      g_logger.log(LogError, 'command failed: ' .. ret)
+    end
+  end)
+end
+
+function clear()
+  terminalBuffer:destroyChildren()
+  terminalSelectText:setText('')
 end
