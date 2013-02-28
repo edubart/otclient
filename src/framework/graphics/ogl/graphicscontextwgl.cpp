@@ -21,6 +21,7 @@
  */
 
 #include "graphicscontextwgl.h"
+#include <framework/platform/win32window.h>
 
 GraphicsContextWGL::GraphicsContextWGL() :
     GraphicsContext("WGL")
@@ -28,10 +29,9 @@ GraphicsContextWGL::GraphicsContextWGL() :
     m_wglContext = 0;
 }
 
-void GraphicsContextWGL::create(WindowType window, DisplayType display)
+void GraphicsContextWGL::create()
 {
-    m_window = window;
-    m_display = display;
+    HDC display = g_win32Window.getDisplay();
 
     uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
@@ -75,7 +75,7 @@ void GraphicsContextWGL::destroy()
 
 void GraphicsContextWGL::restore()
 {
-    if(!wglMakeCurrent(m_display, m_wglContext))
+    if(!wglMakeCurrent(g_win32Window.getDisplay(), m_wglContext))
         g_logger.fatal("Unable to make current WGL context");
 }
 
@@ -100,7 +100,7 @@ void *GraphicsContextWGL::getExtensionProcAddress(const char *ext)
 
 void GraphicsContextWGL::swapBuffers()
 {
-    SwapBuffers(m_display);
+    SwapBuffers(g_win32Window.getDisplay());
 }
 
 void GraphicsContextWGL::setVerticalSync(bool enable)

@@ -23,9 +23,13 @@
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
-#include <framework/graphics/ogl/graphicscontextglx.h>
-#include <framework/graphics/ogl/graphicscontextegl.h>
 #include <unistd.h>
+
+#ifndef OPENGL_ES
+#include <framework/graphics/ogl/graphicscontextglx.h>
+#else
+#include <framework/graphics/ogl/graphicscontextegl.h>
+#endif
 
 #define LSB_BIT_SET(p, n) (p[(n)/8] |= (1 <<((n)%8)))
 

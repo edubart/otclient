@@ -185,7 +185,9 @@ bool Graphics::isPainterEngineAvailable(Graphics::PainterEngine painterEngine)
 bool Graphics::selectPainterEngine(PainterEngine painterEngine)
 {
     // TODO: remove this
-    painterEngine = Painter_OpenGL2;
+#ifdef DIRECTX
+    painterEngine = Painter_DirectX9;
+#endif
 
     Painter *painter = nullptr;
     Painter *fallbackPainter = nullptr;

@@ -24,7 +24,12 @@
 #include <framework/graphics/image.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
+
+#ifndef OPENGL_ES
 #include <framework/graphics/ogl/graphicscontextwgl.h>
+#else
+#include <framework/graphics/ogl/graphicscontextegl.h>
+#endif
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
 
@@ -37,8 +42,12 @@ WIN32Window::WIN32Window()
     m_size = Size(600,480);
     m_hidden = true;
     m_deviceContext = 0;
+
+#ifndef OPENGL_ES
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextWGL);
-    std::cout << "lal3: \"" << m_graphicsContext->getName().c_str() << "\" aa" << std::endl;
+#else
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContextEGL);
+#endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
     m_keyMap[VK_TAB] = Fw::KeyTab;
@@ -196,8 +205,8 @@ void WIN32Window::init()
 {
     m_instance = GetModuleHandle(NULL);
     internalCreateWindow();
-    internalCreateContext();
-    internalRestoreContext();
+    m_graphicsContext->create();
+    m_graphicsContext->restore();
 }
 
 void WIN32Window::terminate()
@@ -212,7 +221,7 @@ void WIN32Window::terminate()
         DestroyCursor(cursor);
     m_cursors.clear();
 
-    internalDestroyContext();
+    m_graphicsContext->destroy();
 
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
@@ -287,22 +296,6 @@ void WIN32Window::internalCreateWindow()
     m_deviceContext = GetDC(m_window);
     if(!m_deviceContext)
         g_logger.fatal("GetDC failed");
-}
-
-void WIN32Window::internalCreateContext()
-{
-    dump << m_graphicsContext->getName().c_str();
-    m_graphicsContext->create(m_window, m_deviceContext);
-}
-
-void WIN32Window::internalDestroyContext()
-{
-    m_graphicsContext->destroy();
-}
-
-void WIN32Window::internalRestoreContext()
-{
-    m_graphicsContext->restore();
 }
 
 void WIN32Window::move(const Point& pos)
@@ -579,7 +572,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             }
 
             if(m_visible)
-                internalRestoreContext();
+                m_graphicsContext->restore();
 
             Size size = Size(LOWORD(lParam), HIWORD(lParam));
             size.setWidth(std::max(std::min(size.width(), 7680), 32));

@@ -380,11 +380,15 @@ if(FRAMEWORK_GRAPHICS)
     else()
         if(WIN32)
             set(framework_SOURCES ${framework_SOURCES}
-                ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextwgl.cpp
-                ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextwgl.h
                 ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.cpp
                 ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
             )
+            if(NOT OPENGLES)
+                set(framework_SOURCES ${framework_SOURCES}
+                    ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextwgl.cpp
+                    ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/graphicscontextwgl.h
+                )
+            endif()
         else()
             set(framework_SOURCES ${framework_SOURCES}
                 ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp

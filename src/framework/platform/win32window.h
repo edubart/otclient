@@ -31,9 +31,6 @@ struct WindowProcProxy;
 class WIN32Window : public PlatformWindow
 {
     void internalCreateWindow();
-    void internalCreateContext();
-    void internalDestroyContext();
-    void internalRestoreContext();
 
     LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     friend class WindowProcProxy;
@@ -70,6 +67,8 @@ public:
     Size getDisplaySize();
     std::string getClipboardText();
     std::string getPlatformType();
+    HWND getWindow() { return m_window; }
+    HDC getDisplay() { return m_deviceContext; }
 
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
@@ -87,5 +86,7 @@ private:
     HCURSOR m_defaultCursor;
     bool m_hidden;
 };
+
+extern WIN32Window& g_win32Window;
 
 #endif

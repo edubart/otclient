@@ -21,7 +21,12 @@
  */
 
 #include "graphicscontextegl.h"
+
+#ifdef WIN32
+#include <framework/platform/win32window.h>
+#else
 #include <framework/platform/x11window.h>
+#endif
 
 GraphicsContextEGL::GraphicsContextEGL() :
     GraphicsContext("EGL")
@@ -35,7 +40,7 @@ GraphicsContextEGL::GraphicsContextEGL() :
 void GraphicsContextEGL::create()
 {
 #ifdef WIN32
-    // TODO
+    HDC display = g_win32Window.getDisplay();
 #else
     Display *display = g_x11Window.getDisplay();
 #endif
@@ -62,22 +67,17 @@ void GraphicsContextEGL::create()
 
     EGLint numConfig;
 
-#ifdef WIN32
-    if(!eglGetConfigs(m_eglDisplay, NULL, 0, &numConfig))
-        g_logger.fatal("No valid GL configurations");
-#endif
-
     if(!eglChooseConfig(m_eglDisplay, configList, &m_eglConfig, 1, &numConfig))
         g_logger.fatal("Failed to choose EGL config");
 
     if(numConfig != 1)
         g_logger.warning("Didn't got the exact EGL config");
 
+#ifndef WIN32
     EGLint vid;
     if(!eglGetConfigAttrib(m_eglDisplay, m_eglConfig, EGL_NATIVE_VISUAL_ID, &vid))
         g_logger.fatal("Unable to get visual EGL visual id");
 
-#ifndef WIN32
     XVisualInfo visTemplate;
     int numVisuals;
     memset(&visTemplate, 0, sizeof(visTemplate));
@@ -99,6 +99,7 @@ void GraphicsContextEGL::create()
     };
 
 #ifdef WIN32
+    HWND window = g_win32Window.getWindow();
     m_eglSurface = eglCreateWindowSurface(m_eglDisplay, m_eglConfig, window, NULL);
     if(m_eglSurface == EGL_NO_SURFACE)
         g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));

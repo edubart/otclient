@@ -29,6 +29,7 @@ SDLWindow window;
 #ifdef WIN32
 #include "win32window.h"
 WIN32Window window;
+WIN32Window& g_win32Window = window;
 #else
 #include "x11window.h"
 #include <framework/core/clock.h>
