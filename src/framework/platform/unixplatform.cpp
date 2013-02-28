@@ -30,7 +30,7 @@
 
 void Platform::processArgs(std::vector<std::string>& args)
 {
-    //nothing todo, linux args are already utf8 encoded
+    //nothing to do, linux args are already utf8 encoded
 }
 
 bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)

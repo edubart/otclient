@@ -25,16 +25,6 @@
 
 #include "declarations.h"
 
-#ifdef WIN32
-#include <windows.h>
-typedef HWND WindowType;
-typedef HDC DisplayType;
-#else
-#include <X11/Xlib.h>
-typedef Window WindowType;
-typedef Display *DisplayType;
-#endif
-
 class GraphicsContext
 {
 public:
@@ -43,7 +33,7 @@ public:
 
     std::string getName() { return m_name; }
 
-    virtual void create(WindowType window, DisplayType display) = 0;
+    virtual void create() = 0;
     virtual void destroy() = 0;
     virtual void restore() = 0;
 
@@ -53,8 +43,6 @@ public:
 
 protected:
     std::string m_name;
-    WindowType m_window;
-    DisplayType m_display;
 
 };
 

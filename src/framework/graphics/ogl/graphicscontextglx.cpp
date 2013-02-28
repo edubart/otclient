@@ -22,45 +22,64 @@
 
 #include "graphicscontextglx.h"
 
+
 GraphicsContextGLX::GraphicsContextGLX() :
-    GraphicsContext("GLX")
+    GraphicsContext("GLX"), m_window(dynamic_cast<X11Window&>(g_window))
 {
     m_fbConfig = 0;
     m_glxContext = 0;
 }
 
-void GraphicsContextGLX::create(WindowType window, DisplayType display)
+void GraphicsContextGLX::create()
 {
-    m_window = window;
-    m_display = display;
+    static int attrList[] = {
+        GLX_RENDER_TYPE, GLX_RGBA_BIT,
+        GLX_DOUBLEBUFFER, True,
+        GLX_RED_SIZE, 8,
+        GLX_GREEN_SIZE, 8,
+        GLX_BLUE_SIZE, 8,
+        GLX_ALPHA_SIZE, 8,
+        None
+    };
 
-    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+    int nelements;
+    m_fbConfig = glXChooseFBConfig(m_window.getDisplay(), m_window.getScreen(), attrList, &nelements);
+    if(!m_fbConfig)
+        g_logger.fatal("Couldn't choose RGBA, double buffered fbconfig");
+
+    m_window.setVisual(glXGetVisualFromFBConfig(m_window.getDisplay(), *m_fbConfig));
+    if(!m_window.getDisplay())
+        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
+
+    m_window.setRootWindow(RootWindow(m_window.getDisplay(), m_window.getVisual()->screen));
+
+    m_glxContext = glXCreateContext(m_window.getDisplay(), m_window.getVisual(), NULL, True);
 
     if(!m_glxContext)
         g_logger.fatal("Unable to create GLX context");
 
-    if(!glXIsDirect(m_display, m_glxContext))
+    if(!glXIsDirect(m_window.getDisplay(), m_glxContext))
         g_logger.warning("GL direct rendering is not possible");
 }
 
 void GraphicsContextGLX::destroy()
 {
     if(m_glxContext) {
-        glXMakeCurrent(m_display, None, NULL);
-        glXDestroyContext(m_display, m_glxContext);
+        glXMakeCurrent(m_window.getDisplay(), None, NULL);
+        glXDestroyContext(m_window.getDisplay(), m_glxContext);
         m_glxContext = 0;
     }
 }
 
 void GraphicsContextGLX::restore()
 {
-    if(!glXMakeCurrent(m_display, m_window, m_glxContext))
+    if(!glXMakeCurrent(m_window.getDisplay(), m_window.getWindow(), m_glxContext))
         g_logger.fatal("Unable to set GLX context on X11 window");
 }
 
 bool GraphicsContextGLX::isExtensionSupported(const char *ext)
 {
-    const char *exts = glXQueryExtensionsString(m_display, DefaultScreen(m_display));
+    const char *exts = glXQueryExtensionsString(m_window.getDisplay(), m_window.getScreen());
     if(strstr(exts, ext))
         return true;
     return false;
@@ -73,7 +92,7 @@ void *GraphicsContextGLX::getExtensionProcAddress(const char *ext)
 
 void GraphicsContextGLX::swapBuffers()
 {
-    glXSwapBuffers(m_display, m_window);
+    glXSwapBuffers(m_window.getDisplay(), m_window.getWindow());
 }
 
 void GraphicsContextGLX::setVerticalSync(bool enable)

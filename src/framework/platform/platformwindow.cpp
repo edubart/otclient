@@ -65,16 +65,15 @@ int PlatformWindow::loadMouseCursor(const std::string& file, const Point& hotSpo
 
 void PlatformWindow::setGraphicsContext(const GraphicsContextPtr& graphicsContext)
 {
-    // TODO
     if(m_graphicsContext && m_graphicsContext->getName() == graphicsContext->getName())
         return;
 
     if(m_graphicsContext)
-        internalDestroyContext();
+        m_graphicsContext->destroy();
 
     m_graphicsContext = graphicsContext;
-    internalCreateContext();
-    internalRestoreContext();
+    m_graphicsContext->create();
+    m_graphicsContext->restore();
 }
 
 void PlatformWindow::updateUnmaximizedCoords()

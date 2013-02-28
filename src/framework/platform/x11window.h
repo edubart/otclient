@@ -69,10 +69,16 @@ public:
     void setVerticalSync(bool enable);
     void setIcon(const std::string& file);
     void setClipboardText(const std::string& text);
+    void setVisual(XVisualInfo *visual) { m_visual = visual; }
+    void setRootWindow(const Window& window) { m_rootWindow = window; }
 
     Size getDisplaySize();
     std::string getClipboardText();
     std::string getPlatformType();
+    Window getWindow() { return m_window; }
+    Display *getDisplay() { return m_display; }
+    int getScreen() { return m_screen; }
+    XVisualInfo *getVisual() { return m_visual; }
 
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);

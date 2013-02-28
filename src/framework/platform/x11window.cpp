@@ -44,6 +44,8 @@ X11Window::X11Window()
     m_minimumSize = Size(600,480);
     m_size = Size(600,480);
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextGLX);
+    dump << GraphicsContextPtr(new GraphicsContextGLX())->getName().c_str();
+    dump << (new GraphicsContextGLX())->getName().c_str();
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
     m_keyMap[XK_Tab] = Fw::KeyTab;
@@ -401,32 +403,13 @@ void X11Window::internalChooseGLVisual()
 
     m_rootWindow = DefaultRootWindow(m_display);
 #else
-    static int attrList[] = {
-        GLX_RENDER_TYPE, GLX_RGBA_BIT,
-        GLX_DOUBLEBUFFER, True,
-        GLX_RED_SIZE, 8,
-        GLX_GREEN_SIZE, 8,
-        GLX_BLUE_SIZE, 8,
-        GLX_ALPHA_SIZE, 8,
-        None
-    };
 
-    int nelements;
-    m_fbConfig = glXChooseFBConfig(m_display, m_screen, attrList, &nelements);
-    if(!m_fbConfig)
-        g_logger.fatal("Couldn't choose RGBA, double buffered fbconfig");
-
-    m_visual = glXGetVisualFromFBConfig(m_display, *m_fbConfig);
-    if(!m_visual)
-        g_logger.fatal("Couldn't choose RGBA, double buffered visual");
-
-    m_rootWindow = RootWindow(m_display, m_visual->screen);
 #endif
 }
 
 void X11Window::internalCreateContext()
 {
-    m_graphicsContext->create(m_window, m_display);
+    m_graphicsContext->create();
 }
 
 void X11Window::internalDestroyContext()

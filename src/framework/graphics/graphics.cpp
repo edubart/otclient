@@ -238,7 +238,7 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
             if(g_painter)
                 g_painter->unbind();
             painter->bind();
-            //g_window.setGraphicsContext(painter->getGraphicsContext());
+            g_window.setGraphicsContext(painter->getGraphicsContext());
             g_painter = painter;
         }
 

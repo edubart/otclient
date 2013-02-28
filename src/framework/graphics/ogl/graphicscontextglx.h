@@ -24,6 +24,7 @@
 #define GRAPHICSCONTEXTGLX_H
 
 #include <framework/graphics/graphicscontext.h>
+#include <framework/platform/x11window.h>
 #include <GL/glx.h>
 
 class GraphicsContextGLX : public GraphicsContext
@@ -31,7 +32,7 @@ class GraphicsContextGLX : public GraphicsContext
 public:
     GraphicsContextGLX();
 
-    void create(WindowType window, DisplayType display);
+    void create();
     void destroy();
     void restore();
 
@@ -43,6 +44,7 @@ public:
     void setVerticalSync(bool enable);
 
 private:
+    X11Window& m_window;
     GLXContext m_glxContext;
     GLXFBConfig *m_fbConfig;
 };

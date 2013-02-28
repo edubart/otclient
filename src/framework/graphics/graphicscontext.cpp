@@ -22,9 +22,7 @@
 
 #include "graphicscontext.h"
 
-GraphicsContext::GraphicsContext(const std::string& name)
+GraphicsContext::GraphicsContext(const std::string& name) :
+    m_name(name)
 {
-    std::cout << "lal1: \"" << name.c_str() << "\" aa" << std::endl;
-    m_name = name;
-    std::cout << "lal2: \"" << getName().c_str() << "\" aa" << std::endl;
 }
