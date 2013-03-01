@@ -25,6 +25,7 @@
 
 #include <string>
 #include <vector>
+#include <framework/stdext/types.h>
 
 class Platform
 {
@@ -39,11 +40,11 @@ public:
     bool copyFile(std::string from, std::string to);
     bool fileExists(std::string file);
     bool removeFile(std::string file);
+    ticks_t getFileModificationTime(std::string file);
     void openUrl(std::string url);
     std::string getCPUName();
     double getTotalSystemMemory();
     std::string getOSName();
-    time_t getFileModificationTime(const std::string& filename);
 };
 
 extern Platform g_platform;

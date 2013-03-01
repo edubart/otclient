@@ -28,6 +28,10 @@ namespace stdext {
 
 const static auto startup_time = boost::chrono::high_resolution_clock::now();
 
+ticks_t time() {
+    return std::time(NULL);
+}
+
 ticks_t millis()
 {
     return boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::high_resolution_clock::now() - startup_time).count();

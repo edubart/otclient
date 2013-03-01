@@ -132,6 +132,19 @@ bool Platform::removeFile(std::string file)
     return true;
 }
 
+ticks_t Platform::getFileModificationTime(std::string file)
+{
+    boost::replace_all(file, "/", "\\");
+    std::wstring wfile = stdext::utf8_to_utf16(file);
+    WIN32_FILE_ATTRIBUTE_DATA fileAttrData;
+    memset(&fileAttrData, 0, sizeof(fileAttrData));
+    GetFileAttributesExW(wfile.c_str(), GetFileExInfoStandard, &fileAttrData);
+    ULARGE_INTEGER uli;
+    uli.LowPart  = fileAttrData.ftLastWriteTime.dwLowDateTime;
+    uli.HighPart = fileAttrData.ftLastWriteTime.dwHighDateTime;
+    return uli.QuadPart;
+}
+
 void Platform::openUrl(std::string url)
 {
     if(url.find("http://") == std::string::npos)
@@ -399,15 +412,6 @@ std::string Platform::getOSName()
         ret = "Windows";
     }
     return ret;
-}
-
-time_t Platform::getFileModificationTime(const std::string& filename)
-{
-    //TODO
-    /*WIN32_FILE_ATTRIBUTE_DATA fileAttrData = {0};
-    GetFileAttributesEx(filename.c_str(), GetFileExInfoStandard, &fileAttrData);
-    return fileAttrData.ftLastWriteTime;*/
-    return 0;
 }
 
 #endif

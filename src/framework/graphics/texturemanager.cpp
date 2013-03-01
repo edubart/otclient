@@ -27,6 +27,7 @@
 
 #include <framework/core/resourcemanager.h>
 #include <framework/core/clock.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/graphics/apngloader.h>
 
 TextureManager g_textures;
@@ -38,6 +39,10 @@ void TextureManager::init()
 
 void TextureManager::terminate()
 {
+    if(m_liveReloadEvent) {
+        m_liveReloadEvent->cancel();
+        m_liveReloadEvent = nullptr;
+    }
     m_textures.clear();
     m_animatedTextures.clear();
     m_emptyTexture = nullptr;
@@ -56,10 +61,30 @@ void TextureManager::poll()
         animatedTexture->updateAnimation();
 }
 
-void TextureManager::clearTexturesCache()
+void TextureManager::clearCache()
 {
     m_animatedTextures.clear();
     m_textures.clear();
+}
+
+void TextureManager::liveReload()
+{
+    if(m_liveReloadEvent)
+        return;
+    m_liveReloadEvent = g_dispatcher.cycleEvent([this] {
+        for(auto& it : m_textures) {
+            const std::string& path = g_resources.guessFilePath(it.first, "png");
+            const TexturePtr& tex = it.second;
+            if(tex->getTime() >= g_resources.getFileTime(path))
+                continue;
+
+            ImagePtr image = Image::load(path);
+            if(!image)
+                continue;
+            tex->uploadPixels(image, tex->hasMipmaps());
+            tex->setTime(stdext::time());
+        }
+    }, 1000);
 }
 
 TexturePtr TextureManager::getTexture(const std::string& fileName)
@@ -83,13 +108,14 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
             // load texture file data
             std::stringstream fin;
             g_resources.readFileStream(filePathEx, fin);
-            texture = loadPNG(fin);
+            texture = loadTexture(fin);
         } catch(stdext::exception& e) {
             g_logger.error(stdext::format("Unable to load texture '%s': %s", fileName, e.what()));
             texture = g_textures.getEmptyTexture();
         }
 
         if(texture) {
+            texture->setTime(stdext::time());
             texture->setSmooth(true);
             m_textures[filePath] = texture;
         }
@@ -98,7 +124,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     return texture;
 }
 
-TexturePtr TextureManager::loadPNG(std::stringstream& file)
+TexturePtr TextureManager::loadTexture(std::stringstream& file)
 {
     TexturePtr texture;
 

@@ -192,6 +192,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "readFileContents", &ResourceManager::readFileContents, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "guessFilePath", &ResourceManager::guessFilePath, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "isFileType", &ResourceManager::isFileType, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "getFileTime", &ResourceManager::getFileTime, &g_resources);
 
     // Module
     g_lua.registerClass<Module>();
@@ -304,7 +305,8 @@ void Application::registerLuaFunctions()
     // Textures
     g_lua.registerSingletonClass("g_textures");
     g_lua.bindSingletonFunction("g_textures", "preload", &TextureManager::preload, &g_textures);
-    g_lua.bindSingletonFunction("g_textures", "clearTexturesCache", &TextureManager::clearTexturesCache, &g_textures);
+    g_lua.bindSingletonFunction("g_textures", "clearCache", &TextureManager::clearCache, &g_textures);
+    g_lua.bindSingletonFunction("g_textures", "liveReload", &TextureManager::liveReload, &g_textures);
 
     // UI
     g_lua.registerSingletonClass("g_ui");

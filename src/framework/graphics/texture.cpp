@@ -30,11 +30,13 @@
 Texture::Texture()
 {
     m_id = 0;
+    m_time = 0;
 }
 
 Texture::Texture(const Size& size)
 {
     m_id = 0;
+    m_time = 0;
 
     if(!setupSize(size))
         return;
@@ -49,9 +51,7 @@ Texture::Texture(const Size& size)
 Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress)
 {
     m_id = 0;
-
-    if(!setupSize(image->getSize(), buildMipmaps))
-        return;
+    m_time = 0;
 
     createTexture();
 
@@ -70,6 +70,9 @@ Texture::~Texture()
 
 void Texture::uploadPixels(const ImagePtr& image, bool buildMipmaps, bool compress)
 {
+    if(!setupSize(image->getSize(), buildMipmaps))
+        return;
+
     ImagePtr glImage = image;
     if(m_size != m_glSize) {
         glImage = ImagePtr(new Image(m_glSize, image->getBpp()));

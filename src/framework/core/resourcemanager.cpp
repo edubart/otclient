@@ -297,6 +297,11 @@ std::string ResourceManager::getRealDir(const std::string& path)
     return dir;
 }
 
+std::string ResourceManager::getRealPath(const std::string& path)
+{
+    return getRealDir(path) + "/" + path;
+}
+
 std::string ResourceManager::getBaseDir()
 {
     return PHYSFS_getBaseDir();
@@ -319,4 +324,9 @@ bool ResourceManager::isFileType(const std::string& filename, const std::string&
     if(stdext::ends_with(filename, std::string(".") + type))
         return true;
     return false;
+}
+
+ticks_t ResourceManager::getFileTime(const std::string& filename)
+{
+    return g_platform.getFileModificationTime(getRealPath(filename));
 }

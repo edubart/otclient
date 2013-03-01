@@ -41,8 +41,10 @@ public:
     virtual void setSmooth(bool smooth);
     virtual void setRepeat(bool repeat);
     void setUpsideDown(bool upsideDown);
+    void setTime(ticks_t time) { m_time = time; }
 
-    uint getId()  { return m_id; }
+    uint getId() { return m_id; }
+    ticks_t getTime() { return m_time; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
@@ -62,6 +64,7 @@ protected:
     void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4, bool compress = false);
 
     uint m_id;
+    ticks_t m_time;
     Size m_size;
     Size m_glSize;
     Matrix3 m_transformMatrix;

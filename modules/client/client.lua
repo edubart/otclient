@@ -11,7 +11,7 @@ function setMusic(filename)
 end
 
 function reloadScripts()
-  g_textures.clearTexturesCache()
+  g_textures.clearCache()
   g_modules.reloadModules()
 
   local script = '/' .. g_app.getCompactName() .. 'rc'

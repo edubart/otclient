@@ -15,6 +15,10 @@ function show_map()
   modules.game_interface.getMapPanel():show()
 end
 
+function live_textures_reload()
+  g_textures.liveReload()
+end
+
 function auto_reload_module(name)
   local function reloadEvent()
     reloadModule(name)

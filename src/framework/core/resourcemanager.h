@@ -64,6 +64,7 @@ public:
 
     std::string resolvePath(const std::string& path);
     std::string getRealDir(const std::string& path);
+    std::string getRealPath(const std::string& path);
     std::string getBaseDir();
     std::string getUserDir();
     std::string getWriteDir() { return m_writeDir; }
@@ -72,6 +73,7 @@ public:
 
     std::string guessFilePath(const std::string& filename, const std::string& type);
     bool isFileType(const std::string& filename, const std::string& type);
+    ticks_t getFileTime(const std::string& filename);
 
 private:
     std::string m_workDir;

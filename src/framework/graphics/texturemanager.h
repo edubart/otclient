@@ -24,6 +24,7 @@
 #define TEXTUREMANAGER_H
 
 #include "texture.h"
+#include <framework/core/declarations.h>
 
 class TextureManager
 {
@@ -32,17 +33,20 @@ public:
     void terminate();
     void poll();
 
-    void clearTexturesCache();
+    void clearCache();
+    void liveReload();
+
     void preload(const std::string& fileName) { getTexture(fileName); }
     TexturePtr getTexture(const std::string& fileName);
     const TexturePtr& getEmptyTexture() { return m_emptyTexture; }
 
 private:
-    TexturePtr loadPNG(std::stringstream& file);
+    TexturePtr loadTexture(std::stringstream& file);
 
     std::unordered_map<std::string, TexturePtr> m_textures;
     std::vector<AnimatedTexturePtr> m_animatedTextures;
     TexturePtr m_emptyTexture;
+    ScheduledEventPtr m_liveReloadEvent;
 };
 
 extern TextureManager g_textures;

@@ -27,6 +27,7 @@
 
 namespace stdext {
 
+ticks_t time();
 ticks_t millis();
 ticks_t micros();
 void millisleep(size_t ms);

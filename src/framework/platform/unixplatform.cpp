@@ -108,6 +108,14 @@ bool Platform::removeFile(std::string file)
     return false;
 }
 
+ticks_t Platform::getFileModificationTime(std::string file)
+{
+    struct stat attrib;
+    if(stat(file.c_str(), &attrib) == 0)
+        return attrib.st_mtime;
+    return 0;
+}
+
 void Platform::openUrl(std::string url)
 {
     if(url.find("http://") == std::string::npos)
@@ -158,16 +166,6 @@ std::string Platform::getOSName()
         return res;
     }
     return std::string();
-}
-
-time_t Platform::getFileModificationTime(const std::string& filename)
-{
-    struct stat attrib;
-    if(stat(filename.c_str(), &attrib))
-        perror(filename.c_str());
-    else
-        return attrib.st_mtime;
-    return 0;
 }
 
 
