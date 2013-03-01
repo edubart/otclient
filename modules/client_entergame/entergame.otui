@@ -1,4 +1,9 @@
 EnterGameWindow < MainWindow
+  !text: tr('Enter Game')
+  size: 236 274
+
+EnterGameButton < Button
+  width: 64
 
 ServerListButton < UIButton
   size: 17 17
@@ -16,8 +21,6 @@ ServerListButton < UIButton
 
 EnterGameWindow
   id: enterGame
-  !text: tr('Enter Game')
-  size: 236 274
   @onEnter: EnterGame.doLogin()
 
   MenuLabel
@@ -130,9 +133,8 @@ EnterGameWindow
     anchors.top: prev.bottom
     margin-top: 2
 
-  Button
+  EnterGameButton
     !text: tr('Ok')
-    width: 64
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     @onClick: EnterGame.doLogin()

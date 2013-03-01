@@ -401,4 +401,13 @@ std::string Platform::getOSName()
     return ret;
 }
 
+time_t Platform::getFileModificationTime(const std::string& filename)
+{
+    //TODO
+    /*WIN32_FILE_ATTRIBUTE_DATA fileAttrData = {0};
+    GetFileAttributesEx(filename.c_str(), GetFileExInfoStandard, &fileAttrData);
+    return fileAttrData.ftLastWriteTime;*/
+    return 0;
+}
+
 #endif

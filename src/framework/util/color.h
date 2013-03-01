@@ -83,7 +83,7 @@ public:
         c += (color.g() / 51) * 6;
         c += (color.b() / 51);
         return c;
-    };
+    }
 
     static Color from8bit(int color) {
         if(color >= 216 || color <= 0)

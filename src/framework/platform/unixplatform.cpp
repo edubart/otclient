@@ -160,5 +160,15 @@ std::string Platform::getOSName()
     return std::string();
 }
 
+time_t Platform::getFileModificationTime(const std::string& filename)
+{
+    struct stat attrib;
+    if(stat(filename.c_str(), &attrib))
+        perror(filename.c_str());
+    else
+        return attrib.st_mtime;
+    return 0;
+}
+
 
 #endif

@@ -43,6 +43,7 @@ public:
     std::string getCPUName();
     double getTotalSystemMemory();
     std::string getOSName();
+    time_t getFileModificationTime(const std::string& filename);
 };
 
 extern Platform g_platform;
