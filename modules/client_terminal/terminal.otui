@@ -42,29 +42,23 @@ UIWindow
     visible: false
 
   ScrollablePanel
-    id: terminalScrollArea
+    id: terminalBuffer
     focusable: false
     anchors.left: parent.left
     anchors.right: terminalScroll.left
     anchors.top: terminalScroll.top
     anchors.bottom: commandSymbolLabel.top
+    layout:
+      type: verticalBox
+      align-bottom: true
     vertical-scrollbar: terminalScroll
     inverted-scroll: true
     margin-left: 2
 
-    Panel
-      anchors.bottom: parent.bottom
-      anchors.left: parent.left
-      anchors.right: parent.right
-      id: terminalBuffer
-      layout:
-        type: verticalBox
-        fit-children: true
-      focusable: false
-
-    TerminalSelectText
-      id: terminalSelectText
-      anchors.fill: terminalBuffer
+  TerminalSelectText
+    id: terminalSelectText
+    anchors.fill: terminalBuffer
+    focusable: false
 
   VerticalScrollBar
     id: terminalScroll

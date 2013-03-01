@@ -3,8 +3,7 @@ local LogColors = { [LogDebug] = 'pink',
                     [LogInfo] = 'white',
                     [LogWarning] = 'yellow',
                     [LogError] = 'red' }
-local MaxLogLines = 512
-local LabelHeight = 16
+local MaxLogLines = 128
 local MaxHistory = 1000
 
 local oldenv = getfenv(0)
@@ -24,6 +23,9 @@ local poped = false
 local oldPos
 local oldSize
 local firstShown = false
+local flushEvent
+local cachedLines = {}
+local disabled = false
 
 -- private functions
 local function navigateCommand(step)
@@ -104,6 +106,7 @@ local function doCommand()
 end
 
 local function onLog(level, message, time)
+  if disabled then return end
   -- avoid logging while reporting logs (would cause a infinite loop)
   if logLocked then return end
 
@@ -137,9 +140,11 @@ function init()
   g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Escape', hide, terminalWindow)
 
-  terminalBuffer = terminalWindow:recursiveGetChildById('terminalBuffer')
-  terminalSelectText = terminalWindow:recursiveGetChildById('terminalSelectText')
+  terminalBuffer = terminalWindow:getChildById('terminalBuffer')
+  terminalSelectText = terminalWindow:getChildById('terminalSelectText')
   terminalSelectText.onDoubleClick = popWindow
+  terminalSelectText.onMouseWheel = function(a,b,c) terminalBuffer:onMouseWheel(b,c) end
+  terminalBuffer.onScrollChange = function(self, value) terminalSelectText:setTextVirtualOffset(value) end
 
   g_logger.setOnLog(onLog)
   g_logger.fireOldMessages()
@@ -147,6 +152,8 @@ end
 
 function terminate()
   g_settings.setList('terminal-history', commandHistory)
+
+  removeEvent(flushEvent)
 
   if poped then
     oldPos = terminalWindow:getPosition()
@@ -231,22 +238,41 @@ end
 function disable()
   terminalButton:hide()
   g_keyboard.unbindKeyDown('Ctrl+T')
+  disabled = true
+end
+
+function flushLines()
+  local numLines = terminalBuffer:getChildCount() + #cachedLines
+  local fulltext = terminalSelectText:getText()
+
+  for _,line in pairs(cachedLines) do
+    -- delete old lines if needed
+    if numLines > MaxLogLines then
+      local len = #terminalBuffer:getChildByIndex(1):getText()
+      terminalBuffer:getChildByIndex(1):destroy()
+      fulltext = string.sub(fulltext, len)
+    end
+
+    local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
+    label:setId('terminalLabel' .. numLines)
+    label:setText(line.text)
+    label:setColor(line.color)
+
+    fulltext = fulltext .. '\n' .. line.text
+  end
+
+  terminalSelectText:setText(fulltext)
+
+  cachedLines = {}
+  flushEvent = nil
 end
 
 function addLine(text, color)
-  -- delete old lines if needed
-  local numLines = terminalBuffer:getChildCount() + 1
-  if numLines > MaxLogLines then
-    terminalBuffer:getChildByIndex(1):destroy()
+  if not flushEvent then
+    flushEvent = scheduleEvent(flushLines, 10)
   end
 
-  -- create new line label
-  local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
-  label:setId('terminalLabel' .. numLines)
-  label:setText(text)
-  label:setColor(color)
-
-  terminalSelectText:setText(terminalSelectText:getText() .. '\n' .. text)
+  table.insert(cachedLines, {text=text, color=color})
 end
 
 function executeCommand(command)

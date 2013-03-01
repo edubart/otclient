@@ -70,9 +70,11 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
         return;
 
     if(hasSelection()) {
-        g_painter->setColor(m_color);
-        for(int i=0;i<m_selectionStart;++i)
-            g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+        if(m_color != Color::alpha) {
+            g_painter->setColor(m_color);
+            for(int i=0;i<m_selectionStart;++i)
+                g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+        }
 
         for(int i=m_selectionStart;i<m_selectionEnd;++i) {
             g_painter->setColor(m_selectionBackgroundColor);
@@ -81,10 +83,12 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
         }
 
-        g_painter->setColor(m_color);
-        for(int i=m_selectionEnd;i<textLength;++i)
-            g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
-    } else {
+        if(m_color != Color::alpha) {
+            g_painter->setColor(m_color);
+            for(int i=m_selectionEnd;i<textLength;++i)
+                g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+        }
+    } else if(m_color != Color::alpha) {
         g_painter->setColor(m_color);
         for(int i=0;i<textLength;++i)
             g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);

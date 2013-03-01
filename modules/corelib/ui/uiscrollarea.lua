@@ -73,23 +73,23 @@ end
 
 function UIScrollArea:setVerticalScrollBar(scrollbar)
   self.verticalScrollBar = scrollbar
-  self.verticalScrollBar.onValueChange = function(scrollbar, value)
+  connect(self.verticalScrollBar, 'onValueChange', function(scrollbar, value)
     local virtualOffset = self:getVirtualOffset()
     virtualOffset.y = value
     self:setVirtualOffset(virtualOffset)
-    if self.onScrollbarChange then self:onScrollbarChange(value) end
-  end
+    signalcall(self.onScrollChange, self, virtualOffset)
+  end)
   self:updateScrollBars()
 end
 
 function UIScrollArea:setHorizontalScrollBar(scrollbar)
   self.horizontalScrollBar = scrollbar
-  self.horizontalScrollBar.onValueChange = function(scrollbar, value)
+  connect(self.horizontalScrollBar, 'onValueChange', function(scrollbar, value)
     local virtualOffset = self:getVirtualOffset()
     virtualOffset.x = value
     self:setVirtualOffset(virtualOffset)
-    if self.onScrollbarChange then self:onScrollbarChange(value) end
-  end
+    signalcall(self.onScrollChange, self, virtualOffset)
+  end)
   self:updateScrollBars()
 end
 
