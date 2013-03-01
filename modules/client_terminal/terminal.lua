@@ -8,7 +8,7 @@ local MaxHistory = 1000
 
 local oldenv = getfenv(0)
 setfenv(0, _G)
-commandEnv = runinsandbox('commands')
+_G.commandEnv = runinsandbox('commands')
 setfenv(0, oldenv)
 
 -- private variables
@@ -26,6 +26,7 @@ local firstShown = false
 local flushEvent
 local cachedLines = {}
 local disabled = false
+local allLines = {}
 
 -- private functions
 local function navigateCommand(step)
@@ -147,7 +148,14 @@ function init()
   terminalBuffer.onScrollChange = function(self, value) terminalSelectText:setTextVirtualOffset(value) end
 
   g_logger.setOnLog(onLog)
-  g_logger.fireOldMessages()
+
+  if not g_app.isRunning() then
+    g_logger.fireOldMessages()
+  elseif _G.terminalLines then
+    for _,line in pairs(_G.terminalLines) do
+      addLine(line.text, line.color)
+    end
+  end
 end
 
 function terminate()
@@ -171,6 +179,7 @@ function terminate()
   terminalWindow:destroy()
   terminalButton:destroy()
   commandEnv = nil
+  _G.terminalLines = allLines
 end
 
 function hideButton()
@@ -250,6 +259,7 @@ function flushLines()
     if numLines > MaxLogLines then
       local len = #terminalBuffer:getChildByIndex(1):getText()
       terminalBuffer:getChildByIndex(1):destroy()
+      table.remove(allLines, 1)
       fulltext = string.sub(fulltext, len)
     end
 
@@ -258,12 +268,15 @@ function flushLines()
     label:setText(line.text)
     label:setColor(line.color)
 
+    table.insert(allLines, {text=line.text,color=line.color})
+
     fulltext = fulltext .. '\n' .. line.text
   end
 
   terminalSelectText:setText(fulltext)
 
   cachedLines = {}
+  removeEvent(flushEvent)
   flushEvent = nil
 end
 
@@ -306,7 +319,7 @@ function executeCommand(command)
   if not func then
     local command_name = command:match('^([%w_]+)[%s]*.*')
     if command_name then
-      local args = string.split(command:match('^[%w]+[%s]*(.*)'), ' ')
+      local args = string.split(command:match('^[%w_]+[%s]*(.*)'), ' ')
       if commandEnv[command_name] and type(commandEnv[command_name]) == 'function' then
         func = function() modules.client_terminal.commandEnv[command_name](unpack(args)) end
       elseif command_name == command then
@@ -329,7 +342,7 @@ function executeCommand(command)
   local ok, ret = pcall(func)
   if ok then
     -- if the command returned a value, print it
-    if ret then print(ret) end
+    if ret then addLine(ret, 'white') end
   else
     addLine('ERROR: command failed: ' .. ret, 'red')
   end
@@ -338,4 +351,6 @@ end
 function clear()
   terminalBuffer:destroyChildren()
   terminalSelectText:setText('')
+  cachedLines = {}
+  allLines = {}
 end
