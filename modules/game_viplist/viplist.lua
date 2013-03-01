@@ -187,8 +187,8 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
 
   if modules.game_console.getOwnPrivateTab() then
     menu:addSeparator()
-    menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
-    menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end)
+    menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(widget:getText()) end)
+    menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(widget:getText()) end)
   end
 
   if not isHiddingOffline() then

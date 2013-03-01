@@ -887,6 +887,7 @@ end
 
 function onRuleViolationLock()
   if not violationReportTab then return end
+  violationReportTab.locked = false
   addTabText(tr('Your request has been closed') .. '.', SpeakTypesSettings.privateRed, violationReportTab)
   violationReportTab.locked = true
 end

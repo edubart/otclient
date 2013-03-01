@@ -10,16 +10,17 @@ MainWindow
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
-    max-length: 255
 
   TextEdit
     id: text
+    text-wrap: true
     multiline: true
     anchors.top: prev.bottom
     anchors.bottom: next.top
     anchors.left: parent.left
     anchors.right: parent.right
     margin: 8 0
+    max-length: 255
 
   Button
     id: buttonOk
