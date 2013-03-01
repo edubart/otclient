@@ -267,7 +267,7 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
     uint16 id = itemType->getServerId();
-    if(id > m_itemTypes.size())
+    if(id >= m_itemTypes.size())
         m_itemTypes.resize(id + 1, m_nullItemType);
     m_itemTypes[id] = itemType;
 }
