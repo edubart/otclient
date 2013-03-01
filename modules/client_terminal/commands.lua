@@ -75,6 +75,40 @@ function live_module_reload(name)
   end, 1000)
 end
 
+function live_sprites_reload()
+  local files = {}
+  for _,file in pairs(g_resources.listDirectoryFiles('/things')) do
+    local filepath = '/things/' .. file
+    local time = g_resources.getFileTime(filepath)
+    if time > 0 then
+      files[filepath] = time
+      hasFile = true
+    end
+  end
+
+  if not hasFile then
+    pcolored('ERROR: unable to find things file for module', 'red')
+    return
+  end
+
+  cycleEvent(function()
+    for filepath,time in pairs(files) do
+      local newtime = g_resources.getFileTime(filepath)
+      if newtime > time then
+        pcolored('Reloading sprites...', 'green')
+        modules.client_terminal.flushLines()
+        modules.game_things.load()
+        files[filepath] = newtime
+
+        if name == 'client_terminal' then
+          modules.client_terminal.show()
+        end
+        break
+      end
+    end
+  end, 1000)
+end
+
 local pinging = false
 local function pingBack(ping)
   if ping < 300 then color = 'green'
