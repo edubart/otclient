@@ -680,6 +680,10 @@ function sendMessage(message, tab)
     elseif tab.npcChat then
       speaktypedesc = 'privatePlayerToNpc'
     elseif tab == violationReportTab then
+      if violationReportTab.locked then
+        modules.game_textmessage.displayFailureMessage('Wait for a gamemaster reply.')
+        return
+      end
       speaktypedesc = 'rvrContinue'
       tabname = tr('Report Rule') .. '...'
     elseif tab.violationChatName then

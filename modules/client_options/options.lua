@@ -175,7 +175,6 @@ function setOption(key, value, force)
   if not force and options[key] == value then return end
   local gameMapPanel = modules.game_interface.getMapPanel()
 
-  local panel = nil
   if key == 'vsync' then
     g_window.setVerticalSync(value)
   elseif key == 'showFps' then
@@ -184,7 +183,6 @@ function setOption(key, value, force)
     modules.client_topmenu.setPingVisible(value)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
-    panel = graphicsPanel
   elseif key == 'enableAudio' then
     g_sounds.setAudioEnabled(value)
     if value then
@@ -192,7 +190,6 @@ function setOption(key, value, force)
     else
       audioButton:setIcon('/images/topbuttons/audio_mute')
     end
-    panel = audioPanel
   elseif key == 'enableMusicSound' then
     g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
   elseif key == 'musicSoundVolume' then
@@ -201,15 +198,15 @@ function setOption(key, value, force)
   elseif key == 'showLeftPanel' then
     modules.game_interface.getLeftPanel():setOn(value)
   elseif key == 'backgroundFrameRate' then
-    local text = value
-    if value <= 0 or value >= 201 then text = 'max'  value = 0  end
+    local text, v = value, value
+    if value <= 0 or value >= 201 then text = 'max' v = 0 end
     graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
-    g_app.setBackgroundPaneMaxFps(value)
+    g_app.setBackgroundPaneMaxFps(v)
   elseif key == 'foregroundFrameRate' then
-    local text = value
-    if value <= 0 or value >= 61 then text = 'max' value = 0 end
+    local text, v = value, value
+    if value <= 0 or value >= 61 then  text = 'max' v = 0 end
     graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
-    g_app.setForegroundPaneMaxFps(value)
+    g_app.setForegroundPaneMaxFps(v)
   elseif key == 'enableLights' then
     gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
     graphicsPanel:getChildById('ambientLight'):setEnabled(value)
@@ -222,20 +219,22 @@ function setOption(key, value, force)
     g_graphics.selectPainterEngine(value)
   elseif key == 'displayNames' then
     gameMapPanel:setDrawNames(value)
-    panel = generalPanel
   elseif key == 'displayHealth' then
     gameMapPanel:setDrawHealthBars(value)
-    panel = generalPanel
   elseif key == 'displayText' then
     gameMapPanel:setDrawTexts(value)
-    panel = generalPanel
   end
 
   -- change value for keybind updates
-  if panel then
+  for _,panel in pairs(optionsTabBar:getTabsPanel()) do
     local widget = panel:recursiveGetChildById(key)
-    if widget and widget:getStyle().__class == 'UICheckBox' then
-      widget:setChecked(value)
+    if widget then
+      if widget:getStyle().__class == 'UICheckBox' then
+        widget:setChecked(value)
+      elseif widget:getStyle().__class == 'UIScrollBar' then
+        widget:setValue(value)
+      end
+      break
     end
   end
 

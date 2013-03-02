@@ -1,11 +1,3 @@
-VolumeScrollbar < HorizontalScrollBar
-  step: 1
-  @onValueChange: modules.client_options.setOption(self:getId(), self:getValue())
-  @onSetup: |
-    UIScrollBar.onSetup(self)
-    local value = modules.client_options.getOption(self:getId())
-    self:setValue(value)
-
 Panel
   OptionCheckBox
     id: enableAudio
@@ -26,7 +18,7 @@ Panel
       local value = modules.client_options.getOption('musicSoundVolume')
       self:setText(tr('Music volume: %d', value))
 
-  VolumeScrollbar
+  OptionScrollbar
     id: musicSoundVolume
     anchors.left: parent.left
     anchors.right: parent.right

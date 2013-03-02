@@ -1129,6 +1129,11 @@ void Game::removeVip(int playerId)
 {
     if(!canPerformGameAction())
         return;
+    
+    auto it = m_vips.find(playerId);
+    if(it == m_vips.end())
+        return;
+    m_vips.erase(it);
     m_protocolGame->sendRemoveVip(playerId);
 }
 

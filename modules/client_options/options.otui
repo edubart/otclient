@@ -1,6 +1,5 @@
 OptionCheckBox < CheckBox
   @onCheckChange: modules.client_options.setOption(self:getId(), self:isChecked())
-  @onSetup: self:setChecked(modules.client_options.getOption(self:getId()))
   height: 16
 
   $first:
@@ -13,6 +12,10 @@ OptionCheckBox < CheckBox
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 2
+
+OptionScrollbar < HorizontalScrollBar
+  step: 1
+  @onValueChange: modules.client_options.setOption(self:getId(), self:getValue())
 
 MainWindow
   id: optionsWindow

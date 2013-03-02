@@ -41,7 +41,7 @@ UITextEdit::UITextEdit()
     m_maxLength = 0;
     m_editable = true;
     m_selectable = true;
-    m_autoScroll = false;
+    m_autoScroll = true;
     m_changeCursorImage = true;
     m_selectionReference = 0;
     m_selectionStart = 0;

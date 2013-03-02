@@ -144,3 +144,11 @@ end
 function UITabBar:getCurrentTab()
   return self.currentTab
 end
+
+function UITabBar:getTabs()
+  return self.tabs
+end
+
+function UITabBar:getTabsPanel()
+  return table.collect(self.tabs, function(_,tab) return tab.tabPanel end)
+end

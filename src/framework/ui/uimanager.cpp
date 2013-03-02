@@ -349,11 +349,13 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     OTMLNodePtr oldStyle = m_styles[name];
 
     // Warn about redefined styles
+    /*
     if(!g_app.isRunning() && (oldStyle && !oldStyle->valueAt("__unique", false))) {
         auto it = m_styles.find(name);
         if(it != m_styles.end())
             g_logger.warning(stdext::format("style '%s' is being redefined", name));
     }
+    */
 
     if(!oldStyle || !oldStyle->valueAt("__unique", false) || unique) {
         OTMLNodePtr originalStyle = getStyle(base);

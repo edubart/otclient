@@ -167,3 +167,17 @@ function table.tostring(t)
   end
   return str
 end
+
+function table.collect(t, func)
+  local res = {}
+  for k,v in pairs(t) do
+    local a,b = func(k,v)
+    if a and b then
+      res[a] = b
+    elseif a ~= nil then
+      table.insert(res,a)
+    end
+  end
+  return res
+end
+
