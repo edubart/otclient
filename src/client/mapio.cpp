@@ -94,7 +94,11 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
     for(const BinaryTreePtr& nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
-            Position basePos = nodeMapData->getPosition();
+
+            Position basePos;
+            basePos.x = nodeMapData->getU16();
+            basePos.y = nodeMapData->getU16();
+            basePos.z = nodeMapData->getU8();
 
             for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                 uint8 type = nodeTile->getU8();
@@ -187,7 +191,12 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
 
                 uint32 townId = nodeTown->getU32();
                 std::string townName = nodeTown->getString();
-                Position townCoords = nodeTown->getPosition();
+
+                Position townCoords;
+                townCoords.x = nodeTown->getU16();
+                townCoords.y = nodeTown->getU16();
+                townCoords.z = nodeTown->getU8();
+
                 if(!(town = g_towns.getTown(townId))) {
                     town = TownPtr(new Town(townId, townName, townCoords));
                     g_towns.addTown(town);
@@ -199,7 +208,12 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
                     stdext::throw_exception("invalid waypoint node.");
 
                 std::string name = nodeWaypoint->getString();
-                Position waypointPos = nodeWaypoint->getPosition();
+
+                Position waypointPos;
+                waypointPos.x = nodeWaypoint->getU16();
+                waypointPos.y = nodeWaypoint->getU16();
+                waypointPos.z = nodeWaypoint->getU8();
+
                 if(waypointPos.isValid() && !name.empty() && m_waypoints.find(waypointPos) == m_waypoints.end())
                     m_waypoints.insert(std::make_pair(waypointPos, name));
             }
@@ -312,7 +326,7 @@ void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
                             px = pos.x & 0xFF00;
                             py = pos.y & 0xFF00;
                             pz = pos.z;
-                            root->addPos(Position(px, py, pz));
+                            root->addPos(px, py, pz);
                         }
 
                         root->startNode(tile->isHouseTile() ? OTBM_HOUSETILE : OTBM_TILE);
@@ -353,7 +367,9 @@ void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
             for(const TownPtr& town : g_towns.getTowns()) {
                 root->addU32(town->getId());
                 root->addString(town->getName());
-                root->addPos(town->getPos());
+
+                Position townPos = town->getPos();
+                root->addPos(townPos.x, townPos.y, townPos.z);
             }
             root->endNode();
 
@@ -361,7 +377,9 @@ void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
                 root->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
                     root->addString(it.second);
-                    root->addPos(it.first);
+
+                    Position pos = it.first;
+                    root->addPos(pos.x, pos.y, pos.z);
                 }
                 root->endNode();
             }

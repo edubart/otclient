@@ -65,7 +65,12 @@ void House::load(const TiXmlElement *elem)
     setSize(elem->readType<uint32>("size"));
     setTownId(elem->readType<uint32>("townid"));
     m_isGuildHall = elem->readType<bool>("guildhall");
-    setEntry(elem->readPos("entry"));
+
+    Position entryPos;
+    entryPos.x = elem->readType<uint16>("entryx");
+    entryPos.y = elem->readType<uint16>("entryy");
+    entryPos.z = elem->readType<uint8>("entryz");
+    setEntry(entryPos);
 }
 
 void House::save(TiXmlElement*& elem)

@@ -179,7 +179,7 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
     if(dest.isValid()) {
         out->addU8(ATTR_TELE_DEST);
-        out->addPos(dest);
+        out->addPos(dest.x, dest.y, dest.z);
     }
 
     if(isDepot()) {

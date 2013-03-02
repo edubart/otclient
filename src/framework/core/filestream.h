@@ -65,7 +65,7 @@ public:
     void addU32(uint32 v);
     void addU64(uint64 v);
     void addString(const std::string& v);
-    void addPos(const Position& pos) { addU16(pos.x); addU16(pos.y); addU8(pos.z); }
+    void addPos(uint16 x, uint16 y, uint8 z) { addU16(x); addU16(y); addU8(z); }
     void addPoint(const Point& p) { addU8(p.x); addU8(p.y); }
 
     FileStreamPtr asFileStream() { return static_self_cast<FileStream>(); }

@@ -165,15 +165,6 @@ std::string BinaryTree::getString(uint16 len)
     return ret;
 }
 
-Position BinaryTree::getPosition()
-{
-    Position ret;
-    ret.x = getU16();
-    ret.y = getU16();
-    ret.z = getU8();
-    return ret;
-}
-
 Point BinaryTree::getPoint()
 {
     Point ret;
@@ -216,11 +207,11 @@ void OutputBinaryTree::addString(const std::string& v)
     write((const uint8*)v.c_str(), v.length());
 }
 
-void OutputBinaryTree::addPos(const Position& pos)
+void OutputBinaryTree::addPos(uint16 x, uint16 y, uint8 z)
 {
-    addU16(pos.x);
-    addU16(pos.y);
-    addU8(pos.z);
+    addU16(x);
+    addU16(y);
+    addU8(z);
 }
 
 void OutputBinaryTree::addPoint(const Point& point)

@@ -962,15 +962,6 @@ public:
         return ret;
     }
 
-    Position readPos(const std::string& base = std::string()) const
-    {
-        Position ret;
-        ret.x = readType<uint16>(base + "x");
-        ret.y = readType<uint16>(base + "y");
-        ret.z = readType<uint8>(base + "z");
-        return ret;
-    }
-
     /** Template form of the attribute query which will try to read the
         attribute into the specified type. Very easy, very powerful, but
         be careful to make sure to call this with the correct type.

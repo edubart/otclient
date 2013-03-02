@@ -49,7 +49,11 @@ void CreatureManager::terminate()
 
 void Spawn::load(TiXmlElement* node)
 {
-    Position centerPos = node->readPos("center");
+    Position centerPos;
+    centerPos.x = node->readType<uint16>("centerx");
+    centerPos.y = node->readType<uint16>("centery");
+    centerPos.z = node->readType<uint8>("centerz");
+
     setCenterPos(centerPos);
     setRadius(node->readType<int32>("radius"));
 

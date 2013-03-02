@@ -49,7 +49,6 @@ public:
     uint32 getU32();
     uint64 getU64();
     std::string getString(uint16 len = 0);
-    Position getPosition();
     Point getPoint();
 
     BinaryTreeVec getChildren();
@@ -74,7 +73,7 @@ public:
     void addU16(uint16 v);
     void addU32(uint32 v);
     void addString(const std::string& v);
-    void addPos(const Position& pos);
+    void addPos(uint16 x, uint16 y, uint8 z);
     void addPoint(const Point& point);
 
     void startNode(uint8 node);
