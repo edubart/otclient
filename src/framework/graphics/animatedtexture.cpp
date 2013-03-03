@@ -24,14 +24,15 @@
 #include "graphics.h"
 
 #include <framework/core/eventdispatcher.h>
+#include "ogl/textureogl.h"
 
-AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps, bool compress)
+AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps)
 {
     if(!setupSize(size, buildMipmaps))
         return;
 
     for(uint i=0;i<frames.size();++i) {
-        m_frames.push_back(new Texture(frames[i], buildMipmaps, compress));
+        m_frames.push_back(new TextureOGL(frames[i], buildMipmaps));
     }
 
     m_framesDelay = framesDelay;

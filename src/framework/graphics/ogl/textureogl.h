@@ -20,32 +20,35 @@
  * THE SOFTWARE.
  */
 
-#ifndef ANIMATEDTEXTURE_H
-#define ANIMATEDTEXTURE_H
+#ifndef TEXTUREOGL_H
+#define TEXTUREOGL_H
 
-#include "texture.h"
-#include <framework/core/timer.h>
+#include <framework/graphics/texture.h>
 
-class AnimatedTexture : public Texture
+class TextureOGL : public Texture
 {
 public:
-    AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps = false);
-    virtual ~AnimatedTexture();
+    TextureOGL();
+    TextureOGL(const Size& size);
+    TextureOGL(const ImagePtr& image, bool buildMipmaps = false);
+    virtual ~TextureOGL();
 
+    void uploadPixels(const ImagePtr& image, bool buildMipmaps = false);
+    void bind();
+    void copyFromScreen(const Rect& screenRect);
     virtual bool buildHardwareMipmaps();
 
     virtual void setSmooth(bool smooth);
     virtual void setRepeat(bool repeat);
+    void setUpsideDown(bool upsideDown);
 
-    void updateAnimation();
+protected:
+    void createTexture();
+    bool setupSize(const Size& size, bool forcePowerOfTwo = false);
+    void setupWrap();
+    void setupFilters();
+    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4);
 
-    virtual bool isAnimatedTexture() { return true; }
-
-private:
-    std::vector<TexturePtr> m_frames;
-    std::vector<int> m_framesDelay;
-    uint m_currentFrame;
-    Timer m_animTimer;
 };
 
 #endif

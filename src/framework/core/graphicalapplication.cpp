@@ -30,6 +30,7 @@
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/painter.h>
+#include <framework/graphics/ogl/textureogl.h>
 
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
@@ -232,7 +233,7 @@ void GraphicalApplication::resize(const Size& size)
     m_onInputEvent = false;
 
     if(g_graphics.canCacheBackbuffer()) {
-        m_foreground = TexturePtr(new Texture(size));
+        m_foreground = TexturePtr(new TextureOGL(size));
         m_foreground->setUpsideDown(true);
     }
     m_mustRepaint = true;

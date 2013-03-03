@@ -459,6 +459,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/texture.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/textureogl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/ogl/textureogl.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/texturemanager.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/vertexarray.h

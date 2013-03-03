@@ -26,6 +26,7 @@
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/graphics/image.h>
+#include <framework/graphics/ogl/textureogl.h>
 
 enum {
     MAX_LIGHT_INTENSITY = 8,
@@ -61,7 +62,7 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
         }
     }
 
-    TexturePtr tex = TexturePtr(new Texture(lightImage, true));
+    TexturePtr tex = TexturePtr(new TextureOGL(lightImage, true));
     tex->setSmooth(true);
     return tex;
 }

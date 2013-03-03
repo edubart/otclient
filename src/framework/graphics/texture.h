@@ -29,26 +29,25 @@ class Texture : public stdext::shared_object
 {
 public:
     Texture();
-    Texture(const Size& size);
-    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
     virtual ~Texture();
 
-    void uploadPixels(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
-    void bind();
-    void copyFromScreen(const Rect& screenRect);
-    virtual bool buildHardwareMipmaps();
+    virtual void setSmooth(bool) {}
+    virtual void setRepeat(bool) {}
+    virtual void setUpsideDown(bool) {}
 
-    virtual void setSmooth(bool smooth);
-    virtual void setRepeat(bool repeat);
-    void setUpsideDown(bool upsideDown);
+    virtual bool setupSize(const Size& size, bool);
+    virtual void copyFromScreen(const Rect&) {}
+    virtual bool buildHardwareMipmaps() { return false; }
+    virtual void uploadPixels(const ImagePtr&, bool) {}
+
     void setTime(ticks_t time) { m_time = time; }
+    void setupTranformMatrix(const Size& textureSize, const Size& realSize);
 
     uint getId() { return m_id; }
     ticks_t getTime() { return m_time; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     const Size& getSize() { return m_size; }
-    const Size& getGlSize() { return m_glSize; }
     const Matrix3& getTransformMatrix() { return m_transformMatrix; }
     bool isEmpty() { return m_id == 0; }
     bool hasRepeat() { return m_repeat; }
@@ -56,13 +55,6 @@ public:
     virtual bool isAnimatedTexture() { return false; }
 
 protected:
-    void createTexture();
-    bool setupSize(const Size& size, bool forcePowerOfTwo = false);
-    void setupWrap();
-    void setupFilters();
-    void setupTranformMatrix();
-    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4, bool compress = false);
-
     uint m_id;
     ticks_t m_time;
     Size m_size;

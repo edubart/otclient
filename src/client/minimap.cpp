@@ -29,6 +29,7 @@
 #include <framework/graphics/painter.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/ogl/textureogl.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
 #include <zlib.h>
@@ -65,7 +66,7 @@ void MinimapBlock::update()
 
     if(shouldDraw) {
         if(!m_texture) {
-            m_texture = TexturePtr(new Texture(image, true));
+            m_texture = TexturePtr(new TextureOGL(image, true));
         } else {
             m_texture->uploadPixels(image, true);
         }

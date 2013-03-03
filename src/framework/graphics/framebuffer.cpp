@@ -26,6 +26,7 @@
 
 #include <framework/platform/platformwindow.h>
 #include <framework/core/application.h>
+#include <framework/graphics/ogl/textureogl.h>
 
 uint FrameBuffer::boundFbo = 0;
 
@@ -61,7 +62,7 @@ void FrameBuffer::resize(const Size& size)
     if(m_texture && m_texture->getSize() == size)
         return;
 
-    m_texture = TexturePtr(new Texture(size));
+    m_texture = TexturePtr(new TextureOGL(size));
     m_texture->setSmooth(m_smooth);
     m_texture->setUpsideDown(true);
 
@@ -75,7 +76,7 @@ void FrameBuffer::resize(const Size& size)
         internalRelease();
     } else {
         if(m_backuping) {
-            m_screenBackup = TexturePtr(new Texture(size));
+            m_screenBackup = TexturePtr(new TextureOGL(size));
             m_screenBackup->setUpsideDown(true);
         }
     }

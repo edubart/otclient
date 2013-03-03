@@ -29,6 +29,7 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/apngloader.h>
+#include "ogl/textureogl.h"
 
 TextureManager g_textures;
 
@@ -146,7 +147,7 @@ TexturePtr TextureManager::loadTexture(std::stringstream& file)
             texture = animatedTexture;
         } else {
             ImagePtr image = ImagePtr(new Image(imageSize, apng.bpp, apng.pdata));
-            texture = TexturePtr(new Texture(image));
+            texture = TexturePtr(new TextureOGL(image));
         }
         free_apng(&apng);
     }

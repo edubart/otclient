@@ -28,6 +28,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/image.h>
+#include <framework/graphics/ogl/textureogl.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/core/filestream.h>
 #include <framework/otml/otml.h>
@@ -283,7 +284,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                 }
             }
         }
-        animationPhaseTexture = TexturePtr(new Texture(fullImage, true));
+        animationPhaseTexture = TexturePtr(new TextureOGL(fullImage, true));
         animationPhaseTexture->setSmooth(true);
     }
     return animationPhaseTexture;
