@@ -41,7 +41,6 @@ distribution.
 #include <assert.h>
 
 #include <framework/const.h>
-#include <client/position.h>
 #include <framework/stdext/cast.h>
 #include <framework/stdext/string.h>
 

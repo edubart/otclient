@@ -26,7 +26,6 @@
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 #include <framework/util/databuffer.h>
-#include <client/position.h>
 #include <framework/util/point.h>
 
 struct PHYSFS_File;

@@ -25,7 +25,6 @@
 
 #include "declarations.h"
 #include <framework/util/databuffer.h>
-#include <client/position.h>
 
 enum {
     BINARYTREE_ESCAPE_CHAR = 0xFD,
