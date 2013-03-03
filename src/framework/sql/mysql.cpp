@@ -76,10 +76,10 @@ bool DatabaseMySQL::handleError()
         g_logger.error("MYSQL connection lost, trying to reconnect...");
         setConnected(false);
 
-        ticks_t startTime = g_clock.millis();
+        ticks_t startTime = stdext::millis();
         while(true) {
             bool connected = (mysql_ping(m_handle) == 0);
-            ticks_t diffTime = (g_clock.millis() - startTime);
+            ticks_t diffTime = (stdext::millis() - startTime);
             if(connected) {
                 g_logger.info(stdext::format("MySQL reconneted in %d ms", diffTime));
                 setConnected(true);

@@ -24,7 +24,6 @@
 #define DATABASE_H
 #include "declarations.h"
 
-#include <framework/core/clock.h>
 #include <framework/luaengine/luaobject.h>
 
 #include <boost/thread.hpp>
@@ -48,7 +47,7 @@ class Database : public LuaObject
         /**
         * Database ...
         */
-        virtual void use() {m_use = g_clock.millis();}
+        virtual void use() {m_use = stdext::millis();}
 
         /**
         * Database connector.

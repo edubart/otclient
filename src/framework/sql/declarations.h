@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2012 TitanCore <https://github.com/edubart/titancore>
+ * Copyright (c) 2010-2012 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
