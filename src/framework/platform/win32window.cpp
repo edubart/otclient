@@ -619,20 +619,12 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             processKeyUp(retranslateVirtualKey(wParam, lParam));
             break;
         }
-        case WM_SYSKEYUP:
+        case WM_SYSKEYUP: {
+            processKeyUp(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
         case WM_SYSKEYDOWN: {
-            // F10 is the shortcut key to enter a windows menu, this is a workaround to get F10 working
-            if(wParam != VK_F10) {
-                if(wParam != VK_MENU && wParam != VK_LMENU  && wParam != VK_RMENU)
-                    return DefWindowProc(hWnd, uMsg, wParam, lParam);
-                else
-                    return 0;
-            } else {
-                if(uMsg == WM_SYSKEYUP)
-                    processKeyUp(retranslateVirtualKey(wParam, lParam));
-                else
-                    processKeyDown(retranslateVirtualKey(wParam, lParam));
-            }
+            processKeyDown(retranslateVirtualKey(wParam, lParam));
             break;
         }
         case WM_LBUTTONDOWN: {

@@ -169,7 +169,3 @@ std::string Application::getOs()
 #endif
 }
 
-std::string Application::getBuildDate()
-{
-    return std::string(__DATE__);
-}
