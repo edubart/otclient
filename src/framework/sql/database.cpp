@@ -21,19 +21,8 @@
  */
 
 #include "database.h"
-#include "mysql.h"
 
 boost::recursive_mutex DBQuery::databaseLock;
-DatabasePtr Database::m_instance = nullptr;
-
-DatabasePtr Database::getInstance()
-{
-    if(!m_instance)
-        m_instance = (DatabasePtr)DatabaseMySQLPtr(new DatabaseMySQL());
-
-    m_instance->use();
-    return m_instance;
-}
 
 DBResultPtr Database::verifyResult(DBResultPtr result)
 {
