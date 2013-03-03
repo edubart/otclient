@@ -20,8 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef __DATABASE_MYSQL__
-#define __DATABASE_MYSQL__
+#ifndef DATABASEMYSQL_H
+#define DATABASEMYSQL_H
 
 #include "database.h"
 

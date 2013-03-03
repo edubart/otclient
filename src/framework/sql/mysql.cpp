@@ -253,8 +253,6 @@ void MySQLResult::free()
     }
 
     mysql_free_result(m_resultHandle);
-
-    delete m_resultHandle;
     m_resultHandle = NULL;
 }
 

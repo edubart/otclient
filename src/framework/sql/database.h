@@ -239,7 +239,7 @@ class DBInsert
         /**
         * Associates with given database handler.
         *
-        * @param Database* database wrapper
+        * @param DatabasePtr database wrapper
         */
         DBInsert(DatabasePtr db): m_db(db), m_rows(0) {}
         ~DBInsert() {}
