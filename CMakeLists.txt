@@ -7,6 +7,7 @@ set(FRAMEWORK_SOUND ON)
 set(FRAMEWORK_GRAPHICS ON)
 set(FRAMEWORK_XML ON)
 set(FRAMEWORK_NET ON)
+set(FRAMEWORK_SQL ON)
 include(src/framework/CMakeLists.txt)
 include(src/client/CMakeLists.txt)
 

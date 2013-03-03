@@ -21,11 +21,69 @@
  */
 
 #include "database.h"
+#include "mysql.h"
 
-Database::Database()
+boost::recursive_mutex DBQuery::databaseLock;
+DatabasePtr Database::m_instance = nullptr;
+
+DatabasePtr Database::getInstance()
 {
+    if(!m_instance)
+        m_instance = (DatabasePtr)DatabaseMySQLPtr(new DatabaseMySQL());
+
+    m_instance->use();
+    return m_instance;
 }
 
-Database::~Database()
+DBResultPtr Database::verifyResult(DBResultPtr result)
 {
+    if(result->next())
+        return result;
+
+    result->free();
+    return nullptr;
+}
+
+void DBInsert::setQuery(const std::string& query)
+{
+    m_query = query;
+    m_buf = "";
+    m_rows = 0;
+}
+
+bool DBInsert::addRow(const std::string& row)
+{
+    ++m_rows;
+    if(m_buf.empty()) {
+        m_buf = "(" + row + ")";
+    }
+    else if(m_buf.length() > 8192)
+    {
+        if(!execute())
+            return false;
+
+        m_buf = "(" + row + ")";
+    }
+    else
+        m_buf += ",(" + row + ")";
+
+    return true;
+}
+
+bool DBInsert::addRow(std::stringstream& row)
+{
+    bool ret = addRow(row.str());
+    row.str("");
+    return ret;
+}
+
+bool DBInsert::execute()
+{
+    if(m_buf.empty() || !m_rows)
+        return true;
+
+    m_rows = 0;
+    bool ret = m_db->executeQuery(m_query + m_buf);
+    m_buf = "";
+    return ret;
 }

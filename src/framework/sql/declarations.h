@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2012 TitanCore <https://github.com/edubart/titancore>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,10 +25,16 @@
 
 #include <framework/global.h>
 
+class Database;
 class DBResult;
+
 class DatabaseMySQL;
+class MySQLResult;
+
+typedef stdext::shared_object_ptr<Database> DatabasePtr;
+typedef stdext::shared_object_ptr<DatabaseMySQL> DatabaseMySQLPtr;
 
 typedef stdext::shared_object_ptr<DBResult> DBResultPtr;
-typedef stdext::shared_object_ptr<DatabaseMySQL> DatabaseMySQLPtr;
+typedef stdext::shared_object_ptr<MySQLResult> MySQLResultPtr;
 
 #endif
