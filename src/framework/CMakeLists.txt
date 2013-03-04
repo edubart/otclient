@@ -219,14 +219,12 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${OPENSSL_LIBRARIES}
-    ${ZLIB_LIBRARY}
 )
 
 set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
@@ -235,7 +233,6 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${OpenSSL_INCLUDE_DIR}
-    ${ZLIB_INCLUDE_DIR}
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -277,7 +274,7 @@ else()
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
-        set(SYSTEM_LIBRARIES dl)
+        set(SYSTEM_LIBRARIES dl rt)
     endif()
     set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
@@ -462,8 +459,6 @@ if(FRAMEWORK_SOUND)
         set(framework_LIBRARIES ${framework_LIBRARIES} winmm)
     elseif(APPLE)
         set(framework_LIBRARIES ${framework_LIBRARIES} System)
-    else()
-        set(framework_LIBRARIES ${framework_LIBRARIES} rt)
     endif()
 
     set(framework_SOURCES ${framework_SOURCES}
@@ -541,6 +536,10 @@ if(FRAMEWORK_SQL)
     )
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
 endif()
+
+find_package(ZLIB REQUIRED)
+set(framework_LIBRARIES ${framework_LIBRARIES} ${ZLIB_LIBRARY})
+set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR})
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
