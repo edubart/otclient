@@ -25,6 +25,7 @@
 
 #include "../global.h"
 
+#include <framework/stdext/thread.h>
 #include <fstream>
 
 struct LogMessage {
@@ -61,6 +62,7 @@ private:
     std::list<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
     std::ofstream m_outFile;
+    std::recursive_mutex m_mutex;
 };
 
 extern Logger g_logger;

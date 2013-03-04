@@ -30,6 +30,8 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/core/asyncdispatcher.h>
+#include <thread>
 
 SoundManager g_sounds;
 
@@ -57,9 +59,14 @@ void SoundManager::terminate()
 {
     ensureContext();
 
+    for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();++it)
+        it->second.wait();
+    m_streamFiles.clear();
+
     m_sources.clear();
     m_buffers.clear();
     m_channels.clear();
+
     m_audioEnabled = false;
 
     alcMakeContextCurrent(nullptr);
@@ -86,6 +93,23 @@ void SoundManager::poll()
     lastUpdate = now;
 
     ensureContext();
+
+    for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();) {
+        StreamSoundSourcePtr source = it->first;
+        std::future<SoundFilePtr>& future = it->second;
+
+        if(std::is_ready(future)) {
+            SoundFilePtr sound = future.get();
+            if(sound)
+                source->setSoundFile(sound);
+            else
+                source->stop();
+            it = m_streamFiles.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
     for(auto it = m_sources.begin(); it != m_sources.end();) {
         SoundSourcePtr source = *it;
 
@@ -161,9 +185,8 @@ SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float ga
     soundSource->setRelative(true);
     soundSource->setGain(gain);
 
-    if(fadetime > 0) {
+    if(fadetime > 0)
         soundSource->setFading(StreamSoundSource::FadingOn, fadetime);
-    }
 
     soundSource->play();
 
@@ -202,45 +225,55 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             source = SoundSourcePtr(new SoundSource);
             source->setBuffer(it->second);
         } else {
-            SoundFilePtr soundFile = SoundFile::loadSoundFile(filename);
-            if(!soundFile)
-                return nullptr;
+#if defined __linux && !defined OPENGL_ES
+            // due to OpenAL implementation bug, stereo buffers are always downmixed to mono on linux systems
+            // this is hack to work around the issue
+            // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
+            CombinedSoundSourcePtr combinedSource(new CombinedSoundSource);
+            StreamSoundSourcePtr streamSource;
 
-            if(soundFile->getSize() <= MAX_CACHE_SIZE) {
-                source = SoundSourcePtr(new SoundSource);
-                SoundBufferPtr buffer = SoundBufferPtr(new SoundBuffer);
-                buffer->fillBuffer(soundFile);
-                source->setBuffer(buffer);
-                m_buffers[filename] = buffer;
-                g_logger.warning(stdext::format("uncached sound '%s' requested to be played", filename));
-            } else {
-                StreamSoundSourcePtr streamSource(new StreamSoundSource);
-                streamSource->setSoundFile(soundFile);
-                source = streamSource;
-
-    #if defined __linux && !defined OPENGL_ES
-                // due to OpenAL implementation bug, stereo buffers are always downmixed to mono on linux systems
-                // this is hack to work around the issue
-                // solution taken from http://opensource.creative.com/pipermail/openal/2007-April/010355.html
-                if(soundFile->getSampleFormat() == AL_FORMAT_STEREO16) {
-                    CombinedSoundSourcePtr combinedSource(new CombinedSoundSource);
-
-                    streamSource->downMix(StreamSoundSource::DownMixLeft);
-                    streamSource->setRelative(true);
-                    streamSource->setPosition(Point(-128, 0));
-                    combinedSource->addSource(streamSource);
-
-                    streamSource = StreamSoundSourcePtr(new StreamSoundSource);
-                    streamSource->setSoundFile(SoundFile::loadSoundFile(filename));
-                    streamSource->downMix(StreamSoundSource::DownMixRight);
-                    streamSource->setRelative(true);
-                    streamSource->setPosition(Point(128,0));
-                    combinedSource->addSource(streamSource);
-
-                    source = combinedSource;
+            streamSource = StreamSoundSourcePtr(new StreamSoundSource);
+            streamSource->downMix(StreamSoundSource::DownMixLeft);
+            streamSource->setRelative(true);
+            streamSource->setPosition(Point(-128, 0));
+            combinedSource->addSource(streamSource);
+            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+                stdext::timer a;
+                try {
+                    return SoundFile::loadSoundFile(filename); 
+                } catch(std::exception& e) {
+                    g_logger.error(e.what());
+                    return nullptr;
                 }
-    #endif
-            }
+            });
+
+            streamSource = StreamSoundSourcePtr(new StreamSoundSource);
+            streamSource->downMix(StreamSoundSource::DownMixRight);
+            streamSource->setRelative(true);
+            streamSource->setPosition(Point(128,0));
+            combinedSource->addSource(streamSource);
+            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
+                try {
+                    return SoundFile::loadSoundFile(filename); 
+                } catch(std::exception& e) {
+                    g_logger.error(e.what());
+                    return nullptr;
+                }
+            });
+
+            source = combinedSource;
+#else
+            StreamSoundSourcePtr streamSource(new StreamSoundSource);
+            m_streamFiles[streamSource] = m_loadJobs [=]() -> SoundFilePtr {
+                try {
+                    return SoundFile::loadSoundFile(filename); 
+                } catch(std::exception& e) {
+                    g_logger.error(e.what());
+                    return nullptr;
+                }
+            });
+            source = streamSource;
+#endif
         }
     } catch(std::exception& e) {
         g_logger.error(stdext::format("failed to load sound source: '%s'", e.what()));

@@ -29,7 +29,7 @@
 class LocalPlayer : public Player
 {
     enum {
-        PREWALK_TIMEOUT = 5000
+        PREWALK_TIMEOUT = 1000
     };
 
 public:

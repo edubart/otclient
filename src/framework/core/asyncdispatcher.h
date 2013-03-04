@@ -20,51 +20,40 @@
  * THE SOFTWARE.
  */
 
-#ifndef THREAD_H
-#define THREAD_H
+#ifndef ASYNCDISPATCHER_H
+#define ASYNCDISPATCHER_H
 
-// hack to enable std::thread on mingw32 4.6
-#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/future.hpp>
-#include <boost/thread/condition_variable.hpp>
-namespace std {
-    using boost::thread;
-    using boost::future;
-    using boost::future_status;
-    using boost::promise;
+#include "declarations.h"
+#include <framework/stdext/thread.h>
 
-    using boost::mutex;
-    using boost::timed_mutex;
-    using boost::recursive_mutex;
-    using boost::recursive_timed_mutex;
+class AsyncDispatcher {
+public:
+    void init();
+    void terminate();
 
-    using boost::lock_guard;
-    using boost::unique_lock;
+    void spawn_thread();
+    void stop();
 
-    using boost::condition_variable;
-    using boost::condition_variable_any;
+    template<class F>
+    std::future<typename std::result_of<F()>::type> schedule(const F& task) {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        auto prom = std::make_shared<std::promise<typename std::result_of<F()>::type>>();
+        m_tasks.push_back([=]() { prom->set_value(task()); });
+        m_condition.notify_all();
+        return prom->get_future();
+    }
 
-    template<typename R>
-    bool is_ready(std::future<R>& f)
-    { return f.wait_for(boost::chrono::seconds(0)) == future_status::ready; }
-}
-  
-#else
-#include <thread>
-#include <condition_variable>
-#include <mutex>
-#include <future>
+protected:
+    void exec_loop();
 
-namespace std {
-    template<typename R>
-    bool is_ready(std::future<R>& f)
-    { return f.wait_for(chrono::seconds(0)) == future_status::ready; }
+private:
+    std::list<std::function<void()>> m_tasks;
+    std::mutex m_mutex;
+    std::list<std::thread> m_threads;
+    std::condition_variable m_condition;
+    stdext::boolean<false> m_running;
 };
 
-#endif
+extern AsyncDispatcher g_asyncDispatcher;
 
 #endif

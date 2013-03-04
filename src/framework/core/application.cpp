@@ -27,6 +27,7 @@
 #include <framework/core/modulemanager.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
+#include "asyncdispatcher.h"
 #include <framework/luaengine/luainterface.h>
 #include <framework/platform/crashhandler.h>
 #include <framework/platform/platform.h>
@@ -76,6 +77,8 @@ void Application::init(std::vector<std::string>& args)
     // process args encoding
     g_platform.processArgs(args);
 
+    g_asyncDispatcher.init();
+
     std::string startupOptions;
     for(uint i=1;i<args.size();++i) {
         const std::string& arg = args[i];
@@ -108,6 +111,8 @@ void Application::deinit()
 
     // poll remaining events
     poll();
+
+    g_asyncDispatcher.terminate();
 
     // disable dispatcher events
     g_dispatcher.shutdown();

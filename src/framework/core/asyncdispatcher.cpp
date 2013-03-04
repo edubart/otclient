@@ -20,51 +20,52 @@
  * THE SOFTWARE.
  */
 
-#ifndef THREAD_H
-#define THREAD_H
+#include "asyncdispatcher.h"
 
-// hack to enable std::thread on mingw32 4.6
-#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/future.hpp>
-#include <boost/thread/condition_variable.hpp>
-namespace std {
-    using boost::thread;
-    using boost::future;
-    using boost::future_status;
-    using boost::promise;
+AsyncDispatcher g_asyncDispatcher;
 
-    using boost::mutex;
-    using boost::timed_mutex;
-    using boost::recursive_mutex;
-    using boost::recursive_timed_mutex;
-
-    using boost::lock_guard;
-    using boost::unique_lock;
-
-    using boost::condition_variable;
-    using boost::condition_variable_any;
-
-    template<typename R>
-    bool is_ready(std::future<R>& f)
-    { return f.wait_for(boost::chrono::seconds(0)) == future_status::ready; }
+void AsyncDispatcher::init()
+{
+    spawn_thread();
 }
-  
-#else
-#include <thread>
-#include <condition_variable>
-#include <mutex>
-#include <future>
 
-namespace std {
-    template<typename R>
-    bool is_ready(std::future<R>& f)
-    { return f.wait_for(chrono::seconds(0)) == future_status::ready; }
+void AsyncDispatcher::terminate()
+{
+    stop();
+    m_tasks.clear();
+}
+
+void AsyncDispatcher::spawn_thread()
+{
+    m_running = true;
+    m_threads.push_back(std::thread(std::bind(&AsyncDispatcher::exec_loop, this)));
+}
+
+void AsyncDispatcher::stop()
+{
+    m_mutex.lock();
+    m_running = false;
+    m_condition.notify_all();
+    m_mutex.unlock();
+    for(std::thread& thread : m_threads)
+        thread.join();
+    m_threads.clear();
 };
 
-#endif
+void AsyncDispatcher::exec_loop() {
+    std::unique_lock<std::mutex> lock(m_mutex);
+    while(true) {
+        while(m_tasks.size() == 0 && m_running)
+            m_condition.wait(lock);
 
-#endif
+        if(!m_running)
+            return;
+
+        std::function<void()> task = m_tasks.front();
+        m_tasks.pop_front();
+
+        lock.unlock();
+        task();
+        lock.lock();
+    }
+}

@@ -25,6 +25,7 @@
 #include "soundfile.h"
 
 #include <framework/util/databuffer.h>
+#include <boost/concept_check.hpp>
 
 StreamSoundSource::StreamSoundSource()
 {
@@ -41,20 +42,24 @@ StreamSoundSource::~StreamSoundSource()
 void StreamSoundSource::setSoundFile(const SoundFilePtr& soundFile)
 {
     m_soundFile = soundFile;
+    if(m_waitingFile) {
+        m_waitingFile = false;
+        play();
+    }
 }
 
 void StreamSoundSource::play()
 {
     m_playing = true;
 
+    if(!m_soundFile) {
+        m_waitingFile = true;
+        return;
+    }
+
     if(m_eof) {
         m_soundFile->reset();
         m_eof = false;
-    }
-
-    if(!m_soundFile) {
-        g_logger.error("there is not sound file to play the stream");
-        return;
     }
 
     queueBuffers();
@@ -64,9 +69,13 @@ void StreamSoundSource::play()
 
 void StreamSoundSource::stop()
 {
+    m_playing = false;
+
+    if(m_waitingFile)
+        return;
+
     SoundSource::stop();
     unqueueBuffers();
-    m_playing = false;
 }
 
 void StreamSoundSource::queueBuffers()
@@ -91,6 +100,9 @@ void StreamSoundSource::unqueueBuffers()
 
 void StreamSoundSource::update()
 {
+    if(m_waitingFile)
+        return;
+
     SoundSource::update();
 
     int processed = 0;
@@ -118,6 +130,9 @@ void StreamSoundSource::update()
 
 bool StreamSoundSource::fillBufferAndQueue(uint buffer)
 {
+    if(m_waitingFile)
+        return false;
+
     // fill buffer
     static DataBuffer<char> bufferData(2*STREAM_FRAGMENT_SIZE);
     ALenum format = m_soundFile->getSampleFormat();
@@ -170,15 +185,5 @@ bool StreamSoundSource::fillBufferAndQueue(uint buffer)
 
 void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)
 {
-    if(!m_soundFile) {
-        g_logger.error("down mix must be set after setting a sound file");
-        return;
-    }
-
-    if(m_soundFile->getSampleFormat() != AL_FORMAT_STEREO16) {
-        g_logger.error("can only downmix 16 bit stereo audio files");
-        return;
-    }
-
     m_downMix = downMix;
 }

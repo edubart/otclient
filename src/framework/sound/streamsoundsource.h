@@ -61,6 +61,7 @@ private:
     stdext::boolean<false> m_looping;
     stdext::boolean<false> m_playing;
     stdext::boolean<false> m_eof;
+    stdext::boolean<false> m_waitingFile;
 };
 
 #endif
