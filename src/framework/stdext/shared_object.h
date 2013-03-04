@@ -28,12 +28,16 @@
 #include <cassert>
 #include <ostream>
 
+#ifdef THREAD_SAFE
+#include <atomic>
+#endif
+
 namespace stdext {
 
 template<class T>
 class shared_object_ptr;
 
-typedef unsigned int refcount_t;
+typedef unsigned long refcount_t;
 
 class shared_object
 {
@@ -49,7 +53,11 @@ public:
     template<typename T> stdext::shared_object_ptr<T> const_self_cast() { return stdext::shared_object_ptr<T>(const_cast<T*>(this)); }
 
 private:
+#ifdef THREAD_SAFE
+    std::atomic<refcount_t> m_refs;
+#else
     refcount_t m_refs;
+#endif
 };
 
 template<class T>

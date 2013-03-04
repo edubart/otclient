@@ -281,6 +281,10 @@ else()
     set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
 
+if(FRAMEWORK_THREAD_SAFE)
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DTHREAD_SAFE)
+endif()
+
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
     if(OPENGLES STREQUAL "2.0")
