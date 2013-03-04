@@ -23,6 +23,7 @@
 #ifndef STDEXT_SHARED_OBJECT_H
 #define STDEXT_SHARED_OBJECT_H
 
+#include "types.h"
 #include <type_traits>
 #include <functional>
 #include <cassert>
@@ -37,16 +38,14 @@ namespace stdext {
 template<class T>
 class shared_object_ptr;
 
-typedef unsigned long refcount_t;
-
 class shared_object
 {
 public:
-    shared_object() : m_refs(0) { }
+    shared_object() : refs(0) { }
     virtual ~shared_object() { }
-    void add_ref() { ++m_refs; assert(m_refs != 0xffffffff); }
-    void dec_ref() { if(--m_refs == 0) delete this; }
-    refcount_t ref_count() { return m_refs; }
+    void add_ref() { ++refs; }
+    void dec_ref() { if(--refs == 0) delete this; }
+    refcount_t ref_count() { return refs; }
 
     template<typename T> stdext::shared_object_ptr<T> static_self_cast() { return stdext::shared_object_ptr<T>(static_cast<T*>(this)); }
     template<typename T> stdext::shared_object_ptr<T> dynamic_self_cast() { return stdext::shared_object_ptr<T>(dynamic_cast<T*>(this)); }
@@ -54,9 +53,9 @@ public:
 
 private:
 #ifdef THREAD_SAFE
-    std::atomic<refcount_t> m_refs;
+    std::atomic<refcount_t> refs;
 #else
-    refcount_t m_refs;
+    refcount_t refs;
 #endif
 };
 
@@ -78,7 +77,7 @@ public:
     ~shared_object_ptr() { if(px != nullptr) dec_ref(); }
 
     void reset() { shared_object_ptr().swap(*this); }
-    void reset(T* rhs) { shared_object_ptr( rhs ).swap(*this); }
+    void reset(T* rhs) { shared_object_ptr(rhs).swap(*this); }
     void swap(shared_object_ptr& rhs) { std::swap(px, rhs.px); }
     T* get() const { return px; }
 

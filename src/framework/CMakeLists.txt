@@ -50,6 +50,7 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/stdext/packed_storage.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/packed_vector.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/shared_object.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/shared_ptr.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/stdext.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/string.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/string.h
