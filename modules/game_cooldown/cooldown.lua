@@ -128,12 +128,12 @@ function initCooldown(progressRect, updateCallback, finishCallback)
   updateCallback()
 end
 
-function updateCooldown(progressRect, interval)
-  progressRect:setPercent(progressRect:getPercent() + 5)
+function updateCooldown(progressRect, duration)
+  progressRect:setPercent(progressRect:getPercent() + 10000/duration)
   
   if progressRect:getPercent() < 100 then
     removeEvent(progressRect.event)
-    progressRect.event = scheduleEvent(function() progressRect.callback[ProgressCallback.update]() end, interval)
+    progressRect.event = scheduleEvent(function() progressRect.callback[ProgressCallback.update]() end, 100)
   else
     progressRect.callback[ProgressCallback.finish]()
   end
@@ -158,7 +158,7 @@ function onSpellCooldown(iconId, duration)
   progressRect:setTooltip(spellName)
 
   local updateFunc = function()
-    updateCooldown(progressRect, duration/19)
+    updateCooldown(progressRect, duration)
   end
   local finishFunc = function()
     removeCooldown(progressRect)
@@ -180,7 +180,7 @@ function onSpellGroupCooldown(groupId, duration)
   if progressRect then
     removeEvent(progressRect.event)
     local updateFunc = function()
-      updateCooldown(progressRect, duration/19)
+      updateCooldown(progressRect, duration)
     end
     local finishFunc = function()
       turnOffCooldown(progressRect)
