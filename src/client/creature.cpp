@@ -334,10 +334,6 @@ void Creature::stopWalk()
     if(!m_walking)
         return;
 
-    // reset walk animation states
-    m_walkOffset = Point(0,0);
-    m_walkAnimationPhase = 0;
-
     // stops the walk right away
     terminateWalk();
 }
@@ -588,6 +584,10 @@ void Creature::terminateWalk()
 
     m_walking = false;
     m_walkedPixels = 0;
+
+    // reset walk animation states
+    m_walkOffset = Point(0,0);
+    m_walkAnimationPhase = 0;
 }
 
 void Creature::setName(const std::string& name)
