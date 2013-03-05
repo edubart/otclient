@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "soundchannel.h"
+#include <framework/stdext/thread.h>
 
 //@bindsingleton g_sounds
 class SoundManager
@@ -57,7 +58,7 @@ private:
     ALCdevice *m_device;
     ALCcontext *m_context;
 
-    std::map<StreamSoundSourcePtr, std::future<SoundFilePtr>> m_streamFiles;
+    std::map<StreamSoundSourcePtr, stdext::future<SoundFilePtr>> m_streamFiles;
     std::unordered_map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
     stdext::boolean<true> m_audioEnabled;

@@ -96,9 +96,9 @@ void SoundManager::poll()
 
     for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();) {
         StreamSoundSourcePtr source = it->first;
-        std::future<SoundFilePtr>& future = it->second;
+        stdext::future<SoundFilePtr>& future = it->second;
 
-        if(std::is_ready(future)) {
+        if(stdext::is_ready(future)) {
             SoundFilePtr sound = future.get();
             if(sound)
                 source->setSoundFile(sound);
@@ -264,7 +264,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             source = combinedSource;
 #else
             StreamSoundSourcePtr streamSource(new StreamSoundSource);
-            m_streamFiles[streamSource] = m_loadJobs [=]() -> SoundFilePtr {
+            m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
                 try {
                     return SoundFile::loadSoundFile(filename); 
                 } catch(std::exception& e) {

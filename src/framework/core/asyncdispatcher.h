@@ -35,9 +35,9 @@ public:
     void stop();
 
     template<class F>
-    std::future<typename std::result_of<F()>::type> schedule(const F& task) {
-        std::lock_guard<std::mutex> lock(m_mutex);
-        auto prom = std::make_shared<std::promise<typename std::result_of<F()>::type>>();
+    stdext::future<typename std::result_of<F()>::type> schedule(const F& task) {
+        stdext::lock_guard<stdext::mutex> lock(m_mutex);
+        auto prom = std::make_shared<stdext::promise<typename std::result_of<F()>::type>>();
         m_tasks.push_back([=]() { prom->set_value(task()); });
         m_condition.notify_all();
         return prom->get_future();
@@ -48,9 +48,9 @@ protected:
 
 private:
     std::list<std::function<void()>> m_tasks;
-    std::mutex m_mutex;
-    std::list<std::thread> m_threads;
-    std::condition_variable m_condition;
+    stdext::mutex m_mutex;
+    std::list<stdext::thread> m_threads;
+    stdext::condition_variable m_condition;
     stdext::boolean<false> m_running;
 };
 
