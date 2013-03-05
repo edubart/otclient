@@ -35,55 +35,57 @@
 
 class DatabaseMySQL : public Database
 {
-    public:
-        DatabaseMySQL();
-        virtual ~DatabaseMySQL();
+public:
+    DatabaseMySQL();
+    virtual ~DatabaseMySQL();
 
-        virtual void connect(const std::string& host, const std::string& user, const std::string& pass,
-                     const std::string& db, uint16 port, const std::string& unix_socket = "");
+    virtual void connect(const std::string& host, const std::string& user, const std::string& pass,
+                 const std::string& db, uint16 port, const std::string& unix_socket = "");
 
-        virtual bool beginTransaction();
-        virtual bool rollback();
-        virtual bool commit();
+    virtual bool beginTransaction();
+    virtual bool rollback();
+    virtual bool commit();
 
-        virtual bool executeQuery(const std::string& query);
-        virtual DBResultPtr storeQuery(const std::string& query);
+    virtual bool executeQuery(const std::string& query);
+    virtual DBResultPtr storeQuery(const std::string& query);
 
-        virtual std::string escapeString(const std::string &s);
-        virtual std::string escapeBlob(const char* s, uint32 length);
+    virtual std::string escapeString(const std::string &s);
+    virtual std::string escapeBlob(const char* s, uint32 length);
 
-        virtual uint64 getLastInsertedRowID();
-        virtual Fw::DatabaseEngine getDatabaseEngine() {return Fw::DatabaseMySQL;}
+    virtual uint64 getLastInsertedRowID();
+    virtual Fw::DatabaseEngine getDatabaseEngine() {return Fw::DatabaseMySQL;}
 
-    protected:
-        bool handleError();
-        bool internalExecuteQuery(const std::string &query);
+protected:
+    bool handleError();
+    bool internalExecuteQuery(const std::string &query);
 
-        MYSQL* m_handle;
+    MYSQL* m_handle;
 };
 
 class MySQLResult : public DBResult
 {
-    friend class DatabaseMySQL;
-    public:
-        virtual int32 getDataInt(const std::string& s);
-        virtual int64 getDataLong(const std::string& s);
-        virtual std::string getDataString(const std::string& s);
-        virtual const char* getDataStream(const std::string& s, uint64& size);
 
-        virtual void free();
-        virtual bool next();
-        virtual int getRowCount() { return mysql_num_rows(m_result); }
+friend class DatabaseMySQL;
 
-    protected:
-        MySQLResult(MYSQL_RES* result);
-        virtual ~MySQLResult();
+public:
+    MySQLResult(MYSQL_RES* result);
+    virtual ~MySQLResult();
 
-        typedef std::map<const std::string, uint32> RowNames_t;
-        RowNames_t m_names;
+    virtual int32 getDataInt(const std::string& s);
+    virtual int64 getDataLong(const std::string& s);
+    virtual std::string getDataString(const std::string& s);
+    virtual const char* getDataStream(const std::string& s, uint64& size);
 
-        MYSQL_RES* m_result;
-        MYSQL_ROW m_row;
+    virtual void free();
+    virtual bool next();
+    virtual int getRowCount() { return mysql_num_rows(m_result); }
+
+protected:
+    typedef std::map<const std::string, uint32> RowNames_t;
+    RowNames_t m_names;
+
+    MYSQL_RES* m_result;
+    MYSQL_ROW m_row;
 };
 
 #endif
