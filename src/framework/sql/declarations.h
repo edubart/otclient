@@ -28,13 +28,14 @@
 class Database;
 class DBResult;
 
+typedef stdext::shared_object_ptr<Database> DatabasePtr;
+typedef stdext::shared_object_ptr<DBResult> DBResultPtr;
+
+// MySQL
 class DatabaseMySQL;
 class MySQLResult;
 
-typedef stdext::shared_object_ptr<Database> DatabasePtr;
 typedef stdext::shared_object_ptr<DatabaseMySQL> DatabaseMySQLPtr;
-
-typedef stdext::shared_object_ptr<DBResult> DBResultPtr;
 typedef stdext::shared_object_ptr<MySQLResult> MySQLResultPtr;
 
 #endif

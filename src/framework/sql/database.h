@@ -262,7 +262,8 @@ class DBInsert
         DatabasePtr m_db;
 
         uint32 m_rows;
-        std::string m_query, m_buf;
+        std::string m_query;
+        std::string m_buf;
 };
 
 class DBTransaction

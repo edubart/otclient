@@ -73,16 +73,16 @@ class MySQLResult : public DBResult
 
         virtual void free();
         virtual bool next();
-        virtual int getRowCount() { return mysql_num_rows(m_resultHandle); }
+        virtual int getRowCount() { return mysql_num_rows(m_result); }
 
     protected:
         MySQLResult(MYSQL_RES* result);
         virtual ~MySQLResult();
 
-        typedef std::map<const std::string, uint32> listNames_t;
-        listNames_t m_listNames;
+        typedef std::map<const std::string, uint32> RowNames_t;
+        RowNames_t m_names;
 
-        MYSQL_RES* m_resultHandle;
+        MYSQL_RES* m_result;
         MYSQL_ROW m_row;
 };
 
