@@ -196,7 +196,6 @@ message(STATUS "Build revision: ${BUILD_REVISION}")
 add_definitions(-D"BUILD_REVISION=\\\"${BUILD_REVISION}\\\"")
 
 # find boost
-set(framework_DEFINITIONS ${framework_DEFINITIONS} -DBOOST_THREAD_PROVIDES_FUTURE) # enable boost::future
 set(REQUIRED_BOOST_COMPONENTS system thread chrono)
 if(WIN32)
     set(Boost_THREADAPI win32)
