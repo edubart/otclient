@@ -27,7 +27,6 @@
 #include <framework/luaengine/luaobject.h>
 
 #include <boost/thread.hpp>
-#include <ctime>
 
 class Database : public LuaObject
 {
