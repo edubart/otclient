@@ -480,12 +480,12 @@ bool Map::isAwareOfPosition(const Position& pos)
     Position groundedPos = pos;
     while(groundedPos.z != m_centralPosition.z) {
         if(groundedPos.z > m_centralPosition.z) {
-            if(groundedPos.z == Otc::MAX_Z) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
+            if(groundedPos.x == 65535 || groundedPos.y == 65535) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
                 break;
             groundedPos.coveredUp();
         }
         else {
-            if(groundedPos.z == 0) // When pos == 0,0,0 we cant go down to -1,-1,1
+            if(groundedPos.x == 0 || groundedPos.y == 0) // When pos == 0,0,0 we cant go down to -1,-1,1
                 break;
             groundedPos.coveredDown();
         }
