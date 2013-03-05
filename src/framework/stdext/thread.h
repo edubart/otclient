@@ -24,15 +24,14 @@
 #define THREAD_H
 
 // hack to enable std::thread on mingw32 4.6
-#if 1
-//#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
+#if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__)
 #include <boost/thread/thread.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/future.hpp>
 #include <boost/thread/condition_variable.hpp>
-namespace stdext {
+namespace std {
     using boost::thread;
     using boost::future;
     using boost::future_status;
@@ -50,43 +49,21 @@ namespace stdext {
     using boost::condition_variable_any;
 
     template<typename R>
-    bool is_ready(stdext::future<R>& f)
+    bool is_ready(std::future<R>& f)
     { return f.wait_for(boost::chrono::seconds(0)) == future_status::ready; }
 }
-
+  
 #else
-
 #include <thread>
 #include <condition_variable>
 #include <mutex>
 #include <future>
 
-namespace stdext {
+namespace std {
     template<typename R>
     bool is_ready(std::future<R>& f)
     { return f.wait_for(chrono::seconds(0)) == future_status::ready; }
 };
-namespace stdext {
-    using std::thread;
-    using std::future;
-    using std::future_status;
-    using std::promise;
-
-    using std::mutex;
-    using std::timed_mutex;
-    using std::recursive_mutex;
-    using std::recursive_timed_mutex;
-
-    using std::lock_guard;
-    using std::unique_lock;
-
-    using std::condition_variable;
-    using std::condition_variable_any;
-
-    template<typename R>
-    bool is_ready(std::future<R>& f)
-    { return f.wait_for(boost::chrono::seconds(0)) == future_status::ready; }
-}
 
 #endif
 

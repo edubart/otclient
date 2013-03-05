@@ -252,7 +252,6 @@ function getItemPrice(item, single)
   if not single then
     amount = quantityScroll:getValue()
   end
-  
   if getCurrentTradeType() == BUY then
     if buyWithBackpack:isChecked() then
       if item.ptr:isStackable() then
@@ -392,7 +391,6 @@ function refreshPlayerGoods()
 end
 
 function onOpenNpcTrade(items)
-  table.dump(items)
   tradeItems[BUY] = {}
   tradeItems[SELL] = {}
 

@@ -35,7 +35,7 @@ Logger g_logger;
 
 void Logger::log(Fw::LogLevel level, const std::string& message)
 {
-    stdext::lock_guard<stdext::recursive_mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
 #ifdef NDEBUG
     if(level == Fw::LogDebug)
@@ -97,7 +97,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 
 void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)
 {
-    stdext::lock_guard<stdext::recursive_mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));
     if(prettyFunction.find_last_of(' ') != std::string::npos)
@@ -118,7 +118,7 @@ void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string
 
 void Logger::fireOldMessages()
 {
-    stdext::lock_guard<stdext::recursive_mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     if(m_onLog) {
         auto backup = m_logMessages;
@@ -130,7 +130,7 @@ void Logger::fireOldMessages()
 
 void Logger::setLogFile(const std::string& file)
 {
-    stdext::lock_guard<stdext::recursive_mutex> lock(m_mutex);
+    std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     m_outFile.open(stdext::utf8_to_latin1(file.c_str()).c_str(), std::ios::out | std::ios::app);
     if(!m_outFile.is_open() || !m_outFile.good()) {

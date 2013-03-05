@@ -62,7 +62,7 @@ private:
     std::list<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
     std::ofstream m_outFile;
-    stdext::recursive_mutex m_mutex;
+    std::recursive_mutex m_mutex;
 };
 
 extern Logger g_logger;
