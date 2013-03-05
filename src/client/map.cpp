@@ -479,10 +479,16 @@ bool Map::isAwareOfPosition(const Position& pos)
 
     Position groundedPos = pos;
     while(groundedPos.z != m_centralPosition.z) {
-        if(groundedPos.z > m_centralPosition.z)
+        if(groundedPos.z > m_centralPosition.z) {
+            if(groundedPos.z == Otc::MAX_Z) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
+                break;
             groundedPos.coveredUp();
-        else
+        }
+        else {
+            if(groundedPos.z == 0) // When pos == 0,0,0 we cant go down to -1,-1,1
+                break;
             groundedPos.coveredDown();
+        }
     }
     return m_centralPosition.isInRange(groundedPos, m_awareRange.left,
                                                     m_awareRange.right,
