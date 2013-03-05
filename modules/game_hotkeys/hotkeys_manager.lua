@@ -76,6 +76,8 @@ function init()
     onGameStart = online,
     onGameEnd = offline
   })
+
+  load()
 end
 
 function terminate()
@@ -96,6 +98,7 @@ end
 function configure(savePerServer, savePerCharacter)
   perServer = savePerServer
   perCharacter = savePerCharacter
+  reload()
 end
 
 function online()

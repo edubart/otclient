@@ -72,6 +72,7 @@ violationsChannelId = nil
 violationWindow = nil
 violationReportTab = nil
 ignoredChannels = {}
+filters = {}
 
 local ignoreSettings = {
   privateMessages = false,
@@ -591,9 +592,23 @@ function sendCurrentMessage()
   sendMessage(message)
 end
 
+function addFilter(filter)
+  table.insert(filters, filter)
+end
+
+function removeFilter(filter)
+  table.removevalue(filters, filter)
+end
+
 function sendMessage(message, tab)
   local tab = tab or getCurrentTab()
   if not tab then return end
+
+  for k,func in pairs(filters) do
+    if func(message) then
+      return true
+    end
+  end
 
   -- when talking on server log, the message goes to default channel
   local name = tab:getText()
