@@ -24,100 +24,68 @@
 #define DATABASEMYSQL_H
 
 #include "database.h"
-#include <framework/global.h>
-#include <mysql/mysql.h>
 
-class DBResult;
+#include <framework/global.h>
+
+#ifdef WINDOWS
+    #include <winsock2.h>
+#endif
+
+#include <mysql/mysql.h>
 
 class DatabaseMySQL : public Database
 {
 public:
     DatabaseMySQL();
-    ~DatabaseMySQL();
+    virtual ~DatabaseMySQL();
 
-    void connect(const std::string& host, const std::string& user, const std::string& pass,
-                 const std::string& db, uint16_t port, const std::string& unix_socket = "");
+    virtual void connect(const std::string& host, const std::string& user, const std::string& pass,
+                 const std::string& db, uint16 port, const std::string& unix_socket = "");
 
-    bool beginTransaction();
-    bool rollback();
-    bool commit();
+    virtual bool beginTransaction();
+    virtual bool rollback();
+    virtual bool commit();
 
-    bool executeQuery(const std::string &query);
-    DBResultPtr storeQuery(const std::string &query);
+    virtual bool executeQuery(const std::string& query);
+    virtual DBResultPtr storeQuery(const std::string& query);
 
-    uint64_t getLastInsertedRowID();
+    virtual std::string escapeString(const std::string &s);
+    virtual std::string escapeBlob(const char* s, uint32 length);
 
-    std::string escapeString(const std::string &s);
-    std::string escapeBlob(const char* s, uint32_t length);
-
-    void freeResult(DBResult *res);
+    virtual uint64 getLastInsertedRowID();
+    virtual Fw::DatabaseEngine getDatabaseEngine() {return Fw::DatabaseMySQL;}
 
 protected:
     bool handleError();
     bool internalExecuteQuery(const std::string &query);
 
-    bool m_running;
-    MYSQL m_mysqlHandle;
+    MYSQL* m_handle;
 };
 
-class DBResult : public LuaObject
+class MySQLResult : public DBResult
 {
+
+friend class DatabaseMySQL;
+
 public:
-    DBResult(MYSQL_RES* res);
-     ~DBResult();
+    MySQLResult(MYSQL_RES* result);
+    virtual ~MySQLResult();
 
-    friend class DatabaseMySQL;
+    virtual int32 getDataInt(const std::string& s);
+    virtual int64 getDataLong(const std::string& s);
+    virtual std::string getDataString(const std::string& s);
+    virtual const char* getDataStream(const std::string& s, uint64& size);
 
-    int32_t getDataInt(const std::string &s);
-    int64_t getDataLong(const std::string &s);
-    std::string getDataString(const std::string &s);
+    virtual void free();
+    virtual bool next();
+    virtual int getRowCount() { return mysql_num_rows(m_result); }
 
-    bool next();
-    int getRowCount() { return mysql_num_rows(m_res); }
+protected:
+    typedef std::map<const std::string, uint32> RowNames_t;
+    RowNames_t m_names;
 
-private:
-    typedef std::map<const std::string, uint32_t> ListNames;
-    ListNames m_listNames;
-
-    MYSQL_RES* m_res;
+    MYSQL_RES* m_result;
     MYSQL_ROW m_row;
-};
-
-class DBTransaction
-{
-public:
-    DBTransaction(DatabaseMySQL* database) {
-        m_database = database;
-        m_state = STATE_NO_START;
-    }
-
-    ~DBTransaction() {
-        if(m_state == STATE_START) {
-            m_database->rollback();
-        }
-    }
-
-    bool begin() {
-        m_state = STATE_START;
-        return m_database->beginTransaction();
-    }
-
-    bool commit() {
-        if(m_state == STATE_START) {
-            m_state = STEATE_COMMIT;
-            return m_database->commit();
-        } else {
-            return false;
-        }
-    }
-
-private:
-    enum TransactionStates_t {
-        STATE_NO_START, STATE_START, STEATE_COMMIT
-    };
-
-    TransactionStates_t m_state;
-    DatabaseMySQL* m_database;
 };
 
 #endif
