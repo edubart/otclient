@@ -219,20 +219,22 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${OPENSSL_LIBRARIES}
+    ${ZLIB_LIBRARY}
 )
 
 set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${OpenSSL_INCLUDE_DIR}
+    ${framework_INCLUDE_DIRS} 
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -276,8 +278,8 @@ else()
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
         set(SYSTEM_LIBRARIES dl rt)
     endif()
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
+set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
@@ -453,7 +455,7 @@ if(FRAMEWORK_SOUND)
     find_package(Ogg REQUIRED)
 
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${VORBISFILE_INCLUDE_DIR})
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+    set(framework_LIBRARIES ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY} ${framework_LIBRARIES})
 
     if(WIN32)
         set(framework_LIBRARIES ${framework_LIBRARIES} winmm)
@@ -525,7 +527,7 @@ if(FRAMEWORK_SQL)
     find_package(MySQL REQUIRED)
 
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR})
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${MYSQL_LIBRARY})
+    set(framework_LIBRARIES ${MYSQL_LIBRARY} ${framework_LIBRARIES})
 
     set(framework_SOURCES ${framework_SOURCES}
         ${CMAKE_CURRENT_LIST_DIR}/sql/declarations.h
@@ -536,10 +538,6 @@ if(FRAMEWORK_SQL)
     )
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
 endif()
-
-find_package(ZLIB REQUIRED)
-set(framework_LIBRARIES ${framework_LIBRARIES} ${ZLIB_LIBRARY})
-set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR})
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
