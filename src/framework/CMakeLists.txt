@@ -3,6 +3,7 @@
 # FRAMEWORK_GRAPHICS
 # FRAMEWORK_NET
 # FRAMEWORK_XML
+# FRAMEWORK_SQL
 
 # CMAKE_CURRENT_LIST_DIR cmake 2.6 compatibility
 if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
@@ -233,11 +234,10 @@ set(framework_LIBRARIES ${framework_LIBRARIES}
 
 set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${OpenSSL_INCLUDE_DIR}
-    ${ZLIB_INCLUDE_DIR}
+    ${framework_INCLUDE_DIRS} 
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -279,10 +279,10 @@ else()
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
-        set(SYSTEM_LIBRARIES dl)
+        set(SYSTEM_LIBRARIES dl rt)
     endif()
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 endif()
+set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
 
 if(FRAMEWORK_THREAD_SAFE)
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DTHREAD_SAFE)
@@ -462,14 +462,12 @@ if(FRAMEWORK_SOUND)
     find_package(Ogg REQUIRED)
 
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENAL_INCLUDE_DIR} ${VORBISFILE_INCLUDE_DIR})
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY})
+    set(framework_LIBRARIES ${OPENAL_LIBRARY} ${VORBISFILE_LIBRARY} ${VORBIS_LIBRARY} ${OGG_LIBRARY} ${framework_LIBRARIES})
 
     if(WIN32)
         set(framework_LIBRARIES ${framework_LIBRARIES} winmm)
     elseif(APPLE)
         set(framework_LIBRARIES ${framework_LIBRARIES} System)
-    else()
-        set(framework_LIBRARIES ${framework_LIBRARIES} rt)
     endif()
 
     set(framework_SOURCES ${framework_SOURCES}
@@ -536,7 +534,7 @@ if(FRAMEWORK_SQL)
     find_package(MySQL REQUIRED)
 
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR})
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${MYSQL_LIBRARY})
+    set(framework_LIBRARIES ${MYSQL_LIBRARY} ${framework_LIBRARIES})
 
     set(framework_SOURCES ${framework_SOURCES}
         ${CMAKE_CURRENT_LIST_DIR}/sql/declarations.h

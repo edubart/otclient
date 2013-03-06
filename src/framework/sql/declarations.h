@@ -25,10 +25,17 @@
 
 #include <framework/global.h>
 
+class Database;
 class DBResult;
-class DatabaseMySQL;
 
+typedef stdext::shared_object_ptr<Database> DatabasePtr;
 typedef stdext::shared_object_ptr<DBResult> DBResultPtr;
+
+// MySQL
+class DatabaseMySQL;
+class MySQLResult;
+
 typedef stdext::shared_object_ptr<DatabaseMySQL> DatabaseMySQLPtr;
+typedef stdext::shared_object_ptr<MySQLResult> MySQLResultPtr;
 
 #endif

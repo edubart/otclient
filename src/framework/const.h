@@ -288,6 +288,13 @@ namespace Fw
         BackgroundPane = 2,
         BothPanes = 3
     };
+
+#ifdef FW_SQL
+    enum DatabaseEngine {
+        DatabaseNone = 0,
+        DatabaseMySQL
+    };
+#endif
 }
 
 #endif
