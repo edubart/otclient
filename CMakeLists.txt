@@ -7,7 +7,7 @@ option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
 option(FRAMEWORK_XML "Use XML " ON)
 option(FRAMEWORK_NET "Use NET " ON)
-option(FRAMEWORK_SQL "Use SQL" ON)
+option(FRAMEWORK_SQL "Use SQL" OFF)
 
 include(src/framework/CMakeLists.txt)
 include(src/client/CMakeLists.txt)
