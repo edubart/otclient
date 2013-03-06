@@ -59,8 +59,10 @@ void SoundManager::terminate()
 {
     ensureContext();
 
-    for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();++it)
-        it->second.wait();
+    for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();++it) {
+        auto& future = it->second;
+        future.wait();
+    }
     m_streamFiles.clear();
 
     m_sources.clear();
