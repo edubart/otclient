@@ -40,7 +40,7 @@ public:
         auto prom = std::make_shared<boost::promise<typename std::result_of<F()>::type>>();
         m_tasks.push_back([=]() { prom->set_value(task()); });
         m_condition.notify_all();
-        return prom->get_future().share();
+        return boost::shared_future<typename std::result_of<F()>::type>(prom->get_future());
     }
 
 protected:
