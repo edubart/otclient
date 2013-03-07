@@ -25,10 +25,15 @@
 
 //#include <boost/regex.hpp>
 #include <framework/core/resourcemanager.h>
+#include "application.h"
 
 #ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
 #include <framework/luaengine/luainterface.h>
+#endif
+
+#ifdef MOBILE
+#include <android/log.h>
 #endif
 
 Logger g_logger;
@@ -66,7 +71,11 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 #endif
     */
 
+#ifdef ANDROID
+    __android_log_print(ANDROID_LOG_INFO, g_app.getCompactName().c_str(), outmsg.c_str());
+#else
     std::cout << outmsg << std::endl;
+#endif
 
     if(m_outFile.good()) {
         m_outFile << outmsg << std::endl;

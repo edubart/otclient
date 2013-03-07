@@ -24,7 +24,7 @@
 #define SDLWINDOW_H
 
 #include "platformwindow.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <framework/graphics/glutil.h>
 
 class SDLWindow : public PlatformWindow

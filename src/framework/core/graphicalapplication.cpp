@@ -24,6 +24,7 @@
 #include "graphicalapplication.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/input/mouse.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/ui/uimanager.h>
 #include <framework/graphics/graphics.h>

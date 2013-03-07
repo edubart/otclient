@@ -33,8 +33,4 @@
     #error "Compiler not supported."
 #endif
 
-#if !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#error "Sorry, you must enable C++0x to compile."
-#endif
-
 #endif

@@ -34,7 +34,9 @@
 
 PainterOGL::PainterOGL()
 {
-#ifdef OPENGL_ES
+#ifdef SDL
+    m_graphicsContext = GraphicsContextPtr(new GraphicsContext("null"));
+#elif OPENGL_ES
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextEGL);
 #elif WIN32
     m_graphicsContext = GraphicsContextPtr(new GraphicsContextWGL);

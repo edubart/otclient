@@ -25,7 +25,11 @@
 #include <framework/luaengine/luainterface.h>
 #include <client/client.h>
 
-int main(int argc, const char* argv[])
+#ifdef SDL
+#include <SDL.h>
+#endif
+
+int main(int argc, char** argv)
 {
     std::vector<std::string> args(argv, argv + argc);
 

@@ -33,6 +33,7 @@
 #include <framework/platform/platform.h>
 
 #include <locale>
+#include <boost/concept_check.hpp>
 
 #ifdef FW_NET
 #include <framework/net/connection.h>
@@ -163,10 +164,14 @@ void Application::close()
 
 std::string Application::getOs()
 {
-#if defined(WIN32)
+#if defined(ANDROID)
+    return "android";
+#elif defined(IOS)
+    return "ios";
+#elif defined(WIN32)
     return "windows";
 #elif defined(__APPLE__)
-    return "mac";
+    return "macos";
 #elif __linux
     return "linux";
 #else

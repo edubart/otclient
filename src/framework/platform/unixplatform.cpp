@@ -36,7 +36,7 @@ void Platform::processArgs(std::vector<std::string>& args)
 bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     struct stat sts;
-    if(stat(process.c_str(), &sts) == -1 && errno == ENOENT)
+    if(stat(process.c_str(), &sts) == -1)
         return false;
 
     pid_t pid = fork();

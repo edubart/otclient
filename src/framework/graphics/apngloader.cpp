@@ -33,15 +33,15 @@
 #include <fstream>
 
 #if defined(_MSC_VER) && _MSC_VER >= 1300
-#define swap16(data) _byteswap_ushort(data)
-#define swap32(data) _byteswap_ulong(data)
+#define lswap16(data) _byteswap_ushort(data)
+#define lswap32(data) _byteswap_ulong(data)
 #elif __linux__
 #include <byteswap.h>
-#define swap16(data) bswap_16(data)
-#define swap32(data) bswap_32(data)
+#define lswap16(data) bswap_16(data)
+#define lswap32(data) bswap_32(data)
 #else
-#define swap16(data) (((data >> 8) & 255) | ((data & 255) << 8))
-#define swap32(data) ((swap16(data) << 16) | swap16(data >> 16))
+#define lswap16(data) (((data >> 8) & 255) | ((data & 255) << 8))
+#define lswap32(data) ((swap16(data) << 16) | swap16(data >> 16))
 #endif
 
 #define PNG_ZBUF_SIZE  32768
@@ -865,7 +865,7 @@ int load_apng(std::stringstream& file, struct apng_data *apng)
 void write_chunk(std::ostream& f, const char* name, unsigned char* data, unsigned int length)
 {
     unsigned int crc = crc32(0, Z_NULL, 0);
-    unsigned int len = swap32(length);
+    unsigned int len = lswap32(length);
 
     f.write((char*)&len, 4);
     f.write(name, 4);
@@ -876,7 +876,7 @@ void write_chunk(std::ostream& f, const char* name, unsigned char* data, unsigne
         crc = crc32(crc, data, length);
     }
 
-    crc = swap32(crc);
+    crc = lswap32(crc);
     f.write((char*)&crc, 4);
 }
 
@@ -937,7 +937,7 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
         unsigned char   mCompression;
         unsigned char   mFilterMethod;
         unsigned char   mInterlaceMethod;
-    } ihdr = { swap32(width), swap32(height), 8, coltype, 0, 0, 0 };
+    } ihdr = { lswap32(width), lswap32(height), 8, coltype, 0, 0, 0 };
 
     z_stream        zstream1;
     z_stream        zstream2;

@@ -36,13 +36,33 @@ void SDLWindow::init()
 {
     SDL_Init(SDL_INIT_VIDEO);
 
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 4);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 4);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 4);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 4);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
+
+#ifdef OPENGL_ES
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OPENGL_ES);
+#endif
+
+#ifdef MOBILE
+    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_SHOWN;
+#else
+    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+#endif
+
     m_window = SDL_CreateWindow(g_app.getName().c_str(),
                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 m_size.width(), m_size.height(),
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN);
+                                flags);
 
     if(!m_window)
         g_logger.fatal("Unable to create SDL window");
+
+    int w, h;
+    SDL_GetWindowSize(m_window, &w, &h);
+    m_size = Size(w,h);
 
     m_context = SDL_GL_CreateContext(m_window);
     if(!m_context)
@@ -108,6 +128,7 @@ void SDLWindow::poll()
                 m_position = Point(event.window.data1, event.window.data2);
                 break;
             case SDL_WINDOWEVENT_RESIZED:
+                g_logger.info(stdext::format("resize %d %d", event.window.data1, event.window.data2));
                 m_size = Size(event.window.data1, event.window.data2);
                 if(m_onResize)
                     m_onResize(m_size);
@@ -147,6 +168,7 @@ void SDLWindow::poll()
         case SDL_QUIT:
             if(m_onClose)
                 m_onClose();
+            break;
         }
     }
 

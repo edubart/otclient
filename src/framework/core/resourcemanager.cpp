@@ -29,6 +29,10 @@
 
 #include <physfs.h>
 
+#ifdef MOBILE
+#include <SDL.h>
+#endif
+
 ResourceManager g_resources;
 
 void ResourceManager::init(const char *argv0)
@@ -45,10 +49,15 @@ void ResourceManager::terminate()
 bool ResourceManager::discoverWorkDir(const std::string& existentFile)
 {
     // search for modules directory
-    std::string possiblePaths[] = { g_platform.getCurrentDir(),
+#ifdef ANDROID
+    std::string possiblePaths[] = { std::string("/sdcard/") + g_app.getCompactName() + "/" };
+#else
+    std::string possiblePaths[] = { "./",
+                                    g_platform.getCurrentDir(),
                                     g_resources.getBaseDir(),
                                     g_resources.getBaseDir() + "../",
                                     g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/" };
+#endif
 
     bool found = false;
     for(const std::string& dir : possiblePaths) {
@@ -309,7 +318,11 @@ std::string ResourceManager::getBaseDir()
 
 std::string ResourceManager::getUserDir()
 {
+#ifdef ANDROID
+    return std::string("/sdcard/");
+#else
     return PHYSFS_getUserDir();
+#endif
 }
 
 std::string ResourceManager::guessFilePath(const std::string& filename, const std::string& type)

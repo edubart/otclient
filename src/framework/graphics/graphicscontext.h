@@ -33,13 +33,13 @@ public:
 
     std::string getName() { return m_name; }
 
-    virtual void create() = 0;
-    virtual void destroy() = 0;
-    virtual void restore() = 0;
+    virtual void create() {}
+    virtual void destroy() {}
+    virtual void restore() {}
 
-    virtual void swapBuffers() = 0;
+    virtual void swapBuffers() {}
 
-    virtual void setVerticalSync(bool enable) = 0;
+    virtual void setVerticalSync(bool enable) {}
 
 protected:
     std::string m_name;

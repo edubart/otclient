@@ -1,5 +1,5 @@
 local musicFilename = "/sounds/startup"
-local musicChannel = g_sounds.getChannel(1)
+local musicChannel = nil
 
 function setMusic(filename)
   musicFilename = filename
@@ -57,11 +57,14 @@ function init()
                    onExit = exit })
 
   g_window.setMinimumSize({ width = 600, height = 480 })
+
+  musicChannel = g_sounds.getChannel(1)
   g_sounds.preload(musicFilename)
 
   -- initialize in fullscreen mode on mobile devices
-  if g_window.getPlatformType() == "X11-EGL" then
+  if g_app.getOs() == "android" then
     g_window.setFullscreen(true)
+    g_window.maximize()
   else
     -- window size
     local size = { width = 800, height = 600 }
