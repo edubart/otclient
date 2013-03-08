@@ -42,11 +42,13 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
+/*
+>>>>>>> Progress in SDL platform
 #ifdef NDEBUG
     if(level == Fw::LogDebug)
         return;
 #endif
-
+*/
     static bool ignoreLogs = false;
     if(ignoreLogs)
         return;

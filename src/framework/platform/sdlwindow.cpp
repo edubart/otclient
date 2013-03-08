@@ -111,6 +111,21 @@ void SDLWindow::maximize()
     SDL_MaximizeWindow(m_window);
 }
 
+Fw::MouseButton translateMouseButton(uint8 sdlButton)
+{
+    switch(sdlButton) {
+        case SDL_BUTTON_LEFT:
+            return Fw::MouseLeftButton;
+            break;
+        case SDL_BUTTON_MIDDLE:
+            return Fw::MouseMidButton;
+            break;
+        case SDL_BUTTON_RIGHT:
+            return Fw::MouseRightButton;
+    }
+    return Fw::MouseNoButton;
+}
+
 void SDLWindow::poll()
 {
     SDL_Event event;
@@ -158,13 +173,93 @@ void SDLWindow::poll()
         case SDL_TEXTINPUT:
             break;
         case SDL_MOUSEMOTION:
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseMoveInputEvent;
+            m_inputEvent.mouseMoved = Point(event.motion.xrel, event.motion.yrel);
+            m_inputEvent.mousePos = Point(event.motion.x, event.motion.y);
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONDOWN: {
+            Fw::MouseButton button = translateMouseButton(event.button.button);
+            if(button != Fw::MouseNoButton) {
+                m_inputEvent.reset();
+                m_inputEvent.type = Fw::MousePressInputEvent;
+                m_inputEvent.mouseButton = button;
+                m_mouseButtonStates[button] = true;
+                if(m_onInputEvent)
+                    m_onInputEvent(m_inputEvent);
+            }
             break;
-        case SDL_MOUSEBUTTONUP:
+        }
+        case SDL_MOUSEBUTTONUP: {
+            Fw::MouseButton button = translateMouseButton(event.button.button);
+            if(button == Fw::MouseNoButton)
+                break;
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.mouseButton = button;
+            m_mouseButtonStates[button] = false;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
-        case SDL_MOUSEWHEEL:
+        }
+        case SDL_MOUSEWHEEL: {
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseWheelInputEvent;
+            m_inputEvent.mouseButton = Fw::MouseMidButton;
+            if(event.wheel.y > 0)
+                m_inputEvent.wheelDirection = Fw::MouseWheelUp;
+            else if(event.wheel.y < 0)
+                m_inputEvent.wheelDirection = Fw::MouseWheelUp;
+            else
+                break;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
+        }
+        case SDL_FINGERDOWN: {
+            Fw::MouseButton button;
+            if(event.tfinger.fingerId == 0)
+                button = Fw::MouseLeftButton;
+            else if(event.tfinger.fingerId == 1)
+                button = Fw::MouseRightButton;
+            else
+                break;
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.mouseButton = button;
+            m_mouseButtonStates[button] = true;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case SDL_FINGERUP: {
+            Fw::MouseButton button;
+            if(event.tfinger.fingerId == 0)
+                button = Fw::MouseLeftButton;
+            else if(event.tfinger.fingerId == 1)
+                button = Fw::MouseRightButton;
+            else
+                break;
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseReleaseInputEvent;
+            m_inputEvent.mouseButton = button;
+            m_mouseButtonStates[button] = false;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case SDL_FINGERMOTION: {
+            m_inputEvent.reset();
+            m_inputEvent.type = Fw::MouseMoveInputEvent;
+            m_inputEvent.mouseMoved = Point(event.tfinger.dx, event.tfinger.dy);
+            m_inputEvent.mousePos = Point(event.tfinger.x, event.tfinger.y);
+            g_logger.info(stdext::format("motion %d %d", event.tfinger.x, event.tfinger.y));
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
         case SDL_QUIT:
             if(m_onClose)
                 m_onClose();
@@ -198,6 +293,16 @@ void SDLWindow::setMouseCursor(int cursorId)
 void SDLWindow::restoreMouseCursor()
 {
     //TODO
+}
+
+void SDLWindow::showInputKeyboard()
+{
+    SDL_StartTextInput();
+}
+
+void SDLWindow::hideInputKeyboard()
+{
+    SDL_StopTextInput();
 }
 
 void SDLWindow::setTitle(const std::string& title)

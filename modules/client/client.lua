@@ -63,8 +63,8 @@ function init()
 
   -- initialize in fullscreen mode on mobile devices
   if g_app.getOs() == "android" then
-    g_window.setFullscreen(true)
     g_window.maximize()
+    --g_window.setFullscreen(true)
   else
     -- window size
     local size = { width = 800, height = 600 }

@@ -746,6 +746,7 @@ function setupViewMode(mode)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
   elseif mode == 2 then
     local limit = limitZoom and not g_game.isGM()
+    gameMapPanel:setKeepAspectRatio(false)
     gameMapPanel:setLimitVisibleRange(limit)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })

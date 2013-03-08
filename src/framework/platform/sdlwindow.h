@@ -48,6 +48,9 @@ public:
     void setMouseCursor(int cursorId);
     void restoreMouseCursor();
 
+    void showInputKeyboard();
+    void hideInputKeyboard();
+
     void setTitle(const std::string& title);
     void setMinimumSize(const Size& minimumSize);
     void setFullscreen(bool fullscreen);

@@ -58,6 +58,9 @@ public:
     virtual void setMouseCursor(int cursorId) = 0;
     virtual void restoreMouseCursor() = 0;
 
+    virtual void showInputKeyboard() { }
+    virtual void hideInputKeyboard() { }
+
     virtual void setTitle(const std::string& title) = 0;
     virtual void setMinimumSize(const Size& minimumSize) = 0;
     virtual void setFullscreen(bool fullscreen) = 0;

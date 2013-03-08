@@ -48,9 +48,11 @@ bool SpriteManager::loadSpr(std::string file)
         file = g_resources.guessFilePath(file, "spr");
 
         m_spritesFile = g_resources.openFile(file);
-        // cache file buffer to avoid lags from hard drive
-        m_spritesFile->cache();
 
+        // cache file buffer to avoid lags from hard drive
+#ifndef MOBILE
+        m_spritesFile->cache();
+#endif
         m_signature = m_spritesFile->getU32();
         m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
         m_spritesOffset = m_spritesFile->tell();
