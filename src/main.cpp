@@ -58,5 +58,7 @@ int main(int argc, char** argv)
     // terminate everything and free memory
     g_client.terminate();
     g_app.terminate();
+
+    exit(0);
     return 0;
 }

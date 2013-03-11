@@ -284,7 +284,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                 }
             }
         }
-        animationPhaseTexture = TexturePtr(new TextureOGL(fullImage, true));
+        animationPhaseTexture = TexturePtr(new TextureOGL(fullImage));
         animationPhaseTexture->setSmooth(true);
     }
     return animationPhaseTexture;

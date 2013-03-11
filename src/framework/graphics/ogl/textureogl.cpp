@@ -223,5 +223,7 @@ void TextureOGL::setupPixels(int level, const Size& size, uchar* pixels, int cha
             format = GL_LUMINANCE;
             break;
     }
-    glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
+    GLenum internalFormat = GL_RGBA;
+    //TODO: compression support
+    glTexImage2D(GL_TEXTURE_2D, level, internalFormat, size.width(), size.height(), 0, format, GL_UNSIGNED_BYTE, pixels);
 }

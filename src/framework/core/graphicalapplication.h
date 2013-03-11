@@ -31,7 +31,7 @@
 class GraphicalApplication : public Application
 {
     enum {
-        POLL_CYCLE_DELAY = 10
+        POLL_CYCLE_DELAY = 1000
     };
 
 public:

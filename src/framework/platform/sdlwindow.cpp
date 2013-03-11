@@ -43,6 +43,7 @@ void SDLWindow::init()
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 0);
 
 #ifdef OPENGL_ES
+    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, 16);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, OPENGL_ES);
 #endif
 
@@ -150,18 +151,23 @@ void SDLWindow::poll()
                 break;
             case SDL_WINDOWEVENT_MINIMIZED:
                 m_maximized = false;
+                m_visible = false;
                 break;
             case SDL_WINDOWEVENT_MAXIMIZED:
                 m_maximized = true;
+                m_visible = true;
                 break;
             case SDL_WINDOWEVENT_RESTORED:
                 m_maximized = false;
+                m_visible = true;
                 break;
             case SDL_WINDOWEVENT_FOCUS_GAINED:
                 m_focused = true;
                 break;
             case SDL_WINDOWEVENT_FOCUS_LOST:
                 m_focused = false;
+                break;
+            case SDL_WINDOWEVENT_CLOSE:
                 break;
             }
             break;
@@ -171,6 +177,10 @@ void SDLWindow::poll()
         case SDL_KEYUP:
             break;
         case SDL_TEXTINPUT:
+            m_inputEvent.reset(Fw::KeyTextInputEvent);
+            m_inputEvent.keyText = event.text.text;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
             break;
         case SDL_MOUSEMOTION:
             m_inputEvent.reset();
@@ -255,7 +265,7 @@ void SDLWindow::poll()
             m_inputEvent.type = Fw::MouseMoveInputEvent;
             m_inputEvent.mouseMoved = Point(event.tfinger.dx, event.tfinger.dy);
             m_inputEvent.mousePos = Point(event.tfinger.x, event.tfinger.y);
-            g_logger.info(stdext::format("motion %d %d", event.tfinger.x, event.tfinger.y));
+            //g_logger.info(stdext::format("motion %d %d", event.tfinger.x, event.tfinger.y));
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
@@ -295,12 +305,12 @@ void SDLWindow::restoreMouseCursor()
     //TODO
 }
 
-void SDLWindow::showInputKeyboard()
+void SDLWindow::showTextInput()
 {
     SDL_StartTextInput();
 }
 
-void SDLWindow::hideInputKeyboard()
+void SDLWindow::hideTextInput()
 {
     SDL_StopTextInput();
 }
