@@ -238,6 +238,7 @@ end
 function tryLogout()
   if not g_game.isOnline() then
     exit()
+    return
   end
 
   if logoutWindow then
