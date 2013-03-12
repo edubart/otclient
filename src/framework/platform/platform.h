@@ -45,6 +45,7 @@ public:
     std::string getCPUName();
     double getTotalSystemMemory();
     std::string getOSName();
+    std::string traceback(const std::string& where, int level = 1, int maxDepth = 32);
 };
 
 extern Platform g_platform;

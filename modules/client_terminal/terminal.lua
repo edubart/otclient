@@ -285,6 +285,7 @@ function addLine(text, color)
     flushEvent = scheduleEvent(flushLines, 10)
   end
 
+  text = string.gsub(text, '\t', '    ')
   table.insert(cachedLines, {text=text, color=color})
 end
 

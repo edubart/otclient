@@ -29,6 +29,7 @@
 #include <framework/stdext/stdext.h>
 
 #include <sys/stat.h>
+#include <execinfo.h>
 
 void Platform::processArgs(std::vector<std::string>& args)
 {
@@ -168,5 +169,35 @@ std::string Platform::getOSName()
     return std::string();
 }
 
+std::string Platform::traceback(const std::string& where, int level, int maxDepth)
+{
+    std::stringstream ss;
+
+    ss << "\nC++ stack traceback:";
+    if(!where.empty())
+        ss << "\n\t[C++]: " << where;
+
+    void* buffer[maxDepth + level + 1];
+    int numLevels = backtrace(buffer, maxDepth + level + 1);
+    char **tracebackBuffer = backtrace_symbols(buffer, numLevels);
+    if(tracebackBuffer) {
+        for(int i = 1 + level; i < numLevels; i++) {
+            std::string line = tracebackBuffer[i];
+            if(line.find("__libc_start_main") != std::string::npos)
+                break;
+            std::size_t demanglePos = line.find("(_Z");
+            if(demanglePos != std::string::npos) {
+                demanglePos++;
+                int len = std::min(line.find_first_of("+", demanglePos), line.find_first_of(")", demanglePos)) - demanglePos;
+                std::string funcName = line.substr(demanglePos, len);
+                line.replace(demanglePos, len, stdext::demangle_name(funcName.c_str()));
+            }
+            ss << "\n\t" << line;
+        }
+        free(tracebackBuffer);
+    }
+
+    return ss.str();
+}
 
 #endif

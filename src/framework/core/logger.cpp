@@ -28,6 +28,7 @@
 
 #ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
+#include <framework/platform/platform.h>
 #include <framework/luaengine/luainterface.h>
 #endif
 
@@ -104,16 +105,16 @@ void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string
         prettyFunction = prettyFunction.substr(prettyFunction.find_last_of(' ') + 1);
 
 
-    std::string out = message;
+    std::stringstream ss;
+    ss << message;
 
     if(!prettyFunction.empty()) {
         if(g_lua.isInCppCallback())
-            out = g_lua.traceback(out, 1);
-        else
-            out += "\nat:\t[C++]: " + prettyFunction;
+            ss << g_lua.traceback("", 1);
+        ss << g_platform.traceback(prettyFunction, 1, 8);
     }
 
-    log(level, out);
+    log(level, ss.str());
 }
 
 void Logger::fireOldMessages()

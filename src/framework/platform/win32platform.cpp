@@ -414,4 +414,13 @@ std::string Platform::getOSName()
     return ret;
 }
 
+
+std::string Platform::traceback(const std::string& where)
+{
+    std::stringstream ss;
+    ss << "\nat:";
+    ss << "\n\t[C++]: " << where;
+    return ss.str();
+}
+
 #endif
