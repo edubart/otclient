@@ -36,7 +36,6 @@ class Connection : public LuaObject
     enum {
         READ_TIMEOUT = 30,
         WRITE_TIMEOUT = 30,
-        SEND_INTERVAL = 1,
         SEND_BUFFER_SIZE = 65536,
         RECV_BUFFER_SIZE = 65536
     };
@@ -51,7 +50,7 @@ public:
     void connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback);
     void close();
 
-    void write(uint8* buffer, uint16 size);
+    void write(uint8* buffer, size_t size);
     void read(uint16 bytes, const RecvCallback& callback);
     void read_until(const std::string& what, const RecvCallback& callback);
     void read_some(const RecvCallback& callback);
@@ -64,9 +63,14 @@ public:
     bool isConnected() { return m_connected; }
 
     ConnectionPtr asConnection() { return static_self_cast<Connection>(); }
+
 protected:
+    void internal_connect(asio::ip::basic_resolver<asio::ip::tcp>::iterator endpointIterator);
+    void internal_write();
+    void onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
-    void onWrite(const boost::system::error_code& error, size_t);
+    void onCanWrite(const boost::system::error_code& error);
+    void onWrite(const boost::system::error_code& error, size_t writeSize, std::shared_ptr<asio::streambuf> outputStream);
     void onRecv(const boost::system::error_code& error, size_t recvSize);
     void onTimeout(const boost::system::error_code& error);
     void handleError(const boost::system::error_code& error);
@@ -77,17 +81,16 @@ protected:
 
     asio::deadline_timer m_readTimer;
     asio::deadline_timer m_writeTimer;
+    asio::deadline_timer m_delayedWriteTimer;
     asio::ip::tcp::resolver m_resolver;
     asio::ip::tcp::socket m_socket;
 
-    uint8 m_sendBuffer[SEND_BUFFER_SIZE];
-    asio::streambuf m_streamBuffer;
+    static std::list<std::shared_ptr<asio::streambuf>> m_outputStreams;
+    std::shared_ptr<asio::streambuf> m_outputStream;
+    asio::streambuf m_inputStream;
     bool m_connected;
     bool m_connecting;
     boost::system::error_code m_error;
-    int m_sendBufferSize;
-    Timer m_sendTimer;
-    ScheduledEventPtr m_sendEvent;
 
     friend class Server;
 };
