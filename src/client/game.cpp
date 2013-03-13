@@ -99,6 +99,11 @@ void Game::resetGameStates()
         m_walkEvent = nullptr;
     }
 
+    if(m_checkConnectionEvent) {
+        m_checkConnectionEvent->cancel();
+        m_checkConnectionEvent = nullptr;
+    }
+
     m_containers.clear();
     m_vips.clear();
     m_gmActions.clear();
@@ -183,12 +188,27 @@ void Game::processGameStart()
             g_game.ping();
         }, m_pingDelay);
     }
+
+    m_checkConnectionEvent = g_dispatcher.cycleEvent([this] {
+        if(!g_game.isConnectionOk() && !m_connectionFailWarned) {
+            g_lua.callGlobalField("g_game", "onConnectionFailing", true);
+            m_connectionFailWarned = true;
+        } else if(g_game.isConnectionOk() && m_connectionFailWarned) {
+            g_lua.callGlobalField("g_game", "onConnectionFailing", false);
+            m_connectionFailWarned = false;
+        }
+    }, 1000);
 }
 
 void Game::processGameEnd()
 {
     m_online = false;
     g_lua.callGlobalField("g_game", "onGameEnd");
+
+    if(m_connectionFailWarned) {
+        g_lua.callGlobalField("g_game", "onConnectionFailing", false);
+        m_connectionFailWarned = false;
+    }
 
     // reset game state
     resetGameStates();
@@ -551,6 +571,7 @@ bool Game::walk(Otc::Direction direction)
 
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
+        /*
         if(m_lastWalkDir != direction) {
             // must add a new walk event
             float ticks = m_localPlayer->getStepTicksLeft();
@@ -562,6 +583,7 @@ bool Game::walk(Otc::Direction direction)
             }
             m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
         }
+        */
         return false;
     }
 
@@ -697,15 +719,16 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
 
     auto it = dirs.begin();
     Otc::Direction direction = *it;
-    if(m_localPlayer->canWalk(direction)) {
-        TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-        if(toTile && toTile->isWalkable() && !m_localPlayer->isServerWalking()) {
-            m_localPlayer->preWalk(direction);
+    if(!m_localPlayer->canWalk(direction))
+        return;
 
-            if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
-                forceWalk(direction);
-                dirs.erase(it);
-            }
+    TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
+    if(toTile && toTile->isWalkable() && !m_localPlayer->isServerWalking()) {
+        m_localPlayer->preWalk(direction);
+
+        if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
+            forceWalk(direction);
+            dirs.erase(it);
         }
     }
 

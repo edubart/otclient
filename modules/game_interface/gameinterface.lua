@@ -104,8 +104,8 @@ function bindKeys()
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+Q', logout, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+L', logout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+Q', tryLogout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+L', tryLogout, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
 end
@@ -215,8 +215,8 @@ function tryExit()
     return true
   end
 
-  local exitFunc = function() logout() forceExit() end
-  local logoutFunc = function() logout() exitWindow:destroy() exitWindow = nil end
+  local exitFunc = function() g_game.safeLogout() forceExit() end
+  local logoutFunc = function() g_game.safeLogout() exitWindow:destroy() exitWindow = nil end
   local cancelFunc = function() exitWindow:destroy() exitWindow = nil end
 
   exitWindow = displayGeneralBox(tr('Exit'), tr("If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."),
@@ -226,13 +226,6 @@ function tryExit()
     anchor=AnchorHorizontalCenter }, logoutFunc, cancelFunc)
 
   return true
-end
-
-function logout()
-  if g_game.isOnline() then
-    g_game.safeLogout()
-    return true
-  end
 end
 
 function tryLogout()
@@ -245,13 +238,33 @@ function tryLogout()
     return
   end
 
-  local yesCallback = function() logout() logoutWindow:destroy() logoutWindow=nil end
-  local noCallback = function() logoutWindow:destroy() logoutWindow=nil end
+  if not g_game.isConnectionOk() then
+    local yesCallback = function() 
+      g_game.forceLogout()
+      logoutWindow=nil
+    end
+    local noCallback = function()
+      logoutWindow=nil
+    end
 
-  logoutWindow = displayGeneralBox(tr('Logout'), tr('Are you sure you want to logout?'), {
-    { text=tr('Yes'), callback=yesCallback },
-    { text=tr('No'), callback=noCallback },
-    anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+    logoutWindow = displayGeneralBox(tr('Logout'), tr('Your connection is failing, if you logout now your character will be still online, do you want to force logout?'), {
+      { text=tr('Yes'), callback=yesCallback },
+      { text=tr('No'), callback=noCallback },
+      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+  else
+    local yesCallback = function()
+      g_game.safeLogout()
+      logoutWindow=nil
+    end
+    local noCallback = function()
+      logoutWindow=nil
+    end
+
+    logoutWindow = displayGeneralBox(tr('Logout'), tr('Are you sure you want to logout?'), {
+      { text=tr('Yes'), callback=yesCallback },
+      { text=tr('No'), callback=noCallback },
+      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+  end
 end
 
 function stopSmartWalk()

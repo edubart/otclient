@@ -83,7 +83,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // cannot walk while already walking
-    if(m_walking && !prewalkTimeouted)
+    if(m_walking && (!prewalkTimeouted || m_secondPreWalk))
         return false;
 
     return true;
@@ -95,6 +95,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
     if(m_preWalking) {
         // switch to normal walking
         m_preWalking = false;
+        m_secondPreWalk = false;
         m_lastPrewalkDone = true;
         // if is to the last prewalk destination, updates the walk preserving the animation
         if(newPos == m_lastPrewalkDestination) {
@@ -118,7 +119,8 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     Position newPos = m_position.translatedToDirection(direction);
 
     // avoid reanimating prewalks
-    if(m_preWalking && m_lastPrewalkDestination == newPos) {
+    if(m_preWalking) {
+        m_secondPreWalk = true;
         return;
     }
 
@@ -277,6 +279,7 @@ void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
     m_preWalking = false;
+    m_secondPreWalk = false;
     m_idleTimer.restart();
 
     auto self = asLocalPlayer();

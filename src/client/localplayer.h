@@ -126,6 +126,7 @@ private:
     ticks_t m_walkLockExpiration;
     stdext::boolean<false> m_preWalking;
     stdext::boolean<true> m_lastPrewalkDone;
+    stdext::boolean<false> m_secondPreWalk;
     stdext::boolean<false> m_serverWalking;
     stdext::boolean<false> m_knownCompletePath;
 

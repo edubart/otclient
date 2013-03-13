@@ -231,7 +231,7 @@ public:
     void openRuleViolation(const std::string& reporter);
     void closeRuleViolation(const std::string& reporter);
     void cancelRuleViolation();
-    
+
     // reports
     void reportBug(const std::string& comment);
     void reportRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
@@ -281,6 +281,7 @@ public:
     bool isDead() { return m_dead; }
     bool isAttacking() { return !!m_attackingCreature; }
     bool isFollowing() { return !!m_followingCreature; }
+    bool isConnectionOk() { return m_protocolGame && m_protocolGame->getElapsedTicksSinceLastRead() < 5000; }
 
     int getPing() { return m_ping >= 0 ? std::max(m_ping, m_pingTimer.elapsed_millis()) : -1; }
     ContainerPtr getContainer(int index) { return m_containers[index]; }
@@ -340,6 +341,8 @@ private:
     std::bitset<Otc::LastGameFeature> m_features;
     ScheduledEventPtr m_pingEvent;
     ScheduledEventPtr m_walkEvent;
+    ScheduledEventPtr m_checkConnectionEvent;
+    bool m_connectionFailWarned;
     int m_protocolVersion;
     int m_clientVersion;
     std::string m_clientSignature;

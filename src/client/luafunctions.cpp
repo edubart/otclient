@@ -230,6 +230,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "isDead", &Game::isDead, &g_game);
     g_lua.bindSingletonFunction("g_game", "isAttacking", &Game::isAttacking, &g_game);
     g_lua.bindSingletonFunction("g_game", "isFollowing", &Game::isFollowing, &g_game);
+    g_lua.bindSingletonFunction("g_game", "isConnectionOk", &Game::isConnectionOk, &g_game);
     g_lua.bindSingletonFunction("g_game", "getPing", &Game::getPing, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainer", &Game::getContainer, &g_game);
     g_lua.bindSingletonFunction("g_game", "getContainers", &Game::getContainers, &g_game);

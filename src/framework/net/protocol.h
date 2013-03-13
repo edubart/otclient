@@ -42,6 +42,8 @@ public:
 
     bool isConnected();
     bool isConnecting();
+    ticks_t getElapsedTicksSinceLastRead() { return m_connection ? m_connection->getElapsedTicksSinceLastRead() : -1; }
+
     ConnectionPtr getConnection() { return m_connection; }
     void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 

@@ -61,6 +61,7 @@ public:
     boost::system::error_code getError() { return m_error; }
     bool isConnecting() { return m_connecting; }
     bool isConnected() { return m_connected; }
+    ticks_t getElapsedTicksSinceLastRead() { return m_connected ? m_activityTimer.elapsed_millis() : -1; }
 
     ConnectionPtr asConnection() { return static_self_cast<Connection>(); }
 
@@ -91,6 +92,7 @@ protected:
     bool m_connected;
     bool m_connecting;
     boost::system::error_code m_error;
+    stdext::timer m_activityTimer;
 
     friend class Server;
 };
