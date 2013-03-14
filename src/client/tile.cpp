@@ -590,14 +590,23 @@ bool Tile::hasCreature()
     return false;
 }
 
-bool Tile::limitsFloorsView()
+bool Tile::limitsFloorsView(bool isFreeView)
 {
     // ground and walls limits the view
     ThingPtr firstThing = getThing(0);
-    if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || firstThing->isOnBottom()))
-        return true;
+
+    if(isFreeView){
+        if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || firstThing->isOnBottom()))
+            return true;
+    }
+    else
+    {
+        if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || (firstThing->isOnBottom() && firstThing->blockProjectile())))
+            return true;
+    }
     return false;
 }
+
 
 bool Tile::canErase()
 {
