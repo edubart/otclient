@@ -615,14 +615,17 @@ int MapView::calcFirstVisibleFloor()
                             while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
                                 // check tiles physically above
                                 TilePtr tile = g_map.getTile(upperPos);
-                                if(tile && tile->limitsFloorsView()) {
+                                bool isPosBottom = false;
+                                if(cameraPosition.y < pos.y)
+                                    isPosBottom = true;
+                                if(tile && tile->limitsFloorsView(isPosBottom)) {
                                     firstFloor = upperPos.z + 1;
                                     break;
                                 }
 
                                 // check tiles geometrically above
                                 tile = g_map.getTile(coveredPos);
-                                if(tile && tile->limitsFloorsView()) {
+                                if(tile && tile->limitsFloorsView(isPosBottom)) {
                                     firstFloor = coveredPos.z + 1;
                                     break;
                                 }
