@@ -415,7 +415,7 @@ std::string Platform::getOSName()
 }
 
 
-std::string Platform::traceback(const std::string& where)
+std::string Platform::traceback(const std::string& where, int level, int maxDepth)
 {
     std::stringstream ss;
     ss << "\nat:";

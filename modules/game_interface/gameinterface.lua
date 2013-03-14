@@ -241,9 +241,13 @@ function tryLogout()
   if not g_game.isConnectionOk() then
     local yesCallback = function() 
       g_game.forceLogout()
-      logoutWindow=nil
+      if logoutWindow then
+        logoutWindow:destroy()
+        logoutWindow=nil
+      end
     end
     local noCallback = function()
+      logoutWindow:destroy()
       logoutWindow=nil
     end
 
@@ -254,9 +258,11 @@ function tryLogout()
   else
     local yesCallback = function()
       g_game.safeLogout()
+      logoutWindow:destroy()
       logoutWindow=nil
     end
     local noCallback = function()
+      logoutWindow:destroy()
       logoutWindow=nil
     end
 
