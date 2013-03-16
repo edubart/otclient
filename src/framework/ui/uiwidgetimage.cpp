@@ -68,9 +68,10 @@ void UIWidget::parseImageStyle(const OTMLNodePtr& styleNode)
             setImageBorderBottom(node->value<int>());
         else if(node->tag() == "image-border-left")
             setImageBorderLeft(node->value<int>());
-        else if(node->tag() == "image-border") {
+        else if(node->tag() == "image-border")
             setImageBorder(node->value<int>());
-        }
+        else if(node->tag() == "image-auto-resize")
+            setImageAutoResize(node->value<bool>());
     }
 }
 
@@ -180,5 +181,16 @@ void UIWidget::setImageSource(const std::string& source)
         m_imageTexture = nullptr;
     else
         m_imageTexture = g_textures.getTexture(source);
+
+    if(m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
+        Size size = getSize();
+        Size imageSize = m_imageTexture->getSize();
+        if(size.width() <= 0 || m_imageAutoResize)
+            size.setWidth(imageSize.width());
+        if(size.height() <= 0 || m_imageAutoResize)
+            size.setHeight(imageSize.height());
+        setSize(size);
+    }
+
     m_imageMustRecache = true;
 }

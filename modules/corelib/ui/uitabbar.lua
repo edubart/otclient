@@ -110,7 +110,9 @@ function UITabBar:selectTab(tab)
   tab:setOn(false)
 
   local parent = tab:getParent()
-  parent:focusChild(tab, MouseFocusReason)
+  if parent then
+    parent:focusChild(tab, MouseFocusReason)
+  end
 end
 
 function UITabBar:selectNextTab()

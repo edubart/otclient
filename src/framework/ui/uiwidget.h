@@ -419,6 +419,7 @@ protected:
     stdext::boolean<false> m_imageFixedRatio;
     stdext::boolean<false> m_imageRepeated;
     stdext::boolean<false> m_imageSmooth;
+    stdext::boolean<false> m_imageAutoResize;
     EdgeGroup<int> m_imageBorder;
 
 public:
@@ -435,6 +436,7 @@ public:
     void setImageFixedRatio(bool fixedRatio) { m_imageFixedRatio = fixedRatio; updateImageCache(); }
     void setImageRepeated(bool repeated) { m_imageRepeated = repeated; updateImageCache(); }
     void setImageSmooth(bool smooth) { m_imageSmooth = smooth; }
+    void setImageAutoResize(bool autoResize) { m_imageAutoResize = autoResize; }
     void setImageBorderTop(int border) { m_imageBorder.top = border; configureBorderImage(); }
     void setImageBorderRight(int border) { m_imageBorder.right = border; configureBorderImage(); }
     void setImageBorderBottom(int border) { m_imageBorder.bottom = border; configureBorderImage(); }
@@ -452,6 +454,7 @@ public:
     Color getImageColor() { return m_imageColor; }
     bool isImageFixedRatio() { return m_imageFixedRatio; }
     bool isImageSmooth() { return m_imageSmooth; }
+    bool isImageAutoResize() { return m_imageAutoResize; }
     int getImageBorderTop() { return m_imageBorder.top; }
     int getImageBorderRight() { return m_imageBorder.right; }
     int getImageBorderBottom() { return m_imageBorder.bottom; }

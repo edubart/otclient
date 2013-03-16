@@ -98,9 +98,9 @@ void UIWidget::drawSelf(Fw::DrawPane drawPane)
     }
 
     drawImage(m_rect);
-    drawBorder(m_rect);
     drawIcon(m_rect);
     drawText(m_rect);
+    drawBorder(m_rect);
 }
 
 void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)

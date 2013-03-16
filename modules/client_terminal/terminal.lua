@@ -257,10 +257,13 @@ function flushLines()
   for _,line in pairs(cachedLines) do
     -- delete old lines if needed
     if numLines > MaxLogLines then
-      local len = #terminalBuffer:getChildByIndex(1):getText()
-      terminalBuffer:getChildByIndex(1):destroy()
-      table.remove(allLines, 1)
-      fulltext = string.sub(fulltext, len)
+      local firstChild = terminalBuffer:getChildByIndex(1)
+      if firstChild then
+        local len = #firstChild:getText()
+        firstChild:destroy()
+        table.remove(allLines, 1)
+        fulltext = string.sub(fulltext, len)
+      end
     end
 
     local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
