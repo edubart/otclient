@@ -365,7 +365,7 @@ index b980be0..7a84f61 100644
 +	std::string buffer = msg.getString();
 +
 +	// process additional opcodes via lua script event
-+	addGameTask(&Game::parsePlayerExtendedOpcode, player->getId(), opcode, buffer);
++	addGameTask(&Game::parsePlayerExtendedOpcode, player->getID(), opcode, buffer);
 +}
 +
 +void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
