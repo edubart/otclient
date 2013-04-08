@@ -608,21 +608,21 @@ int MapView::calcFirstVisibleFloor()
                         Position pos = cameraPosition.translated(ix, iy);
 
                         // process tiles that we can look through, e.g. windows, doors
-                        if((ix == 0 && iy == 0) || ((std::abs(ix) != std::abs(iy)) && g_map.isLookPossible(pos))) {
+                        if((ix == 0 && iy == 0) || (/*(std::abs(ix) != std::abs(iy)) && */g_map.isLookPossible(pos))) {
                             Position upperPos = pos;
                             Position coveredPos = pos;
 
                             while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
                                 // check tiles physically above
                                 TilePtr tile = g_map.getTile(upperPos);
-                                if(tile && tile->limitsFloorsView(!g_map.isLookPossible(pos))) {
+                                if(tile && tile->limitsFloorsView()) {
                                     firstFloor = upperPos.z + 1;
                                     break;
                                 }
 
                                 // check tiles geometrically above
                                 tile = g_map.getTile(coveredPos);
-                                if(tile && tile->limitsFloorsView(g_map.isLookPossible(pos))) {
+                                if(tile && tile->limitsFloorsView()) {
                                     firstFloor = coveredPos.z + 1;
                                     break;
                                 }

@@ -48,7 +48,7 @@ enum tileflags_t
     TILESTATE_TRASHHOLDER = 1 << 20,
     TILESTATE_BED = 1 << 21,
     TILESTATE_DEPOT = 1 << 22,
-    TILESTATE_TRANSLUECENT_LIGHT = 1 << 23
+    TILESTATE_TRANSLUECENT_LIGHT = 1 << 23 
 };
 
 class Tile : public LuaObject
@@ -105,7 +105,7 @@ public:
     bool mustHookSouth();
     bool mustHookEast();
     bool hasCreature();
-    bool limitsFloorsView(bool isFreeView = false);
+    bool limitsFloorsView();
     bool canErase();
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
