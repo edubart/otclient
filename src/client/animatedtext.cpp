@@ -96,10 +96,20 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
         return false;
 
     try {
-        int number = stdext::safe_cast<int>(m_cachedText.getText());
-        int otherNumber = stdext::safe_cast<int>(other->getCachedText().getText());
+        std::string string1 = m_cachedText.getText();
+        std::string string2 = other->getCachedText().getText();
+        bool p = false;
+        if(string1[0] == '+' && string2[0] == '+') {
+            p = true;
+            string1.erase(0,1);
+            string2.erase(0,1);
+        }
+        int number = stdext::safe_cast<int>(string1);
+        int otherNumber = stdext::safe_cast<int>(string2);
 
         std::string text = stdext::format("%d", number + otherNumber);
+        if(p)
+            text = "+" + text;
         m_cachedText.setText(text);
         return true;
     }

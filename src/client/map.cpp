@@ -123,10 +123,22 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             bool merged = false;
             for(auto other : m_animatedTexts) {
                 if(other->getPosition() == pos) {
-                    prevAnimatedText = other;
-                    if(other->merge(animatedText)) {
+                    if(!prevAnimatedText)
+                        prevAnimatedText = other;
+                    else {
+                        float pt = prevAnimatedText->getTimer().ticksElapsed();
+                        float ot = other->getTimer().ticksElapsed();
+                        Point poff = prevAnimatedText->getOffset();
+                        Point ooff = other->getOffset();
+                        poff += Point(0, 12 - 48 * pt / (float)Otc::ANIMATED_TEXT_DURATION);
+                        ooff += Point(0, 12 - 48 * ot / (float)Otc::ANIMATED_TEXT_DURATION);
+                        if(poff.y < ooff.y) // Want the one with the "lowest" screen position, which is more positive
+                            prevAnimatedText = other;
+                    }
+
+                    if(!merged && other->merge(animatedText)) {
                         merged = true;
-                        break;
+                        //break;
                     }
                 }
             }
@@ -134,11 +146,9 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();
                     float t = prevAnimatedText->getTimer().ticksElapsed();
-                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
-                        int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
-                        offset += Point(0, y);
-                    }
-                    offset.y = std::min(offset.y, 12);
+                    int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
+                    offset += Point(0, y);
+                    offset.y = std::max(offset.y, 12); // If text is above the starting position, use default of 12
                     animatedText->setOffset(offset);
                 }
                 m_animatedTexts.push_back(animatedText);
