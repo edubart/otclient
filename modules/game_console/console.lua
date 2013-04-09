@@ -466,7 +466,7 @@ function addTabText(text, speaktype, tab, creatureName)
       -- Remove the curly braces
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
-        text = text:gsub("{"..dataBlock.words.."}", dataBlock.words)
+        text = text:gsub("%{(.-)%}", dataBlock.words, 1)
 
         -- Recalculate positions as braces are removed
         highlightData[(i-1)*3+1] = dataBlock._start - ((i-1) * 2)
