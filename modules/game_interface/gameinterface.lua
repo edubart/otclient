@@ -674,6 +674,8 @@ function moveStackableItem(item, toPos)
   end
   g_keyboard.bindKeyPress("Up", function() check() spinbox:up() end, spinbox)
   g_keyboard.bindKeyPress("Down", function() check() spinbox:down() end, spinbox)
+  g_keyboard.bindKeyPress("Right", function() check() spinbox:up() end, spinbox)
+  g_keyboard.bindKeyPress("Left", function() check() spinbox:down() end, spinbox)
   g_keyboard.bindKeyPress("PageUp", function() check() spinbox:setValue(spinbox:getValue()+10) end, spinbox)
   g_keyboard.bindKeyPress("PageDown", function() check() spinbox:setValue(spinbox:getValue()-10) end, spinbox)
 

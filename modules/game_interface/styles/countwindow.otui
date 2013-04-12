@@ -6,11 +6,11 @@ CountWindow < MainWindow
   SpinBox
     id: spinBox
     anchors.left: parent.left
-    anchors.top: parent.bottom
-    width: 0
-    height: 0
+    anchors.top: parent.top
+    width: 1
+    height: 1
     phantom: true
-    padding-bottom: -40
+    margin-top: 2
     focusable: true
 
   Item
