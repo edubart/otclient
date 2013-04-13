@@ -137,7 +137,7 @@ function unloadCurrentModule()
     local module = g_modules.getModule(focusedChild:getText())
     if module then
       module:unload()
-      if ModuleManager == nil then return end
+      if modules.client_modulemanager == nil then return end
       updateModuleInfo(module:getName())
       refreshLoadedModules()
     end
