@@ -11,3 +11,9 @@ HorizontalList < UIScrollArea
   border-width: 1
   border-color: #1d222b
   background-color: #222833
+
+VerticalList < UIScrollArea
+  layout: verticalBox
+  border-width: 1
+  border-color: #1d222b
+  background-color: #222833
