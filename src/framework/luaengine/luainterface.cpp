@@ -577,20 +577,19 @@ int LuaInterface::lua_dofile(lua_State* L)
 
 int LuaInterface::lua_dofiles(lua_State* L)
 {
-    std::string directory = g_lua.popString();
-
-    for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
-        if(!g_resources.isFileType(fileName, "lua"))
-            continue;
-
-        try {
-            g_lua.loadScript(directory + "/" + fileName);
-            g_lua.call(0, 0);
-        } catch(stdext::exception& e) {
-            g_lua.pushString(e.what());
-            g_lua.error();
-        }
+    bool recursive = false;
+    if(g_lua.getTop() > 2) {
+        recursive = g_lua.popBoolean();
     }
+
+    std::string contains = "";
+    if(g_lua.getTop() > 1) {
+        contains = g_lua.popString();
+    }
+
+    std::string directory = g_lua.popString();
+    g_lua.loadFiles(directory, contains, recursive);
+
     return 0;
 }
 
@@ -1246,4 +1245,30 @@ LuaObjectPtr LuaInterface::toObject(int index)
 int LuaInterface::getTop()
 {
     return lua_gettop(L);
+}
+
+void LuaInterface::loadFiles(std::string directory, std::string contains, bool recursive)
+{
+    for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
+        std::string fullPath = directory + "/" + fileName;
+
+        if(recursive && g_resources.directoryExists(fullPath)) {
+            loadFiles(fullPath, contains, true);
+            continue;
+        }
+
+        if(!g_resources.isFileType(fileName, "lua"))
+            continue;
+
+        if(!contains.empty() && fileName.find(contains) == std::string::npos)
+            continue;
+
+        try {
+            g_lua.loadScript(fullPath);
+            g_lua.call(0, 0);
+        } catch(stdext::exception& e) {
+            g_lua.pushString(e.what());
+            g_lua.error();
+        }
+    }
 }
