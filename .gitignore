@@ -1,4 +1,3 @@
-/modules/.project
 build*
 CMakeCache.txt
 CMakeFiles
@@ -39,3 +38,4 @@ tags
 Thumbs.db
 .directory
 src/framework/graphics/dx/
+modules/.project/modules.sublime-workspace

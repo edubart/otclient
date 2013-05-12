@@ -321,7 +321,7 @@ public:
     void clearStack() { pop(stackSize()); }
     bool hasIndex(int index) { return (stackSize() >= (index < 0 ? -index : index) && index != 0); }
 
-    void loadFiles(std::string directory, std::string contains, bool recursive = false);
+    void loadFiles(std::string directory, bool recursive = false, std::string contains = "");
 
     /// Pushes any type onto the stack
     template<typename T, typename... Args>

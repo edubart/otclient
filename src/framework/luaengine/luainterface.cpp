@@ -577,18 +577,18 @@ int LuaInterface::lua_dofile(lua_State* L)
 
 int LuaInterface::lua_dofiles(lua_State* L)
 {
-    bool recursive = false;
-    if(g_lua.getTop() > 2) {
-        recursive = g_lua.popBoolean();
-    }
-
     std::string contains = "";
-    if(g_lua.getTop() > 1) {
+    if(g_lua.getTop() > 2) {
         contains = g_lua.popString();
     }
 
+    bool recursive = false;
+    if(g_lua.getTop() > 1) {
+        recursive = g_lua.popBoolean();
+    }
+
     std::string directory = g_lua.popString();
-    g_lua.loadFiles(directory, contains, recursive);
+    g_lua.loadFiles(directory, recursive, contains);
 
     return 0;
 }
@@ -1247,13 +1247,13 @@ int LuaInterface::getTop()
     return lua_gettop(L);
 }
 
-void LuaInterface::loadFiles(std::string directory, std::string contains, bool recursive)
+void LuaInterface::loadFiles(std::string directory, bool recursive, std::string contains)
 {
     for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
         std::string fullPath = directory + "/" + fileName;
 
         if(recursive && g_resources.directoryExists(fullPath)) {
-            loadFiles(fullPath, contains, true);
+            loadFiles(fullPath, true, contains);
             continue;
         }
 
