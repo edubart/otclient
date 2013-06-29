@@ -624,6 +624,9 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             break;
         }
         case WM_SYSKEYDOWN: {
+            if(wParam == VK_F4 && m_inputEvent.keyboardModifiers & Fw::KeyboardAltModifier)
+                return DefWindowProc(hWnd, uMsg, wParam, lParam);
+
             processKeyDown(retranslateVirtualKey(wParam, lParam));
             break;
         }
