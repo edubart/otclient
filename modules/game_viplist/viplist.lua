@@ -88,6 +88,23 @@ function isHiddingOffline()
   return settings['hideOffline']
 end
 
+function getSortedBy()
+  local settings = g_settings.getNode('VipList')
+  if not settings then
+    return 'status'
+  end
+  return settings['sortedBy']
+end
+
+function sortBy(state)
+  settings = {}
+  settings['sortedBy'] = state
+  g_settings.mergeNode('VipList', settings)
+
+  refresh()
+end
+
+
 function onAddVip(id, name, state)
   local vipList = vipWindow:getChildById('contentsPanel')
 
@@ -118,13 +135,13 @@ function onAddVip(id, name, state)
   
   for i=1,childrenCount do
     local child = vipList:getChildByIndex(i)
-    if state == VipState.Online and child.vipState ~= VipState.Online then
+    if state == VipState.Online and child.vipState ~= VipState.Online and getSortedBy() == 'status' then
       vipList:insertChild(i, label)
       return
     end
 
-    if (state ~= VipState.Online and child.vipState ~= VipState.Online)
-      or (state == VipState.Online and child.vipState == VipState.Online) then
+    if ((state ~= VipState.Online and child.vipState ~= VipState.Online)
+      or (state == VipState.Online and child.vipState == VipState.Online)) or getSortedBy() == 'name' then
       
       local childText = child:getText():lower()
       local length = math.min(childText:len(), nameLower:len())
@@ -167,6 +184,14 @@ function onVipListMousePress(widget, mousePos, mouseButton)
   else
     menu:addOption(tr('Show Offline'), function() hideOffline(false) end)
   end
+  
+  if not(getSortedBy() == 'name') then
+    menu:addOption(tr('Sort by name'), function() sortBy('name') end)
+  end
+  
+  if not(getSortedBy() == 'status') then
+    menu:addOption(tr('Sort by status'), function() sortBy('status') end)
+  end
 
   menu:display(mousePos)
 
@@ -196,6 +221,15 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
   else
     menu:addOption(tr('Show Offline'), function() hideOffline(false) end)
   end
+  
+  if not(getSortedBy() == 'name') then
+    menu:addOption(tr('Sort by name'), function() sortBy('name') end)
+  end
+  
+  if not(getSortedBy() == 'status') then
+    menu:addOption(tr('Sort by status'), function() sortBy('status') end)
+  end 
+  
   menu:display(mousePos)
 
   return true
