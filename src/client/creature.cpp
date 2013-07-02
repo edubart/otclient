@@ -128,7 +128,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             dest -= datType->getDisplacement() * scaleFactor;
             datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
             dest += getDisplacement() * scaleFactor;
-            zPattern = 1;
+            zPattern = std::min(1, getNumPatternZ() - 1);
         }
 
         PointF jumpOffset = m_jumpOffset * scaleFactor;
