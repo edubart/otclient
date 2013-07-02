@@ -45,11 +45,12 @@ MiniWindow
   &save: true
 
   Panel
+    id: filterPanel
     margin-top: 26
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: miniwindowScrollBar.left
-    height: 20
+    height: 45
 
     Panel
       anchors.top: parent.top
@@ -85,16 +86,55 @@ MiniWindow
         !tooltip: tr('Hide party members')
         @onCheckChange: modules.game_battle.checkCreatures()
 
-  HorizontalSeparator
+    Panel
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: parent.horizontalCenter
+      height: 20
+      width: 128
+      margin-top: 6
+      
+      ComboBox
+        id: sortTypeBox
+        width: 74
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 5
+
+      ComboBox
+        id: sortOrderBox
+        width: 54
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 4
+        
+  Panel
+    height: 18
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: miniwindowScrollBar.left
-    margin-right: 1
-    margin-top: 4
+    margin-top: 5
 
+    UIWidget
+      id: toggleFilterButton
+      anchors.top: prev.top
+      width: 21
+      anchors.horizontalCenter: parent.horizontalCenter
+      image-source: /images/ui/arrow_vertical
+      image-rect: 0 0 21 12
+      image-clip: 21 0 21 12
+      @onClick: modules.game_battle.toggleFilterPanel()
+      phantom: false
+
+  HorizontalSeparator
+    anchors.top: prev.top
+    anchors.left: parent.left
+    anchors.right: miniwindowScrollBar.left
+    margin-right: 1
+    margin-top: 11
+    
   MiniWindowContents
     anchors.top: prev.bottom
-    margin-top: 0
+    margin-top: 2
 
     Panel
       id: battlePanel

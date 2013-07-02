@@ -1,11 +1,16 @@
 battleWindow = nil
 battleButton = nil
 battlePanel = nil
+filterPanel = nil
+toggleFilterButton = nil
 lastBattleButtonSwitched = nil
 battleButtonsByCreaturesList = {}
+creatureAgeList = {}
 
 mouseWidget = nil
 
+sortTypeBox = nil
+sortOrderBox = nil
 hidePlayersButton = nil
 hideNPCsButton = nil
 hideMonstersButton = nil
@@ -25,6 +30,15 @@ function init()
 
   battlePanel = battleWindow:recursiveGetChildById('battlePanel')
 
+  filterPanel = battleWindow:recursiveGetChildById('filterPanel')
+  toggleFilterButton = battleWindow:recursiveGetChildById('toggleFilterButton')
+  
+  if isHidingFilters() then
+    hideFilterPanel()
+  end
+  
+  sortTypeBox = battleWindow:recursiveGetChildById('sortTypeBox')
+  sortOrderBox = battleWindow:recursiveGetChildById('sortOrderBox')
   hidePlayersButton = battleWindow:recursiveGetChildById('hidePlayers')
   hideNPCsButton = battleWindow:recursiveGetChildById('hideNPCs')
   hideMonstersButton = battleWindow:recursiveGetChildById('hideMonsters')
@@ -38,6 +52,18 @@ function init()
 
   battleWindow:setContentMinimumHeight(80)
 
+  sortTypeBox:addOption('Name', 'name')
+  sortTypeBox:addOption('Distance', 'distance')
+  sortTypeBox:addOption('Age', 'age')
+  sortTypeBox:addOption('Health', 'health')
+  sortTypeBox:setCurrentOptionByData(getSortType())
+  sortTypeBox.onOptionChange = onChangeSortType
+
+  sortOrderBox:addOption('Asc.', 'asc')
+  sortOrderBox:addOption('Desc.', 'desc')
+  sortOrderBox:setCurrentOptionByData(getSortOrder())
+  sortOrderBox.onOptionChange = onChangeSortOrder
+  
   connect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
@@ -46,6 +72,10 @@ function init()
     onPositionChange = onCreaturePositionChange,
     onAppear = onCreatureAppear,
     onDisappear = onCreatureDisappear
+  })
+  
+  connect(LocalPlayer, {
+    onPositionChange = onCreaturePositionChange
   })
 
   connect(g_game, {
@@ -75,6 +105,10 @@ function terminate()
     onDisappear = onCreatureDisappear
   })
 
+  disconnect(LocalPlayer, {
+    onPositionChange = onCreaturePositionChange
+  })
+  
   disconnect(g_game, {
     onAttackingCreatureChange = onAttack,
     onFollowingCreatureChange = onFollow,
@@ -94,6 +128,93 @@ end
 
 function onMiniWindowClose()
   battleButton:setOn(false)
+end
+
+function getSortType()
+  local settings = g_settings.getNode('BattleList')
+  if not settings then
+    return 'name'
+  end
+  return settings['sortType']
+end
+
+function setSortType(state)
+  settings = {}
+  settings['sortType'] = state
+  g_settings.mergeNode('BattleList', settings)
+
+  checkCreatures()
+end
+
+function getSortOrder()
+  local settings = g_settings.getNode('BattleList')
+  if not settings then
+    return 'asc'
+  end
+  return settings['sortOrder']
+end
+
+function setSortOrder(state)
+  settings = {}
+  settings['sortOrder'] = state
+  g_settings.mergeNode('BattleList', settings)
+
+  checkCreatures()
+end
+
+function isSortAsc()
+    return getSortOrder() == 'asc'
+end
+
+function isSortDesc()
+    return getSortOrder() == 'desc'
+end
+
+function isHidingFilters()
+  local settings = g_settings.getNode('BattleList')
+  if not settings then
+    return false
+  end
+  return settings['hidingFilters']
+end
+
+function setHidingFilters(state)
+  settings = {}
+  settings['hidingFilters'] = state
+  g_settings.mergeNode('BattleList', settings)
+end
+
+function hideFilterPanel()
+  filterPanel.originalHeight = filterPanel:getHeight()
+  filterPanel:setHeight(0)
+  toggleFilterButton:getParent():setMarginTop(0)
+  toggleFilterButton:setImageClip(torect("0 0 21 12"))
+  setHidingFilters(true)
+  filterPanel:setVisible(false)
+end
+
+function showFilterPanel()
+  toggleFilterButton:getParent():setMarginTop(5)
+  filterPanel:setHeight(filterPanel.originalHeight)
+  toggleFilterButton:setImageClip(torect("21 0 21 12"))
+  setHidingFilters(false)
+  filterPanel:setVisible(true)
+end
+
+function toggleFilterPanel()
+  if filterPanel:isVisible() then
+    hideFilterPanel()
+  else
+    showFilterPanel()
+  end
+end
+
+function onChangeSortType(comboBox, option)
+  setSortType(option:lower())
+end
+
+function onChangeSortOrder(comboBox, option)
+  setSortOrder(option:lower():gsub('[.]', ''))  -- Replace dot in option name
 end
 
 function checkCreatures()
@@ -151,8 +272,17 @@ end
 function onCreatureHealthPercentChange(creature, health)
   local battleButton = battleButtonsByCreaturesList[creature:getId()]
   if battleButton then
+    if getSortType() == 'health' then
+      removeCreature(creature)
+      addCreature(creature)
+      return
+    end
     battleButton:setLifeBarPercent(creature:getHealthPercent())
   end
+end
+
+local function getDistanceBetween(p1, p2)
+    return math.max(math.abs(p1.x - p2.x), math.abs(p1.y - p2.y))
 end
 
 function onCreaturePositionChange(creature, newPos, oldPos)
@@ -160,6 +290,24 @@ function onCreaturePositionChange(creature, newPos, oldPos)
     if oldPos and newPos and newPos.z ~= oldPos.z then
       checkCreatures()
     else
+      -- Distance will change when moving, recalculate and move to correct index
+      if getSortType() == 'distance' then
+        local distanceList = {}
+        for id, creatureButton in pairs(battleButtonsByCreaturesList) do
+          table.insert(distanceList, {distance = getDistanceBetween(newPos, creatureButton.creature:getPosition()), widget = creatureButton})
+        end
+  
+        if isSortAsc() then
+          table.sort(distanceList, function(a, b) return a.distance < b.distance end)
+        else
+          table.sort(distanceList, function(a, b) return a.distance > b.distance end)    
+        end
+        
+        for i = 1, #distanceList do
+          battlePanel:moveChildToIndex(distanceList[i].widget, i)
+        end
+      end    
+
       for id, creatureButton in pairs(battleButtonsByCreaturesList) do
         addCreature(creatureButton.creature)
       end
@@ -170,6 +318,9 @@ function onCreaturePositionChange(creature, newPos, oldPos)
     if has and not fit then
       removeCreature(creature)
     elseif fit then
+      if has and getSortType() == 'distance' then
+        removeCreature(creature)
+      end
       addCreature(creature)
     end
   end
@@ -201,8 +352,13 @@ function addCreature(creature)
   local creatureId = creature:getId()
   local battleButton = battleButtonsByCreaturesList[creatureId]
 
+  -- Register when creature is added to battlelist for the first time
+  if not creatureAgeList[creatureId] then
+    creatureAgeList[creatureId] = os.time()
+  end
+  
   if not battleButton then
-    battleButton = g_ui.createWidget('BattleButton', battlePanel)
+    battleButton = g_ui.createWidget('BattleButton')
     battleButton:setup(creature)
 
     battleButton.onHoverChange = onBattleButtonHoverChange
@@ -217,6 +373,77 @@ function addCreature(creature)
     if creature == g_game.getFollowingCreature() then
       onFollow(creature)
     end
+    
+    local inserted = false
+    local nameLower = creature:getName():lower()
+    local healthPercent = creature:getHealthPercent()
+    local playerPosition = g_game.getLocalPlayer():getPosition()
+    local distance = getDistanceBetween(playerPosition, creature:getPosition())
+    local age = creatureAgeList[creatureId]
+    
+    local childCount = battlePanel:getChildCount()
+    for i = 1, childCount do
+      local child = battlePanel:getChildByIndex(i)
+      local childName = child:getCreature():getName():lower()
+      local equal = false
+      if getSortType() == 'age' then
+        local childAge = creatureAgeList[child:getCreature():getId()]
+        if (age < childAge and isSortAsc()) or (age > childAge and isSortDesc()) then
+          battlePanel:insertChild(i, battleButton)
+          inserted = true
+          break
+        elseif age == childAge then
+          equal = true
+        end
+      elseif getSortType() == 'distance' then
+        local childDistance = getDistanceBetween(child:getCreature():getPosition(), playerPosition)
+        if (distance < childDistance and isSortAsc()) or (distance > childDistance and isSortDesc()) then
+          battlePanel:insertChild(i, battleButton)
+          inserted = true
+          break
+        elseif childDistance == distance then
+          equal = true
+        end
+      elseif getSortType() == 'health' then
+          local childHealth = child:getCreature():getHealthPercent()
+          if (healthPercent < childHealth and isSortAsc()) or (healthPercent > childHealth and isSortDesc()) then
+            battlePanel:insertChild(i, battleButton)
+            inserted = true
+            break
+          elseif healthPercent == childHealth then
+            equal = true
+          end            
+      end
+      
+      -- If any other sort type is selected and values are equal, sort it by name also
+      if getSortType() == 'name' or equal then
+          local length = math.min(childName:len(), nameLower:len())
+          for j=1,length do
+            if (nameLower:byte(j) < childName:byte(j) and isSortAsc()) or (nameLower:byte(j) > childName:byte(j) and isSortDesc()) then
+              battlePanel:insertChild(i, battleButton)
+              inserted = true
+              break
+            elseif (nameLower:byte(j) > childName:byte(j) and isSortAsc()) or (nameLower:byte(j) < childName:byte(j) and isSortDesc()) then
+              break
+            elseif j == nameLower:len() and isSortAsc() then 
+              battlePanel:insertChild(i, battleButton)
+              inserted = true
+            elseif j == childName:len() and isSortDesc() then
+              battlePanel:insertChild(i, battleButton)
+              inserted = true
+            end
+          end
+      end
+
+      if inserted then
+        break
+      end
+    end
+    
+    -- Insert at the end if no other place is found
+    if not inserted then
+      battlePanel:insertChild(childCount + 1, battleButton)
+    end
   else
     battleButton:setLifeBarPercent(creature:getHealthPercent())
   end
@@ -226,6 +453,7 @@ function addCreature(creature)
 end
 
 function removeAllCreatures()
+  creatureAgeList = {}
   for i, v in pairs(battleButtonsByCreaturesList) do
     removeCreature(v.creature)
   end
