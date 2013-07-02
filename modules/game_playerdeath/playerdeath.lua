@@ -47,7 +47,7 @@ function openWindow()
     deathWindow = nil
   end
   local cancelFunc = function()
-    modules.game_interface.logout()
+    g_game.safeLogout()
     cancelButton:getParent():destroy()
     deathWindow = nil
   end
