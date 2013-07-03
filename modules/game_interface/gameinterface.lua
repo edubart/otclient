@@ -482,17 +482,20 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
 
     else
+      local localPosition = localPlayer:getPosition()
       if not classic then shortcut = '(Alt)' else shortcut = nil end
-      if g_game.getAttackingCreature() ~= creatureThing then
-        menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
-      else
-        menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
-      end
-
-      if g_game.getFollowingCreature() ~= creatureThing then
-        menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
-      else
-        menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
+      if creatureThing:getPosition().z == localPosition.z then
+        if g_game.getAttackingCreature() ~= creatureThing then
+          menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
+        else
+          menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
+        end
+  
+        if g_game.getFollowingCreature() ~= creatureThing then
+          menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
+        else
+          menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
+        end
       end
 
       if creatureThing:isPlayer() then
@@ -538,7 +541,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
     end
 
-    if modules.game_ruleviolation.hasWindowAccess() then
+    if modules.game_ruleviolation.hasWindowAccess() and creatureThing:isPlayer() then
       menu:addSeparator()
       menu:addOption(tr('Rule Violation'), function() modules.game_ruleviolation.show(creatureThing:getName()) end)
     end
@@ -550,7 +553,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   menu:display(menuPosition)
 end
 
-function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
+function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, attackCreature)
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if not modules.client_options.getOption('classicControl') then
@@ -576,7 +579,10 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
         return true
       end
       return true
-    elseif creatureThing and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+    elseif attackCreature and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      g_game.attack(attackCreature)
+      return true
+    elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.attack(creatureThing)
       return true
     end
@@ -585,7 +591,10 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   else
     if useThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
       local player = g_game.getLocalPlayer()
-      if creatureThing and creatureThing ~= player then
+      if attackCreature and attackCreature ~= player then
+        g_game.attack(attackCreature)
+        return true
+      elseif creatureThing and creatureThing ~= player and creatureThing:getPosition().z == autoWalkPos.z then
         g_game.attack(creatureThing)
         return true
       elseif useThing:isContainer() then
@@ -613,7 +622,10 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
     elseif useThing and keyboardModifiers == KeyboardCtrlModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       return true
-    elseif creatureThing and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+    elseif attackCreature and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+      g_game.attack(attackCreature)
+      return true
+    elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and g_keyboard.isAltPressed() and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
       g_game.attack(creatureThing)
       return true
     end

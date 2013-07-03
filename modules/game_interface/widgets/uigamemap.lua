@@ -78,15 +78,21 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
   local useThing
   local creatureThing
   local multiUseThing
+  local attackCreature
 
   local tile = self:getTile(mousePosition)
   if tile then
     lookThing = tile:getTopLookThing()
     useThing = tile:getTopUseThing()
     creatureThing = tile:getTopCreature()
+  end 
+   
+  local autoWalkTile = g_map.getTile(autoWalkPos)
+  if autoWalkTile then
+    attackCreature = autoWalkTile:getTopCreature()
   end
 
-  local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing)
+  local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, attackCreature)
   if ret then
     self.allowNextRelease = false
   end
