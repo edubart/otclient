@@ -1,0 +1,206 @@
+IgnoreListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  phantom: false
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+WhiteListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 2 0
+  focusable: true
+  phantom: false
+
+  $focus:
+    background-color: #ffffff22
+    color: #ffffff
+
+
+MainWindow
+  id: communicationWindow
+  !text: tr('Ignore List')
+  size: 515 410
+  @onEscape: self:destroy()
+
+  CheckBox
+    id: checkboxUseIgnoreList
+    !text: tr('Activate ignorelist')
+    anchors.left: parent.left
+    anchors.top: parent.top
+    width: 180
+  
+  Label
+    !text: tr('Ignored Players:')
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-top: 10
+    
+  TextList
+    id: ignoreList
+    vertical-scrollbar: ignoreListScrollBar
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    height: 150
+    width: 230
+    margin-bottom: 10
+    margin-top: 3
+    padding: 1
+    focusable: false
+    
+  TextEdit
+    id: ignoreNameEdit
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    width: 110
+    margin-top: 5
+    
+  Button
+    id: buttonIgnoreAdd
+    !text: tr('Add')
+    width: 48
+    height: 20
+    margin-left: 5
+    anchors.top: prev.top
+    anchors.left: prev.right
+    
+  Button
+    id: buttonIgnoreRemove
+    !text: tr('Remove')
+    width: 64
+    height: 20
+    margin-left: 5
+    anchors.top: prev.top
+    anchors.left: prev.right
+
+  Label
+    !text: tr('Global ignore settings')
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    margin-top: 20
+
+  CheckBox
+    id: checkboxIgnorePrivateMessages
+    !text: tr('Ignore Private Messages')
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    width: 180
+    margin-top: 5
+    
+  CheckBox
+    id: checkboxIgnoreYelling
+    !text: tr('Ignore Yelling')
+    anchors.left: parent.left
+    anchors.top: prev.bottom
+    width: 180
+    margin-top: 5
+    
+  CheckBox
+    id: checkboxUseWhiteList
+    !text: tr('Activate whitelist')
+    anchors.top: parent.top
+    anchors.left: ignoreList.right
+    margin-left: 20
+    width: 180
+    
+  Label
+    !text: tr('Allowed Players:')
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    margin-top: 10
+    
+  TextList
+    id: whiteList
+    vertical-scrollbar: whiteListScrollBar
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    height: 150
+    width: 230
+    margin-bottom: 10
+    margin-top: 3
+    padding: 1
+    focusable: false
+    
+  TextEdit
+    id: whitelistNameEdit
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    width: 110
+    margin-top: 5
+    
+  Button
+    id: buttonWhitelistAdd
+    !text: tr('Add')
+    width: 48
+    height: 20
+    margin-left: 5
+    anchors.top: prev.top
+    anchors.left: prev.right
+    
+  Button
+    id: buttonWhitelistRemove
+    !text: tr('Remove')
+    width: 64
+    height: 20
+    margin-left: 5
+    anchors.top: prev.top
+    anchors.left: prev.right
+    
+  Label
+    !text: tr('Global whitelist settings')
+    anchors.left: whiteList.left
+    anchors.top: prev.bottom
+    margin-top: 20
+
+  CheckBox
+    id: checkboxAllowVIPs
+    !text: tr('Allow VIPs to message you')
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    width: 180
+    margin-top: 5
+    
+  Panel
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 30
+    
+    Panel
+      size: 160 30
+      anchors.horizontalCenter: parent.horizontalCenter
+    
+      Button
+        id: buttonSave
+        !text: tr('Save')
+        width: 75
+        anchors.top: parent.top
+        anchors.left: parent.left
+
+      Button
+        id: buttonCancel
+        !text: tr('Cancel')
+        width: 75
+        anchors.top: parent.top
+        anchors.left: prev.right
+        margin-left: 10
+
+  VerticalScrollBar
+    id: ignoreListScrollBar
+    anchors.top: ignoreList.top
+    anchors.bottom: ignoreList.bottom
+    anchors.right: ignoreList.right
+    step: 14
+    pixels-scroll: true
+    
+  VerticalScrollBar
+    id: whiteListScrollBar
+    anchors.top: whiteList.top
+    anchors.bottom: whiteList.bottom
+    anchors.right: whiteList.right
+    step: 14
+    pixels-scroll: true
