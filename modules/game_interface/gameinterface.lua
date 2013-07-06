@@ -42,7 +42,8 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), '/images/topbuttons/logout', tryLogout, true)
+  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), 
+    '/images/topbuttons/logout', tryLogout, true)
 
   setupViewMode(0)
 
@@ -104,8 +105,8 @@ function bindKeys()
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel)
   g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
   g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+Q', tryLogout, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+L', tryLogout, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+Q', function() tryLogout(false) end, gameRootPanel)
+  g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
 end
@@ -228,7 +229,10 @@ function tryExit()
   return true
 end
 
-function tryLogout()
+function tryLogout(prompt)
+  if type(prompt) ~= "boolean" then
+    prompt = true
+  end
   if not g_game.isOnline() then
     exit()
     return
@@ -238,38 +242,41 @@ function tryLogout()
     return
   end
 
+  local msg, yesCallback
   if not g_game.isConnectionOk() then
-    local yesCallback = function() 
+    msg = 'Your connection is failing, if you logout now your character will be still online, do you want to force logout?'
+
+    yesCallback = function() 
       g_game.forceLogout()
       if logoutWindow then
         logoutWindow:destroy()
         logoutWindow=nil
       end
     end
-    local noCallback = function()
-      logoutWindow:destroy()
-      logoutWindow=nil
-    end
+  else
+    msg = 'Are you sure you want to logout?'
 
-    logoutWindow = displayGeneralBox(tr('Logout'), tr('Your connection is failing, if you logout now your character will be still online, do you want to force logout?'), {
+    yesCallback = function()
+      g_game.safeLogout()
+      if logoutWindow then
+        logoutWindow:destroy()
+        logoutWindow=nil
+      end
+    end
+  end
+
+  local noCallback = function()
+    logoutWindow:destroy()
+    logoutWindow=nil
+  end
+
+  if prompt then
+    logoutWindow = displayGeneralBox(tr('Logout'), tr(msg), {
       { text=tr('Yes'), callback=yesCallback },
       { text=tr('No'), callback=noCallback },
       anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
   else
-    local yesCallback = function()
-      g_game.safeLogout()
-      logoutWindow:destroy()
-      logoutWindow=nil
-    end
-    local noCallback = function()
-      logoutWindow:destroy()
-      logoutWindow=nil
-    end
-
-    logoutWindow = displayGeneralBox(tr('Logout'), tr('Are you sure you want to logout?'), {
-      { text=tr('Yes'), callback=yesCallback },
-      { text=tr('No'), callback=noCallback },
-      anchor=AnchorHorizontalCenter}, yesCallback, noCallback)
+     yesCallback()
   end
 end
 

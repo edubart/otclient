@@ -72,7 +72,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // last walk is not done yet
-    if(m_walkTimer.ticksElapsed() < getStepDuration())
+    if((m_walkTimer.ticksElapsed() < getStepDuration()) && !isAutoWalking())
         return false;
 
     // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
@@ -83,7 +83,7 @@ bool LocalPlayer::canWalk(Otc::Direction direction)
         return false;
 
     // cannot walk while already walking
-    if(m_walking && (!prewalkTimeouted || m_secondPreWalk))
+    if((m_walking && !isAutoWalking()) && (!prewalkTimeouted || m_secondPreWalk))
         return false;
 
     return true;
