@@ -1150,7 +1150,7 @@ void Game::removeVip(int playerId)
 {
     if(!canPerformGameAction())
         return;
-    
+
     auto it = m_vips.find(playerId);
     if(it == m_vips.end())
         return;
@@ -1400,7 +1400,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 810 || version > 974))
+    if(version != 0 && (version < 810 || version > 1010))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
@@ -1464,6 +1464,14 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameNewSpeedLaw);
     }
 
+    if(version >= 976) {
+        enableFeature(Otc::GameContainerPagination);
+    }
+
+    if(version >= 979) {
+        enableFeature(Otc::GameThingMarks);
+    }
+
     m_protocolVersion = version;
 
     Proto::buildMessageModesMap(version);
@@ -1479,7 +1487,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 810 || version > 982))
+    if(version != 0 && (version < 810 || version > 1010))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;

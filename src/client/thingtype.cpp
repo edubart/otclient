@@ -67,6 +67,17 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 attr -= 1;
         }
 
+        if(g_game.getProtocolVersion() >= 1010) {
+            /* In 10.10 all attributes from 16 and up were
+             * incremented by 1 to make space for 16 as
+             * "No Movement Animation" flag.
+             */
+            if(attr == 16)
+                attr = ThingAttrNoMoveAnimation;
+            else if(attr > 16)
+                attr -= 1;
+        }
+
         switch(attr) {
             case ThingAttrDisplacement: {
                 m_displacement.x = fin->getU16();
@@ -126,8 +137,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
 
     int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
 
-    if(totalSprites == 0)
-        stdext::throw_exception("a thing type has no sprites");
+    // if(totalSprites == 0)
+    //     stdext::throw_exception("a thing type has no sprites");
     if(totalSprites > 4096)
         stdext::throw_exception("a thing type has more than 4096 sprites");
 

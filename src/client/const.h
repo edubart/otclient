@@ -353,6 +353,8 @@ namespace Otc
         GameForceFirstAutoWalkStep = 37,
         GameMinimapRemove = 38,
         GameDoubleShopSellAmount = 39,
+        GameContainerPagination = 40,
+        GameThingMarks = 41,
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };
