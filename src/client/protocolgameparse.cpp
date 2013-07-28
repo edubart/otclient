@@ -603,6 +603,14 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     std::string name = msg->getString();
     int capacity = msg->getU8();
     bool hasParent = (msg->getU8() != 0);
+
+    if(g_game.getFeature(Otc::GameContainerPagination)) {
+        msg->getU8(); // drag and drop
+        msg->getU8(); // pagination
+        msg->getU16(); // container size
+        msg->getU16(); // first index
+    }
+
     int itemCount = msg->getU8();
 
     std::vector<ItemPtr> items(itemCount);
@@ -622,13 +630,21 @@ void ProtocolGame::parseContainerAddItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
     ItemPtr item = getItem(msg);
+    if(g_game.getFeature(Otc::GameContainerPagination)) {
+        msg->getU16(); // slot
+    }
     g_game.processContainerAddItem(containerId, item);
 }
 
 void ProtocolGame::parseContainerUpdateItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
-    int slot = msg->getU8();
+    int slot;
+    if(g_game.getFeature(Otc::GameContainerPagination)) {
+        slot = msg->getU16();
+    } else {
+        slot = msg->getU8();
+    }
     ItemPtr item = getItem(msg);
     g_game.processContainerUpdateItem(containerId, slot, item);
 }
@@ -636,7 +652,13 @@ void ProtocolGame::parseContainerUpdateItem(const InputMessagePtr& msg)
 void ProtocolGame::parseContainerRemoveItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
-    int slot = msg->getU8();
+    int slot;
+    if(g_game.getFeature(Otc::GameContainerPagination)) {
+        slot = msg->getU16();
+        getItem(msg);
+    } else {
+        slot = msg->getU8();
+    }
     g_game.processContainerRemoveItem(containerId, slot);
 }
 
@@ -1808,6 +1830,12 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
             emblem = msg->getU8();
 
+        if(g_game.getFeature(Otc::GameThingMarks)) {
+            msg->getU8(); // creature type for summons
+            msg->getU8(); // mark
+            msg->getU16(); // helpers
+        }
+
         if(g_game.getProtocolVersion() >= 854)
             unpass = msg->getU8();
 
@@ -1859,6 +1887,10 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
     ItemPtr item = Item::create(id);
     if(item->getId() == 0)
         stdext::throw_exception(stdext::format("unable to create item with invalid id %d", id));
+
+    if(g_game.getFeature(Otc::GameThingMarks)) {
+        msg->getU8(); // mark
+    }
 
     if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable())
         item->setCountOrSubType(msg->getU8());
