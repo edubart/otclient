@@ -86,7 +86,7 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
     g_game.look(item)
     self.cancelNextRelease = true
     return true
-  elseif modules.game_interface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, item) then
+  elseif modules.game_interface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, nil) then
     return true
   end
   return false

@@ -56,12 +56,21 @@ Panel
   id: consolePanel
   anchors.fill: parent
 
+  CheckBox
+    id: toggleChat
+    !tooltip: tr('Disable chat mode')
+    anchors.left: parent.left
+    anchors.top: parent.top
+    margin-left: 13
+    margin-top: 8
+    @onCheckChange: toggleChat()
+
   TabButton
     id: prevChannelButton
     icon: /images/game/console/leftarrow
-    anchors.left: parent.left
+    anchors.left: toggleChat.right
     anchors.top: parent.top
-    margin-left: 6
+    margin-left: 3
     margin-top: 6
 
   ConsoleTabBar

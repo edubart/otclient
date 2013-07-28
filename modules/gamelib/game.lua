@@ -6,7 +6,7 @@ end
 
 function g_game.chooseRsa(host)
   if currentRsa ~= CIPSOFT_RSA and currentRsa ~= OTSERV_RSA then return end
-  if string.ends(host, '.tibia.com') or string.ends(host, '.cipsoft.com') then
+  if host:ends('.tibia.com') or host:ends('.cipsoft.com') then
     g_game.setRsa(CIPSOFT_RSA)
 
     if g_app.getOs() == 'windows' then

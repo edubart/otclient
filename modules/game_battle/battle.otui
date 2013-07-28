@@ -98,7 +98,8 @@ MiniWindow
         width: 74
         anchors.top: parent.top
         anchors.left: prev.right
-        margin-left: 5
+        anchors.horizontalCenter: parent.horizontalCenter
+        margin-left: -28
 
       ComboBox
         id: sortOrderBox
@@ -134,7 +135,7 @@ MiniWindow
     
   MiniWindowContents
     anchors.top: prev.bottom
-    margin-top: 2
+    margin-top: 6
 
     Panel
       id: battlePanel

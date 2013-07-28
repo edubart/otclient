@@ -143,8 +143,57 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+O', g_game.requestChannels)
   g_keyboard.bindKeyDown('Ctrl+E', removeCurrentTab)
   g_keyboard.bindKeyDown('Ctrl+H', openHelp)
-  
+
+  consoleToggleChat = consolePanel:getChildById('toggleChat')
   load()
+end
+
+function toggleChat()
+  if consoleToggleChat:isChecked() then
+    disableChat()
+  else
+    enableChat()
+  end
+end
+
+function enableChat()
+  local gameInterface = modules.game_interface
+
+  consoleTextEdit:setVisible(true)
+  consoleTextEdit:setText("")
+
+  g_keyboard.unbindKeyUp("Space")
+  g_keyboard.unbindKeyUp("Enter")
+
+  gameInterface.unbindWalkKey("W")
+  gameInterface.unbindWalkKey("D")
+  gameInterface.unbindWalkKey("S")
+  gameInterface.unbindWalkKey("A")
+
+  consoleToggleChat:setTooltip(tr("Disable chat mode"))
+end
+
+function disableChat()
+  local gameInterface = modules.game_interface
+  
+  consoleTextEdit:setVisible(false)
+  consoleTextEdit:setText("")
+
+  local quickFunc = function()
+    if consoleToggleChat:isChecked() then
+      consoleToggleChat:setChecked(false)
+    end
+    enableChat()
+  end
+  g_keyboard.bindKeyUp("Space", quickFunc)
+  g_keyboard.bindKeyUp("Enter", quickFunc)
+
+  gameInterface.bindWalkKey("W", North)
+  gameInterface.bindWalkKey("D", East)
+  gameInterface.bindWalkKey("S", South)
+  gameInterface.bindWalkKey("A", West)
+
+  consoleToggleChat:setTooltip(tr("Enable chat mode"))
 end
 
 function terminate()
