@@ -32,29 +32,29 @@ function g_game.isOfficialTibia()
   return currentRsa == CIPSOFT_RSA
 end
 
-function g_game.getSupportedProtocols()
+function g_game.getSupportedClients()
   return {
     810, 811, 840, 842, 850, 853, 854,
     860, 861, 862, 870, 910, 940, 944,
-    953, 954, 960, 961, 963, 970, 971,
-    973, 974, 975, 976, 977, 978, 979,
-	980, 1010
+    953, 954, 960, 961, 963, 970, 980,
+    981, 982, 983, 984, 985, 986, 1001,
+    1002, 1010
   }
 end
 
-function g_game.getSupportedClients(protocol)
+function g_game.getProtocolVersionForClient(client)
   clients = {
-    [971] = {980},
-    [973] = {981},
-    [974] = {982},
-	[975] = {983},
-	[976] = {984},
-	[977] = {985},
-	[978] = {986},
-	[979] = {1001},
-	[980] = {1002}
+    [980] = 971,
+    [981] = 973,
+    [982] = 974,
+	  [983] = 975,
+	  [984] = 976,
+	  [985] = 977,
+	  [986] = 978,
+	  [1001] = 979,
+	  [1002] = 980,
   }
-  return clients[protocol] or {protocol}
+  return clients[client] or client
 end
 
 g_game.setRsa(OTSERV_RSA)

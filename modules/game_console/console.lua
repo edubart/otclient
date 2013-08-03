@@ -170,7 +170,7 @@ function enableChat()
   gameInterface.unbindWalkKey("S")
   gameInterface.unbindWalkKey("A")
 
-  consoleToggleChat:setTooltip(tr("Disable chat mode"))
+  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
 end
 
 function disableChat()

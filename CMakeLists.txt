@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
-set(VERSION "0.6.2")
+set(VERSION "0.6.3")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)

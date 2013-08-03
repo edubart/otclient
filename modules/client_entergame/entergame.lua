@@ -6,7 +6,7 @@ local enterGame
 local motdWindow
 local motdButton
 local enterGameButton
-local protocolBox
+local clientBox
 local protocolLogin
 local motdEnabled = true
 
@@ -73,11 +73,6 @@ local function onCharacterList(protocol, characters, account, otui)
   end
 end
 
-local function onChangeProtocol(combobox, option)
-  local clients = g_game.getSupportedClients(option)
-  protocolBox:setTooltip("Supports Client" .. (#clients > 1 and "s" or "") .. ": " .. table.tostring(clients))
-end
-
 local function onUpdateNeeded(protocol, signature)
   loadBox:destroy()
   loadBox = nil
@@ -109,7 +104,8 @@ function EnterGame.init()
   local host = g_settings.get('host')
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
-  local protocolVersion = g_settings.getInteger('protocol-version')
+  local clientVersion = g_settings.getInteger('client-version')
+  if clientVersion == 0 then clientVersion = 860 end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -120,11 +116,11 @@ function EnterGame.init()
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
 
-  protocolBox = enterGame:getChildById('protocolComboBox')
-  protocolBox.onOptionChange = onChangeProtocol
-  if protocolVersion then
-    protocolBox:setCurrentOption(protocolVersion)
+  clientBox = enterGame:getChildById('clientComboBox')
+  for _, proto in pairs(g_game.getSupportedClients()) do
+    clientBox:addOption(proto)
   end
+  clientBox:setCurrentOption(clientVersion)
 
   enterGame:hide()
 
@@ -154,7 +150,7 @@ function EnterGame.terminate()
   enterGame = nil
   enterGameButton:destroy()
   enterGameButton = nil
-  protocolBox = nil
+  clientBox = nil
   if motdWindow then
     motdWindow:destroy()
     motdWindow = nil
@@ -218,8 +214,7 @@ function EnterGame.doLogin()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
-  local protocolVersion = tonumber(protocolBox:getText())
-  local clientVersions = g_game.getSupportedClients(protocolVersion)
+  local clientVersion = tonumber(clientBox:getText())
   EnterGame.hide()
 
   if g_game.isOnline() then
@@ -230,6 +225,7 @@ function EnterGame.doLogin()
 
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
+  g_settings.set('client-version', clientVersion) 
 
   protocolLogin = ProtocolLogin.create()
   protocolLogin.onLoginError = onError
@@ -245,10 +241,8 @@ function EnterGame.doLogin()
                                 end })
 
   g_game.chooseRsa(G.host)
-  g_game.setProtocolVersion(protocolVersion)
-  if #clientVersions > 0 then
-    g_game.setClientVersion(clientVersions[#clientVersions])
-  end
+  g_game.setClientVersion(clientVersion)
+  g_game.setProtocolVersion(g_game.getProtocolVersionForClient(clientVersion))
 
   if modules.game_things.isLoaded() then
     protocolLogin:login(G.host, G.port, G.account, G.password)
@@ -269,14 +263,14 @@ end
 function EnterGame.setDefaultServer(host, port, protocol)
   local hostTextEdit = enterGame:getChildById('serverHostTextEdit')
   local portTextEdit = enterGame:getChildById('serverPortTextEdit')
-  local protocolLabel = enterGame:getChildById('protocolLabel')
+  local clientLabel = enterGame:getChildById('clientLabel')
   local accountTextEdit = enterGame:getChildById('accountNameTextEdit')
   local passwordTextEdit = enterGame:getChildById('accountPasswordTextEdit')
 
   if hostTextEdit:getText() ~= host then
     hostTextEdit:setText(host)
     portTextEdit:setText(port)
-    protocolBox:setCurrentOption(protocol)
+    clientBox:setCurrentOption(protocol)
     accountTextEdit:setText('')
     passwordTextEdit:setText('')
   end
@@ -292,9 +286,9 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   portTextEdit:setVisible(false)
   portTextEdit:setHeight(0)
 
-  protocolBox:setCurrentOption(protocol)
-  protocolBox:setVisible(false)
-  protocolBox:setHeight(0)
+  clientBox:setCurrentOption(protocol)
+  clientBox:setVisible(false)
+  clientBox:setHeight(0)
 
   local serverLabel = enterGame:getChildById('serverLabel')
   serverLabel:setVisible(false)
@@ -302,9 +296,9 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   local portLabel = enterGame:getChildById('portLabel')
   portLabel:setVisible(false)
   portLabel:setHeight(0)
-  local protocolLabel = enterGame:getChildById('protocolLabel')
-  protocolLabel:setVisible(false)
-  protocolLabel:setHeight(0)
+  local clientLabel = enterGame:getChildById('clientLabel')
+  clientLabel:setVisible(false)
+  clientLabel:setHeight(0)
 
   local serverListButton = enterGame:getChildById('serverListButton')
   serverListButton:setVisible(false)

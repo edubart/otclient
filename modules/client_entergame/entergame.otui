@@ -68,7 +68,7 @@ EnterGameWindow
 
   TextEdit
     id: serverHostTextEdit
-    !tooltip: tr('Make sure that your client uses\nthe correct game protocol version')
+    !tooltip: tr('Make sure that your client uses\nthe correct game client version')
     anchors.left: parent.left
     anchors.right: serverListButton.left
     anchors.top: serverLabel.bottom
@@ -76,8 +76,8 @@ EnterGameWindow
     margin-right: 4
 
   MenuLabel
-    id: protocolLabel
-    !text: tr('Protocol')
+    id: clientLabel
+    !text: tr('Client Version')
     anchors.left: parent.left
     anchors.top: serverHostTextEdit.bottom
     text-auto-resize: true
@@ -85,17 +85,13 @@ EnterGameWindow
     margin-top: 8
 
   ComboBox
-    id: protocolComboBox
+    id: clientComboBox
     anchors.left: parent.left
     anchors.right: parent.horizontalCenter
-    anchors.top: protocolLabel.bottom
+    anchors.top: clientLabel.bottom
     margin-top: 2
     margin-right: 3
     width: 90
-    @onSetup: |
-      for _, proto in pairs(g_game.getSupportedProtocols()) do
-        self:addOption(proto)
-      end
 
   MenuLabel
     id: portLabel
@@ -110,7 +106,7 @@ EnterGameWindow
     text: 7171
     anchors.right: parent.right
     anchors.left: parent.horizontalCenter
-    anchors.top: protocolComboBox.top
+    anchors.top: clientComboBox.top
     margin-left: 3
 
   CheckBox

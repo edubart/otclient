@@ -49,7 +49,7 @@ MainWindow
     anchors.left: protocolLabel.left
     anchors.right: port.right
     @onSetup: |
-      for _, proto in pairs(g_game.getSupportedProtocols()) do
+      for _, proto in pairs(g_game.getSupportedClients()) do
         self:addOption(proto)
       end
 

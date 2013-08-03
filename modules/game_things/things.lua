@@ -18,7 +18,7 @@ function isLoaded()
 end
 
 function load()
-  local version = g_game.getProtocolVersion()
+  local version = g_game.getClientVersion()
 
   local datPath, sprPath
   if filename then
