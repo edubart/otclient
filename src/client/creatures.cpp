@@ -83,10 +83,8 @@ void Spawn::load(TiXmlElement* node)
     }
 }
 
-void Spawn::save(TiXmlElement*& node)
+void Spawn::save(TiXmlElement* node)
 {
-    node = new TiXmlElement("spawn");
-
     const Position& c = getCenterPos();
     node->SetAttribute("centerx", c.x);
     node->SetAttribute("centery", c.y);
@@ -260,7 +258,7 @@ void CreatureManager::saveSpawns(const std::string& fileName)
     doc.LinkEndChild(root);
 
     for(auto pair : m_spawns) {
-        TiXmlElement* elem;
+        TiXmlElement* elem = new TiXmlElement("spawn");
         pair.second->save(elem);
         root->LinkEndChild(elem);
     }

@@ -77,8 +77,10 @@ typedef stdext::shared_object_ptr<Spawn> SpawnPtr;
 typedef std::vector<ThingPtr> ThingList;
 typedef std::vector<ThingTypePtr> ThingTypeList;
 typedef std::vector<ItemTypePtr> ItemTypeList;
-typedef std::vector<HousePtr> HouseList;
-typedef std::vector<TownPtr> TownList;
+typedef std::list<HousePtr> HouseList;
+typedef std::list<TownPtr> TownList;
+typedef std::list<ItemPtr> ItemList;
+typedef std::vector<ItemPtr> ItemVector;
 typedef std::unordered_map<Position, TilePtr, PositionHasher> TileMap;
 
 // net

@@ -54,6 +54,7 @@ protected:
     ItemPtr m_item;
     stdext::boolean<false> m_virtual;
     stdext::boolean<true> m_itemVisible;
+    stdext::boolean<false> m_showId;
 };
 
 #endif

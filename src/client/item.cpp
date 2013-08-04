@@ -187,6 +187,10 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU16(getDepotId());
     }
 
+    if(isHouseDoor()) {
+        out->addU8(ATTR_HOUSEDOORID);
+	out->addU8(getDoorId());
+    }
     uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
     uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if(aid) {

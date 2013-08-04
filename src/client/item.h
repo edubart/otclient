@@ -97,8 +97,6 @@ public:
     uint16 getServerId() { return m_serverId; }
     bool isValid();
 
-    ItemPtr clone();
-
     void unserializeItem(const BinaryTreePtr& in);
     void serializeItem(const OutputBinaryTreePtr& out);
 
@@ -111,6 +109,7 @@ public:
     void setActionId(uint16 actionId) { m_attribs.set(ATTR_ACTION_ID, actionId); }
     void setUniqueId(uint16 uniqueId) { m_attribs.set(ATTR_UNIQUE_ID, uniqueId); }
 
+    bool isHouseDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isDepot() { return m_attribs.has(ATTR_DEPOT_ID); }
     bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
@@ -118,6 +117,7 @@ public:
     bool isMoveable();
     bool isGround();
 
+    ItemPtr clone();
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() { return true; }
 
@@ -136,7 +136,7 @@ private:
     uint16 m_serverId;
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
-    std::vector<ItemPtr> m_containerItems;
+    ItemList m_containerItems;
 };
 
 #pragma pack(pop)

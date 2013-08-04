@@ -61,7 +61,7 @@ public:
 
 protected:
     void load(TiXmlElement* node);
-    void save(TiXmlElement*& node);
+    void save(TiXmlElement* node);
 
 private:
     stdext::dynamic_storage<uint8> m_attribs;

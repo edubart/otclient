@@ -58,6 +58,15 @@ const TownPtr& TownManager::getTown(uint32 townId)
     return m_nullTown;
 }
 
+const TownPtr& TownManager::getTownByName(std::string name)
+{
+    auto it = std::find_if(m_towns.begin(), m_towns.end(),
+		            [=] (const TownPtr& town) -> bool { return town->getName() == name; } );
+    if(it != m_towns.end())
+        return *it;
+    return m_nullTown;
+}
+
 TownList::iterator TownManager::findTown(uint32 townId)
 {
     return std::find_if(m_towns.begin(), m_towns.end(),

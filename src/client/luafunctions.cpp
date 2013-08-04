@@ -70,16 +70,19 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
 
     g_lua.registerSingletonClass("g_houses");
-    g_lua.bindSingletonFunction("g_houses", "clear",        &HouseManager::clear,        &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "load",         &HouseManager::load,         &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "save",         &HouseManager::save,         &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "getHouse",     &HouseManager::getHouse,     &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "addHouse",     &HouseManager::addHouse,     &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "removeHouse",  &HouseManager::removeHouse,  &g_houses);
-    g_lua.bindSingletonFunction("g_houses", "getHouseList", &HouseManager::getHouseList, &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "clear",          &HouseManager::clear,          &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "load",           &HouseManager::load,           &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "save",           &HouseManager::save,           &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "getHouse",       &HouseManager::getHouse,       &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "getHouseByName", &HouseManager::getHouseByName, &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "addHouse",       &HouseManager::addHouse,       &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "removeHouse",    &HouseManager::removeHouse,    &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "getHouseList",   &HouseManager::getHouseList,   &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "filterHouses",   &HouseManager::filterHouses,   &g_houses);
 
     g_lua.registerSingletonClass("g_towns");
     g_lua.bindSingletonFunction("g_towns", "getTown",      &TownManager::getTown,      &g_towns);
+    g_lua.bindSingletonFunction("g_towns", "getTownByName",&TownManager::getTownByName,&g_towns);
     g_lua.bindSingletonFunction("g_towns", "addTown",      &TownManager::addTown,      &g_towns);
     g_lua.bindSingletonFunction("g_towns", "removeTown",   &TownManager::removeTown,   &g_towns);
     g_lua.bindSingletonFunction("g_towns", "getTowns",     &TownManager::getTowns,   &g_towns);
@@ -336,6 +339,7 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<House>();
     g_lua.bindClassStaticFunction<House>("create", []{ return HousePtr(new House); });
     g_lua.bindClassMemberFunction<House>("setId", &House::setId);
+    g_lua.bindClassMemberFunction<House>("getId", &House::getId);
     g_lua.bindClassMemberFunction<House>("setName", &House::setName);
     g_lua.bindClassMemberFunction<House>("getName", &House::getName);
     g_lua.bindClassMemberFunction<House>("setTownId", &House::setTownId);
@@ -344,6 +348,9 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<House>("getTile", &House::getTile);
     g_lua.bindClassMemberFunction<House>("setEntry", &House::setEntry);
     g_lua.bindClassMemberFunction<House>("getEntry", &House::getEntry);
+    g_lua.bindClassMemberFunction<House>("addDoor", &House::addDoor);
+    g_lua.bindClassMemberFunction<House>("removeDoor", &House::removeDoor);
+    g_lua.bindClassMemberFunction<House>("removeDoorById", &House::removeDoorById);
     g_lua.bindClassMemberFunction<House>("setSize", &House::setSize);
     g_lua.bindClassMemberFunction<House>("getSize", &House::getSize);
     g_lua.bindClassMemberFunction<House>("setRent", &House::setRent);

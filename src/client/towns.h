@@ -54,6 +54,7 @@ public:
     void addTown(const TownPtr& town);
     void removeTown(uint32 townId);
     const TownPtr& getTown(uint32 townId);
+    const TownPtr& getTownByName(std::string name);
 
     TownList getTowns() { return m_towns; }
     void clear() { m_towns.clear(); m_nullTown = nullptr; }

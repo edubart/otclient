@@ -63,8 +63,8 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
             g_painter->setColor(Color(231, 231, 231));
             m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }
-        // debug, show item id
-        //m_font->drawText(stdext::to_string(m_item->getId()), m_rect, Fw::AlignBottomRight);
+        if(m_showId)
+	    m_font->drawText(stdext::to_string(m_item->getServerId()), m_rect, Fw::AlignBottomRight);
     }
 
     drawBorder(m_rect);
@@ -98,5 +98,7 @@ void UIItem::onStyleApply(const std::string& styleName, const OTMLNodePtr& style
             setItemVisible(node->value<bool>());
         else if(node->tag() == "virtual")
             setVirtual(node->value<bool>());
+	else if(node->tag() == "show-id")
+	    m_showId = node->value<bool>();
     }
 }
