@@ -43,6 +43,15 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
 {
     bool animate = drawFlags & Otc::DrawAnimations;
 
+    // Added for MapEditor purposes.
+    // This check will and must evaluate to false if using
+    // normal client, unless some flag error.
+    // Save last color
+    Color lastColor = g_painter->getColor();
+    if((m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
+        g_painter->setColor(Color::blue);
+    else if((m_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
+        g_painter->setColor(Color::green);
     // first bottom items
     if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
         m_drawElevation = 0;
@@ -142,6 +151,9 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
         light.intensity = 1;
         lightView->addLightSource(dest + Point(16,16) * scaleFactor, scaleFactor, light);
     }
+
+    // Restore color
+    g_painter->setColor(lastColor);
 }
 
 void Tile::clean()
