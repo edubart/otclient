@@ -295,10 +295,10 @@ void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
             root->addString(spawnFile);
 
             // house file.
-            if(version > 1) {
+            //if(version > 1) {
                 root->addU8(OTBM_ATTR_HOUSE_FILE);
                 root->addString(houseFile);
-            }
+            //}
 
             int px = -1, py = -1, pz =-1;
             bool firstNode = true;
@@ -365,24 +365,29 @@ void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
 
             root->startNode(OTBM_TOWNS);
             for(const TownPtr& town : g_towns.getTowns()) {
+                root->startNode(OTBM_TOWN);
+
                 root->addU32(town->getId());
                 root->addString(town->getName());
 
                 Position townPos = town->getPos();
                 root->addPos(townPos.x, townPos.y, townPos.z);
+                root->endNode();
             }
             root->endNode();
 
-            if(version > 1) {
+            //if(version > 1) {
                 root->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
+                    root->startNode(OTBM_WAYPOINT);
                     root->addString(it.second);
 
                     Position pos = it.first;
                     root->addPos(pos.x, pos.y, pos.z);
+                    root->endNode();
                 }
                 root->endNode();
-            }
+            //}
         }
         root->endNode(); // OTBM_MAP_DATA
     }
