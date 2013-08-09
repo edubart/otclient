@@ -144,8 +144,8 @@ public:
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
-    void loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
-    void saveOtbm(const std::string& fileName, const UIWidgetPtr& pbar = 0);
+    void loadOtbm(const std::string& fileName);
+    void saveOtbm(const std::string& fileName);
 
     // otbm attributes (description, size, etc.)
     void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }

@@ -32,7 +32,7 @@
 #include <framework/xml/tinyxml.h>
 #include <framework/ui/uiwidget.h>
 
-void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
+void Map::loadOtbm(const std::string& fileName)
 {
     FileStreamPtr fin = g_resources.openFile(fileName);
     if(!fin)
@@ -94,7 +94,6 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
     for(const BinaryTreePtr& nodeMapData : node->getChildren()) {
         uint8 mapDataType = nodeMapData->getU8();
         if(mapDataType == OTBM_TILE_AREA) {
-
             Position basePos;
             basePos.x = nodeMapData->getU16();
             basePos.y = nodeMapData->getU16();
@@ -121,7 +120,7 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
 
                 while(nodeTile->canRead()) {
                     uint8 tileAttr = nodeTile->getU8();
-                    switch (tileAttr) {
+                    switch(tileAttr) {
                         case OTBM_ATTR_TILE_FLAGS: {
                             uint32 _flags = nodeTile->getU32();
                             if((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
@@ -180,7 +179,6 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
                     if(house)
                         tile->setHouseId(house->getId());
                     tile->setFlags((tileflags_t)flags);
-                    //if(!(++pbarvalue % 8192) && pbar);
                 }
             }
         } else if(mapDataType == OTBM_TOWNS) {
@@ -224,7 +222,7 @@ void Map::loadOtbm(const std::string& fileName, const UIWidgetPtr& pbar)
     fin->close();
 }
 
-void Map::saveOtbm(const std::string& fileName, const UIWidgetPtr&/* pbar*/)
+void Map::saveOtbm(const std::string& fileName)
 {
     FileStreamPtr fin = g_resources.createFile(fileName);
     if(!fin)
