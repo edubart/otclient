@@ -52,6 +52,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
         g_painter->setColor(Color::blue);
     else if((m_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
         g_painter->setColor(Color::green);
+
     // first bottom items
     if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
         m_drawElevation = 0;
@@ -351,9 +352,8 @@ int Tile::getGroundSpeed()
 uint8 Tile::getMinimapColorByte()
 {
     uint8 color = 255; // alpha
-    if(m_minimapColor != 0) {
+    if(m_minimapColor != 0)
         return m_minimapColor;
-    }
 
     for(const ThingPtr& thing : m_things) {
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
@@ -510,11 +510,9 @@ bool Tile::isWalkable(bool ignoreCreatures)
 
 bool Tile::isPathable()
 {
-    for(const ThingPtr& thing : m_things) {
+    for(const ThingPtr& thing : m_things)
         if(thing->isNotPathable())
             return false;
-    }
-
     return true;
 }
 
@@ -536,19 +534,17 @@ bool Tile::isSingleDimension()
 {
     if(!m_walkingCreatures.empty())
         return false;
-    for(const ThingPtr& thing : m_things) {
+    for(const ThingPtr& thing : m_things)
         if(thing->getHeight() != 1 || thing->getWidth() != 1)
             return false;
-    }
     return true;
 }
 
 bool Tile::isLookPossible()
 {
-    for(const ThingPtr& thing : m_things) {
+    for(const ThingPtr& thing : m_things)
         if(thing->blockProjectile())
             return false;
-    }
     return true;
 }
 
@@ -607,15 +603,11 @@ bool Tile::limitsFloorsView(bool isFreeView)
     // ground and walls limits the view
     ThingPtr firstThing = getThing(0);
 
-    if(isFreeView){
+    if(isFreeView) {
         if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || firstThing->isOnBottom()))
             return true;
-    }
-    else
-    {
-        if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || (firstThing->isOnBottom() && firstThing->blockProjectile())))
-            return true;
-    }
+    } else if(firstThing && !firstThing->isDontHide() && (firstThing->isGround() || (firstThing->isOnBottom() && firstThing->blockProjectile())))
+        return true;
     return false;
 }
 

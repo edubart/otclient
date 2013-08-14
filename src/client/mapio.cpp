@@ -43,7 +43,7 @@ void Map::loadOtbm(const std::string& fileName)
         stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
     if(fin->getU32())
-            stdext::throw_exception("Unknown file version detected");
+        stdext::throw_exception("Unknown file version detected");
 
     BinaryTreePtr root = fin->getBinaryTree();
     if(root->getU8())

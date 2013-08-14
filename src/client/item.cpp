@@ -189,8 +189,9 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
 
     if(isHouseDoor()) {
         out->addU8(ATTR_HOUSEDOORID);
-	out->addU8(getDoorId());
+        out->addU8(getDoorId());
     }
+
     uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
     uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if(aid) {
@@ -204,10 +205,8 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     }
 
     out->endNode();
-    if(!m_containerItems.empty()) {
-        for(auto c : m_containerItems)
-            c->serializeItem(out);
-    }
+    for(auto i : m_containerItems)
+        i->serializeItem(out);
 }
 
 int Item::getSubType()
