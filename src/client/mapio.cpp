@@ -293,10 +293,8 @@ void Map::saveOtbm(const std::string& fileName)
             root->addString(spawnFile);
 
             // house file.
-            //if(version > 1) {
-                root->addU8(OTBM_ATTR_HOUSE_FILE);
-                root->addString(houseFile);
-            //}
+            root->addU8(OTBM_ATTR_HOUSE_FILE);
+            root->addString(houseFile);
 
             int px = -1, py = -1, pz =-1;
             bool firstNode = true;
@@ -374,7 +372,7 @@ void Map::saveOtbm(const std::string& fileName)
             }
             root->endNode();
 
-            //if(version > 1) {
+            if(version > 1) {
                 root->startNode(OTBM_WAYPOINTS);
                 for(const auto& it : m_waypoints) {
                     root->startNode(OTBM_WAYPOINT);
@@ -385,7 +383,7 @@ void Map::saveOtbm(const std::string& fileName)
                     root->endNode();
                 }
                 root->endNode();
-            //}
+            }
         }
         root->endNode(); // OTBM_MAP_DATA
     }
