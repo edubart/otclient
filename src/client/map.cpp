@@ -305,6 +305,30 @@ void Map::cleanTile(const Position& pos)
     }
 }
 
+void Map::setShowZone(tileflags_t zone, bool show)
+{
+    if(show)
+        m_zoneFlags |= (uint32)zone;
+    else
+        m_zoneFlags &= ~(uint32)zone;
+}
+
+void Map::setShowZones(bool show)
+{
+    static constexpr uint32 defaultZoneFlags
+            = TILESTATE_HOUSE | TILESTATE_PROTECTIONZONE;
+    if(!show)
+        m_zoneFlags = 0;
+    else if(m_zoneFlags == 0)
+        m_zoneFlags = defaultZoneFlags;
+}
+
+void Map::setZoneColor(tileflags_t zone, const Color& color)
+{
+    if((m_zoneFlags & zone) == zone)
+        m_zoneColors[zone] = color;
+}
+
 void Map::addCreature(const CreaturePtr& creature)
 {
     m_knownCreatures[creature->getId()] = creature;

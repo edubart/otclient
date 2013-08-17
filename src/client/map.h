@@ -179,6 +179,18 @@ public:
     const TilePtr& getTile(const Position& pos);
     void cleanTile(const Position& pos);
 
+    // tile zone related
+    void setShowZone(tileflags_t zone, bool show);
+    void setShowZones(bool show);
+    void setZoneColor(tileflags_t flag, const Color& color);
+    void setZoneOpacity(float opacity) { m_zoneOpacity = opacity; }
+
+    float getZoneOpacity() { return m_zoneOpacity; }
+    Color getZoneColor(tileflags_t flag) { return m_zoneColors[flag]; }
+    tileflags_t getZoneFlags() { return (tileflags_t)m_zoneFlags; }
+    bool showZones() { return m_zoneFlags != 0; }
+    bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
+
     // known creature related
     void addCreature(const CreaturePtr& creature);
     CreaturePtr getCreatureById(uint32 id);
@@ -222,6 +234,10 @@ private:
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
     std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
+
+    uint32 m_zoneFlags;
+    std::array<Color, TILESTATE_LAST> m_zoneColors;
+    float m_zoneOpacity;
 
     Light m_light;
     Position m_centralPosition;

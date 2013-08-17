@@ -43,15 +43,11 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
 {
     bool animate = drawFlags & Otc::DrawAnimations;
 
-    // Added for MapEditor purposes.
-    // This check will and must evaluate to false if using
-    // normal client, unless some flag error.
-    // Save last color
-    Color lastColor = g_painter->getColor();
-    if((m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
-        g_painter->setColor(Color::blue);
-    else if((m_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
-        g_painter->setColor(Color::green);
+    /* Flags to be checked for.  */
+    static const tileflags_t flags[] = {
+        TILESTATE_HOUSE,
+        TILESTATE_PROTECTIONZONE,
+    };
 
     // first bottom items
     if(drawFlags & (Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawOnBottom)) {
@@ -60,10 +56,31 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
             if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
                 break;
 
+            Color prevColor   = g_painter->getColor();
+            float prevOpacity = g_painter->getOpacity();
+            bool restore = false;
+
+            if(g_map.showZones() && thing->isGround()) {
+                for(unsigned int i = 0; i < sizeof(flags) / sizeof(tileflags_t); ++i) {
+                    tileflags_t flag = flags[i];
+                    if(hasFlag(flag) && g_map.showZone(flag)) {
+                        g_painter->setOpacity(g_map.getZoneOpacity());
+                        g_painter->setColor(g_map.getZoneColor(flag));
+                        restore = true;
+                        break;
+                    }
+                }
+            }
+
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
                (thing->isOnBottom() && drawFlags & Otc::DrawOnBottom)) {
                 thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
+
+                if(restore) {
+                    g_painter->setOpacity(prevOpacity);
+                    g_painter->setColor(prevColor);
+                }
             }
 
             m_drawElevation += thing->getElevation();
@@ -131,20 +148,15 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     }
 
     // effects
-    if(drawFlags & Otc::DrawEffects) {
-        for(const EffectPtr& effect : m_effects){
+    if(drawFlags & Otc::DrawEffects)
+        for(const EffectPtr& effect : m_effects)
             effect->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
-        }
-    }
 
     // top items
-    if(drawFlags & Otc::DrawOnTop) {
-        for(const ThingPtr& thing : m_things) {
-            if(thing->isOnTop()){
-                thing->draw(dest, scaleFactor, animate, lightView);
-            }
-        }
-    }
+    if(drawFlags & Otc::DrawOnTop)
+        for(const ThingPtr& thing : m_things)
+            if(thing->isOnTop())
+                thing->draw(dest, scaleFactor, animate, lightView); 
 
     // draw translucent light (for tiles beneath holes)
     if(hasTranslucentLight() && lightView) {
@@ -152,9 +164,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
         light.intensity = 1;
         lightView->addLightSource(dest + Point(16,16) * scaleFactor, scaleFactor, light);
     }
-
-    // Restore color
-    g_painter->setColor(lastColor);
 }
 
 void Tile::clean()
@@ -652,3 +661,5 @@ void Tile::checkTranslucentLight()
     else
         tile->m_flags = tile->m_flags & ~TILESTATE_TRANSLUECENT_LIGHT;
 }
+
+/* vim: set ts=8 sw=4 tw=0 et :*/

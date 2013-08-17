@@ -66,6 +66,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "getItemType", &ThingTypeManager::getItemType, &g_things);
     g_lua.bindSingletonFunction("g_things", "getThingTypes", &ThingTypeManager::getThingTypes, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByClientId", &ThingTypeManager::findItemTypeByClientId, &g_things);
+    g_lua.bindSingletonFunction("g_things", "findItemTypeByName", &ThingTypeManager::findItemTypeByName, &g_things);
     g_lua.bindSingletonFunction("g_things", "findThingTypeByAttr", &ThingTypeManager::findThingTypeByAttr, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
 
@@ -122,6 +123,14 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "setSpawnFile", &Map::setSpawnFile, &g_map);
     g_lua.bindSingletonFunction("g_map", "createTile", &Map::createTile, &g_map);
     g_lua.bindSingletonFunction("g_map", "getSize", &Map::getSize, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setShowZone", &Map::setShowZone, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setShowZones", &Map::setShowZones, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setZoneColor", &Map::setZoneColor, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setZoneOpacity", &Map::setZoneOpacity, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getZoneOpacity", &Map::getZoneOpacity, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getZoneColor", &Map::getZoneColor, &g_map);
+    g_lua.bindSingletonFunction("g_map", "showZones", &Map::showZones, &g_map);
+    g_lua.bindSingletonFunction("g_map", "showZone", &Map::showZone, &g_map);
 
     g_lua.registerSingletonClass("g_minimap");
     g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
@@ -529,6 +538,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("isClickable", &Tile::isClickable);
     g_lua.bindClassMemberFunction<Tile>("isPathable", &Tile::isPathable);
     g_lua.bindClassMemberFunction<Tile>("overwriteMinimapColor", &Tile::overwriteMinimapColor);
+    g_lua.bindClassMemberFunction<Tile>("setFlag", &Tile::setFlag);
+    g_lua.bindClassMemberFunction<Tile>("setFlags", &Tile::setFlags);
+    g_lua.bindClassMemberFunction<Tile>("getFlags", &Tile::getFlags);
+    g_lua.bindClassMemberFunction<Tile>("hasFlag", &Tile::hasFlag);
 
     g_lua.registerClass<UIItem, UIWidget>();
     g_lua.bindClassStaticFunction<UIItem>("create", []{ return UIItemPtr(new UIItem); });

@@ -48,7 +48,9 @@ enum tileflags_t
     TILESTATE_TRASHHOLDER = 1 << 20,
     TILESTATE_BED = 1 << 21,
     TILESTATE_DEPOT = 1 << 22,
-    TILESTATE_TRANSLUECENT_LIGHT = 1 << 23
+    TILESTATE_TRANSLUECENT_LIGHT = 1 << 23,
+
+    TILESTATE_LAST = 1 << 24
 };
 
 class Tile : public LuaObject
@@ -112,6 +114,7 @@ public:
 
     void setFlag(tileflags_t flag) { m_flags |= (uint32)flag; }
     void setFlags(tileflags_t flags) { m_flags = (uint32)flags; }
+    bool hasFlag(tileflags_t flag) { return (m_flags & flag) == flag; }
     uint32 getFlags() { return m_flags; }
 
     void setHouseId(uint32 hid) { m_houseId = hid; }
