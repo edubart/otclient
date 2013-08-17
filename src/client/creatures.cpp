@@ -197,20 +197,12 @@ void CreatureManager::loadNpcs(const std::string& folder)
     if(!stdext::ends_with(tmp, "/"))
         tmp += "/";
 
-    // FIXME: filesystem is not supported anymore, rework the following code with g_resources
-    /*
-    boost::filesystem::path npcPath(boost::filesystem::current_path().generic_string() + tmp);
-    if(!boost::filesystem::exists(npcPath))
+    if(!g_resources.directoryExists(tmp))
         stdext::throw_exception(stdext::format("NPCs folder '%s' was not found.", folder));
 
-    for(boost::filesystem::directory_iterator it(npcPath), end; it != end; ++it) {
-        std::string f = it->path().filename().string();
-        if(boost::filesystem::is_directory(it->status()))
-            continue;
-
-        loadCreatureBuffer(g_resources.readFileContents(tmp + f));
-    }
-    */
+    const auto& fileList = g_resources.listDirectoryFiles(tmp);
+    for(const std::string& file : fileList)
+        loadCreatureBuffer(g_resources.readFileContents(tmp + file));
 }
 
 void CreatureManager::loadSpawns(const std::string& fileName)
