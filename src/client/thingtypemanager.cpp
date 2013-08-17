@@ -283,6 +283,14 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
         return m_nullItemType;
 }
 
+const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
+{
+    for(const ItemTypePtr& it : m_itemTypes)
+        if(it->getName() == name)
+            return it;
+    return m_nullItemType;
+}
+
 const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory category)
 {
     if(category >= ThingLastCategory || id >= m_thingTypes[category].size()) {
