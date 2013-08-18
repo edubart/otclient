@@ -56,10 +56,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
             if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom())
                 break;
 
-            Color prevColor   = g_painter->getColor();
-            float prevOpacity = g_painter->getOpacity();
             bool restore = false;
-
             if(g_map.showZones() && thing->isGround()) {
                 for(unsigned int i = 0; i < sizeof(flags) / sizeof(tileflags_t); ++i) {
                     tileflags_t flag = flags[i];
@@ -78,8 +75,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                 thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
 
                 if(restore) {
-                    g_painter->setOpacity(prevOpacity);
-                    g_painter->setColor(prevColor);
+                    g_painter->resetOpacity();
+                    g_painter->resetColor();
                 }
             }
 
@@ -143,7 +140,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
             CreaturePtr creature = thing->static_self_cast<Creature>();
             if(creature && (!creature->isWalking() || !animate))
                 creature->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
-
         }
     }
 
@@ -311,10 +307,9 @@ ThingPtr Tile::getTopThing()
 {
     if(isEmpty())
         return nullptr;
-    for(const ThingPtr& thing : m_things) {
+    for(const ThingPtr& thing : m_things)
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature())
             return thing;
-    }
     return m_things[m_things.size() - 1];
 }
 
@@ -657,9 +652,9 @@ void Tile::checkTranslucentLight()
     }
 
     if(translucent)
-        tile->m_flags = tile->m_flags | TILESTATE_TRANSLUECENT_LIGHT;
+        tile->m_flags |= TILESTATE_TRANSLUECENT_LIGHT;
     else
-        tile->m_flags = tile->m_flags & ~TILESTATE_TRANSLUECENT_LIGHT;
+        tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-/* vim: set ts=8 sw=4 tw=0 et :*/
+/* vim: set ts=4 sw=4 et :*/

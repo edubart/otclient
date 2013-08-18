@@ -95,6 +95,7 @@ public:
     uint32 getId() { return m_clientId; }
     uint16 getClientId() { return m_clientId; }
     uint16 getServerId() { return m_serverId; }
+    std::string getName();
     bool isValid();
 
     void unserializeItem(const BinaryTreePtr& in);

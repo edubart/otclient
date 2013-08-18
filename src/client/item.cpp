@@ -58,6 +58,11 @@ ItemPtr Item::createFromOtb(int id)
     return item;
 }
 
+std::string Item::getName()
+{
+    return g_things.findItemTypeByClientId(m_clientId)->getName();
+}
+
 void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
 {
     if(m_clientId == 0)
@@ -370,3 +375,4 @@ ThingType* Item::rawGetThingType()
 {
     return g_things.rawGetThingType(m_clientId, ThingCategoryItem);
 }
+/* vim: set ts=4 sw=4 et :*/
