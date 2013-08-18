@@ -157,14 +157,14 @@ function g_keyboard.unbindKeyDown(keyComboDesc, arg1, arg2)
   disconnect(widget.boundKeyDownCombos, keyComboDesc, callback)
 end
 
-function g_keyboard.unbindKeyUp(keyComboDesc, widget)
+function g_keyboard.unbindKeyUp(keyComboDesc, arg1, arg2)
   local callback, widget = getUnbindArgs(arg1, arg2)
   if widget.boundKeyUpCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)
   disconnect(widget.boundKeyUpCombos, keyComboDesc, callback)
 end
 
-function g_keyboard.unbindKeyPress(keyComboDesc, widget, callback)
+function g_keyboard.unbindKeyPress(keyComboDesc, arg1, arg2)
   local callback, widget = getUnbindArgs(arg1, arg2)
   if widget.boundKeyPressCombos == nil then return end
   local keyComboDesc = retranslateKeyComboDesc(keyComboDesc)

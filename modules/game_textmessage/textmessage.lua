@@ -28,6 +28,8 @@ MessageTypes = {
   [MessageModes.Blue] = MessageSettings.consoleBlue,
   [MessageModes.PrivateFrom] = MessageSettings.consoleBlue,
 
+  [MessageModes.GamemasterBroadcast] = MessageSettings.consoleRed,
+
   [MessageModes.DamageDealed] = MessageSettings.status,
   [MessageModes.DamageReceived] = MessageSettings.status,
   [MessageModes.Heal] = MessageSettings.status,
