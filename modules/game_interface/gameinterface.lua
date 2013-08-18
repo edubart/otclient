@@ -89,8 +89,8 @@ function bindKeys()
 end
 
 function bindWalkKey(key, dir)
-  g_keyboard.bindKeyDown(key, function() changeWalkDir(dir) end, gameRootPanel)
-  g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true) end, gameRootPanel)
+  g_keyboard.bindKeyDown(key, function() changeWalkDir(dir) end, gameRootPanel, true)
+  g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true) end, gameRootPanel, true)
   g_keyboard.bindKeyPress(key, function() smartWalk(dir) end, gameRootPanel)
 end
 
