@@ -76,10 +76,12 @@ void Spawn::load(TiXmlElement* node)
             dir = (Otc::Direction)dir_;
         cType->setDirection(dir);
 
-        centerPos.x += cNode->readType<int>("x");
-        centerPos.y += cNode->readType<int>("y");
-        centerPos.z  = cNode->readType<int>("z");
-        addCreature(centerPos, cType);
+        Position placePos;
+        placePos.x = centerPos.x + cNode->readType<int>("x");
+        placePos.y = centerPos.y + cNode->readType<int>("y");
+        placePos.z = cNode->readType<int>("z");
+
+        addCreature(placePos, cType);
     }
 }
 
@@ -357,8 +359,11 @@ SpawnPtr CreatureManager::getSpawn(const Position& centerPos)
 SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
 {
     auto iter = m_spawns.find(centerPos);
-    if(iter != m_spawns.end())
+    if(iter != m_spawns.end()) {
+        if(iter->second->getRadius() != radius)
+	    iter->second->setRadius(radius);
         return iter->second;
+    }
 
     SpawnPtr ret(new Spawn);
 
@@ -368,4 +373,6 @@ SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
     m_spawns.insert(std::make_pair(centerPos, ret));
     return ret;
 }
+
+/* vim: set ts=4 sw=4 et: */
 
