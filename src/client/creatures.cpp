@@ -119,11 +119,14 @@ void Spawn::addCreature(const Position& placePos, const CreatureTypePtr& cType)
 {
     const Position& centerPos = getCenterPos();
     int m_radius = getRadius();
-    if(!isInZone(placePos, centerPos, m_radius))
-        stdext::throw_exception(stdext::format("cannot place creature at %s %s %d (increment radius)",
+    if(!isInZone(placePos, centerPos, m_radius)) {
+        g_logger.warning(stdext::format("cannot place creature at %s (spawn's center position: %s, spawn radius: %d) (increment radius)",
                                                stdext::to_string(placePos), stdext::to_string(centerPos),
                                                m_radius
                                               ));
+        return;
+    }
+
     g_map.addThing(cType->cast(), placePos, 4);
     m_creatures.insert(std::make_pair(placePos, cType));
 }
@@ -255,8 +258,9 @@ void CreatureManager::saveSpawns(const std::string& fileName)
         root->LinkEndChild(elem);
     }
 
-    if(!doc.SaveFile(fileName))
-        stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", fileName, doc.ErrorDesc()));
+    std::string savePath = g_resources.getRealDir(fileName) + "/" + fileName;
+    if(!doc.SaveFile(savePath))
+        stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", savePath, doc.ErrorDesc()));
 }
 
 void CreatureManager::loadCreatureBuffer(const std::string& buffer)

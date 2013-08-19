@@ -173,8 +173,9 @@ void HouseManager::save(const std::string& fileName)
         root->LinkEndChild(elem);
     }
 
-    if(!doc.SaveFile(fileName))
-        stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", fileName, doc.ErrorDesc()));
+    std::string savePath = g_resources.getRealDir(fileName) + "/" + fileName;
+    if(!doc.SaveFile(savePath))
+        stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", savePath, doc.ErrorDesc()));
 }
 
 HouseList HouseManager::filterHouses(uint32 townId)
