@@ -109,8 +109,8 @@ void Spawn::save(TiXmlElement* node)
         const Position& placePos = pair.first;
         assert(placePos.isValid());
 
-        creatureNode->SetAttribute("x", placePos.x);
-        creatureNode->SetAttribute("y", placePos.y);
+        creatureNode->SetAttribute("x", c.x - placePos.x);
+        creatureNode->SetAttribute("y", c.y - placePos.y);
         creatureNode->SetAttribute("z", placePos.z);
 
         node->LinkEndChild(creatureNode);

@@ -53,7 +53,7 @@ public:
     int32 getRadius() { return m_attribs.get<int32>(SpawnAttrRadius); }
 
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
-    Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrPos); }
+    Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrCenter); }
 
     void addCreature(const Position& placePos, const CreatureTypePtr& cType);
     void removeCreature(const Position& pos);
