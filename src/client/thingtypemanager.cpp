@@ -170,7 +170,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
         m_otbLoaded = true;
     } catch(std::exception& e) {
-        g_logger.error(stdext::format("Failed to load '%s' (OTB file): %s", file, e.what());)
+        g_logger.error(stdext::format("Failed to load '%s' (OTB file): %s", file, e.what()));
     }
 }
 
