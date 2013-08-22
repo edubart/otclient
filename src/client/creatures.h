@@ -40,7 +40,6 @@ enum SpawnAttr : uint8
 {
     SpawnAttrRadius  = 0,
     SpawnAttrCenter  = 1,
-    SpawnAttrPos     = 2
 };
 
 class Spawn : public LuaObject

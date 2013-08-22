@@ -134,88 +134,95 @@ bool ThingTypeManager::loadOtml(std::string file)
 
 void ThingTypeManager::loadOtb(const std::string& file)
 {
-    FileStreamPtr fin = g_resources.openFile(file);
+    try {
+        FileStreamPtr fin = g_resources.openFile(file);
 
-    uint signature = fin->getU32();
-    if(signature != 0)
-        stdext::throw_exception("invalid otb file");
+        uint signature = fin->getU32();
+        if(signature != 0)
+            stdext::throw_exception("invalid otb file");
 
-    BinaryTreePtr root = fin->getBinaryTree();
+        BinaryTreePtr root = fin->getBinaryTree();
 
-    signature = root->getU32();
-    if(signature != 0)
-        stdext::throw_exception("invalid otb file");
+        signature = root->getU32();
+        if(signature != 0)
+            stdext::throw_exception("invalid otb file");
 
-    root->skip(4);
+        root->skip(4);
 
-    m_otbMajorVersion = root->getU32();
-    m_otbMinorVersion = root->getU32();
-    root->skip(4);
-    root->skip(128); // description
+        m_otbMajorVersion = root->getU32();
+        m_otbMinorVersion = root->getU32();
+        root->skip(4);
+        root->skip(128); // description
 
-    m_reverseItemTypes.clear();
-    m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
+        m_reverseItemTypes.clear();
+        m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
 
-    for(const BinaryTreePtr& node : root->getChildren()) {
-        ItemTypePtr itemType(new ItemType);
-        itemType->unserialize(node);
-        addItemType(itemType);
+        for(const BinaryTreePtr& node : root->getChildren()) {
+            ItemTypePtr itemType(new ItemType);
+            itemType->unserialize(node);
+            addItemType(itemType);
 
-        uint16 clientId = itemType->getClientId();
-        if(clientId >= m_reverseItemTypes.size())
-            m_reverseItemTypes.resize(clientId+1);
-        m_reverseItemTypes[clientId] = itemType;
+            uint16 clientId = itemType->getClientId();
+            if(clientId >= m_reverseItemTypes.size())
+                m_reverseItemTypes.resize(clientId+1);
+            m_reverseItemTypes[clientId] = itemType;
+        }
+
+        m_otbLoaded = true;
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to load '%s' (OTB file): %s", file, e.what());)
     }
-
-    m_otbLoaded = true;
 }
 
 void ThingTypeManager::loadXml(const std::string& file)
 {
-    if(!isOtbLoaded())
-        stdext::throw_exception("OTB must be loaded before XML");
+    try {
+        if(!isOtbLoaded())
+            stdext::throw_exception("OTB must be loaded before XML");
 
-    TiXmlDocument doc;
-    doc.Parse(g_resources.readFileContents(file).c_str());
-    if(doc.Error())
-        stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
+        TiXmlDocument doc;
+        doc.Parse(g_resources.readFileContents(file).c_str());
+        if(doc.Error())
+            stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
 
-    TiXmlElement* root = doc.FirstChildElement();
-    if(!root || root->ValueTStr() != "items")
-        stdext::throw_exception("invalid root tag name");
+        TiXmlElement* root = doc.FirstChildElement();
+        if(!root || root->ValueTStr() != "items")
+            stdext::throw_exception("invalid root tag name");
 
-    for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
-        if(element->ValueTStr() != "item")
-            continue;
+        for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+            if(element->ValueTStr() != "item")
+                continue;
 
-        uint16 id = element->readType<uint16>("id");
-        if(id != 0) {
-            std::vector<std::string> s_ids = stdext::split(element->Attribute("id"), ";");
-            for(const std::string& s : s_ids) {
-                std::vector<int32> ids = stdext::split<int32>(s, "-");
-                if(ids.size() > 1) {
-                    int32 i = ids[0];
-                    while(i <= ids[1])
-                        parseItemType(i++, element);
-                } else
-                    parseItemType(atoi(s.c_str()), element);
-            }
-        } else {
-            std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
-            std::vector<int32> end   = stdext::split<int32>(element->Attribute("toid"), ";");
-            if(begin[0] && begin.size() == end.size()) {
-                size_t size = begin.size();
-                for(size_t i = 0; i < size; ++i) {
-                    while(begin[i] <= end[i])
-                        parseItemType(begin[i]++, element);
+            uint16 id = element->readType<uint16>("id");
+            if(id != 0) {
+                std::vector<std::string> s_ids = stdext::split(element->Attribute("id"), ";");
+                for(const std::string& s : s_ids) {
+                    std::vector<int32> ids = stdext::split<int32>(s, "-");
+                    if(ids.size() > 1) {
+                        int32 i = ids[0];
+                        while(i <= ids[1])
+                            parseItemType(i++, element);
+                    } else
+                        parseItemType(atoi(s.c_str()), element);
+                }
+            } else {
+                std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
+                std::vector<int32> end   = stdext::split<int32>(element->Attribute("toid"), ";");
+                if(begin[0] && begin.size() == end.size()) {
+                    size_t size = begin.size();
+                    for(size_t i = 0; i < size; ++i)
+                        while(begin[i] <= end[i])
+                            parseItemType(begin[i]++, element);
                 }
             }
         }
-    }
 
-    doc.Clear();
-    m_xmlLoaded = true;
-    g_logger.debug("items.xml read successfully.");
+        doc.Clear();
+        m_xmlLoaded = true;
+        g_logger.debug("items.xml read successfully.");
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to load '%s' (XML file): %s", file, e.what()));
+    }
 }
 
 void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
@@ -303,7 +310,7 @@ const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory cate
 const ItemTypePtr& ThingTypeManager::getItemType(uint16 id)
 {
     if(id >= m_itemTypes.size() || m_itemTypes[id] == m_nullItemType) {
-        g_logger.error(stdext::format("invalid thing type server id %d", id));
+        g_logger.error(stdext::format("invalid thing type, server id: %d", id));
         return m_nullItemType;
     }
     return m_itemTypes[id];
@@ -334,3 +341,5 @@ const ThingTypeList& ThingTypeManager::getThingTypes(ThingCategory category)
         stdext::throw_exception(stdext::format("invalid thing type category %d", category));
     return m_thingTypes[category];
 }
+
+/* vim: set ts=4 sw=4 et: */
