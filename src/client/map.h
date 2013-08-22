@@ -151,6 +151,7 @@ public:
     void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
     void setSpawnFile(const std::string& file) { m_attribs.set(OTBM_ATTR_SPAWN_FILE, file); }
     void setDescription(const std::string& desc) { m_attribs.set(OTBM_ATTR_DESCRIPTION, desc); }
+    void clearDescriptions() { m_attribs.remove(OTBM_ATTR_DESCRIPTION); }
     void setWidth(uint16 w) { m_attribs.set(OTBM_ATTR_WIDTH, w); }
     void setHeight(uint16 h) { m_attribs.set(OTBM_ATTR_HEIGHT, h); }
 

@@ -260,7 +260,7 @@ void CreatureManager::saveSpawns(const std::string& fileName)
         root->LinkEndChild(elem);
     }
 
-    std::string savePath = g_resources.getRealDir(fileName) + "/" + fileName;
+    std::string savePath = g_resources.getRealPath(fileName);
     if(!doc.SaveFile(savePath))
         stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", savePath, doc.ErrorDesc()));
 }
