@@ -80,9 +80,9 @@ void House::load(const TiXmlElement *elem)
     m_isGuildHall = elem->readType<bool>("guildhall");
 
     Position entryPos;
-    entryPos.x = elem->readType<uint16>("entryx");
-    entryPos.y = elem->readType<uint16>("entryy");
-    entryPos.z = elem->readType<uint8>("entryz");
+    entryPos.x = elem->readType<int>("entryx");
+    entryPos.y = elem->readType<int>("entryy");
+    entryPos.z = elem->readType<int>("entryz");
     setEntry(entryPos);
 }
 
