@@ -169,6 +169,8 @@ public:
     ThingPtr getThing(const Position& pos, int stackPos);
     bool removeThing(const ThingPtr& thing);
     bool removeThingByPos(const Position& pos, int stackPos);
+    void colorizeThing(const ThingPtr& thing, const Color& color);
+    void removeThingColor(const ThingPtr& thing);
 
     StaticTextPtr getStaticText(const Position& pos);
 

@@ -216,6 +216,42 @@ bool Map::removeThingByPos(const Position& pos, int stackPos)
     return false;
 }
 
+void Map::colorizeThing(const ThingPtr& thing, const Color& color)
+{
+    if(!thing)
+        return;
+
+    if(thing->isItem())
+        thing->static_self_cast<Item>()->setColor(color);
+    else if(thing->isCreature()) {
+        const TilePtr& tile = thing->getTile();
+        assert(tile);
+
+        const ThingPtr& topThing = tile->getTopThing();
+        assert(topThing);
+
+        topThing->static_self_cast<Item>()->setColor(color);
+    }
+}
+
+void Map::removeThingColor(const ThingPtr& thing)
+{
+    if(!thing)
+        return;
+
+    if(thing->isItem())
+        thing->static_self_cast<Item>()->setColor(Color::alpha);
+    else if(thing->isCreature()) {
+        const TilePtr& tile = thing->getTile();
+        assert(tile);
+
+        const ThingPtr& topThing = tile->getTopThing();
+        assert(topThing);
+
+        topThing->static_self_cast<Item>()->setColor(Color::alpha);
+    }
+}
+
 StaticTextPtr Map::getStaticText(const Position& pos)
 {
     for(auto staticText : m_staticTexts) {
@@ -732,3 +768,5 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
     return ret;
 }
+
+/* vim: set ts=4 sw=4 et: */

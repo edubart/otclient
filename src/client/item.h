@@ -24,6 +24,7 @@
 #define ITEM_H
 
 #include <framework/global.h>
+
 #include "thing.h"
 #include "effect.h"
 #include "itemtype.h"
@@ -88,6 +89,7 @@ public:
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
     void setSubType(int subType) { m_countOrSubType = subType; }
+    void setColor(const Color& c) { m_color = c; }
 
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType();
@@ -138,6 +140,7 @@ private:
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
     ItemList m_containerItems;
+    Color m_color;
 };
 
 #pragma pack(pop)
