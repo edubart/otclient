@@ -223,47 +223,55 @@ void CreatureManager::loadSpawns(const std::string& fileName)
         return;
     }
 
-    TiXmlDocument doc;
-    doc.Parse(g_resources.readFileContents(fileName).c_str());
-    if(doc.Error())
-        stdext::throw_exception(stdext::format("cannot load spawns xml file '%s: '%s'", fileName, doc.ErrorDesc()));
+    try {
+        TiXmlDocument doc;
+        doc.Parse(g_resources.readFileContents(fileName).c_str());
+        if(doc.Error())
+            stdext::throw_exception(stdext::format("cannot load spawns xml file '%s: '%s'", fileName, doc.ErrorDesc()));
 
-    TiXmlElement* root = doc.FirstChildElement();
-    if(!root || root->ValueStr() != "spawns")
-        stdext::throw_exception("malformed spawns file");
+        TiXmlElement* root = doc.FirstChildElement();
+        if(!root || root->ValueStr() != "spawns")
+            stdext::throw_exception("malformed spawns file");
 
-    for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
-        if(node->ValueTStr() != "spawn")
-            stdext::throw_exception("invalid spawn node");
+        for(TiXmlElement* node = root->FirstChildElement(); node; node = node->NextSiblingElement()) {
+            if(node->ValueTStr() != "spawn")
+                stdext::throw_exception("invalid spawn node");
 
-        SpawnPtr spawn(new Spawn);
-        spawn->load(node);
-        m_spawns.insert(std::make_pair(spawn->getCenterPos(), spawn));
+            SpawnPtr spawn(new Spawn);
+            spawn->load(node);
+            m_spawns.insert(std::make_pair(spawn->getCenterPos(), spawn));
+        }
+        doc.Clear();
+        m_spawnLoaded = true;
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to load '%s': %s", fileName, e.what()));
     }
-    doc.Clear();
-    m_spawnLoaded = true;
 }
 
 void CreatureManager::saveSpawns(const std::string& fileName)
 {
-    TiXmlDocument doc;
-    doc.SetTabSize(2);
+    try {
+        TiXmlDocument doc;
+        doc.SetTabSize(2);
 
-    TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
-    doc.LinkEndChild(decl);
+        TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+        doc.LinkEndChild(decl);
 
-    TiXmlElement* root = new TiXmlElement("spawns");
-    doc.LinkEndChild(root);
+        TiXmlElement* root = new TiXmlElement("spawns");
+        doc.LinkEndChild(root);
 
-    for(auto pair : m_spawns) {
-        TiXmlElement* elem = new TiXmlElement("spawn");
-        pair.second->save(elem);
-        root->LinkEndChild(elem);
+        for(auto pair : m_spawns) {
+            TiXmlElement* elem = new TiXmlElement("spawn");
+            pair.second->save(elem);
+            root->LinkEndChild(elem);
+        }
+
+        std::string savePath = g_resources.getRealPath(fileName);
+        if(!doc.SaveFile(savePath))
+            stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", savePath, doc.ErrorDesc()));
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
     }
-
-    std::string savePath = g_resources.getRealPath(fileName);
-    if(!doc.SaveFile(savePath))
-        stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", savePath, doc.ErrorDesc()));
 }
 
 void CreatureManager::loadCreatureBuffer(const std::string& buffer)

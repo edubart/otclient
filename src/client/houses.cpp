@@ -134,48 +134,56 @@ HousePtr HouseManager::getHouseByName(std::string name)
 
 void HouseManager::load(const std::string& fileName)
 {
-    TiXmlDocument doc;
-    doc.Parse(g_resources.readFileContents(fileName).c_str());
-    if(doc.Error())
-        stdext::throw_exception(stdext::format("failed to load '%s': %s (House XML)", fileName, doc.ErrorDesc()));
+    try {
+        TiXmlDocument doc;
+        doc.Parse(g_resources.readFileContents(fileName).c_str());
+        if(doc.Error())
+            stdext::throw_exception(stdext::format("failed to load '%s': %s (House XML)", fileName, doc.ErrorDesc()));
 
-    TiXmlElement *root = doc.FirstChildElement();
-    if(!root || root->ValueTStr() != "houses")
-        stdext::throw_exception("invalid root tag name");
+        TiXmlElement *root = doc.FirstChildElement();
+        if(!root || root->ValueTStr() != "houses")
+            stdext::throw_exception("invalid root tag name");
 
-    for(TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
-        if(elem->ValueTStr() != "house")
-            stdext::throw_exception("invalid house tag.");
+        for(TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
+            if(elem->ValueTStr() != "house")
+                stdext::throw_exception("invalid house tag.");
 
-        uint32 houseId = elem->readType<uint32>("houseid");
-        HousePtr house = getHouse(houseId);
-        if(!house)
-            house = HousePtr(new House(houseId)), addHouse(house);
+            uint32 houseId = elem->readType<uint32>("houseid");
+            HousePtr house = getHouse(houseId);
+            if(!house)
+                house = HousePtr(new House(houseId)), addHouse(house);
 
-        house->load(elem);
+            house->load(elem);
+        }
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to load '%s': %s", fileName, e.what()));
     }
 }
 
 void HouseManager::save(const std::string& fileName)
 {
-    TiXmlDocument doc;
-    doc.SetTabSize(2);
+    try {
+        TiXmlDocument doc;
+        doc.SetTabSize(2);
 
-    TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
-    doc.LinkEndChild(decl);
+        TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+        doc.LinkEndChild(decl);
 
-    TiXmlElement* root = new TiXmlElement("houses");
-    doc.LinkEndChild(root);
+        TiXmlElement* root = new TiXmlElement("houses");
+        doc.LinkEndChild(root);
 
-    for(auto house : m_houses) {
-        TiXmlElement *elem = new TiXmlElement("house");
-        house->save(elem);
-        root->LinkEndChild(elem);
+        for(auto house : m_houses) {
+            TiXmlElement *elem = new TiXmlElement("house");
+            house->save(elem);
+            root->LinkEndChild(elem);
+        }
+
+        std::string savePath = g_resources.getRealPath(fileName);
+        if(!doc.SaveFile(savePath))
+            stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", savePath, doc.ErrorDesc()));
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
     }
-
-    std::string savePath = g_resources.getRealPath(fileName);
-    if(!doc.SaveFile(savePath))
-        stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", savePath, doc.ErrorDesc()));
 }
 
 HouseList HouseManager::filterHouses(uint32 townId)
@@ -193,3 +201,4 @@ HouseList::iterator HouseManager::findHouse(uint32 houseId)
                            [=] (const HousePtr& house) -> bool { return house->getId() == houseId; });
 }
 
+/* vim: set ts=4 sw=4 et: */
