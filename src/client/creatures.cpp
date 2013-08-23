@@ -50,9 +50,9 @@ void CreatureManager::terminate()
 void Spawn::load(TiXmlElement* node)
 {
     Position centerPos;
-    centerPos.x = node->readType<uint16>("centerx");
-    centerPos.y = node->readType<uint16>("centery");
-    centerPos.z = node->readType<uint8>("centerz");
+    centerPos.x = node->readType<int>("centerx");
+    centerPos.y = node->readType<int>("centery");
+    centerPos.z = node->readType<int>("centerz");
 
     setCenterPos(centerPos);
     setRadius(node->readType<int32>("radius"));
@@ -62,6 +62,7 @@ void Spawn::load(TiXmlElement* node)
         if(cNode->ValueStr() != "monster" && cNode->ValueStr() != "npc")
             stdext::throw_exception(stdext::format("invalid spawn-subnode %s", cNode->ValueStr()));
 
+        setNPC(cNode->ValueStr() == "npc");
         std::string cName = cNode->Attribute("name");
         stdext::tolower(cName);
         stdext::trim(cName);
@@ -97,7 +98,7 @@ void Spawn::save(TiXmlElement* node)
     TiXmlElement* creatureNode = nullptr;
 
     for(const auto& pair : m_creatures) {
-        if(!(creatureNode = new TiXmlElement("monster")))
+        if(!(creatureNode = new TiXmlElement(getNPC()? "npc" : "monster")))
             stdext::throw_exception("oom?");
 
         const CreatureTypePtr& creature = pair.second;

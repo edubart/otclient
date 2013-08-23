@@ -40,6 +40,7 @@ enum SpawnAttr : uint8
 {
     SpawnAttrRadius  = 0,
     SpawnAttrCenter  = 1,
+    SpawnAttrNPC  = 2,
 };
 
 class Spawn : public LuaObject
@@ -53,6 +54,9 @@ public:
 
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
     Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrCenter); }
+
+    void setNPC(bool n) { m_attribs.set(SpawnAttrNPC, n); }
+    bool getNPC() { return m_attribs.get<bool>(SpawnAttrNPC); }
 
     void addCreature(const Position& placePos, const CreatureTypePtr& cType);
     void removeCreature(const Position& pos);
