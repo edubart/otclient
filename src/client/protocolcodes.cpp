@@ -57,7 +57,7 @@ void buildMessageModesMap(int version) {
         messageModesMap[Otc::MessageFailure]                 = 20;
         messageModesMap[Otc::MessageBlue]                    = 21;
         messageModesMap[Otc::MessageRed]                     = 22;
-    } else if(version >= 854) {
+    } else if(version >= 850) {
         messageModesMap[Otc::MessageNone]                    = 0;
         messageModesMap[Otc::MessageSay]                     = 1;
         messageModesMap[Otc::MessageWhisper]                 = 2;
