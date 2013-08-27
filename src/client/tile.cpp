@@ -47,6 +47,9 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     static const tileflags_t flags[] = {
         TILESTATE_HOUSE,
         TILESTATE_PROTECTIONZONE,
+        TILESTATE_OPTIONALZONE,
+        TILESTATE_HARDCOREZONE,
+        TILESTATE_NOLOGOUT
     };
 
     // first bottom items
