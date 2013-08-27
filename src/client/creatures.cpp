@@ -62,7 +62,6 @@ void Spawn::load(TiXmlElement* node)
         if(cNode->ValueStr() != "monster" && cNode->ValueStr() != "npc")
             stdext::throw_exception(stdext::format("invalid spawn-subnode %s", cNode->ValueStr()));
 
-        setNPC(cNode->ValueStr() == "npc");
         std::string cName = cNode->Attribute("name");
         stdext::tolower(cName);
         stdext::trim(cName);
@@ -82,6 +81,7 @@ void Spawn::load(TiXmlElement* node)
         placePos.y = centerPos.y + cNode->readType<int>("y");
         placePos.z = cNode->readType<int>("z");
 
+        cType->setRace(cNode->ValueStr() == "npc" ? CreatureRaceNpc : CreatureRaceMonster);
         addCreature(placePos, cType);
     }
 }
@@ -98,10 +98,10 @@ void Spawn::save(TiXmlElement* node)
     TiXmlElement* creatureNode = nullptr;
 
     for(const auto& pair : m_creatures) {
-        if(!(creatureNode = new TiXmlElement(getNPC()? "npc" : "monster")))
+        const CreatureTypePtr& creature = pair.second;
+        if(!(creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster")))
             stdext::throw_exception("oom?");
 
-        const CreatureTypePtr& creature = pair.second;
 
         creatureNode->SetAttribute("name", creature->getName());
         creatureNode->SetAttribute("spawntime", creature->getSpawnTime());

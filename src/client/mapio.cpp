@@ -74,7 +74,7 @@ void Map::loadOtbm(const std::string& fileName)
         if(node->getU8() != OTBM_MAP_DATA)
             stdext::throw_exception("Could not read root data node");
 
-        while (node->canRead()) {
+        while(node->canRead()) {
             uint8 attribute = node->getU8();
             std::string tmp = node->getString();
             switch (attribute) {
@@ -102,7 +102,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                 for(const BinaryTreePtr &nodeTile : nodeMapData->getChildren()) {
                     uint8 type = nodeTile->getU8();
-                    if(type != OTBM_TILE && type != OTBM_HOUSETILE)
+                    if(unlikely(type != OTBM_TILE && type != OTBM_HOUSETILE))
                         stdext::throw_exception(stdext::format("invalid node tile type %d", (int)type));
 
                     HousePtr house = nullptr;
@@ -151,7 +151,7 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     for(const BinaryTreePtr& nodeItem : nodeTile->getChildren()) {
-                        if(nodeItem->getU8() != OTBM_ITEM)
+                        if(unlikely(nodeItem->getU8() != OTBM_ITEM))
                             stdext::throw_exception("invalid item node");
 
                         ItemPtr item = Item::createFromOtb(nodeItem->getU16());
@@ -198,7 +198,7 @@ void Map::loadOtbm(const std::string& fileName)
 
                     if(!(town = g_towns.getTown(townId)))
                         g_towns.addTown(TownPtr(new Town(townId, townName, townCoords)));
-            }
+                }
             } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
                 for(const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
                     if(nodeWaypoint->getU8() != OTBM_WAYPOINT)
@@ -306,11 +306,11 @@ void Map::saveOtbm(const std::string& fileName)
                     for(const auto& it : m_tileBlocks[z]) {
                         const TileBlock& block = it.second;
                         for(const TilePtr& tile : block.getTiles()) {
-                            if(!tile || tile->isEmpty())
+                            if(unlikely(!tile || tile->isEmpty()))
                                 continue;
 
                             const Position& pos = tile->getPosition();
-                            if(!pos.isValid())
+                            if(unlikely(!pos.isValid()))
                                 continue;
 
                             if(pos.x < px || pos.x >= px + 256

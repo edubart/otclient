@@ -33,8 +33,23 @@
     #error "Compiler not supported."
 #endif
 
+/// Branch Prediction.  See the GCC Manual for more information.
+/// NB: These are used when speed is need most; do not use in normal
+/// code, they may slow down stuff.
+#if defined(__clang__) || defined(__GNUC__)
+#define likely(x) 	__builtin_expect(!!(x), 1)
+#define unlikely(x) 	__builtin_expect(!!(x), 0)
+#else
+#define likely(x) 	(x)
+#define unlikely(x) 	(x)
+#endif
+
 #if !defined(__GXX_EXPERIMENTAL_CXX0X__)
-#error "Sorry, you must enable C++0x to compile."
+#error "C++0x is required to compile this application.  Try updating your compiler."
+#endif
+
+#ifdef _MSC_VER
+#warning "MSVC lacks some C++11 features used in this application; compilation is most likely to fail."
 #endif
 
 #endif

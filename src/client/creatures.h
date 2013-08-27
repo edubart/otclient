@@ -33,14 +33,20 @@ enum CreatureAttr : uint8
     CreatureAttrName      = 1,
     CreatureAttrOutfit    = 2,
     CreatureAttrSpawnTime = 3,
-    CreatureAttrDir       = 4
+    CreatureAttrDir       = 4,
+    CreatureAttrRace      = 5
+};
+
+enum CreatureRace : uint8
+{
+    CreatureRaceNpc     = 0,
+    CreatureRaceMonster = 1
 };
 
 enum SpawnAttr : uint8
 {
     SpawnAttrRadius  = 0,
     SpawnAttrCenter  = 1,
-    SpawnAttrNPC  = 2,
 };
 
 class Spawn : public LuaObject
@@ -54,9 +60,6 @@ public:
 
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
     Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrCenter); }
-
-    void setNPC(bool n) { m_attribs.set(SpawnAttrNPC, n); }
-    bool getNPC() { return m_attribs.get<bool>(SpawnAttrNPC); }
 
     void addCreature(const Position& placePos, const CreatureTypePtr& cType);
     void removeCreature(const Position& pos);
@@ -89,6 +92,9 @@ public:
 
     void setDirection(Otc::Direction dir) { m_attribs.set(CreatureAttrDir, dir); }
     Otc::Direction getDirection() { return m_attribs.get<Otc::Direction>(CreatureAttrDir); }
+
+    void setRace(CreatureRace race) { m_attribs.set(CreatureAttrRace, race); }
+    CreatureRace getRace() { return m_attribs.get<CreatureRace>(CreatureAttrRace); }
 
     CreaturePtr cast();
 

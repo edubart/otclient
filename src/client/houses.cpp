@@ -191,7 +191,7 @@ HouseList HouseManager::filterHouses(uint32 townId)
     HouseList ret;
     for(const HousePtr& house : m_houses)
         if(house->getTownId() == townId)
-	    ret.push_back(house);
+            ret.push_back(house);
     return ret;
 }
 

@@ -390,7 +390,7 @@ void Map::removeCreatureById(uint32 id)
 
 void Map::removeUnawareThings()
 {
-    // remove creatures from tiles that we are not aware anymore
+    // remove creatures from tiles that we are not aware of anymore
     for(const auto& pair : m_knownCreatures) {
         const CreaturePtr& creature = pair.second;
         if(!isAwareOfPosition(creature->getPosition()))

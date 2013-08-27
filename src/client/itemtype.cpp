@@ -53,7 +53,6 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                 if(serverId > 20000 && serverId < 20100) {
                     serverId -= 20000;
                 } else if(lastId > 99 && lastId != serverId - 1) {
-
                     while(lastId != serverId - 1) {
                         ItemTypePtr tmp(new ItemType);
                         tmp->setServerId(lastId++);
@@ -64,14 +63,12 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                 lastId = serverId;
                 break;
             }
-            case ItemTypeAttrClientId: {
+            case ItemTypeAttrClientId:
                 setClientId(node->getU16());
                 break;
-            }
-            case ItemTypeAttrName: {
+            case ItemTypeAttrName:
                 setName(node->getString(len));
                 break;
-            }
             default:
                 node->skip(len); // skip attribute
                 break;

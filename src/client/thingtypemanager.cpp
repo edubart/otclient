@@ -156,6 +156,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
 
         m_reverseItemTypes.clear();
         m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
+        m_reverseItemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
 
         for(const BinaryTreePtr& node : root->getChildren()) {
             ItemTypePtr itemType(new ItemType);
@@ -163,8 +164,8 @@ void ThingTypeManager::loadOtb(const std::string& file)
             addItemType(itemType);
 
             uint16 clientId = itemType->getClientId();
-            if(clientId >= m_reverseItemTypes.size())
-                m_reverseItemTypes.resize(clientId+1);
+            if(unlikely(clientId >= m_reverseItemTypes.size()))
+                m_reverseItemTypes.resize(clientId + 1);
             m_reverseItemTypes[clientId] = itemType;
         }
 
@@ -189,8 +190,8 @@ void ThingTypeManager::loadXml(const std::string& file)
         if(!root || root->ValueTStr() != "items")
             stdext::throw_exception("invalid root tag name");
 
-        for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
-            if(element->ValueTStr() != "item")
+        for(TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+            if(unlikely(element->ValueTStr() != "item"))
                 continue;
 
             uint16 id = element->readType<uint16>("id");
@@ -274,7 +275,7 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
     uint16 id = itemType->getServerId();
-    if(id >= m_itemTypes.size())
+    if(unlikely(id >= m_itemTypes.size()))
         m_itemTypes.resize(id + 1, m_nullItemType);
     m_itemTypes[id] = itemType;
 }
