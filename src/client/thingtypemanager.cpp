@@ -299,6 +299,24 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
     return m_nullItemType;
 }
 
+ItemTypeList ThingTypeManager::findItemTypesByName(std::string name)
+{
+    ItemTypeList ret;
+    for(const ItemTypePtr& it : m_itemTypes)
+        if(it->getName() == name)
+            ret.push_back(it);
+    return ret;
+}
+
+ItemTypeList ThingTypeManager::findItemTypesByString(std::string name)
+{
+    ItemTypeList ret;
+    for(const ItemTypePtr& it : m_itemTypes)
+        if(it->getName().find(name) != std::string::npos)
+            ret.push_back(it);
+    return ret;
+}
+
 const ThingTypePtr& ThingTypeManager::getThingType(uint16 id, ThingCategory category)
 {
     if(category >= ThingLastCategory || id >= m_thingTypes[category].size()) {

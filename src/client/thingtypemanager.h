@@ -44,6 +44,8 @@ public:
     void addItemType(const ItemTypePtr& itemType);
     const ItemTypePtr& findItemTypeByClientId(uint16 id);
     const ItemTypePtr& findItemTypeByName(std::string name);
+    ItemTypeList findItemTypesByName(std::string name);
+    ItemTypeList findItemTypesByString(std::string str);
 
     const ThingTypePtr& getNullThingType() { return m_nullThingType; }
     const ItemTypePtr& getNullItemType() { return m_nullItemType; }
