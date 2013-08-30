@@ -194,6 +194,9 @@ public:
     bool showZones() { return m_zoneFlags != 0; }
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
 
+    void beginGhostMode(float opacity);
+    void endGhostMode();
+
     // known creature related
     void addCreature(const CreaturePtr& creature);
     CreaturePtr getCreatureById(uint32 id);

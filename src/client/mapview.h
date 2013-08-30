@@ -108,6 +108,8 @@ public:
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
+    void move(int x, int y);
+
     void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
     bool isAnimating() { return m_animated; }
 
@@ -139,6 +141,7 @@ private:
     Size m_optimizedSize;
     Point m_virtualCenterOffset;
     Point m_visibleCenterOffset;
+    Point m_moveOffset;
     Position m_customCameraPosition;
     stdext::boolean<true> m_mustUpdateVisibleTilesCache;
     stdext::boolean<true> m_mustDrawVisibleTilesCache;

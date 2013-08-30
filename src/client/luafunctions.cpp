@@ -138,6 +138,8 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getZoneColor", &Map::getZoneColor, &g_map);
     g_lua.bindSingletonFunction("g_map", "showZones", &Map::showZones, &g_map);
     g_lua.bindSingletonFunction("g_map", "showZone", &Map::showZone, &g_map);
+    g_lua.bindSingletonFunction("g_map", "beginGhostMode", &Map::beginGhostMode, &g_map);
+    g_lua.bindSingletonFunction("g_map", "endGhostMode", &Map::endGhostMode, &g_map);
 
     g_lua.registerSingletonClass("g_minimap");
     g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
@@ -578,6 +580,7 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<UIMap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMap>("create", []{ return UIMapPtr(new UIMap); });
     g_lua.bindClassMemberFunction<UIMap>("drawSelf", &UIMap::drawSelf);
+    g_lua.bindClassMemberFunction<UIMap>("movePixels", &UIMap::movePixels);
     g_lua.bindClassMemberFunction<UIMap>("setZoom", &UIMap::setZoom);
     g_lua.bindClassMemberFunction<UIMap>("zoomIn", &UIMap::zoomIn);
     g_lua.bindClassMemberFunction<UIMap>("zoomOut", &UIMap::zoomOut);

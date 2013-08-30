@@ -70,6 +70,11 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
     }
 }
 
+void UIMap::movePixels(int x, int y)
+{
+    m_mapView->move(x, y);
+}
+
 bool UIMap::setZoom(int zoom)
 {
     m_zoom = std::min(std::max(zoom, m_maxZoomIn), m_maxZoomOut);
@@ -215,3 +220,5 @@ void UIMap::updateMapSize()
     if(!m_keepAspectRatio)
         updateVisibleDimension();
 }
+
+/* vim: set ts=4 sw=4 et: */

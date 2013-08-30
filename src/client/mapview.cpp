@@ -564,12 +564,20 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     return position;
 }
 
+void MapView::move(int x, int y)
+{
+    m_moveOffset.x = x;
+    m_moveOffset.y = y;
+}
+
 Rect MapView::calcFramebufferSource(const Size& destSize)
 {
     float scaleFactor = m_tileSize/(float)Otc::TILE_PIXELS;
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1,1)).toPoint()/2) * m_tileSize;
     if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
+    else if(!m_moveOffset.isNull())
+        drawOffset += m_moveOffset * scaleFactor;
 
     Size srcSize = destSize;
     Size srcVisible = m_visibleDimension * m_tileSize;
@@ -703,3 +711,5 @@ void MapView::setDrawLights(bool enable)
         m_lightView = nullptr;
     m_drawLights = enable;
 }
+
+/* vim: set ts=4 sw=4 et: */

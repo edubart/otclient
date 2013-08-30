@@ -365,6 +365,16 @@ void Map::setZoneColor(tileflags_t zone, const Color& color)
         m_zoneColors[zone] = color;
 }
 
+void Map::beginGhostMode(float opacity)
+{
+    g_painter->setOpacity(opacity);
+}
+
+void Map::endGhostMode()
+{
+    g_painter->resetOpacity();
+}
+
 void Map::addCreature(const CreaturePtr& creature)
 {
     m_knownCreatures[creature->getId()] = creature;

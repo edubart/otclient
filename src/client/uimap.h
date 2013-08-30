@@ -37,6 +37,7 @@ public:
 
     void drawSelf(Fw::DrawPane drawPane);
 
+    void movePixels(int x, int y);
     bool setZoom(int zoom);
     bool zoomIn();
     bool zoomOut();
