@@ -167,6 +167,7 @@ cp $mingwbin/libEGL.dll .
 cp $mingwbin/libGLESv2.dll .
 cp $mingwbin/d3dcompiler_43.dll .
 cp $mingwbin/d3dx9_43.dll .
+cp $mingwbin/wrap_oal.dll .
 cp $workdir/otclient/build.win32/otclient.exe .
 cp $workdir/otclient/build.win32/otclient.map .
 cp $workdir/otclient/build.win32dx9/otclient.exe otclient_dx9.exe
