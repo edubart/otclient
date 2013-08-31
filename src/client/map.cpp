@@ -375,6 +375,28 @@ void Map::endGhostMode()
     g_painter->resetOpacity();
 }
 
+ItemVector Map::findItemsById(uint16 clientId, uint32 max)
+{
+    ItemVector ret;
+    uint32 count = 0;
+    for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+        for(const auto& pair : m_tileBlocks[z]) {
+            const TileBlock& block = pair.second;
+            for(const TilePtr& tile : block.getTiles()) {
+                for(const ItemPtr& item : tile->getItems()) {
+                    if(item->getId() == clientId) {
+                        ret.push_back(item);
+                        if(++count >= max)
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
 void Map::addCreature(const CreaturePtr& creature)
 {
     m_knownCreatures[creature->getId()] = creature;
