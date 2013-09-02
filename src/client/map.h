@@ -197,7 +197,7 @@ public:
     void beginGhostMode(float opacity);
     void endGhostMode();
 
-    ItemVector findItemsById(uint16 clientId, uint32 max);
+    std::map<Position, ItemPtr> findItemsById(uint16 clientId, uint32 max);
 
     // known creature related
     void addCreature(const CreaturePtr& creature);

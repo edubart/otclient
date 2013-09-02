@@ -189,6 +189,8 @@ public:
     bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const {
         return (pos.x >= x-minXRange && pos.x <= x+maxXRange && pos.y >= y-minYRange && pos.y <= y+maxYRange && pos.z == z);
     }
+    // operator less than for std::map
+    bool operator<(const Position& other) const { return x < other.x && y < other.y && z < other.z; }
 
     bool up(int n = 1) {
         int nz = z-n;

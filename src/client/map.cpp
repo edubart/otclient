@@ -375,17 +375,19 @@ void Map::endGhostMode()
     g_painter->resetOpacity();
 }
 
-ItemVector Map::findItemsById(uint16 clientId, uint32 max)
+std::map<Position, ItemPtr> Map::findItemsById(uint16 clientId, uint32 max)
 {
-    ItemVector ret;
+    std::map<Position, ItemPtr> ret;
     uint32 count = 0;
     for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
         for(const auto& pair : m_tileBlocks[z]) {
             const TileBlock& block = pair.second;
             for(const TilePtr& tile : block.getTiles()) {
+                if(unlikely(!tile || tile->isEmpty()))
+                    continue;
                 for(const ItemPtr& item : tile->getItems()) {
                     if(item->getId() == clientId) {
-                        ret.push_back(item);
+                        ret.insert(std::make_pair(tile->getPosition(), item));
                         if(++count >= max)
                             break;
                     }
