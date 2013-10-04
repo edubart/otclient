@@ -184,6 +184,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "useWith", &Game::useWith, &g_game);
     g_lua.bindSingletonFunction("g_game", "useInventoryItem", &Game::useInventoryItem, &g_game);
     g_lua.bindSingletonFunction("g_game", "useInventoryItemWith", &Game::useInventoryItemWith, &g_game);
+    g_lua.bindSingletonFunction("g_game", "findItemInContainers", &Game::findItemInContainers, &g_game);
     g_lua.bindSingletonFunction("g_game", "open", &Game::open, &g_game);
     g_lua.bindSingletonFunction("g_game", "openParent", &Game::openParent, &g_game);
     g_lua.bindSingletonFunction("g_game", "close", &Game::close, &g_game);

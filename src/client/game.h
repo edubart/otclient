@@ -158,6 +158,7 @@ public:
     void useWith(const ItemPtr& fromThing, const ThingPtr& toThing);
     void useInventoryItem(int itemId);
     void useInventoryItemWith(int itemId, const ThingPtr& toThing);
+    ItemPtr findItemInContainers(uint itemId, int subType);
 
     // container related
     int open(const ItemPtr& item, const ContainerPtr& previousContainer);

@@ -1038,7 +1038,9 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 
     double magicLevelPercent = msg->getU8();
     double soul = msg->getU8();
-    double stamina = msg->getU16();
+    double stamina = 0;
+    if(g_game.getFeature(Otc::GamePlayerStamina))
+        stamina = msg->getU16();
 
     double baseSpeed = 0;
     if(g_game.getFeature(Otc::GameSkillsBase))
@@ -1092,7 +1094,12 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
 {
-    int states = msg->getU16();
+    int states;
+    if(g_game.getFeature(Otc::GamePlayerStateU16))
+        states = msg->getU16();
+    else
+        states = msg->getU8();
+
     m_localPlayer->setStates(states);
 }
 
@@ -1130,10 +1137,15 @@ void ProtocolGame::parseMultiUseCooldown(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTalk(const InputMessagePtr& msg)
 {
-    msg->getU32(); // channel statement guid
+    if(g_game.getFeature(Otc::GameMessageStatments))
+        msg->getU32(); // channel statement guid
 
     std::string name = g_game.formatCreatureName(msg->getString());
-    int level = msg->getU16();
+
+    int level = 0;
+    if(g_game.getFeature(Otc::GameMessageLevel))
+        level = msg->getU16();
+
     Otc::MessageMode mode = Proto::translateMessageModeFromServer(msg->getU8());
     int channelId = 0;
     Position pos;
@@ -1380,15 +1392,23 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr& msg)
 void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 {
     Outfit currentOutfit = getOutfit(msg);
-
     std::vector<std::tuple<int, std::string, int> > outfitList;
-    int outfitCount = msg->getU8();
-    for(int i = 0; i < outfitCount; i++) {
-        int outfitId = msg->getU16();
-        std::string outfitName = msg->getString();
-        int outfitAddons = msg->getU8();
 
-        outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
+    if(g_game.getProtocolVersion() < 780) {
+        int outfitStart = msg->getU8();
+        int outfitEnd   = msg->getU8();
+        for(int i = outfitStart; i <= outfitEnd; i++)
+            outfitList.push_back(std::make_tuple(i, "", 0));
+    }
+    else {
+        int outfitCount = msg->getU8();
+        for(int i = 0; i < outfitCount; i++) {
+            int outfitId = msg->getU16();
+            std::string outfitName = msg->getString();
+            int outfitAddons = msg->getU8();
+
+            outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
+        }
     }
 
     std::vector<std::tuple<int, std::string> > mountList;
@@ -1665,14 +1685,21 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
 {
     Outfit outfit;
 
-    int lookType = msg->getU16();
+    int lookType;
+    if(g_game.getFeature(Otc::GameLooktypeU16))
+        lookType = msg->getU16();
+    else
+        lookType = msg->getU8();
+
     if(lookType != 0) {
         outfit.setCategory(ThingCategoryCreature);
         int head = msg->getU8();
         int body = msg->getU8();
         int legs = msg->getU8();
         int feet = msg->getU8();
-        int addons = msg->getU8();
+        int addons = 0;
+        if(g_game.getFeature(Otc::GamePlayerAddons))
+            addons = msg->getU8();
 
         if(!g_things.isValidDatId(lookType, ThingCategoryCreature)) {
             g_logger.traceError(stdext::format("invalid outfit looktype %d", lookType));

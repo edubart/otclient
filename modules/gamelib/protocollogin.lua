@@ -27,9 +27,13 @@ end
 
 function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
-
-  msg:addU8(ClientOpcodes.ClientEnterAccount)
-  msg:addU16(g_game.getOs())
+  if g_game.getProtocolVersion() == 760 then
+    msg:addU16(ClientOpcodes.ClientEnterAccount760)
+  else
+    msg:addU8(ClientOpcodes.ClientEnterAccount)
+    msg:addU16(g_game.getOs())
+  end
+  
   msg:addU16(g_game.getProtocolVersion())
 
   if g_game.getProtocolVersion() >= 971 then
@@ -49,14 +53,16 @@ function ProtocolLogin:sendLoginPacket()
    -- first RSA byte must be 0
   msg:addU8(0)
 
-  -- xtea key
-  self:generateXteaKey()
-  local xteaKey = self:getXteaKey()
-  msg:addU32(xteaKey[1])
-  msg:addU32(xteaKey[2])
-  msg:addU32(xteaKey[3])
-  msg:addU32(xteaKey[4])
-
+  if g_game.getProtocolVersion() >= 800 then
+    -- xtea key
+    self:generateXteaKey()
+    local xteaKey = self:getXteaKey()
+    msg:addU32(xteaKey[1])
+    msg:addU32(xteaKey[2])
+    msg:addU32(xteaKey[3])
+    msg:addU32(xteaKey[4])
+  end
+  
   if g_game.getFeature(GameAccountNames) then
     msg:addString(self.accountName)
   else
@@ -73,14 +79,18 @@ function ProtocolLogin:sendLoginPacket()
   local paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
   assert(paddingBytes >= 0)
   msg:addPaddingBytes(paddingBytes, 0)
-  msg:encryptRsa()
-
+  if g_game.getProtocolVersion() >= 800 then
+    msg:encryptRsa()
+  end
+  
   if g_game.getFeature(GameProtocolChecksum) then
     self:enableChecksum()
   end
 
   self:send(msg)
-  self:enableXteaEncryption()
+  if g_game.getProtocolVersion() >= 800 then
+    self:enableXteaEncryption()
+  end
   self:recv()
 end
 

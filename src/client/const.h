@@ -355,6 +355,15 @@ namespace Otc
         GameDoubleShopSellAmount = 39,
         GameContainerPagination = 40,
         GameThingMarks = 41,
+
+        GameLooktypeU16 = 42,
+        GamePlayerStamina = 43,
+        GamePlayerAddons = 44,
+        GameMessageStatments = 45,
+        GameMessageLevel = 46,
+        GameNewFluids = 47,
+        GamePlayerStateU16 = 48,
+
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };

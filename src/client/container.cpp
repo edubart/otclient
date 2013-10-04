@@ -59,6 +59,14 @@ void Container::onAddItem(const ItemPtr& item)
     callLuaField("onAddItem", 0, item);
 }
 
+ItemPtr Container::findItemById(uint itemId, int subType)
+{
+    for(const ItemPtr item : m_items)
+        if(item->getId() == itemId && (subType == -1 || item->getSubType() == subType))
+            return item;
+    return nullptr;
+}
+
 void Container::onAddItems(const std::vector<ItemPtr>& items)
 {
     for(const ItemPtr& item : items)

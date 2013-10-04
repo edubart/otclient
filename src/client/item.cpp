@@ -288,65 +288,68 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         }
     } else if(isSplash() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
-        switch(m_countOrSubType) {
-            case Otc::FluidNone:
-                color = Otc::FluidTransparent;
-                break;
-            case Otc::FluidWater:
-                color = Otc::FluidBlue;
-                break;
-            case Otc::FluidMana:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidBeer:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidOil:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidBlood:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidSlime:
-                color = Otc::FluidGreen;
-                break;
-            case Otc::FluidMud:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidLemonade:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidWine:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidHealth:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidUrine:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidRum:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidFruidJuice:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidCoconutMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidTea:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidMead:
-                color = Otc::FluidBrown;
-                break;
-            default:
-                color = Otc::FluidTransparent;
-                break;
-        }
+        if(g_game.getFeature(Otc::GameNewFluids)) {
+            switch(m_countOrSubType) {
+                case Otc::FluidNone:
+                    color = Otc::FluidTransparent;
+                    break;
+                case Otc::FluidWater:
+                    color = Otc::FluidBlue;
+                    break;
+                case Otc::FluidMana:
+                    color = Otc::FluidPurple;
+                    break;
+                case Otc::FluidBeer:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidOil:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidBlood:
+                    color = Otc::FluidRed;
+                    break;
+                case Otc::FluidSlime:
+                    color = Otc::FluidGreen;
+                    break;
+                case Otc::FluidMud:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidLemonade:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidMilk:
+                    color = Otc::FluidWhite;
+                    break;
+                case Otc::FluidWine:
+                    color = Otc::FluidPurple;
+                    break;
+                case Otc::FluidHealth:
+                    color = Otc::FluidRed;
+                    break;
+                case Otc::FluidUrine:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidRum:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidFruidJuice:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidCoconutMilk:
+                    color = Otc::FluidWhite;
+                    break;
+                case Otc::FluidTea:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidMead:
+                    color = Otc::FluidBrown;
+                    break;
+                default:
+                    color = Otc::FluidTransparent;
+                    break;
+            }
+        } else
+            color = m_countOrSubType;
 
         xPattern = (color % 4) % getNumPatternX();
         yPattern = (color / 4) % getNumPatternY();

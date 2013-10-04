@@ -375,15 +375,41 @@ function doKeyCombo(keyCombo)
       modules.game_console.setTextEditText(hotKey.value)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USE then
-    g_game.useInventoryItem(hotKey.itemId)
+    if g_game.getProtocolVersion() < 780 then
+      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      if item then
+        g_game.use(item)
+      end        
+    else
+      g_game.useInventoryItem(hotKey.itemId)
+    end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONSELF then
-    g_game.useInventoryItemWith(hotKey.itemId, g_game.getLocalPlayer())
+    if g_game.getProtocolVersion() < 780 then
+      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      if item then
+        g_game.useWith(item, g_game.getLocalPlayer())
+      end        
+    else
+      g_game.useInventoryItemWith(hotKey.itemId, g_game.getLocalPlayer())
+    end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONTARGET then
     local attackingCreature = g_game.getAttackingCreature()
     if not attackingCreature then return end
-    g_game.useInventoryItemWith(hotKey.itemId, attackingCreature)
+    if g_game.getProtocolVersion() < 780 then
+      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      if item then
+        g_game.useWith(item, attackingCreature)
+      end        
+    else
+      g_game.useInventoryItemWith(hotKey.itemId, attackingCreature)
+    end
   elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then
     local item = Item.create(hotKey.itemId)
+    if g_game.getProtocolVersion() < 780 then
+      local tmpItem = g_game.findItemInContainers(hotKey.itemId, -1)
+      if not tmpItem then return true end     
+      item = tmpItem
+    end
     modules.game_interface.startUseWith(item)
   end
 end

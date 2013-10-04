@@ -884,7 +884,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
     if(!pos.isValid()) // virtual item
         pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
-    if(toThing->isCreature())
+    if(toThing->isCreature() && g_game.getProtocolVersion() >= 780)
         m_protocolGame->sendUseOnCreature(pos, item->getId(), item->getStackPos(), toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackPos(), toThing->getPosition(), toThing->getId(), toThing->getStackPos());
@@ -901,6 +901,20 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, toThing->getId());
     else
         m_protocolGame->sendUseItemWith(pos, itemId, 0, toThing->getPosition(), toThing->getId(), toThing->getStackPos());
+}
+
+ItemPtr Game::findItemInContainers(uint itemId, int subType)
+{
+    for(auto& it : m_containers) {
+        const ContainerPtr& container = it.second;
+
+        if(container) {
+            ItemPtr item = container->findItemById(itemId, subType);
+            if(item != nullptr)
+                return item;
+        }
+    }
+    return nullptr;
 }
 
 int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
@@ -1400,11 +1414,23 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 810 || version > 1010))
+    if(version != 0 && version != 760 && (version < 810 || version > 1010))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
+
+
+    if(version >= 780)
+    {
+        enableFeature(Otc::GamePlayerAddons);
+        enableFeature(Otc::GamePlayerStamina);
+        enableFeature(Otc::GameNewFluids);
+        enableFeature(Otc::GameMessageLevel);
+        enableFeature(Otc::GameMessageStatments);
+        enableFeature(Otc::GamePlayerStateU16);
+        enableFeature(Otc::GameLooktypeU16);
+    }
 
     if(version >= 840) {
         enableFeature(Otc::GameProtocolChecksum);
@@ -1412,7 +1438,7 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameAccountNames);
     }
 
-    if(version <= 854) {
+    if(version >= 780 && version <= 854) {          // 780 might not be accurate
         enableFeature(Otc::GameChargeableItems);
     }
 
@@ -1487,7 +1513,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 810 || version > 1010))
+    if(version != 0 && version != 760 && (version < 810 || version > 1010))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;

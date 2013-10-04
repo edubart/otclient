@@ -45,6 +45,7 @@ public:
     std::string getName() { return m_name; }
     bool hasParent() { return m_hasParent; }
     bool isClosed() { return m_closed; }
+    ItemPtr findItemById(uint itemId, int subType);
 
 protected:
     void onOpen(const ContainerPtr& previousContainer);
