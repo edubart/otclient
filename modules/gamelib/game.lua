@@ -4,6 +4,20 @@ function g_game.getRsa()
   return currentRsa
 end
 
+function g_game.findPlayerItem(itemId, subType)
+    local localPlayer = g_game.getLocalPlayer()
+    if localPlayer then
+        for slot = InventorySlotFirst, InventorySlotLast do
+            local item = localPlayer:getInventoryItem(slot)
+            if item and item:getId() == itemId and (subType == -1 or item:getSubType() == subType) then
+                return item
+            end
+        end
+    end
+    
+    return g_game.findItemInContainers(itemId, subType)
+end
+
 function g_game.chooseRsa(host)
   if currentRsa ~= CIPSOFT_RSA and currentRsa ~= OTSERV_RSA then return end
   if host:ends('.tibia.com') or host:ends('.cipsoft.com') then

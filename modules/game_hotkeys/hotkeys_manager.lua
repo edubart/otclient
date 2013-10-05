@@ -376,7 +376,7 @@ function doKeyCombo(keyCombo)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USE then
     if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      local item = g_game.findPlayerItem(hotKey.itemId, -1)
       if item then
         g_game.use(item)
       end        
@@ -385,7 +385,7 @@ function doKeyCombo(keyCombo)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONSELF then
     if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      local item = g_game.findPlayerItem(hotKey.itemId, -1)
       if item then
         g_game.useWith(item, g_game.getLocalPlayer())
       end        
@@ -395,8 +395,9 @@ function doKeyCombo(keyCombo)
   elseif hotKey.useType == HOTKEY_MANAGER_USEONTARGET then
     local attackingCreature = g_game.getAttackingCreature()
     if not attackingCreature then return end
+    if not attackingCreature:getTile() then return end
     if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findItemInContainers(hotKey.itemId, -1)
+      local item = g_game.findPlayerItem(hotKey.itemId, -1)
       if item then
         g_game.useWith(item, attackingCreature)
       end        
@@ -406,7 +407,7 @@ function doKeyCombo(keyCombo)
   elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then
     local item = Item.create(hotKey.itemId)
     if g_game.getProtocolVersion() < 780 then
-      local tmpItem = g_game.findItemInContainers(hotKey.itemId, -1)
+      local tmpItem = g_game.findPlayerItem(hotKey.itemId, -1)
       if not tmpItem then return true end     
       item = tmpItem
     end
