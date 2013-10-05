@@ -216,6 +216,7 @@ function save()
     hotkeys[child.keyCombo] = {
       autoSend = child.autoSend,
       itemId = child.itemId,
+      subType = child.subType,
       useType = child.useType,
       value = child.value
     }
@@ -266,6 +267,9 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
 
   if item and currentHotkeyLabel then
     currentHotkeyLabel.itemId = item:getId()
+    if item:isFluidContainer() then
+        currentHotkeyLabel.subType = item:getSubType()
+    end
     if item:isMultiUse() then
       currentHotkeyLabel.useType = HOTKEY_MANAGER_USEWITH
     else
@@ -293,6 +297,7 @@ end
 
 function clearObject()
   currentHotkeyLabel.itemId = nil
+  currentHotkeyLabel.subType = nil
   currentHotkeyLabel.useType = nil
   currentHotkeyLabel.autoSend = nil
   currentHotkeyLabel.value = nil
@@ -340,12 +345,14 @@ function addKeyCombo(keyCombo, keySettings, focus)
       hotkeyLabel.keyCombo = keyCombo
       hotkeyLabel.autoSend = toboolean(keySettings.autoSend)
       hotkeyLabel.itemId = tonumber(keySettings.itemId)
+      hotkeyLabel.subType = tonumber(keySettings.subType)
       hotkeyLabel.useType = tonumber(keySettings.useType)
       if keySettings.value then hotkeyLabel.value = tostring(keySettings.value) end
     else
       hotkeyLabel.keyCombo = keyCombo
       hotkeyLabel.autoSend = false
       hotkeyLabel.itemId = nil
+      hotkeyLabel.subType = nil
       hotkeyLabel.useType = nil
       hotkeyLabel.value = ''
     end
@@ -375,8 +382,8 @@ function doKeyCombo(keyCombo)
       modules.game_console.setTextEditText(hotKey.value)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USE then
-    if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findPlayerItem(hotKey.itemId, -1)
+    if g_game.getProtocolVersion() < 780 or hotKey.subType then
+      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.use(item)
       end        
@@ -384,8 +391,8 @@ function doKeyCombo(keyCombo)
       g_game.useInventoryItem(hotKey.itemId)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONSELF then
-    if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findPlayerItem(hotKey.itemId, -1)
+    if g_game.getProtocolVersion() < 780 or hotKey.subType then
+      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.useWith(item, g_game.getLocalPlayer())
       end        
@@ -396,8 +403,8 @@ function doKeyCombo(keyCombo)
     local attackingCreature = g_game.getAttackingCreature()
     if not attackingCreature then return end
     if not attackingCreature:getTile() then return end
-    if g_game.getProtocolVersion() < 780 then
-      local item = g_game.findPlayerItem(hotKey.itemId, -1)
+    if g_game.getProtocolVersion() < 780 or hotKey.subType then
+      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.useWith(item, attackingCreature)
       end        
@@ -406,8 +413,8 @@ function doKeyCombo(keyCombo)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then
     local item = Item.create(hotKey.itemId)
-    if g_game.getProtocolVersion() < 780 then
-      local tmpItem = g_game.findPlayerItem(hotKey.itemId, -1)
+    if g_game.getProtocolVersion() < 780 or hotKey.subType then
+      local tmpItem = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if not tmpItem then return true end     
       item = tmpItem
     end
@@ -455,6 +462,9 @@ function updateHotkeyForm(reset)
       selectObjectButton:disable()
       clearObjectButton:enable()
       currentItemPreview:setItemId(currentHotkeyLabel.itemId)
+      if currentHotkeyLabel.subType then
+        currentItemPreview:setItemSubType(currentHotkeyLabel.subType)
+      end
       if currentItemPreview:getItem():isMultiUse() then
         useOnSelf:enable()
         useOnTarget:enable()
