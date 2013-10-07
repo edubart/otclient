@@ -273,8 +273,8 @@ void Map::saveOtbm(const std::string& fileName)
             root->addU32(version);
 
             Size mapSize = getSize();
-            root->addU16(mapSize.width());
-            root->addU16(mapSize.height());
+            root->addU16(65535);
+            root->addU16(65535);
 
             root->addU32(g_things.getOtbMajorVersion());
             root->addU32(g_things.getOtbMinorVersion());

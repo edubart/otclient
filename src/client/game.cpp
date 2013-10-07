@@ -1442,8 +1442,11 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameChargeableItems);
     }
 
-    if(version >= 854) {
+    if(version >= 850) {
         enableFeature(Otc::GameDoubleFreeCapacity);
+    }
+
+    if(version >= 854) {
         enableFeature(Otc::GameCreatureEmblems);
     }
 
