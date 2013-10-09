@@ -25,7 +25,8 @@ local defaultOptions = {
   ambientLight = 25,
   displayNames = true,
   displayHealth = true,
-  displayText = true
+  displayText = true,
+  dontStretchShrink = false
 }
 
 local optionsWindow
@@ -223,6 +224,10 @@ function setOption(key, value, force)
     gameMapPanel:setDrawHealthBars(value)
   elseif key == 'displayText' then
     gameMapPanel:setDrawTexts(value)
+  elseif key == 'dontStretchShrink' then
+    addEvent(function()
+      modules.game_interface.updateStretchShrink()
+    end)
   end
 
   -- change value for keybind updates
