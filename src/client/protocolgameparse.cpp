@@ -629,10 +629,10 @@ void ProtocolGame::parseCloseContainer(const InputMessagePtr& msg)
 void ProtocolGame::parseContainerAddItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
-    ItemPtr item = getItem(msg);
     if(g_game.getFeature(Otc::GameContainerPagination)) {
         msg->getU16(); // slot
     }
+    ItemPtr item = getItem(msg);
     g_game.processContainerAddItem(containerId, item);
 }
 
@@ -655,7 +655,10 @@ void ProtocolGame::parseContainerRemoveItem(const InputMessagePtr& msg)
     int slot;
     if(g_game.getFeature(Otc::GameContainerPagination)) {
         slot = msg->getU16();
-        getItem(msg);
+
+        int itemId = msg->getU16();
+        if(itemId != 0)
+            getItem(msg, itemId);
     } else {
         slot = msg->getU8();
     }
