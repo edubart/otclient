@@ -137,6 +137,8 @@ void Map::loadOtbm(const std::string& fileName)
                                 if((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
                                     flags |= TILESTATE_REFRESH;
 
+                                if((_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
+                                    flags |= TILESTATE_HOUSE;
                                 break;
                             }
                             case OTBM_ATTR_ITEM: {
