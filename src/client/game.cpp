@@ -1427,9 +1427,10 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GamePlayerStamina);
         enableFeature(Otc::GameNewFluids);
         enableFeature(Otc::GameMessageLevel);
-        enableFeature(Otc::GameMessageStatments);
+        enableFeature(Otc::GameMessageStatements);
         enableFeature(Otc::GamePlayerStateU16);
         enableFeature(Otc::GameLooktypeU16);
+        enableFeature(Otc::GameNewOutfitProtocol);
     }
 
     if(version >= 840) {

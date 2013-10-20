@@ -81,6 +81,16 @@ GameNewSpeedLaw = 36
 GameForceFirstAutoWalkStep = 37
 GameMinimapRemove = 38
 GameDoubleShopSellAmount = 39
+GameContainerPagination = 40
+GameThingMarks = 41
+GameLooktypeU16 = 42
+GamePlayerStamina = 43
+GamePlayerAddons = 44
+GameMessageStatements = 45
+GameMesssageLevel = 46
+GameNewFluids = 47
+GamePlayerStateU16 = 48
+GameNewOutfitProtocol = 49
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

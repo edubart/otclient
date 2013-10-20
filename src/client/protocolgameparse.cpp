@@ -1140,7 +1140,7 @@ void ProtocolGame::parseMultiUseCooldown(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTalk(const InputMessagePtr& msg)
 {
-    if(g_game.getFeature(Otc::GameMessageStatments))
+    if(g_game.getFeature(Otc::GameMessageStatements))
         msg->getU32(); // channel statement guid
 
     std::string name = g_game.formatCreatureName(msg->getString());
@@ -1397,13 +1397,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
     Outfit currentOutfit = getOutfit(msg);
     std::vector<std::tuple<int, std::string, int> > outfitList;
 
-    if(g_game.getProtocolVersion() < 780) {
-        int outfitStart = msg->getU8();
-        int outfitEnd   = msg->getU8();
-        for(int i = outfitStart; i <= outfitEnd; i++)
-            outfitList.push_back(std::make_tuple(i, "", 0));
-    }
-    else {
+    if(g_game.getFeature(Otc::GameNewOutfitProtocol)) {
         int outfitCount = msg->getU8();
         for(int i = 0; i < outfitCount; i++) {
             int outfitId = msg->getU16();
@@ -1412,6 +1406,11 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
             outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
         }
+    } else {
+        int outfitStart = msg->getU8();
+        int outfitEnd   = msg->getU8();
+        for(int i = outfitStart; i <= outfitEnd; i++)
+            outfitList.push_back(std::make_tuple(i, "", 0));
     }
 
     std::vector<std::tuple<int, std::string> > mountList;
