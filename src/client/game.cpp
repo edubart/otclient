@@ -171,7 +171,6 @@ void Game::processEnterGame()
     g_lua.callGlobalField("g_game", "onEnterGame");
 }
 
-
 void Game::processGameStart()
 {
     m_online = true;
@@ -274,10 +273,10 @@ void Game::processTalk(const std::string& name, int level, Otc::MessageMode mode
     g_lua.callGlobalField("g_game", "onTalk", name, level, mode, text, channelId, pos);
 }
 
-void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items)
+void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items, bool isUnlocked, bool hasPages, int containerSize, int firstIndex)
 {
     ContainerPtr previousContainer = getContainer(containerId);
-    ContainerPtr container = ContainerPtr(new Container(containerId, capacity, name, containerItem, hasParent));
+    ContainerPtr container = ContainerPtr(new Container(containerId, capacity, name, containerItem, hasParent, isUnlocked, hasPages, containerSize, firstIndex));
     m_containers[containerId] = container;
     container->onAddItems(items);
 
@@ -302,7 +301,7 @@ void Game::processCloseContainer(int containerId)
     container->onClose();
 }
 
-void Game::processContainerAddItem(int containerId, const ItemPtr& item)
+void Game::processContainerAddItem(int containerId, const ItemPtr& item, int slot)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
@@ -310,7 +309,7 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item)
         return;
     }
 
-    container->onAddItem(item);
+    container->onAddItem(item, slot);
 }
 
 void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& item)
