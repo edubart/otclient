@@ -620,10 +620,10 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int capacity = msg->getU8();
     bool hasParent = (msg->getU8() != 0);
 
-    bool isUnlocked;
-    bool hasPages;
-    int containerSize;
-    int firstIndex;
+    bool isUnlocked = false;
+    bool hasPages = false;
+    int containerSize = 0;
+    int firstIndex = 0;
 
     if(g_game.getFeature(Otc::GameContainerPagination)) {
         isUnlocked = (msg->getU8() != 0); // drag and drop
