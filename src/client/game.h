@@ -73,6 +73,8 @@ protected:
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
+    void processPlayerHelpers(int helpers);
+
     // message related
     void processTextMessage(Otc::MessageMode mode, const std::string& text);
     void processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos);

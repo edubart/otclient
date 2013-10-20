@@ -323,6 +323,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerEnterGame:
                 parseEnterGame(msg);
                 break;
+            // PROTOCOL>=1010
+            case Proto::GameServerPlayerHelpers:
+                parsePlayerHelpers(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -377,6 +381,18 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
         g_game.processGameStart();
         m_gameInitialized = true;
     }
+}
+
+void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
+{
+    uint id = msg->getU32();
+    int helpers = msg->getU16();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        g_game.processPlayerHelpers(helpers);
+    else
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)

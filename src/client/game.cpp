@@ -171,6 +171,7 @@ void Game::processEnterGame()
     g_lua.callGlobalField("g_game", "onEnterGame");
 }
 
+
 void Game::processGameStart()
 {
     m_online = true;
@@ -232,6 +233,11 @@ void Game::processGMActions(const std::vector<uint8>& actions)
 {
     m_gmActions = actions;
     g_lua.callGlobalField("g_game", "onGMActions", actions);
+}
+
+void Game::processPlayerHelpers(int helpers)
+{
+    g_lua.callGlobalField("g_game", "onPlayerHelpersUpdate", helpers);
 }
 
 void Game::processPing()
