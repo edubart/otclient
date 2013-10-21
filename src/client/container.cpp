@@ -23,7 +23,7 @@
 #include "container.h"
 #include "item.h"
 
-Container::Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent)
+Container::Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent, bool isUnlocked, bool hasPages, int containerSize, int firstIndex)
 {
     m_id = id;
     m_capacity = capacity;
@@ -31,6 +31,10 @@ Container::Container(int id, int capacity, const std::string& name, const ItemPt
     m_containerItem = containerItem;
     m_hasParent = hasParent;
     m_closed = false;
+    m_unlocked = isUnlocked;
+    m_hasPages = hasPages;
+    m_size = containerSize;
+    m_firstIndex = firstIndex;
 }
 
 ItemPtr Container::getItem(int slot)
@@ -51,12 +55,12 @@ void Container::onClose()
     callLuaField("onClose");
 }
 
-void Container::onAddItem(const ItemPtr& item)
+void Container::onAddItem(const ItemPtr& item, int slot)
 {
     m_items.push_front(item);
     updateItemsPositions();
 
-    callLuaField("onAddItem", 0, item);
+    callLuaField("onAddItem", slot, item);
 }
 
 ItemPtr Container::findItemById(uint itemId, int subType)

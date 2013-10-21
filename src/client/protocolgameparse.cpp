@@ -323,6 +323,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerEnterGame:
                 parseEnterGame(msg);
                 break;
+            // PROTOCOL>=1010
+            case Proto::GameServerPlayerHelpers:
+                parsePlayerHelpers(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -377,6 +381,18 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
         g_game.processGameStart();
         m_gameInitialized = true;
     }
+}
+
+void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
+{
+    uint id = msg->getU32();
+    int helpers = msg->getU16();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        g_game.processPlayerHelpers(helpers);
+    else
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
@@ -604,11 +620,16 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int capacity = msg->getU8();
     bool hasParent = (msg->getU8() != 0);
 
+    bool isUnlocked = false;
+    bool hasPages = false;
+    int containerSize = 0;
+    int firstIndex = 0;
+
     if(g_game.getFeature(Otc::GameContainerPagination)) {
-        msg->getU8(); // drag and drop
-        msg->getU8(); // pagination
-        msg->getU16(); // container size
-        msg->getU16(); // first index
+        isUnlocked = (msg->getU8() != 0); // drag and drop
+        hasPages = (msg->getU8() != 0); // pagination
+        containerSize = msg->getU16(); // container size
+        firstIndex = msg->getU16(); // first index
     }
 
     int itemCount = msg->getU8();
@@ -617,7 +638,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     for(int i = 0; i < itemCount; i++)
         items[i] = getItem(msg);
 
-    g_game.processOpenContainer(containerId, containerItem, name, capacity, hasParent, items);
+    g_game.processOpenContainer(containerId, containerItem, name, capacity, hasParent, items, isUnlocked, hasPages, containerSize, firstIndex);
 }
 
 void ProtocolGame::parseCloseContainer(const InputMessagePtr& msg)
@@ -629,11 +650,12 @@ void ProtocolGame::parseCloseContainer(const InputMessagePtr& msg)
 void ProtocolGame::parseContainerAddItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
+    int slot = 0;
     if(g_game.getFeature(Otc::GameContainerPagination)) {
-        msg->getU16(); // slot
+        slot = msg->getU16(); // slot
     }
     ItemPtr item = getItem(msg);
-    g_game.processContainerAddItem(containerId, item);
+    g_game.processContainerAddItem(containerId, item, slot);
 }
 
 void ProtocolGame::parseContainerUpdateItem(const InputMessagePtr& msg)

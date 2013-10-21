@@ -73,14 +73,16 @@ protected:
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
+    void processPlayerHelpers(int helpers);
+
     // message related
     void processTextMessage(Otc::MessageMode mode, const std::string& text);
     void processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos);
 
     // container related
-    void processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items);
+    void processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items, bool isUnlocked, bool hasPages, int containerSize, int firstIndex);
     void processCloseContainer(int containerId);
-    void processContainerAddItem(int containerId, const ItemPtr& item);
+    void processContainerAddItem(int containerId, const ItemPtr& item, int slot);
     void processContainerUpdateItem(int containerId, int slot, const ItemPtr& item);
     void processContainerRemoveItem(int containerId, int slot);
 

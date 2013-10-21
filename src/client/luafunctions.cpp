@@ -68,7 +68,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_things", "findItemTypeByClientId", &ThingTypeManager::findItemTypeByClientId, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByName", &ThingTypeManager::findItemTypeByName, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypesByName", &ThingTypeManager::findItemTypesByName, &g_things);
-    g_lua.bindSingletonFunction("g_things", "findItemTypesByString", &ThingTypeManager::findItemTypesByString, &g_things); 
+    g_lua.bindSingletonFunction("g_things", "findItemTypesByString", &ThingTypeManager::findItemTypesByString, &g_things);
     g_lua.bindSingletonFunction("g_things", "findItemTypeByCategory", &ThingTypeManager::findItemTypeByCategory, &g_things);
     g_lua.bindSingletonFunction("g_things", "findThingTypeByAttr", &ThingTypeManager::findThingTypeByAttr, &g_things);
 
@@ -317,6 +317,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Container>("getContainerItem", &Container::getContainerItem);
     g_lua.bindClassMemberFunction<Container>("hasParent", &Container::hasParent);
     g_lua.bindClassMemberFunction<Container>("isClosed", &Container::isClosed);
+    g_lua.bindClassMemberFunction<Container>("isUnlocked", &Container::isUnlocked);
+    g_lua.bindClassMemberFunction<Container>("hasPages", &Container::hasPages);
+    g_lua.bindClassMemberFunction<Container>("getSize", &Container::getSize);
+    g_lua.bindClassMemberFunction<Container>("getFirstIndex", &Container::getFirstIndex);
 
     g_lua.registerClass<Thing>();
     g_lua.bindClassMemberFunction<Thing>("setId", &Thing::setId);
@@ -646,7 +650,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMinimap>("getMinZoom", &UIMinimap::getMinZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("getMaxZoom", &UIMinimap::getMaxZoom);
     g_lua.bindClassMemberFunction<UIMinimap>("getZoom", &UIMinimap::getZoom);
-    g_lua.bindClassMemberFunction<UIMinimap>("getScale", &UIMinimap::getScale); 
+    g_lua.bindClassMemberFunction<UIMinimap>("getScale", &UIMinimap::getScale);
     g_lua.bindClassMemberFunction<UIMinimap>("anchorPosition", &UIMinimap::anchorPosition);
     g_lua.bindClassMemberFunction<UIMinimap>("fillPosition", &UIMinimap::fillPosition);
     g_lua.bindClassMemberFunction<UIMinimap>("centerInPosition", &UIMinimap::centerInPosition);
