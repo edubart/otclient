@@ -323,7 +323,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerEnterGame:
                 parseEnterGame(msg);
                 break;
-            // PROTOCOL>=1010
             case Proto::GameServerPlayerHelpers:
                 parsePlayerHelpers(msg);
                 break;
@@ -978,7 +977,15 @@ void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
 void ProtocolGame::parseEditText(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
-    int itemId = msg->getU16();
+
+    int itemId;
+    if(g_game.getProtocolVersion() >= 1010) {
+        // TODO: processEditText with ItemPtr as parameter
+        ItemPtr item = getItem(msg);
+        itemId = item->getId();
+    } else
+        itemId = msg->getU16();
+
     int maxLength = msg->getU16();
     std::string text = msg->getString();
     std::string writter = msg->getString();
