@@ -50,8 +50,9 @@ Connection::~Connection()
 
 void Connection::poll()
 {
-    g_ioService.poll();
+    // reset must always be called prior to poll
     g_ioService.reset();
+    g_ioService.poll();
 }
 
 void Connection::terminate()
