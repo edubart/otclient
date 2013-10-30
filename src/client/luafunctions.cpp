@@ -47,6 +47,7 @@
 #include "uiminimap.h"
 #include "uimapanchorlayout.h"
 #include "uiprogressrect.h"
+#include "uisprite.h"
 #include "outfit.h"
 
 #include <framework/luaengine/luainterface.h>
@@ -576,6 +577,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIItem>("getItem", &UIItem::getItem);
     g_lua.bindClassMemberFunction<UIItem>("isVirtual", &UIItem::isVirtual);
     g_lua.bindClassMemberFunction<UIItem>("isItemVisible", &UIItem::isItemVisible);
+
+    g_lua.registerClass<UISprite, UIWidget>();
+    g_lua.bindClassStaticFunction<UISprite>("create", []{ return UISpritePtr(new UISprite); });
+    g_lua.bindClassMemberFunction<UISprite>("setSpriteId", &UISprite::setSpriteId);
+    g_lua.bindClassMemberFunction<UISprite>("clearSprite", &UISprite::clearSprite);
+    g_lua.bindClassMemberFunction<UISprite>("getSpriteId", &UISprite::getSpriteId);
+    g_lua.bindClassMemberFunction<UISprite>("setSpriteColor", &UISprite::setSpriteColor);
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );

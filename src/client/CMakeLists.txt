@@ -100,6 +100,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/uiprogressrect.h
     ${CMAKE_CURRENT_LIST_DIR}/uimapanchorlayout.cpp
     ${CMAKE_CURRENT_LIST_DIR}/uimapanchorlayout.h
+    ${CMAKE_CURRENT_LIST_DIR}/uisprite.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/uisprite.h
 
     # util
     ${CMAKE_CURRENT_LIST_DIR}/position.h
