@@ -27,6 +27,7 @@
 #include "itemtype.h"
 #include "creature.h"
 #include "creatures.h"
+#include "game.h"
 
 #include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
@@ -230,14 +231,26 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
 {
     uint16 serverId = id;
     ItemTypePtr itemType = nullptr;
-    if(serverId > 20000 && serverId < 20100) {
-        serverId -= 20000;
+    if(g_game.getProtocolVersion() < 960) {
+        if(serverId > 20000 && serverId < 20100) {
+            serverId -= 20000;
 
-        itemType = ItemTypePtr(new ItemType);
-        itemType->setServerId(serverId);
-        addItemType(itemType);
-    } else
-        itemType = getItemType(serverId);
+            itemType = ItemTypePtr(new ItemType);
+            itemType->setServerId(serverId);
+            addItemType(itemType);
+        } else
+            itemType = getItemType(serverId);
+    }
+    if(g_game.getProtocolVersion() >= 960) {
+        if(serverId > 30000 && serverId < 30100) {
+            serverId -= 30000;
+
+            itemType = ItemTypePtr(new ItemType);
+            itemType->setServerId(serverId);
+            addItemType(itemType);
+        } else
+            itemType = getItemType(serverId);
+    }
 
     itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {

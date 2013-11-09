@@ -65,6 +65,7 @@ void Spawn::load(TiXmlElement* node)
         std::string cName = cNode->Attribute("name");
         stdext::tolower(cName);
         stdext::trim(cName);
+        stdext::ucwords(cName);
 
         if (!(cType = g_creatures.getCreatureByName(cName)))
             continue;
@@ -149,6 +150,8 @@ CreaturePtr CreatureType::cast()
     CreaturePtr ret(new Creature);
 
     std::string cName = getName();
+    stdext::tolower(cName);
+    stdext::trim(cName);
     stdext::ucwords(cName);
     ret->setName(cName);
 
@@ -287,6 +290,7 @@ void CreatureManager::loadCreatureBuffer(const std::string& buffer)
     std::string cName = root->Attribute("name");
     stdext::tolower(cName);
     stdext::trim(cName);
+    stdext::ucwords(cName);
 
     CreatureTypePtr newType(new CreatureType(cName));
     for(TiXmlElement* attrib = root->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
@@ -333,6 +337,7 @@ const CreatureTypePtr& CreatureManager::getCreatureByName(std::string name)
 {
     stdext::tolower(name);
     stdext::trim(name);
+    stdext::ucwords(name);
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
                            [=] (const CreatureTypePtr& m) -> bool { return m->getName() == name; });
     if(it != m_creatures.end())

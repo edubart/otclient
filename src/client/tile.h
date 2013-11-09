@@ -119,7 +119,7 @@ public:
 
     void setHouseId(uint32 hid) { m_houseId = hid; }
     uint32 getHouseId() { return m_houseId; }
-    bool isHouseTile() const { return m_houseId != 0 && (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
+    bool isHouseTile() const { return m_houseId != 0 or (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
