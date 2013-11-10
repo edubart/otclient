@@ -46,7 +46,7 @@ bool OggSoundFile::prepareOgg()
     m_channels = vi->channels;
     m_rate = vi->rate;
     m_bps = 16;
-    m_size = ov_pcm_total(&m_vorbisFile, -1) * 2;
+    m_size = ov_pcm_total(&m_vorbisFile, -1) * (m_bps/8) * m_channels;
 
     return true;
 }
