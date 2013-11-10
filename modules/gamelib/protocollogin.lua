@@ -144,7 +144,7 @@ function ProtocolLogin:parseCharacterList(msg)
       local world = {}
       local worldId = msg:getU8() 
       world.worldName = msg:getString()
-      world.worldIp = iptostring(msg:getU32())
+      world.worldIp = msg:getString()
       world.worldPort = msg:getU16()
       msg:getU8() -- unknow byte?
       worlds[worldId] = world
