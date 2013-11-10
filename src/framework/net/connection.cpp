@@ -126,7 +126,7 @@ void Connection::write(uint8* buffer, size_t size)
             m_outputStream = std::shared_ptr<asio::streambuf>(new asio::streambuf);
 
         m_delayedWriteTimer.cancel();
-        m_delayedWriteTimer.expires_from_now(boost::posix_time::milliseconds(10));
+        m_delayedWriteTimer.expires_from_now(boost::posix_time::milliseconds(0));
         m_delayedWriteTimer.async_wait(std::bind(&Connection::onCanWrite, asConnection(), std::placeholders::_1));
     }
 
