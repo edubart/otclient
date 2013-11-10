@@ -135,19 +135,47 @@ end
 
 function ProtocolLogin:parseCharacterList(msg)
   local characters = {}
-  local charactersCount = msg:getU8()
-  for i=1,charactersCount do
-    local character = {}
-    character.name = msg:getString()
-    character.worldName = msg:getString()
-    character.worldIp = iptostring(msg:getU32())
-    character.worldPort = msg:getU16()
 
-    if g_game.getProtocolVersion() >= 971 then
-      character.unknown = msg:getU8()
+  if g_game.getProtocolVersion() > 1010 then
+    local worlds = {}
+
+    local worldsCount = msg:getU8()
+    for i=1, worldsCount do
+      local world = {}
+      local worldId = msg:getU8() 
+      world.worldName = msg:getString()
+      world.worldIp = msg:getString()
+      world.worldPort = msg:getU16()
+      msg:getU8() -- unknow byte?
+      worlds[worldId] = world
     end
 
-    characters[i] = character
+    local charactersCount = msg:getU8()
+    for i=1, charactersCount do
+      local character = {}
+      local worldId = msg:getU8()
+      character.name = msg:getString()
+      character.worldName = worlds[worldId].worldName
+      character.worldIp = worlds[worldId].worldIp
+      character.worldPort = worlds[worldId].worldPort
+      characters[i] = character
+    end
+
+  else
+    local charactersCount = msg:getU8()
+    for i=1,charactersCount do
+      local character = {}
+      character.name = msg:getString()
+      character.worldName = msg:getString()
+      character.worldIp = iptostring(msg:getU32())
+      character.worldPort = msg:getU16()
+
+      if g_game.getProtocolVersion() >= 971 then
+        character.unknown = msg:getU8()
+      end
+
+      characters[i] = character
+    end
   end
 
   local account = {}
