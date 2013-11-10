@@ -76,6 +76,7 @@ enum ThingAttr : uint8 {
     ThingAttrLook             = 31,
     ThingAttrCloth            = 32,
     ThingAttrMarket           = 33,
+    ThingAttrUsable           = 34,
 
     // additional
     ThingAttrOpacity          = 100,
