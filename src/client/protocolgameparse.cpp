@@ -329,17 +329,16 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPlayerHelpers:
                 parsePlayerHelpers(msg);
                 break;
+            // PROTOCOL>=1000
+            case Proto::GameServerCreatureMarks:
+                parseCreaturesMark(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
             case Proto::GameServerChangeMapAwareRange:
                 parseChangeMapAwareRange(msg);
-                break;
-            // unknown
-            case 147: // proto >= 1000 ?
-                for(int i=0;i<19;++i)
-                    msg->getU8();
                 break;
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
@@ -1674,6 +1673,28 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
     g_lua.callGlobalField("g_game", "onMapChangeAwareRange", xrange, yrange);
 }
 
+void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
+{
+    int len = msg->getU8();
+    for(int i=0; i<len; ++i) {
+        uint32 id = msg->getU32();
+        bool isPermanent = msg->getU8() != 1;
+        uint8 markType = msg->getU8();
+
+        CreaturePtr creature = g_map.getCreatureById(id);
+        if(creature) {
+            if(isPermanent) {
+                if(markType == 0xff)
+                    creature->hideStaticSquare();
+                else
+                    creature->showStaticSquare(Color::from8bit(markType));
+            } else
+                creature->addTimedSquare(markType);
+        } else
+            g_logger.traceError("could not get creature");
+    }
+}
+
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
 {
     int startz, endz, zstep;
@@ -1906,14 +1927,22 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         // emblem is sent only when the creature is not known
         int emblem = -1;
         bool unpass = true;
+        uint8 mark;
 
         if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
             emblem = msg->getU8();
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
             msg->getU8(); // creature type for summons
-            msg->getU8(); // mark
+            uint8 mark = msg->getU8(); // mark
             msg->getU16(); // helpers
+
+            if(creature) {
+                if(mark == 0xff)
+                    creature->hideStaticSquare();
+                else
+                    creature->showStaticSquare(Color::from8bit(mark));
+            }
         }
 
         if(g_game.getProtocolVersion() >= 854)
