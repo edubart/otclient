@@ -329,7 +329,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPlayerHelpers:
                 parsePlayerHelpers(msg);
                 break;
-                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -341,6 +340,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case 147: // proto >= 1000 ?
                 for(int i=0;i<19;++i)
                     msg->getU8();
+                break;
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
                 break;
