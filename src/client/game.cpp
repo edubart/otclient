@@ -239,6 +239,17 @@ void Game::processPlayerHelpers(int helpers)
     g_lua.callGlobalField("g_game", "onPlayerHelpersUpdate", helpers);
 }
 
+void Game::processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode)
+{
+    m_fightMode = fightMode;
+    m_chaseMode = chaseMode;
+    m_safeFight = safeMode;
+
+    g_lua.callGlobalField("g_game", "onFightModeChange", fightMode);
+    g_lua.callGlobalField("g_game", "onChaseModeChange", chaseMode);
+    g_lua.callGlobalField("g_game", "onSafeFightChange", safeMode);
+}
+
 void Game::processPing()
 {
     g_lua.callGlobalField("g_game", "onPing");
@@ -1505,6 +1516,10 @@ void Game::setProtocolVersion(int version)
 
     if(version >= 979) {
         enableFeature(Otc::GameThingMarks);
+    }
+
+    if(version >= 1000) {
+        enableFeature(Otc::GamePVPMode);
     }
 
     m_protocolVersion = version;

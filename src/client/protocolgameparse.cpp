@@ -219,6 +219,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerClearTarget:
                 parsePlayerCancelAttack(msg);
                 break;
+            case Proto::GameServerPlayerModes:
+                parsePlayerModes(msg);
+                break;
             case Proto::GameServerTalk:
                 parseTalk(msg);
                 break;
@@ -326,6 +329,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPlayerHelpers:
                 parsePlayerHelpers(msg);
                 break;
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -333,6 +337,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerChangeMapAwareRange:
                 parseChangeMapAwareRange(msg);
                 break;
+            // unknown
+            case 147: // proto >= 1000 ?
+                for(int i=0;i<19;++i)
+                    msg->getU8();
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
                 break;
@@ -1142,6 +1150,20 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
         seq = msg->getU32();
 
     g_game.processAttackCancel(seq);
+}
+
+
+void ProtocolGame::parsePlayerModes(const InputMessagePtr& msg)
+{
+    int fightMode = msg->getU8();
+    int chaseMode = msg->getU8();
+    bool safeMode = msg->getU8();
+
+    //TODO: implement pvp modes
+    if(g_game.getFeature(Otc::GamePVPMode))
+        msg->getU8(); // pvp mode
+
+    g_game.processPlayerModes((Otc::FightModes)fightMode, (Otc::ChaseModes)chaseMode, safeMode);
 }
 
 void ProtocolGame::parseSpellCooldown(const InputMessagePtr& msg)

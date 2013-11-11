@@ -110,6 +110,7 @@ namespace Proto {
         GameServerPlayerSkills              = 161,
         GameServerPlayerState               = 162,
         GameServerClearTarget               = 163,
+        GameServerPlayerModes               = 167,
         GameServerSpellDelay                = 164, // 870
         GameServerSpellGroupDelay           = 165, // 870
         GameServerMultiUseDelay             = 166, // 870

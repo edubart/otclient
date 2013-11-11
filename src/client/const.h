@@ -363,6 +363,7 @@ namespace Otc
         GameNewFluids = 47,
         GamePlayerStateU16 = 48,
         GameNewOutfitProtocol = 49,
+        GamePVPMode = 50,
 
         // 51-100 reserved to be defined in lua
         LastGameFeature = 101

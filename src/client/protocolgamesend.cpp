@@ -580,6 +580,11 @@ void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseMod
     msg->addU8(fightMode);
     msg->addU8(chaseMode);
     msg->addU8(safeFight ? 0x01: 0x00);
+
+    //TODO: implement pvp modes
+    if(g_game.getFeature(Otc::GamePVPMode))
+        msg->addU8(0); // pvp mode
+
     send(msg);
 }
 

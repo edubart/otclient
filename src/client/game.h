@@ -74,6 +74,7 @@ protected:
     void processWalkCancel(Otc::Direction direction);
 
     void processPlayerHelpers(int helpers);
+    void processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode);
 
     // message related
     void processTextMessage(Otc::MessageMode mode, const std::string& text);
