@@ -22,7 +22,11 @@
 
 #include "time.h"
 #include <boost/chrono.hpp>
+#ifdef _MSC_VER
+#include <thread>
+#else
 #include <unistd.h>
+#endif
 
 namespace stdext {
 
@@ -42,12 +46,20 @@ ticks_t micros() {
 
 void millisleep(size_t ms)
 {
+#ifdef _MSC_VER
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+#else
     usleep(ms * 1000);
+#endif
 };
 
 void microsleep(size_t us)
 {
+#ifdef _MSC_VER
+    std::this_thread::sleep_for(std::chrono::microseconds(us));
+#else
     usleep(us);
+#endif
 };
 
 }

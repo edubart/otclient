@@ -351,8 +351,13 @@ void Map::setShowZone(tileflags_t zone, bool show)
 
 void Map::setShowZones(bool show)
 {
+#ifdef _MSC_VER
+	static const uint32 defaultZoneFlags
+            = TILESTATE_HOUSE | TILESTATE_PROTECTIONZONE;
+#else
     static constexpr uint32 defaultZoneFlags
             = TILESTATE_HOUSE | TILESTATE_PROTECTIONZONE;
+#endif
     if(!show)
         m_zoneFlags = 0;
     else if(m_zoneFlags == 0)

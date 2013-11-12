@@ -103,7 +103,7 @@ inline void glEnableVertexAttribArray (GLuint index) { }
 inline void glDisableVertexAttribArray (GLuint index) { }
 
 #else
-#define GLEW_STATIC
+//#define GLEW_STATIC
 #include <GL/glew.h>
 #endif
 

@@ -22,14 +22,24 @@
 
 #include "demangle.h"
 
+#ifdef _MSC_VER
+#include <windows.h>
+#include <dbghelp.h>
+#else
 #include <cxxabi.h>
 #include <cstring>
 #include <cstdlib>
+#endif
 
 namespace stdext {
 
 const char* demangle_name(const char* name)
 {
+#ifdef _MSC_VER
+    static char buffer[1024];
+    UnDecorateSymbolName(name, buffer, sizeof(buffer), UNDNAME_COMPLETE);
+    return &buffer[6];
+#else
     size_t len;
     int status;
     static char buffer[1024];
@@ -39,6 +49,7 @@ const char* demangle_name(const char* name)
         free(demangled);
     }
     return buffer;
+#endif
 }
 
 }

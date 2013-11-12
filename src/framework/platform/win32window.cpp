@@ -691,12 +691,12 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if(newMousePos.x >= 32767)
                 newMousePos.x = 0;
             else
-                newMousePos.x = std::min(newMousePos.x, m_size.width());
+                newMousePos.x = std::min<int32>(newMousePos.x, m_size.width());
 
             if(newMousePos.y >= 32767)
                 newMousePos.y = 0;
             else
-                newMousePos.y = std::min(newMousePos.y, m_size.height());
+                newMousePos.y = std::min<int32>(newMousePos.y, m_size.height());
 
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
@@ -746,8 +746,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                 internalRestoreGLContext();
 
             Size size = Size(LOWORD(lParam), HIWORD(lParam));
-            size.setWidth(std::max(std::min(size.width(), 7680), 32));
-            size.setHeight(std::max(std::min(size.height(), 4320), 32));
+            size.setWidth(std::max<int32>(std::min<int32>(size.width(), 7680), 32));
+            size.setHeight(std::max<int32>(std::min<int32>(size.height(), 4320), 32));
 
             if(m_visible && (forceResize || m_size != size)) {
                 m_size = size;

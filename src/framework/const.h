@@ -23,10 +23,10 @@
 #ifndef FRAMEWORK_CONST_H
 #define FRAMEWORK_CONST_H
 
+#include "stdext/compiler.h"
+
 #define DEG_TO_RAD (acos(-1)/180.0)
 #define RAD_TO_DEC (180.0/acos(-1))
-
-#define BUILD_COMPILER "gcc " __VERSION__
 
 #ifndef BUILD_COMMIT
 #define BUILD_COMMIT "devel"
@@ -52,9 +52,13 @@
 
 namespace Fw
 {
+#ifdef _MSC_VER
+    static const float pi = 3.14159265;
+    static const float MIN_ALPHA = 0.003f;
+#else
     constexpr float pi = 3.14159265;
     constexpr float MIN_ALPHA = 0.003f;
-
+#endif
     enum Key : unsigned char {
         KeyUnknown = 0,
         KeyEscape = 1,

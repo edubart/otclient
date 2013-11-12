@@ -246,7 +246,7 @@ std::string Platform::getOSName()
     ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
 
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-    bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
+    bOsVersionInfoEx = VerifyVersionInfo(&osvi, 0, 0);
 
     if(!bOsVersionInfoEx)
         return std::string();

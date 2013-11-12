@@ -1934,7 +1934,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
             msg->getU8(); // creature type for summons
-            uint8 mark = msg->getU8(); // mark
+            mark = msg->getU8(); // mark
             msg->getU16(); // helpers
 
             if(creature) {
