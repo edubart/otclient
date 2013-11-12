@@ -40,7 +40,7 @@ template<class T, class... Args>
 void print_ostream(std::ostringstream& stream, const T& first, const Args&... rest) { stream << "\t" << first; print_ostream(stream, rest...); }
 template<class... T>
 
-/// Utility for printing variables just like lua
+// Utility for printing variables just like lua
 void print(const T&... args) { std::ostringstream buf; print_ostream(buf, args...); std::cout << buf.str() << std::endl; }
 
 template<typename T>
@@ -58,14 +58,27 @@ template<> struct expand_snprintf<0> {
     template<typename Tuple, typename... Args> static int call(char *s, size_t maxlen, const char *format, const Tuple& tuple, const Args&... args) {
         return snprintf(s, maxlen, format, args...); }};
 
-/// Improved snprintf that accepts std::string and other types
+// Improved snprintf that accepts std::string and other types
 template<typename... Args>
 int snprintf(char *s, size_t maxlen, const char *format, const Args&... args) {
     std::tuple<typename replace_extent<Args>::type...> tuple(args...);
     return expand_snprintf<std::tuple_size<decltype(tuple)>::value>::call(s, maxlen, format, tuple);
 }
 
-/// Format strings with the sprintf style, accepting std::string and string convertible types for %s
+template<typename... Args>
+inline int snprintf(char *s, size_t maxlen, const char *format) {
+    std::strncpy(s, format, maxlen);
+    s[maxlen-1] = 0;
+    return strlen(s);
+}
+
+template<typename... Args>
+inline std::string format() { return std::string(); }
+
+template<typename... Args>
+inline std::string format(const std::string& format) { return format; }
+
+// Format strings with the sprintf style, accepting std::string and string convertible types for %s
 template<typename... Args>
 std::string format(const std::string& format, const Args&... args) {
     int n, size = 1024;
