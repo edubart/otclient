@@ -40,7 +40,7 @@ House::House(uint32 hId, const std::string &name, const Position &pos)
 
 void House::setTile(const TilePtr& tile)
 {
-    tile->setFlags(TILESTATE_HOUSE);
+    tile->setFlag(TILESTATE_HOUSE);
     m_tiles.insert(std::make_pair(tile->getPosition(), tile));
 }
 
