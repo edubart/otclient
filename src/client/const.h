@@ -237,7 +237,7 @@ namespace Otc
         EmblemRed,
         EmblemBlue,
         EmblemMember,
-		EmblemOther
+        EmblemOther
     };
 
     enum PlayerStates {
