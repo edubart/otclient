@@ -240,8 +240,7 @@ void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
             addItemType(itemType);
         } else
             itemType = getItemType(serverId);
-    }
-    if(g_game.getProtocolVersion() >= 960) {
+    } else {
         if(serverId > 30000 && serverId < 30100) {
             serverId -= 30000;
 

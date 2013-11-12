@@ -61,8 +61,7 @@ void ItemType::unserialize(const BinaryTreePtr& node)
                             g_things.addItemType(tmp);
                         }
                     }
-                }
-                if(g_game.getProtocolVersion() >= 960) {
+                } else {
                     if(serverId > 30000 && serverId < 30100) {
                         serverId -= 30000;
                     } else if(lastId > 99 && lastId != serverId - 1) {
