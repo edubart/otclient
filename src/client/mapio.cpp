@@ -179,8 +179,8 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     if(const TilePtr& tile = getTile(pos)) {
-                        if(house)
-                            tile->setHouseId(house->getId());
+                        if(tile->hasFlag(TILESTATE_HOUSE))
+                            tile->setFlags(tile->getFlags() & ~TILESTATE_HOUSE);
                         tile->setFlags((tileflags_t)flags);
                     }
                 }
