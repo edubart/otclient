@@ -112,6 +112,8 @@ public:
     void setActionId(uint16 actionId) { m_attribs.set(ATTR_ACTION_ID, actionId); }
     void setUniqueId(uint16 uniqueId) { m_attribs.set(ATTR_UNIQUE_ID, uniqueId); }
 
+    void setAsync(bool enable) { m_async = enable; }
+
     bool isHouseDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isDepot() { return m_attribs.has(ATTR_DEPOT_ID); }
     bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
@@ -141,6 +143,10 @@ private:
     stdext::packed_storage<uint8> m_attribs;
     ItemList m_containerItems;
     Color m_color;
+    bool m_async;
+
+    uint8 m_phase;
+    ticks_t m_lastPhase;
 };
 
 #pragma pack(pop)
