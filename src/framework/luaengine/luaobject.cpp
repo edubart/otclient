@@ -117,5 +117,9 @@ int LuaObject::getUseCount()
 std::string LuaObject::getClassName()
 {
     // TODO: this could be cached for more performance
+#ifdef _MSC_VER
+    return stdext::demangle_name(typeid(*this).name()) + 6;
+#else
     return stdext::demangle_name(typeid(*this).name());
+#endif
 }

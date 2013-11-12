@@ -38,7 +38,7 @@ const char* demangle_name(const char* name)
 #ifdef _MSC_VER
     static char buffer[1024];
     UnDecorateSymbolName(name, buffer, sizeof(buffer), UNDNAME_COMPLETE);
-    return &buffer[6];
+    return buffer;
 #else
     size_t len;
     int status;

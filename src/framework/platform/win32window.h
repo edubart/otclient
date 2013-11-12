@@ -48,7 +48,7 @@ class WIN32Window : public PlatformWindow
     bool isExtensionSupported(const char *ext);
 
     LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    friend class WindowProcProxy;
+    friend struct WindowProcProxy;
 
     Fw::Key retranslateVirtualKey(WPARAM wParam, LPARAM lParam);
 

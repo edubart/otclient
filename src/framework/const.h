@@ -52,13 +52,8 @@
 
 namespace Fw
 {
-#ifdef _MSC_VER
     static const float pi = 3.14159265;
     static const float MIN_ALPHA = 0.003f;
-#else
-    constexpr float pi = 3.14159265;
-    constexpr float MIN_ALPHA = 0.003f;
-#endif
     enum Key : unsigned char {
         KeyUnknown = 0,
         KeyEscape = 1,

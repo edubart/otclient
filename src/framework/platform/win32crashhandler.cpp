@@ -148,10 +148,10 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     MessageBox(NULL, msg.c_str(), "Application crashed", 0);
 
     // this seems to silently close the application
-    return EXCEPTION_EXECUTE_HANDLER;
+    //return EXCEPTION_EXECUTE_HANDLER;
 
     // this triggers the microsoft "application has crashed" error dialog
-    //return EXCEPTION_CONTINUE_SEARCH;
+    return EXCEPTION_CONTINUE_SEARCH;
 }
 
 void installCrashHandler()

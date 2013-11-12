@@ -53,8 +53,8 @@ void LuaInterface::init()
     m_globalEnv = ref();
     pop();
 
-    // check if demangle_type is working as expected
-    assert(stdext::demangle_type<LuaObject>() == "LuaObject");
+    // check if demangle_class is working as expected
+    assert(stdext::demangle_class<LuaObject>() == "LuaObject");
 
     // register LuaObject, the base of all other objects
     registerClass<LuaObject>();

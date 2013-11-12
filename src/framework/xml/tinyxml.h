@@ -172,11 +172,7 @@ enum TiXmlEncoding
     TIXML_ENCODING_UTF8,
     TIXML_ENCODING_LEGACY
 };
-#ifdef _MSC_VER
 static const TiXmlEncoding TIXML_DEFAULT_ENCODING = TIXML_ENCODING_UNKNOWN;
-#else
-constexpr TiXmlEncoding TIXML_DEFAULT_ENCODING = TIXML_ENCODING_UNKNOWN;
-#endif
 /** TiXmlBase is a base class for every class in TinyXml.
     It does little except to establish that TinyXml classes
     can be printed and provide some utility functions.

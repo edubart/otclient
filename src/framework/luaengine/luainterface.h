@@ -64,24 +64,24 @@ public:
     // register shortcuts using templates
     template<class C, class B = LuaObject>
     void registerClass() {
-        registerClass(stdext::demangle_type<C>(), stdext::demangle_type<B>());
+        registerClass(stdext::demangle_class<C>(), stdext::demangle_class<B>());
     }
 
     template<class C>
     void registerClassStaticFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassStaticFunction(stdext::demangle_type<C>(), functionName, function);
+        registerClassStaticFunction(stdext::demangle_class<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberFunction(const std::string& functionName, const LuaCppFunction& function) {
-        registerClassMemberFunction(stdext::demangle_type<C>(), functionName, function);
+        registerClassMemberFunction(stdext::demangle_class<C>(), functionName, function);
     }
 
     template<class C>
     void registerClassMemberField(const std::string& field,
                                   const LuaCppFunction& getFunction,
                                   const LuaCppFunction& setFunction) {
-        registerClassMemberField(stdext::demangle_type<C>(), field, getFunction, setFunction);
+        registerClassMemberField(stdext::demangle_class<C>(), field, getFunction, setFunction);
     }
 
     // methods for binding functions
