@@ -120,27 +120,20 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             // this code will stack animated texts of the same color
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
             AnimatedTextPtr prevAnimatedText;
+            int offset = 12;
             bool merged = false;
             for(auto other : m_animatedTexts) {
                 if(other->getPosition() == pos) {
-                    prevAnimatedText = other;
-                    if(other->merge(animatedText)) {
+                    // 12 is to account for height of text
+                    // Want the one with the "lowest" screen position, which is more positive
+                    offset = std::max(offset, 12 + other->getCalculatedVerticalOffset());
+
+                    if(!merged && other->merge(animatedText))
                         merged = true;
-                        break;
-                    }
                 }
             }
             if(!merged) {
-                if(prevAnimatedText) {
-                    Point offset = prevAnimatedText->getOffset();
-                    float t = prevAnimatedText->getTimer().ticksElapsed();
-                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
-                        int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
-                        offset += Point(0, y);
-                    }
-                    offset.y = std::min(offset.y, 12);
-                    animatedText->setOffset(offset);
-                }
+                animatedText->setOffset(Point(0, offset));
                 m_animatedTexts.push_back(animatedText);
             }
         } else if(thing->isStaticText()) {

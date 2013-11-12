@@ -44,6 +44,7 @@ public:
     const CachedText& getCachedText() const { return m_cachedText; }
     Point getOffset() { return m_offset; }
     Timer getTimer() { return m_animationTimer; }
+    int getCalculatedVerticalOffset();
 
     bool merge(const AnimatedTextPtr& other);
 
