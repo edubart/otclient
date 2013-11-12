@@ -22,11 +22,14 @@ ShieldBlueNoSharedExpBlink = 7
 ShieldYellowNoSharedExpBlink = 8
 ShieldBlueNoSharedExp = 9
 ShieldYellowNoSharedExp = 10
+ShieldGray = 11
 
 EmblemNone = 0
 EmblemGreen = 1
 EmblemRed = 2
 EmblemBlue = 3
+EmblemMember = 4
+EmblemOther = 5
 
 North = 0
 East = 1

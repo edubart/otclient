@@ -41,7 +41,10 @@ Item::Item() :
     m_clientId(0),
     m_serverId(0),
     m_countOrSubType(1),
-    m_color(Color::alpha)
+    m_color(Color::alpha),
+    m_async(true),
+    m_phase(0),
+    m_lastPhase(0)
 {
 }
 
@@ -363,9 +366,17 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 int Item::calculateAnimationPhase(bool animate)
 {
     if(getAnimationPhases() > 1) {
-        if(animate)
-            return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
-        else
+        if(animate) {
+            if(m_async)
+                return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+            else {
+                if(g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {
+                    m_phase = (m_phase + 1) % getAnimationPhases();
+                    m_lastPhase = g_clock.millis();
+                }
+                return m_phase;
+            }
+        } else
             return getAnimationPhases()-1;
     }
     return 0;
