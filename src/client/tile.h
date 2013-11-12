@@ -112,9 +112,9 @@ public:
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 
-    void setFlag(tileflags_t flag) { m_flags |= (uint32)flag; }
-    void setFlags(tileflags_t flags) { m_flags = (uint32)flags; }
-    bool hasFlag(tileflags_t flag) { return (m_flags & flag) == flag; }
+    void setFlag(uint32 flag) { m_flags |= flag; }
+    void setFlags(uint32 flags) { m_flags = flags; }
+    bool hasFlag(uint32 flag) { return (m_flags & flag) == flag; }
     uint32 getFlags() { return m_flags; }
 
     void setHouseId(uint32 hid) { m_houseId = hid; }
