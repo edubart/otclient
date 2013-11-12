@@ -11,7 +11,7 @@ countWindow = nil
 logoutWindow = nil
 exitWindow = nil
 bottomSplitter = nil
-limitZoom = false
+limitedZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
@@ -127,16 +127,6 @@ function onGameStart()
   else
     g_game.disableFeature(GameForceFirstAutoWalkStep)
   end
-
-  addEvent(function()
-    if not limitZoom or g_game.isGM() then
-      gameMapPanel:setMaxZoomOut(513)
-      gameMapPanel:setLimitVisibleRange(false)
-    else
-      gameMapPanel:setMaxZoomOut(11)
-      gameMapPanel:setLimitVisibleRange(true)
-    end
-  end)
 end
 
 function onGameEnd()
@@ -153,6 +143,16 @@ function show()
   setupViewMode(0)
   updateStretchShrink()
   logoutButton:setTooltip(tr('Logout'))
+
+  addEvent(function()
+    if not limitedZoom or g_game.isGM() then
+      gameMapPanel:setMaxZoomOut(513)
+      gameMapPanel:setLimitVisibleRange(false)
+    else
+      gameMapPanel:setMaxZoomOut(11)
+      gameMapPanel:setLimitVisibleRange(true)
+    end
+  end)
 end
 
 function hide()
@@ -775,7 +775,7 @@ function setupViewMode(mode)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
   elseif mode == 2 then
-    local limit = limitZoom and not g_game.isGM()
+    local limit = limitedZoom and not g_game.isGM()
     gameMapPanel:setLimitVisibleRange(limit)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
@@ -800,5 +800,5 @@ function setupViewMode(mode)
 end
 
 function limitZoom()
-  limitZoom = true
+  limitedZoom = true
 end
