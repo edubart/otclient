@@ -52,23 +52,25 @@ function getShieldImagePathAndBlink(shieldId)
   if shieldId == ShieldWhiteYellow then
     path, blink = '/images/game/shields/shield_yellow_white', false
   elseif shieldId == ShieldWhiteBlue then
-    path, blink = '/images/game/shields//shield_blue_white', false
+    path, blink = '/images/game/shields/shield_blue_white', false
   elseif shieldId == ShieldBlue then
-    path, blink = '/images/game/shields//shield_blue', false
+    path, blink = '/images/game/shields/shield_blue', false
   elseif shieldId == ShieldYellow then
-    path, blink = '/images/game/shields//shield_yellow', false
+    path, blink = '/images/game/shields/shield_yellow', false
   elseif shieldId == ShieldBlueSharedExp then
-    path, blink = '/images/game/shields//shield_blue_shared', false
+    path, blink = '/images/game/shields/shield_blue_shared', false
   elseif shieldId == ShieldYellowSharedExp then
-    path, blink = '/images/game/shields//shield_yellow_shared', false
+    path, blink = '/images/game/shields/shield_yellow_shared', false
   elseif shieldId == ShieldBlueNoSharedExpBlink then
-    path, blink = '/images/game/shields//shield_blue_not_shared', true
+    path, blink = '/images/game/shields/shield_blue_not_shared', true
   elseif shieldId == ShieldYellowNoSharedExpBlink then
-    path, blink = '/images/game/shields//shield_yellow_not_shared', true
+    path, blink = '/images/game/shields/shield_yellow_not_shared', true
   elseif shieldId == ShieldBlueNoSharedExp then
-    path, blink = '/images/game/shields//shield_blue_not_shared', false
+    path, blink = '/images/game/shields/shield_blue_not_shared', false
   elseif shieldId == ShieldYellowNoSharedExp then
-    path, blink = '/images/game/shields//shield_yellow_not_shared', false
+    path, blink = '/images/game/shields/shield_yellow_not_shared', false
+  elseif shieldId == ShieldGray then
+    path, blink = '/images/game/shields/shield_gray', false
   end
   return path, blink
 end
@@ -81,6 +83,10 @@ function getEmblemImagePath(emblemId)
     path = '/images/game/emblems/emblem_red'
   elseif emblemId == EmblemBlue then
     path = '/images/game/emblems/emblem_blue'
+  elseif emblemId == EmblemMember then
+    path = '/images/game/emblems/emblem_member'
+  elseif emblemId == EmblemOther then
+    path = '/images/game/emblems/emblem_other'
   end
   return path
 end

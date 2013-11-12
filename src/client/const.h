@@ -227,14 +227,17 @@ namespace Otc
         ShieldBlueNoSharedExpBlink, // 7 party member sexp inactive guilty
         ShieldYellowNoSharedExpBlink, // 8 // party leader sexp inactive guilty
         ShieldBlueNoSharedExp, // 9 party member sexp inactive innocent
-        ShieldYellowNoSharedExp // 10 party leader sexp inactive innocent
+        ShieldYellowNoSharedExp, // 10 party leader sexp inactive innocent
+        ShieldGray // 11 member of another party
     };
 
     enum PlayerEmblems {
         EmblemNone = 0,
         EmblemGreen,
         EmblemRed,
-        EmblemBlue
+        EmblemBlue,
+        EmblemMember,
+		EmblemOther
     };
 
     enum PlayerStates {

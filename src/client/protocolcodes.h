@@ -250,7 +250,9 @@ namespace Proto {
     enum CreatureType {
         CreatureTypePlayer = 0,
         CreatureTypeMonster,
-        CreatureTypeNpc
+        CreatureTypeNpc,
+        CreatureTypeSummonOwn,
+        CreatureTypeSummonOther
     };
 
     enum CreaturesIdRange {
