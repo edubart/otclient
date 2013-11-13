@@ -178,6 +178,7 @@ std::string latin1_to_utf8(const std::string& src)
 }
 
 #ifdef WIN32
+#include <winsock2.h>
 #include <windows.h>
 std::wstring utf8_to_utf16(const std::string& src)
 {

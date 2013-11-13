@@ -23,6 +23,7 @@
 #include "demangle.h"
 
 #ifdef _MSC_VER
+#include <winsock2.h>
 #include <windows.h>
 #include <dbghelp.h>
 #else

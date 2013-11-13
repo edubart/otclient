@@ -23,6 +23,7 @@
 #ifdef WIN32
 
 #include "platform.h"
+#include <winsock2.h>
 #include <windows.h>
 #include <framework/stdext/stdext.h>
 #include <boost/algorithm/string.hpp>
@@ -55,7 +56,7 @@ bool Platform::spawnProcess(std::string process, const std::vector<std::string>&
     std::wstring wfile = stdext::utf8_to_utf16(process);
     std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
 
-    if((int)ShellExecuteW(NULL, L"open", wfile.c_str(), wcommandLine.c_str(), NULL, SW_SHOWNORMAL) > 32)
+    if((size_t)ShellExecuteW(NULL, L"open", wfile.c_str(), wcommandLine.c_str(), NULL, SW_SHOWNORMAL) > 32)
         return true;
     return false;
 }
@@ -172,6 +173,7 @@ double Platform::getTotalSystemMemory()
     return status.ullTotalPhys;
 }
 
+#ifndef PRODUCT_PROFESSIONAL
 #define PRODUCT_PROFESSIONAL    0x00000030
 #define VER_SUITE_WH_SERVER     0x00008000
 #define VER_PLATFORM_WIN32s             0
@@ -228,6 +230,7 @@ double Platform::getTotalSystemMemory()
 #define PRODUCT_PROFESSIONAL                        0x00000030
 #define PRODUCT_PROFESSIONAL_N                      0x00000031
 #define PRODUCT_SB_SOLUTION_SERVER                  0x00000032
+#endif
 
 std::string Platform::getOSName()
 {

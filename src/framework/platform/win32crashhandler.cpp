@@ -26,6 +26,7 @@
 #include <framework/global.h>
 #include <framework/core/application.h>
 
+#include <winsock2.h>
 #include <windows.h>
 #include <process.h>
 #include <imagehlp.h>
@@ -64,17 +65,28 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     PIMAGEHLP_SYMBOL pSym;
     STACKFRAME sf;
     HANDLE process, thread;
-    DWORD dwModBase, Disp;
+    ULONG_PTR dwModBase, Disp;
     BOOL more = FALSE;
+    DWORD machineType;
     int count = 0;
     char modname[MAX_PATH];
+    char symBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
 
-    pSym = (PIMAGEHLP_SYMBOL)GlobalAlloc(GMEM_FIXED, 16384);
+    pSym = (PIMAGEHLP_SYMBOL)symBuffer;
 
     ZeroMemory(&sf, sizeof(sf));
+#ifdef __WIN64__
+    sf.AddrPC.Offset = e->ContextRecord->Rip;
+    sf.AddrStack.Offset = e->ContextRecord->Rsp;
+    sf.AddrFrame.Offset = e->ContextRecord->Rbp;
+    machineType = IMAGE_FILE_MACHINE_AMD64;
+#else
     sf.AddrPC.Offset = e->ContextRecord->Eip;
     sf.AddrStack.Offset = e->ContextRecord->Esp;
     sf.AddrFrame.Offset = e->ContextRecord->Ebp;
+    machineType = IMAGE_FILE_MACHINE_I386;
+#endif
+
     sf.AddrPC.Mode = AddrModeFlat;
     sf.AddrStack.Mode = AddrModeFlat;
     sf.AddrFrame.Mode = AddrModeFlat;
@@ -83,7 +95,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     thread = GetCurrentThread();
 
     while(1) {
-        more = StackWalk(IMAGE_FILE_MACHINE_I386,  process, thread, &sf, e->ContextRecord, NULL, SymFunctionTableAccess, SymGetModuleBase, NULL);
+        more = StackWalk(machineType,  process, thread, &sf, e->ContextRecord, NULL, SymFunctionTableAccess, SymGetModuleBase, NULL);
         if(!more || sf.AddrFrame.Offset == 0)
             break;
 
@@ -93,13 +105,14 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
         else
             strcpy(modname, "Unknown");
 
-        pSym->SizeOfStruct = sizeof(IMAGEHLP_SYMBOL);
-        pSym->MaxNameLength = MAX_PATH;
+        Disp = 0;
+        pSym->SizeOfStruct = sizeof(symBuffer);
+        pSym->MaxNameLength = 254;
 
         if(SymGetSymFromAddr(process, sf.AddrPC.Offset, &Disp, pSym))
-            ss << stdext::format("    %d: %s(%s+%#0lx) [0x%08lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
+            ss << stdext::format("    %d: %s(%s+%#0lx) [0x%016lX]\n", count, modname, pSym->Name, Disp, sf.AddrPC.Offset);
         else
-            ss << stdext::format("    %d: %s [0x%08lX]\n", count, modname, sf.AddrPC.Offset);
+            ss << stdext::format("    %d: %s [0x%016lX]\n", count, modname, sf.AddrPC.Offset);
         ++count;
     }
     GlobalFree(pSym);
@@ -119,7 +132,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     ss << stdext::format("build revision: %s (%s)\n", BUILD_REVISION, BUILD_COMMIT);
     ss << stdext::format("crash date: %s\n", stdext::date_time_string());
     ss << stdext::format("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
-    ss << stdext::format("exception address: 0x%08lx\n", (long unsigned int)e->ExceptionRecord->ExceptionAddress);
+    ss << stdext::format("exception address: 0x%08lx\n", (size_t)e->ExceptionRecord->ExceptionAddress);
     ss << stdext::format("  backtrace:\n");
     Stacktrace(e, ss);
     ss << "\n";

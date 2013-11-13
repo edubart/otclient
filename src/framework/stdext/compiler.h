@@ -23,6 +23,10 @@
 #ifndef STDEXT_COMPILER_H
 #define STDEXT_COMPILER_H
 
+#ifdef WIN32
+#include <winsock2.h>
+#endif
+
 #ifdef __clang__
     // clang is supported
     #define BUILD_COMPILER "clang " __VERSION__

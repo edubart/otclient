@@ -270,7 +270,7 @@ endif()
 if(WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501)
-    set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
+    #set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
     set(SYSTEM_LIBRARIES "")
 else()
     if(APPLE)
@@ -544,6 +544,10 @@ if(FRAMEWORK_SQL)
         ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.h
     )
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
+endif()
+
+if(EXTRA_LIBS)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${EXTRA_LIBS})
 endif()
 
 include_directories(${framework_INCLUDE_DIRS})

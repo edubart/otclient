@@ -43,7 +43,94 @@ revision=`git rev-list --all | wc -l`
 commit=`git describe --always`
 version=`cat CMakeLists.txt | grep "set(VERSION" | sed 's/.*"\([^"]*\)".*/\1/'`
 
-# build for i686
+
+if $rebuild; then
+    rm -rf build.win32
+    rm -rf build.win64
+    rm -rf build.win32dx9
+    rm -rf build.win64dx9
+    rm -rf build.linux32
+    #rm -rf build.linux64
+fi
+
+WIN32_EXTRA_LIBS="-Wl,-Bstatic -lgcc -lstdc++ -lpthread"
+
+# compile for win64
+mkdir -p build.win64
+cd build.win64
+if $rebuild; then
+    x86_64-w64-mingw32-cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        -DEXTRA_LIBS="$WIN32_EXTRA_LIBS" \
+        .. || exit
+fi
+make -j$makejobs || exit
+cd ..
+
+# compile for win32
+mkdir -p build.win32
+cd build.win32
+if $rebuild; then
+    i686-w64-mingw32-cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        -DEXTRA_LIBS="$WIN32_EXTRA_LIBS" \
+        .. || exit
+fi
+make -j$makejobs || exit
+cd ..
+
+# compile for win64dx9
+mkdir -p build.win64
+cd build.win64
+if $rebuild; then
+    x86_64-w64-mingw32-cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DOPENGLES=2.0 \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        -DEXTRA_LIBS="$WIN32_EXTRA_LIBS" \
+        .. || exit
+fi
+make -j$makejobs || exit
+cd ..
+
+# compile for win32dx9
+mkdir -p build.win32dx9
+cd build.win32dx9
+if $rebuild; then
+    i686-w64-mingw32-cmake \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DOPENGLES=2.0 \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        -DEXTRA_LIBS="$WIN32_EXTRA_LIBS" \
+        .. || exit
+fi
+make -j$makejobs || exit
+cd ..
+
+# compile for linux64
+mkdir -p build.linux64
+cd build.linux64
+if $rebuild; then
+    cmake -DCMAKE_BUILD_TYPE=Release \
+        -DBOT_PROTECTION=OFF \
+        -DBUILD_REVISION=$revision \
+        -DBUILD_COMMIT=$commit \
+        .. || exit
+fi
+make -j$makejobs || exit
+cd ..
+
+# compile for linux32
 export CFLAGS="-march=i686 -m32"
 export CXXFLAGS="-march=i686 -m32"
 export LDFLAGS="-march=i686 -m32"
@@ -53,42 +140,6 @@ if [ -d /usr/lib32 ]; then
     LIBPATH=/usr/lib32
 fi
 
-if $rebuild; then
-    rm -rf build.win32
-    rm -rf build.win32dx9
-    rm -rf build.linux32
-fi
-
-# compile for win32
-mkdir -p build.win32
-cd build.win32
-if $rebuild; then
-    cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DBOT_PROTECTION=OFF \
-        -DBUILD_REVISION=$revision \
-        -DBUILD_COMMIT=$commit \
-        .. || exit
-fi
-make -j$makejobs || exit
-cd ..
-
-# compile for win32
-mkdir -p build.win32dx9
-cd build.win32dx9
-if $rebuild; then
-    cmake -DCMAKE_TOOLCHAIN_FILE=$workdir/otclient/src/framework/cmake/${mingwplatform}_toolchain.cmake \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DBOT_PROTECTION=OFF \
-        -DOPENGLES=2.0 \
-        -DBUILD_REVISION=$revision \
-        -DBUILD_COMMIT=$commit \
-        .. || exit
-fi
-make -j$makejobs || exit
-cd ..
-
-# compile for linux32
 mkdir -p build.linux32
 cd build.linux32
 if $rebuild; then
@@ -117,8 +168,8 @@ mkdir mods
 cp $workdir/otclient/mods/README.txt mods/
 cp -R $workdir/otclient/modules .
 cp -R $workdir/otclient/data .
-cp $workdir/otclient/build.linux32/otclient .
-cp $workdir/otclient/build.linux32/otclient.map .
+cp $workdir/otclient/build.linux32/otclient otclient-32
+cp $workdir/otclient/build.linux64/otclient otclient-64
 cp $workdir/otclient/init.lua .
 cp $workdir/otclient/otclientrc.lua .
 cp $workdir/otclient/BUGS .
@@ -163,15 +214,15 @@ mkdir mods
 cp $workdir/otclient/mods/README.txt mods/
 cp -R $workdir/otclient/modules .
 cp -R $workdir/otclient/data .
-cp $mingwbin/libEGL.dll .
-cp $mingwbin/libGLESv2.dll .
-cp $mingwbin/d3dcompiler_43.dll .
-cp $mingwbin/d3dx9_43.dll .
-cp $mingwbin/wrap_oal.dll .
-cp $workdir/otclient/build.win32/otclient.exe .
-cp $workdir/otclient/build.win32/otclient.map .
-cp $workdir/otclient/build.win32dx9/otclient.exe otclient_dx9.exe
-cp $workdir/otclient/build.win32dx9/otclient.map otclient_dx9.map
+#cp $mingwbin/libEGL.dll .
+#cp $mingwbin/libGLESv2.dll .
+#cp $mingwbin/d3dcompiler_43.dll .
+#cp $mingwbin/d3dx9_43.dll .
+#cp $mingwbin/wrap_oal.dll .
+cp $workdir/otclient/build.win32/otclient.exe otclient-32.exe
+cp $workdir/otclient/build.win32dx9/otclient.exe otclient_dx9-32.exe
+cp $workdir/otclient/build.win64/otclient.exe otclient-64.exe
+cp $workdir/otclient/build.winw64dx9/otclient.exe otclient_dx9-64.exe
 cp $workdir/otclient/init.lua .
 cp $workdir/otclient/otclientrc.lua .
 cp $workdir/otclient/AUTHORS AUTHORS.txt
