@@ -149,8 +149,8 @@ Size FrameBuffer::getSize()
 {
     if(m_fbo == 0) {
         // the buffer size is limited by the window size
-        return Size(min(m_texture->getWidth(), g_window.getWidth()),
-                    min(m_texture->getHeight(), g_window.getHeight()));
+        return Size(std::min(m_texture->getWidth(), g_window.getWidth()),
+                    std::min(m_texture->getHeight(), g_window.getHeight()));
     }
     return m_texture->getSize();
 }

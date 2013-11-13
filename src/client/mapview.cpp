@@ -110,7 +110,7 @@ void MapView::draw(const Rect& rect)
                     ambientLight.color = 215;
                     ambientLight.intensity = 0;
                 }
-                ambientLight.intensity = max<int>(m_minimumAmbientLight*255, ambientLight.intensity);
+                ambientLight.intensity = std::max<int>(m_minimumAmbientLight*255, ambientLight.intensity);
                 m_lightView->setGlobalLight(ambientLight);
             }
         }
@@ -159,7 +159,7 @@ void MapView::draw(const Rect& rect)
     }
 
     if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
-        fadeOpacity = min(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
+        fadeOpacity = std::min(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
     Rect srcRect = calcFramebufferSource(rect.size());
     Point drawOffset = srcRect.topLeft();
@@ -311,7 +311,7 @@ void MapView::updateVisibleTilesCache(int start)
             // loop through / diagonals beginning at top left and going to top right
             for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
                 // loop current diagonal tiles
-                int advance = max(diagonal - m_drawDimension.height(), 0);
+                int advance = std::max(diagonal - m_drawDimension.height(), 0);
                 for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                     // only start really looking tiles in the desired start
                     if(m_updateTilesPos < start) {
@@ -364,10 +364,10 @@ void MapView::updateVisibleTilesCache(int start)
                     };
 
                     for(int i=0;i<4;++i) {
-                        int sx = max(lines[i].left(), area.left());
-                        int ex = min(lines[i].right(), area.right());
-                        int sy = max(lines[i].top(), area.top());
-                        int ey = min(lines[i].bottom(), area.bottom());
+                        int sx = std::max(lines[i].left(), area.left());
+                        int ex = std::min(lines[i].right(), area.right());
+                        int sy = std::max(lines[i].top(), area.top());
+                        int ey = std::min(lines[i].bottom(), area.bottom());
                         for(int qx=sx;qx<=ex;++qx)
                             for(int qy=sy;qy<=ey;++qy)
                                 m_spiral[count++] = Point(qx, qy);
@@ -608,7 +608,7 @@ int MapView::calcFirstVisibleFloor()
 
                 // limits to underground floors while under sea level
                 if(cameraPosition.z > Otc::SEA_FLOOR)
-                    firstFloor = max(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
+                    firstFloor = std::max(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
 
                 // loop in 3x3 tiles around the camera
                 for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
@@ -644,7 +644,7 @@ int MapView::calcFirstVisibleFloor()
     }
 
     // just ensure the that the floor is in the valid range
-    z = min(max(z, 0), (int)Otc::MAX_Z);
+    z = std::min(std::max(z, 0), (int)Otc::MAX_Z);
     return z;
 }
 
@@ -666,10 +666,10 @@ int MapView::calcLastVisibleFloor()
     }
 
     if(m_lockedFirstVisibleFloor != -1)
-        z = max(m_lockedFirstVisibleFloor, z);
+        z = std::max(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
-    z = min(max(z, 0), (int)Otc::MAX_Z);
+    z = std::min(std::max(z, 0), (int)Otc::MAX_Z);
     return z;
 }
 

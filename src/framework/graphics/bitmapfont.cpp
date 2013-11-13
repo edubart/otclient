@@ -209,7 +209,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
                 lineWidths[lines] += m_glyphsSize[glyph].width() ;
                 if((i+1 != textLength && text[i+1] != '\n')) // only add space if letter is not the last or before a \n.
                     lineWidths[lines] += m_glyphSpacing.width();
-                maxLineWidth = max(maxLineWidth, lineWidths[lines]);
+                maxLineWidth = std::max(maxLineWidth, lineWidths[lines]);
             }
         }
     }

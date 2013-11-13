@@ -44,35 +44,35 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
     // 0% - 12.5% (12.5)
     // triangle from top center, to top right (var x)
     if(m_percent < 12.5) {
-        Point var = Point(max(m_percent - 0.0, 0.0) * (drawRect.right() - drawRect.horizontalCenter()) / 12.5, 0);
+        Point var = Point(std::max(m_percent - 0.0, 0.0) * (drawRect.right() - drawRect.horizontalCenter()) / 12.5, 0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.topRight() + Point(1,0), drawRect.topCenter() + var);
     }
 
     // 12.5% - 37.5% (25)
     // triangle from top right to bottom right (var y)
     if(m_percent < 37.5) {
-        Point var = Point(0, max(m_percent - 12.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
+        Point var = Point(0, std::max(m_percent - 12.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomRight() + Point(1,1), drawRect.topRight() + var + Point(1,0));
     }
 
     // 37.5% - 62.5% (25)
     // triangle from bottom right to bottom left (var x)
     if(m_percent < 62.5) {
-        Point var = Point(max(m_percent - 37.5, 0.0) * (drawRect.right() - drawRect.left()) / 25.0, 0);
+        Point var = Point(std::max(m_percent - 37.5, 0.0) * (drawRect.right() - drawRect.left()) / 25.0, 0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomLeft() + Point(0,1), drawRect.bottomRight() - var + Point(1,1));
     }
 
     // 62.5% - 87.5% (25)
     // triangle from bottom left to top left
     if(m_percent < 87.5) {
-        Point var = Point(0, max(m_percent - 62.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
+        Point var = Point(0, std::max(m_percent - 62.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.topLeft(), drawRect.bottomLeft() - var + Point(0,1));
     }
 
     // 87.5% - 100% (12.5)
     // triangle from top left to top center
     if(m_percent < 100) {
-        Point var = Point(max(m_percent - 87.5, 0.0) * (drawRect.horizontalCenter() - drawRect.left()) / 12.5, 0);
+        Point var = Point(std::max(m_percent - 87.5, 0.0) * (drawRect.horizontalCenter() - drawRect.left()) / 12.5, 0);
         g_painter->drawFilledTriangle(drawRect.center(), drawRect.topCenter(), drawRect.topLeft() + var);
     }
 
@@ -84,7 +84,7 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
 
 void UIProgressRect::setPercent(float percent)
 {
-    m_percent = max(min((double)percent, 100.0), 0.0);
+    m_percent = std::max(std::min((double)percent, 100.0), 0.0);
 }
 
 void UIProgressRect::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
