@@ -78,7 +78,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
         m_updateEvent = nullptr;
     }
 
-    int delay = std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * text.length(), Otc::MIN_STATIC_TEXT_DURATION);
+    int delay = max<int>(Otc::STATIC_DURATION_PER_CHARACTER * text.length(), Otc::MIN_STATIC_TEXT_DURATION);
     if(isYell())
         delay *= 2;
 
@@ -106,7 +106,7 @@ void StaticText::update()
 
 void StaticText::scheduleUpdate()
 {
-    int delay = std::max<int>(m_messages.front().second - g_clock.millis(), 0);
+    int delay = max<int>(m_messages.front().second - g_clock.millis(), 0);
 
     auto self = asStaticText();
     m_updateEvent = g_dispatcher.scheduleEvent([self]() {

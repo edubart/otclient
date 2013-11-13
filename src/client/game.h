@@ -287,7 +287,7 @@ public:
     bool isFollowing() { return !!m_followingCreature; }
     bool isConnectionOk() { return m_protocolGame && m_protocolGame->getElapsedTicksSinceLastRead() < 5000; }
 
-    int getPing() { return m_ping >= 0 ? std::max(m_ping, m_pingTimer.elapsed_millis()) : -1; }
+    int getPing() { return m_ping >= 0 ? max(m_ping, m_pingTimer.elapsed_millis()) : -1; }
     ContainerPtr getContainer(int index) { return m_containers[index]; }
     std::map<int, ContainerPtr> getContainers() { return m_containers; }
     std::map<int, Vip> getVips() { return m_vips; }

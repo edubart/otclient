@@ -101,8 +101,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
 
             if(thing->isLyingCorpse()) {
-                redrawPreviousTopW = std::max(thing->getWidth(), redrawPreviousTopW);
-                redrawPreviousTopH = std::max(thing->getHeight(), redrawPreviousTopH);
+                redrawPreviousTopW = max(thing->getWidth(), redrawPreviousTopW);
+                redrawPreviousTopH = max(thing->getHeight(), redrawPreviousTopH);
             }
 
             m_drawElevation += thing->getElevation();

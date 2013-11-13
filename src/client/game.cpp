@@ -664,7 +664,7 @@ bool Game::dashWalk(Otc::Direction direction)
         m_localPlayer->stopAutoWalk();
     }
 
-    if(m_localPlayer->isWalking() && m_dashTimer.ticksElapsed() < std::max<int>(m_localPlayer->getStepDuration(false, direction) - m_ping, 30))
+    if(m_localPlayer->isWalking() && m_dashTimer.ticksElapsed() < max<int>(m_localPlayer->getStepDuration(false, direction) - m_ping, 30))
         return false;
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);

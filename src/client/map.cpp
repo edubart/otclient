@@ -138,7 +138,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                         int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
                         offset += Point(0, y);
                     }
-                    offset.y = std::min(offset.y, 12);
+                    offset.y = min(offset.y, 12);
                     animatedText->setOffset(offset);
                 }
                 m_animatedTexts.push_back(animatedText);
@@ -615,7 +615,7 @@ int Map::getFirstAwareFloor()
 int Map::getLastAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return std::min(m_centralPosition.z+Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
+        return min(m_centralPosition.z+Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
     else
         return Otc::SEA_FLOOR;
 }

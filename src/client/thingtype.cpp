@@ -129,7 +129,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     uint8 width = fin->getU8();
     uint8 height = fin->getU8();
     m_size = Size(width, height);
-    m_exactSize = (width > 1 || height > 1) ? std::min((int)fin->getU8(), std::max(width * 32, height * 32)) : 32;
+    m_exactSize = (width > 1 || height > 1) ? min((int)fin->getU8(), max(width * 32, height * 32)) : 32;
     m_layers = fin->getU8();
     m_numPatternX = fin->getU8();
     m_numPatternY = fin->getU8();
@@ -280,10 +280,10 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                             for(int y = framePos.y; y < framePos.y + m_size.height() * Otc::TILE_PIXELS; ++y) {
                                 uint8 *p = fullImage->getPixel(x,y);
                                 if(p[3] != 0x00) {
-                                    drawRect.setTop   (std::min(y, (int)drawRect.top()));
-                                    drawRect.setLeft  (std::min(x, (int)drawRect.left()));
-                                    drawRect.setBottom(std::max(y, (int)drawRect.bottom()));
-                                    drawRect.setRight (std::max(x, (int)drawRect.right()));
+                                    drawRect.setTop   (min(y, (int)drawRect.top()));
+                                    drawRect.setLeft  (min(x, (int)drawRect.left()));
+                                    drawRect.setBottom(max(y, (int)drawRect.bottom()));
+                                    drawRect.setRight (max(x, (int)drawRect.right()));
                                 }
                             }
                         }
@@ -362,5 +362,5 @@ int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern,
     getTexture(animationPhase); // we must calculate it anyway.
     int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
     Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
-    return std::max(size.width(), size.height());
+    return max(size.width(), size.height());
 }

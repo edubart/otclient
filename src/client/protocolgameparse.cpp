@@ -1701,7 +1701,7 @@ void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, i
 
     if(z > Otc::SEA_FLOOR) {
         startz = z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
-        endz = std::min(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
+        endz = min(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
         zstep = 1;
     }
     else {

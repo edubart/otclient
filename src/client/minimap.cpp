@@ -200,7 +200,7 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
             minimapTile.flags |= MinimapTileNotWalkable;
         if(!tile->isPathable())
             minimapTile.flags |= MinimapTileNotPathable;
-        minimapTile.speed = std::min((int)std::ceil(tile->getGroundSpeed() / 10.0f), 255);
+        minimapTile.speed = min((int)std::ceil(tile->getGroundSpeed() / 10.0f), 255);
     }
 
     if(minimapTile != MinimapTile()) {
