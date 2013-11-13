@@ -31,7 +31,7 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate, LightView 
 
     int animationPhase = 0;
     if(animate)
-        animationPhase = std::min((int)(m_animationTimer.ticksElapsed() / m_phaseDuration), getAnimationPhases() - 1);
+        animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / m_phaseDuration), getAnimationPhases() - 1);
     rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
 }
 

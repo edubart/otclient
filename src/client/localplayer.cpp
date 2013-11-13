@@ -58,7 +58,7 @@ LocalPlayer::LocalPlayer()
 
 void LocalPlayer::lockWalk(int millis)
 {
-    m_walkLockExpiration = std::max(m_walkLockExpiration, (ticks_t) g_clock.millis() + millis);
+    m_walkLockExpiration = std::max<int>(m_walkLockExpiration, (ticks_t) g_clock.millis() + millis);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction direction)
@@ -263,7 +263,7 @@ void LocalPlayer::updateWalk()
 {
     int stepDuration = getStepDuration();
     float walkTicksPerPixel = getStepDuration(true) / 32.0f;
-    int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);

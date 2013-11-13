@@ -77,7 +77,7 @@ void UIMap::movePixels(int x, int y)
 
 bool UIMap::setZoom(int zoom)
 {
-    m_zoom = std::min(std::max(zoom, m_maxZoomIn), m_maxZoomOut);
+    m_zoom = std::min<int>(std::max<int>(zoom, m_maxZoomIn), m_maxZoomOut);
     updateVisibleDimension();
     return false;
 }

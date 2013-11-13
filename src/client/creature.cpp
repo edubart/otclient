@@ -70,13 +70,13 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
 
     if(m_showTimedSquare && animate) {
         g_painter->setColor(m_timedSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 2)*scaleFactor, Size(28, 28)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement() + 2)*scaleFactor, Size(28, 28)*scaleFactor), std::max<int>((int)(2*scaleFactor), 1));
         g_painter->setColor(Color::white);
     }
 
     if(m_showStaticSquare && animate) {
         g_painter->setColor(m_staticSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement())*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max((int)(2*scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (animationOffset - getDisplacement())*scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS)*scaleFactor), std::max<int>((int)(2*scaleFactor), 1));
         g_painter->setColor(Color::white);
     }
 
@@ -171,7 +171,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         // when creature is an effect we cant render the first and last animation phase,
         // instead we should loop in the phases between
         if(m_outfit.getCategory() == ThingCategoryEffect) {
-            animationPhases = std::max(1, animationPhases-2);
+            animationPhases = std::max<int>(1, animationPhases-2);
             animateTicks = Otc::INVISIBLE_TICKS_PER_FRAME;
         }
 
@@ -372,7 +372,7 @@ void Creature::updateJump()
 
         int nextT, i = 1;
         do {
-            nextT = stdext::round((-b + std::sqrt(std::max(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
+            nextT = stdext::round((-b + std::sqrt(std::max<int>(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
             ++i;
 
             if(nextT < halfJumpDuration)
@@ -556,7 +556,7 @@ void Creature::updateWalk()
     int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // needed for paralyze effect
-    m_walkedPixels = std::max(m_walkedPixels, totalPixelsWalked);
+    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
@@ -820,7 +820,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
     if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
         int formulatedSpeed = 1;
         if(speed > -m_speedFormula[Otc::SpeedFormulaB]) {
-            formulatedSpeed = std::max(1, (int)floor((m_speedFormula[Otc::SpeedFormulaA] * log((speed / 2)
+            formulatedSpeed = std::max<int>(1, (int)floor((m_speedFormula[Otc::SpeedFormulaA] * log((speed / 2)
                  + m_speedFormula[Otc::SpeedFormulaB]) + m_speedFormula[Otc::SpeedFormulaC]) + 0.5));
         }
         interval = std::floor(interval / (double)formulatedSpeed);
@@ -835,7 +835,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
     if(g_game.getProtocolVersion() <= 810)
         factor = 2;
 
-    interval = std::max(interval, g_game.getServerBeat());
+    interval = std::max<int>(interval, g_game.getServerBeat());
 
     if(!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
@@ -887,7 +887,7 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
             continue;
 
         for(layer = 0; layer < getLayers(); ++layer)
-            exactSize = std::max(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
+            exactSize = std::max<int>(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
     }
 
     return exactSize;

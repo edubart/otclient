@@ -50,7 +50,7 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
     for(int x = 0; x < bubbleDiameter; x++) {
         for(int y = 0; y < bubbleDiameter; y++) {
             float radius = std::sqrt((bubbleRadius - x)*(bubbleRadius - x) + (bubbleRadius - y)*(bubbleRadius - y));
-            float intensity = std::max(std::min((bubbleRadius-radius)/(float)(bubbleRadius-centerRadius), 1.0f), 0.0f);
+            float intensity = std::max<float>(std::min<float>((bubbleRadius-radius)/(float)(bubbleRadius-centerRadius), 1.0f), 0.0f);
 
             // light intensity varies inversely with the square of the distance
             intensity = intensity * intensity;
