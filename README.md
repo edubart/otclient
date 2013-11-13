@@ -8,6 +8,16 @@ that each functionality is a separated module, giving the possibility to users m
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 Otclient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
 
+### Where do I download?
+
+Here is the latest v0.6.4 release compiled for both i686(32 bit) and x86_64(64 bit) machines.
+This release is compatible with protocols ranges from 7.60 up to 10.21.
+
+* [For Windows](https://www.dropbox.com/s/ouvfybsnav0tela/otclient-win32-0.6.4.zip)
+* [For Linux](https://www.dropbox.com/s/zzgkk2ahsku5j47/otclient-linux32-0.6.4.tgz)
+
+NOTE: You will need to download spr/dat files on your own and place them in "data/things/VERSION/" (i.e: "data/things/1022/Tibia.spr")
+
 ### Features
 
 Beyond of it's flexibility with scripts, otclient comes with tons of other features that make possible
