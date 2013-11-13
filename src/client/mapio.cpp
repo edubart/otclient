@@ -109,7 +109,7 @@ void Map::loadOtbm(const std::string& fileName)
                     uint32 flags = TILESTATE_NONE;
                     Position pos = basePos + nodeTile->getPoint();
 
-                    if(type ==  OTBM_HOUSETILE) {
+                    if(type == OTBM_HOUSETILE) {
                         uint32 hId = nodeTile->getU32();
                         TilePtr tile = getOrCreateTile(pos);
                         if(!(house = g_houses.getHouse(hId))) {
@@ -136,9 +136,6 @@ void Map::loadOtbm(const std::string& fileName)
 
                                 if((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
                                     flags |= TILESTATE_REFRESH;
-
-                                if((_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE)
-                                    flags |= TILESTATE_HOUSE;
                                 break;
                             }
                             case OTBM_ATTR_ITEM: {
@@ -179,9 +176,9 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     if(const TilePtr& tile = getTile(pos)) {
-                        if(tile->hasFlag(TILESTATE_HOUSE))
-                            tile->setFlags(tile->getFlags() & ~TILESTATE_HOUSE);
-                        tile->setFlags((tileflags_t)flags);
+                        if(house)
+                            tile->setFlag(TILESTATE_HOUSE);
+                        tile->setFlag(flags);
                     }
                 }
             } else if(mapDataType == OTBM_TOWNS) {
