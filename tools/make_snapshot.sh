@@ -50,10 +50,11 @@ if $rebuild; then
     rm -rf build.win32dx9
     rm -rf build.win64dx9
     rm -rf build.linux32
-    #rm -rf build.linux64
+    rm -rf build.linux64
 fi
 
-WIN32_EXTRA_LIBS="-Wl,-Bstatic -lgcc -lstdc++ -lpthread"
+WIN32_EXTRA_LIBS="-Wl,-Bstatic -lgcc -lstdc++ -lpthread -Wl,-Bdynamic"
+
 
 # compile for win64
 mkdir -p build.win64
@@ -86,8 +87,8 @@ make -j$makejobs || exit
 cd ..
 
 # compile for win64dx9
-mkdir -p build.win64
-cd build.win64
+mkdir -p build.win64dx9
+cd build.win64dx9
 if $rebuild; then
     x86_64-w64-mingw32-cmake \
         -DCMAKE_BUILD_TYPE=Release \
@@ -214,11 +215,11 @@ mkdir mods
 cp $workdir/otclient/mods/README.txt mods/
 cp -R $workdir/otclient/modules .
 cp -R $workdir/otclient/data .
-#cp $mingwbin/libEGL.dll .
-#cp $mingwbin/libGLESv2.dll .
-#cp $mingwbin/d3dcompiler_43.dll .
-#cp $mingwbin/d3dx9_43.dll .
-#cp $mingwbin/wrap_oal.dll .
+cp $mingwbin/libEGL.dll .
+cp $mingwbin/libGLESv2.dll .
+cp $mingwbin/d3dcompiler_43.dll .
+cp $mingwbin/d3dx9_43.dll .
+cp $mingwbin/wrap_oal.dll .
 cp $workdir/otclient/build.win32/otclient.exe otclient-32.exe
 cp $workdir/otclient/build.win32dx9/otclient.exe otclient_dx9-32.exe
 cp $workdir/otclient/build.win64/otclient.exe otclient-64.exe
