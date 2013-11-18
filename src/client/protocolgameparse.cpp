@@ -316,8 +316,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parsePlayerInfo(msg);
                 break;
             // PROTOCOL>=970
-            case Proto::GameServerShowModalDialog:
-                parseShowModalDialog(msg);
+            case Proto::GameServerModalDialog:
+                parseModalDialog(msg);
                 break;
             // PROTOCOL>=980
             case Proto::GameServerLoginSuccess:
@@ -1596,18 +1596,18 @@ void ProtocolGame::parsePlayerInventory(const InputMessagePtr& msg)
     }
 }
 
-void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
+void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
 {
     uint32 id = msg->getU32();
     std::string title = msg->getString();
     std::string message = msg->getString();
 
     int sizeButtons = msg->getU8();
-    std::map<int, std::string > buttonList;
+    std::vector<std::tuple<int, std::string> > buttonList;
     for(int i = 0; i < sizeButtons; ++i) {
         std::string value = msg->getString();
         int id = msg->getU8();
-        buttonList[id] = value;
+        buttonList.push_back(std::make_tuple(id, value));
     }
 
     int sizeChoices = msg->getU8();
@@ -1628,21 +1628,9 @@ void ProtocolGame::parseShowModalDialog(const InputMessagePtr& msg)
         escapeButton = msg->getU8();
     }
 
-    msg->getU8(); // popup value (no clue what it is for)
+    bool priority = msg->getU8() == 0x01;
 
-    std::map<int, std::string>::iterator itEnter = buttonList.find(enterButton);
-    if(itEnter == buttonList.end()) {
-        g_logger.info(stdext::format("Enter button does not exist for dialog id: %d", id));
-        return;
-    }
-
-    std::map<int, std::string >::iterator itEscape = buttonList.find(escapeButton);
-    if(itEscape == buttonList.end()) {
-        g_logger.info(stdext::format("Escape button does not exist for dialog id: %d", id));
-        return;
-    }
-
-    g_game.processModalDialog(id, title, message, itEnter->first, itEnter->second, itEscape->first, itEscape->second, choiceList);
+    g_game.processModalDialog(id, title, message, buttonList, enterButton, escapeButton, choiceList, priority);
 }
 
 void ProtocolGame::parseExtendedOpcode(const InputMessagePtr& msg)

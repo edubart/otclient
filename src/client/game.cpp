@@ -506,9 +506,9 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
-void Game::processModalDialog(uint32 id, std::string title, std::string message, int enterId, std::string enterText, int escapeId, std::string escapeText, std::vector<std::tuple<int, std::string> > choiceList)
+void Game::processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority)
 {
-    g_lua.callGlobalField("g_game", "onModalDialog", id, title, message, enterId, enterText, escapeId, escapeText, choiceList);
+    g_lua.callGlobalField("g_game", "onModalDialog", id, title, message, buttonList, enterButton, escapeButton, choiceList, priority);
 }
 
 void Game::processAttackCancel(uint seq)

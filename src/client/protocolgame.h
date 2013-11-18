@@ -212,7 +212,7 @@ private:
     void parseChannelEvent(const InputMessagePtr& msg);
     void parseItemInfo(const InputMessagePtr& msg);
     void parsePlayerInventory(const InputMessagePtr& msg);
-    void parseShowModalDialog(const InputMessagePtr& msg);
+    void parseModalDialog(const InputMessagePtr& msg);
     void parseExtendedOpcode(const InputMessagePtr& msg);
     void parseChangeMapAwareRange(const InputMessagePtr& msg);
     void parseCreaturesMark(const InputMessagePtr& msg);

@@ -61,7 +61,7 @@ end
 
 function terminate()
   disconnect(g_game, 'onTextMessage', displayMessage)
-  disconnect(g_game, 'onGameEnd',clearMessages)
+  disconnect(g_game, 'onGameEnd', clearMessages)
   clearMessages()
   messagesPanel:destroy()
 end

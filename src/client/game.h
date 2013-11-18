@@ -132,7 +132,7 @@ protected:
     void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions);
 
     // modal dialogs >= 970
-    void processModalDialog(uint32 id, std::string title, std::string message, int enterId, std::string enterText, int escapeId, std::string escapeText, std::vector<std::tuple<int, std::string> > choiceList);
+    void processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority);
 
     friend class ProtocolGame;
     friend class Map;
