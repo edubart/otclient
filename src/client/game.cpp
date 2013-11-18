@@ -1356,7 +1356,6 @@ void Game::mount(bool mount)
 {
     if(!canPerformGameAction())
         return;
-
     m_protocolGame->sendMountStatus(mount);
 }
 
@@ -1371,7 +1370,6 @@ void Game::answerModalDialog(int dialog, int button, int choice)
 {
     if(!canPerformGameAction())
         return;
-
     m_protocolGame->sendAnswerModalDialog(dialog, button, choice);
 }
 
