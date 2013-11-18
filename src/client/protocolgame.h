@@ -83,7 +83,7 @@ public:
     void sendCloseRuleViolation(const std::string& reporter);
     void sendCancelRuleViolation();
     void sendCloseNpcChannel();
-    void sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight);
+    void sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight, Otc::PVPModes pvpMode);
     void sendAttack(uint creatureId, uint seq);
     void sendFollow(uint creatureId, uint seq);
     void sendInviteToParty(uint creatureId);

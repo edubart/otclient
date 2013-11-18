@@ -206,6 +206,13 @@ namespace Otc
         ChaseOpponent = 1
     };
 
+    enum PVPModes {
+        WhiteDove = 0,
+        WhiteHand = 1,
+        YellowHand = 2,
+        RedFist = 3
+    };
+
     enum PlayerSkulls {
         SkullNone = 0,
         SkullYellow,

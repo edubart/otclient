@@ -573,7 +573,7 @@ void ProtocolGame::sendCloseNpcChannel()
     send(msg);
 }
 
-void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight)
+void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight, Otc::PVPModes pvpMode)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientChangeFightModes);
@@ -581,9 +581,8 @@ void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseMod
     msg->addU8(chaseMode);
     msg->addU8(safeFight ? 0x01: 0x00);
 
-    //TODO: implement pvp modes
     if(g_game.getFeature(Otc::GamePVPMode))
-        msg->addU8(0); // pvp mode
+        msg->addU8(pvpMode);
 
     send(msg);
 }

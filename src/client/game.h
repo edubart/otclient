@@ -74,7 +74,7 @@ protected:
     void processWalkCancel(Otc::Direction direction);
 
     void processPlayerHelpers(int helpers);
-    void processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode);
+    void processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode, Otc::PVPModes pvpMode);
 
     // message related
     void processTextMessage(Otc::MessageMode mode, const std::string& text);
@@ -211,9 +211,11 @@ public:
     void setChaseMode(Otc::ChaseModes chaseMode);
     void setFightMode(Otc::FightModes fightMode);
     void setSafeFight(bool on);
+    void setPVPMode(Otc::PVPModes pvpMode);
     Otc::ChaseModes getChaseMode() { return m_chaseMode; }
     Otc::FightModes getFightMode() { return m_fightMode; }
     bool isSafeFight() { return m_safeFight; }
+    Otc::PVPModes getPVPMode() { return m_pvpMode; }
 
     // npc trade related
     void inspectNpcTrade(const ItemPtr& item);
@@ -336,6 +338,7 @@ private:
     int m_pingDelay;
     Otc::FightModes m_fightMode;
     Otc::ChaseModes m_chaseMode;
+    Otc::PVPModes m_pvpMode;
     Otc::Direction m_lastWalkDir;
     bool m_safeFight;
     bool m_canReportBugs;

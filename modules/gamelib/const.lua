@@ -47,6 +47,11 @@ FightDefensive = 3
 DontChase = 0
 ChaseOpponent = 1
 
+PVPWhiteDove = 0
+PVPWhiteHand = 1
+PVPYellowHand = 2
+PVPRedFist = 3
+
 GameProtocolChecksum = 1
 GameAccountNames = 2
 GameChallengeOnLogin = 3
@@ -94,6 +99,7 @@ GameMesssageLevel = 46
 GameNewFluids = 47
 GamePlayerStateU16 = 48
 GameNewOutfitProtocol = 49
+GamePVPMode = 50
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
