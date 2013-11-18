@@ -1229,6 +1229,8 @@ void Game::setPVPMode(Otc::PVPModes pvpMode)
 {
     if(!canPerformGameAction())
         return;
+    if(!g_game.getFeature(Otc::GameFeature::PVPModes))
+        return;
     if(m_pvpMode == pvpMode)
         return;
     m_pvpMode = pvpMode;

@@ -141,7 +141,7 @@ function online()
         g_game.setFightMode(lastCombatControls[char].fightMode)
         g_game.setChaseMode(lastCombatControls[char].chaseMode)
         g_game.setSafeFight(lastCombatControls[char].safeFight)
-        if g_game.getFeature(GamePVPMode) and lastCombatControls[char].pvpMode then
+        if lastCombatControls[char].pvpMode then
           g_game.setPVPMode(lastCombatControls[char].pvpMode)
         end
       end
@@ -244,10 +244,8 @@ function onSetPVPMode(self, selectedPVPButton)
   elseif buttonId == 'redFistBox' then
     pvpMode = PVPRedFist
   end
-  
-  if g_game.getFeature(GamePVPMode) then
-    g_game.setPVPMode(pvpMode)
-  end
+
+  g_game.setPVPMode(pvpMode)
 end
 
 function onMiniWindowClose()
