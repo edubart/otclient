@@ -705,12 +705,16 @@ void ProtocolGame::sendChangeOutfit(const Outfit& outfit)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientChangeOutfit);
-    msg->addU16(outfit.getId());
+    if(g_game.getFeature(Otc::GameLooktypeU16))
+        msg->addU16(outfit.getId());
+    else
+        msg->addU8(outfit.getId());
     msg->addU8(outfit.getHead());
     msg->addU8(outfit.getBody());
     msg->addU8(outfit.getLegs());
     msg->addU8(outfit.getFeet());
-    msg->addU8(outfit.getAddons());
+    if(g_game.getFeature(Otc::GamePlayerAddons))
+        msg->addU8(outfit.getAddons());
     if(g_game.getFeature(Otc::GamePlayerMounts))
         msg->addU16(outfit.getMount());
     send(msg);
