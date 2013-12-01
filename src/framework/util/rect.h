@@ -222,9 +222,9 @@ public:
     TRect<T> united(const TRect<T> &r) const {
         TRect<T> tmp;
         tmp.x1 = std::min<T>(x1, r.x1);
-		tmp.x2 = std::max<T>(x2, r.x2);
-		tmp.y1 = std::min<T>(y1, r.y1);
-		tmp.y2 = std::max<T>(y2, r.y2);
+        tmp.x2 = std::max<T>(x2, r.x2);
+        tmp.y1 = std::min<T>(y1, r.y1);
+        tmp.y2 = std::max<T>(y2, r.y2);
         return tmp;
     }
 
