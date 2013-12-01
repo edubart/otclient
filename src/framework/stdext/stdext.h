@@ -23,7 +23,6 @@
 #ifndef STDEXT_H
 #define STDEXT_H
 
-#include <algorithm>
 #include "compiler.h"
 #include "dumper.h"
 #include "types.h"

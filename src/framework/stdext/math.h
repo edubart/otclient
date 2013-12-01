@@ -23,6 +23,7 @@
 #ifndef STDEXT_MATH_H
 #define STDEXT_MATH_H
 
+#include <algorithm>
 #include "types.h"
 
 namespace stdext {
