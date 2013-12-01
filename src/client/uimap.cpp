@@ -77,7 +77,7 @@ void UIMap::movePixels(int x, int y)
 
 bool UIMap::setZoom(int zoom)
 {
-    m_zoom = stdext::clamp<int>(zoom, m_maxZoomOut, m_maxZoomIn);
+    m_zoom = stdext::clamp<int>(zoom, m_maxZoomIn, m_maxZoomOut);
     updateVisibleDimension();
     return false;
 }
