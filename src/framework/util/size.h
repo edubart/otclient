@@ -70,8 +70,8 @@ public:
     bool operator==(const TSize<T>& other) const { return other.wd==wd && other.ht==ht; }
     bool operator!=(const TSize<T>& other) const { return other.wd!=wd || other.ht!=ht; }
 
-    TSize<T> expandedTo(const TSize<T>& other) const { return TSize<T>(std::max(wd,other.wd), std::max(ht,other.ht)); }
-    TSize<T> boundedTo(const TSize<T>& other) const { return TSize<T>(std::min(wd,other.wd), std::min(ht,other.ht)); }
+	TSize<T> expandedTo(const TSize<T>& other) const { return TSize<T>(std::max<T>(wd, other.wd), std::max<T>(ht, other.ht)); }
+	TSize<T> boundedTo(const TSize<T>& other) const { return TSize<T>(std::min<T>(wd, other.wd), std::min<T>(ht, other.ht)); }
 
     void scale(const TSize<T>& s, Fw::AspectRatioMode mode) {
         if(mode == Fw::IgnoreAspectRatio || wd == 0 || ht == 0) {

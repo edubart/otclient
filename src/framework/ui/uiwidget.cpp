@@ -192,7 +192,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     if(!(index >= 0 && (uint)index <= m_children.size())) {
         //g_logger.traceWarning("attempt to insert a child UIWidget into an invalid index, using nearest index...");
-        index = std::min(std::max(index, 0),  (int)m_children.size());
+        index = std::min<int>(std::max<int>(index, 0),  (int)m_children.size());
     }
 
     // retrieve child by index

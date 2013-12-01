@@ -66,10 +66,10 @@ bool UIHorizontalLayout::internalUpdate()
                 pos.y = paddingRect.top() + widget->getMarginTop();
             } else if(widget->getTextAlign() & Fw::AlignBottom) {
                 pos.y = paddingRect.bottom() - widget->getHeight() - widget->getMarginBottom();
-                pos.y = std::max(pos.y, paddingRect.top());
+                pos.y = std::max<int>(pos.y, paddingRect.top());
             } else { // center it
                 pos.y = paddingRect.top() + (paddingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
-                pos.y = std::max(pos.y, paddingRect.top());
+                pos.y = std::max<int>(pos.y, paddingRect.top());
             }
         } else {
             // expand height
