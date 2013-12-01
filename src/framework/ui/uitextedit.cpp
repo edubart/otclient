@@ -181,15 +181,15 @@ void UITextEdit::update(bool focusCursor)
                 if(!virtualRect.contains(glyphRect.topLeft()) || !virtualRect.contains(glyphRect.bottomRight())) {
                     // calculate where is the first glyph visible
                     Point startGlyphPos;
-                    startGlyphPos.y = std::max(glyphRect.bottom() - virtualRect.height(), 0);
-                    startGlyphPos.x = std::max(glyphRect.right() - virtualRect.width(), 0);
+                    startGlyphPos.y = std::max<int>(glyphRect.bottom() - virtualRect.height(), 0);
+                    startGlyphPos.x = std::max<int>(glyphRect.right() - virtualRect.width(), 0);
 
                     // find that glyph
                     for(pos = 0; pos < textLength; ++pos) {
                         glyph = (uchar)text[pos];
                         glyphRect = Rect(glyphsPositions[pos], glyphsSize[glyph]);
-                        glyphRect.setTop(std::max(glyphRect.top() - m_font->getYOffset() - m_font->getGlyphSpacing().height(), 0));
-                        glyphRect.setLeft(std::max(glyphRect.left() - m_font->getGlyphSpacing().width(), 0));
+                        glyphRect.setTop(std::max<int>(glyphRect.top() - m_font->getYOffset() - m_font->getGlyphSpacing().height(), 0));
+                        glyphRect.setLeft(std::max<int>(glyphRect.left() - m_font->getGlyphSpacing().width(), 0));
 
                         // first glyph entirely visible found
                         if(glyphRect.topLeft() >= startGlyphPos) {
@@ -358,8 +358,8 @@ void UITextEdit::setSelection(int start, int end)
     if(end == -1)
         end = m_text.length();
 
-    m_selectionStart = std::min(std::max(start, 0), (int)m_text.length());
-    m_selectionEnd = std::min(std::max(end, 0), (int)m_text.length());
+    m_selectionStart = stdext::clamp<int>(start, 0, (int)m_text.length());
+    m_selectionEnd = stdext::clamp<int>(end, 0, (int)m_text.length());
 }
 
 void UITextEdit::setTextHidden(bool hidden)

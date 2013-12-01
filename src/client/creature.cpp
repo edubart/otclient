@@ -128,7 +128,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             dest -= datType->getDisplacement() * scaleFactor;
             datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
             dest += getDisplacement() * scaleFactor;
-            zPattern = std::min(1, getNumPatternZ() - 1);
+            zPattern = std::min<int>(1, getNumPatternZ() - 1);
         }
 
         PointF jumpOffset = m_jumpOffset * scaleFactor;
@@ -183,7 +183,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         }
 
         if(m_outfit.getCategory() == ThingCategoryEffect)
-            animationPhase = std::min(animationPhase+1, animationPhases);
+            animationPhase = std::min<int>(animationPhase+1, animationPhases);
 
         type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
     }
@@ -480,7 +480,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
             if(!self->m_walking || self->m_walkTimer.ticksElapsed() >= self->getStepDuration(true))
                 self->m_walkAnimationPhase = 0;
             self->m_walkFinishAnimEvent = nullptr;
-        }, std::min(footDelay, 200));
+        }, std::min<int>(footDelay, 200));
     }
 
 }
@@ -553,7 +553,7 @@ void Creature::nextWalkUpdate()
 void Creature::updateWalk()
 {
     float walkTicksPerPixel = getStepDuration(true) / 32;
-    int totalPixelsWalked = std::min(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);

@@ -68,10 +68,10 @@ bool UIVerticalLayout::internalUpdate()
                 pos.x = paddingRect.left() + widget->getMarginLeft();
             } else if(widget->getTextAlign() & Fw::AlignLeft) {
                 pos.x = paddingRect.bottom() - widget->getHeight() - widget->getMarginBottom();
-                pos.x = std::max(pos.x, paddingRect.left());
+                pos.x = std::max<int>(pos.x, paddingRect.left());
             } else {
                 pos.x = paddingRect.left() + (paddingRect.width() - (widget->getMarginLeft() + widget->getWidth() + widget->getMarginRight()))/2;
-                pos.x = std::max(pos.x, paddingRect.left());
+                pos.x = std::max<int>(pos.x, paddingRect.left());
             }
         } else {
             // expand width
