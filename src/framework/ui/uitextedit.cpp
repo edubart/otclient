@@ -358,8 +358,8 @@ void UITextEdit::setSelection(int start, int end)
     if(end == -1)
         end = m_text.length();
 
-    m_selectionStart = std::min<int>(std::max<int>(start, 0), (int)m_text.length());
-    m_selectionEnd = std::min<int>(std::max<int>(end, 0), (int)m_text.length());
+    m_selectionStart = stdext::clamp<int>(start, 0, (int)m_text.length());
+    m_selectionEnd = stdext::clamp<int>(end, 0, (int)m_text.length());
 }
 
 void UITextEdit::setTextHidden(bool hidden)

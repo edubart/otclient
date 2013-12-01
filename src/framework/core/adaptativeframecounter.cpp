@@ -89,7 +89,7 @@ bool AdaptativeFrameCounter::update()
 
 void AdaptativeFrameCounter::setMaxFps(int maxFps)
 {
-    maxFps = std::max<int>(std::min<int>(maxFps, 1000), 0);
+    maxFps = stdext::clamp<int>(maxFps, 0, 1000);
 
     if(maxFps != 0) {
         m_bestFrameDelay = 1000000 / maxFps;

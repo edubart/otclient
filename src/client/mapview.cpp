@@ -644,7 +644,7 @@ int MapView::calcFirstVisibleFloor()
     }
 
     // just ensure the that the floor is in the valid range
-    z = std::min<int>(std::max<int>(z, 0), (int)Otc::MAX_Z);
+    z = stdext::clamp<int>(z, 0, (int)Otc::MAX_Z);
     return z;
 }
 
@@ -669,7 +669,7 @@ int MapView::calcLastVisibleFloor()
         z = std::max<int>(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
-    z = std::min<int>(std::max<int>(z, 0), (int)Otc::MAX_Z);
+    z = stdext::clamp<int>(z, 0, (int)Otc::MAX_Z);
     return z;
 }
 

@@ -84,7 +84,7 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
 
 void UIProgressRect::setPercent(float percent)
 {
-    m_percent = std::max<float>(std::min<float>((double)percent, 100.0), 0.0);
+    m_percent = stdext::clamp<float>((double)percent, 0.0, 100.0);
 }
 
 void UIProgressRect::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
