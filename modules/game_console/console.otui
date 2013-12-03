@@ -80,6 +80,7 @@ Panel
     anchors.right: next.left
     margin-left: 5
     margin-top: 3
+    margin-right: 5
     moveable: true
 
   TabButton

@@ -124,9 +124,6 @@ function init()
     return true
   end
 
-  defaultTab = addTab(tr('Default'), true)
-  serverTab = addTab(tr('Server Log'), false)
-
   g_keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   g_keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
   g_keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
@@ -135,8 +132,7 @@ function init()
   g_keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
 
   -- apply buttom functions after loaded
-  consolePanel:getChildById('nextChannelButton').onClick = function() consoleTabBar:selectNextTab() end
-  consolePanel:getChildById('prevChannelButton').onClick = function() consoleTabBar:selectPrevTab() end
+  consoleTabBar:setNavigation(consolePanel:getChildById('prevChannelButton'), consolePanel:getChildById('nextChannelButton'))
   consoleTabBar.onTabChange = onTabChange
 
   -- tibia like hotkeys
@@ -146,6 +142,10 @@ function init()
 
   consoleToggleChat = consolePanel:getChildById('toggleChat')
   load()
+
+  if g_game.isOnline() then
+    online()
+  end
 end
 
 function toggleChat()
@@ -287,8 +287,8 @@ function clear()
   end
   channels = {}
 
-  defaultTab.tabPanel:getChildById('consoleBuffer'):destroyChildren()
-  serverTab.tabPanel:getChildById('consoleBuffer'):destroyChildren()
+  consoleTabBar:removeTab(defaultTab)
+  consoleTabBar:removeTab(serverTab)
 
   local npcTab = consoleTabBar:getTab('NPCs')
   if npcTab then
@@ -1233,6 +1233,9 @@ function onClickIgnoreButton()
 end
 
 function online()
+  defaultTab = addTab(tr('Default'), true)
+  serverTab = addTab(tr('Server Log'), false)
+
   if g_game.getProtocolVersion() < 862 then
     g_keyboard.bindKeyDown('Ctrl+R', openPlayerReportRuleViolationWindow)
   end
