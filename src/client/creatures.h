@@ -121,6 +121,7 @@ public:
     const CreatureTypePtr& getCreatureByLook(int look);
 
     SpawnPtr getSpawn(const Position& centerPos);
+    SpawnPtr getSpawnForPlacePos(const Position& pos);
     SpawnPtr addSpawn(const Position& centerPos, int radius);
 
     bool isLoaded() { return m_loaded; }

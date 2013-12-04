@@ -155,6 +155,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_creatures", "getCreatureByName", &CreatureManager::getCreatureByName, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getCreatureByLook", &CreatureManager::getCreatureByLook, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getSpawn", &CreatureManager::getSpawn, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getSpawnForPlacePos", &CreatureManager::getSpawnForPlacePos, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "addSpawn", &CreatureManager::addSpawn, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "loadMonsters", &CreatureManager::loadMonsters, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "loadNpcs", &CreatureManager::loadNpcs, &g_creatures);

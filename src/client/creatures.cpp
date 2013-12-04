@@ -369,6 +369,20 @@ SpawnPtr CreatureManager::getSpawn(const Position& centerPos)
     return nullptr;
 }
 
+SpawnPtr CreatureManager::getSpawnForPlacePos(const Position& pos)
+{
+    for (const auto& pair : m_spawns) {
+        const Position& centerPos = pair.first;
+        const SpawnPtr& spawn = pair.second;
+
+        if (isInZone(pos, centerPos, spawn->getRadius()))
+            return spawn;
+    }
+
+    g_logger.debug(stdext::format("failed to find spawn at %s", stdext::to_string(pos)));
+    return nullptr;
+}
+
 SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
 {
     auto iter = m_spawns.find(centerPos);
