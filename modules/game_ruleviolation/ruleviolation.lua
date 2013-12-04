@@ -43,7 +43,7 @@ function init()
   reasonsTextList = ruleViolationWindow:getChildById('reasonList')
   actionsTextList = ruleViolationWindow:getChildById('actionList')
 
-  g_keyboard.bindKeyDown('Ctrl+Y', show)
+  g_keyboard.bindKeyDown('Ctrl+Y', function() show() end)
 
   if g_game.isOnline() then
     loadReasons()
@@ -63,6 +63,7 @@ end
 
 function loadReasons()
   reasonsTextList:destroyChildren()
+  actionsTextList:destroyChildren()
 
   local actions = g_game.getGMActions()
   for reason, actionFlags in pairs(actions) do
@@ -100,7 +101,7 @@ function onSelectReason(reasonLabel, focused)
   if reasonLabel.actionFlags and focused then
     actionsTextList:destroyChildren()
     for actionBaseFlag = 0, #rvactions do
-      actionFlagString = rvactions[actionBaseFlag]
+      local actionFlagString = rvactions[actionBaseFlag]
       if bit32.band(reasonLabel.actionFlags, math.pow(2, actionBaseFlag)) > 0 then
         local label = g_ui.createWidget('RVListLabel', actionsTextList)
         label:setText(actionFlagString)
@@ -111,9 +112,21 @@ function onSelectReason(reasonLabel, focused)
 end
 
 function report()
+  local reasonLabel = reasonsTextList:getFocusedChild()
+  if not reasonLabel then
+    displayErrorBox(tr("Error"), tr("You must select a reason."))
+    return
+  end
+
+  local actionLabel = actionsTextList:getFocusedChild()
+  if not actionLabel then
+    displayErrorBox(tr("Error"), tr("You must select an action."))
+    return
+  end
+
   local target = ruleViolationWindow:getChildById('nameText'):getText()
-  local reason = reasonsTextList:getFocusedChild().reasonId
-  local action = actionsTextList:getFocusedChild().actionId
+  local reason = reasonLabel.reasonId
+  local action = actionLabel.actionId
   local comment = ruleViolationWindow:getChildById('commentText'):getText()
   local statement = ruleViolationWindow:getChildById('statementText'):getText()
   local statementId = 0 -- TODO: message unique id ?

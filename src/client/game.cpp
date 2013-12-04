@@ -1468,14 +1468,11 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameProtocolChecksum);
         enableFeature(Otc::GameChallengeOnLogin);
         enableFeature(Otc::GameAccountNames);
+        enableFeature(Otc::GameDoubleFreeCapacity);
     }
 
     if(version >= 780 && version <= 854) {          // 780 might not be accurate
         enableFeature(Otc::GameChargeableItems);
-    }
-
-    if(version >= 850) {
-        enableFeature(Otc::GameDoubleFreeCapacity);
     }
 
     if(version >= 854) {
