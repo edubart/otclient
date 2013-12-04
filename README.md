@@ -30,16 +30,17 @@ to port to mobile platforms. Otclient is also flexible enough to
 create tibia tools like map editors just using scripts, because it wasn't designed to be just a
 client, instead otclient was designed to be a combination of a framework and tibia APIs.
 
-### Download
-
-Stable versions of otclient master branch compiled for Windows and Linux is available
-in the [downloads section](https://github.com/edubart/otclient/downloads) of the project's github page.
-
 ### Compiling
+
+A package with all required libraries for compiling OTClient on Windows can be found here:
+* [For MSVC 2013](https://www.dropbox.com/sh/se1okacemoqzjve/dI4ODbq7OT/otclient-msvc13-libs.zip)
+* [For MingW32](https://www.dropbox.com/sh/se1okacemoqzjve/UAkRCiGXXR/otclient-libs_mingw32-dwarf2.zip)
 
 In short, if you need to compile OTClient, follow these tutorials:
 * [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
 * [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
+
+
 
 ### Need help?
 
