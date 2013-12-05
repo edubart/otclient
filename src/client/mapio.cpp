@@ -280,8 +280,8 @@ void Map::saveOtbm(const std::string& fileName)
 
             root->startNode(OTBM_MAP_DATA);
             {
-                // own description.
-                for(const auto& desc : getDescriptions()) {
+                const auto& descvec = getDescriptions();
+                for(const auto& desc : descvec) {
                     root->addU8(OTBM_ATTR_DESCRIPTION);
                     root->addString(desc);
                 }

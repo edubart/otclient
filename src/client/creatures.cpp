@@ -379,7 +379,6 @@ SpawnPtr CreatureManager::getSpawnForPlacePos(const Position& pos)
             return spawn;
     }
 
-    g_logger.debug(stdext::format("failed to find spawn at %s", stdext::to_string(pos)));
     return nullptr;
 }
 
