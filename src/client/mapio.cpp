@@ -35,16 +35,20 @@
 void Map::loadOtbm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(fileName);
-        if(!fin)
-            stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
-
-        fin->cache();
         if(!g_things.isOtbLoaded())
             stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
-        if(fin->getU32())
-            stdext::throw_exception("Unknown file version detected");
+        FileStreamPtr fin = g_resources.openFile(fileName);
+        if(!fin)
+            stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
+        fin->cache();
+
+        char identifier[4];
+        if(fin->read(identifier, 1, 4) < 4)
+            stdext::throw_exception("Could not read file identifier");
+
+        if(memcmp(identifier, "OTBM", 4) != 0 && memcmp(identifier, "\0\0\0\0", 4) != 0)
+            stdext::throw_exception(stdext::format("Invalid file identifier detected: %s", identifier));
 
         BinaryTreePtr root = fin->getBinaryTree();
         if(root->getU8())
