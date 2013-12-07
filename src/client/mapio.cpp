@@ -284,15 +284,10 @@ void Map::saveOtbm(const std::string& fileName)
 
             root->startNode(OTBM_MAP_DATA);
             {
-                const auto& descvec = getDescriptions();
-                for(const auto& desc : descvec) {
-                    root->addU8(OTBM_ATTR_DESCRIPTION);
-                    root->addString(desc);
-                }
-
-                // special one
                 root->addU8(OTBM_ATTR_DESCRIPTION);
-                root->addString(stdext::format("Saved with %s v%s", g_app.getName(), g_app.getVersion()));
+                root->addString(stdext::format("%s\nSaved with %s v%s",
+                                    m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION),
+                                    g_app.getName(), g_app.getVersion()));
 
                 // spawn file.
                 root->addU8(OTBM_ATTR_SPAWN_FILE);
