@@ -285,15 +285,11 @@ void Map::saveOtbm(const std::string& fileName)
             root->startNode(OTBM_MAP_DATA);
             {
                 root->addU8(OTBM_ATTR_DESCRIPTION);
-                root->addString(stdext::format("%s\nSaved with %s v%s",
-                                    m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION),
-                                    g_app.getName(), g_app.getVersion()));
+                root->addString(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION));
 
-                // spawn file.
                 root->addU8(OTBM_ATTR_SPAWN_FILE);
                 root->addString(spawnFile);
 
-                // house file.
                 root->addU8(OTBM_ATTR_HOUSE_FILE);
                 root->addString(houseFile);
 
