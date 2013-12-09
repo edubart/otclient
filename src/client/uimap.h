@@ -47,6 +47,8 @@ public:
     void setMaxZoomIn(int maxZoomIn) { m_maxZoomIn = maxZoomIn; }
     void setMaxZoomOut(int maxZoomOut) { m_maxZoomOut = maxZoomOut; }
     void setMultifloor(bool enable) { m_mapView->setMultifloor(enable); }
+    void lockVisibleFloor(int floor) { m_mapView->lockFirstVisibleFloor(floor); }
+    void unlockVisibleFloor() { m_mapView->unlockFirstVisibleFloor(); }
     void setVisibleDimension(const Size& visibleDimension);
     void setViewMode(MapView::ViewMode viewMode)  { m_mapView->setViewMode(viewMode); }
     void setAutoViewMode(bool enable) { m_mapView->setAutoViewMode(enable); }
