@@ -566,8 +566,8 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
 
 void MapView::move(int x, int y)
 {
-    m_moveOffset.x = x;
-    m_moveOffset.y = y;
+    m_moveOffset.x += x;
+    m_moveOffset.y += y;
 }
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
