@@ -463,6 +463,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
     g_lua.bindClassMemberFunction<Item>("getSubType", &Item::getSubType);
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);
+    g_lua.bindClassMemberFunction<Item>("getServerId", &Item::getServerId);
     g_lua.bindClassMemberFunction<Item>("getName", &Item::getName);
     g_lua.bindClassMemberFunction<Item>("isStackable", &Item::isStackable);
     g_lua.bindClassMemberFunction<Item>("isMarketable", &Item::isMarketable);
