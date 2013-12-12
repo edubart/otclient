@@ -570,18 +570,22 @@ void MapView::move(int x, int y)
     m_moveOffset.y += y;
 
     int32_t tmp = m_moveOffset.x / 32;
+    bool requestTilesUpdate = false;
     if(tmp != 0) {
         m_customCameraPosition.x += tmp;
         m_moveOffset.x %= 32;
-        requestVisibleTilesCacheUpdate();
+        requestTilesUpdate = true;
     }
 
     tmp = m_moveOffset.y / 32;
     if(tmp != 0) {
         m_customCameraPosition.y += tmp;
         m_moveOffset.y %= 32;
-        requestVisibleTilesCacheUpdate();
+        requestTilesUpdate = true;
     }
+
+    if(requestTilesUpdate)
+        requestVisibleTilesCacheUpdate();
 }
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
