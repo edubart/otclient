@@ -566,43 +566,22 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
 
 void MapView::move(int x, int y)
 {
-    if(m_moveOffset.x + x > 32) {
-        if(m_moveOffset.x + x > 64)
-            m_customCameraPosition.x += 2;
-        else
-            m_customCameraPosition.x += 1;
+    m_moveOffset.x += x;
+    m_moveOffset.y += y;
 
-        m_moveOffset.x = x;
+    int32_t tmp = m_moveOffset.x / 32;
+    if(tmp != 0) {
+        m_customCameraPosition.x += tmp;
+        m_moveOffset.x %= 32;
         requestVisibleTilesCacheUpdate();
-    } else if(m_moveOffset.x - x < -32) {
-        if(m_moveOffset.x - x < -64)
-            m_customCameraPosition.x -= 2;
-        else
-            m_customCameraPosition.x -= 1;
+    }
 
-        m_moveOffset.x = x;
+    tmp = m_moveOffset.y / 32;
+    if(tmp != 0) {
+        m_customCameraPosition.y += tmp;
+        m_moveOffset.y %= 32;
         requestVisibleTilesCacheUpdate();
-    } else
-        m_moveOffset.x += x;
-
-    if(m_moveOffset.y + y > 32) {
-        if(m_moveOffset.y + y > 64)
-            m_customCameraPosition.y += 2;
-        else
-            m_customCameraPosition.y += 1;
-
-        m_moveOffset.y = y;
-        requestVisibleTilesCacheUpdate();
-    } else if(m_moveOffset.y - y < -32) {
-        if(m_moveOffset.y - y < -64)
-            m_customCameraPosition.y -= 2;
-        else
-            m_customCameraPosition.y -= 1;
-
-        m_moveOffset.y = y;
-        requestVisibleTilesCacheUpdate();
-    } else
-        m_moveOffset.y += y;
+    }
 }
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
