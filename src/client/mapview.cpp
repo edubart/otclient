@@ -567,22 +567,38 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
 void MapView::move(int x, int y)
 {
     if(m_moveOffset.x + x > 32) {
-        m_customCameraPosition.x += 1;
+        if(m_moveOffset.x + x > 64)
+            m_customCameraPosition.x += 2;
+        else
+            m_customCameraPosition.x += 1;
+
         m_moveOffset.x = x;
         requestVisibleTilesCacheUpdate();
     } else if(m_moveOffset.x - x < -32) {
-        m_customCameraPosition.x -= 1;
+        if(m_moveOffset.x - x < -64)
+            m_customCameraPosition.x -= 2;
+        else
+            m_customCameraPosition.x -= 1;
+
         m_moveOffset.x = x;
         requestVisibleTilesCacheUpdate();
     } else
         m_moveOffset.x += x;
 
     if(m_moveOffset.y + y > 32) {
-        m_customCameraPosition.y += 1;
+        if(m_moveOffset.y + y > 64)
+            m_customCameraPosition.y += 2;
+        else
+            m_customCameraPosition.y += 1;
+
         m_moveOffset.y = y;
         requestVisibleTilesCacheUpdate();
     } else if(m_moveOffset.y - y < -32) {
-        m_customCameraPosition.y -= 1;
+        if(m_moveOffset.y - y < -64)
+            m_customCameraPosition.y -= 2;
+        else
+            m_customCameraPosition.y -= 1;
+
         m_moveOffset.y = y;
         requestVisibleTilesCacheUpdate();
     } else
