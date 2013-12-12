@@ -587,8 +587,6 @@ void MapView::move(int x, int y)
         requestVisibleTilesCacheUpdate();
     } else
         m_moveOffset.y += y;
-
-    g_logger.warning(stdext::format("move offset %d %d", m_moveOffset.x, m_moveOffset.y));
 }
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
