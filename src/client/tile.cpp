@@ -52,7 +52,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
         TILESTATE_HARDCOREZONE,
         TILESTATE_REFRESH,
         TILESTATE_NOLOGOUT,
-        TILESTATE_TRANSLUECENT_LIGHT,
         TILESTATE_LAST
     };
 
@@ -74,6 +73,9 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                         break;
                     }
                 }
+            } else if(m_selected) {
+                g_painter->setColor(Color::darkGreen);
+                g_painter->setOpacity(0.9);
             }
 
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||

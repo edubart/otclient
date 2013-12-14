@@ -568,6 +568,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("isClickable", &Tile::isClickable);
     g_lua.bindClassMemberFunction<Tile>("isPathable", &Tile::isPathable);
     g_lua.bindClassMemberFunction<Tile>("overwriteMinimapColor", &Tile::overwriteMinimapColor);
+    g_lua.bindClassMemberFunction<Tile>("select", &Tile::select);
+    g_lua.bindClassMemberFunction<Tile>("unselect", &Tile::unselect);
+    g_lua.bindClassMemberFunction<Tile>("isSelected", &Tile::isSelected);
+    g_lua.bindClassMemberFunction<Tile>("remFlag", &Tile::remFlag);
     g_lua.bindClassMemberFunction<Tile>("setFlag", &Tile::setFlag);
     g_lua.bindClassMemberFunction<Tile>("setFlags", &Tile::setFlags);
     g_lua.bindClassMemberFunction<Tile>("getFlags", &Tile::getFlags);
