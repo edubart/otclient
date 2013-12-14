@@ -39,6 +39,7 @@ TilePtr Map::m_nulltile;
 void Map::init()
 {
     resetAwareRange();
+    m_animationFlags |= Animation_Show;
 }
 
 void Map::terminate()
@@ -361,6 +362,34 @@ void Map::setZoneColor(tileflags_t zone, const Color& color)
 {
     if((m_zoneFlags & zone) == zone)
         m_zoneColors[zone] = color;
+}
+
+void Map::setForceShowAnimations(bool force)
+{
+    if(force) {
+        if(!(m_animationFlags & Animation_Force))
+            m_animationFlags |= Animation_Force;
+    } else
+        m_animationFlags &= ~Animation_Force;
+}
+
+bool Map::isForcingAnimations()
+{
+    return (m_animationFlags & Animation_Force) == Animation_Force;
+}
+
+bool Map::isShowingAnimations()
+{
+    return (m_animationFlags & Animation_Show) == Animation_Show;
+}
+
+void Map::setShowAnimations(bool show)
+{
+    if(show) {
+        if(!(m_animationFlags & Animation_Show))
+            m_animationFlags |= Animation_Show;
+    } else
+        m_animationFlags &= ~Animation_Show;
 }
 
 void Map::beginGhostMode(float opacity)

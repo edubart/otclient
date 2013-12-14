@@ -85,11 +85,22 @@ void MapView::draw(const Rect& rect)
     Position cameraPosition = getCameraPosition();
 
     int drawFlags = 0;
+    // First branch:
+    // This is unlikely to be false because a lot of us
+    // don't wanna hear their GPU fan while playing a 
+    // 2D game.
+    //
+    // Second & Third branch:
+    // This is likely to be true since not many people have
+    // low-end graphics cards.
+    if(unlikely(g_map.isForcingAnimations()) || (likely(g_map.isShowingAnimations()) && m_viewMode == NEAR_VIEW))
+        drawFlags = Otc::DrawAnimations;
+
     if(m_viewMode == NEAR_VIEW)
-        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls |
-                    Otc::DrawItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawMissiles | Otc::DrawAnimations;
+        drawFlags |= Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls |
+                    Otc::DrawItems | Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawMissiles;
     else
-        drawFlags = Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
+        drawFlags |= Otc::DrawGround | Otc::DrawGroundBorders | Otc::DrawWalls | Otc::DrawItems;
 
     if(m_mustDrawVisibleTilesCache || (drawFlags & Otc::DrawAnimations)) {
         m_framebuffer->bind();

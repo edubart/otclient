@@ -141,6 +141,10 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "getZoneColor", &Map::getZoneColor, &g_map);
     g_lua.bindSingletonFunction("g_map", "showZones", &Map::showZones, &g_map);
     g_lua.bindSingletonFunction("g_map", "showZone", &Map::showZone, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setForceShowAnimations", &Map::setForceShowAnimations, &g_map);
+    g_lua.bindSingletonFunction("g_map", "isForcingAnimations", &Map::isForcingAnimations, &g_map);
+    g_lua.bindSingletonFunction("g_map", "isShowingAnimations", &Map::isShowingAnimations, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setShowAnimations", &Map::setShowAnimations, &g_map);
     g_lua.bindSingletonFunction("g_map", "beginGhostMode", &Map::beginGhostMode, &g_map);
     g_lua.bindSingletonFunction("g_map", "endGhostMode", &Map::endGhostMode, &g_map);
     g_lua.bindSingletonFunction("g_map", "findItemsById", &Map::findItemsById, &g_map);

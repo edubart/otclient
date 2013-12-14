@@ -93,6 +93,11 @@ enum {
     BLOCK_SIZE = 32
 };
 
+enum : uint8 {
+    Animation_Force,
+    Animation_Show
+};
+
 class TileBlock {
 public:
     TileBlock() { m_tiles.fill(nullptr); }
@@ -195,6 +200,11 @@ public:
     bool showZones() { return m_zoneFlags != 0; }
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
 
+    void setForceShowAnimations(bool force);
+    bool isForcingAnimations();
+    bool isShowingAnimations();
+    void setShowAnimations(bool show);
+
     void beginGhostMode(float opacity);
     void endGhostMode();
 
@@ -244,6 +254,7 @@ private:
     std::vector<MapViewPtr> m_mapViews;
     std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
 
+    uint8 m_animationFlags;
     uint32 m_zoneFlags;
     std::array<Color, TILESTATE_LAST> m_zoneColors;
     float m_zoneOpacity;
