@@ -469,6 +469,16 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getId", &Item::getId);
     g_lua.bindClassMemberFunction<Item>("getServerId", &Item::getServerId);
     g_lua.bindClassMemberFunction<Item>("getName", &Item::getName);
+    g_lua.bindClassMemberFunction<Item>("getDescription", &Item::getDescription);
+    g_lua.bindClassMemberFunction<Item>("getText", &Item::getText);
+    g_lua.bindClassMemberFunction<Item>("setDescription", &Item::setDescription);
+    g_lua.bindClassMemberFunction<Item>("setText", &Item::setText);
+    g_lua.bindClassMemberFunction<Item>("getUniqueId", &Item::getUniqueId);
+    g_lua.bindClassMemberFunction<Item>("getActionId", &Item::getActionId);
+    g_lua.bindClassMemberFunction<Item>("setUniqueId", &Item::setUniqueId);
+    g_lua.bindClassMemberFunction<Item>("setActionId", &Item::setActionId);
+    g_lua.bindClassMemberFunction<Item>("getTeleportDestination", &Item::getTeleportDestination);
+    g_lua.bindClassMemberFunction<Item>("setTeleportDestination", &Item::setTeleportDestination);
     g_lua.bindClassMemberFunction<Item>("isStackable", &Item::isStackable);
     g_lua.bindClassMemberFunction<Item>("isMarketable", &Item::isMarketable);
     g_lua.bindClassMemberFunction<Item>("isFluidContainer", &Item::isFluidContainer);

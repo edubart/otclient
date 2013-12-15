@@ -109,8 +109,18 @@ public:
     void setDoorId(uint8 doorId) { m_attribs.set(ATTR_HOUSEDOORID, doorId); }
     uint8 getDoorId() { return m_attribs.get<uint8>(ATTR_HOUSEDOORID); }
 
+    uint16 getUniqueId() { return m_attribs.get<uint16>(ATTR_ACTION_ID); }
+    uint16 getActionId() { return m_attribs.get<uint16>(ATTR_UNIQUE_ID); }
     void setActionId(uint16 actionId) { m_attribs.set(ATTR_ACTION_ID, actionId); }
     void setUniqueId(uint16 uniqueId) { m_attribs.set(ATTR_UNIQUE_ID, uniqueId); }
+
+    std::string getText() { return m_attribs.get<std::string>(ATTR_TEXT); }
+    std::string getDescription() { return m_attribs.get<std::string>(ATTR_DESC); }
+    void setDescription(std::string desc) { m_attribs.set(ATTR_DESC, desc); }
+    void setText(std::string txt) { m_attribs.set(ATTR_TEXT, txt); }
+
+    Position getTeleportDestination() { return m_attribs.get<Position>(ATTR_TELE_DEST); }
+    void setTeleportDestination(const Position& pos) { m_attribs.set(ATTR_TELE_DEST, pos); }
 
     void setAsync(bool enable) { m_async = enable; }
 
