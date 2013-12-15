@@ -40,6 +40,7 @@
     #error "You need Visual Studio 2013 or greater to compile."
     #endif
     #pragma warning(disable:4244) // conversion from 'A' to 'B', possible loss of data
+    #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
     #pragma warning(disable:4305) // 'initializing' : truncation from 'A' to 'B'
     #pragma warning(disable:4146) // unary minus operator applied to unsigned type, result still unsigned
     #pragma warning(disable:4800) // 'A' : forcing value to bool 'true' or 'false' (performance warning)

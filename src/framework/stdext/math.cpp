@@ -23,6 +23,10 @@
 #include "math.h"
 #include <random>
 
+#ifdef _MSC_VER
+    #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
+#endif
+
 namespace stdext {
 
 uint32_t adler32(const uint8_t *buffer, size_t size) {

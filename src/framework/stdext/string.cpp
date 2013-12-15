@@ -26,6 +26,10 @@
 #include <ctype.h>
 #include <physfs.h>
 
+#ifdef _MSC_VER
+    #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
+#endif
+
 namespace stdext {
 
 std::string resolve_path(const std::string& filePath, std::string sourcePath)

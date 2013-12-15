@@ -75,7 +75,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     pSym = (PIMAGEHLP_SYMBOL)symBuffer;
 
     ZeroMemory(&sf, sizeof(sf));
-#ifdef __WIN64__
+#ifdef _WIN64
     sf.AddrPC.Offset = e->ContextRecord->Rip;
     sf.AddrStack.Offset = e->ContextRecord->Rsp;
     sf.AddrFrame.Offset = e->ContextRecord->Rbp;
