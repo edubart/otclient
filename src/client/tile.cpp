@@ -73,10 +73,9 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                         break;
                     }
                 }
-            } else if(m_selected) {
-                g_painter->setColor(Color::darkGreen);
-                g_painter->setOpacity(0.9);
             }
+            if(m_selected)
+                g_painter->setColor(Color::teal);
 
             if((thing->isGround() && drawFlags & Otc::DrawGround) ||
                (thing->isGroundBorder() && drawFlags & Otc::DrawGroundBorders) ||
@@ -88,6 +87,8 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
                     g_painter->resetColor();
                 }
             }
+            if(m_selected)
+                g_painter->resetColor();
 
             m_drawElevation += thing->getElevation();
             if(m_drawElevation > Otc::MAX_ELEVATION)
