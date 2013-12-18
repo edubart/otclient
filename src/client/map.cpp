@@ -180,34 +180,34 @@ bool Map::removeThing(const ThingPtr& thing)
     if(!thing)
         return false;
 
-    notificateTileUpdate(thing->getPosition());
-
+    bool ret = false;
     if(thing->isMissile()) {
         MissilePtr missile = thing->static_self_cast<Missile>();
         int z = missile->getPosition().z;
         auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
         if(it != m_floorMissiles[z].end()) {
             m_floorMissiles[z].erase(it);
-            return true;
+            ret = true;
         }
     } else if(thing->isAnimatedText()) {
         AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
         auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
         if(it != m_animatedTexts.end()) {
             m_animatedTexts.erase(it);
-            return true;
+            ret = true;
         }
     } else if(thing->isStaticText()) {
         StaticTextPtr staticText = thing->static_self_cast<StaticText>();
         auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
         if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);
-            return true;
+            ret = true;
         }
     } else if(const TilePtr& tile = thing->getTile())
-        return tile->removeThing(thing);
+        ret = tile->removeThing(thing);
 
-    return false;
+    notificateTileUpdate(thing->getPosition());
+    return ret;
 }
 
 bool Map::removeThingByPos(const Position& pos, int stackPos)

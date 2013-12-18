@@ -149,6 +149,8 @@ public:
 
     bool isNull() { return m_null; }
 
+    bool isWriteable() { return m_attribs.get<bool>(ItemTypeAttrWritable); }
+
 private:
     ItemCategory m_category;
     stdext::boolean<true> m_null;
