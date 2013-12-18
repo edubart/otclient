@@ -150,7 +150,6 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "findItemsById", &Map::findItemsById, &g_map);
 
     g_lua.registerSingletonClass("g_minimap");
-    g_lua.bindSingletonFunction("g_minimap", "updateTile", &Minimap::updateTile, &g_minimap);
     g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
     g_lua.bindSingletonFunction("g_minimap", "loadImage", &Minimap::loadImage, &g_minimap);
     g_lua.bindSingletonFunction("g_minimap", "saveImage", &Minimap::saveImage, &g_minimap);
