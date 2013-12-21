@@ -96,7 +96,7 @@ int push_luavalue(const LuaCppFunction& func)
 // color
 int push_luavalue(const Color& color)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 4);
     g_lua.pushInteger(color.r());
     g_lua.setField("r");
     g_lua.pushInteger(color.g());
@@ -132,7 +132,7 @@ bool luavalue_cast(int index, Color& color)
 // rect
 int push_luavalue(const Rect& rect)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 4);
     g_lua.pushInteger(rect.x());
     g_lua.setField("x");
     g_lua.pushInteger(rect.y());
@@ -168,7 +168,7 @@ bool luavalue_cast(int index, Rect& rect)
 // point
 int push_luavalue(const Point& point)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 2);
     g_lua.pushInteger(point.x);
     g_lua.setField("x");
     g_lua.pushInteger(point.y);
@@ -196,7 +196,7 @@ bool luavalue_cast(int index, Point& point)
 // size
 int push_luavalue(const Size& size)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 2);
     g_lua.pushInteger(size.width());
     g_lua.setField("width");
     g_lua.pushInteger(size.height());

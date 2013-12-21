@@ -986,6 +986,11 @@ void LuaInterface::newTable()
     lua_newtable(L);
 }
 
+void LuaInterface::createTable(int narr, int nrec)
+{
+    lua_createtable(L, narr, nrec);
+}
+
 void* LuaInterface::newUserdata(int size)
 {
     return lua_newuserdata(L, size);

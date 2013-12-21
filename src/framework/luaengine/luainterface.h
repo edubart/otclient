@@ -274,6 +274,7 @@ public:
     void rawSeti(int n, int index = -2);
 
     void newTable();
+    void createTable(int narr, int nrec);
     void* newUserdata(int size);
 
     void pop(int n = 1);
