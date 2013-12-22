@@ -25,7 +25,7 @@
 
 int push_luavalue(const Outfit& outfit)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 8);
     g_lua.pushInteger(outfit.getId());
     g_lua.setField("type");
     g_lua.pushInteger(outfit.getAuxId());
@@ -80,7 +80,7 @@ bool luavalue_cast(int index, Outfit& outfit)
 int push_luavalue(const Position& pos)
 {
     if(pos.isValid()) {
-        g_lua.newTable();
+        g_lua.createTable(0, 3);
         g_lua.pushInteger(pos.x);
         g_lua.setField("x");
         g_lua.pushInteger(pos.y);
@@ -108,7 +108,7 @@ bool luavalue_cast(int index, Position& pos)
 
 int push_luavalue(const MarketData& data)
 {
-    g_lua.newTable();
+    g_lua.createTable(0, 6);
     g_lua.pushInteger(data.category);
     g_lua.setField("category");
     g_lua.pushString(data.name);

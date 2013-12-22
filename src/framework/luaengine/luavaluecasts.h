@@ -287,7 +287,7 @@ luavalue_cast(int index, std::function<Ret(Args...)>& func) {
 
 template<typename T>
 int push_luavalue(const std::list<T>& list) {
-    g_lua.newTable();
+    g_lua.createTable(list.size(), 0);
     int i = 1;
     for(const T& v : list) {
         push_internal_luavalue(v);
@@ -315,7 +315,7 @@ bool luavalue_cast(int index, std::list<T>& list)
 
 template<typename T>
 int push_luavalue(const std::vector<T>& vec) {
-    g_lua.newTable();
+    g_lua.createTable(vec.size(), 0);
     int i = 1;
     for(const T& v : vec) {
         push_internal_luavalue(v);
@@ -343,7 +343,7 @@ bool luavalue_cast(int index, std::vector<T>& vec)
 
 template<typename T>
 int push_luavalue(const std::deque<T>& vec) {
-    g_lua.newTable();
+    g_lua.createTable(vec.size(), 0);
     int i = 1;
     for(const T& v : vec) {
         push_internal_luavalue(v);
