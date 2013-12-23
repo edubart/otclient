@@ -73,7 +73,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
 
     msg->addU8(0); // first RSA byte must be 0
 
-    if(g_game.getProtocolVersion() >= 800)
+    if(g_game.getProtocolVersion() >= 770)
     {
         // xtea key
         generateXteaKey();
@@ -107,7 +107,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    if(g_game.getProtocolVersion() >= 800)
+    if(g_game.getProtocolVersion() >= 770)
         msg->encryptRsa();
 
     if(g_game.getFeature(Otc::GameProtocolChecksum))
@@ -115,7 +115,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
 
     send(msg);
 
-    if(g_game.getProtocolVersion() >= 800)
+    if(g_game.getProtocolVersion() >= 770)
         enableXteaEncryption();
 }
 
