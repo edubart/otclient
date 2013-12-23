@@ -27,13 +27,9 @@ end
 
 function ProtocolLogin:sendLoginPacket()
   local msg = OutputMessage.create()
-  if g_game.getProtocolVersion() == 760 then
-    msg:addU16(ClientOpcodes.ClientEnterAccount760)
-  else
-    msg:addU8(ClientOpcodes.ClientEnterAccount)
-    msg:addU16(g_game.getOs())
-  end
-  
+  msg:addU8(ClientOpcodes.ClientEnterAccount)
+  msg:addU16(g_game.getOs())
+
   msg:addU16(g_game.getProtocolVersion())
 
   if g_game.getProtocolVersion() >= 971 then
@@ -50,10 +46,9 @@ function ProtocolLogin:sendLoginPacket()
 
   local offset = msg:getMessageSize()
 
-   -- first RSA byte must be 0
-  msg:addU8(0)
-
   if g_game.getProtocolVersion() >= 800 then
+    -- first RSA byte must be 0
+    msg:addU8(0)
     -- xtea key
     self:generateXteaKey()
     local xteaKey = self:getXteaKey()
