@@ -94,7 +94,7 @@ function create(creatureOutfit, outfitList, creatureMount, mountList)
     addon.widget.onCheckChange = function(self) onAddonCheckChange(self, addon.value) end
   end
 
-  if outfit.addons > 0 then
+  if outfit.addons and outfit.addons > 0 then
     for _, i in pairs(ADDON_SETS[outfit.addons]) do
       addons[i].widget:setChecked(true)
     end
