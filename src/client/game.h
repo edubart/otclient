@@ -124,7 +124,7 @@ protected:
     void processCloseTrade();
 
     // edit text/list
-    void processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date);
+    void processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writer, const std::string& date);
     void processEditList(uint id, int doorId, const std::string& text);
 
     // questlog

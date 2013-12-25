@@ -997,10 +997,13 @@ void ProtocolGame::parseEditText(const InputMessagePtr& msg)
 
     int maxLength = msg->getU16();
     std::string text = msg->getString();
-    std::string writter = msg->getString();
-    std::string date = msg->getString();
 
-    g_game.processEditText(id, itemId, maxLength, text, writter, date);
+    std::string writer = msg->getString();
+    std::string date = "";
+    if(g_game.getFeature(Otc::GameWritableDate))
+        date = msg->getString();
+
+    g_game.processEditText(id, itemId, maxLength, text, writer, date);
 }
 
 void ProtocolGame::parseEditList(const InputMessagePtr& msg)

@@ -490,9 +490,9 @@ void Game::processCloseTrade()
     g_lua.callGlobalField("g_game", "onCloseTrade");
 }
 
-void Game::processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date)
+void Game::processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writer, const std::string& date)
 {
-    g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writter, date);
+    g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writer, date);
 }
 
 void Game::processEditList(uint id, int doorId, const std::string& text)
@@ -1451,6 +1451,10 @@ void Game::setProtocolVersion(int version)
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
+    if(version >= 770)
+    {
+        enableFeature(Otc::GameWritableDate);   // might not be since 770
+    }
 
     if(version >= 780)
     {
