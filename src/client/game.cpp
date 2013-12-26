@@ -1445,7 +1445,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && version != 760 && (version < 810 || version > 1022))
+    if(version != 0 && (version < 760 || (version > 772 && version < 810) || version > 1022))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
@@ -1453,6 +1453,8 @@ void Game::setProtocolVersion(int version)
 
     if(version >= 770)
     {
+        enableFeature(Otc::GameLooktypeU16);
+        enableFeature(Otc::GameMessageStatements);
         enableFeature(Otc::GameWritableDate);   // might not be since 770
     }
 
@@ -1462,9 +1464,7 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GamePlayerStamina);
         enableFeature(Otc::GameNewFluids);
         enableFeature(Otc::GameMessageLevel);
-        enableFeature(Otc::GameMessageStatements);
         enableFeature(Otc::GamePlayerStateU16);
-        enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameNewOutfitProtocol);
     }
 
@@ -1553,7 +1553,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && version != 760 && (version < 810 || version > 1022))
+    if(version != 0 && (version < 760 || (version > 772 && version < 810) || version > 1022))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;
