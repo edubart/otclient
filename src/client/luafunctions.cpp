@@ -451,6 +451,7 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<ItemType>();
     g_lua.bindClassMemberFunction<ItemType>("getServerId", &ItemType::getServerId);
     g_lua.bindClassMemberFunction<ItemType>("getClientId", &ItemType::getClientId);
+    g_lua.bindClassMemberFunction<ItemType>("isWritable",  &ItemType::isWritable);
 
     g_lua.registerClass<ThingType>();
     g_lua.bindClassMemberFunction<ThingType>("getId", &ThingType::getId);
