@@ -101,8 +101,7 @@ void Spawn::save(TiXmlElement* node)
     for(const auto& pair : m_creatures) {
         const CreatureTypePtr& creature = pair.second;
         if(!(creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster")))
-            stdext::throw_exception("oom?");
-
+            stdext::throw_exception("Spawn::save: Ran out of memory while allocating XML element!  Terminating now.");
 
         creatureNode->SetAttribute("name", creature->getName());
         creatureNode->SetAttribute("spawntime", creature->getSpawnTime());

@@ -463,6 +463,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);
     g_lua.bindClassStaticFunction<Item>("createOtb", &Item::createFromOtb);
     g_lua.bindClassMemberFunction<Item>("clone", &Item::clone);
+    g_lua.bindClassMemberFunction<Item>("getContainerItems", &Item::getContainerItems);
+    g_lua.bindClassMemberFunction<Item>("getContainerItem", &Item::getContainerItem);
+    g_lua.bindClassMemberFunction<Item>("addContainerItem", &Item::addContainerItem);
+    g_lua.bindClassMemberFunction<Item>("addContainerItemIndexed", &Item::addContainerItemIndexed);
+    g_lua.bindClassMemberFunction<Item>("removeContainerItem", &Item::removeContainerItem);
+    g_lua.bindClassMemberFunction<Item>("clearContainerItems", &Item::clearContainerItems);
+    g_lua.bindClassMemberFunction<Item>("getContainerItem", &Item::getContainerItem);
     g_lua.bindClassMemberFunction<Item>("setCount", &Item::setCount);
     g_lua.bindClassMemberFunction<Item>("getCount", &Item::getCount);
     g_lua.bindClassMemberFunction<Item>("getSubType", &Item::getSubType);

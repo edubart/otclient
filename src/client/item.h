@@ -136,7 +136,11 @@ public:
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() { return true; }
 
+    ItemVector getContainerItems() { return m_containerItems; }
+    ItemPtr getContainerItem(int slot) { return m_containerItems[slot]; }
+    void addContainerItemIndexed(const ItemPtr& i, int slot) { m_containerItems[slot] = i; }
     void addContainerItem(const ItemPtr& i) { m_containerItems.push_back(i); }
+	void removeContainerItem(int slot) { m_containerItems[slot] = nullptr; }
     void clearContainerItems() { m_containerItems.clear(); }
 
     void calculatePatterns(int& xPattern, int& yPattern, int& zPattern);
@@ -151,7 +155,7 @@ private:
     uint16 m_serverId;
     uint8 m_countOrSubType;
     stdext::packed_storage<uint8> m_attribs;
-    ItemList m_containerItems;
+    ItemVector m_containerItems;
     Color m_color;
     bool m_async;
 
