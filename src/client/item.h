@@ -140,7 +140,7 @@ public:
     ItemPtr getContainerItem(int slot) { return m_containerItems[slot]; }
     void addContainerItemIndexed(const ItemPtr& i, int slot) { m_containerItems[slot] = i; }
     void addContainerItem(const ItemPtr& i) { m_containerItems.push_back(i); }
-	void removeContainerItem(int slot) { m_containerItems[slot] = nullptr; }
+    void removeContainerItem(int slot) { m_containerItems[slot] = nullptr; }
     void clearContainerItems() { m_containerItems.clear(); }
 
     void calculatePatterns(int& xPattern, int& yPattern, int& zPattern);
