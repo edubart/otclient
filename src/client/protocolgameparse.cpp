@@ -997,10 +997,13 @@ void ProtocolGame::parseEditText(const InputMessagePtr& msg)
 
     int maxLength = msg->getU16();
     std::string text = msg->getString();
-    std::string writter = msg->getString();
-    std::string date = msg->getString();
 
-    g_game.processEditText(id, itemId, maxLength, text, writter, date);
+    std::string writer = msg->getString();
+    std::string date = "";
+    if(g_game.getFeature(Otc::GameWritableDate))
+        date = msg->getString();
+
+    g_game.processEditText(id, itemId, maxLength, text, writer, date);
 }
 
 void ProtocolGame::parseEditList(const InputMessagePtr& msg)
@@ -1459,8 +1462,15 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
             outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
         }
     } else {
-        int outfitStart = msg->getU8();
-        int outfitEnd   = msg->getU8();
+        int outfitStart, outfitEnd;
+        if(g_game.getFeature(Otc::GameLooktypeU16)) {
+            outfitStart = msg->getU16();
+            outfitEnd = msg->getU16();
+        } else {
+            outfitStart = msg->getU8();
+            outfitEnd = msg->getU8();
+        }
+
         for(int i = outfitStart; i <= outfitEnd; i++)
             outfitList.push_back(std::make_tuple(i, "", 0));
     }

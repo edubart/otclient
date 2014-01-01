@@ -45,7 +45,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
 
     /* Flags to be checked for.  */
     static const tileflags_t flags[] = {
-        TILESTATE_NONE,
         TILESTATE_HOUSE,
         TILESTATE_PROTECTIONZONE,
         TILESTATE_OPTIONALZONE,

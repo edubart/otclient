@@ -25,6 +25,10 @@
 
 #include "declarations.h"
 
+#include <boost/filesystem.hpp>
+
+namespace fs = boost::filesystem;
+
 // @bindsingleton g_resources
 class ResourceManager
 {
@@ -61,6 +65,7 @@ public:
 
     bool makeDir(const std::string directory);
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
+    std::vector<std::string> getDirectoryFiles(const std::string& path, bool filenameOnly, bool recursive);
 
     std::string resolvePath(const std::string& path);
     std::string getRealDir(const std::string& path);
@@ -74,6 +79,9 @@ public:
     std::string guessFilePath(const std::string& filename, const std::string& type);
     bool isFileType(const std::string& filename, const std::string& type);
     ticks_t getFileTime(const std::string& filename);
+
+protected:
+    std::vector<std::string> discoverPath(const fs::path& path, bool filenameOnly, bool recursive);
 
 private:
     std::string m_workDir;

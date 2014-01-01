@@ -374,8 +374,8 @@ namespace Otc
         GamePlayerStateU16 = 48,
         GameNewOutfitProtocol = 49,
         GamePVPMode = 50,
+        GameWritableDate = 51,
 
-        // 51-100 reserved to be defined in lua
         LastGameFeature = 101
     };
 

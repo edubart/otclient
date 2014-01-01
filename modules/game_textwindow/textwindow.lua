@@ -23,7 +23,7 @@ function destroyWindows()
   windows = {}
 end
 
-function onGameEditText(id, itemId, maxLength, text, writter, time)
+function onGameEditText(id, itemId, maxLength, text, writer, time)
   local textWindow = g_ui.createWidget('TextWindow', rootWidget)
 
   local writeable = #text < maxLength and maxLength > 0
@@ -42,8 +42,8 @@ function onGameEditText(id, itemId, maxLength, text, writter, time)
   textEdit:setCursorVisible(writeable)
 
   local desc = ''
-  if #writter > 0 then
-    desc = tr('You read the following, written by \n%s\n', writter)
+  if #writer > 0 then
+    desc = tr('You read the following, written by \n%s\n', writer)
     if #time > 0 then
       desc = desc .. tr('on %s.\n', time)
     end

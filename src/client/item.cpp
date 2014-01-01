@@ -221,6 +221,17 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU16(uid);
     }
 
+    std::string text = getText();
+    if(g_things.getItemType(m_serverId)->isWritable() && !text.empty()) {
+        out->addU8(ATTR_TEXT);
+        out->addString(text);
+    }
+    std::string desc = getDescription();
+    if(!desc.empty()) {
+        out->addU8(ATTR_DESC);
+        out->addString(desc);
+    }
+
     out->endNode();
     for(auto i : m_containerItems)
         i->serializeItem(out);

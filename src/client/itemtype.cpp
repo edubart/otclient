@@ -82,6 +82,9 @@ void ItemType::unserialize(const BinaryTreePtr& node)
             case ItemTypeAttrName:
                 setName(node->getString(len));
                 break;
+            case ItemTypeAttrWritable:
+                m_attribs.set(ItemTypeAttrWritable, true);
+                break;
             default:
                 node->skip(len); // skip attribute
                 break;

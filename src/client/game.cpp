@@ -490,9 +490,9 @@ void Game::processCloseTrade()
     g_lua.callGlobalField("g_game", "onCloseTrade");
 }
 
-void Game::processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writter, const std::string& date)
+void Game::processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writer, const std::string& date)
 {
-    g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writter, date);
+    g_lua.callGlobalField("g_game", "onEditText", id, itemId, maxLength, text, writer, date);
 }
 
 void Game::processEditList(uint id, int doorId, const std::string& text)
@@ -1445,12 +1445,18 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && version != 760 && (version < 810 || version > 1022))
+    if(version != 0 && (version < 760 || version > 1022))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
+    if(version >= 770)
+    {
+        enableFeature(Otc::GameLooktypeU16);
+        enableFeature(Otc::GameMessageStatements);
+        enableFeature(Otc::GameWritableDate);   // might not be since 770
+    }
 
     if(version >= 780)
     {
@@ -1458,9 +1464,7 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GamePlayerStamina);
         enableFeature(Otc::GameNewFluids);
         enableFeature(Otc::GameMessageLevel);
-        enableFeature(Otc::GameMessageStatements);
         enableFeature(Otc::GamePlayerStateU16);
-        enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameNewOutfitProtocol);
     }
 
@@ -1549,7 +1553,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && version != 760 && (version < 810 || version > 1022))
+    if(version != 0 && (version < 760 || version > 1022))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;

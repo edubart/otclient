@@ -148,8 +148,7 @@ public:
     std::string getDesc() { return m_attribs.get<std::string>(ItemTypeAttrDesc); }
 
     bool isNull() { return m_null; }
-
-    bool isWriteable() { return m_attribs.get<bool>(ItemTypeAttrWritable); }
+    bool isWritable() { return m_attribs.get<bool>(ItemTypeAttrWritable); }
 
 private:
     ItemCategory m_category;
