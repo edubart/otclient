@@ -227,29 +227,28 @@ void ThingTypeManager::loadXml(const std::string& file)
     }
 }
 
-void ThingTypeManager::parseItemType(uint16 id, TiXmlElement* elem)
+void ThingTypeManager::parseItemType(uint16 serverId, TiXmlElement* elem)
 {
-    uint16 serverId = id;
     ItemTypePtr itemType = nullptr;
+
+    bool s;
+    int d;
+
     if(g_game.getProtocolVersion() < 960) {
-        if(serverId > 20000 && serverId < 20100) {
-            serverId -= 20000;
-
-            itemType = ItemTypePtr(new ItemType);
-            itemType->setServerId(serverId);
-            addItemType(itemType);
-        } else
-            itemType = getItemType(serverId);
+        s = serverId > 20000 && serverId < 20100;
+        d = 20000;
     } else {
-        if(serverId > 30000 && serverId < 30100) {
-            serverId -= 30000;
-
-            itemType = ItemTypePtr(new ItemType);
-            itemType->setServerId(serverId);
-            addItemType(itemType);
-        } else
-            itemType = getItemType(serverId);
+        s = serverId > 30000 && serverId < 30100;
+        d = 30000;
     }
+
+    if(s) {
+        serverId -= d;
+        itemType = ItemTypePtr(new ItemType);
+        itemType->setServerId(serverId);
+        addItemType(itemType);
+    } else
+        itemType = getItemType(serverId);
 
     itemType->setName(elem->Attribute("name"));
     for(TiXmlElement* attrib = elem->FirstChildElement(); attrib; attrib = attrib->NextSiblingElement()) {
