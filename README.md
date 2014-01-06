@@ -10,13 +10,13 @@ Otclient is written in C++2011, the upcoming C++ standard and heavily scripted i
 
 ### Where do I download?
 
-Here is the latest v0.6.4 release compiled for both i686(32 bit) and x86_64(64 bit) machines.
-This release is compatible with protocols ranges from 7.60 up to 10.22.
+Here is the latest v0.6.5 release compiled for both i686(32 bit) and x86_64(64 bit) machines, with OpenGL renderer.
+This release is compatible with protocols ranges from 7.60 up to 10.31.
 
-* [For Windows](https://www.dropbox.com/sh/se1okacemoqzjve/KNY8ioKT8g/otclient-win-0.6.4.zip)
-* [For Linux](https://www.dropbox.com/sh/se1okacemoqzjve/-VCdmukEZj/otclient-linux-0.6.4.tar.gz)
+* [For Windows](https://www.dropbox.com/sh/se1okacemoqzjve/XFqFoSKLCg/otclient-win-0.6.5.zip)
+* [For Linux](https://www.dropbox.com/sh/se1okacemoqzjve/xKJL7j6vEo/otclient-linux-0.6.5.tar.gz)
 
-**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VER/` (i.e: `data/things/1022/Tibia.spr`)
+**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VER/` (i.e: `data/things/1031/Tibia.spr`)
 
 Older releases can be downloaded from [here](https://www.dropbox.com/sh/se1okacemoqzjve/-oWK4YFm03)
 
@@ -63,4 +63,3 @@ Talk directly with us at #otclient irc.freenode.net or send an email directly to
 
 Otclient is made available under the MIT License, thus this means that you are free
 to do whatever you want, commercial, non-commercial, closed or open.
-

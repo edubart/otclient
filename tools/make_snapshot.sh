@@ -156,9 +156,9 @@ cd ..
 
 ##################################################
 # create win32 package
-pkg_suffix="-linux32-$version"
+pkg_suffix="-linux-$version"
 pkgname="$name$pkg_suffix"
-pkgzip="$pkgname.tgz"
+pkgzip="$pkgname.tar.gz"
 cd $workdir
 rm -rf $pkgname
 mkdir $pkgname
@@ -201,8 +201,8 @@ tar czf $pkgzip $pkgname
 echo "Package generated to $pkgzip"
 
 ##################################################
-# create win32 package
-pkg_suffix="-win32-$version"
+# create windows package
+pkg_suffix="-win-$version"
 pkgname="$name$pkg_suffix"
 pkgzip="$pkgname.zip"
 cd $workdir
