@@ -221,7 +221,7 @@ function toggle()
   if terminalWindow:isVisible() then
     hide()
   else
-    if not firstShow then
+    if not firstShown then
       local settings = g_settings.getNode('terminal-window')
       if settings then
         if settings.size then  oldSize = size end
