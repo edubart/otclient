@@ -172,6 +172,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_creatures", "isSpawnLoaded", &CreatureManager::isSpawnLoaded, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "clear", &CreatureManager::clear, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "clearSpawns", &CreatureManager::clearSpawns, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "getSpawns", &CreatureManager::getSpawns, &g_creatures);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
@@ -398,6 +399,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Spawn>("getCenterPos", &Spawn::getCenterPos);
     g_lua.bindClassMemberFunction<Spawn>("addCreature", &Spawn::addCreature);
     g_lua.bindClassMemberFunction<Spawn>("removeCreature", &Spawn::removeCreature);
+    g_lua.bindClassMemberFunction<Spawn>("getCreatures", &Spawn::getCreatures);
 
     g_lua.registerClass<Town>();
     g_lua.bindClassStaticFunction<Town>("create", []{ return TownPtr(new Town); });

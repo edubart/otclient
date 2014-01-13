@@ -82,6 +82,8 @@ typedef std::list<TownPtr> TownList;
 typedef std::list<ItemPtr> ItemList;
 typedef std::vector<ItemPtr> ItemVector;
 typedef std::unordered_map<Position, TilePtr, PositionHasher> TileMap;
+typedef std::unordered_map<Position, CreatureTypePtr, PositionHasher> CreatureMap;
+typedef std::unordered_map<Position, SpawnPtr, PositionHasher> SpawnMap;
 
 // net
 class ProtocolLogin;

@@ -144,6 +144,14 @@ void Spawn::removeCreature(const Position& pos)
     }
 }
 
+std::vector<CreatureTypePtr> Spawn::getCreatures()
+{
+    std::vector<CreatureTypePtr> creatures;
+    for (auto p : m_creatures)
+        creatures.push_back(p.second);
+    return creatures;
+}
+
 CreaturePtr CreatureType::cast()
 {
     CreaturePtr ret(new Creature);
@@ -399,5 +407,12 @@ SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
     return ret;
 }
 
-/* vim: set ts=4 sw=4 et: */
+std::vector<SpawnPtr> CreatureManager::getSpawns()
+{
+    std::vector<SpawnPtr> spawns;
+    for (auto p : m_spawns)
+        spawns.push_back(p.second);
+    return spawns;
+}
 
+/* vim: set ts=4 sw=4 et: */

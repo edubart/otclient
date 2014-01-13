@@ -61,6 +61,7 @@ public:
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
     Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrCenter); }
 
+    std::vector<CreatureTypePtr> getCreatures();
     void addCreature(const Position& placePos, const CreatureTypePtr& cType);
     void removeCreature(const Position& pos);
     void clear() { m_creatures.clear(); }
@@ -120,6 +121,7 @@ public:
     const CreatureTypePtr& getCreatureByName(std::string name);
     const CreatureTypePtr& getCreatureByLook(int look);
 
+    std::vector<SpawnPtr> getSpawns();
     SpawnPtr getSpawn(const Position& centerPos);
     SpawnPtr getSpawnForPlacePos(const Position& pos);
     SpawnPtr addSpawn(const Position& centerPos, int radius);
