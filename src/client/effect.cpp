@@ -24,7 +24,7 @@
 #include "map.h"
 #include <framework/core/eventdispatcher.h>
 
-void Effect::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
+void Effect::draw(const Point& dest, float scaleFactor, bool animate, int offsetX, int offsetY, LightView *lightView)
 {
     if(m_id == 0)
         return;
@@ -32,7 +32,16 @@ void Effect::draw(const Point& dest, float scaleFactor, bool animate, LightView 
     int animationPhase = 0;
     if(animate)
         animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / m_phaseDuration), getAnimationPhases() - 1);
-    rawGetThingType()->draw(dest, scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
+
+    int xPattern = offsetX % getNumPatternX();
+    if(xPattern < 0)
+        xPattern += getNumPatternX();
+
+    int yPattern = offsetY % getNumPatternY();
+    if(yPattern < 0)
+        yPattern += getNumPatternY();
+
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, lightView);
 }
 
 void Effect::onAppear()
