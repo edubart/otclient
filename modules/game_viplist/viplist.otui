@@ -1,5 +1,9 @@
 VipListLabel < GameLabel
   margin-top: 2
+  text-offset: 16 0
+  image-rect: 0 0 12 12
+  image-clip: 0 0 12 12
+  image-source: /images/game/viplist/icons
   font: verdana-11px-monochrome
   phantom: false
 

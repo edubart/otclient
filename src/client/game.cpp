@@ -402,10 +402,10 @@ void Game::processRuleViolationLock()
     g_lua.callGlobalField("g_game", "onRuleViolationLock");
 }
 
-void Game::processVipAdd(uint id, const std::string& name, uint status, int iconId, bool notifyLogin)
+void Game::processVipAdd(uint id, const std::string& name, uint status, const std::string& description, int iconId, bool notifyLogin)
 {
-    m_vips[id] = Vip(name, status);
-    g_lua.callGlobalField("g_game", "onAddVip", id, name, status, iconId, notifyLogin);
+    m_vips[id] = Vip(name, status, description, iconId, notifyLogin);
+    g_lua.callGlobalField("g_game", "onAddVip", id, name, status, description, iconId, notifyLogin);
 }
 
 void Game::processVipStateChange(uint id, uint status)
@@ -1192,6 +1192,23 @@ void Game::removeVip(int playerId)
     m_protocolGame->sendRemoveVip(playerId);
 }
 
+void Game::editVip(int playerId, const std::string& description, int iconId, bool notifyLogin)
+{
+    if(!canPerformGameAction())
+        return;
+
+    auto it = m_vips.find(playerId);
+    if(it == m_vips.end())
+        return;
+
+    std::get<2>(m_vips[playerId]) = description;
+    std::get<3>(m_vips[playerId]) = iconId;
+    std::get<4>(m_vips[playerId]) = notifyLogin;
+
+    if(getFeature(Otc::GameAdditionalVipInfo))
+        m_protocolGame->sendEditVip(playerId, description, iconId, notifyLogin);
+}
+
 void Game::setChaseMode(Otc::ChaseModes chaseMode)
 {
     if(!canPerformGameAction())
@@ -1519,6 +1536,10 @@ void Game::setProtocolVersion(int version)
     if(version >= 960) {
         enableFeature(Otc::GameSpritesU32);
         enableFeature(Otc::GameOfflineTrainingTime);
+    }
+
+    if(version >= 963) {
+        enableFeature(Otc::GameAdditionalVipInfo);
     }
 
     if(version >= 973) {

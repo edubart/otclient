@@ -1,0 +1,138 @@
+IconButton < CheckBox
+  size: 20 20
+  image-source: /images/game/viplist/vipcheckbox
+  image-size: 20 20
+  image-border: 3
+  margin: 2
+  icon-source: /images/game/viplist/icons
+  icon-size: 12 12
+  icon-rect: 0 0 12 12
+  icon-clip: 0 0 12 12
+  icon-offset: 4 6
+
+  $first:
+    margin-left: 0
+
+  $!checked:
+    image-clip: 26 0 26 26
+
+  $hover !checked:
+    image-clip: 78 0 26 26
+
+  $checked:
+    image-clip: 0 0 26 26
+
+  $hover checked:
+    image-clip: 52 0 26 26
+
+MainWindow
+  size: 272 170
+  !text: tr('Edit VIP list entry')
+
+  Label
+    id: nameLabel
+    text: Name
+    anchors.top: parent.top
+    anchors.left: parent.left
+    color: green
+    width: 180
+
+  Label
+    !text: tr('Description') .. ':'
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    text-offset: 0 3
+    height: 20
+    margin-top: 5
+
+  TextEdit
+    id: descriptionText
+    anchors.top: prev.top
+    anchors.left: prev.right
+    anchors.right: parent.right
+    margin: 0 5
+
+  Label
+    !text: tr('Notify-Login') .. ':'
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    text-offset: 0 3
+    height: 20
+    margin-top: 5
+
+  CheckBox
+    id: checkBoxNotify
+    anchors.top: prev.top
+    anchors.left: prev.right
+    margin: 2 6
+
+  UIWidget
+    layout: horizontalBox
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 24
+
+    IconButton
+      id: icon0
+
+    IconButton
+      id: icon1
+      icon-clip: 12 0 12 12
+
+    IconButton
+      id: icon2
+      icon-clip: 24 0 12 12
+
+    IconButton
+      id: icon3
+      icon-clip: 36 0 12 12
+
+    IconButton
+      id: icon4
+      icon-clip: 48 0 12 12
+
+    IconButton
+      id: icon5
+      icon-clip: 60 0 12 12
+
+    IconButton
+      id: icon6
+      icon-clip: 72 0 12 12
+        
+    IconButton
+      id: icon7
+      icon-clip: 84 0 12 12
+
+    IconButton
+      id: icon8
+      icon-clip: 96 0 12 12
+
+    IconButton
+      id: icon9
+      icon-clip: 108 0 12 12
+
+    IconButton
+      id: icon10
+      icon-clip: 120 0 12 12
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: buttonOK
+    !text: tr('Ok')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+
+  Button
+    id: buttonCancel
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom

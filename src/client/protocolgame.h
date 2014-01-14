@@ -102,6 +102,7 @@ public:
     void sendMountStatus(bool mount);
     void sendAddVip(const std::string& name);
     void sendRemoveVip(uint playerId);
+    void sendEditVip(uint playerId, const std::string& description, int iconId, bool notifyLogin);
     void sendBugReport(const std::string& comment);
     void sendRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
     void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);

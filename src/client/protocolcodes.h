@@ -232,6 +232,7 @@ namespace Proto {
         ClientMount                         = 212, // 870
         ClientAddVip                        = 220,
         ClientRemoveVip                     = 221,
+        ClientEditVip                       = 222,
         ClientBugReport                     = 230,
         ClientRuleViolation                 = 231,
         ClientDebugReport                   = 232,

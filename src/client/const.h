@@ -375,6 +375,7 @@ namespace Otc
         GameNewOutfitProtocol = 49,
         GamePVPMode = 50,
         GameWritableDate = 51,
+        GameAdditionalVipInfo = 52,
 
         LastGameFeature = 101
     };

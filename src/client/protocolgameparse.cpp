@@ -1492,19 +1492,19 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 {
     uint id, iconId = 0, status;
-    std::string name, desc;
+    std::string name, desc = "";
     bool notifyLogin = false;
 
     id = msg->getU32();
     name = g_game.formatCreatureName(msg->getString());
-    if(g_game.getProtocolVersion() >= 963) {
+    if(g_game.getFeature(Otc::GameAdditionalVipInfo)) {
         desc = msg->getString();
         iconId = msg->getU32();
         notifyLogin = msg->getU8();
     }
     status = msg->getU8();
 
-    g_game.processVipAdd(id, name, status, iconId, notifyLogin);
+    g_game.processVipAdd(id, name, status, desc, iconId, notifyLogin);
 }
 
 void ProtocolGame::parseVipState(const InputMessagePtr& msg)

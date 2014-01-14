@@ -740,6 +740,17 @@ void ProtocolGame::sendRemoveVip(uint playerId)
     send(msg);
 }
 
+void ProtocolGame::sendEditVip(uint playerId, const std::string& description, int iconId, bool notifyLogin)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientEditVip);
+    msg->addU32(playerId);
+    msg->addString(description);
+    msg->addU32(iconId);
+    msg->addU8(notifyLogin);
+    send(msg);
+}
+
 void ProtocolGame::sendBugReport(const std::string& comment)
 {
     OutputMessagePtr msg(new OutputMessage);

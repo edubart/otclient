@@ -31,6 +31,9 @@ EmblemBlue = 3
 EmblemMember = 4
 EmblemOther = 5
 
+VipIconFirst = 0
+VipIconLast = 10
+
 North = 0
 East = 1
 South = 2
@@ -100,6 +103,8 @@ GameNewFluids = 47
 GamePlayerStateU16 = 48
 GameNewOutfitProtocol = 49
 GamePVPMode = 50
+GameWritableDate = 51
+GameAdditionalVipInfo = 52
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
