@@ -407,6 +407,14 @@ SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
     return ret;
 }
 
+void CreatureManager::deleteSpawn(const SpawnPtr& spawn)
+{
+    const Position& centerPos = spawn->getCenterPos();
+    auto it = m_spawns.find(centerPos);
+    if(it != m_spawns.end())
+        m_spawns.erase(it);
+}
+
 std::vector<SpawnPtr> CreatureManager::getSpawns()
 {
     std::vector<SpawnPtr> spawns;

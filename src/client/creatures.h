@@ -125,6 +125,7 @@ public:
     SpawnPtr getSpawn(const Position& centerPos);
     SpawnPtr getSpawnForPlacePos(const Position& pos);
     SpawnPtr addSpawn(const Position& centerPos, int radius);
+    void deleteSpawn(const SpawnPtr& spawn);
 
     bool isLoaded() { return m_loaded; }
     bool isSpawnLoaded() { return m_spawnLoaded; }

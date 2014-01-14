@@ -173,6 +173,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_creatures", "clear", &CreatureManager::clear, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "clearSpawns", &CreatureManager::clearSpawns, &g_creatures);
     g_lua.bindSingletonFunction("g_creatures", "getSpawns", &CreatureManager::getSpawns, &g_creatures);
+    g_lua.bindSingletonFunction("g_creatures", "deleteSpawn", &CreatureManager::deleteSpawn, &g_creatures);
 
     g_lua.registerSingletonClass("g_game");
     g_lua.bindSingletonFunction("g_game", "loginWorld", &Game::loginWorld, &g_game);
