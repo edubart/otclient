@@ -1468,11 +1468,15 @@ void Game::setProtocolVersion(int version)
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
+    if(version >= 760)
+    {
+        enableFeature(Otc::GameWritableDate);
+    }
+
     if(version >= 770)
     {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
-        enableFeature(Otc::GameWritableDate);   // might not be since 770
     }
 
     if(version >= 780)
