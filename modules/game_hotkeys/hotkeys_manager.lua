@@ -401,7 +401,18 @@ function doKeyCombo(keyCombo)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONTARGET then
     local attackingCreature = g_game.getAttackingCreature()
-    if not attackingCreature then return end
+    if not attackingCreature then
+      local item = Item.create(hotKey.itemId)
+      if g_game.getProtocolVersion() < 780 or hotKey.subType then
+        local tmpItem = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
+        if not tmpItem then return end
+        item = tmpItem
+      end
+
+      modules.game_interface.startUseWith(item)
+      return
+    end
+
     if not attackingCreature:getTile() then return end
     if g_game.getProtocolVersion() < 780 or hotKey.subType then
       local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
