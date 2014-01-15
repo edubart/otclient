@@ -389,8 +389,16 @@ function UIMoveableTabBar:selectNextTab()
     if #self.postTabs > 0 then
       local widget = showPostTab(self)
       self:selectTab(widget)
-      updateTabs(self)
+    else
+      if #self.preTabs > 0 then
+        for i = 1, #self.preTabs do
+          showPreTab(self)
+        end
+      end
+
+      self:selectTab(self.tabs[1])
     end
+    updateTabs(self)
     return
   end
 
@@ -417,8 +425,16 @@ function UIMoveableTabBar:selectPrevTab()
     if #self.preTabs > 0 then
       local widget = showPreTab(self)
       self:selectTab(widget)
-      updateTabs(self)
+    else
+      if #self.postTabs > 0 then
+        for i = 1, #self.postTabs do
+          showPostTab(self)
+        end
+      end
+
+      self:selectTab(self.tabs[#self.tabs])
     end
+    updateTabs(self)
     return
   end
 
