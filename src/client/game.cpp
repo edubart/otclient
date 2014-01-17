@@ -1472,7 +1472,7 @@ void Game::setProtocolVersion(int version)
     {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
-        enableFeature(Otc::GameWritableDate);   // might not be since 770
+        enableFeature(Otc::GameWritableDate);
     }
 
     if(version >= 780)
@@ -1485,15 +1485,18 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameNewOutfitProtocol);
     }
 
+    if(version >= 780 && version <= 854) {          // 780 might not be accurate
+        enableFeature(Otc::GameChargeableItems);
+    }
+
     if(version >= 840) {
         enableFeature(Otc::GameProtocolChecksum);
-        enableFeature(Otc::GameChallengeOnLogin);
         enableFeature(Otc::GameAccountNames);
         enableFeature(Otc::GameDoubleFreeCapacity);
     }
 
-    if(version >= 780 && version <= 854) {          // 780 might not be accurate
-        enableFeature(Otc::GameChargeableItems);
+    if(version >= 841) {
+        enableFeature(Otc::GameChallengeOnLogin);
     }
 
     if(version >= 854) {
