@@ -65,7 +65,7 @@ bool UIMinimap::setZoom(int zoom)
     else
         m_scale = 1;
     m_layout->update();
-    
+
     onZoomChange(zoom, oldZoom);
     return true;
 }

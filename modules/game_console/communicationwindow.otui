@@ -33,13 +33,13 @@ MainWindow
     anchors.left: parent.left
     anchors.top: parent.top
     width: 180
-  
+
   Label
     !text: tr('Ignored Players:')
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 10
-    
+
   TextList
     id: ignoreList
     vertical-scrollbar: ignoreListScrollBar
@@ -51,14 +51,14 @@ MainWindow
     margin-top: 3
     padding: 1
     focusable: false
-    
+
   TextEdit
     id: ignoreNameEdit
     anchors.top: prev.bottom
     anchors.left: parent.left
     width: 110
     margin-top: 5
-    
+
   Button
     id: buttonIgnoreAdd
     !text: tr('Add')
@@ -67,7 +67,7 @@ MainWindow
     margin-left: 5
     anchors.top: prev.top
     anchors.left: prev.right
-    
+
   Button
     id: buttonIgnoreRemove
     !text: tr('Remove')
@@ -90,7 +90,7 @@ MainWindow
     anchors.top: prev.bottom
     width: 180
     margin-top: 5
-    
+
   CheckBox
     id: checkboxIgnoreYelling
     !text: tr('Ignore Yelling')
@@ -98,7 +98,7 @@ MainWindow
     anchors.top: prev.bottom
     width: 180
     margin-top: 5
-    
+
   CheckBox
     id: checkboxUseWhiteList
     !text: tr('Activate whitelist')
@@ -106,13 +106,13 @@ MainWindow
     anchors.left: ignoreList.right
     margin-left: 20
     width: 180
-    
+
   Label
     !text: tr('Allowed Players:')
     anchors.top: prev.bottom
     anchors.left: prev.left
     margin-top: 10
-    
+
   TextList
     id: whiteList
     vertical-scrollbar: whiteListScrollBar
@@ -124,14 +124,14 @@ MainWindow
     margin-top: 3
     padding: 1
     focusable: false
-    
+
   TextEdit
     id: whitelistNameEdit
     anchors.top: prev.bottom
     anchors.left: prev.left
     width: 110
     margin-top: 5
-    
+
   Button
     id: buttonWhitelistAdd
     !text: tr('Add')
@@ -140,7 +140,7 @@ MainWindow
     margin-left: 5
     anchors.top: prev.top
     anchors.left: prev.right
-    
+
   Button
     id: buttonWhitelistRemove
     !text: tr('Remove')
@@ -149,7 +149,7 @@ MainWindow
     margin-left: 5
     anchors.top: prev.top
     anchors.left: prev.right
-    
+
   Label
     !text: tr('Global whitelist settings')
     anchors.left: whiteList.left
@@ -163,17 +163,17 @@ MainWindow
     anchors.top: prev.bottom
     width: 180
     margin-top: 5
-    
+
   Panel
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
     height: 30
-    
+
     Panel
       size: 160 30
       anchors.horizontalCenter: parent.horizontalCenter
-    
+
       Button
         id: buttonSave
         !text: tr('Save')
@@ -196,7 +196,7 @@ MainWindow
     anchors.right: ignoreList.right
     step: 14
     pixels-scroll: true
-    
+
   VerticalScrollBar
     id: whiteListScrollBar
     anchors.top: whiteList.top

@@ -275,7 +275,7 @@ std::string Platform::getOSName()
                  else
                     if(osvi.wProductType == VER_NT_WORKSTATION && osvi.dwMinorVersion == 2)
                         ret += "Windows 8 ";
-                    else 
+                    else
                         ret += "Windows Server 2008 R2 ";
             }
 

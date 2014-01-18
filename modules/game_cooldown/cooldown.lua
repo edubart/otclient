@@ -20,8 +20,8 @@ function init()
 
   cooldownWindow = g_ui.loadUI('cooldown', modules.game_interface.getRightPanel())
   cooldownWindow:disableResize()
-  cooldownWindow:setup() 
-  
+  cooldownWindow:setup()
+
   contentsPanel = cooldownWindow:getChildById('contentsPanel')
   cooldownPanel = contentsPanel:getChildById('cooldownPanel')
 
@@ -47,10 +47,10 @@ end
 function loadIcon(iconId)
   local spell, profile, spellName = Spells.getSpellByIcon(iconId)
   if not spellName then return end
-  
+
   clientIconId = Spells.getClientId(spellName)
   if not clientIconId then return end
-  
+
   local icon = cooldownPanel:getChildById(iconId)
   if not icon then
     icon = g_ui.createWidget('SpellIcon')
@@ -109,7 +109,7 @@ function turnOffCooldown(progressRect)
     progressRect.icon:setOn(false)
     progressRect.icon = nil
   end
-  
+
   -- create particles
   --[[local particle = g_ui.createWidget('GroupCooldownParticles', progressRect)
   particle:fill('parent')
@@ -130,7 +130,7 @@ end
 
 function updateCooldown(progressRect, duration)
   progressRect:setPercent(progressRect:getPercent() + 10000/duration)
-  
+
   if progressRect:getPercent() < 100 then
     removeEvent(progressRect.event)
     progressRect.event = scheduleEvent(function() progressRect.callback[ProgressCallback.update]() end, 100)

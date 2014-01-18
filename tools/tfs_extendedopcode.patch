@@ -3,7 +3,7 @@ index cd479e4..8d46b23 100644
 --- a/const.h
 +++ b/const.h
 @@ -21,9 +21,12 @@
- 
+
  enum OperatingSystem_t
  {
 -	CLIENTOS_LINUX		= 0x01,
@@ -16,7 +16,7 @@ index cd479e4..8d46b23 100644
 +	CLIENTOS_OTCLIENT_WINDOWS	= 0x0B,
 +	CLIENTOS_OTCLIENT_MAC		= 0x0C,
  };
- 
+
  enum ChannelEvent_t
 diff --git a/creatureevent.cpp b/creatureevent.cpp
 index 842b237..e9b2200 100644
@@ -28,7 +28,7 @@ index 842b237..e9b2200 100644
  		_type = CREATURE_EVENT_PREPAREDEATH;
 +	else if(type == "extendedopcode")
 +		_type = CREATURE_EVENT_EXTENDED_OPCODE;
- 
+
  	return _type;
  }
 @@ -330,6 +332,8 @@ std::string CreatureEvent::getScriptEventName() const
@@ -119,7 +119,7 @@ index f1ff4b2..cc5171c 100644
 +	CREATURE_EVENT_PREPAREDEATH,
 +	CREATURE_EVENT_EXTENDED_OPCODE // otclient additional network opcodes
  };
- 
+
  enum StatsChange_t
 @@ -150,6 +151,7 @@ class CreatureEvent : public Event
  		uint32_t executeKill(Creature* creature, Creature* target, const DeathEntry& entry);
@@ -127,14 +127,14 @@ index f1ff4b2..cc5171c 100644
  		uint32_t executePrepareDeath(Creature* creature, DeathList deathList);
 +		uint32_t executeExtendedOpcode(Creature* creature, uint8_t opcode, const std::string& buffer);
  		//
- 
+
  	protected:
 diff --git a/data/creaturescripts/creaturescripts.xml b/data/creaturescripts/creaturescripts.xml
 index 363c62b..c706f10 100644
 --- a/data/creaturescripts/creaturescripts.xml
 +++ b/data/creaturescripts/creaturescripts.xml
 @@ -14,4 +14,6 @@
- 
+
  	<event type="think" name="Idle" event="script" value="idle.lua"/>
  	<event type="think" name="SkullCheck" event="script" value="skullcheck.lua"/>
 +
@@ -164,7 +164,7 @@ index 2e4dc2c..7508591 100644
 --- a/game.cpp
 +++ b/game.cpp
 @@ -6951,3 +6951,12 @@ void Game::checkExpiredMarketOffers()
- 
+
  	Scheduler::getInstance().addEvent(createSchedulerTask(checkExpiredMarketOffersEachMinutes * 60 * 1000, boost::bind(&Game::checkExpiredMarketOffers, this)));
  }
 +
@@ -185,7 +185,7 @@ index 51fa397..7192549 100644
 @@ -646,6 +646,8 @@ class Game
  		std::map<Item*, int32_t> grounds;
  #endif
- 
+
 +		void parsePlayerExtendedOpcode(uint32_t playerId, uint8_t opcode, const std::string& buffer);
 +
  	protected:
@@ -198,7 +198,7 @@ index 4cb8c8d..4ed9391 100644
 @@ -2476,6 +2476,12 @@ void LuaInterface::registerFunctions()
  	//getConfigFile()
  	lua_register(m_luaState, "getConfigFile", LuaInterface::luaGetConfigFile);
- 
+
 +	//isPlayerUsingOtclient(cid)
 +	lua_register(m_luaState, "isPlayerUsingOtclient", LuaInterface::luaIsPlayerUsingOtclient);
 +
@@ -207,11 +207,11 @@ index 4cb8c8d..4ed9391 100644
 +
  	//getConfigValue(key)
  	lua_register(m_luaState, "getConfigValue", LuaInterface::luaGetConfigValue);
- 
+
 @@ -9471,6 +9477,32 @@ int32_t LuaInterface::luaGetMountInfo(lua_State* L)
  	return 1;
  }
- 
+
 +int32_t LuaInterface::luaIsPlayerUsingOtclient(lua_State* L)
 +{
 +	//isPlayerUsingOtclient(cid)
@@ -248,7 +248,7 @@ index 234091a..0a0046f 100644
 @@ -697,6 +697,9 @@ class LuaInterface
  		static int32_t luaDoPlayerSetMounted(lua_State* L);
  		static int32_t luaGetMountInfo(lua_State* L);
- 
+
 +		static int32_t luaIsPlayerUsingOtclient(lua_State* L);
 +		static int32_t luaDoSendPlayerExtendedOpcode(lua_State* L);
 +
@@ -262,7 +262,7 @@ index 917e36a..3671750 100644
 @@ -171,16 +171,16 @@ Position NetworkMessage::getPosition()
  	return pos;
  }
- 
+
 -void NetworkMessage::putString(const char* value, bool addSize/* = true*/)
 +void NetworkMessage::putString(const char* value, int length, bool addSize/* = true*/)
  {
@@ -270,10 +270,10 @@ index 917e36a..3671750 100644
 +	uint32_t size = (uint32_t)length;
  	if(!hasSpace(size + (addSize ? 2 : 0)) || size > 8192)
  		return;
- 
+
  	if(addSize)
  		put<uint16_t>(size);
- 
+
 -	strcpy((char*)(m_buffer + m_position), value);
 +	memcpy((char*)(m_buffer + m_position), value, length);
  	m_position += size;
@@ -286,14 +286,14 @@ index 6cf8ee1..615f094 100644
 @@ -80,8 +80,8 @@ class NetworkMessage
  			m_size += sizeof(T);
  		}
- 
+
 -		void putString(const std::string& value, bool addSize = true) {putString(value.c_str(), addSize);}
 -		void putString(const char* value, bool addSize = true);
 +		void putString(const std::string& value, bool addSize = true) {putString(value.c_str(), value.length(), addSize);}
 +		void putString(const char* value, int length, bool addSize = true);
- 
+
  		void putPadding(uint32_t amount);
- 
+
 diff --git a/player.h b/player.h
 index 63e9183..7cb8313 100644
 --- a/player.h
@@ -301,7 +301,7 @@ index 63e9183..7cb8313 100644
 @@ -228,6 +228,7 @@ class Player : public Creature, public Cylinder
  		bool hasPVPBlessing() const {return pvpBlessing;}
  		uint16_t getBlessings() const;
- 
+
 +		bool isUsingOtclient() const { return operatingSystem >= CLIENTOS_OTCLIENT_LINUX; }
  		OperatingSystem_t getOperatingSystem() const {return operatingSystem;}
  		void setOperatingSystem(OperatingSystem_t os) {operatingSystem = os;}
@@ -309,7 +309,7 @@ index 63e9183..7cb8313 100644
 @@ -580,6 +581,9 @@ class Player : public Creature, public Cylinder
  		void sendSpellGroupCooldown(SpellGroup_t groupId, uint32_t cooldown)
  			{if(client) client->sendSpellGroupCooldown(groupId, cooldown);}
- 
+
 +		void sendExtendedOpcode(uint8_t opcode, const std::string& buffer)
 +			{if(client) client->sendExtendedOpcode(opcode, buffer);}
 +
@@ -323,7 +323,7 @@ index b980be0..7a84f61 100644
 @@ -263,6 +263,11 @@ bool ProtocolGame::login(const std::string& name, uint32_t id, const std::string
  			return false;
  		}
- 
+
 +		if(player->isUsingOtclient())
 +		{
 +			player->registerCreatureEvent("ExtendedOpcode");
@@ -335,18 +335,18 @@ index b980be0..7a84f61 100644
 @@ -427,6 +432,10 @@ void ProtocolGame::onRecvFirstMessage(NetworkMessage& msg)
  	enableXTEAEncryption();
  	setXTEAKey(key);
- 
+
 +	// notifies to otclient that this server can receive extended game protocol opcodes
 +	if(operatingSystem >= CLIENTOS_OTCLIENT_LINUX)
 +		sendExtendedOpcode(0x00, std::string());
 +
  	bool gamemaster = (msg.get<char>() != (char)0);
  	std::string name = msg.getString(), character = msg.getString(), password = msg.getString();
- 
+
 @@ -578,6 +587,10 @@ void ProtocolGame::parsePacket(NetworkMessage &msg)
  				parseReceivePing(msg);
  				break;
- 
+
 +			case 0x32: // otclient extended opcode
 +				parseExtendedOpcode(msg);
 +				break;
@@ -390,7 +390,7 @@ index 7691174..48b9bf1 100644
 @@ -326,6 +326,9 @@ class ProtocolGame : public Protocol
  		//shop
  		void AddShopItem(NetworkMessage_ptr msg, const ShopInfo& item);
- 
+
 +		void parseExtendedOpcode(NetworkMessage& msg);
 +		void sendExtendedOpcode(uint8_t opcode, const std::string& buffer);
 +

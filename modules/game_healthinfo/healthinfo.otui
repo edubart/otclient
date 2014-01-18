@@ -14,7 +14,7 @@ ManaBar < ProgressBar
   anchors.right: parent.right
   margin: 1
   margin-top: 3
-  
+
 ExperienceBar < ProgressBar
   id: experienceBar
   background-color: #B6E866

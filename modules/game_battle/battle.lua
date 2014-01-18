@@ -32,11 +32,11 @@ function init()
 
   filterPanel = battleWindow:recursiveGetChildById('filterPanel')
   toggleFilterButton = battleWindow:recursiveGetChildById('toggleFilterButton')
-  
+
   if isHidingFilters() then
     hideFilterPanel()
   end
-  
+
   sortTypeBox = battleWindow:recursiveGetChildById('sortTypeBox')
   sortOrderBox = battleWindow:recursiveGetChildById('sortOrderBox')
   hidePlayersButton = battleWindow:recursiveGetChildById('hidePlayers')
@@ -63,7 +63,7 @@ function init()
   sortOrderBox:addOption('Desc.', 'desc')
   sortOrderBox:setCurrentOptionByData(getSortOrder())
   sortOrderBox.onOptionChange = onChangeSortOrder
-  
+
   connect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
@@ -73,7 +73,7 @@ function init()
     onAppear = onCreatureAppear,
     onDisappear = onCreatureDisappear
   })
-  
+
   connect(LocalPlayer, {
     onPositionChange = onCreaturePositionChange
   })
@@ -95,7 +95,7 @@ function terminate()
   battleWindow:destroy()
   mouseWidget:destroy()
 
-  disconnect(Creature, {  
+  disconnect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
     onOutfitChange = onCreatureOutfitChange,
@@ -108,7 +108,7 @@ function terminate()
   disconnect(LocalPlayer, {
     onPositionChange = onCreaturePositionChange
   })
-  
+
   disconnect(g_game, {
     onAttackingCreatureChange = onAttack,
     onFollowingCreatureChange = onFollow,
@@ -296,17 +296,17 @@ function onCreaturePositionChange(creature, newPos, oldPos)
         for id, creatureButton in pairs(battleButtonsByCreaturesList) do
           table.insert(distanceList, {distance = getDistanceBetween(newPos, creatureButton.creature:getPosition()), widget = creatureButton})
         end
-  
+
         if isSortAsc() then
           table.sort(distanceList, function(a, b) return a.distance < b.distance end)
         else
-          table.sort(distanceList, function(a, b) return a.distance > b.distance end)    
+          table.sort(distanceList, function(a, b) return a.distance > b.distance end)
         end
-        
+
         for i = 1, #distanceList do
           battlePanel:moveChildToIndex(distanceList[i].widget, i)
         end
-      end    
+      end
 
       for id, creatureButton in pairs(battleButtonsByCreaturesList) do
         addCreature(creatureButton.creature)
@@ -356,7 +356,7 @@ function addCreature(creature)
   if not creatureAgeList[creatureId] then
     creatureAgeList[creatureId] = os.time()
   end
-  
+
   if not battleButton then
     battleButton = g_ui.createWidget('BattleButton')
     battleButton:setup(creature)
@@ -373,14 +373,14 @@ function addCreature(creature)
     if creature == g_game.getFollowingCreature() then
       onFollow(creature)
     end
-    
+
     local inserted = false
     local nameLower = creature:getName():lower()
     local healthPercent = creature:getHealthPercent()
     local playerPosition = g_game.getLocalPlayer():getPosition()
     local distance = getDistanceBetween(playerPosition, creature:getPosition())
     local age = creatureAgeList[creatureId]
-    
+
     local childCount = battlePanel:getChildCount()
     for i = 1, childCount do
       local child = battlePanel:getChildByIndex(i)
@@ -412,9 +412,9 @@ function addCreature(creature)
             break
           elseif healthPercent == childHealth then
             equal = true
-          end            
+          end
       end
-      
+
       -- If any other sort type is selected and values are equal, sort it by name also
       if getSortType() == 'name' or equal then
           local length = math.min(childName:len(), nameLower:len())
@@ -425,7 +425,7 @@ function addCreature(creature)
               break
             elseif (nameLower:byte(j) > childName:byte(j) and isSortAsc()) or (nameLower:byte(j) < childName:byte(j) and isSortDesc()) then
               break
-            elseif j == nameLower:len() and isSortAsc() then 
+            elseif j == nameLower:len() and isSortAsc() then
               battlePanel:insertChild(i, battleButton)
               inserted = true
             elseif j == childName:len() and isSortDesc() then
@@ -439,7 +439,7 @@ function addCreature(creature)
         break
       end
     end
-    
+
     -- Insert at the end if no other place is found
     if not inserted then
       battlePanel:insertChild(childCount + 1, battleButton)
@@ -478,7 +478,7 @@ function onBattleButtonMouseRelease(self, mousePosition, mouseButton)
     mouseWidget.cancelNextRelease = false
     return false
   end
-  if ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) 
+  if ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton)
     or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     mouseWidget.cancelNextRelease = true
     g_game.look(self.creature)

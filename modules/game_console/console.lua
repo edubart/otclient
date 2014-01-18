@@ -175,7 +175,7 @@ end
 
 function disableChat()
   local gameInterface = modules.game_interface
-  
+
   consoleTextEdit:setVisible(false)
   consoleTextEdit:setText("")
 
@@ -220,11 +220,11 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+H')
 
   saveCommunicationSettings()
-  
+
   if channelsWindow then
     channelsWindow:destroy()
   end
-  
+
   if communicationWindow then
     communicationWindow:destroy()
   end
@@ -232,7 +232,7 @@ function terminate()
   if violationWindow then
     violationWindow:destroy()
   end
-  
+
   consolePanel:destroy()
   ownPrivateName = nil
 
@@ -363,7 +363,7 @@ function addTab(name, focus)
 end
 
 function removeTab(tab)
-  if type(tab) == 'string' then 
+  if type(tab) == 'string' then
     tab = consoleTabBar:getTab(tab)
   end
 
@@ -824,7 +824,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   end
 
   if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
-  
+
   speaktype = SpeakTypes[mode]
 
   if not speaktype then
@@ -833,10 +833,10 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
   end
 
   local localPlayer = g_game.getLocalPlayer()
-  if name ~= g_game.getCharacterName()     
-      and isUsingIgnoreList()             
+  if name ~= g_game.getCharacterName()
+      and isUsingIgnoreList()
         and not(isUsingWhiteList()) or (isUsingWhiteList() and not(isWhitelisted(name)) and not(isAllowingVIPs() and localPlayer:hasVip(name))) then
-    
+
     if mode == MessageModes.Yell and isIgnoringYelling() then
       return
     elseif speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom then
@@ -1042,16 +1042,16 @@ end
 function saveCommunicationSettings()
   local tmpIgnoreList = {}
   local ignoredPlayers = getIgnoredPlayers()
-  for i = 1, #ignoredPlayers do    
+  for i = 1, #ignoredPlayers do
     table.insert(tmpIgnoreList, ignoredPlayers[i])
   end
 
   local tmpWhiteList = {}
   local whitelistedPlayers = getWhitelistedPlayers()
-  for i = 1, #whitelistedPlayers do    
+  for i = 1, #whitelistedPlayers do
     table.insert(tmpWhiteList, whitelistedPlayers[i])
   end
-  
+
   g_settings.set('UseIgnoreList', communicationSettings.useIgnoreList)
   g_settings.set('UseWhiteList', communicationSettings.useWhiteList)
   g_settings.set('IgnorePrivateMessages', communicationSettings.privateMessages)
@@ -1119,7 +1119,7 @@ function onClickIgnoreButton()
   local ignoreListPanel = communicationWindow:getChildById('ignoreList')
   local whiteListPanel = communicationWindow:getChildById('whiteList')
   communicationWindow.onDestroy = function() communicationWindow = nil end
-  
+
   local useIgnoreListBox = communicationWindow:getChildById('checkboxUseIgnoreList')
   useIgnoreListBox:setChecked(communicationSettings.useIgnoreList)
   local useWhiteListBox = communicationWindow:getChildById('checkboxUseWhiteList')
@@ -1128,8 +1128,8 @@ function onClickIgnoreButton()
   local removeIgnoreButton = communicationWindow:getChildById('buttonIgnoreRemove')
   removeIgnoreButton:disable()
   ignoreListPanel.onChildFocusChange = function() removeIgnoreButton:enable() end
-  removeIgnoreButton.onClick = function() 
-    local selection = ignoreListPanel:getFocusedChild() 
+  removeIgnoreButton.onClick = function()
+    local selection = ignoreListPanel:getFocusedChild()
     if selection then
       ignoreListPanel:removeChild(selection)
       selection:destroy()
@@ -1140,19 +1140,19 @@ function onClickIgnoreButton()
   local removeWhitelistButton = communicationWindow:getChildById('buttonWhitelistRemove')
   removeWhitelistButton:disable()
   whiteListPanel.onChildFocusChange = function() removeWhitelistButton:enable() end
-  removeWhitelistButton.onClick = function() 
-    local selection = whiteListPanel:getFocusedChild() 
+  removeWhitelistButton.onClick = function()
+    local selection = whiteListPanel:getFocusedChild()
     if selection then
       whiteListPanel:removeChild(selection)
       selection:destroy()
     end
     removeWhitelistButton:disable()
   end
-  
+
   local newlyIgnoredPlayers = {}
   local addIgnoreName = communicationWindow:getChildById('ignoreNameEdit')
   local addIgnoreButton = communicationWindow:getChildById('buttonIgnoreAdd')
-  local addIgnoreFunction = function() 
+  local addIgnoreFunction = function()
       local newEntry = addIgnoreName:getText()
       if newEntry == '' then return end
       if table.find(getIgnoredPlayers(), newEntry) then return end
@@ -1186,14 +1186,14 @@ function onClickIgnoreButton()
         addIgnoreFunction()
       end
     end
-    
+
   local ignorePrivateMessageBox = communicationWindow:getChildById('checkboxIgnorePrivateMessages')
   ignorePrivateMessageBox:setChecked(communicationSettings.privateMessages)
   local ignoreYellingBox = communicationWindow:getChildById('checkboxIgnoreYelling')
   ignoreYellingBox:setChecked(communicationSettings.yelling)
   local allowVIPsBox = communicationWindow:getChildById('checkboxAllowVIPs')
   allowVIPsBox:setChecked(communicationSettings.allowVIPs)
-    
+
   local saveButton = communicationWindow:recursiveGetChildById('buttonSave')
   saveButton.onClick = function()
       communicationSettings.ignoredPlayers = {}
@@ -1205,7 +1205,7 @@ function onClickIgnoreButton()
       for i = 1, whiteListPanel:getChildCount() do
         addWhitelistedPlayer(whiteListPanel:getChildByIndex(i):getText())
       end
-      
+
       communicationSettings.useIgnoreList = useIgnoreListBox:isChecked()
       communicationSettings.useWhiteList = useWhiteListBox:isChecked()
       communicationSettings.yelling = ignoreYellingBox:isChecked()
@@ -1213,18 +1213,18 @@ function onClickIgnoreButton()
       communicationSettings.allowVIPs = allowVIPsBox:isChecked()
       communicationWindow:destroy()
     end
-            
+
   local cancelButton = communicationWindow:recursiveGetChildById('buttonCancel')
   cancelButton.onClick = function()
       communicationWindow:destroy()
     end
-    
+
   local ignoredPlayers = getIgnoredPlayers()
   for i = 1, #ignoredPlayers do
     local label = g_ui.createWidget('IgnoreListLabel', ignoreListPanel)
     label:setText(ignoredPlayers[i])
   end
-    
+
   local whitelistedPlayers = getWhitelistedPlayers()
   for i = 1, #whitelistedPlayers do
     local label = g_ui.createWidget('WhiteListLabel', whiteListPanel)

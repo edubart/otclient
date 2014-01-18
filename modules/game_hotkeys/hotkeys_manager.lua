@@ -72,7 +72,7 @@ function init()
   g_keyboard.bindKeyPress('Down', function() currentHotkeys:focusNextChild(KeyboardFocusReason) end, hotkeysWindow)
   g_keyboard.bindKeyPress('Up', function() currentHotkeys:focusPreviousChild(KeyboardFocusReason) end, hotkeysWindow)
 
-  connect(g_game, { 
+  connect(g_game, {
     onGameStart = online,
     onGameEnd = offline
   })
@@ -386,7 +386,7 @@ function doKeyCombo(keyCombo)
       local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.use(item)
-      end        
+      end
     else
       g_game.useInventoryItem(hotKey.itemId)
     end
@@ -395,7 +395,7 @@ function doKeyCombo(keyCombo)
       local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.useWith(item, g_game.getLocalPlayer())
-      end        
+      end
     else
       g_game.useInventoryItemWith(hotKey.itemId, g_game.getLocalPlayer())
     end
@@ -418,7 +418,7 @@ function doKeyCombo(keyCombo)
       local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
       if item then
         g_game.useWith(item, attackingCreature)
-      end        
+      end
     else
       g_game.useInventoryItemWith(hotKey.itemId, attackingCreature)
     end
@@ -426,7 +426,7 @@ function doKeyCombo(keyCombo)
     local item = Item.create(hotKey.itemId)
     if g_game.getProtocolVersion() < 780 or hotKey.subType then
       local tmpItem = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
-      if not tmpItem then return true end     
+      if not tmpItem then return true end
       item = tmpItem
     end
     modules.game_interface.startUseWith(item)

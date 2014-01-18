@@ -87,7 +87,7 @@ void MapView::draw(const Rect& rect)
     int drawFlags = 0;
     // First branch:
     // This is unlikely to be false because a lot of us
-    // don't wanna hear their GPU fan while playing a 
+    // don't wanna hear their GPU fan while playing a
     // 2D game.
     //
     // Second & Third branch:

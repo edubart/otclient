@@ -412,7 +412,7 @@ void Minimap::saveOtmm(const std::string& fileName)
                 fin->write(compressBuffer.data(), len);
             }
         }
-    
+
         // end of file
         Position invalidPos;
         fin->addU16(invalidPos.x);

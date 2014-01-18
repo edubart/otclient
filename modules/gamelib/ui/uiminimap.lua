@@ -273,18 +273,18 @@ function UIMinimap:createFlagWindow(pos)
 
   flagRadioGroup:selectWidget(flagRadioGroup:getFirstWidget())
 
-  local successFunc = function() 
+  local successFunc = function()
     self:addFlag(pos, flagRadioGroup:getSelectedWidget().icon, description:getText())
     self:destroyFlagWindow()
   end
-  
-  local cancelFunc = function() 
-    self:destroyFlagWindow() 
+
+  local cancelFunc = function()
+    self:destroyFlagWindow()
   end
-  
+
   okButton.onClick = successFunc
   cancelButton.onClick = cancelFunc
-  
+
   self.flagWindow.onEnter = successFunc
   self.flagWindow.onEscape = cancelFunc
 

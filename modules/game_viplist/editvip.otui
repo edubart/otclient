@@ -99,7 +99,7 @@ MainWindow
     IconButton
       id: icon6
       icon-clip: 72 0 12 12
-        
+
     IconButton
       id: icon7
       icon-clip: 84 0 12 12

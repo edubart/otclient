@@ -131,11 +131,11 @@ function init()
   commandTextEdit = terminalWindow:getChildById('commandTextEdit')
   g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
   g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
-  g_keyboard.bindKeyPress('Ctrl+C', 
-    function() 
+  g_keyboard.bindKeyPress('Ctrl+C',
+    function()
       if commandTextEdit:hasSelection() or not terminalSelectText:hasSelection() then return false end
       g_window.setClipboardText(terminalSelectText:getSelection())
-    return true 
+    return true
     end, commandTextEdit)
   g_keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)

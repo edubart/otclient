@@ -57,7 +57,7 @@ function ProtocolLogin:sendLoginPacket()
     msg:addU32(xteaKey[3])
     msg:addU32(xteaKey[4])
   end
-  
+
   if g_game.getFeature(GameAccountNames) then
     msg:addString(self.accountName)
   else
@@ -77,7 +77,7 @@ function ProtocolLogin:sendLoginPacket()
   if g_game.getProtocolVersion() >= 770 then
     msg:encryptRsa()
   end
-  
+
   if g_game.getFeature(GameProtocolChecksum) then
     self:enableChecksum()
   end
@@ -137,7 +137,7 @@ function ProtocolLogin:parseCharacterList(msg)
     local worldsCount = msg:getU8()
     for i=1, worldsCount do
       local world = {}
-      local worldId = msg:getU8() 
+      local worldId = msg:getU8()
       world.worldName = msg:getString()
       world.worldIp = msg:getString()
       world.worldPort = msg:getU16()

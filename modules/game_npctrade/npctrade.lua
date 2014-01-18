@@ -180,7 +180,7 @@ function itemPopup(self, mousePosition, mouseButton)
     menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
     menu:display(mousePosition)
     return true
-  elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) 
+  elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton)
     or (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
     cancelNextRelease = true
     g_game.inspectNpcTrade(self:getItem())
@@ -438,7 +438,7 @@ function onPlayerGoods(money, items)
       playerItems[id] = playerItems[id] + item[2]
     end
   end
-  
+
   refreshPlayerGoods()
 end
 
@@ -480,7 +480,7 @@ end
 function checkSellAllTooltip()
   sellAllButton:setEnabled(true)
   sellAllButton:removeTooltip()
-  
+
   local total = 0
   local info = ''
   local first = true

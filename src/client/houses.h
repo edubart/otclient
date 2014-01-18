@@ -100,7 +100,7 @@ public:
     HouseList getHouseList() { return m_houses; }
     HouseList filterHouses(uint32 townId);
 
-private:    
+private:
     HouseList m_houses;
 
 protected:

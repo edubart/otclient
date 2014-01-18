@@ -1,6 +1,6 @@
 --[[
     Finalizing Market:
-      Note: Feel free to work on any area and submit 
+      Note: Feel free to work on any area and submit
             it as a pull request from your git fork.
 
       BeniS's Skype: benjiz69
@@ -11,7 +11,7 @@
         - Offer History
 
       * Clean up the interface building
-        - Add a new market interface file to handle building?      
+        - Add a new market interface file to handle building?
 
       * Add offer table column ordering.
         - Player Name, Amount, Total Price, Peice Price and Ends At
@@ -251,7 +251,7 @@ local function updateOffers(offers)
   -- clear existing offer data
   buyOfferTable:clearData()
   sellOfferTable:clearData()
-  
+
   sellButton:setEnabled(false)
   buyButton:setEnabled(false)
 
@@ -431,7 +431,7 @@ local function openAmountWindow(callback, type, actionText)
     widget:setText(tostring(value*selectedOffer[type]:getPrice())..'gp')
     itembox:setText(tostring(value))
   end
-  
+
   local okButton = amountWindow:getChildById('buttonOk')
   if actionText ~= '' then
     okButton:setText(actionText)
@@ -814,7 +814,7 @@ function Market.enableCreateOffer(enable)
 
   local prevAmountButton = marketOffersPanel:recursiveGetChildById('prevAmountButton')
   local nextAmountButton = marketOffersPanel:recursiveGetChildById('nextAmountButton')
-  
+
   prevAmountButton:setEnabled(enable)
   nextAmountButton:setEnabled(enable)
 end
@@ -1076,7 +1076,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
 
   Market.clearSelectedItem()
   updateBalance(balance)
-  
+
   information.totalOffers = offers
   local player = g_game.getLocalPlayer()
   if player then
@@ -1101,7 +1101,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
   else
     Market.refreshItemsWidget()
   end
- 
+
   if table.empty(currentItems) then
     Market.loadMarketItems(MarketCategory.First)
   end

@@ -50,7 +50,7 @@ function create(creatureOutfit, outfitList, creatureMount, mountList)
   if outfitWindow and not outfitWindow:isHidden() then
     return
   end
-  
+
   outfitCreature = creatureOutfit
   mountCreature = creatureMount
   outfits = outfitList

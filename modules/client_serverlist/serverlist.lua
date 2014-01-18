@@ -50,7 +50,7 @@ function ServerList.add(host, port, protocol, load)
   end
   local widget = g_ui.createWidget('ServerWidget', serverTextList)
   widget:setId(host)
-  
+
   if not load then
     servers[host] = {
       port = port,

@@ -154,7 +154,7 @@ function Player:hasState(_state, states)
   for i = 1, 32 do
     local pow = math.pow(2, i-1)
     if pow > states then break end
-    
+
     local states = bit32.band(states, pow)
     if states == _state then
       return true

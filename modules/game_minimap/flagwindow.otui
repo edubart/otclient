@@ -8,7 +8,7 @@ FlagButton < CheckBox
   icon-size: 11 11
   icon-clip: 0 0 11 11
   icon-offset: 2 4
-  text: 
+  text:
 
   $!checked:
     image-clip: 26 0 26 26
@@ -54,7 +54,7 @@ FlagWindow < MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 6
-    margin-left: 0  
+    margin-left: 0
 
   FlagButton
     id: flag2
@@ -116,7 +116,7 @@ FlagWindow < MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 6
-    margin-left: 0  
+    margin-left: 0
 
   FlagButton
     id: flag12

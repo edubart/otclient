@@ -66,7 +66,7 @@ public:
     typedef T element_type;
 
     shared_object_ptr(): px(nullptr) { }
-    shared_object_ptr(T* p, bool add_ref = true) : px(p) { 
+    shared_object_ptr(T* p, bool add_ref = true) : px(p) {
         static_assert(std::is_base_of<shared_object, T>::value, "classes using shared_object_ptr must be a derived of stdext::shared_object");
         if(px != nullptr && add_ref)
             this->add_ref();

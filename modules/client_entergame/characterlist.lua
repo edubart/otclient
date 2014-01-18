@@ -243,7 +243,7 @@ function CharacterList.create(characters, account, otui)
   else
     accountStatusLabel:setText(tr('Free Account'))
   end
-  
+
   if account.premDays > 0 and account.premDays <= 7 then
     accountStatusLabel:setOn(true)
   else
