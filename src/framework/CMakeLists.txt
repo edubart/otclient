@@ -237,7 +237,7 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${OpenSSL_INCLUDE_DIR}
-    ${framework_INCLUDE_DIRS} 
+    ${framework_INCLUDE_DIRS}
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")

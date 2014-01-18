@@ -8,7 +8,7 @@ end
 
 local function updateMargins(tabBar, ignored)
   if #tabBar.tabs == 0 then return end
- 
+
   local currentMargin = 0
   for i = 1, #tabBar.tabs do
     tabBar.tabs[i]:setMarginLeft(currentMargin)
@@ -279,17 +279,17 @@ end
 function UIMoveableTabBar:moveTab(tab, units)
   local index = table.find(self.tabs, tab)
   if index == nil then return end
-  
+
   local focus = false
   if self.currentTab == tab then
     self:selectPrevTab()
     focus = true
   end
-  
+
   table.remove(self.tabs, index)
-  
+
   local newIndex = math.min(#self.tabs+1, math.max(index + units, 1))
-  table.insert(self.tabs, newIndex, tab) 
+  table.insert(self.tabs, newIndex, tab)
   if focus then self:selectTab(tab) end
   updateMargins(self)
   return newIndex

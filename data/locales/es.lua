@@ -6,7 +6,7 @@ locale = {
   name = "es",
   charset = "cp1252",
   languageName = "Español",
- 
+
   translation = {
     ["1a) Offensive Name"] = "1a) Nombre ofensivo",
     ["1b) Invalid Name Format"] = "1b) Formato invalido para nombre",
@@ -154,7 +154,7 @@ locale = {
     ["Hide spells for higher exp. levels"] = "Ocultar hechizos para niveles mas altos que tu experiencia.",
     ["Hide spells for other vocations"] = "Ocultar hechizos que sean para otra vocación",
     ["Hit Points"] = "Puntos de vida",
-    ["Hold left mouse button to navigate\nScroll mouse middle button to zoom\nRight mouse button to create map marks"] = "Mantenga presionado el botón derecho del ratón para navegar\nDezplaze la rueda central del ratón para ampliar\nbotón derecho del mouse para crear marcas del mapa", 
+    ["Hold left mouse button to navigate\nScroll mouse middle button to zoom\nRight mouse button to create map marks"] = "Mantenga presionado el botón derecho del ratón para navegar\nDezplaze la rueda central del ratón para ampliar\nbotón derecho del mouse para crear marcas del mapa",
     ["Hotkeys"] = "Hotkeys",
     ["If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."] = "Si se cierra el programa, tu personaje puede permanecer en el juego.\nHaga clic en 'Salir' para asegurarse de que personaje deja el juego correctamente.\nHaga click en 'Salir' si desea salir del programa sin tener que salir de tu personaje.",
     ["Ignore"] = "Ignorar",
@@ -374,5 +374,5 @@ locale = {
     ["Don't stretch or shrink Game Window"] = "No estirar o encoger Ventana de Juego"
   }
 }
- 
+
 modules.client_locales.installLocale(locale)

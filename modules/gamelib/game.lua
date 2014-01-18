@@ -14,7 +14,7 @@ function g_game.findPlayerItem(itemId, subType)
             end
         end
     end
-    
+
     return g_game.findItemInContainers(itemId, subType)
 end
 

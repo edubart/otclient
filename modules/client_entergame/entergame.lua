@@ -225,7 +225,7 @@ function EnterGame.doLogin()
 
   g_settings.set('host', G.host)
   g_settings.set('port', G.port)
-  g_settings.set('client-version', clientVersion) 
+  g_settings.set('client-version', clientVersion)
 
   protocolLogin = ProtocolLogin.create()
   protocolLogin.onLoginError = onError

@@ -39,10 +39,10 @@ Panel
     id: fullscreen
     !text: tr('Fullscreen')
     tooltip: Ctrl+Shift+F
-    
+
   OptionCheckBox
     id: dontStretchShrink
-    !text: tr('Don\'t stretch/shrink Game Window')  
+    !text: tr('Don\'t stretch/shrink Game Window')
 
   Label
     id: backgroundFrameRateLabel

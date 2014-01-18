@@ -81,7 +81,7 @@ MainWindow
     anchors.right: parent.right
     anchors.bottom: next.top
     margin-bottom: 1
-    
+
   Label
     id: accountStatusLabel
     !text: tr('Free Account')

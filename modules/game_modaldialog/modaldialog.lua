@@ -31,15 +31,15 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   end
 
   modalDialog = g_ui.createWidget('ModalDialog', rootWidget)
-  
+
   local messageLabel = modalDialog:getChildById('messageLabel')
   local choiceList = modalDialog:getChildById('choiceList')
   local choiceScrollbar = modalDialog:getChildById('choiceScrollBar')
   local buttonList = modalDialog:getChildById('buttonList')
-  
+
   modalDialog:setText(title)
   messageLabel:setText(message)
-  
+
   local horizontalPadding = modalDialog:getPaddingLeft() + modalDialog:getPaddingRight()
   modalDialog:setWidth(math.min(modalDialog.maximumWidth, math.max(messageLabel:getWidth(), modalDialog.minimumWidth)))
   messageLabel:setWidth(math.min(modalDialog.maximumWidth, math.max(messageLabel:getWidth(), modalDialog.minimumWidth)) - horizontalPadding)
@@ -48,7 +48,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   for i = 1, #choices do
     local choiceId = choices[i][1]
     local choiceName = choices[i][2]
-    
+
     local label = g_ui.createWidget('ChoiceListLabel', choiceList)
     label.choiceId = choiceId
     label:setText(choiceName)
@@ -99,7 +99,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
     g_game.answerModalDialog(id, enterButton, choice)
     destroyDialog()
   end
-  
+
   local escapeFunc = function()
     local focusedChoice = choiceList:getFocusedChild()
     local choice = 0xFF
@@ -111,7 +111,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   end
 
   choiceList.onDoubleClick = enterFunc
-  
+
   modalDialog.onEnter = enterFunc
   modalDialog.onEscape = escapeFunc
 end

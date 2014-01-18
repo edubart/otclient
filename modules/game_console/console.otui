@@ -133,7 +133,7 @@ Panel
     margin-right: 5
     margin-top: 6
     @onClick: onClickIgnoreButton()
-    
+
   Panel
     id: consoleContentPanel
     anchors.top: prev.bottom

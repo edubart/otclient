@@ -23,15 +23,15 @@ function init()
   fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
   fightBalancedBox = combatControlsWindow:recursiveGetChildById('fightBalancedBox')
   fightDefensiveBox = combatControlsWindow:recursiveGetChildById('fightDefensiveBox')
-  
+
   chaseModeButton = combatControlsWindow:recursiveGetChildById('chaseModeBox')
   safeFightButton = combatControlsWindow:recursiveGetChildById('safeFightBox')
-  
+
   mountButton = combatControlsWindow:recursiveGetChildById('mountButton')
   mountButton.onClick = onMountButtonClick
-  
+
   pvpModesPanel = combatControlsWindow:recursiveGetChildById('pvpModesPanel')
-  
+
   whiteDoveBox = combatControlsWindow:recursiveGetChildById('whiteDoveBox')
   whiteHandBox = combatControlsWindow:recursiveGetChildById('whiteHandBox')
   yellowHandBox = combatControlsWindow:recursiveGetChildById('yellowHandBox')
@@ -41,7 +41,7 @@ function init()
   fightModeRadioGroup:addWidget(fightOffensiveBox)
   fightModeRadioGroup:addWidget(fightBalancedBox)
   fightModeRadioGroup:addWidget(fightDefensiveBox)
-  
+
   pvpModeRadioGroup = UIRadioGroup.create()
   pvpModeRadioGroup:addWidget(whiteDoveBox)
   pvpModeRadioGroup:addWidget(whiteHandBox)
@@ -62,7 +62,7 @@ function init()
     onWalk = check,
     onAutoWalk = check
   })
-  
+
   connect(LocalPlayer, { onOutfitChange = onOutfitChange })
 
   if g_game.isOnline() then
@@ -92,7 +92,7 @@ function terminate()
     onWalk = check,
     onAutoWalk = check
   })
-  
+
   disconnect(LocalPlayer, { onOutfitChange = onOutfitChange })
 end
 
@@ -111,7 +111,7 @@ function update()
 
   local safeFight = g_game.isSafeFight()
   safeFightButton:setChecked(not safeFight)
-  
+
   if g_game.getFeature(GamePVPMode) then
     local pvpMode = g_game.getPVPMode()
     local pvpWidget = getPVPBoxByMode(pvpMode)
@@ -153,7 +153,7 @@ function online()
     else
       mountButton:setVisible(false)
     end
-    
+
     if g_game.getFeature(GamePVPMode) then
       pvpModesPanel:setVisible(true)
       combatControlsWindow:setHeight(combatControlsWindow.extendedControlsHeight)
@@ -232,7 +232,7 @@ function onSetPVPMode(self, selectedPVPButton)
   if selectedPVPButton == nil then
     return
   end
-  
+
   local buttonId = selectedPVPButton:getId()
   local pvpMode = PVPWhiteDove
   if buttonId == 'whiteDoveBox' then
@@ -263,7 +263,7 @@ function onOutfitChange(localPlayer, outfit, oldOutfit)
   if outfit.mount == oldOutfit.mount then
     return
   end
-  
+
   mountButton:setChecked(outfit.mount ~= nil and outfit.mount > 0)
 end
 

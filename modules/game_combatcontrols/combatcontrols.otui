@@ -16,7 +16,7 @@ ChaseModeBox < CombatBox
   image-source: /images/game/combatmodes/chasemode
 SafeFightBox < CombatBox
   image-source: /images/game/combatmodes/safefight
-  
+
 MountButton < CombatBox
   image-source: /images/game/combatmodes/mount
 
@@ -73,7 +73,7 @@ MiniWindow
       anchors.right: parent.right
       anchors.bottom: parent.bottom
       height: 20
-      
+
       WhiteDoveBox
         id: whiteDoveBox
         anchors.left: parent.left

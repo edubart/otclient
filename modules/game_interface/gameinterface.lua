@@ -42,7 +42,7 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), 
+  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'),
     '/images/topbuttons/logout', tryLogout, true)
 
   setupViewMode(0)
@@ -158,7 +158,7 @@ end
 function hide()
   disconnect(g_app, { onClose = tryExit })
   logoutButton:setTooltip(tr('Exit'))
-  
+
   if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil
@@ -235,7 +235,7 @@ function tryLogout(prompt)
   if not g_game.isConnectionOk() then
     msg = 'Your connection is failing, if you logout now your character will be still online, do you want to force logout?'
 
-    yesCallback = function() 
+    yesCallback = function()
       g_game.forceLogout()
       if logoutWindow then
         logoutWindow:destroy()
@@ -486,7 +486,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         else
           menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
         end
-  
+
         if g_game.getFollowingCreature() ~= creatureThing then
           menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
         else

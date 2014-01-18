@@ -161,7 +161,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     if(drawFlags & Otc::DrawOnTop)
         for(const ThingPtr& thing : m_things)
             if(thing->isOnTop())
-                thing->draw(dest, scaleFactor, animate, lightView); 
+                thing->draw(dest, scaleFactor, animate, lightView);
 
     // draw translucent light (for tiles beneath holes)
     if(hasTranslucentLight() && lightView) {
@@ -482,7 +482,7 @@ ThingPtr Tile::getTopMultiUseThing()
         if(thing->isForceUse())
             return thing;
     }
-    
+
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()) {

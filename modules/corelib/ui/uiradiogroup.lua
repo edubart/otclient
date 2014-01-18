@@ -47,7 +47,7 @@ end
 
 function UIRadioGroup:clearSelected()
   if not self.selectedWidget then return end
-  
+
   local previousSelectedWidget = self.selectedWidget
   self.selectedWidget:setChecked(false)
   self.selectedWidget = nil

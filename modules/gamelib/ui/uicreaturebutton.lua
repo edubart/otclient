@@ -43,17 +43,17 @@ end
 
 function UICreatureButton:setup(creature)
   self.creature = creature
-  
+
   local creatureWidget = self:getChildById('creature')
   local labelWidget = self:getChildById('label')
   local lifeBarWidget = self:getChildById('lifeBar')
-  
+
   labelWidget:setText(creature:getName())
   creatureWidget:setCreature(creature)
-  
+
   self:setId('CreatureButton_' .. creature:getName():gsub('%s','_'))
   self:setLifeBarPercent(creature:getHealthPercent())
-  
+
   self:updateSkull(creature:getSkull())
   self:updateEmblem(creature:getEmblem())
 end

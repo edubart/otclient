@@ -50,7 +50,7 @@ public:
     ~shared_base() { }
 
     void add_ref() { ++refs; }
-    void dec_ref() { 
+    void dec_ref() {
         if(--refs == 0) {
             delete px;
             px = nullptr;
@@ -116,7 +116,7 @@ public:
     T& operator*() const { assert(base != nullptr); return *base->get(); }
     T* operator->() const { assert(base != nullptr); return base->get(); }
 
-    template<class U> 
+    template<class U>
     shared_ptr& operator=(shared_ptr<U> const& rhs) { shared_ptr(rhs).swap(*this); return *this; }
     shared_ptr& operator=(shared_ptr const& rhs) { shared_ptr(rhs).swap(*this); return *this; }
     shared_ptr& operator=(T* rhs) { shared_ptr(rhs).swap(*this); return *this; }

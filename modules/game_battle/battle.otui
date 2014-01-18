@@ -92,7 +92,7 @@ MiniWindow
       height: 20
       width: 128
       margin-top: 6
-      
+
       ComboBox
         id: sortTypeBox
         width: 74
@@ -107,7 +107,7 @@ MiniWindow
         anchors.top: parent.top
         anchors.left: prev.right
         margin-left: 4
-        
+
   Panel
     height: 18
     anchors.top: prev.bottom
@@ -132,7 +132,7 @@ MiniWindow
     anchors.right: miniwindowScrollBar.left
     margin-right: 1
     margin-top: 11
-    
+
   MiniWindowContents
     anchors.top: prev.bottom
     margin-top: 6

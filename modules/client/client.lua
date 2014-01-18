@@ -53,7 +53,7 @@ function startup()
 end
 
 function init()
-  connect(g_app, { onRun = startup, 
+  connect(g_app, { onRun = startup,
                    onExit = exit })
 
   g_window.setMinimumSize({ width = 600, height = 480 })
@@ -94,11 +94,11 @@ function init()
   if not g_crypt.setMachineUUID(g_configs.get('uuid')) then
     g_configs.set('uuid', g_crypt.getMachineUUID())
     g_configs.save()
-  end                   
+  end
 end
 
 function terminate()
-  disconnect(g_app, { onRun = startup, 
+  disconnect(g_app, { onRun = startup,
                       onExit = exit })
   -- save window configs
   g_settings.set('window-size', g_window.getUnmaximizedSize())

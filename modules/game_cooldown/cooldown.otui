@@ -6,7 +6,7 @@ SpellGroupIcon < UIWidget
   margin-top: 3
 
 SpellIcon < UIWidget
-  size: 24 24 
+  size: 24 24
   image-size: 24 24
   focusable: false
 
@@ -20,7 +20,7 @@ SpellProgressRect < UIProgressRect
 
 GroupCooldownParticles < UIParticles
   effect: groupcooldown-effect
-  
+
 MiniWindow
   id: cooldownWindow
   !text: tr('Spell Cooldowns')
@@ -28,7 +28,7 @@ MiniWindow
   icon: /images/topbuttons/cooldowns
   @onClose: modules.game_cooldown.onMiniWindowClose()
   &save: true
-  
+
   MiniWindowContents
     SpellGroupIcon
       id: groupIconAttack
@@ -97,4 +97,4 @@ MiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       background-color: #ffffff11
-      
+
