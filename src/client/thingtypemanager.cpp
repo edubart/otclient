@@ -91,6 +91,7 @@ bool ThingTypeManager::loadDat(std::string file)
         }
 
         m_datLoaded = true;
+        g_lua.callGlobalField("g_things", "onLoadDat", file);
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to read dat '%s': %s'", file, e.what()));
@@ -171,6 +172,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
         }
 
         m_otbLoaded = true;
+        g_lua.callGlobalField("g_things", "onLoadOtb", file);
     } catch(std::exception& e) {
         g_logger.error(stdext::format("Failed to load '%s' (OTB file): %s", file, e.what()));
     }

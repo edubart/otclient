@@ -55,6 +55,7 @@ bool SpriteManager::loadSpr(std::string file)
         m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
         m_spritesOffset = m_spritesFile->tell();
         m_loaded = true;
+        g_lua.callGlobalField("g_sprites", "onLoadSpr", file);
         return true;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to load sprites from '%s': %s", file, e.what()));
