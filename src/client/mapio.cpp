@@ -202,6 +202,7 @@ void Map::loadOtbm(const std::string& fileName)
                     if(!(town = g_towns.getTown(townId)))
                         g_towns.addTown(TownPtr(new Town(townId, townName, townCoords)));
                 }
+                g_towns.sort();
             } else if(mapDataType == OTBM_WAYPOINTS && headerVersion > 1) {
                 for(const BinaryTreePtr &nodeWaypoint : nodeMapData->getChildren()) {
                     if(nodeWaypoint->getU8() != OTBM_WAYPOINT)

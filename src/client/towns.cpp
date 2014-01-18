@@ -72,3 +72,9 @@ TownList::iterator TownManager::findTown(uint32 townId)
     return std::find_if(m_towns.begin(), m_towns.end(),
                         [=] (const TownPtr& town) -> bool { return town->getId() == townId; });
 }
+
+void TownManager::sort()
+{
+    m_towns.sort([] (const TownPtr& lhs, const TownPtr& rhs) { return lhs->getName() < rhs->getName(); });
+}
+

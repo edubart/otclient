@@ -96,6 +96,7 @@ public:
     void load(const std::string& fileName);
     void save(const std::string& fileName);
 
+    void sort();
     void clear() { m_houses.clear(); }
     HouseList getHouseList() { return m_houses; }
     HouseList filterHouses(uint32 townId);

@@ -159,6 +159,7 @@ void HouseManager::load(const std::string& fileName)
     } catch(std::exception& e) {
         g_logger.error(stdext::format("Failed to load '%s': %s", fileName, e.what()));
     }
+    sort();
 }
 
 void HouseManager::save(const std::string& fileName)
@@ -199,6 +200,11 @@ HouseList::iterator HouseManager::findHouse(uint32 houseId)
 {
     return std::find_if(m_houses.begin(), m_houses.end(),
                            [=] (const HousePtr& house) -> bool { return house->getId() == houseId; });
+}
+
+void HouseManager::sort()
+{
+    m_houses.sort([] (const HousePtr& lhs, const HousePtr& rhs) { return lhs->getName() < rhs->getName(); });
 }
 
 /* vim: set ts=4 sw=4 et: */

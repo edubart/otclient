@@ -56,6 +56,7 @@ public:
     const TownPtr& getTown(uint32 townId);
     const TownPtr& getTownByName(std::string name);
 
+    void sort();
     TownList getTowns() { return m_towns; }
     void clear() { m_towns.clear(); m_nullTown = nullptr; }
 

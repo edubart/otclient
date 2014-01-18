@@ -82,13 +82,15 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_houses", "removeHouse",    &HouseManager::removeHouse,    &g_houses);
     g_lua.bindSingletonFunction("g_houses", "getHouseList",   &HouseManager::getHouseList,   &g_houses);
     g_lua.bindSingletonFunction("g_houses", "filterHouses",   &HouseManager::filterHouses,   &g_houses);
+    g_lua.bindSingletonFunction("g_houses",  "sort",          &HouseManager::sort,           &g_houses);
 
     g_lua.registerSingletonClass("g_towns");
     g_lua.bindSingletonFunction("g_towns", "getTown",      &TownManager::getTown,      &g_towns);
     g_lua.bindSingletonFunction("g_towns", "getTownByName",&TownManager::getTownByName,&g_towns);
     g_lua.bindSingletonFunction("g_towns", "addTown",      &TownManager::addTown,      &g_towns);
     g_lua.bindSingletonFunction("g_towns", "removeTown",   &TownManager::removeTown,   &g_towns);
-    g_lua.bindSingletonFunction("g_towns", "getTowns",     &TownManager::getTowns,   &g_towns);
+    g_lua.bindSingletonFunction("g_towns", "getTowns",     &TownManager::getTowns,     &g_towns);
+    g_lua.bindSingletonFunction("g_towns", "sort",         &TownManager::sort,         &g_towns);
 
     g_lua.registerSingletonClass("g_sprites");
     g_lua.bindSingletonFunction("g_sprites", "loadSpr", &SpriteManager::loadSpr, &g_sprites);
