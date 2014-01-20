@@ -24,6 +24,7 @@
 #include "image.h"
 
 #include <framework/core/resourcemanager.h>
+#include <framework/core/filestream.h>
 #include <framework/graphics/apngloader.h>
 
 Image::Image(const Size& size, int bpp, uint8 *pixels)
@@ -60,6 +61,20 @@ ImagePtr Image::loadPNG(const std::string& file)
         free_apng(&apng);
     }
     return image;
+}
+
+void Image::savePNG(const std::string& fileName)
+{
+    FileStreamPtr fin = g_resources.createFile(fileName);
+    if(!fin)
+        stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
+
+    fin->cache();
+    std::stringstream data;
+    save_png(data, m_size.width(), m_size.height(), 4, (unsigned char*)getPixelData());
+    fin->write(data.str().c_str(), data.str().length());
+    fin->flush();
+    fin->close();
 }
 
 void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, const Color& outsideColor)
