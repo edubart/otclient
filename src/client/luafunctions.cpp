@@ -621,6 +621,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UISprite>("clearSprite", &UISprite::clearSprite);
     g_lua.bindClassMemberFunction<UISprite>("getSpriteId", &UISprite::getSpriteId);
     g_lua.bindClassMemberFunction<UISprite>("setSpriteColor", &UISprite::setSpriteColor);
+    g_lua.bindClassMemberFunction<UISprite>("hasSprite", &UISprite::hasSprite);
 
     g_lua.registerClass<UICreature, UIWidget>();
     g_lua.bindClassStaticFunction<UICreature>("create", []{ return UICreaturePtr(new UICreature); } );

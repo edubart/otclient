@@ -41,6 +41,8 @@ public:
     bool isSpriteVisible() { return m_spriteVisible; }
     void setSpriteVisible(bool visible) { m_spriteVisible = visible; }
 
+    bool hasSprite() { return m_sprite != nullptr; }
+
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
 
