@@ -63,6 +63,60 @@ bool SpriteManager::loadSpr(std::string file)
     }
 }
 
+void SpriteManager::saveSpr(std::string fileName)
+{
+    if(!m_loaded)
+        stdext::throw_exception("failed to save, spr is not loaded");
+
+    try {
+        FileStreamPtr fin = g_resources.createFile(fileName);
+        if(!fin)
+            stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
+
+        fin->cache();
+
+        fin->addU32(m_signature);
+        if(g_game.getFeature(Otc::GameSpritesU32))
+            fin->addU32(m_spritesCount);
+        else
+            fin->addU16(m_spritesCount);
+
+        uint32 offset = fin->tell();
+        uint32 spriteAddress = offset + 4 * m_spritesCount;
+        for(int i = 1; i <= m_spritesCount; i++)
+            fin->addU32(0);
+
+        for(int i = 1; i <= m_spritesCount; i++) {
+            m_spritesFile->seek((i - 1) * 4 + m_spritesOffset);
+            uint32 fromAdress = m_spritesFile->getU32();
+            if(fromAdress != 0) {
+                fin->seek(offset + (i - 1) * 4);
+                fin->addU32(spriteAddress);
+                fin->seek(spriteAddress);
+
+                m_spritesFile->seek(fromAdress);
+                fin->addU8(m_spritesFile->getU8());
+                fin->addU8(m_spritesFile->getU8());
+                fin->addU8(m_spritesFile->getU8());
+
+                uint16 dataSize = m_spritesFile->getU16();
+                char spriteData[dataSize];
+                fin->addU16(dataSize);
+                m_spritesFile->read(spriteData, dataSize);
+                fin->write(spriteData, dataSize);
+
+                spriteAddress = fin->tell();
+            }
+            //TODO: Check for overwritten sprites.
+        }
+
+        fin->flush();
+        fin->close();
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
+    }
+}
+
 void SpriteManager::unload()
 {
     m_spritesCount = 0;

@@ -94,6 +94,7 @@ void Client::registerLuaFunctions()
 
     g_lua.registerSingletonClass("g_sprites");
     g_lua.bindSingletonFunction("g_sprites", "loadSpr", &SpriteManager::loadSpr, &g_sprites);
+    g_lua.bindSingletonFunction("g_sprites", "saveSpr", &SpriteManager::saveSpr, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "unload", &SpriteManager::unload, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "isLoaded", &SpriteManager::isLoaded, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSprSignature", &SpriteManager::getSignature, &g_sprites);

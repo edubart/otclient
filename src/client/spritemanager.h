@@ -37,6 +37,8 @@ public:
     bool loadSpr(std::string file);
     void unload();
 
+    void saveSpr(std::string fileName);
+
     uint32 getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
 
