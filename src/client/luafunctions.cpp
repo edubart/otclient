@@ -525,7 +525,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("getSprites", &ThingType::getSprites);
     g_lua.bindClassMemberFunction<ThingType>("hasAttribute", &ThingType::hasAttr);
     g_lua.bindClassMemberFunction<ThingType>("exportImage", &ThingType::exportImage);
-    
+
     g_lua.registerClass<Item, Thing>();
     g_lua.bindClassStaticFunction<Item>("create", &Item::create);
     g_lua.bindClassStaticFunction<Item>("createOtb", &Item::createFromOtb);
