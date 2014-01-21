@@ -143,3 +143,26 @@ bool luavalue_cast(int index, MarketData& data)
     }
     return false;
 }
+
+int push_luavalue(const Light& light)
+{
+    g_lua.createTable(0, 2);
+    g_lua.pushInteger(light.color);
+    g_lua.setField("color");
+    g_lua.pushInteger(light.intensity);
+    g_lua.setField("intensity");
+    return 1;
+}
+
+
+bool luavalue_cast(int index, Light& light)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.getField("color", index);
+        light.color = g_lua.popInteger();
+        g_lua.getField("intensity", index);
+        light.intensity = g_lua.popInteger();
+        return true;
+    }
+    return false;
+}
