@@ -29,6 +29,11 @@
 //@bindsingleton g_sprites
 class SpriteManager
 {
+    enum {
+        SPRITE_SIZE = 32,
+        SPRITE_DATA_SIZE = SPRITE_SIZE*SPRITE_SIZE * 4
+    };
+
 public:
     SpriteManager();
 

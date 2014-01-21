@@ -144,6 +144,8 @@ public:
     int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
     int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
     Light getLight() { return m_attribs.get<Light>(ThingAttrLight); }
+    int getLightIntensity() { return getLight().intensity; }
+    int getLightColor() { return getLight().color; }
     int getMinimapColor() { return m_attribs.get<uint16>(ThingAttrMinimapColor); }
     int getLensHelp() { return m_attribs.get<uint16>(ThingAttrLensHelp); }
     int getClothSlot() { return m_attribs.get<uint16>(ThingAttrCloth); }
@@ -183,6 +185,7 @@ public:
     bool isIgnoreLook() { return m_attribs.has(ThingAttrLook); }
     bool isCloth() { return m_attribs.has(ThingAttrCloth); }
     bool isMarketable() { return m_attribs.has(ThingAttrMarket); }
+    std::vector<int> getSprites() { return m_spritesIndex; }
 
     // additional
     float getOpacity() { return m_opacity; }
