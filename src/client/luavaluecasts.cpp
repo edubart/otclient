@@ -154,7 +154,6 @@ int push_luavalue(const Light& light)
     return 1;
 }
 
-
 bool luavalue_cast(int index, Light& light)
 {
     if(g_lua.isTable(index)) {

@@ -131,6 +131,7 @@ public:
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
     int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
+    int getRealSize() { return m_realSize; }
     int getLayers() { return m_layers; }
     int getNumPatternX() { return m_numPatternX; }
     int getNumPatternY() { return m_numPatternY; }
@@ -144,8 +145,6 @@ public:
     int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
     int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
     Light getLight() { return m_attribs.get<Light>(ThingAttrLight); }
-    int getLightIntensity() { return getLight().intensity; }
-    int getLightColor() { return getLight().color; }
     int getMinimapColor() { return m_attribs.get<uint16>(ThingAttrMinimapColor); }
     int getLensHelp() { return m_attribs.get<uint16>(ThingAttrLensHelp); }
     int getClothSlot() { return m_attribs.get<uint16>(ThingAttrCloth); }

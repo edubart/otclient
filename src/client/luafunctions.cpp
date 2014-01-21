@@ -463,7 +463,6 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<ThingType>();
     g_lua.bindClassStaticFunction<ThingType>("create", []{ return ThingTypePtr(new ThingType); });
     g_lua.bindClassMemberFunction<ThingType>("getId", &ThingType::getId);
-    g_lua.bindClassMemberFunction<ThingType>("getMarketData", &ThingType::getMarketData);
     g_lua.bindClassMemberFunction<ThingType>("getClothSlot", &ThingType::getClothSlot);
     g_lua.bindClassMemberFunction<ThingType>("getCategory", &ThingType::getCategory);
     g_lua.bindClassMemberFunction<ThingType>("getSize", &ThingType::getSize);
@@ -473,6 +472,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("getDisplacementX", &ThingType::getDisplacementX);
     g_lua.bindClassMemberFunction<ThingType>("getDisplacementY", &ThingType::getDisplacementY);
     g_lua.bindClassMemberFunction<ThingType>("getExactSize", &ThingType::getExactSize);
+    g_lua.bindClassMemberFunction<ThingType>("getRealSize", &ThingType::getRealSize);
     g_lua.bindClassMemberFunction<ThingType>("getLayers", &ThingType::getLayers);
     g_lua.bindClassMemberFunction<ThingType>("getNumPatternX", &ThingType::getNumPatternX);
     g_lua.bindClassMemberFunction<ThingType>("getNumPatternY", &ThingType::getNumPatternY);
@@ -480,8 +480,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("getAnimationPhases", &ThingType::getAnimationPhases);
     g_lua.bindClassMemberFunction<ThingType>("getGroundSpeed", &ThingType::getGroundSpeed);
     g_lua.bindClassMemberFunction<ThingType>("getMaxTextLength", &ThingType::getMaxTextLength);
-    g_lua.bindClassMemberFunction<ThingType>("getLightIntensity", &ThingType::getLightIntensity);
-    g_lua.bindClassMemberFunction<ThingType>("getLightColor", &ThingType::getLightColor);
+    g_lua.bindClassMemberFunction<ThingType>("getLight", &ThingType::getLight);
     g_lua.bindClassMemberFunction<ThingType>("getMinimapColor", &ThingType::getMinimapColor);
     g_lua.bindClassMemberFunction<ThingType>("getLensHelp", &ThingType::getLensHelp);
     g_lua.bindClassMemberFunction<ThingType>("getClothSlot", &ThingType::getClothSlot);
