@@ -1472,7 +1472,6 @@ void Game::setProtocolVersion(int version)
     {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
-        enableFeature(Otc::GameWritableDate);
     }
 
     if(version >= 780)
@@ -1483,6 +1482,10 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameMessageLevel);
         enableFeature(Otc::GamePlayerStateU16);
         enableFeature(Otc::GameNewOutfitProtocol);
+    }
+
+    if(version >= 790) {
+        enableFeature(Otc::GameWritableDate);
     }
 
     if(version >= 780 && version <= 854) {          // 780 might not be accurate
