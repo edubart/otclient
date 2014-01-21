@@ -103,7 +103,6 @@ void SpriteManager::saveSpr(std::string fileName)
                 fin->addU16(dataSize);
                 char spriteData[SPRITE_DATA_SIZE];
                 m_spritesFile->read(spriteData, dataSize);
-                m_spritesFile->read(spriteData, dataSize);
                 fin->write(spriteData, dataSize);
 
                 spriteAddress = fin->tell();
