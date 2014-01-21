@@ -41,6 +41,8 @@ public:
     void loadXml(const std::string& file);
     void parseItemType(uint16 id, TiXmlElement *elem);
 
+    void saveDat(std::string fileName);
+
     void addItemType(const ItemTypePtr& itemType);
     const ItemTypePtr& findItemTypeByClientId(uint16 id);
     const ItemTypePtr& findItemTypeByName(std::string name);

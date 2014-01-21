@@ -117,6 +117,8 @@ public:
     void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
     void unserializeOtml(const OTMLNodePtr& node);
 
+    void serialize(const FileStreamPtr& fin);
+
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView = nullptr);
 
     uint16 getId() { return m_id; }
@@ -199,6 +201,7 @@ private:
     Size m_size;
     Point m_displacement;
     int m_exactSize;
+    int m_realSize;
     int m_numPatternX, m_numPatternY, m_numPatternZ;
     int m_animationPhases;
     int m_layers;

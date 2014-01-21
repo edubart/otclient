@@ -38,11 +38,92 @@ ThingType::ThingType()
     m_id = 0;
     m_null = true;
     m_exactSize = 0;
+    m_realSize = 0;
     m_numPatternX = m_numPatternY = m_numPatternZ = 0;
     m_animationPhases = 0;
     m_layers = 0;
     m_elevation = 0;
     m_opacity = 1.0f;
+}
+
+void ThingType::serialize(const FileStreamPtr& fin)
+{
+    for(int i = 0; i < ThingLastAttr; ++i) {
+        if(!hasAttr((ThingAttr)i))
+            continue;
+
+        int attr = i;
+        if(g_game.getFeature(Otc::GameChargeableItems)) {
+            if(attr == ThingAttrChargeable)
+                attr = ThingAttrWritable;
+            else if(attr >= ThingAttrWritable)
+                attr += 1;
+        }
+
+        if(g_game.getProtocolVersion() >= 1010) {
+            if(attr == ThingAttrNoMoveAnimation)
+                attr = 16;
+            else if(attr >= ThingAttrPickupable)
+                attr += 1;
+        }
+
+        fin->addU8(attr);
+        switch(attr) {
+            case ThingAttrDisplacement: {
+                fin->addU16(m_displacement.x);
+                fin->addU16(m_displacement.y);
+                break;
+            }
+            case ThingAttrLight: {
+                Light light = m_attribs.get<Light>(attr);
+                fin->addU16(light.intensity);
+                fin->addU16(light.color);
+                break;
+            }
+            case ThingAttrMarket: {
+                MarketData market = m_attribs.get<MarketData>(attr);
+                fin->addU16(market.category);
+                fin->addU16(market.tradeAs);
+                fin->addU16(market.showAs);
+                fin->addString(market.name);
+                fin->addU16(market.restrictVocation);
+                fin->addU16(market.requiredLevel);
+                break;
+            }
+            case ThingAttrUsable:
+            case ThingAttrElevation:
+            case ThingAttrGround:
+            case ThingAttrWritable:
+            case ThingAttrWritableOnce:
+            case ThingAttrMinimapColor:
+            case ThingAttrCloth:
+            case ThingAttrLensHelp:
+                fin->addU16(m_attribs.get<uint16>(attr));
+                break;
+            default:
+                break;
+        };
+    }
+    fin->addU8(ThingLastAttr);
+
+    fin->addU8(m_size.width());
+    fin->addU8(m_size.height());
+
+    if(m_size.width() > 1 || m_size.height() > 1)
+        fin->addU8(m_realSize);
+
+    fin->addU8(m_layers);
+    fin->addU8(m_numPatternX);
+    fin->addU8(m_numPatternY);
+    fin->addU8(m_numPatternZ);
+    fin->addU8(m_animationPhases);
+
+    for(uint i = 0; i < m_spritesIndex.size(); i++) {
+        if(g_game.getFeature(Otc::GameSpritesU32))
+            fin->addU32(m_spritesIndex[i]);
+        else
+            fin->addU16(m_spritesIndex[i]);
+    }
 }
 
 void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
@@ -129,7 +210,13 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     uint8 width = fin->getU8();
     uint8 height = fin->getU8();
     m_size = Size(width, height);
-    m_exactSize = (width > 1 || height > 1) ? std::min<int>((int)fin->getU8(), std::max<int>(width * 32, height * 32)) : 32;
+    if(width > 1 || height > 1) {
+        m_realSize = fin->getU8();
+        m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
+    }
+    else
+        m_exactSize = 32;
+
     m_layers = fin->getU8();
     m_numPatternX = fin->getU8();
     m_numPatternY = fin->getU8();

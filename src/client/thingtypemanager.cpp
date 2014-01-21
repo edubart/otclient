@@ -62,6 +62,40 @@ void ThingTypeManager::terminate()
     m_nullItemType = nullptr;
 }
 
+void ThingTypeManager::saveDat(std::string fileName)
+{
+    if(!m_datLoaded)
+        stdext::throw_exception("failed to save, dat is not loaded");
+
+    try {
+        FileStreamPtr fin = g_resources.createFile(fileName);
+        if(!fin)
+            stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
+
+        fin->cache();
+
+        fin->addU32(m_datSignature);
+
+        for(int category = 0; category < ThingLastCategory; ++category)
+            fin->addU16(m_thingTypes[category].size() - 1);
+
+        for(int category = 0; category < ThingLastCategory; ++category) {
+            uint16 firstId = 1;
+            if(category == ThingCategoryItem)
+                firstId = 100;
+
+            for(uint16 id = firstId; id < m_thingTypes[category].size(); ++id)
+                m_thingTypes[category][id]->serialize(fin);
+        }
+
+
+        fin->flush();
+        fin->close();
+    } catch(std::exception& e) {
+        g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
+    }
+}
+
 bool ThingTypeManager::loadDat(std::string file)
 {
     m_datLoaded = false;
