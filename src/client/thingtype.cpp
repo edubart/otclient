@@ -240,6 +240,36 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
+void ThingType::exportImage(std::string fileName)
+{
+    if(m_null)
+        stdext::throw_exception("cannot export null thingtype");
+
+    if(m_spritesIndex.size() == 0)
+        stdext::throw_exception("cannot export thingtype without sprites");
+
+    ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, 32 * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
+    for(int z = 0; z < m_numPatternZ; ++z) {
+        for(int y = 0; y < m_numPatternY; ++y) {
+            for(int x = 0; x < m_numPatternX; ++x) {
+                for(int l = 0; l < m_layers; ++l) {
+                    for(int a = 0; a < m_animationPhases; ++a) {
+                        for(int w = 0; w < m_size.width(); ++w) {
+                            for(int h = 0; h < m_size.height(); ++h) {
+                                image->blit(Point(32 * (m_size.width() - w - 1 + m_size.width() * x + m_size.width() * m_numPatternX * l),
+                                                  32 * (m_size.height() - h - 1 + m_size.height() * y + m_size.height() * m_numPatternY * a + m_size.height() * m_numPatternY * m_animationPhases * z)),
+                                            g_sprites.getSpriteImage(m_spritesIndex[getSpriteIndex(w, h, l, x, y, z, a)]));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    image->savePNG(fileName);
+}
+
 void ThingType::unserializeOtml(const OTMLNodePtr& node)
 {
     for(const OTMLNodePtr& node2 : node->children()) {
