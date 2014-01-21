@@ -100,12 +100,13 @@ void SpriteManager::saveSpr(std::string fileName)
                 fin->addU8(m_spritesFile->getU8());
 
                 uint16 dataSize = m_spritesFile->getU16();
-                char spriteData[dataSize];
+                char* spriteData = new char[dataSize];
                 fin->addU16(dataSize);
                 m_spritesFile->read(spriteData, dataSize);
                 fin->write(spriteData, dataSize);
 
                 spriteAddress = fin->tell();
+                delete[]spriteData;
             }
             //TODO: Check for overwritten sprites.
         }
