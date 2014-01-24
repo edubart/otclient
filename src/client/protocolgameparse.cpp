@@ -2008,7 +2008,9 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
         if(item->getAnimationPhases() > 1) {
             // 0xfe => random phase
             // 0xff => async?
-            item->setAsync(msg->getU8() == 0xff);
+            msg->getU8();
+            // Remove async since OTB file in server is configured so every item with animationPhase > 1 is a random phase item.
+            //item->setAsync(msg->getU8() == 0xff);
         }
     }
 
