@@ -666,12 +666,6 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         bool evaluated;
     };
 
-    struct LessNode : std::binary_function<Node*, Node*, bool> {
-        bool operator()(Node* a, Node* b) const {
-            return b->totalCost < a->totalCost;
-        }
-    };
-
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
@@ -703,7 +697,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     }
 
     std::unordered_map<Position, Node*, PositionHasher> nodes;
-    std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
+    //std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
+	std::deque<Node*> searchList;
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
@@ -798,15 +793,18 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
                 neighborNode->evaluated = false;
-                searchList.push(neighborNode);
+                searchList.push_back(neighborNode);
             }
         }
+
+		std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
+		std::unique(searchList.begin(), searchList.end());
 
         currentNode->evaluated = true;
         currentNode = nullptr;
         while(searchList.size() > 0 && !currentNode) {
-            Node *node = searchList.top();
-            searchList.pop();
+            Node *node = searchList.front();
+            searchList.pop_front();
 
             if(!node->evaluated)
                 currentNode = node;
