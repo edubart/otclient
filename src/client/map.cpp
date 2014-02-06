@@ -807,6 +807,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
             if(!node->evaluated)
                 currentNode = node;
         }
+		searchList.clear();
     }
 
     if(foundNode) {
