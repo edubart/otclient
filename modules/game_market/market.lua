@@ -630,14 +630,15 @@ local function initInterface()
   displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
   displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
 
-  itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers')
-  displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
+  itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats')
+  displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
 
   itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails')
   displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
 
-  itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats')
-  displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
+  itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers')
+  displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
+  displaysTabBar:selectTab(displaysTabBar:getTab(tr('Offers')))
 
   -- setup 'My Offer' section tabs
   myOffersPanel = g_ui.loadUI('ui/myoffers')

@@ -16,7 +16,7 @@ Panel
     border-width: 1
     border-color: #000000
 
-  MarketTabBar
+  MarketRightTabBar
     id: rightTabBar
     width: 166
     height:25
