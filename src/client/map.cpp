@@ -697,8 +697,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     }
 
     std::unordered_map<Position, Node*, PositionHasher> nodes;
-    //std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
-	std::deque<Node*> searchList;
+    std::deque<Node*> searchList;
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
@@ -797,12 +796,13 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
             }
         }
 
-		std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
-		std::unique(searchList.begin(), searchList.end());
+        std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
+        auto end = std::unique(searchList.begin(), searchList.end());
+        searchList.resize(std::distance(searchList.begin(), end));
 
         currentNode->evaluated = true;
         currentNode = nullptr;
-        while(searchList.size() > 0 && !currentNode) {
+        while(!searchList.empty() && !currentNode) {
             Node *node = searchList.front();
             searchList.pop_front();
 
