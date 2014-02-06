@@ -798,13 +798,11 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
         std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
         auto end = std::unique(searchList.begin(), searchList.end());
-        searchList.resize(std::distance(searchList.begin(), end));
 
         currentNode->evaluated = true;
         currentNode = nullptr;
-        while(!searchList.empty() && !currentNode) {
-            Node *node = searchList.front();
-            searchList.pop_front();
+        for (auto begin = searchList.begin(); begin != end && !currentNode; ++begin) {
+            Node *node = *begin;
 
             if(!node->evaluated)
                 currentNode = node;
