@@ -498,16 +498,18 @@ void UITextEdit::wrapText()
 void UITextEdit::moveCursorHorizontally(bool right)
 {
     if(right) {
-        if((uint)m_cursorPos+1 <= m_text.length()) {
+        if((uint)m_cursorPos+1 <= m_text.length())
             m_cursorPos++;
-            blinkCursor();
-        }
+        else
+            m_cursorPos = 0;
     } else {
-        if(m_cursorPos-1 >= 0) {
+        if(m_cursorPos-1 >= 0)
             m_cursorPos--;
-            blinkCursor();
-        }
+        else
+            m_cursorPos = m_text.length();
     }
+
+    blinkCursor();
     update(true);
 }
 
