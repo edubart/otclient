@@ -655,15 +655,12 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
 
     struct Node {
-        Node(const Position& pos) : cost(0), totalCost(0), steps(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection), evaluated(false) { }
-        bool operator<(const Node& other) const { return  totalCost < other.totalCost; }
+        Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) { }
         float cost;
         float totalCost;
-        int steps;
         Position pos;
         Node *prev;
         Otc::Direction dir;
-        bool evaluated;
     };
 
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
@@ -788,27 +785,21 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
                 neighborNode->prev = currentNode;
                 neighborNode->cost = cost;
-                neighborNode->steps = currentNode->steps + 1;
                 neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
-                neighborNode->evaluated = false;
                 searchList.push_back(neighborNode);
             }
         }
 
         std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
-        auto end = std::unique(searchList.begin(), searchList.end());
+        auto uniq_end = std::unique(searchList.begin(), searchList.end());
+        searchList.erase(uniq_end, searchList.end());
 
-        currentNode->evaluated = true;
-        currentNode = nullptr;
-        for (auto begin = searchList.begin(); begin != end && !currentNode; ++begin) {
-            Node *node = *begin;
-
-            if(!node->evaluated)
-                currentNode = node;
-        }
-
-        searchList.clear();
+        if(!searchList.empty()) {
+            currentNode = searchList.front();
+            searchList.pop_front();
+        } else
+            currentNode = nullptr;
     }
 
     if(foundNode) {
@@ -827,5 +818,3 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
     return ret;
 }
-
-/* vim: set ts=4 sw=4 et: */
