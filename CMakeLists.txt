@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
 set(VERSION "0.6.5")
+set(LIB_NAME "otc_framework")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
@@ -35,11 +36,15 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
+# we want framework to be a static library for faster compilation/linking
+add_library(${LIB_NAME} ${framework_SOURCES})
+target_link_libraries(${LIB_NAME} ${framework_LIBRARIES})
+
 # add client executable
-add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+add_executable(${PROJECT_NAME} ${client_SOURCES} ${executable_SOURCES})
 
 # target link libraries
-target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${LIB_NAME})
 
 if(USE_PCH)
     include(cotire)
