@@ -36,8 +36,13 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
-# we want framework to be a static library for faster compilation/linking
-add_library(${LIB_NAME} ${framework_SOURCES})
+# we want framework to be a library for faster compilation/linking
+if(USE_STATIC_LIBS)
+    add_library(${LIB_NAME} ${framework_SOURCES})
+else()
+    add_library(${LIB_NAME} SHARED ${framework_SOURCES})
+    message(STATUS "Linking to shared ${LIB_NAME}, make sure you copy the DLL/SO/dylib with the executable!")
+endif()
 target_link_libraries(${LIB_NAME} ${framework_LIBRARIES})
 
 # add client executable
