@@ -39,7 +39,7 @@ public:
     ~BinaryTree();
 
     void seek(uint pos);
-    void skip(uint len) { seek(tell() + len); }
+    void skip(uint len);
     uint tell() { return m_pos; }
     uint size() { unserialize(); return m_buffer.size(); }
 

@@ -43,7 +43,8 @@ enum ItemCategory : uint8 {
     ItemCategorySplash       = 11,
     ItemCategoryFluid        = 12,
     ItemCategoryDoor         = 13,
-    ItemCategoryLast         = 14
+    ItemCategoryDeprecated   = 14,
+    ItemCategoryLast         = 15
 };
 
 enum ItemTypeAttr : uint8 {
@@ -76,7 +77,8 @@ enum ItemTypeAttr : uint8 {
     ItemTypeAttrLight2           = 42,
     ItemTypeAttrTopOrder         = 43,
     ItemTypeAttrWrtiable3        = 44,   // deprecated
-    ItemTypeAttrLast             = 45
+    ItemTypeAttrWareId           = 45,
+    ItemTypeAttrLast             = 46
 };
 
 enum ClientVersion

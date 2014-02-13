@@ -111,6 +111,12 @@ void BinaryTree::seek(uint pos)
     m_pos = pos;
 }
 
+void BinaryTree::skip(uint len)
+{
+    unserialize();
+    seek(tell() + len);
+}
+
 uint8 BinaryTree::getU8()
 {
     unserialize();

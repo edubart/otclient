@@ -178,17 +178,23 @@ void ThingTypeManager::loadOtb(const std::string& file)
             stdext::throw_exception("invalid otb file");
 
         BinaryTreePtr root = fin->getBinaryTree();
+        root->skip(1); // otb first byte is always 0
 
         signature = root->getU32();
         if(signature != 0)
             stdext::throw_exception("invalid otb file");
 
-        root->skip(4);
+        uint8 rootAttr = root->getU8();
+        if(rootAttr == 0x01) { // OTB_ROOT_ATTR_VERSION
+            uint16 size = root->getU16();
+            if(size != 4 + 4 + 4 + 128)
+                stdext::throw_exception("invalid otb root attr version size");
 
-        m_otbMajorVersion = root->getU32();
-        m_otbMinorVersion = root->getU32();
-        root->skip(4);
-        root->skip(128); // description
+            m_otbMajorVersion = root->getU32();
+            m_otbMinorVersion = root->getU32();
+            root->skip(4); // buildNumber
+            root->skip(128); // description
+        }
 
         m_reverseItemTypes.clear();
         m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
