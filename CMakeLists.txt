@@ -19,7 +19,6 @@ if(NOT APPLE)
 endif()
 
 option(USE_PCH "Use precompiled header (speed up compile)" OFF)
-option(FRAMEWORK_STATIC "Build and link framework statically" OFF)
 
 set(executable_SOURCES
     src/main.cpp
@@ -38,7 +37,7 @@ endif()
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 # we want framework to be a library for faster compilation/linking
-if(FRAMEWORK_STATIC)
+if(USE_STATIC_LIBS)
     add_library(${LIB_NAME} ${framework_SOURCES})
 else()
     add_library(${LIB_NAME} SHARED ${framework_SOURCES})
