@@ -663,6 +663,12 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         Otc::Direction dir;
     };
 
+    struct LessNode : std::binary_function<std::pair<Node*, float>, std::pair<Node*, float>, bool> {
+        bool operator()(std::pair<Node*, float> a, std::pair<Node*, float> b) const {
+            return b.second < a.second;
+        }
+    };
+
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
     std::vector<Otc::Direction>& dirs = std::get<0>(ret);
     Otc::PathFindResult& result = std::get<1>(ret);
@@ -694,7 +700,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     }
 
     std::unordered_map<Position, Node*, PositionHasher> nodes;
-    std::deque<Node*> searchList;
+    std::priority_queue<std::pair<Node*, float>, std::vector<std::pair<Node*, float>>, LessNode> searchList;
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
@@ -779,7 +785,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     nodes[neighborPos] = neighborNode;
                 } else {
                     neighborNode = nodes[neighborPos];
-                    if(neighborNode->cost < cost)
+                    if(neighborNode->cost <= cost)
                         continue;
                 }
 
@@ -787,17 +793,13 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 neighborNode->cost = cost;
                 neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
-                searchList.push_back(neighborNode);
+                searchList.push(std::make_pair(neighborNode, neighborNode->totalCost));
             }
         }
 
-        std::sort(searchList.begin(), searchList.end(), [](Node *a, Node *b) { return a->totalCost < b->totalCost; });
-        auto uniq_end = std::unique(searchList.begin(), searchList.end());
-        searchList.erase(uniq_end, searchList.end());
-
         if(!searchList.empty()) {
-            currentNode = searchList.front();
-            searchList.pop_front();
+            currentNode = searchList.top().first;
+            searchList.pop();
         } else
             currentNode = nullptr;
     }
