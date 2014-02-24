@@ -139,7 +139,10 @@ void MapView::draw(const Rect& rect)
                 else
                     ++it;
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
+                if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                else
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
             }
 
             if(drawFlags & Otc::DrawMissiles) {
