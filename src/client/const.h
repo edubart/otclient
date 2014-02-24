@@ -376,6 +376,7 @@ namespace Otc
         GamePVPMode = 50,
         GameWritableDate = 51,
         GameAdditionalVipInfo = 52,
+        GameBaseSkillU16 = 53,
 
         LastGameFeature = 101
     };

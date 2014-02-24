@@ -1562,6 +1562,10 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GamePVPMode);
     }
 
+    if (version >= 1035) {
+       enableFeature(Otc::GameDoubleSkills);
+       enableFeature(Otc::GameBaseSkillU16);
+    }
     m_protocolVersion = version;
 
     Proto::buildMessageModesMap(version);

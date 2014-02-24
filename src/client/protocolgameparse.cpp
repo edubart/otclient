@@ -1125,7 +1125,10 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
         int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            baseLevel = msg->getU8();
+            if (g_game.getFeature(Otc::GameBaseSkillU16))
+                baseLevel = msg->getU16();
+            else
+                baseLevel = msg->getU8();
         else
             baseLevel = level;
 
