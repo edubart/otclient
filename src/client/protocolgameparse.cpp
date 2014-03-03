@@ -1678,7 +1678,13 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
 {
-    int len = msg->getU8();
+    int len;
+    if (g_game.getProtocolVersion() >= 1035) {
+        len = 1;
+    } else {
+        len = msg->getU8();
+    }
+
     for(int i=0; i<len; ++i) {
         uint32 id = msg->getU32();
         bool isPermanent = msg->getU8() != 1;
