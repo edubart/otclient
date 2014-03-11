@@ -126,6 +126,7 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseCreatureType(const InputMessagePtr& msg);
     void parsePlayerHelpers(const InputMessagePtr& msg);
     void parseMessage(const InputMessagePtr& msg);
     void parsePendingGame(const InputMessagePtr& msg);

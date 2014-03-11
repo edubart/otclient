@@ -104,6 +104,7 @@ namespace Proto {
         GameServerCreatureUnpass            = 146,
         GameServerCreatureMarks             = 147,
         GameServerPlayerHelpers             = 148,
+        GameServerCreatureType              = 149,
         GameServerEditText                  = 150,
         GameServerEditList                  = 151,
         GameServerPlayerDataBasic           = 159, // 950
