@@ -333,6 +333,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerCreatureMarks:
                 parseCreaturesMark(msg);
                 break;
+            case Proto::GameServerCreatureType:
+                parseCreatureType(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -1696,6 +1699,12 @@ void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
         } else
             g_logger.traceError("could not get creature");
     }
+}
+
+void ProtocolGame::parseCreatureType(const InputMessagePtr& msg)
+{
+    uint32 id = msg->getU32();
+    uint8 type = msg->getU8();
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
