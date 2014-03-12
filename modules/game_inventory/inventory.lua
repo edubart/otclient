@@ -14,6 +14,7 @@ InventorySlotStyles = {
 inventoryWindow = nil
 inventoryPanel = nil
 inventoryButton = nil
+purseButton = nil
 
 function init()
   connect(LocalPlayer, { onInventoryChange = onInventoryChange })
@@ -27,6 +28,16 @@ function init()
   inventoryWindow = g_ui.loadUI('inventory', modules.game_interface.getRightPanel())
   inventoryWindow:disableResize()
   inventoryPanel = inventoryWindow:getChildById('contentsPanel')
+
+  purseButton = inventoryPanel:getChildById('purseButton')
+  local function purseFunction()
+    local purse = g_game.getLocalPlayer():getInventoryItem(InventorySlotPurse)
+    if purse then
+      print(purse:getId())
+      g_game.use(purse)
+    end
+  end
+  purseButton.onClick = purseFunction
 
   refresh()
   inventoryWindow:setup()
@@ -44,13 +55,15 @@ end
 
 function refresh()
   local player = g_game.getLocalPlayer()
-  for i=InventorySlotFirst,InventorySlotLast do
+  for i = InventorySlotFirst, InventorySlotPurse do
     if g_game.isOnline() then
       onInventoryChange(player, i, player:getInventoryItem(i))
     else
       onInventoryChange(player, i, nil)
     end
   end
+
+  purseButton:setVisible(g_game.getFeature(GamePurseSlot))
 end
 
 function toggle()
@@ -69,7 +82,15 @@ end
 
 -- hooked events
 function onInventoryChange(player, slot, item, oldItem)
-  if slot >= InventorySlotPurse then return end
+  if slot > InventorySlotPurse then return end
+
+  if slot == InventorySlotPurse then
+    if g_game.getFeature(GamePurseSlot) then
+      purseButton:setEnabled(item and true or false)
+    end
+    return
+  end
+
   local itemWidget = inventoryPanel:getChildById('slot' .. slot)
   if item then
     itemWidget:setStyle('Item')

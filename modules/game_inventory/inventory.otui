@@ -50,6 +50,14 @@ AmmoSlot < InventoryItem
   image-source: /images/game/slots/ammo
   &position: {x=65535, y=10, z=0}
 
+PurseButton < Button
+  id: purseButton
+  size: 26 26
+  !tooltip: tr('Open purse')
+  icon-source: /images/game/slots/purse
+  icon-size: 24 24
+  icon-offset: 1 1
+
 MiniWindow
   id: inventoryWindow
   !text: tr('Inventory')
@@ -110,3 +118,8 @@ MiniWindow
       anchors.top: prev.bottom
       anchors.horizontalCenter: prev.horizontalCenter
       margin-top: 3
+
+    PurseButton
+      margin-top: 3
+      anchors.top: prev.bottom
+      anchors.horizontalCenter: prev.horizontalCenter
