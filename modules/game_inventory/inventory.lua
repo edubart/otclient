@@ -33,7 +33,6 @@ function init()
   local function purseFunction()
     local purse = g_game.getLocalPlayer():getInventoryItem(InventorySlotPurse)
     if purse then
-      print(purse:getId())
       g_game.use(purse)
     end
   end
