@@ -436,6 +436,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("getSkull", &Creature::getSkull);
     g_lua.bindClassMemberFunction<Creature>("getShield", &Creature::getShield);
     g_lua.bindClassMemberFunction<Creature>("getEmblem", &Creature::getEmblem);
+    g_lua.bindClassMemberFunction<Creature>("getIcon", &Creature::getIcon);
     g_lua.bindClassMemberFunction<Creature>("setOutfit", &Creature::setOutfit);
     g_lua.bindClassMemberFunction<Creature>("getOutfit", &Creature::getOutfit);
     g_lua.bindClassMemberFunction<Creature>("setOutfitColor", &Creature::setOutfitColor);
@@ -448,6 +449,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("setSkullTexture", &Creature::setSkullTexture);
     g_lua.bindClassMemberFunction<Creature>("setShieldTexture", &Creature::setShieldTexture);
     g_lua.bindClassMemberFunction<Creature>("setEmblemTexture", &Creature::setEmblemTexture);
+    g_lua.bindClassMemberFunction<Creature>("setIconTexture", &Creature::setIconTexture);
     g_lua.bindClassMemberFunction<Creature>("showStaticSquare", &Creature::showStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("hideStaticSquare", &Creature::hideStaticSquare);
     g_lua.bindClassMemberFunction<Creature>("isWalking", &Creature::isWalking);

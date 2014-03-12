@@ -1879,7 +1879,6 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
     CreaturePtr creature;
     bool known = (type != Proto::UnknownCreature);
-
     if(type == Proto::OutdatedCreature || type == Proto::UnknownCreature) {
         if(known) {
             uint id = msg->getU32();
@@ -1944,6 +1943,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         // emblem is sent only when the creature is not known
         int emblem = -1;
+        int icon = -1;
         bool unpass = true;
         uint8 mark;
 
@@ -1952,6 +1952,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
             msg->getU8(); // creature type for summons
+        }
+
+        if(g_game.getFeature(Otc::GameCreatureIcons)) {
+            icon = msg->getU8();
+        }
+
+        if(g_game.getFeature(Otc::GameThingMarks)) {
             mark = msg->getU8(); // mark
             msg->getU16(); // helpers
 
@@ -1977,6 +1984,8 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setLight(light);
             if(emblem != -1)
                 creature->setEmblem(emblem);
+            if(icon != -1)
+                creature->setIcon(icon);
 
             if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);

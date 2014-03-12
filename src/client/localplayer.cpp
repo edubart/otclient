@@ -297,9 +297,11 @@ void LocalPlayer::onAppear()
 {
     Creature::onAppear();
 
+    /* Does not seem to be needed anymore
     // on teleports lock the walk
     if(!m_oldPosition.isInRange(m_position,1,1))
         lockWalk();
+    */
 }
 
 void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPos)

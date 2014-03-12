@@ -28,8 +28,15 @@ std::map<uint8, uint8> messageModesMap;
 
 void buildMessageModesMap(int version) {
     messageModesMap.clear();
-    if(version >= 900) {
-        for(int i=Otc::MessageNone;i<=Otc::MessageBeyondLast;++i)
+    if(version >= 1036) {
+            for(int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i) {
+                if(i >= Otc::MessageNpcTo)
+                    messageModesMap[i] = i + 1;
+                else
+                    messageModesMap[i] = i;
+            }
+    } else if(version >= 900) {
+        for(int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i)
             messageModesMap[i] = i;
     } else if(version >= 861) {
         messageModesMap[Otc::MessageNone]                    = 0;

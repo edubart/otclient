@@ -1459,7 +1459,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 760 || version > 1035))
+    if(version != 0 && (version < 760 || version > 1036))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
@@ -1563,9 +1563,15 @@ void Game::setProtocolVersion(int version)
     }
 
     if (version >= 1035) {
-       enableFeature(Otc::GameDoubleSkills);
-       enableFeature(Otc::GameBaseSkillU16);
+        enableFeature(Otc::GameDoubleSkills);
+        enableFeature(Otc::GameBaseSkillU16);
     }
+
+    if(version >= 1036) {
+        enableFeature(Otc::GameCreatureIcons);
+        enableFeature(Otc::GameHideNpcNames);
+    }
+
     m_protocolVersion = version;
 
     Proto::buildMessageModesMap(version);
@@ -1581,7 +1587,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 760 || version > 1035))
+    if(version != 0 && (version < 760 || version > 1036))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;
