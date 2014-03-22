@@ -37,7 +37,7 @@ public:
 
     InputMessage();
 
-    void setBuffer(const std::string& buffer);
+	void setBuffer(const std::string& buffer);
 	std::string getBuffer() { return std::string((char*)m_buffer + m_headerPos, m_messageSize); }
 
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
