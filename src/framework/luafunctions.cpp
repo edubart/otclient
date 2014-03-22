@@ -777,7 +777,7 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<InputMessage>();
     g_lua.bindClassStaticFunction<InputMessage>("create", []{ return InputMessagePtr(new InputMessage); });
     g_lua.bindClassMemberFunction<InputMessage>("setBuffer", &InputMessage::setBuffer);
-	g_lua.bindClassMemberFunction<InputMessage>("getBuffer", &InputMessage::getBuffer);
+    g_lua.bindClassMemberFunction<InputMessage>("getBuffer", &InputMessage::getBuffer);
     g_lua.bindClassMemberFunction<InputMessage>("skipBytes", &InputMessage::skipBytes);
     g_lua.bindClassMemberFunction<InputMessage>("getU8", &InputMessage::getU8);
     g_lua.bindClassMemberFunction<InputMessage>("getU16", &InputMessage::getU16);
