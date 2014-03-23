@@ -115,7 +115,7 @@ MainWindow
 
     ModuleInfoLabel
       !text: tr('Website')
-    TextEdit
+    ModuleValueLabel
       id: moduleWebsite
 
     ModuleInfoLabel
