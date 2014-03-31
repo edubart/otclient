@@ -1,14 +1,5 @@
 -- @docclass
-g_settings = {}
-
-g_settings.exists = g_configs.exists
-g_settings.setNode = g_configs.setNode
-g_settings.mergeNode = g_configs.mergeNode
-g_settings.getNode = g_configs.getNode
-g_settings.remove = g_configs.remove
-g_settings.setList = g_configs.setList
-g_settings.getList = g_configs.getList
-g_settings.save = g_configs.save
+g_settings = g_configs.getSettings()
 
 local function convertSettingValue(value)
   if type(value) == 'table' then
@@ -31,7 +22,7 @@ local function convertSettingValue(value)
 end
 
 function g_settings.set(key, value)
-  g_configs.set(key, convertSettingValue(value))
+  g_settings.set(key, convertSettingValue(value))
 end
 
 function g_settings.setDefault(key, value)
@@ -41,10 +32,11 @@ function g_settings.setDefault(key, value)
 end
 
 function g_settings.get(key, default)
+  print(g_settings.exists)
   if not g_settings.exists(key) and default ~= nil then
     g_settings.set(key, default)
   end
-  return g_configs.get(key)
+  return g_settings.get(key)
 end
 
 function g_settings.getString(key, default)

@@ -21,118 +21,65 @@
  */
 
 #include "configmanager.h"
-#include "resourcemanager.h"
-
-#include <framework/otml/otml.h>
 
 ConfigManager g_configs;
 
 ConfigManager::ConfigManager()
 {
-    m_confsDoc = OTMLDocument::create();
+    m_settings = ConfigPtr(new Config());
 }
 
-bool ConfigManager::load(const std::string& file)
+ConfigPtr ConfigManager::getSettings()
 {
-    m_fileName = file;
+    return m_settings;
+}
 
-    if(!g_resources.fileExists(file))
-        return false;
+ConfigPtr ConfigManager::get(const std::string& file)
+{
+    for(const ConfigPtr config : m_configs) {
+        if(config->getFileName() == file) {
+            return config;
+        }
+    }
+    g_logger.error(stdext::format("Unable to find configuration for '%s' ", file));
+    return nullptr;
+}
 
-    try {
-        OTMLDocumentPtr confsDoc = OTMLDocument::parse(file);
-        if(confsDoc)
-            m_confsDoc = confsDoc;
+ConfigPtr ConfigManager::loadSettings(const std::string file)
+{
+    if(file.empty()) {
+        g_logger.error("Must provide a configuration file to load.");
+    }
+    else {
+        if(m_settings->load(file)) {
+            return m_settings;
+        }
+    }
+    return nullptr;
+}
+
+ConfigPtr ConfigManager::load(const std::string& file)
+{
+    if(file.empty()) {
+        g_logger.error("Must provide a configuration file to load.");
+    }
+    else {
+        ConfigPtr config = ConfigPtr(new Config());
+        if(config->load(file)) {
+            m_configs.push_back(config);
+            return config;
+        }
+    }
+    return nullptr;
+}
+
+bool ConfigManager::unload(const std::string& file)
+{
+    ConfigPtr config = get(file);
+    if(config) {
+        config->unload();
+        m_configs.remove(config);
         return true;
-    } catch(stdext::exception& e) {
-        g_logger.error(stdext::format("Unable to parse configuration file '%s': ", e.what()));
-        return false;
     }
-}
-
-bool ConfigManager::save()
-{
-    if(m_fileName.length() == 0)
-        return false;
-    return m_confsDoc->save(m_fileName);
-}
-
-void ConfigManager::clear()
-{
-    m_confsDoc->clear();
-}
-
-void ConfigManager::set(const std::string& key, const std::string& value)
-{
-    if(key == "") {
-        remove(key);
-        return;
-    }
-
-    OTMLNodePtr child = OTMLNode::create(key, value);
-    m_confsDoc->addChild(child);
-}
-
-void ConfigManager::setList(const std::string& key, const std::vector<std::string>& list)
-{
-    remove(key);
-
-    if(list.size() == 0)
-        return;
-
-    OTMLNodePtr child = OTMLNode::create(key, true);
-    for(const std::string& value : list)
-        child->writeIn(value);
-    m_confsDoc->addChild(child);
-}
-
-bool ConfigManager::exists(const std::string& key)
-{
-    return m_confsDoc->hasChildAt(key);
-}
-
-std::string ConfigManager::get(const std::string& key)
-{
-    OTMLNodePtr child = m_confsDoc->get(key);
-    if(child)
-        return child->value();
-    else
-        return "";
-}
-
-std::vector<std::string> ConfigManager::getList(const std::string& key)
-{
-    std::vector<std::string> list;
-    OTMLNodePtr child = m_confsDoc->get(key);
-    if(child) {
-        for(const OTMLNodePtr& subchild : child->children())
-            list.push_back(subchild->value());
-    }
-    return list;
-}
-
-void ConfigManager::remove(const std::string& key)
-{
-    OTMLNodePtr child = m_confsDoc->get(key);
-    if(child)
-        m_confsDoc->removeChild(child);
-}
-
-void ConfigManager::setNode(const std::string& key, const OTMLNodePtr& node)
-{
-    remove(key);
-    mergeNode(key, node);
-}
-
-void ConfigManager::mergeNode(const std::string& key, const OTMLNodePtr& node)
-{
-    OTMLNodePtr clone = node->clone();
-    node->setTag(key);
-    node->setUnique(true);
-    m_confsDoc->addChild(node);
-}
-
-OTMLNodePtr ConfigManager::getNode(const std::string& key)
-{
-    return m_confsDoc->get(key);
+    return false;
 }

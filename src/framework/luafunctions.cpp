@@ -24,6 +24,7 @@
 #include <framework/luaengine/luainterface.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
+#include <framework/core/config.h>
 #include <framework/otml/otml.h>
 #include <framework/core/modulemanager.h>
 #include <framework/core/module.h>
@@ -135,17 +136,11 @@ void Application::registerLuaFunctions()
 
     // ConfigManager
     g_lua.registerSingletonClass("g_configs");
-    g_lua.bindSingletonFunction("g_configs", "load", &ConfigManager::load, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "save", &ConfigManager::save, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "set", &ConfigManager::set, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "setList", &ConfigManager::setList, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "getSettings", &ConfigManager::getSettings, &g_configs);
     g_lua.bindSingletonFunction("g_configs", "get", &ConfigManager::get, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "getList", &ConfigManager::getList, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "exists", &ConfigManager::exists, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "remove", &ConfigManager::remove, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "setNode", &ConfigManager::setNode, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "mergeNode", &ConfigManager::mergeNode, &g_configs);
-    g_lua.bindSingletonFunction("g_configs", "getNode", &ConfigManager::getNode, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "loadSettings", &ConfigManager::loadSettings, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "load", &ConfigManager::load, &g_configs);
+    g_lua.bindSingletonFunction("g_configs", "unload", &ConfigManager::unload, &g_configs);
 
     // Logger
     g_lua.registerSingletonClass("g_logger");
@@ -194,6 +189,19 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "guessFilePath", &ResourceManager::guessFilePath, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "isFileType", &ResourceManager::isFileType, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getFileTime", &ResourceManager::getFileTime, &g_resources);
+
+    // Config
+    g_lua.registerClass<Config>();
+    g_lua.bindClassMemberFunction<Config>("save", &Config::save);
+    g_lua.bindClassMemberFunction<Config>("set", &Config::set);
+    g_lua.bindClassMemberFunction<Config>("setList", &Config::setList);
+    g_lua.bindClassMemberFunction<Config>("get", &Config::get);
+    g_lua.bindClassMemberFunction<Config>("getList", &Config::getList);
+    g_lua.bindClassMemberFunction<Config>("exists", &Config::exists);
+    g_lua.bindClassMemberFunction<Config>("remove", &Config::remove);
+    g_lua.bindClassMemberFunction<Config>("setNode", &Config::setNode);
+    g_lua.bindClassMemberFunction<Config>("getNode", &Config::getNode);
+    g_lua.bindClassMemberFunction<Config>("mergeNode", &Config::mergeNode);
 
     // Module
     g_lua.registerClass<Module>();

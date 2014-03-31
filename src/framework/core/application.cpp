@@ -126,7 +126,10 @@ void Application::terminate()
 #endif
 
     // save configurations
-    g_configs.save();
+    ConfigPtr settings = g_configs.getSettings();
+    if(settings) {
+        settings->save();
+    }
 
     // release resources
     g_resources.terminate();

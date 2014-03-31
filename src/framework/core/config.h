@@ -20,31 +20,46 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONFIGMANAGER_H
-#define CONFIGMANAGER_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#include "config.h"
+#include "declarations.h"
 
-// @bindsingleton g_configs
-class ConfigManager
+#include <framework/luaengine/luaobject.h>
+#include <framework/otml/declarations.h>
+
+// @bindclass
+class Config : public LuaObject
 {
 public:
-    ConfigManager();
+    Config();
 
-    ConfigPtr getSettings();
-    ConfigPtr get(const std::string& file);
+    bool load(const std::string& file);
+    bool unload();
+    bool save();
+    void clear();
 
-    ConfigPtr loadSettings(const std::string file);
-    ConfigPtr load(const std::string& file);
-    bool unload(const std::string& file);
+    void set(const std::string& key, const std::string& value);
+    void setList(const std::string& key, const std::vector<std::string>& list);
+    std::string get(const std::string& key);
+    std::vector<std::string> getList(const std::string& key);
 
-protected:
-    ConfigPtr m_settings;
+    void setNode(const std::string& key, const OTMLNodePtr& node);
+    void mergeNode(const std::string& key, const OTMLNodePtr& node);
+    OTMLNodePtr getNode(const std::string& key);
+
+    bool exists(const std::string key);
+    void remove(const std::string& key);
+
+    std::string getFileName();
+    bool isLoaded();
+
+    // @dontbind
+    ConfigPtr asConfig() { return static_self_cast<Config>(); }
 
 private:
-    std::list<ConfigPtr> m_configs;
+    std::string m_fileName = "";
+    OTMLDocumentPtr m_confsDoc;
 };
-
-extern ConfigManager g_configs;
 
 #endif
