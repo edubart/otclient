@@ -58,7 +58,7 @@ public:
     ConfigPtr asConfig() { return static_self_cast<Config>(); }
 
 private:
-    std::string m_fileName = "";
+    std::string m_fileName;
     OTMLDocumentPtr m_confsDoc;
 };
 

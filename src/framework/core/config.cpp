@@ -28,6 +28,7 @@
 Config::Config()
 {
     m_confsDoc = OTMLDocument::create();
+    m_fileName = "";
 }
 
 bool Config::load(const std::string& file)
