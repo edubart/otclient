@@ -332,4 +332,16 @@ function getOppositeAnchor(anchor)
   return anchor
 end
 
+function makesingleton(obj)
+  local singleton = {}
+  if obj.getClassName then
+    for key,value in pairs(_G[obj:getClassName()]) do
+      if type(value) == 'function' then
+        singleton[key] = function(...) value(obj, ...) end
+      end
+    end
+  end
+  return singleton
+end
+
 -- @}
