@@ -5,7 +5,7 @@ endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
 
 # client options
 add_definitions(-DCLIENT)
-option(BOT_PROTECTION "Enable bot protection" OFF)
+option(BOT_PROTECTION "Enable bot protection" ON)
 if(BOT_PROTECTION)
     add_definitions(-DBOT_PROTECTION)
     message(STATUS "Bot protection: ON")

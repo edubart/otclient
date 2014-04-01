@@ -154,7 +154,7 @@ set(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRIN
 
 # default build type
 if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
+    set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
 
 if(WIN32)
