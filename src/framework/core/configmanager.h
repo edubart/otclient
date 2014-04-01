@@ -35,6 +35,7 @@ public:
     ConfigPtr getSettings();
     ConfigPtr get(const std::string& file);
 
+    ConfigPtr create(const std::string& file);
     ConfigPtr loadSettings(const std::string file);
     ConfigPtr load(const std::string& file);
     bool unload(const std::string& file);

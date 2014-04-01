@@ -27,7 +27,7 @@ g_resources.setupUserWriteDir(g_app.getCompactName())
 -- search all packages
 g_resources.searchAndAddPackages('/', '.otpkg', true)
 
--- load configurations
+-- load settings
 g_configs.loadSettings("/config.otml")
 
 g_modules.discoverModules()

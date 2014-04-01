@@ -59,7 +59,6 @@ ConfigPtr ConfigManager::get(const std::string& file)
             return config;
         }
     }
-    g_logger.error(stdext::format("Unable to find configuration for '%s' ", file));
     return nullptr;
 }
 
@@ -76,19 +75,41 @@ ConfigPtr ConfigManager::loadSettings(const std::string file)
     return nullptr;
 }
 
+ConfigPtr ConfigManager::create(const std::string& file)
+{
+    ConfigPtr config = load(file);
+    if(!config) {
+        config = ConfigPtr(new Config());
+
+        config->load(file);
+        config->save();
+
+        m_configs.push_back(config);
+    }
+    return config;
+}
+
 ConfigPtr ConfigManager::load(const std::string& file)
 {
     if(file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
+        return nullptr;
     }
     else {
-        ConfigPtr config = ConfigPtr(new Config());
-        if(config->load(file)) {
-            m_configs.push_back(config);
-            return config;
+        ConfigPtr config = get(file);
+        if(!config) {
+            config = ConfigPtr(new Config());
+
+            if(config->load(file)) {
+                m_configs.push_back(config);
+            }
+            else {
+                // cannot load config
+                config = nullptr;
+            }
         }
+        return config;
     }
-    return nullptr;
 }
 
 bool ConfigManager::unload(const std::string& file)
