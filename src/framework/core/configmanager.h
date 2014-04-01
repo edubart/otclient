@@ -38,7 +38,9 @@ public:
     ConfigPtr create(const std::string& file);
     ConfigPtr loadSettings(const std::string file);
     ConfigPtr load(const std::string& file);
+
     bool unload(const std::string& file);
+    void remove(const ConfigPtr config);
 
 protected:
     ConfigPtr m_settings;

@@ -22,6 +22,7 @@
 
 #include "config.h"
 #include "resourcemanager.h"
+#include "configmanager.h"
 
 #include <framework/otml/otml.h>
 
@@ -54,6 +55,7 @@ bool Config::unload()
     if(isLoaded()) {
         m_confsDoc = nullptr;
         m_fileName = "";
+        g_configs.remove(this);
         return true;
     }
     return false;
@@ -148,7 +150,7 @@ OTMLNodePtr Config::getNode(const std::string& key)
 
 bool Config::isLoaded()
 {
-    return !m_fileName.empty();
+    return !m_fileName.empty() && m_confsDoc;
 }
 
 std::string Config::getFileName()
