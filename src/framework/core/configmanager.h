@@ -29,7 +29,8 @@
 class ConfigManager
 {
 public:
-    ConfigManager();
+    void init();
+    void terminate();
 
     ConfigPtr getSettings();
     ConfigPtr get(const std::string& file);

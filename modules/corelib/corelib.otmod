@@ -24,3 +24,6 @@ Module
 
     dofile 'inputmessage'
     dofile 'outputmessage'
+
+  @onUnload: |
+    g_settings = nil

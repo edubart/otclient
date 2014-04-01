@@ -24,9 +24,27 @@
 
 ConfigManager g_configs;
 
-ConfigManager::ConfigManager()
+void ConfigManager::init()
 {
     m_settings = ConfigPtr(new Config());
+}
+
+void ConfigManager::terminate()
+{
+    if(m_settings) {
+        // ensure settings are saved
+        m_settings->save();
+
+        m_settings->unload();
+        m_settings = nullptr;
+    }
+
+    for(ConfigPtr config : m_configs) {
+        config->unload();
+        config = nullptr;
+    }
+
+    m_configs.clear();
 }
 
 ConfigPtr ConfigManager::getSettings()
@@ -79,6 +97,7 @@ bool ConfigManager::unload(const std::string& file)
     if(config) {
         config->unload();
         m_configs.remove(config);
+        config = nullptr;
         return true;
     }
     return false;
