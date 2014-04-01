@@ -70,7 +70,7 @@ void Config::clear()
     m_confsDoc->clear();
 }
 
-void Config::set(const std::string& key, const std::string& value)
+void Config::setValue(const std::string& key, const std::string& value)
 {
     if(key == "") {
         remove(key);
@@ -94,12 +94,12 @@ void Config::setList(const std::string& key, const std::vector<std::string>& lis
     m_confsDoc->addChild(child);
 }
 
-bool Config::exists(const std::string key)
+bool Config::exists(const std::string& key)
 {
     return m_confsDoc->hasChildAt(key);
 }
 
-std::string Config::get(const std::string& key)
+std::string Config::getValue(const std::string& key)
 {
     OTMLNodePtr child = m_confsDoc->get(key);
     if(child)

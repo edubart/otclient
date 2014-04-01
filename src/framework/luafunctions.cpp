@@ -193,9 +193,9 @@ void Application::registerLuaFunctions()
     // Config
     g_lua.registerClass<Config>();
     g_lua.bindClassMemberFunction<Config>("save", &Config::save);
-    g_lua.bindClassMemberFunction<Config>("set", &Config::set);
+    g_lua.bindClassMemberFunction<Config>("setValue", &Config::setValue);
     g_lua.bindClassMemberFunction<Config>("setList", &Config::setList);
-    g_lua.bindClassMemberFunction<Config>("get", &Config::get);
+    g_lua.bindClassMemberFunction<Config>("getValue", &Config::getValue);
     g_lua.bindClassMemberFunction<Config>("getList", &Config::getList);
     g_lua.bindClassMemberFunction<Config>("exists", &Config::exists);
     g_lua.bindClassMemberFunction<Config>("remove", &Config::remove);

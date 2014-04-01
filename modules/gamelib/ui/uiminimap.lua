@@ -55,7 +55,7 @@ function UIMinimap:disableAutoWalk()
 end
 
 function UIMinimap:load()
-  local settings = g_settings.getNode('Minimap')
+  local settings = g_settings:getNode('Minimap')
   if settings then
     if settings.flags then
       for _,flag in pairs(settings.flags) do
@@ -76,7 +76,7 @@ function UIMinimap:save()
     })
   end
   settings.zoom = self:getZoom()
-  g_settings.setNode('Minimap', settings)
+  g_settings:setNode('Minimap', settings)
 end
 
 local function onFlagMouseRelease(widget, pos, button)

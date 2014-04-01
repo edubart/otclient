@@ -11,14 +11,14 @@ function ServerList.init()
   serverListWindow = g_ui.displayUI('serverlist')
   serverTextList = serverListWindow:getChildById('serverList')
 
-  servers = g_settings.getNode('ServerList') or {}
+  servers = g_settings:getNode('ServerList') or {}
   ServerList.load()
 end
 
 function ServerList.terminate()
   ServerList.destroy()
 
-  g_settings.setNode('ServerList', servers)
+  g_settings:setNode('ServerList', servers)
 
   ServerList = nil
 end

@@ -39,16 +39,16 @@ public:
     bool save();
     void clear();
 
-    void set(const std::string& key, const std::string& value);
+    void setValue(const std::string& key, const std::string& value);
     void setList(const std::string& key, const std::vector<std::string>& list);
-    std::string get(const std::string& key);
+    std::string getValue(const std::string& key);
     std::vector<std::string> getList(const std::string& key);
 
     void setNode(const std::string& key, const OTMLNodePtr& node);
     void mergeNode(const std::string& key, const OTMLNodePtr& node);
     OTMLNodePtr getNode(const std::string& key);
 
-    bool exists(const std::string key);
+    bool exists(const std::string& key);
     void remove(const std::string& key);
 
     std::string getFileName();

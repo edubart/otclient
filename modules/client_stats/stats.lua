@@ -8,10 +8,10 @@ sendReportEvent = nil
 firstReportEvent = nil
 
 function initUUID()
-  UUID = g_settings.getString('report-uuid')
+  UUID = g_settings:getString('report-uuid')
   if not UUID or #UUID ~= 36 then
     UUID = g_crypt.genUUID()
-    g_settings.set('report-uuid', UUID)
+    g_settings:set('report-uuid', UUID)
   end
 end
 

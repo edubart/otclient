@@ -48,7 +48,7 @@ function terminate()
 end
 
 function loadVipInfo()
-  local settings = g_settings.getNode('VipList')
+  local settings = g_settings:getNode('VipList')
   if not settings then
     vipInfo = {}
     return
@@ -59,7 +59,7 @@ end
 function saveVipInfo()
   settings = {}
   settings['VipInfo'] = vipInfo
-  g_settings.mergeNode('VipList', settings)
+  g_settings:mergeNode('VipList', settings)
 end
 
 
@@ -212,13 +212,13 @@ end
 function hideOffline(state)
   settings = {}
   settings['hideOffline'] = state
-  g_settings.mergeNode('VipList', settings)
+  g_settings:mergeNode('VipList', settings)
 
   refresh()
 end
 
 function isHiddingOffline()
-  local settings = g_settings.getNode('VipList')
+  local settings = g_settings:getNode('VipList')
   if not settings then
     return false
   end
@@ -226,7 +226,7 @@ function isHiddingOffline()
 end
 
 function getSortedBy()
-  local settings = g_settings.getNode('VipList')
+  local settings = g_settings:getNode('VipList')
   if not settings or not settings['sortedBy'] then
     return 'status'
   end
@@ -236,7 +236,7 @@ end
 function sortBy(state)
   settings = {}
   settings['sortedBy'] = state
-  g_settings.mergeNode('VipList', settings)
+  g_settings:mergeNode('VipList', settings)
 
   refresh()
 end
