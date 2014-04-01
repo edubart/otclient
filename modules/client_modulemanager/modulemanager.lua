@@ -14,7 +14,8 @@ function init()
   g_keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
   g_keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
-  moduleManagerButton = modules.client_topmenu.addLeftButton('moduleManagerButton', tr('Module Manager'), '/images/topbuttons/modulemanager', toggle)
+  moduleManagerButton = modules.client_topmenu.addLeftButton('moduleManagerButton', 
+    tr('Module Manager'), '/images/topbuttons/modulemanager', toggle)
 
   -- refresh modules only after all modules are loaded
   addEvent(listModules)

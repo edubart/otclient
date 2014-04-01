@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,34 +23,30 @@
 #ifndef CONFIGMANAGER_H
 #define CONFIGMANAGER_H
 
-#include "declarations.h"
-#include <framework/otml/declarations.h>
+#include "config.h"
 
 // @bindsingleton g_configs
 class ConfigManager
 {
 public:
-    ConfigManager();
+    void init();
+    void terminate();
 
-    bool load(const std::string& file);
-    bool save();
-    void clear();
+    ConfigPtr getSettings();
+    ConfigPtr get(const std::string& file);
 
-    void set(const std::string& key, const std::string& value);
-    void setList(const std::string& key, const std::vector<std::string>& list);
-    std::string get(const std::string& key);
-    std::vector<std::string> getList(const std::string& key);
+    ConfigPtr create(const std::string& file);
+    ConfigPtr loadSettings(const std::string file);
+    ConfigPtr load(const std::string& file);
 
-    void setNode(const std::string& key, const OTMLNodePtr& node);
-    void mergeNode(const std::string& key, const OTMLNodePtr& node);
-    OTMLNodePtr getNode(const std::string& key);
+    bool unload(const std::string& file);
+    void remove(const ConfigPtr config);
 
-    bool exists(const std::string& key);
-    void remove(const std::string& key);
+protected:
+    ConfigPtr m_settings;
 
 private:
-    std::string m_fileName;
-    OTMLDocumentPtr m_confsDoc;
+    std::list<ConfigPtr> m_configs;
 };
 
 extern ConfigManager g_configs;

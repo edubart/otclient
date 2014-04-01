@@ -20,40 +20,46 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHOT_H
-#define SHOT_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-#include <framework/global.h>
-#include <framework/core/timer.h>
-#include "thing.h"
+#include "declarations.h"
+
+#include <framework/luaengine/luaobject.h>
+#include <framework/otml/declarations.h>
 
 // @bindclass
-class Missile : public Thing
+class Config : public LuaObject
 {
-    enum {
-        TICKS_PER_FRAME = 75
-    };
-
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    Config();
 
-    void setId(uint32 id);
-    void setPath(const Position& fromPosition, const Position& toPosition);
+    bool load(const std::string& file);
+    bool unload();
+    bool save();
+    void clear();
 
-    uint32 getId() { return m_id; }
+    void setValue(const std::string& key, const std::string& value);
+    void setList(const std::string& key, const std::vector<std::string>& list);
+    std::string getValue(const std::string& key);
+    std::vector<std::string> getList(const std::string& key);
 
-    MissilePtr asMissile() { return static_self_cast<Missile>(); }
-    bool isMissile() { return true; }
+    void setNode(const std::string& key, const OTMLNodePtr& node);
+    void mergeNode(const std::string& key, const OTMLNodePtr& node);
+    OTMLNodePtr getNode(const std::string& key);
 
-    const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    bool exists(const std::string& key);
+    void remove(const std::string& key);
+
+    std::string getFileName();
+    bool isLoaded();
+
+    // @dontbind
+    ConfigPtr asConfig() { return static_self_cast<Config>(); }
 
 private:
-    Timer m_animationTimer;
-    Point m_delta;
-    float m_duration;
-    uint16 m_id;
-    Otc::Direction m_direction;
+    std::string m_fileName;
+    OTMLDocumentPtr m_confsDoc;
 };
 
 #endif

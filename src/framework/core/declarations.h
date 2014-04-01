@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,9 +25,11 @@
 
 #include <framework/global.h>
 
+class ConfigManager;
 class ModuleManager;
 class ResourceManager;
 class Module;
+class Config;
 class Event;
 class ScheduledEvent;
 class FileStream;
@@ -35,6 +37,7 @@ class BinaryTree;
 class OutputBinaryTree;
 
 typedef stdext::shared_object_ptr<Module> ModulePtr;
+typedef stdext::shared_object_ptr<Config> ConfigPtr;
 typedef stdext::shared_object_ptr<Event> EventPtr;
 typedef stdext::shared_object_ptr<ScheduledEvent> ScheduledEventPtr;
 typedef stdext::shared_object_ptr<FileStream> FileStreamPtr;

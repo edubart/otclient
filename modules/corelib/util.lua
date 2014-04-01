@@ -284,6 +284,10 @@ function numbertoboolean(number)
   end
 end
 
+function postostring(pos)
+  return pos.x .. " " .. pos.y .. " " .. pos.z
+end
+
 function signalcall(param, ...)
   if type(param) == 'function' then
     local status, ret = pcall(param, ...)
@@ -326,6 +330,18 @@ function getOppositeAnchor(anchor)
     return AnchorVerticalCenter
   end
   return anchor
+end
+
+function makesingleton(obj)
+  local singleton = {}
+  if obj.getClassName then
+    for key,value in pairs(_G[obj:getClassName()]) do
+      if type(value) == 'function' then
+        singleton[key] = function(...) return value(obj, ...) end
+      end
+    end
+  end
+  return singleton
 end
 
 -- @}
