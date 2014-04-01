@@ -71,6 +71,3 @@ function Config:getColor(key, default)
   return tocolor(self:get(key, default))
 end
 
-function Config:getColor(key, default)
-  return tocolor(self:get(key, default))
-end

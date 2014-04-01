@@ -131,7 +131,7 @@ function onMiniWindowClose()
 end
 
 function getSortType()
-  local settings = g_settings:getNode('BattleList')
+  local settings = g_settings.getNode('BattleList')
   if not settings then
     return 'name'
   end
@@ -141,13 +141,13 @@ end
 function setSortType(state)
   settings = {}
   settings['sortType'] = state
-  g_settings:mergeNode('BattleList', settings)
+  g_settings.mergeNode('BattleList', settings)
 
   checkCreatures()
 end
 
 function getSortOrder()
-  local settings = g_settings:getNode('BattleList')
+  local settings = g_settings.getNode('BattleList')
   if not settings then
     return 'asc'
   end
@@ -157,7 +157,7 @@ end
 function setSortOrder(state)
   settings = {}
   settings['sortOrder'] = state
-  g_settings:mergeNode('BattleList', settings)
+  g_settings.mergeNode('BattleList', settings)
 
   checkCreatures()
 end
@@ -171,7 +171,7 @@ function isSortDesc()
 end
 
 function isHidingFilters()
-  local settings = g_settings:getNode('BattleList')
+  local settings = g_settings.getNode('BattleList')
   if not settings then
     return false
   end
@@ -181,7 +181,7 @@ end
 function setHidingFilters(state)
   settings = {}
   settings['hidingFilters'] = state
-  g_settings:mergeNode('BattleList', settings)
+  g_settings.mergeNode('BattleList', settings)
 end
 
 function hideFilterPanel()

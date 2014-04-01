@@ -134,7 +134,7 @@ function online()
   if player then
     local char = g_game.getCharacterName()
 
-    local lastCombatControls = g_settings:getNode('LastCombatControls')
+    local lastCombatControls = g_settings.getNode('LastCombatControls')
 
     if not table.empty(lastCombatControls) then
       if lastCombatControls[char] then
@@ -167,7 +167,7 @@ function online()
 end
 
 function offline()
-  local lastCombatControls = g_settings:getNode('LastCombatControls')
+  local lastCombatControls = g_settings.getNode('LastCombatControls')
   if not lastCombatControls then
     lastCombatControls = {}
   end
@@ -186,7 +186,7 @@ function offline()
     end
 
     -- save last combat control settings
-    g_settings:setNode('LastCombatControls', lastCombatControls)
+    g_settings.setNode('LastCombatControls', lastCombatControls)
   end
 end
 

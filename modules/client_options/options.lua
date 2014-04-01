@@ -84,7 +84,7 @@ end
 
 function init()
   for k,v in pairs(defaultOptions) do
-    g_settings:setDefault(k, v)
+    g_settings.setDefault(k, v)
     options[k] = v
   end
 
@@ -129,9 +129,9 @@ function setup()
   -- load options
   for k,v in pairs(defaultOptions) do
     if type(v) == 'boolean' then
-      setOption(k, g_settings:getBoolean(k), true)
+      setOption(k, g_settings.getBoolean(k), true)
     elseif type(v) == 'number' then
-      setOption(k, g_settings:getNumber(k), true)
+      setOption(k, g_settings.getNumber(k), true)
     end
   end
 end
@@ -243,7 +243,7 @@ function setOption(key, value, force)
     end
   end
 
-  g_settings:set(key, value)
+  g_settings.set(key, value)
   options[key] = value
 end
 

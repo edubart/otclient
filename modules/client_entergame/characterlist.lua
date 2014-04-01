@@ -37,8 +37,8 @@ local function tryLogin(charInfo, tries)
                                 end })
 
   -- save last used character
-  g_settings:set('last-used-character', charInfo.characterName)
-  g_settings:set('last-used-world', charInfo.worldName)
+  g_settings.set('last-used-character', charInfo.characterName)
+  g_settings.set('last-used-world', charInfo.worldName)
 end
 
 local function updateWait(timeStart, timeEnd)
@@ -225,7 +225,7 @@ function CharacterList.create(characters, account, otui)
 
     connect(widget, { onDoubleClick = function () CharacterList.doLogin() return true end } )
 
-    if i == 1 or (g_settings:get('last-used-character') == widget.characterName and g_settings:get('last-used-world') == widget.worldName) then
+    if i == 1 or (g_settings.get('last-used-character') == widget.characterName and g_settings.get('last-used-world') == widget.worldName) then
       focusLabel = widget
     end
   end

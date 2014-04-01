@@ -93,7 +93,7 @@ function UIMiniWindow:setup()
 
   local oldParent = self:getParent()
 
-  local settings = g_settings:getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if settings then
     local selfSettings = settings[self:getId()]
     if selfSettings then
@@ -245,7 +245,7 @@ end
 
 function UIMiniWindow:getSettings(name)
   if not self.save then return nil end
-  local settings = g_settings:getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if settings then
     local selfSettings = settings[self:getId()]
     if selfSettings then
@@ -258,7 +258,7 @@ end
 function UIMiniWindow:setSettings(data)
   if not self.save then return end
 
-  local settings = g_settings:getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if not settings then
     settings = {}
   end
@@ -272,13 +272,13 @@ function UIMiniWindow:setSettings(data)
     settings[id][key] = value
   end
 
-  g_settings:setNode('MiniWindows', settings)
+  g_settings.setNode('MiniWindows', settings)
 end
 
 function UIMiniWindow:eraseSettings(data)
   if not self.save then return end
 
-  local settings = g_settings:getNode('MiniWindows')
+  local settings = g_settings.getNode('MiniWindows')
   if not settings then
     settings = {}
   end
@@ -292,7 +292,7 @@ function UIMiniWindow:eraseSettings(data)
     settings[id][key] = nil
   end
 
-  g_settings:setNode('MiniWindows', settings)
+  g_settings.setNode('MiniWindows', settings)
 end
 
 function UIMiniWindow:saveParent(parent)

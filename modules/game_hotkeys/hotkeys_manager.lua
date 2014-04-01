@@ -145,7 +145,7 @@ end
 function load(forceDefaults)
   hotkeysManagerLoaded = false
 
-  local hotkeySettings = g_settings:getNode('game_hotkeys')
+  local hotkeySettings = g_settings.getNode('game_hotkeys')
   local hotkeys = {}
 
   if not table.empty(hotkeySettings) then hotkeys = hotkeySettings end
@@ -192,7 +192,7 @@ function reload()
 end
 
 function save()
-  local hotkeySettings = g_settings:getNode('game_hotkeys') or {}
+  local hotkeySettings = g_settings.getNode('game_hotkeys') or {}
   local hotkeys = hotkeySettings
 
   if perServer then
@@ -223,8 +223,8 @@ function save()
   end
 
   hotkeyList = hotkeys
-  g_settings:setNode('game_hotkeys', hotkeySettings)
-  g_settings:save()
+  g_settings.setNode('game_hotkeys', hotkeySettings)
+  g_settings.save()
 end
 
 function loadDefautComboKeys()

@@ -126,7 +126,7 @@ function init()
   terminalButton = modules.client_topmenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)', '/images/topbuttons/terminal', toggle)
   g_keyboard.bindKeyDown('Ctrl+T', toggle)
 
-  commandHistory = g_settings:getList('terminal-history')
+  commandHistory = g_settings.getList('terminal-history')
 
   commandTextEdit = terminalWindow:getChildById('commandTextEdit')
   g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
@@ -159,7 +159,7 @@ function init()
 end
 
 function terminate()
-  g_settings:setList('terminal-history', commandHistory)
+  g_settings.setList('terminal-history', commandHistory)
 
   removeEvent(flushEvent)
 
@@ -172,7 +172,7 @@ function terminate()
     pos = oldPos,
     poped = poped
   }
-  g_settings:setNode('terminal-window', settings)
+  g_settings.setNode('terminal-window', settings)
 
   g_keyboard.unbindKeyDown('Ctrl+T')
   g_logger.setOnLog(nil)
@@ -222,7 +222,7 @@ function toggle()
     hide()
   else
     if not firstShown then
-      local settings = g_settings:getNode('terminal-window')
+      local settings = g_settings.getNode('terminal-window')
       if settings then
         if settings.size then  oldSize = size end
         if settings.pos then oldPos = settings.pos end

@@ -242,11 +242,11 @@ end
 function save()
   local settings = {}
   settings.messageHistory = messageHistory
-  g_settings:setNode('game_console', settings)
+  g_settings.setNode('game_console', settings)
 end
 
 function load()
-  local settings = g_settings:getNode('game_console')
+  local settings = g_settings.getNode('game_console')
   if settings then
     messageHistory = settings.messageHistory or {}
   end
@@ -263,7 +263,7 @@ end
 
 function clear()
   -- save last open channels
-  local lastChannelsOpen = g_settings:getNode('lastChannelsOpen') or {}
+  local lastChannelsOpen = g_settings.getNode('lastChannelsOpen') or {}
   local char = g_game.getCharacterName()
   local savedChannels = {}
   local set = false
@@ -278,7 +278,7 @@ function clear()
   else
     lastChannelsOpen[char] = nil
   end
-  g_settings:setNode('lastChannelsOpen', lastChannelsOpen)
+  g_settings.setNode('lastChannelsOpen', lastChannelsOpen)
 
   -- close channels
   for _, channelName in pairs(channels) do
@@ -1018,25 +1018,25 @@ function loadCommunicationSettings()
   communicationSettings.whitelistedPlayers = {}
   communicationSettings.ignoredPlayers = {}
 
-  local ignoreNode = g_settings:getNode('IgnorePlayers')
+  local ignoreNode = g_settings.getNode('IgnorePlayers')
   if ignoreNode then
     for i = 1, #ignoreNode do
       table.insert(communicationSettings.ignoredPlayers, ignoreNode[i])
     end
   end
 
-  local whitelistNode = g_settings:getNode('WhitelistedPlayers')
+  local whitelistNode = g_settings.getNode('WhitelistedPlayers')
   if whitelistNode then
     for i = 1, #whitelistNode do
       table.insert(communicationSettings.whitelistedPlayers, whitelistNode[i])
     end
   end
 
-  communicationSettings.useIgnoreList = g_settings:getBoolean('UseIgnoreList')
-  communicationSettings.useWhiteList = g_settings:getBoolean('UseWhiteList')
-  communicationSettings.privateMessages = g_settings:getBoolean('IgnorePrivateMessages')
-  communicationSettings.yelling = g_settings:getBoolean('IgnoreYelling')
-  communicationSettings.allowVIPs = g_settings:getBoolean('AllowVIPs')
+  communicationSettings.useIgnoreList = g_settings.getBoolean('UseIgnoreList')
+  communicationSettings.useWhiteList = g_settings.getBoolean('UseWhiteList')
+  communicationSettings.privateMessages = g_settings.getBoolean('IgnorePrivateMessages')
+  communicationSettings.yelling = g_settings.getBoolean('IgnoreYelling')
+  communicationSettings.allowVIPs = g_settings.getBoolean('AllowVIPs')
 end
 
 function saveCommunicationSettings()
@@ -1052,12 +1052,12 @@ function saveCommunicationSettings()
     table.insert(tmpWhiteList, whitelistedPlayers[i])
   end
 
-  g_settings:set('UseIgnoreList', communicationSettings.useIgnoreList)
-  g_settings:set('UseWhiteList', communicationSettings.useWhiteList)
-  g_settings:set('IgnorePrivateMessages', communicationSettings.privateMessages)
-  g_settings:set('IgnoreYelling', communicationSettings.yelling)
-  g_settings:setNode('IgnorePlayers', tmpIgnoreList)
-  g_settings:setNode('WhitelistedPlayers', tmpWhiteList)
+  g_settings.set('UseIgnoreList', communicationSettings.useIgnoreList)
+  g_settings.set('UseWhiteList', communicationSettings.useWhiteList)
+  g_settings.set('IgnorePrivateMessages', communicationSettings.privateMessages)
+  g_settings.set('IgnoreYelling', communicationSettings.yelling)
+  g_settings.setNode('IgnorePlayers', tmpIgnoreList)
+  g_settings.setNode('WhitelistedPlayers', tmpWhiteList)
 end
 
 function getIgnoredPlayers()
@@ -1240,7 +1240,7 @@ function online()
     g_keyboard.bindKeyDown('Ctrl+R', openPlayerReportRuleViolationWindow)
   end
   -- open last channels
-  local lastChannelsOpen = g_settings:getNode('lastChannelsOpen')
+  local lastChannelsOpen = g_settings.getNode('lastChannelsOpen')
   if lastChannelsOpen then
     local savedChannels = lastChannelsOpen[g_game.getCharacterName()]
     if savedChannels then

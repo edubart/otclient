@@ -41,13 +41,13 @@ local function onCharacterList(protocol, characters, account, otui)
     local account = g_crypt.encrypt(G.account)
     local password = g_crypt.encrypt(G.password)
 
-    g_settings:set('account', account)
-    g_settings:set('password', password)
+    g_settings.set('account', account)
+    g_settings.set('password', password)
 
     ServerList.setServerAccount(G.host, account)
     ServerList.setServerPassword(G.host, password)
 
-    g_settings:set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
+    g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
   else
     -- reset server list account/password
     ServerList.setServerAccount(G.host, '')
@@ -63,9 +63,9 @@ local function onCharacterList(protocol, characters, account, otui)
   CharacterList.show()
 
   if motdEnabled then
-    local lastMotdNumber = g_settings:getNumber("motd")
+    local lastMotdNumber = g_settings.getNumber("motd")
     if G.motdNumber and G.motdNumber ~= lastMotdNumber then
-      g_settings:set("motd", motdNumber)
+      g_settings.set("motd", motdNumber)
       motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
       connect(motdWindow, { onOk = function() CharacterList.show() motdWindow = nil end })
       CharacterList.hide()
@@ -99,12 +99,12 @@ function EnterGame.init()
     motdButton:show()
   end
 
-  local account = g_settings:get('account')
-  local password = g_settings:get('password')
-  local host = g_settings:get('host')
-  local port = g_settings:get('port')
-  local autologin = g_settings:getBoolean('autologin')
-  local clientVersion = g_settings:getInteger('client-version')
+  local account = g_settings.get('account')
+  local password = g_settings.get('password')
+  local host = g_settings.get('host')
+  local port = g_settings.get('port')
+  local autologin = g_settings.getBoolean('autologin')
+  local clientVersion = g_settings.getInteger('client-version')
   if clientVersion == 0 then clientVersion = 860 end
 
   if port == nil or port == 0 then port = 7171 end
@@ -132,13 +132,13 @@ end
 function EnterGame.firstShow()
   EnterGame.show()
 
-  local account = g_crypt.decrypt(g_settings:get('account'))
-  local password = g_crypt.decrypt(g_settings:get('password'))
-  local host = g_settings:get('host')
-  local autologin = g_settings:getBoolean('autologin')
+  local account = g_crypt.decrypt(g_settings.get('account'))
+  local password = g_crypt.decrypt(g_settings.get('password'))
+  local host = g_settings.get('host')
+  local autologin = g_settings.getBoolean('autologin')
   if #host > 0 and #password > 0 and #account > 0 and autologin then
     addEvent(function()
-      if not g_settings:getBoolean('autologin') then return end
+      if not g_settings.getBoolean('autologin') then return end
       EnterGame.doLogin()
     end)
   end
@@ -205,8 +205,8 @@ function EnterGame.clearAccountFields()
   enterGame:getChildById('accountNameTextEdit'):clearText()
   enterGame:getChildById('accountPasswordTextEdit'):clearText()
   enterGame:getChildById('accountNameTextEdit'):focus()
-  g_settings:remove('account')
-  g_settings:remove('password')
+  g_settings.remove('account')
+  g_settings.remove('password')
 end
 
 function EnterGame.doLogin()
@@ -223,9 +223,9 @@ function EnterGame.doLogin()
     return
   end
 
-  g_settings:set('host', G.host)
-  g_settings:set('port', G.port)
-  g_settings:set('client-version', clientVersion)
+  g_settings.set('host', G.host)
+  g_settings.set('port', G.port)
+  g_settings.set('client-version', clientVersion)
 
   protocolLogin = ProtocolLogin.create()
   protocolLogin.onLoginError = onError
