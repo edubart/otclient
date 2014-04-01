@@ -337,7 +337,7 @@ function makesingleton(obj)
   if obj.getClassName then
     for key,value in pairs(_G[obj:getClassName()]) do
       if type(value) == 'function' then
-        singleton[key] = function(...) value(obj, ...) end
+        singleton[key] = function(...) return value(obj, ...) end
       end
     end
   end
