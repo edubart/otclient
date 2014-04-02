@@ -492,7 +492,7 @@ public:
     void resizeToText() { setSize(getTextSize()); }
     void clearText() { setText(""); }
 
-    void setText(std::string text);
+    void setText(std::string text, bool fireLuaCall = true);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
     void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
     void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }
