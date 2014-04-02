@@ -224,7 +224,7 @@ function toggle()
     if not firstShown then
       local settings = g_settings.getNode('terminal-window')
       if settings then
-        if settings.size then  oldSize = size end
+        if settings.size then oldSize = settings.size end
         if settings.pos then oldPos = settings.pos end
         if settings.poped then popWindow() end
       end
