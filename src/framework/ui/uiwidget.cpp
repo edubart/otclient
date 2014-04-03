@@ -418,7 +418,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     if(!child)
         return;
 
-    if((uint)index - 1 > m_children.size()) {
+    if((uint)index - 1 >= m_children.size()) {
         g_logger.traceError(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
         return;
     }
