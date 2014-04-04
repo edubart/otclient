@@ -81,7 +81,6 @@ void SpriteManager::saveSpr(std::string fileName)
         else
             fin->addU16(m_spritesCount);
 
-        bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
         uint32 offset = fin->tell();
         uint32 spriteAddress = offset + 4 * m_spritesCount;
         for(int i = 1; i <= m_spritesCount; i++)
@@ -99,7 +98,6 @@ void SpriteManager::saveSpr(std::string fileName)
                 fin->addU8(m_spritesFile->getU8());
                 fin->addU8(m_spritesFile->getU8());
                 fin->addU8(m_spritesFile->getU8());
-                if (useAlpha) fin->addU8(m_spritesFile->getU8());
 
                 uint16 dataSize = m_spritesFile->getU16();
                 fin->addU16(dataSize);
