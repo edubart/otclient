@@ -81,6 +81,7 @@ void SpriteManager::saveSpr(std::string fileName)
         else
             fin->addU16(m_spritesCount);
 
+        bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
         uint32 offset = fin->tell();
         uint32 spriteAddress = offset + 4 * m_spritesCount;
         for(int i = 1; i <= m_spritesCount; i++)
@@ -98,6 +99,7 @@ void SpriteManager::saveSpr(std::string fileName)
                 fin->addU8(m_spritesFile->getU8());
                 fin->addU8(m_spritesFile->getU8());
                 fin->addU8(m_spritesFile->getU8());
+                if (useAlpha) fin->addU8(m_spritesFile->getU8());
 
                 uint16 dataSize = m_spritesFile->getU16();
                 fin->addU16(dataSize);
@@ -153,6 +155,8 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         uint8 *pixels = image->getPixelData();
         int writePos = 0;
         int read = 0;
+        bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
+        uint8 channels = useAlpha ? 4 : 3;
 
         // decompress pixels
         while(read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
@@ -171,11 +175,11 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 pixels[writePos + 0] = m_spritesFile->getU8();
                 pixels[writePos + 1] = m_spritesFile->getU8();
                 pixels[writePos + 2] = m_spritesFile->getU8();
-                pixels[writePos + 3] = 0xFF;
+                pixels[writePos + 3] = useAlpha ? m_spritesFile->getU8() : 0xFF;
                 writePos += 4;
             }
 
-            read += 4 + (3 * coloredPixels);
+            read += 4 + (channels * coloredPixels);
         }
 
         // fill remaining pixels with alpha
