@@ -387,6 +387,7 @@ namespace Otc
         GameBaseSkillU16 = 53,
         GameCreatureIcons = 54,
         GameHideNpcNames = 55,
+        GameSpritesAlphaChannel = 56,
 
         LastGameFeature = 101
     };
