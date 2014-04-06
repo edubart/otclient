@@ -55,7 +55,6 @@ bool Config::unload()
     if(isLoaded()) {
         m_confsDoc = nullptr;
         m_fileName = "";
-        g_configs.remove(this);
         return true;
     }
     return false;

@@ -157,6 +157,7 @@ function table.tostring(t)
   local maxn = #t
   local str = ""
   for k,v in pairs(t) do
+    v = tostring(v)
     if k == maxn and k ~= 1 then
       str = str .. " and " .. v
     elseif maxn > 1 and k ~= 1 then

@@ -197,7 +197,6 @@ void Application::registerLuaFunctions()
     // Config
     g_lua.registerClass<Config>();
     g_lua.bindClassMemberFunction<Config>("save", &Config::save);
-    g_lua.bindClassMemberFunction<Config>("unload", &Config::unload);
     g_lua.bindClassMemberFunction<Config>("setValue", &Config::setValue);
     g_lua.bindClassMemberFunction<Config>("setList", &Config::setList);
     g_lua.bindClassMemberFunction<Config>("getValue", &Config::getValue);
