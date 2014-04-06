@@ -110,7 +110,7 @@ void Image::blit(const Point& dest, const ImagePtr& other)
         int y = p / other->getWidth();
         int pos = ((dest.y + y) * m_size.width() + (dest.x + x)) * 4;
 
-        if(otherPixels[p*4+3] == 0xFF) {
+        if (otherPixels[p*4+3] != 0) {
             m_pixels[pos+0] = otherPixels[p*4+0];
             m_pixels[pos+1] = otherPixels[p*4+1];
             m_pixels[pos+2] = otherPixels[p*4+2];
