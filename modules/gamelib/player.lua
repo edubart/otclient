@@ -99,37 +99,24 @@ function Player:dismount()
   end
 end
 
-function Player:getItem(itemid)
-  for i=InventorySlotFirst,InventorySlotLast do
-    local item = self:getInventoryItem(i)
-    if item and item:getId() == itemid then
-      return item
-    end
-  end
-
-  for i, container in pairs(g_game.getContainers()) do
-    for j, item in pairs(container:getItems()) do
-      if item:getId() == itemid then
-        item.container = container
-        return item
-      end
-    end
-  end
-  return items
+function Player:getItem(itemId, subType)
+  return g_game.findPlayerItem(itemId, subType or -1)
 end
 
-function Player:getItems(itemid)
+function Player:getItems(itemId, subType)
+  local subType = subType or -1
+
   local items = {}
   for i=InventorySlotFirst,InventorySlotLast do
     local item = self:getInventoryItem(i)
-    if item and item:getId() == itemid then
+    if item and item:getId() == itemId and (subType == -1 or item:getSubType() == subType) then
       table.insert(items, item)
     end
   end
 
   for i, container in pairs(g_game.getContainers()) do
     for j, item in pairs(container:getItems()) do
-      if item:getId() == itemid then
+      if item:getId() == itemId and (subType == -1 or item:getSubType() == subType) then
         item.container = container
         table.insert(items, item)
       end
@@ -138,8 +125,8 @@ function Player:getItems(itemid)
   return items
 end
 
-function Player:getItemsCount(itemid)
-  local items, count = self:getItems(itemid), 0
+function Player:getItemsCount(itemId)
+  local items, count = self:getItems(itemId), 0
   for i=1,#items do
     count = count + items[i]:getCount()
   end
