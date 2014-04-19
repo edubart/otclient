@@ -286,8 +286,8 @@ public:
     bool isOnline() { return m_online; }
     bool isLogging() { return !m_online && m_protocolGame; }
     bool isDead() { return m_dead; }
-    bool isAttacking() { return !!m_attackingCreature; }
-    bool isFollowing() { return !!m_followingCreature; }
+    bool isAttacking() { return !!m_attackingCreature && !m_attackingCreature->isRemoved(); }
+    bool isFollowing() { return !!m_followingCreature && !m_followingCreature->isRemoved(); }
     bool isConnectionOk() { return m_protocolGame && m_protocolGame->getElapsedTicksSinceLastRead() < 5000; }
 
     int getPing() { return m_ping >= 0 ? std::max<int>(m_ping, m_pingTimer.elapsed_millis()) : -1; }

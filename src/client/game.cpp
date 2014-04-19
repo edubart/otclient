@@ -1478,7 +1478,7 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameNewFluids);
         enableFeature(Otc::GameMessageLevel);
         enableFeature(Otc::GamePlayerStateU16);
-        enableFeature(Otc::GameNewOutfitProtocol);
+        enableFeature(Otc::GameNewOutfitProtocol); // This might be 790 not 780
     }
 
     if(version >= 790) {
