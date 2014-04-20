@@ -561,7 +561,12 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("getClothSlot", &Item::getClothSlot);
 
     g_lua.registerClass<Effect, Thing>();
+    g_lua.bindClassStaticFunction<Effect>("create", []{ return EffectPtr(new Effect); });
+    g_lua.bindClassMemberFunction<Effect>("setId", &Effect::setId);
+
     g_lua.registerClass<Missile, Thing>();
+    g_lua.bindClassStaticFunction<Missile>("create", []{ return MissilePtr(new Missile); });
+    g_lua.bindClassMemberFunction<Missile>("setId", &Missile::setId);
 
     g_lua.registerClass<StaticText, Thing>();
     g_lua.bindClassStaticFunction<StaticText>("create", []{ return StaticTextPtr(new StaticText); });
@@ -622,6 +627,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("isPreWalking", &LocalPlayer::isPreWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("hasSight", &LocalPlayer::hasSight);
     g_lua.bindClassMemberFunction<LocalPlayer>("isAutoWalking", &LocalPlayer::isAutoWalking);
+    g_lua.bindClassMemberFunction<LocalPlayer>("isServerWalking", &LocalPlayer::isServerWalking);
     g_lua.bindClassMemberFunction<LocalPlayer>("stopAutoWalk", &LocalPlayer::stopAutoWalk);
     g_lua.bindClassMemberFunction<LocalPlayer>("autoWalk", &LocalPlayer::autoWalk);
 
