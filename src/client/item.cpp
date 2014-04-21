@@ -367,7 +367,7 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 
         xPattern = (color % 4) % getNumPatternX();
         yPattern = (color / 4) % getNumPatternY();
-    } else if(isGround() || isOnBottom()) {
+    } else {
         xPattern = m_position.x % getNumPatternX();
         yPattern = m_position.y % getNumPatternY();
         zPattern = m_position.z % getNumPatternZ();
