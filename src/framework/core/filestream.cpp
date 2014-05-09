@@ -114,11 +114,10 @@ int FileStream::read(void *buffer, uint32 size, uint32 nmemb)
             throwError("read failed", true);
         return res;
     } else {
-        uint maxReadPos = m_data.size()-1;
         int writePos = 0;
         uint8 *outBuffer = (uint8*)buffer;
         for(uint i=0;i<nmemb;++i) {
-            if(m_pos+size > maxReadPos)
+            if(m_pos+size > m_data.size())
                 return i;
 
             for(uint j=0;j<size;++j)
