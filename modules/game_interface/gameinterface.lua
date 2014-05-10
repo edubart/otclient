@@ -354,7 +354,11 @@ function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.useWith(selectedThing, tile:getTopMultiUseThing())
+      if selectedThing:isFluidContainer() then
+        g_game.useWith(selectedThing, tile:getTopMultiUseThing())
+      else
+        g_game.useWith(selectedThing, tile:getTopUseThing())
+      end
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
     g_game.useWith(selectedThing, clickedWidget:getItem())
