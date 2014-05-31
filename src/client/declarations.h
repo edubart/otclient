@@ -51,6 +51,7 @@ class House;
 class Town;
 class CreatureType;
 class Spawn;
+class TileBlock;
 
 typedef stdext::shared_object_ptr<MapView> MapViewPtr;
 typedef stdext::shared_object_ptr<LightView> LightViewPtr;
@@ -80,6 +81,7 @@ typedef std::vector<ItemTypePtr> ItemTypeList;
 typedef std::list<HousePtr> HouseList;
 typedef std::list<TownPtr> TownList;
 typedef std::list<ItemPtr> ItemList;
+typedef std::list<TilePtr> TileList;
 typedef std::vector<ItemPtr> ItemVector;
 typedef std::unordered_map<Position, TilePtr, PositionHasher> TileMap;
 typedef std::unordered_map<Position, CreatureTypePtr, PositionHasher> CreatureMap;

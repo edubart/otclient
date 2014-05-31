@@ -467,7 +467,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     }
     */
 
-
     m_viewMode = viewMode;
     m_visibleDimension = visibleDimension;
     m_drawDimension = drawDimension;

@@ -83,7 +83,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_houses", "removeHouse",    &HouseManager::removeHouse,    &g_houses);
     g_lua.bindSingletonFunction("g_houses", "getHouseList",   &HouseManager::getHouseList,   &g_houses);
     g_lua.bindSingletonFunction("g_houses", "filterHouses",   &HouseManager::filterHouses,   &g_houses);
-    g_lua.bindSingletonFunction("g_houses",  "sort",          &HouseManager::sort,           &g_houses);
+    g_lua.bindSingletonFunction("g_houses", "sort",           &HouseManager::sort,           &g_houses);
 
     g_lua.registerSingletonClass("g_towns");
     g_lua.bindSingletonFunction("g_towns", "getTown",      &TownManager::getTown,      &g_towns);
@@ -115,6 +115,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "cleanTile", &Map::cleanTile, &g_map);
     g_lua.bindSingletonFunction("g_map", "cleanTexts", &Map::cleanTexts, &g_map);
     g_lua.bindSingletonFunction("g_map", "getTile", &Map::getTile, &g_map);
+    g_lua.bindSingletonFunction("g_map", "getTiles", &Map::getTiles, &g_map);
     g_lua.bindSingletonFunction("g_map", "setCentralPosition", &Map::setCentralPosition, &g_map);
     g_lua.bindSingletonFunction("g_map", "getCentralPosition", &Map::getCentralPosition, &g_map);
     g_lua.bindSingletonFunction("g_map", "getCreatureById", &Map::getCreatureById, &g_map);
@@ -307,6 +308,8 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_shaders", "getShader", &ShaderManager::getShader, &g_shaders);
 
     g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
+    g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);
+    g_lua.bindGlobalFunction("getDirectionFromPos", Position::getDirectionFromPositions);
 
     g_lua.registerClass<ProtocolGame, Protocol>();
     g_lua.bindClassStaticFunction<ProtocolGame>("create", []{ return ProtocolGamePtr(new ProtocolGame); });
@@ -651,6 +654,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Tile>("getCreatures", &Tile::getCreatures);
     g_lua.bindClassMemberFunction<Tile>("getGround", &Tile::getGround);
     g_lua.bindClassMemberFunction<Tile>("isWalkable", &Tile::isWalkable);
+    g_lua.bindClassMemberFunction<Tile>("isHouseTile", &Tile::isHouseTile);
     g_lua.bindClassMemberFunction<Tile>("isFullGround", &Tile::isFullGround);
     g_lua.bindClassMemberFunction<Tile>("isFullyOpaque", &Tile::isFullyOpaque);
     g_lua.bindClassMemberFunction<Tile>("isLookPossible", &Tile::isLookPossible);

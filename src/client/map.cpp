@@ -318,6 +318,36 @@ const TilePtr& Map::getTile(const Position& pos)
     return m_nulltile;
 }
 
+const TileList Map::getTiles(int floor/* = -1*/)
+{
+    TileList tiles;
+    if(floor > Otc::MAX_Z) {
+        return tiles;
+    }
+    else if(floor < 0) {
+        // Search all floors
+        for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+            for(const auto& pair : m_tileBlocks[z]) {
+                const TileBlock& block = pair.second;
+                for(const TilePtr& tile : block.getTiles()) {
+                    if(tile != nullptr)
+                        tiles.push_back(tile);
+                }
+            }
+        }
+    }
+    else {
+        for(const auto& pair : m_tileBlocks[floor]) {
+            const TileBlock& block = pair.second;
+            for(const TilePtr& tile : block.getTiles()) {
+                if(tile != nullptr)
+                    tiles.push_back(tile);
+            }
+        }
+    }
+    return tiles;
+}
+
 void Map::cleanTile(const Position& pos)
 {
     if(!pos.isMapPosition())

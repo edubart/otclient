@@ -110,20 +110,6 @@ public:
         return pos;
     }
 
-    double getAngleFromPosition(const Position& position) const {
-        // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
-        int dx = position.x - x;
-        int dy = position.y - y;
-        if(dx == 0 && dy == 0)
-            return -1;
-
-        float angle = std::atan2(dy * -1, dx);
-        if(angle < 0)
-            angle += 2 * Fw::pi;
-
-        return angle;
-    }
-
     std::vector<Position> translatedToDirections(const std::vector<Otc::Direction>& dirs) const {
         Position lastPos = *this;
         std::vector<Position> positions;
@@ -143,8 +129,28 @@ public:
         return positions;
     }
 
-    Otc::Direction getDirectionFromPosition(const Position& position) const {
-        float angle = getAngleFromPosition(position) * RAD_TO_DEC;
+    static double getAngleFromPositions(const Position& fromPos, const Position& toPos) {
+        // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
+        int dx = toPos.x - fromPos.x;
+        int dy = toPos.y - fromPos.y;
+        if(dx == 0 && dy == 0)
+            return -1;
+
+        float angle = std::atan2(dy * -1, dx);
+        if(angle < 0)
+            angle += 2 * Fw::pi;
+
+        return angle;
+    }
+
+    double getAngleFromPosition(const Position& position) const {
+        return getAngleFromPositions(*this, position);
+    }
+
+    static Otc::Direction getDirectionFromPositions(const Position& fromPos,
+                                                    const Position& toPos)
+    {
+        float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
         if(angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
@@ -164,6 +170,10 @@ public:
             return Otc::SouthEast;
         else
             return Otc::InvalidDirection;
+    }
+
+    Otc::Direction getDirectionFromPosition(const Position& position) const {
+        return getDirectionFromPositions(*this, position);
     }
 
     bool isMapPosition() const { return (x >=0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
