@@ -34,14 +34,25 @@ EmblemOther = 5
 VipIconFirst = 0
 VipIconLast = 10
 
-North = 0
-East = 1
-South = 2
-West = 3
-NorthEast = 4
-SouthEast = 5
-SouthWest = 6
-NorthWest = 7
+Directions = {
+  North = 0,
+  East = 1,
+  South = 2,
+  West = 3,
+  NorthEast = 4,
+  SouthEast = 5,
+  SouthWest = 6,
+  NorthWest = 7
+}
+
+North = Directions.North
+East = Directions.East
+South = Directions.South
+West = Directions.West
+NorthEast = Directions.NorthEast
+SouthEast = Directions.SouthEast
+SouthWest = Directions.SouthWest
+NorthWest = Directions.NorthWest
 
 FightOffensive = 1
 FightBalanced = 2

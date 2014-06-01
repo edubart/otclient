@@ -284,10 +284,6 @@ function numbertoboolean(number)
   end
 end
 
-function postostring(pos)
-  return pos.x .. " " .. pos.y .. " " .. pos.z
-end
-
 function signalcall(param, ...)
   if type(param) == 'function' then
     local status, ret = pcall(param, ...)

@@ -1597,10 +1597,12 @@ void Game::setClientVersion(int version)
 
 void Game::setAttackingCreature(const CreaturePtr& creature)
 {
-    CreaturePtr oldCreature = m_attackingCreature;
-    m_attackingCreature = creature;
+    if(creature != m_attackingCreature) {
+        CreaturePtr oldCreature = m_attackingCreature;
+        m_attackingCreature = creature;
 
-    g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature, oldCreature);
+        g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature, oldCreature);
+    }
 }
 
 void Game::setFollowingCreature(const CreaturePtr& creature)
