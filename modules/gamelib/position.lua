@@ -20,7 +20,6 @@ function Position.lessThan(pos1, pos2, orEqualTo)
   end
 end
 
-function Position.isInRange(pos1, pos2, minXRange, maxXRange, minYRange, maxYRange)
-  return (pos2.x >= pos1.x-minXRange and pos2.x <= pos1.x+maxXRange and pos2.y 
-    >= pos1.y-minYRange and pos2.y <= pos1.y+maxYRange and pos2.z == pos1.z);
+function Position.isInRange(pos1, pos2, xRange, yRange)
+  return math.abs(pos1.x-pos2.x) <= xRange and math.abs(pos1.y-pos2.y) <= yRange and pos1.z == pos2.z;
 end
