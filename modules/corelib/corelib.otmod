@@ -6,8 +6,6 @@ Module
   reloadable: false
 
   @onLoad: |
-    dofiles 'classes'
-
     dofile 'math'
     dofile 'string'
     dofile 'table'
@@ -22,6 +20,7 @@ Module
     dofile 'mouse'
     dofile 'net'
 
+    dofiles 'classes'
     dofiles 'ui'
 
     dofile 'inputmessage'

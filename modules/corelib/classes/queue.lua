@@ -3,21 +3,15 @@
   @Details: Queue class for event queuing.
 ]]
 
-Queue = {}
-Queue.__index = Queue
+Queue = newclass("Queue")
 
-Queue.__class = "Queue"
+Queue.create = function(callback)
+  local obj = Queue.internalCreate()
 
-Queue.new = function(callback)
-  que = {
-    queue = {},
-    callback = nil
-  }
+  obj.queue = {}
+  obj.callback = callback
 
-  que.callback = callback
-
-  setmetatable(que, Queue)
-  return que
+  return obj
 end
 
 -- gets/sets

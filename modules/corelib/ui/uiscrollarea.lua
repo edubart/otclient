@@ -1,5 +1,5 @@
 -- @docclass
-UIScrollArea = extends(UIWidget)
+UIScrollArea = extends(UIWidget, "UIScrollArea")
 
 -- public functions
 function UIScrollArea.create()

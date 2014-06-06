@@ -1,5 +1,5 @@
 -- @docclass
-UISplitter = extends(UIWidget)
+UISplitter = extends(UIWidget, "UISplitter")
 
 function UISplitter.create()
   local splitter = UISplitter.internalCreate()

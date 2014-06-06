@@ -1,7 +1,7 @@
 if not UIWindow then dofile 'uiwindow' end
 
 -- @docclass
-UIInputBox = extends(UIWindow)
+UIInputBox = extends(UIWindow, "UIInputBox")
 
 function UIInputBox.create(title, okCallback, cancelCallback)
   local inputBox = UIInputBox.internalCreate()

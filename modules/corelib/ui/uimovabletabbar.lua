@@ -1,5 +1,5 @@
 -- @docclass
-UIMoveableTabBar = extends(UIWidget)
+UIMoveableTabBar = extends(UIWidget, "UIMoveableTabBar")
 
 -- private functions
 local function onTabClick(tab)

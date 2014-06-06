@@ -5,7 +5,7 @@
     * Get dynamic row heights working with text wrapping.
     * Every second row different background color applied.
 ]]
-UITable = extends(UIWidget)
+UITable = extends(UIWidget, "UITable")
 
 local HEADER_ID = 'row0'
 

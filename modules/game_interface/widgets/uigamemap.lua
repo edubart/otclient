@@ -1,4 +1,4 @@
-UIGameMap = extends(UIMap)
+UIGameMap = extends(UIMap, "UIGameMap")
 
 function UIGameMap.create()
   local gameMap = UIGameMap.internalCreate()

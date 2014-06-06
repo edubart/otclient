@@ -117,7 +117,11 @@ function disconnect(object, arg1, arg2)
   end
 end
 
-function newclass()
+function newclass(name)
+  if not name then
+    perror(debug.traceback('new class has no name.'))
+  end
+
   local class = {}
   function class.internalCreate()
     local instance = {}
@@ -127,10 +131,16 @@ function newclass()
     return instance
   end
   class.create = class.internalCreate
+  class.__class = name
+  class.getClassName = function() return name end
   return class
 end
 
-function extends(base)
+function extends(base, name)
+  if not name then
+    perror(debug.traceback('extended class has no name.'))
+  end
+
   local derived = {}
   function derived.internalCreate()
     local instance = base.create()
@@ -140,6 +150,9 @@ function extends(base)
     return instance
   end
   derived.create = derived.internalCreate
+  derived.__class = name
+  derived.getClassName = function() return name end
+  derived.super = base
   return derived
 end
 

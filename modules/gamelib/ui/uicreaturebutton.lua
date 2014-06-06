@@ -1,5 +1,5 @@
 -- @docclass
-UICreatureButton = extends(UIWidget)
+UICreatureButton = extends(UIWidget, "UICreatureButton")
 
 local CreatureButtonColors = {
   onIdle = {notHovered = '#888888', hovered = '#FFFFFF' },
@@ -23,10 +23,6 @@ function UICreatureButton.create()
   button.isTarget = false
   button.isFollowed = false
   return button
-end
-
-function UICreatureButton:getClassName()
-  return 'UICreatureButton'
 end
 
 function UICreatureButton:setCreature(creature)

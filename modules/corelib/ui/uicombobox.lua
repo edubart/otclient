@@ -1,5 +1,5 @@
 -- @docclass
-UIComboBox = extends(UIWidget)
+UIComboBox = extends(UIWidget, "UIComboBox")
 
 function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()

@@ -1,5 +1,5 @@
 -- @docclass
-UIScrollBar = extends(UIWidget)
+UIScrollBar = extends(UIWidget, "UIScrollBar")
 
 -- private functions
 local function calcValues(self)

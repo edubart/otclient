@@ -1,5 +1,5 @@
 -- @docclass
-ProtocolLogin = extends(Protocol)
+ProtocolLogin = extends(Protocol, "ProtocolLogin")
 
 LoginServerError = 10
 LoginServerUpdate = 17

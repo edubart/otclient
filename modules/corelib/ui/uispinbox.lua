@@ -1,5 +1,5 @@
 -- @docclass
-UISpinBox = extends(UITextEdit)
+UISpinBox = extends(UITextEdit, "UISpinBox")
 
 function UISpinBox.create()
   local spinbox = UISpinBox.internalCreate()

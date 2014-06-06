@@ -1,5 +1,5 @@
 -- @docclass
-UIWindow = extends(UIWidget)
+UIWindow = extends(UIWidget, "UIWindow")
 
 function UIWindow.create()
   local window = UIWindow.internalCreate()
@@ -7,10 +7,6 @@ function UIWindow.create()
   window:setDraggable(true)
   window:setAutoFocusPolicy(AutoFocusFirst)
   return window
-end
-
-function UIWindow:getClassName()
-  return 'UIWindow'
 end
 
 function UIWindow:onKeyDown(keyCode, keyboardModifiers)
