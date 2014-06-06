@@ -351,7 +351,7 @@ function onMouseGrabberRelease(self, mousePosition, mouseButton)
 end
 
 function onUseWith(clickedWidget, mousePosition)
-  if clickedWidget:getClassName() == 'UIMap' then
+  if clickedWidget:getClassName() == 'UIGameMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
       if selectedThing:isFluidContainer() then
@@ -371,7 +371,7 @@ function onUseWith(clickedWidget, mousePosition)
 end
 
 function onTradeWith(clickedWidget, mousePosition)
-  if clickedWidget:getClassName() == 'UIMap' then
+  if clickedWidget:getClassName() == 'UIGameMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
       g_game.requestTrade(selectedThing, tile:getTopCreature())

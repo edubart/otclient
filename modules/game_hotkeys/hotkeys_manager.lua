@@ -251,7 +251,7 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
   if mouseButton == MouseLeftButton then
     local clickedWidget = modules.game_interface.getRootPanel():recursiveGetChildByPos(mousePosition, false)
     if clickedWidget then
-      if clickedWidget:getClassName() == 'UIMap' then
+      if clickedWidget:getClassName() == 'UIGameMap' then
         local tile = clickedWidget:getTile(mousePosition)
         if tile then
           local thing = tile:getTopMoveThing()

@@ -57,7 +57,7 @@ function UIItem:onHoverChange(hovered)
 
   local draggingWidget = g_ui.getDraggingWidget()
   if draggingWidget and self ~= draggingWidget then
-    local gotMap = draggingWidget:getClassName() == 'UIMap'
+    local gotMap = draggingWidget:getClassName() == 'UIGameMap'
     local gotItem = draggingWidget:getClassName() == 'UIItem' and not draggingWidget:isVirtual()
     if hovered and (gotItem or gotMap) then
       self:setBorderWidth(1)
