@@ -1571,6 +1571,10 @@ void Game::setProtocolVersion(int version)
         enableFeature(Otc::GameCreatureIcons);
         enableFeature(Otc::GameHideNpcNames);
     }
+    
+    if(version >= 1039) {
+        enableFeature(Otc::GamePremiumExpiration)
+    }
 
     m_protocolVersion = version;
 
