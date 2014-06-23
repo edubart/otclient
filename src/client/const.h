@@ -388,6 +388,7 @@ namespace Otc
         GameCreatureIcons = 54,
         GameHideNpcNames = 55,
         GameSpritesAlphaChannel = 56,
+        GamePremiumExpiration = 57,
 
         LastGameFeature = 101
     };
