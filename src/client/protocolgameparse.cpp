@@ -1022,7 +1022,8 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 {
     bool premium = msg->getU8(); // premium
     int vocation = msg->getU8(); // vocation
-    int premiumEx = msg->getU32(); // premium expiration
+    if(g_game.getFeature(Otc::GamePremiumExpiration))
+        int premiumEx = msg->getU32(); // premium expiration
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
