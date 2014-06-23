@@ -1573,7 +1573,7 @@ void Game::setProtocolVersion(int version)
     }
     
     if(version >= 1041) {
-        enableFeature(Otc::GamePremiumExpiration)
+        enableFeature(Otc::GamePremiumExpiration);
     }
 
     m_protocolVersion = version;
