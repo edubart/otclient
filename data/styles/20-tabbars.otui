@@ -1,47 +1,49 @@
 MoveableTabBar < UIMoveableTabBar
-  size: 80 20
+  size: 80 21
 MoveableTabBarPanel < Panel
 MoveableTabBarButton < UIButton
-  size: 20 20
+  size: 20 21
   image-source: /images/ui/tabbutton_square
-  image-color: white
-  image-clip: 0 0 20 20
+  image-color: #dfdfdf
+  image-clip: 0 0 20 21
   image-border: 3
-  icon-color: white
-  color: #aaaaaa
+  image-border-bottom: 0
+  icon-color: #dfdfdf
+  color: #dfdfdf
   anchors.top: parent.top
   anchors.left: parent.left
   padding: 5
 
   $hover !checked:
-    image-clip: 0 20 20 20
-    color: white
+    image-clip: 0 21 20 21
+    color: #dfdfdf
 
   $disabled:
-    image-color: #ffffff66
-    icon-color: #888888
+    image-color: #dfdfdf88
+    icon-color: #dfdfdf
 
   $checked:
-    image-clip: 0 40 20 20
-    color: #D8E7F0
+    image-clip: 0 42 20 21
+    color: #dfdfdf
 
   $on !checked:
-    color: #F55E5E
+    color: #dfdfdf
 
 TabBar < UITabBar
-  size: 80 20
+  size: 80 21
   Panel
     id: buttonsPanel
     anchors.fill: parent
 TabBarPanel < Panel
 TabBarButton < UIButton
-  size: 20 20
+  size: 22 23
   image-source: /images/ui/tabbutton_square
-  image-color: white
-  image-clip: 0 0 20 20
+  image-color: #dfdfdf
+  image-clip: 0 0 22 23
   image-border: 3
-  icon-color: white
-  color: #aaaaaa
+  image-border-bottom: 0
+  icon-color: #dfdfdf
+  color: #dfdfdf
   anchors.top: parent.top
   padding: 5
 
@@ -53,19 +55,19 @@ TabBarButton < UIButton
     margin-left: 5
 
   $hover !checked:
-    image-clip: 0 20 20 20
-    color: white
+    image-clip: 0 23 22 23
+    color: #dfdfdf
 
   $disabled:
-    image-color: #ffffff66
-    icon-color: #888888
+    image-color: #dfdfdf88
+    icon-color: #dfdfdf
 
   $checked:
-    image-clip: 0 40 20 20
-    color: #80c7f8
+    image-clip: 0 46 22 23
+    color: #dfdfdf
 
   $on !checked:
-    color: #F55E5E
+    color: #dfdfdf
 
 TabBarRounded < TabBar
 TabBarRoundedPanel < TabBarPanel
@@ -107,7 +109,7 @@ TabBarVerticalButton < UIButton
     margin-top: 10
   $hover !checked:
     color: white
-    icon-color: #cccccc
+    icon-color: #dfdfdf
   $disabled:
     icon-color: #333333
   $checked:

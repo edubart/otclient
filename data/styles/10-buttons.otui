@@ -1,44 +1,45 @@
 Button < UIButton
   font: verdana-11px-antialised
-  color: #f0ad4dff
-  size: 106 22
+  color: #dfdfdfff
+  size: 106 23
   text-offset: 0 0
-  image-source: /images/ui/button_rounded
-  image-color: white
-  image-clip: 0 0 20 20
+  image-source: /images/ui/button
+  image-color: #dfdfdf
+  image-clip: 0 0 22 23
   image-border: 3
   padding: 5 10 5 10
 
   $hover !disabled:
-    image-clip: 0 20 20 20
+    image-clip: 0 23 22 23
 
   $pressed:
-    image-clip: 0 40 20 20
+    image-clip: 0 46 22 23
     text-offset: 1 1
 
   $disabled:
-    color: #f0ad4d88
+    color: #dfdfdf88
+    opacity: 0.8
 
 TabButton < UIButton
-  size: 20 20
+  size: 22 23
   image-source: /images/ui/tabbutton_rounded
-  image-color: white
-  image-clip: 0 0 20 20
+  image-color: #dfdfdf
+  image-clip: 0 0 22 23
   image-border: 3
-  icon-color: white
-  color: #aaaaaa
+  icon-color: #dfdfdf
+  color: #dfdfdf
 
   $hover !on:
-    image-clip: 0 20 20 20
-    color: white
+    image-clip: 0 23 22 23
+    color: #dfdfdf
 
   $disabled:
-    image-color: #ffffff66
-    icon-color: #888888
+    image-color: #dfdfdf66
+    icon-color: #dfdfdf
 
   $on:
-    image-clip: 0 40 20 20
-    color: #80c7f8
+    image-clip: 0 46 22 23
+    color: #dfdfdf
 
 NextButton < UIButton
   size: 12 21
@@ -52,7 +53,7 @@ NextButton < UIButton
     image-clip: 12 21 12 21
 
   $disabled:
-    image-color: #ffffff55
+    image-color: #dfdfdf55
 
 PreviousButton < UIButton
   size: 12 21
@@ -66,18 +67,18 @@ PreviousButton < UIButton
     image-clip: 0 21 12 21
 
   $disabled:
-    image-color: #ffffff55
+    image-color: #dfdfdf55
 
 AddButton < UIButton
   size: 20 20
   image-source: /images/ui/icon_add
-  image-color: #ffffffff
+  image-color: #dfdfdfff
 
   $hover !disabled:
-    image-color: #ffffff99
+    image-color: #dfdfdf99
 
   $pressed:
-    image-color: #ffffff44
+    image-color: #dfdfdf44
 
   $disabled:
-    image-color: #ffffff55
+    image-color: #dfdfdf55
