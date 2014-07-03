@@ -39,3 +39,45 @@ PopupMenu < UIPopupMenu
   image-source: /images/ui/menubox
   image-border: 3
   padding: 3
+
+PopupScrollMenuButton < UIButton
+  height: 18
+  size: 0 21
+  text-offset: 4 0
+  text-align: left
+  font: verdana-11px-antialised
+
+  color: #aaaaaa
+  background-color: alpha
+
+  $hover !disabled:
+    color: #ffffff
+    background-color: #ffffff44
+    image-clip: 0 40 20 20
+
+  $disabled:
+    color: #555555
+
+PopupScrollMenuShortcutLabel < Label
+  font: verdana-11px-antialised
+  text-align: right
+  anchors.fill: parent
+  margin-right: 2
+  margin-left: 5
+
+PopupScrollMenuSeparator < UIWidget
+  margin-left: 2
+  margin-right: 2
+  margin-bottom: 1
+  image-source: /images/ui/menubox
+  image-border-left: 1
+  image-border-right: 1
+  image-clip: 0 0 32 2
+  height: 2
+  phantom: true
+
+PopupScrollMenu < UIPopupScrollMenu
+  width: 50
+  image-source: /images/ui/menubox
+  image-border: 3
+  padding: 3

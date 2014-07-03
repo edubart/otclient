@@ -1,19 +1,41 @@
 -- @docclass
-UIPopupMenu = extends(UIWidget, "UIPopupMenu")
+UIPopupScrollMenu = extends(UIWidget, "UIPopupScrollMenu")
 
 local currentMenu
 
-function UIPopupMenu.create()
-  local menu = UIPopupMenu.internalCreate()
-  local layout = UIVerticalLayout.create(menu)
-  layout:setFitChildren(true)
-  menu:setLayout(layout)
+function UIPopupScrollMenu.create()
+  local menu = UIPopupScrollMenu.internalCreate()
+
+  local scrollArea = g_ui.createWidget('UIScrollArea', menu)
+  scrollArea:setLayout(UIVerticalLayout.create(menu))
+  scrollArea:setId('scrollArea')
+
+  local scrollBar = g_ui.createWidget('VerticalScrollBar', menu)
+  scrollBar:setId('scrollBar')
+  scrollBar.pixelsScroll = false
+
+  scrollBar:addAnchor(AnchorRight, 'parent', AnchorRight)
+  scrollBar:addAnchor(AnchorTop, 'parent', AnchorTop)
+  scrollBar:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+
+  scrollArea:addAnchor(AnchorLeft, 'parent', AnchorLeft)
+  scrollArea:addAnchor(AnchorTop, 'parent', AnchorTop)
+  scrollArea:addAnchor(AnchorBottom, 'parent', AnchorBottom)
+  scrollArea:addAnchor(AnchorRight, 'next', AnchorLeft)
+  scrollArea:setVerticalScrollBar(scrollBar)
+
+  menu.scrollArea = scrollArea
+  menu.scrollBar = scrollBar
   return menu
 end
 
-function UIPopupMenu:display(pos)
+function UIPopupScrollMenu:setScrollbarStep(step)
+  self.scrollBar:setStep(step)
+end
+
+function UIPopupScrollMenu:display(pos)
   -- don't display if not options was added
-  if self:getChildCount() == 0 then
+  if self.scrollArea:getChildCount() == 0 then
     self:destroy()
     return
   end
@@ -34,11 +56,10 @@ function UIPopupMenu:display(pos)
   rootWidget:addChild(self)
   self:setPosition(pos)
   self:grabMouse()
-  --self:grabKeyboard()
   currentMenu = self
 end
 
-function UIPopupMenu:onGeometryChange(oldRect, newRect)
+function UIPopupScrollMenu:onGeometryChange(oldRect, newRect)
   local parent = self:getParent()
   if not parent then return end
   local ymax = parent:getY() + parent:getHeight()
@@ -54,8 +75,8 @@ function UIPopupMenu:onGeometryChange(oldRect, newRect)
   self:bindRectToParent()
 end
 
-function UIPopupMenu:addOption(optionName, optionCallback, shortcut)
-  local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self)
+function UIPopupScrollMenu:addOption(optionName, optionCallback, shortcut)
+  local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self.scrollArea)
   optionWidget.onClick = function(widget)
     self:destroy()
     optionCallback()
@@ -72,18 +93,18 @@ function UIPopupMenu:addOption(optionName, optionCallback, shortcut)
   self:setWidth(math.max(self:getWidth(), width))
 end
 
-function UIPopupMenu:addSeparator()
-  g_ui.createWidget(self:getStyleName() .. 'Separator', self)
+function UIPopupScrollMenu:addSeparator()
+  g_ui.createWidget(self:getStyleName() .. 'Separator', self.scrollArea)
 end
 
-function UIPopupMenu:onDestroy()
+function UIPopupScrollMenu:onDestroy()
   if currentMenu == self then
     currentMenu = nil
   end
   self:ungrabMouse()
 end
 
-function UIPopupMenu:onMousePress(mousePos, mouseButton)
+function UIPopupScrollMenu:onMousePress(mousePos, mouseButton)
   -- clicks outside menu area destroys the menu
   if not self:containsPoint(mousePos) then
     self:destroy()
@@ -91,7 +112,7 @@ function UIPopupMenu:onMousePress(mousePos, mouseButton)
   return true
 end
 
-function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers)
+function UIPopupScrollMenu:onKeyPress(keyCode, keyboardModifiers)
   if keyCode == KeyEscape then
     self:destroy()
     return true
