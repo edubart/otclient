@@ -28,25 +28,29 @@ function UIComboBox:getOption(text)
   end
 end
 
-function UIComboBox:setCurrentOption(text)
+function UIComboBox:setCurrentOption(text, dontSignal)
   if not self.options then return end
   for i,v in ipairs(self.options) do
     if v.text == text and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(text)
-      signalcall(self.onOptionChange, self, text, v.data)
+      if not dontSignal then
+        signalcall(self.onOptionChange, self, text, v.data)
+      end
       return
     end
   end
 end
 
-function UIComboBox:setCurrentOptionByData(data)
+function UIComboBox:setCurrentOptionByData(data, dontSignal)
   if not self.options then return end
   for i,v in ipairs(self.options) do
     if v.data == data and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(v.text)
-      signalcall(self.onOptionChange, self, v.text, v.data)
+      if not dontSignal then
+        signalcall(self.onOptionChange, self, v.text, v.data)
+      end
       return
     end
   end

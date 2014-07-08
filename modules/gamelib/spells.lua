@@ -141,7 +141,7 @@ SpellInfo = {
     ['Stone Shower'] =             {id = 116, words = 'adori mas tera',        exhaustion = 2000,  premium = false, type = 'Conjure', icon = 'stoneshower',            mana = 430,    level = 28, soul = 3, group = {[3] = 2000},               vocations = {2, 6}},
     ['Thunderstorm'] =             {id = 117, words = 'adori mas vis',         exhaustion = 2000,  premium = false, type = 'Conjure', icon = 'thunderstorm',           mana = 430,    level = 28, soul = 3, group = {[3] = 2000},               vocations = {1, 5}},
     ['Holy Missile'] =             {id = 130, words = 'adori san',             exhaustion = 2000,  premium = false, type = 'Conjure', icon = 'holymissile',            mana = 350,    level = 27, soul = 3, group = {[3] = 2000},               vocations = {3, 7}}
-  },
+  }--[[,
 
   ['Sample'] = {
     ['Wind Walk'] =                {id = 1, words = 'windwalk',        description = 'Run at enormous speed.',          exhaustion = 2000,  premium = false, type = 'Instant', icon = 1,  mana = 50,     level = 10, soul = 0, group = {[3] = 2000}, vocations = {1, 2}},
@@ -149,7 +149,7 @@ SpellInfo = {
     ['Moonglaives'] =              {id = 3, words = 'moonglaives',     description = 'Throw moonglaives around you.',   exhaustion = 2000,  premium = false, type = 'Instant', icon = 3,  mana = 90,     level = 55, soul = 0, group = {[1] = 2000}, vocations = {3, 7}},
     ['Critical Strike'] =          {id = 4, words = 'criticalstrike',  description = 'Land a critical strike.',         exhaustion = 2000,  premium = false, type = 'Instant', icon = 4,  mana = 350,    level = 27, soul = 0, group = {[1] = 2000}, vocations = {3, 4, 7, 8}},
     ['Firefly'] =                  {id = 5, words = 'firefly',         description = 'Summon a angry firefly',          exhaustion = 2000,  premium = false, type = 'Instant', icon = 5,  mana = 350,    level = 27, soul = 0, group = {[1] = 2000}, vocations = {1, 2, 5, 6}}
-  }
+  }]]
 }
 
 -- ['const_name'] =       {client_id, TFS_id}
@@ -400,6 +400,37 @@ function Spells.getSpellProfileByName(spellName)
     end
   end
   return nil
+end
+
+function Spells.getSpellsByVocationId(vocId)
+  local spells = {}
+  for profile,data in pairs(SpellInfo) do
+    for k,spell in pairs(data) do
+      if table.contains(spell.vocations, vocId) then
+        table.insert(spells, spell)
+      end
+    end
+  end
+  return spells
+end
+
+function Spells.filterSpellsByGroups(spells, groups)
+  local filtered = {}
+  for v,spell in pairs(spells) do
+    local spellGroups = Spells.getGroupIds(spell)
+    if table.equals(spellGroups, groups) then
+      table.insert(filtered, spell)
+    end
+  end
+  return filtered
+end
+
+function Spells.getGroupIds(spell)
+  local groups = {}
+  for k,_ in pairs(spell.group) do
+    table.insert(groups, k)
+  end
+  return groups
 end
 
 function Spells.getImageClip(id, profile)
