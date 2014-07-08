@@ -152,7 +152,6 @@ function extends(base, name)
   derived.create = derived.internalCreate
   derived.__class = name
   derived.getClassName = function() return name end
-  derived.super = base
   return derived
 end
 
