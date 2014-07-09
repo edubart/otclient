@@ -183,13 +183,10 @@ function table.collect(t, func)
 end
 
 function table.equals(t, comp)
-  local equals = false
   if type(t) == "table" and type(comp) == "table" then
     for k,v in pairs(t) do
-      if v == comp[k] then
-        equals = true
-      end
+      if v ~= comp[k] then return false end
     end
   end
-  return equals
+  return true
 end
