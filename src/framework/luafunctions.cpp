@@ -186,6 +186,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "getUserDir", &ResourceManager::getUserDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getWriteDir", &ResourceManager::getWriteDir, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getSearchPaths", &ResourceManager::getSearchPaths, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "getRealPath", &ResourceManager::getRealPath, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "listDirectoryFiles", &ResourceManager::listDirectoryFiles, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getDirectoryFiles", &ResourceManager::getDirectoryFiles, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "readFileContents", &ResourceManager::readFileContents, &g_resources);
@@ -193,6 +194,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_resources", "isFileType", &ResourceManager::isFileType, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "getFileTime", &ResourceManager::getFileTime, &g_resources);
     g_lua.bindSingletonFunction("g_resources", "makeDir", &ResourceManager::makeDir, &g_resources);
+    g_lua.bindSingletonFunction("g_resources", "deleteFile", &ResourceManager::deleteFile, &g_resources);
 
     // Config
     g_lua.registerClass<Config>();
@@ -206,6 +208,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Config>("setNode", &Config::setNode);
     g_lua.bindClassMemberFunction<Config>("getNode", &Config::getNode);
     g_lua.bindClassMemberFunction<Config>("mergeNode", &Config::mergeNode);
+    g_lua.bindClassMemberFunction<Config>("getFileName", &Config::getFileName);
 
     // Module
     g_lua.registerClass<Module>();
