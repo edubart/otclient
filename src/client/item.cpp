@@ -272,6 +272,10 @@ ItemPtr Item::clone()
 
 void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 {
+    // Avoid crashes with invalid items
+    if(!isValid())
+        return;
+
     if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
         if(m_countOrSubType <= 0) {
             xPattern = 0;
