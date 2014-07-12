@@ -28,7 +28,7 @@ function UIRadioGroup:removeWidget(widget)
   table.removevalue(self.widgets, widget)
 end
 
-function UIRadioGroup:selectWidget(selectedWidget)
+function UIRadioGroup:selectWidget(selectedWidget, dontSignal)
   if selectedWidget == self.selectedWidget then return end
 
   local previousSelectedWidget = self.selectedWidget
@@ -42,7 +42,9 @@ function UIRadioGroup:selectWidget(selectedWidget)
     selectedWidget:setChecked(true)
   end
 
-  signalcall(self.onSelectionChange, self, selectedWidget, previousSelectedWidget)
+  if not dontSignal then
+    signalcall(self.onSelectionChange, self, selectedWidget, previousSelectedWidget)
+  end
 end
 
 function UIRadioGroup:clearSelected()

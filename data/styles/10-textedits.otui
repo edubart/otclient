@@ -3,6 +3,7 @@ TextEdit < UITextEdit
   color: #272727
   size: 86 22
   text-offset: 0 4
+  opacity: 1
   padding: 4
   image-source: /images/ui/textedit
   image-border: 1
