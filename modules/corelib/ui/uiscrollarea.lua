@@ -111,8 +111,15 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
       return false
     end
     if mouseWheel == MouseWheelUp then
+      if self.verticalScrollBar:getValue() < 1 then
+        return false
+      end
       self.verticalScrollBar:decrement()
     else
+      local maximum = self.verticalScrollBar:getMaximum()
+      if self.verticalScrollBar:getValue() >= maximum then
+        return false
+      end
       self.verticalScrollBar:increment()
     end
   elseif self.horizontalScrollBar then
@@ -120,8 +127,15 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
       return false
     end
     if mouseWheel == MouseWheelUp then
+      local maximum = self.horizontalScrollBar:getMaximum()
+      if self.horizontalScrollBar:getValue() >= maximum then
+        return false
+      end
       self.horizontalScrollBar:increment()
     else
+      if self.horizontalScrollBar:getValue() < 1 then
+        return false
+      end
       self.horizontalScrollBar:decrement()
     end
   end
