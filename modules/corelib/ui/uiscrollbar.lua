@@ -239,7 +239,7 @@ function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
   end
   if mouseWheel == MouseWheelUp then
     if self.orientation == 'vertical' then
-      if self.value < 1 then  return false end
+      if self.value <= self.minimum then  return false end
       self:decrement()
     else
       if self.value >= self.maximum then return false end
@@ -250,7 +250,7 @@ function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
       if self.value >= self.maximum then return false end
       self:increment()
     else
-      if self.value < 1 then  return false end
+      if self.value <= self.minimum then  return false end
       self:decrement()
     end
   end
