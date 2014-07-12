@@ -81,7 +81,9 @@ function online()
   else
     spelllistButton:hide()
   end
-  if g_game.getProtocolVersion() >= 950 then -- Vocation is only send in newer clients
+
+  -- Vocation is only send in newer clients
+  if g_game.getProtocolVersion() >= 950 then
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)
   else
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(false)
@@ -159,7 +161,7 @@ function init()
   g_keyboard.bindKeyPress('Down', function() spellList:focusNextChild(KeyboardFocusReason) end, spelllistWindow)
   g_keyboard.bindKeyPress('Up', function() spellList:focusPreviousChild(KeyboardFocusReason) end, spelllistWindow)
 
-  initialiseSpelllist()
+  initializeSpelllist()
   resizeWindow()
 
   if g_game.isOnline() then
@@ -184,7 +186,7 @@ function terminate()
   premiumRadioGroup:destroy()
 end
 
-function initialiseSpelllist()
+function initializeSpelllist()
   for i = 1, #SpelllistSettings[SpelllistProfile].spellOrder do
     local spell = SpelllistSettings[SpelllistProfile].spellOrder[i]
     local info = SpellInfo[SpelllistProfile][spell]
@@ -227,8 +229,7 @@ function changeSpelllistProfile(oldProfile)
   end
 
   -- Create new spelllist and ajust window
-  initialiseSpelllist()
-  setOptions()
+  initializeSpelllist()
   resizeWindow()
   resetWindow()
 end
@@ -304,11 +305,13 @@ end
 
 function toggle()
   if spelllistButton:isOn() then
-    spelllistWindow:hide()
     spelllistButton:setOn(false)
+    spelllistWindow:hide()
   else
-    spelllistWindow:show()
     spelllistButton:setOn(true)
+    spelllistWindow:show()
+    spelllistWindow:raise()
+    spelllistWindow:focus()
   end
 end
 

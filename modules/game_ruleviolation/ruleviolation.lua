@@ -78,7 +78,7 @@ function loadReasons()
 end
 
 function show(target, statement)
-  if g_game.isOnline() and hasWindowAccess() then
+  if g_game.isOnline() and hasWindowAccess() or true then
     if target then
       ruleViolationWindow:getChildById('nameText'):setText(target)
     end
@@ -89,6 +89,7 @@ function show(target, statement)
 
     ruleViolationWindow:show()
     ruleViolationWindow:raise()
+    ruleViolationWindow:focus()
   end
 end
 
