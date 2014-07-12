@@ -107,12 +107,18 @@ end
 
 function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
   if self.verticalScrollBar then
+    if not self.verticalScrollBar:isOn() then
+      return false
+    end
     if mouseWheel == MouseWheelUp then
       self.verticalScrollBar:decrement()
     else
       self.verticalScrollBar:increment()
     end
   elseif self.horizontalScrollBar then
+    if not self.horizontalScrollBar:isOn() then
+      return false
+    end
     if mouseWheel == MouseWheelUp then
       self.horizontalScrollBar:increment()
     else

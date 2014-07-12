@@ -11,6 +11,7 @@ function UISpinBox.create()
   spinbox.value = 0
   spinbox.step = 1
   spinbox.firstchange = true
+  spinbox.mouseScroll = true
   spinbox:setText("0")
   return spinbox
 end
@@ -21,6 +22,9 @@ function UISpinBox:onSetup()
 end
 
 function UISpinBox:onMouseWheel(mousePos, direction)
+  if not self.mouseScroll then 
+    return false
+  end
   if direction == MouseWheelUp then
     self:up()
   elseif direction == MouseWheelDown then
@@ -70,6 +74,8 @@ function UISpinBox:onStyleApply(styleName, styleNode)
       addEvent(function() self:setMaximum(value) end)
     elseif name == 'minimum' then
       addEvent(function() self:setMinimum(value) end)
+    elseif name == 'mouse-scroll' then
+      addEvent(function() self:setMouseScroll(value) end)
     elseif name == 'buttons' then
       addEvent(function()
         if value then
@@ -156,4 +162,12 @@ end
 
 function UISpinBox:setStep(step)
   self.step = step or 1
+end
+
+function UISpinBox:setMouseScroll(mouseScroll)
+  self.mouseScroll = mouseScroll
+end
+
+function UISpinBox:getMouseScroll()
+  return self.mouseScroll
 end
