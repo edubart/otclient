@@ -234,19 +234,23 @@ function UIScrollBar:onGeometryChange()
 end
 
 function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
-  if not self.mouseScroll then
+  if not self.mouseScroll or not self:isOn() then
     return false
   end
   if mouseWheel == MouseWheelUp then
     if self.orientation == 'vertical' then
+      if self.value <= self.minimum then  return false end
       self:decrement()
     else
+      if self.value >= self.maximum then return false end
       self:increment()
     end
   else
     if self.orientation == 'vertical' then
+      if self.value >= self.maximum then return false end
       self:increment()
     else
+      if self.value <= self.minimum then  return false end
       self:decrement()
     end
   end
