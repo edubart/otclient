@@ -7,12 +7,13 @@ function UISpinBox.create()
   spinbox:setValidCharacters('0123456789')
   spinbox.displayButtons = true
   spinbox.minimum = 0
-  spinbox.maximum = 0
+  spinbox.maximum = 1
   spinbox.value = 0
   spinbox.step = 1
   spinbox.firstchange = true
   spinbox.mouseScroll = true
   spinbox:setText("0")
+  spinbox:setValue(1)
   return spinbox
 end
 
