@@ -112,7 +112,7 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
     end
     if mouseWheel == MouseWheelUp then
       local minimum = self.verticalScrollBar:getMinimum()
-      if self.verticalScrollBar:getValue() < minimum then
+      if self.verticalScrollBar:getValue() <= minimum then
         return false
       end
       self.verticalScrollBar:decrement()
@@ -135,7 +135,7 @@ function UIScrollArea:onMouseWheel(mousePos, mouseWheel)
       self.horizontalScrollBar:increment()
     else
       local minimum = self.horizontalScrollBar:getMinimum()
-      if self.horizontalScrollBar:getValue() < minimum then
+      if self.horizontalScrollBar:getValue() <= minimum then
         return false
       end
       self.horizontalScrollBar:decrement()
