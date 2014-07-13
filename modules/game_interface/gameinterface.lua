@@ -413,11 +413,9 @@ function startTradeWith(thing)
 end
 
 function isMenuHookCategoryEmpty(category)
-  if category and not table.empty(category) then
+  if category then
     for _,opt in pairs(category) do
-      if opt and not table.empty(opt) then
-        return false
-      end
+      if opt then return false end
     end
   end
   return true
