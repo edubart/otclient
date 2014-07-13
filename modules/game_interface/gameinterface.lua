@@ -423,6 +423,10 @@ function addMenuHook(category, name, callback, condition, shortcut)
   }
 end
 
+function removeMenuHook(category, name)
+  hookedMenuOptions[category][name] = {}
+end
+
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if not g_game.isOnline() then return end
   local menu = g_ui.createWidget('PopupMenu')
