@@ -257,7 +257,6 @@ end
 function UIMinimap:onStyleApply(styleName, styleNode)
   for name,value in pairs(styleNode) do
     if name == 'autowalk' then
-      print(value)
       self.autowalk = value
     end
   end
