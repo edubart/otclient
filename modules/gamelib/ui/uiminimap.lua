@@ -1,3 +1,7 @@
+function UIMinimap:onCreate()
+  self.autowalk = true
+end
+
 function UIMinimap:onSetup()
   self.flagWindow = nil
   self.floorUpWidget = self:getChildById('floorUp')
@@ -6,7 +10,6 @@ function UIMinimap:onSetup()
   self.zoomOutWidget = self:getChildById('zoomOut')
   self.flags = {}
   self.alternatives = {}
-  self.autowalk = true
   self.onAddAutomapFlag = function(pos, icon, description) self:addFlag(pos, icon, description) end
   self.onRemoveAutomapFlag = function(pos, icon, description) self:removeFlag(pos, icon, description) end
   connect(g_game, {
@@ -249,6 +252,16 @@ end
 
 function UIMinimap:onDragLeave(widget, pos)
   return true
+end
+
+function UIMinimap:onStyleApply(styleName, styleNode)
+  for name,value in pairs(styleNode) do
+    print(name)
+    if name == 'autowalk' then
+      print(value)
+      self.autowalk = value
+    end
+  end
 end
 
 function UIMinimap:createFlagWindow(pos)

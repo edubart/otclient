@@ -447,6 +447,8 @@ UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const
     if(parent)
         parent->addChild(widget);
 
+    widget->callLuaField("onCreate");
+
     if(widget) {
         widget->setStyleFromNode(styleNode);
 

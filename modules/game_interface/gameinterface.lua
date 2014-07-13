@@ -16,6 +16,7 @@ currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
 walkFunction = nil
+hookedMenuOptions = {}
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -103,6 +104,8 @@ end
 function terminate()
   save()
   hide()
+
+  hookedMenuOptions = {}
 
   stopSmartWalk()
 
@@ -409,6 +412,17 @@ function startTradeWith(thing)
   g_mouse.pushCursor('target')
 end
 
+function addMenuHook(category, name, callback, condition, shortcut)
+  if not hookedMenuOptions[category] then
+    hookedMenuOptions[category] = {}
+  end
+  hookedMenuOptions[category][name] = {
+    callback = callback,
+    condition = condition,
+    shortcut = shortcut
+  }
+end
+
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if not g_game.isOnline() then return end
   local menu = g_ui.createWidget('PopupMenu')
@@ -440,7 +454,6 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if useThing:isRotateable() then
       menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end)
     end
-
   end
 
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
@@ -548,6 +561,16 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
     menu:addSeparator()
     menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
+  end
+
+  -- hooked menu options
+  for _,category in pairs(hookedMenuOptions) do
+    menu:addSeparator()
+    for name,opt in pairs(category) do
+      if opt.condition(menuPosition, lookThing, useThing, creatureThing) then
+        menu:addOption(name, opt.callback, opt.shortcut)
+      end
+    end
   end
 
   menu:display(menuPosition)
