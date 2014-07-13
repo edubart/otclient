@@ -412,6 +412,17 @@ function startTradeWith(thing)
   g_mouse.pushCursor('target')
 end
 
+function isMenuHookCategoryEmpty(category)
+  if category and not table.empty(category) then
+    for _,opt in pairs(category) do
+      if opt and not table.empty(opt) then
+        return false
+      end
+    end
+  end
+  return true
+end
+
 function addMenuHook(category, name, callback, condition, shortcut)
   if not hookedMenuOptions[category] then
     hookedMenuOptions[category] = {}
@@ -424,7 +435,7 @@ function addMenuHook(category, name, callback, condition, shortcut)
 end
 
 function removeMenuHook(category, name)
-  hookedMenuOptions[category][name] = {}
+  hookedMenuOptions[category][name] = nil
 end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
@@ -569,10 +580,12 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 
   -- hooked menu options
   for _,category in pairs(hookedMenuOptions) do
-    menu:addSeparator()
-    for name,opt in pairs(category) do
-      if opt.condition(menuPosition, lookThing, useThing, creatureThing) then
-        menu:addOption(name, opt.callback, opt.shortcut)
+    if not isMenuHookCategoryEmpty(category) then
+      menu:addSeparator()
+      for name,opt in pairs(category) do
+        if opt and opt.condition(menuPosition, lookThing, useThing, creatureThing) then
+          menu:addOption(name, opt.callback, opt.shortcut)
+        end
       end
     end
   end
