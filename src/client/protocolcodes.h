@@ -228,6 +228,8 @@ namespace Proto {
         ClientCancelAttackAndFollow         = 190,
         ClientUpdateTile                    = 201,
         ClientRefreshContainer              = 202,
+        ClientBrowseField                   = 203,
+        ClientSeekInContainer               = 204,
         ClientRequestOutfit                 = 210,
         ClientChangeOutfit                  = 211,
         ClientMount                         = 212, // 870

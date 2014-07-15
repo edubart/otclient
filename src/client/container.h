@@ -57,7 +57,7 @@ protected:
     void onAddItem(const ItemPtr& item, int slot);
     void onAddItems(const std::vector<ItemPtr>& items);
     void onUpdateItem(int slot, const ItemPtr& item);
-    void onRemoveItem(int slot);
+    void onRemoveItem(int slot, const ItemPtr& lastItem);
 
     friend class Game;
 

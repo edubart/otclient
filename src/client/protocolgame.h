@@ -111,6 +111,8 @@ public:
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
     void sendAnswerModalDialog(int dialog, int button, int choice);
+    void sendBrowseField(const Position& position);
+    void sendSeekInContainer(int cid, int index);
 
     // otclient only
     void sendChangeMapAwareRange(int xrange, int yrange);

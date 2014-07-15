@@ -389,6 +389,7 @@ namespace Otc
         GameHideNpcNames = 55,
         GameSpritesAlphaChannel = 56,
         GamePremiumExpiration = 57,
+        GameBrowseField = 58,
 
         LastGameFeature = 101
     };

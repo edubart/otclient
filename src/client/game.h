@@ -85,7 +85,7 @@ protected:
     void processCloseContainer(int containerId);
     void processContainerAddItem(int containerId, const ItemPtr& item, int slot);
     void processContainerUpdateItem(int containerId, int slot, const ItemPtr& item);
-    void processContainerRemoveItem(int containerId, int slot);
+    void processContainerRemoveItem(int containerId, int slot, const ItemPtr& lastItem);
 
     // channel related
     void processChannelList(const std::vector<std::tuple<int, std::string> >& channelList);
@@ -257,6 +257,10 @@ public:
 
     // >= 970 modal dialog
     void answerModalDialog(int dialog, int button, int choice);
+
+    // >= 984 browse field
+    void browseField(const Position& position);
+    void seekInContainer(int cid, int index);
 
     //void reportRuleViolation2();
     void ping();

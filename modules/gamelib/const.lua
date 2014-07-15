@@ -117,6 +117,8 @@ GamePVPMode = 50
 GameWritableDate = 51
 GameAdditionalVipInfo = 52
 GameSpritesAlphaChannel = 56
+GamePremiumExpiration = 57
+GameBrowseField = 58
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

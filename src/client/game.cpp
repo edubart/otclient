@@ -308,7 +308,9 @@ void Game::processCloseContainer(int containerId)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
+        /* happens if you close and restart client with container opened
+         * g_logger.traceError("container not found");
+         */
         return;
     }
 
@@ -338,7 +340,7 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
     container->onUpdateItem(slot, item);
 }
 
-void Game::processContainerRemoveItem(int containerId, int slot)
+void Game::processContainerRemoveItem(int containerId, int slot, const ItemPtr& lastItem)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
@@ -346,7 +348,7 @@ void Game::processContainerRemoveItem(int containerId, int slot)
         return;
     }
 
-    container->onRemoveItem(slot);
+    container->onRemoveItem(slot, lastItem);
 }
 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
@@ -1404,6 +1406,20 @@ void Game::answerModalDialog(int dialog, int button, int choice)
     m_protocolGame->sendAnswerModalDialog(dialog, button, choice);
 }
 
+void Game::browseField(const Position& position)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendBrowseField(position);
+}
+
+void Game::seekInContainer(int cid, int index)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendSeekInContainer(cid, index);
+}
+
 void Game::ping()
 {
     if(!m_protocolGame || !m_protocolGame->isConnected())
@@ -1556,6 +1572,10 @@ void Game::setProtocolVersion(int version)
 
     if(version >= 979) {
         enableFeature(Otc::GameThingMarks);
+    }
+
+    if(version >= 984) {
+        enableFeature(Otc::GameBrowseField);
     }
 
     if(version >= 1000) {

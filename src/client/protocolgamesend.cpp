@@ -831,6 +831,29 @@ void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
     send(msg);
 }
 
+void ProtocolGame::sendBrowseField(const Position& position)
+{
+    if(!g_game.getFeature(Otc::GameBrowseField))
+        return;
+
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientBrowseField);
+    addPosition(msg, position);
+    send(msg);
+}
+
+void ProtocolGame::sendSeekInContainer(int cid, int index)
+{
+    if(!g_game.getFeature(Otc::GameContainerPagination))
+        return;
+
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientSeekInContainer);
+    msg->addU8(cid);
+    msg->addU16(index);
+    send(msg);
+}
+
 void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
 {
     if(!g_game.getFeature(Otc::GameChangeMapAwareRange))

@@ -1,3 +1,8 @@
+PageButton < Button
+  size: 30 18
+  margin: 1
+
+
 ContainerWindow < MiniWindow
   height: 150
 
@@ -24,6 +29,35 @@ ContainerWindow < MiniWindow
 
     $pressed:
       image-clip: 42 28 14 14
+
+  Panel
+    id: pagePanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: miniwindowTopBar.bottom
+    height: 20
+    margin: 2 3 0 3
+    background: #00000066
+    visible: false
+
+    Label
+      id: pageLabel
+      anchors.top: parent.top
+      anchors.horizontalCenter: parent.horizontalCenter
+      margin-top: 2
+      text-auto-resize: true
+
+    PageButton
+      id: prevPageButton
+      text: <
+      anchors.top: parent.top
+      anchors.left: parent.left
+
+    PageButton
+      id: nextPageButton
+      text: >
+      anchors.top: parent.top
+      anchors.right: parent.right
 
   MiniWindowContents
     padding-right: 0

@@ -3,9 +3,8 @@ function init()
 
   connect(Container, { onOpen = onContainerOpen,
                        onClose = onContainerClose,
-                       onAddItem = onContainerAddItem,
-                       onUpdateItem = onContainerUpdateItem,
-                       onRemoveItem = onContainerRemoveItem })
+                       onSizeChange = onContainerChangeSize,
+                       onUpdateItem = onContainerUpdateItem })
   connect(Game, { onGameEnd = clean() })
 
   reloadContainers()
@@ -14,9 +13,8 @@ end
 function terminate()
   disconnect(Container, { onOpen = onContainerOpen,
                           onClose = onContainerClose,
-                          onAddItem = onContainerAddItem,
-                          onUpdateItem = onContainerUpdateItem,
-                          onRemoveItem = onContainerRemoveItem })
+                          onSizeChange = onContainerChangeSize,
+                          onUpdateItem = onContainerUpdateItem })
   disconnect(Game, { onGameEnd = clean() })
 end
 
@@ -45,6 +43,38 @@ function refreshContainerItems(container)
   for slot=0,container:getCapacity()-1 do
     local itemWidget = container.itemsPanel:getChildById('item' .. slot)
     itemWidget:setItem(container:getItem(slot))
+  end
+
+  if container:hasPages() then
+    refreshContainerPages(container)
+  end
+end
+
+function toggleContainerPages(containerWindow, pages)
+  containerWindow:getChildById('miniwindowScrollBar'):setMarginTop(pages and 42 or 22)
+  containerWindow:getChildById('contentsPanel'):setMarginTop(pages and 42 or 22)
+  containerWindow:getChildById('pagePanel'):setVisible(pages)
+end
+
+function refreshContainerPages(container)
+  local currentPage = 1 + math.floor(container:getFirstIndex() / container:getCapacity())
+  local pages = 1 + math.floor(math.max(0, (container:getSize() - 1)) / container:getCapacity())
+  container.window:recursiveGetChildById('pageLabel'):setText(string.format('Page %i of %i', currentPage, pages))
+
+  local prevPageButton = container.window:recursiveGetChildById('prevPageButton')
+  if currentPage == 1 then
+    prevPageButton:setEnabled(false)
+  else
+    prevPageButton:setEnabled(true)
+    prevPageButton.onClick = function() g_game.seekInContainer(container:getId(), container:getFirstIndex() - container:getCapacity()) end
+  end
+
+  local nextPageButton = container.window:recursiveGetChildById('nextPageButton')
+  if currentPage >= pages then
+    nextPageButton:setEnabled(false)
+  else
+    nextPageButton:setEnabled(true)
+    nextPageButton.onClick = function() g_game.seekInContainer(container:getId(), container:getFirstIndex() + container:getCapacity()) end
   end
 end
 
@@ -88,10 +118,17 @@ function onContainerOpen(container, previousContainer)
     itemWidget:setItem(container:getItem(slot))
     itemWidget:setMargin(0)
     itemWidget.position = container:getSlotPosition(slot)
+
+    if not container:isUnlocked() then
+      itemWidget:setBorderColor('red')
+    end
   end
 
   container.window = containerWindow
   container.itemsPanel = containerPanel
+
+  toggleContainerPages(containerWindow, container:hasPages())
+  refreshContainerPages(container)
 
   local layout = containerPanel:getLayout()
   local cellSize = layout:getCellSize()
@@ -110,7 +147,7 @@ function onContainerClose(container)
   destroy(container)
 end
 
-function onContainerAddItem(container, slot, item)
+function onContainerChangeSize(container, size)
   if not container.window then return end
   refreshContainerItems(container)
 end
@@ -119,9 +156,4 @@ function onContainerUpdateItem(container, slot, item, oldItem)
   if not container.window then return end
   local itemWidget = container.itemsPanel:getChildById('item' .. slot)
   itemWidget:setItem(item)
-end
-
-function onContainerRemoveItem(container, slot, item)
-  if not container.window then return end
-  refreshContainerItems(container)
 end

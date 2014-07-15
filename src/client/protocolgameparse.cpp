@@ -686,16 +686,17 @@ void ProtocolGame::parseContainerRemoveItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
     int slot;
+    ItemPtr lastItem;
     if(g_game.getFeature(Otc::GameContainerPagination)) {
         slot = msg->getU16();
 
         int itemId = msg->getU16();
         if(itemId != 0)
-            getItem(msg, itemId);
+            lastItem = getItem(msg, itemId);
     } else {
         slot = msg->getU8();
     }
-    g_game.processContainerRemoveItem(containerId, slot);
+    g_game.processContainerRemoveItem(containerId, slot, lastItem);
 }
 
 void ProtocolGame::parseAddInventoryItem(const InputMessagePtr& msg)

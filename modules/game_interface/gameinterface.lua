@@ -467,6 +467,10 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if useThing:isRotateable() then
       menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end)
     end
+
+    if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~= 0xffff then
+      menu:addOption(tr('Browse Field'), function() g_game.browseField(useThing:getPosition()) end)
+    end
   end
 
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
