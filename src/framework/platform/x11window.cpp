@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32
+#if !defined(WIN32) && !defined(SDL2)
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
