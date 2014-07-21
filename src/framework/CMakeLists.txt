@@ -149,6 +149,7 @@ else()
     set(USE_STATIC_LIBS OFF)
     set(USE_LIBCPP ON)
 endif()
+
 set(BUILD_COMMIT "devel" CACHE "Git commit string (intended for releases)" STRING)
 set(BUILD_REVISION "0" CACHE "Git revision string (intended for releases)" STRING)
 
@@ -208,7 +209,16 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
-#find lua
+# SDL2
+if(SDL)
+	find_package(SDL2 REQUIRED)
+	set(SDL_INCLUDE_DIR ${SDL2_INCLUDE_DIR})
+	set(SDL_LIBRARY ${SDL2_LIBRARY})
+	set(framework_DEFINITIONS ${framework_DEFINITIONS} -DSDL2)
+endif()
+message(STATUS "SDL2: " ${SDL})
+
+# find lua
 if(LUAJIT)
     find_package(LuaJIT REQUIRED)
     set(LUA_INCLUDE_DIR ${LUAJIT_INCLUDE_DIR})
@@ -228,6 +238,7 @@ find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
+    ${SDL_LIBRARY}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${OPENSSL_LIBRARIES}
@@ -236,6 +247,7 @@ set(framework_LIBRARIES ${framework_LIBRARIES}
 
 set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${SDL_INCLUDE_DIR}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${OpenSSL_INCLUDE_DIR}
@@ -305,15 +317,18 @@ if(FRAMEWORK_GRAPHICS)
         set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
         set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
     else()
-        ## TODO: CMake Documentation says that this is not the right
-        # Thing for Mac OS X, but it works for now.
         if(APPLE)
-            include_directories(/usr/X11R6/include/)
-            link_directories(/usr/X11R6/lib/)
-            SET(OPENGL_LIBRARIES GL)
+			if(SDL)
+            	SET(OPENGL_LIBRARIES "-framework OpenGL")
+			else()
+            	include_directories(/usr/X11R6/include/)
+            	link_directories(/usr/X11R6/lib/)
+            	SET(OPENGL_LIBRARIES GL)		
+			endif()
         else()
             find_package(OpenGL REQUIRED)
         endif()
+        
         find_package(GLEW REQUIRED)
         set(framework_LIBRARIES ${framework_LIBRARIES} ${GLEW_LIBRARY} ${OPENGL_LIBRARIES})
     endif()
@@ -342,7 +357,9 @@ if(FRAMEWORK_GRAPHICS)
         endif()
 
     else()
-        set(framework_LIBRARIES ${framework_LIBRARIES} X11)
+	if(NOT SDL)
+        	set(framework_LIBRARIES ${framework_LIBRARIES} X11)
+	endif()
     endif()
 
     set(framework_SOURCES ${framework_SOURCES}
@@ -441,6 +458,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+	${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
@@ -554,4 +573,3 @@ endif()
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
-
