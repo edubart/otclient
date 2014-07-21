@@ -9,7 +9,7 @@ option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
 option(FRAMEWORK_XML "Use XML " ON)
 option(FRAMEWORK_NET "Use NET " ON)
 option(FRAMEWORK_SQL "Use SQL" OFF)
-option(SDL "Use SDL 2.0 support" ON)
+option(SDL "Use SDL 2.0 support" OFF)
 
 include(src/framework/CMakeLists.txt)
 include(src/client/CMakeLists.txt)
