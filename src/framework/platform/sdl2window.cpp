@@ -218,7 +218,7 @@ void SDL2Window::resize(const Size& size){
 }
 
 void SDL2Window::show(){
-    //SDL_ShowWindow(m_window);
+    SDL_ShowWindow(m_window);
 }
 
 void SDL2Window::hide(){
