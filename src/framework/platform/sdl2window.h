@@ -68,6 +68,8 @@ private:
     
     SDL_Window* m_window;
     SDL_GLContext m_context;
+    
+    stdext::boolean<true> m_hidden;
 };
 
 #endif
