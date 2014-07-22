@@ -211,10 +211,10 @@ find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
 # SDL2
 if(SDL)
-	find_package(SDL2 REQUIRED)
-	set(SDL_INCLUDE_DIR ${SDL2_INCLUDE_DIR})
-	set(SDL_LIBRARY ${SDL2_LIBRARY})
-	set(framework_DEFINITIONS ${framework_DEFINITIONS} -DSDL2)
+    find_package(SDL2 REQUIRED)
+    set(SDL_INCLUDE_DIR ${SDL2_INCLUDE_DIR})
+    set(SDL_LIBRARY ${SDL2_LIBRARY})
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DSDL2)
 endif()
 message(STATUS "SDL2: " ${SDL})
 
@@ -318,13 +318,13 @@ if(FRAMEWORK_GRAPHICS)
         set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
     else()
         if(APPLE)
-			if(SDL)
-            	SET(OPENGL_LIBRARIES "-framework OpenGL")
-			else()
-            	include_directories(/usr/X11R6/include/)
-            	link_directories(/usr/X11R6/lib/)
-            	SET(OPENGL_LIBRARIES GL)		
-			endif()
+            if(SDL)
+                SET(OPENGL_LIBRARIES "-framework OpenGL")
+            else()
+                include_directories(/usr/X11R6/include/)
+                link_directories(/usr/X11R6/lib/)
+                SET(OPENGL_LIBRARIES GL)        
+            endif()
         else()
             find_package(OpenGL REQUIRED)
         endif()
@@ -357,9 +357,9 @@ if(FRAMEWORK_GRAPHICS)
         endif()
 
     else()
-	if(NOT SDL)
-        	set(framework_LIBRARIES ${framework_LIBRARIES} X11)
-	endif()
+    if(NOT SDL)
+            set(framework_LIBRARIES ${framework_LIBRARIES} X11)
+    endif()
     endif()
 
     set(framework_SOURCES ${framework_SOURCES}
@@ -458,7 +458,7 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-	${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.h
 
         # window input
