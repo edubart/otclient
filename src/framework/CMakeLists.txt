@@ -458,7 +458,7 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-    ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/sdl2window.h
 
         # window input
