@@ -180,7 +180,7 @@ void SDL2Window::init(){
 	uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
 	
 	// Create window
-	m_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_size.width(), m_size.height(), flags);
+	m_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_size.width(), m_size.height(), flags);
 	
 	if(m_window == NULL){
 		g_logger.fatal("SDL2 failed to create window!");
@@ -201,6 +201,7 @@ void SDL2Window::init(){
 
 void SDL2Window::terminate(){
 	SDL_GL_DeleteContext(m_context);
+	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 }
 
