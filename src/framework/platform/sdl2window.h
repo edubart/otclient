@@ -30,44 +30,44 @@
 class SDL2Window : public PlatformWindow
 {
 public:
-	SDL2Window();
-	void init();
-	void terminate();
+    SDL2Window();
+    void init();
+    void terminate();
 
-	void move(const Point& pos);
-	void resize(const Size& size);
-	void show();
-	void hide();
-	void maximize();
-	void poll();
-	void swapBuffers();
-	void showMouse();
-	void hideMouse();
-	void displayFatalError(const std::string& message);
+    void move(const Point& pos);
+    void resize(const Size& size);
+    void show();
+    void hide();
+    void maximize();
+    void poll();
+    void swapBuffers();
+    void showMouse();
+    void hideMouse();
+    void displayFatalError(const std::string& message);
 
-	void setMouseCursor(int cursorId);
-	void restoreMouseCursor();
+    void setMouseCursor(int cursorId);
+    void restoreMouseCursor();
 
-	void setTitle(const std::string& title);
-	void setMinimumSize(const Size& minimumSize);
-	void setFullscreen(bool fullscreen);
-	void setVerticalSync(bool enable);
-	void setIcon(const std::string& iconFile);
-	void setClipboardText(const std::string& text);
+    void setTitle(const std::string& title);
+    void setMinimumSize(const Size& minimumSize);
+    void setFullscreen(bool fullscreen);
+    void setVerticalSync(bool enable);
+    void setIcon(const std::string& iconFile);
+    void setClipboardText(const std::string& text);
 
-	Size getDisplaySize();
-	std::string getClipboardText();
-	std::string getPlatformType();
+    Size getDisplaySize();
+    std::string getClipboardText();
+    std::string getPlatformType();
 protected:
-	int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
-	Fw::Key retranslateVirtualKey(SDL_Keycode keycode);
+    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
+    Fw::Key retranslateVirtualKey(SDL_Keycode keycode);
 private:
-	SDL_Cursor* m_defaultCursor;
-	SDL_Cursor* m_cursor;
-	std::vector<SDL_Cursor*> m_cursors;
-	
-	SDL_Window* m_window;
-	SDL_GLContext m_context;
+    SDL_Cursor* m_defaultCursor;
+    SDL_Cursor* m_cursor;
+    std::vector<SDL_Cursor*> m_cursors;
+    
+    SDL_Window* m_window;
+    SDL_GLContext m_context;
 };
 
 #endif
