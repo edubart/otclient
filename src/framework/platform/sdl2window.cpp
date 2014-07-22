@@ -180,7 +180,7 @@ void SDL2Window::init(){
     uint32_t flags = SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN | SDL_WINDOW_RESIZABLE;
     
     // Create window
-    m_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, m_size.width(), m_size.height(), flags);
+    m_window = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, m_size.width(), m_size.height(), flags);
     
     if(m_window == NULL){
         g_logger.fatal("SDL2 failed to create window!");
@@ -218,17 +218,29 @@ void SDL2Window::resize(const Size& size){
 }
 
 void SDL2Window::show(){
+    m_hidden = false;
+    
+    if(m_maximized){
+        SDL_MaximizeWindow(m_window);
+    }
+    
     SDL_ShowWindow(m_window);
 }
 
 void SDL2Window::hide(){
+    m_hidden = true;
+    
     SDL_HideWindow(m_window);
 }
 
 void SDL2Window::maximize(){
-    m_maximized = true;
-    
-    SDL_MaximizeWindow(m_window);
+    if(!m_maximized){
+        m_maximized = true;
+        
+        if(!m_hidden){
+            SDL_MaximizeWindow(m_window);
+        }
+    }
 }
 
 Fw::Key SDL2Window::retranslateVirtualKey(SDL_Keycode keycode){
@@ -297,6 +309,31 @@ void SDL2Window::poll(){
                     
                     case SDL_WINDOWEVENT_LEAVE: {
                         m_focused = false;
+                        break;
+                    }
+                    
+                    case SDL_WINDOWEVENT_MINIMIZED: {
+                        m_visible = false;
+                        break;
+                    }
+                    
+                    case SDL_WINDOWEVENT_MAXIMIZED: {
+                        m_maximized = true;
+                        m_visible = true;
+                        
+                        if(m_onResize)
+                            m_onResize(m_size);
+                            
+                        break;
+                    }
+                    
+                    case SDL_WINDOWEVENT_RESTORED: {
+                        m_maximized = false;
+                        m_visible = true;
+                        
+                        if(m_onResize)
+                            m_onResize(m_size);
+
                         break;
                     }
                     
