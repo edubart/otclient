@@ -284,6 +284,11 @@ void SDL2Window::poll(){
                         break;
                     }
                     
+                    case SDL_WINDOWEVENT_EXPOSED: {
+                        m_visible = true;
+                        break;
+                    }
+                    
                     case SDL_WINDOWEVENT_RESIZED: {
                         m_size = Size(event.window.data1, event.window.data2);
                         
@@ -313,6 +318,7 @@ void SDL2Window::poll(){
                     }
                     
                     case SDL_WINDOWEVENT_MINIMIZED: {
+                        m_maximized = false;
                         m_visible = false;
                         break;
                     }
@@ -322,8 +328,7 @@ void SDL2Window::poll(){
                         m_visible = true;
                         
                         if(m_onResize)
-                            m_onResize(m_size);
-                            
+                            m_onResize(m_size);         
                         break;
                     }
                     
@@ -333,13 +338,16 @@ void SDL2Window::poll(){
                         
                         if(m_onResize)
                             m_onResize(m_size);
-
                         break;
                     }
                     
                     default: {
                         break;
                     }
+                }
+                
+                if(m_visible && m_context){
+                    internalRestoreGLContext();
                 }
                 
                 break;
@@ -605,6 +613,12 @@ std::string SDL2Window::getClipboardText(){
 
 std::string SDL2Window::getPlatformType(){
     return "SDL2";
+}
+
+void SDL2Window::internalRestoreGLContext(){
+    if(SDL_GL_MakeCurrent(m_window, m_context) != 0){
+        g_logger.fatal("SDL2 was unable to make current GL context");
+    }
 }
 
 int SDL2Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot){
