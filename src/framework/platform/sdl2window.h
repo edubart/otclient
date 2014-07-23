@@ -29,6 +29,8 @@
 
 class SDL2Window : public PlatformWindow
 {
+    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
+    void internalRestoreGLContext();
 public:
     SDL2Window();
     void init();
@@ -59,7 +61,6 @@ public:
     std::string getClipboardText();
     std::string getPlatformType();
 protected:
-    int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
     Fw::Key retranslateVirtualKey(SDL_Keycode keycode);
 private:
     SDL_Cursor* m_defaultCursor;
