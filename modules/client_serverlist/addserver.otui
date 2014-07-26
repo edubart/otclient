@@ -1,7 +1,7 @@
 MainWindow
   id: addServerWindow
   !text: tr('New Server')
-  size: 180 180
+  size: 180 195
   visible: false
   @onEscape: AddServer.hide()
   @onEnter: AddServer.add()
@@ -48,6 +48,9 @@ MainWindow
     anchors.top: protocolLabel.bottom
     anchors.left: protocolLabel.left
     anchors.right: port.right
+    menu-scroll: true
+    menu-height: 125
+    menu-scroll-step: 25
     @onSetup: |
       for _, proto in pairs(g_game.getSupportedClients()) do
         self:addOption(proto)
