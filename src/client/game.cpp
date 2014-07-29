@@ -1475,34 +1475,28 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 760 || version > 1041))
+    if(version != 0 && (version < 740 || version > 1041))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
-    if(version >= 770)
-    {
+    if(version >= 770) {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
     }
 
-    if(version >= 780)
-    {
+    if(version >= 780) {
         enableFeature(Otc::GamePlayerAddons);
         enableFeature(Otc::GamePlayerStamina);
         enableFeature(Otc::GameNewFluids);
         enableFeature(Otc::GameMessageLevel);
         enableFeature(Otc::GamePlayerStateU16);
-        enableFeature(Otc::GameNewOutfitProtocol); // This might be 790 not 780
+        enableFeature(Otc::GameNewOutfitProtocol);
     }
 
     if(version >= 790) {
         enableFeature(Otc::GameWritableDate);
-    }
-
-    if(version >= 780 && version <= 854) {          // 780 might not be accurate
-        enableFeature(Otc::GameChargeableItems);
     }
 
     if(version >= 840) {
@@ -1611,7 +1605,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 760 || version > 1041))
+    if(version != 0 && (version < 740 || version > 1041))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_clientVersion = version;

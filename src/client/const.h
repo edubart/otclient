@@ -333,7 +333,6 @@ namespace Otc
     };
 
     enum GameFeature {
-        // 1-50 defined in c++
         GameProtocolChecksum = 1,
         GameAccountNames = 2,
         GameChallengeOnLogin = 3,
@@ -352,7 +351,7 @@ namespace Otc
         GameMagicEffectU16 = 16,
         GamePlayerMarket = 17,
         GameSpritesU32 = 18,
-        GameChargeableItems = 19,
+        // 19 unused
         GameOfflineTrainingTime = 20,
         GamePurseSlot = 21,
         GameFormatCreatureName = 22,

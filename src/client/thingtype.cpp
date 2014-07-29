@@ -53,14 +53,12 @@ void ThingType::serialize(const FileStreamPtr& fin)
             continue;
 
         int attr = i;
-        if(g_game.getFeature(Otc::GameChargeableItems)) {
+        if(g_game.getProtocolVersion() >= 780) {
             if(attr == ThingAttrChargeable)
                 attr = ThingAttrWritable;
             else if(attr >= ThingAttrWritable)
                 attr += 1;
-        }
-
-        if(g_game.getProtocolVersion() >= 1010) {
+        } else if(g_game.getProtocolVersion() >= 1010) {
             if(attr == ThingAttrNoMoveAnimation)
                 attr = 16;
             else if(attr >= ThingAttrPickupable)
@@ -140,16 +138,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             break;
         }
 
-        if(g_game.getFeature(Otc::GameChargeableItems)) {
-            if(attr == ThingAttrWritable) {
-                m_attribs.set(ThingAttrChargeable, true);
-                continue;
-            } else if(attr > ThingAttrWritable)
-                attr -= 1;
-        }
-
         if(g_game.getProtocolVersion() >= 1010) {
-            /* In 10.10 all attributes from 16 and up were
+            /* In 10.10+ all attributes from 16 and up were
              * incremented by 1 to make space for 16 as
              * "No Movement Animation" flag.
              */
@@ -157,12 +147,58 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 attr = ThingAttrNoMoveAnimation;
             else if(attr > 16)
                 attr -= 1;
+        } else if(g_game.getProtocolVersion() >= 780) {
+            /* In 7.80-8.54 all attributes from 8 and higher were
+             * incremented by 1 to make space for 8 as
+             * "Item Charges" flag.
+             */
+            if(attr == 8) {
+                m_attribs.set(ThingAttrChargeable, true);
+                continue;
+            } else if(attr > 8)
+                attr -= 1;
+        } else if(g_game.getProtocolVersion() >= 755) {
+            /* In 7.55-7.72 attributes 23 is "Floor Change". */
+            if(attr == 23)
+                attr = ThingAttrFloorChange;
+        } else if(g_game.getProtocolVersion() >= 740) {
+            /* 7.4-7.5 */
+            if(attr > 0 && attr <= 15)
+                attr += 1;
+            else if(attr == 17)
+                attr = ThingAttrFloorChange;
+            else if(attr == 18)
+                attr += 12;
+            else if(attr == 19 || attr == 22)
+                attr += 6;
+            else if(attr == 16)
+                attr += 5;
+            else if(attr == 20)
+                attr += 4;
+            else if(attr == 24)
+                attr += 2;
+            else if(attr >= 25 && attr <= 27)
+                attr -= 8;
+            else if(attr == 23)
+                attr -= 3;
+            else if(attr == 28)
+                attr -= 1;
+
+            if(attr == ThingAttrMultiUse)
+                attr = ThingAttrForceUse;
+            else if(attr == ThingAttrForceUse)
+                attr = ThingAttrMultiUse;
         }
 
         switch(attr) {
             case ThingAttrDisplacement: {
-                m_displacement.x = fin->getU16();
-                m_displacement.y = fin->getU16();
+                if(g_game.getProtocolVersion() >= 755) {
+                    m_displacement.x = fin->getU16();
+                    m_displacement.y = fin->getU16();
+                } else {
+                    m_displacement.x = 8;
+                    m_displacement.y = 8;
+                }
                 m_attribs.set(attr, true);
                 break;
             }
@@ -220,7 +256,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_layers = fin->getU8();
     m_numPatternX = fin->getU8();
     m_numPatternY = fin->getU8();
-    m_numPatternZ = fin->getU8();
+    if(g_game.getProtocolVersion() >= 755)
+        m_numPatternZ = fin->getU8();
+    else
+        m_numPatternZ = 1;
     m_animationPhases = fin->getU8();
 
     int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;

@@ -82,7 +82,8 @@ enum ThingAttr : uint8 {
     ThingAttrOpacity          = 100,
     ThingAttrNotPreWalkable   = 101,
 
-    ThingAttrNoMoveAnimation  = 253, // real value is 16, but we need to do this for backwards compatibility
+    ThingAttrFloorChange      = 252,
+    ThingAttrNoMoveAnimation  = 253, // 10.10: real value is 16, but we need to do this for backwards compatibility
     ThingAttrChargeable       = 254, // deprecated
     ThingLastAttr             = 255
 };
