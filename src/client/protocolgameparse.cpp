@@ -631,7 +631,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int capacity = msg->getU8();
     bool hasParent = (msg->getU8() != 0);
 
-    bool isUnlocked = false;
+    bool isUnlocked = true;
     bool hasPages = false;
     int containerSize = 0;
     int firstIndex = 0;
