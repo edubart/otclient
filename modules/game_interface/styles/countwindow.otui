@@ -1,7 +1,7 @@
 CountWindow < MainWindow
   id: countWindow
   !text: tr('Move Stackable Item')
-  size: 196 80
+  size: 196 90
 
   SpinBox
     id: spinBox

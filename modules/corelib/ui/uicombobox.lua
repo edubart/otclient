@@ -28,6 +28,10 @@ function UIComboBox:getOption(text)
   end
 end
 
+function UIComboBox:setOption(text, dontSignal)
+  self:setCurrentOption(text, dontSignal)
+end
+
 function UIComboBox:setCurrentOption(text, dontSignal)
   if not self.options then return end
   for i,v in ipairs(self.options) do

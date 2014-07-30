@@ -433,7 +433,11 @@ function addMenuHook(category, name, callback, condition, shortcut)
 end
 
 function removeMenuHook(category, name)
-  hookedMenuOptions[category][name] = nil
+  if not name then
+    hookedMenuOptions[category] = {}
+  else
+    hookedMenuOptions[category][name] = nil
+  end
 end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
