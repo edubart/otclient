@@ -10,13 +10,15 @@ Otclient is written in C++2011, the upcoming C++ standard and heavily scripted i
 
 ### Where do I download?
 
+The latest commits compiled for Windows can be found here.
+* [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
+
 Here is the latest v0.6.5 release compiled for both i686(32 bit) and x86_64(64 bit) machines, with OpenGL renderer.
 This release is compatible with protocols ranges from 7.60 up to 10.31.
-
 * [For Windows](https://www.dropbox.com/sh/se1okacemoqzjve/XFqFoSKLCg/otclient-win-0.6.5.zip)
 * [For Linux](https://www.dropbox.com/sh/se1okacemoqzjve/xKJL7j6vEo/otclient-linux-0.6.5.tar.gz)
 
-**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VER/` (i.e: `data/things/1031/Tibia.spr`)
+**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1041/Tibia.spr`)
 
 Older releases can be downloaded from [here](https://www.dropbox.com/sh/se1okacemoqzjve/-oWK4YFm03)
 
