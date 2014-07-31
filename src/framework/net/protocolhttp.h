@@ -40,7 +40,7 @@ public:
 
     void send(const std::string &message);
     void recv();
-	void recv_some();
+    void recv_some();
 
     ProtocolHttpPtr asProtocolHttp() { return static_self_cast<ProtocolHttp>(); }
 
