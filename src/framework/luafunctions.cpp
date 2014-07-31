@@ -787,7 +787,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ProtocolHttp>("disconnect", &ProtocolHttp::disconnect);
     g_lua.bindClassMemberFunction<ProtocolHttp>("send", &ProtocolHttp::send);
     g_lua.bindClassMemberFunction<ProtocolHttp>("recv", &ProtocolHttp::recv);
-    g_lua.bindClassMemberFunction<ProtocolHttp>("recv_some", &ProtocolHttp::recv_some);
 
     // InputMessage
     g_lua.registerClass<InputMessage>();
