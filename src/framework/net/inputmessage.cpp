@@ -56,7 +56,7 @@ uint8 InputMessage::getU8()
 uint16 InputMessage::getU16()
 {
     checkRead(2);
-    uint16 v = stdext::readLE16(m_buffer + m_readPos);
+    uint16 v = stdext::readULE16(m_buffer + m_readPos);
     m_readPos += 2;
     return v;
 }
@@ -64,7 +64,7 @@ uint16 InputMessage::getU16()
 uint32 InputMessage::getU32()
 {
     checkRead(4);
-    uint32 v = stdext::readLE32(m_buffer + m_readPos);
+    uint32 v = stdext::readULE32(m_buffer + m_readPos);
     m_readPos += 4;
     return v;
 }
@@ -72,7 +72,7 @@ uint32 InputMessage::getU32()
 uint64 InputMessage::getU64()
 {
     checkRead(8);
-    uint64 v = stdext::readLE64(m_buffer + m_readPos);
+    uint64 v = stdext::readULE64(m_buffer + m_readPos);
     m_readPos += 8;
     return v;
 }

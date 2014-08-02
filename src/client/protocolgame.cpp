@@ -56,7 +56,7 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
     if(m_firstRecv) {
         m_firstRecv = false;
 
-        if(g_game.getProtocolVersion() >= 841) { // not sure since which version this is, but it seems to be after 8.40
+        if(g_game.getClientVersion() >= 841) { // not sure since which version this is, but it seems to be after 8.40
             int size = inputMessage->getU16();
             if(size != inputMessage->getUnreadSize()) {
                 g_logger.traceError("invalid message size");

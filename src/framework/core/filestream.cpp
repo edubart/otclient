@@ -206,7 +206,7 @@ uint16 FileStream::getU16()
         if(m_pos+2 > m_data.size())
             throwError("read failed");
 
-        v = stdext::readLE16(&m_data[m_pos]);
+        v = stdext::readULE16(&m_data[m_pos]);
         m_pos += 2;
     }
     return v;
@@ -222,7 +222,7 @@ uint32 FileStream::getU32()
         if(m_pos+4 > m_data.size())
             throwError("read failed");
 
-        v = stdext::readLE32(&m_data[m_pos]);
+        v = stdext::readULE32(&m_data[m_pos]);
         m_pos += 4;
     }
     return v;
@@ -237,7 +237,70 @@ uint64 FileStream::getU64()
     } else {
         if(m_pos+8 > m_data.size())
             throwError("read failed");
-        v = stdext::readLE64(&m_data[m_pos]);
+        v = stdext::readULE64(&m_data[m_pos]);
+        m_pos += 8;
+    }
+    return v;
+}
+
+int8 FileStream::get8()
+{
+    int8 v = 0;
+    if(!m_caching) {
+        if(PHYSFS_read(m_fileHandle, &v, 1, 1) != 1)
+            throwError("read failed", true);
+    } else {
+        if(m_pos+1 > m_data.size())
+            throwError("read failed");
+
+        v = m_data[m_pos];
+        m_pos += 1;
+    }
+    return v;
+}
+
+int16 FileStream::get16()
+{
+    int16 v = 0;
+    if(!m_caching) {
+        if(PHYSFS_readSLE16(m_fileHandle, &v) == 0)
+            throwError("read failed", true);
+    } else {
+        if(m_pos+2 > m_data.size())
+            throwError("read failed");
+
+        v = stdext::readSLE16(&m_data[m_pos]);
+        m_pos += 2;
+    }
+    return v;
+}
+
+int32 FileStream::get32()
+{
+    int32 v = 0;
+    if(!m_caching) {
+        if(PHYSFS_readSLE32(m_fileHandle, &v) == 0)
+            throwError("read failed", true);
+    } else {
+        if(m_pos+4 > m_data.size())
+            throwError("read failed");
+
+        v = stdext::readSLE32(&m_data[m_pos]);
+        m_pos += 4;
+    }
+    return v;
+}
+
+int64 FileStream::get64()
+{
+    int64 v = 0;
+    if(!m_caching) {
+        if(PHYSFS_readSLE64(m_fileHandle, (PHYSFS_sint64*)&v) == 0)
+            throwError("read failed", true);
+    } else {
+        if(m_pos+8 > m_data.size())
+            throwError("read failed");
+        v = stdext::readSLE64(&m_data[m_pos]);
         m_pos += 8;
     }
     return v;
@@ -306,7 +369,7 @@ void FileStream::addU16(uint16 v)
             throwError("write failed", true);
     } else {
         m_data.grow(m_pos + 2);
-        stdext::writeLE16(&m_data[m_pos], v);
+        stdext::writeULE16(&m_data[m_pos], v);
         m_pos += 2;
     }
 }
@@ -318,7 +381,7 @@ void FileStream::addU32(uint32 v)
             throwError("write failed", true);
     } else {
         m_data.grow(m_pos + 4);
-        stdext::writeLE32(&m_data[m_pos], v);
+        stdext::writeULE32(&m_data[m_pos], v);
         m_pos += 4;
     }
 }
@@ -330,7 +393,54 @@ void FileStream::addU64(uint64 v)
             throwError("write failed", true);
     } else {
         m_data.grow(m_pos + 8);
-        stdext::writeLE64(&m_data[m_pos], v);
+        stdext::writeULE64(&m_data[m_pos], v);
+        m_pos += 8;
+    }
+}
+
+void FileStream::add8(int8 v)
+{
+    if(!m_caching) {
+        if(PHYSFS_write(m_fileHandle, &v, 1, 1) != 1)
+            throwError("write failed", true);
+    } else {
+        m_data.add(v);
+        m_pos++;
+    }
+}
+
+void FileStream::add16(int16 v)
+{
+    if(!m_caching) {
+        if(PHYSFS_writeSLE16(m_fileHandle, v) == 0)
+            throwError("write failed", true);
+    } else {
+        m_data.grow(m_pos + 2);
+        stdext::writeSLE16(&m_data[m_pos], v);
+        m_pos += 2;
+    }
+}
+
+void FileStream::add32(int32 v)
+{
+    if(!m_caching) {
+        if(PHYSFS_writeSLE32(m_fileHandle, v) == 0)
+            throwError("write failed", true);
+    } else {
+        m_data.grow(m_pos + 4);
+        stdext::writeSLE32(&m_data[m_pos], v);
+        m_pos += 4;
+    }
+}
+
+void FileStream::add64(int64 v)
+{
+    if(!m_caching) {
+        if(PHYSFS_writeSLE64(m_fileHandle, v) == 0)
+            throwError("write failed", true);
+    } else {
+        m_data.grow(m_pos + 8);
+        stdext::writeSLE64(&m_data[m_pos], v);
         m_pos += 8;
     }
 }

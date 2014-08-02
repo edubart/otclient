@@ -389,6 +389,7 @@ namespace Otc
         GameSpritesAlphaChannel = 56,
         GamePremiumExpiration = 57,
         GameBrowseField = 58,
+        GameEnhancedAnimations = 59,
 
         LastGameFeature = 101
     };

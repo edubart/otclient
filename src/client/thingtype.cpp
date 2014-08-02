@@ -53,12 +53,12 @@ void ThingType::serialize(const FileStreamPtr& fin)
             continue;
 
         int attr = i;
-        if(g_game.getProtocolVersion() >= 780) {
+        if(g_game.getClientVersion() >= 780) {
             if(attr == ThingAttrChargeable)
                 attr = ThingAttrWritable;
             else if(attr >= ThingAttrWritable)
                 attr += 1;
-        } else if(g_game.getProtocolVersion() >= 1010) {
+        } else if(g_game.getClientVersion() >= 1010) {
             if(attr == ThingAttrNoMoveAnimation)
                 attr = 16;
             else if(attr >= ThingAttrPickupable)
@@ -116,6 +116,19 @@ void ThingType::serialize(const FileStreamPtr& fin)
     fin->addU8(m_numPatternZ);
     fin->addU8(m_animationPhases);
 
+    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(m_animationPhases > 1) {
+            fin->addU8(m_animation.async ? 0 : 1);
+            fin->add32(m_animation.loopCount);
+            fin->addU8(m_animation.startIndex);
+
+            for(std::tuple<int, int> frame : m_animation.frames) {
+                fin->addU32(std::get<0>(frame));
+                fin->addU32(std::get<1>(frame));
+            }
+        }
+    }
+
     for(uint i = 0; i < m_spritesIndex.size(); i++) {
         if(g_game.getFeature(Otc::GameSpritesU32))
             fin->addU32(m_spritesIndex[i]);
@@ -130,15 +143,17 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_id = clientId;
     m_category = category;
 
+    int count = 0, attr = -1;
     bool done = false;
     for(int i = 0 ; i < ThingLastAttr;++i) {
-        int attr = fin->getU8();
+        count++;
+        attr = fin->getU8();
         if(attr == ThingLastAttr) {
             done = true;
             break;
         }
 
-        if(g_game.getProtocolVersion() >= 1010) {
+        if(g_game.getClientVersion() >= 1010) {
             /* In 10.10+ all attributes from 16 and up were
              * incremented by 1 to make space for 16 as
              * "No Movement Animation" flag.
@@ -147,12 +162,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 attr = ThingAttrNoMoveAnimation;
             else if(attr > 16)
                 attr -= 1;
-        } else if(g_game.getProtocolVersion() >= 860) {
+        } else if(g_game.getClientVersion() >= 860) {
             /* Default attribute values follow
              * the format of 8.6-9.86.
              * Therefore no changes here.
              */
-        } else if(g_game.getProtocolVersion() >= 780) {
+        } else if(g_game.getClientVersion() >= 780) {
             /* In 7.80-8.54 all attributes from 8 and higher were
              * incremented by 1 to make space for 8 as
              * "Item Charges" flag.
@@ -162,11 +177,11 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 continue;
             } else if(attr > 8)
                 attr -= 1;
-        } else if(g_game.getProtocolVersion() >= 755) {
+        } else if(g_game.getClientVersion() >= 755) {
             /* In 7.55-7.72 attributes 23 is "Floor Change". */
             if(attr == 23)
                 attr = ThingAttrFloorChange;
-        } else if(g_game.getProtocolVersion() >= 740) {
+        } else if(g_game.getClientVersion() >= 740) {
             /* In 7.4-7.5 attribute "Ground Border" did not exist
              * attributes 1-15 have to be adjusted.
              * Several other changes in the format.
@@ -207,7 +222,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
 
         switch(attr) {
             case ThingAttrDisplacement: {
-                if(g_game.getProtocolVersion() >= 755) {
+                if(g_game.getClientVersion() >= 755) {
                     m_displacement.x = fin->getU16();
                     m_displacement.y = fin->getU16();
                 } else {
@@ -256,7 +271,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     }
 
     if(!done)
-        stdext::throw_exception("corrupt data");
+        stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
+            m_id, m_category, count, attr));
 
     uint8 width = fin->getU8();
     uint8 height = fin->getU8();
@@ -271,11 +287,26 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_layers = fin->getU8();
     m_numPatternX = fin->getU8();
     m_numPatternY = fin->getU8();
-    if(g_game.getProtocolVersion() >= 755)
+    if(g_game.getClientVersion() >= 755)
         m_numPatternZ = fin->getU8();
     else
         m_numPatternZ = 1;
     m_animationPhases = fin->getU8();
+
+    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(m_animationPhases > 1) {
+            m_animation.async = fin->getU8() == 0;
+            m_animation.loopCount = fin->get32();
+            m_animation.startIndex = fin->getU8();
+
+            for(int i = 0; i < m_animationPhases; i++) {
+                int minDuration = fin->getU32();
+                int maxDuration = fin->getU32();
+
+                m_animation.frames.push_back(std::make_tuple(minDuration, maxDuration));
+            }
+        }
+    }
 
     int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
 

@@ -54,6 +54,10 @@ public:
     uint16 getU16();
     uint32 getU32();
     uint64 getU64();
+    int8 get8();
+    int16 get16();
+    int32 get32();
+    int64 get64();
     std::string getString();
     BinaryTreePtr getBinaryTree();
 
@@ -63,6 +67,10 @@ public:
     void addU16(uint16 v);
     void addU32(uint32 v);
     void addU64(uint64 v);
+    void add8(int8 v);
+    void add16(int16 v);
+    void add32(int32 v);
+    void add64(int64 v);
     void addString(const std::string& v);
     void addPos(uint16 x, uint16 y, uint8 z) { addU16(x); addU16(y); addU8(z); }
     void addPoint(const Point& p) { addU8(p.x); addU8(p.y); }

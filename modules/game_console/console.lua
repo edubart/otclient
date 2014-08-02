@@ -324,7 +324,7 @@ end
 
 function openHelp()
   local helpChannel = 9
-  if g_game.getProtocolVersion() <= 810 then
+  if g_game.getClientVersion() <= 810 then
     helpChannel = 8
   end
   g_game.joinChannel(helpChannel)
@@ -1236,7 +1236,7 @@ function online()
   defaultTab = addTab(tr('Default'), true)
   serverTab = addTab(tr('Server Log'), false)
 
-  if g_game.getProtocolVersion() < 862 then
+  if g_game.getClientVersion() < 862 then
     g_keyboard.bindKeyDown('Ctrl+R', openPlayerReportRuleViolationWindow)
   end
   -- open last channels
@@ -1259,7 +1259,7 @@ function online()
 end
 
 function offline()
-  if g_game.getProtocolVersion() < 862 then
+  if g_game.getClientVersion() < 862 then
     g_keyboard.unbindKeyDown('Ctrl+R')
   end
   clear()

@@ -410,9 +410,9 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getProtocolVersion() >= 850)
+    if(g_game.getClientVersion() >= 850)
         numViolationReasons = 20;
-    else if(g_game.getProtocolVersion() >= 840)
+    else if(g_game.getClientVersion() >= 840)
         numViolationReasons = 23;
     else
         numViolationReasons = 32;
@@ -562,7 +562,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
     Position pos = getPosition(msg);
     int stackPos = -1;
 
-    if(g_game.getProtocolVersion() >= 841)
+    if(g_game.getClientVersion() >= 841)
         stackPos = msg->getU8();
 
     ThingPtr thing = getThing(msg);
@@ -722,7 +722,7 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
 
     int listCount;
 
-    if(g_game.getProtocolVersion() >= 900)
+    if(g_game.getClientVersion() >= 900)
         listCount = msg->getU16();
     else
         listCount = msg->getU8();
@@ -749,7 +749,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
     std::vector<std::tuple<ItemPtr, int>> goods;
 
     int money;
-    if(g_game.getProtocolVersion() >= 973)
+    if(g_game.getClientVersion() >= 973)
         money = msg->getU64();
     else
         money = msg->getU32();
@@ -992,7 +992,7 @@ void ProtocolGame::parseEditText(const InputMessagePtr& msg)
     uint id = msg->getU32();
 
     int itemId;
-    if(g_game.getProtocolVersion() >= 1010) {
+    if(g_game.getClientVersion() >= 1010) {
         // TODO: processEditText with ItemPtr as parameter
         ItemPtr item = getItem(msg);
         itemId = item->getId();
@@ -1640,7 +1640,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     }
 
     int enterButton, escapeButton;
-    if(g_game.getProtocolVersion() > 970) {
+    if(g_game.getClientVersion() > 970) {
         escapeButton = msg->getU8();
         enterButton = msg->getU8();
     }
@@ -1685,7 +1685,7 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
 void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
 {
     int len;
-    if (g_game.getProtocolVersion() >= 1035) {
+    if (g_game.getClientVersion() >= 1035) {
         len = 1;
     } else {
         len = msg->getU8();
@@ -1895,7 +1895,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
 
             int creatureType;
-            if(g_game.getProtocolVersion() >= 910)
+            if(g_game.getClientVersion() >= 910)
                 creatureType = msg->getU8();
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
@@ -1973,7 +1973,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             }
         }
 
-        if(g_game.getProtocolVersion() >= 854)
+        if(g_game.getClientVersion() >= 854)
             unpass = msg->getU8();
 
         if(creature) {
@@ -2004,7 +2004,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(creature)
             creature->turn(direction);
 
-        if(g_game.getProtocolVersion() >= 953) {
+        if(g_game.getClientVersion() >= 953) {
             bool unpass = msg->getU8();
 
             if(creature)

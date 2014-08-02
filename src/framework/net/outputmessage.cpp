@@ -46,7 +46,7 @@ void OutputMessage::addU8(uint8 value)
 void OutputMessage::addU16(uint16 value)
 {
     checkWrite(2);
-    stdext::writeLE16(m_buffer + m_writePos, value);
+    stdext::writeULE16(m_buffer + m_writePos, value);
     m_writePos += 2;
     m_messageSize += 2;
 }
@@ -54,7 +54,7 @@ void OutputMessage::addU16(uint16 value)
 void OutputMessage::addU32(uint32 value)
 {
     checkWrite(4);
-    stdext::writeLE32(m_buffer + m_writePos, value);
+    stdext::writeULE32(m_buffer + m_writePos, value);
     m_writePos += 4;
     m_messageSize += 4;
 }
@@ -62,7 +62,7 @@ void OutputMessage::addU32(uint32 value)
 void OutputMessage::addU64(uint64 value)
 {
     checkWrite(8);
-    stdext::writeLE64(m_buffer + m_writePos, value);
+    stdext::writeULE64(m_buffer + m_writePos, value);
     m_writePos += 8;
     m_messageSize += 8;
 }
@@ -104,7 +104,7 @@ void OutputMessage::writeChecksum()
     uint32 checksum = stdext::adler32(m_buffer + m_headerPos, m_messageSize);
     assert(m_headerPos - 4 >= 0);
     m_headerPos -= 4;
-    stdext::writeLE32(m_buffer + m_headerPos, checksum);
+    stdext::writeULE32(m_buffer + m_headerPos, checksum);
     m_messageSize += 4;
 }
 
@@ -112,7 +112,7 @@ void OutputMessage::writeMessageSize()
 {
     assert(m_headerPos - 2 >= 0);
     m_headerPos -= 2;
-    stdext::writeLE16(m_buffer + m_headerPos, m_messageSize);
+    stdext::writeULE16(m_buffer + m_headerPos, m_messageSize);
     m_messageSize += 2;
 }
 

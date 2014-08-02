@@ -132,7 +132,7 @@ uint16 BinaryTree::getU16()
     unserialize();
     if(m_pos+2 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU16 failed");
-    uint16 v = stdext::readLE16(&m_buffer[m_pos]);
+    uint16 v = stdext::readULE16(&m_buffer[m_pos]);
     m_pos += 2;
     return v;
 }
@@ -142,7 +142,7 @@ uint32 BinaryTree::getU32()
     unserialize();
     if(m_pos+4 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU32 failed");
-    uint32 v = stdext::readLE32(&m_buffer[m_pos]);
+    uint32 v = stdext::readULE32(&m_buffer[m_pos]);
     m_pos += 4;
     return v;
 }
@@ -152,7 +152,7 @@ uint64 BinaryTree::getU64()
     unserialize();
     if(m_pos+8 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU64 failed");
-    uint64 v = stdext::readLE64(&m_buffer[m_pos]);
+    uint64 v = stdext::readULE64(&m_buffer[m_pos]);
     m_pos += 8;
     return v;
 }
@@ -193,14 +193,14 @@ void OutputBinaryTree::addU8(uint8 v)
 void OutputBinaryTree::addU16(uint16 v)
 {
     uint8 data[2];
-    stdext::writeLE16(data, v);
+    stdext::writeULE16(data, v);
     write(data, 2);
 }
 
 void OutputBinaryTree::addU32(uint32 v)
 {
     uint8 data[4];
-    stdext::writeLE32(data, v);
+    stdext::writeULE32(data, v);
     write(data, 4);
 }
 

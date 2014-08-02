@@ -110,6 +110,15 @@ struct Light {
     uint8 color;
 };
 
+struct Animation {
+    Animation() { startIndex = 0; loopCount = 0; async = false; }
+
+    int startIndex;
+    int loopCount;
+    bool async;
+    std::vector<std::tuple<int, int> > frames;
+};
+
 class ThingType : public LuaObject
 {
 public:
@@ -138,6 +147,7 @@ public:
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
     int getAnimationPhases() { return m_animationPhases; }
+    Animation getAnimation() { return m_animation; }
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
@@ -204,10 +214,11 @@ private:
 
     Size m_size;
     Point m_displacement;
+    Animation m_animation;
+    int m_animationPhases;
     int m_exactSize;
     int m_realSize;
     int m_numPatternX, m_numPatternY, m_numPatternZ;
-    int m_animationPhases;
     int m_layers;
     int m_elevation;
     float m_opacity;

@@ -32,7 +32,7 @@ function ProtocolLogin:sendLoginPacket()
 
   msg:addU16(g_game.getProtocolVersion())
 
-  if g_game.getProtocolVersion() >= 971 then
+  if g_game.getClientVersion() >= 980 then
     msg:addU32(g_game.getClientVersion())
   end
 
@@ -40,13 +40,13 @@ function ProtocolLogin:sendLoginPacket()
   msg:addU32(g_sprites.getSprSignature())
   msg:addU32(PIC_SIGNATURE)
 
-  if g_game.getProtocolVersion() >= 971 then
+  if g_game.getClientVersion() >= 980 then
     msg:addU8(0) -- clientType
   end
 
   local offset = msg:getMessageSize()
 
-  if g_game.getProtocolVersion() >= 770 then
+  if g_game.getClientVersion() >= 770 then
     -- first RSA byte must be 0
     msg:addU8(0)
     -- xtea key
@@ -74,7 +74,7 @@ function ProtocolLogin:sendLoginPacket()
   local paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
   assert(paddingBytes >= 0)
   msg:addPaddingBytes(paddingBytes, 0)
-  if g_game.getProtocolVersion() >= 770 then
+  if g_game.getClientVersion() >= 770 then
     msg:encryptRsa()
   end
 
@@ -83,7 +83,7 @@ function ProtocolLogin:sendLoginPacket()
   end
 
   self:send(msg)
-  if g_game.getProtocolVersion() >= 770 then
+  if g_game.getClientVersion() >= 770 then
     self:enableXteaEncryption()
   end
   self:recv()
@@ -131,7 +131,7 @@ end
 function ProtocolLogin:parseCharacterList(msg)
   local characters = {}
 
-  if g_game.getProtocolVersion() > 1010 then
+  if g_game.getClientVersion() > 1010 then
     local worlds = {}
 
     local worldsCount = msg:getU8()
@@ -165,7 +165,7 @@ function ProtocolLogin:parseCharacterList(msg)
       character.worldIp = iptostring(msg:getU32())
       character.worldPort = msg:getU16()
 
-      if g_game.getProtocolVersion() >= 971 then
+      if g_game.getClientVersion() >= 980 then
         character.unknown = msg:getU8()
       end
 

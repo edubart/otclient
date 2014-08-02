@@ -2,11 +2,11 @@ filename =  nil
 loaded = false
 
 function init()
-  connect(g_game, { onProtocolVersionChange = load })
+  connect(g_game, { onClientVersionChange = load })
 end
 
 function terminate()
-  disconnect(g_game, { onProtocolVersionChange = load })
+  disconnect(g_game, { onClientVersionChange = load })
 end
 
 function setFileName(name)
@@ -43,8 +43,9 @@ function load()
     local messageBox = displayErrorBox(tr('Error'), errorMessage)
     addEvent(function() messageBox:raise() messageBox:focus() end)
 
-    disconnect(g_game, { onProtocolVersionChange = load })
+    disconnect(g_game, { onClientVersionChange = load })
+    g_game.setClientVersion(0)
     g_game.setProtocolVersion(0)
-    connect(g_game, { onProtocolVersionChange = load })
+    connect(g_game, { onClientVersionChange = load })
   end
 end

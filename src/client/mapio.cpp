@@ -491,7 +491,7 @@ void Map::saveOtcm(const std::string& fileName)
         // version 1 header
         fin->addString("OTCM 1.0"); // map description
         fin->addU32(g_things.getDatSignature());
-        fin->addU16(g_game.getProtocolVersion());
+        fin->addU16(g_game.getClientVersion());
         fin->addString(g_game.getWorldName());
 
         // go back and rewrite where the map data starts

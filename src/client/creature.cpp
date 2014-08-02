@@ -846,11 +846,11 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
     else
         interval /= speed;
 
-    if(g_game.getProtocolVersion() >= 900)
+    if(g_game.getClientVersion() >= 900)
         interval = (interval / g_game.getServerBeat()) * g_game.getServerBeat();
 
     float factor = 3;
-    if(g_game.getProtocolVersion() <= 810)
+    if(g_game.getClientVersion() <= 810)
         factor = 2;
 
     interval = std::max<int>(interval, g_game.getServerBeat());
