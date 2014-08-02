@@ -908,7 +908,7 @@ int X11Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSp
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = stdext::readLE32(image->getPixelData() + i*4);
+        uint32 rgba = stdext::readULE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
         } else if(rgba == 0xff000000) { //black, foreground
