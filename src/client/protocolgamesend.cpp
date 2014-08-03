@@ -56,7 +56,6 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addU16(g_game.getOs());
     msg->addU16(g_game.getProtocolVersion());
 
-    // This may only be required by the flash client
     if(g_game.getClientVersion() >= 980) {
         msg->addU32(g_game.getClientVersion());
         msg->addU8(0); // preview state
