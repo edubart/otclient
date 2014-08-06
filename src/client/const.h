@@ -409,8 +409,7 @@ namespace Otc
         PathFindAllowNonWalkable = 8
     };
 
-    enum AutomapFlags
-    {
+    enum AutomapFlags {
         MapMarkTick = 0,
         MapMarkQuestion,
         MapMarkExclamation,
@@ -433,19 +432,23 @@ namespace Otc
         MapMarkGreenSouth
     };
 
-    enum VipState
-    {
+    enum VipState {
         VipStateOffline = 0,
         VipStateOnline = 1,
         VipStatePending = 2
     };
 
-    enum SpeedFormula
-    {
+    enum SpeedFormula {
         SpeedFormulaA = 0,
         SpeedFormulaB,
         SpeedFormulaC,
         LastSpeedFormula
+    };
+
+    enum AnimationPhase {
+        PhaseAutomatic = 0,
+        PhaseRandom = 254,
+        PhaseAsync = 255
     };
 }
 

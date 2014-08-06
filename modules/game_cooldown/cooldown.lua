@@ -9,6 +9,9 @@ contentsPanel = nil
 cooldownPanel = nil
 lastPlayer = nil
 
+cooldown = {}
+groupCooldown = {}
+
 function init()
   connect(g_game, { onGameStart = online,
                     onSpellGroupCooldown = onSpellGroupCooldown,
@@ -149,6 +152,14 @@ function updateCooldown(progressRect, duration)
   end
 end
 
+function isGroupCooldownIconActive(groupId)
+  return groupCooldown[groupId]
+end
+
+function isCooldownIconActive(iconId)
+  return cooldown[iconId]
+end
+
 function onSpellCooldown(iconId, duration)
   local icon = loadIcon(iconId)
   if not icon then
@@ -172,8 +183,10 @@ function onSpellCooldown(iconId, duration)
   end
   local finishFunc = function()
     removeCooldown(progressRect)
+    cooldown[iconId] = false
   end
   initCooldown(progressRect, updateFunc, finishFunc)
+  cooldown[iconId] = true
 end
 
 function onSpellGroupCooldown(groupId, duration)
@@ -194,7 +207,9 @@ function onSpellGroupCooldown(groupId, duration)
     end
     local finishFunc = function()
       turnOffCooldown(progressRect)
+      groupCooldown[groupId] = false
     end
     initCooldown(progressRect, updateFunc, finishFunc)
+    groupCooldown[groupId] = true
   end
 end

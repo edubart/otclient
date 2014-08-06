@@ -74,6 +74,7 @@ public:
     int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
     int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
     int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
+    Animation getAnimation() { return rawGetThingType()->getAnimation(); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
     Light getLight() { return rawGetThingType()->getLight(); }

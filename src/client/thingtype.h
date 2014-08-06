@@ -117,6 +117,12 @@ struct Animation {
     int loopCount;
     bool async;
     std::vector<std::tuple<int, int> > frames;
+
+    float duration(uint8 frame) {
+        assert(frames.size() <= frame);
+        std::tuple<int, int> data = frames.at(frame);
+        return stdext::random_range((long)std::get<0>(data), (long)std::get<1>(data));
+    }
 };
 
 class ThingType : public LuaObject
