@@ -119,6 +119,7 @@ GameAdditionalVipInfo = 52
 GameSpritesAlphaChannel = 56
 GamePremiumExpiration = 57
 GameBrowseField = 58
+GameEnhancedAnimations = 59
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
@@ -200,7 +201,7 @@ CIPSOFT_RSA = "1321277432058722840622950990822933849527763264961655079678763618"
               "88792221429527047321331896351555606801473202394175817"
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-PIC_SIGNATURE = 0x52de78da
+PIC_SIGNATURE = 0x53208400
 
 OsTypes = {
   Linux = 1,

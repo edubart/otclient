@@ -590,7 +590,8 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       menu:addSeparator()
       for name,opt in pairs(category) do
         if opt and opt.condition(menuPosition, lookThing, useThing, creatureThing) then
-          menu:addOption(name, opt.callback, opt.shortcut)
+          menu:addOption(name, function() opt.callback(menuPosition, 
+            lookThing, useThing, creatureThing) end, opt.shortcut)
         end
       end
     end
@@ -676,6 +677,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
       return true
     end
   end
+
 
   local player = g_game.getLocalPlayer()
   player:stopAutoWalk()

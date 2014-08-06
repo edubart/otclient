@@ -66,21 +66,39 @@ function g_game.getSupportedClients()
     1012, 1013, 1020, 1021, 1022, 
     1030, 1031, 1032, 1033, 1034, 
     1035, 1036, 1037, 1038, 1039, 
-    1040, 1041
+    1040, 1041, 1050, 1051
   }
 end
 
-function g_game.getProtocolVersionForClient(client)
-  clients = {
+-- The client version and protocol version where
+-- unsynchronized for some releases, not sure if this 
+-- will be the normal standard.
+
+-- Client Version: Publicly given version when 
+-- downloading Cipsoft client.
+
+-- Protocol Version: Previously was the same as 
+-- the client version, but was unsychronized in some
+-- releases, now it needs to be verified and added here
+-- if it does not match the client version.
+
+-- Reason for defining both: The server now requires a
+-- Client version and Protocol version from the client.
+
+-- Important: Use getClientVersion for specific protocol 
+-- features to ensure we are using the proper version.
+
+function g_game.getClientProtocolVersion(client)
+  local clients = {
     [980] = 971,
     [981] = 973,
     [982] = 974,
-	  [983] = 975,
-	  [984] = 976,
-	  [985] = 977,
-	  [986] = 978,
-	  [1001] = 979,
-	  [1002] = 980,
+    [983] = 975,
+    [984] = 976,
+    [985] = 977,
+    [986] = 978,
+    [1001] = 979,
+    [1002] = 980
   }
   return clients[client] or client
 end

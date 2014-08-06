@@ -56,16 +56,16 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addU16(g_game.getOs());
     msg->addU16(g_game.getProtocolVersion());
 
-    if(g_game.getProtocolVersion() >= 971) {
+    if(g_game.getClientVersion() >= 980) {
         msg->addU32(g_game.getClientVersion());
-        msg->addU8(0); // clientType
+        msg->addU8(0); // preview state
     }
 
     int offset = msg->getMessageSize();
 
     msg->addU8(0); // first RSA byte must be 0
 
-    if(g_game.getProtocolVersion() >= 770)
+    if(g_game.getClientVersion() >= 770)
     {
         // xtea key
         generateXteaKey();
@@ -99,7 +99,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    if(g_game.getProtocolVersion() >= 770)
+    if(g_game.getClientVersion() >= 770)
         msg->encryptRsa();
 
     if(g_game.getFeature(Otc::GameProtocolChecksum))
@@ -107,7 +107,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
 
     send(msg);
 
-    if(g_game.getProtocolVersion() >= 770)
+    if(g_game.getClientVersion() >= 770)
         enableXteaEncryption();
 }
 
@@ -642,7 +642,7 @@ void ProtocolGame::sendShareExperience(bool active)
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
 
-    if(g_game.getProtocolVersion() < 910)
+    if(g_game.getClientVersion() < 910)
         msg->addU8(0);
 
     send(msg);

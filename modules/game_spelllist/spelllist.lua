@@ -83,7 +83,7 @@ function online()
   end
 
   -- Vocation is only send in newer clients
-  if g_game.getProtocolVersion() >= 950 then
+  if g_game.getClientVersion() >= 950 then
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)
   else
     spelllistWindow:getChildById('buttonFilterVocation'):setVisible(false)

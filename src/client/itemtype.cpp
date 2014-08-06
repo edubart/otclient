@@ -51,7 +51,7 @@ void ItemType::unserialize(const BinaryTreePtr& node)
         switch(attr) {
             case ItemTypeAttrServerId: {
                 uint16 serverId = node->getU16();
-                if(g_game.getProtocolVersion() < 960) {
+                if(g_game.getClientVersion() < 960) {
                     if(serverId > 20000 && serverId < 20100) {
                         serverId -= 20000;
                     } else if(lastId > 99 && lastId != serverId - 1) {
