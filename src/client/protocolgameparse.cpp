@@ -207,6 +207,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerEditList:
                 parseEditList(msg);
                 break;
+            // PROTOCOL>=1038
+            case Proto::GameServerPremiumTrigger:
+                parsePremiumTrigger(msg);
+                break;
             case Proto::GameServerPlayerData:
                 parsePlayerStats(msg);
                 break;
@@ -1017,6 +1021,16 @@ void ProtocolGame::parseEditList(const InputMessagePtr& msg)
     const std::string& text = msg->getString();
 
     g_game.processEditList(id, doorId, text);
+}
+
+void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
+{
+    int triggerCount = msg->getU8();
+    std::vector<int> triggers;
+    for(int i=0;i<triggerCount;++i) {
+        triggers.push_back(msg->getU8());
+    }
+    bool something = msg->getU8() == 1;
 }
 
 void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
@@ -2036,11 +2050,11 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     if(g_game.getFeature(Otc::GameItemAnimationPhase)) {
         if(item->getAnimationPhases() > 1) {
-            // 0xfe => random phase
-            // 0xff => async?
+            // 0x00 => automatic phase
+            // 0xFE => random phase
+            // 0xFF => async phase
             msg->getU8();
-            // Remove async since OTB file in server is configured so every item with animationPhase > 1 is a random phase item.
-            //item->setAsync(msg->getU8() == 0xff);
+            //item->setPhase(msg->getU8());
         }
     }
 

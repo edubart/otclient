@@ -178,6 +178,7 @@ private:
     void parseCreatureUnpass(const InputMessagePtr& msg);
     void parseEditText(const InputMessagePtr& msg);
     void parseEditList(const InputMessagePtr& msg);
+    void parsePremiumTrigger(const InputMessagePtr& msg);
     void parsePlayerInfo(const InputMessagePtr& msg);
     void parsePlayerStats(const InputMessagePtr& msg);
     void parsePlayerSkills(const InputMessagePtr& msg);
