@@ -877,6 +877,12 @@ int Creature::getDisplacementX()
         return 8;
     else if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
+
+    if(m_outfit.getMount() != 0) {
+        auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+        return datType->getDisplacementX();
+    }
+
     return Thing::getDisplacementX();
 }
 
@@ -886,6 +892,12 @@ int Creature::getDisplacementY()
         return 8;
     else if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
+
+    if(m_outfit.getMount() != 0) {
+        auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+        return datType->getDisplacementY();
+    }
+
     return Thing::getDisplacementY();
 }
 
