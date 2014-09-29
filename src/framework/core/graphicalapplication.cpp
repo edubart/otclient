@@ -30,10 +30,10 @@
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/painter.h>
+#include <framework/input/mouse.h>
 
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
-#include <framework/input/mouse.h>
 #endif
 
 GraphicalApplication g_app;
