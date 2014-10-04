@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -73,6 +73,15 @@ private:
     stdext::boolean<false> m_wasSeen;
 };
 
+struct MinimapCache
+{
+	bool drawn;
+	Position pos;
+	MinimapTile minimapTile;
+	Point offsetPos;
+	MinimapBlock* block;
+};
+
 #pragma pack(pop)
 
 class Minimap
@@ -107,6 +116,9 @@ private:
                                                                   (index / (65536 / MMBLOCK_SIZE))*MMBLOCK_SIZE, z); }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z+1];
+
+	std::map<uint, std::list<MinimapCache>> minimapFloorCache;
+	std::map<Position, MinimapTile> minimapDrawCache;
 };
 
 extern Minimap g_minimap;
