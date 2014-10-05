@@ -679,7 +679,7 @@ function sendMessage(message, tab)
   local chatCommandMessage
 
   -- player used yell command
-  chatCommandMessage = message:match("^%#y (.*)")
+  chatCommandMessage = message:match("^%#[y|Y] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'yell'
     channel = 0
@@ -687,7 +687,7 @@ function sendMessage(message, tab)
   end
 
    -- player used whisper
-  local chatCommandMessage = message:match("^%#w (.*)")
+  local chatCommandMessage = message:match("^%#[w|W] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'whisper'
     message = chatCommandMessage
@@ -695,7 +695,7 @@ function sendMessage(message, tab)
   end
 
   -- player say
-  local chatCommandMessage = message:match("^%#s (.*)")
+  local chatCommandMessage = message:match("^%#[s|S] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'say'
     message = chatCommandMessage
