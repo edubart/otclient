@@ -35,6 +35,10 @@ function onGameEditText(id, itemId, maxLength, text, writer, time)
 
   local textScroll = textWindow:getChildById('textScroll')
 
+  if textItem:isHidden() then
+    textItem:show()
+  end
+
   textItem:setItemId(itemId)
   textEdit:setMaxLength(maxLength)
   textEdit:setText(text)
@@ -106,6 +110,11 @@ function onGameEditList(id, doorId, text)
   local description = textWindow:getChildById('description')
   local okButton = textWindow:getChildById('okButton')
   local cancelButton = textWindow:getChildById('cancelButton')
+
+  local textItem = textWindow:getChildById('textItem')
+  if textItem and not textItem:isHidden() then
+    textItem:hide()
+  end
 
   textEdit:setMaxLength(8192)
   textEdit:setText(text)
