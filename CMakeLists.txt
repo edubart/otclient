@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
-set(VERSION "0.6.5")
+set(VERSION "0.6.6")
 set(LIB_NAME "otc_framework")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
