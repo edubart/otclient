@@ -405,7 +405,7 @@ void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
     if(creature)
         g_game.processPlayerHelpers(helpers);
     else
-        g_logger.traceError("could not get creature");
+        g_logger.traceError(stdext::format("could not get creature with id %d", id));
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)

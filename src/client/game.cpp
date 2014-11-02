@@ -648,7 +648,7 @@ bool Game::walk(Otc::Direction direction)
 
     m_localPlayer->stopAutoWalk();
 
-    g_lua.callGlobalField("g_game", "onWalk", direction);
+    g_lua.callGlobalField("g_game", "onWalk", direction, false);
 
     forceWalk(direction);
     m_lastWalkDir = direction;
@@ -712,6 +712,8 @@ bool Game::dashWalk(Otc::Direction direction)
         } else
             return false;
     }
+
+    g_lua.callGlobalField("g_game", "onWalk", direction, true);
 
     forceWalk(direction);
     m_dashTimer.restart();
