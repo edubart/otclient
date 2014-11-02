@@ -1573,24 +1573,18 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameAdditionalVipInfo);
     }
 
-    if(version >= 973) {
+    if(version >= 981) {
         enableFeature(Otc::GameLoginPending);
         enableFeature(Otc::GameNewSpeedLaw);
     }
 
-    if(version >= 976) {
-        enableFeature(Otc::GameContainerPagination);
-    }
-
-    if(version >= 979) {
-        enableFeature(Otc::GameThingMarks);
-    }
-
     if(version >= 984) {
+        enableFeature(Otc::GameContainerPagination);
         enableFeature(Otc::GameBrowseField);
     }
 
     if(version >= 1000) {
+        enableFeature(Otc::GameThingMarks);
         enableFeature(Otc::GamePVPMode);
     }
 
