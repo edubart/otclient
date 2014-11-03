@@ -145,7 +145,7 @@ public:
     void safeLogout();
 
     // walk related
-    bool walk(Otc::Direction direction);
+    bool walk(Otc::Direction direction, bool dash = false);
     bool dashWalk(Otc::Direction direction);
     void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);

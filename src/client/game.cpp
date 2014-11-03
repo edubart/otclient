@@ -574,7 +574,7 @@ void Game::safeLogout()
     m_protocolGame->sendLogout();
 }
 
-bool Game::walk(Otc::Direction direction)
+bool Game::walk(Otc::Direction direction, bool dash)
 {
     if(!canPerformGameAction())
         return false;
@@ -591,20 +591,26 @@ bool Game::walk(Otc::Direction direction)
         return false;
     }
 
-    // check we can walk and add new walk event if false
-    if(!m_localPlayer->canWalk(direction)) {
-        if(m_lastWalkDir != direction) {
-            // must add a new walk event
-            float ticks = m_localPlayer->getStepTicksLeft();
-            if(ticks <= 0) { ticks = 1; }
+    if(dash) {
+        if(m_localPlayer->isWalking() && m_dashTimer.ticksElapsed() < std::max<int>(m_localPlayer->getStepDuration(false, direction) - m_ping, 30))
+            return false;
+    }
+    else {
+        // check we can walk and add new walk event if false
+        if(!m_localPlayer->canWalk(direction)) {
+            if(m_lastWalkDir != direction) {
+                // must add a new walk event
+                float ticks = m_localPlayer->getStepTicksLeft();
+                if(ticks <= 0) { ticks = 1; }
 
-            if(m_walkEvent) {
-                m_walkEvent->cancel();
-                m_walkEvent = nullptr;
+                if(m_walkEvent) {
+                    m_walkEvent->cancel();
+                    m_walkEvent = nullptr;
+                }
+                m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction, false); }, ticks);
             }
-            m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+            return false;
         }
-        return false;
     }
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
@@ -648,77 +654,19 @@ bool Game::walk(Otc::Direction direction)
 
     m_localPlayer->stopAutoWalk();
 
-    g_lua.callGlobalField("g_game", "onWalk", direction, false);
+    g_lua.callGlobalField("g_game", "onWalk", direction, dash);
 
     forceWalk(direction);
+    if(dash)
+      m_dashTimer.restart();
+
     m_lastWalkDir = direction;
     return true;
 }
 
 bool Game::dashWalk(Otc::Direction direction)
 {
-    if(!canPerformGameAction())
-        return false;
-
-    // must cancel follow before any new walk
-    if(isFollowing())
-        cancelFollow();
-
-    // must cancel auto walking
-    if(m_localPlayer->isAutoWalking()) {
-        m_protocolGame->sendStop();
-        m_localPlayer->stopAutoWalk();
-    }
-
-    if(m_localPlayer->isWalking() && m_dashTimer.ticksElapsed() < std::max<int>(m_localPlayer->getStepDuration(false, direction) - m_ping, 30))
-        return false;
-
-    Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
-    TilePtr toTile = g_map.getTile(toPos);
-    // only do prewalks to walkable tiles (like grounds and not walls)
-    if(toTile && toTile->isWalkable()) {
-        if(!m_localPlayer->isWalking() && m_localPlayer->getWalkTicksElapsed() >= m_localPlayer->getStepDuration() + 100)
-            m_localPlayer->preWalk(direction);
-    // check walk to another floor (e.g: when above 3 parcels)
-    } else {
-        // check if can walk to a lower floor
-        auto canChangeFloorDown = [&]() -> bool {
-            Position pos = toPos;
-            if(!pos.down())
-                return false;
-            TilePtr toTile = g_map.getTile(pos);
-            if(toTile && toTile->hasElevation(3))
-                return true;
-            return false;
-        };
-
-        // check if can walk to a higher floor
-        auto canChangeFloorUp = [&]() -> bool {
-            TilePtr fromTile = m_localPlayer->getTile();
-            if(!fromTile || !fromTile->hasElevation(3))
-                return false;
-            Position pos = toPos;
-            if(!pos.up())
-                return false;
-            TilePtr toTile = g_map.getTile(pos);
-            if(!toTile || !toTile->isWalkable())
-                return false;
-            return true;
-        };
-
-        if(canChangeFloorDown() || canChangeFloorUp() ||
-            (!toTile || toTile->isEmpty())) {
-            m_localPlayer->lockWalk();
-        } else
-            return false;
-    }
-
-    g_lua.callGlobalField("g_game", "onWalk", direction, true);
-
-    forceWalk(direction);
-    m_dashTimer.restart();
-    m_lastWalkDir = direction;
-    return true;
+    return walk(direction, true);
 }
 
 void Game::autoWalk(std::vector<Otc::Direction> dirs)
