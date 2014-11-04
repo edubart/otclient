@@ -34,6 +34,11 @@ function g_game.chooseRsa(host)
     end
     g_game.setRsa(OTSERV_RSA)
   end
+
+  -- Hack fix to resolve some 760 login issues
+  if g_game.getClientVersion() <= 760 then
+    g_game.setCustomOs(2)
+  end
 end
 
 function g_game.setRsa(rsa, e)
