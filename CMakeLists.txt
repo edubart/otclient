@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
 set(VERSION "0.6.6")
-set(LIB_NAME "otc_framework")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
@@ -36,20 +35,9 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
-# we want framework to be a library for faster compilation/linking
-if(USE_STATIC_LIBS)
-    add_library(${LIB_NAME} ${framework_SOURCES})
-else()
-    add_library(${LIB_NAME} SHARED ${framework_SOURCES})
-    message(STATUS "Linking to shared ${LIB_NAME}, make sure you copy the DLL/SO/dylib with the executable!")
-endif()
-target_link_libraries(${LIB_NAME} ${framework_LIBRARIES})
-
 # add client executable
-add_executable(${PROJECT_NAME} ${client_SOURCES} ${executable_SOURCES})
-
-# target link libraries
-target_link_libraries(${PROJECT_NAME} ${LIB_NAME})
+add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
 if(USE_PCH)
     include(cotire)
@@ -61,7 +49,7 @@ endif()
 
 # installation
 set(DATA_INSTALL_DIR share/${PROJECT_NAME})
-install(TARGETS ${PROJECT_NAME} ${LIB_NAME}
+install(TARGETS ${PROJECT_NAME}
 		RUNTIME DESTINATION bin
 		LIBRARY DESTINATION lib
 		ARCHIVE DESTINATION lib)
