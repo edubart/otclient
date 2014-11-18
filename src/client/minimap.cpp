@@ -24,6 +24,9 @@
 #include "minimap.h"
 #include "tile.h"
 
+//PhiadariaSoft Mod: Minimap drawing fix to prevent drwaing multiple floors
+#include "game.h"
+
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/painter.h>
@@ -96,6 +99,9 @@ void Minimap::clean()
 {
     for(int i=0;i<=Otc::MAX_Z;++i)
         m_tileBlocks[i].clear();
+        
+    m_minimapFloorCache.clear();
+	m_minimapDrawCache.clear();
 }
 
 void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scale, const Color& color)
@@ -203,12 +209,100 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
         minimapTile.speed = std::min<int>((int)std::ceil(tile->getGroundSpeed() / 10.0f), 255);
     }
 
-    if(minimapTile != MinimapTile()) {
-        MinimapBlock& block = getBlock(pos);
-        Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
-        block.updateTile(pos.x - offsetPos.x, pos.y - offsetPos.y, minimapTile);
-        block.justSaw();
-    }
+#ifndef EXPLORE_MODE
+	if (minimapTile != MinimapTile()) {
+		MinimapBlock& block = getBlock(pos);
+		Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+		block.updateTile(pos.x - offsetPos.x, pos.y - offsetPos.y, minimapTile);
+		block.justSaw();
+	}
+#else
+	/*
+	* Exploration mode:
+	* By default OTClient is drawing all tiles which are send by the server to the minimap view
+	* Some server admins might not want this and will receive a working patch for this. Simply add EXPLORE_MODE to build dependencies to make it work
+	* While still all tiles are received from the server, only the visible ones on the same floor as the player including tiles inside the view range
+	* will be drawn. All other tiles will be added to a caching system and drawn later in case the player walks up or down a floor
+	* To prevent the Client from freezing or slowing done after a long play time, the cache will be flushed of all tiles which have been drawn already
+	* or which are far out from our view range
+	*/
+
+	//First we need to get the player object
+	LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
+
+	// Do nothing in case the player object is not valid
+	if (localPlayer == nullptr) {
+		return;
+	}
+
+	// Get the current Z-Position and cache the current Player offset based on the player position and tile position
+	short playerPosZ = localPlayer->getPosition().z;
+
+	//Ensure each position is only cached once, but still check for a possible change (might happen in case we add a wall for example by script)
+	if (m_minimapDrawCache[pos] == minimapTile) {
+		return;
+	}
+	m_minimapDrawCache[pos] = minimapTile;
+
+	//Like the old system, check if there is actually a minimap tile available to draw
+	if (minimapTile != MinimapTile()) {
+		MinimapBlock& block = getBlock(pos);
+		Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+
+		//Create new cache object
+		MinimapCache minimapCache;
+		minimapCache.drawn = false;
+		minimapCache.minimapTile = minimapTile;
+		minimapCache.pos = pos;
+		minimapCache.block = &block;
+		minimapCache.offsetPos = offsetPos;
+
+		//In case the player object is valid and we are capable to view this tile, draw it without caching
+		if (playerPosZ == pos.z && std::abs(localPlayer->getPosition().x - pos.x) <= 9 && std::abs(localPlayer->getPosition().y - pos.y) <= 7) {
+			block.updateTile(pos.x - offsetPos.x, pos.y - offsetPos.y, minimapTile);
+			block.justSaw();
+			return;
+		}
+
+		//In case we are not able to view the map tile we should use our cache
+		m_minimapFloorCache[pos.z].push_back(minimapCache);
+	}
+
+	//Take a look inside our cache for the current players floor and check if there is data we can use
+	auto cacheIt = m_minimapFloorCache.find(playerPosZ);
+	if (cacheIt != m_minimapFloorCache.end()) {
+		//Now loop through the entire tile cache for this floor and draw the minimap for all tiles in range
+		auto &cache = m_minimapFloorCache[playerPosZ];
+		for (auto &it = cache.begin(); it != cache.end(); it++) {
+			//We might already have drawn this tile. Lets remove it to speed up everything
+			if (it->drawn == true) {
+				m_minimapFloorCache[playerPosZ].erase(it);
+				it = cache.begin();
+				continue;
+			}
+
+			//To prevent the Client from slowing down after a long playtime, remove all cached data which are outside our view range
+			if (std::abs(localPlayer->getPosition().x - it->pos.x) > 18 || std::abs(localPlayer->getPosition().y - it->pos.y) > 14) {
+				m_minimapDrawCache[it->pos] = MinimapTile();
+				m_minimapFloorCache[playerPosZ].erase(it);
+				it = cache.begin();
+				continue;
+			}
+
+			//Check if we are actually capable to view this tile from our current position and skip in case we are not
+			if (std::abs(localPlayer->getPosition().x - it->pos.x) > 9 || std::abs(localPlayer->getPosition().y - it->pos.y) > 7) {
+				continue;
+			}
+
+			//Looks like we passed all checks and are capable to view this tile. Lets draw the minimap data
+			it->block->updateTile(it->pos.x - it->offsetPos.x, it->pos.y - it->offsetPos.y, it->minimapTile);
+			it->block->justSaw();
+			it->drawn = true;
+			m_minimapFloorCache[playerPosZ].erase(it);
+			it = cache.begin();
+		}
+	}
+#endif
 }
 
 const MinimapTile& Minimap::getTile(const Position& pos)
