@@ -73,6 +73,16 @@ private:
     stdext::boolean<false> m_wasSeen;
 };
 
+//EXPLORATION MODE
+struct MinimapCache
+{
+	bool drawn;
+	Position pos;
+	MinimapTile minimapTile;
+	Point offsetPos;
+	MinimapBlock* block;
+};
+
 #pragma pack(pop)
 
 class Minimap
@@ -107,6 +117,10 @@ private:
                                                                   (index / (65536 / MMBLOCK_SIZE))*MMBLOCK_SIZE, z); }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z+1];
+    
+    //EXPLORATION MODE
+	std::map<uint, std::list<MinimapCache>> m_minimapFloorCache;
+	std::map<Position, MinimapTile> m_minimapDrawCache;
 };
 
 extern Minimap g_minimap;
