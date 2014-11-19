@@ -28,7 +28,7 @@ local function calcValues(self)
     proportion = math.min(math.max(self.step, 1), range)/range
   end
 
-  local px = math.max(proportion * pxrange, 10)
+  local px = math.max(proportion * pxrange, 6)
   px = px - px % 2 + 1
 
   local offset = 0
