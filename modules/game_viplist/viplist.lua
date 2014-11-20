@@ -92,7 +92,9 @@ function onMiniWindowClose()
 end
 
 function createAddWindow()
-  addVipWindow = g_ui.displayUI('addvip')
+  if not addVipWindow then
+    addVipWindow = g_ui.displayUI('addvip')
+  end
 end
 
 function createEditWindow(widget)
