@@ -281,11 +281,9 @@ end
 
 function changeWalkDir(dir, pop)
 
-  if player then
-    if player:isDead() then
-      return
-	end
-  end  
+  if canPlayerPerformAction() == false then
+     return
+  end
 
   while table.removevalue(smartWalkDirs, dir) do end
   if pop then
@@ -319,11 +317,9 @@ end
 
 function smartWalk(dir)
 
-  if player then
-    if player:isDead() then
-      return
-	end
-  end  
+  if canPlayerPerformAction() == false then
+     return false
+  end 
 
   if g_keyboard.getModifiers() == KeyboardNoModifier then
     local func = walkFunction
@@ -618,11 +614,9 @@ end
 
 function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, attackCreature)
 
-  if player then
-    if player:isDead() then
-      return
-	end
-  end 
+  if canPlayerPerformAction() == false then
+     return false
+  end
 
   local keyboardModifiers = g_keyboard.getModifiers()
 
@@ -873,4 +867,15 @@ end
 
 function limitZoom()
   limitedZoom = true
+end
+
+function canPlayerPerformAction()
+  if not player then
+     return false
+  end
+  if player:isDead() then
+      return false
+  end 
+  
+  return true
 end
