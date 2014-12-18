@@ -224,7 +224,11 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(ZLIB REQUIRED)
+
+# android already has zlib
+if(NOT __ANDROID__)
+    find_package(ZLIB REQUIRED)
+endif()
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
