@@ -126,10 +126,10 @@ set(framework_SOURCES ${framework_SOURCES}
 
     # crash handler
     ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
-    ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
+    #${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 )
@@ -206,7 +206,12 @@ if(WIN32)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
+
+if(ANDROID)
+    
+else()
+    find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
+endif()
 
 #find lua
 if(LUAJIT)
@@ -226,8 +231,10 @@ find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
 
 # android already has zlib
-if(NOT __ANDROID__)
+if(NOT ANDROID)
     find_package(ZLIB REQUIRED)
+else()
+    set(framework_LIBRARIES ${framework_LIBRARIES} android)
 endif()
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
@@ -296,18 +303,26 @@ endif()
 
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-    if(OPENGLES STREQUAL "2.0")
-        find_package(OpenGLES2 REQUIRED)
-        find_package(EGL REQUIRED)
+    if(OPENGLES STREQUAL "2.0" OR ANDROID_NATIVE_API_LEVEL VERSION_GREATER 7)
+        if(NOT ANDROID)
+            find_package(OpenGLES2 REQUIRED)
+            find_package(EGL REQUIRED)
+            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
+            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
+        else()
+            set(framework_LIBRARIES ${framework_LIBRARIES} GLESv2)
+        endif()
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
-        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
-        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
-    ELSEif(OPENGLES STREQUAL "1.0")
-        find_package(OpenGLES1 REQUIRED)
-        find_package(EGL REQUIRED)
+    ELSEif(OPENGLES STREQUAL "1.0" OR ANDROID_NATIVE_API_LEVEL VERSION_LESS 8)
+        if(NOT ANDROID)
+            find_package(OpenGLES1 REQUIRED)
+            find_package(EGL REQUIRED)
+            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
+            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
+        else()
+            set(framework_LIBRARIES ${framework_LIBRARIES} GLESv1_CM)
+        endif()
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
-        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
-        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
     else()
         ## TODO: CMake Documentation says that this is not the right
         # Thing for Mac OS X, but it works for now.
@@ -344,8 +359,8 @@ if(FRAMEWORK_GRAPHICS)
                 ${CMAKE_CURRENT_LIST_DIR}/graphics/dx/painterdx9.h
             )
         endif()
-
-    else()
+    
+    elseif(NOT ANDROID)
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
     endif()
 
@@ -445,6 +460,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlplatform.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlplatform.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp

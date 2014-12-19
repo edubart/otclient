@@ -32,14 +32,14 @@ endif()
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 
-if(NOT __ANDROID__)
+if(ANDROID)
     set(executable_SOURCES
-        src/android.cpp
+        android/android.cpp
         src/main.cpp
     )
 
     # add shared library for android
-    add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
 else()
     set(executable_SOURCES
         src/main.cpp

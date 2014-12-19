@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32
+#if !defined WIN32 && !defined ANDROID
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
