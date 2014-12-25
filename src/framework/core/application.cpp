@@ -101,7 +101,7 @@ void Application::init(std::vector<std::string>& args)
     registerLuaFunctions();
 }
 
-void Application::deinit()
+void Application::unloadModules()
 {
     g_lua.callGlobalField("g_app", "onTerminate");
 

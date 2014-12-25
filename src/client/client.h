@@ -27,12 +27,14 @@
 
 class Client
 {
-public:
-    void init(std::vector<std::string>& args);
-    void terminate();
+    void initAppFrameworkAndOTClient(std::vector<std::string>& args);
+    void setupAppNameAndVersion();
+    void findLuaInitScript();
+    void runLuaInitScript();
     void registerLuaFunctions();
+public:
+    Client(int argc, const char* argv[]);
+    void terminateAndFreeMemory();
 };
-
-extern Client g_client;
 
 #endif

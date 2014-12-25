@@ -36,9 +36,9 @@ class GraphicalApplication : public Application
 
 public:
     void init(std::vector<std::string>& args);
-    void deinit();
+    void unloadModules();
     void terminate();
-    void run();
+    void runAppMainLoop();
     void poll();
     void close();
 

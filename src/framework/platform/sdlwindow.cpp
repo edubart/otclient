@@ -1,5 +1,12 @@
 #include "sdlwindow.h"
 
+SDLWindow::SDLWindow() {
+    m_window = 0;
+    m_cursor = 0;
+    m_minimumSize = Size(600,480);
+    m_size = Size(600,480);
+}
+
 void SDLWindow::init() {
 }
 
@@ -83,7 +90,7 @@ Size SDLWindow::getDisplaySize() {
 }
 
 std::string SDLWindow::getClipboardText() {
-    return nullptr;
+    return "";
 }
 
 std::string SDLWindow::getPlatformType() {

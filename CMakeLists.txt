@@ -33,9 +33,10 @@ add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 
 if(ANDROID)
+    include_directories($ENV{ANDROID_NDK}/sources/android/native_app_glue)
     set(executable_SOURCES
-        android/android.cpp
-        src/main.cpp
+        "android/android.cpp"
+        "$ENV{ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c"
     )
 
     # add shared library for android

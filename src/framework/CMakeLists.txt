@@ -126,10 +126,10 @@ set(framework_SOURCES ${framework_SOURCES}
 
     # crash handler
     ${CMAKE_CURRENT_LIST_DIR}/platform/crashhandler.h
-    #${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/unixcrashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32crashhandler.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/win32platform.cpp
-    #${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
 )
@@ -140,7 +140,11 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 # some build options
 option(LUAJIT "Use lua jit" OFF)
 if(NOT APPLE)
-    option(CRASH_HANDLER "Generate crash reports" ON)
+    if(ANDROID)
+        set(CRASH_HANDLER OFF)
+    else()
+        option(CRASH_HANDLER "Generate crash reports" ON)
+    endif()
     option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
     option(USE_LIBCPP "Use the new libc++ library instead of stdc++" OFF)
     option(USE_LTO "Use link time optimizations" OFF)
@@ -206,12 +210,7 @@ if(WIN32)
 endif()
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
-
-if(ANDROID)
-    
-else()
-    find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
-endif()
+find_package(Boost 1.48.0 COMPONENTS ${REQUIRED_BOOST_COMPONENTS} REQUIRED)
 
 #find lua
 if(LUAJIT)
@@ -230,11 +229,10 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
 
-# android already has zlib
 if(NOT ANDROID)
     find_package(ZLIB REQUIRED)
 else()
-    set(framework_LIBRARIES ${framework_LIBRARIES} android)
+    set(framework_LIBRARIES ${framework_LIBRARIES} z android log)
 endif()
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
@@ -292,7 +290,11 @@ else()
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
-        set(SYSTEM_LIBRARIES dl rt)
+        if(ANDROID)
+            set(SYSTEM_LIBRARIES dl)
+        else()
+            set(SYSTEM_LIBRARIES dl rt)
+        endif()
     endif()
 endif()
 set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
@@ -303,7 +305,7 @@ endif()
 
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-    if(OPENGLES STREQUAL "2.0" OR ANDROID_NATIVE_API_LEVEL VERSION_GREATER 7)
+    if(OPENGLES STREQUAL "2.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_GREATER 7))
         if(NOT ANDROID)
             find_package(OpenGLES2 REQUIRED)
             find_package(EGL REQUIRED)
@@ -313,7 +315,7 @@ if(FRAMEWORK_GRAPHICS)
             set(framework_LIBRARIES ${framework_LIBRARIES} GLESv2)
         endif()
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
-    ELSEif(OPENGLES STREQUAL "1.0" OR ANDROID_NATIVE_API_LEVEL VERSION_LESS 8)
+    ELSEif(OPENGLES STREQUAL "1.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_LESS 8))
         if(NOT ANDROID)
             find_package(OpenGLES1 REQUIRED)
             find_package(EGL REQUIRED)
@@ -460,8 +462,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlplatform.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlplatform.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
