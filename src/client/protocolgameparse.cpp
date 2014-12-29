@@ -340,6 +340,19 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerCreatureType:
                 parseCreatureType(msg);
                 break;
+            // PROTOCOL>=1055
+            case Proto::GameServerBlessings:
+                parseBlessings(msg);
+                break;
+            case Proto::GameServerUnjustifiedStats:
+                parseUnjustifiedStats(msg);
+                break;
+            case Proto::GameServerPvpSituations:
+                parsePvpSituations(msg);
+                break;
+            case Proto::GameServerPreset:
+                parsePreset(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -372,6 +385,9 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     }
     bool canReportBugs = msg->getU8();
 
+    msg->getU8(); // can change pvp framing option
+    msg->getU8(); // expert mode enabled
+
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
@@ -394,6 +410,34 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
         g_game.processGameStart();
         m_gameInitialized = true;
     }
+}
+
+void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
+{
+    uint16 blessings = msg->getU16();
+    m_localPlayer->setBlessings(blessings);
+}
+
+void ProtocolGame::parsePreset(const InputMessagePtr& msg)
+{
+    uint16 preset = msg->getU32();
+}
+
+void ProtocolGame::parseUnjustifiedStats(const InputMessagePtr& msg)
+{
+    // Unjustified Kills display since 10.55
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+}
+
+void ProtocolGame::parsePvpSituations(const InputMessagePtr& msg)
+{
+    msg->getU8(); // amount of open pvp situations
 }
 
 void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
@@ -468,6 +512,7 @@ void ProtocolGame::parseChallenge(const InputMessagePtr& msg)
 {
     uint timestamp = msg->getU32();
     uint8 random = msg->getU8();
+
     sendLoginPacket(timestamp, random);
 }
 
@@ -1038,7 +1083,7 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
     bool premium = msg->getU8(); // premium
     int vocation = msg->getU8(); // vocation
     if(g_game.getFeature(Otc::GamePremiumExpiration))
-        int premiumEx = msg->getU32(); // premium expiration
+        int premiumEx = msg->getU32(); // premium expiration used for premium advertisement
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
@@ -1081,6 +1126,10 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 
     double level = msg->getU16();
     double levelPercent = msg->getU8();
+
+    if(g_game.getFeature(Otc::GameExperienceBonus))
+        double experienceBonus = msg->getDouble();
+
     double mana;
     double maxMana;
 
@@ -1145,7 +1194,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
         int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            if (g_game.getFeature(Otc::GameBaseSkillU16))
+            if(g_game.getFeature(Otc::GameBaseSkillU16))
                 baseLevel = msg->getU16();
             else
                 baseLevel = msg->getU8();
@@ -1699,7 +1748,7 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
 void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
 {
     int len;
-    if (g_game.getClientVersion() >= 1035) {
+    if(g_game.getClientVersion() >= 1035) {
         len = 1;
     } else {
         len = msg->getU8();

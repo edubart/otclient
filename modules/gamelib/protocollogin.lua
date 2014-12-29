@@ -32,23 +32,28 @@ function ProtocolLogin:sendLoginPacket()
 
   msg:addU16(g_game.getProtocolVersion())
 
-  if g_game.getClientVersion() >= 980 then
+  if g_game.getFeature(GameClientVersion) then
     msg:addU32(g_game.getClientVersion())
   end
 
-  msg:addU32(g_things.getDatSignature())
+  if g_game.getFeature(GameContentRevision) then
+    msg:addU16(g_things.getContentRevision())
+    msg:addU16(0)
+  else
+    msg:addU32(g_things.getDatSignature())
+  end
   msg:addU32(g_sprites.getSprSignature())
   msg:addU32(PIC_SIGNATURE)
 
-  if g_game.getClientVersion() >= 980 then
-    msg:addU8(0) -- clientType
+  if g_game.getFeature(GamePreviewState) then
+    msg:addU8(0)
   end
 
   local offset = msg:getMessageSize()
-
-  if g_game.getClientVersion() >= 770 then
+  if g_game.getFeature(GameLoginPacketEncryption) then
     -- first RSA byte must be 0
     msg:addU8(0)
+
     -- xtea key
     self:generateXteaKey()
     local xteaKey = self:getXteaKey()
@@ -74,8 +79,15 @@ function ProtocolLogin:sendLoginPacket()
   local paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
   assert(paddingBytes >= 0)
   msg:addPaddingBytes(paddingBytes, 0)
-  if g_game.getClientVersion() >= 770 then
+  if g_game.getFeature(GameLoginPacketEncryption) then
     msg:encryptRsa()
+  end
+
+  if g_game.getFeature(GameOGLInformation) then
+    msg:addU8(1) --unknown
+    msg:addU8(1) --unknown
+    msg:addString(g_graphics.getRenderer())
+    msg:addString(g_graphics.getVersion())
   end
 
   if g_game.getFeature(GameProtocolChecksum) then
@@ -83,7 +95,7 @@ function ProtocolLogin:sendLoginPacket()
   end
 
   self:send(msg)
-  if g_game.getClientVersion() >= 770 then
+  if g_game.getFeature(GameLoginPacketEncryption) then
     self:enableXteaEncryption()
   end
   self:recv()
@@ -141,7 +153,7 @@ function ProtocolLogin:parseCharacterList(msg)
       world.worldName = msg:getString()
       world.worldIp = msg:getString()
       world.worldPort = msg:getU16()
-      msg:getU8() -- unknow byte?
+      world.previewState = msg:getU8()
       worlds[worldId] = world
     end
 
@@ -153,6 +165,7 @@ function ProtocolLogin:parseCharacterList(msg)
       character.worldName = worlds[worldId].worldName
       character.worldIp = worlds[worldId].worldIp
       character.worldPort = worlds[worldId].worldPort
+      character.previewState = worlds[worldId].previewState
       characters[i] = character
     end
 
@@ -165,8 +178,8 @@ function ProtocolLogin:parseCharacterList(msg)
       character.worldIp = iptostring(msg:getU32())
       character.worldPort = msg:getU16()
 
-      if g_game.getClientVersion() >= 980 then
-        character.unknown = msg:getU8()
+      if g_game.getFeature(GamePreviewState) then
+        character.previewState = msg:getU8()
       end
 
       characters[i] = character

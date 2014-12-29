@@ -32,6 +32,12 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
 
+enum FrameGroup : uint8 {
+	FrameGroupIdle = 0,
+	FrameGroupMoving,
+	FrameGroupDefault = FrameGroupIdle
+};
+
 enum ThingCategory : uint8 {
     ThingCategoryItem = 0,
     ThingCategoryCreature,

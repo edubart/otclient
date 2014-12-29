@@ -28,7 +28,52 @@ std::map<uint8, uint8> messageModesMap;
 
 void buildMessageModesMap(int version) {
     messageModesMap.clear();
-    if(version >= 1036) {
+
+    if(version >= 1055) { // might be 1054
+        messageModesMap[Otc::MessageNone] = 0;
+        messageModesMap[Otc::MessageSay] = 1;
+        messageModesMap[Otc::MessageWhisper] = 2;
+        messageModesMap[Otc::MessageYell] = 3;
+        messageModesMap[Otc::MessagePrivateFrom] = 4;
+        messageModesMap[Otc::MessagePrivateTo] = 5;
+        messageModesMap[Otc::MessageChannelManagement] = 6;
+        messageModesMap[Otc::MessageChannel] = 7;
+        messageModesMap[Otc::MessageChannelHighlight] = 8;
+        messageModesMap[Otc::MessageSpell] = 9;
+        //NpcFromStartBlock = 10
+        messageModesMap[Otc::MessageNpcFrom] = 11;
+        messageModesMap[Otc::MessageNpcTo] = 12;
+        messageModesMap[Otc::MessageGamemasterBroadcast] = 13;
+        messageModesMap[Otc::MessageGamemasterChannel] = 14;
+        messageModesMap[Otc::MessageGamemasterPrivateFrom] = 15;
+        messageModesMap[Otc::MessageGamemasterPrivateTo] = 16;
+        messageModesMap[Otc::MessageLogin] = 17;
+        messageModesMap[Otc::MessageWarning] = 18; // Admin
+        messageModesMap[Otc::MessageGame] = 19;
+        messageModesMap[Otc::MessageGameHighlight] = 20;
+        messageModesMap[Otc::MessageFailure] = 21;
+        messageModesMap[Otc::MessageLook] = 22;
+        messageModesMap[Otc::MessageDamageDealed] = 23;
+        messageModesMap[Otc::MessageDamageReceived] = 24;
+        messageModesMap[Otc::MessageHeal] = 25;
+        messageModesMap[Otc::MessageExp] = 26;
+        messageModesMap[Otc::MessageDamageOthers] = 27;
+        messageModesMap[Otc::MessageHealOthers] = 28;
+        messageModesMap[Otc::MessageExpOthers] = 29;
+        messageModesMap[Otc::MessageStatus] = 30;
+        messageModesMap[Otc::MessageLoot] = 31;
+        messageModesMap[Otc::MessageTradeNpc] = 32;
+        messageModesMap[Otc::MessageGuild] = 33;
+        messageModesMap[Otc::MessagePartyManagement] = 34;
+        messageModesMap[Otc::MessageParty] = 35;
+        messageModesMap[Otc::MessageBarkLow] = 36;
+        messageModesMap[Otc::MessageBarkLoud] = 37;
+        messageModesMap[Otc::MessageReport] = 38;
+        messageModesMap[Otc::MessageHotkeyUse] = 39;
+        messageModesMap[Otc::MessageTutorialHint] = 40;
+        messageModesMap[Otc::MessageThankyou] = 41;
+        messageModesMap[Otc::MessageMarket] = 42;
+    } else if(version >= 1036) {
             for(int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i) {
                 if(i >= Otc::MessageNpcTo)
                     messageModesMap[i] = i + 1;

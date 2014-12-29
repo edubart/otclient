@@ -128,6 +128,10 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseBlessings(const InputMessagePtr& msg);
+    void parseUnjustifiedStats(const InputMessagePtr& msg);
+    void parsePvpSituations(const InputMessagePtr& msg);
+    void parsePreset(const InputMessagePtr& msg);
     void parseCreatureType(const InputMessagePtr& msg);
     void parsePlayerHelpers(const InputMessagePtr& msg);
     void parseMessage(const InputMessagePtr& msg);

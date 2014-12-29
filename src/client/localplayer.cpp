@@ -31,6 +31,7 @@ LocalPlayer::LocalPlayer()
 {
     m_states = 0;
     m_vocation = 0;
+    m_blessings = Otc::BlessingNone;
     m_walkLockExpiration = 0;
 
     m_skillsLevel.fill(-1);
@@ -543,6 +544,16 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
         m_spells = spells;
 
         callLuaField("onSpellsChange", spells, oldSpells);
+    }
+}
+
+void LocalPlayer::setBlessings(int blessings)
+{
+    if(blessings != m_blessings) {
+        int oldBlessings = m_blessings;
+        m_blessings = blessings;
+
+        callLuaField("onBlessingsChange", blessings, oldBlessings);
     }
 }
 

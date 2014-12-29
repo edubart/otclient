@@ -66,6 +66,7 @@ public:
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }
     uint32 getOtbMinorVersion() { return m_otbMinorVersion; }
+    uint16 getContentRevision() { return m_contentRevision; }
 
     bool isDatLoaded() { return m_datLoaded; }
     bool isXmlLoaded() { return m_xmlLoaded; }
@@ -89,6 +90,7 @@ private:
     uint32 m_otbMinorVersion;
     uint32 m_otbMajorVersion;
     uint32 m_datSignature;
+    uint16 m_contentRevision;
 };
 
 extern ThingTypeManager g_things;

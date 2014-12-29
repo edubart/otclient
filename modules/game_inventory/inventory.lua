@@ -17,7 +17,10 @@ inventoryButton = nil
 purseButton = nil
 
 function init()
-  connect(LocalPlayer, { onInventoryChange = onInventoryChange })
+  connect(LocalPlayer, {
+    onInventoryChange = onInventoryChange,
+    onBlessingsChange = onBlessingsChange
+  })
   connect(g_game, { onGameStart = refresh })
 
   g_keyboard.bindKeyDown('Ctrl+I', toggle)
@@ -43,13 +46,31 @@ function init()
 end
 
 function terminate()
-  disconnect(LocalPlayer, { onInventoryChange = onInventoryChange })
+  disconnect(LocalPlayer, {
+    onInventoryChange = onInventoryChange,
+    onBlessingsChange = onBlessingsChange
+  })
   disconnect(g_game, { onGameStart = refresh })
 
   g_keyboard.unbindKeyDown('Ctrl+I')
 
   inventoryWindow:destroy()
   inventoryButton:destroy()
+end
+
+function toggleAdventurerStyle(hasBlessing)
+  for slot = InventorySlotFirst, InventorySlotLast do
+    local itemWidget = inventoryPanel:getChildById('slot' .. slot)
+    if itemWidget then
+      if hasBlessing then
+        itemWidget:setBorderWidth(1)
+        itemWidget:setBorderColor('#F7C80C')
+      else
+        itemWidget:setBorderWidth(0)
+        itemWidget:setBorderColor('white')
+      end
+    end
+  end
 end
 
 function refresh()
@@ -60,6 +81,7 @@ function refresh()
     else
       onInventoryChange(player, i, nil)
     end
+    toggleAdventurerStyle(Bit.hasBit(player:getBlessings(), Blessings.Adventurer))
   end
 
   purseButton:setVisible(g_game.getFeature(GamePurseSlot))
@@ -97,5 +119,12 @@ function onInventoryChange(player, slot, item, oldItem)
   else
     itemWidget:setStyle(InventorySlotStyles[slot])
     itemWidget:setItem(nil)
+  end
+end
+
+function onBlessingsChange(player, blessings, oldBlessings)
+  local hasAdventurerBlessing = Bit.hasBit(blessings, Blessings.Adventurer)
+  if hasAdventurerBlessing ~= Bit.hasBit(oldBlessings, Blessings.Adventurer) then
+    toggleAdventurerStyle(hasAdventurerBlessing)
   end
 end

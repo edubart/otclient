@@ -274,50 +274,59 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
             m_id, m_category, count, attr));
 
-    uint8 width = fin->getU8();
-    uint8 height = fin->getU8();
-    m_size = Size(width, height);
-    if(width > 1 || height > 1) {
-        m_realSize = fin->getU8();
-        m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
-    }
-    else
-        m_exactSize = 32;
+    uint8 frames = 1;
+    if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057)
+        frames = fin->getU8();
 
-    m_layers = fin->getU8();
-    m_numPatternX = fin->getU8();
-    m_numPatternY = fin->getU8();
-    if(g_game.getClientVersion() >= 755)
-        m_numPatternZ = fin->getU8();
-    else
-        m_numPatternZ = 1;
-    m_animationPhases = fin->getU8();
+    for(int i = 0; i < frames; ++i) {
+        uint8 frameGroup = FrameGroupDefault;
+        if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057) {
+            frameGroup = fin->getU8();
+        }
 
-    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
-        if(m_animationPhases > 1) {
-            m_animation.async = fin->getU8() == 0;
-            m_animation.loopCount = fin->get32();
-            m_animation.startIndex = fin->getU8();
+        uint8 width = fin->getU8();
+        uint8 height = fin->getU8();
+        m_size = Size(width, height);
+        if(width > 1 || height > 1) {
+            m_realSize = fin->getU8();
+            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
+        }
+        else
+            m_exactSize = 32;
 
-            for(int i = 0; i < m_animationPhases; i++) {
-                int minDuration = fin->getU32();
-                int maxDuration = fin->getU32();
+        m_layers = fin->getU8();
+        m_numPatternX = fin->getU8();
+        m_numPatternY = fin->getU8();
+        if(g_game.getClientVersion() >= 755)
+            m_numPatternZ = fin->getU8();
+        else
+            m_numPatternZ = 1;
+        m_animationPhases = fin->getU8();
 
-                m_animation.frames.push_back(std::make_tuple(minDuration, maxDuration));
+        if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+            if(m_animationPhases > 1) {
+                m_animation.async = fin->getU8() == 0;
+                m_animation.loopCount = fin->get32();
+                m_animation.startIndex = fin->getU8();
+
+                for (int i = 0; i < m_animationPhases; i++) {
+                    int minDuration = fin->getU32();
+                    int maxDuration = fin->getU32();
+
+                    m_animation.frames.push_back(std::make_tuple(minDuration, maxDuration));
+                }
             }
         }
+
+        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+
+        if(totalSprites > 4096)
+            stdext::throw_exception("a thing type has more than 4096 sprites");
+
+        m_spritesIndex.resize(totalSprites);
+        for(int i = 0; i < totalSprites; i++)
+            m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
     }
-
-    int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
-
-    // if(totalSprites == 0)
-    //     stdext::throw_exception("a thing type has no sprites");
-    if(totalSprites > 4096)
-        stdext::throw_exception("a thing type has more than 4096 sprites");
-
-    m_spritesIndex.resize(totalSprites);
-    for(int i = 0; i < totalSprites; i++)
-        m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
     m_textures.resize(m_animationPhases);
     m_texturesFramesRects.resize(m_animationPhases);

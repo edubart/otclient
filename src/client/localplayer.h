@@ -63,6 +63,7 @@ public:
     void setRegenerationTime(double regenerationTime);
     void setOfflineTrainingTime(double offlineTrainingTime);
     void setSpells(const std::vector<int>& spells);
+    void setBlessings(int blessings);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
@@ -88,6 +89,7 @@ public:
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
+    int getBlessings() { return m_blessings; }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -144,6 +146,7 @@ private:
 
     int m_states;
     int m_vocation;
+    int m_blessings;
 
     double m_health;
     double m_maxHealth;

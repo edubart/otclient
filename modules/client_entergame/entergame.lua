@@ -59,6 +59,12 @@ local function onCharacterList(protocol, characters, account, otui)
   loadBox:destroy()
   loadBox = nil
 
+  for _, characterInfo in pairs(characters) do
+    if characterInfo.previewState and characterInfo.previewState ~= PreviewState.Default then
+      characterInfo.worldName = characterInfo.worldName .. ', Preview'
+    end
+  end
+
   CharacterList.create(characters, account, otui)
   CharacterList.show()
 
@@ -105,7 +111,7 @@ function EnterGame.init()
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
   local clientVersion = g_settings.getInteger('client-version')
-  if clientVersion == 0 then clientVersion = 860 end
+  if clientVersion == 0 then clientVersion = 1071 end
 
   if port == nil or port == 0 then port = 7171 end
 

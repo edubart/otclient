@@ -107,6 +107,8 @@ namespace Proto {
         GameServerCreatureType              = 149,
         GameServerEditText                  = 150,
         GameServerEditList                  = 151,
+        GameServerBlessings                 = 156,
+        GameServerPreset                    = 157,
         GameServerPremiumTrigger            = 158, // 1038
         GameServerPlayerDataBasic           = 159, // 950
         GameServerPlayerData                = 160,
@@ -130,6 +132,8 @@ namespace Proto {
         GameServerTextMessage               = 180,
         GameServerCancelWalk                = 181,
         GameServerWalkWait                  = 182,
+        GameServerUnjustifiedStats          = 183,
+        GameServerPvpSituations             = 184,
         GameServerFloorChangeUp             = 190,
         GameServerFloorChangeDown           = 191,
         GameServerChooseOutfit              = 200,

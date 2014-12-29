@@ -120,6 +120,13 @@ GameSpritesAlphaChannel = 56
 GamePremiumExpiration = 57
 GameBrowseField = 58
 GameEnhancedAnimations = 59
+GameOGLInformation = 60
+GameMessageSizeCheck = 61
+GamePreviewState = 62
+GameLoginPacketEncryption = 63
+GameClientVersion = 64
+GameContentRevision = 65
+GameExperienceBonus = 66
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
@@ -201,7 +208,7 @@ CIPSOFT_RSA = "1321277432058722840622950990822933849527763264961655079678763618"
               "88792221429527047321331896351555606801473202394175817"
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-PIC_SIGNATURE = 0x53208400
+PIC_SIGNATURE = 0x542100C1
 
 OsTypes = {
   Linux = 1,
@@ -242,6 +249,22 @@ ExtendedIds = {
   Particles = 5,
   MapShader = 6,
   NeedsUpdate = 7
+}
+
+PreviewState = {
+  Default = 0,
+  Inactive = 1,
+  Active = 2
+}
+
+Blessings = {
+  None = 0,
+  Adventurer = 1,
+  SpiritualShielding = 2,
+  EmbraceOfTibia = 4,
+  FireOfSuns = 8,
+  WisdomOfSolitude = 16,
+  SparkOfPhoenix = 32
 }
 
 -- @}

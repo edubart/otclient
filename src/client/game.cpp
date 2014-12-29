@@ -1425,7 +1425,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1051))
+    if(version != 0 && (version < 740 || version > 1071))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1443,7 +1443,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1051))
+    if(version != 0 && (version < 740 || version > 1071))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1452,6 +1452,7 @@ void Game::setClientVersion(int version)
     if(version >= 770) {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
+        enableFeature(Otc::GameLoginPacketEncryption);
     }
 
     if(version >= 780) {
@@ -1475,6 +1476,7 @@ void Game::setClientVersion(int version)
 
     if(version >= 841) {
         enableFeature(Otc::GameChallengeOnLogin);
+        enableFeature(Otc::GameMessageSizeCheck);
     }
 
     if(version >= 854) {
@@ -1523,6 +1525,11 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameAdditionalVipInfo);
     }
 
+    if(version >= 980) {
+        enableFeature(Otc::GamePreviewState);
+        enableFeature(Otc::GameClientVersion);
+    }
+
     if(version >= 981) {
         enableFeature(Otc::GameLoginPending);
         enableFeature(Otc::GameNewSpeedLaw);
@@ -1538,7 +1545,7 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GamePVPMode);
     }
 
-    if (version >= 1035) {
+    if(version >= 1035) {
         enableFeature(Otc::GameDoubleSkills);
         enableFeature(Otc::GameBaseSkillU16);
     }
@@ -1554,6 +1561,18 @@ void Game::setClientVersion(int version)
 
     if(version >= 1050) {
         enableFeature(Otc::GameEnhancedAnimations);
+    }
+
+    if(version >= 1054) {
+        enableFeature(Otc::GameExperienceBonus);
+    }
+
+    if(version >= 1061) {
+        enableFeature(Otc::GameOGLInformation);
+    }
+
+    if(version >= 1071) {
+        enableFeature(Otc::GameContentRevision);
     }
 
     m_clientVersion = version;
