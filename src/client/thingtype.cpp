@@ -58,7 +58,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
                 attr = ThingAttrWritable;
             else if(attr >= ThingAttrWritable)
                 attr += 1;
-        } else if(g_game.getClientVersion() >= 1010) {
+        } else if(g_game.getClientVersion() >= 1000) {
             if(attr == ThingAttrNoMoveAnimation)
                 attr = 16;
             else if(attr >= ThingAttrPickupable)
@@ -153,7 +153,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             break;
         }
 
-        if(g_game.getClientVersion() >= 1010) {
+        if(g_game.getClientVersion() >= 1000) {
             /* In 10.10+ all attributes from 16 and up were
              * incremented by 1 to make space for 16 as
              * "No Movement Animation" flag.

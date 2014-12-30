@@ -15,7 +15,8 @@ fightModeRadioGroup = nil
 pvpModeRadioGroup = nil
 
 function init()
-  combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton', tr('Combat Controls'), '/images/topbuttons/combatcontrols', toggle)
+  combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton', 
+    tr('Combat Controls'), '/images/topbuttons/combatcontrols', toggle)
   combatControlsButton:setOn(true)
   combatControlsWindow = g_ui.loadUI('combatcontrols', modules.game_interface.getRightPanel())
   combatControlsWindow:disableResize()
