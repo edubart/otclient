@@ -385,8 +385,11 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     }
     bool canReportBugs = msg->getU8();
 
-    msg->getU8(); // can change pvp framing option
-    msg->getU8(); // expert mode enabled
+    if(g_game.getClientVersion() >= 1053)
+        msg->getU8(); // can change pvp frame option
+
+    if(g_game.getClientVersion() >= 1058)
+        msg->getU8(); // expert mode enabled
 
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);

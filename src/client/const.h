@@ -329,7 +329,8 @@ namespace Otc
         MessageRVRAnswer               = 47,
         MessageRVRContinue             = 48,
         MessageGameHighlight           = 49,
-        LastMessage                    = 50,
+        MessageNpcFromStartBlock       = 50,
+        LastMessage                    = 51,
         MessageInvalid                 = 255
     };
 

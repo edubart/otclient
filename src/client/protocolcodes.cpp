@@ -40,7 +40,7 @@ void buildMessageModesMap(int version) {
         messageModesMap[Otc::MessageChannel] = 7;
         messageModesMap[Otc::MessageChannelHighlight] = 8;
         messageModesMap[Otc::MessageSpell] = 9;
-        //NpcFromStartBlock = 10
+        messageModesMap[Otc::MessageNpcFromStartBlock] = 10;
         messageModesMap[Otc::MessageNpcFrom] = 11;
         messageModesMap[Otc::MessageNpcTo] = 12;
         messageModesMap[Otc::MessageGamemasterBroadcast] = 13;
