@@ -81,7 +81,7 @@ function refresh()
     else
       onInventoryChange(player, i, nil)
     end
-    toggleAdventurerStyle(Bit.hasBit(player:getBlessings(), Blessings.Adventurer))
+    toggleAdventurerStyle(player and Bit.hasBit(player:getBlessings(), Blessings.Adventurer) or false)
   end
 
   purseButton:setVisible(g_game.getFeature(GamePurseSlot))
