@@ -20,9 +20,14 @@
  * THE SOFTWARE.
  */
 
+// The only way that the android sdl library can link a main function it's including SDL.h
+#ifdef ANDROID
+#include <SDL.h>
+#endif
+
 #include <client/client.h>
 
-int main(int argc, const char* argv[])
+int main(int argc, char* argv[])
 {
     Client client(argc, argv);
     client.terminateAndFreeMemory();

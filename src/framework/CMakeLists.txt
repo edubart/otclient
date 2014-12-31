@@ -228,11 +228,11 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
+find_package(ZLIB REQUIRED)
 
-if(NOT ANDROID)
-    find_package(ZLIB REQUIRED)
-else()
-    set(framework_LIBRARIES ${framework_LIBRARIES} z android log)
+if(ANDROID)
+    set(framework_LIBRARIES ${framework_LIBRARIES} android log)
+    find_package(SDL2 REQUIRED)
 endif()
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
@@ -250,6 +250,11 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${OpenSSL_INCLUDE_DIR}
     ${framework_INCLUDE_DIRS}
 )
+
+if(ANDROID)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL2_LIBRARY})
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug information: ON")
@@ -306,25 +311,17 @@ endif()
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
     if(OPENGLES STREQUAL "2.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_GREATER 7))
-        if(NOT ANDROID)
-            find_package(OpenGLES2 REQUIRED)
-            find_package(EGL REQUIRED)
-            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
-            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
-        else()
-            set(framework_LIBRARIES ${framework_LIBRARIES} GLESv2)
-        endif()
+        find_package(OpenGLES2 REQUIRED)
+        find_package(EGL REQUIRED)
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
     ELSEif(OPENGLES STREQUAL "1.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_LESS 8))
-        if(NOT ANDROID)
-            find_package(OpenGLES1 REQUIRED)
-            find_package(EGL REQUIRED)
-            set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
-            set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
-        else()
-            set(framework_LIBRARIES ${framework_LIBRARIES} GLESv1_CM)
-        endif()
+        find_package(OpenGLES1 REQUIRED)
+        find_package(EGL REQUIRED)
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
+        set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES1_INCLUDE_DIR})
+        set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES1_LIBRARY})
     else()
         ## TODO: CMake Documentation says that this is not the right
         # Thing for Mac OS X, but it works for now.
@@ -361,7 +358,7 @@ if(FRAMEWORK_GRAPHICS)
                 ${CMAKE_CURRENT_LIST_DIR}/graphics/dx/painterdx9.h
             )
         endif()
-    
+
     elseif(NOT ANDROID)
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
     endif()

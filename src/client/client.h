@@ -33,7 +33,7 @@ class Client
     void runLuaInitScript();
     void registerLuaFunctions();
 public:
-    Client(int argc, const char* argv[]);
+    Client(int argc, char* argv[]);
     void terminateAndFreeMemory();
 };
 

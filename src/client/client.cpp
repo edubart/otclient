@@ -33,7 +33,7 @@
 #include <framework/core/configmanager.h>
 #include <framework/graphics/graphics.h>
 
-Client::Client(int argc, const char* argv[]) {
+Client::Client(int argc, char* argv[]) {
     std::vector<std::string> args(argv, argv + argc);
     initAppFrameworkAndOTClient(args);
 }
@@ -99,8 +99,8 @@ void Client::setupAppNameAndVersion() {
 void Client::findLuaInitScript() {
     if(!g_resources.discoverWorkDir("init.lua"))
         g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
-    else
-        runLuaInitScript();
+
+    runLuaInitScript();
 }
 
 void Client::runLuaInitScript() {

@@ -31,20 +31,18 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
+set(executable_SOURCES
+    src/main.cpp
+)
 
 if(ANDROID)
-    include_directories($ENV{ANDROID_NDK}/sources/android/native_app_glue)
-    set(executable_SOURCES
-        "android/android.cpp"
-        "$ENV{ANDROID_NDK}/sources/android/native_app_glue/android_native_app_glue.c"
-    )
+    set( sdl_main
+        android/SDL_android_main.c
+        ${executable_SOURCES} )
 
     # add shared library for android
-    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${sdl_main})
 else()
-    set(executable_SOURCES
-        src/main.cpp
-    )
     # add client executable
     add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
 endif()
