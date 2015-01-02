@@ -4,7 +4,7 @@ mkdir ../build && cd ../build
 cmake -DCMAKE_TOOLCHAIN_FILE=../android/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_NATIVE_API_LEVEL=android-16 -DANDROID_TOOLCHAIN_NAME=arm-linux-androideabi-4.6 ..
 make
 
-cd ../ && rm -r build
+cd ../
 
 cp -r libs android/project/ && rm -r libs
 
