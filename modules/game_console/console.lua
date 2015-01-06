@@ -3,7 +3,7 @@ SpeakTypesSettings = {
   say = { speakType = MessageModes.Say, color = '#FFFF00' },
   whisper = { speakType = MessageModes.Whisper, color = '#FFFF00' },
   yell = { speakType = MessageModes.Yell, color = '#FFFF00' },
-  broadcast = { speakType = MessageModes.GamemasterPrivateFrom, color = '#F55E5E' },
+  broadcast = { speakType = MessageModes.GamemasterBroadcast, color = '#F55E5E' },
   private = { speakType = MessageModes.PrivateTo, color = '#5FF7F7', private = true },
   privateRed = { speakType = MessageModes.GamemasterTo, color = '#F55E5E', private = true },
   privatePlayerToPlayer = { speakType = MessageModes.PrivateTo, color = '#9F9DFD', private = true },
@@ -164,11 +164,17 @@ function enableChat()
 
   g_keyboard.unbindKeyUp("Space")
   g_keyboard.unbindKeyUp("Enter")
+  g_keyboard.unbindKeyUp("Escape")
 
   gameInterface.unbindWalkKey("W")
   gameInterface.unbindWalkKey("D")
   gameInterface.unbindWalkKey("S")
   gameInterface.unbindWalkKey("A")
+  
+  gameInterface.unbindWalkKey("E")
+  gameInterface.unbindWalkKey("Q")
+  gameInterface.unbindWalkKey("C")
+  gameInterface.unbindWalkKey("Z")
 
   consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
 end
@@ -187,11 +193,17 @@ function disableChat()
   end
   g_keyboard.bindKeyUp("Space", quickFunc)
   g_keyboard.bindKeyUp("Enter", quickFunc)
+  g_keyboard.bindKeyUp("Escape", quickFunc)
 
   gameInterface.bindWalkKey("W", North)
   gameInterface.bindWalkKey("D", East)
   gameInterface.bindWalkKey("S", South)
   gameInterface.bindWalkKey("A", West)
+  
+  gameInterface.bindWalkKey("E", NorthEast)
+  gameInterface.bindWalkKey("Q", NorthWest)
+  gameInterface.bindWalkKey("C", SouthEast)
+  gameInterface.bindWalkKey("Z", SouthWest)
 
   consoleToggleChat:setTooltip(tr("Enable chat mode"))
 end
@@ -687,7 +699,7 @@ function sendMessage(message, tab)
   end
 
    -- player used whisper
-  local chatCommandMessage = message:match("^%#[w|W] (.*)")
+  chatCommandMessage = message:match("^%#[w|W] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'whisper'
     message = chatCommandMessage
@@ -695,9 +707,24 @@ function sendMessage(message, tab)
   end
 
   -- player say
-  local chatCommandMessage = message:match("^%#[s|S] (.*)")
+  chatCommandMessage = message:match("^%#[s|S] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'say'
+    message = chatCommandMessage
+    channel = 0
+  end
+  
+  -- player red talk on channel
+  chatCommandMessage = message:match("^%#[c|C] (.*)")
+  if chatCommandMessage ~= nil then
+    chatCommandSayMode = 'channelRed'
+    message = chatCommandMessage
+  end
+  
+  -- player broadcast
+  chatCommandMessage = message:match("^%#[b|B] (.*)")
+  if chatCommandMessage ~= nil then
+    chatCommandSayMode = 'broadcast'
     message = chatCommandMessage
     channel = 0
   end
