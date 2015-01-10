@@ -175,6 +175,11 @@ function enableChat()
   gameInterface.unbindWalkKey("Q")
   gameInterface.unbindWalkKey("C")
   gameInterface.unbindWalkKey("Z")
+  
+  g_keyboard.unbindKeyPress('Ctrl+W', function() g_game.turn(North) end, gameRootPanel)
+  g_keyboard.unbindKeyPress('Ctrl+D', function() g_game.turn(East) end, gameRootPanel)
+  g_keyboard.unbindKeyPress('Ctrl+S', function() g_game.turn(South) end, gameRootPanel)
+  g_keyboard.unbindKeyPress('Ctrl+A', function() g_game.turn(West) end, gameRootPanel)  
 
   consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
 end
@@ -204,6 +209,11 @@ function disableChat()
   gameInterface.bindWalkKey("Q", NorthWest)
   gameInterface.bindWalkKey("C", SouthEast)
   gameInterface.bindWalkKey("Z", SouthWest)
+  
+  g_keyboard.bindKeyPress('Ctrl+W', function() g_game.turn(North) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+D', function() g_game.turn(East) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+S', function() g_game.turn(South) end, gameRootPanel)
+  g_keyboard.bindKeyPress('Ctrl+A', function() g_game.turn(West) end, gameRootPanel)
 
   consoleToggleChat:setTooltip(tr("Enable chat mode"))
 end
