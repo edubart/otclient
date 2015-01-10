@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -110,7 +110,7 @@ void Image::blit(const Point& dest, const ImagePtr& other)
         int y = p / other->getWidth();
         int pos = ((dest.y + y) * m_size.width() + (dest.x + x)) * 4;
 
-        if(otherPixels[p*4+3] == 0xFF) {
+        if (otherPixels[p*4+3] != 0) {
             m_pixels[pos+0] = otherPixels[p*4+0];
             m_pixels[pos+1] = otherPixels[p*4+1];
             m_pixels[pos+2] = otherPixels[p*4+2];

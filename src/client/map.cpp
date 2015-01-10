@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -316,6 +316,36 @@ const TilePtr& Map::getTile(const Position& pos)
     if(it != m_tileBlocks[pos.z].end())
         return it->second.get(pos);
     return m_nulltile;
+}
+
+const TileList Map::getTiles(int floor/* = -1*/)
+{
+    TileList tiles;
+    if(floor > Otc::MAX_Z) {
+        return tiles;
+    }
+    else if(floor < 0) {
+        // Search all floors
+        for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+            for(const auto& pair : m_tileBlocks[z]) {
+                const TileBlock& block = pair.second;
+                for(const TilePtr& tile : block.getTiles()) {
+                    if(tile != nullptr)
+                        tiles.push_back(tile);
+                }
+            }
+        }
+    }
+    else {
+        for(const auto& pair : m_tileBlocks[floor]) {
+            const TileBlock& block = pair.second;
+            for(const TilePtr& tile : block.getTiles()) {
+                if(tile != nullptr)
+                    tiles.push_back(tile);
+            }
+        }
+    }
+    return tiles;
 }
 
 void Map::cleanTile(const Position& pos)
@@ -655,20 +685,17 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
 
     struct Node {
-        Node(const Position& pos) : cost(0), totalCost(0), steps(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection), evaluated(false) { }
-        bool operator<(const Node& other) const { return  totalCost < other.totalCost; }
+        Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) { }
         float cost;
         float totalCost;
-        int steps;
         Position pos;
         Node *prev;
         Otc::Direction dir;
-        bool evaluated;
     };
 
-    struct LessNode : std::binary_function<Node*, Node*, bool> {
-        bool operator()(Node* a, Node* b) const {
-            return b->totalCost < a->totalCost;
+    struct LessNode : std::binary_function<std::pair<Node*, float>, std::pair<Node*, float>, bool> {
+        bool operator()(std::pair<Node*, float> a, std::pair<Node*, float> b) const {
+            return b.second < a.second;
         }
     };
 
@@ -703,7 +730,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     }
 
     std::unordered_map<Position, Node*, PositionHasher> nodes;
-    std::priority_queue<Node*, std::vector<Node*>, LessNode> searchList;
+    std::priority_queue<std::pair<Node*, float>, std::vector<std::pair<Node*, float>>, LessNode> searchList;
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
@@ -788,29 +815,23 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     nodes[neighborPos] = neighborNode;
                 } else {
                     neighborNode = nodes[neighborPos];
-                    if(neighborNode->cost < cost)
+                    if(neighborNode->cost <= cost)
                         continue;
                 }
 
                 neighborNode->prev = currentNode;
                 neighborNode->cost = cost;
-                neighborNode->steps = currentNode->steps + 1;
                 neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
-                neighborNode->evaluated = false;
-                searchList.push(neighborNode);
+                searchList.push(std::make_pair(neighborNode, neighborNode->totalCost));
             }
         }
 
-        currentNode->evaluated = true;
-        currentNode = nullptr;
-        while(searchList.size() > 0 && !currentNode) {
-            Node *node = searchList.top();
+        if(!searchList.empty()) {
+            currentNode = searchList.top().first;
             searchList.pop();
-
-            if(!node->evaluated)
-                currentNode = node;
-        }
+        } else
+            currentNode = nullptr;
     }
 
     if(foundNode) {
@@ -829,5 +850,3 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
 
     return ret;
 }
-
-/* vim: set ts=4 sw=4 et: */

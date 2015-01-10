@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -908,7 +908,7 @@ int X11Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSp
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = stdext::readLE32(image->getPixelData() + i*4);
+        uint32 rgba = stdext::readULE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
         } else if(rgba == 0xff000000) { //black, foreground

@@ -49,3 +49,11 @@ function string:explode(sep, limit)
   table.insert(t, tmp)
   return t
 end
+
+function string:contains(str, checkCase, start, plain)
+  if(not checkCase) then
+    self = self:lower()
+    str = str:lower()
+  end
+  return string.find(self, str, start and start or 1, plain == nil and true or false)
+end

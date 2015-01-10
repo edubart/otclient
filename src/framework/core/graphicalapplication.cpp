@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,10 @@
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/painter.h>
+#include <framework/input/mouse.h>
 
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
-#include <framework/input/mouse.h>
 #endif
 
 GraphicalApplication g_app;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,7 +57,7 @@ protected:
     void onAddItem(const ItemPtr& item, int slot);
     void onAddItems(const std::vector<ItemPtr>& items);
     void onUpdateItem(int slot, const ItemPtr& item);
-    void onRemoveItem(int slot);
+    void onRemoveItem(int slot, const ItemPtr& lastItem);
 
     friend class Game;
 

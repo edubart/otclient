@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,7 +56,7 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
     if(m_firstRecv) {
         m_firstRecv = false;
 
-        if(g_game.getProtocolVersion() >= 841) { // not sure since which version this is, but it seems to be after 8.40
+        if(g_game.getFeature(Otc::GameMessageSizeCheck)) {
             int size = inputMessage->getU16();
             if(size != inputMessage->getUnreadSize()) {
                 g_logger.traceError("invalid message size");

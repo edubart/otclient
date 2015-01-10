@@ -33,6 +33,7 @@ MainWindow
   id: ruleViolationWindow
   size: 400 445
   text: Rule Violation
+  @onEscape: hide()
 
   RVLabel
     !text: tr('Name') .. ':'

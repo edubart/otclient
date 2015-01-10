@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -56,17 +56,20 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addU16(g_game.getOs());
     msg->addU16(g_game.getProtocolVersion());
 
-    if(g_game.getProtocolVersion() >= 971) {
+    if(g_game.getFeature(Otc::GameClientVersion))
         msg->addU32(g_game.getClientVersion());
-        msg->addU8(0); // clientType
-    }
+
+    if(g_game.getFeature(Otc::GameContentRevision))
+        msg->addU16(g_things.getContentRevision());
+
+    if(g_game.getFeature(Otc::GamePreviewState))
+        msg->addU8(0);
 
     int offset = msg->getMessageSize();
+    // first RSA byte must be 0
+    msg->addU8(0);
 
-    msg->addU8(0); // first RSA byte must be 0
-
-    if(g_game.getProtocolVersion() >= 770)
-    {
+    if(g_game.getFeature(Otc::GameLoginPacketEncryption)) {
         // xtea key
         generateXteaKey();
         msg->addU32(m_xteaKey[0]);
@@ -99,7 +102,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addPaddingBytes(paddingBytes);
 
     // encrypt with RSA
-    if(g_game.getProtocolVersion() >= 770)
+    if(g_game.getFeature(Otc::GameLoginPacketEncryption))
         msg->encryptRsa();
 
     if(g_game.getFeature(Otc::GameProtocolChecksum))
@@ -107,7 +110,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
 
     send(msg);
 
-    if(g_game.getProtocolVersion() >= 770)
+    if(g_game.getFeature(Otc::GameLoginPacketEncryption))
         enableXteaEncryption();
 }
 
@@ -642,7 +645,7 @@ void ProtocolGame::sendShareExperience(bool active)
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
 
-    if(g_game.getProtocolVersion() < 910)
+    if(g_game.getClientVersion() < 910)
         msg->addU8(0);
 
     send(msg);
@@ -828,6 +831,29 @@ void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
     msg->addU32(dialog);
     msg->addU8(button);
     msg->addU8(choice);
+    send(msg);
+}
+
+void ProtocolGame::sendBrowseField(const Position& position)
+{
+    if(!g_game.getFeature(Otc::GameBrowseField))
+        return;
+
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientBrowseField);
+    addPosition(msg, position);
+    send(msg);
+}
+
+void ProtocolGame::sendSeekInContainer(int cid, int index)
+{
+    if(!g_game.getFeature(Otc::GameContainerPagination))
+        return;
+
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientSeekInContainer);
+    msg->addU8(cid);
+    msg->addU16(index);
     send(msg);
 }
 

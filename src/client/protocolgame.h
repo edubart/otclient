@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -111,6 +111,8 @@ public:
     void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
     void sendAnswerModalDialog(int dialog, int button, int choice);
+    void sendBrowseField(const Position& position);
+    void sendSeekInContainer(int cid, int index);
 
     // otclient only
     void sendChangeMapAwareRange(int xrange, int yrange);
@@ -126,6 +128,11 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseBlessings(const InputMessagePtr& msg);
+    void parseUnjustifiedStats(const InputMessagePtr& msg);
+    void parsePvpSituations(const InputMessagePtr& msg);
+    void parsePreset(const InputMessagePtr& msg);
+    void parseCreatureType(const InputMessagePtr& msg);
     void parsePlayerHelpers(const InputMessagePtr& msg);
     void parseMessage(const InputMessagePtr& msg);
     void parsePendingGame(const InputMessagePtr& msg);
@@ -175,6 +182,7 @@ private:
     void parseCreatureUnpass(const InputMessagePtr& msg);
     void parseEditText(const InputMessagePtr& msg);
     void parseEditList(const InputMessagePtr& msg);
+    void parsePremiumTrigger(const InputMessagePtr& msg);
     void parsePlayerInfo(const InputMessagePtr& msg);
     void parsePlayerStats(const InputMessagePtr& msg);
     void parsePlayerSkills(const InputMessagePtr& msg);

@@ -41,6 +41,7 @@ MessageTypes = {
 
   [MessageModes.TradeNpc] = MessageSettings.centerWhite,
   [MessageModes.Guild] = MessageSettings.centerWhite,
+  [MessageModes.Party] = MessageSettings.centerGreen,
   [MessageModes.PartyManagement] = MessageSettings.centerWhite,
   [MessageModes.TutorialHint] = MessageSettings.centerWhite,
   [MessageModes.Market] = MessageSettings.centerWhite,

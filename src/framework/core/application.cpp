@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -90,6 +90,9 @@ void Application::init(std::vector<std::string>& args)
 
     m_startupOptions = startupOptions;
 
+    // initialize configs
+    g_configs.init();
+
     // initialize resources
     g_resources.init(args[0].c_str());
 
@@ -125,8 +128,8 @@ void Application::terminate()
     Connection::terminate();
 #endif
 
-    // save configurations
-    g_configs.save();
+    // release configs
+    g_configs.terminate();
 
     // release resources
     g_resources.terminate();

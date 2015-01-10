@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ LocalPlayer::LocalPlayer()
 {
     m_states = 0;
     m_vocation = 0;
+    m_blessings = Otc::BlessingNone;
     m_walkLockExpiration = 0;
 
     m_skillsLevel.fill(-1);
@@ -297,9 +298,11 @@ void LocalPlayer::onAppear()
 {
     Creature::onAppear();
 
+    /* Does not seem to be needed anymore
     // on teleports lock the walk
     if(!m_oldPosition.isInRange(m_position,1,1))
         lockWalk();
+    */
 }
 
 void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPos)
@@ -541,6 +544,16 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
         m_spells = spells;
 
         callLuaField("onSpellsChange", spells, oldSpells);
+    }
+}
+
+void LocalPlayer::setBlessings(int blessings)
+{
+    if(blessings != m_blessings) {
+        int oldBlessings = m_blessings;
+        m_blessings = blessings;
+
+        callLuaField("onBlessingsChange", blessings, oldBlessings);
     }
 }
 

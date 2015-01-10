@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,7 +51,7 @@ void ItemType::unserialize(const BinaryTreePtr& node)
         switch(attr) {
             case ItemTypeAttrServerId: {
                 uint16 serverId = node->getU16();
-                if(g_game.getProtocolVersion() < 960) {
+                if(g_game.getClientVersion() < 960) {
                     if(serverId > 20000 && serverId < 20100) {
                         serverId -= 20000;
                     } else if(lastId > 99 && lastId != serverId - 1) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ public:
     ~BinaryTree();
 
     void seek(uint pos);
-    void skip(uint len) { seek(tell() + len); }
+    void skip(uint len);
     uint tell() { return m_pos; }
     uint size() { unserialize(); return m_buffer.size(); }
 

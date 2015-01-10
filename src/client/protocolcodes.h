@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -104,8 +104,12 @@ namespace Proto {
         GameServerCreatureUnpass            = 146,
         GameServerCreatureMarks             = 147,
         GameServerPlayerHelpers             = 148,
+        GameServerCreatureType              = 149,
         GameServerEditText                  = 150,
         GameServerEditList                  = 151,
+        GameServerBlessings                 = 156,
+        GameServerPreset                    = 157,
+        GameServerPremiumTrigger            = 158, // 1038
         GameServerPlayerDataBasic           = 159, // 950
         GameServerPlayerData                = 160,
         GameServerPlayerSkills              = 161,
@@ -128,6 +132,8 @@ namespace Proto {
         GameServerTextMessage               = 180,
         GameServerCancelWalk                = 181,
         GameServerWalkWait                  = 182,
+        GameServerUnjustifiedStats          = 183,
+        GameServerPvpSituations             = 184,
         GameServerFloorChangeUp             = 190,
         GameServerFloorChangeDown           = 191,
         GameServerChooseOutfit              = 200,
@@ -227,6 +233,8 @@ namespace Proto {
         ClientCancelAttackAndFollow         = 190,
         ClientUpdateTile                    = 201,
         ClientRefreshContainer              = 202,
+        ClientBrowseField                   = 203,
+        ClientSeekInContainer               = 204,
         ClientRequestOutfit                 = 210,
         ClientChangeOutfit                  = 211,
         ClientMount                         = 212, // 870

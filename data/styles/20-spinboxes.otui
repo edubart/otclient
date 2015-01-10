@@ -1,13 +1,13 @@
 SpinBox < TextEdit
   __class: UISpinBox
   text-align: left
-  size: 86 20
+  size: 86 22
   padding: 0
   padding-left: 2
 
   Button
     id: up
-    size: 10 10
+    size: 11 11
     image-source: /images/ui/spinbox_up
     image-border: 1
     image-clip: 0 0 10 10
@@ -21,7 +21,7 @@ SpinBox < TextEdit
 
   Button
     id: down
-    size: 10 10
+    size: 11 11
     image-source: /images/ui/spinbox_down
     image-border: 1
     image-clip: 0 0 10 10

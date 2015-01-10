@@ -4,14 +4,9 @@ MarketButtonBox < ButtonBoxRounded
   size: 106 22
   text-offset: 0 2
   text-align: center
-  image-clip: 0 0 20 20
   image-border: 2
 
-  $hover !disabled:
-    image-clip: 0 20 20 20
-
   $checked:
-    image-clip: 0 40 20 20
     color: white
 
   $disabled:

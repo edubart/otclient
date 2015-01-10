@@ -157,6 +157,7 @@ function table.tostring(t)
   local maxn = #t
   local str = ""
   for k,v in pairs(t) do
+    v = tostring(v)
     if k == maxn and k ~= 1 then
       str = str .. " and " .. v
     elseif maxn > 1 and k ~= 1 then
@@ -181,3 +182,11 @@ function table.collect(t, func)
   return res
 end
 
+function table.equals(t, comp)
+  if type(t) == "table" and type(comp) == "table" then
+    for k,v in pairs(t) do
+      if v ~= comp[k] then return false end
+    end
+  end
+  return true
+end

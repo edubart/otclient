@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -207,6 +207,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerEditList:
                 parseEditList(msg);
                 break;
+            // PROTOCOL>=1038
+            case Proto::GameServerPremiumTrigger:
+                parsePremiumTrigger(msg);
+                break;
             case Proto::GameServerPlayerData:
                 parsePlayerStats(msg);
                 break;
@@ -333,6 +337,22 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerCreatureMarks:
                 parseCreaturesMark(msg);
                 break;
+            case Proto::GameServerCreatureType:
+                parseCreatureType(msg);
+                break;
+            // PROTOCOL>=1055
+            case Proto::GameServerBlessings:
+                parseBlessings(msg);
+                break;
+            case Proto::GameServerUnjustifiedStats:
+                parseUnjustifiedStats(msg);
+                break;
+            case Proto::GameServerPvpSituations:
+                parsePvpSituations(msg);
+                break;
+            case Proto::GameServerPreset:
+                parsePreset(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -365,6 +385,12 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     }
     bool canReportBugs = msg->getU8();
 
+    if(g_game.getClientVersion() >= 1053)
+        msg->getU8(); // can change pvp frame option
+
+    if(g_game.getClientVersion() >= 1058)
+        msg->getU8(); // expert mode enabled
+
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
@@ -389,6 +415,34 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
     }
 }
 
+void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
+{
+    uint16 blessings = msg->getU16();
+    m_localPlayer->setBlessings(blessings);
+}
+
+void ProtocolGame::parsePreset(const InputMessagePtr& msg)
+{
+    uint16 preset = msg->getU32();
+}
+
+void ProtocolGame::parseUnjustifiedStats(const InputMessagePtr& msg)
+{
+    // Unjustified Kills display since 10.55
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+    msg->getU8();
+}
+
+void ProtocolGame::parsePvpSituations(const InputMessagePtr& msg)
+{
+    msg->getU8(); // amount of open pvp situations
+}
+
 void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
@@ -398,7 +452,7 @@ void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
     if(creature)
         g_game.processPlayerHelpers(helpers);
     else
-        g_logger.traceError("could not get creature");
+        g_logger.traceError(stdext::format("could not get creature with id %d", id));
 }
 
 void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
@@ -407,9 +461,9 @@ void ProtocolGame::parseGMActions(const InputMessagePtr& msg)
 
     int numViolationReasons;
 
-    if(g_game.getProtocolVersion() >= 850)
+    if(g_game.getClientVersion() >= 850)
         numViolationReasons = 20;
-    else if(g_game.getProtocolVersion() >= 840)
+    else if(g_game.getClientVersion() >= 840)
         numViolationReasons = 23;
     else
         numViolationReasons = 32;
@@ -461,6 +515,7 @@ void ProtocolGame::parseChallenge(const InputMessagePtr& msg)
 {
     uint timestamp = msg->getU32();
     uint8 random = msg->getU8();
+
     sendLoginPacket(timestamp, random);
 }
 
@@ -559,7 +614,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
     Position pos = getPosition(msg);
     int stackPos = -1;
 
-    if(g_game.getProtocolVersion() >= 841)
+    if(g_game.getClientVersion() >= 841)
         stackPos = msg->getU8();
 
     ThingPtr thing = getThing(msg);
@@ -628,7 +683,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int capacity = msg->getU8();
     bool hasParent = (msg->getU8() != 0);
 
-    bool isUnlocked = false;
+    bool isUnlocked = true;
     bool hasPages = false;
     int containerSize = 0;
     int firstIndex = 0;
@@ -683,16 +738,17 @@ void ProtocolGame::parseContainerRemoveItem(const InputMessagePtr& msg)
 {
     int containerId = msg->getU8();
     int slot;
+    ItemPtr lastItem;
     if(g_game.getFeature(Otc::GameContainerPagination)) {
         slot = msg->getU16();
 
         int itemId = msg->getU16();
         if(itemId != 0)
-            getItem(msg, itemId);
+            lastItem = getItem(msg, itemId);
     } else {
         slot = msg->getU8();
     }
-    g_game.processContainerRemoveItem(containerId, slot);
+    g_game.processContainerRemoveItem(containerId, slot, lastItem);
 }
 
 void ProtocolGame::parseAddInventoryItem(const InputMessagePtr& msg)
@@ -718,7 +774,7 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
 
     int listCount;
 
-    if(g_game.getProtocolVersion() >= 900)
+    if(g_game.getClientVersion() >= 900)
         listCount = msg->getU16();
     else
         listCount = msg->getU8();
@@ -745,7 +801,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
     std::vector<std::tuple<ItemPtr, int>> goods;
 
     int money;
-    if(g_game.getProtocolVersion() >= 973)
+    if(g_game.getClientVersion() >= 973)
         money = msg->getU64();
     else
         money = msg->getU32();
@@ -988,7 +1044,7 @@ void ProtocolGame::parseEditText(const InputMessagePtr& msg)
     uint id = msg->getU32();
 
     int itemId;
-    if(g_game.getProtocolVersion() >= 1010) {
+    if(g_game.getClientVersion() >= 1010) {
         // TODO: processEditText with ItemPtr as parameter
         ItemPtr item = getItem(msg);
         itemId = item->getId();
@@ -1015,10 +1071,22 @@ void ProtocolGame::parseEditList(const InputMessagePtr& msg)
     g_game.processEditList(id, doorId, text);
 }
 
+void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
+{
+    int triggerCount = msg->getU8();
+    std::vector<int> triggers;
+    for(int i=0;i<triggerCount;++i) {
+        triggers.push_back(msg->getU8());
+    }
+    bool something = msg->getU8() == 1;
+}
+
 void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 {
     bool premium = msg->getU8(); // premium
     int vocation = msg->getU8(); // vocation
+    if(g_game.getFeature(Otc::GamePremiumExpiration))
+        int premiumEx = msg->getU32(); // premium expiration used for premium advertisement
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
@@ -1061,6 +1129,10 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 
     double level = msg->getU16();
     double levelPercent = msg->getU8();
+
+    if(g_game.getFeature(Otc::GameExperienceBonus))
+        double experienceBonus = msg->getDouble();
+
     double mana;
     double maxMana;
 
@@ -1125,7 +1197,10 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
         int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            baseLevel = msg->getU8();
+            if(g_game.getFeature(Otc::GameBaseSkillU16))
+                baseLevel = msg->getU16();
+            else
+                baseLevel = msg->getU8();
         else
             baseLevel = level;
 
@@ -1631,7 +1706,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     }
 
     int enterButton, escapeButton;
-    if(g_game.getProtocolVersion() > 970) {
+    if(g_game.getClientVersion() > 970) {
         escapeButton = msg->getU8();
         enterButton = msg->getU8();
     }
@@ -1675,7 +1750,13 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
 {
-    int len = msg->getU8();
+    int len;
+    if(g_game.getClientVersion() >= 1035) {
+        len = 1;
+    } else {
+        len = msg->getU8();
+    }
+
     for(int i=0; i<len; ++i) {
         uint32 id = msg->getU32();
         bool isPermanent = msg->getU8() != 1;
@@ -1693,6 +1774,12 @@ void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
         } else
             g_logger.traceError("could not get creature");
     }
+}
+
+void ProtocolGame::parseCreatureType(const InputMessagePtr& msg)
+{
+    uint32 id = msg->getU32();
+    uint8 type = msg->getU8();
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
@@ -1861,7 +1948,6 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
     CreaturePtr creature;
     bool known = (type != Proto::UnknownCreature);
-
     if(type == Proto::OutdatedCreature || type == Proto::UnknownCreature) {
         if(known) {
             uint id = msg->getU32();
@@ -1875,7 +1961,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             uint id = msg->getU32();
 
             int creatureType;
-            if(g_game.getProtocolVersion() >= 910)
+            if(g_game.getClientVersion() >= 910)
                 creatureType = msg->getU8();
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
@@ -1926,6 +2012,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         // emblem is sent only when the creature is not known
         int emblem = -1;
+        int icon = -1;
         bool unpass = true;
         uint8 mark;
 
@@ -1934,6 +2021,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
             msg->getU8(); // creature type for summons
+        }
+
+        if(g_game.getFeature(Otc::GameCreatureIcons)) {
+            icon = msg->getU8();
+        }
+
+        if(g_game.getFeature(Otc::GameThingMarks)) {
             mark = msg->getU8(); // mark
             msg->getU16(); // helpers
 
@@ -1945,7 +2039,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             }
         }
 
-        if(g_game.getProtocolVersion() >= 854)
+        if(g_game.getClientVersion() >= 854)
             unpass = msg->getU8();
 
         if(creature) {
@@ -1959,6 +2053,8 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setLight(light);
             if(emblem != -1)
                 creature->setEmblem(emblem);
+            if(icon != -1)
+                creature->setIcon(icon);
 
             if(creature == m_localPlayer && !m_localPlayer->isKnown())
                 m_localPlayer->setKnown(true);
@@ -1974,7 +2070,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(creature)
             creature->turn(direction);
 
-        if(g_game.getProtocolVersion() >= 953) {
+        if(g_game.getClientVersion() >= 953) {
             bool unpass = msg->getU8();
 
             if(creature)
@@ -2006,11 +2102,11 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     if(g_game.getFeature(Otc::GameItemAnimationPhase)) {
         if(item->getAnimationPhases() > 1) {
-            // 0xfe => random phase
-            // 0xff => async?
+            // 0x00 => automatic phase
+            // 0xFE => random phase
+            // 0xFF => async phase
             msg->getU8();
-            // Remove async since OTB file in server is configured so every item with animationPhase > 1 is a random phase item.
-            //item->setAsync(msg->getU8() == 0xff);
+            //item->setPhase(msg->getU8());
         }
     }
 

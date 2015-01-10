@@ -27,6 +27,12 @@ EmblemGreen = 1
 EmblemRed = 2
 EmblemBlue = 3
 
+NpcIconNone = 0
+NpcIconChat = 1
+NpcIconTrade = 2
+NpcIconQuest = 3
+NpcIconTradeQuest = 4
+
 -- @}
 
 function getSkullImagePath(skullId)
@@ -91,6 +97,20 @@ function getEmblemImagePath(emblemId)
   return path
 end
 
+function getIconImagePath(iconId)
+  local path
+  if iconId == NpcIconChat then
+    path = '/images/game/npcicons/icon_chat'
+  elseif iconId == NpcIconTrade then
+    path = '/images/game/npcicons/icon_trade'
+  elseif iconId == NpcIconQuest then
+    path = '/images/game/npcicons/icon_quest'
+  elseif iconId == NpcIconTradeQuest then
+    path = '/images/game/npcicons/icon_tradequest'
+  end
+  return path
+end
+
 function Creature:onSkullChange(skullId)
   local imagePath = getSkullImagePath(skullId)
   if imagePath then
@@ -109,5 +129,12 @@ function Creature:onEmblemChange(emblemId)
   local imagePath = getEmblemImagePath(emblemId)
   if imagePath then
     self:setEmblemTexture(imagePath)
+  end
+end
+
+function Creature:onIconChange(iconId)
+  local imagePath = getIconImagePath(iconId)
+  if imagePath then
+    self:setIconTexture(imagePath)
   end
 end

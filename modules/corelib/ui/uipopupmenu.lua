@@ -1,5 +1,5 @@
 -- @docclass
-UIPopupMenu = extends(UIWidget)
+UIPopupMenu = extends(UIWidget, "UIPopupMenu")
 
 local currentMenu
 
@@ -56,9 +56,8 @@ end
 
 function UIPopupMenu:addOption(optionName, optionCallback, shortcut)
   local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self)
-  local lastOptionWidget = self:getLastChild()
-  optionWidget.onClick = function(self)
-    self:getParent():destroy()
+  optionWidget.onClick = function(widget)
+    self:destroy()
     optionCallback()
   end
   optionWidget:setText(optionName)

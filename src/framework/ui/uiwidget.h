@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -492,7 +492,7 @@ public:
     void resizeToText() { setSize(getTextSize()); }
     void clearText() { setText(""); }
 
-    void setText(std::string text);
+    void setText(std::string text, bool dontFireLuaCall = false);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
     void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
     void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }

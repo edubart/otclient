@@ -525,6 +525,9 @@
     <ClCompile Include="..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\core\config.cpp">
+      <Filter>Source Files\framework\core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1042,6 +1045,9 @@
     </ClInclude>
     <ClInclude Include="..\src\client\uisprite.h">
       <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\core\config.h">
+      <Filter>Header Files\framework\core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

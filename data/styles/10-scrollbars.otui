@@ -10,7 +10,6 @@ ScrollBarSlider < UIButton
     image-clip: 13 26 13 13
   $pressed:
     image-clip: 26 26 13 13
-    image-color: #ffffff99
   $disabled:
     image-color: #ffffff66
 

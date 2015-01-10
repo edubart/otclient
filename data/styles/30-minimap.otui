@@ -146,7 +146,7 @@ MinimapFlagWindow < MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 6
-    margin-left: 0
+    margin-left: 0  
 
   MinimapFlagCheckBox
     id: flag1
@@ -190,7 +190,7 @@ MinimapFlagWindow < MainWindow
     anchors.left: parent.left
     anchors.top: prev.bottom
     margin-top: 6
-    margin-left: 0
+    margin-left: 0  
 
   MinimapFlagCheckBox
     id: flag11

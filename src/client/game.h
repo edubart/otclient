@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -85,7 +85,7 @@ protected:
     void processCloseContainer(int containerId);
     void processContainerAddItem(int containerId, const ItemPtr& item, int slot);
     void processContainerUpdateItem(int containerId, int slot, const ItemPtr& item);
-    void processContainerRemoveItem(int containerId, int slot);
+    void processContainerRemoveItem(int containerId, int slot, const ItemPtr& lastItem);
 
     // channel related
     void processChannelList(const std::vector<std::tuple<int, std::string> >& channelList);
@@ -145,7 +145,7 @@ public:
     void safeLogout();
 
     // walk related
-    bool walk(Otc::Direction direction);
+    bool walk(Otc::Direction direction, bool dash = false);
     bool dashWalk(Otc::Direction direction);
     void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);
@@ -258,6 +258,10 @@ public:
     // >= 970 modal dialog
     void answerModalDialog(int dialog, int button, int choice);
 
+    // >= 984 browse field
+    void browseField(const Position& position);
+    void seekInContainer(int cid, int index);
+
     //void reportRuleViolation2();
     void ping();
     void setPingDelay(int delay) { m_pingDelay = delay; }
@@ -286,8 +290,8 @@ public:
     bool isOnline() { return m_online; }
     bool isLogging() { return !m_online && m_protocolGame; }
     bool isDead() { return m_dead; }
-    bool isAttacking() { return !!m_attackingCreature; }
-    bool isFollowing() { return !!m_followingCreature; }
+    bool isAttacking() { return !!m_attackingCreature && !m_attackingCreature->isRemoved(); }
+    bool isFollowing() { return !!m_followingCreature && !m_followingCreature->isRemoved(); }
     bool isConnectionOk() { return m_protocolGame && m_protocolGame->getElapsedTicksSinceLastRead() < 5000; }
 
     int getPing() { return m_ping >= 0 ? std::max<int>(m_ping, m_pingTimer.elapsed_millis()) : -1; }

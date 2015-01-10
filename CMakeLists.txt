@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(otclient)
 
-set(VERSION "0.6.5")
+set(VERSION "0.6.6")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
@@ -37,8 +37,6 @@ add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 # add client executable
 add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
-
-# target link libraries
 target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
 if(USE_PCH)
@@ -51,7 +49,10 @@ endif()
 
 # installation
 set(DATA_INSTALL_DIR share/${PROJECT_NAME})
-install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME}
+		RUNTIME DESTINATION bin
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib)
 install(FILES README.md BUGS LICENSE AUTHORS init.lua ${PROJECT_NAME}rc.lua DESTINATION ${DATA_INSTALL_DIR})
 install(DIRECTORY data modules DESTINATION ${DATA_INSTALL_DIR} PATTERN ".git" EXCLUDE)
 

@@ -25,13 +25,17 @@ mountCreature = nil
 currentMount = 1
 
 function init()
-  connect(g_game, { onOpenOutfitWindow = create,
-                    onGameEnd = destroy })
+  connect(g_game, {
+    onOpenOutfitWindow = create,
+    onGameEnd = destroy
+  })
 end
 
 function terminate()
-  disconnect(g_game, { onOpenOutfitWindow = create,
-                       onGameEnd = destroy })
+  disconnect(g_game, {
+    onOpenOutfitWindow = create,
+    onGameEnd = destroy
+  })
   destroy()
 end
 
@@ -300,17 +304,11 @@ function updateOutfit()
     addon.widget:setChecked(false)
     addon.widget:setEnabled(false)
   end
+  outfit.addons = 0
 
   if availableAddons > 0 then
     for _, i in pairs(ADDON_SETS[availableAddons]) do
       addons[i].widget:setEnabled(true)
-    end
-  end
-
-  outfit.addons = 0
-  for i = 1, #prevAddons do
-    local addon = prevAddons[i]
-    if addon and addons[i].widget:isEnabled() then
       addons[i].widget:setChecked(true)
     end
   end

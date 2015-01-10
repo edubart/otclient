@@ -91,9 +91,9 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+Shift+R', reloadScripts)
 
   -- generate machine uuid, this is a security measure for storing passwords
-  if not g_crypt.setMachineUUID(g_configs.get('uuid')) then
-    g_configs.set('uuid', g_crypt.getMachineUUID())
-    g_configs.save()
+  if not g_crypt.setMachineUUID(g_settings.get('uuid')) then
+    g_settings.set('uuid', g_crypt.getMachineUUID())
+    g_settings.save()
   end
 end
 

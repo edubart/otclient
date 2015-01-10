@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -418,7 +418,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     if(!child)
         return;
 
-    if((uint)index - 1 > m_children.size()) {
+    if((uint)index - 1 >= m_children.size()) {
         g_logger.traceError(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
         return;
     }

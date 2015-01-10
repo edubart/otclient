@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -247,6 +247,14 @@ namespace Otc
         EmblemOther
     };
 
+    enum CreatureIcons {
+        NpcIconNone = 0,
+        NpcIconChat,
+        NpcIconTrade,
+        NpcIconQuest,
+        NpcIconTradeQuest
+    };
+
     enum PlayerStates {
         IconNone = 0,
         IconPoison = 1,
@@ -320,12 +328,13 @@ namespace Otc
         MessageRVRChannel              = 46,
         MessageRVRAnswer               = 47,
         MessageRVRContinue             = 48,
-        LastMessage                    = 49,
+        MessageGameHighlight           = 49,
+        MessageNpcFromStartBlock       = 50,
+        LastMessage                    = 51,
         MessageInvalid                 = 255
     };
 
     enum GameFeature {
-        // 1-50 defined in c++
         GameProtocolChecksum = 1,
         GameAccountNames = 2,
         GameChallengeOnLogin = 3,
@@ -344,7 +353,7 @@ namespace Otc
         GameMagicEffectU16 = 16,
         GamePlayerMarket = 17,
         GameSpritesU32 = 18,
-        GameChargeableItems = 19,
+        // 19 unused
         GameOfflineTrainingTime = 20,
         GamePurseSlot = 21,
         GameFormatCreatureName = 22,
@@ -376,6 +385,20 @@ namespace Otc
         GamePVPMode = 50,
         GameWritableDate = 51,
         GameAdditionalVipInfo = 52,
+        GameBaseSkillU16 = 53,
+        GameCreatureIcons = 54,
+        GameHideNpcNames = 55,
+        GameSpritesAlphaChannel = 56,
+        GamePremiumExpiration = 57,
+        GameBrowseField = 58,
+        GameEnhancedAnimations = 59,
+        GameOGLInformation = 60,
+        GameMessageSizeCheck = 61,
+        GamePreviewState = 62,
+        GameLoginPacketEncryption = 63,
+        GameClientVersion = 64,
+        GameContentRevision = 65,
+        GameExperienceBonus = 66,
 
         LastGameFeature = 101
     };
@@ -395,8 +418,7 @@ namespace Otc
         PathFindAllowNonWalkable = 8
     };
 
-    enum AutomapFlags
-    {
+    enum AutomapFlags {
         MapMarkTick = 0,
         MapMarkQuestion,
         MapMarkExclamation,
@@ -419,19 +441,33 @@ namespace Otc
         MapMarkGreenSouth
     };
 
-    enum VipState
-    {
+    enum VipState {
         VipStateOffline = 0,
         VipStateOnline = 1,
         VipStatePending = 2
     };
 
-    enum SpeedFormula
-    {
+    enum SpeedFormula {
         SpeedFormulaA = 0,
         SpeedFormulaB,
         SpeedFormulaC,
         LastSpeedFormula
+    };
+
+    enum AnimationPhase {
+        PhaseAutomatic = 0,
+        PhaseRandom = 254,
+        PhaseAsync = 255
+    };
+
+    enum Blessings {
+        BlessingNone = 0,
+        BlessingAdventurer = 1,
+        BlessingSpiritualShielding = 1 << 1,
+        BlessingEmbraceOfTibia = 1 << 2,
+        BlessingFireOfSuns = 1 << 3,
+        BlessingWisdomOfSolitude = 1 << 4,
+        BlessingSparkOfPhoenix = 1 << 5
     };
 }
 

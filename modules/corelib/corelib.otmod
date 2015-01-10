@@ -14,11 +14,13 @@ Module
     dofile 'const'
     dofile 'util'
     dofile 'globals'
+    dofile 'config'
     dofile 'settings'
     dofile 'keyboard'
     dofile 'mouse'
     dofile 'net'
 
+    dofiles 'classes'
     dofiles 'ui'
 
     dofile 'inputmessage'

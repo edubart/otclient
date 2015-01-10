@@ -92,6 +92,9 @@ EnterGameWindow
     margin-top: 2
     margin-right: 3
     width: 90
+    menu-scroll: true
+    menu-height: 125
+    menu-scroll-step: 25
 
   MenuLabel
     id: portLabel

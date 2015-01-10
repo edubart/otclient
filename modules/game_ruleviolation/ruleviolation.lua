@@ -89,6 +89,7 @@ function show(target, statement)
 
     ruleViolationWindow:show()
     ruleViolationWindow:raise()
+    ruleViolationWindow:focus()
   end
 end
 

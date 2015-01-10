@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ void ThingTypeManager::init()
     m_nullThingType = ThingTypePtr(new ThingType);
     m_nullItemType = ItemTypePtr(new ItemType);
     m_datSignature = 0;
+    m_contentRevision = 0;
     m_otbMinorVersion = 0;
     m_otbMajorVersion = 0;
     m_datLoaded = false;
@@ -100,12 +101,14 @@ bool ThingTypeManager::loadDat(std::string file)
 {
     m_datLoaded = false;
     m_datSignature = 0;
+    m_contentRevision = 0;
     try {
         file = g_resources.guessFilePath(file, "dat");
 
         FileStreamPtr fin = g_resources.openFile(file);
 
         m_datSignature = fin->getU32();
+        m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
         for(int category = 0; category < ThingLastCategory; ++category) {
             int count = fin->getU16() + 1;
@@ -178,17 +181,23 @@ void ThingTypeManager::loadOtb(const std::string& file)
             stdext::throw_exception("invalid otb file");
 
         BinaryTreePtr root = fin->getBinaryTree();
+        root->skip(1); // otb first byte is always 0
 
         signature = root->getU32();
         if(signature != 0)
             stdext::throw_exception("invalid otb file");
 
-        root->skip(4);
+        uint8 rootAttr = root->getU8();
+        if(rootAttr == 0x01) { // OTB_ROOT_ATTR_VERSION
+            uint16 size = root->getU16();
+            if(size != 4 + 4 + 4 + 128)
+                stdext::throw_exception("invalid otb root attr version size");
 
-        m_otbMajorVersion = root->getU32();
-        m_otbMinorVersion = root->getU32();
-        root->skip(4);
-        root->skip(128); // description
+            m_otbMajorVersion = root->getU32();
+            m_otbMinorVersion = root->getU32();
+            root->skip(4); // buildNumber
+            root->skip(128); // description
+        }
 
         m_reverseItemTypes.clear();
         m_itemTypes.resize(root->getChildren().size() + 1, m_nullItemType);
@@ -270,7 +279,7 @@ void ThingTypeManager::parseItemType(uint16 serverId, TiXmlElement* elem)
     bool s;
     int d;
 
-    if(g_game.getProtocolVersion() < 960) {
+    if(g_game.getClientVersion() < 960) {
         s = serverId > 20000 && serverId < 20100;
         d = 20000;
     } else {

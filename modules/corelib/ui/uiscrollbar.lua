@@ -1,5 +1,5 @@
 -- @docclass
-UIScrollBar = extends(UIWidget)
+UIScrollBar = extends(UIWidget, "UIScrollBar")
 
 -- private functions
 local function calcValues(self)
@@ -28,7 +28,7 @@ local function calcValues(self)
     proportion = math.min(math.max(self.step, 1), range)/range
   end
 
-  local px = math.max(proportion * pxrange, 10)
+  local px = math.max(proportion * pxrange, 6)
   px = px - px % 2 + 1
 
   local offset = 0
@@ -234,19 +234,23 @@ function UIScrollBar:onGeometryChange()
 end
 
 function UIScrollBar:onMouseWheel(mousePos, mouseWheel)
-  if not self.mouseScroll then
+  if not self.mouseScroll or not self:isOn() then
     return false
   end
   if mouseWheel == MouseWheelUp then
     if self.orientation == 'vertical' then
+      if self.value <= self.minimum then  return false end
       self:decrement()
     else
+      if self.value >= self.maximum then return false end
       self:increment()
     end
   else
     if self.orientation == 'vertical' then
+      if self.value >= self.maximum then return false end
       self:increment()
     else
+      if self.value <= self.minimum then  return false end
       self:decrement()
     end
   end

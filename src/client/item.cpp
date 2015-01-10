@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -241,7 +241,7 @@ int Item::getSubType()
 {
     if(isSplash() || isFluidContainer())
         return m_countOrSubType;
-    if(g_game.getProtocolVersion() > 862)
+    if(g_game.getClientVersion() > 862)
         return 0;
     return 1;
 }
@@ -272,6 +272,10 @@ ItemPtr Item::clone()
 
 void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 {
+    // Avoid crashes with invalid items
+    if(!isValid())
+        return;
+
     if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
         if(m_countOrSubType <= 0) {
             xPattern = 0;
@@ -367,7 +371,7 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 
         xPattern = (color % 4) % getNumPatternX();
         yPattern = (color / 4) % getNumPatternY();
-    } else if(isGround() || isOnBottom()) {
+    } else {
         xPattern = m_position.x % getNumPatternX();
         yPattern = m_position.y % getNumPatternY();
         zPattern = m_position.z % getNumPatternZ();

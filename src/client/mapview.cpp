@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -139,7 +139,10 @@ void MapView::draw(const Rect& rect)
                 else
                     ++it;
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
+                if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                else
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
             }
 
             if(drawFlags & Otc::DrawMissiles) {
@@ -463,7 +466,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
         virtualCenterOffset += (drawDimension - oldDimension).toPoint() / 2;
     }
     */
-
 
     m_viewMode = viewMode;
     m_visibleDimension = visibleDimension;

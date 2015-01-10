@@ -202,9 +202,9 @@ function popWindow()
   else
     terminalWindow:breakAnchors()
     terminalWindow:setOn(true)
-    local size = oldSize or { width = g_window.getWidth()/2, height = g_window.getHeight()/2 }
+    local size = oldSize or { width = g_window.getWidth()/2.5, height = g_window.getHeight()/4 }
     terminalWindow:setSize(size)
-    local pos = oldPos or { x = (g_window.getWidth() - terminalWindow:getWidth())/2, y = (g_window.getHeight() - terminalWindow:getHeight())/2 }
+    local pos = oldPos or { x = 0, y = g_window.getHeight() }
     terminalWindow:setPosition(pos)
     terminalWindow:getChildById('bottomResizeBorder'):enable()
     terminalWindow:getChildById('rightResizeBorder'):enable()
@@ -224,7 +224,7 @@ function toggle()
     if not firstShown then
       local settings = g_settings.getNode('terminal-window')
       if settings then
-        if settings.size then  oldSize = size end
+        if settings.size then oldSize = settings.size end
         if settings.pos then oldPos = settings.pos end
         if settings.poped then popWindow() end
       end

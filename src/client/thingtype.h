@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,12 @@
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
+
+enum FrameGroup : uint8 {
+	FrameGroupIdle = 0,
+	FrameGroupMoving,
+	FrameGroupDefault = FrameGroupIdle
+};
 
 enum ThingCategory : uint8 {
     ThingCategoryItem = 0,
@@ -82,7 +88,8 @@ enum ThingAttr : uint8 {
     ThingAttrOpacity          = 100,
     ThingAttrNotPreWalkable   = 101,
 
-    ThingAttrNoMoveAnimation  = 253, // real value is 16, but we need to do this for backwards compatibility
+    ThingAttrFloorChange      = 252,
+    ThingAttrNoMoveAnimation  = 253, // 10.10: real value is 16, but we need to do this for backwards compatibility
     ThingAttrChargeable       = 254, // deprecated
     ThingLastAttr             = 255
 };
@@ -107,6 +114,21 @@ struct Light {
     Light() { intensity = 0; color = 215; }
     uint8 intensity;
     uint8 color;
+};
+
+struct Animation {
+    Animation() { startIndex = 0; loopCount = 0; async = false; }
+
+    int startIndex;
+    int loopCount;
+    bool async;
+    std::vector<std::tuple<int, int> > frames;
+
+    float duration(uint8 frame) {
+        assert(frames.size() <= frame);
+        std::tuple<int, int> data = frames.at(frame);
+        return stdext::random_range((long)std::get<0>(data), (long)std::get<1>(data));
+    }
 };
 
 class ThingType : public LuaObject
@@ -137,6 +159,7 @@ public:
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
     int getAnimationPhases() { return m_animationPhases; }
+    Animation getAnimation() { return m_animation; }
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
@@ -203,10 +226,11 @@ private:
 
     Size m_size;
     Point m_displacement;
+    Animation m_animation;
+    int m_animationPhases;
     int m_exactSize;
     int m_realSize;
     int m_numPatternX, m_numPatternY, m_numPatternZ;
-    int m_animationPhases;
     int m_layers;
     int m_elevation;
     float m_opacity;

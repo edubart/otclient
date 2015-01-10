@@ -8,7 +8,8 @@ oldZoom = nil
 oldPos = nil
 
 function init()
-  minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
+  minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', 
+    tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
   minimapButton:setOn(true)
 
   minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
@@ -95,7 +96,7 @@ function offline()
 end
 
 function loadMap(clean)
-  local protocolVersion = g_game.getProtocolVersion()
+  local clientVersion = g_game.getClientVersion()
 
   if clean then
     g_minimap.clean()
@@ -107,7 +108,7 @@ function loadMap(clean)
       g_minimap.loadOtmm(minimapFile)
     end
   else
-    local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
+    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
     if g_resources.fileExists(minimapFile) then
       g_map.loadOtcm(minimapFile)
     end
@@ -116,12 +117,12 @@ function loadMap(clean)
 end
 
 function saveMap()
-  local protocolVersion = g_game.getProtocolVersion()
+  local clientVersion = g_game.getClientVersion()
   if otmm then
     local minimapFile = '/minimap.otmm'
     g_minimap.saveOtmm(minimapFile)
   else
-    local minimapFile = '/minimap_' .. protocolVersion .. '.otcm'
+    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
     g_map.saveOtcm(minimapFile)
   end
   minimapWidget:save()

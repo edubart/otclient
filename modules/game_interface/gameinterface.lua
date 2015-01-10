@@ -16,6 +16,7 @@ currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
 walkFunction = nil
+hookedMenuOptions = {}
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -56,7 +57,7 @@ function init()
 end
 
 function bindKeys()
-  gameRootPanel:setAutoRepeatDelay(250)
+  gameRootPanel:setAutoRepeatDelay(200)
 
   bindWalkKey('Up', North)
   bindWalkKey('Right', East)
@@ -103,6 +104,8 @@ end
 function terminate()
   save()
   hide()
+
+  hookedMenuOptions = {}
 
   stopSmartWalk()
 
@@ -351,10 +354,14 @@ function onMouseGrabberRelease(self, mousePosition, mouseButton)
 end
 
 function onUseWith(clickedWidget, mousePosition)
-  if clickedWidget:getClassName() == 'UIMap' then
+  if clickedWidget:getClassName() == 'UIGameMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
-      g_game.useWith(selectedThing, tile:getTopMultiUseThing())
+      if selectedThing:isFluidContainer() or selectedThing:isMultiUse() then
+        g_game.useWith(selectedThing, tile:getTopMultiUseThing())
+      else
+        g_game.useWith(selectedThing, tile:getTopUseThing())
+      end
     end
   elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
     g_game.useWith(selectedThing, clickedWidget:getItem())
@@ -367,7 +374,7 @@ function onUseWith(clickedWidget, mousePosition)
 end
 
 function onTradeWith(clickedWidget, mousePosition)
-  if clickedWidget:getClassName() == 'UIMap' then
+  if clickedWidget:getClassName() == 'UIGameMap' then
     local tile = clickedWidget:getTile(mousePosition)
     if tile then
       g_game.requestTrade(selectedThing, tile:getTopCreature())
@@ -405,6 +412,34 @@ function startTradeWith(thing)
   g_mouse.pushCursor('target')
 end
 
+function isMenuHookCategoryEmpty(category)
+  if category then
+    for _,opt in pairs(category) do
+      if opt then return false end
+    end
+  end
+  return true
+end
+
+function addMenuHook(category, name, callback, condition, shortcut)
+  if not hookedMenuOptions[category] then
+    hookedMenuOptions[category] = {}
+  end
+  hookedMenuOptions[category][name] = {
+    callback = callback,
+    condition = condition,
+    shortcut = shortcut
+  }
+end
+
+function removeMenuHook(category, name)
+  if not name then
+    hookedMenuOptions[category] = {}
+  else
+    hookedMenuOptions[category][name] = nil
+  end
+end
+
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if not g_game.isOnline() then return end
   local menu = g_ui.createWidget('PopupMenu')
@@ -437,6 +472,9 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end)
     end
 
+    if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~= 0xffff then
+      menu:addOption(tr('Browse Field'), function() g_game.browseField(useThing:getPosition()) end)
+    end
   end
 
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
@@ -546,6 +584,19 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
   end
 
+  -- hooked menu options
+  for _,category in pairs(hookedMenuOptions) do
+    if not isMenuHookCategoryEmpty(category) then
+      menu:addSeparator()
+      for name,opt in pairs(category) do
+        if opt and opt.condition(menuPosition, lookThing, useThing, creatureThing) then
+          menu:addOption(name, function() opt.callback(menuPosition, 
+            lookThing, useThing, creatureThing) end, opt.shortcut)
+        end
+      end
+    end
+  end
+
   menu:display(menuPosition)
 end
 
@@ -626,6 +677,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
       return true
     end
   end
+
 
   local player = g_game.getLocalPlayer()
   player:stopAutoWalk()
@@ -783,8 +835,10 @@ function setupViewMode(mode)
     gameRootPanel:fill('parent')
     gameLeftPanel:setImageColor('alpha')
     gameRightPanel:setImageColor('alpha')
-    gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameLeftPanel:getPaddingTop())
-    gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightPanel:getPaddingTop())
+    gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu()
+      :getHeight() - gameLeftPanel:getPaddingTop())
+    gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu()
+      :getHeight() - gameRightPanel:getPaddingTop())
     gameLeftPanel:setOn(true)
     gameLeftPanel:setVisible(true)
     gameRightPanel:setOn(true)

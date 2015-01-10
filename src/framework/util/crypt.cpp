@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -201,7 +201,7 @@ std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachine
 {
     std::string tmp = "0000" + decrypted_string;
     uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
-    stdext::writeLE32((uint8*)&tmp[0], sum);
+    stdext::writeULE32((uint8*)&tmp[0], sum);
     std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
 }
@@ -211,7 +211,7 @@ std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachine
     std::string decoded = base64Decode(encrypted_string);
     std::string tmp = xorCrypt(base64Decode(encrypted_string), getCryptKey(useMachineUUID));
     if(tmp.length() >= 4) {
-        uint32 readsum = stdext::readLE32((const uint8*)tmp.c_str());
+        uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
         std::string decrypted_string = tmp.substr(4);
         uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
         if(readsum == sum)

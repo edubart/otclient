@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -153,6 +153,8 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         uint8 *pixels = image->getPixelData();
         int writePos = 0;
         int read = 0;
+        bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
+        uint8 channels = useAlpha ? 4 : 3;
 
         // decompress pixels
         while(read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
@@ -171,11 +173,11 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 pixels[writePos + 0] = m_spritesFile->getU8();
                 pixels[writePos + 1] = m_spritesFile->getU8();
                 pixels[writePos + 2] = m_spritesFile->getU8();
-                pixels[writePos + 3] = 0xFF;
+                pixels[writePos + 3] = useAlpha ? m_spritesFile->getU8() : 0xFF;
                 writePos += 4;
             }
 
-            read += 4 + (3 * coloredPixels);
+            read += 4 + (channels * coloredPixels);
         }
 
         // fill remaining pixels with alpha

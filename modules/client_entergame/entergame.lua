@@ -35,7 +35,7 @@ end
 
 local function onCharacterList(protocol, characters, account, otui)
   -- Try add server to the server list
-  ServerList.add(G.host, G.port, g_game.getProtocolVersion())
+  ServerList.add(G.host, G.port, g_game.getClientVersion())
 
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
     local account = g_crypt.encrypt(G.account)
@@ -58,6 +58,12 @@ local function onCharacterList(protocol, characters, account, otui)
 
   loadBox:destroy()
   loadBox = nil
+
+  for _, characterInfo in pairs(characters) do
+    if characterInfo.previewState and characterInfo.previewState ~= PreviewState.Default then
+      characterInfo.worldName = characterInfo.worldName .. ', Preview'
+    end
+  end
 
   CharacterList.create(characters, account, otui)
   CharacterList.show()
@@ -82,7 +88,7 @@ local function onUpdateNeeded(protocol, signature)
     local cancelFunc = EnterGame.show
     EnterGame.updateFunc(signature, continueFunc, cancelFunc)
   else
-    local errorBox = displayErrorBox(tr('Update needed'), tr('Your client needs update, try redownloading it.'))
+    local errorBox = displayErrorBox(tr('Update needed'), tr('Your client needs updating, try redownloading it.'))
     connect(errorBox, { onOk = EnterGame.show })
   end
 end
@@ -105,7 +111,7 @@ function EnterGame.init()
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
   local clientVersion = g_settings.getInteger('client-version')
-  if clientVersion == 0 then clientVersion = 860 end
+  if clientVersion == 0 then clientVersion = 1071 end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -242,7 +248,7 @@ function EnterGame.doLogin()
 
   g_game.chooseRsa(G.host)
   g_game.setClientVersion(clientVersion)
-  g_game.setProtocolVersion(g_game.getProtocolVersionForClient(clientVersion))
+  g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
 
   if modules.game_things.isLoaded() then
     protocolLogin:login(G.host, G.port, G.account, G.password)

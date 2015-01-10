@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,7 @@ public:
     uint32 getDatSignature() { return m_datSignature; }
     uint32 getOtbMajorVersion() { return m_otbMajorVersion; }
     uint32 getOtbMinorVersion() { return m_otbMinorVersion; }
+    uint16 getContentRevision() { return m_contentRevision; }
 
     bool isDatLoaded() { return m_datLoaded; }
     bool isXmlLoaded() { return m_xmlLoaded; }
@@ -89,6 +90,7 @@ private:
     uint32 m_otbMinorVersion;
     uint32 m_otbMajorVersion;
     uint32 m_datSignature;
+    uint16 m_contentRevision;
 };
 
 extern ThingTypeManager g_things;

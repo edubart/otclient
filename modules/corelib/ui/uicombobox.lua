@@ -1,5 +1,5 @@
 -- @docclass
-UIComboBox = extends(UIWidget)
+UIComboBox = extends(UIWidget, "UIComboBox")
 
 function UIComboBox.create()
   local combobox = UIComboBox.internalCreate()
@@ -7,6 +7,9 @@ function UIComboBox.create()
   combobox.options = {}
   combobox.currentIndex = -1
   combobox.mouseScroll = true
+  combobox.menuScroll = false
+  combobox.menuHeight = 100
+  combobox.menuScrollStep = 0
   return combobox
 end
 
@@ -25,25 +28,33 @@ function UIComboBox:getOption(text)
   end
 end
 
-function UIComboBox:setCurrentOption(text)
+function UIComboBox:setOption(text, dontSignal)
+  self:setCurrentOption(text, dontSignal)
+end
+
+function UIComboBox:setCurrentOption(text, dontSignal)
   if not self.options then return end
   for i,v in ipairs(self.options) do
     if v.text == text and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(text)
-      signalcall(self.onOptionChange, self, text, v.data)
+      if not dontSignal then
+        signalcall(self.onOptionChange, self, text, v.data)
+      end
       return
     end
   end
 end
 
-function UIComboBox:setCurrentOptionByData(data)
+function UIComboBox:setCurrentOptionByData(data, dontSignal)
   if not self.options then return end
   for i,v in ipairs(self.options) do
     if v.data == data and self.currentIndex ~= i then
       self.currentIndex = i
       self:setText(v.text)
-      signalcall(self.onOptionChange, self, v.text, v.data)
+      if not dontSignal then
+        signalcall(self.onOptionChange, self, v.text, v.data)
+      end
       return
     end
   end
@@ -86,7 +97,16 @@ function UIComboBox:removeOption(text)
 end
 
 function UIComboBox:onMousePress(mousePos, mouseButton)
-  local menu = g_ui.createWidget(self:getStyleName() .. 'PopupMenu')
+  local menu
+  if self.menuScroll then
+    menu = g_ui.createWidget(self:getStyleName() .. 'PopupScrollMenu')
+    menu:setHeight(self.menuHeight)
+    if self.menuScrollStep > 0 then
+      menu:setScrollbarStep(self.menuScrollStep)
+    end
+  else
+    menu = g_ui.createWidget(self:getStyleName() .. 'PopupMenu')
+  end
   menu:setId(self:getId() .. 'PopupMenu')
   for i,v in ipairs(self.options) do
     menu:addOption(v.text, function() self:setCurrentOption(v.text) end)
@@ -129,6 +149,12 @@ function UIComboBox:onStyleApply(styleName, styleNode)
   for name,value in pairs(styleNode) do
     if name == 'mouse-scroll' then
       self.mouseScroll = value
+    elseif name == 'menu-scroll' then
+      self.menuScroll = value
+    elseif name == 'menu-height' then
+      self.menuHeight = value
+    elseif name == 'menu-scroll-step' then
+      self.menuScrollStep = value
     end
   end
 end

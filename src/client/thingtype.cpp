@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2013 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -53,14 +53,12 @@ void ThingType::serialize(const FileStreamPtr& fin)
             continue;
 
         int attr = i;
-        if(g_game.getFeature(Otc::GameChargeableItems)) {
+        if(g_game.getClientVersion() >= 780) {
             if(attr == ThingAttrChargeable)
                 attr = ThingAttrWritable;
             else if(attr >= ThingAttrWritable)
                 attr += 1;
-        }
-
-        if(g_game.getProtocolVersion() >= 1010) {
+        } else if(g_game.getClientVersion() >= 1000) {
             if(attr == ThingAttrNoMoveAnimation)
                 attr = 16;
             else if(attr >= ThingAttrPickupable)
@@ -118,6 +116,19 @@ void ThingType::serialize(const FileStreamPtr& fin)
     fin->addU8(m_numPatternZ);
     fin->addU8(m_animationPhases);
 
+    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(m_animationPhases > 1) {
+            fin->addU8(m_animation.async ? 0 : 1);
+            fin->add32(m_animation.loopCount);
+            fin->addU8(m_animation.startIndex);
+
+            for(std::tuple<int, int> frame : m_animation.frames) {
+                fin->addU32(std::get<0>(frame));
+                fin->addU32(std::get<1>(frame));
+            }
+        }
+    }
+
     for(uint i = 0; i < m_spritesIndex.size(); i++) {
         if(g_game.getFeature(Otc::GameSpritesU32))
             fin->addU32(m_spritesIndex[i]);
@@ -132,24 +143,18 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_id = clientId;
     m_category = category;
 
+    int count = 0, attr = -1;
     bool done = false;
     for(int i = 0 ; i < ThingLastAttr;++i) {
-        int attr = fin->getU8();
+        count++;
+        attr = fin->getU8();
         if(attr == ThingLastAttr) {
             done = true;
             break;
         }
 
-        if(g_game.getFeature(Otc::GameChargeableItems)) {
-            if(attr == ThingAttrWritable) {
-                m_attribs.set(ThingAttrChargeable, true);
-                continue;
-            } else if(attr > ThingAttrWritable)
-                attr -= 1;
-        }
-
-        if(g_game.getProtocolVersion() >= 1010) {
-            /* In 10.10 all attributes from 16 and up were
+        if(g_game.getClientVersion() >= 1000) {
+            /* In 10.10+ all attributes from 16 and up were
              * incremented by 1 to make space for 16 as
              * "No Movement Animation" flag.
              */
@@ -157,12 +162,73 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 attr = ThingAttrNoMoveAnimation;
             else if(attr > 16)
                 attr -= 1;
+        } else if(g_game.getClientVersion() >= 860) {
+            /* Default attribute values follow
+             * the format of 8.6-9.86.
+             * Therefore no changes here.
+             */
+        } else if(g_game.getClientVersion() >= 780) {
+            /* In 7.80-8.54 all attributes from 8 and higher were
+             * incremented by 1 to make space for 8 as
+             * "Item Charges" flag.
+             */
+            if(attr == 8) {
+                m_attribs.set(ThingAttrChargeable, true);
+                continue;
+            } else if(attr > 8)
+                attr -= 1;
+        } else if(g_game.getClientVersion() >= 755) {
+            /* In 7.55-7.72 attributes 23 is "Floor Change". */
+            if(attr == 23)
+                attr = ThingAttrFloorChange;
+        } else if(g_game.getClientVersion() >= 740) {
+            /* In 7.4-7.5 attribute "Ground Border" did not exist
+             * attributes 1-15 have to be adjusted.
+             * Several other changes in the format.
+             */
+            if(attr > 0 && attr <= 15)
+                attr += 1;
+            else if(attr == 16)
+                attr = ThingAttrLight;
+            else if(attr == 17)
+                attr = ThingAttrFloorChange;
+            else if(attr == 18)
+                attr = ThingAttrFullGround;
+            else if(attr == 19)
+                attr = ThingAttrElevation;
+            else if(attr == 20)
+                attr = ThingAttrDisplacement;
+            else if(attr == 22)
+                attr = ThingAttrMinimapColor;
+            else if(attr == 23)
+                attr = ThingAttrRotateable;
+            else if(attr == 24)
+                attr = ThingAttrLyingCorpse;
+            else if(attr == 25)
+                attr = ThingAttrHangable;
+            else if(attr == 26)
+                attr = ThingAttrHookSouth;
+            else if(attr == 27)
+                attr = ThingAttrHookEast;
+            else if(attr == 28)
+                attr = ThingAttrAnimateAlways;
+
+            /* "Multi Use" and "Force Use" are swapped */
+            if(attr == ThingAttrMultiUse)
+                attr = ThingAttrForceUse;
+            else if(attr == ThingAttrForceUse)
+                attr = ThingAttrMultiUse;
         }
 
         switch(attr) {
             case ThingAttrDisplacement: {
-                m_displacement.x = fin->getU16();
-                m_displacement.y = fin->getU16();
+                if(g_game.getClientVersion() >= 755) {
+                    m_displacement.x = fin->getU16();
+                    m_displacement.y = fin->getU16();
+                } else {
+                    m_displacement.x = 8;
+                    m_displacement.y = 8;
+                }
                 m_attribs.set(attr, true);
                 break;
             }
@@ -205,34 +271,62 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     }
 
     if(!done)
-        stdext::throw_exception("corrupt data");
+        stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
+            m_id, m_category, count, attr));
 
-    uint8 width = fin->getU8();
-    uint8 height = fin->getU8();
-    m_size = Size(width, height);
-    if(width > 1 || height > 1) {
-        m_realSize = fin->getU8();
-        m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
+    uint8 frames = 1;
+    if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057)
+        frames = fin->getU8();
+
+    for(int i = 0; i < frames; ++i) {
+        uint8 frameGroup = FrameGroupDefault;
+        if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057) {
+            frameGroup = fin->getU8();
+        }
+
+        uint8 width = fin->getU8();
+        uint8 height = fin->getU8();
+        m_size = Size(width, height);
+        if(width > 1 || height > 1) {
+            m_realSize = fin->getU8();
+            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
+        }
+        else
+            m_exactSize = 32;
+
+        m_layers = fin->getU8();
+        m_numPatternX = fin->getU8();
+        m_numPatternY = fin->getU8();
+        if(g_game.getClientVersion() >= 755)
+            m_numPatternZ = fin->getU8();
+        else
+            m_numPatternZ = 1;
+        m_animationPhases = fin->getU8();
+
+        if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+            if(m_animationPhases > 1) {
+                m_animation.async = fin->getU8() == 0;
+                m_animation.loopCount = fin->get32();
+                m_animation.startIndex = fin->getU8();
+
+                for (int i = 0; i < m_animationPhases; i++) {
+                    int minDuration = fin->getU32();
+                    int maxDuration = fin->getU32();
+
+                    m_animation.frames.push_back(std::make_tuple(minDuration, maxDuration));
+                }
+            }
+        }
+
+        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+
+        if(totalSprites > 4096)
+            stdext::throw_exception("a thing type has more than 4096 sprites");
+
+        m_spritesIndex.resize(totalSprites);
+        for(int i = 0; i < totalSprites; i++)
+            m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
     }
-    else
-        m_exactSize = 32;
-
-    m_layers = fin->getU8();
-    m_numPatternX = fin->getU8();
-    m_numPatternY = fin->getU8();
-    m_numPatternZ = fin->getU8();
-    m_animationPhases = fin->getU8();
-
-    int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
-
-    // if(totalSprites == 0)
-    //     stdext::throw_exception("a thing type has no sprites");
-    if(totalSprites > 4096)
-        stdext::throw_exception("a thing type has more than 4096 sprites");
-
-    m_spritesIndex.resize(totalSprites);
-    for(int i = 0; i < totalSprites; i++)
-        m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
     m_textures.resize(m_animationPhases);
     m_texturesFramesRects.resize(m_animationPhases);

@@ -1,5 +1,5 @@
 -- @docclass
-UIProgressBar = extends(UIWidget)
+UIProgressBar = extends(UIWidget, "UIProgressBar")
 
 function UIProgressBar.create()
   local progressbar = UIProgressBar.internalCreate()

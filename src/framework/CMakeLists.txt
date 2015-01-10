@@ -71,6 +71,8 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/core/binarytree.h
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/clock.h
+    ${CMAKE_CURRENT_LIST_DIR}/core/config.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/core/config.h
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.cpp
     ${CMAKE_CURRENT_LIST_DIR}/core/configmanager.h
     ${CMAKE_CURRENT_LIST_DIR}/core/declarations.h
@@ -167,7 +169,7 @@ set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_
 set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
-set(CMAKE_CXX_FLAGS_RELEASE           "-Os")
+set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
 set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
 
 if(USE_LTO)

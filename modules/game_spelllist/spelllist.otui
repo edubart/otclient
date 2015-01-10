@@ -26,6 +26,16 @@ SpellInfoValueLabel < Label
   margin-left: 10
   margin-top: 5
 
+FilterButton < Button
+  width: 64
+  anchors.left: prev.right
+  anchors.top: spellList.bottom
+  @onClick: toggleFilter(self)
+  margin: 5 0 0 6
+  color: #630000
+  $on:
+    color: green
+
 MainWindow
   id: spelllistWindow
   !text: tr('Spell List')
@@ -65,33 +75,21 @@ MainWindow
     anchors.top: spellList.top
     !text: tr('Name') .. ':'
 
-  Button
+  Label
+    anchors.left: parent.left
+    anchors.top: spellList.bottom
+    !text: tr('Filters') .. ':'
+    margin-top: 8
+
+  FilterButton
     id: buttonFilterLevel
     !text: tr('Level')
     !tooltip: tr('Hide spells for higher exp. levels')
-    width: 64
-    anchors.left: spellList.left
-    anchors.top: spellList.bottom
-    @onClick: toggleFilter(self)
-    margin-left: 10
-    margin-top: 5
-    color: #FF0000D0
-    $on:
-      color: green
 
-  Button
+  FilterButton
     id: buttonFilterVocation
     !text: tr('Vocation')
     !tooltip: tr('Hide spells for other vocations')
-    width: 64
-    anchors.left: prev.right
-    anchors.top: spellList.bottom
-    @onClick: toggleFilter(self)
-    margin-left: 10
-    margin-top: 5
-    color: #FF0000D0
-    $on:
-      color: green
 
   SpellInfoLabel
     id: labelFormula

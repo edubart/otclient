@@ -1,5 +1,5 @@
 -- @docclass
-UIMiniWindowContainer = extends(UIWidget)
+UIMiniWindowContainer = extends(UIWidget, "UIMiniWindowContainer")
 
 function UIMiniWindowContainer.create()
   local container = UIMiniWindowContainer.internalCreate()
@@ -7,10 +7,6 @@ function UIMiniWindowContainer.create()
   container:setFocusable(false)
   container:setPhantom(true)
   return container
-end
-
-function UIMiniWindowContainer:getClassName()
-  return 'UIMiniWindowContainer'
 end
 
 -- TODO: connect to window onResize event

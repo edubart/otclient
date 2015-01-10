@@ -1,13 +1,9 @@
 -- @docclass
-UIMiniWindow = extends(UIWindow)
+UIMiniWindow = extends(UIWindow, "UIMiniWindow")
 
 function UIMiniWindow.create()
   local miniwindow = UIMiniWindow.internalCreate()
   return miniwindow
-end
-
-function UIMiniWindow:getClassName()
-  return 'UIMiniWindow'
 end
 
 function UIMiniWindow:open(dontSave)

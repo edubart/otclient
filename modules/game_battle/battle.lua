@@ -214,38 +214,35 @@ function onChangeSortType(comboBox, option)
 end
 
 function onChangeSortOrder(comboBox, option)
-  setSortOrder(option:lower():gsub('[.]', ''))  -- Replace dot in option name
+  -- Replace dot in option name
+  setSortOrder(option:lower():gsub('[.]', ''))
 end
 
 function checkCreatures()
   removeAllCreatures()
 
-  local spectators = {}
-  local player = g_game.getLocalPlayer()
-  if g_game.isOnline() then
-    creatures = g_map.getSpectators(player:getPosition(), false)
-    for i, creature in ipairs(creatures) do
-      if creature ~= player and doCreatureFitFilters(creature) then
-        table.insert(spectators, creature)
-      end
-    end
+  if not g_game.isOnline() then
+    return
   end
 
-  for i, v in pairs(spectators) do
-    addCreature(v)
+  local player = g_game.getLocalPlayer()
+  local spectators = g_map.getSpectators(player:getPosition(), false)
+  for _, creature in ipairs(spectators) do
+    if doCreatureFitFilters(creature) then
+      addCreature(creature)
+    end
   end
 end
 
-
 function doCreatureFitFilters(creature)
-  local localPlayer = g_game.getLocalPlayer()
-  if creature == localPlayer then
+  if creature:isLocalPlayer() then
     return false
   end
 
   local pos = creature:getPosition()
   if not pos then return false end
 
+  local localPlayer = g_game.getLocalPlayer()
   if pos.z ~= localPlayer:getPosition().z or not creature:canBeSeen() then return false end
 
   local hidePlayers = hidePlayersButton:isChecked()
@@ -293,8 +290,8 @@ function onCreaturePositionChange(creature, newPos, oldPos)
       -- Distance will change when moving, recalculate and move to correct index
       if getSortType() == 'distance' then
         local distanceList = {}
-        for id, creatureButton in pairs(battleButtonsByCreaturesList) do
-          table.insert(distanceList, {distance = getDistanceBetween(newPos, creatureButton.creature:getPosition()), widget = creatureButton})
+        for _, battleButton in pairs(battleButtonsByCreaturesList) do
+          table.insert(distanceList, {distance = getDistanceBetween(newPos, battleButton.creature:getPosition()), widget = battleButton})
         end
 
         if isSortAsc() then
@@ -308,8 +305,8 @@ function onCreaturePositionChange(creature, newPos, oldPos)
         end
       end
 
-      for id, creatureButton in pairs(battleButtonsByCreaturesList) do
-        addCreature(creatureButton.creature)
+      for _, battleButton in pairs(battleButtonsByCreaturesList) do
+        addCreature(battleButton.creature)
       end
     end
   else
@@ -335,6 +332,12 @@ function onCreatureOutfitChange(creature, outfit, oldOutfit)
 end
 
 function onCreatureAppear(creature)
+  if creature:isLocalPlayer() then
+    addEvent(function()
+      updateStaticSquare()
+    end)
+  end
+
   if doCreatureFitFilters(creature) then
     addCreature(creature)
   end
@@ -454,8 +457,8 @@ end
 
 function removeAllCreatures()
   creatureAgeList = {}
-  for i, v in pairs(battleButtonsByCreaturesList) do
-    removeCreature(v.creature)
+  for _, battleButton in pairs(battleButtonsByCreaturesList) do
+    removeCreature(battleButton.creature)
   end
 end
 
@@ -500,10 +503,10 @@ function onBattleButtonMouseRelease(self, mousePosition, mouseButton)
   return false
 end
 
-function onBattleButtonHoverChange(widget, hovered)
-  if widget.isBattleButton then
-    widget.isHovered = hovered
-    updateBattleButton(widget)
+function onBattleButtonHoverChange(battleButton, hovered)
+  if battleButton.isBattleButton then
+    battleButton.isHovered = hovered
+    updateBattleButton(battleButton)
   end
 end
 
@@ -520,6 +523,14 @@ function onFollow(creature)
   if battleButton then
     battleButton.isFollowed = creature and true or false
     updateBattleButton(battleButton)
+  end
+end
+
+function updateStaticSquare()
+  for _, battleButton in pairs(battleButtonsByCreaturesList) do
+    if battleButton.isTarget then
+      battleButton:update()
+    end
   end
 end
 
