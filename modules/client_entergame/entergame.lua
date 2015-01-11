@@ -246,9 +246,9 @@ function EnterGame.doLogin()
                                   EnterGame.show()
                                 end })
 
-  g_game.chooseRsa(G.host)
   g_game.setClientVersion(clientVersion)
   g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
+  g_game.chooseRsa(G.host)
 
   if modules.game_things.isLoaded() then
     protocolLogin:login(G.host, G.port, G.account, G.password)
