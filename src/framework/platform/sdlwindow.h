@@ -61,12 +61,17 @@ public:
 
     void initializeSDL();
     void setSDLAttributes();
+    bool hasRepeatedKey();
+    void processKeydownOrKeyrelease();
+    void processTextInput();
+    void processFingerdownAndFingerup();
+
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);
 private:
-    SDL_Window* window;
-    SDL_GLContext gl;
-    SDL_DisplayMode mode;
+    SDL_Window* m_window;
+    SDL_DisplayMode m_mode;
+    SDL_Event m_event;
 };
 
 #endif
