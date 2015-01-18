@@ -87,6 +87,9 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     msg->addString(m_characterName);
     msg->addString(m_accountPassword);
 
+    if(g_game.getFeature(Otc::GameAuthenticator))
+        msg->addString(m_authenticatorToken);
+
     if(g_game.getFeature(Otc::GameChallengeOnLogin)) {
         msg->addU32(challengeTimestamp);
         msg->addU8(challengeRandom);

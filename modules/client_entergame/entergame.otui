@@ -21,6 +21,8 @@ ServerListButton < UIButton
 
 EnterGameWindow
   id: enterGame
+  &authenticatorEnabled: false
+  &authenticatorHeight: 44
   @onEnter: EnterGame.doLogin()
 
   MenuLabel
@@ -51,11 +53,29 @@ EnterGameWindow
     margin-top: 2
 
   MenuLabel
+    id: authenticatorTokenLabel
+    !text: tr('Authenticator Token')
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    text-auto-resize: true
+    margin-top: 8
+    visible: false
+
+  TextEdit
+    id: authenticatorTokenTextEdit
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 2
+    visible: false
+    max-length: 8
+
+  MenuLabel
     id: serverLabel
     !text: tr('Server')
     anchors.left: prev.left
     anchors.top: prev.bottom
-    margin-top: 8
+    margin-top: -36
     text-auto-resize: true
 
   ServerListButton

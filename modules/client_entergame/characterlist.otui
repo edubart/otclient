@@ -16,7 +16,7 @@ CharacterWidget < UIWidget
 
   Label
     id: name
-    color: #aaaaaa
+    color: #bbbbbb
     anchors.top: parent.top
     anchors.left: parent.left
     font: verdana-11px-monochrome
@@ -29,8 +29,7 @@ CharacterWidget < UIWidget
 
   Label
     id: worldName
-    color: #ffffff
-    color: #aaaaaa
+    color: #bbbbbb
     anchors.top: parent.top
     anchors.right: parent.right
     margin-right: 5
@@ -59,6 +58,7 @@ MainWindow
 
   TextList
     id: characters
+    background-color: #565656
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left

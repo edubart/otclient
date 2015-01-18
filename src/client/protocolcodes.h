@@ -50,6 +50,7 @@ namespace Proto {
         GameServerLoginAdvice               = 21,
         GameServerLoginWait                 = 22,
         GameServerLoginSuccess              = 23,
+        GameServerLoginToken                = 24,
         GameServerPingBack                  = 29,
         GameServerPing                      = 30,
         GameServerChallenge                 = 31,

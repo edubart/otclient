@@ -1,0 +1,8 @@
+Module
+  name: game_unjustifiedpoints
+  description: View unjustified points
+  author: Summ
+  sandboxed: true
+  scripts: [ unjustifiedpoints ]
+  @onLoad: init()
+  @onUnload: terminate()

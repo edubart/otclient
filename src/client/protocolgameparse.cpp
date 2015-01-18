@@ -79,6 +79,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerLoginWait:
                 parseLoginWait(msg);
                 break;
+            case Proto::GameServerLoginToken:
+                parseLoginToken(msg);
+                break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
                 if((opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing)) ||
@@ -385,11 +388,13 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     }
     bool canReportBugs = msg->getU8();
 
-    if(g_game.getClientVersion() >= 1053)
+    if(g_game.getClientVersion() >= 1054)
         msg->getU8(); // can change pvp frame option
 
-    if(g_game.getClientVersion() >= 1058)
-        msg->getU8(); // expert mode enabled
+    if(g_game.getClientVersion() >= 1058) {
+        int expertModeEnabled = msg->getU8();
+        g_game.setExpertPvpMode(expertModeEnabled);
+    }
 
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
@@ -428,19 +433,23 @@ void ProtocolGame::parsePreset(const InputMessagePtr& msg)
 
 void ProtocolGame::parseUnjustifiedStats(const InputMessagePtr& msg)
 {
-    // Unjustified Kills display since 10.55
-    msg->getU8();
-    msg->getU8();
-    msg->getU8();
-    msg->getU8();
-    msg->getU8();
-    msg->getU8();
-    msg->getU8();
+    UnjustifiedPoints unjustifiedPoints;
+    unjustifiedPoints.killsDay = msg->getU8();
+    unjustifiedPoints.killsDayRemaining = msg->getU8();
+    unjustifiedPoints.killsWeek = msg->getU8();
+    unjustifiedPoints.killsWeekRemaining = msg->getU8();
+    unjustifiedPoints.killsMonth = msg->getU8();
+    unjustifiedPoints.killsMonthRemaining = msg->getU8();
+    unjustifiedPoints.skullTime = msg->getU8();
+
+    g_game.setUnjustifiedPoints(unjustifiedPoints);
 }
 
 void ProtocolGame::parsePvpSituations(const InputMessagePtr& msg)
 {
-    msg->getU8(); // amount of open pvp situations
+    uint8 openPvpSituations = msg->getU8();
+
+    g_game.setOpenPvpSituations(openPvpSituations);
 }
 
 void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
@@ -499,6 +508,12 @@ void ProtocolGame::parseLoginWait(const InputMessagePtr& msg)
     int time = msg->getU8();
 
     g_game.processLoginWait(message, time);
+}
+
+void ProtocolGame::parseLoginToken(const InputMessagePtr& msg)
+{
+    bool unknown = (msg->getU8() == 0);
+    g_game.processLoginToken(unknown);
 }
 
 void ProtocolGame::parsePing(const InputMessagePtr& msg)

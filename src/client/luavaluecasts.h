@@ -44,4 +44,8 @@ bool luavalue_cast(int index, MarketData& data);
 int push_luavalue(const Light& light);
 bool luavalue_cast(int index, Light& light);
 
+// unjustified points
+int push_luavalue(const UnjustifiedPoints& unjustifiedPoints);
+bool luavalue_cast(int index, UnjustifiedPoints& unjustifiedPoints);
+
 #endif

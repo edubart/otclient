@@ -399,6 +399,8 @@ namespace Otc
         GameClientVersion = 64,
         GameContentRevision = 65,
         GameExperienceBonus = 66,
+        GameAuthenticator = 67,
+        GameUnjustifiedPoints = 68,
 
         LastGameFeature = 101
     };

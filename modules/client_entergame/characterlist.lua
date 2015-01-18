@@ -27,7 +27,7 @@ local function tryLogin(charInfo, tries)
 
   CharacterList.hide()
 
-  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName)
+  g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort, charInfo.characterName, G.authenticatorToken)
 
   loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
   connect(loadBox, { onCancel = function()
@@ -109,6 +109,16 @@ function onGameLoginError(message)
   end
 end
 
+function onGameLoginToken(unknown)
+  CharacterList.destroyLoadBox()
+  -- TODO: make it possible to enter a new token here / prompt token
+  errorBox = displayErrorBox(tr("Two-Factor Authentification"), 'A new authentification token is required.\nPlease login again.')
+  errorBox.onOk = function()
+    errorBox = nil
+    EnterGame.show()
+  end
+end
+
 function onGameConnectionError(message, code)
   CharacterList.destroyLoadBox()
   local text = translateNetworkError(code, g_game.getProtocolGame() and g_game.getProtocolGame():isConnecting(), message)
@@ -131,6 +141,7 @@ end
 -- public functions
 function CharacterList.init()
   connect(g_game, { onLoginError = onGameLoginError })
+  connect(g_game, { onLoginToken = onGameLoginToken })
   connect(g_game, { onUpdateNeeded = onGameUpdateNeeded })
   connect(g_game, { onConnectionError = onGameConnectionError })
   connect(g_game, { onGameStart = CharacterList.destroyLoadBox })
@@ -144,6 +155,7 @@ end
 
 function CharacterList.terminate()
   disconnect(g_game, { onLoginError = onGameLoginError })
+  disconnect(g_game, { onLoginToken = onGameLoginToken })
   disconnect(g_game, { onUpdateNeeded = onGameUpdateNeeded })
   disconnect(g_game, { onConnectionError = onGameConnectionError })
   disconnect(g_game, { onGameStart = CharacterList.destroyLoadBox })

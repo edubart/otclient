@@ -127,6 +127,8 @@ GameLoginPacketEncryption = 63
 GameClientVersion = 64
 GameContentRevision = 65
 GameExperienceBonus = 66
+GameAuthenticator = 67
+GameUnjustifiedPoints = 68
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

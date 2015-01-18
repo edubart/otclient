@@ -2,13 +2,15 @@
 ProtocolLogin = extends(Protocol, "ProtocolLogin")
 
 LoginServerError = 10
+LoginServerTokenSuccess = 12
+LoginServerTokenError = 13
 LoginServerUpdate = 17
 LoginServerMotd = 20
 LoginServerUpdateNeeded = 30
 LoginServerCharacterList = 100
 LoginServerExtendedCharacterList = 101
 
-function ProtocolLogin:login(host, port, accountName, accountPassword)
+function ProtocolLogin:login(host, port, accountName, accountPassword, authenticatorToken)
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onLoginError, self, tr("You must enter a valid server address and port."))
     return
@@ -16,6 +18,7 @@ function ProtocolLogin:login(host, port, accountName, accountPassword)
 
   self.accountName = accountName
   self.accountPassword = accountPassword
+  self.authenticatorToken = authenticatorToken
   self.connectCallback = self.sendLoginPacket
 
   self:connect(host, port)
@@ -78,7 +81,10 @@ function ProtocolLogin:sendLoginPacket()
 
   local paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
   assert(paddingBytes >= 0)
-  msg:addPaddingBytes(paddingBytes, 0)
+  for i = 1, paddingBytes do
+    msg:addU8(math.random(0, 0xff))
+  end
+
   if g_game.getFeature(GameLoginPacketEncryption) then
     msg:encryptRsa()
   end
@@ -86,8 +92,30 @@ function ProtocolLogin:sendLoginPacket()
   if g_game.getFeature(GameOGLInformation) then
     msg:addU8(1) --unknown
     msg:addU8(1) --unknown
-    msg:addString(g_graphics.getRenderer())
+
+    if g_game.getClientVersion() >= 1072 then
+      msg:addString(string.format('%s %s', g_graphics.getVendor(), g_graphics.getRenderer()))
+    else
+      msg:addString(g_graphics.getRenderer())
+    end
     msg:addString(g_graphics.getVersion())
+  end
+
+  -- add RSA encrypted auth token
+  if g_game.getFeature(GameAuthenticator) then
+    offset = msg:getMessageSize()
+
+    -- first RSA byte must be 0
+    msg:addU8(0)
+    msg:addString(self.authenticatorToken)
+
+    paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
+    assert(paddingBytes >= 0)
+    for i = 1, paddingBytes do
+      msg:addU8(math.random(0, 0xff))
+    end
+
+    msg:encryptRsa()
   end
 
   if g_game.getFeature(GameProtocolChecksum) then
@@ -116,6 +144,9 @@ function ProtocolLogin:onRecv(msg)
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
       signalcall(self.onLoginError, self, tr("Client needs update."))
+    elseif opcode == LoginServerTokenError then
+      -- TODO: prompt for token here
+      signalcall(self.onLoginError, self, tr("Invalid authentification token."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
     elseif opcode == LoginServerExtendedCharacterList then

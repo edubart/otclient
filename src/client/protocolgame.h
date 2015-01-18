@@ -31,7 +31,7 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
+    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken);
     void send(const OutputMessagePtr& outputMessage);
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
@@ -143,6 +143,7 @@ private:
     void parseLoginError(const InputMessagePtr& msg);
     void parseLoginAdvice(const InputMessagePtr& msg);
     void parseLoginWait(const InputMessagePtr& msg);
+    void parseLoginToken(const InputMessagePtr& msg);
     void parsePing(const InputMessagePtr& msg);
     void parsePingBack(const InputMessagePtr& msg);
     void parseChallenge(const InputMessagePtr& msg);
@@ -246,6 +247,7 @@ private:
     stdext::boolean<true> m_firstRecv;
     std::string m_accountName;
     std::string m_accountPassword;
+    std::string m_authenticatorToken;
     std::string m_characterName;
     LocalPlayerPtr m_localPlayer;
 };

@@ -36,6 +36,25 @@
 
 #include <bitset>
 
+struct UnjustifiedPoints {
+    bool operator==(const UnjustifiedPoints& other) {
+        return killsDay == other.killsDay &&
+            killsDayRemaining == other.killsDayRemaining &&
+            killsWeek == other.killsWeek &&
+            killsWeekRemaining == other.killsWeekRemaining &&
+            killsMonth == other.killsMonth &&
+            killsMonthRemaining == other.killsMonthRemaining &&
+            skullTime == other.skullTime;
+    }
+    uint8 killsDay;
+    uint8 killsDayRemaining;
+    uint8 killsWeek;
+    uint8 killsWeekRemaining;
+    uint8 killsMonth;
+    uint8 killsMonthRemaining;
+    uint8 skullTime;
+};
+
 typedef std::tuple<std::string, uint, std::string, int, bool> Vip;
 
 //@bindsingleton g_game
@@ -60,6 +79,7 @@ protected:
     void processLoginError(const std::string& error);
     void processLoginAdvice(const std::string& message);
     void processLoginWait(const std::string& message, int time);
+    void processLoginToken(bool unknown);
     void processLogin();
     void processPendingGame();
     void processEnterGame();
@@ -139,7 +159,7 @@ protected:
 
 public:
     // login related
-    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName);
+    void loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& authenticatorToken);
     void cancelLogin();
     void forceLogout();
     void safeLogout();
@@ -217,6 +237,12 @@ public:
     Otc::FightModes getFightMode() { return m_fightMode; }
     bool isSafeFight() { return m_safeFight; }
     Otc::PVPModes getPVPMode() { return m_pvpMode; }
+
+    // pvp related
+    void setUnjustifiedPoints(UnjustifiedPoints unjustifiedPoints);
+    UnjustifiedPoints getUnjustifiedPoints() { return m_unjustifiedPoints; };
+    void setOpenPvpSituations(int openPvpSitations);
+    int getOpenPvpSituations() { return m_openPvpSituations; }
 
     // npc trade related
     void inspectNpcTrade(const ItemPtr& item);
@@ -304,6 +330,8 @@ public:
     int getServerBeat() { return m_serverBeat; }
     void setCanReportBugs(bool enable) { m_canReportBugs = enable; }
     bool canReportBugs() { return m_canReportBugs; }
+    void setExpertPvpMode(bool enable) { m_expertPvpMode = enable; }
+    bool getExpertPvpMode() { return m_expertPvpMode; }
     LocalPlayerPtr getLocalPlayer() { return m_localPlayer; }
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     std::string getCharacterName() { return m_characterName; }
@@ -333,6 +361,7 @@ private:
     bool m_online;
     bool m_denyBotCall;
     bool m_dead;
+    bool m_expertPvpMode;
     int m_serverBeat;
     ticks_t m_ping;
     uint m_pingSent;
@@ -345,6 +374,8 @@ private:
     Otc::ChaseModes m_chaseMode;
     Otc::PVPModes m_pvpMode;
     Otc::Direction m_lastWalkDir;
+    UnjustifiedPoints m_unjustifiedPoints;
+    int m_openPvpSituations;
     bool m_safeFight;
     bool m_canReportBugs;
     std::vector<uint8> m_gmActions;

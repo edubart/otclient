@@ -111,7 +111,7 @@ function EnterGame.init()
   local port = g_settings.get('port')
   local autologin = g_settings.getBoolean('autologin')
   local clientVersion = g_settings.getInteger('client-version')
-  if clientVersion == 0 then clientVersion = 1071 end
+  if clientVersion == 0 then clientVersion = 1072 end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -122,7 +122,10 @@ function EnterGame.init()
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
 
+
   clientBox = enterGame:getChildById('clientComboBox')
+  connect(clientBox, { onOptionChange = EnterGame.onClientVersionChange })
+
   for _, proto in pairs(g_game.getSupportedClients()) do
     clientBox:addOption(proto)
   end
@@ -152,6 +155,7 @@ end
 
 function EnterGame.terminate()
   g_keyboard.unbindKeyDown('Ctrl+G')
+  disconnect(clientBox, { onOptionChange = EnterGame.onClientVersionChange })
   enterGame:destroy()
   enterGame = nil
   enterGameButton:destroy()
@@ -210,14 +214,55 @@ end
 function EnterGame.clearAccountFields()
   enterGame:getChildById('accountNameTextEdit'):clearText()
   enterGame:getChildById('accountPasswordTextEdit'):clearText()
+  enterGame:getChildById('authenticatorTokenTextEdit'):clearText()
   enterGame:getChildById('accountNameTextEdit'):focus()
   g_settings.remove('account')
   g_settings.remove('password')
 end
 
+function EnterGame.toggleAuthenticatorToken(enabled)
+  if enabled == enterGame.authenticatorEnabled then
+    return
+  end
+
+  if enabled then
+    enterGame:getChildById('authenticatorTokenLabel'):setVisible(true)
+    enterGame:getChildById('authenticatorTokenTextEdit'):setVisible(true)
+
+    local serverLabel = enterGame:getChildById('serverLabel')
+    serverLabel:setMarginTop(serverLabel:getMarginTop() + enterGame.authenticatorHeight)
+
+    enterGame:breakAnchors()
+    enterGame:setY(enterGame:getY() - enterGame.authenticatorHeight)
+    enterGame:bindRectToParent()
+
+    enterGame:setHeight(enterGame:getHeight() + enterGame.authenticatorHeight)
+  else
+    enterGame:getChildById('authenticatorTokenLabel'):setVisible(false)
+    enterGame:getChildById('authenticatorTokenTextEdit'):setVisible(false)
+
+    local serverLabel = enterGame:getChildById('serverLabel')
+    serverLabel:setMarginTop(serverLabel:getMarginTop() - enterGame.authenticatorHeight)
+
+    enterGame:breakAnchors()
+    enterGame:setY(enterGame:getY() + enterGame.authenticatorHeight)
+    enterGame:bindRectToParent()
+
+    enterGame:setHeight(enterGame:getHeight() - enterGame.authenticatorHeight)
+  end
+
+  enterGame.authenticatorEnabled = enabled
+end
+
+function EnterGame.onClientVersionChange(comboBox, text, data)
+  local clientVersion = tonumber(text)
+  EnterGame.toggleAuthenticatorToken(clientVersion >= 1072)
+end
+
 function EnterGame.doLogin()
   G.account = enterGame:getChildById('accountNameTextEdit'):getText()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
+  G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit'):getText()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   local clientVersion = tonumber(clientBox:getText())
@@ -251,7 +296,7 @@ function EnterGame.doLogin()
   g_game.chooseRsa(G.host)
 
   if modules.game_things.isLoaded() then
-    protocolLogin:login(G.host, G.port, G.account, G.password)
+    protocolLogin:login(G.host, G.port, G.account, G.password, G.authenticatorToken)
   else
     loadBox:destroy()
     loadBox = nil
@@ -272,6 +317,7 @@ function EnterGame.setDefaultServer(host, port, protocol)
   local clientLabel = enterGame:getChildById('clientLabel')
   local accountTextEdit = enterGame:getChildById('accountNameTextEdit')
   local passwordTextEdit = enterGame:getChildById('accountPasswordTextEdit')
+  local authenticatorTokenTextEdit = enterGame:getChildById('authenticatorTokenTextEdit')
 
   if hostTextEdit:getText() ~= host then
     hostTextEdit:setText(host)
@@ -279,6 +325,7 @@ function EnterGame.setDefaultServer(host, port, protocol)
     clientBox:setCurrentOption(protocol)
     accountTextEdit:setText('')
     passwordTextEdit:setText('')
+    authenticatorTokenTextEdit:setText('')
   end
 end
 
@@ -291,6 +338,13 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   portTextEdit:setText(port)
   portTextEdit:setVisible(false)
   portTextEdit:setHeight(0)
+  local authenticatorTokenTextEdit = enterGame:getChildById('authenticatorTokenTextEdit')
+  authenticatorTokenTextEdit:setText('')
+  authenticatorTokenTextEdit:setVisible(false)
+  authenticatorTokenTextEdit:setHeight(0)
+  local authenticatorTokenLabel = enterGame:getChildById('authenticatorTokenLabel')
+  authenticatorTokenLabel:setVisible(false)
+  authenticatorTokenLabel:setHeight(0)
 
   clientBox:setCurrentOption(protocol)
   clientBox:setVisible(false)
@@ -312,7 +366,7 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   serverListButton:setWidth(0)
 
   local rememberPasswordBox = enterGame:getChildById('rememberPasswordBox')
-  rememberPasswordBox:setMarginTop(-5)
+  rememberPasswordBox:setMarginTop(-14)
 
   if not windowWidth then windowWidth = 236 end
   enterGame:setWidth(windowWidth)

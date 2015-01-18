@@ -84,6 +84,7 @@ void Game::resetGameStates()
     m_localPlayer = nullptr;
     m_pingSent = 0;
     m_pingReceived = 0;
+    m_unjustifiedPoints = UnjustifiedPoints();
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -153,6 +154,11 @@ void Game::processLoginAdvice(const std::string& message)
 void Game::processLoginWait(const std::string& message, int time)
 {
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
+}
+
+void Game::processLoginToken(bool unknown)
+{
+    g_lua.callGlobalField("g_game", "onLoginToken", unknown);
 }
 
 void Game::processLogin()
@@ -528,7 +534,7 @@ void Game::processWalkCancel(Otc::Direction direction)
     m_localPlayer->cancelWalk(direction);
 }
 
-void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
+void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& authenticatorToken)
 {
     if(m_protocolGame || isOnline())
         stdext::throw_exception("Unable to login into a world while already online or logging.");
@@ -543,7 +549,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_localPlayer->setName(characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
+    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName, authenticatorToken);
     m_characterName = characterName;
     m_worldName = worldName;
 }
@@ -1204,6 +1210,31 @@ void Game::setPVPMode(Otc::PVPModes pvpMode)
     g_lua.callGlobalField("g_game", "onPVPModeChange", pvpMode);
 }
 
+void Game::setUnjustifiedPoints(UnjustifiedPoints unjustifiedPoints)
+{
+    if(!canPerformGameAction())
+        return;
+    if(!getFeature(Otc::GameUnjustifiedPoints))
+        return;
+    if(m_unjustifiedPoints == unjustifiedPoints)
+        return;
+
+    m_unjustifiedPoints = unjustifiedPoints;
+    g_lua.callGlobalField("g_game", "onUnjustifiedPointsChange", unjustifiedPoints);
+}
+
+void Game::setOpenPvpSituations(int openPvpSituations)
+{
+    if(!canPerformGameAction())
+        return;
+    if(m_openPvpSituations == openPvpSituations)
+        return;
+
+    m_openPvpSituations = openPvpSituations;
+    g_lua.callGlobalField("g_game", "onOpenPvpSituationsChange", openPvpSituations);
+}
+
+
 void Game::inspectNpcTrade(const ItemPtr& item)
 {
     if(!canPerformGameAction() || !item)
@@ -1425,7 +1456,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1071))
+    if(version != 0 && (version < 740 || version > 1072))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1443,7 +1474,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1071))
+    if(version != 0 && (version < 740 || version > 1072))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1563,6 +1594,10 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameEnhancedAnimations);
     }
 
+    if(version >= 1053) {
+        enableFeature(Otc::GameUnjustifiedPoints);
+    }
+
     if(version >= 1054) {
         enableFeature(Otc::GameExperienceBonus);
     }
@@ -1573,6 +1608,10 @@ void Game::setClientVersion(int version)
 
     if(version >= 1071) {
         enableFeature(Otc::GameContentRevision);
+    }
+
+    if(version >= 1072) {
+        enableFeature(Otc::GameAuthenticator);
     }
 
     m_clientVersion = version;

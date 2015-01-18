@@ -1,0 +1,80 @@
+SkullProgressBar < ProgressBar
+  height: 13
+  margin: 4 18 0 10
+  anchors.top: prev.bottom
+  anchors.left: parent.left
+  anchors.right: parent.right
+
+SkullWidget < UIWidget
+  size: 13 13
+  margin-right: 2
+  anchors.right: parent.right
+  image-source: /images/game/skull_socket
+
+MiniWindow
+  id: unjustifiedPointsWindow
+  !text: tr('Unjustified Points')
+  height: 114
+  icon: /images/topbuttons/unjustifiedpoints
+  @onClose: modules.game_unjustifiedpoints.onMiniWindowClose()
+  &save: true
+
+  MiniWindowContents
+    Label
+      anchors.top: parent.top
+      anchors.left: parent.left
+      !text: tr('Open PvP')
+      !tooltip: tr('Open PvP Situations')
+      phantom: false
+      margin-top: 2
+      margin-left: 10
+
+    Label
+      id: openPvpSituationsLabel
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      font: verdana-11px-rounded
+      margin-left: 12
+      phantom: false
+
+    Label
+      anchors.top: parent.top
+      anchors.right: parent.right
+      !text: tr('Skull Time')
+      margin-top: 2
+      margin-right: 10
+
+    SkullWidget
+      id: currentSkullWidget
+      anchors.top: prev.bottom
+      margin-right: 10
+
+    Label
+      id: skullTimeLabel
+      anchors.top: prev.top
+      anchors.right: prev.left
+      font: verdana-11px-rounded
+      margin-right: 6
+      phantom: false
+
+    SkullProgressBar
+      id: dayProgressBar
+      margin-top: 10
+
+    SkullWidget
+      id: daySkullWidget
+      anchors.top: prev.top
+
+    SkullProgressBar
+      id: weekProgressBar
+
+    SkullWidget
+      id: weekSkullWidget
+      anchors.top: prev.top
+
+    SkullProgressBar
+      id: monthProgressBar
+
+    SkullWidget
+      id: monthSkullWidget
+      anchors.top: prev.top
