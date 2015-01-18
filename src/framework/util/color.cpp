@@ -41,7 +41,7 @@ const Color Color::darkTeal   = 0xff808000;
 const Color Color::gray       = 0xffa0a0a0;
 const Color Color::darkGray   = 0xff808080;
 const Color Color::lightGray  = 0xffc0c0c0;
-const Color Color::orange     = 0xffff8c00;
+const Color Color::orange     = 0xff008cff;
 
 Color::Color(const std::string& coltext)
 {
