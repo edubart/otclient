@@ -59,7 +59,6 @@ public:
     void setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item);
     void setVocation(int vocation);
     void setPremium(bool premium);
-    void setBaseSpeed(double baseSpeed);
     void setRegenerationTime(double regenerationTime);
     void setOfflineTrainingTime(double offlineTrainingTime);
     void setSpells(const std::vector<int>& spells);
@@ -84,7 +83,6 @@ public:
     double getBaseMagicLevel() { return m_baseMagicLevel; }
     double getSoul() { return m_soul; }
     double getStamina() { return m_stamina; }
-    double getBaseSpeed() { return m_baseSpeed; }
     double getRegenerationTime() { return m_regenerationTime; }
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
@@ -162,7 +160,6 @@ private:
     double m_baseMagicLevel;
     double m_soul;
     double m_stamina;
-    double m_baseSpeed;
     double m_regenerationTime;
     double m_offlineTrainingTime;
 };

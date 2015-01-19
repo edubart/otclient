@@ -238,9 +238,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "getChaseMode", &Game::getChaseMode, &g_game);
     g_lua.bindSingletonFunction("g_game", "getFightMode", &Game::getFightMode, &g_game);
     g_lua.bindSingletonFunction("g_game", "getPVPMode", &Game::getPVPMode, &g_game);
-    g_lua.bindSingletonFunction("g_game", "setUnjustifiedPoints", &Game::setUnjustifiedPoints, &g_game);
     g_lua.bindSingletonFunction("g_game", "getUnjustifiedPoints", &Game::getUnjustifiedPoints, &g_game);
-    g_lua.bindSingletonFunction("g_game", "setOpenPvpSituations", &Game::setOpenPvpSituations, &g_game);
     g_lua.bindSingletonFunction("g_game", "getOpenPvpSituations", &Game::getOpenPvpSituations, &g_game);
     g_lua.bindSingletonFunction("g_game", "isSafeFight", &Game::isSafeFight, &g_game);
     g_lua.bindSingletonFunction("g_game", "inspectNpcTrade", &Game::inspectNpcTrade, &g_game);
@@ -444,6 +442,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("getName", &Creature::getName);
     g_lua.bindClassMemberFunction<Creature>("getHealthPercent", &Creature::getHealthPercent);
     g_lua.bindClassMemberFunction<Creature>("getSpeed", &Creature::getSpeed);
+    g_lua.bindClassMemberFunction<Creature>("getBaseSpeed", &Creature::getBaseSpeed);
     g_lua.bindClassMemberFunction<Creature>("getSkull", &Creature::getSkull);
     g_lua.bindClassMemberFunction<Creature>("getShield", &Creature::getShield);
     g_lua.bindClassMemberFunction<Creature>("getEmblem", &Creature::getEmblem);
@@ -630,7 +629,6 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<LocalPlayer>("getStamina", &LocalPlayer::getStamina);
     g_lua.bindClassMemberFunction<LocalPlayer>("getOfflineTrainingTime", &LocalPlayer::getOfflineTrainingTime);
     g_lua.bindClassMemberFunction<LocalPlayer>("getRegenerationTime", &LocalPlayer::getRegenerationTime);
-    g_lua.bindClassMemberFunction<LocalPlayer>("getBaseSpeed", &LocalPlayer::getBaseSpeed);
     g_lua.bindClassMemberFunction<LocalPlayer>("getBaseMagicLevel", &LocalPlayer::getBaseMagicLevel);
     g_lua.bindClassMemberFunction<LocalPlayer>("getTotalCapacity", &LocalPlayer::getTotalCapacity);
     g_lua.bindClassMemberFunction<LocalPlayer>("getInventoryItem", &LocalPlayer::getInventoryItem);

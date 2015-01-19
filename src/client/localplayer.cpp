@@ -507,16 +507,6 @@ void LocalPlayer::setPremium(bool premium)
     }
 }
 
-void LocalPlayer::setBaseSpeed(double baseSpeed)
-{
-    if(m_baseSpeed != baseSpeed) {
-        double oldBaseSpeed = m_baseSpeed;
-        m_baseSpeed = baseSpeed;
-
-        callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);
-    }
-}
-
 void LocalPlayer::setRegenerationTime(double regenerationTime)
 {
     if(m_regenerationTime != regenerationTime) {

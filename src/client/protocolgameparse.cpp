@@ -1004,11 +1004,19 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
 void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
+
+    int baseSpeed = -1;
+    if(g_game.getClientVersion() >= 1059)
+        baseSpeed = msg->getU16();
+
     int speed = msg->getU16();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if(creature)
+    if(creature) {
         creature->setSpeed(speed);
+        if(baseSpeed != -1)
+            creature->setBaseSpeed(baseSpeed);
+    }
 
     // some servers has a bug in get spectators and sends unknown creatures updates
     // so this code is disabled
