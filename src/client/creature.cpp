@@ -705,6 +705,7 @@ void Creature::setBaseSpeed(double baseSpeed)
         callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);
     }
 }
+
 void Creature::setSkull(uint8 skull)
 {
     m_skull = skull;

@@ -62,13 +62,7 @@ function toggleAdventurerStyle(hasBlessing)
   for slot = InventorySlotFirst, InventorySlotLast do
     local itemWidget = inventoryPanel:getChildById('slot' .. slot)
     if itemWidget then
-      if hasBlessing then
-        itemWidget:setBorderWidth(1)
-        itemWidget:setBorderColor('#F7C80C')
-      else
-        itemWidget:setBorderWidth(0)
-        itemWidget:setBorderColor('white')
-      end
+      itemWidget:setOn(hasBlessing)
     end
   end
 end
@@ -114,7 +108,7 @@ function onInventoryChange(player, slot, item, oldItem)
 
   local itemWidget = inventoryPanel:getChildById('slot' .. slot)
   if item then
-    itemWidget:setStyle('Item')
+    itemWidget:setStyle('InventoryItem')
     itemWidget:setItem(item)
   else
     itemWidget:setStyle(InventorySlotStyles[slot])
