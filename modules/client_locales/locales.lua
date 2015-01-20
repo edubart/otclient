@@ -166,15 +166,19 @@ end
 -- global function used to translate texts
 function _G.tr(text, ...)
   if currentLocale then
-    if tonumber(text) then
-      -- todo: use locale information to calculate this. also detect floating numbers
+    if tonumber(text) and currentLocale.formatNumbers then
+      local number = tostring(text):split('.')
       local out = ''
-      local number = tostring(text):reverse()
-      for i=1,#number do
-        out = out .. number:sub(i, i)
+      local reverseNumber = number[1]:reverse()
+      for i=1,#reverseNumber do
+        out = out .. reverseNumber:sub(i, i)
         if i % 3 == 0 and i ~= #number then
-          out = out .. ','
+          out = out .. currentLocale.thousandsSeperator
         end
+      end
+
+      if number[2] then
+        out = number[2] .. currentLocale.decimalSeperator .. out
       end
       return out:reverse()
     elseif tostring(text) then

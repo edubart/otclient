@@ -5,6 +5,10 @@ locale = {
   charset = "cp1252",
   languageName = "Svenska",
 
+  formatNumbers = true,
+  decimalSeperator = ',',
+  thousandsSeperator = ' ',
+
   translation = {
     ["1a) Offensive Name"] = "1a) Offensivt Namn",
     ["1b) Invalid Name Format"] = "1b) Ogiltigt Namnformat",

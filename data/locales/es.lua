@@ -7,6 +7,10 @@ locale = {
   charset = "cp1252",
   languageName = "Español",
 
+  formatNumbers = true,
+  decimalSeperator = ',',
+  thousandsSeperator = '.',
+
   translation = {
     ["1a) Offensive Name"] = "1a) Nombre ofensivo",
     ["1b) Invalid Name Format"] = "1b) Formato invalido para nombre",
