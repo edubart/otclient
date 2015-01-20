@@ -4,7 +4,6 @@ MarketButtonBox < ButtonBoxRounded
   size: 106 22
   text-offset: 0 2
   text-align: center
-  image-border: 2
 
   $checked:
     color: white

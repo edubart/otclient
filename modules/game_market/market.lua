@@ -147,8 +147,8 @@ end
 
 local function clearFilters()
   for _, filter in pairs(filterButtons) do
-    if filter and filter:isChecked() then
-      filter:setChecked(false)
+    if filter and filter:isChecked() ~= filter.default then
+      filter:setChecked(filter.default)
     end
   end
 end
@@ -400,6 +400,13 @@ local function updateFee(price, amount)
   feeLabel:resizeToText()
 end
 
+local function destroyAmountWindow()
+  if amountWindow then
+    amountWindow:destroy()
+    amountWindow = nil
+  end
+end
+
 local function openAmountWindow(callback, type, actionText)
   local actionText = actionText or ''
   if not Market.isOfferSelected(type) then
@@ -441,14 +448,12 @@ local function openAmountWindow(callback, type, actionText)
     local counter = selectedOffer[type]:getCounter()
     local timestamp = selectedOffer[type]:getTimeStamp()
     callback(scrollbar:getValue(), timestamp, counter)
-    okButton:getParent():destroy()
-    amountWindow = nil
+    destroyAmountWindow()
   end
 
   local cancelButton = amountWindow:getChildById('buttonCancel')
   local cancelFunc = function()
-    cancelButton:getParent():destroy()
-    amountWindow = nil
+    destroyAmountWindow()
   end
 
   amountWindow.onEnter = okFunc
@@ -624,8 +629,10 @@ local function initInterface()
   browsePanel = g_ui.loadUI('ui/marketoffers/browse')
   selectionTabBar:addTab(tr('Browse'), browsePanel)
 
-  overviewPanel = g_ui.loadUI('ui/marketoffers/overview')
-  selectionTabBar:addTab(tr('Overview'), overviewPanel)
+  -- Currently not used
+  -- "Reserved for more functionality later"
+  --overviewPanel = g_ui.loadUI('ui/marketoffers/overview')
+  --selectionTabBar:addTab(tr('Overview'), overviewPanel)
 
   displaysTabBar = marketOffersPanel:getChildById('rightTabBar')
   displaysTabBar:setContentWidget(marketOffersPanel:getChildById('rightTabContent'))
@@ -690,6 +697,14 @@ local function initInterface()
   filterButtons[MarketFilters.Depot] = browsePanel:getChildById('filterDepot')
   filterButtons[MarketFilters.SearchAll] = browsePanel:getChildById('filterSearchAll')
 
+  -- set filter default values
+  clearFilters()
+
+  -- hook filters
+  for _, filter in pairs(filterButtons) do
+    filter.onCheckChange = Market.updateCurrentItems
+  end
+
   searchEdit = browsePanel:getChildById('searchEdit')
   categoryList = browsePanel:getChildById('categoryComboBox')
   subCategoryList = browsePanel:getChildById('subCategoryComboBox')
@@ -744,10 +759,13 @@ function init()
 end
 
 function terminate()
+  Market.close()
+
   protocol.terminateProtocol()
   disconnect(g_game, { onGameEnd = Market.reset })
   disconnect(g_game, { onGameEnd = Market.close })
 
+  destroyAmountWindow()
   marketWindow:destroy()
 
   Market = nil

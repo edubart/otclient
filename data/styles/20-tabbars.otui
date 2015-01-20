@@ -36,10 +36,11 @@ TabBar < UITabBar
     anchors.fill: parent
 TabBarPanel < Panel
 TabBarButton < UIButton
-  size: 22 23
+  size: 20 21
+  image-source: /images/ui/tabbutton_square
   image-source: /images/ui/tabbutton_square
   image-color: #dfdfdf
-  image-clip: 0 0 22 23
+  image-clip: 0 0 20 21
   image-border: 3
   image-border-bottom: 0
   icon-color: #dfdfdf
@@ -55,7 +56,7 @@ TabBarButton < UIButton
     margin-left: 5
 
   $hover !checked:
-    image-clip: 0 23 22 23
+    image-clip: 0 21 20 21
     color: #dfdfdf
 
   $disabled:
@@ -63,7 +64,7 @@ TabBarButton < UIButton
     icon-color: #dfdfdf
 
   $checked:
-    image-clip: 0 46 22 23
+    image-clip: 0 42 20 21
     color: #dfdfdf
 
   $on !checked:
@@ -73,6 +74,14 @@ TabBarRounded < TabBar
 TabBarRoundedPanel < TabBarPanel
 TabBarRoundedButton < TabBarButton
   image-source: /images/ui/tabbutton_rounded
+  size: 22 23
+  image-clip: 0 0 22 23
+
+  $hover !checked:
+    image-clip: 0 23 22 23
+
+  $checked:
+    image-clip: 0 46 22 23
 
 TabBarVertical < UITabBar
   width: 96

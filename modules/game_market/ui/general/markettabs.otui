@@ -10,15 +10,9 @@ MarketTabBarButton < TabBarButton
     margin-left: 0
 
   $hover !checked:
-    image-clip: 0 20 20 20
-    color: white
-
-  $disabled:
-    image-color: #ffffff66
-    icon-color: #888888
+    color: #ffffff
 
   $checked:
-    image-clip: 0 20 20 20
     color: #ffffff
 
   $on !checked:
@@ -26,36 +20,24 @@ MarketTabBarButton < TabBarButton
 
 MarketRightTabBar < TabBar
 MarketRightTabBarPanel < TabBarPanel
-// TODO: inherit style from TabBarButton and adjust it
-// anchors.left: none  did not seem to work for me
-MarketRightTabBarButton < UIButton
+MarketRightTabBarButton < TabBarButton
   size: 20 25
   font: verdana-11px-rounded
   text-offset: 0 2
-  image-source: /images/ui/tabbutton_square
-  image-color: white
-  image-clip: 0 0 20 20
-  image-border: 3
-  icon-color: white
-  color: #aaaaaa
-  anchors.top: parent.top
-  padding: 5
-
-  anchors.right: prev.left
+  color: #929292
 
   $first:
     anchors.right: parent.right
+    anchors.left: none
+
+  $!first:
+    anchors.right: prev.left
+    anchors.left: none
 
   $hover !checked:
-    image-clip: 0 20 20 20
-    color: white
-
-  $disabled:
-    image-color: #ffffff66
-    icon-color: #888888
+    color: #ffffff
 
   $checked:
-    image-clip: 0 20 20 20
     color: #ffffff
 
   $on !checked:
