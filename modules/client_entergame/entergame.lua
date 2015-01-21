@@ -124,12 +124,13 @@ function EnterGame.init()
 
 
   clientBox = enterGame:getChildById('clientComboBox')
-  connect(clientBox, { onOptionChange = EnterGame.onClientVersionChange })
-
   for _, proto in pairs(g_game.getSupportedClients()) do
     clientBox:addOption(proto)
   end
   clientBox:setCurrentOption(clientVersion)
+
+  EnterGame.toggleAuthenticatorToken(clientVersion, true)
+  connect(clientBox, { onOptionChange = EnterGame.onClientVersionChange })
 
   enterGame:hide()
 
@@ -220,7 +221,8 @@ function EnterGame.clearAccountFields()
   g_settings.remove('password')
 end
 
-function EnterGame.toggleAuthenticatorToken(enabled)
+function EnterGame.toggleAuthenticatorToken(clientVersion, init)
+  local enabled = (clientVersion >= 1072)
   if enabled == enterGame.authenticatorEnabled then
     return
   end
@@ -232,9 +234,11 @@ function EnterGame.toggleAuthenticatorToken(enabled)
     local serverLabel = enterGame:getChildById('serverLabel')
     serverLabel:setMarginTop(serverLabel:getMarginTop() + enterGame.authenticatorHeight)
 
-    enterGame:breakAnchors()
-    enterGame:setY(enterGame:getY() - enterGame.authenticatorHeight)
-    enterGame:bindRectToParent()
+    if not init then
+      enterGame:breakAnchors()
+      enterGame:setY(enterGame:getY() - enterGame.authenticatorHeight)
+      enterGame:bindRectToParent()
+    end
 
     enterGame:setHeight(enterGame:getHeight() + enterGame.authenticatorHeight)
   else
@@ -244,9 +248,11 @@ function EnterGame.toggleAuthenticatorToken(enabled)
     local serverLabel = enterGame:getChildById('serverLabel')
     serverLabel:setMarginTop(serverLabel:getMarginTop() - enterGame.authenticatorHeight)
 
-    enterGame:breakAnchors()
-    enterGame:setY(enterGame:getY() + enterGame.authenticatorHeight)
-    enterGame:bindRectToParent()
+    if not init then
+      enterGame:breakAnchors()
+      enterGame:setY(enterGame:getY() + enterGame.authenticatorHeight)
+      enterGame:bindRectToParent()
+    end
 
     enterGame:setHeight(enterGame:getHeight() - enterGame.authenticatorHeight)
   end
@@ -256,7 +262,7 @@ end
 
 function EnterGame.onClientVersionChange(comboBox, text, data)
   local clientVersion = tonumber(text)
-  EnterGame.toggleAuthenticatorToken(clientVersion >= 1072)
+  EnterGame.toggleAuthenticatorToken(clientVersion)
 end
 
 function EnterGame.doLogin()
