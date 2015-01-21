@@ -13,9 +13,6 @@
       * Clean up the interface building
         - Add a new market interface file to handle building?
 
-      * Add offer table column ordering.
-        - Player Name, Amount, Total Price, Peice Price and Ends At
-
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
         - Display out of trend market offers based on their previous statistics (like cipsoft does)
@@ -77,14 +74,6 @@ lastCreatedOffer = 0
 fee = 0
 
 loaded = false
-
-local offerTableHeader = {
-  {['text'] = 'Player Name', ['width'] = 100},
-  {['text'] = 'Amount', ['width'] = 60},
-  {['text'] = 'Total Price', ['width'] = 90},
-  {['text'] = 'Piece Price', ['width'] = 80},
-  {['text'] = 'Ends at', ['width'] = 120}
-}
 
 local function isItemValid(item, category, searchFilter)
   if not item or not item.marketData then
@@ -169,7 +158,7 @@ local function refreshTypeList()
   end
 end
 
-local function addOffer(offer, type)
+local function addOffer(offer, offerType)
   if not offer then
     return false
   end
@@ -179,26 +168,35 @@ local function addOffer(offer, type)
   local price = offer:getPrice()
   local timestamp = offer:getTimeStamp()
 
+  buyOfferTable:toggleSorting(false)
+  sellOfferTable:toggleSorting(false)
+
   if amount < 1 then return false end
-  if type == MarketAction.Buy then
+  if offerType == MarketAction.Buy then
     local data = {
-      {['text'] = player, ['width'] = 100},
-      {['text'] = amount, ['width'] = 60},
-      {['text'] = price*amount, ['width'] = 90},
-      {['text'] = price, ['width'] = 80},
-      {['text'] = string.gsub(os.date('%c', timestamp), " ", "  "), ['width'] = 120}
+      {text = player},
+      {text = amount},
+      {text = price*amount},
+      {text = price},
+      {text = string.gsub(os.date('%c', timestamp), " ", "  ")}
     }
     buyOfferTable:addRow(data, id)
   else
     local data = {
-      {['text'] = player, ['width'] = 100},
-      {['text'] = amount, ['width'] = 60},
-      {['text'] = price*amount, ['width'] = 90},
-      {['text'] = price, ['width'] = 80},
-      {['text'] = string.gsub(os.date('%c', timestamp), " ", "  "), ['width'] = 120}
+      {text = player},
+      {text = amount},
+      {text = price*amount},
+      {text = price},
+      {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
     }
     sellOfferTable:addRow(data, id)
   end
+
+  buyOfferTable:toggleSorting(false)
+  sellOfferTable:toggleSorting(false)
+  buyOfferTable:sort()
+  sellOfferTable:sort()
+
   return true
 end
 
@@ -207,11 +205,11 @@ local function mergeOffer(offer)
     return false
   end
   local id = offer:getId()
-  local type = offer:getType()
+  local offerType = offer:getType()
   local amount = offer:getAmount()
   local replaced = false
 
-  if type == MarketAction.Buy then
+  if offerType == MarketAction.Buy then
     for i = 1, #marketOffers[MarketAction.Buy] do
       local o = marketOffers[MarketAction.Buy][i]
       -- replace existing offer
@@ -250,7 +248,9 @@ local function updateOffers(offers)
 
   -- clear existing offer data
   buyOfferTable:clearData()
+  buyOfferTable:setSorting(4, TABLE_SORTING_DESC)
   sellOfferTable:clearData()
+  sellOfferTable:setSorting(4, TABLE_SORTING_ASC)
 
   sellButton:setEnabled(false)
   buyButton:setEnabled(false)
@@ -274,8 +274,8 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   detailsTable:clearData()
   for k, desc in pairs(descriptions) do
     local columns = {
-      {['text'] = getMarketDescriptionName(desc[1])..':'},
-      {['text'] = desc[2], ['width'] = 330}
+      {text = getMarketDescriptionName(desc[1])..':'},
+      {text = desc[2]}
     }
     detailsTable:addRow(columns)
   end
@@ -283,7 +283,7 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   -- update sale item statistics
   sellStatsTable:clearData()
   if table.empty(saleStats) then
-    sellStatsTable:addRow({{['text'] = 'No information'}})
+    sellStatsTable:addRow({{text = 'No information'}})
   else
     local transactions, totalPrice, highestPrice, lowestPrice = 0, 0, 0, 0
     for _, stat in pairs(saleStats) do
@@ -301,28 +301,24 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
         end
       end
     end
-    sellStatsTable:addRow({{['text'] = 'Total Transations:'},
-      {['text'] = transactions, ['width'] = 270}})
 
-    sellStatsTable:addRow({{['text'] = 'Highest Price:'},
-      {['text'] = highestPrice, ['width'] = 270}})
+    sellStatsTable:addRow({{text = 'Total Transations:'}, {text = transactions}})
+    sellStatsTable:addRow({{text = 'Highest Price:'}, {text = highestPrice}})
 
     if totalPrice > 0 and transactions > 0 then
-      sellStatsTable:addRow({{['text'] = 'Average Price:'},
-        {['text'] = math.floor(totalPrice/transactions), ['width'] = 270}})
+      sellStatsTable:addRow({{text = 'Average Price:'},
+        {text = math.floor(totalPrice/transactions)}})
     else
-      sellStatsTable:addRow({{['text'] = 'Average Price:'},
-        {['text'] = 0, ['width'] = 270}})
+      sellStatsTable:addRow({{text = 'Average Price:'}, {text = 0}})
     end
 
-    sellStatsTable:addRow({{['text'] = 'Lowest Price:'},
-      {['text'] = lowestPrice, ['width'] = 270}})
+    sellStatsTable:addRow({{text = 'Lowest Price:'}, {text = lowestPrice}})
   end
 
   -- update buy item statistics
   buyStatsTable:clearData()
   if table.empty(purchaseStats) then
-    buyStatsTable:addRow({{['text'] = 'No information'}})
+    buyStatsTable:addRow({{text = 'No information'}})
   else
     local transactions, totalPrice, highestPrice, lowestPrice = 0, 0, 0, 0
     for _, stat in pairs(purchaseStats) do
@@ -340,22 +336,18 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
         end
       end
     end
-    buyStatsTable:addRow({{['text'] = 'Total Transations:'},
-      {['text'] = transactions, ['width'] = 270}})
 
-    buyStatsTable:addRow({{['text'] = 'Highest Price:'},
-      {['text'] = highestPrice, ['width'] = 270}})
+    buyStatsTable:addRow({{text = 'Total Transations:'},{text = transactions}})
+    buyStatsTable:addRow({{text = 'Highest Price:'}, {text = highestPrice}})
 
     if totalPrice > 0 and transactions > 0 then
-      buyStatsTable:addRow({{['text'] = 'Average Price:'},
-        {['text'] = math.floor(totalPrice/transactions), ['width'] = 270}})
+      buyStatsTable:addRow({{text = 'Average Price:'},
+        {text = math.floor(totalPrice/transactions)}})
     else
-      buyStatsTable:addRow({{['text'] = 'Average Price:'},
-        {['text'] = 0, ['width'] = 270}})
+      buyStatsTable:addRow({{text = 'Average Price:'}, {text = 0}})
     end
 
-    buyStatsTable:addRow({{['text'] = 'Lowest Price:'},
-      {['text'] = lowestPrice, ['width'] = 270}})
+    buyStatsTable:addRow({{text = 'Lowest Price:'}, {text = lowestPrice}})
   end
 end
 
@@ -737,6 +729,13 @@ local function initInterface()
   sellStatsTable = itemStatsPanel:recursiveGetChildById('sellStatsTable')
   buyOfferTable.onSelectionChange = onSelectBuyOffer
   sellOfferTable.onSelectionChange = onSelectSellOffer
+
+  buyStatsTable:setColumnWidth({120, 270})
+  sellStatsTable:setColumnWidth({120, 270})
+  detailsTable:setColumnWidth({80, 330})
+
+  buyOfferTable:setSorting(4, TABLE_SORTING_DESC)
+  sellOfferTable:setSorting(4, TABLE_SORTING_ASC)
 end
 
 function init()
@@ -1123,14 +1122,6 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
 
   if table.empty(currentItems) then
     Market.loadMarketItems(MarketCategory.First)
-  end
-
-  -- build offer table header
-  if buyOfferTable and not buyOfferTable:hasHeader() then
-    buyOfferTable:addHeaderRow(offerTableHeader)
-  end
-  if sellOfferTable and not sellOfferTable:hasHeader() then
-    sellOfferTable:addHeaderRow(offerTableHeader)
   end
 
   if g_game.isOnline() then

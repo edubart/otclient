@@ -1,13 +1,7 @@
 OfferTableRow < TableRow
   font: verdana-11px-monochrome
-  background-color: alpha
-  focusable: true
   color: #cccccc
   height: 15
-
-  $focus:
-    background-color: #294f6d
-    color: #ffffff
 
 OfferTableColumn < TableColumn
   font: verdana-11px-monochrome
@@ -15,21 +9,16 @@ OfferTableColumn < TableColumn
   text-offset: 5 0
   color: #cccccc
   width: 80
-  focusable: false
 
 OfferTableHeaderRow < TableHeaderRow
   font: verdana-11px-monochrome
-  focusable: false
   color: #cccccc
   height: 20
 
-OfferTableHeaderColumn < TableHeaderColumn
+OfferTableHeaderColumn < SortableTableHeaderColumn
   font: verdana-11px-monochrome
-  background-color: alpha
   text-offset: 2 0
   color: #cccccc
-  width: 80
-  focusable: true
 
   $focus:
     background-color: #294f6d
@@ -74,8 +63,26 @@ Panel
     table-data: sellingTableData
     row-style: OfferTableRow
     column-style: OfferTableColumn
-    header-row-style: OfferTableHeaderRow
-    header-column-style: OfferTableHeaderColumn
+    header-column-style: false
+    header-row-style: false
+
+    OfferTableHeaderRow
+      id: header
+      OfferTableHeaderColumn
+        !text: tr('Buyer Name')
+        width: 100
+      OfferTableHeaderColumn
+        !text: tr('Amount')
+        width: 60
+      OfferTableHeaderColumn
+        !text: tr('Total Price')
+        width: 90
+      OfferTableHeaderColumn
+        !text: tr('Piece Price')
+        width: 80
+      OfferTableHeaderColumn
+        !text: tr('Auction End')
+        width: 120
 
   TableData
     id: sellingTableData
@@ -129,8 +136,26 @@ Panel
     table-data: buyingTableData
     row-style: OfferTableRow
     column-style: OfferTableColumn
-    header-row-style: OfferTableHeaderRow
-    header-column-style: OfferTableHeaderColumn
+    header-column-style: false
+    header-row-style: false
+
+    OfferTableHeaderRow
+      id: header
+      OfferTableHeaderColumn
+        !text: tr('Seller Name')
+        width: 100
+      OfferTableHeaderColumn
+        !text: tr('Amount')
+        width: 60
+      OfferTableHeaderColumn
+        !text: tr('Total Price')
+        width: 90
+      OfferTableHeaderColumn
+        !text: tr('Piece Price')
+        width: 80
+      OfferTableHeaderColumn
+        !text: tr('Auction End')
+        width: 120
 
   TableData
     id: buyingTableData

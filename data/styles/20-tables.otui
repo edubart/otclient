@@ -1,26 +1,62 @@
 Table < UITable
   layout: verticalBox
-  header-column-style: HeaderTableColumn
-  header-row-style: HeaderTableRow
+  header-column-style: TableHeaderColumn
+  header-row-style: TableHeaderRow
   column-style: TableColumn
   row-style: TableRow
 
 TableData < UIScrollArea
   layout: verticalBox
 
-TableRow < Label
+TableRow < UITableRow
   layout: horizontalBox
   height: 10
   text-wrap: true
+  focusable: true
+  even-background-color: alpha
+  odd-background-color: #00000022
+
+  $focus:
+    background-color: #294f6d
+    color: #ffffff
 
 TableColumn < Label
   width: 30
   text-wrap: true
+  focusable: false
 
 TableHeaderRow < Label
   layout: horizontalBox
+  focusable: false
   height: 10
   text-wrap: true
 
-TableHeaderColumn < Button
-  width: 30
+TableHeaderColumn < UITableHeaderColumn
+  font: verdana-11px-antialised
+  background-color: alpha
+  color: #dfdfdfff
+  height: 23
+  focusable: true
+  text-offset: 0 0
+  image-source: /images/ui/button
+  image-color: #dfdfdf
+  image-clip: 0 0 22 23
+  image-border: 3
+  padding: 5 10 5 10
+  enabled: false
+  focusable: false
+
+  $hover !disabled:
+    image-clip: 0 23 22 23
+
+  $pressed:
+    image-clip: 0 46 22 23
+    text-offset: 1 1
+
+  $disabled:
+    color: #dfdfdf88
+    opacity: 0.8
+
+SortableTableHeaderColumn < TableHeaderColumn
+  enabled: true
+  focusable: true

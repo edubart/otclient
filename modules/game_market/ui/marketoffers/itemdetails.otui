@@ -1,11 +1,12 @@
 DetailsTableRow < TableRow
   font: verdana-11px-monochrome
-  background-color: alpha
   focusable: true
   color: #cccccc
   height: 45
   focusable: false
   padding: 2
+  even-background-color: alpha
+  odd-background-color: alpha
 
 DetailsTableColumn < TableColumn
   font: verdana-11px-monochrome
