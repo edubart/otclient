@@ -160,8 +160,8 @@ MarketFilters = {
   SearchAll = 4
 }
 
-MarketFilters.First = MarketFilters.vocation
-MarketFilters.Last = MarketFilters.depot
+MarketFilters.First = MarketFilters.Vocation
+MarketFilters.Last = MarketFilters.Depot
 
 function getMarketSlotFilterId(name)
   local id = table.find(MarketSlotFilters, name)

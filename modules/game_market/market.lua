@@ -575,6 +575,10 @@ local function onAmountChange()
   end
 end
 
+local function onMarketMessage(messageMode, message)
+  Market.displayMessage(message)
+end
+
 local function initMarketItems(category)
   for c = MarketCategory.First, MarketCategory.Last do
     marketItems[c] = {}
@@ -748,6 +752,8 @@ function init()
   offerExhaust[MarketAction.Sell] = 10
   offerExhaust[MarketAction.Buy] = 20
 
+  registerMessageMode(MessageModes.Market, onMarketMessage)
+
   protocol.initProtocol()
   connect(g_game, { onGameEnd = Market.reset })
   connect(g_game, { onGameEnd = Market.close })
@@ -759,6 +765,8 @@ end
 
 function terminate()
   Market.close()
+
+  unregisterMessageMode(MessageModes.Market, onMarketMessage)
 
   protocol.terminateProtocol()
   disconnect(g_game, { onGameEnd = Market.reset })
@@ -778,6 +786,13 @@ function Market.reset()
   if not table.empty(information) then
     Market.updateCurrentItems()
   end
+end
+
+function Market.displayMessage(message)
+  if marketWindow:isHidden() then return end
+
+  local infoBox = displayInfoBox(tr('Market Error'), message)
+  infoBox:lock()
 end
 
 function Market.clearSelectedItem()
@@ -1059,7 +1074,7 @@ function Market.createNewOffer()
   end
 
   if errorMsg ~= '' then
-    displayInfoBox('Error', errorMsg)
+    Market.displayMessage(errorMsg)
     return
   end
 
