@@ -99,7 +99,7 @@ local function isItemValid(item, category, searchFilter)
   local filterDepot = filterButtons[MarketFilters.Depot]:isChecked()
 
   if slotFilter then
-    if slotFilter ~= 255 and item.ptr:getClothSlot() ~= slotFilter then
+    if slotFilter ~= 255 and item.thingType:getClothSlot() ~= slotFilter then
       return false
     end
   end
@@ -113,7 +113,7 @@ local function isItemValid(item, category, searchFilter)
       return false
     end
   end
-  if filterDepot and Market.depotContains(item.ptr:getId()) <= 0 then
+  if filterDepot and Market.getDepotCount(item.marketData.tradeAs) <= 0 then
     return false
   end
   if searchFilter then
@@ -152,7 +152,7 @@ local function refreshTypeList()
   offerTypeList:addOption('Buy')
 
   if Market.isItemSelected() then
-    if Market.depotContains(selectedItem.item.ptr:getId()) > 0 then
+    if Market.getDepotCount(selectedItem.item.marketData.tradeAs) > 0 then
       offerTypeList:addOption('Sell')
     end
   end
@@ -357,12 +357,12 @@ local function updateSelectedItem(widget)
 
   Market.resetCreateOffer()
   if Market.isItemSelected() then
-    selectedItem:setItem(selectedItem.item.ptr)
+    selectedItem:setItem(selectedItem.item.displayItem)
     nameLabel:setText(selectedItem.item.marketData.name)
     clearOffers()
 
     Market.enableCreateOffer(true) -- update offer types
-    MarketProtocol.sendMarketBrowse(selectedItem.item.ptr:getId()) -- send browsed msg
+    MarketProtocol.sendMarketBrowse(selectedItem.item.marketData.tradeAs) -- send browsed msg
   else
     Market.clearSelectedItem()
   end
@@ -410,7 +410,7 @@ local function openAmountWindow(callback, type, actionText)
 
   local max = selectedOffer[type]:getAmount(item:getId())
   if type == MarketAction.Sell then
-    local depot = Market.depotContains(item:getId())
+    local depot = Market.getDepotCount(item:getId())
     if max > depot then
       max = depot
     end
@@ -489,7 +489,7 @@ local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
   for _, offer in pairs(marketOffers[MarketAction.Buy]) do
     if offer:isEqual(selectedRow.ref) then
       selectedOffer[MarketAction.Sell] = offer
-      if Market.depotContains(offer:getItem():getId()) > 0 then
+      if Market.getDepotCount(offer:getItem():getId()) > 0 then
         sellButton:setEnabled(true)
       else
         sellButton:setEnabled(false)
@@ -532,9 +532,9 @@ local function onChangeSlotFilter(combobox, option)
 end
 
 local function onChangeOfferType(combobox, option)
-  local id = selectedItem.item.ptr:getId()
+  local id = selectedItem.item.marketData.tradeAs
   if option == 'Sell' then
-    local max = Market.depotContains(id)
+    local max = Market.getDepotCount(id)
     amountEdit:setMaximum(max)
   else
     amountEdit:setMaximum(999999)
@@ -579,31 +579,36 @@ local function onMarketMessage(messageMode, message)
   Market.displayMessage(message)
 end
 
-local function initMarketItems(category)
+local function initMarketItems()
   for c = MarketCategory.First, MarketCategory.Last do
     marketItems[c] = {}
   end
 
+  -- save a list of items which are already added
+  local itemSet = {}
+
   -- populate all market items
   local types = g_things.findThingTypeByAttr(ThingAttrMarket, 0)
   for i = 1, #types do
-    local t = types[i]
+    local itemType = types[i]
 
-    local newItem = Item.create(t:getId())
-    if newItem then
-      local marketData = t:getMarketData()
-      if not table.empty(marketData) then
-        if marketData.category == category or category == MarketCategory.All then
+    local item = Item.create(itemType:getId())
+    if item then
+      local marketData = itemType:getMarketData()
+      if not table.empty(marketData) and not itemSet[marketData.tradeAs] then
+          -- Some items use a different sprite in Market
+          item:setId(marketData.showAs)
 
-          -- create new item block
-          local item = {
-            ptr = newItem,
+          -- create new marketItem block
+          local marketItem = {
+            displayItem = item,
+            thingType = itemType,
             marketData = marketData
           }
 
           -- add new market item
-          table.insert(marketItems[marketData.category], item)
-        end
+          table.insert(marketItems[marketData.category], marketItem)
+          itemSet[marketData.tradeAs] = true
       end
     end
   end
@@ -668,7 +673,6 @@ local function initInterface()
   -- setup selected item
   nameLabel = marketOffersPanel:getChildById('nameLabel')
   selectedItem = marketOffersPanel:getChildById('selectedItem')
-  selectedItem.item = {}
 
   -- setup create new offer
   totalPriceEdit = marketOffersPanel:getChildById('totalPriceEdit')
@@ -819,22 +823,15 @@ function Market.clearSelectedItem()
 end
 
 function Market.isItemSelected()
-  return selectedItem and not table.empty(selectedItem.item) and selectedItem.item.ptr
+  return selectedItem and selectedItem.item
 end
 
 function Market.isOfferSelected(type)
   return selectedOffer[type] and not selectedOffer[type]:isNull()
 end
 
-function Market.depotContains(itemId)
-  local count = 0
-  for i = 1, #information.depotItems do
-    local item = information.depotItems[i]
-    if item and item.ptr:getId() == itemId then
-      count = count + item.ptr:getCount()
-    end
-  end
-  return count
+function Market.getDepotCount(itemId)
+  return information.depotItems[itemId] or 0
 end
 
 function Market.enableCreateOffer(enable)
@@ -857,6 +854,8 @@ function Market.close(notify)
   if not marketWindow:isHidden() then
     marketWindow:hide()
     marketWindow:unlock()
+    Market.clearSelectedItem(
+)    Market.reset()
     if notify then
       MarketProtocol.sendMarketLeave()
     end
@@ -909,15 +908,15 @@ function Market.refreshItemsWidget(selectItem)
     itemBox.onCheckChange = Market.onItemBoxChecked
     itemBox.item = item
 
-    if selectItem > 0 and item.ptr:getId() == selectItem then
+    if selectItem > 0 and item.marketData.tradeAs == selectItem then
       select = itemBox
+      selectItem = 0
     end
 
     local itemWidget = itemBox:getChildById('item')
-    item.ptr:setCount(1) -- reset item count for image
-    itemWidget:setItem(item.ptr)
+    itemWidget:setItem(item.displayItem)
 
-    local amount = Market.depotContains(item.ptr:getId())
+    local amount = Market.getDepotCount(item.marketData.tradeAs)
     if amount > 0 then
       itemWidget:setText(amount)
       itemBox:setTooltip('You have '.. amount ..' in your depot.')
@@ -925,8 +924,9 @@ function Market.refreshItemsWidget(selectItem)
 
     radioItemSet:addWidget(itemBox)
   end
+
   if select then
-    select:setChecked(true)
+    radioItemSet:selectWidget(select, false)
   end
 
   layout:enableUpdates()
@@ -957,6 +957,7 @@ function Market.loadMarketItems(category)
       for i = 1, #marketItems[category] do
         local item = marketItems[category][i]
         if isItemValid(item, category, searchFilter) then
+
           table.insert(currentItems, item)
         end
       end
@@ -974,56 +975,6 @@ function Market.loadMarketItems(category)
   Market.refreshItemsWidget()
 end
 
-function Market.loadDepotItems(depotItems)
-  information.depotItems = {}
-
-  local items = {}
-  for i = 1, #depotItems do
-    local data = depotItems[i]
-    local id, count = data[1], data[2]
-
-    local tmpItem = Item.create(id)
-    if tmpItem:isStackable() then
-      if count > 100 then
-        local createCount = math.floor(count/100)
-        local remainder = count % 100
-        if remainder > 0 then
-          createCount = createCount + 1
-        end
-        for i = 1, createCount do
-          local newItem = Item.create(id)
-          if i == createCount and remainder > 0 then
-            newItem:setCount(remainder)
-          else
-            newItem:setCount(100)
-          end
-          table.insert(items, newItem)
-        end
-      else
-        local newItem = Item.create(id)
-        newItem:setCount(count)
-        table.insert(items, newItem)
-      end
-    else
-      for i = 1, count do
-        table.insert(items, Item.create(id))
-      end
-    end
-  end
-
-  for _, newItem in pairs(items) do
-    local marketData = newItem:getMarketData()
-
-    if not table.empty(marketData) then
-      local item = {
-        ptr = newItem,
-        marketData = marketData
-      }
-      table.insert(information.depotItems, item)
-    end
-  end
-end
-
 function Market.createNewOffer()
   local type = offerTypeList:getCurrentOption().text
   if type == 'Sell' then
@@ -1035,8 +986,8 @@ function Market.createNewOffer()
   if not Market.isItemSelected() then
     return
   end
-  local item = selectedItem.item
-  local spriteId = item.ptr:getId()
+
+  local spriteId = selectedItem.item.marketData.tradeAs
 
   local piecePrice = piecePriceEdit:getValue()
   local totalPrice = totalPriceEdit:getValue()
@@ -1051,7 +1002,7 @@ function Market.createNewOffer()
       errorMsg = errorMsg..'Not enough balance to create this offer.\n'
     end
   elseif type == MarketAction.Sell then
-    if Market.depotContains(spriteId) < amount then
+    if Market.getDepotCount(spriteId) < amount then
       errorMsg = errorMsg..'Not enough items in your depot to create this offer.\n'
     end
   end
@@ -1092,9 +1043,6 @@ end
 
 function Market.onItemBoxChecked(widget)
   if widget:isChecked() then
-    if selectedItem.ref and widget ~= selectedItem.ref then
-      selectedItem.ref:setChecked(false) -- temporary fix?
-    end
     updateSelectedItem(widget)
   end
 end
@@ -1103,11 +1051,10 @@ end
 
 function Market.onMarketEnter(depotItems, offers, balance, vocation)
   if not loaded then
-    initMarketItems(MarketCategory.All)
+    initMarketItems()
     loaded = true
   end
 
-  Market.clearSelectedItem()
   updateBalance(balance)
 
   information.totalOffers = offers
@@ -1124,10 +1071,12 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
     information.vocation = vocation
   end
 
-  Market.loadDepotItems(depotItems)
+  -- set list of depot items
+  information.depotItems = depotItems
+
   -- update the items widget to match depot items
   if Market.isItemSelected() then
-    local spriteId = selectedItem.item.ptr:getId()
+    local spriteId = selectedItem.item.marketData.tradeAs
     MarketProtocol.silent(true) -- disable protocol messages
     Market.refreshItemsWidget(spriteId)
     MarketProtocol.silent(false) -- enable protocol messages
