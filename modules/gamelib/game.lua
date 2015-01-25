@@ -1,7 +1,5 @@
-local currentRsa
-
 function g_game.getRsa()
-  return currentRsa
+  return G.currentRsa
 end
 
 function g_game.findPlayerItem(itemId, subType)
@@ -19,7 +17,7 @@ function g_game.findPlayerItem(itemId, subType)
 end
 
 function g_game.chooseRsa(host)
-  if currentRsa ~= CIPSOFT_RSA and currentRsa ~= OTSERV_RSA then return end
+  if G.currentRsa ~= CIPSOFT_RSA and G.currentRsa ~= OTSERV_RSA then return end
   if host:ends('.tibia.com') or host:ends('.cipsoft.com') then
     g_game.setRsa(CIPSOFT_RSA)
 
@@ -29,7 +27,7 @@ function g_game.chooseRsa(host)
       g_game.setCustomOs(OsTypes.Linux)
     end
   else
-    if currentRsa == CIPSOFT_RSA then
+    if G.currentRsa == CIPSOFT_RSA then
       g_game.setCustomOs(-1)
     end
     g_game.setRsa(OTSERV_RSA)
@@ -44,11 +42,11 @@ end
 function g_game.setRsa(rsa, e)
   e = e or '65537'
   g_crypt.rsaSetPublicKey(rsa, e)
-  currentRsa = rsa
+  G.currentRsa = rsa
 end
 
 function g_game.isOfficialTibia()
-  return currentRsa == CIPSOFT_RSA
+  return G.currentRsa == CIPSOFT_RSA
 end
 
 function g_game.getSupportedClients()
@@ -112,4 +110,6 @@ function g_game.getClientProtocolVersion(client)
   return clients[client] or client
 end
 
-g_game.setRsa(OTSERV_RSA)
+if not G.currentRsa then
+  g_game.setRsa(OTSERV_RSA)
+end
