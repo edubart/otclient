@@ -313,7 +313,7 @@ function signalcall(param, ...)
         perror(ret)
       end
     end
-  elseif func ~= nil then
+  elseif param ~= nil then
     error('attempt to call a non function value')
   end
   return false
