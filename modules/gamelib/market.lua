@@ -1,3 +1,8 @@
+MarketMaxAmount = 2000
+MarketMaxAmountStackable = 64000
+MarketMaxPrice = 999999999
+MarketMaxOffers = 100
+
 MarketAction = {
   Buy = 0,
   Sell = 1

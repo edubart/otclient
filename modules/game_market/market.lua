@@ -144,7 +144,7 @@ end
 
 local function clearFee()
   feeLabel:setText('')
-  fee = 0
+  fee = 20
 end
 
 local function refreshTypeList()
@@ -399,46 +399,55 @@ local function destroyAmountWindow()
   end
 end
 
-local function openAmountWindow(callback, type, actionText)
-  local actionText = actionText or ''
-  if not Market.isOfferSelected(type) then
+local function openAmountWindow(callback, actionType, actionText)
+  if not Market.isOfferSelected(actionType) then
     return
   end
+
   amountWindow = g_ui.createWidget('AmountWindow', rootWidget)
   amountWindow:lock()
-  local item = selectedOffer[type]:getItem()
 
-  local max = selectedOffer[type]:getAmount(item:getId())
-  if type == MarketAction.Sell then
+  local offer = selectedOffer[actionType]
+  local item = offer:getItem()
+
+  local maximum = offer:getAmount()
+  if actionType == MarketAction.Sell then
     local depot = Market.getDepotCount(item:getId())
-    if max > depot then
-      max = depot
+    if maximum > depot then
+      maximum = depot
     end
+  else
+    maximum = math.min(maximum, math.floor(information.balance / offer:getPrice()))
+  end
+
+  if item:isStackable() then
+    maximum = math.min(maximum, MarketMaxAmountStackable)
+  else
+    maximum = math.min(maximum, MarketMaxAmount)
   end
 
   local itembox = amountWindow:getChildById('item')
   itembox:setItemId(item:getId())
-  itembox:setText(1)
 
   local scrollbar = amountWindow:getChildById('amountScrollBar')
-  scrollbar:setText(tostring(selectedOffer[type]:getPrice())..'gp')
-  scrollbar:setMaximum(max)
-  scrollbar:setMinimum(1)
-  scrollbar:setValue(1)
+  scrollbar:setText(offer:getPrice()..'gp')
 
   scrollbar.onValueChange = function(widget, value)
-    widget:setText(tostring(value*selectedOffer[type]:getPrice())..'gp')
-    itembox:setText(tostring(value))
+    widget:setText((value*offer:getPrice())..'gp')
+    itembox:setText(value)
   end
 
+  scrollbar:setRange(1, maximum)
+  scrollbar:setValue(1)
+
   local okButton = amountWindow:getChildById('buttonOk')
-  if actionText ~= '' then
+  if actionText then
     okButton:setText(actionText)
   end
 
   local okFunc = function()
-    local counter = selectedOffer[type]:getCounter()
-    local timestamp = selectedOffer[type]:getTimeStamp()
+    local counter = offer:getCounter()
+    local timestamp = offer:getTimeStamp()
     callback(scrollbar:getValue(), timestamp, counter)
     destroyAmountWindow()
   end
@@ -532,46 +541,47 @@ local function onChangeSlotFilter(combobox, option)
 end
 
 local function onChangeOfferType(combobox, option)
-  local id = selectedItem.item.marketData.tradeAs
+  local item = selectedItem.item
+  local maximum = item.thingType:isStackable() and MarketMaxAmountStackable or MarketMaxAmount
+
   if option == 'Sell' then
-    local max = Market.getDepotCount(id)
-    amountEdit:setMaximum(max)
+    maximum = math.min(maximum, Market.getDepotCount(item.marketData.tradeAs))
+    amountEdit:setMaximum(maximum)
   else
-    amountEdit:setMaximum(999999)
+    amountEdit:setMaximum(maximum)
   end
 end
 
 local function onTotalPriceChange()
-  local totalPrice = totalPriceEdit:getValue()
-  local piecePrice = piecePriceEdit:getValue()
   local amount = amountEdit:getValue()
+  local totalPrice = totalPriceEdit:getValue()
+  local piecePrice = math.floor(totalPrice/amount)
 
-  piecePriceEdit:setValue(math.floor(totalPrice/amount))
+  piecePriceEdit:setValue(piecePrice, true)
   if Market.isItemSelected() then
-    updateFee(totalPrice, amount)
+    updateFee(piecePrice, amount)
   end
 end
 
 local function onPiecePriceChange()
+  local amount = amountEdit:getValue()
   local totalPrice = totalPriceEdit:getValue()
   local piecePrice = piecePriceEdit:getValue()
-  local amount = amountEdit:getValue()
 
-  totalPriceEdit:setValue(piecePrice*amount)
+  totalPriceEdit:setValue(piecePrice*amount, true)
   if Market.isItemSelected() then
-    updateFee(totalPrice, amount)
+    updateFee(piecePrice, amount)
   end
 end
 
 local function onAmountChange()
-  local totalPrice = totalPriceEdit:getValue()
-  local piecePrice = piecePriceEdit:getValue()
   local amount = amountEdit:getValue()
+  local piecePrice = piecePriceEdit:getValue()
+  local totalPrice = piecePrice * amount
 
-  piecePriceEdit:setValue(math.floor(totalPrice/amount))
-  totalPriceEdit:setValue(piecePrice*amount)
+  totalPriceEdit:setValue(piecePrice*amount, true)
   if Market.isItemSelected() then
-    updateFee(totalPrice, amount)
+    updateFee(piecePrice, amount)
   end
 end
 
@@ -801,7 +811,7 @@ end
 
 function Market.clearSelectedItem()
   if Market.isItemSelected() then
-    Market.resetCreateOffer()
+    Market.resetCreateOffer(true)
     offerTypeList:clearOptions()
     offerTypeList:setText('Please Select')
     offerTypeList:setEnabled(false)
@@ -878,12 +888,17 @@ function Market.updateCurrentItems()
   Market.loadMarketItems(id)
 end
 
-function Market.resetCreateOffer()
+function Market.resetCreateOffer(resetFee)
   piecePriceEdit:setValue(1)
   totalPriceEdit:setValue(1)
   amountEdit:setValue(1)
   refreshTypeList()
-  clearFee()
+
+  if resetFee then
+    clearFee()
+  else
+    updateFee(0, 0)
+  end
 end
 
 function Market.refreshItemsWidget(selectItem)
@@ -990,8 +1005,6 @@ function Market.createNewOffer()
   local spriteId = selectedItem.item.marketData.tradeAs
 
   local piecePrice = piecePriceEdit:getValue()
-  local totalPrice = totalPriceEdit:getValue()
-
   local amount = amountEdit:getValue()
   local anonymous = anonymous:isChecked() and 1 or 0
 
@@ -1002,6 +1015,9 @@ function Market.createNewOffer()
       errorMsg = errorMsg..'Not enough balance to create this offer.\n'
     end
   elseif type == MarketAction.Sell then
+    if information.balance < fee then
+      errorMsg = errorMsg..'Not enough balance to create this offer.\n'
+    end
     if Market.getDepotCount(spriteId) < amount then
       errorMsg = errorMsg..'Not enough items in your depot to create this offer.\n'
     end
@@ -1012,10 +1028,19 @@ function Market.createNewOffer()
   elseif piecePrice < piecePriceEdit.minimum then
     errorMsg = errorMsg..'Price is too low.\n'
   end
+
   if amount > amountEdit.maximum then
     errorMsg = errorMsg..'Amount is too high.\n'
   elseif amount < amountEdit.minimum then
     errorMsg = errorMsg..'Amount is too low.\n'
+  end
+
+  if amount * piecePrice > MarketMaxPrice then
+    errorMsg = errorMsg..'Total price is too high.\n'
+  end
+
+  if information.totalOffers >= MarketMaxOffers then
+    errorMsg = errorMsg..'You cannot create more offers.\n'
   end
 
   local timeCheck = os.time() - lastCreatedOffer
