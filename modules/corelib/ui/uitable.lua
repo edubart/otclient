@@ -194,7 +194,7 @@ function UITable:removeHeader()
   end
 end
 
-function UITable:addRow(data, ref, height)
+function UITable:addRow(data, height)
   if not self.dataSpace then
     g_logger.error('UITable:addRow - table data space has not been set, cannot add rows.')
     return
@@ -206,7 +206,6 @@ function UITable:addRow(data, ref, height)
 
   local row = g_ui.createWidget(self.rowBaseStyle)
   row.table = self
-  if ref then row.ref = ref end
   if height then row:setHeight(height) end
 
   local rowId = #self.rows + 1
@@ -352,18 +351,24 @@ function UITable:setTableData(tableData)
   self.dataSpace:applyStyle({ height = self:getHeight()-headerHeight-self:getMarginTop() })
 end
 
-function UITable:setRowStyle(style)
+function UITable:setRowStyle(style, dontUpdate)
   self.rowBaseStyle = style
-  for _, row in pairs(self.rows) do
-    row:setStyle(style)
+
+  if not dontUpdate then
+    for _, row in pairs(self.rows) do
+      row:setStyle(style)
+    end
   end
 end
 
-function UITable:setColumnStyle(style)
+function UITable:setColumnStyle(style, dontUpdate)
   self.columBaseStyle = style
-  for _, columns in pairs(self.columns) do
-    for _, col in pairs(columns) do
-      col:setStyle(style)
+
+  if not dontUpdate then
+    for _, columns in pairs(self.columns) do
+      for _, col in pairs(columns) do
+        col:setStyle(style)
+      end
     end
   end
 end

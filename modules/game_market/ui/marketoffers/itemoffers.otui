@@ -10,6 +10,9 @@ OfferTableColumn < TableColumn
   color: #cccccc
   width: 80
 
+OfferTableWarningColumn < OfferTableColumn
+  color: #e03d3d
+
 OfferTableHeaderRow < TableHeaderRow
   font: verdana-11px-monochrome
   color: #cccccc

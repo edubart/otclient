@@ -15,7 +15,6 @@
 
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
-        - Display out of trend market offers based on their previous statistics (like cipsoft does)
   ]]
 
 Market = {}
@@ -72,6 +71,7 @@ information = {}
 currentItems = {}
 lastCreatedOffer = 0
 fee = 0
+averagePrice = 0
 
 loaded = false
 
@@ -180,7 +180,18 @@ local function addOffer(offer, offerType)
       {text = price},
       {text = string.gsub(os.date('%c', timestamp), " ", "  ")}
     }
-    buyOfferTable:addRow(data, id)
+
+    if offer.warn then
+      buyOfferTable:setColumnStyle('OfferTableWarningColumn', true)
+    end
+
+    local row = buyOfferTable:addRow(data)
+    row.ref = id
+
+    if offer.warn then
+      row:setTooltip(tr('This offer is 25%% below the average market price'))
+      buyOfferTable:setColumnStyle('OfferTableColumn', true)
+    end
   else
     local data = {
       {text = player},
@@ -189,7 +200,18 @@ local function addOffer(offer, offerType)
       {text = price},
       {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
     }
-    sellOfferTable:addRow(data, id)
+
+    if offer.warn then
+      sellOfferTable:setColumnStyle('OfferTableWarningColumn', true)
+    end
+
+    local row = sellOfferTable:addRow(data)
+    row.ref = id
+
+    if offer.warn then
+      row:setTooltip(tr('This offer is 25%% above the average market price'))
+      sellOfferTable:setColumnStyle('OfferTableColumn', true)
+    end
   end
 
   buyOfferTable:toggleSorting(false)
@@ -204,12 +226,17 @@ local function mergeOffer(offer)
   if not offer then
     return false
   end
+
   local id = offer:getId()
   local offerType = offer:getType()
   local amount = offer:getAmount()
   local replaced = false
 
   if offerType == MarketAction.Buy then
+    if averagePrice > 0 then
+      offer.warn = offer:getPrice() <= averagePrice - math.floor(averagePrice / 4)
+    end
+
     for i = 1, #marketOffers[MarketAction.Buy] do
       local o = marketOffers[MarketAction.Buy][i]
       -- replace existing offer
@@ -222,6 +249,10 @@ local function mergeOffer(offer)
       table.insert(marketOffers[MarketAction.Buy], offer)
     end
   else
+    if averagePrice > 0 then
+      offer.warn = offer:getPrice() >= averagePrice + math.floor(averagePrice / 4)
+    end
+
     for i = 1, #marketOffers[MarketAction.Sell] do
       local o = marketOffers[MarketAction.Sell][i]
       -- replace existing offer
@@ -285,9 +316,11 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
   if table.empty(saleStats) then
     sellStatsTable:addRow({{text = 'No information'}})
   else
+    local offerAmount = 0
     local transactions, totalPrice, highestPrice, lowestPrice = 0, 0, 0, 0
     for _, stat in pairs(saleStats) do
       if not stat:isNull() then
+        offerAmount = offerAmount + 1
         transactions = transactions + stat:getTransactions()
         totalPrice = totalPrice + stat:getTotalPrice()
         local newHigh = stat:getHighestPrice()
@@ -300,6 +333,12 @@ local function updateDetails(itemId, descriptions, purchaseStats, saleStats)
           lowestPrice = newLow
         end
       end
+    end
+
+    if offerAmount >= 5 and transactions >= 10 then
+      averagePrice = math.round(totalPrice / transactions)
+    else
+      averagePrice = 0
     end
 
     sellStatsTable:addRow({{text = 'Total Transations:'}, {text = transactions}})
@@ -1081,6 +1120,7 @@ function Market.onMarketEnter(depotItems, offers, balance, vocation)
   end
 
   updateBalance(balance)
+  averagePrice = 0
 
   information.totalOffers = offers
   local player = g_game.getLocalPlayer()
