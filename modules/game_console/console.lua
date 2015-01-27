@@ -170,7 +170,7 @@ function enableChat()
   gameInterface.unbindWalkKey("D")
   gameInterface.unbindWalkKey("S")
   gameInterface.unbindWalkKey("A")
-  
+
   gameInterface.unbindWalkKey("E")
   gameInterface.unbindWalkKey("Q")
   gameInterface.unbindWalkKey("C")
@@ -199,7 +199,7 @@ function disableChat()
   gameInterface.bindWalkKey("D", East)
   gameInterface.bindWalkKey("S", South)
   gameInterface.bindWalkKey("A", West)
-  
+
   gameInterface.bindWalkKey("E", NorthEast)
   gameInterface.bindWalkKey("Q", NorthWest)
   gameInterface.bindWalkKey("C", SouthEast)
@@ -245,7 +245,13 @@ function terminate()
     violationWindow:destroy()
   end
 
+  consoleTabBar = nil
+  consoleContentPanel = nil
+  consoleToggleChat = nil
+  consoleTextEdit = nil
+
   consolePanel:destroy()
+  consolePanel = nil
   ownPrivateName = nil
 
   Console = nil
@@ -300,11 +306,14 @@ function clear()
   channels = {}
 
   consoleTabBar:removeTab(defaultTab)
+  defaultTab = nil
   consoleTabBar:removeTab(serverTab)
+  serverTab = nil
 
   local npcTab = consoleTabBar:getTab('NPCs')
   if npcTab then
     consoleTabBar:removeTab(npcTab)
+    npcTab = nil
   end
 
   if violationReportTab then

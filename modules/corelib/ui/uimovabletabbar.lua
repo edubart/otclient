@@ -17,19 +17,19 @@ local function updateMargins(tabBar, ignored)
 end
 
 local function updateNavigation(tabBar)
-  if prevNavigation then
+  if tabBar.prevNavigation then
     if #tabBar.preTabs > 0 or table.find(tabBar.tabs, tabBar.currentTab) ~= 1 then
-      prevNavigation:enable()
+      tabBar.prevNavigation:enable()
     else
-      prevNavigation:disable()
+      tabBar.prevNavigation:disable()
     end
   end
 
-  if nextNavigation then
+  if tabBar.nextNavigation then
     if #tabBar.postTabs > 0 or table.find(tabBar.tabs, tabBar.currentTab) ~= #tabBar.tabs then
-      nextNavigation:enable()
+      tabBar.nextNavigation:enable()
     else
-      nextNavigation:disable()
+      tabBar.nextNavigation:disable()
     end
   end
 end
@@ -216,6 +216,19 @@ function UIMoveableTabBar.create()
                               updateTabs(tabbar)
                             end
   return tabbar
+end
+
+function UIMoveableTabBar:onDestroy()
+  if self.prevNavigation then
+    self.prevNavigation:disable()
+  end
+
+  if self.nextNavigation then
+    self.nextNavigation:disable()
+  end
+
+  self.nextNavigation = nil
+  self.prevNavigation = nil
 end
 
 function UIMoveableTabBar:setContentWidget(widget)
@@ -467,14 +480,14 @@ function UIMoveableTabBar:getCurrentTab()
 end
 
 function UIMoveableTabBar:setNavigation(prevButton, nextButton)
-  prevNavigation = prevButton
-  nextNavigation = nextButton
+  self.prevNavigation = prevButton
+  self.nextNavigation = nextButton
 
-  if prevNavigation then
-    prevNavigation.onClick = function() self:selectPrevTab() end
+  if self.prevNavigation then
+    self.prevNavigation.onClick = function() self:selectPrevTab() end
   end
-  if nextNavigation then
-    nextNavigation.onClick = function() self:selectNextTab() end
+  if self.nextNavigation then
+    self.nextNavigation.onClick = function() self:selectNextTab() end
   end
   updateNavigation(self)
 end
