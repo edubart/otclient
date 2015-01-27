@@ -860,7 +860,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
 
     Position pos = item->getPosition();
     if(!pos.isValid()) // virtual item
-        pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+        pos = Position(0xFFFF, 0, 0); // means that is an item in inventory
 
     m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackPos(), toThing->getPosition(), toThing->getId(), toThing->getStackPos());
 }

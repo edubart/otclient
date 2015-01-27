@@ -485,7 +485,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()) {
+        if(!thing->isGround() && !thing->isOnBottom() && !thing->isOnTop()) {
             if(i > 0 && thing->isSplash())
                 return m_things[i-1];
             return thing;
@@ -494,7 +494,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop())
+        if(!thing->isGround() && !thing->isOnTop())
             return thing;
     }
 
