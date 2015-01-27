@@ -129,6 +129,7 @@ GameContentRevision = 65
 GameExperienceBonus = 66
 GameAuthenticator = 67
 GameUnjustifiedPoints = 68
+GameSessionKey = 69
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'

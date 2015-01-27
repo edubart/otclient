@@ -401,6 +401,7 @@ namespace Otc
         GameExperienceBonus = 66,
         GameAuthenticator = 67,
         GameUnjustifiedPoints = 68,
+        GameSessionKey = 69,
 
         LastGameFeature = 101
     };

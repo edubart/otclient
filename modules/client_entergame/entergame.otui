@@ -1,6 +1,6 @@
 EnterGameWindow < MainWindow
   !text: tr('Enter Game')
-  size: 236 274
+  size: 236 298
 
 EnterGameButton < Button
   width: 64
@@ -23,6 +23,8 @@ EnterGameWindow
   id: enterGame
   &authenticatorEnabled: false
   &authenticatorHeight: 44
+  &stayLoggedBoxEnabled: false
+  &stayLoggedBoxHeight: 24
   @onEnter: EnterGame.doLogin()
 
   MenuLabel
@@ -58,24 +60,52 @@ EnterGameWindow
     anchors.left: prev.left
     anchors.top: prev.bottom
     text-auto-resize: true
-    margin-top: 8
+    margin-top: -12
     visible: false
+
+    $on:
+      visible: true
+      margin-top: 8
 
   TextEdit
     id: authenticatorTokenTextEdit
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: prev.bottom
-    margin-top: 2
+    margin-top: -22
     visible: false
     max-length: 8
+
+    $on:
+      visible: true
+      margin-top: 2
+
+  CheckBox
+    id: stayLoggedBox
+    !text: tr('Stay logged during session')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 6
+    margin-top: -16
+    visible: false
+
+    $on:
+      visible: true
+      margin-top: 8
+
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 8
 
   MenuLabel
     id: serverLabel
     !text: tr('Server')
     anchors.left: prev.left
     anchors.top: prev.bottom
-    margin-top: -36
+    margin-top: 8
     text-auto-resize: true
 
   ServerListButton
@@ -152,16 +182,24 @@ EnterGameWindow
     anchors.top: prev.bottom
     margin-top: 2
 
+  HorizontalSeparator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 6
+
   EnterGameButton
     !text: tr('Ok')
     anchors.right: parent.right
-    anchors.bottom: parent.bottom
+    anchors.top: prev.bottom
+    margin-top: 4
     @onClick: EnterGame.doLogin()
 
   Label
     id: serverInfoLabel
     font: verdana-11px-rounded
-    anchors.bottom: parent.bottom
+    anchors.top: prev.top
     anchors.left: parent.left
+    margin-top: 5
     color: green
     text-auto-resize: true

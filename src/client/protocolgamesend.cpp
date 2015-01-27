@@ -79,16 +79,21 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         msg->addU8(0); // is gm set?
     }
 
-    if(g_game.getFeature(Otc::GameAccountNames))
-        msg->addString(m_accountName);
-    else
-        msg->addU32(stdext::from_string<uint32>(m_accountName));
+    if(g_game.getFeature(Otc::GameSessionKey)) {
+        msg->addString(m_sessionKey);
+        msg->addString(m_characterName);
+    } else {
+        if(g_game.getFeature(Otc::GameAccountNames))
+            msg->addString(m_accountName);
+        else
+            msg->addU32(stdext::from_string<uint32>(m_accountName));
 
-    msg->addString(m_characterName);
-    msg->addString(m_accountPassword);
+        msg->addString(m_characterName);
+        msg->addString(m_accountPassword);
 
-    if(g_game.getFeature(Otc::GameAuthenticator))
-        msg->addString(m_authenticatorToken);
+        if(g_game.getFeature(Otc::GameAuthenticator))
+            msg->addString(m_authenticatorToken);
+    }
 
     if(g_game.getFeature(Otc::GameChallengeOnLogin)) {
         msg->addU32(challengeTimestamp);

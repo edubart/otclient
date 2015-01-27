@@ -7,10 +7,11 @@ LoginServerTokenError = 13
 LoginServerUpdate = 17
 LoginServerMotd = 20
 LoginServerUpdateNeeded = 30
+LoginServerSessionKey = 40
 LoginServerCharacterList = 100
 LoginServerExtendedCharacterList = 101
 
-function ProtocolLogin:login(host, port, accountName, accountPassword, authenticatorToken)
+function ProtocolLogin:login(host, port, accountName, accountPassword, authenticatorToken, stayLogged)
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onLoginError, self, tr("You must enter a valid server address and port."))
     return
@@ -19,6 +20,7 @@ function ProtocolLogin:login(host, port, accountName, accountPassword, authentic
   self.accountName = accountName
   self.accountPassword = accountPassword
   self.authenticatorToken = authenticatorToken
+  self.stayLogged = stayLogged
   self.connectCallback = self.sendLoginPacket
 
   self:connect(host, port)
@@ -109,6 +111,10 @@ function ProtocolLogin:sendLoginPacket()
     msg:addU8(0)
     msg:addString(self.authenticatorToken)
 
+    if g_game.getFeature(GameSessionKey) then
+      msg:addU8(booleantonumber(self.stayLogged))
+    end
+
     paddingBytes = g_crypt.rsaGetSize() - (msg:getMessageSize() - offset)
     assert(paddingBytes >= 0)
     for i = 1, paddingBytes do
@@ -144,8 +150,11 @@ function ProtocolLogin:onRecv(msg)
       self:parseMotd(msg)
     elseif opcode == LoginServerUpdateNeeded then
       signalcall(self.onLoginError, self, tr("Client needs update."))
+    elseif opcode == LoginServerTokenSuccess then
+      local unknown = msg:getU8()
     elseif opcode == LoginServerTokenError then
       -- TODO: prompt for token here
+      local unknown = msg:getU8()
       signalcall(self.onLoginError, self, tr("Invalid authentification token."))
     elseif opcode == LoginServerCharacterList then
       self:parseCharacterList(msg)
@@ -154,6 +163,8 @@ function ProtocolLogin:onRecv(msg)
     elseif opcode == LoginServerUpdate then
       local signature = msg:getString()
       signalcall(self.onUpdateNeeded, self, signature)
+    elseif opcode == LoginServerSessionKey then
+      self:parseSessionKey(msg)
     else
       self:parseOpcode(opcode, msg)
     end
@@ -169,6 +180,11 @@ end
 function ProtocolLogin:parseMotd(msg)
   local motd = msg:getString()
   signalcall(self.onMotd, self, motd)
+end
+
+function ProtocolLogin:parseSessionKey(msg)
+  local sessionKey = msg:getString()
+  signalcall(self.onSessionKey, self, sessionKey)
 end
 
 function ProtocolLogin:parseCharacterList(msg)

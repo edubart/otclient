@@ -33,9 +33,16 @@ local function onMotd(protocol, motd)
   end
 end
 
+local function onSessionKey(protocol, sessionKey)
+  G.sessionKey = sessionKey
+end
+
 local function onCharacterList(protocol, characters, account, otui)
   -- Try add server to the server list
   ServerList.add(G.host, G.port, g_game.getClientVersion())
+
+  -- Save 'Stay logged in' setting
+  g_settings.set('staylogged', enterGame:getChildById('stayLoggedBox'):isChecked())
 
   if enterGame:getChildById('rememberPasswordBox'):isChecked() then
     local account = g_crypt.encrypt(G.account)
@@ -109,9 +116,10 @@ function EnterGame.init()
   local password = g_settings.get('password')
   local host = g_settings.get('host')
   local port = g_settings.get('port')
+  local stayLogged = g_settings.getBoolean('staylogged')
   local autologin = g_settings.getBoolean('autologin')
   local clientVersion = g_settings.getInteger('client-version')
-  if clientVersion == 0 then clientVersion = 1072 end
+  if clientVersion == 0 then clientVersion = 1074 end
 
   if port == nil or port == 0 then port = 7171 end
 
@@ -121,7 +129,7 @@ function EnterGame.init()
   enterGame:getChildById('serverHostTextEdit'):setText(host)
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
-
+  enterGame:getChildById('stayLoggedBox'):setChecked(stayLogged)
 
   clientBox = enterGame:getChildById('clientComboBox')
   for _, proto in pairs(g_game.getSupportedClients()) do
@@ -130,6 +138,7 @@ function EnterGame.init()
   clientBox:setCurrentOption(clientVersion)
 
   EnterGame.toggleAuthenticatorToken(clientVersion, true)
+  EnterGame.toggleStayLoggedBox(clientVersion, true)
   connect(clientBox, { onOptionChange = EnterGame.onClientVersionChange })
 
   enterGame:hide()
@@ -227,48 +236,68 @@ function EnterGame.toggleAuthenticatorToken(clientVersion, init)
     return
   end
 
+  enterGame:getChildById('authenticatorTokenLabel'):setOn(enabled)
+  enterGame:getChildById('authenticatorTokenTextEdit'):setOn(enabled)
+
+  local newHeight = enterGame:getHeight()
+  local newY = enterGame:getY()
   if enabled then
-    enterGame:getChildById('authenticatorTokenLabel'):setVisible(true)
-    enterGame:getChildById('authenticatorTokenTextEdit'):setVisible(true)
-
-    local serverLabel = enterGame:getChildById('serverLabel')
-    serverLabel:setMarginTop(serverLabel:getMarginTop() + enterGame.authenticatorHeight)
-
-    if not init then
-      enterGame:breakAnchors()
-      enterGame:setY(enterGame:getY() - enterGame.authenticatorHeight)
-      enterGame:bindRectToParent()
-    end
-
-    enterGame:setHeight(enterGame:getHeight() + enterGame.authenticatorHeight)
+    newY = newY - enterGame.authenticatorHeight
+    newHeight = newHeight + enterGame.authenticatorHeight
   else
-    enterGame:getChildById('authenticatorTokenLabel'):setVisible(false)
-    enterGame:getChildById('authenticatorTokenTextEdit'):setVisible(false)
-
-    local serverLabel = enterGame:getChildById('serverLabel')
-    serverLabel:setMarginTop(serverLabel:getMarginTop() - enterGame.authenticatorHeight)
-
-    if not init then
-      enterGame:breakAnchors()
-      enterGame:setY(enterGame:getY() + enterGame.authenticatorHeight)
-      enterGame:bindRectToParent()
-    end
-
-    enterGame:setHeight(enterGame:getHeight() - enterGame.authenticatorHeight)
+    newY = newY + enterGame.authenticatorHeight
+    newHeight = newHeight - enterGame.authenticatorHeight
   end
 
+  if not init then
+    enterGame:breakAnchors()
+    enterGame:setY(newY)
+    enterGame:bindRectToParent()
+  end
+  enterGame:setHeight(newHeight)
+
   enterGame.authenticatorEnabled = enabled
+end
+
+function EnterGame.toggleStayLoggedBox(clientVersion, init)
+  local enabled = (clientVersion >= 1074)
+  if enabled == enterGame.stayLoggedBoxEnabled then
+    return
+  end
+
+  enterGame:getChildById('stayLoggedBox'):setOn(enabled)
+
+  local newHeight = enterGame:getHeight()
+  local newY = enterGame:getY()
+  if enabled then
+    newY = newY - enterGame.stayLoggedBoxHeight
+    newHeight = newHeight + enterGame.stayLoggedBoxHeight
+  else
+    newY = newY + enterGame.stayLoggedBoxHeight
+    newHeight = newHeight - enterGame.stayLoggedBoxHeight
+  end
+
+  if not init then
+    enterGame:breakAnchors()
+    enterGame:setY(newY)
+    enterGame:bindRectToParent()
+  end
+  enterGame:setHeight(newHeight)
+
+  enterGame.stayLoggedBoxEnabled = enabled
 end
 
 function EnterGame.onClientVersionChange(comboBox, text, data)
   local clientVersion = tonumber(text)
   EnterGame.toggleAuthenticatorToken(clientVersion)
+  EnterGame.toggleStayLoggedBox(clientVersion)
 end
 
 function EnterGame.doLogin()
   G.account = enterGame:getChildById('accountNameTextEdit'):getText()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit'):getText()
+  G.stayLogged = enterGame:getChildById('stayLoggedBox'):isChecked()
   G.host = enterGame:getChildById('serverHostTextEdit'):getText()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   local clientVersion = tonumber(clientBox:getText())
@@ -287,6 +316,7 @@ function EnterGame.doLogin()
   protocolLogin = ProtocolLogin.create()
   protocolLogin.onLoginError = onError
   protocolLogin.onMotd = onMotd
+  protocolLogin.onSessionKey = onSessionKey
   protocolLogin.onCharacterList = onCharacterList
   protocolLogin.onUpdateNeeded = onUpdateNeeded
 
@@ -302,7 +332,7 @@ function EnterGame.doLogin()
   g_game.chooseRsa(G.host)
 
   if modules.game_things.isLoaded() then
-    protocolLogin:login(G.host, G.port, G.account, G.password, G.authenticatorToken)
+    protocolLogin:login(G.host, G.port, G.account, G.password, G.authenticatorToken, G.stayLogged)
   else
     loadBox:destroy()
     loadBox = nil
@@ -344,13 +374,16 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   portTextEdit:setText(port)
   portTextEdit:setVisible(false)
   portTextEdit:setHeight(0)
+
   local authenticatorTokenTextEdit = enterGame:getChildById('authenticatorTokenTextEdit')
   authenticatorTokenTextEdit:setText('')
-  authenticatorTokenTextEdit:setVisible(false)
-  authenticatorTokenTextEdit:setHeight(0)
+  authenticatorTokenTextEdit:setOn(false)
   local authenticatorTokenLabel = enterGame:getChildById('authenticatorTokenLabel')
-  authenticatorTokenLabel:setVisible(false)
-  authenticatorTokenLabel:setHeight(0)
+  authenticatorTokenLabel:setOn(false)
+
+  local stayLoggedBox = enterGame:getChildById('stayLoggedBox')
+  stayLoggedBox:setChecked(false)
+  stayLoggedBox:setOn(false)
 
   clientBox:setCurrentOption(protocol)
   clientBox:setVisible(false)
@@ -372,11 +405,11 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
   serverListButton:setWidth(0)
 
   local rememberPasswordBox = enterGame:getChildById('rememberPasswordBox')
-  rememberPasswordBox:setMarginTop(-14)
+  rememberPasswordBox:setMarginTop(-8)
 
   if not windowWidth then windowWidth = 236 end
   enterGame:setWidth(windowWidth)
-  if not windowHeight then windowHeight = 200 end
+  if not windowHeight then windowHeight = 210 end
   enterGame:setHeight(windowHeight)
 end
 
