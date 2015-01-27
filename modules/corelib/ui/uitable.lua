@@ -154,7 +154,7 @@ function UITable:addHeader(data)
       elseif type == 'height' then
         col:setHeight(value)
       elseif type == 'text' then
-        col:setText(tr(value))
+        col:setText(value)
       elseif type == 'onClick' then
         col.onClick = value
       end
