@@ -187,7 +187,7 @@ local function onTabDragMove(tab, mousePos, mouseMoved)
 end
 
 local function tabBlink(tab, step)
-  step = step or 0
+  local step = step or 0
   tab:setOn(not tab:isOn())
 
   removeEvent(tab.blinkEvent)

@@ -27,7 +27,7 @@ MoveableTabBarButton < UIButton
     color: #dfdfdf
 
   $on !checked:
-    color: #dfdfdf
+    color: #de6f6f
 
 TabBar < UITabBar
   size: 80 21
