@@ -55,7 +55,6 @@ function init()
   connect(g_game, 'onTextMessage', displayMessage)
   connect(g_game, 'onGameEnd', clearMessages)
   messagesPanel = g_ui.loadUI('textmessage', modules.game_interface.getRootPanel())
-
 end
 
 function terminate()
