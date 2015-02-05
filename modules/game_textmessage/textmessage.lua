@@ -55,10 +55,7 @@ function init()
   connect(g_game, 'onTextMessage', displayMessage)
   connect(g_game, 'onGameEnd', clearMessages)
   messagesPanel = g_ui.loadUI('textmessage', modules.game_interface.getRootPanel())
-  
-  -- Preventing position error in statusLabel
-  statusLabel = messagesPanel:recursiveGetChildById('statusLabel')
-  statusLabel:addAnchor(AnchorBottom, 'gameBottomPanel', AnchorTop)
+
 end
 
 function terminate()
