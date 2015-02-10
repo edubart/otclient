@@ -377,8 +377,8 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 
 int Item::calculateAnimationPhase(bool animate)
 {
-    if (getAnimationPhases() > 1) {
-        if (animate && getAnimator() != nullptr)
+    if(getAnimationPhases() > 1) {
+        if(animate && getAnimator() != nullptr)
             return getAnimator()->getPhase();
         else
             return getAnimationPhases() - 1;

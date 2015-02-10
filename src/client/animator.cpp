@@ -52,7 +52,7 @@ void Animator::serialize(const FileStreamPtr& fin)
     fin->add32(m_loopCount);
     fin->add8(m_startPhase);
 
-    for (std::tuple<int, int> phase : m_phaseDurations) {
+    for(std::tuple<int, int> phase : m_phaseDurations) {
         fin->addU32(std::get<0>(phase));
         fin->addU32(std::get<1>(phase));
     }
@@ -60,16 +60,16 @@ void Animator::serialize(const FileStreamPtr& fin)
 
 void Animator::setPhase(int phase)
 {
-    if (m_phase == phase) return;
+    if(m_phase == phase) return;
 
-    if (m_async) {
-        if (phase == AnimPhaseAsync) {
+    if(m_async) {
+        if(phase == AnimPhaseAsync) {
             m_phase = 0;
         }
-        else if (phase == AnimPhaseRandom) {
+        else if(phase == AnimPhaseRandom) {
             m_phase = stdext::random_range(0, (long)m_animationPhases);
         }
-        else if (phase >= 0 && phase < m_animationPhases) {
+        else if(phase >= 0 && phase < m_animationPhases) {
             m_phase = phase;
         }
         else {
@@ -88,18 +88,18 @@ void Animator::setPhase(int phase)
 int Animator::getPhase()
 {
     ticks_t ticks = g_clock.millis();
-    if (ticks != m_lastPhaseTicks && !m_isComplete) {
+    if(ticks != m_lastPhaseTicks && !m_isComplete) {
         int elapsedTicks = (int)(ticks - m_lastPhaseTicks);
-        if (elapsedTicks >= m_currentDuration) {
+        if(elapsedTicks >= m_currentDuration) {
             int phase = 0;
-            if (m_loopCount < 0)
+            if(m_loopCount < 0)
                 phase = getPingPongPhase();
             else
                 phase = getLoopPhase();
 
-            if (m_phase != phase) {
+            if(m_phase != phase) {
                 int duration = getPhaseDuration(phase) - (elapsedTicks - m_currentDuration);
-                if (duration < 0 && !m_async) {
+                if(duration < 0 && !m_async) {
                     calculateSynchronous();
                 }
                 else {
@@ -120,7 +120,7 @@ int Animator::getPhase()
 
 int Animator::getStartPhase()
 {
-    if (m_startPhase > -1) {
+    if(m_startPhase > -1) {
         return m_startPhase;
     }
 
@@ -141,7 +141,7 @@ int Animator::getPingPongPhase()
     int count = m_currentDirection == AnimDirForward ? 1 : -1;
     int nextPhase = m_phase + count;
 
-    if (m_phase + count < 0 || nextPhase >= m_animationPhases) {
+    if(m_phase + count < 0 || nextPhase >= m_animationPhases) {
         m_currentDirection = m_currentDirection == AnimDirForward ? AnimDirBackward : AnimDirForward;
         count *= -1;
     }
@@ -151,13 +151,13 @@ int Animator::getPingPongPhase()
 int Animator::getLoopPhase()
 {
     int nextPhase = m_phase + 1;
-    if (nextPhase < m_animationPhases)
+    if(nextPhase < m_animationPhases)
         return nextPhase;
 
-    if (m_loopCount == 0)
+    if(m_loopCount == 0)
         return 0;
         
-    if (m_currentLoop < (m_loopCount - 1)) {
+    if(m_currentLoop < (m_loopCount - 1)) {
         m_currentLoop++;
         return 0;
     }
@@ -172,7 +172,7 @@ int Animator::getPhaseDuration(int frame)
     std::tuple<int, int> data = m_phaseDurations.at(frame);
     int min = std::get<0>(data);
     int max = std::get<1>(data);
-    if (min == max) return min;
+    if(min == max) return min;
 
     return (int)stdext::random_range((long)min, (long)max);
 }
@@ -180,15 +180,15 @@ int Animator::getPhaseDuration(int frame)
 void Animator::calculateSynchronous()
 {
     int totalDuration = 0;
-    for (int i = 0; i < m_animationPhases; i++)
+    for(int i = 0; i < m_animationPhases; i++)
         totalDuration += getPhaseDuration(i);
     
     ticks_t ticks = g_clock.millis();
     int elapsedTicks = (int)(ticks % totalDuration);
     int totalTime = 0;
-    for (int i = 0; i < m_animationPhases; i++) {
+    for(int i = 0; i < m_animationPhases; i++) {
         int duration = getPhaseDuration(i);
-        if (elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
+        if(elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
             m_phase = i;
             m_currentDuration = duration - (elapsedTicks - totalTime);
             break;

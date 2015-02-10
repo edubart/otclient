@@ -117,8 +117,8 @@ void ThingType::serialize(const FileStreamPtr& fin)
     fin->addU8(m_numPatternZ);
     fin->addU8(m_animationPhases);
 
-    if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
-        if (m_animationPhases > 1 && m_animator != nullptr)  {
+    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(m_animationPhases > 1 && m_animator != nullptr)  {
             m_animator->serialize(fin);
         }
     }
@@ -272,7 +272,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057)
         groupCount = fin->getU8();
 
-    for (int i = 0; i < groupCount; ++i) {
+    for(int i = 0; i < groupCount; ++i) {
         uint8 frameGroup = FrameGroupDefault;
         if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057) {
             frameGroup = fin->getU8();
@@ -297,47 +297,47 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_numPatternZ = 1;
         m_animationPhases = fin->getU8();
 
-        if (m_animationPhases > 1) {
+        if(m_animationPhases > 1) {
             bool async = true;
             int loopCount = 0;
             int8 startPhase = -1;
             std::vector< std::tuple<int, int> > phaseDurations;
 
-            if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
+            if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
                 async = fin->getU8() == 0;
                 loopCount = fin->get32();
                 startPhase = fin->get8();
 
-                for (int i = 0; i < m_animationPhases; i++) {
+                for(int i = 0; i < m_animationPhases; i++) {
                     int minimum = fin->getU32();
                     int maximum = fin->getU32();
                     phaseDurations.push_back(std::make_tuple(minimum, maximum));
                 }
-            } 
+            }
             else {
                 int duration = 0;
                 switch (m_category) {
                     case ThingCategoryItem:
-                        duration = 500;
+                        duration = TicksPerPhaseItem;
                         break;
                     case ThingCategoryCreature:
-                        duration = 300;
+                        duration = TicksPerPhaseCreature;
                         break;
                     case ThingCategoryEffect:
-                        duration = 100;
+                        duration = TicksPerPhaseEffect;
                         break;
                     default:
                         break;
                 }
 
-                for (int i = 0; i < m_animationPhases; i++) {
+                for(int i = 0; i < m_animationPhases; i++) {
                     phaseDurations.push_back(std::make_tuple(duration, duration));
                 }
             }
 
             // Currently, the animator is only used for items.
             // This avoids unnecessary instance to other categories, but can be removed.
-            if (category == ThingCategoryItem)
+            if(category == ThingCategoryItem)
                 m_animator = AnimatorPtr(new Animator(m_animationPhases, startPhase, loopCount, async, phaseDurations));
         }
 

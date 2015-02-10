@@ -40,6 +40,13 @@ enum AnimationDirection : uint8
     AnimDirBackward = 1
 };
 
+enum TicksPerPhase : int16
+{
+    TicksPerPhaseItem = 500,
+    TicksPerPhaseCreature = 300,
+    TicksPerPhaseEffect = 100,
+};
+
 class Animator : public stdext::shared_object
 {
 public:
