@@ -24,6 +24,8 @@ set(client_SOURCES ${client_SOURCES}
     # core
     ${CMAKE_CURRENT_LIST_DIR}/animatedtext.cpp
     ${CMAKE_CURRENT_LIST_DIR}/animatedtext.h
+    ${CMAKE_CURRENT_LIST_DIR}/animator.h
+    ${CMAKE_CURRENT_LIST_DIR}/animator.cpp
     ${CMAKE_CURRENT_LIST_DIR}/container.cpp
     ${CMAKE_CURRENT_LIST_DIR}/container.h
     ${CMAKE_CURRENT_LIST_DIR}/creature.cpp
