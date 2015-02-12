@@ -314,9 +314,6 @@ void Game::processCloseContainer(int containerId)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        /* happens if you close and restart client with container opened
-         * g_logger.traceError("container not found");
-         */
         return;
     }
 
@@ -328,7 +325,6 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item, int slo
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
@@ -339,7 +335,6 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
@@ -350,7 +345,6 @@ void Game::processContainerRemoveItem(int containerId, int slot, const ItemPtr& 
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
