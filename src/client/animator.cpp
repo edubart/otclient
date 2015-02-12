@@ -26,24 +26,37 @@
 #include <framework/core/clock.h>
 #include <framework/core/filestream.h>
 
-Animator::Animator(int animationPhases, int startPhase, int loopCount, bool async, std::vector< std::tuple<int, int> > phaseDurations) :
-    m_animationPhases(animationPhases),
-    m_startPhase(startPhase),
-    m_loopCount(loopCount),
-    m_async(async),
-    m_phaseDurations(phaseDurations)
+Animator::Animator()
 {
-    assert(m_animationPhases == m_phaseDurations.size());
-    assert(m_startPhase >= -1 && m_startPhase < m_animationPhases);
-    
+    m_animationPhases = 0;
+    m_startPhase = 0;
+    m_loopCount = 0;
+    m_async = false;
     m_currentDuration = 0;
     m_currentDirection = AnimDirForward;
     m_currentLoop = 0;
-
     m_lastPhaseTicks = 0;
     m_isComplete = false;
+    m_phase = 0;
+}
+
+void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
+{
+    m_animationPhases = animationPhases;
+    m_async = fin->getU8() == 0;
+    m_loopCount = fin->get32();
+    m_startPhase = fin->get8();
+
+    for(int i = 0; i < m_animationPhases; ++i) {
+        int minimum = fin->getU32();
+        int maximum = fin->getU32();
+        m_phaseDurations.push_back(std::make_tuple(minimum, maximum));
+    }
 
     m_phase = getStartPhase();
+
+    assert(m_animationPhases == m_phaseDurations.size());
+    assert(m_startPhase >= -1 && m_startPhase < m_animationPhases);
 }
 
 void Animator::serialize(const FileStreamPtr& fin)
@@ -63,25 +76,20 @@ void Animator::setPhase(int phase)
     if(m_phase == phase) return;
 
     if(m_async) {
-        if(phase == AnimPhaseAsync) {
+        if(phase == AnimPhaseAsync)
             m_phase = 0;
-        }
-        else if(phase == AnimPhaseRandom) {
+        else if(phase == AnimPhaseRandom)
             m_phase = stdext::random_range(0, (long)m_animationPhases);
-        }
-        else if(phase >= 0 && phase < m_animationPhases) {
+        else if(phase >= 0 && phase < m_animationPhases)
             m_phase = phase;
-        }
-        else {
+        else
             m_phase = getStartPhase();
-        }
 
         m_isComplete = false;
         m_lastPhaseTicks = g_clock.millis();
         m_currentDuration = getPhaseDuration(phase);
         m_currentLoop = 0;
-    }
-    else
+    } else
         calculateSynchronous();
 }
 
@@ -101,16 +109,13 @@ int Animator::getPhase()
                 int duration = getPhaseDuration(phase) - (elapsedTicks - m_currentDuration);
                 if(duration < 0 && !m_async) {
                     calculateSynchronous();
-                }
-                else {
+                } else {
                     m_phase = phase;
                     m_currentDuration = std::max<int>(0, duration);
                 }
-            }
-            else
+            } else
                 m_isComplete = true;
-        }
-        else
+        } else
             m_currentDuration -= elapsedTicks;
 
         m_lastPhaseTicks = ticks;
@@ -120,10 +125,8 @@ int Animator::getPhase()
 
 int Animator::getStartPhase()
 {
-    if(m_startPhase > -1) {
+    if(m_startPhase > -1)
         return m_startPhase;
-    }
-
     return (int)stdext::random_range(0, (long)m_animationPhases);
 }
 
@@ -132,7 +135,6 @@ void Animator::resetAnimation()
     m_isComplete = false;
     m_currentDirection = AnimDirForward;
     m_currentLoop = 0;
-
     setPhase(AnimPhaseAutomatic);
 }
 
@@ -140,8 +142,7 @@ int Animator::getPingPongPhase()
 {
     int count = m_currentDirection == AnimDirForward ? 1 : -1;
     int nextPhase = m_phase + count;
-
-    if(m_phase + count < 0 || nextPhase >= m_animationPhases) {
+    if(nextPhase < 0 || nextPhase >= m_animationPhases) {
         m_currentDirection = m_currentDirection == AnimDirForward ? AnimDirBackward : AnimDirForward;
         count *= -1;
     }
@@ -173,7 +174,6 @@ int Animator::getPhaseDuration(int frame)
     int min = std::get<0>(data);
     int max = std::get<1>(data);
     if(min == max) return min;
-
     return (int)stdext::random_range((long)min, (long)max);
 }
 

@@ -297,48 +297,9 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_numPatternZ = 1;
         m_animationPhases = fin->getU8();
 
-        if(m_animationPhases > 1) {
-            bool async = true;
-            int loopCount = 0;
-            int8 startPhase = -1;
-            std::vector< std::tuple<int, int> > phaseDurations;
-
-            if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
-                async = fin->getU8() == 0;
-                loopCount = fin->get32();
-                startPhase = fin->get8();
-
-                for(int i = 0; i < m_animationPhases; i++) {
-                    int minimum = fin->getU32();
-                    int maximum = fin->getU32();
-                    phaseDurations.push_back(std::make_tuple(minimum, maximum));
-                }
-            }
-            else {
-                int duration = 0;
-                switch (m_category) {
-                    case ThingCategoryItem:
-                        duration = TicksPerPhaseItem;
-                        break;
-                    case ThingCategoryCreature:
-                        duration = TicksPerPhaseCreature;
-                        break;
-                    case ThingCategoryEffect:
-                        duration = TicksPerPhaseEffect;
-                        break;
-                    default:
-                        break;
-                }
-
-                for(int i = 0; i < m_animationPhases; i++) {
-                    phaseDurations.push_back(std::make_tuple(duration, duration));
-                }
-            }
-
-            // Currently, the animator is only used for items.
-            // This avoids unnecessary instance to other categories, but can be removed.
-            if(category == ThingCategoryItem)
-                m_animator = AnimatorPtr(new Animator(m_animationPhases, startPhase, loopCount, async, phaseDurations));
+        if(m_animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+            m_animator = AnimatorPtr(new Animator);
+            m_animator->unserialize(m_animationPhases, fin);
         }
 
         int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
