@@ -457,12 +457,6 @@ namespace Otc
         LastSpeedFormula
     };
 
-    enum AnimationPhase {
-        PhaseAutomatic = 0,
-        PhaseRandom = 254,
-        PhaseAsync = 255
-    };
-
     enum Blessings {
         BlessingNone = 0,
         BlessingAdventurer = 1,

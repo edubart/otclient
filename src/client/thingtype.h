@@ -24,6 +24,7 @@
 #define THINGTYPE_H
 
 #include "declarations.h"
+#include "animator.h"
 
 #include <framework/core/declarations.h>
 #include <framework/otml/declarations.h>
@@ -116,21 +117,6 @@ struct Light {
     uint8 color;
 };
 
-struct Animation {
-    Animation() { startIndex = 0; loopCount = 0; async = false; }
-
-    int startIndex;
-    int loopCount;
-    bool async;
-    std::vector<std::tuple<int, int> > frames;
-
-    float duration(uint8 frame) {
-        assert(frames.size() <= frame);
-        std::tuple<int, int> data = frames.at(frame);
-        return stdext::random_range((long)std::get<0>(data), (long)std::get<1>(data));
-    }
-};
-
 class ThingType : public LuaObject
 {
 public:
@@ -159,7 +145,7 @@ public:
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
     int getAnimationPhases() { return m_animationPhases; }
-    Animation getAnimation() { return m_animation; }
+    AnimatorPtr getAnimator() { return m_animator; }
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
@@ -226,7 +212,7 @@ private:
 
     Size m_size;
     Point m_displacement;
-    Animation m_animation;
+    AnimatorPtr m_animator;
     int m_animationPhases;
     int m_exactSize;
     int m_realSize;

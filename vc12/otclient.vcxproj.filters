@@ -528,6 +528,9 @@
     <ClCompile Include="..\src\framework\core\config.cpp">
       <Filter>Source Files\framework\core</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\client\animator.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1048,6 +1051,9 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\core\config.h">
       <Filter>Header Files\framework\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\animator.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
