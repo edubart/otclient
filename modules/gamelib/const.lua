@@ -130,6 +130,7 @@ GameExperienceBonus = 66
 GameAuthenticator = 67
 GameUnjustifiedPoints = 68
 GameSessionKey = 69
+GameDeathType = 70
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
@@ -268,6 +269,11 @@ Blessings = {
   FireOfSuns = 8,
   WisdomOfSolitude = 16,
   SparkOfPhoenix = 32
+}
+
+DeathType = {
+  Regular = 0,
+  Blessed = 1
 }
 
 -- @}

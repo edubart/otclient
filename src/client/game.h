@@ -86,7 +86,7 @@ protected:
 
     void processGameStart();
     void processGameEnd();
-    void processDeath(int penality);
+    void processDeath(int deathType, int penality);
 
     void processGMActions(const std::vector<uint8>& actions);
     void processInventoryChange(int slot, const ItemPtr& item);

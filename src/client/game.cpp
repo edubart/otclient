@@ -228,12 +228,12 @@ void Game::processGameEnd()
     g_map.cleanDynamicThings();
 }
 
-void Game::processDeath(int penality)
+void Game::processDeath(int deathType, int penality)
 {
     m_dead = true;
     m_localPlayer->stopWalk();
 
-    g_lua.callGlobalField("g_game", "onDeath", penality);
+    g_lua.callGlobalField("g_game", "onDeath", deathType, penality);
 }
 
 void Game::processGMActions(const std::vector<uint8>& actions)
@@ -1450,7 +1450,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1075))
+    if(version != 0 && (version < 740 || version > 1076))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1468,7 +1468,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1075))
+    if(version != 0 && (version < 740 || version > 1076))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1594,6 +1594,10 @@ void Game::setClientVersion(int version)
 
     if(version >= 1054) {
         enableFeature(Otc::GameExperienceBonus);
+    }
+
+    if(version >= 1055) {
+        enableFeature(Otc::GameDeathType);
     }
 
     if(version >= 1061) {

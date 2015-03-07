@@ -402,6 +402,7 @@ namespace Otc
         GameAuthenticator = 67,
         GameUnjustifiedPoints = 68,
         GameSessionKey = 69,
+        GameDeathType = 70,
 
         LastGameFeature = 101
     };
@@ -465,6 +466,11 @@ namespace Otc
         BlessingFireOfSuns = 1 << 3,
         BlessingWisdomOfSolitude = 1 << 4,
         BlessingSparkOfPhoenix = 1 << 5
+    };
+
+    enum DeathType {
+        DeathRegular = 0,
+        DeathBlessed = 1
     };
 }
 

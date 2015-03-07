@@ -537,9 +537,15 @@ void ProtocolGame::parseChallenge(const InputMessagePtr& msg)
 void ProtocolGame::parseDeath(const InputMessagePtr& msg)
 {
     int penality = 100;
-    if(g_game.getFeature(Otc::GamePenalityOnDeath))
+    int deathType = Otc::DeathRegular;
+
+    if(g_game.getFeature(Otc::GameDeathType))
+        deathType = msg->getU8();
+
+    if(g_game.getFeature(Otc::GamePenalityOnDeath) && deathType == Otc::DeathRegular)
         penality = msg->getU8();
-    g_game.processDeath(penality);
+
+    g_game.processDeath(deathType, penality);
 }
 
 void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
