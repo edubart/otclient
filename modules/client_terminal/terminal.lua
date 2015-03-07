@@ -30,6 +30,10 @@ local allLines = {}
 
 -- private functions
 local function navigateCommand(step)
+  if commandTextEdit:isMultiline() then
+    return
+  end
+
   local numCommands = #commandHistory
   if numCommands > 0 then
     currentHistoryIndex = math.min(math.max(currentHistoryIndex + step, 0), numCommands)
@@ -96,14 +100,27 @@ local function completeCommand()
   end
 end
 
-local function doCommand()
-  local currentCommand = commandTextEdit:getText()
+local function doCommand(textWidget)
+  local currentCommand = textWidget:getText()
   executeCommand(currentCommand)
-
-  if commandTextEdit then
-    commandTextEdit:clearText()
-  end
+  textWidget:clearText()
   return true
+end
+
+local function addNewline(textWidget)
+  if not textWidget:isOn() then
+    textWidget:setOn(true)
+  end
+  textWidget:appendText('\n')
+end
+
+local function onCommandChange(textWidget, newText, oldText)
+  local _, newLineCount = string.gsub(newText, '\n', '\n')
+  textWidget:setHeight((newLineCount + 1) * textWidget.baseHeight)
+
+  if newLineCount == 0 and textWidget:isOn() then
+    textWidget:setOn(false)
+  end
 end
 
 local function onLog(level, message, time)
@@ -129,6 +146,8 @@ function init()
   commandHistory = g_settings.getList('terminal-history')
 
   commandTextEdit = terminalWindow:getChildById('commandTextEdit')
+  commandTextEdit:setHeight(commandTextEdit.baseHeight)
+  connect(commandTextEdit, {onTextChange = onCommandChange})
   g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
   g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
   g_keyboard.bindKeyPress('Ctrl+C',
@@ -138,6 +157,7 @@ function init()
     return true
     end, commandTextEdit)
   g_keyboard.bindKeyDown('Tab', completeCommand, commandTextEdit)
+  g_keyboard.bindKeyPress('Shift+Enter', addNewline, commandTextEdit)
   g_keyboard.bindKeyDown('Enter', doCommand, commandTextEdit)
   g_keyboard.bindKeyDown('Escape', hide, terminalWindow)
 
@@ -293,7 +313,7 @@ function addLine(text, color)
 end
 
 function executeCommand(command)
-  if command == nil or #command == 0 then return end
+  if command == nil or #string.gsub(command, '\n', '') == 0 then return end
 
   -- add command line
   addLine("> " .. command, "#ffffff")
