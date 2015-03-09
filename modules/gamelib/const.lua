@@ -195,7 +195,9 @@ MessageModes = {
   RVRChannel              = 46,
   RVRAnswer               = 47,
   RVRContinue             = 48,
-  Last                    = 49,
+  GameHighlight           = 49,
+  NpcFromStartBlock       = 50,
+  Last                    = 51,
   Invalid                 = 255,
 }
 

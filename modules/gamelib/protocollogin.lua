@@ -11,6 +11,10 @@ LoginServerSessionKey = 40
 LoginServerCharacterList = 100
 LoginServerExtendedCharacterList = 101
 
+-- Since 10.76
+LoginServerRetry = 10
+LoginServerErrorNew = 11
+
 function ProtocolLogin:login(host, port, accountName, accountPassword, authenticatorToken, stayLogged)
   if string.len(host) == 0 or port == nil or port == 0 then
     signalcall(self.onLoginError, self, tr("You must enter a valid server address and port."))
@@ -144,7 +148,9 @@ end
 function ProtocolLogin:onRecv(msg)
   while not msg:eof() do
     local opcode = msg:getU8()
-    if opcode == LoginServerError then
+    if opcode == LoginServerErrorNew then
+      self:parseError(msg)
+    elseif opcode == LoginServerError then
       self:parseError(msg)
     elseif opcode == LoginServerMotd then
       self:parseMotd(msg)
