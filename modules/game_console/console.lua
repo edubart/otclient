@@ -854,6 +854,9 @@ function applyMessagePrefixies(name, level, message)
 end
 
 function onTalk(name, level, mode, message, channelId, creaturePos)
+  if mode == MessageModes.NpcFromStartBlock then
+    mode = MessageModes.NpcFrom
+  end
   if mode == MessageModes.GamemasterBroadcast then
     modules.game_textmessage.displayBroadcastMessage(name .. ': ' .. message)
     return
