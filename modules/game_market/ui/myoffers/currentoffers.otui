@@ -1,9 +1,176 @@
+OfferTableRow < TableRow
+  font: verdana-11px-monochrome
+  color: #cccccc
+  height: 15
+
+OfferTableColumn < TableColumn
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 5 0
+  color: #cccccc
+  width: 80
+
+OfferTableWarningColumn < OfferTableColumn
+  color: #e03d3d
+
+OfferTableHeaderRow < TableHeaderRow
+  font: verdana-11px-monochrome
+  color: #cccccc
+  height: 20
+
+OfferTableHeaderColumn < SortableTableHeaderColumn
+  font: verdana-11px-monochrome
+  text-offset: 2 0
+  color: #cccccc
+
+  $focus:
+    background-color: #294f6d
+    color: #ffffff
+
 Panel
   background-color: #22283399
   margin: 1
 
+  Button
+    id: sellCancelButton
+    !text: tr('Cancel')
+    anchors.right: parent.right
+    anchors.bottom: next.bottom
+    margin-right: 6
+    width: 80
+    enabled: false
+
   Label
-    !text: tr('Current Offers')
+    !text: tr('Sell Offers')
+    font: verdana-11px-rounded
+    text-offset: 0 2
     anchors.top: parent.top
     anchors.left: parent.left
-    margin-left: 10
+    margin-top: 44
+    margin-left: 6
+
+  Table
+    id: mySellingTable
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    height: 150
+    margin-top: 5
+    margin-bottom: 5
+    margin-right: 6
+    padding: 1
+    focusable: false
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    table-data: mySellingTableData
+    row-style: OfferTableRow
+    column-style: OfferTableColumn
+    header-column-style: false
+    header-row-style: false
+
+    OfferTableHeaderRow
+      id: header
+      OfferTableHeaderColumn
+        !text: tr('Item Name')
+        width: 160
+      OfferTableHeaderColumn
+        !text: tr('Total Price')
+        width: 125
+      OfferTableHeaderColumn
+        !text: tr('Piece Price')
+        width: 125
+      OfferTableHeaderColumn
+        !text: tr('Amount')
+        width: 110
+      OfferTableHeaderColumn
+        !text: tr('Auction End')
+        width: 110
+
+  TableData
+    id: mySellingTableData
+    anchors.bottom: mySellingTable.bottom
+    anchors.left: mySellingTable.left
+    anchors.right: mySellingTable.right
+    margin-top: 2
+    vertical-scrollbar: mySellingTableScrollBar
+
+  VerticalScrollBar
+    id: mySellingTableScrollBar
+    anchors.top: mySellingTable.top
+    anchors.bottom: mySellingTable.bottom
+    anchors.right: mySellingTable.right
+    step: 28
+    pixels-scroll: true
+
+  Button
+    id: buyCancelButton
+    !text: tr('Cancel')
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 5
+    margin-right: 6
+    width: 80
+    enabled: false
+
+  Label
+    !text: tr('Buy Offers')
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: prev.top
+    anchors.left: parent.left
+    margin-top: 9
+    margin-left: 6
+
+  Table
+    id: myBuyingTable
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: parent.right
+    margin-top: 5
+    margin-bottom: 5
+    margin-right: 6
+    height: 150
+    padding: 1
+    focusable: false
+    background-color: #222833
+    border-width: 1
+    border-color: #191f27
+    table-data: myBuyingTableData
+    row-style: OfferTableRow
+    column-style: OfferTableColumn
+    header-column-style: false
+    header-row-style: false
+
+    OfferTableHeaderRow
+      id: header
+      OfferTableHeaderColumn
+        !text: tr('Item Name')
+        width: 160
+      OfferTableHeaderColumn
+        !text: tr('Total Price')
+        width: 125
+      OfferTableHeaderColumn
+        !text: tr('Piece Price')
+        width: 125
+      OfferTableHeaderColumn
+        !text: tr('Amount')
+        width: 110
+      OfferTableHeaderColumn
+        !text: tr('Auction End')
+        width: 110
+
+  TableData
+    id: myBuyingTableData
+    anchors.bottom: myBuyingTable.bottom
+    anchors.left: myBuyingTable.left
+    anchors.right: myBuyingTable.right
+    vertical-scrollbar: myBuyingTableScrollBar
+
+  VerticalScrollBar
+    id: myBuyingTableScrollBar
+    anchors.top: myBuyingTable.top
+    anchors.bottom: myBuyingTable.bottom
+    anchors.right: myBuyingTable.right
+    step: 28
+    pixels-scroll: true
