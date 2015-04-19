@@ -55,7 +55,7 @@ void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
 
     m_phase = getStartPhase();
 
-    assert(m_animationPhases == m_phaseDurations.size());
+    assert(m_animationPhases == (int)m_phaseDurations.size());
     assert(m_startPhase >= -1 && m_startPhase < m_animationPhases);
 }
 
