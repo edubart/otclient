@@ -8,6 +8,7 @@ function UIPopupMenu.create()
   local layout = UIVerticalLayout.create(menu)
   layout:setFitChildren(true)
   menu:setLayout(layout)
+  menu.isGameMenu = false
   return menu
 end
 
@@ -34,6 +35,7 @@ function UIPopupMenu:display(pos)
   rootWidget:addChild(self)
   self:setPosition(pos)
   self:grabMouse()
+  self:focus()
   --self:grabKeyboard()
   currentMenu = self
 end
@@ -76,6 +78,10 @@ function UIPopupMenu:addSeparator()
   g_ui.createWidget(self:getStyleName() .. 'Separator', self)
 end
 
+function UIPopupMenu:setGameMenu(state)
+  self.isGameMenu = state
+end
+
 function UIPopupMenu:onDestroy()
   if currentMenu == self then
     currentMenu = nil
@@ -105,4 +111,12 @@ local function onRootGeometryUpdate()
     currentMenu:destroy()
   end
 end
-connect(rootWidget, { onGeometryChange = onRootGeometryUpdate} )
+
+local function onGameEnd()
+  if currentMenu and currentMenu.isGameMenu then
+    currentMenu:destroy()
+  end
+end
+
+connect(rootWidget, { onGeometryChange = onRootGeometryUpdate })
+connect(g_game, { onGameEnd = onGameEnd } )

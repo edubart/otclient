@@ -599,6 +599,7 @@ end
 
 function processChannelTabMenu(tab, mousePos, mouseButton)
   local menu = g_ui.createWidget('PopupMenu')
+  menu:setGameMenu(true)
 
   channelName = tab:getText()
   if tab ~= defaultTab and tab ~= serverTab then
@@ -618,6 +619,7 @@ end
 function processMessageMenu(mousePos, mouseButton, creatureName, text, label, tab)
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
+    menu:setGameMenu(true)
     if creatureName and #creatureName > 0 then
       if creatureName ~= g_game.getCharacterName() then
         menu:addOption(tr('Message to ' .. creatureName), function () g_game.openPrivateChannel(creatureName) end)
