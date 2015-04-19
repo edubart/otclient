@@ -200,12 +200,7 @@
     <ClCompile Include="..\src\client\uimapanchorlayout.cpp" />
     <ClCompile Include="..\src\client\uiminimap.cpp" />
     <ClCompile Include="..\src\client\uiprogressrect.cpp" />
-    <ClCompile Include="..\src\client\uisprite.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\src\client\uisprite.cpp" />
     <ClCompile Include="..\src\framework\core\adaptativeframecounter.cpp" />
     <ClCompile Include="..\src\framework\core\application.cpp" />
     <ClCompile Include="..\src\framework\core\asyncdispatcher.cpp" />
