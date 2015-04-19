@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -694,6 +694,16 @@ void Creature::setSpeed(uint16 speed)
         nextWalkUpdate();
 
     callLuaField("onSpeedChange", m_speed, oldSpeed);
+}
+
+void Creature::setBaseSpeed(double baseSpeed)
+{
+    if(m_baseSpeed != baseSpeed) {
+        double oldBaseSpeed = m_baseSpeed;
+        m_baseSpeed = baseSpeed;
+
+        callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);
+    }
 }
 
 void Creature::setSkull(uint8 skull)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ const Color Color::darkTeal   = 0xff808000;
 const Color Color::gray       = 0xffa0a0a0;
 const Color Color::darkGray   = 0xff808080;
 const Color Color::lightGray  = 0xffc0c0c0;
-const Color Color::orange     = 0xffff8c00;
+const Color Color::orange     = 0xff008cff;
 
 Color::Color(const std::string& coltext)
 {

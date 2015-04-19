@@ -1,6 +1,5 @@
 StatsTableRow < TableRow
   font: verdana-11px-monochrome
-  background-color: alpha
   focusable: true
   color: #cccccc
   height: 20
@@ -9,7 +8,7 @@ StatsTableRow < TableRow
 StatsTableColumn < TableColumn
   font: verdana-11px-monochrome
   background-color: alpha
-  text-offset: 5 0
+  text-offset: 5 3
   color: #cccccc
   width: 110
   focusable: false

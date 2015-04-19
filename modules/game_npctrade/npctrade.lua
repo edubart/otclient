@@ -177,6 +177,7 @@ function itemPopup(self, mousePosition, mouseButton)
 
   if mouseButton == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
+    menu:setGameMenu(true)
     menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
     menu:display(mousePosition)
     return true

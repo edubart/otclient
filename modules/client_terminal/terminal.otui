@@ -47,7 +47,7 @@ UIWindow
     anchors.left: parent.left
     anchors.right: terminalScroll.left
     anchors.top: terminalScroll.top
-    anchors.bottom: commandSymbolLabel.top
+    anchors.bottom: commandTextEdit.top
     layout:
       type: verticalBox
       align-bottom: true
@@ -80,14 +80,25 @@ UIWindow
 
   UITextEdit
     id: commandTextEdit
-    height: 12
+    background: #aaaaaa11
+    border-color: #aaaaaa88
+    &baseHeight: 12
     anchors.bottom: parent.bottom
     anchors.left: commandSymbolLabel.right
-    anchors.right: parent.right
+    anchors.right: terminalScroll.left
     margin-left: 1
+    padding-left: 2
     font: terminus-10px
     selection-color: black
     selection-background-color: white
+    border-width-left: 0
+    border-width-top: 0
+    multiline: false
+
+    $on:
+      border-width-left: 1
+      border-width-top: 1
+      multiline: true
 
   ResizeBorder
     id: bottomResizeBorder

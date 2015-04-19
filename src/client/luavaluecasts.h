@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -43,5 +43,9 @@ bool luavalue_cast(int index, MarketData& data);
 // light
 int push_luavalue(const Light& light);
 bool luavalue_cast(int index, Light& light);
+
+// unjustified points
+int push_luavalue(const UnjustifiedPoints& unjustifiedPoints);
+bool luavalue_cast(int index, UnjustifiedPoints& unjustifiedPoints);
 
 #endif

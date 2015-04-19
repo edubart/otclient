@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,10 +26,12 @@
 #include "item.h"
 #include "localplayer.h"
 
-void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName)
+void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
 {
     m_accountName = accountName;
     m_accountPassword = accountPassword;
+    m_authenticatorToken = authenticatorToken;
+    m_sessionKey = sessionKey;
     m_characterName = characterName;
 
     connect(host, port);
@@ -56,7 +58,7 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
     if(m_firstRecv) {
         m_firstRecv = false;
 
-        if(g_game.getClientVersion() >= 841) { // not sure since which version this is, but it seems to be after 8.40
+        if(g_game.getFeature(Otc::GameMessageSizeCheck)) {
             int size = inputMessage->getU16();
             if(size != inputMessage->getUnreadSize()) {
                 g_logger.traceError("invalid message size");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,6 +42,7 @@ void ThingTypeManager::init()
     m_nullThingType = ThingTypePtr(new ThingType);
     m_nullItemType = ItemTypePtr(new ItemType);
     m_datSignature = 0;
+    m_contentRevision = 0;
     m_otbMinorVersion = 0;
     m_otbMajorVersion = 0;
     m_datLoaded = false;
@@ -100,12 +101,14 @@ bool ThingTypeManager::loadDat(std::string file)
 {
     m_datLoaded = false;
     m_datSignature = 0;
+    m_contentRevision = 0;
     try {
         file = g_resources.guessFilePath(file, "dat");
 
         FileStreamPtr fin = g_resources.openFile(file);
 
         m_datSignature = fin->getU32();
+        m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
         for(int category = 0; category < ThingLastCategory; ++category) {
             int count = fin->getU16() + 1;

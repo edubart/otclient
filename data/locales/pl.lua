@@ -2,6 +2,10 @@ locale = {
   name = "pl",
   languageName = "Polski",
 
+  formatNumbers = true,
+  decimalSeperator = '.',
+  thousandsSeperator = ' ',
+
   translation = {
     ["1a) Offensive Name"] = "1a) Obrazliwe Imie",
     ["1b) Invalid Name Format"] = "1b) Niepoprawny Format Imienia",

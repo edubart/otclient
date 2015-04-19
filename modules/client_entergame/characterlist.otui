@@ -16,7 +16,7 @@ CharacterWidget < UIWidget
 
   Label
     id: name
-    color: #aaaaaa
+    color: #bbbbbb
     anchors.top: parent.top
     anchors.left: parent.left
     font: verdana-11px-monochrome
@@ -29,8 +29,7 @@ CharacterWidget < UIWidget
 
   Label
     id: worldName
-    color: #ffffff
-    color: #aaaaaa
+    color: #bbbbbb
     anchors.top: parent.top
     anchors.right: parent.right
     margin-right: 5
@@ -45,16 +44,21 @@ CharacterWidget < UIWidget
 MainWindow
   id: charactersWindow
   !text: tr('Character List')
-  size: 250 248
   visible: false
   @onEnter: CharacterList.doLogin()
   @onEscape: CharacterList.hide(true)
   @onSetup: |
     g_keyboard.bindKeyPress('Up', function() self:getChildById('characters'):focusPreviousChild(KeyboardFocusReason) end, self)
     g_keyboard.bindKeyPress('Down', function() self:getChildById('characters'):focusNextChild(KeyboardFocusReason) end, self)
+    if g_game.getFeature(GamePreviewState) then
+      self:setSize({width = 350, height = 400})
+    else
+      self:setSize({width = 250, height = 248})
+    end
 
   TextList
     id: characters
+    background-color: #565656
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: characterListScrollBar.left

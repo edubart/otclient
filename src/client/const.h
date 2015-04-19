@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -328,7 +328,9 @@ namespace Otc
         MessageRVRChannel              = 46,
         MessageRVRAnswer               = 47,
         MessageRVRContinue             = 48,
-        LastMessage                    = 49,
+        MessageGameHighlight           = 49,
+        MessageNpcFromStartBlock       = 50,
+        LastMessage                    = 51,
         MessageInvalid                 = 255
     };
 
@@ -390,6 +392,17 @@ namespace Otc
         GamePremiumExpiration = 57,
         GameBrowseField = 58,
         GameEnhancedAnimations = 59,
+        GameOGLInformation = 60,
+        GameMessageSizeCheck = 61,
+        GamePreviewState = 62,
+        GameLoginPacketEncryption = 63,
+        GameClientVersion = 64,
+        GameContentRevision = 65,
+        GameExperienceBonus = 66,
+        GameAuthenticator = 67,
+        GameUnjustifiedPoints = 68,
+        GameSessionKey = 69,
+        GameDeathType = 70,
 
         LastGameFeature = 101
     };
@@ -445,10 +458,19 @@ namespace Otc
         LastSpeedFormula
     };
 
-    enum AnimationPhase {
-        PhaseAutomatic = 0,
-        PhaseRandom = 254,
-        PhaseAsync = 255
+    enum Blessings {
+        BlessingNone = 0,
+        BlessingAdventurer = 1,
+        BlessingSpiritualShielding = 1 << 1,
+        BlessingEmbraceOfTibia = 1 << 2,
+        BlessingFireOfSuns = 1 << 3,
+        BlessingWisdomOfSolitude = 1 << 4,
+        BlessingSparkOfPhoenix = 1 << 5
+    };
+
+    enum DeathType {
+        DeathRegular = 0,
+        DeathBlessed = 1
     };
 }
 

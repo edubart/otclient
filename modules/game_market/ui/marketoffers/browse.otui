@@ -52,7 +52,7 @@ Panel
 
   MarketButtonBox
     id: filterLevel
-    checked: false
+    &default: false
     !text: tr('Level')
     !tooltip: tr('Filter list to match your level')
     anchors.top: prev.bottom
@@ -62,11 +62,10 @@ Panel
     margin-left: 3
     width: 40
     height: 20
-    @onCheckChange: Market.updateCurrentItems()
 
   MarketButtonBox
     id: filterVocation
-    checked: false
+    &default: false
     !text: tr('Voc.')
     !tooltip: tr('Filter list to match your vocation')
     anchors.top: prev.top
@@ -75,7 +74,6 @@ Panel
     margin-left: 3
     width: 34
     height: 20
-    @onCheckChange: Market.updateCurrentItems()
 
   MarketComboBox
     id: slotComboBox
@@ -90,7 +88,7 @@ Panel
 
   MarketButtonBox
     id: filterDepot
-    checked: false
+    &default: false
     !text: tr('Show Depot Only')
     !tooltip: tr('Show your depot items only')
     anchors.top: prev.bottom
@@ -99,7 +97,6 @@ Panel
     margin-top: 6
     margin-right: 3
     margin-left: 3
-    @onCheckChange: Market.updateCurrentItems()
 
   Panel
     id: itemsContainer
@@ -152,11 +149,10 @@ Panel
 
   MarketButtonBox
     id: filterSearchAll
-    checked: false
+    &default: true
     !text: tr('All')
     !tooltip: tr('Search all items')
     anchors.verticalCenter: prev.verticalCenter
     anchors.left: prev.right
     anchors.right: itemsContainer.right
     margin-left: 3
-    @onCheckChange: Market.updateCurrentItems()

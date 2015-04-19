@@ -44,7 +44,6 @@ MessageTypes = {
   [MessageModes.Party] = MessageSettings.centerGreen,
   [MessageModes.PartyManagement] = MessageSettings.centerWhite,
   [MessageModes.TutorialHint] = MessageSettings.centerWhite,
-  [MessageModes.Market] = MessageSettings.centerWhite,
   [MessageModes.BeyondLast] = MessageSettings.centerWhite,
   [MessageModes.Report] = MessageSettings.consoleRed,
   [MessageModes.HotkeyUse] = MessageSettings.centerGreen,
@@ -55,13 +54,19 @@ MessageTypes = {
 messagesPanel = nil
 
 function init()
-  connect(g_game, 'onTextMessage', displayMessage)
+  for messageMode, _ in pairs(MessageTypes) do
+    registerMessageMode(messageMode, displayMessage)
+  end
+
   connect(g_game, 'onGameEnd', clearMessages)
   messagesPanel = g_ui.loadUI('textmessage', modules.game_interface.getRootPanel())
 end
 
 function terminate()
-  disconnect(g_game, 'onTextMessage', displayMessage)
+  for messageMode, _ in pairs(MessageTypes) do
+    unregisterMessageMode(messageMode, displayMessage)
+  end
+
   disconnect(g_game, 'onGameEnd', clearMessages)
   clearMessages()
   messagesPanel:destroy()
@@ -75,9 +80,7 @@ function displayMessage(mode, text)
   if not g_game.isOnline() then return end
 
   local msgtype = MessageTypes[mode]
-
   if not msgtype then
-    perror('unhandled onTextMessage message mode ' .. mode .. ': ' .. text)
     return
   end
 

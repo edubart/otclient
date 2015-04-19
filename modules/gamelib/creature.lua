@@ -35,6 +35,13 @@ NpcIconTradeQuest = 4
 
 -- @}
 
+function getNextSkullId(skullId)
+  if skullId == SkullRed or skullId == SkullBlack then
+    return SkullBlack
+  end
+  return SkullRed
+end
+
 function getSkullImagePath(skullId)
   local path
   if skullId == SkullYellow then

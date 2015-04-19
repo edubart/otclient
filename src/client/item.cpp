@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -382,6 +382,9 @@ int Item::calculateAnimationPhase(bool animate)
 {
     if(getAnimationPhases() > 1) {
         if(animate) {
+            if(getAnimator() != nullptr)
+                return getAnimator()->getPhase();
+
             if(m_async)
                 return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
             else {

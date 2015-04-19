@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -161,6 +161,48 @@ bool luavalue_cast(int index, Light& light)
         light.color = g_lua.popInteger();
         g_lua.getField("intensity", index);
         light.intensity = g_lua.popInteger();
+        return true;
+    }
+    return false;
+}
+
+int push_luavalue(const UnjustifiedPoints& unjustifiedPoints)
+{
+    g_lua.createTable(0, 7);
+    g_lua.pushInteger(unjustifiedPoints.killsDay);
+    g_lua.setField("killsDay");
+    g_lua.pushInteger(unjustifiedPoints.killsDayRemaining);
+    g_lua.setField("killsDayRemaining");
+    g_lua.pushInteger(unjustifiedPoints.killsWeek);
+    g_lua.setField("killsWeek");
+    g_lua.pushInteger(unjustifiedPoints.killsWeekRemaining);
+    g_lua.setField("killsWeekRemaining");
+    g_lua.pushInteger(unjustifiedPoints.killsMonth);
+    g_lua.setField("killsMonth");
+    g_lua.pushInteger(unjustifiedPoints.killsMonthRemaining);
+    g_lua.setField("killsMonthRemaining");
+    g_lua.pushInteger(unjustifiedPoints.skullTime);
+    g_lua.setField("skullTime");
+    return 1;
+}
+
+bool luavalue_cast(int index, UnjustifiedPoints& unjustifiedPoints)
+{
+    if(g_lua.isTable(index)) {
+        g_lua.getField("killsDay", index);
+        unjustifiedPoints.killsDay = g_lua.popInteger();
+        g_lua.getField("killsDayRemaining", index);
+        unjustifiedPoints.killsDayRemaining = g_lua.popInteger();
+        g_lua.getField("killsWeek", index);
+        unjustifiedPoints.killsWeek = g_lua.popInteger();
+        g_lua.getField("killsWeekRemaining", index);
+        unjustifiedPoints.killsWeekRemaining = g_lua.popInteger();
+        g_lua.getField("killsMonth", index);
+        unjustifiedPoints.killsMonth = g_lua.popInteger();
+        g_lua.getField("killsMonthRemaining", index);
+        unjustifiedPoints.killsMonthRemaining = g_lua.popInteger();
+        g_lua.getField("skullTime", index);
+        unjustifiedPoints.skullTime = g_lua.popInteger();
         return true;
     }
     return false;

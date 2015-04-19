@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName);
+    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey);
     void send(const OutputMessagePtr& outputMessage);
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
@@ -128,6 +128,10 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseBlessings(const InputMessagePtr& msg);
+    void parseUnjustifiedStats(const InputMessagePtr& msg);
+    void parsePvpSituations(const InputMessagePtr& msg);
+    void parsePreset(const InputMessagePtr& msg);
     void parseCreatureType(const InputMessagePtr& msg);
     void parsePlayerHelpers(const InputMessagePtr& msg);
     void parseMessage(const InputMessagePtr& msg);
@@ -139,6 +143,7 @@ private:
     void parseLoginError(const InputMessagePtr& msg);
     void parseLoginAdvice(const InputMessagePtr& msg);
     void parseLoginWait(const InputMessagePtr& msg);
+    void parseLoginToken(const InputMessagePtr& msg);
     void parsePing(const InputMessagePtr& msg);
     void parsePingBack(const InputMessagePtr& msg);
     void parseChallenge(const InputMessagePtr& msg);
@@ -242,6 +247,8 @@ private:
     stdext::boolean<true> m_firstRecv;
     std::string m_accountName;
     std::string m_accountPassword;
+    std::string m_authenticatorToken;
+    std::string m_sessionKey;
     std::string m_characterName;
     LocalPlayerPtr m_localPlayer;
 };

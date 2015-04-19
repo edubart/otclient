@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -78,6 +78,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerLoginWait:
                 parseLoginWait(msg);
+                break;
+            case Proto::GameServerLoginToken:
+                parseLoginToken(msg);
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
@@ -340,6 +343,19 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerCreatureType:
                 parseCreatureType(msg);
                 break;
+            // PROTOCOL>=1055
+            case Proto::GameServerBlessings:
+                parseBlessings(msg);
+                break;
+            case Proto::GameServerUnjustifiedStats:
+                parseUnjustifiedStats(msg);
+                break;
+            case Proto::GameServerPvpSituations:
+                parsePvpSituations(msg);
+                break;
+            case Proto::GameServerPreset:
+                parsePreset(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -372,6 +388,14 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     }
     bool canReportBugs = msg->getU8();
 
+    if(g_game.getClientVersion() >= 1054)
+        msg->getU8(); // can change pvp frame option
+
+    if(g_game.getClientVersion() >= 1058) {
+        int expertModeEnabled = msg->getU8();
+        g_game.setExpertPvpMode(expertModeEnabled);
+    }
+
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
@@ -394,6 +418,38 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
         g_game.processGameStart();
         m_gameInitialized = true;
     }
+}
+
+void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
+{
+    uint16 blessings = msg->getU16();
+    m_localPlayer->setBlessings(blessings);
+}
+
+void ProtocolGame::parsePreset(const InputMessagePtr& msg)
+{
+    uint16 preset = msg->getU32();
+}
+
+void ProtocolGame::parseUnjustifiedStats(const InputMessagePtr& msg)
+{
+    UnjustifiedPoints unjustifiedPoints;
+    unjustifiedPoints.killsDay = msg->getU8();
+    unjustifiedPoints.killsDayRemaining = msg->getU8();
+    unjustifiedPoints.killsWeek = msg->getU8();
+    unjustifiedPoints.killsWeekRemaining = msg->getU8();
+    unjustifiedPoints.killsMonth = msg->getU8();
+    unjustifiedPoints.killsMonthRemaining = msg->getU8();
+    unjustifiedPoints.skullTime = msg->getU8();
+
+    g_game.setUnjustifiedPoints(unjustifiedPoints);
+}
+
+void ProtocolGame::parsePvpSituations(const InputMessagePtr& msg)
+{
+    uint8 openPvpSituations = msg->getU8();
+
+    g_game.setOpenPvpSituations(openPvpSituations);
 }
 
 void ProtocolGame::parsePlayerHelpers(const InputMessagePtr& msg)
@@ -454,6 +510,12 @@ void ProtocolGame::parseLoginWait(const InputMessagePtr& msg)
     g_game.processLoginWait(message, time);
 }
 
+void ProtocolGame::parseLoginToken(const InputMessagePtr& msg)
+{
+    bool unknown = (msg->getU8() == 0);
+    g_game.processLoginToken(unknown);
+}
+
 void ProtocolGame::parsePing(const InputMessagePtr& msg)
 {
     g_game.processPing();
@@ -468,15 +530,22 @@ void ProtocolGame::parseChallenge(const InputMessagePtr& msg)
 {
     uint timestamp = msg->getU32();
     uint8 random = msg->getU8();
+
     sendLoginPacket(timestamp, random);
 }
 
 void ProtocolGame::parseDeath(const InputMessagePtr& msg)
 {
     int penality = 100;
-    if(g_game.getFeature(Otc::GamePenalityOnDeath))
+    int deathType = Otc::DeathRegular;
+
+    if(g_game.getFeature(Otc::GameDeathType))
+        deathType = msg->getU8();
+
+    if(g_game.getFeature(Otc::GamePenalityOnDeath) && deathType == Otc::DeathRegular)
         penality = msg->getU8();
-    g_game.processDeath(penality);
+
+    g_game.processDeath(deathType, penality);
 }
 
 void ProtocolGame::parseMapDescription(const InputMessagePtr& msg)
@@ -941,11 +1010,19 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
 void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
+
+    int baseSpeed = -1;
+    if(g_game.getClientVersion() >= 1059)
+        baseSpeed = msg->getU16();
+
     int speed = msg->getU16();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if(creature)
+    if(creature) {
         creature->setSpeed(speed);
+        if(baseSpeed != -1)
+            creature->setBaseSpeed(baseSpeed);
+    }
 
     // some servers has a bug in get spectators and sends unknown creatures updates
     // so this code is disabled
@@ -1038,7 +1115,7 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
     bool premium = msg->getU8(); // premium
     int vocation = msg->getU8(); // vocation
     if(g_game.getFeature(Otc::GamePremiumExpiration))
-        int premiumEx = msg->getU32(); // premium expiration
+        int premiumEx = msg->getU32(); // premium expiration used for premium advertisement
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
@@ -1081,6 +1158,10 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 
     double level = msg->getU16();
     double levelPercent = msg->getU8();
+
+    if(g_game.getFeature(Otc::GameExperienceBonus))
+        double experienceBonus = msg->getDouble();
+
     double mana;
     double maxMana;
 
@@ -1145,7 +1226,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
         int baseLevel;
         if(g_game.getFeature(Otc::GameSkillsBase))
-            if (g_game.getFeature(Otc::GameBaseSkillU16))
+            if(g_game.getFeature(Otc::GameBaseSkillU16))
                 baseLevel = msg->getU16();
             else
                 baseLevel = msg->getU8();
@@ -1242,6 +1323,7 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
         case Otc::MessageBarkLow:
         case Otc::MessageBarkLoud:
         case Otc::MessageSpell:
+        case Otc::MessageNpcFromStartBlock:
             pos = getPosition(msg);
             break;
         case Otc::MessageChannel:
@@ -1699,7 +1781,7 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
 void ProtocolGame::parseCreaturesMark(const InputMessagePtr& msg)
 {
     int len;
-    if (g_game.getClientVersion() >= 1035) {
+    if(g_game.getClientVersion() >= 1035) {
         len = 1;
     } else {
         len = msg->getU8();

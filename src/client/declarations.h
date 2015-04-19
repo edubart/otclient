@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,6 +45,7 @@ class Effect;
 class Missile;
 class AnimatedText;
 class StaticText;
+class Animator;
 class ThingType;
 class ItemType;
 class House;
@@ -68,6 +69,7 @@ typedef stdext::shared_object_ptr<Effect> EffectPtr;
 typedef stdext::shared_object_ptr<Missile> MissilePtr;
 typedef stdext::shared_object_ptr<AnimatedText> AnimatedTextPtr;
 typedef stdext::shared_object_ptr<StaticText> StaticTextPtr;
+typedef stdext::shared_object_ptr<Animator> AnimatorPtr;
 typedef stdext::shared_object_ptr<ThingType> ThingTypePtr;
 typedef stdext::shared_object_ptr<ItemType> ItemTypePtr;
 typedef stdext::shared_object_ptr<House> HousePtr;

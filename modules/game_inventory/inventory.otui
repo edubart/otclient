@@ -1,54 +1,76 @@
 InventoryItem < Item
+  $on:
+    image-source: /images/ui/item-blessed
 
 HeadSlot < InventoryItem
   id: slot1
   image-source: /images/game/slots/head
   &position: {x=65535, y=1, z=0}
+  $on:
+    image-source: /images/game/slots/head-blessed
 
 BodySlot < InventoryItem
   id: slot4
   image-source: /images/game/slots/body
   &position: {x=65535, y=4, z=0}
+  $on:
+    image-source: /images/game/slots/body-blessed
 
 LegSlot < InventoryItem
   id: slot7
   image-source: /images/game/slots/legs
   &position: {x=65535, y=7, z=0}
+  $on:
+    image-source: /images/game/slots/legs-blessed
 
 FeetSlot < InventoryItem
   id: slot8
   image-source: /images/game/slots/feet
   &position: {x=65535, y=8, z=0}
+  $on:
+    image-source: /images/game/slots/feet-blessed
 
 NeckSlot < InventoryItem
   id: slot2
   image-source: /images/game/slots/neck
   &position: {x=65535, y=2, z=0}
+  $on:
+    image-source: /images/game/slots/neck-blessed
 
 LeftSlot < InventoryItem
   id: slot6
   image-source: /images/game/slots/left-hand
   &position: {x=65535, y=6, z=0}
+  $on:
+    image-source: /images/game/slots/left-hand-blessed
 
 FingerSlot < InventoryItem
   id: slot9
   image-source: /images/game/slots/finger
   &position: {x=65535, y=9, z=0}
+  $on:
+    image-source: /images/game/slots/finger-blessed
 
 BackSlot < InventoryItem
   id: slot3
   image-source: /images/game/slots/back
   &position: {x=65535, y=3, z=0}
+  $on:
+    image-source: /images/game/slots/back-blessed
 
 RightSlot < InventoryItem
   id: slot5
   image-source: /images/game/slots/right-hand
   &position: {x=65535, y=5, z=0}
+  $on:
+    image-source: /images/game/slots/right-hand-blessed
 
 AmmoSlot < InventoryItem
   id: slot10
   image-source: /images/game/slots/ammo
   &position: {x=65535, y=10, z=0}
+  $on:
+    image-source: /images/game/slots/ammo-blessed
 
 PurseButton < Button
   id: purseButton

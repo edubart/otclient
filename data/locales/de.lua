@@ -4,6 +4,10 @@ locale = {
   charset = "cp1252",
   languageName = "Deutsch",
 
+  formatNumbers = true,
+  decimalSeperator = ',',
+  thousandsSeperator = ' ',
+
   translation = {
     ["1a) Offensive Name"] = false,
     ["1b) Invalid Name Format"] = false,

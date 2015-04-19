@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -485,7 +485,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()) {
+        if(!thing->isGround() && !thing->isOnBottom() && !thing->isOnTop()) {
             if(i > 0 && thing->isSplash())
                 return m_things[i-1];
             return thing;
@@ -494,7 +494,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
     for(uint i = 0; i < m_things.size(); ++i) {
         ThingPtr thing = m_things[i];
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnTop())
+        if(!thing->isGround() && !thing->isOnTop())
             return thing;
     }
 

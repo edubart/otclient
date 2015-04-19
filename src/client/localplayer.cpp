@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ LocalPlayer::LocalPlayer()
 {
     m_states = 0;
     m_vocation = 0;
+    m_blessings = Otc::BlessingNone;
     m_walkLockExpiration = 0;
 
     m_skillsLevel.fill(-1);
@@ -506,16 +507,6 @@ void LocalPlayer::setPremium(bool premium)
     }
 }
 
-void LocalPlayer::setBaseSpeed(double baseSpeed)
-{
-    if(m_baseSpeed != baseSpeed) {
-        double oldBaseSpeed = m_baseSpeed;
-        m_baseSpeed = baseSpeed;
-
-        callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);
-    }
-}
-
 void LocalPlayer::setRegenerationTime(double regenerationTime)
 {
     if(m_regenerationTime != regenerationTime) {
@@ -543,6 +534,16 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
         m_spells = spells;
 
         callLuaField("onSpellsChange", spells, oldSpells);
+    }
+}
+
+void LocalPlayer::setBlessings(int blessings)
+{
+    if(blessings != m_blessings) {
+        int oldBlessings = m_blessings;
+        m_blessings = blessings;
+
+        callLuaField("onBlessingsChange", blessings, oldBlessings);
     }
 }
 

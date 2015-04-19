@@ -85,6 +85,7 @@ end
 local function onFlagMouseRelease(widget, pos, button)
   if button == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
+    menu:setGameMenu(true)
     menu:addOption(tr('Delete mark'), function() widget:destroy() end)
     menu:display(pos)
     return true
@@ -228,6 +229,7 @@ function UIMinimap:onMouseRelease(pos, button)
     return true
   elseif button == MouseRightButton then
     local menu = g_ui.createWidget('PopupMenu')
+    menu:setGameMenu(true)
     menu:addOption(tr('Create mark'), function() self:createFlagWindow(mapPos) end)
     menu:display(pos)
     return true

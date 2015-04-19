@@ -3,7 +3,7 @@ MarketWindow < MainWindow
   !text: tr('Market')
   size: 700 530
 
-  @onEscape: Market.close(true)
+  @onEscape: Market.close()
 
   // Main Panel Window
 
@@ -54,6 +54,7 @@ MarketWindow < MainWindow
   Button
     id: resetButton
     !text: tr('Reset Market')
+    !tooltip: tr('Reset selection, filters & search')
     anchors.top: mainTabContent.bottom
     anchors.left: mainTabContent.left
     margin-top: 5

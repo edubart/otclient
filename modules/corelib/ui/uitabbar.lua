@@ -38,6 +38,7 @@ function UITabBar:addTab(text, panel, icon)
   end
 
   local tab = g_ui.createWidget(self:getStyleName() .. 'Button', self.buttonsPanel)
+
   panel.isTab = true
   tab.tabPanel = panel
   tab.tabBar = self

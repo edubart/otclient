@@ -161,6 +161,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\client\animatedtext.cpp" />
+    <ClCompile Include="..\src\client\animator.cpp" />
     <ClCompile Include="..\src\client\client.cpp" />
     <ClCompile Include="..\src\client\container.cpp" />
     <ClCompile Include="..\src\client\creature.cpp" />
@@ -199,12 +200,7 @@
     <ClCompile Include="..\src\client\uimapanchorlayout.cpp" />
     <ClCompile Include="..\src\client\uiminimap.cpp" />
     <ClCompile Include="..\src\client\uiprogressrect.cpp" />
-    <ClCompile Include="..\src\client\uisprite.cpp">
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ObjectFileName>
-      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ObjectFileName>
-    </ClCompile>
+    <ClCompile Include="..\src\client\uisprite.cpp" />
     <ClCompile Include="..\src\framework\core\adaptativeframecounter.cpp" />
     <ClCompile Include="..\src\framework\core\application.cpp" />
     <ClCompile Include="..\src\framework\core\asyncdispatcher.cpp" />
@@ -315,6 +311,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\client\animatedtext.h" />
+    <ClInclude Include="..\src\client\animator.h" />
     <ClInclude Include="..\src\client\client.h" />
     <ClInclude Include="..\src\client\const.h" />
     <ClInclude Include="..\src\client\container.h" />

@@ -345,6 +345,7 @@ function onVipListMousePress(widget, mousePos, mouseButton)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = g_ui.createWidget('PopupMenu')
+  menu:setGameMenu(true)
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
 
   menu:addSeparator()
@@ -377,6 +378,7 @@ function onVipListLabelMousePress(widget, mousePos, mouseButton)
   local vipList = vipWindow:getChildById('contentsPanel')
 
   local menu = g_ui.createWidget('PopupMenu')
+  menu:setGameMenu(true)
   menu:addOption(tr('Send Message'), function() g_game.openPrivateChannel(widget:getText()) end)
   menu:addOption(tr('Add new VIP'), function() createAddWindow() end)
   menu:addOption(tr('Edit %s', widget:getText()), function() if widget then createEditWindow(widget) end end)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -84,6 +84,7 @@ void Game::resetGameStates()
     m_localPlayer = nullptr;
     m_pingSent = 0;
     m_pingReceived = 0;
+    m_unjustifiedPoints = UnjustifiedPoints();
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -155,6 +156,11 @@ void Game::processLoginWait(const std::string& message, int time)
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
 }
 
+void Game::processLoginToken(bool unknown)
+{
+    g_lua.callGlobalField("g_game", "onLoginToken", unknown);
+}
+
 void Game::processLogin()
 {
     g_lua.callGlobalField("g_game", "onLogin");
@@ -222,12 +228,12 @@ void Game::processGameEnd()
     g_map.cleanDynamicThings();
 }
 
-void Game::processDeath(int penality)
+void Game::processDeath(int deathType, int penality)
 {
     m_dead = true;
     m_localPlayer->stopWalk();
 
-    g_lua.callGlobalField("g_game", "onDeath", penality);
+    g_lua.callGlobalField("g_game", "onDeath", deathType, penality);
 }
 
 void Game::processGMActions(const std::vector<uint8>& actions)
@@ -308,9 +314,6 @@ void Game::processCloseContainer(int containerId)
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        /* happens if you close and restart client with container opened
-         * g_logger.traceError("container not found");
-         */
         return;
     }
 
@@ -322,7 +325,6 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item, int slo
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
@@ -333,7 +335,6 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
@@ -344,7 +345,6 @@ void Game::processContainerRemoveItem(int containerId, int slot, const ItemPtr& 
 {
     ContainerPtr container = getContainer(containerId);
     if(!container) {
-        g_logger.traceError("container not found");
         return;
     }
 
@@ -528,7 +528,7 @@ void Game::processWalkCancel(Otc::Direction direction)
     m_localPlayer->cancelWalk(direction);
 }
 
-void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName)
+void Game::loginWorld(const std::string& account, const std::string& password, const std::string& worldName, const std::string& worldHost, int worldPort, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
 {
     if(m_protocolGame || isOnline())
         stdext::throw_exception("Unable to login into a world while already online or logging.");
@@ -543,7 +543,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_localPlayer->setName(characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName);
+    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName, authenticatorToken, sessionKey);
     m_characterName = characterName;
     m_worldName = worldName;
 }
@@ -854,7 +854,7 @@ void Game::useWith(const ItemPtr& item, const ThingPtr& toThing)
 
     Position pos = item->getPosition();
     if(!pos.isValid()) // virtual item
-        pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+        pos = Position(0xFFFF, 0, 0); // means that is an item in inventory
 
     m_protocolGame->sendUseItemWith(pos, item->getId(), item->getStackPos(), toThing->getPosition(), toThing->getId(), toThing->getStackPos());
 }
@@ -1204,6 +1204,31 @@ void Game::setPVPMode(Otc::PVPModes pvpMode)
     g_lua.callGlobalField("g_game", "onPVPModeChange", pvpMode);
 }
 
+void Game::setUnjustifiedPoints(UnjustifiedPoints unjustifiedPoints)
+{
+    if(!canPerformGameAction())
+        return;
+    if(!getFeature(Otc::GameUnjustifiedPoints))
+        return;
+    if(m_unjustifiedPoints == unjustifiedPoints)
+        return;
+
+    m_unjustifiedPoints = unjustifiedPoints;
+    g_lua.callGlobalField("g_game", "onUnjustifiedPointsChange", unjustifiedPoints);
+}
+
+void Game::setOpenPvpSituations(int openPvpSituations)
+{
+    if(!canPerformGameAction())
+        return;
+    if(m_openPvpSituations == openPvpSituations)
+        return;
+
+    m_openPvpSituations = openPvpSituations;
+    g_lua.callGlobalField("g_game", "onOpenPvpSituationsChange", openPvpSituations);
+}
+
+
 void Game::inspectNpcTrade(const ItemPtr& item)
 {
     if(!canPerformGameAction() || !item)
@@ -1425,7 +1450,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1051))
+    if(version != 0 && (version < 740 || version > 1076))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1443,7 +1468,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1051))
+    if(version != 0 && (version < 740 || version > 1076))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1452,6 +1477,7 @@ void Game::setClientVersion(int version)
     if(version >= 770) {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);
+        enableFeature(Otc::GameLoginPacketEncryption);
     }
 
     if(version >= 780) {
@@ -1475,6 +1501,7 @@ void Game::setClientVersion(int version)
 
     if(version >= 841) {
         enableFeature(Otc::GameChallengeOnLogin);
+        enableFeature(Otc::GameMessageSizeCheck);
     }
 
     if(version >= 854) {
@@ -1523,6 +1550,11 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameAdditionalVipInfo);
     }
 
+    if(version >= 980) {
+        enableFeature(Otc::GamePreviewState);
+        enableFeature(Otc::GameClientVersion);
+    }
+
     if(version >= 981) {
         enableFeature(Otc::GameLoginPending);
         enableFeature(Otc::GameNewSpeedLaw);
@@ -1538,7 +1570,7 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GamePVPMode);
     }
 
-    if (version >= 1035) {
+    if(version >= 1035) {
         enableFeature(Otc::GameDoubleSkills);
         enableFeature(Otc::GameBaseSkillU16);
     }
@@ -1554,6 +1586,34 @@ void Game::setClientVersion(int version)
 
     if(version >= 1050) {
         enableFeature(Otc::GameEnhancedAnimations);
+    }
+
+    if(version >= 1053) {
+        enableFeature(Otc::GameUnjustifiedPoints);
+    }
+
+    if(version >= 1054) {
+        enableFeature(Otc::GameExperienceBonus);
+    }
+
+    if(version >= 1055) {
+        enableFeature(Otc::GameDeathType);
+    }
+
+    if(version >= 1061) {
+        enableFeature(Otc::GameOGLInformation);
+    }
+
+    if(version >= 1071) {
+        enableFeature(Otc::GameContentRevision);
+    }
+
+    if(version >= 1072) {
+        enableFeature(Otc::GameAuthenticator);
+    }
+
+    if(version >= 1074) {
+        enableFeature(Otc::GameSessionKey);
     }
 
     m_clientVersion = version;

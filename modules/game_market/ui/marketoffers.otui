@@ -135,8 +135,7 @@ Panel
     font: verdana-11px-rounded
     text-offset: 0 2
     anchors.top: offerTypeLabel.top
-    anchors.left: prev.right
-    margin-left: 32
+    anchors.left: amountEdit.left
 
   PreviousButton
     id: prevAmountButton
@@ -147,7 +146,7 @@ Panel
 
   SpinBox
     id: amountEdit
-    anchors.verticalCenter: prev.verticalCenter
+    anchors.top: prev.top
     anchors.left: prev.right
     margin-left: 3
     width: 55
@@ -184,8 +183,6 @@ Panel
   Label
     id: feeLabel
     font: verdana-11px-rounded
-    text-offset: 0 2
     anchors.top: createOfferButton.bottom
-    anchors.right: parent.right
-    margin-right: 8
-    margin-top: 3
+    anchors.left: createOfferButton.left
+    margin: 2

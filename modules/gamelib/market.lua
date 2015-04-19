@@ -1,3 +1,8 @@
+MarketMaxAmount = 2000
+MarketMaxAmountStackable = 64000
+MarketMaxPrice = 999999999
+MarketMaxOffers = 100
+
 MarketAction = {
   Buy = 0,
   Sell = 1
@@ -160,8 +165,8 @@ MarketFilters = {
   SearchAll = 4
 }
 
-MarketFilters.First = MarketFilters.vocation
-MarketFilters.Last = MarketFilters.depot
+MarketFilters.First = MarketFilters.Vocation
+MarketFilters.Last = MarketFilters.Depot
 
 function getMarketSlotFilterId(name)
   local id = table.find(MarketSlotFilters, name)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -59,10 +59,10 @@ public:
     void setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item);
     void setVocation(int vocation);
     void setPremium(bool premium);
-    void setBaseSpeed(double baseSpeed);
     void setRegenerationTime(double regenerationTime);
     void setOfflineTrainingTime(double offlineTrainingTime);
     void setSpells(const std::vector<int>& spells);
+    void setBlessings(int blessings);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
@@ -83,11 +83,11 @@ public:
     double getBaseMagicLevel() { return m_baseMagicLevel; }
     double getSoul() { return m_soul; }
     double getStamina() { return m_stamina; }
-    double getBaseSpeed() { return m_baseSpeed; }
     double getRegenerationTime() { return m_regenerationTime; }
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
+    int getBlessings() { return m_blessings; }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -144,6 +144,7 @@ private:
 
     int m_states;
     int m_vocation;
+    int m_blessings;
 
     double m_health;
     double m_maxHealth;
@@ -159,7 +160,6 @@ private:
     double m_baseMagicLevel;
     double m_soul;
     double m_stamina;
-    double m_baseSpeed;
     double m_regenerationTime;
     double m_offlineTrainingTime;
 };

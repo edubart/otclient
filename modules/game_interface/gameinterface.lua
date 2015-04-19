@@ -442,7 +442,10 @@ end
 
 function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   if not g_game.isOnline() then return end
+
   local menu = g_ui.createWidget('PopupMenu')
+  menu:setGameMenu(true)
+
   local classic = modules.client_options.getOption('classicControl')
   local shortcut = nil
 

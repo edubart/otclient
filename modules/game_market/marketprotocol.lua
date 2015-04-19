@@ -50,14 +50,14 @@ local function parseMarketEnter(protocol, msg)
     vocation = msg:getU8() -- get vocation id
   end
   local offers = msg:getU8()
-  local depotItems = {}
 
+  local depotItems = {}
   local depotCount = msg:getU16()
   for i = 1, depotCount do
     local itemId = msg:getU16() -- item id
     local itemCount = msg:getU16() -- item count
 
-    table.insert(depotItems, {itemId, itemCount})
+    depotItems[itemId] = itemCount
   end
 
   signalcall(Market.onMarketEnter, depotItems, offers, balance, vocation)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,7 +74,7 @@ public:
     int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
     int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
     int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
-    Animation getAnimation() { return rawGetThingType()->getAnimation(); }
+    AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
     Light getLight() { return rawGetThingType()->getLight(); }
