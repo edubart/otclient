@@ -35,16 +35,12 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   local messageLabel = modalDialog:getChildById('messageLabel')
   local choiceList = modalDialog:getChildById('choiceList')
   local choiceScrollbar = modalDialog:getChildById('choiceScrollBar')
-  local buttonList = modalDialog:getChildById('buttonList')
+  local buttonsPanel = modalDialog:getChildById('buttonsPanel')
 
   modalDialog:setText(title)
   messageLabel:setText(message)
 
-  local horizontalPadding = modalDialog:getPaddingLeft() + modalDialog:getPaddingRight()
-  modalDialog:setWidth(math.min(modalDialog.maximumWidth, math.max(messageLabel:getWidth(), modalDialog.minimumWidth)))
-  messageLabel:setWidth(math.min(modalDialog.maximumWidth, math.max(messageLabel:getWidth(), modalDialog.minimumWidth)) - horizontalPadding)
-
-  local labelHeight = nil
+  local labelHeight
   for i = 1, #choices do
     local choiceId = choices[i][1]
     local choiceName = choices[i][2]
@@ -59,11 +55,12 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   end
   choiceList:focusNextChild()
 
+  local buttonsWidth = 0
   for i = 1, #buttons do
     local buttonId = buttons[i][1]
     local buttonText = buttons[i][2]
 
-    local button = g_ui.createWidget('ModalButton', buttonList)
+    local button = g_ui.createWidget('ModalButton', buttonsPanel)
     button:setText(buttonText)
     button.onClick = function(self)
                        local focusedChoice = choiceList:getFocusedChild()
@@ -74,6 +71,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
                        g_game.answerModalDialog(id, buttonId, choice)
                        destroyDialog()
                      end
+    buttonsWidth = buttonsWidth + button:getWidth() + button:getMarginLeft() + button:getMarginRight()
   end
 
   local additionalHeight = 0
@@ -84,11 +82,13 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
     additionalHeight = math.min(modalDialog.maximumChoices, math.max(modalDialog.minimumChoices, #choices)) * labelHeight
     additionalHeight = additionalHeight + choiceList:getPaddingTop() + choiceList:getPaddingBottom()
   end
-  modalDialog:setHeight(modalDialog:getHeight() + additionalHeight)
 
-  addEvent(function()
-             modalDialog:setHeight(modalDialog:getHeight() + messageLabel:getHeight() - 14)
-           end)
+  local horizontalPadding = modalDialog:getPaddingLeft() + modalDialog:getPaddingRight()
+  buttonsWidth = buttonsWidth + horizontalPadding
+
+  modalDialog:setWidth(math.min(modalDialog.maximumWidth, math.max(buttonsWidth, messageLabel:getWidth(), modalDialog.minimumWidth)))
+  messageLabel:setWidth(math.min(modalDialog.maximumWidth, math.max(buttonsWidth, messageLabel:getWidth(), modalDialog.minimumWidth)) - horizontalPadding)
+  modalDialog:setHeight(modalDialog:getHeight() + additionalHeight + messageLabel:getHeight() - 8)
 
   local enterFunc = function()
     local focusedChoice = choiceList:getFocusedChild()
