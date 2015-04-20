@@ -105,7 +105,6 @@ function init()
   consoleContentPanel = consolePanel:getChildById('consoleContentPanel')
   consoleTabBar = consolePanel:getChildById('consoleTabBar')
   consoleTabBar:setContentWidget(consoleContentPanel)
-  consoleTabBar:setTabSpacing(-1)
   channels = {}
 
   consolePanel.onKeyPress = function(self, keyCode, keyboardModifiers)

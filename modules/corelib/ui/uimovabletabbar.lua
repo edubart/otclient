@@ -6,7 +6,7 @@ local function onTabClick(tab)
   tab.tabBar:selectTab(tab)
 end
 
-local function updateMargins(tabBar, ignored)
+local function updateMargins(tabBar)
   if #tabBar.tabs == 0 then return end
 
   local currentMargin = 0
@@ -309,8 +309,11 @@ function UIMoveableTabBar:moveTab(tab, units)
 end
 
 function UIMoveableTabBar:onStyleApply(styleName, styleNode)
-  if styleNode['moveable'] then
-    self.tabsMoveable = styleNode['moveable']
+  if styleNode['movable'] then
+    self.tabsMoveable = styleNode['movable']
+  end
+  if styleNode['tab-spacing'] then
+    self:setTabSpacing(styleNode['tab-spacing'])
   end
 end
 
