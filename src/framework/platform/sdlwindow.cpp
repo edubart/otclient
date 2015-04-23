@@ -239,6 +239,15 @@ void SDLWindow::poll() {
             case SDL_FINGERUP:
                 processFingerdownAndFingerup();
                 break;
+            case SDL_FINGERMOTION:
+                m_inputEvent.reset();
+                m_inputEvent.type = Fw::MouseMoveInputEvent;
+                Point newMousePos(m_event.tfinger.x * m_mode.w, m_event.tfinger.y * m_mode.h);
+                m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
+                m_inputEvent.mousePos = newMousePos;
+                if(m_onInputEvent)
+                    m_onInputEvent(m_inputEvent);
+                break;
         }
 
         if(m_inputEvent.type != Fw::NoInputEvent && m_onInputEvent)
@@ -249,6 +258,7 @@ void SDLWindow::poll() {
 }
 
 bool SDLWindow::hasRepeatedKey() {
+    g_logger.info(stdext::format("hasRepeatedKey %i", m_event.key.repeat));
     return m_event.key.repeat != 0;
 }
 
@@ -282,10 +292,11 @@ void SDLWindow::processTextInput() {
 }
 
 void SDLWindow::processFingerdownAndFingerup() {
+    bool isFinderdown = m_event.type == SDL_FINGERDOWN;
     m_inputEvent.reset();
-    m_inputEvent.type = (m_event.type == SDL_FINGERDOWN) ? Fw::MousePressInputEvent : Fw::MouseReleaseInputEvent;
+    m_inputEvent.type = isFinderdown ? Fw::MousePressInputEvent : Fw::MouseReleaseInputEvent;
     m_inputEvent.mouseButton = Fw::MouseLeftButton;
-    m_mouseButtonStates[Fw::MouseLeftButton] = true;
+    m_mouseButtonStates[Fw::MouseLeftButton] = isFinderdown;
     Point newMousePos(m_event.tfinger.x * m_mode.w, m_event.tfinger.y * m_mode.h);
     m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
     m_inputEvent.mousePos = newMousePos;
