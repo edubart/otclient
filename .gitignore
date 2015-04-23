@@ -6,9 +6,9 @@ Makefile
 /otclient
 /android/project/build.xml
 /android/project/proguard-project.txt
-/android/project/gen*
-/android/project/bin*
-/android/project/libs/*
+/android/project/gen
+/android/project/bin
+/android/project/libs
 libs*
 .idea*
 /*.h
