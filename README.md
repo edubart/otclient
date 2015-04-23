@@ -13,9 +13,9 @@ This is a fork of edubart's otclient. The objective of this fork it's to develop
 
 Taks that need to do:
 - [X] Compile on Android devices
-- [] Compile on Apple devices
-- [] Handle input events correctle
-- [] Adapt the UI reusing the existing lua code
+- [ ] Compile on Apple devices
+- [ ] Handle input events correctle
+- [ ] Adapt the UI reusing the existing lua code
 
 ### Where do I download?
 
