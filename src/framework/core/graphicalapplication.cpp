@@ -66,12 +66,12 @@ void GraphicalApplication::init(std::vector<std::string>& args)
 #endif
 }
 
-void GraphicalApplication::deinit()
+void GraphicalApplication::unloadModules()
 {
     // hide the window because there is no render anymore
     g_window.hide();
 
-    Application::deinit();
+    Application::unloadModules();
 }
 
 void GraphicalApplication::terminate()
@@ -101,7 +101,7 @@ void GraphicalApplication::terminate()
     m_terminated = true;
 }
 
-void GraphicalApplication::run()
+void GraphicalApplication::runAppMainLoop()
 {
     m_running = true;
 

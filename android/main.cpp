@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2015 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2014 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,21 +20,16 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#include <android_native_app_glue.h>
+#include <client/client.h>
 
-#include "global.h"
+void android_main( struct android_app* state ) {
+    int argc = 1;
+    const char* argv[1];
+    argv[0] = "NULL";
 
-class Client
-{
-    void initAppFrameworkAndOTClient(std::vector<std::string>& args);
-    void setupAppNameAndVersion();
-    void findLuaInitScript();
-    void runLuaInitScript();
-    void registerLuaFunctions();
-public:
-    Client(int argc, char* argv[]);
-    void terminateAndFreeMemory();
-};
+    Client client( argc, argv );
+    client.terminateAndFreeMemory();
 
-#endif
+    ANativeActivity_finish(state->activity);
+}

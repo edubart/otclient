@@ -34,9 +34,9 @@ public:
     virtual ~Application() {}
 
     virtual void init(std::vector<std::string>& args);
-    virtual void deinit();
+    virtual void unloadModules();
     virtual void terminate();
-    virtual void run() = 0;
+    virtual void runAppMainLoop() = 0;
     virtual void poll();
     virtual void exit();
     virtual void close();

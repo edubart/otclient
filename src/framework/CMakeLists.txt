@@ -140,7 +140,11 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 # some build options
 option(LUAJIT "Use lua jit" OFF)
 if(NOT APPLE)
-    option(CRASH_HANDLER "Generate crash reports" ON)
+    if(ANDROID)
+        set(CRASH_HANDLER OFF)
+    else()
+        option(CRASH_HANDLER "Generate crash reports" ON)
+    endif()
     option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
     option(USE_LIBCPP "Use the new libc++ library instead of stdc++" OFF)
     option(USE_LTO "Use link time optimizations" OFF)
@@ -226,6 +230,11 @@ find_package(PhysFS REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
+if(ANDROID)
+    set(framework_LIBRARIES ${framework_LIBRARIES} android log)
+    find_package(SDL2 REQUIRED)
+endif()
+
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
@@ -241,6 +250,11 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${OpenSSL_INCLUDE_DIR}
     ${framework_INCLUDE_DIRS}
 )
+
+if(ANDROID)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL2_LIBRARY})
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug information: ON")
@@ -281,7 +295,11 @@ else()
     else()
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -rdynamic -Wl,-rpath,./libs") # rdynamic is needed by backtrace.h used in crash handler
-        set(SYSTEM_LIBRARIES dl rt)
+        if(ANDROID)
+            set(SYSTEM_LIBRARIES dl)
+        else()
+            set(SYSTEM_LIBRARIES dl rt)
+        endif()
     endif()
 endif()
 set(framework_LIBRARIES ${framework_LIBRARIES} ${SYSTEM_LIBRARIES})
@@ -292,13 +310,13 @@ endif()
 
 if(FRAMEWORK_GRAPHICS)
     set(OPENGLES "OFF" CACHE "Use OpenGL ES 1.0 or 2.0 (for mobiles devices)" STRING)
-    if(OPENGLES STREQUAL "2.0")
+    if(OPENGLES STREQUAL "2.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_GREATER 7))
         find_package(OpenGLES2 REQUIRED)
         find_package(EGL REQUIRED)
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=2)
         set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${EGL_INCLUDE_DIR} ${OPENGLES2_INCLUDE_DIR})
         set(framework_LIBRARIES ${framework_LIBRARIES} ${EGL_LIBRARY} ${OPENGLES2_LIBRARY})
-    ELSEif(OPENGLES STREQUAL "1.0")
+    ELSEif(OPENGLES STREQUAL "1.0" OR (ANDROID_NATIVE_API_LEVEL AND ANDROID_NATIVE_API_LEVEL VERSION_LESS 8))
         find_package(OpenGLES1 REQUIRED)
         find_package(EGL REQUIRED)
         set(framework_DEFINITIONS ${framework_DEFINITIONS} -DOPENGL_ES=1)
@@ -341,7 +359,7 @@ if(FRAMEWORK_GRAPHICS)
             )
         endif()
 
-    else()
+    elseif(NOT ANDROID)
         set(framework_LIBRARIES ${framework_LIBRARIES} X11)
     endif()
 
@@ -441,6 +459,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp

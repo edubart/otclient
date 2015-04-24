@@ -31,7 +31,7 @@
 
 ConsoleApplication g_app;
 
-void ConsoleApplication::run()
+void ConsoleApplication::runAppMainLoop()
 {
     m_running = true;
 

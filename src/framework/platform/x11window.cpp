@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32
+#if !defined WIN32 && !defined ANDROID
 
 #include "x11window.h"
 #include <framework/core/resourcemanager.h>
@@ -590,15 +590,15 @@ void X11Window::poll()
         XNextEvent(m_display, &event);
 
         // check for repeated key releases
-        bool repatedKeyRelease = false;
+        bool repeatedKeyRelease = false;
         if(event.type == KeyRelease && XPending(m_display)) {
             XPeekEvent(m_display, &peekEvent);
             if((peekEvent.type == KeyPress) && (peekEvent.xkey.keycode == event.xkey.keycode) && ((peekEvent.xkey.time-event.xkey.time) < 2))
-                repatedKeyRelease = true;
+                repeatedKeyRelease = true;
         }
 
         // process keydown and keyrelease events first
-        if(event.type == KeyPress || (event.type == KeyRelease && !repatedKeyRelease)) {
+        if(event.type == KeyPress || (event.type == KeyRelease && !repeatedKeyRelease)) {
             // remove caps lock and shift maks
             XKeyEvent xkey = event.xkey;
             xkey.state &= ~(ShiftMask | LockMask);
@@ -623,7 +623,7 @@ void X11Window::poll()
             continue;
 
         // discard repated key releases
-        if(repatedKeyRelease)
+        if(repeatedKeyRelease)
             continue;
 
         switch(event.type) {

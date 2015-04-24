@@ -48,7 +48,8 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
     std::string possiblePaths[] = { g_platform.getCurrentDir(),
                                     g_resources.getBaseDir(),
                                     g_resources.getBaseDir() + "../",
-                                    g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/" };
+                                    g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/",
+                                    "/sdcard/OTClient/" };
 
     bool found = false;
     for(const std::string& dir : possiblePaths) {
@@ -71,12 +72,20 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 {
     std::string userDir = getUserDir();
     std::string dirName;
+
 #ifndef WIN32
     dirName = stdext::format(".%s", appWriteDirName);
 #else
     dirName = appWriteDirName;
 #endif
-    std::string writeDir = userDir + dirName;
+
+    std::string writeDir;
+
+#ifdef ANDROID
+    writeDir = getWorkDir();
+#else
+    writeDir = userDir + dirName;
+#endif
 
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         if(!PHYSFS_setWriteDir(userDir.c_str()) || !PHYSFS_mkdir(dirName.c_str())) {

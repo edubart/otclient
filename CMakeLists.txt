@@ -19,10 +19,6 @@ endif()
 
 option(USE_PCH "Use precompiled header (speed up compile)" OFF)
 
-set(executable_SOURCES
-    src/main.cpp
-)
-
 # add executable icon for win32 platforms
 if(WIN32)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o
@@ -35,8 +31,22 @@ endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
-# add client executable
-add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+set(executable_SOURCES
+    src/main.cpp
+)
+
+if(ANDROID)
+    set( sdl_main
+        android/SDL_android_main.c
+        ${executable_SOURCES} )
+
+    # add shared library for android
+    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${sdl_main})
+else()
+    # add client executable
+    add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+endif()
+
 target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
 if(USE_PCH)
