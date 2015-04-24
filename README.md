@@ -17,6 +17,9 @@ Tasks that need to do:
 - [ ] Handle input events correctle
 - [ ] Adapt the UI reusing the existing lua code
 
+Current compiling tutorials:
+* [Compiling for Android](https://github.com/edubart/otclient/wiki/Compiling-for-Android)
+
 ### Where do I download?
 
 The latest commits compiled for Windows can be found here.
@@ -51,7 +54,6 @@ In short, if you need to compile OTClient, follow these tutorials:
 * [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
 * [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
 * [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
-
 
 
 ### Need help?
