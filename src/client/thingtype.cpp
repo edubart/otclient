@@ -268,13 +268,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
             m_id, m_category, count, attr));
 
-    uint8 groupCount = 1;
-    if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057)
-        groupCount = fin->getU8();
+    bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
+    uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     for(int i = 0; i < groupCount; ++i) {
         uint8 frameGroup = FrameGroupDefault;
-        if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057) {
+        if(hasFrameGroups) {
             frameGroup = fin->getU8();
         }
 
@@ -284,17 +283,13 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
             m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
-        }
-        else
+        } else
             m_exactSize = 32;
 
         m_layers = fin->getU8();
         m_numPatternX = fin->getU8();
         m_numPatternY = fin->getU8();
-        if(g_game.getClientVersion() >= 755)
-            m_numPatternZ = fin->getU8();
-        else
-            m_numPatternZ = 1;
+        m_numPatternZ = (g_game.getClientVersion() >= 755) ? fin->getU8() : 1;
         m_animationPhases = fin->getU8();
 
         if(m_animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
