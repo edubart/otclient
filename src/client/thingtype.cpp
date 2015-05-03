@@ -272,10 +272,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     for(int i = 0; i < groupCount; ++i) {
-        uint8 frameGroup = FrameGroupDefault;
-        if(hasFrameGroups) {
-            frameGroup = fin->getU8();
-        }
+        uint8 frameGroupType = hasFrameGroups ? fin->getU8() : FrameGroupDefault;
 
         uint8 width = fin->getU8();
         uint8 height = fin->getU8();
