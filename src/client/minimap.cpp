@@ -333,6 +333,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
 
         uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
         std::vector<uchar> compressBuffer(compressBound(blockSize));
+        std::vector<uchar> decompressBuffer(blockSize);
 
         while(true) {
             Position pos;
@@ -344,13 +345,19 @@ bool Minimap::loadOtmm(const std::string& fileName)
             if(!pos.isValid())
                 break;
 
+            // corrupted file
+            if(pos.z >= Otc::MAX_Z+1)
+                break;
+
             MinimapBlock& block = getBlock(pos);
             ulong len = fin->getU16();
             ulong destLen = blockSize;
             fin->read(compressBuffer.data(), len);
-            int ret = uncompress((uchar*)&block.getTiles(), &destLen, compressBuffer.data(), len);
-            assert(ret == Z_OK);
-            assert(destLen == blockSize);
+            int ret = uncompress(decompressBuffer.data(), &destLen, compressBuffer.data(), len);
+            if(ret != Z_OK || destLen != blockSize)
+                break;
+
+            memcpy((uchar*)&block.getTiles(), decompressBuffer.data(), blockSize);
             block.mustUpdate();
             block.justSaw();
         }
