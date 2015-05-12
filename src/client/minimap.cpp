@@ -341,12 +341,8 @@ bool Minimap::loadOtmm(const std::string& fileName)
             pos.y = fin->getU16();
             pos.z = fin->getU8();
 
-            // end of file
-            if(!pos.isValid())
-                break;
-
-            // corrupted file
-            if(pos.z >= Otc::MAX_Z+1)
+            // end of file or file is corrupted
+            if(!pos.isValid() || pos.z >= Otc::MAX_Z+1)
                 break;
 
             MinimapBlock& block = getBlock(pos);

@@ -202,27 +202,27 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
 
     if(g_graphics.canUseFBO()) {
         const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
-        outfitBuffer->resize(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
+        outfitBuffer->resize(Size(exactSize, exactSize));
         outfitBuffer->bind();
         g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);
-        internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
+        internalDrawOutfit(Point(exactSize - Otc::TILE_PIXELS, exactSize - Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
         outfitBuffer->release();
 
         Rect srcRect;
         if(resize)
             srcRect.resize(exactSize, exactSize);
         else
-            srcRect.resize(2*Otc::TILE_PIXELS*0.75f, 2*Otc::TILE_PIXELS*0.75f);
-        srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS - 1, 2*Otc::TILE_PIXELS - 1));
+            srcRect.resize(exactSize*0.75f, exactSize*0.75f);
+        srcRect.moveBottomRight(Point(exactSize - 1, exactSize - 1));
         outfitBuffer->draw(destRect, srcRect);
     } else {
         float scaleFactor;
         if(resize)
             scaleFactor = destRect.width() / (float)exactSize;
         else
-            scaleFactor = destRect.width() / (float)(2*Otc::TILE_PIXELS*0.75f);
-        Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) - getDisplacement())*scaleFactor;
+            scaleFactor = destRect.width() / (float)(exactSize*0.75f);
+        Point dest = destRect.bottomRight() - (Point(exactSize - Otc::TILE_PIXELS, exactSize - Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
         internalDrawOutfit(dest, scaleFactor, false, true, Otc::South);
     }
 }
