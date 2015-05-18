@@ -10,6 +10,7 @@ Module
     dofile 'string'
     dofile 'table'
     dofile 'bitwise'
+    dofile 'struct'
 
     dofile 'const'
     dofile 'util'
