@@ -5,13 +5,13 @@ function Struct.pack(format, ...)
   local vars = {...}
   local endianness = true
 
-  for i = 1, string.len(format) do
-    local opt = string.sub(format, i, i)
+  for i = 1, format:len() do
+    local opt = format:sub(i, i)
 
-    if opt == '<' or opt == '>' then
-      endianness = opt == '<' and true or false
-    elseif opt == 'b' or opt == 'B' or opt == 'h' or opt == 'H' or opt == 'i' or opt == 'I' or opt == 'l' or opt == 'L' then
-      local n = ((opt == 'h' or opt == 'H') and 2) or ((opt == 'i' or opt == 'I') and 4) or ((opt == 'l' or opt == 'L') and 8) or 1
+    if opt == '>' then
+      endianness = false
+    elseif opt:find('[bBhHiIlL]') then
+      local n = opt:find('[hH]') and 2 or opt:find('[iI]') and 4 or opt:find('[lL]') and 8 or 1
       local val = tonumber(table.remove(vars, 1))
 
       if val < 0 then
@@ -29,7 +29,7 @@ function Struct.pack(format, ...)
       else
         table.insert(stream, table.concat(bytes))
       end
-    elseif opt == 'f' or opt == 'd' then
+    elseif opt:find('[fd]') then
       local val = tonumber(table.remove(vars, 1))
       local sign = 0
 
@@ -74,6 +74,18 @@ function Struct.pack(format, ...)
     elseif opt == 's' then
       table.insert(stream, tostring(table.remove(vars, 1)))
       table.insert(stream, string.char(0))
+    elseif opt == 'c' then
+      local n = format:sub(i + 1):match('%d+')
+      local length = tonumber(n)
+
+      if length > 0 then
+        local str = tostring(table.remove(vars, 1))
+        if length - str:len() > 0 then
+          str = str .. string.rep(' ', length - str:len())
+        end
+        table.insert(stream, str:sub(1, length))
+      end
+      i = i + n:len()
     end
   end
 
@@ -85,18 +97,18 @@ function Struct.unpack(format, stream)
   local iterator = 1
   local endianness = true
 
-  for i = 1, string.len(format) do
-    local opt = string.sub(format, i, i)
+  for i = 1, format:len() do
+    local opt = format:sub(i, i)
 
-    if opt == '<' or opt == '>' then
-      endianness = opt == '<' and true or false
-    elseif opt == 'b' or opt == 'B' or opt == 'h' or opt == 'H' or opt == 'i' or opt == 'I' or opt == 'l' or opt == 'L' then
-      local n = ((opt == 'h' or opt == 'H') and 2) or ((opt == 'i' or opt == 'I') and 4) or ((opt == 'l' or opt == 'L') and 8) or 1
-      local signed = opt == 'b' or opt == 'h' or opt == 'i'
+    if opt == '>' then
+      endianness = false
+    elseif opt:find('[bBhHiIlL]') then
+      local n = opt:find('[hH]') and 2 or opt:find('[iI]') and 4 or opt:find('[lL]') and 8 or 1
+      local signed = opt:lower() == opt
 
       local val = 0
       for j = 1, n do
-        local byte = string.byte(string.sub(stream, iterator, iterator))
+        local byte = string.byte(stream:sub(iterator, iterator))
         if endianness then
           val = val + byte * (2 ^ ((j - 1) * 8))
         else
@@ -110,9 +122,9 @@ function Struct.unpack(format, stream)
       end
 
       table.insert(vars, val)
-    elseif opt == 'f' or opt == 'd' then
+    elseif opt:find('[fd]') then
       local n = (opt == 'd') and 8 or 4
-      local x = string.sub(stream, iterator, iterator + n - 1)
+      local x = stream:sub(iterator, iterator + n - 1)
       iterator = iterator + n
 
       if not endianness then
@@ -138,17 +150,22 @@ function Struct.unpack(format, stream)
       end
     elseif opt == 's' then
       local bytes = {}
-      for j = iterator, string.len(stream) do
-        if string.sub(stream, j, j) == string.char(0) then
+      for j = iterator, stream:len() do
+        if stream:sub(j, j) == string.char(0) then
           break
         end
 
-        table.insert(bytes, string.sub(stream, j, j))
+        table.insert(bytes, stream:sub(j, j))
       end
 
       local str = table.concat(bytes)
-      iterator = iterator + string.len(str) + 1
+      iterator = iterator + str:len() + 1
       table.insert(vars, str)
+    elseif opt == 'c' then
+      local n = format:sub(i + 1):match('%d+')
+      table.insert(vars, stream:sub(iterator, iterator + tonumber(n)))
+      iterator = iterator + tonumber(n)
+      i = i + n:len()
     end
   end
 
