@@ -138,7 +138,7 @@ function Struct.unpack(format, stream)
       end
     elseif opt == 's' then
       local bytes = {}
-      for j = 1 + iterator, string.len(stream) do
+      for j = iterator, string.len(stream) do
         if string.sub(stream, j, j) == string.char(0) then
           break
         end
