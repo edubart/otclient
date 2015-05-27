@@ -170,7 +170,7 @@ set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
 set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
 set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -mmmx -msse -msse2")
+set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -march=native")
 
 if(USE_LTO)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwhole-program -flto")
