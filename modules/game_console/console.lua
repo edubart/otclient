@@ -148,17 +148,30 @@ function init()
 end
 
 function getSelection(widget)
-  if not widget.selectionChildFirst or not widget.selectionChildLast then
+  if not widget.selection then
     return widget:getSelection()
   end
 
   local text = {}
-  for selectionChild = widget.selectionChildFirst, widget.selectionChildLast do
+  for selectionChild = widget.selection.first, widget.selection.last do
     local label = widget:getParent():getChildByIndex(selectionChild)
     table.insert(text, label:getSelection())
   end
 
   return table.concat(text, '\r\n')
+end
+
+function invalidateSelection(widget)
+  local parent = widget:getParent()
+  if widget.selection then
+    for selectionChild = widget.selection.first, widget.selection.last do
+      local label = parent:getChildByIndex(selectionChild)
+      if label ~= widget then
+        label:clearSelection()
+      end
+    end
+    widget.selection = nil
+  end
 end
 
 function toggleChat()
@@ -590,21 +603,6 @@ function addTabText(text, speaktype, tab, creatureName)
     end
   end
 
-  -- remove selection
-  local removeSelectedText = function(self)
-    local parent = self:getParent()
-    if self.selectionChildFirst and self.selectionChildLast then
-        for selectionChild = self.selectionChildFirst, self.selectionChildLast do
-          local label = parent:getChildByIndex(selectionChild)
-          if label ~= self then
-            label:clearSelection()
-          end
-        end
-        self.selectionChildFirst = nil
-        self.selectionChildLast = nil
-    end
-  end
-
   label.name = creatureName
   label.onMouseRelease = function(self, mousePos, mouseButton)
     -- TODO: regain lost selection
@@ -612,10 +610,10 @@ function addTabText(text, speaktype, tab, creatureName)
   end
   label.onFocusChange = function(self, focused, reason)
     -- TODO: we are losing focus on context menu and therefore the selection
-    if not focused then removeSelectedText(self) end
+    if not focused then invalidateSelection(self) end
   end
   label.onMousePress = function(self, mousePos, button)
-    if button == MouseLeftButton then removeSelectedText(self) end
+    if button == MouseLeftButton then invalidateSelection(self) end
   end
   label.onMouseMove = function(self, mousePos, mouseMoved)
     if self:isPressed() then
@@ -625,16 +623,13 @@ function addTabText(text, speaktype, tab, creatureName)
       local childIndex = parent:getChildIndex(child)
 
       -- remove old selection
-      removeSelectedText(self)
+      invalidateSelection(self)
 
       -- choose new selection
       if child and child ~= self then
-        self.selectionChildFirst = math.min(selfIndex, childIndex)
-        self.selectionChildLast = math.max(selfIndex, childIndex)
-
-        for selectionChild = self.selectionChildFirst + 1, self.selectionChildLast - 1 do
-          local label = parent:getChildByIndex(selectionChild)
-          label:selectAll()
+        self.selection = {first = math.min(selfIndex, childIndex), last = math.max(selfIndex, childIndex)}
+        for selectionChild = self.selection.first + 1, self.selection.last - 1 do
+          parent:getChildByIndex(selectionChild):selectAll()
         end
 
         local textPos = child:getTextPos(mousePos)
@@ -650,7 +645,9 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
-    consoleBuffer:getFirstChild():destroy()
+    local child = consoleBuffer:getFirstChild()
+    if child.selection then invalidateSelection(child) end
+    child:destroy()
   end
 end
 
@@ -712,8 +709,9 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label, ta
 
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
     end
-    if label:hasSelection() then
-      menu:addOption(tr('Copy'), function() g_window.setClipboardText(getSelection(label)) end, '(Ctrl+C)')
+    local selectedText = getSelection(label)
+    if #selectedText > 0 then
+      menu:addOption(tr('Copy'), function() g_window.setClipboardText(selectedText) end, '(Ctrl+C)')
     end
     menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
     menu:addOption(tr('Select all'), function() label:selectAll() end)
