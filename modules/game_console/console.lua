@@ -117,15 +117,9 @@ function init()
     if not consoleBuffer then return false end
 
     local consoleLabel = consoleBuffer:getFocusedChild()
-    if not consoleLabel.selectionChildFirst or not consoleLabel.selectionChildLast then return false end
+    if not consoleLabel then return false end
 
-    local text = {}
-    for selectionChild = consoleLabel.selectionChildFirst, consoleLabel.selectionChildLast do
-      local label = consoleLabel:getParent():getChildByIndex(selectionChild)
-      table.insert(text, label:getSelection())
-    end
-
-    g_window.setClipboardText(table.concat(text, '\r\n'))
+    g_window.setClipboardText(getSelection(consoleLabel))
     return true
   end
 
@@ -151,6 +145,20 @@ function init()
   if g_game.isOnline() then
     online()
   end
+end
+
+function getSelection(widget)
+  if not widget.selectionChildFirst or not widget.selectionChildLast then
+    return widget:getSelection()
+  end
+
+  local text = {}
+  for selectionChild = widget.selectionChildFirst, widget.selectionChildLast do
+    local label = widget:getParent():getChildByIndex(selectionChild)
+    table.insert(text, label:getSelection())
+  end
+
+  return table.concat(text, '\r\n')
 end
 
 function toggleChat()
@@ -592,6 +600,8 @@ function addTabText(text, speaktype, tab, creatureName)
             label:clearSelection()
           end
         end
+        self.selectionChildFirst = nil
+        self.selectionChildLast = nil
     end
   end
 
@@ -703,7 +713,7 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label, ta
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
     end
     if label:hasSelection() then
-      menu:addOption(tr('Copy'), function() g_window.setClipboardText(label:getSelection()) end, '(Ctrl+C)')
+      menu:addOption(tr('Copy'), function() g_window.setClipboardText(getSelection(label)) end, '(Ctrl+C)')
     end
     menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
     menu:addOption(tr('Select all'), function() label:selectAll() end)
