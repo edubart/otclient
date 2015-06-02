@@ -796,7 +796,6 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
         }
         return true;
     }
-
     return false;
 }
 
@@ -807,6 +806,9 @@ bool UITextEdit::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 
 bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
+    if(UIWidget::onMouseMove(mousePos, mouseMoved))
+        return true;
+
     if(m_selectable && isPressed()) {
         int pos = getTextPos(mousePos);
         if(pos >= 0) {
@@ -815,7 +817,7 @@ bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
         }
         return true;
     }
-    return UIWidget::onMouseMove(mousePos, mouseMoved);
+    return false;
 }
 
 bool UITextEdit::onDoubleClick(const Point& mousePos)

@@ -117,9 +117,15 @@ function init()
     if not consoleBuffer then return false end
 
     local consoleLabel = consoleBuffer:getFocusedChild()
-    if not consoleLabel or not consoleLabel:hasSelection() then return false end
+    if not consoleLabel.selectionChildFirst or not consoleLabel.selectionChildLast then return false end
 
-    g_window.setClipboardText(consoleLabel:getSelection())
+    local text = {}
+    for selectionChild = consoleLabel.selectionChildFirst, consoleLabel.selectionChildLast do
+      local label = consoleLabel:getParent():getChildByIndex(selectionChild)
+      table.insert(text, label:getSelection())
+    end
+
+    g_window.setClipboardText(table.concat(text, '\r\n'))
     return true
   end
 
@@ -576,9 +582,61 @@ function addTabText(text, speaktype, tab, creatureName)
     end
   end
 
+  -- remove selection
+  local removeSelectedText = function(self)
+    local parent = self:getParent()
+    if self.selectionChildFirst and self.selectionChildLast then
+        for selectionChild = self.selectionChildFirst, self.selectionChildLast do
+          local label = parent:getChildByIndex(selectionChild)
+          if label ~= self then
+            label:clearSelection()
+          end
+        end
+    end
+  end
+
   label.name = creatureName
-  label.onMouseRelease = function (self, mousePos, mouseButton)
+  label.onMouseRelease = function(self, mousePos, mouseButton)
+    -- TODO: regain lost selection
     processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
+  end
+  label.onFocusChange = function(self, focused, reason)
+    -- TODO: we are losing focus on context menu and therefore the selection
+    if not focused then removeSelectedText(self) end
+  end
+  label.onMousePress = function(self, mousePos, button)
+    if button == MouseLeftButton then removeSelectedText(self) end
+  end
+  label.onMouseMove = function(self, mousePos, mouseMoved)
+    if self:isPressed() then
+      local parent = self:getParent()
+      local selfIndex = parent:getChildIndex(self)
+      local child = parent:getChildByPos(mousePos)
+      local childIndex = parent:getChildIndex(child)
+
+      -- remove old selection
+      removeSelectedText(self)
+
+      -- choose new selection
+      if child and child ~= self then
+        self.selectionChildFirst = math.min(selfIndex, childIndex)
+        self.selectionChildLast = math.max(selfIndex, childIndex)
+
+        for selectionChild = self.selectionChildFirst + 1, self.selectionChildLast - 1 do
+          local label = parent:getChildByIndex(selectionChild)
+          label:selectAll()
+        end
+
+        local textPos = child:getTextPos(mousePos)
+        if childIndex > selfIndex then
+          child:setSelection(0, textPos)
+        else
+          child:setSelection(string.len(child:getText()), textPos)
+        end
+      elseif not child then
+        -- TODO: out of bonding rect selection
+      end
+    end
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
