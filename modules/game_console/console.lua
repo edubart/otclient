@@ -113,7 +113,10 @@ function init()
     local tab = consoleTabBar:getCurrentTab()
     if not tab then return false end
 
-    g_window.setClipboardText(selectioText)
+    local selection = tab.tabPanel:getChildById('consoleBuffer').selectionText
+    if not selection then return false end
+
+    g_window.setClipboardText(selection)
     return true
   end
 
