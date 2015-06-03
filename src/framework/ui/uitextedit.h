@@ -108,6 +108,7 @@ protected:
 private:
     void disableUpdates() { m_updatesEnabled = false; }
     void enableUpdates() { m_updatesEnabled = true; }
+    void recacheGlyphs() { m_glyphsMustRecache = true; }
 
     Rect m_drawArea;
     int m_cursorPos;
@@ -137,6 +138,10 @@ private:
 
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
+
+    CoordsBuffer m_glyphsTextCoordsBuffer;
+    CoordsBuffer m_glyphsSelectCoordsBuffer;
+    bool m_glyphsMustRecache;
 };
 
 #endif

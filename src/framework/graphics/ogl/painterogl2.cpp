@@ -120,6 +120,13 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         PainterShaderProgram::enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }
 
+void PainterOGL2::drawFillCoords(CoordsBuffer& coordsBuffer)
+{
+    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawSolidColorProgram.get());
+    setTexture(nullptr);
+    drawCoords(coordsBuffer);
+}
+
 void PainterOGL2::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
     if(texture && texture->isEmpty())

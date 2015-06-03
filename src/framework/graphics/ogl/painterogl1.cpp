@@ -135,6 +135,12 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 #endif
 }
 
+void PainterOGL1::drawFillCoords(CoordsBuffer& coordsBuffer)
+{
+    setTexture(nullptr);
+    drawCoords(coordsBuffer);
+}
+
 void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
 {
     if(texture->isEmpty())
