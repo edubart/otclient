@@ -679,8 +679,28 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
 
   if consoleTabBar:getCurrentTab() == tab then
     menu:addOption(tr('Clear Messages'), function() clearChannel(consoleTabBar) end)
+    menu:addOption(tr('Save Messages'), function()
+      local panel = consoleTabBar:getTabPanel(tab)
+      local consoleBuffer = panel:getChildById('consoleBuffer')
+      local lines = {}
+      for _,label in pairs(consoleBuffer:getChildren()) do
+        table.insert(lines, label:getText())
+      end
+
+      local filename = channelName .. '.txt'
+      local filepath = '/' .. filename
+
+      -- extra information at the beginning
+      table.insert(lines, 1, os.date('\nChannel saved at %a %b %d %H:%M:%S %Y'))
+
+      if g_resources.fileExists(filepath) then
+        table.insert(lines, 1, signalcall(g_resources.readFileContents, filepath) or '')
+      end
+
+      g_resources.writeFileContents(filepath, table.concat(lines, '\n'))
+      modules.game_textmessage.displayStatusMessage(tr('Channel appended to %s', filename))
+    end)
   end
-  --menu:addOption(tr('Save Messages'), function() --[[TODO]] end)
 
   menu:display(mousePos)
 end
