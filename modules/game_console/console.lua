@@ -606,15 +606,40 @@ function addTabText(text, speaktype, tab, creatureName)
   end
   label.onDragMove = function(self, mousePos, mouseMoved)
     local parent = self:getParent()
+    local parentRect = parent:getPaddingRect()
     local selfIndex = parent:getChildIndex(self)
     local child = parent:getChildByPos(mousePos)
     
-    -- find out bounds children
+    -- find bouding children
     if not child then
-      if mousePos.y >= parent:getLastChild():getY() then
-        child = parent:getLastChild()
-      elseif mousePos.y <= parent:getFirstChild():getY() then
-        child = parent:getFirstChild()
+      if mousePos.y < self:getY() then
+        for index = selfIndex - 1, 1, -1 do
+          local label = parent:getChildByIndex(index)
+          if label:getY() + label:getHeight() > parentRect.y then
+            if (mousePos.y >= label:getY() and mousePos.y <= label:getY() + label:getHeight()) or index == 1 then
+              child = label
+              break
+            end
+          else
+            child = parent:getChildByIndex(index + 1)
+            break
+          end
+        end
+      elseif mousePos.y > self:getY() + self:getHeight() then
+        for index = selfIndex + 1, parent:getChildCount(), 1 do
+          local label = parent:getChildByIndex(index)
+          if label:getY() <= parentRect.y + parentRect.height then
+            if (mousePos.y >= label:getY() and mousePos.y <= label:getY() + label:getHeight()) or index == parent:getChildCount() then
+              child = label
+              break
+            end
+          else
+            child = parent:getChildByIndex(index - 1)
+            break
+          end
+        end
+      else
+        child = self
       end
     end
 
