@@ -659,7 +659,7 @@ void UITextEdit::onFocusChange(bool focused, Fw::FocusReason reason)
         else
             blinkCursor();
         update(true);
-    } else
+    } else if(m_selectable)
         clearSelection();
     UIWidget::onFocusChange(focused, reason);
 }

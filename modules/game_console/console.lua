@@ -113,13 +113,7 @@ function init()
     local tab = consoleTabBar:getCurrentTab()
     if not tab then return false end
 
-    local consoleBuffer = tab.tabPanel:getChildById('consoleBuffer')
-    if not consoleBuffer then return false end
-
-    local consoleLabel = consoleBuffer:getFocusedChild()
-    if not consoleLabel then return false end
-
-    g_window.setClipboardText(getSelection(consoleLabel))
+    g_window.setClipboardText(selectioText)
     return true
   end
 
@@ -147,31 +141,12 @@ function init()
   end
 end
 
-function getSelection(widget)
-  if not widget.selection then
-    return widget:getSelection()
+function clearSelection(consoleBuffer)
+  for _,label in pairs(consoleBuffer:getChildren()) do
+    label:clearSelection()
   end
-
-  local text = {}
-  for selectionChild = widget.selection.first, widget.selection.last do
-    local label = widget:getParent():getChildByIndex(selectionChild)
-    table.insert(text, label:getSelection())
-  end
-
-  return table.concat(text, '\r\n')
-end
-
-function invalidateSelection(widget)
-  local parent = widget:getParent()
-  if widget.selection then
-    for selectionChild = widget.selection.first, widget.selection.last do
-      local label = parent:getChildByIndex(selectionChild)
-      if label ~= widget then
-        label:clearSelection()
-      end
-    end
-    widget.selection = nil
-  end
+  consoleBuffer.selectionText = nil
+  consoleBuffer.selection = nil
 end
 
 function toggleChat()
@@ -604,49 +579,76 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 
   label.name = creatureName
+  consoleBuffer.onMouseRelease = function(self, mousePos, mouseButton)
+    processMessageMenu(mousePos, mouseButton, nil, nil, nil, tab)
+  end
   label.onMouseRelease = function(self, mousePos, mouseButton)
-    -- TODO: regain lost selection
     processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
   end
-  label.onFocusChange = function(self, focused, reason)
-    -- TODO: we are losing focus on context menu and therefore the selection
-    if not focused then invalidateSelection(self) end
-  end
   label.onMousePress = function(self, mousePos, button)
-    if button == MouseLeftButton then invalidateSelection(self) end
+    if button == MouseLeftButton then clearSelection(consoleBuffer) end
   end
-  label.onMouseMove = function(self, mousePos, mouseMoved)
-    if self:isPressed() then
-      local parent = self:getParent()
-      local selfIndex = parent:getChildIndex(self)
-      local child = parent:getChildByPos(mousePos)
-      local childIndex = parent:getChildIndex(child)
-
-      -- remove old selection
-      invalidateSelection(self)
-
-      -- choose new selection
-      if child and child ~= self then
-        self.selection = {first = math.min(selfIndex, childIndex), last = math.max(selfIndex, childIndex)}
-        for selectionChild = self.selection.first + 1, self.selection.last - 1 do
-          parent:getChildByIndex(selectionChild):selectAll()
-        end
-
-        local textPos = child:getTextPos(mousePos)
-        if childIndex > selfIndex then
-          child:setSelection(0, textPos)
-        else
-          child:setSelection(string.len(child:getText()), textPos)
-        end
-      elseif not child then
-        -- TODO: out of bonding rect selection
+  label.onDragEnter = function(self, mousePos)
+    clearSelection(consoleBuffer)
+    return true
+  end
+  label.onDragLeave = function(self, droppedWidget, mousePos)
+    local text = {}
+    for selectionChild = consoleBuffer.selection.first, consoleBuffer.selection.last do
+      local label = self:getParent():getChildByIndex(selectionChild)
+      table.insert(text, label:getSelection())
+    end
+    consoleBuffer.selectionText = table.concat(text, '\r\n')
+    return true
+  end
+  label.onDragMove = function(self, mousePos, mouseMoved)
+    local parent = self:getParent()
+    local selfIndex = parent:getChildIndex(self)
+    local child = parent:getChildByPos(mousePos)
+    
+    -- find out bounds children
+    if not child then
+      if mousePos.y >= parent:getLastChild():getY() then
+        child = parent:getLastChild()
+      elseif mousePos.y <= parent:getFirstChild():getY() then
+        child = parent:getFirstChild()
       end
     end
+
+    if not child then return false end
+
+    local childIndex = parent:getChildIndex(child)
+
+    -- remove old selection
+    clearSelection(consoleBuffer)
+
+    -- update self selection
+    local textBegin = self:getTextPos(self:getLastClickPosition())
+    local textPos = self:getTextPos(mousePos)
+    self:setSelection(textBegin, textPos)
+
+    consoleBuffer.selection = { first = math.min(selfIndex, childIndex), last = math.max(selfIndex, childIndex) }
+
+    -- update siblings selection
+    if child ~= self then
+      for selectionChild = consoleBuffer.selection.first + 1, consoleBuffer.selection.last - 1 do
+        parent:getChildByIndex(selectionChild):selectAll()
+      end
+
+      local textPos = child:getTextPos(mousePos)
+      if childIndex > selfIndex then
+        child:setSelection(0, textPos)
+      else
+        child:setSelection(string.len(child:getText()), textPos)
+      end
+    end
+    
+    return true
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
     local child = consoleBuffer:getFirstChild()
-    if child.selection then invalidateSelection(child) end
+    clearSelection(consoleBuffer)
     child:destroy()
   end
 end
@@ -709,13 +711,15 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label, ta
 
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
     end
-    local selectedText = getSelection(label)
-    if #selectedText > 0 then
-      menu:addOption(tr('Copy'), function() g_window.setClipboardText(selectedText) end, '(Ctrl+C)')
+    local selection = tab.tabPanel:getChildById('consoleBuffer').selectionText
+    if selection and #selection > 0 then
+      menu:addOption(tr('Copy'), function() g_window.setClipboardText(selection) end, '(Ctrl+C)')
     end
-    menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
-    menu:addOption(tr('Select all'), function() label:selectAll() end)
-    if tab.violations then
+    if text then
+      menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
+    end
+    --menu:addOption(tr('Select all'), function() label:selectAll() end)
+    if tab.violations and creatureName then
       menu:addSeparator()
       menu:addOption(tr('Process') .. ' ' .. creatureName, function() processViolation(creatureName, text) end)
       menu:addOption(tr('Remove') .. ' ' .. creatureName, function() g_game.closeRuleViolation(creatureName) end)
