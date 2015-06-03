@@ -694,7 +694,7 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
       table.insert(lines, 1, os.date('\nChannel saved at %a %b %d %H:%M:%S %Y'))
 
       if g_resources.fileExists(filepath) then
-        table.insert(lines, 1, signalcall(g_resources.readFileContents, filepath) or '')
+        table.insert(lines, 1, protectedcall(g_resources.readFileContents, filepath) or '')
       end
 
       g_resources.writeFileContents(filepath, table.concat(lines, '\n'))
