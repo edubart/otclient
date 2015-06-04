@@ -12,6 +12,7 @@ ConsoleLabel < UITextEdit
   editable: false
   draggable: true
   selectable: false
+  focusable: false
 
 ConsolePhantomLabel < UILabel
   font: verdana-11px-antialised
