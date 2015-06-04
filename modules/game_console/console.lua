@@ -152,6 +152,19 @@ function clearSelection(consoleBuffer)
   consoleBuffer.selection = nil
 end
 
+function selectAll(consoleBuffer)
+  clearSelection(consoleBuffer)
+  if consoleBuffer:getChildCount() > 0 then
+    local text = {}
+    for _,label in pairs(consoleBuffer:getChildren()) do
+      label:selectAll()
+      table.insert(text, label:getSelection())
+    end
+    consoleBuffer.selectionText = table.concat(text, '\n')
+    consoleBuffer.selection = { first = consoleBuffer:getChildIndex(consoleBuffer:getFirstChild()), last = consoleBuffer:getChildIndex(consoleBuffer:getLastChild()) }
+  end
+end
+
 function toggleChat()
   if consoleToggleChat:isChecked() then
     disableChat()
@@ -609,8 +622,8 @@ function addTabText(text, speaktype, tab, creatureName)
     local parentRect = parent:getPaddingRect()
     local selfIndex = parent:getChildIndex(self)
     local child = parent:getChildByPos(mousePos)
-    
-    -- find bouding children
+
+    -- find bonding children
     if not child then
       if mousePos.y < self:getY() then
         for index = selfIndex - 1, 1, -1 do
@@ -628,7 +641,7 @@ function addTabText(text, speaktype, tab, creatureName)
       elseif mousePos.y > self:getY() + self:getHeight() then
         for index = selfIndex + 1, parent:getChildCount(), 1 do
           local label = parent:getChildByIndex(index)
-          if label:getY() <= parentRect.y + parentRect.height then
+          if label:getY() < parentRect.y + parentRect.height then
             if (mousePos.y >= label:getY() and mousePos.y <= label:getY() + label:getHeight()) or index == parent:getChildCount() then
               child = label
               break
@@ -766,7 +779,7 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label, ta
     if text then
       menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
     end
-    --menu:addOption(tr('Select all'), function() label:selectAll() end)
+    menu:addOption(tr('Select all'), function() selectAll(tab.tabPanel:getChildById('consoleBuffer')) end)
     if tab.violations and creatureName then
       menu:addSeparator()
       menu:addOption(tr('Process') .. ' ' .. creatureName, function() processViolation(creatureName, text) end)
