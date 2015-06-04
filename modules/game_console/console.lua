@@ -601,7 +601,7 @@ function addTabText(text, speaktype, tab, creatureName)
       local label = self:getParent():getChildByIndex(selectionChild)
       table.insert(text, label:getSelection())
     end
-    consoleBuffer.selectionText = table.concat(text, '\r\n')
+    consoleBuffer.selectionText = table.concat(text, '\n')
     return true
   end
   label.onDragMove = function(self, mousePos, mouseMoved)
