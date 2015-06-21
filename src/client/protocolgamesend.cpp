@@ -583,10 +583,8 @@ void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseMod
     msg->addU8(fightMode);
     msg->addU8(chaseMode);
     msg->addU8(safeFight ? 0x01: 0x00);
-
     if(g_game.getFeature(Otc::GamePVPMode))
         msg->addU8(pvpMode);
-
     send(msg);
 }
 
@@ -595,7 +593,8 @@ void ProtocolGame::sendAttack(uint creatureId, uint seq)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAttack);
     msg->addU32(creatureId);
-    msg->addU32(seq);
+    if(g_game.getFeature(Otc::GameAttackSeq))
+        msg->addU32(seq);
     send(msg);
 }
 
@@ -604,7 +603,8 @@ void ProtocolGame::sendFollow(uint creatureId, uint seq)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientFollow);
     msg->addU32(creatureId);
-    msg->addU32(seq);
+    if(g_game.getFeature(Otc::GameAttackSeq))
+        msg->addU32(seq);
     send(msg);
 }
 
@@ -652,10 +652,8 @@ void ProtocolGame::sendShareExperience(bool active)
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientShareExperience);
     msg->addU8(active ? 0x01 : 0x00);
-
     if(g_game.getClientVersion() < 910)
         msg->addU8(0);
-
     send(msg);
 }
 
