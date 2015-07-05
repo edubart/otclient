@@ -244,12 +244,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 m_attribs.set(attr, market);
                 break;
             }
-            case ThingAttrUsable:
             case ThingAttrElevation: {
                 m_elevation = fin->getU16();
                 m_attribs.set(attr, m_elevation);
                 break;
             }
+            case ThingAttrUsable:
             case ThingAttrGround:
             case ThingAttrWritable:
             case ThingAttrWritableOnce:
