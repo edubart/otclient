@@ -113,13 +113,10 @@ function init()
     local tab = consoleTabBar:getCurrentTab()
     if not tab then return false end
 
-    local consoleBuffer = tab.tabPanel:getChildById('consoleBuffer')
-    if not consoleBuffer then return false end
+    local selection = tab.tabPanel:getChildById('consoleBuffer').selectionText
+    if not selection then return false end
 
-    local consoleLabel = consoleBuffer:getFocusedChild()
-    if not consoleLabel or not consoleLabel:hasSelection() then return false end
-
-    g_window.setClipboardText(consoleLabel:getSelection())
+    g_window.setClipboardText(selection)
     return true
   end
 
@@ -144,6 +141,27 @@ function init()
 
   if g_game.isOnline() then
     online()
+  end
+end
+
+function clearSelection(consoleBuffer)
+  for _,label in pairs(consoleBuffer:getChildren()) do
+    label:clearSelection()
+  end
+  consoleBuffer.selectionText = nil
+  consoleBuffer.selection = nil
+end
+
+function selectAll(consoleBuffer)
+  clearSelection(consoleBuffer)
+  if consoleBuffer:getChildCount() > 0 then
+    local text = {}
+    for _,label in pairs(consoleBuffer:getChildren()) do
+      label:selectAll()
+      table.insert(text, label:getSelection())
+    end
+    consoleBuffer.selectionText = table.concat(text, '\n')
+    consoleBuffer.selection = { first = consoleBuffer:getChildIndex(consoleBuffer:getFirstChild()), last = consoleBuffer:getChildIndex(consoleBuffer:getLastChild()) }
   end
 end
 
@@ -577,12 +595,102 @@ function addTabText(text, speaktype, tab, creatureName)
   end
 
   label.name = creatureName
-  label.onMouseRelease = function (self, mousePos, mouseButton)
+  consoleBuffer.onMouseRelease = function(self, mousePos, mouseButton)
+    processMessageMenu(mousePos, mouseButton, nil, nil, nil, tab)
+  end
+  label.onMouseRelease = function(self, mousePos, mouseButton)
     processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
+  end
+  label.onMousePress = function(self, mousePos, button)
+    if button == MouseLeftButton then clearSelection(consoleBuffer) end
+  end
+  label.onDragEnter = function(self, mousePos)
+    clearSelection(consoleBuffer)
+    return true
+  end
+  label.onDragLeave = function(self, droppedWidget, mousePos)
+    local text = {}
+    for selectionChild = consoleBuffer.selection.first, consoleBuffer.selection.last do
+      local label = self:getParent():getChildByIndex(selectionChild)
+      table.insert(text, label:getSelection())
+    end
+    consoleBuffer.selectionText = table.concat(text, '\n')
+    return true
+  end
+  label.onDragMove = function(self, mousePos, mouseMoved)
+    local parent = self:getParent()
+    local parentRect = parent:getPaddingRect()
+    local selfIndex = parent:getChildIndex(self)
+    local child = parent:getChildByPos(mousePos)
+
+    -- find bonding children
+    if not child then
+      if mousePos.y < self:getY() then
+        for index = selfIndex - 1, 1, -1 do
+          local label = parent:getChildByIndex(index)
+          if label:getY() + label:getHeight() > parentRect.y then
+            if (mousePos.y >= label:getY() and mousePos.y <= label:getY() + label:getHeight()) or index == 1 then
+              child = label
+              break
+            end
+          else
+            child = parent:getChildByIndex(index + 1)
+            break
+          end
+        end
+      elseif mousePos.y > self:getY() + self:getHeight() then
+        for index = selfIndex + 1, parent:getChildCount(), 1 do
+          local label = parent:getChildByIndex(index)
+          if label:getY() < parentRect.y + parentRect.height then
+            if (mousePos.y >= label:getY() and mousePos.y <= label:getY() + label:getHeight()) or index == parent:getChildCount() then
+              child = label
+              break
+            end
+          else
+            child = parent:getChildByIndex(index - 1)
+            break
+          end
+        end
+      else
+        child = self
+      end
+    end
+
+    if not child then return false end
+
+    local childIndex = parent:getChildIndex(child)
+
+    -- remove old selection
+    clearSelection(consoleBuffer)
+
+    -- update self selection
+    local textBegin = self:getTextPos(self:getLastClickPosition())
+    local textPos = self:getTextPos(mousePos)
+    self:setSelection(textBegin, textPos)
+
+    consoleBuffer.selection = { first = math.min(selfIndex, childIndex), last = math.max(selfIndex, childIndex) }
+
+    -- update siblings selection
+    if child ~= self then
+      for selectionChild = consoleBuffer.selection.first + 1, consoleBuffer.selection.last - 1 do
+        parent:getChildByIndex(selectionChild):selectAll()
+      end
+
+      local textPos = child:getTextPos(mousePos)
+      if childIndex > selfIndex then
+        child:setSelection(0, textPos)
+      else
+        child:setSelection(string.len(child:getText()), textPos)
+      end
+    end
+    
+    return true
   end
 
   if consoleBuffer:getChildCount() > MAX_LINES then
-    consoleBuffer:getFirstChild():destroy()
+    local child = consoleBuffer:getFirstChild()
+    clearSelection(consoleBuffer)
+    child:destroy()
   end
 end
 
@@ -609,8 +717,28 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
 
   if consoleTabBar:getCurrentTab() == tab then
     menu:addOption(tr('Clear Messages'), function() clearChannel(consoleTabBar) end)
+    menu:addOption(tr('Save Messages'), function()
+      local panel = consoleTabBar:getTabPanel(tab)
+      local consoleBuffer = panel:getChildById('consoleBuffer')
+      local lines = {}
+      for _,label in pairs(consoleBuffer:getChildren()) do
+        table.insert(lines, label:getText())
+      end
+
+      local filename = channelName .. '.txt'
+      local filepath = '/' .. filename
+
+      -- extra information at the beginning
+      table.insert(lines, 1, os.date('\nChannel saved at %a %b %d %H:%M:%S %Y'))
+
+      if g_resources.fileExists(filepath) then
+        table.insert(lines, 1, protectedcall(g_resources.readFileContents, filepath) or '')
+      end
+
+      g_resources.writeFileContents(filepath, table.concat(lines, '\n'))
+      modules.game_textmessage.displayStatusMessage(tr('Channel appended to %s', filename))
+    end)
   end
-  --menu:addOption(tr('Save Messages'), function() --[[TODO]] end)
 
   menu:display(mousePos)
 end
@@ -644,12 +772,15 @@ function processMessageMenu(mousePos, mouseButton, creatureName, text, label, ta
 
       menu:addOption(tr('Copy name'), function () g_window.setClipboardText(creatureName) end)
     end
-    if label:hasSelection() then
-      menu:addOption(tr('Copy'), function() g_window.setClipboardText(label:getSelection()) end, '(Ctrl+C)')
+    local selection = tab.tabPanel:getChildById('consoleBuffer').selectionText
+    if selection and #selection > 0 then
+      menu:addOption(tr('Copy'), function() g_window.setClipboardText(selection) end, '(Ctrl+C)')
     end
-    menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
-    menu:addOption(tr('Select all'), function() label:selectAll() end)
-    if tab.violations then
+    if text then
+      menu:addOption(tr('Copy message'), function() g_window.setClipboardText(text) end)
+    end
+    menu:addOption(tr('Select all'), function() selectAll(tab.tabPanel:getChildById('consoleBuffer')) end)
+    if tab.violations and creatureName then
       menu:addSeparator()
       menu:addOption(tr('Process') .. ' ' .. creatureName, function() processViolation(creatureName, text) end)
       menu:addOption(tr('Remove') .. ' ' .. creatureName, function() g_game.closeRuleViolation(creatureName) end)

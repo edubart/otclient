@@ -78,7 +78,7 @@ local function onCharacterList(protocol, characters, account, otui)
   if motdEnabled then
     local lastMotdNumber = g_settings.getNumber("motd")
     if G.motdNumber and G.motdNumber ~= lastMotdNumber then
-      g_settings.set("motd", motdNumber)
+      g_settings.set("motd", G.motdNumber)
       motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
       connect(motdWindow, { onOk = function() CharacterList.show() motdWindow = nil end })
       CharacterList.hide()

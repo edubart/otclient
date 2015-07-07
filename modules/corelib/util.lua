@@ -296,6 +296,16 @@ function numbertoboolean(number)
   end
 end
 
+function protectedcall(func, ...)
+  local status, ret = pcall(func, ...)
+  if status then
+    return ret
+  end
+
+  perror(ret)
+  return false
+end
+
 function signalcall(param, ...)
   if type(param) == 'function' then
     local status, ret = pcall(param, ...)

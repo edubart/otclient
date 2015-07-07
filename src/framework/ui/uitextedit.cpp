@@ -49,6 +49,9 @@ UITextEdit::UITextEdit()
     m_updatesEnabled = true;
     m_selectionColor = Color::white;
     m_selectionBackgroundColor = Color::black;
+    m_glyphsTextCoordsBuffer.enableHardwareCaching();
+    m_glyphsSelectCoordsBuffer.enableHardwareCaching();
+    m_glyphsMustRecache = true;
     blinkCursor();
 }
 
@@ -62,38 +65,36 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
     drawImage(m_rect);
     drawIcon(m_rect);
 
-    //TODO: text rendering could be much optimized by using vertex buffer or caching the render into a texture
-
     int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
     if(!texture)
         return;
 
-    if(hasSelection()) {
-        if(m_color != Color::alpha) {
-            g_painter->setColor(m_color);
-            for(int i=0;i<m_selectionStart;++i)
-                g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
-        }
+    bool glyphsMustRecache = m_glyphsMustRecache;
+    if(glyphsMustRecache)
+        m_glyphsMustRecache = false;
 
-        for(int i=m_selectionStart;i<m_selectionEnd;++i) {
-            g_painter->setColor(m_selectionBackgroundColor);
-            g_painter->drawFilledRect(m_glyphsCoords[i]);
-            g_painter->setColor(m_selectionColor);
-            g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+    if(m_color != Color::alpha) {
+        if(glyphsMustRecache) {
+            m_glyphsTextCoordsBuffer.clear();
+            for(int i=0;i<textLength;++i)
+                m_glyphsTextCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
         }
-
-        if(m_color != Color::alpha) {
-            g_painter->setColor(m_color);
-            for(int i=m_selectionEnd;i<textLength;++i)
-                g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
-        }
-    } else if(m_color != Color::alpha) {
         g_painter->setColor(m_color);
-        for(int i=0;i<textLength;++i)
-            g_painter->drawTexturedRect(m_glyphsCoords[i], texture, m_glyphsTexCoords[i]);
+        g_painter->drawTextureCoords(m_glyphsTextCoordsBuffer, texture);
     }
 
+    if(hasSelection()) {
+        if(glyphsMustRecache) {
+            m_glyphsSelectCoordsBuffer.clear();
+            for(int i=m_selectionStart;i<m_selectionEnd;++i)
+                m_glyphsSelectCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
+        }
+        g_painter->setColor(m_selectionBackgroundColor);
+        g_painter->drawFillCoords(m_glyphsSelectCoordsBuffer);
+        g_painter->setColor(m_selectionColor);
+        g_painter->drawTextureCoords(m_glyphsSelectCoordsBuffer, texture);
+    }
 
     // render cursor
     if(isExplicitlyEnabled() && m_cursorVisible && m_cursorInRange && isActive() && m_cursorPos >= 0) {
@@ -135,6 +136,9 @@ void UITextEdit::update(bool focusCursor)
     // prevent glitches
     if(m_rect.isEmpty())
         return;
+
+    // recache coords buffers
+    recacheGlyphs();
 
     // map glyphs positions
     Size textBoxSize;
@@ -360,6 +364,7 @@ void UITextEdit::setSelection(int start, int end)
 
     m_selectionStart = stdext::clamp<int>(start, 0, (int)m_text.length());
     m_selectionEnd = stdext::clamp<int>(end, 0, (int)m_text.length());
+    recacheGlyphs();
 }
 
 void UITextEdit::setTextHidden(bool hidden)
@@ -654,7 +659,7 @@ void UITextEdit::onFocusChange(bool focused, Fw::FocusReason reason)
         else
             blinkCursor();
         update(true);
-    } else
+    } else if(m_selectable)
         clearSelection();
     UIWidget::onFocusChange(focused, reason);
 }
@@ -796,7 +801,6 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
         }
         return true;
     }
-
     return false;
 }
 
@@ -807,6 +811,9 @@ bool UITextEdit::onMouseRelease(const Point& mousePos, Fw::MouseButton button)
 
 bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
+    if(UIWidget::onMouseMove(mousePos, mouseMoved))
+        return true;
+
     if(m_selectable && isPressed()) {
         int pos = getTextPos(mousePos);
         if(pos >= 0) {
@@ -815,7 +822,7 @@ bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
         }
         return true;
     }
-    return UIWidget::onMouseMove(mousePos, mouseMoved);
+    return false;
 }
 
 bool UITextEdit::onDoubleClick(const Point& mousePos)

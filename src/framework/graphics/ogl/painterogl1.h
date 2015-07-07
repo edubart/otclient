@@ -50,6 +50,7 @@ public:
     void refreshState();
 
     void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles);
+    void drawFillCoords(CoordsBuffer& coordsBuffer);
     void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture);
     void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
     void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);

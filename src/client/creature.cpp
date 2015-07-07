@@ -200,29 +200,24 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     else
         exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
 
+    int frameSize;
+    if(!resize)
+        frameSize = std::max<int>(exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f);
+    else if(!(frameSize = exactSize))
+        return;
+
     if(g_graphics.canUseFBO()) {
         const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
-        outfitBuffer->resize(Size(2*Otc::TILE_PIXELS, 2*Otc::TILE_PIXELS));
+        outfitBuffer->resize(Size(frameSize, frameSize));
         outfitBuffer->bind();
         g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);
-        internalDrawOutfit(Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
+        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
         outfitBuffer->release();
-
-        Rect srcRect;
-        if(resize)
-            srcRect.resize(exactSize, exactSize);
-        else
-            srcRect.resize(2*Otc::TILE_PIXELS*0.75f, 2*Otc::TILE_PIXELS*0.75f);
-        srcRect.moveBottomRight(Point(2*Otc::TILE_PIXELS - 1, 2*Otc::TILE_PIXELS - 1));
-        outfitBuffer->draw(destRect, srcRect);
+        outfitBuffer->draw(destRect, Rect(0,0,frameSize,frameSize));
     } else {
-        float scaleFactor;
-        if(resize)
-            scaleFactor = destRect.width() / (float)exactSize;
-        else
-            scaleFactor = destRect.width() / (float)(2*Otc::TILE_PIXELS*0.75f);
-        Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) - getDisplacement())*scaleFactor;
+        float scaleFactor = destRect.width() / (float)frameSize;
+        Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS,Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
         internalDrawOutfit(dest, scaleFactor, false, true, Otc::South);
     }
 }

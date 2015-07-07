@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=mobile_port)](http://travis-ci.org/edubart/otclient)
+[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=mobile_port)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ### What is otclient?
 
 Otclient is an alternative Tibia client for usage with otserv. It aims to be complete and flexible,

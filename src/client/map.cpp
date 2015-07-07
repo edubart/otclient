@@ -394,6 +394,14 @@ void Map::setZoneColor(tileflags_t zone, const Color& color)
         m_zoneColors[zone] = color;
 }
 
+Color Map::getZoneColor(tileflags_t flag)
+{
+    auto it = m_zoneColors.find(flag);
+    if(it == m_zoneColors.end())
+        return Color::alpha;
+    return it->second;
+}
+
 void Map::setForceShowAnimations(bool force)
 {
     if(force) {

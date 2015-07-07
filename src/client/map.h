@@ -196,7 +196,7 @@ public:
     void setZoneOpacity(float opacity) { m_zoneOpacity = opacity; }
 
     float getZoneOpacity() { return m_zoneOpacity; }
-    Color getZoneColor(tileflags_t flag) { return m_zoneColors[flag]; }
+    Color getZoneColor(tileflags_t flag);
     tileflags_t getZoneFlags() { return (tileflags_t)m_zoneFlags; }
     bool showZones() { return m_zoneFlags != 0; }
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
@@ -257,7 +257,7 @@ private:
 
     uint8 m_animationFlags;
     uint32 m_zoneFlags;
-    std::array<Color, TILESTATE_LAST> m_zoneColors;
+    std::map<uint32, Color> m_zoneColors;
     float m_zoneOpacity;
 
     Light m_light;
@@ -272,5 +272,3 @@ private:
 extern Map g_map;
 
 #endif
-
-/* vim: set ts=4 sw=4 et: */
