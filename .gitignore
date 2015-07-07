@@ -9,6 +9,11 @@ Makefile
 /android/project/gen
 /android/project/bin
 /android/project/libs
+/android/project/.settings
+/android/project/.classpath
+/android/project/.project
+/android/project/local.properties
+/android/project/project.properties
 libs*
 .idea*
 /*.h
