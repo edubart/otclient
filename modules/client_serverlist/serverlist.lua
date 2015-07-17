@@ -17,7 +17,7 @@ end
 
 function ServerList.terminate()
   ServerList.destroy()
-
+  
   g_settings.setNode('ServerList', servers)
 
   ServerList = nil
@@ -25,7 +25,11 @@ end
 
 function ServerList.load()
   for k,server in pairs(servers) do
-    ServerList.add(k, server.port, server.protocol, true)
+    if not port or not protocol then -- somehow saved a server incorrectly
+      servers[k] = nil
+    else
+      ServerList.add(k, server.port, server.protocol, true)
+    end
   end
 end
 
