@@ -26,7 +26,12 @@ function init()
     onGameEnd = onGameEnd,
     onLoginAdvice = onLoginAdvice,
   }, true)
-
+  -- Call load AFTER game window has been created and resized to a stable state, otherwise the saved settings can get overridden by false onGeometryChange events
+  connect(g_app, {
+    onRun = load,
+    onExit = save
+  })
+  
   gameRootPanel = g_ui.displayUI('gameinterface')
   gameRootPanel:hide()
   gameRootPanel:lower()
@@ -49,7 +54,6 @@ function init()
   setupViewMode(0)
 
   bindKeys()
-  load()
 
   if g_game.isOnline() then
     show()
@@ -102,7 +106,6 @@ function unbindWalkKey(key)
 end
 
 function terminate()
-  save()
   hide()
 
   hookedMenuOptions = {}
@@ -146,7 +149,7 @@ function show()
   setupViewMode(0)
   updateStretchShrink()
   logoutButton:setTooltip(tr('Logout'))
-
+  
   addEvent(function()
     if not limitedZoom or g_game.isGM() then
       gameMapPanel:setMaxZoomOut(513)
@@ -479,7 +482,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       menu:addOption(tr('Browse Field'), function() g_game.browseField(useThing:getPosition()) end)
     end
   end
-
+  
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
     menu:addSeparator()
     menu:addOption(tr('Trade with ...'), function() startTradeWith(lookThing) end)
