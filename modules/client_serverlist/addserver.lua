@@ -19,7 +19,7 @@ function AddServer.add()
 
   local added, error = ServerList.add(host, port, protocol)
   if not added then
-    displayErrorBox(tr('Add Error'), tr(error))
+    displayErrorBox(tr('Error'), tr(error))
   else
     AddServer.hide()
   end
