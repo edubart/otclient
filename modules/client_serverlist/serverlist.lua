@@ -25,11 +25,11 @@ end
 
 function ServerList.load()
   for k,server in pairs(servers) do
-	if not port or not protocol then -- somehow saved a server incorrectly
-	  servers[k] = nil
-	else
+    if not port or not protocol then -- somehow saved a server incorrectly
+      servers[k] = nil
+    else
       ServerList.add(k, server.port, server.protocol, true)
-	end
+    end
   end
 end
 
