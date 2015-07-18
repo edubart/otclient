@@ -38,6 +38,7 @@ SpeakTypes = {
   [MessageModes.RVRChannel] = SpeakTypesSettings.channelWhite,
   [MessageModes.RVRContinue] = SpeakTypesSettings.rvrContinue,
   [MessageModes.RVRAnswer] = SpeakTypesSettings.rvrAnswerFrom,
+  [MessageModes.NpcFromStartBlock] = SpeakTypesSettings.privateNpcToPlayer,
 
   -- ignored types
   [MessageModes.Spell] = SpeakTypesSettings.none,
@@ -1020,21 +1021,21 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
   if (mode == MessageModes.Say or mode == MessageModes.Whisper or mode == MessageModes.Yell or
       mode == MessageModes.Spell or mode == MessageModes.MonsterSay or mode == MessageModes.MonsterYell or
-      mode == MessageModes.NpcFrom or mode == MessageModes.BarkLow or mode == MessageModes.BarkLoud) and
-     creaturePos then
-      -- Remove curly braces from screen message
-      local staticMessage = message
-      if mode == MessageModes.NpcFrom then
-        local highlightData = getHighlightedText(staticMessage)
-        if #highlightData > 0 then
-          for i = 1, #highlightData / 3 do
-            local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
-            staticMessage = staticMessage:gsub("{"..dataBlock.words.."}", dataBlock.words)
-          end
+      mode == MessageModes.NpcFrom or mode == MessageModes.BarkLow or mode == MessageModes.BarkLoud or
+      mode == MessageModes.NpcFromStartBlock) and creaturePos then
+    local staticText = StaticText.create()
+    -- Remove curly braces from screen message
+    local staticMessage = message
+    if mode == MessageModes.NpcFrom or mode == MessageModes.NpcFromStartBlock then
+      local highlightData = getHighlightedText(staticMessage)
+      if #highlightData > 0 then
+        for i = 1, #highlightData / 3 do
+          local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
+          staticMessage = staticMessage:gsub("{"..dataBlock.words.."}", dataBlock.words)
         end
       end
-
-    local staticText = StaticText.create()
+      staticText:setColor(speaktype.color)
+    end
     staticText:addMessage(name, mode, staticMessage)
     g_map.addThing(staticText, creaturePos, -1)
   end
