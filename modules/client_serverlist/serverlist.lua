@@ -11,9 +11,9 @@ function ServerList.init()
   serverListWindow = g_ui.displayUI('serverlist')
   serverTextList = serverListWindow:getChildById('serverList')
 
-  local serverSettings = g_settings.getNode('ServerList')
-  if serverSettings then
-    ServerList.load(serverSettings)
+  servers = g_settings.getNode('ServerList') or {}
+  if servers then
+    ServerList.load()
   end
 end
 
@@ -25,8 +25,8 @@ function ServerList.terminate()
   ServerList = nil
 end
 
-function ServerList.load(serverSettings)
-  for host, server in pairs(serverSettings) do
+function ServerList.load()
+  for host, server in pairs(servers) do
     ServerList.add(host, server.port, server.protocol, true)
   end
 end
