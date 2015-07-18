@@ -4,7 +4,7 @@ MarketOffer.__index = MarketOffer
 local OFFER_TIMESTAMP = 1
 local OFFER_COUNTER = 2
 
-MarketOffer.new = function(offerId, t, item, amount, price, playerName, state)
+MarketOffer.new = function(offerId, t, item, amount, price, playerName, state, var)
   local offer = {
     id = {},
     type = nil,
@@ -12,7 +12,8 @@ MarketOffer.new = function(offerId, t, item, amount, price, playerName, state)
     amount = 0,
     price = 0,
     player = '',
-    state = 0
+    state = 0,
+    var = nil
   }
 
   if not offerId or type(offerId) ~= 'table'  then
@@ -41,6 +42,7 @@ MarketOffer.new = function(offerId, t, item, amount, price, playerName, state)
     g_logger.error('MarketOffer.new - invalid state provided.')
   end
   offer.state = state
+  offer.var = var
 
   setmetatable(offer, MarketOffer)
   return offer

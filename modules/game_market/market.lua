@@ -38,6 +38,7 @@ currentOffersPanel = nil
 offerHistoryPanel = nil
 itemsPanel = nil
 selectedOffer = {}
+selectedMyOffer = {}
 
 nameLabel = nil
 feeLabel = nil
@@ -63,6 +64,11 @@ sellOfferTable = nil
 detailsTable = nil
 buyStatsTable = nil
 sellStatsTable = nil
+
+buyCancelButton = nil
+sellCancelButton = nil
+buyMyOfferTable = nil
+sellMyOfferTable = nil
 
 offerExhaust = {}
 marketOffers = {}
@@ -134,6 +140,13 @@ local function clearOffers()
   sellOfferTable:clearData()
 end
 
+local function clearMyOffers()
+  marketOffers[MarketAction.Buy] = {}
+  marketOffers[MarketAction.Sell] = {}
+  buyMyOfferTable:clearData()
+  sellMyOfferTable:clearData()
+end
+
 local function clearFilters()
   for _, filter in pairs(filterButtons) do
     if filter and filter:isChecked() ~= filter.default then
@@ -167,25 +180,38 @@ local function addOffer(offer, offerType)
   local amount = offer:getAmount()
   local price = offer:getPrice()
   local timestamp = offer:getTimeStamp()
+  local itemName = offer:getItem():getMarketData().name
 
   buyOfferTable:toggleSorting(false)
   sellOfferTable:toggleSorting(false)
 
+  buyMyOfferTable:toggleSorting(false)
+  sellMyOfferTable:toggleSorting(false)
+
   if amount < 1 then return false end
   if offerType == MarketAction.Buy then
-    local data = {
-      {text = player},
-      {text = amount},
-      {text = price*amount},
-      {text = price},
-      {text = string.gsub(os.date('%c', timestamp), " ", "  ")}
-    }
-
     if offer.warn then
       buyOfferTable:setColumnStyle('OfferTableWarningColumn', true)
     end
 
-    local row = buyOfferTable:addRow(data)
+    local row = nil
+    if offer.var == MarketRequest.MyOffers then
+      row = buyMyOfferTable:addRow({
+        {text = itemName},
+        {text = price*amount},
+        {text = price},
+        {text = amount},
+        {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
+      })
+    else
+      row = buyOfferTable:addRow({
+        {text = player},
+        {text = amount},
+        {text = price*amount},
+        {text = price},
+        {text = string.gsub(os.date('%c', timestamp), " ", "  ")}
+      })
+    end
     row.ref = id
 
     if offer.warn then
@@ -193,19 +219,28 @@ local function addOffer(offer, offerType)
       buyOfferTable:setColumnStyle('OfferTableColumn', true)
     end
   else
-    local data = {
-      {text = player},
-      {text = amount},
-      {text = price*amount},
-      {text = price},
-      {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
-    }
-
     if offer.warn then
       sellOfferTable:setColumnStyle('OfferTableWarningColumn', true)
     end
 
-    local row = sellOfferTable:addRow(data)
+    local row = nil
+    if offer.var == MarketRequest.MyOffers then
+      row = sellMyOfferTable:addRow({
+        {text = itemName},
+        {text = price*amount},
+        {text = price},
+        {text = amount},
+        {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
+      })
+    else
+      row = sellOfferTable:addRow({
+        {text = player},
+        {text = amount},
+        {text = price*amount},
+        {text = price},
+        {text = string.gsub(os.date('%c', timestamp), " ", "  "), sortvalue = timestamp}
+      })
+    end
     row.ref = id
 
     if offer.warn then
@@ -218,6 +253,11 @@ local function addOffer(offer, offerType)
   sellOfferTable:toggleSorting(false)
   buyOfferTable:sort()
   sellOfferTable:sort()
+
+  buyMyOfferTable:toggleSorting(false)
+  sellMyOfferTable:toggleSorting(false)
+  buyMyOfferTable:sort()
+  sellMyOfferTable:sort()
 
   return true
 end
@@ -277,6 +317,9 @@ local function updateOffers(offers)
   selectedOffer[MarketAction.Buy] = nil
   selectedOffer[MarketAction.Sell] = nil
 
+  selectedMyOffer[MarketAction.Buy] = nil
+  selectedMyOffer[MarketAction.Sell] = nil
+
   -- clear existing offer data
   buyOfferTable:clearData()
   buyOfferTable:setSorting(4, TABLE_SORTING_DESC)
@@ -285,6 +328,9 @@ local function updateOffers(offers)
 
   sellButton:setEnabled(false)
   buyButton:setEnabled(false)
+
+  buyCancelButton:setEnabled(false)
+  sellCancelButton:setEnabled(false)
 
   for _, offer in pairs(offers) do
     mergeOffer(offer)
@@ -438,6 +484,12 @@ local function destroyAmountWindow()
   end
 end
 
+local function cancelMyOffer(actionType)
+  local offer = selectedMyOffer[actionType]
+  MarketProtocol.sendMarketCancelOffer(offer:getTimeStamp(), offer:getCounter())
+  Market.refreshMyOffers()
+end
+
 local function openAmountWindow(callback, actionType, actionText)
   if not Market.isOfferSelected(actionType) then
     return
@@ -542,6 +594,24 @@ local function onSelectBuyOffer(table, selectedRow, previousSelectedRow)
       else
         sellButton:setEnabled(false)
       end
+    end
+  end
+end
+
+local function onSelectMyBuyOffer(table, selectedRow, previousSelectedRow)
+  for _, offer in pairs(marketOffers[MarketAction.Buy]) do
+    if offer:isEqual(selectedRow.ref) then
+      selectedMyOffer[MarketAction.Buy] = offer
+      buyCancelButton:setEnabled(true)
+    end
+  end
+end
+
+local function onSelectMySellOffer(table, selectedRow, previousSelectedRow)
+  for _, offer in pairs(marketOffers[MarketAction.Sell]) do
+    if offer:isEqual(selectedRow.ref) then
+      selectedMyOffer[MarketAction.Sell] = offer
+      sellCancelButton:setEnabled(true)
     end
   end
 end
@@ -787,12 +857,28 @@ local function initInterface()
   buyOfferTable.onSelectionChange = onSelectBuyOffer
   sellOfferTable.onSelectionChange = onSelectSellOffer
 
+  -- setup my offers
+  buyMyOfferTable = currentOffersPanel:recursiveGetChildById('myBuyingTable')
+  sellMyOfferTable = currentOffersPanel:recursiveGetChildById('mySellingTable')
+  buyMyOfferTable.onSelectionChange = onSelectMyBuyOffer
+  sellMyOfferTable.onSelectionChange = onSelectMySellOffer
+
+  buyCancelButton = currentOffersPanel:getChildById('buyCancelButton')
+  buyCancelButton.onClick = function() cancelMyOffer(MarketAction.Buy) end
+
+  sellCancelButton = currentOffersPanel:getChildById('sellCancelButton')
+  sellCancelButton.onClick = function() cancelMyOffer(MarketAction.Sell) end
+
+
   buyStatsTable:setColumnWidth({120, 270})
   sellStatsTable:setColumnWidth({120, 270})
   detailsTable:setColumnWidth({80, 330})
 
   buyOfferTable:setSorting(4, TABLE_SORTING_DESC)
   sellOfferTable:setSorting(4, TABLE_SORTING_ASC)
+
+  buyMyOfferTable:setSorting(3, TABLE_SORTING_DESC)
+  sellMyOfferTable:setSorting(3, TABLE_SORTING_DESC)
 end
 
 function init()
@@ -836,6 +922,7 @@ function Market.reset()
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
   clearFilters()
+  clearMyOffers()
   if not table.empty(information) then
     Market.updateCurrentItems()
   end
@@ -903,8 +990,8 @@ function Market.close(notify)
   if not marketWindow:isHidden() then
     marketWindow:hide()
     marketWindow:unlock()
-    Market.clearSelectedItem(
-)    Market.reset()
+    Market.clearSelectedItem()
+    Market.reset()
     if notify then
       MarketProtocol.sendMarketLeave()
     end
@@ -990,7 +1077,14 @@ end
 function Market.refreshOffers()
   if Market.isItemSelected() then
     Market.onItemBoxChecked(selectedItem.ref)
+  else
+    Market.refreshMyOffers()
   end
+end
+
+function Market.refreshMyOffers()
+  clearMyOffers()
+  MarketProtocol.sendMarketBrowseMyOffers()
 end
 
 
