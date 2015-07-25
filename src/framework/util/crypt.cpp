@@ -307,13 +307,17 @@ std::string Crypt::sha512Encode(const std::string& decoded_string, bool upperCas
 
 void Crypt::rsaGenerateKey(int bits, int e)
 {
-    RSA *rsa = RSA_generate_key(bits, e, nullptr, nullptr);
+    RSA *rsa = RSA_new();
+    BIGNUM *ebn = BN_new();
+    BN_set_word(ebn, e);
+    RSA_generate_key_ex(rsa, bits, ebn, nullptr);
     g_logger.info(stdext::format("%d bits (%d bytes) RSA key generated", bits, bits / 8));
     g_logger.info(std::string("p = ") + BN_bn2dec(m_rsa->p));
     g_logger.info(std::string("q = ") + BN_bn2dec(m_rsa->q));
     g_logger.info(std::string("d = ") + BN_bn2dec(m_rsa->d));
     g_logger.info(std::string("n = ") + BN_bn2dec(m_rsa->n));
     g_logger.info(std::string("e = ") + BN_bn2dec(m_rsa->e));
+    BN_clear_free(ebn);
     RSA_free(rsa);
 }
 
