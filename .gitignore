@@ -12,6 +12,7 @@ Makefile
 /android/project/.settings
 /android/project/.classpath
 /android/project/.project
+/android/project/.cproject
 /android/project/local.properties
 /android/project/project.properties
 libs*

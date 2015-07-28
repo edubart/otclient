@@ -133,11 +133,6 @@ SDLWindow::SDLWindow() {
     m_keyMap[SDLK_CARET] = Fw::KeyCaret;
     m_keyMap[SDLK_UNDERSCORE] = Fw::KeyUnderscore;
     m_keyMap[SDLK_BACKQUOTE] = Fw::KeyGrave;
-    //m_keyMap['{'] = Fw::KeyLeftCurly;
-    //m_keyMap['|'] = Fw::KeyBar;
-    //m_keyMap['}'] = Fw::KeyRightCurly;
-    //m_keyMap['~'] = Fw::KeyTilde;
-
 
     // keypad
     /*
@@ -228,9 +223,6 @@ void SDLWindow::poll() {
     while(SDL_PollEvent(&m_event)) {
         processKeydownOrKeyrelease();
 
-        if(hasRepeatedKey())
-            continue;
-
         switch(m_event.type) {
             case SDL_TEXTINPUT:
                 processTextInput();
@@ -240,30 +232,19 @@ void SDLWindow::poll() {
                 processFingerdownAndFingerup();
                 break;
             case SDL_FINGERMOTION:
-                m_inputEvent.reset();
-                m_inputEvent.type = Fw::MouseMoveInputEvent;
-                Point newMousePos(m_event.tfinger.x * m_mode.w, m_event.tfinger.y * m_mode.h);
-                m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
-                m_inputEvent.mousePos = newMousePos;
-                if(m_onInputEvent)
-                    m_onInputEvent(m_inputEvent);
+				processFingermotion();
                 break;
         }
 
-        if(m_inputEvent.type != Fw::NoInputEvent && m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
+        //if(m_inputEvent.type != Fw::NoInputEvent && m_onInputEvent)
+        //    m_onInputEvent(m_inputEvent);
     }
 
     fireKeysPress();
 }
 
-bool SDLWindow::hasRepeatedKey() {
-    g_logger.info(stdext::format("hasRepeatedKey %i", m_event.key.repeat));
-    return m_event.key.repeat != 0;
-}
-
 void SDLWindow::processKeydownOrKeyrelease() {
-    if(m_event.key.state == SDL_PRESSED || (m_event.key.state == SDL_RELEASED && !hasRepeatedKey())) {
+    if(m_event.key.state == SDL_PRESSED || m_event.key.state == SDL_RELEASED) {
         Fw::Key keyCode = Fw::KeyUnknown;
         SDL_Keycode keysym = m_event.key.keysym.sym;
 
@@ -281,7 +262,7 @@ void SDLWindow::processTextInput() {
     std::string text = m_event.text.text;
     SDL_Keycode keysym = m_event.key.keysym.sym;
 
-    if(text.length() == 0 || keysym == SDLK_BACKSPACE || keysym == SDLK_RETURN)
+    if(text.length() == 0 || keysym == SDLK_BACKSPACE || keysym == SDLK_RETURN || keysym == SDLK_AC_BACK || keysym == SDLK_DELETE)
         return;
 
     if(m_onInputEvent) {
@@ -293,15 +274,28 @@ void SDLWindow::processTextInput() {
 
 void SDLWindow::processFingerdownAndFingerup() {
     bool isFinderdown = m_event.type == SDL_FINGERDOWN;
+
     m_inputEvent.reset();
     m_inputEvent.type = isFinderdown ? Fw::MousePressInputEvent : Fw::MouseReleaseInputEvent;
     m_inputEvent.mouseButton = Fw::MouseLeftButton;
     m_mouseButtonStates[Fw::MouseLeftButton] = isFinderdown;
+
     Point newMousePos(m_event.tfinger.x * m_mode.w, m_event.tfinger.y * m_mode.h);
     m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
     m_inputEvent.mousePos = newMousePos;
+
     if(m_onInputEvent)
         m_onInputEvent(m_inputEvent);
+}
+
+void SDLWindow::processFingermotion() {
+	m_inputEvent.reset();
+	m_inputEvent.type = Fw::MouseMoveInputEvent;
+	Point newMousePos(m_event.tfinger.x * m_mode.w, m_event.tfinger.y * m_mode.h);
+	m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
+	m_inputEvent.mousePos = newMousePos;
+	if (m_onInputEvent)
+		m_onInputEvent(m_inputEvent);
 }
 
 void SDLWindow::swapBuffers() {
@@ -309,7 +303,7 @@ void SDLWindow::swapBuffers() {
 }
 
 void SDLWindow::setVerticalSync(bool enable) {
-    // TODO
+	SDL_GL_SetSwapInterval(enable);
 }
 
 std::string SDLWindow::getClipboardText() {
@@ -326,7 +320,7 @@ Size SDLWindow::getDisplaySize() {
 }
 
 std::string SDLWindow::getPlatformType() {
-    return "ANDROID_SDL2";
+    return "MOBILE_SDL2";
 }
 
 void SDLWindow::show() {

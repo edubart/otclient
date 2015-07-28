@@ -61,10 +61,10 @@ public:
 
     void initializeSDL();
     void setSDLAttributes();
-    bool hasRepeatedKey();
     void processKeydownOrKeyrelease();
     void processTextInput();
     void processFingerdownAndFingerup();
+	void processFingermotion();
 
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot);

@@ -53,41 +53,6 @@ void Client::initAppFrameworkAndOTClient(std::vector<std::string>& args)
     findLuaInitScript();
 
     g_app.runAppMainLoop();
-    //TODO: restore options
-/*
-    if(g_graphics.parseOption(arg))
-        continue;
-
-    if(arg == "-version" || arg == "--version" || arg == "-v") {
-        stdext::print(
-            m_appName, " ", m_appVersion, "\n"
-            "Buitt on: ", BUILD_DATE, "\n",
-            "Commit: ", BUILD_COMMIT, "\n",
-            "Compiled by: ", BUILD_COMPILER, "\n",
-            "Build type: ", BUILD_TYPE, "\n");
-        return;
-    } else if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-?" || arg == "/?") {
-        stdext::print(
-            "Usage: ", args[0], " [options]\n"
-            "Options:\n"
-            "  -help                            Display this information and exit\n"
-            "  -version                         Display version and exit\n"
-            "  \n"
-            "  -no-fbos                         Disable usage of opengl framebuffer objects\n"
-            "  -no-mipmaps                      Disable texture mipmaping\n"
-            "  -no-smooth                       Disable texture smoothing (bilinear filter)\n"
-            "  -no-non-power-of-two-textures    Use only power of two textures\n"
-            "  -no-clamp-to-edge                Don't use GL_CLAMP_TO_EDGE\n"
-            "  -no-backbuffer-cache             Don't allow backbuffer caching\n"
-            "  -hardware-buffers                Cache vertex arrays in hardware\n"
-            "  -opengl1                         Use OpenGL 1.x painter\n"
-            "  -opengl2                         Use OpenGL 2.0 painter\n");
-        return;
-    } else {
-        stdext::println("Unrecognized option '", arg, "', please see -help for available options list");
-        return;
-    }
-    */
 }
 
 void Client::setupAppNameAndVersion() {

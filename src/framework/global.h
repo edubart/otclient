@@ -44,4 +44,8 @@
 // logger
 #include "core/logger.h"
 
+#ifdef ANDROID
+#include <SDL.h>
+#endif
+
 #endif
