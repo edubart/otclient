@@ -14,7 +14,6 @@ This is a fork of edubart's otclient. The objective of this fork it's to develop
 Tasks that need to do:
 - [X] Compile on Android devices
 - [ ] Compile on Apple devices
-- [ ] Handle input events correctle
 - [ ] Adapt the UI reusing the existing lua code
 
 Current compiling tutorials:
