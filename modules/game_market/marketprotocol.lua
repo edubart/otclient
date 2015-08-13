@@ -29,11 +29,12 @@ local function readMarketOffer(msg, action, var)
   local state = MarketOfferState.Active
   if var == MarketRequest.MyHistory then
     state = msg:getU8()
+  elseif var == MarketRequest.MyOffers then
   else
     playerName = msg:getString()
   end
 
-  return MarketOffer.new({timestamp, counter}, action, Item.create(itemId), amount, price, playerName, state)
+  return MarketOffer.new({timestamp, counter}, action, Item.create(itemId), amount, price, playerName, state, var)
 end
 
 -- parsing protocols
@@ -199,6 +200,10 @@ function MarketProtocol.sendMarketBrowse(browseId)
   else
     g_logger.error('MarketProtocol.sendMarketBrowse does not support the current protocol.')
   end
+end
+
+function MarketProtocol.sendMarketBrowseMyOffers()
+  MarketProtocol.sendMarketBrowse(MarketRequest.MyOffers)
 end
 
 function MarketProtocol.sendMarketCreateOffer(type, spriteId, amount, price, anonymous)

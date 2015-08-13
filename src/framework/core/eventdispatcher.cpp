@@ -74,6 +74,8 @@ void EventDispatcher::poll()
             event->execute();
         }
         m_pollEventsSize = m_eventList.size();
+        
+        loops++;
     }
 }
 

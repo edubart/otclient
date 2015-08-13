@@ -132,9 +132,10 @@ void StaticText::compose()
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell || m_mode == Otc::MessageBarkLow || m_mode == Otc::MessageBarkLoud) {
+    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell
+              || m_mode == Otc::MessageBarkLow || m_mode == Otc::MessageBarkLoud) {
         m_color = Color(254, 101, 0);
-    } else if(m_mode == Otc::MessageNpcFrom) {
+    } else if(m_mode == Otc::MessageNpcFrom || m_mode == Otc::MessageNpcFromStartBlock) {
         text += m_name;
         text += " says:\n";
         m_color = Color(95, 247, 247);

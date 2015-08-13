@@ -1439,7 +1439,7 @@ bool Game::canPerformGameAction()
     // - we have a game protocol
     // - the game protocol is connected
     // - its not a bot action
-    return m_online && m_localPlayer && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
+    return m_online && m_localPlayer && !m_localPlayer->isDead() && !m_dead && m_protocolGame && m_protocolGame->isConnected() && checkBotProtection();
 }
 
 void Game::setProtocolVersion(int version)

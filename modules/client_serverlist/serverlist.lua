@@ -12,7 +12,9 @@ function ServerList.init()
   serverTextList = serverListWindow:getChildById('serverList')
 
   servers = g_settings.getNode('ServerList') or {}
-  ServerList.load()
+  if servers then
+    ServerList.load()
+  end
 end
 
 function ServerList.terminate()
@@ -24,8 +26,8 @@ function ServerList.terminate()
 end
 
 function ServerList.load()
-  for k,server in pairs(servers) do
-    ServerList.add(k, server.port, server.protocol, true)
+  for host, server in pairs(servers) do
+    ServerList.add(host, server.port, server.protocol, true)
   end
 end
 
@@ -43,7 +45,9 @@ function ServerList.select()
 end
 
 function ServerList.add(host, port, protocol, load)
-  if not load and servers[host] then
+  if not host or not port or not protocol then
+    return false, 'Failed to load settings'
+  elseif not load and servers[host] then
     return false, 'Server already exists'
   elseif host == '' or port == '' then
     return false, 'Required fields are missing'
