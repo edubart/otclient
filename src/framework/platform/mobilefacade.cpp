@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifdef ANDROID
 
 #include "mobilefacade.h"
 #include "androidwindow.h"
@@ -28,3 +29,5 @@ MobileFacade g_mobileFacade;
 void MobileFacade::showKeyboardSoft() {
     ((AndroidWindow&) g_window).showKeyboardSoft();
 }
+
+#endif
