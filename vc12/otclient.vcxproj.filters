@@ -19,9 +19,6 @@
     <Filter Include="Source Files\client">
       <UniqueIdentifier>{5c843160-5a3a-4841-b64f-a1be3d5c2df6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\client">
-      <UniqueIdentifier>{9c343067-7e4c-497d-9423-f580732fd03c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\framework">
       <UniqueIdentifier>{be8876e0-a2cf-45f5-ac85-f822d0c85be4}</UniqueIdentifier>
     </Filter>
@@ -102,6 +99,9 @@
     </Filter>
     <Filter Include="Header Files\framework\graphics\ogl">
       <UniqueIdentifier>{8b96ee09-99f1-4c70-90c1-d99505de6264}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{9c343067-7e4c-497d-9423-f580732fd03c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -531,7 +531,7 @@
     <ClCompile Include="..\src\client\animator.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\framework\platform\sdlwindow.cpp">
+    <ClCompile Include="..\src\framework\platform\androidwindow.cpp">
       <Filter>Source Files\framework\platform</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1058,7 +1058,7 @@
     <ClInclude Include="..\src\client\animator.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\platform\sdlwindow.h">
+    <ClInclude Include="..\src\framework\platform\androidwindow.h">
       <Filter>Header Files\framework\platform</Filter>
     </ClInclude>
   </ItemGroup>

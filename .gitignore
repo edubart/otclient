@@ -23,6 +23,7 @@ libs*
 *.gch
 *.a
 *.exe
+*.so
 *.spr
 *.dat
 *.kdev*

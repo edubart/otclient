@@ -206,7 +206,12 @@ std::string Platform::traceback(const std::string& where, int level, int maxDept
     return ss.str();
 }
 #else
-std::string Platform::traceback(const std::string& where, int level, int maxDepth){ return " ANDROID TRACEBACK NEED TO DO"; }
+std::string Platform::traceback(const std::string& where, int level, int maxDepth){
+	std::stringstream ss;
+    ss << "\nat:";
+    ss << "\n\t[C++]: " << where;
+    return ss.str();
+}
 #endif
 
 #endif

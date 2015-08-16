@@ -285,9 +285,9 @@
     <ClCompile Include="..\src\framework\otml\otmlexception.cpp" />
     <ClCompile Include="..\src\framework\otml\otmlnode.cpp" />
     <ClCompile Include="..\src\framework\otml\otmlparser.cpp" />
+    <ClCompile Include="..\src\framework\platform\androidwindow.cpp" />
     <ClCompile Include="..\src\framework\platform\platform.cpp" />
     <ClCompile Include="..\src\framework\platform\platformwindow.cpp" />
-    <ClCompile Include="..\src\framework\platform\sdlwindow.cpp" />
     <ClCompile Include="..\src\framework\platform\win32crashhandler.cpp" />
     <ClCompile Include="..\src\framework\platform\win32platform.cpp" />
     <ClCompile Include="..\src\framework\platform\win32window.cpp" />
@@ -444,10 +444,10 @@
     <ClInclude Include="..\src\framework\otml\otmlnode.h" />
     <ClInclude Include="..\src\framework\otml\otmlparser.h" />
     <ClInclude Include="..\src\framework\pch.h" />
+    <ClInclude Include="..\src\framework\platform\androidwindow.h" />
     <ClInclude Include="..\src\framework\platform\crashhandler.h" />
     <ClInclude Include="..\src\framework\platform\platform.h" />
     <ClInclude Include="..\src\framework\platform\platformwindow.h" />
-    <ClInclude Include="..\src\framework\platform\sdlwindow.h" />
     <ClInclude Include="..\src\framework\platform\win32window.h" />
     <ClInclude Include="..\src\framework\sound\combinedsoundsource.h" />
     <ClInclude Include="..\src\framework\sound\declarations.h" />

@@ -36,12 +36,8 @@ set(executable_SOURCES
 )
 
 if(ANDROID)
-    set( sdl_main
-        android/SDL_android_main.c
-        ${executable_SOURCES} )
-
     # add shared library for android
-    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${sdl_main})
+    add_library(${PROJECT_NAME} SHARED ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
 else()
     # add client executable
     add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})

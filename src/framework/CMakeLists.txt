@@ -132,6 +132,10 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
+	
+	# mobile
+	${CMAKE_CURRENT_LIST_DIR}/platform/mobilefacade.cpp
+	${CMAKE_CURRENT_LIST_DIR}/platform/mobilefacade.h
 )
 
 set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
@@ -232,7 +236,6 @@ find_package(ZLIB REQUIRED)
 
 if(ANDROID)
     set(framework_LIBRARIES ${framework_LIBRARIES} android log)
-    find_package(SDL2 REQUIRED)
 endif()
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
@@ -252,8 +255,8 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
 )
 
 if(ANDROID)
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${SDL2_LIBRARY})
-    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${SDL2_INCLUDE_DIR})
+    set(framework_LIBRARIES ${framework_LIBRARIES})
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS})
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -459,8 +462,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/platform/win32window.h
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.cpp
         ${CMAKE_CURRENT_LIST_DIR}/platform/x11window.h
-        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/platform/sdlwindow.h
+        ${CMAKE_CURRENT_LIST_DIR}/platform/androidwindow.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/platform/androidwindow.h
 
         # window input
         ${CMAKE_CURRENT_LIST_DIR}/input/mouse.cpp
