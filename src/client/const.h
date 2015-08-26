@@ -403,6 +403,7 @@ namespace Otc
         GameUnjustifiedPoints = 68,
         GameSessionKey = 69,
         GameDeathType = 70,
+        GameIdleAnimations = 71,
 
         LastGameFeature = 101
     };

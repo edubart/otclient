@@ -1600,6 +1600,10 @@ void Game::setClientVersion(int version)
         enableFeature(Otc::GameDeathType);
     }
 
+    if(version >= 1057) {
+        enableFeature(Otc::GameIdleAnimations);
+    }
+
     if(version >= 1061) {
         enableFeature(Otc::GameOGLInformation);
     }
