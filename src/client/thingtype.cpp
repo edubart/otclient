@@ -268,15 +268,13 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
             m_id, m_category, count, attr));
 
-    uint8 groupCount = 1;
-    if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057)
-        groupCount = fin->getU8();
+    bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
+    uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     for(int i = 0; i < groupCount; ++i) {
-        uint8 frameGroup = FrameGroupDefault;
-        if(category == ThingCategoryCreature && g_game.getClientVersion() >= 1057) {
-            frameGroup = fin->getU8();
-        }
+        uint8 frameGroupType = FrameGroupDefault;
+        if(hasFrameGroups)
+            frameGroupType = fin->getU8();
 
         uint8 width = fin->getU8();
         uint8 height = fin->getU8();
