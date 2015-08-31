@@ -34,18 +34,14 @@ Panel
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 3
-    margin-right: 3
-    margin-left: 3
+    margin: 3 3 0 3
 
   MarketComboBox
     id: subCategoryComboBox
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 3
-    margin-right: 3
-    margin-left: 3
+    margin: 3 3 0 3
 
     $disabled:
       color: #aaaaaa44
@@ -57,12 +53,10 @@ Panel
     !tooltip: tr('Filter list to match your level')
     anchors.top: prev.bottom
     anchors.left: parent.left
-    margin-top: 3
-    margin-right: 3
+    padding: 4 3 0 3
     margin-left: 3
-    width: 40
-    height: 20
-
+    text-auto-resize: true
+    
   MarketButtonBox
     id: filterVocation
     &default: false
@@ -70,10 +64,9 @@ Panel
     !tooltip: tr('Filter list to match your vocation')
     anchors.top: prev.top
     anchors.left: prev.right
-    margin-right: 3
+    padding: 4 3 0 3
     margin-left: 3
-    width: 34
-    height: 20
+    text-auto-resize: true
 
   MarketComboBox
     id: slotComboBox
@@ -94,9 +87,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 6
-    margin-right: 3
-    margin-left: 3
+    margin: 6 3 0 3
 
   Panel
     id: itemsContainer
@@ -104,10 +95,7 @@ Panel
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    margin-top: 10
-    margin-left: 3
-    margin-bottom: 30
-    margin-right: 3
+    margin: 10 3 30 3
 
     VerticalScrollBar
       id: itemsPanelListScrollBar
@@ -135,7 +123,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     margin-top: 9
-    width: 30
+    text-auto-resize: true
     font: verdana-11px-rounded
     text-offset: 0 2
 

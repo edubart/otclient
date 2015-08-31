@@ -32,9 +32,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.right: prev.right
-    margin-top: 6
-    margin-bottom: 5
-    margin-right: 6
+    margin: 6 6 5 0
     height: 121
     padding: 1
     focusable: false

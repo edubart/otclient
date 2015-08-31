@@ -1,7 +1,7 @@
 MarketWindow < MainWindow
   id: marketWindow
   !text: tr('Market')
-  size: 700 530
+  size: 800 530
 
   @onEscape: Market.close()
 
@@ -58,5 +58,5 @@ MarketWindow < MainWindow
     anchors.top: mainTabContent.bottom
     anchors.left: mainTabContent.left
     margin-top: 5
-    width: 110
+    text-auto-resize: true
     @onClick: Market.reset()

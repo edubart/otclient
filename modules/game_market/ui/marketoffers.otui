@@ -9,7 +9,8 @@ Panel
 
   Panel
     id: leftTabContent
-    width: 180
+    width: 240
+    
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.bottom: parent.bottom
@@ -80,7 +81,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: createLabel.left
     margin-top: 3
-    width: 105
+    width: 115
 
     $disabled:
       color: #aaaaaa44
@@ -99,7 +100,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     margin-top: 3
-    width: 75
+    width: 80
     minimum: 1
     maximum: 999999999
     focusable: true
@@ -168,7 +169,7 @@ Panel
     anchors.verticalCenter: prev.verticalCenter
     anchors.left: prev.right
     margin-left: 7
-    width: 90
+    text-auto-resize: true
 
   CheckBox
     id: anonymousCheckBox
