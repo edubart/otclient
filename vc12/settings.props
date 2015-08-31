@@ -76,11 +76,11 @@
         libvorbis_static.lib;
         opengl32.lib;
         dbghelp.lib;
-		kernel32.lib;
-		user32.lib;
-		shell32.lib;
-		gdi32.lib;
-		advapi32.lib;
+        kernel32.lib;
+        user32.lib;
+        shell32.lib;
+        gdi32.lib;
+        advapi32.lib;
     </OTCLIENT_LIBDEPS>
     
     <OTCLIENT_LIBDEPS_D>
@@ -95,11 +95,11 @@
         libvorbis_static.lib;
         opengl32.lib;
         dbghelp.lib;
-		kernel32.lib;
-		user32.lib;
-		shell32.lib;
-		gdi32.lib;
-		advapi32.lib;
+        kernel32.lib;
+        user32.lib;
+        shell32.lib;
+        gdi32.lib;
+        advapi32.lib;
 	</OTCLIENT_LIBDEPS_D>
     
   </PropertyGroup>
