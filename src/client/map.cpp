@@ -504,6 +504,32 @@ void Map::removeUnawareThings()
         else
             ++it;
     }
+
+    if(!g_game.getFeature(Otc::GameKeepUnawareTiles)) {
+        // remove tiles that we are not aware anymore
+        for(int z = 0; z <= Otc::MAX_Z; ++z) {
+            std::unordered_map<uint, TileBlock>& tileBlocks = m_tileBlocks[z];
+            for(auto it = tileBlocks.begin(); it != tileBlocks.end();) {
+                TileBlock& block = (*it).second;
+                bool blockEmpty = true;
+                for(const TilePtr& tile : block.getTiles()) {
+                    if(!tile)
+                        continue;
+
+                    const Position& pos = tile->getPosition();
+                    if(!isAwareOfPosition(pos))
+                        block.remove(pos);
+                    else
+                        blockEmpty = false;
+                }
+
+                if(blockEmpty)
+                    it = tileBlocks.erase(it);
+                else
+                    ++it;
+            }
+        }
+    }
 }
 
 void Map::setCentralPosition(const Position& centralPosition)

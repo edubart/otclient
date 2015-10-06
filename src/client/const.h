@@ -404,6 +404,7 @@ namespace Otc
         GameSessionKey = 69,
         GameDeathType = 70,
         GameIdleAnimations = 71,
+        GameKeepUnawareTiles=72,
 
         LastGameFeature = 101
     };
