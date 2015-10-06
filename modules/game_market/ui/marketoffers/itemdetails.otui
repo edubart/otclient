@@ -26,10 +26,7 @@ Panel
     anchors.bottom: parent.bottom
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 63
-    margin-left: 6
-    margin-bottom: 85
-    margin-right: 6
+    margin: 63 6 85 6
     padding: 1
     focusable: false
     background-color: #222833

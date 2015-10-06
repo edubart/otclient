@@ -2,6 +2,7 @@ MarketButtonBox < ButtonBoxRounded
   font: verdana-11px-rounded
   color: #f55e5ebb
   size: 106 22
+  text-auto-resize: true
   text-offset: 0 2
   text-align: center
 
