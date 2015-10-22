@@ -132,6 +132,7 @@ GameUnjustifiedPoints = 68
 GameSessionKey = 69
 GameDeathType = 70
 GameIdleAnimations = 71
+GameKeepUnawareTiles = 72
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
