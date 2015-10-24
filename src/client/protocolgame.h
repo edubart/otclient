@@ -113,6 +113,12 @@ public:
     void sendAnswerModalDialog(int dialog, int button, int choice);
     void sendBrowseField(const Position& position);
     void sendSeekInContainer(int cid, int index);
+    void sendBuyStoreOffer(int offerId, int productType, const std::string& name);
+    void sendRequestTransactionHistory(int page, int entriesPerPage);
+    void sendRequestStoreOffers(const std::string& categoryName);
+    void sendOpenStore();
+    void sendTransferCoins(const std::string& recipient, int amount);
+    void sendOpenTransactionHistory(int entiresPerPage);
 
     // otclient only
     void sendChangeMapAwareRange(int xrange, int yrange);
@@ -128,6 +134,14 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
+    void parseStore(const InputMessagePtr& msg);
+    void parseStoreError(const InputMessagePtr& msg);
+    void parseStoreTransactionHistory(const InputMessagePtr& msg);
+    void parseStoreOffers(const InputMessagePtr& msg);
+    void parseCompleteStorePurchase(const InputMessagePtr& msg);
+    void parseRequestPurchaseData(const InputMessagePtr& msg);
+    void parseCoinBalance(const InputMessagePtr& msg);
+    void parseCoinBalanceUpdating(const InputMessagePtr& msg);
     void parseBlessings(const InputMessagePtr& msg);
     void parseUnjustifiedStats(const InputMessagePtr& msg);
     void parsePvpSituations(const InputMessagePtr& msg);

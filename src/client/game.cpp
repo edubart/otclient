@@ -1395,6 +1395,48 @@ void Game::seekInContainer(int cid, int index)
     m_protocolGame->sendSeekInContainer(cid, index);
 }
 
+void Game::buyStoreOffer(int offerId, int productType, const std::string& name)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendBuyStoreOffer(offerId, productType, name);
+}
+
+void Game::requestTransactionHistory(int page, int entriesPerPage)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestTransactionHistory(page, entriesPerPage);
+}
+
+void Game::requestStoreOffers(const std::string& categoryName)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendRequestStoreOffers(categoryName);
+}
+
+void Game::openStore()
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendOpenStore();
+}
+
+void Game::transferCoins(const std::string& recipient, int amount)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendTransferCoins(recipient, amount);
+}
+
+void Game::openTransactionHistory(int entriesPerPage)
+{
+    if(!canPerformGameAction())
+        return;
+    m_protocolGame->sendOpenTransactionHistory(entriesPerPage);
+}
+
 void Game::ping()
 {
     if(!m_protocolGame || !m_protocolGame->isConnected())
@@ -1450,7 +1492,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1076))
+    if(version != 0 && (version < 740 || version > 1082))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1468,7 +1510,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1076))
+    if(version != 0 && (version < 740 || version > 1082))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1618,6 +1660,10 @@ void Game::setClientVersion(int version)
 
     if(version >= 1074) {
         enableFeature(Otc::GameSessionKey);
+    }
+
+    if(version >= 1080) {
+        enableFeature(Otc::GameIngameStore);
     }
 
     m_clientVersion = version;

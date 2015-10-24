@@ -863,6 +863,65 @@ void ProtocolGame::sendSeekInContainer(int cid, int index)
     send(msg);
 }
 
+void ProtocolGame::sendBuyStoreOffer(int offerId, int productType, const std::string& name)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientBuyStoreOffer);
+    msg->addU32(offerId);
+    msg->addU8(productType);
+
+    if(productType == Otc::ProductTypeNameChange)
+        msg->addString(name);
+
+    send(msg);
+}
+
+void ProtocolGame::sendRequestTransactionHistory(int page, int entriesPerPage)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientRequestTransactionHistory);
+    msg->addU16(page);
+    msg->addU32(entriesPerPage);
+
+    send(msg);
+}
+
+void ProtocolGame::sendRequestStoreOffers(const std::string& categoryName)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientRequestStoreOffers);
+    msg->addString(categoryName);
+
+    send(msg);
+}
+
+void ProtocolGame::sendOpenStore()
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientOpenStore);
+
+    send(msg);
+}
+
+void ProtocolGame::sendTransferCoins(const std::string& recipient, int amount)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientTransferCoins);
+    msg->addString(recipient);
+    msg->addU16(amount);
+    send(msg);
+}
+
+void ProtocolGame::sendOpenTransactionHistory(int entriesPerPage)
+{
+    OutputMessagePtr msg(new OutputMessage);
+    msg->addU8(Proto::ClientOpenTransactionHistory);
+    msg->addU8(entriesPerPage);
+
+    send(msg);
+}
+
+
 void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
 {
     if(!g_game.getFeature(Otc::GameChangeMapAwareRange))

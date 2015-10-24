@@ -133,6 +133,7 @@ GameSessionKey = 69
 GameDeathType = 70
 GameIdleAnimations = 71
 GameKeepUnawareTiles = 72
+GameIngameStore = 73
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
@@ -216,7 +217,7 @@ CIPSOFT_RSA = "1321277432058722840622950990822933849527763264961655079678763618"
               "88792221429527047321331896351555606801473202394175817"
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
-PIC_SIGNATURE = 0x542100C1
+PIC_SIGNATURE = 0x557fe565
 
 OsTypes = {
   Linux = 1,
@@ -278,6 +279,27 @@ Blessings = {
 DeathType = {
   Regular = 0,
   Blessed = 1
+}
+
+ProductType = {
+  Other = 0,
+  NameChange = 1
+}
+
+StoreErrorType = {
+  NoError = -1,
+  PurchaseError = 0,
+  NetworkError = 1,
+  HistoryError = 2,
+  TransferError = 3,
+  Information = 4
+}
+
+StoreState = {
+  None = 0,
+  New = 1,
+  Sale = 2,
+  Timed = 3
 }
 
 -- @}
