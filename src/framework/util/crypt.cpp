@@ -209,7 +209,7 @@ std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachine
 std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachineUUID)
 {
     std::string decoded = base64Decode(encrypted_string);
-    std::string tmp = xorCrypt(base64Decode(encrypted_string), getCryptKey(useMachineUUID));
+    std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
     if(tmp.length() >= 4) {
         uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
         std::string decrypted_string = tmp.substr(4);
