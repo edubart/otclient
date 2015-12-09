@@ -45,11 +45,12 @@ MarketCategory = {
   Swords = 20,
   WandsRods = 21,
   PremiumScrolls = 22,
+  TibiaCoins = 23,
   MetaWeapons = 255
 }
 
 MarketCategory.First = MarketCategory.Armors
-MarketCategory.Last = MarketCategory.PremiumScrolls
+MarketCategory.Last = MarketCategory.TibiaCoins
 
 MarketCategoryWeapons = {
   [MarketCategory.Ammunition] = { slots = {255} },
@@ -84,6 +85,7 @@ MarketCategoryStrings = {
   [20] = 'Swords',
   [21] = 'Wands and Rods',
   [22] = 'Premium Scrolls',
+  [23] = 'Tibia Coins',
   [255] = 'Weapons'
 }
 

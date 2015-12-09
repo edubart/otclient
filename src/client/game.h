@@ -288,6 +288,14 @@ public:
     void browseField(const Position& position);
     void seekInContainer(int cid, int index);
 
+    // >= 1080 ingame store
+    void buyStoreOffer(int offerId, int productType, const std::string& name = "");
+    void requestTransactionHistory(int page, int entriesPerPage);
+    void requestStoreOffers(const std::string& categoryName);
+    void openStore();
+    void transferCoins(const std::string& recipient, int amount);
+    void openTransactionHistory(int entriesPerPage);
+
     //void reportRuleViolation2();
     void ping();
     void setPingDelay(int delay) { m_pingDelay = delay; }

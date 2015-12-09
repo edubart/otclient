@@ -404,7 +404,8 @@ namespace Otc
         GameSessionKey = 69,
         GameDeathType = 70,
         GameIdleAnimations = 71,
-        GameKeepUnawareTiles=72,
+        GameKeepUnawareTiles = 72,
+        GameIngameStore = 73,
 
         LastGameFeature = 101
     };
@@ -473,6 +474,27 @@ namespace Otc
     enum DeathType {
         DeathRegular = 0,
         DeathBlessed = 1
+    };
+
+    enum StoreProductTypes {
+        ProductTypeOther = 0,
+        ProductTypeNameChange = 1
+    };
+
+    enum StoreErrorTypes {
+        StoreNoError = -1,
+        StorePurchaseError = 0,
+        StoreNetworkError = 1,
+        StoreHistoryError = 2,
+        StoreTransferError = 3,
+        StoreInformation = 4
+    };
+
+    enum StoreStates {
+        StateNone = 0,
+        StateNew = 1,
+        StateSale = 2,
+        StateTimed = 3
     };
 }
 

@@ -143,8 +143,12 @@ namespace Proto {
         GameServerVipLogout                 = 212,
         GameServerTutorialHint              = 220,
         GameServerAutomapFlag               = 221,
+        GameServerCoinBalance               = 223, // 1080
+        GameServerStoreError                = 224, // 1080
+        GameServerRequestPurchaseData       = 225, // 1080
         GameServerQuestLog                  = 240,
         GameServerQuestLine                 = 241,
+        GameServerCoinBalanceUpdating       = 242, // 1080
         GameServerChannelEvent              = 243, // 910
         GameServerItemInfo                  = 244, // 910
         GameServerPlayerInventory           = 245, // 910
@@ -152,7 +156,11 @@ namespace Proto {
         GameServerMarketLeave               = 247, // 944
         GameServerMarketDetail              = 248, // 944
         GameServerMarketBrowse              = 249, // 944
-        GameServerModalDialog               = 250  // 960
+        GameServerModalDialog               = 250, // 960
+        GameServerStore                     = 251, // 1080
+        GameServerStoreOffers               = 252, // 1080
+        GameServerStoreTransactionHistory   = 253, // 1080
+        GameServerStoreCompletePurchase     = 254  // 1080
     };
 
     enum ClientOpcodes : uint8
@@ -245,6 +253,7 @@ namespace Proto {
         ClientBugReport                     = 230,
         ClientRuleViolation                 = 231,
         ClientDebugReport                   = 232,
+        ClientTransferCoins                 = 239, // 1080
         ClientRequestQuestLog               = 240,
         ClientRequestQuestLine              = 241,
         ClientNewRuleViolation              = 242, // 910
@@ -254,7 +263,12 @@ namespace Proto {
         ClientMarketCreate                  = 246, // 944
         ClientMarketCancel                  = 247, // 944
         ClientMarketAccept                  = 248, // 944
-        ClientAnswerModalDialog             = 249  // 960
+        ClientAnswerModalDialog             = 249, // 960
+        ClientOpenStore                     = 250, // 1080
+        ClientRequestStoreOffers            = 251, // 1080
+        ClientBuyStoreOffer                 = 252, // 1080
+        ClientOpenTransactionHistory        = 253, // 1080
+        ClientRequestTransactionHistory     = 254  // 1080
     };
 
     enum CreatureType {

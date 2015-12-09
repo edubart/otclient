@@ -356,6 +356,31 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerPreset:
                 parsePreset(msg);
                 break;
+            // PROTOCOL>=1080
+            case Proto::GameServerCoinBalanceUpdating:
+                parseCoinBalanceUpdating(msg);
+                break;
+            case Proto::GameServerCoinBalance:
+                parseCoinBalance(msg);
+                break;
+            case Proto::GameServerRequestPurchaseData:
+                parseRequestPurchaseData(msg);
+                break;
+            case Proto::GameServerStoreCompletePurchase:
+                parseCompleteStorePurchase(msg);
+                break;
+            case Proto::GameServerStoreOffers:
+                parseStoreOffers(msg);
+                break;
+            case Proto::GameServerStoreTransactionHistory:
+                parseStoreTransactionHistory(msg);
+                break;
+            case Proto::GameServerStoreError:
+                parseStoreError(msg);
+                break;
+            case Proto::GameServerStore:
+                parseStore(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -396,6 +421,15 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
         g_game.setExpertPvpMode(expertModeEnabled);
     }
 
+    if(g_game.getFeature(Otc::GameIngameStore)) {
+        // URL to ingame store images
+        msg->getString();
+
+        // premium coin package size
+        // e.g you can only buy packs of 25, 50, 75, .. coins in the market
+        msg->getU16();
+    }
+
     m_localPlayer->setId(playerId);
     g_game.setServerBeat(serverBeat);
     g_game.setCanReportBugs(canReportBugs);
@@ -429,6 +463,124 @@ void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
 void ProtocolGame::parsePreset(const InputMessagePtr& msg)
 {
     uint16 preset = msg->getU32();
+}
+
+void ProtocolGame::parseRequestPurchaseData(const InputMessagePtr& msg)
+{
+    int transactionId = msg->getU32();
+    int productType = msg->getU8();
+}
+
+void ProtocolGame::parseStore(const InputMessagePtr& msg)
+{
+    parseCoinBalance(msg);
+
+    // Parse all categories
+    int count = msg->getU16();
+    for(int i = 0; i < count; i++) {
+        std::string category = msg->getString();
+        std::string description = msg->getString();
+
+        std::vector<std::string> icons;
+        int iconCount = msg->getU8();
+        for(int i = 0; i < iconCount; i++) {
+            std::string icon = msg->getString();
+            icons.push_back(icon);
+        }
+
+        // If this is a valid category name then
+        // the category we just parsed is a child of that
+        std::string parentCategory = msg->getString();
+    }
+}
+
+void ProtocolGame::parseCoinBalance(const InputMessagePtr& msg)
+{
+    bool update = msg->getU8() == 1;
+    int coins = -1;
+    int transferableCoins = -1;
+    if(update) {
+        // amount of coins that can be used to buy prodcuts
+        // in the ingame store
+        coins = msg->getU32();
+
+        // amount of coins that can be sold in market
+        // or be transfered to another player
+        transferableCoins = msg->getU32();
+    }
+}
+
+void ProtocolGame::parseCoinBalanceUpdating(const InputMessagePtr& msg)
+{
+    // coin balance can be updating and might not be accurate
+    bool isUpdating = msg->getU8() == 1;
+}
+
+void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
+{
+    // not used
+    msg->getU8();
+
+    std::string message = msg->getString();
+    int coins = msg->getU32();
+    int transferableCoins = msg->getU32();
+
+    g_logger.info(stdext::format("Purchase Complete: %s", message));
+}
+
+void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
+{
+    int currentPage = msg->getU16();
+    bool hasNextPage = msg->getU8() == 1;
+
+    int entries = msg->getU8();
+    for(int i = 0; i < entries; i++) {
+        int time = msg->getU16();
+        int productType = msg->getU8();
+        int coinChange = msg->getU32();
+        std::string productName = msg->getString();
+        g_logger.error(stdext::format("Time %i, type %i, change %i, product name %s", time, productType, coinChange, productName));
+    }
+}
+
+void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
+{
+    std::string categoryName = msg->getString();
+
+    int offers = msg->getU16();
+    for(int i = 0; i < offers; i++) {
+        int offerId = msg->getU32();
+        std::string offerName = msg->getString();
+        std::string offerDescription = msg->getString();
+
+        int price = msg->getU32();
+        int state = msg->getU8();
+        int disabled = msg->getU8() == 1;
+
+        int icons = msg->getU8();
+        for(int j = 0; j < icons; j++) {
+            std::string icon = msg->getString();
+        }
+
+        int subOffers = msg->getU16();
+        for(int j = 0; j < subOffers; j++) {
+            std::string name = msg->getString();
+            std::string description = msg->getString();
+
+            int subIcons = msg->getU8();
+            for(int k = 0; k < subIcons; k++) {
+                std::string icon = msg->getString();
+            }
+            std::string serviceType = msg->getString();
+        }
+    }
+}
+
+void ProtocolGame::parseStoreError(const InputMessagePtr& msg)
+{
+    int errorType = msg->getU8();
+    std::string message = msg->getString();
+    g_logger.error(stdext::format("Store Error: %s [%i]", message, errorType));
 }
 
 void ProtocolGame::parseUnjustifiedStats(const InputMessagePtr& msg)
