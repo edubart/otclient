@@ -394,7 +394,7 @@ SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
     auto iter = m_spawns.find(centerPos);
     if(iter != m_spawns.end()) {
         if(iter->second->getRadius() != radius)
-	    iter->second->setRadius(radius);
+            iter->second->setRadius(radius);
         return iter->second;
     }
 
