@@ -20,3 +20,9 @@ MiniWindow
     Minimap
       id: minimap
       anchors.fill: parent
+
+  ResizeBorder
+    anchors.right: parent.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    enabled: true
