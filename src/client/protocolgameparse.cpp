@@ -1593,6 +1593,13 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
             text = msg->getString();
             break;
         }
+        case Otc::MessageGuild:
+        case Otc::MessagePartyManagement:
+        case Otc::MessageParty: {
+            int channel = msg->getU16();
+            text = msg->getString();
+            break;
+        }
         case Otc::MessageDamageDealed:
         case Otc::MessageDamageReceived:
         case Otc::MessageDamageOthers: {
