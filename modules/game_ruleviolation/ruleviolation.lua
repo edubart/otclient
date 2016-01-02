@@ -90,6 +90,7 @@ function show(target, statement)
     ruleViolationWindow:show()
     ruleViolationWindow:raise()
     ruleViolationWindow:focus()
+    ruleViolationWindow:getChildById('commentText'):focus()
   end
 end
 
