@@ -709,6 +709,8 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
   local menu = g_ui.createWidget('PopupMenu')
   menu:setGameMenu(true)
 
+  local worldName = g_game.getWorldName()
+  local characterName = g_game.getCharacterName()
   channelName = tab:getText()
   if tab ~= defaultTab and tab ~= serverTab then
     menu:addOption(tr('Close'), function() removeTab(channelName) end)
@@ -726,7 +728,7 @@ function processChannelTabMenu(tab, mousePos, mouseButton)
         table.insert(lines, label:getText())
       end
 
-      local filename = channelName .. '.txt'
+      local filename = worldName .. ' - ' .. characterName .. ' - ' .. channelName .. '.txt'
       local filepath = '/' .. filename
 
       -- extra information at the beginning
