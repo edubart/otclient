@@ -35,7 +35,7 @@ class Effect : public Thing
     };
 
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView *lightView = nullptr);
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView *lightView = nullptr);
 
     void setId(uint32 id);
     uint32 getId() { return m_id; }
@@ -50,6 +50,9 @@ protected:
     void onAppear();
 
 private:
+    // Fix hidden overloaded warning
+    using Thing::draw;
+
     Timer m_animationTimer;
     uint m_phaseDuration;
     uint16 m_id;
