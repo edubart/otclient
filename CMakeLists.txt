@@ -5,7 +5,7 @@ set(VERSION "0.6.6")
 
 option(FRAMEWORK_SOUND "Use SOUND " ON)
 option(FRAMEWORK_GRAPHICS "Use GRAPHICS " ON)
-option(FRAMEWORK_XML "Use XML " ON)
+option(FRAMEWORK_XML "Use XML " OFF)
 option(FRAMEWORK_NET "Use NET " ON)
 option(FRAMEWORK_SQL "Use SQL" OFF)
 
