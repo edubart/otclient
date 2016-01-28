@@ -641,11 +641,7 @@ int Tile::getElevation() const
 
 bool Tile::hasElevation(int elevation)
 {
-    int count = 0;
-    for(const ThingPtr& thing : m_things)
-        if(thing->getElevation() > 0)
-            count++;
-    return count >= elevation;
+    return getElevation() >= elevation;
 }
 
 void Tile::checkTranslucentLight()
