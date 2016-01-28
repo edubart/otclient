@@ -654,6 +654,12 @@ bool Game::walk(Otc::Direction direction, bool dash)
 
     m_localPlayer->stopAutoWalk();
 
+    if(getClientVersion() <= 740) {
+        const TilePtr& fromTile = g_map.getTile(m_localPlayer->getPosition());
+        if (fromTile && toTile && (toTile->getElevation() - 1 > fromTile->getElevation()))
+            return false;
+    }
+
     g_lua.callGlobalField("g_game", "onWalk", direction, dash);
 
     forceWalk(direction);
