@@ -506,9 +506,6 @@ bool Tile::isWalkable(bool ignoreCreatures)
     if(!getGround())
         return false;
 
-    if(g_game.getClientVersion() <= 740 && hasElevation(2))
-        return false;
-
     for(const ThingPtr& thing : m_things) {
         if(thing->isNotWalkable())
             return false;
@@ -631,6 +628,15 @@ bool Tile::limitsFloorsView(bool isFreeView)
 bool Tile::canErase()
 {
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty() && m_flags == 0 && m_minimapColor == 0;
+}
+
+int Tile::getElevation() const
+{
+    int elevation = 0;
+    for(const ThingPtr& thing : m_things)
+        if(thing->getElevation() > 0)
+            elevation++;
+    return elevation;
 }
 
 bool Tile::hasElevation(int elevation)
