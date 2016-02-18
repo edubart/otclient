@@ -506,6 +506,9 @@ bool Tile::isWalkable(bool ignoreCreatures)
     if(!getGround())
         return false;
 
+    if(g_game.getClientVersion() <= 740 && hasElevation(2))
+        return false;
+
     for(const ThingPtr& thing : m_things) {
         if(thing->isNotWalkable())
             return false;

@@ -992,7 +992,9 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
     return
   end
 
-  if ignoreNpcMessages and mode == MessageModes.NpcFrom then return end
+  local isNpcMode = (mode == MessageModes.NpcFromStartBlock or mode == MessageModes.NpcFrom)
+
+  if ignoreNpcMessages and isNpcMode then return end
 
   speaktype = SpeakTypes[mode]
 
@@ -1008,7 +1010,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
 
     if mode == MessageModes.Yell and isIgnoringYelling() then
       return
-    elseif speaktype.private and isIgnoringPrivate() and mode ~= MessageModes.NpcFrom then
+    elseif speaktype.private and isIgnoringPrivate() and not isNpcMode then
       return
     elseif isIgnored(name) then
       return
@@ -1026,7 +1028,7 @@ function onTalk(name, level, mode, message, channelId, creaturePos)
     local staticText = StaticText.create()
     -- Remove curly braces from screen message
     local staticMessage = message
-    if mode == MessageModes.NpcFrom or mode == MessageModes.NpcFromStartBlock then
+    if isNpcMode then
       local highlightData = getHighlightedText(staticMessage)
       if #highlightData > 0 then
         for i = 1, #highlightData / 3 do
