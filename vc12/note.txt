@@ -1,0 +1,21 @@
+vc12:
+so, we need libs/dll 32/64bit i believe someone give as this
+with debug info/symbols please add _d to his name like yourlib_d.lib
+example 32bit lib:
+in folder         LuaJIT/lib/
+                            lua51.lib
+(debug) in folder LuaJIT/lib/
+                            lua51_d.lib
+
+example 64bit lib:
+in folder         LuaJIT/lib64/
+                              lua51.lib
+(debug) in folder LuaJIT/lib64/
+                              lua51_d.lib
+in OTCLIENT_LIBDEPS i added some thinks:
+    kernel32.lib;
+    user32.lib;
+    shell32.lib;
+    gdi32.lib;
+    advapi32.lib;
+because of weird linker errors
