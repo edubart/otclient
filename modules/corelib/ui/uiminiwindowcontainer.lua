@@ -69,7 +69,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
     end
 
     local child = children[i]
-    if child ~= noRemoveChild then
+    if child ~= noRemoveChild and child:isVisible() then
       local childHeight = child:getHeight()
       sumHeight = sumHeight - childHeight
       table.insert(removeChildren, child)
