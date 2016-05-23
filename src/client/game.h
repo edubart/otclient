@@ -291,8 +291,8 @@ public:
     // >= 1080 ingame store
     void buyStoreOffer(int offerId, int productType, const std::string& name = "");
     void requestTransactionHistory(int page, int entriesPerPage);
-    void requestStoreOffers(const std::string& categoryName);
-    void openStore();
+    void requestStoreOffers(const std::string& categoryName, int serviceType = 0);
+    void openStore(int serviceType = 0, const std::string& category = "");
     void transferCoins(const std::string& recipient, int amount);
     void openTransactionHistory(int entriesPerPage);
 

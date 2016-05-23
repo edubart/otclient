@@ -115,8 +115,8 @@ public:
     void sendSeekInContainer(int cid, int index);
     void sendBuyStoreOffer(int offerId, int productType, const std::string& name);
     void sendRequestTransactionHistory(int page, int entriesPerPage);
-    void sendRequestStoreOffers(const std::string& categoryName);
-    void sendOpenStore();
+    void sendRequestStoreOffers(const std::string& categoryName, int serviceType);
+    void sendOpenStore(int serviceType, const std::string &category);
     void sendTransferCoins(const std::string& recipient, int amount);
     void sendOpenTransactionHistory(int entiresPerPage);
 

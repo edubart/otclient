@@ -406,6 +406,8 @@ namespace Otc
         GameIdleAnimations = 71,
         GameKeepUnawareTiles = 72,
         GameIngameStore = 73,
+        GameIngameStoreHighlights = 74,
+        GameIngameStoreServiceType = 75,
 
         LastGameFeature = 101
     };

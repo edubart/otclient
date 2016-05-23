@@ -481,6 +481,10 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
         std::string category = msg->getString();
         std::string description = msg->getString();
 
+        int highlightState = 0;
+        if(g_game.getFeature(Otc::GameIngameStoreHighlights))
+            highlightState = msg->getU8();
+
         std::vector<std::string> icons;
         int iconCount = msg->getU8();
         for(int i = 0; i < iconCount; i++) {
@@ -554,8 +558,12 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
         std::string offerDescription = msg->getString();
 
         int price = msg->getU32();
-        int state = msg->getU8();
-        int disabled = msg->getU8() == 1;
+        int highlightState = msg->getU8();
+        int disabledState = msg->getU8();
+        std::string disabledReason = "";
+        if(g_game.getFeature(Otc::GameIngameStoreHighlights) && disabledState == 1) {
+            disabledReason = msg->getString();
+        }
 
         int icons = msg->getU8();
         for(int j = 0; j < icons; j++) {

@@ -1409,18 +1409,18 @@ void Game::requestTransactionHistory(int page, int entriesPerPage)
     m_protocolGame->sendRequestTransactionHistory(page, entriesPerPage);
 }
 
-void Game::requestStoreOffers(const std::string& categoryName)
+void Game::requestStoreOffers(const std::string& categoryName, int serviceType)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendRequestStoreOffers(categoryName);
+    m_protocolGame->sendRequestStoreOffers(categoryName, serviceType);
 }
 
-void Game::openStore()
+void Game::openStore(int serviceType, const std::string& category)
 {
     if(!canPerformGameAction())
         return;
-    m_protocolGame->sendOpenStore();
+    m_protocolGame->sendOpenStore(serviceType, category);
 }
 
 void Game::transferCoins(const std::string& recipient, int amount)
@@ -1492,7 +1492,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1091))
+    if(version != 0 && (version < 740 || version > 1093))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1510,7 +1510,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1091))
+    if(version != 0 && (version < 740 || version > 1093))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1665,6 +1665,15 @@ void Game::setClientVersion(int version)
     if(version >= 1080) {
         enableFeature(Otc::GameIngameStore);
     }
+
+    if(version >= 1092) {
+        enableFeature(Otc::GameIngameStoreServiceType);
+    }
+
+    if(version >= 1093) {
+        enableFeature(Otc::GameIngameStoreHighlights);
+    }
+
 
     m_clientVersion = version;
 
