@@ -47,7 +47,7 @@ FrameGroup::FrameGroup(ThingTypePtr belongsTo, int phases, int realSize, int lay
 	std::vector<std::vector<Rect>> texturesFramesRects, std::vector<std::vector<Rect>> texturesFramesOriginRects,
 	std::vector<std::vector<Point>> texturesFramesOffsets, std::vector<int> spritesIndex)
 {
-	m_animationPhases = phases;
+    m_animationPhases = phases;
 	m_realSize = realSize;
 	m_layers = layers;
 	m_size = size;
@@ -125,38 +125,38 @@ void ThingType::serialize(const FileStreamPtr& fin)
     fin->addU8(ThingLastAttr);
 
 	// it is untested, but to me it seems fine
-	bool hasFrameGroups = (m_category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
+    bool hasFrameGroups = (m_category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
 	uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
 	for (int i = 0; i < groupCount; ++i) {
-		if (hasFrameGroups)
-			fin->addU8(m_frameGroups[i]->getType());
+        if (hasFrameGroups)
+            fin->addU8(m_frameGroups[i]->getType());
 
-		fin->addU8(m_frameGroups[i]->m_size.width());
-		fin->addU8(m_frameGroups[i]->m_size.height());
+        fin->addU8(m_frameGroups[i]->m_size.width());
+        fin->addU8(m_frameGroups[i]->m_size.height());
 
-		if (m_frameGroups[i]->m_size.width() > 1 || m_frameGroups[i]->m_size.height() > 1)
-			fin->addU8(m_frameGroups[i]->getRealSize());
+        if (m_frameGroups[i]->m_size.width() > 1 || m_frameGroups[i]->m_size.height() > 1)
+            fin->addU8(m_frameGroups[i]->getRealSize());
 
-		fin->addU8(m_frameGroups[i]->getLayers());
-		fin->addU8(m_frameGroups[i]->getNumPatternX());
-		fin->addU8(m_frameGroups[i]->getNumPatternY());
-		fin->addU8(m_frameGroups[i]->getNumPatternZ());
-		fin->addU8(m_frameGroups[i]->getAnimationPhases());
+        fin->addU8(m_frameGroups[i]->getLayers());
+        fin->addU8(m_frameGroups[i]->getNumPatternX());
+        fin->addU8(m_frameGroups[i]->getNumPatternY());
+        fin->addU8(m_frameGroups[i]->getNumPatternZ());
+        fin->addU8(m_frameGroups[i]->getAnimationPhases());
 
-		if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
-			if (m_frameGroups[i]->getAnimationPhases() > 1 && m_frameGroups[i]->getAnimator() != nullptr)  {
-				m_frameGroups[i]->getAnimator()->serialize(fin);
-			}
-		}
+        if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
+            if (m_frameGroups[i]->getAnimationPhases() > 1 && m_frameGroups[i]->getAnimator() != nullptr)  {
+                m_frameGroups[i]->getAnimator()->serialize(fin);
+            }
+        }
 
-		for (uint i = 0; i < m_frameGroups[i]->m_spritesIndex.size(); i++) {
-			if (g_game.getFeature(Otc::GameSpritesU32))
-				fin->addU32(m_frameGroups[i]->m_spritesIndex[i]);
-			else
-				fin->addU16(m_frameGroups[i]->m_spritesIndex[i]);
-		}
-	}
+        for (uint i = 0; i < m_frameGroups[i]->m_spritesIndex.size(); i++) {
+            if (g_game.getFeature(Otc::GameSpritesU32))
+                fin->addU32(m_frameGroups[i]->m_spritesIndex[i]);
+            else
+                fin->addU16(m_frameGroups[i]->m_spritesIndex[i]);
+        }
+    }
 }
 
 void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
@@ -307,9 +307,9 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         uint8 width = fin->getU8();
         uint8 height = fin->getU8();
         Size size = Size(width, height);
-		int exactSize;
-		int realSize = 0;
-		if(width > 1 || height > 1) {
+        int exactSize;
+        int realSize = 0;
+        if(width > 1 || height > 1) {
             realSize = fin->getU8();
             exactSize = std::min<int>(realSize, std::max<int>(width * 32, height * 32));
         }
@@ -326,7 +326,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             numPatternZ = 1;
         int animationPhases = fin->getU8();
 
-		AnimatorPtr animator;
+        AnimatorPtr animator;
         if(animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
             animator = AnimatorPtr(new Animator);
             animator->unserialize(animationPhases, fin);
@@ -337,23 +337,23 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         if(totalSprites > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
-		std::vector<int> spritesIndex;
+        std::vector<int> spritesIndex;
         spritesIndex.resize(totalSprites);
         for(int j = 0; j < totalSprites; j++)
             spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
-		std::vector<TexturePtr> textures;
-		std::vector<std::vector<Rect>> texturesFramesRects;
-		std::vector<std::vector<Rect>> texturesFramesOriginRects;
-		std::vector<std::vector<Point>> texturesFramesOffsets;
+        std::vector<TexturePtr> textures;
+        std::vector<std::vector<Rect>> texturesFramesRects;
+        std::vector<std::vector<Rect>> texturesFramesOriginRects;
+        std::vector<std::vector<Point>> texturesFramesOffsets;
 
-		textures.resize(animationPhases);
-		texturesFramesRects.resize(animationPhases);
-		texturesFramesOriginRects.resize(animationPhases);
-		texturesFramesOffsets.resize(animationPhases);
-		FrameGroup* frameGroup = new FrameGroup(this, animationPhases, realSize, layers, size, exactSize, numPatternX, numPatternY, numPatternZ, animator, static_cast<FrameGroupType>(frameGroupType), m_customImage,
+        textures.resize(animationPhases);
+        texturesFramesRects.resize(animationPhases);
+        texturesFramesOriginRects.resize(animationPhases);
+        texturesFramesOffsets.resize(animationPhases);
+        FrameGroup* frameGroup = new FrameGroup(this, animationPhases, realSize, layers, size, exactSize, numPatternX, numPatternY, numPatternZ, animator, static_cast<FrameGroupType>(frameGroupType), m_customImage,
 			textures, texturesFramesRects, texturesFramesOriginRects, texturesFramesOffsets, spritesIndex);
-		m_frameGroups.push_back(frameGroup);
+        m_frameGroups.push_back(frameGroup);
     }
 }
 
@@ -367,26 +367,26 @@ void ThingType::exportImage(std::string fileName)
 			stdext::throw_exception("cannot export thingtype without sprites");
 
 		ImagePtr image(new Image(Size(32 * m_frameGroups[i]->m_size.width() * m_frameGroups[i]->getLayers() * m_frameGroups[i]->getNumPatternX(), 32 * m_frameGroups[i]->m_size.height() * m_frameGroups[i]->getAnimationPhases() * m_frameGroups[i]->getNumPatternY() * m_frameGroups[i]->getNumPatternZ())));
-		for (int z = 0; z < m_frameGroups[i]->getNumPatternZ(); ++z) {
-			for (int y = 0; y < m_frameGroups[i]->getNumPatternY(); ++y) {
-				for (int x = 0; x < m_frameGroups[i]->getNumPatternX(); ++x) {
-					for (int l = 0; l < m_frameGroups[i]->getLayers(); ++l) {
-						for (int a = 0; a < m_frameGroups[i]->getAnimationPhases(); ++a) {
-							for (int w = 0; w < m_frameGroups[i]->m_size.width(); ++w) {
-								for (int h = 0; h < m_frameGroups[i]->m_size.height(); ++h) {
-									image->blit(Point(32 * (m_frameGroups[i]->m_size.width() - w - 1 + m_frameGroups[i]->m_size.width() * x + m_frameGroups[i]->m_size.width() * m_frameGroups[i]->getNumPatternX() * l),
+        for (int z = 0; z < m_frameGroups[i]->getNumPatternZ(); ++z) {
+            for (int y = 0; y < m_frameGroups[i]->getNumPatternY(); ++y) {
+                for (int x = 0; x < m_frameGroups[i]->getNumPatternX(); ++x) {
+                    for (int l = 0; l < m_frameGroups[i]->getLayers(); ++l) {
+                        for (int a = 0; a < m_frameGroups[i]->getAnimationPhases(); ++a) {
+                            for (int w = 0; w < m_frameGroups[i]->m_size.width(); ++w) {
+                                for (int h = 0; h < m_frameGroups[i]->m_size.height(); ++h) {
+                                    image->blit(Point(32 * (m_frameGroups[i]->m_size.width() - w - 1 + m_frameGroups[i]->m_size.width() * x + m_frameGroups[i]->m_size.width() * m_frameGroups[i]->getNumPatternX() * l),
 										32 * (m_frameGroups[i]->m_size.height() - h - 1 + m_frameGroups[i]->m_size.height() * y + m_frameGroups[i]->m_size.height() * m_frameGroups[i]->getNumPatternY() * a + m_frameGroups[i]->m_size.height()
 										* m_frameGroups[i]->getNumPatternY() * m_frameGroups[i]->getAnimationPhases() * z)),
 											g_sprites.getSpriteImage(m_frameGroups[i]->m_spritesIndex[getSpriteIndex(w, h, l, x, y, z, a, m_frameGroups[i]->getType())]));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		image->savePNG(fileName);
-	}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        image->savePNG(fileName);
+     }
 }
 
 void ThingType::unserializeOtml(const OTMLNodePtr& node)
@@ -412,12 +412,12 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(m_null)
         return;
 
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
 	
 	if (animationPhase >= m_frameGroups[groupId]->getAnimationPhases())
         return;
@@ -426,7 +426,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(!texture)
         return;
 
-	uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern, type);
+    uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern, type);
     if(frameIndex >= m_frameGroups[groupId]->m_texturesFramesRects[animationPhase].size())
         return;
 
@@ -434,13 +434,13 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     Rect textureRect;
 
     if(scaleFactor != 1.0f) {
-		textureRect = m_frameGroups[groupId]->m_texturesFramesOriginRects[animationPhase][frameIndex];
+       textureRect = m_frameGroups[groupId]->m_texturesFramesOriginRects[animationPhase][frameIndex];
     } else {
-		textureOffset = m_frameGroups[groupId]->m_texturesFramesOffsets[animationPhase][frameIndex];
-		textureRect = m_frameGroups[groupId]->m_texturesFramesRects[animationPhase][frameIndex];
+        textureOffset = m_frameGroups[groupId]->m_texturesFramesOffsets[animationPhase][frameIndex];
+        textureRect = m_frameGroups[groupId]->m_texturesFramesRects[animationPhase][frameIndex];
     }
 
-	Rect screenRect(dest + (textureOffset - m_displacement - (m_frameGroups[groupId]->m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
+    Rect screenRect(dest + (textureOffset - m_displacement - (m_frameGroups[groupId]->m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
                     textureRect.size() * scaleFactor);
 
     bool useOpacity = m_opacity < 1.0f;
@@ -462,13 +462,13 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
 
 const TexturePtr& ThingType::getTexture(int animationPhase, FrameGroupType type)
 {
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
-	return m_frameGroups[groupId]->getTexture(animationPhase);
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
+    return m_frameGroups[groupId]->getTexture(animationPhase);
 }
 
 const TexturePtr& FrameGroup::getTexture(int animationPhase)
@@ -505,7 +505,7 @@ const TexturePtr& FrameGroup::getTexture(int animationPhase)
             for(int y = 0; y < m_numPatternY; ++y) {
                 for(int x = 0; x < m_numPatternX; ++x) {
                     for(int l = 0; l < numLayers; ++l) {
-						bool spriteMask = (getThing()->getCategory() == ThingCategoryCreature && l > 0);
+                        bool spriteMask = (getThing()->getCategory() == ThingCategoryCreature && l > 0);
                         int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
                         Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
                                                frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * Otc::TILE_PIXELS;
@@ -557,13 +557,13 @@ const TexturePtr& FrameGroup::getTexture(int animationPhase)
 
 Size ThingType::getBestTextureDimension(int w, int h, int count, FrameGroupType type)
 {
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
-	return m_frameGroups[groupId]->getBestTextureDimension(w, h, count);
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
+    return m_frameGroups[groupId]->getBestTextureDimension(w, h, count);
 
 }
 Size FrameGroup::getBestTextureDimension(int w, int h, int count)
@@ -571,13 +571,13 @@ Size FrameGroup::getBestTextureDimension(int w, int h, int count)
     const int MAX = 32;
 
     int k = 1;
-    while(k < w)
-        k<<=1;
+    while (k < w)
+        k <<= 1;
     w = k;
 
     k = 1;
-    while(k < h)
-        k<<=1;
+    while (k < h)
+        k <<= 1;
     h = k;
 
     int numSprites = w*h*count;
@@ -586,13 +586,13 @@ Size FrameGroup::getBestTextureDimension(int w, int h, int count)
     assert(h <= MAX);
 
     Size bestDimension = Size(MAX, MAX);
-    for(int i=w;i<=MAX;i<<=1) {
-        for(int j=h;j<=MAX;j<<=1) {
+    for (int i = w; i <= MAX; i <<= 1) {
+        for (int j = h; j <= MAX; j <<= 1) {
             Size candidateDimension = Size(i, j);
-            if(candidateDimension.area() < numSprites)
+            if (candidateDimension.area() < numSprites)
                 continue;
-            if((candidateDimension.area() < bestDimension.area()) ||
-               (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
+            if ((candidateDimension.area() < bestDimension.area()) ||
+                (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
                 bestDimension = candidateDimension;
         }
     }
@@ -614,34 +614,34 @@ uint FrameGroup::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a)
 }
 
 uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a, FrameGroupType type) {
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
-	return m_frameGroups[groupId]->getSpriteIndex(w, h, l, x, y, z, a);
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
+    return m_frameGroups[groupId]->getSpriteIndex(w, h, l, x, y, z, a);
 }
 
 uint FrameGroup::getTextureIndex(int l, int x, int y, int z) {
     return ((l * m_numPatternZ + z)
-               * m_numPatternY + y)
-               * m_numPatternX + x;
+        * m_numPatternY + y)
+        * m_numPatternX + x;
 }
 
 uint ThingType::getTextureIndex(int l, int x, int y, int z, FrameGroupType type) {
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
-	return m_frameGroups[groupId]->getTextureIndex(l, x, y, z);
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
+    return m_frameGroups[groupId]->getTextureIndex(l, x, y, z);
 }
 
 int FrameGroup::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
-	if (getThing()->isNull())
+    if (getThing()->isNull())
         return 0;
 
     getTexture(animationPhase); // we must calculate it anyway.
@@ -652,11 +652,11 @@ int FrameGroup::getExactSize(int layer, int xPattern, int yPattern, int zPattern
 
 int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase, FrameGroupType type)
 {
-	int groupId = 0;
-	for (uint8 i = 0; i < m_frameGroups.size(); i++) {
-		if (m_frameGroups[i]->getType() == type) {
-			groupId = i;
-		}
-	}
-	return m_frameGroups[groupId]->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
+    int groupId = 0;
+    for (uint8 i = 0; i < m_frameGroups.size(); i++) {
+        if (m_frameGroups[i]->getType() == type) {
+            groupId = i;
+        }
+    }
+    return m_frameGroups[groupId]->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
 }
