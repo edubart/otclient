@@ -108,11 +108,15 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
+		FrameGroupType type = FrameGroupDefault;
 
         if(isAnimateAlways() && animateIdle) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
-        }
+		} else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1) {
+			type = FrameGroupMoving;
+			animationPhase = m_walkAnimationPhase;
+		}
 
         // xPattern => creature direction
         int xPattern;
@@ -127,7 +131,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getMount() != 0) {
             auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
+			datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView, type);
             dest += getDisplacement() * scaleFactor;
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
         }
@@ -143,20 +147,20 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             auto datType = rawGetThingType();
-            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, yPattern == 0 ? lightView : nullptr);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, yPattern == 0 ? lightView : nullptr, type);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase);
+				datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, (LightView *)nullptr, type);
                 g_painter->setColor(m_outfit.getBodyColor());
-                datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase);
+				datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, (LightView *)nullptr, type);
                 g_painter->setColor(m_outfit.getLegsColor());
-                datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase);
+				datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase, (LightView *)nullptr, type);
                 g_painter->setColor(m_outfit.getFeetColor());
-                datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase);
+				datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase, (LightView *)nullptr, type);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
@@ -195,8 +199,8 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 void Creature::drawOutfit(const Rect& destRect, bool resize)
 {
     int exactSize;
-    if(m_outfit.getCategory() == ThingCategoryCreature)
-        exactSize = getExactSize();
+	if (m_outfit.getCategory() == ThingCategoryCreature)
+		exactSize = g_things.rawGetThingType(m_outfit.getId(), ThingCategoryCreature)->getExactSize();
     else
         exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
 
@@ -457,12 +461,16 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     if(m_outfit.getCategory() != ThingCategoryCreature)
         return;
 
-    int footAnimPhases = getAnimationPhases() - 1;
+	FrameGroupType groupType = FrameGroupDefault;
+	if (m_walking && rawGetThingType()->getFrameGroups().size() > 1) {
+		groupType = FrameGroupMoving;
+	}
+    int footAnimPhases = getAnimationPhases(groupType) - 1;
     int footDelay = getStepDuration(true) / 3;
     // Since mount is a different outfit we need to get the mount animation phases
     if(m_outfit.getMount() != 0) {
         ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = type->getAnimationPhases() - 1;
+		footAnimPhases = type->getAnimationPhases(groupType) - 1;
     }
     if(footAnimPhases == 0)
         m_walkAnimationPhase = 0;
@@ -906,7 +914,7 @@ int Creature::getDisplacementY()
     return Thing::getDisplacementY();
 }
 
-int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
+int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase, FrameGroupType type)
 {
     int exactSize = 0;
 
@@ -916,13 +924,14 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
     zPattern = 0;
     if(m_outfit.getMount() != 0)
         zPattern = 1;
+	ThingTypePtr thing = getThingType();
 
-    for(yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
+    for(yPattern = 0; yPattern < thing->getNumPatternY() ; yPattern++) {
         if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern-1))))
             continue;
 
         for(layer = 0; layer < getLayers(); ++layer)
-            exactSize = std::max<int>(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
+            exactSize = std::max<int>(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase, type));
     }
 
     return exactSize;

@@ -68,13 +68,13 @@ public:
     virtual Point getDisplacement() { return rawGetThingType()->getDisplacement(); }
     virtual int getDisplacementX() { return rawGetThingType()->getDisplacementX(); }
     virtual int getDisplacementY() { return rawGetThingType()->getDisplacementY(); }
-    virtual int getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase) { return rawGetThingType()->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase); }
-    int getLayers() { return rawGetThingType()->getLayers(); }
-    int getNumPatternX() { return rawGetThingType()->getNumPatternX(); }
-    int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
-    int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
-    int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
-    AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
+	virtual int getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase, FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase, type); }
+	int getLayers(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getLayers(); }
+	int getNumPatternX(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getNumPatternX(type); }
+	int getNumPatternY(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getNumPatternY(type); }
+	int getNumPatternZ(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getNumPatternZ(type); }
+	int getAnimationPhases(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getAnimationPhases(type); }
+	AnimatorPtr getAnimator(FrameGroupType type = FrameGroupDefault) { return rawGetThingType()->getAnimator(type); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
     Light getLight() { return rawGetThingType()->getLight(); }
