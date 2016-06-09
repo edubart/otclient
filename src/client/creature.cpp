@@ -113,9 +113,8 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(isAnimateAlways() && animateIdle) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
-		} else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1) {
+		} else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
 			type = FrameGroupMoving;
-			animationPhase = m_walkAnimationPhase;
 		}
 
         // xPattern => creature direction
@@ -462,9 +461,10 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         return;
 
 	FrameGroupType groupType = FrameGroupDefault;
-	if (m_walking && rawGetThingType()->getFrameGroups().size() > 1) {
+	if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
 		groupType = FrameGroupMoving;
 	}
+
     int footAnimPhases = getAnimationPhases(groupType) - 1;
     int footDelay = getStepDuration(true) / 3;
     // Since mount is a different outfit we need to get the mount animation phases
