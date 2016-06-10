@@ -114,7 +114,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
         }
-        else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations)) {
             type = FrameGroupMoving;
         }
 
@@ -466,7 +466,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         return;
 
     FrameGroupType groupType = FrameGroupDefault;
-    if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+    if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations)) {
         groupType = FrameGroupMoving;
     }
 

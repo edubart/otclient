@@ -327,7 +327,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         int animationPhases = fin->getU8();
 
         AnimatorPtr animator;
-        if(animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if (animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
             animator = AnimatorPtr(new Animator);
             animator->unserialize(animationPhases, fin);
         }
