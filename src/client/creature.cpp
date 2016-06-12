@@ -113,9 +113,9 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if (isAnimateAlways() && animateIdle) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
-        }
-        else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations)) {
+        } else if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations) && animationPhase != 0) {
             type = FrameGroupMoving;
+            animationPhase--; // we count phases from 0, so we have to decrease animationPhase by 1, so we don't miss one of the frames 
         }
 
         // xPattern => creature direction
@@ -166,8 +166,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             }
         }
         // outfit is a creature imitating an item or the invisible effect
-    }
-    else  {
+    } else  {
         ThingType *type = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory());
 
         int animationPhase = 0;
@@ -220,8 +219,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
         internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, Otc::South);
         outfitBuffer->release();
         outfitBuffer->draw(destRect, Rect(0, 0, frameSize, frameSize));
-    }
-    else {
+    } else {
         float scaleFactor = destRect.width() / (float)frameSize;
         Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
         internalDrawOutfit(dest, scaleFactor, false, true, Otc::South);
@@ -392,8 +390,7 @@ void Creature::updateJump()
         g_dispatcher.scheduleEvent([self] {
             self->updateJump();
         }, nextT - m_jumpTimer.ticksElapsed());
-    }
-    else
+    } else
         m_jumpOffset = PointF(0, 0);
 }
 
@@ -416,14 +413,12 @@ void Creature::onAppear()
         m_removed = false;
         callLuaField("onAppear");
         // walk
-    }
-    else if (m_oldPosition != m_position && m_oldPosition.isInRange(m_position, 1, 1) && m_allowAppearWalk) {
+    } else if (m_oldPosition != m_position && m_oldPosition.isInRange(m_position, 1, 1) && m_allowAppearWalk) {
         m_allowAppearWalk = false;
         walk(m_oldPosition, m_position);
         callLuaField("onWalk", m_oldPosition, m_position);
         // teleport
-    }
-    else if (m_oldPosition != m_position) {
+    } else if (m_oldPosition != m_position) {
         stopWalk();
         callLuaField("onDisappear");
         callLuaField("onAppear");
@@ -466,27 +461,52 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         return;
 
     FrameGroupType groupType = FrameGroupDefault;
-    if (m_walking && rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations)) {
+    if (rawGetThingType()->getFrameGroups().size() > 1 && g_game.getFeature(Otc::GameIdleAnimations) && m_walking) {
         groupType = FrameGroupMoving;
     }
 
-    int footAnimPhases = getAnimationPhases(groupType) - 1;
-    int footDelay = getStepDuration(true) / 3;
-    // Since mount is a different outfit we need to get the mount animation phases
-    if (m_outfit.getMount() != 0) {
-        ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = type->getAnimationPhases(groupType) - 1;
-    }
-    if (footAnimPhases == 0)
-        m_walkAnimationPhase = 0;
-    else if (m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
-        m_footStep++;
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
-        m_footStepDrawn = false;
-        m_footTimer.restart();
-    }
-    else if (m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+    int footAnimPhases = 0;
+    int footDelay = 0;
+    if (groupType == FrameGroupDefault) {
+        footAnimPhases = getAnimationPhases(groupType) - 1;
+        footDelay = getStepDuration(true) / (footAnimPhases + 1);
+
+        // Since mount is a different outfit we need to get the mount animation phases
+        if (m_outfit.getMount() != 0) {
+            ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
+            footAnimPhases = type->getAnimationPhases(groupType) - 1;
+        }
+
+        if (footAnimPhases == 0)
+            m_walkAnimationPhase = 0;
+        else if (m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
+            m_footStep++;
+            m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+            m_footStepDrawn = false;
+            m_footTimer.restart();
+        } else if (m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
+            m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+        }
+    } else if (groupType == FrameGroupMoving) {
+        footAnimPhases = getAnimationPhases(groupType);
+        footDelay = getStepDuration(true) / footAnimPhases;
+
+        if (m_outfit.getMount() != 0) {
+            ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
+            footAnimPhases = type->getAnimationPhases(groupType);
+            footDelay = getStepDuration(true) / footAnimPhases;
+        }
+
+        if (footAnimPhases == 0) {
+            m_walkAnimationPhase = 0;
+        } else if (m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
+            m_footStep++;
+            (m_walkAnimationPhase < footAnimPhases) ? m_walkAnimationPhase++ : m_walkAnimationPhase = 0;
+            m_footStepDrawn = false;
+            m_footTimer.restart();
+        } else if (m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
+            (m_walkAnimationPhase < footAnimPhases) ? m_walkAnimationPhase++ : m_walkAnimationPhase = 0;
+        }
     }
 
     if (totalPixelsWalked == 32 && !m_walkFinishAnimEvent) {
@@ -652,8 +672,7 @@ void Creature::setOutfit(const Outfit& outfit)
             return;
         m_outfit.setAuxId(outfit.getAuxId());
         m_outfit.setCategory(outfit.getCategory());
-    }
-    else {
+    } else {
         if (outfit.getId() > 0 && !g_things.isValidDatId(outfit.getId(), ThingCategoryCreature))
             return;
         m_outfit = outfit;
@@ -674,8 +693,7 @@ void Creature::setOutfitColor(const Color& color, int duration)
         Color delta = (color - m_outfitColor) / (float)duration;
         m_outfitColorTimer.restart();
         updateOutfitColor(m_outfitColor, color, delta, duration);
-    }
-    else
+    } else
         m_outfitColor = color;
 }
 
@@ -688,8 +706,7 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
         m_outfitColorUpdateEvent = g_dispatcher.scheduleEvent([=] {
             self->updateOutfitColor(color, finalColor, delta, duration);
         }, 100);
-    }
-    else {
+    } else {
         m_outfitColor = finalColor;
     }
 }
@@ -805,8 +822,7 @@ void Creature::updateShield()
         g_dispatcher.scheduleEvent([self]() {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
-    }
-    else if (!m_shieldBlink)
+    } else if (!m_shieldBlink)
         m_showShieldTexture = true;
 }
 
@@ -817,8 +833,7 @@ Point Creature::getDrawOffset()
         if (m_walkingTile)
             drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation();
         drawOffset += m_walkOffset;
-    }
-    else {
+    } else {
         const TilePtr& tile = getTile();
         if (tile)
             drawOffset -= Point(1, 1) * tile->getDrawElevation();
@@ -863,8 +878,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
                 + m_speedFormula[Otc::SpeedFormulaB]) + m_speedFormula[Otc::SpeedFormulaC]) + 0.5));
         }
         interval = std::floor(interval / (double)formulatedSpeed);
-    }
-    else
+    } else
         interval /= speed;
 
     if (g_game.getClientVersion() >= 900)
