@@ -84,6 +84,9 @@ enum ThingAttr : uint8 {
     ThingAttrCloth            = 32,
     ThingAttrMarket           = 33,
     ThingAttrUsable           = 34,
+    ThingAttrWrapable         = 35,
+    ThingAttrUnwrapable       = 36,
+    ThingAttrTopEffect        = 37,
 
     // additional
     ThingAttrOpacity          = 100,
@@ -193,6 +196,11 @@ public:
     bool isIgnoreLook() { return m_attribs.has(ThingAttrLook); }
     bool isCloth() { return m_attribs.has(ThingAttrCloth); }
     bool isMarketable() { return m_attribs.has(ThingAttrMarket); }
+    bool isUsable() { return m_attribs.has(ThingAttrUsable); }
+    bool isWrapable() { return m_attribs.has(ThingAttrWrapable); }
+    bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
+    bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
+
     std::vector<int> getSprites() { return m_spritesIndex; }
 
     // additional

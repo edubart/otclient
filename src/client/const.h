@@ -148,6 +148,12 @@ namespace Otc
         Distance,
         Shielding,
         Fishing,
+        CriticalChance,
+        CriticalDamage,
+        LifeLeechChance,
+        LifeLeechAmount,
+        ManaLeechChance,
+        ManaLeechAmount,
         LastSkill
     };
 
@@ -318,19 +324,20 @@ namespace Otc
         MessageTutorialHint            = 38,
         MessageThankyou                = 39,
         MessageMarket                  = 40,
-        MessageBeyondLast              = 41,
+        MessageMana                    = 41,
+        MessageBeyondLast              = 42,
 
         // deprecated
-        MessageMonsterYell             = 42,
-        MessageMonsterSay              = 43,
-        MessageRed                     = 44,
-        MessageBlue                    = 45,
-        MessageRVRChannel              = 46,
-        MessageRVRAnswer               = 47,
-        MessageRVRContinue             = 48,
-        MessageGameHighlight           = 49,
-        MessageNpcFromStartBlock       = 50,
-        LastMessage                    = 51,
+        MessageMonsterYell             = 43,
+        MessageMonsterSay              = 44,
+        MessageRed                     = 45,
+        MessageBlue                    = 46,
+        MessageRVRChannel              = 47,
+        MessageRVRAnswer               = 48,
+        MessageRVRContinue             = 49,
+        MessageGameHighlight           = 50,
+        MessageNpcFromStartBlock       = 51,
+        LastMessage                    = 52,
         MessageInvalid                 = 255
     };
 
@@ -408,6 +415,7 @@ namespace Otc
         GameIngameStore = 73,
         GameIngameStoreHighlights = 74,
         GameIngameStoreServiceType = 75,
+        GameAdditionalSkills = 76,
 
         LastGameFeature = 101
     };

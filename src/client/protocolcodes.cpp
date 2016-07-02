@@ -29,6 +29,10 @@ std::map<uint8, uint8> messageModesMap;
 void buildMessageModesMap(int version) {
     messageModesMap.clear();
 
+    if(version >= 1094) {
+        messageModesMap[Otc::MessageMana] = 43;
+    }
+
     if(version >= 1055) { // might be 1054
         messageModesMap[Otc::MessageNone] = 0;
         messageModesMap[Otc::MessageSay] = 1;

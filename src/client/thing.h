@@ -117,6 +117,10 @@ public:
     bool isIgnoreLook() { return rawGetThingType()->isIgnoreLook(); }
     bool isCloth() { return rawGetThingType()->isCloth(); }
     bool isMarketable() { return rawGetThingType()->isMarketable(); }
+    bool isUsable() { return rawGetThingType()->isUsable(); }
+    bool isWrapable() { return rawGetThingType()->isWrapable(); }
+    bool isUnwrapable() { return rawGetThingType()->isUnwrapable(); }
+    bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
     virtual void onPositionChange(const Position& newPos, const Position& oldPos) { }

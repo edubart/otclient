@@ -387,9 +387,13 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Thing>("isTranslucent", &Thing::isTranslucent);
     g_lua.bindClassMemberFunction<Thing>("isFullGround", &Thing::isFullGround);
     g_lua.bindClassMemberFunction<Thing>("isMarketable", &Thing::isMarketable);
+    g_lua.bindClassMemberFunction<Thing>("getMarketData", &Thing::getMarketData);
+    g_lua.bindClassMemberFunction<Thing>("isUsable", &Thing::isUsable);
+    g_lua.bindClassMemberFunction<Thing>("isWrapable", &Thing::isWrapable);
+    g_lua.bindClassMemberFunction<Thing>("isUnwrapable", &Thing::isUnwrapable);
+    g_lua.bindClassMemberFunction<Thing>("isTopEffect", &Thing::isTopEffect);
     g_lua.bindClassMemberFunction<Thing>("isLyingCorpse", &Thing::isLyingCorpse);
     g_lua.bindClassMemberFunction<Thing>("getParentContainer", &Thing::getParentContainer);
-    g_lua.bindClassMemberFunction<Thing>("getMarketData", &Thing::getMarketData);
 
     g_lua.registerClass<House>();
     g_lua.bindClassStaticFunction<House>("create", []{ return HousePtr(new House); });
@@ -541,6 +545,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("isCloth", &ThingType::isCloth);
     g_lua.bindClassMemberFunction<ThingType>("isMarketable", &ThingType::isMarketable);
     g_lua.bindClassMemberFunction<ThingType>("getMarketData", &ThingType::getMarketData);
+    g_lua.bindClassMemberFunction<ThingType>("isUsable", &ThingType::isUsable);
+    g_lua.bindClassMemberFunction<ThingType>("isWrapable", &ThingType::isWrapable);
+    g_lua.bindClassMemberFunction<ThingType>("isUnwrapable", &ThingType::isUnwrapable);
+    g_lua.bindClassMemberFunction<ThingType>("isTopEffect", &ThingType::isTopEffect);
     g_lua.bindClassMemberFunction<ThingType>("getSprites", &ThingType::getSprites);
     g_lua.bindClassMemberFunction<ThingType>("hasAttribute", &ThingType::hasAttr);
     g_lua.bindClassMemberFunction<ThingType>("exportImage", &ThingType::exportImage);

@@ -195,7 +195,10 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         return;
 
     if(thing->isEffect()) {
-        m_effects.push_back(thing->static_self_cast<Effect>());
+        if(thing->isTopEffect())
+            m_effects.insert(m_effects.begin(), thing->static_self_cast<Effect>());
+        else
+            m_effects.push_back(thing->static_self_cast<Effect>());
     } else {
         // priority                                    854
         // 0 - ground,                        -->      -->

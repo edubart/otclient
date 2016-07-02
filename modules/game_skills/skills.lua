@@ -78,6 +78,11 @@ function resetSkillColor(id)
   widget:setColor('#bbbbbb')
 end
 
+function toggleSkill(id, state)
+  local skill = skillsWindow:recursiveGetChildById(id)
+  skill:setVisible(state)
+end
+
 function setSkillBase(id, value, baseValue)
   if baseValue <= 0 or value < 0 then
     return
@@ -118,10 +123,12 @@ end
 function setSkillPercent(id, percent, tooltip)
   local skill = skillsWindow:recursiveGetChildById(id)
   local widget = skill:getChildById('percent')
-  widget:setPercent(math.floor(percent))
+  if widget then
+    widget:setPercent(math.floor(percent))
 
-  if tooltip then
-    widget:setTooltip(tooltip)
+    if tooltip then
+      widget:setTooltip(tooltip)
+    end
   end
 end
 
@@ -204,16 +211,25 @@ function refresh()
   onRegenerationChange(player, player:getRegenerationTime())
   onSpeedChange(player, player:getSpeed())
 
-  for i=0,6 do
+  local hasAdditionalSkills = g_game.getFeature(GameAdditionalSkills)
+  for i = Skill.Fist, Skill.ManaLeechAmount do
     onSkillChange(player, i, player:getSkillLevel(i), player:getSkillLevelPercent(i))
     onBaseSkillChange(player, i, player:getSkillBaseLevel(i))
+
+    if i > Skill.Fishing then
+      toggleSkill('skillId'..i, hasAdditionalSkills)
+    end
   end
 
   update()
 
   local contentsPanel = skillsWindow:getChildById('contentsPanel')
   skillsWindow:setContentMinimumHeight(44)
-  skillsWindow:setContentMaximumHeight(390)
+  if hasAdditionalSkills then
+    skillsWindow:setContentMaximumHeight(480)
+  else
+    skillsWindow:setContentMaximumHeight(390)
+  end
 end
 
 function offline()

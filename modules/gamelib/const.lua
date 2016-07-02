@@ -45,6 +45,22 @@ Directions = {
   NorthWest = 7
 }
 
+Skill = {
+  Fist = 0,
+  Club = 1,
+  Sword = 2,
+  Axe = 3,
+  Distance = 4,
+  Shielding = 5,
+  Fishing = 6,
+  CriticalChance = 7,
+  CriticalDamage = 8,
+  LifeLeechChance = 9,
+  LifeLeechAmount = 10,
+  ManaLeechChance = 11,
+  ManaLeechAmount = 12
+}
+
 North = Directions.North
 East = Directions.East
 South = Directions.South
@@ -134,6 +150,9 @@ GameDeathType = 70
 GameIdleAnimations = 71
 GameKeepUnawareTiles = 72
 GameIngameStore = 73
+GameIngameStoreHighlights = 74
+GameIngameStoreServiceType = 75
+GameAdditionalSkills = 76
 
 TextColors = {
   red       = '#f55e5e', --'#c83200'
