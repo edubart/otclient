@@ -157,11 +157,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
 
-if(WIN32)
-    set(CPP2011_FLAGS "-std=gnu++0x")
-else()
-    set(CPP2011_FLAGS "-std=c++0x")
-endif()
+include(FindCXX11)
 
 # gcc compile flags
 set(WARNS_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-unused-variable -Wno-unused-result")
