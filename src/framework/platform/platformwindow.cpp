@@ -22,7 +22,7 @@
 
 #include "platformwindow.h"
 
-#ifdef WIN32
+#ifdef __WIN32__
 #include "win32window.h"
 WIN32Window window;
 #else
