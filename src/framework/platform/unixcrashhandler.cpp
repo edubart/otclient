@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#if !defined(__WIN32__) && defined(CRASH_HANDLER)
+#if !defined(_WIN32) && defined(CRASH_HANDLER)
 
 #include "crashhandler.h"
 #include <framework/global.h>
