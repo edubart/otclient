@@ -132,7 +132,7 @@ void buildMessageModesMap(int version) {
         messageModesMap[Otc::MessageGamemasterPrivateFrom]   = 14;
         messageModesMap[Otc::MessageGamemasterPrivateTo]     = 14;
         messageModesMap[Otc::MessageChannelHighlight]        = 15;
-        // 16, 17, 18 ??
+        // 16, 17 ??
         messageModesMap[Otc::MessageRed]                     = 18;
         messageModesMap[Otc::MessageMonsterSay]              = 19;
         messageModesMap[Otc::MessageMonsterYell]             = 20;
