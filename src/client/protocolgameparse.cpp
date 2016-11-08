@@ -383,10 +383,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             // PROTOCOL>=1097
             case Proto::GameServerStoreButtonIndicators:
-				parseStoreButtonIndicators(msg);
+                parseStoreButtonIndicators(msg);
                 break;
             case Proto::GameServerSetStoreDeepLink:
-				parseSetStoreDeepLink(msg);
+                parseSetStoreDeepLink(msg);
                 break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
