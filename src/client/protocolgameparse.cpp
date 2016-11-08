@@ -381,11 +381,13 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerStore:
                 parseStore(msg);
                 break;
-			// PROTOCOL>=1097
-			case Proto::GameServerStoreButtonIndicators:
-				break;
-			case Proto::GameServerSetStoreDeepLink:
-				break;
+            // PROTOCOL>=1097
+            case Proto::GameServerStoreButtonIndicators:
+				parseStoreButtonIndicators(msg);
+                break;
+            case Proto::GameServerSetStoreDeepLink:
+				parseSetStoreDeepLink(msg);
+                break;
             // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
@@ -461,13 +463,13 @@ void ProtocolGame::parseEnterGame(const InputMessagePtr& msg)
 
 void ProtocolGame::parseStoreButtonIndicators(const InputMessagePtr& msg)
 {
-	msg->getU8(); // unknown
-	msg->getU8(); // unknown
+    msg->getU8(); // unknown
+    msg->getU8(); // unknown
 }
 
 void ProtocolGame::parseSetStoreDeepLink(const InputMessagePtr& msg)
 {
-	int currentlyFeaturedServiceType = msg->getU8();
+    int currentlyFeaturedServiceType = msg->getU8();
 }
 
 void ProtocolGame::parseBlessings(const InputMessagePtr& msg)
@@ -550,14 +552,14 @@ void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
 
 void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
 {
-	int currentPage;
-	if (g_game.getClientVersion() <= 1096) {
-		currentPage = msg->getU16();
-		bool hasNextPage = msg->getU8() == 1;
-	} else {
-		currentPage = msg->getU32();
-		int pageCount = msg->getU32();
-	}
+    int currentPage;
+    if (g_game.getClientVersion() <= 1096) {
+        currentPage = msg->getU16();
+        bool hasNextPage = msg->getU8() == 1;
+    } else {
+        currentPage = msg->getU32();
+        int pageCount = msg->getU32();
+    }
 
     int entries = msg->getU8();
     for(int i = 0; i < entries; i++) {
@@ -581,10 +583,10 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
 
         int price = msg->getU32();
         int highlightState = msg->getU8();
-		if (highlightState == 2 && g_game.getFeature(Otc::GameIngameStoreHighlights) && g_game.getClientVersion() >= 1097) {
-			int saleValidUntilTimestamp = msg->getU32();
-			int basePrice = msg->getU32();
-		}
+        if (highlightState == 2 && g_game.getFeature(Otc::GameIngameStoreHighlights) && g_game.getClientVersion() >= 1097) {
+            int saleValidUntilTimestamp = msg->getU32();
+            int basePrice = msg->getU32();
+        }
 
         int disabledState = msg->getU8();
         std::string disabledReason = "";
@@ -1295,9 +1297,9 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
         triggers.push_back(msg->getU8());
     }
     
-	if (g_game.getClientVersion() <= 1096) {
-		bool something = msg->getU8() == 1;
-	}
+    if (g_game.getClientVersion() <= 1096) {
+        bool something = msg->getU8() == 1;
+    }
 }
 
 void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
@@ -1350,15 +1352,15 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     double levelPercent = msg->getU8();
 
     if(g_game.getFeature(Otc::GameExperienceBonus))
-		if (g_game.getClientVersion() <= 1096) {
-			double experienceBonus = msg->getDouble();
-		} else {
-			int baseXpGain = msg->getU16();
-			int voucherAddend = msg->getU16();
-			int grindingAddend = msg->getU16();
-			int storeBoostAddend = msg->getU16();
-			int huntingBoostFactor = msg->getU16();
-		}
+        if (g_game.getClientVersion() <= 1096) {
+            double experienceBonus = msg->getDouble();
+        } else {
+            int baseXpGain = msg->getU16();
+            int voucherAddend = msg->getU16();
+            int grindingAddend = msg->getU16();
+            int storeBoostAddend = msg->getU16();
+            int huntingBoostFactor = msg->getU16();
+        }
 
     double mana;
     double maxMana;
@@ -1394,13 +1396,13 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         regeneration = msg->getU16();
 
     double training = 0;
-	if (g_game.getFeature(Otc::GameOfflineTrainingTime)) {
-		training = msg->getU16();
-		if (g_game.getClientVersion() >= 1097) {
-			int remainingStoreXpBoostSeconds = msg->getU16();
-			bool canBuyMoreStoreXpBoosts = msg->getU8();
-		}
-	}
+    if (g_game.getFeature(Otc::GameOfflineTrainingTime)) {
+        training = msg->getU16();
+        if (g_game.getClientVersion() >= 1097) {
+            int remainingStoreXpBoostSeconds = msg->getU16();
+            bool canBuyMoreStoreXpBoosts = msg->getU8();
+        }
+    }
 
     m_localPlayer->setHealth(health, maxHealth);
     m_localPlayer->setFreeCapacity(freeCapacity);

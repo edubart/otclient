@@ -134,8 +134,8 @@ public:
     void addPosition(const OutputMessagePtr& msg, const Position& position);
 
 private:
-	void parseStoreButtonIndicators(const InputMessagePtr& msg);
-	void parseSetStoreDeepLink(const InputMessagePtr& msg);
+    void parseStoreButtonIndicators(const InputMessagePtr& msg);
+    void parseSetStoreDeepLink(const InputMessagePtr& msg);
     void parseStore(const InputMessagePtr& msg);
     void parseStoreError(const InputMessagePtr& msg);
     void parseStoreTransactionHistory(const InputMessagePtr& msg);
