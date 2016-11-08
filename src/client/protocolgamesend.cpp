@@ -880,8 +880,13 @@ void ProtocolGame::sendRequestTransactionHistory(int page, int entriesPerPage)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRequestTransactionHistory);
-    msg->addU16(page);
-    msg->addU32(entriesPerPage);
+	if (g_game.getClientVersion() <= 1096) {
+		msg->addU16(page);
+		msg->addU32(entriesPerPage);
+	} else {
+		msg->addU32(page);
+		msg->addU8(entriesPerPage);
+	}
 
     send(msg);
 }
