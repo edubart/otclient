@@ -553,7 +553,7 @@ void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
 void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
 {
     int currentPage;
-    if (g_game.getClientVersion() <= 1096) {
+    if(g_game.getClientVersion() <= 1096) {
         currentPage = msg->getU16();
         bool hasNextPage = msg->getU8() == 1;
     } else {
@@ -583,7 +583,7 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
 
         int price = msg->getU32();
         int highlightState = msg->getU8();
-        if (highlightState == 2 && g_game.getFeature(Otc::GameIngameStoreHighlights) && g_game.getClientVersion() >= 1097) {
+        if(highlightState == 2 && g_game.getFeature(Otc::GameIngameStoreHighlights) && g_game.getClientVersion() >= 1097) {
             int saleValidUntilTimestamp = msg->getU32();
             int basePrice = msg->getU32();
         }
@@ -1297,7 +1297,7 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
         triggers.push_back(msg->getU8());
     }
     
-    if (g_game.getClientVersion() <= 1096) {
+    if(g_game.getClientVersion() <= 1096) {
         bool something = msg->getU8() == 1;
     }
 }
@@ -1352,7 +1352,7 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     double levelPercent = msg->getU8();
 
     if(g_game.getFeature(Otc::GameExperienceBonus))
-        if (g_game.getClientVersion() <= 1096) {
+        if(g_game.getClientVersion() <= 1096) {
             double experienceBonus = msg->getDouble();
         } else {
             int baseXpGain = msg->getU16();
@@ -1396,9 +1396,9 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         regeneration = msg->getU16();
 
     double training = 0;
-    if (g_game.getFeature(Otc::GameOfflineTrainingTime)) {
+    if(g_game.getFeature(Otc::GameOfflineTrainingTime)) {
         training = msg->getU16();
-        if (g_game.getClientVersion() >= 1097) {
+        if(g_game.getClientVersion() >= 1097) {
             int remainingStoreXpBoostSeconds = msg->getU16();
             bool canBuyMoreStoreXpBoosts = msg->getU8();
         }
