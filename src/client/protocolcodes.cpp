@@ -119,7 +119,7 @@ void buildMessageModesMap(int version) {
         messageModesMap[Otc::MessageWhisper]                 = 2;
         messageModesMap[Otc::MessageYell]                    = 3;
         messageModesMap[Otc::MessageNpcTo]                   = 4;
-        messageModesMap[Otc::MessageNpcFrom]                 = 5;
+        messageModesMap[Otc::MessageNpcFromStartBlock]       = 5;
         messageModesMap[Otc::MessagePrivateFrom]             = 6;
         messageModesMap[Otc::MessagePrivateTo]               = 6;
         messageModesMap[Otc::MessageChannel]                 = 7;
