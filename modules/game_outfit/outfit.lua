@@ -115,7 +115,7 @@ function create(creatureOutfit, outfitList, creatureMount, mountList)
   for j=0,6 do
     for i=0,18 do
       local colorBox = g_ui.createWidget('ColorBox', colorBoxPanel)
-      local outfitColor = getOufitColor(j*19 + i)
+      local outfitColor = getOutfitColor(j*19 + i)
       colorBox:setImageColor(outfitColor)
       colorBox:setId('colorBox' .. j*19+i)
       colorBox.colorId = j*19 + i
