@@ -318,7 +318,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_shaders", "getDefaultMapShader", &ShaderManager::getDefaultMapShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getShader", &ShaderManager::getShader, &g_shaders);
 
-    g_lua.bindGlobalFunction("getOufitColor", Outfit::getColor);
+    g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);
     g_lua.bindGlobalFunction("getDirectionFromPos", Position::getDirectionFromPositions);
 
