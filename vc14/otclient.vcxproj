@@ -1,0 +1,502 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{17A8F78F-1FFB-4128-A3B3-59CC6C19D89A}</ProjectGuid>
+    <RootNamespace>otclient</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\otclient-msvc13-libs\libogg-1.3.1\include;D:\otclient-msvc13-libs\libvorbis-1.3.3\include;D:\otclient-msvc13-libs\physfs-2.0.3\include;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\include;D:\otclient-msvc13-libs\zlib-1.2.5\include;D:\otclient-msvc13-libs\OpenAL\include\AL;D:\otclient-msvc13-libs\glew-1.10.0\include;D:\otclient-msvc13-libs\LuaJIT-2.0.2\include;D:\otclient-msvc13-libs\boost_1_55_0\include;D:\otclient\src;..\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\otclient-msvc13-libs\libogg-1.3.1\lib;D:\otclient-msvc13-libs\libvorbis-1.3.3\lib;D:\otclient-msvc13-libs\physfs-2.0.3\lib;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\lib\VC;D:\otclient-msvc13-libs\zlib-1.2.5\lib;D:\otclient-msvc13-libs\OpenAL\lib;D:\otclient-msvc13-libs\LuaJIT-2.0.2\lib;D:\otclient-msvc13-libs\glew-1.10.0\lib;D:\otclient-msvc13-libs\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\otclient-msvc13-libs\libogg-1.3.1\include;D:\otclient-msvc13-libs\libvorbis-1.3.3\include;D:\otclient-msvc13-libs\physfs-2.0.3\include;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\include;D:\otclient-msvc13-libs\zlib-1.2.5\include;D:\otclient-msvc13-libs\OpenAL\include\AL;D:\otclient-msvc13-libs\glew-1.10.0\include;D:\otclient-msvc13-libs\LuaJIT-2.0.2\include;D:\otclient-msvc13-libs\boost_1_55_0\include;D:\otclient\src;..\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\otclient-msvc13-libs\libogg-1.3.1\lib;D:\otclient-msvc13-libs\libvorbis-1.3.3\lib;D:\otclient-msvc13-libs\physfs-2.0.3\lib;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\lib\VC;D:\otclient-msvc13-libs\zlib-1.2.5\lib;D:\otclient-msvc13-libs\OpenAL\lib;D:\otclient-msvc13-libs\LuaJIT-2.0.2\lib;D:\otclient-msvc13-libs\glew-1.10.0\lib;D:\otclient-msvc13-libs\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\otclient-msvc13-libs\libogg-1.3.1\include;D:\otclient-msvc13-libs\libvorbis-1.3.3\include;D:\otclient-msvc13-libs\physfs-2.0.3\include;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\include;D:\otclient-msvc13-libs\zlib-1.2.5\include;D:\otclient-msvc13-libs\OpenAL\include\AL;D:\otclient-msvc13-libs\glew-1.10.0\include;D:\otclient-msvc13-libs\LuaJIT-2.0.2\include;D:\otclient-msvc13-libs\boost_1_55_0\include;..\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\otclient-msvc13-libs\libogg-1.3.1\lib;D:\otclient-msvc13-libs\libvorbis-1.3.3\lib;D:\otclient-msvc13-libs\physfs-2.0.3\lib;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\lib\VC;D:\otclient-msvc13-libs\zlib-1.2.5\lib;D:\otclient-msvc13-libs\OpenAL\lib;D:\otclient-msvc13-libs\LuaJIT-2.0.2\lib;D:\otclient-msvc13-libs\glew-1.10.0\lib;D:\otclient-msvc13-libs\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>D:\otclient-msvc13-libs\libogg-1.3.1\include;D:\otclient-msvc13-libs\libvorbis-1.3.3\include;D:\otclient-msvc13-libs\physfs-2.0.3\include;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\include;D:\otclient-msvc13-libs\zlib-1.2.5\include;D:\otclient-msvc13-libs\OpenAL\include\AL;D:\otclient-msvc13-libs\glew-1.10.0\include;D:\otclient-msvc13-libs\LuaJIT-2.0.2\include;D:\otclient-msvc13-libs\boost_1_55_0\include;D:\otclient\src;..\src;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\otclient-msvc13-libs\libogg-1.3.1\lib;D:\otclient-msvc13-libs\libvorbis-1.3.3\lib;D:\otclient-msvc13-libs\physfs-2.0.3\lib;D:\otclient-msvc13-libs\OpenSSL-1.0.1e\lib\VC;D:\otclient-msvc13-libs\zlib-1.2.5\lib;D:\otclient-msvc13-libs\OpenAL\lib;D:\otclient-msvc13-libs\LuaJIT-2.0.2\lib;D:\otclient-msvc13-libs\glew-1.10.0\lib;D:\otclient-msvc13-libs\boost_1_55_0\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;BOT_PROTECTION;CLIENT;CRASH_HANDLER;FW_GRAPHICS;FW_NET;FW_SOUND;FW_XML;BUILD_TYPE="RelWithDebInfo";BUILD_COMMIT="devel";BUILD_REVISION="0";VERSION="0.6.3";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)\$(Platform)\src\%(RelativeDir)\</ObjectFileName>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>glew32.lib;zlib1.lib;libeay32MD.lib;physfs.lib;openal32.lib;luajit.lib;libogg_static.lib;libvorbisfile_static.lib;libvorbis_static.lib;opengl32.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_WIN32_WINNT=0x0501;BOT_PROTECTION;CLIENT;CRASH_HANDLER;FW_GRAPHICS;FW_NET;FW_SOUND;FW_XML;BUILD_TYPE="RelWithDebInfo";BUILD_COMMIT="devel";BUILD_REVISION="0";VERSION="0.6.3";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)\$(Platform)\src\%(RelativeDir)\</ObjectFileName>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies>glew32.lib;zlib1.lib;libeay32MD.lib;physfs.lib;openal32.lib;luajit.lib;libogg_static.lib;libvorbisfile_static.lib;libvorbis_static.lib;opengl32.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;BOT_PROTECTION;CLIENT;CRASH_HANDLER;FW_GRAPHICS;FW_NET;FW_SOUND;FW_XML;BUILD_TYPE="RelWithDebInfo";BUILD_COMMIT="devel";BUILD_REVISION="0";VERSION="0.6.3";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(Platform)\src\%(RelativeDir)\</ObjectFileName>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glew32.lib;zlib1.lib;libeay32MD.lib;physfs.lib;openal32.lib;luajit.lib;libogg_static.lib;libvorbisfile_static.lib;libvorbis_static.lib;opengl32.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_WINSOCK_DEPRECATED_NO_WARNINGS;_WIN32_WINNT=0x0501;BOT_PROTECTION;CLIENT;CRASH_HANDLER;FW_GRAPHICS;FW_NET;FW_SOUND;FW_XML;BUILD_TYPE="RelWithDebInfo";BUILD_COMMIT="devel";BUILD_REVISION="0";VERSION="0.6.3";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ObjectFileName>$(IntDir)\$(Platform)\src\%(RelativeDir)\</ObjectFileName>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Fast</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glew32.lib;zlib1.lib;libeay32MD.lib;physfs.lib;openal32.lib;luajit.lib;libogg_static.lib;libvorbisfile_static.lib;libvorbis_static.lib;opengl32.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\client\animatedtext.cpp" />
+    <ClCompile Include="..\src\client\animator.cpp" />
+    <ClCompile Include="..\src\client\client.cpp" />
+    <ClCompile Include="..\src\client\container.cpp" />
+    <ClCompile Include="..\src\client\creature.cpp" />
+    <ClCompile Include="..\src\client\creatures.cpp" />
+    <ClCompile Include="..\src\client\effect.cpp" />
+    <ClCompile Include="..\src\client\game.cpp" />
+    <ClCompile Include="..\src\client\houses.cpp" />
+    <ClCompile Include="..\src\client\item.cpp" />
+    <ClCompile Include="..\src\client\itemtype.cpp" />
+    <ClCompile Include="..\src\client\lightview.cpp" />
+    <ClCompile Include="..\src\client\localplayer.cpp" />
+    <ClCompile Include="..\src\client\luafunctions.cpp" />
+    <ClCompile Include="..\src\client\luavaluecasts.cpp" />
+    <ClCompile Include="..\src\client\map.cpp" />
+    <ClCompile Include="..\src\client\mapio.cpp" />
+    <ClCompile Include="..\src\client\mapview.cpp" />
+    <ClCompile Include="..\src\client\minimap.cpp" />
+    <ClCompile Include="..\src\client\missile.cpp" />
+    <ClCompile Include="..\src\client\outfit.cpp" />
+    <ClCompile Include="..\src\client\player.cpp" />
+    <ClCompile Include="..\src\client\protocolcodes.cpp" />
+    <ClCompile Include="..\src\client\protocolgame.cpp" />
+    <ClCompile Include="..\src\client\protocolgameparse.cpp" />
+    <ClCompile Include="..\src\client\protocolgamesend.cpp" />
+    <ClCompile Include="..\src\client\shadermanager.cpp" />
+    <ClCompile Include="..\src\client\spritemanager.cpp" />
+    <ClCompile Include="..\src\client\statictext.cpp" />
+    <ClCompile Include="..\src\client\thing.cpp" />
+    <ClCompile Include="..\src\client\thingtype.cpp" />
+    <ClCompile Include="..\src\client\thingtypemanager.cpp" />
+    <ClCompile Include="..\src\client\tile.cpp" />
+    <ClCompile Include="..\src\client\towns.cpp" />
+    <ClCompile Include="..\src\client\uicreature.cpp" />
+    <ClCompile Include="..\src\client\uiitem.cpp" />
+    <ClCompile Include="..\src\client\uimap.cpp" />
+    <ClCompile Include="..\src\client\uimapanchorlayout.cpp" />
+    <ClCompile Include="..\src\client\uiminimap.cpp" />
+    <ClCompile Include="..\src\client\uiprogressrect.cpp" />
+    <ClCompile Include="..\src\client\uisprite.cpp" />
+    <ClCompile Include="..\src\framework\core\adaptativeframecounter.cpp" />
+    <ClCompile Include="..\src\framework\core\application.cpp" />
+    <ClCompile Include="..\src\framework\core\asyncdispatcher.cpp" />
+    <ClCompile Include="..\src\framework\core\binarytree.cpp" />
+    <ClCompile Include="..\src\framework\core\clock.cpp" />
+    <ClCompile Include="..\src\framework\core\config.cpp" />
+    <ClCompile Include="..\src\framework\core\configmanager.cpp" />
+    <ClCompile Include="..\src\framework\core\event.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\core\eventdispatcher.cpp" />
+    <ClCompile Include="..\src\framework\core\filestream.cpp" />
+    <ClCompile Include="..\src\framework\core\graphicalapplication.cpp" />
+    <ClCompile Include="..\src\framework\core\logger.cpp" />
+    <ClCompile Include="..\src\framework\core\module.cpp" />
+    <ClCompile Include="..\src\framework\core\modulemanager.cpp" />
+    <ClCompile Include="..\src\framework\core\resourcemanager.cpp" />
+    <ClCompile Include="..\src\framework\core\scheduledevent.cpp" />
+    <ClCompile Include="..\src\framework\core\timer.cpp" />
+    <ClCompile Include="..\src\framework\graphics\animatedtexture.cpp" />
+    <ClCompile Include="..\src\framework\graphics\apngloader.cpp" />
+    <ClCompile Include="..\src\framework\graphics\bitmapfont.cpp" />
+    <ClCompile Include="..\src\framework\graphics\cachedtext.cpp" />
+    <ClCompile Include="..\src\framework\graphics\coordsbuffer.cpp" />
+    <ClCompile Include="..\src\framework\graphics\fontmanager.cpp" />
+    <ClCompile Include="..\src\framework\graphics\framebuffer.cpp" />
+    <ClCompile Include="..\src\framework\graphics\framebuffermanager.cpp" />
+    <ClCompile Include="..\src\framework\graphics\graphics.cpp" />
+    <ClCompile Include="..\src\framework\graphics\hardwarebuffer.cpp" />
+    <ClCompile Include="..\src\framework\graphics\image.cpp" />
+    <ClCompile Include="..\src\framework\graphics\ogl\painterogl.cpp" />
+    <ClCompile Include="..\src\framework\graphics\ogl\painterogl1.cpp" />
+    <ClCompile Include="..\src\framework\graphics\ogl\painterogl2.cpp" />
+    <ClCompile Include="..\src\framework\graphics\painter.cpp" />
+    <ClCompile Include="..\src\framework\graphics\paintershaderprogram.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particle.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particleaffector.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particleeffect.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particleemitter.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particlemanager.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particlesystem.cpp" />
+    <ClCompile Include="..\src\framework\graphics\particletype.cpp" />
+    <ClCompile Include="..\src\framework\graphics\shader.cpp" />
+    <ClCompile Include="..\src\framework\graphics\shaderprogram.cpp" />
+    <ClCompile Include="..\src\framework\graphics\texture.cpp" />
+    <ClCompile Include="..\src\framework\graphics\texturemanager.cpp" />
+    <ClCompile Include="..\src\framework\input\mouse.cpp" />
+    <ClCompile Include="..\src\framework\luaengine\lbitlib.cpp" />
+    <ClCompile Include="..\src\framework\luaengine\luaexception.cpp" />
+    <ClCompile Include="..\src\framework\luaengine\luainterface.cpp" />
+    <ClCompile Include="..\src\framework\luaengine\luaobject.cpp" />
+    <ClCompile Include="..\src\framework\luaengine\luavaluecasts.cpp">
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(InputDir)\$(IntDir)\</ObjectFileName>
+      <ObjectFileName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(InputDir)\$(IntDir)\</ObjectFileName>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\luafunctions.cpp" />
+    <ClCompile Include="..\src\framework\net\connection.cpp" />
+    <ClCompile Include="..\src\framework\net\inputmessage.cpp" />
+    <ClCompile Include="..\src\framework\net\outputmessage.cpp" />
+    <ClCompile Include="..\src\framework\net\protocol.cpp" />
+    <ClCompile Include="..\src\framework\net\protocolhttp.cpp" />
+    <ClCompile Include="..\src\framework\net\server.cpp" />
+    <ClCompile Include="..\src\framework\otml\otmldocument.cpp" />
+    <ClCompile Include="..\src\framework\otml\otmlemitter.cpp" />
+    <ClCompile Include="..\src\framework\otml\otmlexception.cpp" />
+    <ClCompile Include="..\src\framework\otml\otmlnode.cpp" />
+    <ClCompile Include="..\src\framework\otml\otmlparser.cpp" />
+    <ClCompile Include="..\src\framework\platform\platform.cpp" />
+    <ClCompile Include="..\src\framework\platform\platformwindow.cpp" />
+    <ClCompile Include="..\src\framework\platform\win32crashhandler.cpp" />
+    <ClCompile Include="..\src\framework\platform\win32platform.cpp" />
+    <ClCompile Include="..\src\framework\platform\win32window.cpp" />
+    <ClCompile Include="..\src\framework\sound\combinedsoundsource.cpp" />
+    <ClCompile Include="..\src\framework\sound\oggsoundfile.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundbuffer.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundchannel.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundfile.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundmanager.cpp" />
+    <ClCompile Include="..\src\framework\sound\soundsource.cpp" />
+    <ClCompile Include="..\src\framework\sound\streamsoundsource.cpp" />
+    <ClCompile Include="..\src\framework\stdext\demangle.cpp" />
+    <ClCompile Include="..\src\framework\stdext\math.cpp" />
+    <ClCompile Include="..\src\framework\stdext\net.cpp" />
+    <ClCompile Include="..\src\framework\stdext\string.cpp" />
+    <ClCompile Include="..\src\framework\stdext\time.cpp" />
+    <ClCompile Include="..\src\framework\ui\uianchorlayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiboxlayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uigridlayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uihorizontallayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uilayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uimanager.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiparticles.cpp" />
+    <ClCompile Include="..\src\framework\ui\uitextedit.cpp" />
+    <ClCompile Include="..\src\framework\ui\uitranslator.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiverticallayout.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiwidget.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiwidgetbasestyle.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiwidgetimage.cpp" />
+    <ClCompile Include="..\src\framework\ui\uiwidgettext.cpp" />
+    <ClCompile Include="..\src\framework\util\color.cpp" />
+    <ClCompile Include="..\src\framework\util\crypt.cpp" />
+    <ClCompile Include="..\src\framework\xml\tinystr.cpp" />
+    <ClCompile Include="..\src\framework\xml\tinyxml.cpp" />
+    <ClCompile Include="..\src\framework\xml\tinyxmlerror.cpp" />
+    <ClCompile Include="..\src\framework\xml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\client\animatedtext.h" />
+    <ClInclude Include="..\src\client\animator.h" />
+    <ClInclude Include="..\src\client\client.h" />
+    <ClInclude Include="..\src\client\const.h" />
+    <ClInclude Include="..\src\client\container.h" />
+    <ClInclude Include="..\src\client\creature.h" />
+    <ClInclude Include="..\src\client\creatures.h" />
+    <ClInclude Include="..\src\client\declarations.h" />
+    <ClInclude Include="..\src\client\effect.h" />
+    <ClInclude Include="..\src\client\game.h" />
+    <ClInclude Include="..\src\client\global.h" />
+    <ClInclude Include="..\src\client\houses.h" />
+    <ClInclude Include="..\src\client\item.h" />
+    <ClInclude Include="..\src\client\itemtype.h" />
+    <ClInclude Include="..\src\client\lightview.h" />
+    <ClInclude Include="..\src\client\localplayer.h" />
+    <ClInclude Include="..\src\client\luavaluecasts.h" />
+    <ClInclude Include="..\src\client\map.h" />
+    <ClInclude Include="..\src\client\mapview.h" />
+    <ClInclude Include="..\src\client\minimap.h" />
+    <ClInclude Include="..\src\client\missile.h" />
+    <ClInclude Include="..\src\client\outfit.h" />
+    <ClInclude Include="..\src\client\player.h" />
+    <ClInclude Include="..\src\client\position.h" />
+    <ClInclude Include="..\src\client\protocolcodes.h" />
+    <ClInclude Include="..\src\client\protocolgame.h" />
+    <ClInclude Include="..\src\client\shadermanager.h" />
+    <ClInclude Include="..\src\client\spritemanager.h" />
+    <ClInclude Include="..\src\client\statictext.h" />
+    <ClInclude Include="..\src\client\thing.h" />
+    <ClInclude Include="..\src\client\thingstype.h" />
+    <ClInclude Include="..\src\client\thingtype.h" />
+    <ClInclude Include="..\src\client\thingtypemanager.h" />
+    <ClInclude Include="..\src\client\tile.h" />
+    <ClInclude Include="..\src\client\towns.h" />
+    <ClInclude Include="..\src\client\uicreature.h" />
+    <ClInclude Include="..\src\client\uiitem.h" />
+    <ClInclude Include="..\src\client\uimap.h" />
+    <ClInclude Include="..\src\client\uimapanchorlayout.h" />
+    <ClInclude Include="..\src\client\uiminimap.h" />
+    <ClInclude Include="..\src\client\uiprogressrect.h" />
+    <ClInclude Include="..\src\client\uisprite.h" />
+    <ClInclude Include="..\src\framework\const.h" />
+    <ClInclude Include="..\src\framework\core\adaptativeframecounter.h" />
+    <ClInclude Include="..\src\framework\core\application.h" />
+    <ClInclude Include="..\src\framework\core\asyncdispatcher.h" />
+    <ClInclude Include="..\src\framework\core\binarytree.h" />
+    <ClInclude Include="..\src\framework\core\clock.h" />
+    <ClInclude Include="..\src\framework\core\config.h" />
+    <ClInclude Include="..\src\framework\core\configmanager.h" />
+    <ClInclude Include="..\src\framework\core\declarations.h" />
+    <ClInclude Include="..\src\framework\core\event.h" />
+    <ClInclude Include="..\src\framework\core\eventdispatcher.h" />
+    <ClInclude Include="..\src\framework\core\filestream.h" />
+    <ClInclude Include="..\src\framework\core\graphicalapplication.h" />
+    <ClInclude Include="..\src\framework\core\inputevent.h" />
+    <ClInclude Include="..\src\framework\core\logger.h" />
+    <ClInclude Include="..\src\framework\core\module.h" />
+    <ClInclude Include="..\src\framework\core\modulemanager.h" />
+    <ClInclude Include="..\src\framework\core\resourcemanager.h" />
+    <ClInclude Include="..\src\framework\core\scheduledevent.h" />
+    <ClInclude Include="..\src\framework\core\timer.h" />
+    <ClInclude Include="..\src\framework\global.h" />
+    <ClInclude Include="..\src\framework\graphics\animatedtexture.h" />
+    <ClInclude Include="..\src\framework\graphics\apngloader.h" />
+    <ClInclude Include="..\src\framework\graphics\bitmapfont.h" />
+    <ClInclude Include="..\src\framework\graphics\cachedtext.h" />
+    <ClInclude Include="..\src\framework\graphics\coordsbuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\declarations.h" />
+    <ClInclude Include="..\src\framework\graphics\fontmanager.h" />
+    <ClInclude Include="..\src\framework\graphics\framebuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\framebuffermanager.h" />
+    <ClInclude Include="..\src\framework\graphics\glutil.h" />
+    <ClInclude Include="..\src\framework\graphics\graphics.h" />
+    <ClInclude Include="..\src\framework\graphics\hardwarebuffer.h" />
+    <ClInclude Include="..\src\framework\graphics\image.h" />
+    <ClInclude Include="..\src\framework\graphics\ogl\painterogl.h" />
+    <ClInclude Include="..\src\framework\graphics\ogl\painterogl1.h" />
+    <ClInclude Include="..\src\framework\graphics\ogl\painterogl2.h" />
+    <ClInclude Include="..\src\framework\graphics\ogl\painterogl2_shadersources.h" />
+    <ClInclude Include="..\src\framework\graphics\painter.h" />
+    <ClInclude Include="..\src\framework\graphics\paintershaderprogram.h" />
+    <ClInclude Include="..\src\framework\graphics\particle.h" />
+    <ClInclude Include="..\src\framework\graphics\particleaffector.h" />
+    <ClInclude Include="..\src\framework\graphics\particleeffect.h" />
+    <ClInclude Include="..\src\framework\graphics\particleemitter.h" />
+    <ClInclude Include="..\src\framework\graphics\particlemanager.h" />
+    <ClInclude Include="..\src\framework\graphics\particlesystem.h" />
+    <ClInclude Include="..\src\framework\graphics\particletype.h" />
+    <ClInclude Include="..\src\framework\graphics\shader.h" />
+    <ClInclude Include="..\src\framework\graphics\shaderprogram.h" />
+    <ClInclude Include="..\src\framework\graphics\texture.h" />
+    <ClInclude Include="..\src\framework\graphics\texturemanager.h" />
+    <ClInclude Include="..\src\framework\graphics\vertexarray.h" />
+    <ClInclude Include="..\src\framework\input\mouse.h" />
+    <ClInclude Include="..\src\framework\luaengine\declarations.h" />
+    <ClInclude Include="..\src\framework\luaengine\lbitlib.h" />
+    <ClInclude Include="..\src\framework\luaengine\luabinder.h" />
+    <ClInclude Include="..\src\framework\luaengine\luaexception.h" />
+    <ClInclude Include="..\src\framework\luaengine\luainterface.h" />
+    <ClInclude Include="..\src\framework\luaengine\luaobject.h" />
+    <ClInclude Include="..\src\framework\luaengine\luavaluecasts.h" />
+    <ClInclude Include="..\src\framework\net\connection.h" />
+    <ClInclude Include="..\src\framework\net\declarations.h" />
+    <ClInclude Include="..\src\framework\net\inputmessage.h" />
+    <ClInclude Include="..\src\framework\net\outputmessage.h" />
+    <ClInclude Include="..\src\framework\net\protocol.h" />
+    <ClInclude Include="..\src\framework\net\protocolhttp.h" />
+    <ClInclude Include="..\src\framework\net\server.h" />
+    <ClInclude Include="..\src\framework\otml\declarations.h" />
+    <ClInclude Include="..\src\framework\otml\otml.h" />
+    <ClInclude Include="..\src\framework\otml\otmldocument.h" />
+    <ClInclude Include="..\src\framework\otml\otmlemitter.h" />
+    <ClInclude Include="..\src\framework\otml\otmlexception.h" />
+    <ClInclude Include="..\src\framework\otml\otmlnode.h" />
+    <ClInclude Include="..\src\framework\otml\otmlparser.h" />
+    <ClInclude Include="..\src\framework\pch.h" />
+    <ClInclude Include="..\src\framework\platform\crashhandler.h" />
+    <ClInclude Include="..\src\framework\platform\platform.h" />
+    <ClInclude Include="..\src\framework\platform\platformwindow.h" />
+    <ClInclude Include="..\src\framework\platform\win32window.h" />
+    <ClInclude Include="..\src\framework\sound\combinedsoundsource.h" />
+    <ClInclude Include="..\src\framework\sound\declarations.h" />
+    <ClInclude Include="..\src\framework\sound\oggsoundfile.h" />
+    <ClInclude Include="..\src\framework\sound\soundbuffer.h" />
+    <ClInclude Include="..\src\framework\sound\soundchannel.h" />
+    <ClInclude Include="..\src\framework\sound\soundfile.h" />
+    <ClInclude Include="..\src\framework\sound\soundmanager.h" />
+    <ClInclude Include="..\src\framework\sound\soundsource.h" />
+    <ClInclude Include="..\src\framework\sound\streamsoundsource.h" />
+    <ClInclude Include="..\src\framework\stdext\any.h" />
+    <ClInclude Include="..\src\framework\stdext\boolean.h" />
+    <ClInclude Include="..\src\framework\stdext\cast.h" />
+    <ClInclude Include="..\src\framework\stdext\compiler.h" />
+    <ClInclude Include="..\src\framework\stdext\demangle.h" />
+    <ClInclude Include="..\src\framework\stdext\dumper.h" />
+    <ClInclude Include="..\src\framework\stdext\dynamic_storage.h" />
+    <ClInclude Include="..\src\framework\stdext\exception.h" />
+    <ClInclude Include="..\src\framework\stdext\format.h" />
+    <ClInclude Include="..\src\framework\stdext\math.h" />
+    <ClInclude Include="..\src\framework\stdext\net.h" />
+    <ClInclude Include="..\src\framework\stdext\packed_any.h" />
+    <ClInclude Include="..\src\framework\stdext\packed_storage.h" />
+    <ClInclude Include="..\src\framework\stdext\packed_vector.h" />
+    <ClInclude Include="..\src\framework\stdext\shared_object.h" />
+    <ClInclude Include="..\src\framework\stdext\shared_ptr.h" />
+    <ClInclude Include="..\src\framework\stdext\stdext.h" />
+    <ClInclude Include="..\src\framework\stdext\string.h" />
+    <ClInclude Include="..\src\framework\stdext\thread.h" />
+    <ClInclude Include="..\src\framework\stdext\time.h" />
+    <ClInclude Include="..\src\framework\stdext\traits.h" />
+    <ClInclude Include="..\src\framework\stdext\types.h" />
+    <ClInclude Include="..\src\framework\ui\declarations.h" />
+    <ClInclude Include="..\src\framework\ui\ui.h" />
+    <ClInclude Include="..\src\framework\ui\uianchorlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uiboxlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uigridlayout.h" />
+    <ClInclude Include="..\src\framework\ui\uihorizontallayout.h" />
+    <ClInclude Include="..\src\framework\ui\uilayout.h" />
+    <ClInclude Include="..\src\framework\ui\uimanager.h" />
+    <ClInclude Include="..\src\framework\ui\uiparticles.h" />
+    <ClInclude Include="..\src\framework\ui\uitextedit.h" />
+    <ClInclude Include="..\src\framework\ui\uitranslator.h" />
+    <ClInclude Include="..\src\framework\ui\uiverticallayout.h" />
+    <ClInclude Include="..\src\framework\ui\uiwidget.h" />
+    <ClInclude Include="..\src\framework\util\color.h" />
+    <ClInclude Include="..\src\framework\util\crypt.h" />
+    <ClInclude Include="..\src\framework\util\databuffer.h" />
+    <ClInclude Include="..\src\framework\util\matrix.h" />
+    <ClInclude Include="..\src\framework\util\point.h" />
+    <ClInclude Include="..\src\framework\util\rect.h" />
+    <ClInclude Include="..\src\framework\util\size.h" />
+    <ClInclude Include="..\src\framework\xml\tinystr.h" />
+    <ClInclude Include="..\src\framework\xml\tinyxml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\src\otcicon.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
