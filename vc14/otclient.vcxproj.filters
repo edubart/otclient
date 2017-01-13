@@ -1056,7 +1056,6 @@
       <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
-  
   <ItemGroup>
     <ResourceCompile Include="..\src\otcicon.rc">
       <Filter>Resource Files</Filter>
