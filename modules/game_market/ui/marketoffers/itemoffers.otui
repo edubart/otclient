@@ -37,7 +37,7 @@ Panel
     anchors.right: parent.right
     anchors.bottom: next.bottom
     margin-right: 6
-    width: 80
+    text-auto-resize: true
     enabled: false
 
   Label
@@ -55,9 +55,7 @@ Panel
     anchors.left: prev.left
     anchors.right: parent.right
     height: 115
-    margin-top: 5
-    margin-bottom: 5
-    margin-right: 6
+    margin: 5 6 5 0
     padding: 1
     focusable: false
     background-color: #222833
@@ -73,19 +71,19 @@ Panel
       id: header
       OfferTableHeaderColumn
         !text: tr('Buyer Name')
-        width: 100
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Amount')
-        width: 60
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Total Price')
-        width: 90
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Piece Price')
-        width: 80
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Auction End')
-        width: 120
+        text-auto-resize: true
 
   TableData
     id: sellingTableData
@@ -110,7 +108,7 @@ Panel
     anchors.top: prev.bottom
     margin-top: 5
     margin-right: 6
-    width: 80
+    text-auto-resize: true
     enabled: false
 
   Label
@@ -127,6 +125,7 @@ Panel
     anchors.top: prev.bottom
     anchors.left: prev.left
     anchors.right: parent.right
+    margin: 5 6 5 0
     margin-top: 5
     margin-bottom: 5
     margin-right: 6
@@ -146,19 +145,19 @@ Panel
       id: header
       OfferTableHeaderColumn
         !text: tr('Seller Name')
-        width: 100
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Amount')
-        width: 60
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Total Price')
-        width: 90
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Piece Price')
-        width: 80
+        text-auto-resize: true
       OfferTableHeaderColumn
         !text: tr('Auction End')
-        width: 120
+        text-auto-resize: true
 
   TableData
     id: buyingTableData

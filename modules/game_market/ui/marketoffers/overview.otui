@@ -7,9 +7,7 @@ Panel
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right
-    margin-top: 6
-    margin-left: 6
-    margin-right: 6
+    margin: 6 6 0 6
     font: verdana-11px-rounded
     text-offset: 0 2
     height: 50
