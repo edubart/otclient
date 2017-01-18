@@ -113,15 +113,18 @@ function installLocale(locale)
   if _G.allowedLocales and not _G.allowedLocales[locale.name] then return end
 
   if locale.name ~= defaultLocaleName then
-    local updatesNeeded = 0
-    for _i,k in pairs(neededTranslations) do
+    local updatesNamesMissing = {}
+    for _,k in pairs(neededTranslations) do
       if locale.translation[k] == nil then
-        updatesNeeded = updatesNeeded + 1
+        updatesNamesMissing[#updatesNamesMissing + 1] = k
       end
     end
 
-    if updatesNeeded > 0 then
-      pdebug('Locale \'' .. locale.name .. '\' is missing ' .. updatesNeeded .. ' translations.')
+    if #updatesNamesMissing > 0 then
+      pdebug('Locale \'' .. locale.name .. '\' is missing ' .. #updatesNamesMissing .. ' translations.')
+      for _,name in pairs(updatesNamesMissing) do
+        pdebug('["' .. name ..'"] = \"\",')
+      end
     end
   end
 
