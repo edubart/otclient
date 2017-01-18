@@ -1,0 +1,188 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <LUA_DIR>$(OTCLIENTSDKDir)\LuaJIT-2.1.0\</LUA_DIR>
+    <GLEW_DIR>$(OTCLIENTSDKDir)\glew-2.0.0\</GLEW_DIR>
+    <LIBOGG_DIR>$(OTCLIENTSDKDir)\libogg-1.3.2\</LIBOGG_DIR>
+    <LIBVORBIS_DIR>$(OTCLIENTSDKDir)\libvorbis-1.3.5\</LIBVORBIS_DIR>
+    <OPEN_AL_DIR>$(OTCLIENTSDKDir)\OpenAL-1.15.1\</OPEN_AL_DIR>
+    <OPEN_SSL_DIR>$(OTCLIENTSDKDir)\OpenSSL-1.0.2j\</OPEN_SSL_DIR>
+    <PHYSFS_DIR>$(OTCLIENTSDKDir)\physfs-2.0.3.1\</PHYSFS_DIR>
+    <ZLIB_DIR>$(OTCLIENTSDKDir)\zlib-1.2.8.8\</ZLIB_DIR>
+
+    <PREPROCESSOR_DEFS>
+        WIN32;
+        _CRT_SECURE_NO_WARNINGS;
+        _WIN32_WINNT=0x0501;
+        BOT_PROTECTION;
+        OTCLIENT;
+        CRASH_HANDLER;
+        FW_GRAPHICS;
+        FW_NET;
+        FW_SOUND;
+        FW_XML;
+        BUILD_TYPE="RelWithDebInfo";
+        BUILD_COMMIT="devel";
+        BUILD_REVISION="0";
+        VERSION="0.6.3";
+        AB
+    </PREPROCESSOR_DEFS>
+    
+    <OTCLIENT_INCLUDES>
+        $(BOOST_ROOT_OTCLIENT);
+        $(LUA_DIR)\include;
+        $(GLEW_DIR)\include;
+        $(LIBOGG_DIR)\include;
+        $(LIBVORBIS_DIR)\include;
+        $(OPEN_AL_DIR)\include;
+        $(OPEN_SSL_DIR)\include;
+        $(PHYSFS_DIR)\include;
+        $(ZLIB_DIR)\include
+    </OTCLIENT_INCLUDES>
+    
+    <OTCLIENT_LIBS>
+        $(BOOST_ROOT_OTCLIENT)\lib32-msvc-14.0;
+        $(LUA_DIR)\lib;
+        $(GLEW_DIR)\lib;
+        $(LIBOGG_DIR)\lib;
+        $(LIBVORBIS_DIR)\lib;
+        $(OPEN_AL_DIR)\lib;
+        $(OPEN_SSL_DIR)\lib;
+        $(PHYSFS_DIR)\lib;
+        $(ZLIB_DIR)\lib
+    </OTCLIENT_LIBS>
+    
+    <OTCLIENT_LIBS64>
+        $(BOOST_ROOT_OTCLIENT)\lib64-msvc-14.0;
+        $(LUA_DIR)\lib64;
+        $(GLEW_DIR)\lib64;
+        $(LIBOGG_DIR)\lib64;
+        $(LIBVORBIS_DIR)\lib64;
+        $(OPEN_AL_DIR)\lib64;
+        $(OPEN_SSL_DIR)\lib64;
+        $(PHYSFS_DIR)\lib64;
+        $(ZLIB_DIR)\lib64
+    </OTCLIENT_LIBS64>
+    
+    <OTCLIENT_LIBDEPS>
+        glew32.lib;
+        zlib.lib;
+        libeay32.lib;
+        physfs.lib;
+        openal32.lib;
+        lua51.lib;
+        ogg.lib;
+        vorbisfile.lib;
+        vorbis.lib;
+        opengl32.lib;
+        dbghelp.lib;
+        kernel32.lib;
+        user32.lib;
+        shell32.lib;
+        gdi32.lib;
+        advapi32.lib;
+    </OTCLIENT_LIBDEPS>
+    
+    <OTCLIENT_LIBDEPS_D>
+        glew32.lib;
+        zlib.lib;
+        libeay32.lib;
+        physfs.lib;
+        openal32.lib;
+        lua51.lib;
+        ogg.lib;
+        vorbisfile.lib;
+        vorbis.lib;
+        opengl32.lib;
+        dbghelp.lib;
+        kernel32.lib;
+        user32.lib;
+        shell32.lib;
+        gdi32.lib;
+        advapi32.lib;
+	</OTCLIENT_LIBDEPS_D>
+    
+  </PropertyGroup>
+  <PropertyGroup>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(OTCLIENT_INCLUDES)</AdditionalIncludeDirectories>
+      <WarningLevel>Level3</WarningLevel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(OTCLIENT_LIBDEPS)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+    </Link>
+    <!-- <ResourceCompile>
+      <PreprocessorDefinitions>$(PREPROCESSOR_DEFS)</PreprocessorDefinitions>
+    </ResourceCompile> -->
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <BuildMacro Include="LUA_DIR">
+      <Value>$(LUA_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="GLEW_DIR">
+      <Value>$(GLEW_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LIBOGG_DIR">
+      <Value>$(LIBOGG_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LIBVORBIS_DIR">
+      <Value>$(LIBVORBIS_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPEN_AL_DIR">
+      <Value>$(OPEN_AL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OPEN_SSL_DIR">
+      <Value>$(OPEN_SSL_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="PHYSFS_DIR">
+      <Value>$(PHYSFS_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ZLIB_DIR">
+      <Value>$(ZLIB_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    
+    <BuildMacro Include="PREPROCESSOR_DEFS">
+      <Value>$(PREPROCESSOR_DEFS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OTCLIENT_INCLUDES">
+      <Value>$(OTCLIENT_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OTCLIENT_LIBS">
+      <Value>$(OTCLIENT_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OTCLIENT_LIBS64">
+      <Value>$(OTCLIENT_LIBS64)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OTCLIENT_LIBDEPS">
+      <Value>$(OTCLIENT_LIBDEPS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="OTCLIENT_LIBDEPS_D">
+      <Value>$(OTCLIENT_LIBDEPS_D)</Value>
+    </BuildMacro>
+  </ItemGroup>
+</Project>
