@@ -271,6 +271,9 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
     uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
+    m_animationPhases = 0;
+    int totalSpritesCount = 0;
+
     for(int i = 0; i < groupCount; ++i) {
         uint8 frameGroupType = FrameGroupDefault;
         if(hasFrameGroups)
@@ -293,21 +296,25 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_numPatternZ = fin->getU8();
         else
             m_numPatternZ = 1;
-        m_animationPhases = fin->getU8();
+        
+        int groupAnimationsPhases = fin->getU8();
+        m_animationPhases += groupAnimationsPhases;
 
-        if(m_animationPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
             m_animator = AnimatorPtr(new Animator);
-            m_animator->unserialize(m_animationPhases, fin);
+            m_animator->unserialize(groupAnimationsPhases, fin);
         }
 
-        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
 
-        if(totalSprites > 4096)
+        if((totalSpritesCount+totalSprites) > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
-        m_spritesIndex.resize(totalSprites);
-        for(int i = 0; i < totalSprites; i++)
+        m_spritesIndex.resize((totalSpritesCount+totalSprites));
+        for(int i = totalSpritesCount; i < (totalSpritesCount+totalSprites); i++)
             m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
+
+        totalSpritesCount += totalSprites;
     }
 
     m_textures.resize(m_animationPhases);
