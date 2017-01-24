@@ -311,7 +311,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
         m_spritesIndex.resize((realTotalSprites+totalSprites));
-        for(int i = lastTotalSprites; i < (realTotalSprites+totalSprites); i++)
+        for(int i = realTotalSprites; i < (realTotalSprites+totalSprites); i++)
             m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         realTotalSprites += totalSprites;
