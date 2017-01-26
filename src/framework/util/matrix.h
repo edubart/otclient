@@ -193,7 +193,7 @@ std::istream& operator>>(std::istream& in, Matrix<N,M,T>& mat)
     for(int i=0;i<N;++i)
         for(int j=0;j<M;++j)
             in >> mat(i,j);
-        return in;
+    return in;
 }
 
 // faster comparing for 3x3 matrixes
