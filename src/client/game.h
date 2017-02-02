@@ -173,7 +173,7 @@ public:
     void stop();
 
     // item related
-    void look(const ThingPtr& thing);
+    void look(const ThingPtr& thing, bool isBattleList = false);
     void move(const ThingPtr &thing, const Position& toPos, int count);
     void moveToParentContainer(const ThingPtr& thing, int count);
     void rotate(const ThingPtr& thing);

@@ -778,12 +778,12 @@ void Game::stop()
     m_protocolGame->sendStop();
 }
 
-void Game::look(const ThingPtr& thing)
+void Game::look(const ThingPtr& thing, bool isBattleList)
 {
     if(!canPerformGameAction() || !thing)
         return;
 
-    if(thing->isCreature() && m_protocolVersion >= 961)
+    if(thing->isCreature() && isBattleList && m_protocolVersion >= 961)
         m_protocolGame->sendLookCreature(thing->getId());
     else
         m_protocolGame->sendLook(thing->getPosition(), thing->getId(), thing->getStackPos());
