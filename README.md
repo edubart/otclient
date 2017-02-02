@@ -13,14 +13,8 @@ Otclient is written in C++2011, the upcoming C++ standard and heavily scripted i
 The latest commits compiled for Windows can be found here.
 * [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
 
-Here is the latest v0.6.5 release compiled for both i686(32 bit) and x86_64(64 bit) machines, with OpenGL renderer.
-This release is compatible with protocols ranges from 7.60 up to 10.31.
-* [For Windows](https://www.dropbox.com/sh/se1okacemoqzjve/XFqFoSKLCg/otclient-win-0.6.5.zip)
-* [For Linux](https://www.dropbox.com/sh/se1okacemoqzjve/xKJL7j6vEo/otclient-linux-0.6.5.tar.gz)
+**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1098/Tibia.spr`)
 
-**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1041/Tibia.spr`)
-
-Older releases can be downloaded from [here](https://www.dropbox.com/sh/se1okacemoqzjve/-oWK4YFm03)
 
 ### Features
 
@@ -35,8 +29,8 @@ client, instead otclient was designed to be a combination of a framework and tib
 ### Compiling
 
 A package with all required libraries for compiling OTClient on Windows can be found here:
-* [For MSVC 2013](https://www.dropbox.com/sh/se1okacemoqzjve/dI4ODbq7OT/otclient-msvc13-libs.zip)
-* [For MingW32](https://www.dropbox.com/sh/se1okacemoqzjve/UAkRCiGXXR/otclient-libs_mingw32-dwarf2.zip)
+* [Otclient SDK v1.0 - For MSVC 2015](https://github.com/conde2/otclient-sdk) (libraries)
+* [For MingW32] - Not available in the moment.
 
 In short, if you need to compile OTClient, follow these tutorials:
 * [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
