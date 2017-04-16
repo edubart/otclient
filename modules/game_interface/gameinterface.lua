@@ -17,6 +17,7 @@ smartWalkDirs = {}
 smartWalkDir = nil
 walkFunction = nil
 hookedMenuOptions = {}
+local player = nil
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -52,7 +53,7 @@ function init()
   gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
   connect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
 
-  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'),
+  logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), 
     '/images/topbuttons/logout', tryLogout, true)
 
   setupViewMode(0)
@@ -111,7 +112,7 @@ end
 
 function terminate()
   hide()
-
+  
   hookedMenuOptions = {}
 
   stopSmartWalk()
@@ -149,7 +150,8 @@ function show()
   modules.client_background.hide()
   gameRootPanel:show()
   gameRootPanel:focus()
-  gameMapPanel:followCreature(g_game.getLocalPlayer())
+  player = g_game.getLocalPlayer()
+  gameMapPanel:followCreature(player)
   setupViewMode(0)
   updateStretchShrink()
   logoutButton:setTooltip(tr('Logout'))
@@ -168,7 +170,7 @@ end
 function hide()
   disconnect(g_app, { onClose = tryExit })
   logoutButton:setTooltip(tr('Exit'))
-
+  
   if logoutWindow then
     logoutWindow:destroy()
     logoutWindow = nil
@@ -245,7 +247,7 @@ function tryLogout(prompt)
   if not g_game.isConnectionOk() then
     msg = 'Your connection is failing, if you logout now your character will be still online, do you want to force logout?'
 
-    yesCallback = function()
+    yesCallback = function() 
       g_game.forceLogout()
       if logoutWindow then
         logoutWindow:destroy()
@@ -285,6 +287,11 @@ function stopSmartWalk()
 end
 
 function changeWalkDir(dir, pop)
+
+  if canPlayerPerformAction() == false then
+     return
+  end
+
   while table.removevalue(smartWalkDirs, dir) do end
   if pop then
     if #smartWalkDirs == 0 then
@@ -316,6 +323,11 @@ function changeWalkDir(dir, pop)
 end
 
 function smartWalk(dir)
+
+  if canPlayerPerformAction() == false then
+     return false
+  end 
+
   if g_keyboard.getModifiers() == KeyboardNoModifier then
     local func = walkFunction
     if not func then
@@ -481,10 +493,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     if useThing:isRotateable() then
       menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end)
     end
-
-    if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~= 0xffff then
+	
+	if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~= 0xffff then
       menu:addOption(tr('Browse Field'), function() g_game.browseField(useThing:getPosition()) end)
     end
+
   end
 
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
@@ -500,17 +513,16 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   end
 
   if creatureThing then
-    local localPlayer = g_game.getLocalPlayer()
     menu:addSeparator()
 
     if creatureThing:isLocalPlayer() then
       menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
       if g_game.getFeature(GamePlayerMounts) then
-        if not localPlayer:isMounted() then
-          menu:addOption(tr('Mount'), function() localPlayer:mount() end)
+        if not player:isMounted() then
+          menu:addOption(tr('Mount'), function() player:mount() end)
         else
-          menu:addOption(tr('Dismount'), function() localPlayer:dismount() end)
+          menu:addOption(tr('Dismount'), function() player:dismount() end)
         end
       end
 
@@ -526,7 +538,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
       end
 
     else
-      local localPosition = localPlayer:getPosition()
+      local localPosition = player:getPosition()
       if not classic then shortcut = '(Alt)' else shortcut = nil end
       if creatureThing:getPosition().z == localPosition.z then
         if g_game.getAttackingCreature() ~= creatureThing then
@@ -534,7 +546,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         else
           menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
         end
-
+  
         if g_game.getFollowingCreature() ~= creatureThing then
           menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
         else
@@ -550,7 +562,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
           menu:addOption(tr('Invite to private chat'), function() g_game.inviteToOwnChannel(creatureName) end)
           menu:addOption(tr('Exclude from private chat'), function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
         end
-        if not localPlayer:hasVip(creatureName) then
+        if not player:hasVip(creatureName) then
           menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
         end
 
@@ -560,7 +572,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
           menu:addOption(tr('Ignore') .. ' ' .. creatureName, function() modules.game_console.addIgnoredPlayer(creatureName) end)
         end
 
-        local localPlayerShield = localPlayer:getShield()
+        local localPlayerShield = player:getShield()
         local creatureShield = creatureThing:getShield()
 
         if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
@@ -593,14 +605,14 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addSeparator()
     menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
   end
-
+  
   -- hooked menu options
   for _,category in pairs(hookedMenuOptions) do
     if not isMenuHookCategoryEmpty(category) then
       menu:addSeparator()
       for name,opt in pairs(category) do
         if opt and opt.condition(menuPosition, lookThing, useThing, creatureThing) then
-          menu:addOption(name, function() opt.callback(menuPosition, 
+		  menu:addOption(name, function() opt.callback(menuPosition, 
             lookThing, useThing, creatureThing) end, opt.shortcut)
         end
       end
@@ -611,6 +623,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
 end
 
 function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, attackCreature)
+
+  if canPlayerPerformAction() == false then
+     return false
+  end
+
   local keyboardModifiers = g_keyboard.getModifiers()
 
   if not modules.client_options.getOption('classicControl') then
@@ -647,7 +664,6 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
   -- classic control
   else
     if useThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
-      local player = g_game.getLocalPlayer()
       if attackCreature and attackCreature ~= player then
         g_game.attack(attackCreature)
         return true
@@ -688,8 +704,6 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
     end
   end
 
-
-  local player = g_game.getLocalPlayer()
   player:stopAutoWalk()
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
@@ -845,10 +859,8 @@ function setupViewMode(mode)
     gameRootPanel:fill('parent')
     gameLeftPanel:setImageColor('alpha')
     gameRightPanel:setImageColor('alpha')
-    gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu()
-      :getHeight() - gameLeftPanel:getPaddingTop())
-    gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu()
-      :getHeight() - gameRightPanel:getPaddingTop())
+    gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameLeftPanel:getPaddingTop())
+    gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightPanel:getPaddingTop())
     gameLeftPanel:setOn(true)
     gameLeftPanel:setVisible(true)
     gameRightPanel:setOn(true)
@@ -865,4 +877,15 @@ end
 
 function limitZoom()
   limitedZoom = true
+end
+
+function canPlayerPerformAction()
+  if not player then
+     return false
+  end
+  if player:isDead() then
+      return false
+  end 
+  
+  return true
 end
