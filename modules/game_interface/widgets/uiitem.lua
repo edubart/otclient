@@ -51,7 +51,7 @@ function UIItem:onDestroy()
 end
 
 function UIItem:onHoverChange(hovered)
-  UIWidget.onHoverChange(self, hovered)
+  signalcall(UIWidget.onHoverChange, self, hovered)
 
   if self:isVirtual() or not self:isDraggable() then return end
 
