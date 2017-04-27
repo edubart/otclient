@@ -165,7 +165,7 @@ void read_paeth_row(unsigned char * row, unsigned char * prev_row, unsigned int 
     }
 }
 
-void unpack(z_stream zstream, unsigned char * dst, unsigned int dst_size, unsigned char * src, unsigned int src_size, unsigned int h, unsigned int rowbytes, unsigned char bpp)
+void unpack(z_stream& zstream, unsigned char * dst, unsigned int dst_size, unsigned char * src, unsigned int src_size, unsigned int h, unsigned int rowbytes, unsigned char bpp)
 {
     unsigned int    j;
     unsigned char * row = dst;
