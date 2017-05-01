@@ -160,9 +160,9 @@ void Protocol::setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d)
     m_xteaKey[3] = d;
 }
 
-std::vector<int> Protocol::getXteaKey()
+std::vector<uint32> Protocol::getXteaKey()
 {
-    std::vector<int> xteaKey;
+    std::vector<uint32> xteaKey;
     xteaKey.resize(4);
     for(int i = 0; i < 4; ++i)
         xteaKey[i] = m_xteaKey[i];

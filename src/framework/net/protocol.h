@@ -49,7 +49,7 @@ public:
 
     void generateXteaKey();
     void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d);
-    std::vector<int> getXteaKey();
+    std::vector<uint32> getXteaKey();
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 
     void enableChecksum() { m_checksumEnabled = true; }
