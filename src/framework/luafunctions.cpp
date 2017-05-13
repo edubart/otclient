@@ -72,7 +72,7 @@ void Application::registerLuaFunctions()
     g_lua.bindGlobalFunction("pointtostring", [](const Point& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("colortostring", [](const Color& v) { return stdext::to_string(v); });
     g_lua.bindGlobalFunction("sizetostring", [](const Size& v) { return stdext::to_string(v); });
-    g_lua.bindGlobalFunction("iptostring", [](int v) { return stdext::ip_to_string(v); });
+    g_lua.bindGlobalFunction("iptostring", [](uint32 v) { return stdext::ip_to_string(v); });
     g_lua.bindGlobalFunction("stringtoip", [](const std::string& v) { return stdext::string_to_ip(v); });
     g_lua.bindGlobalFunction("listSubnetAddresses", [](uint32 a, uint8 b) { return stdext::listSubnetAddresses(a, b); });
     g_lua.bindGlobalFunction("ucwords", [](std::string s) { return stdext::ucwords(s); });
