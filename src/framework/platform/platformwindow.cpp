@@ -25,6 +25,9 @@
 #ifdef WIN32
 #include "win32window.h"
 WIN32Window window;
+#elif defined ANDROID
+#include "sdlwindow.h"
+SDLWindow window;
 #else
 #include "x11window.h"
 #include <framework/core/clock.h>

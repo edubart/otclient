@@ -21,29 +21,38 @@
  */
 
 #include "client.h"
-#include <framework/core/modulemanager.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/graphics/graphics.h>
 #include "game.h"
 #include "map.h"
 #include "shadermanager.h"
 #include "spritemanager.h"
 #include "minimap.h"
+#include <framework/luaengine/luainterface.h>
+#include <framework/core/application.h>
+#include <framework/core/modulemanager.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/core/configmanager.h>
+#include <framework/graphics/graphics.h>
 
-Client g_client;
+Client::Client(int argc, char* argv[]) {
+    std::vector<std::string> args(argv, argv + argc);
+    initAppFrameworkAndOTClient(args);
+}
 
-void Client::init(std::vector<std::string>& args)
+void Client::initAppFrameworkAndOTClient(std::vector<std::string>& args)
 {
-    // register needed lua functions
-    registerLuaFunctions();
+    setupAppNameAndVersion();
 
+    g_app.init(args);
     g_map.init();
     g_minimap.init();
     g_game.init();
     g_shaders.init();
     g_things.init();
 
+    registerLuaFunctions();
+    findLuaInitScript();
+
+    g_app.runAppMainLoop();
     //TODO: restore options
 /*
     if(g_graphics.parseOption(arg))
@@ -81,8 +90,28 @@ void Client::init(std::vector<std::string>& args)
     */
 }
 
-void Client::terminate()
+void Client::setupAppNameAndVersion() {
+    g_app.setName("OTClient");
+    g_app.setCompactName("otclient");
+    g_app.setVersion(VERSION);
+}
+
+void Client::findLuaInitScript() {
+    if(!g_resources.discoverWorkDir("init.lua"))
+        g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
+
+    runLuaInitScript();
+}
+
+void Client::runLuaInitScript() {
+    if(!g_lua.safeRunScript("init.lua"))
+        g_logger.fatal("Unable to run script init.lua!");
+}
+
+void Client::terminateAndFreeMemory()
 {
+    g_app.unloadModules();
+
     g_creatures.terminate();
     g_game.terminate();
     g_map.terminate();
@@ -90,4 +119,5 @@ void Client::terminate()
     g_things.terminate();
     g_sprites.terminate();
     g_shaders.terminate();
+    g_app.terminate();
 }

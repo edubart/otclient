@@ -8,6 +8,15 @@ that each functionality is a separated module, giving the possibility to users m
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 Otclient is written in C++2011, the upcoming C++ standard and heavily scripted in lua.
 
+## The Mobile Project
+This is a fork of edubart's otclient. The objective of this fork it's to develop a runnable otclient on mobiles devices.
+
+Tasks that need to do:
+- [X] Compile on Android devices
+- [ ] Compile on Apple devices
+- [ ] Handle input events correctle
+- [ ] Adapt the UI reusing the existing lua code
+
 ### Where do I download?
 
 The latest commits compiled for Windows can be found here.

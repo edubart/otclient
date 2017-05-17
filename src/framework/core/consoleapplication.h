@@ -29,7 +29,7 @@
 class ConsoleApplication : public Application
 {
 public:
-    void run();
+    void runAppMainLoop();
 
     int getFps() { return m_frameCounter.getLastFps(); }
 

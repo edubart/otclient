@@ -20,39 +20,17 @@
  * THE SOFTWARE.
  */
 
-#include <framework/core/application.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/luaengine/luainterface.h>
+// The only way that the android sdl library can link a main function it's including SDL.h
+#ifdef ANDROID
+#include <SDL.h>
+#endif
+
 #include <client/client.h>
 
-int main(int argc, const char* argv[])
+int main(int argc, char* argv[])
 {
-    std::vector<std::string> args(argv, argv + argc);
+    Client client(argc, argv);
+    client.terminateAndFreeMemory();
 
-    // setup application name and version
-    g_app.setName("OTClient");
-    g_app.setCompactName("otclient");
-    g_app.setVersion(VERSION);
-
-    // initialize application framework and otclient
-    g_app.init(args);
-    g_client.init(args);
-
-    // find script init.lua and run it
-    if(!g_resources.discoverWorkDir("init.lua"))
-        g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
-
-    if(!g_lua.safeRunScript("init.lua"))
-        g_logger.fatal("Unable to run script init.lua!");
-
-    // the run application main loop
-    g_app.run();
-
-    // unload modules
-    g_app.deinit();
-
-    // terminate everything and free memory
-    g_client.terminate();
-    g_app.terminate();
     return 0;
 }

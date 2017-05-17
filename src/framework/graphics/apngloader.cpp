@@ -35,7 +35,7 @@
 #if defined(_MSC_VER) && _MSC_VER >= 1300
 #define swap16(data) _byteswap_ushort(data)
 #define swap32(data) _byteswap_ulong(data)
-#elif __linux__
+#elif __linux__ && !defined ANDROID
 #include <byteswap.h>
 #define swap16(data) bswap_16(data)
 #define swap32(data) bswap_32(data)
