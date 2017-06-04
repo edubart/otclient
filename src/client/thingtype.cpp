@@ -272,7 +272,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     m_animationPhases = 0;
-    int lastTotalSprites = 0;
+    int totalSpritesCount = 0;
 
     for(int i = 0; i < groupCount; ++i) {
         uint8 frameGroupType = FrameGroupDefault;
@@ -296,25 +296,25 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_numPatternZ = fin->getU8();
         else
             m_numPatternZ = 1;
-        int n_phases = fin->getU8();
+        
+        int groupAnimationsPhases = fin->getU8();
+        m_animationPhases += groupAnimationsPhases;
 
-        m_animationPhases += n_phases;
-
-        if(n_phases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        if(groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
             m_animator = AnimatorPtr(new Animator);
-            m_animator->unserialize(n_phases, fin);
+            m_animator->unserialize(groupAnimationsPhases, fin);
         }
 
-        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * n_phases;
+        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
 
-        if((lastTotalSprites+totalSprites) > 4096)
+        if((totalSpritesCount+totalSprites) > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
-        m_spritesIndex.resize((lastTotalSprites+totalSprites));
-        for(int i = lastTotalSprites; i < (lastTotalSprites+totalSprites); i++)
+        m_spritesIndex.resize((totalSpritesCount+totalSprites));
+        for(int i = totalSpritesCount; i < (totalSpritesCount+totalSprites); i++)
             m_spritesIndex[i] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
-        lastTotalSprites += totalSprites;
+        totalSpritesCount += totalSprites;
     }
 
     m_textures.resize(m_animationPhases);
