@@ -465,8 +465,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         footAnimPhases = type->getAnimationPhases() - 1;
     }
     if(footAnimPhases == 0)
-        // m_walkAnimationPhase = 0;
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+        m_walkAnimationPhase = 0;
     else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
         m_footStep++;
         m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
