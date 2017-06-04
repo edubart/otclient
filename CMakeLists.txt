@@ -33,6 +33,9 @@ if(WIN32)
     set(executable_SOURCES ${executable_SOURCES} otcicon.o)
 endif()
 
+if(MINGW)
+    add_definitions(-DWIN32)
+endif()
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 # add client executable

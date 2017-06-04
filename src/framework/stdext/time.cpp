@@ -27,7 +27,9 @@
 #else
 #include <unistd.h>
 #endif
-
+#ifdef __MINGW32__
+#include <boost/thread.hpp>
+#endif // __MINGW32__
 namespace stdext {
 
 const static auto startup_time = boost::chrono::high_resolution_clock::now();
@@ -49,7 +51,11 @@ void millisleep(size_t ms)
 #ifdef _MSC_VER
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 #else
-    usleep(ms * 1000);
+    #ifdef __MINGW32__
+        boost::this_thread::sleep(boost::posix_time::milliseconds(ms));
+    #else
+        usleep(ms * 1000);
+    #endif // __MINGW32__
 #endif
 };
 
@@ -58,7 +64,11 @@ void microsleep(size_t us)
 #ifdef _MSC_VER
     std::this_thread::sleep_for(std::chrono::microseconds(us));
 #else
-    usleep(us);
+    #ifdef __MINGW32__
+        boost::this_thread::sleep(boost::posix_time::microseconds(us));
+    #else
+        usleep(us);
+    #endif // __MINGW32__
 #endif
 };
 
