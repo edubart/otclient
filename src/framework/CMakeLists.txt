@@ -219,14 +219,12 @@ endif()
 message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
-find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
-    ${OPENSSL_LIBRARIES}
     ${ZLIB_LIBRARY}
 )
 
@@ -234,8 +232,7 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
-    ${OpenSSL_INCLUDE_DIR}
-    ${framework_INCLUDE_DIRS}
+    ${ZLIB_INCLUDE_DIR}
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -547,6 +544,10 @@ endif()
 if(EXTRA_LIBS)
     set(framework_LIBRARIES ${framework_LIBRARIES} ${EXTRA_LIBS})
 endif()
+
+find_package(OpenSSL 1.0 EXACT REQUIRED)
+set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENSSL_LIBRARIES})
+set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
