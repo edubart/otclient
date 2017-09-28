@@ -521,6 +521,8 @@ void Game::processAttackCancel(uint seq)
 {
     if(isAttacking() && (seq == 0 || m_seq == seq))
         cancelAttack();
+	else if (isFollowing() && (seq == 0 || m_seq == seq))
+        cancelFollow();
 }
 
 void Game::processWalkCancel(Otc::Direction direction)
