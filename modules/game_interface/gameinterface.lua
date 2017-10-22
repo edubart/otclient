@@ -386,6 +386,11 @@ function onTradeWith(clickedWidget, mousePosition)
     if tile then
       g_game.requestTrade(selectedThing, tile:getTopCreature())
     end
+  elseif clickedWidget:getClassName() == 'UICreatureButton' then
+    local creature = clickedWidget:getCreature()
+    if creature then
+      g_game.requestTrade(selectedThing, creature)
+    end
   end
 end
 
