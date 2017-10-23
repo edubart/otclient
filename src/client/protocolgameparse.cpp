@@ -1530,6 +1530,7 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
         case Otc::MessageYell:
         case Otc::MessageMonsterSay:
         case Otc::MessageMonsterYell:
+        case Otc::MessageNpcFrom:
         case Otc::MessageNpcTo:
         case Otc::MessageBarkLow:
         case Otc::MessageBarkLoud:
@@ -1543,7 +1544,6 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
         case Otc::MessageGamemasterChannel:
             channelId = msg->getU16();
             break;
-        case Otc::MessageNpcFrom:
         case Otc::MessagePrivateFrom:
         case Otc::MessageGamemasterBroadcast:
         case Otc::MessageGamemasterPrivateFrom:
