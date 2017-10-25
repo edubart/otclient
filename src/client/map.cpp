@@ -116,7 +116,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-            thing->onAppear();
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
