@@ -32,6 +32,7 @@
 
 #include <execinfo.h>
 #include <ucontext.h>
+#include <signal.h>
 
 #define MAX_BACKTRACE_DEPTH 128
 #define DEMANGLE_BACKTRACE_SYMBOLS
