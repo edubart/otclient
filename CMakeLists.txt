@@ -31,6 +31,7 @@ if(WIN32)
                        -i${CMAKE_CURRENT_SOURCE_DIR}/src/otcicon.rc
                        -o ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o)
     set(executable_SOURCES ${executable_SOURCES} otcicon.o)
+    set(CMAKE_CXX_LINK_FLAGS "-U__STRICT_ANSI__")
 endif()
 
 add_definitions(-D"VERSION=\\"${VERSION}\\"")
