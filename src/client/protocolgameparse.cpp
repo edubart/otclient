@@ -1351,7 +1351,7 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     double level = msg->getU16();
     double levelPercent = msg->getU8();
 
-    if(g_game.getFeature(Otc::GameExperienceBonus))
+    if(g_game.getFeature(Otc::GameExperienceBonus)) {
         if(g_game.getClientVersion() <= 1096) {
             double experienceBonus = msg->getDouble();
         } else {
@@ -1361,6 +1361,7 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
             int storeBoostAddend = msg->getU16();
             int huntingBoostFactor = msg->getU16();
         }
+    }
 
     double mana;
     double maxMana;

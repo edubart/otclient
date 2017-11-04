@@ -155,7 +155,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     // effects
     if(drawFlags & Otc::DrawEffects)
         for(const EffectPtr& effect : m_effects)
-            effect->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
+            effect->drawEffect(dest - m_drawElevation*scaleFactor, scaleFactor, animate, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
 
     // top items
     if(drawFlags & Otc::DrawOnTop)

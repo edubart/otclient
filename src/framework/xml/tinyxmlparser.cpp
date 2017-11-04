@@ -107,18 +107,22 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
     // Scary scary fall throughs.
     switch (*length)
     {
+        /* FALLTHROUGH */
         case 4:
             --output;
             *output = (char)((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
+        /* FALLTHROUGH */
         case 3:
             --output;
             *output = (char)((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
+        /* FALLTHROUGH */
         case 2:
             --output;
             *output = (char)((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
+        /* FALLTHROUGH */
         case 1:
             --output;
             *output = (char)(input | FIRST_BYTE_MARK[*length]);

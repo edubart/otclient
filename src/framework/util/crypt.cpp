@@ -143,7 +143,7 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
 {
     std::string out;
     out.resize(buffer.size());
-    register size_t i, j=0;
+    size_t i, j=0;
     for(i=0;i<buffer.size();++i) {
         out[i] = buffer[i] ^ key[j++];
         if(j >= key.size())
@@ -307,6 +307,8 @@ std::string Crypt::sha512Encode(const std::string& decoded_string, bool upperCas
 
 void Crypt::rsaGenerateKey(int bits, int e)
 {
+    // disabled because new OpenSSL changes broke
+    /*
     RSA *rsa = RSA_new();
     BIGNUM *ebn = BN_new();
     BN_set_word(ebn, e);
@@ -319,6 +321,7 @@ void Crypt::rsaGenerateKey(int bits, int e)
     g_logger.info(std::string("e = ") + BN_bn2dec(m_rsa->e));
     BN_clear_free(ebn);
     RSA_free(rsa);
+    */
 }
 
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
