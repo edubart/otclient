@@ -2,7 +2,7 @@ language: cpp
 compiler:
   - gcc
 before_script:
-  - sudo apt-get install libboost1.48-all-dev libphysfs-dev libssl-dev liblua5.1-dev libglew1.6-dev libvorbis-dev libopenal-dev libz-dev -y
+  - sudo apt-get install libboost-all-dev libphysfs-dev libssl-dev liblua5.1-dev libglew-dev libvorbis-dev libopenal-dev libz-dev -y
 script: |
   cmake . -DCMAKE_BUILD_TYPE=Release
   make
