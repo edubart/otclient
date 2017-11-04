@@ -21,16 +21,12 @@
  */
 
 #include "time.h"
-#include <boost/chrono.hpp>
-#ifdef _MSC_VER
+#include <chrono>
 #include <thread>
-#else
-#include <unistd.h>
-#endif
 
 namespace stdext {
 
-const static auto startup_time = boost::chrono::high_resolution_clock::now();
+const static auto startup_time = std::chrono::high_resolution_clock::now();
 
 ticks_t time() {
     return std::time(NULL);
@@ -38,28 +34,20 @@ ticks_t time() {
 
 ticks_t millis()
 {
-    return boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::high_resolution_clock::now() - startup_time).count();
+    return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
 }
 ticks_t micros() {
-    return boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::high_resolution_clock::now() - startup_time).count();
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - startup_time).count();
 }
 
 void millisleep(size_t ms)
 {
-#ifdef _MSC_VER
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-#else
-    usleep(ms * 1000);
-#endif
 };
 
 void microsleep(size_t us)
 {
-#ifdef _MSC_VER
     std::this_thread::sleep_for(std::chrono::microseconds(us));
-#else
-    usleep(us);
-#endif
 };
 
 }
