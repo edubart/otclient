@@ -39,7 +39,6 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/dumper.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/dynamic_storage.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/format.h

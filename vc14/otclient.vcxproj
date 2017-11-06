@@ -413,7 +413,6 @@
     <ClInclude Include="..\src\framework\stdext\cast.h" />
     <ClInclude Include="..\src\framework\stdext\compiler.h" />
     <ClInclude Include="..\src\framework\stdext\demangle.h" />
-    <ClInclude Include="..\src\framework\stdext\dumper.h" />
     <ClInclude Include="..\src\framework\stdext\dynamic_storage.h" />
     <ClInclude Include="..\src\framework\stdext\exception.h" />
     <ClInclude Include="..\src\framework\stdext\format.h" />
