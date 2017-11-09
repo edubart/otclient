@@ -28,7 +28,7 @@
 
 #include <boost/uuid/uuid.hpp>
 
-typedef struct rsa_st RSA;
+#include <gmp.h>
 
 class Crypt
 {
@@ -44,17 +44,14 @@ public:
     std::string genUUID();
     bool setMachineUUID(std::string uuidstr);
     std::string getMachineUUID();
-    std::string md5Encode(const std::string& decoded_string, bool upperCase);
-    std::string sha1Encode(const std::string& decoded_string, bool upperCase);
-    std::string sha256Encode(const std::string& decoded_string, bool upperCase);
-    std::string sha512Encode(const std::string& decoded_string, bool upperCase);
 
-    void rsaGenerateKey(int bits, int e);
+    static constexpr auto MODULUS_SIZE = 1024;
+    static constexpr auto BLOCK_SIZE = MODULUS_SIZE / 8;
+
     void rsaSetPublicKey(const std::string& n, const std::string& e);
     void rsaSetPrivateKey(const std::string &p, const std::string &q, const std::string &d);
-    bool rsaCheckKey();
-    bool rsaEncrypt(unsigned char *msg, int size);
-    bool rsaDecrypt(unsigned char *msg, int size);
+    bool rsaEncrypt(char *msg, int size);
+    bool rsaDecrypt(char *msg, int size);
     int rsaGetSize();
 
 private:
@@ -62,7 +59,7 @@ private:
     std::string _decrypt(const std::string& encrypted_string, bool useMachineUUID);
     std::string getCryptKey(bool useMachineUUID);
     boost::uuids::uuid m_machineUUID;
-    RSA *m_rsa;
+    mpz_t n, e, d;
 };
 
 extern Crypt g_crypt;

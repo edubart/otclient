@@ -96,7 +96,7 @@ double InputMessage::getDouble()
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
-    g_crypt.rsaDecrypt((unsigned char*)m_buffer + m_readPos, size);
+    g_crypt.rsaDecrypt((char*)m_buffer + m_readPos, size);
     return (getU8() == 0x00);
 }
 
