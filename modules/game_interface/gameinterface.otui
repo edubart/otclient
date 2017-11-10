@@ -1,4 +1,3 @@
-
 GameSidePanel < UIMiniWindowContainer
   image-source: /images/ui/panel_side
   image-border: 4

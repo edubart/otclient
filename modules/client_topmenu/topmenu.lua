@@ -51,6 +51,8 @@ function init()
   pingLabel = topMenu:getChildById('pingLabel')
   fpsLabel = topMenu:getChildById('fpsLabel')
 
+  g_keyboard.bindKeyDown('Ctrl+Shift+T', toggle)
+
   if g_game.isOnline() then
     online()
   end
@@ -163,4 +165,21 @@ end
 
 function getTopMenu()
   return topMenu
+end
+
+function toggle()
+  local menu = getTopMenu()
+  if not menu then
+    return
+  end
+
+  if menu:isVisible() then
+    menu:hide()
+    modules.client_background.getBackground():addAnchor(AnchorTop, 'parent', AnchorTop)
+    modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+  else
+    menu:show()
+    modules.client_background.getBackground():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+    modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+  end
 end
