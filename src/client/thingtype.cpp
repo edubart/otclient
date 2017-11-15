@@ -564,3 +564,11 @@ int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern,
     Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
     return std::max<int>(size.width(), size.height());
 }
+
+void ThingType::setPathable(bool var)
+{
+    if(var == true)
+        m_attribs.remove(ThingAttrNotPathable);
+    else
+        m_attribs.set(ThingAttrNotPathable, true);
+}
