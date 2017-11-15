@@ -29,13 +29,16 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   if modalDialog then
     return
   end
-
+  local modalWindow = modalDialog
   modalDialog = g_ui.createWidget('ModalDialog', rootWidget)
 
   local messageLabel = modalDialog:getChildById('messageLabel')
   local choiceList = modalDialog:getChildById('choiceList')
   local choiceScrollbar = modalDialog:getChildById('choiceScrollBar')
   local buttonsPanel = modalDialog:getChildById('buttonsPanel')
+  
+   g_keyboard.bindKeyPress('Down', function() choiceList:focusNextChild(KeyboardFocusReason) end, modalWindow)
+   g_keyboard.bindKeyPress('Up', function() choiceList:focusPreviousChild(KeyboardFocusReason) end, modalWindow)
 
   modalDialog:setText(title)
   messageLabel:setText(message)
@@ -73,7 +76,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
                      end
     buttonsWidth = buttonsWidth + button:getWidth() + button:getMarginLeft() + button:getMarginRight()
   end
-
+	choiceList:focusChild(choiceList:getFirstChild())
   local additionalHeight = 0
   if #choices > 0 then
     choiceList:setVisible(true)
