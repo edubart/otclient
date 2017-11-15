@@ -526,6 +526,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ThingType>("isNotMoveable", &ThingType::isNotMoveable);
     g_lua.bindClassMemberFunction<ThingType>("blockProjectile", &ThingType::blockProjectile);
     g_lua.bindClassMemberFunction<ThingType>("isNotPathable", &ThingType::isNotPathable);
+    g_lua.bindClassMemberFunction<ThingType>("setPathable", &ThingType::setPathable);
     g_lua.bindClassMemberFunction<ThingType>("isPickupable", &ThingType::isPickupable);
     g_lua.bindClassMemberFunction<ThingType>("isHangable", &ThingType::isHangable);
     g_lua.bindClassMemberFunction<ThingType>("isHookSouth", &ThingType::isHookSouth);
