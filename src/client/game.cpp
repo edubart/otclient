@@ -1383,7 +1383,7 @@ void Game::requestItemInfo(const ItemPtr& item, int index)
     m_protocolGame->sendRequestItemInfo(item->getId(), item->getSubType(), index);
 }
 
-void Game::answerModalDialog(int dialog, int button, int choice)
+void Game::answerModalDialog(uint32 dialog, int button, int choice)
 {
     if(!canPerformGameAction())
         return;

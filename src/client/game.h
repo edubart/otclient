@@ -282,7 +282,7 @@ public:
     void requestItemInfo(const ItemPtr& item, int index);
 
     // >= 970 modal dialog
-    void answerModalDialog(int dialog, int button, int choice);
+    void answerModalDialog(uint32 dialog, int button, int choice);
 
     // >= 984 browse field
     void browseField(const Position& position);
