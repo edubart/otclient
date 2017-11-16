@@ -107,12 +107,12 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
-        int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
 
-        if(isAnimateAlways() && animateIdle) {
-            int ticksPerFrame = 1000 / getAnimationPhases();
-            animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
-        }
+        int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
+        if(getIdleAnimator() != nullptr && !isWalking() && animateIdle)
+            animationPhase = getIdleAnimator()->getPhase();
+        else if(getAnimator() != nullptr && animateWalk && isWalking())
+            animationPhase = m_walkAnimationPhase;
 
         // xPattern => creature direction
         int xPattern;
