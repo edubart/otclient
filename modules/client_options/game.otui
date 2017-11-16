@@ -38,11 +38,51 @@ Panel
     id: displayText
     !text: tr('Display text messages')
 
+  Label
+    id: turnDelayLabel
+    !text: tr('Turn delay: %sms', 30)
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 12
+    @onSetup: |
+      local value = modules.client_options.getOption('turnDelay')
+      self:setText(tr('Turn delay: %dms', value))
+
+  OptionScrollbar
+    id: turnDelay
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 3
+    minimum: 30
+    maximum: 250
+
+  Label
+    id: hotkeyDelayLabel
+    !text: tr('Hotkey delay: %dms', 30)
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 12
+    @onSetup: |
+      local value = modules.client_options.getOption('hotkeyDelay')
+      self:setText(tr('Hotkey delay: %dms', value))
+
+  OptionScrollbar
+    id: hotkeyDelay
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 3
+    minimum: 30
+    maximum: 250
+
   Button
     id: changeLocale
     !text: tr('Change language')
     @onClick: modules.client_locales.createWindow()
     anchors.top: prev.bottom
     anchors.left: prev.left
-    margin-top: 5
+    margin-top: 12
     width: 120

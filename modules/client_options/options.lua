@@ -26,7 +26,9 @@ local defaultOptions = {
   displayNames = true,
   displayHealth = true,
   displayText = true,
-  dontStretchShrink = false
+  dontStretchShrink = false,
+  turnDelay = 50,
+  hotkeyDelay = 50,
 }
 
 local optionsWindow
@@ -228,6 +230,10 @@ function setOption(key, value, force)
     addEvent(function()
       modules.game_interface.updateStretchShrink()
     end)
+  elseif key == 'turnDelay' then
+    generalPanel:getChildById('turnDelayLabel'):setText(tr('Turn delay: %sms', value))
+  elseif key == 'hotkeyDelay' then
+    generalPanel:getChildById('hotkeyDelayLabel'):setText(tr('Hotkey delay: %sms', value))
   end
 
   -- change value for keybind updates
