@@ -81,7 +81,6 @@ bool AdaptativeFrameCounter::update()
         m_frames = 0;
         m_frameDelaySum = 0;
 
-        //dump << stdext::format("FPS => %d  Partial FPS => %d  Frame Delay Hit => %.2f%%", m_lastFps, (int)m_partialFps, getFrameDelayHit());
         return true;
     }
     return false;

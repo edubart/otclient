@@ -809,9 +809,6 @@
     <ClInclude Include="..\src\framework\stdext\demangle.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\dumper.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\framework\stdext\dynamic_storage.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>

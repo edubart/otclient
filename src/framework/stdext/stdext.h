@@ -24,7 +24,6 @@
 #define STDEXT_H
 
 #include "compiler.h"
-#include "dumper.h"
 #include "types.h"
 #include "exception.h"
 #include "demangle.h"

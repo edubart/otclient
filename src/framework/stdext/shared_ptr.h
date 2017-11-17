@@ -24,7 +24,6 @@
 #define STDEXT_SHARED_PTR_H
 
 #include "types.h"
-#include "dumper.h"
 #include <type_traits>
 #include <functional>
 #include <cassert>
