@@ -60,11 +60,12 @@ namespace Otc
         DrawBars = 4096,
         DrawNames = 8192,
         DrawLights = 16384,
+        DrawManaBar = 32768,
         DrawWalls = DrawOnBottom | DrawOnTop,
         DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
                          DrawCreatures | DrawEffects | DrawMissiles | DrawCreaturesInformation |
                          DrawStaticTexts | DrawAnimatedTexts | DrawAnimations | DrawBars | DrawNames |
-                         DrawLights
+                         DrawLights | DrawManaBar
     };
 
     enum DatOpts {

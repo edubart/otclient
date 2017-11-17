@@ -241,10 +241,15 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     textRect.bind(parentRect);
 
     // distance them
+    uint32 offset = 12;
+    if(isLocalPlayer()) {
+        offset *= 2;
+    }
+
     if(textRect.top() == parentRect.top())
-        backgroundRect.moveTop(textRect.top() + 12);
+        backgroundRect.moveTop(textRect.top() + offset);
     if(backgroundRect.bottom() == parentRect.bottom())
-        textRect.moveTop(backgroundRect.top() - 12);
+        textRect.moveTop(backgroundRect.top() - offset);
 
     // health rect is based on background rect, so no worries
     Rect healthRect = backgroundRect.expanded(-1);
@@ -260,6 +265,27 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
 
         g_painter->setColor(fillColor);
         g_painter->drawFilledRect(healthRect);
+
+        if(drawFlags & Otc::DrawManaBar && isLocalPlayer()) {
+            LocalPlayerPtr player = g_game.getLocalPlayer();
+            if(player) {
+                backgroundRect.moveTop(backgroundRect.bottom());
+
+                g_painter->setColor(Color::black);
+                g_painter->drawFilledRect(backgroundRect);
+
+                Rect manaRect = backgroundRect.expanded(-1);
+                double maxMana = player->getMaxMana();
+                if(maxMana == 0) {
+                    manaRect.setWidth(25);
+                } else {
+                    manaRect.setWidth(player->getMana() / (maxMana * 1.0) * 25);
+                }
+
+                g_painter->setColor(Color::blue);
+                g_painter->drawFilledRect(manaRect);
+            }
+        }
     }
 
     if(drawFlags & Otc::DrawNames) {

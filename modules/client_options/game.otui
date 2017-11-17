@@ -35,6 +35,10 @@ Panel
     !text: tr('Display creature health bars')
 
   OptionCheckBox
+    id: displayMana
+    !text: tr('Display player mana bar')
+
+  OptionCheckBox
     id: displayText
     !text: tr('Display text messages')
 
