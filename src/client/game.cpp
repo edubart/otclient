@@ -431,14 +431,14 @@ void Game::processRemoveAutomapFlag(const Position& pos, int icon, const std::st
     g_lua.callGlobalField("g_game", "onRemoveAutomapFlag", pos, icon, message);
 }
 
-void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
+void Game::processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
                                    const std::vector<std::tuple<int, std::string> >& mountList)
 {
     // create virtual creature outfit
     CreaturePtr virtualOutfitCreature = CreaturePtr(new Creature);
     virtualOutfitCreature->setDirection(Otc::South);
 
-    Outfit outfit = currentOufit;
+    Outfit outfit = currentOutfit;
     outfit.setMount(0);
     virtualOutfitCreature->setOutfit(outfit);
 
@@ -452,7 +452,7 @@ void Game::processOpenOutfitWindow(const Outfit& currentOufit, const std::vector
         Outfit mountOutfit;
         mountOutfit.setId(0);
 
-        int mount = currentOufit.getMount();
+        int mount = currentOutfit.getMount();
         if(mount > 0)
             mountOutfit.setId(mount);
 
