@@ -178,7 +178,6 @@ public:
     bool isNotMoveable() { return m_attribs.has(ThingAttrNotMoveable); }
     bool blockProjectile() { return m_attribs.has(ThingAttrBlockProjectile); }
     bool isNotPathable() { return m_attribs.has(ThingAttrNotPathable); }
-	void setPathable(bool var);
     bool isPickupable() { return m_attribs.has(ThingAttrPickupable); }
     bool isHangable() { return m_attribs.has(ThingAttrHangable); }
     bool isHookSouth() { return m_attribs.has(ThingAttrHookSouth); }
@@ -207,6 +206,7 @@ public:
     // additional
     float getOpacity() { return m_opacity; }
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
+    void setPathable(bool var);
 
 private:
     const TexturePtr& getTexture(int animationPhase);
