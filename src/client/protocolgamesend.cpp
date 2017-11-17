@@ -830,7 +830,7 @@ void ProtocolGame::sendRequestItemInfo(int itemId, int subType, int index)
     send(msg);
 }
 
-void ProtocolGame::sendAnswerModalDialog(int dialog, int button, int choice)
+void ProtocolGame::sendAnswerModalDialog(uint32 dialog, int button, int choice)
 {
     OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAnswerModalDialog);
