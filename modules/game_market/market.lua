@@ -990,6 +990,7 @@ function Market.close(notify)
   if not marketWindow:isHidden() then
     marketWindow:hide()
     marketWindow:unlock()
+    modules.game_interface.getRootPanel():focus()
     Market.clearSelectedItem()
     Market.reset()
     if notify then
