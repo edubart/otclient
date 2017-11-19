@@ -32,6 +32,14 @@ UIWidget
     anchors.bottom: gameBottomPanel.top
     focusable: false
 
+    Button
+      id: showTopMenuButton
+      anchors.top: parent.top
+      anchors.left: parent.left
+      !text: tr('Show Top Menu')
+      height: 32
+      visible: false
+
   GameBottomPanel
     id: gameBottomPanel
     anchors.left: gameLeftPanel.right

@@ -177,9 +177,11 @@ function toggle()
     menu:hide()
     modules.client_background.getBackground():addAnchor(AnchorTop, 'parent', AnchorTop)
     modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
+    modules.game_interface.getShowTopMenuButton():show()
   else
     menu:show()
     modules.client_background.getBackground():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
     modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+    modules.game_interface.getShowTopMenuButton():hide()
   end
 end

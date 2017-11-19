@@ -5,6 +5,7 @@ gameMapPanel = nil
 gameRightPanel = nil
 gameLeftPanel = nil
 gameBottomPanel = nil
+showTopMenuButton = nil
 logoutButton = nil
 mouseGrabberWidget = nil
 countWindow = nil
@@ -54,6 +55,11 @@ function init()
 
   logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'),
     '/images/topbuttons/logout', tryLogout, true)
+
+  showTopMenuButton = gameMapPanel:getChildById('showTopMenuButton')
+  showTopMenuButton.onClick = function()
+    modules.client_topmenu.toggle()
+  end
 
   setupViewMode(0)
 
@@ -798,6 +804,10 @@ end
 
 function getBottomPanel()
   return gameBottomPanel
+end
+
+function getShowTopMenuButton()
+  return showTopMenuButton
 end
 
 function onLeftPanelVisibilityChange(leftPanel, visible)
