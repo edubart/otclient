@@ -2,7 +2,7 @@ Module
   name: client_serverlist
   description: Manages a server list of previously entered servers
   author: BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
 
   dependencies:
     - client_entergame

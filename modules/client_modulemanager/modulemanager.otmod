@@ -2,7 +2,7 @@ Module
   name: client_modulemanager
   description: Manage other modules
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ modulemanager ]
   dependencies: [ client_topmenu ]

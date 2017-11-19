@@ -2,7 +2,7 @@ Module
   name: game_minimap
   description: Manage minimap
   author: edubart, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ minimap ]
   @onLoad: init()

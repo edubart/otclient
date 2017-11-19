@@ -2,7 +2,7 @@ Module
   name: game_hotkeys
   description: Manage client hotkeys
   author: andrefaramir, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ hotkeys_manager ]
   @onLoad: init()

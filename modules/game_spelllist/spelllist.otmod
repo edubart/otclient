@@ -2,7 +2,7 @@ Module
   name: game_spelllist
   description: View available spells
   author: Summ, Edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ spelllist ]
   @onLoad: init()

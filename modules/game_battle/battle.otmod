@@ -2,7 +2,7 @@ Module
   name: game_battle
   description: Manage battle window
   author: andrefaramir, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ battle ]
   @onLoad: init()

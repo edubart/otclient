@@ -2,7 +2,7 @@ Module
   name: game_containers
   description: Manage containers
   author: edubart, baxnie
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [containers]
   @onLoad: init()

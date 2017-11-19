@@ -2,7 +2,7 @@ Module
   name: game_interface
   description: Create the game interface, where the ingame stuff starts
   author: OTClient team
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ widgets/uigamemap, widgets/uiitem, gameinterface ]
   load-later:

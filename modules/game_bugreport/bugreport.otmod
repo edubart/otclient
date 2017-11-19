@@ -2,7 +2,7 @@ Module
   name: game_bugreport
   description: Bug report interface (Ctrl+Z)
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   scripts: [ bugreport ]
   sandboxed: true
   @onLoad: init()
