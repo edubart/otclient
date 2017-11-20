@@ -2,7 +2,7 @@ Module
   name: gamelib
   description: Contains game related classes
   author: OTClient team
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
 
   dependencies:
     - game_things

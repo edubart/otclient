@@ -2,7 +2,7 @@ Module
   name: client_terminal
   description: Terminal for executing lua functions
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   scripts: [ terminal ]
   sandboxed: true
   @onLoad: init()

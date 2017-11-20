@@ -2,7 +2,7 @@ Module
   name: game_healthinfo
   description: Displays health, mana points, soul points, and conditions
   author: edubart, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ healthinfo ]
   @onLoad: init()

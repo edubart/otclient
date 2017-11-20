@@ -2,7 +2,7 @@ Module
   name: game_inventory
   description: View local player equipments window
   author: baxnie, edubart, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ inventory ]
   @onLoad: init()

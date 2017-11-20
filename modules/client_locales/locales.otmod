@@ -2,7 +2,7 @@ Module
   name: client_locales
   description: Translates texts to selected language
   author: baxnie, edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ locales ]
   @onLoad: init()
