@@ -2031,6 +2031,12 @@ void ProtocolGame::parseCreatureType(const InputMessagePtr& msg)
 {
     uint32 id = msg->getU32();
     uint8 type = msg->getU8();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        creature->setType(type);
+    else
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height)
@@ -2262,8 +2268,9 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         int shield = msg->getU8();
 
         // emblem is sent only when the creature is not known
-        int emblem = -1;
-        int icon = -1;
+        int8 emblem = -1;
+        int8 creatureType = -1;
+        int8 icon = -1;
         bool unpass = true;
         uint8 mark;
 
@@ -2271,7 +2278,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             emblem = msg->getU8();
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
-            msg->getU8(); // creature type for summons
+            creatureType = msg->getU8();
         }
 
         if(g_game.getFeature(Otc::GameCreatureIcons)) {
@@ -2302,8 +2309,13 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature->setShield(shield);
             creature->setPassable(!unpass);
             creature->setLight(light);
+
             if(emblem != -1)
                 creature->setEmblem(emblem);
+
+            if(creatureType != -1)
+                creature->setType(creatureType);
+
             if(icon != -1)
                 creature->setIcon(icon);
 

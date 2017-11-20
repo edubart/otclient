@@ -278,7 +278,8 @@ namespace Proto {
         CreatureTypeMonster,
         CreatureTypeNpc,
         CreatureTypeSummonOwn,
-        CreatureTypeSummonOther
+        CreatureTypeSummonOther,
+        CreatureTypeUnknown = 0xFF
     };
 
     enum CreaturesIdRange {

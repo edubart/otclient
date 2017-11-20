@@ -62,10 +62,12 @@ public:
     void setSkull(uint8 skull);
     void setShield(uint8 shield);
     void setEmblem(uint8 emblem);
+    void setType(uint8 type);
     void setIcon(uint8 icon);
     void setSkullTexture(const std::string& filename);
     void setShieldTexture(const std::string& filename, bool blink);
     void setEmblemTexture(const std::string& filename);
+    void setTypeTexture(const std::string& filename);
     void setIconTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
     void setSpeedFormula(double speedA, double speedB, double speedC);
@@ -87,6 +89,7 @@ public:
     uint8 getSkull() { return m_skull; }
     uint8 getShield() { return m_shield; }
     uint8 getEmblem() { return m_emblem; }
+    uint8 getType() { return m_type; }
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
     Point getDrawOffset();
@@ -153,10 +156,12 @@ protected:
     uint8 m_skull;
     uint8 m_shield;
     uint8 m_emblem;
+    uint8 m_type;
     uint8 m_icon;
     TexturePtr m_skullTexture;
     TexturePtr m_shieldTexture;
     TexturePtr m_emblemTexture;
+    TexturePtr m_typeTexture;
     TexturePtr m_iconTexture;
     stdext::boolean<true> m_showShieldTexture;
     stdext::boolean<false> m_shieldBlink;
