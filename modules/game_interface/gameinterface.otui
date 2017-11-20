@@ -1,4 +1,3 @@
-
 GameSidePanel < UIMiniWindowContainer
   image-source: /images/ui/panel_side
   image-border: 4
@@ -32,6 +31,14 @@ UIWidget
     anchors.top: parent.top
     anchors.bottom: gameBottomPanel.top
     focusable: false
+
+    Button
+      id: showTopMenuButton
+      anchors.top: parent.top
+      anchors.left: parent.left
+      !text: tr('Show Top Menu')
+      height: 32
+      visible: false
 
   GameBottomPanel
     id: gameBottomPanel
