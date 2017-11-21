@@ -57,7 +57,7 @@ function init()
   logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'),
     '/images/topbuttons/logout', tryLogout, true)
 
-  showTopMenuButton = gameMapPanel:getChildById('showTopMenuButton')
+  showTopMenuButton = gameRootPanel:getChildById('showTopMenuButton')
   showTopMenuButton.onClick = function()
     modules.client_topmenu.toggle()
   end
