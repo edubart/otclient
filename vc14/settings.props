@@ -25,7 +25,7 @@
         BUILD_TYPE="RelWithDebInfo";
         BUILD_COMMIT="devel";
         BUILD_REVISION="0";
-        VERSION="0.6.3";
+        VERSION="0.6.6";
         AB
     </PREPROCESSOR_DEFS>
     
