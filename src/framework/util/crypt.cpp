@@ -416,7 +416,7 @@ bool Crypt::rsaEncrypt(char *msg, int size)
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
     memset(msg, 0, BLOCK_SIZE - count);
-    mpz_export(msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, c);
+    mpz_export(msg + (BLOCK_SIZE - count - 1), nullptr, 1, 1, 0, 0, c);
 
     mpz_clear(c);
     mpz_clear(m);
@@ -437,7 +437,7 @@ bool Crypt::rsaDecrypt(char *msg, int size)
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
     memset(msg, 0, BLOCK_SIZE - count);
-    mpz_export(msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, m);
+    mpz_export(msg + (BLOCK_SIZE - count - 1), nullptr, 1, 1, 0, 0, m);
 
     mpz_clear(c);
     mpz_clear(m);
