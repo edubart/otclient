@@ -219,8 +219,23 @@ endif()
 message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
-find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
+
+option(USE_GMP "Use GMP in place of OpenSSL: " OFF)
+if(USE_GMP)
+    find_package(GMP REQUIRED)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${GMP_LIBRARY} )
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${GMP_INCLUDE_DIR})
+    add_definitions(-DUSE_GMP)
+    message(STATUS "Use GMP: ON")
+    message(STATUS "Use OpenSSL: OFF")
+else(USE_GMP)
+    find_package(OpenSSL REQUIRED)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENSSL_LIBRARIES} )
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    message(STATUS "Use GMP: OFF")
+    message(STATUS "Use OpenSSL: ON")
+endif(USE_GMP)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
