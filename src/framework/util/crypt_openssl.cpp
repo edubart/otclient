@@ -20,15 +20,12 @@
  * THE SOFTWARE.
  */
 
-#include "rsa_openssl.h"
+#include "crypt_openssl.h"
 #include <framework/stdext/math.h>
 #include <framework/core/logger.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/platform/platform.h>
 #include <framework/core/application.h>
-
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
 
 #include <boost/functional/hash.hpp>
 
@@ -41,19 +38,19 @@
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
 
-RsaOpenSSL g_crypt;
+CryptOpenSSL g_crypt_openssl;
 
-RsaOpenSSL::RsaOpenSSL()
+CryptOpenSSL::CryptOpenSSL()
 {
     m_rsa = RSA_new();
 }
 
-RsaOpenSSL::~RsaOpenSSL()
+CryptOpenSSL::~CryptOpenSSL()
 {
     RSA_free(m_rsa);
 }
 
-std::string RsaOpenSSL::md5Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptOpenSSL::md5Encode(const std::string& decoded_string, bool upperCase)
 {
     MD5_CTX c;
     MD5_Init(&c);
@@ -74,7 +71,7 @@ std::string RsaOpenSSL::md5Encode(const std::string& decoded_string, bool upperC
     return result;
 }
 
-std::string RsaOpenSSL::sha1Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptOpenSSL::sha1Encode(const std::string& decoded_string, bool upperCase)
 {
     SHA_CTX c;
     SHA1_Init(&c);
@@ -95,7 +92,7 @@ std::string RsaOpenSSL::sha1Encode(const std::string& decoded_string, bool upper
     return result;
 }
 
-std::string RsaOpenSSL::sha256Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptOpenSSL::sha256Encode(const std::string& decoded_string, bool upperCase)
 {
     SHA256_CTX c;
     SHA256_Init(&c);
@@ -116,7 +113,7 @@ std::string RsaOpenSSL::sha256Encode(const std::string& decoded_string, bool upp
     return result;
 }
 
-std::string RsaOpenSSL::sha512Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptOpenSSL::sha512Encode(const std::string& decoded_string, bool upperCase)
 {
     SHA512_CTX c;
     SHA512_Init(&c);
@@ -138,7 +135,7 @@ std::string RsaOpenSSL::sha512Encode(const std::string& decoded_string, bool upp
 }
 
 
-void RsaOpenSSL::rsaGenerateKey(int bits, int e)
+void CryptOpenSSL::rsaGenerateKey(int bits, int e)
 {
     // disabled because new OpenSSL changes broke
     /*
@@ -157,7 +154,7 @@ void RsaOpenSSL::rsaGenerateKey(int bits, int e)
     */
 }
 
-void RsaOpenSSL::rsaSetPublicKey(const std::string& n, const std::string& e)
+void CryptOpenSSL::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
     BN_dec2bn(&m_rsa->n, n.c_str());
     BN_dec2bn(&m_rsa->e, e.c_str());
@@ -166,7 +163,7 @@ void RsaOpenSSL::rsaSetPublicKey(const std::string& n, const std::string& e)
     if(m_rsa->_method_mod_n) { BN_MONT_CTX_free(m_rsa->_method_mod_n); m_rsa->_method_mod_n = NULL; }
 }
 
-void RsaOpenSSL::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
+void CryptOpenSSL::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
 {
     BN_dec2bn(&m_rsa->p, p.c_str());
     BN_dec2bn(&m_rsa->q, q.c_str());
@@ -177,7 +174,7 @@ void RsaOpenSSL::rsaSetPrivateKey(const std::string& p, const std::string& q, co
     if(m_rsa->_method_mod_q) { BN_MONT_CTX_free(m_rsa->_method_mod_q); m_rsa->_method_mod_q = NULL; }
 }
 
-bool RsaOpenSSL::rsaCheckKey()
+bool CryptOpenSSL::rsaCheckKey()
 {
     // only used by server, that sets both public and private
     if(RSA_check_key(m_rsa)) {
@@ -198,21 +195,21 @@ bool RsaOpenSSL::rsaCheckKey()
     }
 }
 
-bool RsaOpenSSL::rsaEncrypt(unsigned char *msg, int size)
+bool CryptOpenSSL::rsaEncrypt(unsigned char *msg, int size)
 {
     if(size != RSA_size(m_rsa))
         return false;
     return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }
 
-bool RsaOpenSSL::rsaDecrypt(unsigned char *msg, int size)
+bool CryptOpenSSL::rsaDecrypt(unsigned char *msg, int size)
 {
     if(size != RSA_size(m_rsa))
         return false;
     return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
 }
 
-int RsaOpenSSL::rsaGetSize()
+int CryptOpenSSL::rsaGetSize()
 {
     return RSA_size(m_rsa);
 }

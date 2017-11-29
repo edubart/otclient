@@ -30,20 +30,11 @@
 
 typedef struct rsa_st RSA;
 
-class Crypt
+class CryptOpenSSL
 {
 public:
-    Crypt();
-    ~Crypt();
-
-    std::string base64Encode(const std::string& decoded_string);
-    std::string base64Decode(const std::string& encoded_string);
-    std::string xorCrypt(const std::string& buffer, const std::string& key);
-    std::string encrypt(const std::string& decrypted_string) { return _encrypt(decrypted_string, true); }
-    std::string decrypt(const std::string& encrypted_string) { return _decrypt(encrypted_string, true); }
-    std::string genUUID();
-    bool setMachineUUID(std::string uuidstr);
-    std::string getMachineUUID();
+    CryptOpenSSL();
+    ~CryptOpenSSL();
 
     std::string md5Encode(const std::string& decoded_string, bool upperCase);
     std::string sha1Encode(const std::string& decoded_string, bool upperCase);
@@ -59,14 +50,9 @@ public:
     int rsaGetSize();
 
 private:
-    std::string _encrypt(const std::string& decrypted_string, bool useMachineUUID);
-    std::string _decrypt(const std::string& encrypted_string, bool useMachineUUID);
-    std::string getCryptKey(bool useMachineUUID);
-    boost::uuids::uuid m_machineUUID;
-
     RSA *m_rsa;
 };
 
-extern Crypt g_crypt;
+extern CryptOpenSSL g_crypt_openssl;
 
 #endif

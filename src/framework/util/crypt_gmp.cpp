@@ -20,74 +20,61 @@
  * THE SOFTWARE.
  */
 
-#include "rsa_gmp.h"
-#include <framework/stdext/math.h>
-#include <framework/core/logger.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/platform/platform.h>
+#include "crypt_gmp.h"
 #include <framework/core/application.h>
+CryptGMP g_crypt_gmp;
 
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>
+auto notImplementedMessage = "Not implemented in GMP. Compile OTClient with OpenSSL (without -DUSE_GMP).";
 
-#include <boost/functional/hash.hpp>
-
-#ifndef USE_GMP
-
-#include <openssl/rsa.h>
-#include <openssl/sha.h>
-#include <openssl/md5.h>
-#include <openssl/bn.h>
-#include <openssl/err.h>
-
-#endif
-
-static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
-
-RsaGMP g_crypt_gmp;
-
-RsaGMP::RsaGMP()
+CryptGMP::CryptGMP()
 {
     mpz_init(rsaN);
     mpz_init2(rsaD, MODULUS_SIZE);
     mpz_init2(rsaE, MODULUS_SIZE);
 }
 
-RsaGMP::~RsaGMP()
+CryptGMP::~CryptGMP()
 {
     mpz_clear(rsaN);
     mpz_clear(rsaD);
     mpz_clear(rsaE);
 }
-
-std::string RsaGMP::md5Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptGMP::md5Encode(const std::string& decoded_string, bool upperCase)
 {
+    stdext::throw_exception(notImplementedMessage);
+    return notImplementedMessage;
 }
 
-std::string RsaGMP::sha1Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptGMP::sha1Encode(const std::string& decoded_string, bool upperCase)
 {
+    stdext::throw_exception(notImplementedMessage);
+    return notImplementedMessage;
 }
 
-std::string RsaGMP::sha256Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptGMP::sha256Encode(const std::string& decoded_string, bool upperCase)
 {
+    stdext::throw_exception(notImplementedMessage);
+    return notImplementedMessage;
 }
 
-std::string RsaGMP::sha512Encode(const std::string& decoded_string, bool upperCase)
+std::string CryptGMP::sha512Encode(const std::string& decoded_string, bool upperCase)
 {
+    stdext::throw_exception(notImplementedMessage);
+    return notImplementedMessage;
 }
 
-void RsaGMP::rsaGenerateKey(int bits, int e)
+void CryptGMP::rsaGenerateKey(int bits, int e)
 {
+    stdext::throw_exception(notImplementedMessage);
 }
 
-void RsaGMP::rsaSetPublicKey(const std::string& n, const std::string& e)
+void CryptGMP::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
     mpz_set_str(rsaN, n.c_str(), 10);
     mpz_set_str(rsaE, e.c_str(), 10);
 }
 
-void RsaGMP::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
+void CryptGMP::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
 {
     mpz_t rsaP, rsaQ;
     mpz_init2(rsaP, MODULUS_SIZE);
@@ -104,7 +91,7 @@ void RsaGMP::rsaSetPrivateKey(const std::string& p, const std::string& q, const 
     mpz_clear(rsaQ);
 }
 
-bool RsaGMP::rsaEncrypt(char *msg, int size)
+bool CryptGMP::rsaEncrypt(unsigned char *msg, int size)
 {
     mpz_t c, m;
     mpz_init2(c, MODULUS_SIZE);
@@ -125,7 +112,7 @@ bool RsaGMP::rsaEncrypt(char *msg, int size)
     return true;
 }
 
-bool RsaGMP::rsaDecrypt(char *msg, int size)
+bool CryptGMP::rsaDecrypt(unsigned char *msg, int size)
 {
     mpz_t c, m;
     mpz_init2(c, MODULUS_SIZE);
@@ -146,25 +133,13 @@ bool RsaGMP::rsaDecrypt(char *msg, int size)
     return true;
 }
 
-bool RsaGMP::rsaCheckKey()
+bool CryptGMP::rsaCheckKey()
 {
+    stdext::throw_exception(notImplementedMessage);
+    return false;
 }
 
-bool RsaGMP::rsaEncrypt(unsigned char *msg, int size)
-{
-    if(size != RSA_size(m_rsa))
-        return false;
-    return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
-}
-
-bool RsaGMP::rsaDecrypt(unsigned char *msg, int size)
-{
-    if(size != RSA_size(m_rsa))
-        return false;
-    return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
-}
-
-int RsaGMP::rsaGetSize()
+int CryptGMP::rsaGetSize()
 {
     return BLOCK_SIZE;
 }

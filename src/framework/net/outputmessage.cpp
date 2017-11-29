@@ -94,11 +94,7 @@ void OutputMessage::encryptRsa()
     int size = g_crypt.rsaGetSize();
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");
-#ifdef USE_GMP
-    if(!g_crypt.rsaEncrypt((char*)m_buffer + m_writePos - size, size))
-#else
     if(!g_crypt.rsaEncrypt((unsigned char*)m_buffer + m_writePos - size, size))
-#endif
         throw stdext::exception("rsa encryption failed");
 }
 
