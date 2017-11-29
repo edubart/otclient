@@ -35,9 +35,6 @@
 #include <openssl/bn.h>
 #include <openssl/err.h>
 
-static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
-
 CryptOpenSSL g_crypt_openssl;
 
 CryptOpenSSL::CryptOpenSSL()

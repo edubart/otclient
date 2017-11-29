@@ -42,7 +42,6 @@ public:
     std::string genUUID();
     bool setMachineUUID(std::string uuidstr);
     std::string getMachineUUID();
-
     std::string md5Encode(const std::string& decoded_string, bool upperCase);
     std::string sha1Encode(const std::string& decoded_string, bool upperCase);
     std::string sha256Encode(const std::string& decoded_string, bool upperCase);
