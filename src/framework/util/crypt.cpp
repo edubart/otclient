@@ -47,14 +47,6 @@ static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+')
 
 Crypt g_crypt;
 
-Crypt::Crypt()
-{
-}
-
-Crypt::~Crypt()
-{
-}
-
 std::string Crypt::base64Encode(const std::string& decoded_string)
 {
     std::string ret;

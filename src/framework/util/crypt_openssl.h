@@ -28,7 +28,7 @@
 
 #include <boost/uuid/uuid.hpp>
 
-typedef struct rsa_st RSA;
+#include <openssl/ossl_typ.h>
 
 class CryptOpenSSL
 {

@@ -24,7 +24,7 @@
 #include <framework/core/application.h>
 CryptGMP g_crypt_gmp;
 
-auto notImplementedMessage = "Not implemented in GMP. Compile OTClient with OpenSSL (without -DUSE_GMP).";
+auto notImplementedMessage = "Not implemented in GMP. Compile OTClient with OpenSSL (-DUSE_GMP=0).";
 
 CryptGMP::CryptGMP()
 {
@@ -87,6 +87,28 @@ void CryptGMP::rsaSetPrivateKey(const std::string& p, const std::string& q, cons
     // n = p * q
     mpz_mul(rsaN, rsaP, rsaQ);
 
+    // calculate D from P and Q
+    if (d.empty()) {
+        // WARNING! rsaE can be not set - can't check it with GMP!
+        mpz_t p_1, q_1, phi;
+        mpz_init2(p_1, MODULUS_SIZE);
+        mpz_init2(q_1, MODULUS_SIZE);
+        mpz_init2(phi, MODULUS_SIZE);
+
+        mpz_sub_ui(p_1, rsaP, 1);
+        mpz_sub_ui(q_1, rsaQ, 1);
+
+        // phi = (p -1)(q - 1)
+        mpz_mul(phi, p_1, q_1);
+
+        // d = e^-1 mod (p - 1)(q - 1)
+        mpz_invert(rsaD, rsaE, phi);
+
+        mpz_clear(p_1);
+        mpz_clear(q_1);
+        mpz_clear(phi);
+    }
+
     mpz_clear(rsaP);
     mpz_clear(rsaQ);
 }
@@ -125,7 +147,7 @@ bool CryptGMP::rsaDecrypt(unsigned char *msg, int size)
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
     memset(msg, 0, BLOCK_SIZE - count);
-    mpz_export(msg + (BLOCK_SIZE - count - 1), nullptr, 1, 1, 0, 0, m);
+    mpz_export(msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, m);
 
     mpz_clear(c);
     mpz_clear(m);

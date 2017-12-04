@@ -31,9 +31,6 @@
 class Crypt
 {
 public:
-    Crypt();
-    ~Crypt();
-
     std::string base64Encode(const std::string& decoded_string);
     std::string base64Decode(const std::string& encoded_string);
     std::string xorCrypt(const std::string& buffer, const std::string& key);
