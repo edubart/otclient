@@ -2,7 +2,7 @@ Module
   name: game_market
   description: Global item market system
   author: BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ offerstatistic, marketoffer, marketprotocol, market ]
   @onLoad: init()

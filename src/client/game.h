@@ -130,7 +130,7 @@ protected:
     void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
-    void processOpenOutfitWindow(const Outfit& currentOufit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
+    void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
                                  const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
@@ -282,7 +282,7 @@ public:
     void requestItemInfo(const ItemPtr& item, int index);
 
     // >= 970 modal dialog
-    void answerModalDialog(int dialog, int button, int choice);
+    void answerModalDialog(uint32 dialog, int button, int choice);
 
     // >= 984 browse field
     void browseField(const Position& position);

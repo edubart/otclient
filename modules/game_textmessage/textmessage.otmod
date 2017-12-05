@@ -2,7 +2,7 @@ Module
   name: game_textmessage
   description: Manage game text messages
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ textmessage ]
   @onLoad: init()

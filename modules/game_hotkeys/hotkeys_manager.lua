@@ -36,6 +36,7 @@ useRadioGroup = nil
 currentHotkeys = nil
 boundCombosCallback = {}
 hotkeysList = {}
+lastHotkeyTime = g_clock.millis()
 
 -- public functions
 function init()
@@ -374,6 +375,12 @@ function doKeyCombo(keyCombo)
   if not g_game.isOnline() then return end
   local hotKey = hotkeyList[keyCombo]
   if not hotKey then return end
+
+  if g_clock.millis() - lastHotkeyTime < modules.client_options.getOption('hotkeyDelay') then
+    return
+  end
+  lastHotkeyTime = g_clock.millis()
+
   if hotKey.itemId == nil then
     if not hotKey.value or #hotKey.value == 0 then return end
     if hotKey.autoSend then

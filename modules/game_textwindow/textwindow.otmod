@@ -2,7 +2,7 @@ Module
   name: game_textwindow
   description: Allow to edit text books and lists
   author: edubart, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   dependencies: [ game_interface ]
   scripts: [ textwindow ]

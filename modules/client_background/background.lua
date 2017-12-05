@@ -45,3 +45,7 @@ end
 function setVersionText(text)
   clientVersionLabel:setText(text)
 end
+
+function getBackground()
+  return background
+end

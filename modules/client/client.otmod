@@ -2,7 +2,7 @@ Module
   name: client
   description: Initialize the client and setups its main window
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   reloadable: false
   sandboxed: true
   scripts: [ client ]

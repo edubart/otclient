@@ -25,8 +25,11 @@ local defaultOptions = {
   ambientLight = 25,
   displayNames = true,
   displayHealth = true,
+  displayMana = true,
   displayText = true,
-  dontStretchShrink = false
+  dontStretchShrink = false,
+  turnDelay = 50,
+  hotkeyDelay = 50,
 }
 
 local optionsWindow
@@ -155,15 +158,17 @@ function hide()
 end
 
 function toggleDisplays()
-  if options['displayNames'] and options['displayHealth'] then
+  if options['displayNames'] and options['displayHealth'] and options['displayMana'] then
     setOption('displayNames', false)
   elseif options['displayHealth'] then
     setOption('displayHealth', false)
+    setOption('displayMana', false)
   else
     if not options['displayNames'] and not options['displayHealth'] then
       setOption('displayNames', true)
     else
       setOption('displayHealth', true)
+      setOption('displayMana', true)
     end
   end
 end
@@ -222,12 +227,18 @@ function setOption(key, value, force)
     gameMapPanel:setDrawNames(value)
   elseif key == 'displayHealth' then
     gameMapPanel:setDrawHealthBars(value)
+  elseif key == 'displayMana' then
+    gameMapPanel:setDrawManaBar(value)
   elseif key == 'displayText' then
     gameMapPanel:setDrawTexts(value)
   elseif key == 'dontStretchShrink' then
     addEvent(function()
       modules.game_interface.updateStretchShrink()
     end)
+  elseif key == 'turnDelay' then
+    generalPanel:getChildById('turnDelayLabel'):setText(tr('Turn delay: %sms', value))
+  elseif key == 'hotkeyDelay' then
+    generalPanel:getChildById('hotkeyDelayLabel'):setText(tr('Hotkey delay: %sms', value))
   end
 
   -- change value for keybind updates

@@ -2,7 +2,7 @@ Module
   name: game_ruleviolation
   description: Rule violation interface (Ctrl+Y)
   author: andrefaramir
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ ruleviolation ]
   @onLoad: init()

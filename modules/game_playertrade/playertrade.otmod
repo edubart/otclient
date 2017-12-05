@@ -2,7 +2,7 @@ Module
   name: game_playertrade
   description: Allow to trade items with players
   author: edubart
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ playertrade ]
   @onLoad: init()

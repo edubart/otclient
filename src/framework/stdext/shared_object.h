@@ -73,7 +73,7 @@ public:
     }
     shared_object_ptr(shared_object_ptr const& rhs): px(rhs.px) { if(px != nullptr) add_ref(); }
     template<class U>
-    shared_object_ptr(shared_object_ptr<U> const& rhs, typename std::is_convertible<U,T>::type* = nullptr) : px(rhs.get()) { if(px != nullptr) add_ref(); }
+    shared_object_ptr(shared_object_ptr<U> const& rhs, typename std::enable_if<std::is_convertible<U*,T*>::value, U*>::type = nullptr) : px(rhs.get()) { if(px != nullptr) add_ref(); }
     ~shared_object_ptr() { if(px != nullptr) dec_ref(); }
 
     void reset() { shared_object_ptr().swap(*this); }

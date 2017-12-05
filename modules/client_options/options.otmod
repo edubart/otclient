@@ -2,7 +2,7 @@ Module
   name: client_options
   description: Create the options window
   author: edubart, BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ options ]
   @onLoad: init()

@@ -53,6 +53,7 @@ Creature::Creature() : Thing()
     m_skull = Otc::SkullNone;
     m_shield = Otc::ShieldNone;
     m_emblem = Otc::EmblemNone;
+    m_type = Proto::CreatureTypeUnknown;
     m_icon = Otc::NpcIconNone;
     m_lastStepDirection = Otc::InvalidDirection;
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
@@ -241,10 +242,15 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     textRect.bind(parentRect);
 
     // distance them
+    uint32 offset = 12;
+    if(isLocalPlayer()) {
+        offset *= 2;
+    }
+
     if(textRect.top() == parentRect.top())
-        backgroundRect.moveTop(textRect.top() + 12);
+        backgroundRect.moveTop(textRect.top() + offset);
     if(backgroundRect.bottom() == parentRect.bottom())
-        textRect.moveTop(backgroundRect.top() - 12);
+        textRect.moveTop(backgroundRect.top() - offset);
 
     // health rect is based on background rect, so no worries
     Rect healthRect = backgroundRect.expanded(-1);
@@ -258,10 +264,29 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         
         g_painter->setColor(fillColor);
         g_painter->drawFilledRect(healthRect);
-        
         ImagePtr backgroundLifeBar = Image::load("data/images/game/lifebar/background.png");
         TexturePtr bgLifeBar = TexturePtr(new Texture(backgroundLifeBar, false));
         g_painter->drawTexturedRect(backgroundRect, bgLifeBar);
+        if(drawFlags & Otc::DrawManaBar && isLocalPlayer()) {
+            LocalPlayerPtr player = g_game.getLocalPlayer();
+            if(player) {
+                backgroundRect.moveTop(backgroundRect.bottom());
+
+                g_painter->setColor(Color::black);
+                g_painter->drawFilledRect(backgroundRect);
+
+                Rect manaRect = backgroundRect.expanded(-1);
+                double maxMana = player->getMaxMana();
+                if(maxMana == 0) {
+                    manaRect.setWidth(25);
+                } else {
+                    manaRect.setWidth(player->getMana() / (maxMana * 1.0) * 25);
+                }
+
+                g_painter->setColor(Color::blue);
+                g_painter->drawFilledRect(manaRect);
+            }
+        }
     }
 
     if(drawFlags & Otc::DrawNames) {
@@ -284,6 +309,11 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         g_painter->setColor(Color::white);
         Rect emblemRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 16, m_emblemTexture->getSize());
         g_painter->drawTexturedRect(emblemRect, m_emblemTexture);
+    }
+    if(m_type != Proto::CreatureTypeUnknown && m_typeTexture) {
+        g_painter->setColor(Color::white);
+        Rect typeRect = Rect(backgroundRect.x() + 13.5 + 12 + 12, backgroundRect.y() + 16, m_typeTexture->getSize());
+        g_painter->drawTexturedRect(typeRect, m_typeTexture);
     }
     if(m_icon != Otc::NpcIconNone && m_iconTexture) {
         g_painter->setColor(Color::white);
@@ -721,6 +751,12 @@ void Creature::setEmblem(uint8 emblem)
     callLuaField("onEmblemChange", m_emblem);
 }
 
+void Creature::setType(uint8 type)
+{
+    m_type = type;
+    callLuaField("onTypeChange", m_type);
+}
+
 void Creature::setIcon(uint8 icon)
 {
     m_icon = icon;
@@ -752,11 +788,15 @@ void Creature::setEmblemTexture(const std::string& filename)
     m_emblemTexture = g_textures.getTexture(filename);
 }
 
+void Creature::setTypeTexture(const std::string& filename)
+{
+    m_typeTexture = g_textures.getTexture(filename);
+}
+
 void Creature::setIconTexture(const std::string& filename)
 {
     m_iconTexture = g_textures.getTexture(filename);
 }
-
 
 void Creature::setSpeedFormula(double speedA, double speedB, double speedC)
 {

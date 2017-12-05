@@ -206,6 +206,7 @@ public:
     // additional
     float getOpacity() { return m_opacity; }
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
+    void setPathable(bool var);
 
 private:
     const TexturePtr& getTexture(int animationPhase);

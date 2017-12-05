@@ -24,7 +24,7 @@
 #include "map.h"
 #include <framework/core/eventdispatcher.h>
 
-void Effect::draw(const Point& dest, float scaleFactor, bool animate, int offsetX, int offsetY, LightView *lightView)
+void Effect::drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX, int offsetY, LightView *lightView)
 {
     if(m_id == 0)
         return;

@@ -2,7 +2,7 @@ Module
   name: game_playermount
   description: Manage player mounts
   author: BeniS
-  website: www.otclient.info
+  website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ playermount ]
   @onLoad: init()

@@ -155,7 +155,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
     // effects
     if(drawFlags & Otc::DrawEffects)
         for(const EffectPtr& effect : m_effects)
-            effect->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
+            effect->drawEffect(dest - m_drawElevation*scaleFactor, scaleFactor, animate, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
 
     // top items
     if(drawFlags & Otc::DrawOnTop)
@@ -509,9 +509,6 @@ bool Tile::isWalkable(bool ignoreCreatures)
     if(!getGround())
         return false;
 
-    if(g_game.getClientVersion() <= 740 && hasElevation(2))
-        return false;
-
     for(const ThingPtr& thing : m_things) {
         if(thing->isNotWalkable())
             return false;
@@ -636,13 +633,18 @@ bool Tile::canErase()
     return m_walkingCreatures.empty() && m_effects.empty() && m_things.empty() && m_flags == 0 && m_minimapColor == 0;
 }
 
-bool Tile::hasElevation(int elevation)
+int Tile::getElevation() const
 {
-    int count = 0;
+    int elevation = 0;
     for(const ThingPtr& thing : m_things)
         if(thing->getElevation() > 0)
-            count++;
-    return count >= elevation;
+            elevation++;
+    return elevation;
+}
+
+bool Tile::hasElevation(int elevation)
+{
+    return getElevation() >= elevation;
 }
 
 void Tile::checkTranslucentLight()
