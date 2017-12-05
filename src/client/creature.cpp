@@ -255,11 +255,13 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         fillColor = Color(0x66, 0xcc, 0xff);
 
     if(drawFlags & Otc::DrawBars && (!isNpc() || !g_game.getFeature(Otc::GameHideNpcNames))) {
-        g_painter->setColor(Color::black);
-        g_painter->drawFilledRect(backgroundRect);
-
+        
         g_painter->setColor(fillColor);
         g_painter->drawFilledRect(healthRect);
+        
+        ImagePtr backgroundLifeBar = Image::load("data/images/game/lifebar/background.png");
+        TexturePtr bgLifeBar = TexturePtr(new Texture(backgroundLifeBar, false));
+        g_painter->drawTexturedRect(backgroundRect, bgLifeBar);
     }
 
     if(drawFlags & Otc::DrawNames) {
