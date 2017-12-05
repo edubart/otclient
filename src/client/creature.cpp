@@ -39,6 +39,7 @@
 #include <framework/graphics/ogl/painterogl2_shadersources.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/image.h>
 #include "spritemanager.h"
 
 Creature::Creature() : Thing()
