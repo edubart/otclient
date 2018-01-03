@@ -25,7 +25,7 @@ MainWindow
 
   Label
     id: openPrivateChannelWithLabel
-    !text: tr('Open a private message channel:')
+    !text: tr('Open a private message channel') .. ':'
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.bottom: next.top
