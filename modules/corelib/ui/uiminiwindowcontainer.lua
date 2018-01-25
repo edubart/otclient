@@ -83,7 +83,7 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
 end
 
 function UIMiniWindowContainer:onDrop(widget, mousePos)
-  if widget:getClassName() == 'UIMiniWindow' then
+  if widget.UIMiniWindowContainer then
     local oldParent = widget:getParent()
     if oldParent == self then
       return true
