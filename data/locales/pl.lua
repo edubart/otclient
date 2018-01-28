@@ -1,5 +1,6 @@
 locale = {
   name = "pl",
+  charset = "cp1250",
   languageName = "Polski",
 
   formatNumbers = true,

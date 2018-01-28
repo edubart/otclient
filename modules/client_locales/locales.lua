@@ -72,6 +72,8 @@ function init()
     connect(g_app, { onRun = createWindow })
   end
 
+  reinstallFonts()
+
   ProtocolGame.registerExtendedOpcode(ExtendedIds.Locale, onExtendedLocales)
   connect(g_game, { onGameStart = onGameStart })
 end
@@ -198,4 +200,13 @@ function _G.tr(text, ...)
     end
   end
   return text
+end
+
+function reinstallFonts()
+  files = g_resources.listDirectoryFiles('/fonts/' .. currentLocale.charset)
+  for _,file in pairs(files) do
+    if g_resources.isFileType(file, 'otfont') then
+      g_fonts.importFont('/fonts/' .. currentLocale.charset .. '/' .. file)
+    end
+  end
 end
