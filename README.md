@@ -36,6 +36,15 @@ In short, if you need to compile OTClient, follow these tutorials:
 * [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
 * [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
 
+### Build and run with Docker
+
+To build and run the client without copile by hand:
+```
+./build.sh
+./run.sh
+```
+
+The build step should be run just when something on implementation changes.
 
 ### Need help?
 
