@@ -385,6 +385,11 @@ function UIMoveableTabBar:selectTab(tab)
   tab:setOn(false)
   tab.blinking = false
 
+  if tab.blinkEvent then
+    removeEvent(tab.blinkEvent)
+    tab.blinkEvent = nil
+  end
+
   local parent = tab:getParent()
   parent:focusChild(tab, MouseFocusReason)
   updateNavigation(self)
