@@ -37,12 +37,12 @@ void OutputMessage::reset()
 
 void OutputMessage::setBuffer(const std::string& buffer)
 {
-	int len = buffer.size();
-	checkWrite(MAX_HEADER_SIZE + len);
-	memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), len);
-	m_writePos = MAX_HEADER_SIZE;
-	m_headerPos = MAX_HEADER_SIZE;
-	m_messageSize = len;
+    int len = buffer.size();
+    checkWrite(MAX_HEADER_SIZE + len);
+    memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), len);
+    m_writePos = MAX_HEADER_SIZE;
+    m_headerPos = MAX_HEADER_SIZE;
+    m_messageSize = len;
 }
 
 void OutputMessage::addU8(uint8 value)
