@@ -40,6 +40,7 @@ public:
 
     void reset();
 
+    void setBuffer(const std::string& buffer);
     std::string getBuffer() { return std::string((char*)m_buffer + m_headerPos, m_messageSize); }
 
     void addU8(uint8 value);
