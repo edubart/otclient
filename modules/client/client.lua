@@ -26,26 +26,14 @@ function reloadScripts()
 end
 
 function startup()
-  -- Check operating system
-  local binaryFormat = package.cpath:match("%p[\\|/]?%p(%a+)")
-  local osName = nil
-  if binaryFormat == "dll" then
-    osName = "Windows"
-  elseif binaryFormat == "so" then
-    osName = "Linux"
-  elseif binaryFormat == "dylib" then
-    osName = "MacOS"
-  end
-  binaryFormat = nil
-  
-  -- If Windows, play startup music
-  if osName == "Windows" then
-    musicChannel:enqueue(musicFilename, 3)
-    connect(g_game, { onGameStart = function() musicChannel:stop(3) end })
-    connect(g_game, { onGameEnd = function()
-      g_sounds.stopAll()
-      musicChannel:enqueue(musicFilename, 3)
-    end })
+  -- If not MacOS, play startup music
+  if g_app.getOs() ~= "mac" and g_app.getOs() ~= "macos" then
+	musicChannel:enqueue(musicFilename, 3)
+	connect(g_game, { onGameStart = function() musicChannel:stop(3) end })
+	connect(g_game, { onGameEnd = function()
+	  g_sounds.stopAll()
+	  musicChannel:enqueue(musicFilename, 3)
+	end })
   end
 
   -- Check for startup errors
