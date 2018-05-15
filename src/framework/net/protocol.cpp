@@ -79,7 +79,7 @@ void Protocol::send(const OutputMessagePtr& outputMessage)
     if(m_checksumEnabled)
         outputMessage->writeChecksum();
 
-    // wirte message size
+    // write message size
     outputMessage->writeMessageSize();
 
     // send
