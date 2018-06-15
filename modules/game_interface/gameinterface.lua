@@ -362,6 +362,30 @@ function updateStretchShrink()
   end
 end
 
+function addToPanels(uiWidget)
+  uiWidget.onRemoveFromContainer = function(widget)
+    if gameLeftPanel:isOn() then
+      if widget:getParent():getId() == 'gameRightPanel' then
+        if gameLeftPanel:getEmptySpaceHeight() - widget:getHeight() >= 0 then
+          widget:setParent(gameLeftPanel)
+        end
+      elseif widget:getParent():getId() == 'gameLeftPanel' then
+        if gameRightPanel:getEmptySpaceHeight() - widget:getHeight() >= 0 then
+          widget:setParent(gameRightPanel)
+        end
+      end
+    end
+  end
+
+  if not gameLeftPanel:isOn() then uiWidget:setParent(gameRightPanel) return end
+
+  if gameRightPanel:getEmptySpaceHeight() - uiWidget:getHeight() >= 0 then
+    uiWidget:setParent(gameRightPanel)
+  else
+    uiWidget:setParent(gameLeftPanel)
+  end
+end
+
 function onMouseGrabberRelease(self, mousePosition, mouseButton)
   if selectedThing == nil then return false end
   if mouseButton == MouseLeftButton then
