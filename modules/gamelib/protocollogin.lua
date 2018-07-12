@@ -240,7 +240,20 @@ function ProtocolLogin:parseCharacterList(msg)
   end
 
   local account = {}
-  account.premDays = msg:getU16()
+  if g_game.getProtocolVersion() > 1077 then
+    account.status = msg:getU8()
+    account.subStatus = msg:getU8()
+
+    account.premDays = msg:getU32()
+    if account.premDays ~= 0 and account.premDays ~= 65535 then
+      account.premDays = math.floor((account.premDays - os.time()) / 86400)
+    end
+  else
+    account.status = AccountStatus.Ok
+    account.premDays = msg:getU16()
+    account.subStatus = account.premDays > 0 and SubscriptionStatus.Premium or SubscriptionStatus.Free
+  end
+
   signalcall(self.onCharacterList, self, characters, account)
 end
 

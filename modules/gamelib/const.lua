@@ -322,4 +322,15 @@ StoreState = {
   Timed = 3
 }
 
+AccountStatus = {
+  Ok = 0,
+  Frozen = 1,
+  Suspended = 2,
+}
+
+SubscriptionStatus = {
+  Free = 0,
+  Premium = 1,
+}
+
 -- @}
