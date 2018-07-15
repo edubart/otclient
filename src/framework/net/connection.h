@@ -33,9 +33,10 @@ class Connection : public LuaObject
     typedef std::function<void(const boost::system::error_code&)> ErrorCallback;
     typedef std::function<void(uint8*, uint16)> RecvCallback;
 
+	static constexpr int32_t READ_TIMEOUT = 30;
+	static constexpr int32_t WRITE_TIMEOUT = 30;
+
     enum {
-        READ_TIMEOUT = 30,
-        WRITE_TIMEOUT = 30,
         SEND_BUFFER_SIZE = 65536,
         RECV_BUFFER_SIZE = 65536
     };
