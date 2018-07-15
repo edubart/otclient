@@ -27,8 +27,8 @@
 
 #define AL_LIBTYPE_STATIC
 
-#include <al.h>
-#include <alc.h>
+#include <AL/al.h>
+#include <AL/alc.h>
 
 class SoundManager;
 class SoundSource;

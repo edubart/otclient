@@ -39,6 +39,8 @@ Thumbs.db
 .directory
 src/framework/graphics/dx/
 modules/.project/modules.sublime-workspace
+vc14/.vs/
+*.dll
 
 #################
 ## Visual Studio
