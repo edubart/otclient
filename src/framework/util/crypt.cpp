@@ -326,22 +326,62 @@ void Crypt::rsaGenerateKey(int bits, int e)
 
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
-    BN_dec2bn(&m_rsa->n, n.c_str());
-    BN_dec2bn(&m_rsa->e, e.c_str());
-
-    // clear rsa cache
-    if(m_rsa->_method_mod_n) { BN_MONT_CTX_free(m_rsa->_method_mod_n); m_rsa->_method_mod_n = NULL; }
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+	BN_dec2bn(&m_rsa->n, n.c_str());
+	BN_dec2bn(&m_rsa->e, e.c_str());
+	// clear rsa cache
+	if (m_rsa->_method_mod_n)
+	{
+		BN_MONT_CTX_free(m_rsa->_method_mod_n);
+		m_rsa->_method_mod_n = NULL;
+	}
+#else
+	{
+		BIGNUM *bn=NULL;
+		BIGNUM *be=NULL;
+		BN_dec2bn(&bn, n.c_str());
+		BN_dec2bn(&be, e.c_str());
+		RSA_set0_key(m_rsa,bn,be,NULL);
+		// note, not supposed to free bn/be here, that's m_rsa's destructor's job
+	}
+#endif
 }
 
 void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
 {
-    BN_dec2bn(&m_rsa->p, p.c_str());
-    BN_dec2bn(&m_rsa->q, q.c_str());
-    BN_dec2bn(&m_rsa->d, d.c_str());
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+	BN_dec2bn(&m_rsa->p, p.c_str());
+	BN_dec2bn(&m_rsa->q, q.c_str());
+	BN_dec2bn(&m_rsa->d, d.c_str());
+	// clear rsa cache
+	if (m_rsa->_method_mod_p)
+	{
+		BN_MONT_CTX_free(m_rsa->_method_mod_p);
+		m_rsa->_method_mod_p = NULL;
+	}
+	if (m_rsa->_method_mod_q)
+	{
+		BN_MONT_CTX_free(m_rsa->_method_mod_q);
+		m_rsa->_method_mod_q = NULL;
+	}
+#else
+	{
 
-    // clear rsa cache
-    if(m_rsa->_method_mod_p) { BN_MONT_CTX_free(m_rsa->_method_mod_p); m_rsa->_method_mod_p = NULL; }
-    if(m_rsa->_method_mod_q) { BN_MONT_CTX_free(m_rsa->_method_mod_q); m_rsa->_method_mod_q = NULL; }
+		if(d.length()> 0)
+		{
+			BIGNUM *bd=NULL;
+			BN_dec2bn(&bd, d.c_str());
+			RSA_set0_key(m_rsa,NULL,NULL,bd);
+		}
+		BIGNUM *bp=NULL;
+		BIGNUM *bq=NULL;
+		BN_dec2bn(&bp, p.c_str());
+		BN_dec2bn(&bq, q.c_str());
+		RSA_set0_factors(m_rsa,bp,bq);
+		// note, not supposed to free bp/bq/bd here, that's m_rsa's destructor's job
+
+	}
+#endif
 }
 
 bool Crypt::rsaCheckKey()
@@ -352,10 +392,30 @@ bool Crypt::rsaCheckKey()
         BN_CTX_start(ctx);
 
         BIGNUM *r1 = BN_CTX_get(ctx), *r2 = BN_CTX_get(ctx);
-        BN_mod(m_rsa->dmp1, m_rsa->d, r1, ctx);
-        BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
-
-        BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+		BN_mod(m_rsa->dmp1, m_rsa->d, r1, ctx);
+		BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
+		BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
+#else
+		{
+			const BIGNUM *dmp1_c=NULL;
+			const BIGNUM *d=NULL;
+			const BIGNUM *dmq1_c=NULL;
+			const BIGNUM *iqmp_c=NULL;
+			const BIGNUM *q=NULL;
+			const BIGNUM *p=NULL;
+			RSA_get0_key(m_rsa,NULL, NULL, &d);
+			RSA_get0_factors(m_rsa, &p, &q);
+			RSA_get0_crt_params(m_rsa,&dmp1_c,&dmq1_c,&iqmp_c);
+			BIGNUM *dmp1=BN_dup(dmp1_c);
+			BIGNUM *dmq1=BN_dup(dmq1_c);
+			BIGNUM *iqmp=BN_dup(iqmp_c);
+			BN_mod(dmp1, d, r1, ctx);
+			BN_mod(dmq1, d, r2, ctx);
+			BN_mod_inverse(iqmp, q, p, ctx);
+			RSA_set0_crt_params(m_rsa, dmp1, dmq1, iqmp);
+		}
+#endif
         return true;
     }
     else {
