@@ -50,11 +50,14 @@ public:
 
     void setPhase(int phase);
     int getPhase();
+    int getPhaseAt(ticks_t time);
 
     int getStartPhase();
     int getAnimationPhases() { return m_animationPhases; }
     bool isAsync() { return m_async; }
     bool isComplete() { return m_isComplete; }
+
+    ticks_t getTotalDuration();
 
     void resetAnimation();
 
