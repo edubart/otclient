@@ -52,6 +52,13 @@ SayModes = {
   [3] = { speakTypeDesc = 'yell', icon = '/images/game/console/yell' }
 }
 
+ChannelEventFormats = {
+  [ChannelEvent.Join] = '%s joined the channel.',
+  [ChannelEvent.Leave] = '%s left the channel.',
+  [ChannelEvent.Invite] = '%s has been invited to the channel.',
+  [ChannelEvent.Exclude] = '%s has been removed from the channel.',
+}
+
 MAX_HISTORY = 500
 MAX_LINES = 100
 HELP_CHANNEL = 9
@@ -98,7 +105,8 @@ function init()
     onRuleViolationCancel = onRuleViolationCancel,
     onRuleViolationLock = onRuleViolationLock,
     onGameStart = online,
-    onGameEnd = offline
+    onGameEnd = offline,
+    onChannelEvent = onChannelEvent,
   })
 
   consolePanel = g_ui.loadUI('console', modules.game_interface.getBottomPanel())
@@ -240,7 +248,8 @@ function terminate()
     onRuleViolationCancel = onRuleViolationCancel,
     onRuleViolationLock = onRuleViolationLock,
     onGameStart = online,
-    onGameEnd = offline
+    onGameEnd = offline,
+    onChannelEvent = onChannelEvent,
   })
 
   if g_game.isOnline() then clear() end
@@ -684,7 +693,7 @@ function addTabText(text, speaktype, tab, creatureName)
         child:setSelection(string.len(child:getText()), textPos)
       end
     end
-    
+
     return true
   end
 
@@ -857,14 +866,14 @@ function sendMessage(message, tab)
     message = chatCommandMessage
     channel = 0
   end
-  
+
   -- player red talk on channel
   chatCommandMessage = message:match("^%#[c|C] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'channelRed'
     message = chatCommandMessage
   end
-  
+
   -- player broadcast
   chatCommandMessage = message:match("^%#[b|B] (.*)")
   if chatCommandMessage ~= nil then
@@ -1436,4 +1445,20 @@ function offline()
     g_keyboard.unbindKeyDown('Ctrl+R')
   end
   clear()
+end
+
+function onChannelEvent(channelId, name, type)
+  local fmt = ChannelEventFormats[type]
+  if not fmt then
+    print(('Unknown channel event type (%d).'):format(type))
+    return
+  end
+
+  local channel = channels[channelId]
+  if channel then
+    local tab = getTab(channel)
+    if tab then
+      addTabText(fmt:format(name), SpeakTypesSettings.channelOrange, tab)
+    end
+  end
 end

@@ -333,4 +333,11 @@ SubscriptionStatus = {
   Premium = 1,
 }
 
+ChannelEvent = {
+  Join = 0,
+  Leave = 1,
+  Invite = 2,
+  Exclude = 3,
+}
+
 -- @}
