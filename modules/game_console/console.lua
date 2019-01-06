@@ -684,7 +684,7 @@ function addTabText(text, speaktype, tab, creatureName)
         child:setSelection(string.len(child:getText()), textPos)
       end
     end
-    
+
     return true
   end
 
@@ -857,14 +857,14 @@ function sendMessage(message, tab)
     message = chatCommandMessage
     channel = 0
   end
-  
+
   -- player red talk on channel
   chatCommandMessage = message:match("^%#[c|C] (.*)")
   if chatCommandMessage ~= nil then
     chatCommandSayMode = 'channelRed'
     message = chatCommandMessage
   end
-  
+
   -- player broadcast
   chatCommandMessage = message:match("^%#[b|B] (.*)")
   if chatCommandMessage ~= nil then
@@ -978,7 +978,7 @@ function navigateMessageHistory(step)
 end
 
 function applyMessagePrefixies(name, level, message)
-  if name then
+  if name and #name > 0 then
     if modules.client_options.getOption('showLevelsInConsole') and level > 0 then
       message = name .. ' [' .. level .. ']: ' .. message
     else
