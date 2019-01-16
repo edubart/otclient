@@ -8,7 +8,7 @@ TextMessageLabel < UILabel
 
 Panel
   anchors.fill: gameMapPanel
-  anchors.bottom: gameBottomPanel.top
+  anchors.bottom: gameMapPanel.bottom
   focusable: false
 
   Panel
