@@ -26,6 +26,11 @@ local function retranslateKeyComboDesc(keyComboDesc)
   if keyComboDesc == nil then
     error('Unable to translate key combo \'' .. keyComboDesc .. '\'')
   end
+
+  if type(keyComboDesc) == 'number' then
+    keyComboDesc = tostring(keyComboDesc)
+  end
+
   local keyCombo = {}
   for i,currentKeyDesc in ipairs(keyComboDesc:split('+')) do
     for keyCode, keyDesc in pairs(KeyCodeDescs) do
