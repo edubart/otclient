@@ -1296,7 +1296,7 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
     for(int i=0;i<triggerCount;++i) {
         triggers.push_back(msg->getU8());
     }
-    
+
     if(g_game.getClientVersion() <= 1096) {
         bool something = msg->getU8() == 1;
     }
@@ -1903,9 +1903,11 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
 
 void ProtocolGame::parseChannelEvent(const InputMessagePtr& msg)
 {
-    msg->getU16(); // channel id
-    g_game.formatCreatureName(msg->getString()); // player name
-    msg->getU8(); // event type
+    uint16 channelId = msg->getU16();
+    std::string name = g_game.formatCreatureName(msg->getString());
+    uint8 type = msg->getU8();
+
+    g_lua.callGlobalField("g_game", "onChannelEvent", channelId, name, type);
 }
 
 void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)

@@ -22,7 +22,7 @@ end
 g_resources.addSearchPath(g_resources.getWorkDir() .. "mods", true)
 
 -- setup directory for saving configurations
-g_resources.setupUserWriteDir(g_app.getCompactName())
+g_resources.setupUserWriteDir(('%s/'):format(g_app.getCompactName()))
 
 -- search all packages
 g_resources.searchAndAddPackages('/', '.otpkg', true)

@@ -3,6 +3,7 @@ UIMiniWindow = extends(UIWindow, "UIMiniWindow")
 
 function UIMiniWindow.create()
   local miniwindow = UIMiniWindow.internalCreate()
+  miniwindow.UIMiniWindowContainer = true
   return miniwindow
 end
 

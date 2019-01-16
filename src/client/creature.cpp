@@ -405,7 +405,7 @@ void Creature::updateJump()
 
         int nextT, i = 1;
         do {
-            nextT = stdext::round((-b + std::sqrt(std::max<int>(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
+            nextT = stdext::round((-b + std::sqrt(std::max<double>(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
             ++i;
 
             if(nextT < halfJumpDuration)

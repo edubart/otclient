@@ -45,7 +45,16 @@
     #pragma warning(disable:4146) // unary minus operator applied to unsigned type, result still unsigned
     #pragma warning(disable:4800) // 'A' : forcing value to bool 'true' or 'false' (performance warning)
 
-    #define BUILD_COMPILER "msvc12"
+    #if _MSC_VER == 1912 || _MSC_VER == 1911 || _MSC_VER == 1910
+    #define BUILD_COMPILER "Visual Studio 2017"
+    #elif _MSC_VER == 1900
+    #define BUILD_COMPILER "Visual Studio 2015"
+    #elif _MSC_VER == 1800
+    #define BUILD_COMPILER "Visual Studio 2013"
+    #else
+    #define BUILD_COMPILER "Visual Studio"
+    #endif
+
     #define __PRETTY_FUNCTION__ __FUNCDNAME__
 #else
     #error "Compiler not supported."

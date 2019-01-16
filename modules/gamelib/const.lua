@@ -322,4 +322,22 @@ StoreState = {
   Timed = 3
 }
 
+AccountStatus = {
+  Ok = 0,
+  Frozen = 1,
+  Suspended = 2,
+}
+
+SubscriptionStatus = {
+  Free = 0,
+  Premium = 1,
+}
+
+ChannelEvent = {
+  Join = 0,
+  Leave = 1,
+  Invite = 2,
+  Exclude = 3,
+}
+
 -- @}

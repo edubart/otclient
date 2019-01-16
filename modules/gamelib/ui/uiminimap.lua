@@ -72,11 +72,13 @@ end
 function UIMinimap:save()
   local settings = { flags={} }
   for _,flag in pairs(self.flags) do
-    table.insert(settings.flags, {
-      position = flag.pos,
-      icon = flag.icon,
-      description = flag.description,
-    })
+    if not flag.temporary then
+      table.insert(settings.flags, {
+        position = flag.pos,
+        icon = flag.icon,
+        description = flag.description,
+      })
+    end
   end
   settings.zoom = self:getZoom()
   g_settings.setNode('Minimap', settings)
@@ -110,19 +112,25 @@ function UIMinimap:setCrossPosition(pos)
   end
 end
 
-function UIMinimap:addFlag(pos, icon, description)
+function UIMinimap:addFlag(pos, icon, description, temporary)
   if not pos or not icon then return end
   local flag = self:getFlag(pos, icon, description)
   if flag or not icon then
     return
   end
+  temporary = temporary or false
 
   flag = g_ui.createWidget('MinimapFlag')
   self:insertChild(1, flag)
   flag.pos = pos
   flag.description = description
   flag.icon = icon
-  flag:setIcon('/images/game/minimap/flag' .. icon)
+  flag.temporary = temporary
+  if type(tonumber(icon)) == 'number' then
+    flag:setIcon('/images/game/minimap/flag' .. icon)
+  else
+    flag:setIcon(resolvepath(icon, 1))
+  end
   flag:setTooltip(description)
   flag.onMouseRelease = onFlagMouseRelease
   flag.onDestroy = function() table.removevalue(self.flags, flag) end

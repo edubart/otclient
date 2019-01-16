@@ -254,12 +254,21 @@ function CharacterList.create(characters, account, otui)
   end
 
   -- account
-  if account.premDays > 0 and account.premDays < 65535 then
-    accountStatusLabel:setText(tr("Premium Account (%s) days left", account.premDays))
-  elseif account.premDays >= 65535 then
-    accountStatusLabel:setText(tr("Lifetime Premium Account"))
-  else
-    accountStatusLabel:setText(tr('Free Account'))
+  local status = ''
+  if account.status == AccountStatus.Frozen then
+    status = tr(' (Frozen)')
+  elseif account.status == AccountStatus.Suspended then
+    status = tr(' (Suspended)')
+  end
+
+  if account.subStatus == SubscriptionStatus.Free then
+    accountStatusLabel:setText(('%s%s'):format(tr('Free Account'), status))
+  elseif account.subStatus == SubscriptionStatus.Premium then
+    if account.premDays == 0 or account.premDays == 65535 then
+      accountStatusLabel:setText(('%s%s'):format(tr('Gratis Premium Account'), status))
+    else
+      accountStatusLabel:setText(('%s%s'):format(tr('Premium Account (%s) days left', account.premDays), status))
+    end
   end
 
   if account.premDays > 0 and account.premDays <= 7 then
