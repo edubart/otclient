@@ -377,7 +377,10 @@ function addToPanels(uiWidget)
     end
   end
 
-  if not gameLeftPanel:isOn() then uiWidget:setParent(gameRightPanel) return end
+  if not gameLeftPanel:isOn() then
+    uiWidget:setParent(gameRightPanel)
+    return
+  end
 
   if gameRightPanel:getEmptySpaceHeight() - uiWidget:getHeight() >= 0 then
     uiWidget:setParent(gameRightPanel)
