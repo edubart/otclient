@@ -85,8 +85,8 @@
     </OTCLIENT_LIBDEPS>
     
     <OTCLIENT_LIBDEPS_D>
-        glew32.lib;
-        zlib.lib;
+        glew32d.lib;
+        zlibd.lib;
         libeay32.lib;
         physfs.lib;
         openal32.lib;
