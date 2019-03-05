@@ -335,7 +335,7 @@ void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
         m_rsa->_method_mod_n = nullptr;
     }
 #else
-    BIGNUM *bn, *be;
+    BIGNUM *bn = nullptr, *be = nullptr;
     BN_dec2bn(&bn, n.c_str());
     BN_dec2bn(&be, e.c_str());
     RSA_set0_key(m_rsa, bn, be, nullptr);
@@ -360,7 +360,7 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
         m_rsa->_method_mod_q = nullptr;
     }
 #else
-    BIGNUM *bp, *bq, *bd;
+    BIGNUM *bp = nullptr, *bq = nullptr, *bd = nullptr;
     BN_dec2bn(&bp, p.c_str());
     BN_dec2bn(&bq, q.c_str());
     BN_dec2bn(&bd, d.c_str());
@@ -382,7 +382,7 @@ bool Crypt::rsaCheckKey()
         BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
         BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
 #else
-        const BIGNUM *dmp1_c, *d, *dmq1_c, *iqmp_c, *q, *p;
+        const BIGNUM *dmp1_c = nullptr, *d = nullptr, *dmq1_c = nullptr, *iqmp_c = nullptr, *q = nullptr, *p = nullptr;
 
         RSA_get0_key(m_rsa, nullptr, nullptr, &d);
         RSA_get0_factors(m_rsa, &p, &q);
