@@ -349,13 +349,11 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
     BN_dec2bn(&m_rsa->q, q.c_str());
     BN_dec2bn(&m_rsa->d, d.c_str());
     // clear rsa cache
-    if (m_rsa->_method_mod_p)
-    {
+    if(m_rsa->_method_mod_p) {
         BN_MONT_CTX_free(m_rsa->_method_mod_p);
         m_rsa->_method_mod_p = nullptr;
     }
-    if (m_rsa->_method_mod_q)
-    {
+    if(m_rsa->_method_mod_q) {
         BN_MONT_CTX_free(m_rsa->_method_mod_q);
         m_rsa->_method_mod_q = nullptr;
     }
