@@ -18,7 +18,7 @@ MainWindow
 
   Label
     id: currentHotkeysLabel
-    !text: tr('Current hotkeys:')
+    !text: tr('Current hotkeys') .. ':'
     anchors.left: parent.left
     anchors.right: parent.right
     anchors.top: parent.top
@@ -70,7 +70,7 @@ MainWindow
 
   Label
     id: hotKeyTextLabel
-    !text: tr('Edit hotkey text:')
+    !text: tr('Edit hotkey text') .. ':'
     enable: false
     anchors.left: parent.left
     anchors.right: parent.right

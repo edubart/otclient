@@ -5,7 +5,7 @@ MainWindow
   @onEscape: modules.game_viplist.destroyAddWindow()
 
   Label
-    !text: tr('Please enter a character name:')
+    !text: tr('Please enter a character name') .. ':'
     anchors.top: parent.top
     anchors.left: parent.left
     anchors.right: parent.right

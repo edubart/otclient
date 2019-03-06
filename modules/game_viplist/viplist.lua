@@ -335,7 +335,7 @@ function onVipStateChange(id, state)
   onAddVip(id, name, state, description, iconId, notify)
 
   if notify and state ~= VipState.Pending then
-    modules.game_textmessage.displayFailureMessage(tr('%s has logged %s.', name, (state == VipState.Online and 'in' or 'out')))
+    modules.game_textmessage.displayFailureMessage(state == VipState.Online and tr('%s has logged in.', name) or tr('%s has logged out.', name))
   end
 end
 
