@@ -326,22 +326,45 @@ void Crypt::rsaGenerateKey(int bits, int e)
 
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
     BN_dec2bn(&m_rsa->n, n.c_str());
     BN_dec2bn(&m_rsa->e, e.c_str());
-
     // clear rsa cache
-    if(m_rsa->_method_mod_n) { BN_MONT_CTX_free(m_rsa->_method_mod_n); m_rsa->_method_mod_n = NULL; }
+    if(m_rsa->_method_mod_n) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_n);
+        m_rsa->_method_mod_n = nullptr;
+    }
+#else
+    BIGNUM *bn = nullptr, *be = nullptr;
+    BN_dec2bn(&bn, n.c_str());
+    BN_dec2bn(&be, e.c_str());
+    RSA_set0_key(m_rsa, bn, be, nullptr);
+#endif
 }
 
 void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
     BN_dec2bn(&m_rsa->p, p.c_str());
     BN_dec2bn(&m_rsa->q, q.c_str());
     BN_dec2bn(&m_rsa->d, d.c_str());
-
     // clear rsa cache
-    if(m_rsa->_method_mod_p) { BN_MONT_CTX_free(m_rsa->_method_mod_p); m_rsa->_method_mod_p = NULL; }
-    if(m_rsa->_method_mod_q) { BN_MONT_CTX_free(m_rsa->_method_mod_q); m_rsa->_method_mod_q = NULL; }
+    if(m_rsa->_method_mod_p) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_p);
+        m_rsa->_method_mod_p = nullptr;
+    }
+    if(m_rsa->_method_mod_q) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_q);
+        m_rsa->_method_mod_q = nullptr;
+    }
+#else
+    BIGNUM *bp = nullptr, *bq = nullptr, *bd = nullptr;
+    BN_dec2bn(&bp, p.c_str());
+    BN_dec2bn(&bq, q.c_str());
+    BN_dec2bn(&bd, d.c_str());
+    RSA_set0_key(m_rsa, nullptr, nullptr, bd);
+    RSA_set0_factors(m_rsa, bp, bq);
+#endif
 }
 
 bool Crypt::rsaCheckKey()
@@ -352,15 +375,29 @@ bool Crypt::rsaCheckKey()
         BN_CTX_start(ctx);
 
         BIGNUM *r1 = BN_CTX_get(ctx), *r2 = BN_CTX_get(ctx);
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
         BN_mod(m_rsa->dmp1, m_rsa->d, r1, ctx);
         BN_mod(m_rsa->dmq1, m_rsa->d, r2, ctx);
-
         BN_mod_inverse(m_rsa->iqmp, m_rsa->q, m_rsa->p, ctx);
+#else
+        const BIGNUM *dmp1_c = nullptr, *d = nullptr, *dmq1_c = nullptr, *iqmp_c = nullptr, *q = nullptr, *p = nullptr;
+
+        RSA_get0_key(m_rsa, nullptr, nullptr, &d);
+        RSA_get0_factors(m_rsa, &p, &q);
+        RSA_get0_crt_params(m_rsa, &dmp1_c, &dmq1_c, &iqmp_c);
+
+        BIGNUM *dmp1 = BN_dup(dmp1_c), *dmq1 = BN_dup(dmq1_c), *iqmp = BN_dup(iqmp_c);
+
+        BN_mod(dmp1, d, r1, ctx);
+        BN_mod(dmq1, d, r2, ctx);
+        BN_mod_inverse(iqmp, q, p, ctx);
+        RSA_set0_crt_params(m_rsa, dmp1, dmq1, iqmp);
+#endif
         return true;
     }
     else {
         ERR_load_crypto_strings();
-        g_logger.error(stdext::format("RSA check failed - %s", ERR_error_string(ERR_get_error(), NULL)));
+        g_logger.error(stdext::format("RSA check failed - %s", ERR_error_string(ERR_get_error(), nullptr)));
         return false;
     }
 }
@@ -383,4 +420,3 @@ int Crypt::rsaGetSize()
 {
     return RSA_size(m_rsa);
 }
-
