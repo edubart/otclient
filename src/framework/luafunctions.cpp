@@ -814,6 +814,7 @@ void Application::registerLuaFunctions()
     // OutputMessage
     g_lua.registerClass<OutputMessage>();
     g_lua.bindClassStaticFunction<OutputMessage>("create", []{ return OutputMessagePtr(new OutputMessage); });
+    g_lua.bindClassMemberFunction<OutputMessage>("setBuffer", &OutputMessage::setBuffer);
     g_lua.bindClassMemberFunction<OutputMessage>("getBuffer", &OutputMessage::getBuffer);
     g_lua.bindClassMemberFunction<OutputMessage>("reset", &OutputMessage::reset);
     g_lua.bindClassMemberFunction<OutputMessage>("addU8", &OutputMessage::addU8);
