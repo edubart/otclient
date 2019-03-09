@@ -295,7 +295,7 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
 
 bool Crypt::rsaEncrypt(unsigned char *msg, int size)
 {
-    if(size != rsaGetSize(m_rsa))
+    if(size != rsaGetSize())
         return false;
 
 #ifdef USE_GMP
@@ -320,9 +320,9 @@ bool Crypt::rsaEncrypt(unsigned char *msg, int size)
 #endif
 }
 
-bool Crypt::rsaDecrypt(char *msg, int size)
+bool Crypt::rsaDecrypt(unsigned char *msg, int size)
 {
-    if(size != rsaGetSize(m_rsa))
+    if(size != rsaGetSize())
         return false;
 
 #ifdef USE_GMP
