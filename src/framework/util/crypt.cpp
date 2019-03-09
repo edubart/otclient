@@ -305,7 +305,7 @@ bool Crypt::rsaEncrypt(unsigned char *msg, int size)
     mpz_import(m, size, 1, 1, 0, 0, msg);
 
     // c = m^e mod n
-    mpz_powm(c, m, e, n);
+    mpz_powm(c, m, m_e, m_n);
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
     memset((char*)msg, 0, size - count);
@@ -332,7 +332,7 @@ bool Crypt::rsaDecrypt(unsigned char *msg, int size)
     mpz_import(c, size, 1, 1, 0, 0, msg);
 
     // m = c^d mod n
-    mpz_powm(m, c, d, n);
+    mpz_powm(m, c, m_d, m_n);
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
     memset((char*)msg, 0, size - count);
