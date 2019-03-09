@@ -38,11 +38,11 @@ void InputMessage::reset()
 void InputMessage::setBuffer(const std::string& buffer)
 {
     int len = buffer.size();
-    checkWrite(MAX_HEADER_SIZE + len);
-    memcpy(m_buffer + MAX_HEADER_SIZE, buffer.c_str(), len);
-    m_readPos = MAX_HEADER_SIZE;
-    m_headerPos = MAX_HEADER_SIZE;
-    m_messageSize = len;
+    reset();
+    checkWrite(len);
+    memcpy((char*)(m_buffer + m_readPos), buffer.c_str(), len);
+    m_readPos += len;
+    m_messageSize += len;
 }
 
 uint8 InputMessage::getU8()
@@ -96,7 +96,7 @@ double InputMessage::getDouble()
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
-    g_crypt.rsaDecrypt((char*)m_buffer + m_readPos, size);
+    g_crypt.rsaDecrypt((unsigned char*)m_buffer + m_readPos, size);
     return (getU8() == 0x00);
 }
 

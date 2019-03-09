@@ -32,7 +32,11 @@
 
 #include <boost/functional/hash.hpp>
 
-#include <random>
+#ifndef USE_GMP
+#include <openssl/rsa.h>
+#include <openssl/bn.h>
+#include <openssl/err.h>
+#endif
 
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
@@ -41,16 +45,28 @@ Crypt g_crypt;
 
 Crypt::Crypt()
 {
-    mpz_init(n);
-    mpz_init2(d, MODULUS_SIZE);
-    mpz_init2(e, MODULUS_SIZE);
+#ifdef USE_GMP
+    mpz_init2(m_p, MODULUS_SIZE);
+    mpz_init2(m_q, MODULUS_SIZE);
+    mpz_init2(m_d, MODULUS_SIZE);
+    mpz_init2(m_e, MODULUS_SIZE);
+    mpz_init(m_n);
+#else
+    m_rsa = RSA_new();
+#endif
 }
 
 Crypt::~Crypt()
 {
-    mpz_clear(n);
-    mpz_clear(d);
-    mpz_clear(e);
+#ifdef USE_GMP
+    mpz_clear(m_p);
+    mpz_clear(m_q);
+    mpz_clear(m_n);
+    mpz_clear(m_d);
+    mpz_clear(m_e);
+#else
+    RSA_free(m_rsa);
+#endif
 }
 
 std::string Crypt::base64Encode(const std::string& decoded_string)
@@ -220,72 +236,116 @@ std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachine
     return std::string();
 }
 
-void Crypt::rsaSetPublicKey(const std::string& nString, const std::string& eString)
+void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
 {
-    mpz_set_str(n, nString.c_str(), 10);
-    mpz_set_str(e, eString.c_str(), 10);
+#ifdef USE_GMP
+    mpz_set_str(m_n, n.c_str(), 10);
+    mpz_set_str(m_e, e.c_str(), 10);
+#else
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+    BN_dec2bn(&m_rsa->n, n.c_str());
+    BN_dec2bn(&m_rsa->e, e.c_str());
+    // clear rsa cache
+    if(m_rsa->_method_mod_n) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_n);
+        m_rsa->_method_mod_n = nullptr;
+    }
+#else
+    BIGNUM *bn = nullptr, *be = nullptr;
+    BN_dec2bn(&bn, n.c_str());
+    BN_dec2bn(&be, e.c_str());
+    RSA_set0_key(m_rsa, bn, be, nullptr);
+#endif
+#endif
 }
 
-void Crypt::rsaSetPrivateKey(const std::string& pString, const std::string& qString, const std::string& dString)
+void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
 {
-    mpz_t p, q;
-    mpz_init2(p, MODULUS_SIZE);
-    mpz_init2(q, MODULUS_SIZE);
-
-    mpz_set_str(p, pString.c_str(), 10);
-    mpz_set_str(q, qString.c_str(), 10);
-    mpz_set_str(d, dString.c_str(), 10);
+#ifdef USE_GMP
+    mpz_set_str(m_p, p.c_str(), 10);
+    mpz_set_str(m_q, q.c_str(), 10);
+    mpz_set_str(m_d, d.c_str(), 10);
 
     // n = p * q
     mpz_mul(n, p, q);
-
-    mpz_clear(p);
-    mpz_clear(q);
+#else
+#if OPENSSL_VERSION_NUMBER < 0x10100005L
+    BN_dec2bn(&m_rsa->p, p.c_str());
+    BN_dec2bn(&m_rsa->q, q.c_str());
+    BN_dec2bn(&m_rsa->d, d.c_str());
+    // clear rsa cache
+    if(m_rsa->_method_mod_p) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_p);
+        m_rsa->_method_mod_p = nullptr;
+    }
+    if(m_rsa->_method_mod_q) {
+        BN_MONT_CTX_free(m_rsa->_method_mod_q);
+        m_rsa->_method_mod_q = nullptr;
+    }
+#else
+    BIGNUM *bp = nullptr, *bq = nullptr, *bd = nullptr;
+    BN_dec2bn(&bp, p.c_str());
+    BN_dec2bn(&bq, q.c_str());
+    BN_dec2bn(&bd, d.c_str());
+    RSA_set0_key(m_rsa, nullptr, nullptr, bd);
+    RSA_set0_factors(m_rsa, bp, bq);
+#endif
+#endif
 }
 
-bool Crypt::rsaEncrypt(char *msg, int size)
+bool Crypt::rsaEncrypt(unsigned char *msg, int size)
 {
+#ifdef USE_GMP
     mpz_t c, m;
-    mpz_init2(c, MODULUS_SIZE);
-    mpz_init2(m, MODULUS_SIZE);
-
     mpz_import(m, BLOCK_SIZE, 1, 1, 0, 0, msg);
 
     // c = m^e mod n
     mpz_powm(c, m, e, n);
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
-    memset(msg, 0, BLOCK_SIZE - count);
-    mpz_export(msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, c);
+    memset((char*)msg, 0, BLOCK_SIZE - count);
+    mpz_export((char*)msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, c);
 
     mpz_clear(c);
     mpz_clear(m);
 
     return true;
+#else
+    if(size != RSA_size(m_rsa))
+        return false;
+    return RSA_public_encrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
+#endif
 }
 
 bool Crypt::rsaDecrypt(char *msg, int size)
 {
+#ifdef USE_GMP
     mpz_t c, m;
-    mpz_init2(c, MODULUS_SIZE);
-    mpz_init2(m, MODULUS_SIZE);
-
     mpz_import(c, BLOCK_SIZE, 1, 1, 0, 0, msg);
 
     // m = c^d mod n
     mpz_powm(m, c, d, n);
 
     size_t count = (mpz_sizeinbase(m, 2) + 7) / 8;
-    memset(msg, 0, BLOCK_SIZE - count);
-    mpz_export(msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, m);
+    memset((char*)msg, 0, BLOCK_SIZE - count);
+    mpz_export((char*)msg + (BLOCK_SIZE - count), nullptr, 1, 1, 0, 0, m);
 
     mpz_clear(c);
     mpz_clear(m);
 
     return true;
+#else
+    if(size != RSA_size(m_rsa))
+        return false;
+    return RSA_private_decrypt(size, msg, msg, m_rsa, RSA_NO_PADDING) != -1;
+#endif
 }
 
 int Crypt::rsaGetSize()
 {
+#ifdef USE_GMP
     return BLOCK_SIZE;
+#else
+    return RSA_size(m_rsa);
+#endif
 }
