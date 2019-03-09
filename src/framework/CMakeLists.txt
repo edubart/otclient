@@ -243,7 +243,7 @@ if(NOT OPENSSL_FOUND)
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${GMP_INCLUDE_DIR})
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DUSE_GMP)
 else()
-    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENSSL_INCLUDE_DIR})
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENSSL_LIBRARY})
     set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
 endif()
 
