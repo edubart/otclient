@@ -219,14 +219,12 @@ endif()
 message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
-find_package(OpenSSL REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
-    ${OPENSSL_LIBRARIES}
     ${ZLIB_LIBRARY}
 )
 
@@ -234,9 +232,20 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
-    ${OPENSSL_INCLUDE_DIR}
     ${framework_INCLUDE_DIRS}
 )
+
+find_package(OpenSSL QUIET)
+
+if(NOT OPENSSL_FOUND)
+    find_package(GMP REQUIRED)
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${GMP_LIBRARY})
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${GMP_INCLUDE_DIR})
+    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DUSE_GMP)
+else()
+    set(framework_LIBRARIES ${framework_LIBRARIES} ${OPENSSL_LIBRARIES})
+    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     message(STATUS "Debug information: ON")
@@ -550,4 +559,3 @@ endif()
 
 include_directories(${framework_INCLUDE_DIRS})
 add_definitions(${framework_DEFINITIONS})
-
