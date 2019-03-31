@@ -1202,15 +1202,15 @@ function loadCommunicationSettings()
 
   local ignoreNode = g_settings.getNode('IgnorePlayers')
   if ignoreNode then
-    for i = 1, #ignoreNode do
-      table.insert(communicationSettings.ignoredPlayers, ignoreNode[i])
+    for _, player in pairs(ignoreNode) do
+      table.insert(communicationSettings.ignoredPlayers, player)
     end
   end
 
   local whitelistNode = g_settings.getNode('WhitelistedPlayers')
   if whitelistNode then
-    for i = 1, #whitelistNode do
-      table.insert(communicationSettings.whitelistedPlayers, whitelistNode[i])
+    for _, player in pairs(whitelistNode) do
+      table.insert(communicationSettings.whitelistedPlayers, player)
     end
   end
 
