@@ -65,33 +65,33 @@ function onConnect(protocol)
   end
 
   local post = ''
-  post = post .. 'uid='                .. UUID
+  post = post .. 'uid='                .. urlencode(UUID)
   post = post .. '&report_delay='      .. REPORT_DELAY
-  post = post .. '&os='                .. g_app.getOs()
-  post = post .. '&graphics_vendor='   .. g_graphics.getVendor()
-  post = post .. '&graphics_renderer=' .. g_graphics.getRenderer()
-  post = post .. '&graphics_version='  .. g_graphics.getVersion()
-  post = post .. '&painter_engine='    .. g_graphics.getPainterEngine()
-  post = post .. '&fps='               .. g_app.getBackgroundPaneFps()
-  post = post .. '&max_fps='           .. g_app.getBackgroundPaneMaxFps()
-  post = post .. '&fullscreen='        .. tostring(g_window.isFullscreen())
-  post = post .. '&window_width='      .. g_window.getWidth()
-  post = post .. '&window_height='     .. g_window.getHeight()
-  post = post .. '&player_name='       .. g_game.getCharacterName()
-  post = post .. '&world_name='        .. g_game.getWorldName()
-  post = post .. '&otserv_host='       .. G.host
+  post = post .. '&os='                .. urlencode(g_app.getOs())
+  post = post .. '&graphics_vendor='   .. urlencode(g_graphics.getVendor())
+  post = post .. '&graphics_renderer=' .. urlencode(g_graphics.getRenderer())
+  post = post .. '&graphics_version='  .. urlencode(g_graphics.getVersion())
+  post = post .. '&painter_engine='    .. urlencode(g_graphics.getPainterEngine())
+  post = post .. '&fps='               .. urlencode(g_app.getBackgroundPaneFps())
+  post = post .. '&max_fps='           .. urlencode(g_app.getBackgroundPaneMaxFps())
+  post = post .. '&fullscreen='        .. urlencode(tostring(g_window.isFullscreen()))
+  post = post .. '&window_width='      .. urlencode(g_window.getWidth())
+  post = post .. '&window_height='     .. urlencode(g_window.getHeight())
+  post = post .. '&player_name='       .. urlencode(g_game.getCharacterName())
+  post = post .. '&world_name='        .. urlencode(g_game.getWorldName())
+  post = post .. '&otserv_host='       .. urlencode(G.host)
   post = post .. '&otserv_port='       .. G.port
-  post = post .. '&otserv_protocol='   .. g_game.getProtocolVersion()
-  post = post .. '&otserv_client='     .. g_game.getClientVersion()
-  post = post .. '&build_version='     .. g_app.getVersion()
-  post = post .. '&build_revision='    .. g_app.getBuildRevision()
-  post = post .. '&build_commit='      .. g_app.getBuildCommit()
-  post = post .. '&build_date='        .. g_app.getBuildDate()
+  post = post .. '&otserv_protocol='   .. urlencode(g_game.getProtocolVersion())
+  post = post .. '&otserv_client='     .. urlencode(g_game.getClientVersion())
+  post = post .. '&build_version='     .. urlencode(g_app.getVersion())
+  post = post .. '&build_revision='    .. urlencode(g_app.getBuildRevision())
+  post = post .. '&build_commit='      .. urlencode(g_app.getBuildCommit())
+  post = post .. '&build_date='        .. urlencode(g_app.getBuildDate())
   post = post .. '&display_width='     .. g_window.getDisplayWidth()
   post = post .. '&display_height='    .. g_window.getDisplayHeight()
-  post = post .. '&cpu='               .. g_platform.getCPUName()
+  post = post .. '&cpu='               .. urlencode(g_platform.getCPUName())
   post = post .. '&mem='               .. g_platform.getTotalSystemMemory()
-  post = post .. '&os_name='           .. g_platform.getOSName()
+  post = post .. '&os_name='           .. urlencode(g_platform.getOSName())
   post = post .. getAdditionalData()
 
   local message = ''
@@ -120,4 +120,12 @@ end
 
 function onError(protocol, message, code)
   pdebug('Could not send statistics: ' .. message)
+end
+
+function urlencode(str)
+    local encodeChar=function(chr)
+	    return string.format("%%%X",string.byte(chr))
+    end
+	local output, t = string.gsub(str,"[^%w]",encodeChar)
+	return output
 end
