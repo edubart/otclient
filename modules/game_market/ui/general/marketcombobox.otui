@@ -15,4 +15,4 @@ MarketComboBoxPopupMenu < ComboBoxRoundedPopupMenu
 MarketComboBox < ComboBoxRounded
   font: verdana-11px-rounded
   size: 86 20
-  text-offset: 3 2
+  text-offset: 9 9
