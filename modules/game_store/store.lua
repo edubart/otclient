@@ -98,6 +98,7 @@ function Store.close()
   Store.clearOffers()
   modules.game_interface.getRootPanel():focus()
   CATEGORY_LIST.onOptionChange = nil
+  lastCategory = nil
 end
 
 function Store.open()
