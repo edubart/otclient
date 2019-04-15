@@ -1,0 +1,213 @@
+StoreItemBox < UICheckBox
+  id: itemBox
+  border-width: 1
+  border-color: #272727
+  background-color: #555555
+  color: #aaaaaa
+  text-align: center
+  margin-left: 6
+  margin-top: 6
+
+  Item
+    id: item
+    phantom: true
+    virtual: true
+    size: 64 64
+    image-clip: 0 0 64 64
+    text-offset: 0 22
+    margin-left: -3
+    margin-top: -3
+    text-align: right
+    anchors.top: parent.top
+    anchors.left: parent.left
+
+  $checked:
+    border-color: #ffffff
+    background-color: #353535
+
+  $hover !checked:
+    border-color: #aaaaaa
+
+  $disabled:
+    image-color: #ffffff88
+    color: #aaaaaa88
+
+  Label
+    id: nameLabel
+    font: verdana-11px-rounded
+    margin-left: 3
+    border-color: #000000
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+  Label
+    id: priceLabel
+    font: verdana-11px-rounded
+    margin-left: 3
+    border-color: #000000
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+Panel
+  id: mainPanel
+  background-color: #535353
+  margin: 1
+
+  MarketComboBox
+    id: categoryComboBox
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-offset: 6 1
+    margin-top: 3
+    margin-right: 0
+    margin-left: 0
+
+  Panel
+    id: itemsContainer
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 213
+    border-color: #000000
+    border-width: 1
+    margin-top: 3
+    margin-bottom: 30
+
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      step: 28
+      pixels-scroll: true
+
+    ScrollablePanel
+      id: itemsPanel
+      anchors.left: parent.left
+      anchors.right: prev.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      vertical-scrollbar: itemsPanelListScrollBar
+      background-color: #494949
+      color: #A2A2A2
+      border-width: 1
+      border-color: #272727
+      layout:
+        type: grid
+        cell-size: 76 101
+        flow: true
+        auto-spacing: true
+
+  MarketTabBar
+    id: itemDetailsPanelTabBar
+    width: 187
+    height: 25
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 6
+    margin-left: 3
+
+  Panel
+    id: itemDetailsPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    background-color: #535353
+    border-color: #000000
+    border-width: 1
+    margin-top: -1
+    margin-left: 3
+    margin-right: 3
+    margin-bottom: 3
+    text-align: center
+
+    Item
+      id: selectedItem
+      phantom: true
+      virtual: true
+      size: 64 64
+      image-clip: 0 0 64 64
+      image-source: /images/store/64/Product_Blessing_AllPvE
+      text-align: right
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin-top: 30
+      margin-left: 20
+
+    Label
+      id: itemName
+      font: verdana-11px-rounded
+      border-color: #000000
+      anchors.top: prev.top
+      anchors.left: prev.right
+      margin-left: 20
+      text-wrap: true
+      width: 200
+
+    Label
+      id: itemPrice
+      font: verdana-11px-rounded
+      border-color: #000000
+      anchors.top: prev.bottom
+      anchors.left: prev.left
+      margin-top: 6
+      width: 200
+
+    Label
+      id: itemAmount
+      font: verdana-11px-rounded
+      border-color: #000000
+      anchors.top: prev.bottom
+      anchors.left: prev.left
+      margin-top: 6
+      width: 200
+
+    Button
+      id: buyButton
+      !text: tr('Buy')
+      font: verdana-11px-rounded
+      border-color: #000000
+      anchors.top: selectedItem.bottom
+      anchors.left: selectedItem.left
+      anchors.right: itemName.right
+      margin-top: 10
+      margin-left: 10
+      margin-right: 10
+
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      margin-right: 30
+      margin-top: 30
+      margin-bottom: 30
+      step: 28
+      pixels-scroll: true
+
+    ScrollablePanel
+      anchors.left: itemAmount.right
+      anchors.top: itemsPanelListScrollBar.top
+      anchors.bottom: itemsPanelListScrollBar.bottom
+      anchors.right: parent.right
+      text-wrap: true
+      background-color: #494949
+      border-color: #272727
+      border-width: 1
+      border-width-right: 0
+      vertical-scrollbar: itemsPanelListScrollBar
+      layout: verticalBox
+      padding: 5
+      margin-right: 43
+      margin-left: 20
+
+      Panel
+        id: itemDescription
+        text-wrap: true
+        color: #A2A2A2
+        text-align: left

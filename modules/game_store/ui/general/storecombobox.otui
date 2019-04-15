@@ -1,0 +1,18 @@
+StoreComboBoxPopupMenuButton < ComboBoxRoundedPopupMenuButton
+  height: 18
+  font: verdana-11px-rounded
+  text-offset: 2 2
+
+StoreComboBoxPopupMenuSeparator < UIWidget
+  image-source: /images/combobox_rounded
+  image-repeated: true
+  image-clip: 1 59 89 1
+  height: 1
+  phantom: true
+
+StoreComboBoxPopupMenu < ComboBoxRoundedPopupMenu
+
+StoreComboBox < ComboBoxRounded
+  font: verdana-11px-rounded
+  size: 86 20
+  text-offset: 3 2
