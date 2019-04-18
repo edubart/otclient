@@ -2,17 +2,13 @@
     Finalizing Market:
       Note: Feel free to work on any area and submit
             it as a pull request from your git fork.
-
       BeniS's Skype: benjiz69
-
       List:
       * Add offer management:
         - Current Offers
         - Offer History
-
       * Clean up the interface building
         - Add a new market interface file to handle building?
-
       * Extend information features
         - Hover over offers for purchase information (balance after transaction, etc)
   ]]
@@ -28,10 +24,10 @@ offersTabBar = nil
 selectionTabBar = nil
 
 marketOffersPanel = nil
-BROWSE_PANEL = nil
+browsePanel = nil
 overviewPanel = nil
 itemOffersPanel = nil
-ITEM_DETAILS_PANEL = nil
+itemDetailsPanel = nil
 itemStatsPanel = nil
 myOffersPanel = nil
 currentOffersPanel = nil
@@ -51,7 +47,7 @@ selectedItem = nil
 selectedItemLabel = nil
 selectedItemTitleLabel = nil
 offerTypeList = nil
-CATEGORY_LIST = nil
+categoryList = nil
 subCategoryList = nil
 slotFilterList = nil
 createOfferButton = nil
@@ -755,8 +751,8 @@ local function initInterface()
   selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
   selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
 
-  BROWSE_PANEL = g_ui.loadUI('ui/marketoffers/browse')
-  selectionTabBar:addTab(tr('Browse'), BROWSE_PANEL)
+  browsePanel = g_ui.loadUI('ui/marketoffers/browse')
+  selectionTabBar:addTab(tr('Browse'), browsePanel)
 
   -- Currently not used
   -- "Reserved for more functionality later"
@@ -769,8 +765,8 @@ local function initInterface()
   itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats')
   displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
 
-  ITEM_DETAILS_PANEL = g_ui.loadUI('ui/marketoffers/itemdetails')
-  displaysTabBar:addTab(tr('Details'), ITEM_DETAILS_PANEL)
+  itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails')
+  displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
 
   itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers')
   displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
@@ -825,10 +821,10 @@ local function initInterface()
   Market.enableCreateOffer(false)
 
   -- setup filters
-  filterButtons[MarketFilters.Vocation] = BROWSE_PANEL:getChildById('filterVocation')
-  filterButtons[MarketFilters.Level] = BROWSE_PANEL:getChildById('filterLevel')
-  filterButtons[MarketFilters.Depot] = BROWSE_PANEL:getChildById('filterDepot')
-  filterButtons[MarketFilters.SearchAll] = BROWSE_PANEL:getChildById('filterSearchAll')
+  filterButtons[MarketFilters.Vocation] = browsePanel:getChildById('filterVocation')
+  filterButtons[MarketFilters.Level] = browsePanel:getChildById('filterLevel')
+  filterButtons[MarketFilters.Depot] = browsePanel:getChildById('filterDepot')
+  filterButtons[MarketFilters.SearchAll] = browsePanel:getChildById('filterSearchAll')
 
   -- set filter default values
   clearFilters()
@@ -838,10 +834,10 @@ local function initInterface()
     filter.onCheckChange = Market.updateCurrentItems
   end
 
-  searchEdit = BROWSE_PANEL:getChildById('searchEdit')
-  CATEGORY_LIST = BROWSE_PANEL:getChildById('categoryComboBox')
-  subCategoryList = BROWSE_PANEL:getChildById('subCategoryComboBox')
-  slotFilterList = BROWSE_PANEL:getChildById('slotComboBox')
+  searchEdit = browsePanel:getChildById('searchEdit')
+  categoryList = browsePanel:getChildById('categoryComboBox')
+  subCategoryList = browsePanel:getChildById('subCategoryComboBox')
+  slotFilterList = browsePanel:getChildById('slotComboBox')
 
   slotFilterList:addOption(MarketSlotFilters[255])
   slotFilterList:setEnabled(false)
@@ -850,22 +846,22 @@ local function initInterface()
     if i >= MarketCategory.Ammunition and i <= MarketCategory.WandsRods then
       subCategoryList:addOption(getMarketCategoryName(i))
     else
-      CATEGORY_LIST:addOption(getMarketCategoryName(i))
+      categoryList:addOption(getMarketCategoryName(i))
     end
   end
-  CATEGORY_LIST:addOption(getMarketCategoryName(255)) -- meta weapons
-  CATEGORY_LIST:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  categoryList:addOption(getMarketCategoryName(255)) -- meta weapons
+  categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   subCategoryList:setEnabled(false)
 
   -- hook item filters
-  CATEGORY_LIST.onOptionChange = onChangeCategory
+  categoryList.onOptionChange = onChangeCategory
   subCategoryList.onOptionChange = onChangeSubCategory
   slotFilterList.onOptionChange = onChangeSlotFilter
 
   -- setup tables
   buyOfferTable = itemOffersPanel:recursiveGetChildById('buyingTable')
   sellOfferTable = itemOffersPanel:recursiveGetChildById('sellingTable')
-  detailsTable = ITEM_DETAILS_PANEL:recursiveGetChildById('detailsTable')
+  detailsTable = itemDetailsPanel:recursiveGetChildById('detailsTable')
   buyStatsTable = itemStatsPanel:recursiveGetChildById('buyStatsTable')
   sellStatsTable = itemStatsPanel:recursiveGetChildById('sellStatsTable')
   buyOfferTable.onSelectionChange = onSelectBuyOffer
@@ -955,7 +951,7 @@ end
 
 function Market.reset()
   balanceLabel:setColor('#bbbbbb')
-  CATEGORY_LIST:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
 
   -- When uses closes market at this screen we need to show this instruction again when it gets opened,
@@ -1051,7 +1047,7 @@ function Market.decrementAmount()
 end
 
 function Market.updateCurrentItems()
-  local id = getMarketCategoryId(CATEGORY_LIST:getCurrentOption().text)
+  local id = getMarketCategoryId(categoryList:getCurrentOption().text)
   if id == MarketCategory.MetaWeapons then
     id = getMarketCategoryId(subCategoryList:getCurrentOption().text)
   end
@@ -1073,7 +1069,7 @@ end
 
 function Market.refreshItemsWidget(selectItem)
   local selectItem = selectItem or 0
-  itemsPanel = BROWSE_PANEL:recursiveGetChildById('itemsPanel')
+  itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
 
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
