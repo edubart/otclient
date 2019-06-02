@@ -74,7 +74,7 @@ void Config::clear()
 
 void Config::setValue(const std::string& key, const std::string& value)
 {
-    if(key == "") {
+    if(value == "") {
         remove(key);
         return;
     }
