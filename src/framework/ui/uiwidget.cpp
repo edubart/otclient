@@ -1712,12 +1712,15 @@ bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widget
 
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList)
 {
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        const UIWidgetPtr& child = *it;
-        if(child->isExplicitlyVisible() && child->isExplicitlyEnabled())
-            child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
+    if(containsPaddingPoint(mousePos)) {
+        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
+            const UIWidgetPtr& child = *it;
+            if(child->isExplicitlyVisible() && child->isExplicitlyEnabled() && child->containsPoint(mousePos))
+                child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
+
+            widgetList.push_back(static_self_cast<UIWidget>());
+        }
     }
 
-    widgetList.push_back(static_self_cast<UIWidget>());
     return true;
 }

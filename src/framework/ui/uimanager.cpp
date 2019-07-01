@@ -142,6 +142,12 @@ void UIManager::inputEvent(const InputEvent& event)
                     break;
             }
 
+            if(m_pressedWidget) {
+                if(m_pressedWidget->onMouseMove(event.mousePos, event.mouseMoved)) {
+                    break;
+                }
+            }
+
             m_mouseReceiver->propagateOnMouseMove(event.mousePos, event.mouseMoved, widgetList);
             for(const UIWidgetPtr& widget : widgetList) {
                 if(widget->onMouseMove(event.mousePos, event.mouseMoved))
