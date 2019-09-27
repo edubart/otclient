@@ -1,31 +1,51 @@
-from ubuntu:latest
+FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58 AS builder
 
-WORKDIR /app
+RUN apt-get update; \
+  apt-get install -y \
+    build-essential \
+    cmake \
+    git-core \
+    libboost-atomic1.65-dev \
+    libboost-chrono1.65-dev \
+    libboost-date-time1.65-dev \
+    libboost-filesystem1.65-dev \
+    libboost-system1.65-dev \
+    libboost-thread1.65-dev \
+    libglew-dev \
+    liblua5.1-0-dev \
+    libncurses5-dev \
+    libopenal-dev \
+    libssl-dev \
+    libvorbis-dev \
+    mercurial \
+    zlib1g-dev; \
+  apt-get clean && apt-get autoclean
 
-RUN apt-get update; apt-get install -y \
-  build-essential \
-  cmake \
-  git-core \
-  libboost-all-dev \
-  libglew-dev \
-  liblua5.1-0-dev \
-  libopenal-dev \
-  libphysfs-dev \
-  libssl-dev \
-  libvorbis-dev \
-  zlib1g-dev
+WORKDIR /
+RUN hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/
+WORKDIR /physfs/build/
+RUN cmake ..
+RUN make -j$(grep -c ^process /proc/cpuinfo)
+RUN make install
+RUN mv /usr/local/lib/libphysfs.a /usr/lib/x86_64-linux-gnu/.
 
-RUN apt-get install -y \
-  libncurses5-dev \
-  mercurial; \
-  hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/; \
-    cd physfs; \
-    mkdir build && cd build && cmake .. && make && make install; \
-    mv /usr/local/lib/libphysfs.a /usr/lib/x86_64-linux-gnu/.
+COPY ./src/ /otclient/src/.
+COPY CMakeLists.txt /otclient/.
+WORKDIR /otclient/build/
+RUN cmake -DCMAKE_CXX_LINK_FLAGS=-no-pie ..
+RUN make -j$(grep -c ^process /proc/cpuinfo)
+RUN strip --strip-unneeded otclient
 
-ADD . /app
-
-# Build application
-RUN mkdir -p build && cd build && cmake .. && make -j$(grep -c ^process /proc/cpuinfo); 
-
-CMD cd build; ./otclient 
+FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58
+RUN apt-get update; \
+  apt-get install -y \
+    libglew2.0 \
+    libopenal1; \
+  apt-get clean && apt-get autoclean
+COPY --from=builder /otclient/build/otclient /otclient/bin/otclient
+COPY ./data/ /otclient/data/.
+COPY ./mods/ /otclient/mods/.
+COPY ./modules/ /otclient/modules/.
+COPY ./init.lua /otclient/.
+WORKDIR /otclient
+CMD ["./bin/otclient"]
