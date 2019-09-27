@@ -31,9 +31,8 @@ RUN make install
 COPY ./src/ /otclient/src/.
 COPY CMakeLists.txt /otclient/.
 WORKDIR /otclient/build/
-RUN cmake -DCMAKE_CXX_LINK_FLAGS=-no-pie ..
+RUN cmake -DCMAKE_CXX_LINK_FLAGS=-no-pie -DCMAKE_BUILD_TYPE=Release ..
 RUN make -j$(nproc)
-RUN strip --strip-unneeded otclient
 
 FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58
 RUN apt-get update; \
