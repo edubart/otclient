@@ -29,7 +29,7 @@ before_script:
     popd
 script: |
   cmake . -DCMAKE_BUILD_TYPE=Release
-  make
+  make -j$(nproc)
 notifications:
   irc:
     channels:
