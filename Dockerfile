@@ -27,7 +27,6 @@ WORKDIR /physfs/build/
 RUN cmake ..
 RUN make -j$(nproc)
 RUN make install
-RUN mv /usr/local/lib/libphysfs.a /usr/lib/x86_64-linux-gnu/.
 
 COPY ./src/ /otclient/src/.
 COPY CMakeLists.txt /otclient/.
