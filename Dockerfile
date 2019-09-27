@@ -25,7 +25,7 @@ WORKDIR /
 RUN hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/
 WORKDIR /physfs/build/
 RUN cmake ..
-RUN make -j$(grep -c ^process /proc/cpuinfo)
+RUN make -j$(nproc)
 RUN make install
 RUN mv /usr/local/lib/libphysfs.a /usr/lib/x86_64-linux-gnu/.
 
@@ -33,7 +33,7 @@ COPY ./src/ /otclient/src/.
 COPY CMakeLists.txt /otclient/.
 WORKDIR /otclient/build/
 RUN cmake -DCMAKE_CXX_LINK_FLAGS=-no-pie ..
-RUN make -j$(grep -c ^process /proc/cpuinfo)
+RUN make -j$(nproc)
 RUN strip --strip-unneeded otclient
 
 FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58
