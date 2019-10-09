@@ -75,7 +75,7 @@ bool Mouse::pushCursor(const std::string& name)
 
 void Mouse::popCursor(const std::string& name)
 {
-    if(m_cursorStack.size() == 0)
+    if(m_cursorStack.empty())
         return;
 
     if(name.empty() || m_cursors.find(name) == m_cursors.end())
@@ -93,7 +93,7 @@ void Mouse::popCursor(const std::string& name)
             return;
     }
 
-    if(m_cursorStack.size() > 0)
+    if(!m_cursorStack.empty())
         g_window.setMouseCursor(m_cursorStack.back());
     else
         g_window.restoreMouseCursor();
@@ -101,7 +101,7 @@ void Mouse::popCursor(const std::string& name)
 
 bool Mouse::isCursorChanged()
 {
-    return m_cursorStack.size() > 0;
+    return !m_cursorStack.empty();
 }
 
 bool Mouse::isPressed(Fw::MouseButton mouseButton)

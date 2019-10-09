@@ -378,11 +378,11 @@ void MapView::updateVisibleTilesCache(int start)
                         Rect(tpx,       tpy + 1,   1,   qs),
                     };
 
-                    for(int i=0;i<4;++i) {
-                        int sx = std::max<int>(lines[i].left(), area.left());
-                        int ex = std::min<int>(lines[i].right(), area.right());
-                        int sy = std::max<int>(lines[i].top(), area.top());
-                        int ey = std::min<int>(lines[i].bottom(), area.bottom());
+                    for(auto &line: lines) {
+                        int sx = std::max<int>(line.left(), area.left());
+                        int ex = std::min<int>(line.right(), area.right());
+                        int sy = std::max<int>(line.top(), area.top());
+                        int ey = std::min<int>(line.bottom(), area.bottom());
                         for(int qx=sx;qx<=ex;++qx)
                             for(int qy=sy;qy<=ey;++qy)
                                 m_spiral[count++] = Point(qx, qy);

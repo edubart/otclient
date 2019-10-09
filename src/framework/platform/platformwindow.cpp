@@ -150,8 +150,8 @@ void PlatformWindow::releaseAllKeys()
 
     m_inputEvent.keyboardModifiers = 0;
 
-    for(int i=0;i<4;++i)
-        m_mouseButtonStates[i] = false;
+    for(auto &mouseButtonState: m_mouseButtonStates)
+        mouseButtonState = false;
 }
 
 void PlatformWindow::fireKeysPress()

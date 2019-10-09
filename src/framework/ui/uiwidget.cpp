@@ -70,7 +70,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 
     drawSelf(drawPane);
 
-    if(m_children.size() > 0) {
+    if(!m_children.empty()) {
         if(m_clipping)
             g_painter->setClipRect(visibleRect.intersection(getPaddingRect()));
 
@@ -488,7 +488,7 @@ void UIWidget::unlockChild(const UIWidgetPtr& child)
 
     // find new child to lock
     UIWidgetPtr lockedChild;
-    if(m_lockedChildren.size() > 0) {
+    if(!m_lockedChildren.empty()) {
         lockedChild = m_lockedChildren.front();
         assert(hasChild(lockedChild));
     }
@@ -1043,8 +1043,8 @@ bool UIWidget::hasChild(const UIWidgetPtr& child)
 int UIWidget::getChildIndex(const UIWidgetPtr& child)
 {
     int index = 1;
-    for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-        if(*it == child)
+    for(auto &it: m_children) {
+        if(it == child)
             return index;
         ++index;
     }
@@ -1713,8 +1713,7 @@ bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widget
 bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList)
 {
     if(containsPaddingPoint(mousePos)) {
-        for(auto it = m_children.begin(); it != m_children.end(); ++it) {
-            const UIWidgetPtr& child = *it;
+        for(auto &child: m_children) {
             if(child->isExplicitlyVisible() && child->isExplicitlyEnabled() && child->containsPoint(mousePos))
                 child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
 

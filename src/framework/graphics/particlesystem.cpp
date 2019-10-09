@@ -61,8 +61,8 @@ void ParticleSystem::addParticle(const ParticlePtr& particle)
 
 void ParticleSystem::render()
 {
-    for(auto it = m_particles.begin(), end = m_particles.end(); it != end; ++it)
-        (*it)->render();
+    for(auto &particle: m_particles)
+        particle->render();
     g_painter->resetCompositionMode();
 }
 

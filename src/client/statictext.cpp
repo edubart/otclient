@@ -63,7 +63,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
 {
     //TODO: this could be moved to lua
     // first message
-    if(m_messages.size() == 0) {
+    if(m_messages.empty()) {
         m_name = name;
         m_mode = mode;
     }
@@ -82,7 +82,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
     if(isYell())
         delay *= 2;
 
-    m_messages.push_back(std::make_pair(text, g_clock.millis() + delay));
+    m_messages.emplace_back(text, g_clock.millis() + delay);
     compose();
 
     if(!m_updateEvent)

@@ -192,7 +192,7 @@ public:
     // tile zone related
     void setShowZone(tileflags_t zone, bool show);
     void setShowZones(bool show);
-    void setZoneColor(tileflags_t flag, const Color& color);
+    void setZoneColor(tileflags_t zone, const Color& color);
     void setZoneOpacity(float opacity) { m_zoneOpacity = opacity; }
 
     float getZoneOpacity() { return m_zoneOpacity; }

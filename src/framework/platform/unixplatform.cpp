@@ -23,9 +23,9 @@
 #ifndef WIN32
 
 #include "platform.h"
+#include <cstring>
 #include <fstream>
 #include <unistd.h>
-#include <string.h>
 #include <framework/stdext/stdext.h>
 
 #include <sys/stat.h>
@@ -51,7 +51,7 @@ bool Platform::spawnProcess(std::string process, const std::vector<std::string>&
         cargs[0] = (char*)process.c_str();
         for(uint i=1;i<=args.size();++i)
             cargs[i] = (char*)args[i-1].c_str();
-        cargs[args.size()+1] = 0;
+        cargs[args.size()+1] = nullptr;
 
         if(execv(process.c_str(), cargs) == -1)
             _exit(EXIT_FAILURE);
@@ -84,7 +84,7 @@ std::string Platform::getCurrentDir()
 {
     std::string res;
     char cwd[2048];
-    if(getcwd(cwd, sizeof(cwd)) != NULL) {
+    if(getcwd(cwd, sizeof(cwd)) != nullptr) {
         res = cwd;
         res += "/";
     }

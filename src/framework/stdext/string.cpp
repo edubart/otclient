@@ -23,7 +23,7 @@
 #include "string.h"
 #include "format.h"
 #include <boost/algorithm/string.hpp>
-#include <ctype.h>
+#include <cctype>
 #include <physfs.h>
 
 #ifdef _MSC_VER

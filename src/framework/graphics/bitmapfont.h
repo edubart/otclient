@@ -48,7 +48,7 @@ public:
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string& text,
                                                        Fw::AlignmentFlag align = Fw::AlignTopLeft,
-                                                       Size* textBoxSize = NULL);
+                                                       Size* textBoxSize = nullptr);
 
     /// Simulate render and calculate text size
     Size calculateTextRectSize(const std::string& text);

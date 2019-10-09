@@ -44,7 +44,7 @@ public:
 
     bool addSearchPath(const std::string& path, bool pushFront = false);
     bool removeSearchPath(const std::string& path);
-    void searchAndAddPackages(const std::string& packagesDir, const std::string& packagesExt);
+    void searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt);
 
     bool fileExists(const std::string& fileName);
     bool directoryExists(const std::string& directoryName);

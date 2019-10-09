@@ -144,7 +144,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 
 void Protocol::generateXteaKey()
 {
-    std::mt19937 eng(std::time(NULL));
+    std::mt19937 eng(std::time(nullptr));
     std::uniform_int_distribution<uint32> unif(0, 0xFFFFFFFF);
     m_xteaKey[0] = unif(eng);
     m_xteaKey[1] = unif(eng);

@@ -142,7 +142,7 @@ void ParticleType::load(const OTMLNodePtr& node)
     }
 
     if(pColors.empty())
-        pColors.push_back(Color(255, 255, 255, 128));
+        pColors.emplace_back(255, 255, 255, 128);
     if(pColorsStops.empty())
         pColorsStops.push_back(0);
 

@@ -55,12 +55,12 @@ public:
     void sendTurnSouth();
     void sendTurnWest();
     void sendEquipItem(int itemId, int countOrSubType);
-    void sendMove(const Position& fromPos, int itemId, int stackpos, const Position& toPos, int count);
+    void sendMove(const Position& fromPos, int thingId, int stackpos, const Position& toPos, int count);
     void sendInspectNpcTrade(int itemId, int count);
     void sendBuyItem(int itemId, int subType, int amount, bool ignoreCapacity, bool buyWithBackpack);
     void sendSellItem(int itemId, int subType, int amount, bool ignoreEquipped);
     void sendCloseNpcTrade();
-    void sendRequestTrade(const Position& pos, int thingId, int stackpos, uint playerId);
+    void sendRequestTrade(const Position& pos, int thingId, int stackpos, uint creatureId);
     void sendInspectTrade(bool counterOffer, int index);
     void sendAcceptTrade();
     void sendRejectTrade();
@@ -118,7 +118,7 @@ public:
     void sendRequestStoreOffers(const std::string& categoryName, int serviceType);
     void sendOpenStore(int serviceType, const std::string &category);
     void sendTransferCoins(const std::string& recipient, int amount);
-    void sendOpenTransactionHistory(int entiresPerPage);
+    void sendOpenTransactionHistory(int entriesPerPage);
 
     // otclient only
     void sendChangeMapAwareRange(int xrange, int yrange);

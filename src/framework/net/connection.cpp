@@ -24,7 +24,9 @@
 
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
+
 #include <boost/asio.hpp>
+#include <memory>
 
 asio::io_service g_ioService;
 std::list<std::shared_ptr<asio::streambuf>> Connection::m_outputStreams;
@@ -123,7 +125,7 @@ void Connection::write(uint8* buffer, size_t size)
             m_outputStream = m_outputStreams.front();
             m_outputStreams.pop_front();
         } else
-            m_outputStream = std::shared_ptr<asio::streambuf>(new asio::streambuf);
+            m_outputStream = std::make_shared<asio::streambuf>();
 
         m_delayedWriteTimer.cancel();
         m_delayedWriteTimer.expires_from_now(boost::posix_time::milliseconds(0));
@@ -177,7 +179,7 @@ void Connection::read_until(const std::string& what, const RecvCallback& callbac
 
     asio::async_read_until(m_socket,
                            m_inputStream,
-                           what.c_str(),
+                           what,
                            std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.cancel();

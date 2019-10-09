@@ -707,7 +707,7 @@ void LuaInterface::closeLuaState()
     if(L) {
         // close lua, it also collects
         lua_close(L);
-        L = NULL;
+        L = nullptr;
     }
 }
 
@@ -785,7 +785,7 @@ int LuaInterface::weakRef()
 
 void LuaInterface::unref(int ref)
 {
-    if(ref >= 0 && L != NULL)
+    if(ref >= 0 && L != nullptr)
         luaL_unref(L, LUA_REGISTRYINDEX, ref);
 }
 

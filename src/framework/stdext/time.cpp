@@ -21,6 +21,7 @@
  */
 
 #include "time.h"
+
 #include <chrono>
 #include <ctime>
 #include <thread>
@@ -30,7 +31,7 @@ namespace stdext {
 const static auto startup_time = std::chrono::high_resolution_clock::now();
 
 ticks_t time() {
-    return std::time(NULL);
+    return std::time(nullptr);
 }
 
 ticks_t millis()

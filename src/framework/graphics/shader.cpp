@@ -69,7 +69,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
     std::string code = qualifierDefines;
     code.append(sourceCode);
     const char *c_source = code.c_str();
-    glShaderSource(m_shaderId, 1, &c_source, NULL);
+    glShaderSource(m_shaderId, 1, &c_source, nullptr);
     glCompileShader(m_shaderId);
 
     int res = GL_FALSE;
@@ -95,7 +95,7 @@ std::string Shader::log()
     glGetShaderiv(m_shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
-        glGetShaderInfoLog(m_shaderId, infoLogLength-1, NULL, &buf[0]);
+        glGetShaderInfoLog(m_shaderId, infoLogLength-1, nullptr, &buf[0]);
         infoLog = &buf[0];
     }
     return infoLog;

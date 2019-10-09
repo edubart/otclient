@@ -54,8 +54,8 @@ void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 
 void ParticleEffect::render()
 {
-    for(auto it = m_systems.begin(), end = m_systems.end(); it != end; ++it)
-        (*it)->render();
+    for(auto &system: m_systems)
+        system->render();
 }
 
 void ParticleEffect::update()

@@ -129,7 +129,7 @@ std::string ShaderProgram::log()
     glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
-        glGetShaderInfoLog(m_programId, infoLogLength-1, NULL, &buf[0]);
+        glGetShaderInfoLog(m_programId, infoLogLength-1, nullptr, &buf[0]);
         infoLog = &buf[0];
     }
     return infoLog;

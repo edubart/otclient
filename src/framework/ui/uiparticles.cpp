@@ -50,8 +50,8 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
         else
             g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
 
-        for(auto it = m_effects.begin(), end = m_effects.end(); it != end; ++it)
-            (*it)->render();
+        for(auto &effect: m_effects)
+            effect->render();
         g_painter->restoreSavedState();
     }
 }
