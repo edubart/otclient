@@ -29,6 +29,21 @@
 
 #include <physfs.h>
 
+namespace {
+
+bool isDirectory(const std::string &path)
+{
+    PHYSFS_Stat stat = {};
+    int result = PHYSFS_stat(path.c_str(), &stat);
+    if (!result) {
+        return false;
+    }
+
+    return stat.filetype == PHYSFS_FILETYPE_DIRECTORY;
+}
+
+} // namespace <anonymous>
+
 ResourceManager g_resources;
 
 void ResourceManager::init(const char *argv0)
@@ -52,7 +67,7 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
 
     bool found = false;
     for(const std::string& dir : possiblePaths) {
-        if(!PHYSFS_addToSearchPath(dir.c_str(), 0))
+        if(!PHYSFS_mount(dir.c_str(), nullptr, 0))
             continue;
 
         if(PHYSFS_exists(existentFile.c_str())) {
@@ -61,7 +76,7 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
             found = true;
             break;
         }
-        PHYSFS_removeFromSearchPath(dir.c_str());
+        PHYSFS_unmount(dir.c_str());
     }
 
     return found;
@@ -80,7 +95,7 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
         if(!PHYSFS_setWriteDir(userDir.c_str()) || !PHYSFS_mkdir(dirName.c_str())) {
-            g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+            g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
             return false;
         }
     }
@@ -90,7 +105,7 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
 {
     if(!PHYSFS_setWriteDir(writeDir.c_str())) {
-        g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getLastError()));
+        g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
         return false;
     }
 
@@ -108,11 +123,11 @@ bool ResourceManager::setWriteDir(const std::string& writeDir, bool create)
 bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 {
     std::string savePath = path;
-    if(!PHYSFS_addToSearchPath(path.c_str(), pushFront ? 0 : 1)) {
+    if(!PHYSFS_mount(path.c_str(), nullptr, pushFront ? 0 : 1)) {
         bool found = false;
         for(std::string searchPath : m_searchPaths) {
             std::string newPath = searchPath + path;
-            if(PHYSFS_addToSearchPath(newPath.c_str(), pushFront ? 0 : 1)) {
+            if(PHYSFS_mount(newPath.c_str(), nullptr, pushFront ? 0 : 1)) {
                 savePath = newPath;
                 found = true;
                 break;
@@ -120,7 +135,7 @@ bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
         }
 
         if(!found) {
-            //g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getLastError()));
+            //g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
             return false;
         }
     }
@@ -133,7 +148,7 @@ bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 
 bool ResourceManager::removeSearchPath(const std::string& path)
 {
-    if(!PHYSFS_removeFromSearchPath(path.c_str()))
+    if(!PHYSFS_unmount(path.c_str()))
         return false;
     auto it = std::find(m_searchPaths.begin(), m_searchPaths.end(), path);
     assert(it != m_searchPaths.end());
@@ -150,18 +165,18 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
             continue;
         std::string package = getRealDir(packagesDir) + "/" + file;
         if(!addSearchPath(package, true))
-            g_logger.error(stdext::format("Unable to read package '%s': %s", package, PHYSFS_getLastError()));
+            g_logger.error(stdext::format("Unable to read package '%s': %s", package, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     }
 }
 
 bool ResourceManager::fileExists(const std::string& fileName)
 {
-    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !PHYSFS_isDirectory(resolvePath(fileName).c_str()));
+    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !isDirectory(resolvePath(fileName)));
 }
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
-    return (PHYSFS_isDirectory(resolvePath(directoryName).c_str()));
+    return isDirectory(resolvePath(directoryName));
 }
 
 void ResourceManager::readFileStream(const std::string& fileName, std::iostream& out)
@@ -182,11 +197,11 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
 
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
     if(!file)
-        stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getLastError()));
+        stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
 
     int fileSize = PHYSFS_fileLength(file);
     std::string buffer(fileSize, 0);
-    PHYSFS_read(file, (void*)&buffer[0], 1, fileSize);
+    PHYSFS_readBytes(file, (void*)&buffer[0], fileSize);
     PHYSFS_close(file);
 
     return buffer;
@@ -196,11 +211,11 @@ bool ResourceManager::writeFileBuffer(const std::string& fileName, const uchar* 
 {
     PHYSFS_file* file = PHYSFS_openWrite(fileName.c_str());
     if(!file) {
-        g_logger.error(PHYSFS_getLastError());
+        g_logger.error(PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         return false;
     }
 
-    PHYSFS_write(file, (void*)data, size, 1);
+    PHYSFS_writeBytes(file, (void*)data, size);
     PHYSFS_close(file);
     return true;
 }
@@ -229,7 +244,7 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
 
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
     if(!file)
-        stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getLastError()));
+        stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return FileStreamPtr(new FileStream(fullPath, file, false));
 }
 
@@ -237,7 +252,7 @@ FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openAppend(fileName.c_str());
     if(!file)
-        stdext::throw_exception(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getLastError()));
+        stdext::throw_exception(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
@@ -245,7 +260,7 @@ FileStreamPtr ResourceManager::createFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openWrite(fileName.c_str());
     if(!file)
-        stdext::throw_exception(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getLastError()));
+        stdext::throw_exception(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return FileStreamPtr(new FileStream(fileName, file, true));
 }
 
