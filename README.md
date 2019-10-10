@@ -38,13 +38,28 @@ In short, if you need to compile OTClient, follow these tutorials:
 
 ### Build and run with Docker
 
-To build and run the client:
-```
-./build.sh
-./run.sh
+To build the image:
+
+```sh
+docker build -t edubart/otclient .
 ```
 
-The build step should be run just when something on implementation changes.
+To run the built image:
+
+```sh
+# Disable access control for the X server.
+xhost +
+
+# Run the container image with the required bindings to the host devices and volumes.
+docker run -it --rm \
+  --env DISPLAY \
+  --volume /tmp/.X11-unix:/tmp/.X11-unix \
+  --device /dev/dri \
+  --device /dev/snd edubart/otclient /bin/bash
+
+# Enable access control for the X server.
+xhost -
+```
 
 ### Need help?
 

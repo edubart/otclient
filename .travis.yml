@@ -2,10 +2,34 @@ language: cpp
 compiler:
   - gcc
 before_script:
-  - sudo apt-get install libboost-all-dev libphysfs-dev libssl-dev liblua5.1-dev libglew-dev libvorbis-dev libopenal-dev libz-dev -y
+  - |-
+    set -o errexit
+
+    sudo apt-get update
+    sudo apt-get install -y \
+      build-essential \
+      cmake \
+      git-core \
+      libboost-all-dev \
+      libglew-dev \
+      liblua5.1-0-dev \
+      libncurses5-dev \
+      libopenal-dev \
+      libssl-dev \
+      libvorbis-dev \
+      mercurial \
+      zlib1g-dev
+
+    hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/
+    mkdir -p physfs/build
+    pushd physfs/build
+    cmake ..
+    make -j$(nproc)
+    sudo make install
+    popd
 script: |
   cmake . -DCMAKE_BUILD_TYPE=Release
-  make
+  make -j$(nproc)
 notifications:
   irc:
     channels:
