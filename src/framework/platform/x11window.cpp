@@ -31,15 +31,15 @@
 
 X11Window::X11Window()
 {
-    m_display = 0;
-    m_visual = 0;
+    m_display = nullptr;
+    m_visual = nullptr;
     m_window = 0;
     m_rootWindow = 0;
     m_colormap = 0;
     m_cursor = 0;
     m_hiddenCursor = 0;
-    m_xim = 0;
-    m_xic = 0;
+    m_xim = nullptr;
+    m_xic = nullptr;
     m_screen = 0;
     m_wmDelete = 0;
     m_minimumSize = Size(600,480);
@@ -51,8 +51,8 @@ X11Window::X11Window()
     m_eglDisplay = 0;
     m_eglSurface = 0;
 #else
-    m_fbConfig = 0;
-    m_glxContext = 0;
+    m_fbConfig = nullptr;
+    m_glxContext = nullptr;
 #endif
 
     m_keyMap[XK_Escape] = Fw::KeyEscape;
@@ -247,22 +247,22 @@ void X11Window::terminate()
 
     if(m_visual) {
         XFree(m_visual);
-        m_visual = 0;
+        m_visual = nullptr;
     }
 
     if(m_xic) {
         XDestroyIC(m_xic);
-        m_xic = 0;
+        m_xic = nullptr;
     }
 
     if(m_xim) {
         XCloseIM(m_xim);
-        m_xim = 0;
+        m_xim = nullptr;
     }
 
     if(m_display) {
         XCloseDisplay(m_display);
-        m_display = 0;
+        m_display = nullptr;
     }
 
     m_visible = false;
@@ -270,7 +270,7 @@ void X11Window::terminate()
 
 void X11Window::internalOpenDisplay()
 {
-    m_display = XOpenDisplay(NULL);
+    m_display = XOpenDisplay(nullptr);
     if(!m_display)
         g_logger.fatal("Unable to open X11 display");
     m_screen = DefaultScreen(m_display);
@@ -343,7 +343,7 @@ bool X11Window::internalSetupWindowInput()
     }
 
     XSetLocaleModifiers("");
-    m_xim = XOpenIM(m_display, NULL, NULL, NULL);
+    m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr);
     if(!m_xim) {
         g_logger.error("XOpenIM failed");
         return false;
@@ -368,7 +368,7 @@ void X11Window::internalCheckGL()
     if(!eglInitialize(m_eglDisplay, NULL, NULL))
         g_logger.fatal("Unable to initialize EGL");
 #else
-    if(!glXQueryExtension(m_display, NULL, NULL))
+    if(!glXQueryExtension(m_display, nullptr, nullptr))
         g_logger.fatal("GLX not supported");
 #endif
 }
@@ -450,7 +450,7 @@ void X11Window::internalCreateGLContext()
     if(m_eglContext == EGL_NO_CONTEXT )
         g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
 #else
-    m_glxContext = glXCreateContext(m_display, m_visual, NULL, True);
+    m_glxContext = glXCreateContext(m_display, m_visual, nullptr, True);
 
     if(!m_glxContext)
         g_logger.fatal("Unable to create GLX context");
@@ -477,9 +477,9 @@ void X11Window::internalDestroyGLContext()
     }
 #else
     if(m_glxContext) {
-        glXMakeCurrent(m_display, None, NULL);
+        glXMakeCurrent(m_display, None, nullptr);
         glXDestroyContext(m_display, m_glxContext);
-        m_glxContext = 0;
+        m_glxContext = nullptr;
     }
 #endif
 }
@@ -606,7 +606,7 @@ void X11Window::poll()
             // lookup keysym and translate it
             KeySym keysym;
             char buf[32];
-            XLookupString(&xkey, buf, sizeof(buf), &keysym, 0);
+            XLookupString(&xkey, buf, sizeof(buf), &keysym, nullptr);
             Fw::Key keyCode = Fw::KeyUnknown;
 
             if(m_keyMap.find(keysym) != m_keyMap.end())
@@ -651,7 +651,7 @@ void X11Window::poll()
                     Atom wmStateMaximizedHorz = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
                     Atom actualType;
                     ulong i, numItems, bytesAfter;
-                    uchar *propertyValue = NULL;
+                    uchar *propertyValue = nullptr;
                     int actualFormat;
 
                     if(XGetWindowProperty(m_display, m_window, wmState,
@@ -740,7 +740,7 @@ void X11Window::poll()
                     Status status;
                     len = XmbLookupString(m_xic, &event.xkey, buf, sizeof(buf), &keysym, &status);
                 } else { // otherwise use XLookupString, but often it doesn't work right with dead keys
-                    static XComposeStatus compose = {NULL, 0};
+                    static XComposeStatus compose = {nullptr, 0};
                     len = XLookupString(&event.xkey, buf, sizeof(buf), &keysym, &compose);
                 }
 
@@ -972,7 +972,7 @@ void X11Window::setVerticalSync(bool enable)
     //TODO
 #else
     typedef GLint (*glSwapIntervalProc)(GLint);
-    glSwapIntervalProc glSwapInterval = NULL;
+    glSwapIntervalProc glSwapInterval = nullptr;
 
     if(isExtensionSupported("GLX_MESA_swap_control"))
         glSwapInterval = (glSwapIntervalProc)getExtensionProcAddress("glXSwapIntervalMESA");

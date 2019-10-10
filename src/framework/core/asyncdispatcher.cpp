@@ -38,7 +38,7 @@ void AsyncDispatcher::terminate()
 void AsyncDispatcher::spawn_thread()
 {
     m_running = true;
-    m_threads.push_back(std::thread(std::bind(&AsyncDispatcher::exec_loop, this)));
+    m_threads.emplace_back(std::bind(&AsyncDispatcher::exec_loop, this));
 }
 
 void AsyncDispatcher::stop()
@@ -55,7 +55,7 @@ void AsyncDispatcher::stop()
 void AsyncDispatcher::exec_loop() {
     std::unique_lock<std::mutex> lock(m_mutex);
     while(true) {
-        while(m_tasks.size() == 0 && m_running)
+        while(m_tasks.empty() && m_running)
             m_condition.wait(lock);
 
         if(!m_running)

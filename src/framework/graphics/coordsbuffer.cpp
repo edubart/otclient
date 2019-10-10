@@ -34,10 +34,8 @@ CoordsBuffer::CoordsBuffer()
 
 CoordsBuffer::~CoordsBuffer()
 {
-    if(m_hardwareVertexArray)
-        delete m_hardwareVertexArray;
-    if(m_hardwareTextureCoordArray)
-        delete m_hardwareTextureCoordArray;
+    delete m_hardwareVertexArray;
+    delete m_hardwareTextureCoordArray;
 }
 
 void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)

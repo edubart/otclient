@@ -63,8 +63,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
 
             bool restore = false;
             if(g_map.showZones() && thing->isGround()) {
-                for(unsigned int i = 0; i < sizeof(flags) / sizeof(tileflags_t); ++i) {
-                    tileflags_t flag = flags[i];
+                for(auto flag: flags) {
                     if(hasFlag(flag) && g_map.showZone(flag)) {
                         g_painter->setOpacity(g_map.getZoneOpacity());
                         g_painter->setColor(g_map.getZoneColor(flag));
@@ -386,8 +385,7 @@ ThingPtr Tile::getTopLookThing()
     if(isEmpty())
         return nullptr;
 
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if(!thing->isIgnoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
             return thing;
     }
@@ -400,14 +398,12 @@ ThingPtr Tile::getTopUseThing()
     if(isEmpty())
         return nullptr;
 
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if (thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature() && !thing->isSplash()))
             return thing;
     }
 
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if (!thing->isGround() && !thing->isGroundBorder() && !thing->isCreature() && !thing->isSplash())
             return thing;
     }
@@ -418,8 +414,7 @@ ThingPtr Tile::getTopUseThing()
 CreaturePtr Tile::getTopCreature()
 {
     CreaturePtr creature;
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if(thing->isLocalPlayer()) // return local player if there is no other creature
             creature = thing->static_self_cast<Creature>();
         else if(thing->isCreature() && !thing->isLocalPlayer())
@@ -480,8 +475,7 @@ ThingPtr Tile::getTopMultiUseThing()
     if(CreaturePtr topCreature = getTopCreature())
         return topCreature;
 
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if(thing->isForceUse())
             return thing;
     }
@@ -495,8 +489,7 @@ ThingPtr Tile::getTopMultiUseThing()
         }
     }
 
-    for(uint i = 0; i < m_things.size(); ++i) {
-        ThingPtr thing = m_things[i];
+    for(auto thing: m_things) {
         if(!thing->isGround() && !thing->isOnTop())
             return thing;
     }

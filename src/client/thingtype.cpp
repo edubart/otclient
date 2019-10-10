@@ -123,11 +123,11 @@ void ThingType::serialize(const FileStreamPtr& fin)
         }
     }
 
-    for(uint i = 0; i < m_spritesIndex.size(); i++) {
+    for(int i: m_spritesIndex) {
         if(g_game.getFeature(Otc::GameSpritesU32))
-            fin->addU32(m_spritesIndex[i]);
+            fin->addU32(i);
         else
-            fin->addU16(m_spritesIndex[i]);
+            fin->addU16(i);
     }
 }
 
@@ -328,7 +328,7 @@ void ThingType::exportImage(std::string fileName)
     if(m_null)
         stdext::throw_exception("cannot export null thingtype");
 
-    if(m_spritesIndex.size() == 0)
+    if(m_spritesIndex.empty())
         stdext::throw_exception("cannot export thingtype without sprites");
 
     ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, 32 * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));

@@ -320,7 +320,7 @@ std::string FileStream::getString()
         } else {
             if(m_pos+len > m_data.size()) {
                 throwError("read failed");
-                return 0;
+                return nullptr;
             }
 
             str = std::string((char*)&m_data[m_pos], len);

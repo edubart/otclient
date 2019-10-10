@@ -165,7 +165,7 @@ void PainterShaderProgram::addMultiTexture(const std::string& file)
 
 void PainterShaderProgram::bindMultiTextures()
 {
-    if(m_multiTextures.size() == 0)
+    if(m_multiTextures.empty())
         return;
 
     int i=1;

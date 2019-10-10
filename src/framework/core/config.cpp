@@ -74,7 +74,7 @@ void Config::clear()
 
 void Config::setValue(const std::string& key, const std::string& value)
 {
-    if(value == "") {
+    if(value.empty()) {
         remove(key);
         return;
     }
@@ -87,7 +87,7 @@ void Config::setList(const std::string& key, const std::vector<std::string>& lis
 {
     remove(key);
 
-    if(list.size() == 0)
+    if(list.empty())
         return;
 
     OTMLNodePtr child = OTMLNode::create(key, true);

@@ -103,7 +103,7 @@ protected:
     virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
     virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onDoubleClick(const Point& mousePos);
-    virtual void onTextAreaUpdate(const Point& vitualOffset, const Size& virtualSize, const Size& totalSize);
+    virtual void onTextAreaUpdate(const Point& vitualOffset, const Size& visibleSize, const Size& totalSize);
 
 private:
     void disableUpdates() { m_updatesEnabled = false; }

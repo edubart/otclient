@@ -686,7 +686,7 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
         return;
     }
 
-    if(dirs.size() == 0)
+    if(dirs.empty())
         return;
 
     // must cancel follow before any new walk
@@ -1715,10 +1715,10 @@ std::string Game::formatCreatureName(const std::string& name)
     std::string formatedName = name;
     if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0) {
         bool upnext = true;
-        for(uint i=0;i<formatedName.length();++i) {
-            char ch = formatedName[i];
+        for(char &i: formatedName) {
+            char ch = i;
             if(upnext) {
-                formatedName[i] = stdext::upchar(ch);
+                i = stdext::upchar(ch);
                 upnext = false;
             }
             if(ch == ' ')

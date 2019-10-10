@@ -44,20 +44,21 @@ namespace stdext {
 
 const char* demangle_name(const char* name)
 {
+    static const unsigned BufferSize = 1024;
+    static char Buffer[1024] = {};
+
 #ifdef _MSC_VER
-    static char buffer[1024];
-    UnDecorateSymbolName(name, buffer, sizeof(buffer), UNDNAME_COMPLETE);
-    return buffer;
+    UnDecorateSymbolName(name, Buffer, BufferSize, UNDNAME_COMPLETE);
+    return Buffer;
 #else
     size_t len;
     int status;
-    static char buffer[1024];
-    char* demangled = abi::__cxa_demangle(name, 0, &len, &status);
+    char* demangled = abi::__cxa_demangle(name, nullptr, &len, &status);
     if(demangled) {
-        strcpy(buffer, demangled);
+        strncpy(Buffer, demangled, BufferSize);
         free(demangled);
     }
-    return buffer;
+    return Buffer;
 #endif
 }
 

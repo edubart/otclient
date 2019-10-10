@@ -1000,7 +1000,7 @@ void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
         int weight = msg->getU32();
         int buyPrice = msg->getU32();
         int sellPrice = msg->getU32();
-        items.push_back(std::make_tuple(item, name, weight, buyPrice, sellPrice));
+        items.emplace_back(item, name, weight, buyPrice, sellPrice);
     }
 
     g_game.processOpenNpcTrade(items);
@@ -1026,7 +1026,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
         else
             amount = msg->getU8();
 
-        goods.push_back(std::make_tuple(Item::create(itemId), amount));
+        goods.emplace_back(Item::create(itemId), amount);
     }
 
     g_game.processPlayerGoods(money, goods);
@@ -1571,7 +1571,7 @@ void ProtocolGame::parseChannelList(const InputMessagePtr& msg)
     for(int i = 0; i < count; i++) {
         int id = msg->getU16();
         std::string name = msg->getString();
-        channelList.push_back(std::make_tuple(id, name));
+        channelList.emplace_back(id, name);
     }
 
     g_game.processChannelList(channelList);
@@ -1785,7 +1785,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
             std::string outfitName = msg->getString();
             int outfitAddons = msg->getU8();
 
-            outfitList.push_back(std::make_tuple(outfitId, outfitName, outfitAddons));
+            outfitList.emplace_back(outfitId, outfitName, outfitAddons);
         }
     } else {
         int outfitStart, outfitEnd;
@@ -1798,7 +1798,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
         }
 
         for(int i = outfitStart; i <= outfitEnd; i++)
-            outfitList.push_back(std::make_tuple(i, "", 0));
+            outfitList.emplace_back(i, "", 0);
     }
 
     std::vector<std::tuple<int, std::string> > mountList;
@@ -1808,7 +1808,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
             int mountId = msg->getU16(); // mount type
             std::string mountName = msg->getString(); // mount name
 
-            mountList.push_back(std::make_tuple(mountId, mountName));
+            mountList.emplace_back(mountId, mountName);
         }
     }
 
@@ -1881,7 +1881,7 @@ void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)
         int id = msg->getU16();
         std::string name = msg->getString();
         bool completed = msg->getU8();
-        questList.push_back(std::make_tuple(id, name, completed));
+        questList.emplace_back(id, name, completed);
     }
 
     g_game.processQuestLog(questList);
@@ -1895,7 +1895,7 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
     for(int i = 0; i < missionCount; i++) {
         std::string missionName = msg->getString();
         std::string missionDescrition = msg->getString();
-        questMissions.push_back(std::make_tuple(missionName, missionDescrition));
+        questMissions.emplace_back(missionName, missionDescrition);
     }
 
     g_game.processQuestLine(questId, questMissions);
@@ -1920,7 +1920,7 @@ void ProtocolGame::parseItemInfo(const InputMessagePtr& msg)
         item->setCountOrSubType(msg->getU8());
 
         std::string desc = msg->getString();
-        list.push_back(std::make_tuple(item, desc));
+        list.emplace_back(item, desc);
     }
 
     g_lua.callGlobalField("g_game", "onItemInfo", list);
@@ -1947,7 +1947,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     for(int i = 0; i < sizeButtons; ++i) {
         std::string value = msg->getString();
         int id = msg->getU8();
-        buttonList.push_back(std::make_tuple(id, value));
+        buttonList.emplace_back(id, value);
     }
 
     int sizeChoices = msg->getU8();
@@ -1955,7 +1955,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     for(int i = 0; i < sizeChoices; ++i) {
         std::string value = msg->getString();
         int id = msg->getU8();
-        choiceList.push_back(std::make_tuple(id, value));
+        choiceList.emplace_back(id, value);
     }
 
     int enterButton, escapeButton;

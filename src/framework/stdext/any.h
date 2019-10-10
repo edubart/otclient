@@ -52,7 +52,7 @@ public:
     any() : content(nullptr) { }
     any(const any& other) : content(other.content ? other.content->clone() : nullptr) { }
     template<typename T> any(const T& value) : content(new holder<T>(value)) { }
-    ~any() { if(content) delete content; }
+    ~any() { delete content; }
 
     any& swap(any& rhs) { std::swap(content, rhs.content); return *this; }
 

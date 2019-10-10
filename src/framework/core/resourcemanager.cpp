@@ -264,8 +264,8 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
     std::list<std::string> files;
     auto rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
-    for(int i = 0; rc[i] != NULL; i++)
-        files.push_back(rc[i]);
+    for(int i = 0; rc[i] != nullptr; i++)
+        files.emplace_back(rc[i]);
 
     PHYSFS_freeList(rc);
     return files;
