@@ -86,7 +86,9 @@ void UIWidget::drawText(const Rect& screenCoords)
         return;
 
     if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
-        Rect coords = Rect(screenCoords.topLeft() + m_textOffset, screenCoords.bottomRight());
+        Rect coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
+        coords.translate(m_textOffset);
+
         m_textMustRecache = false;
         m_textCachedScreenCoords = coords;
 
