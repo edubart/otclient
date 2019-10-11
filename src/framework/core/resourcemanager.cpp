@@ -29,21 +29,6 @@
 
 #include <physfs.h>
 
-namespace {
-
-bool isDirectory(const std::string &path)
-{
-    PHYSFS_Stat stat = {};
-    int result = PHYSFS_stat(path.c_str(), &stat);
-    if (!result) {
-        return false;
-    }
-
-    return stat.filetype == PHYSFS_FILETYPE_DIRECTORY;
-}
-
-} // namespace <anonymous>
-
 ResourceManager g_resources;
 
 void ResourceManager::init(const char *argv0)
@@ -171,12 +156,18 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
 
 bool ResourceManager::fileExists(const std::string& fileName)
 {
-    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !isDirectory(resolvePath(fileName)));
+    const std::string path = resolvePath(fileName);
+    return (PHYSFS_exists(path.c_str()) && !directoryExists(path));
 }
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
-    return isDirectory(resolvePath(directoryName));
+    PHYSFS_Stat stat = {};
+    if (!PHYSFS_stat(directoryName.c_str(), &stat)) {
+        return false;
+    }
+
+    return stat.filetype == PHYSFS_FILETYPE_DIRECTORY;
 }
 
 void ResourceManager::readFileStream(const std::string& fileName, std::iostream& out)
