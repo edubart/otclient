@@ -20,7 +20,7 @@ before_script:
       mercurial \
       zlib1g-dev
 
-    hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/
+    hg clone -r stable-3.0 http://hg.icculus.org/icculus/physfs/
     mkdir -p physfs/build
     pushd physfs/build
     cmake ..
