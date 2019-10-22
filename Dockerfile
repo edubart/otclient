@@ -22,7 +22,7 @@ RUN apt-get update; \
   apt-get clean && apt-get autoclean
 
 WORKDIR /
-RUN hg clone -r stable-2.0 http://hg.icculus.org/icculus/physfs/
+RUN hg clone -r stable-3.0 http://hg.icculus.org/icculus/physfs/
 WORKDIR /physfs/build/
 RUN cmake ..
 RUN make -j$(nproc)
