@@ -371,8 +371,6 @@ uint8 Tile::getMinimapColorByte()
         return m_minimapColor;
 
     for(const ThingPtr& thing : m_things) {
-        if(!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop())
-            break;
         uint8 c = thing->getMinimapColor();
         if(c != 0)
             color = c;

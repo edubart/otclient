@@ -67,7 +67,6 @@ function init()
   connect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
-    onOutfitChange = onCreatureOutfitChange,
     onHealthPercentChange = onCreatureHealthPercentChange,
     onPositionChange = onCreaturePositionChange,
     onAppear = onCreatureAppear,
@@ -98,7 +97,6 @@ function terminate()
   disconnect(Creature, {
     onSkullChange = updateCreatureSkull,
     onEmblemChange = updateCreatureEmblem,
-    onOutfitChange = onCreatureOutfitChange,
     onHealthPercentChange = onCreatureHealthPercentChange,
     onPositionChange = onCreaturePositionChange,
     onAppear = onCreatureAppear,
@@ -228,9 +226,7 @@ function checkCreatures()
   local player = g_game.getLocalPlayer()
   local spectators = g_map.getSpectators(player:getPosition(), false)
   for _, creature in ipairs(spectators) do
-    if doCreatureFitFilters(creature) then
-      addCreature(creature)
-    end
+    addCreature(creature)
   end
 end
 
@@ -323,14 +319,6 @@ function onCreaturePositionChange(creature, newPos, oldPos)
   end
 end
 
-function onCreatureOutfitChange(creature, outfit, oldOutfit)
-  if doCreatureFitFilters(creature) then
-    addCreature(creature)
-  else
-    removeCreature(creature)
-  end
-end
-
 function onCreatureAppear(creature)
   if creature:isLocalPlayer() then
     addEvent(function()
@@ -338,9 +326,7 @@ function onCreatureAppear(creature)
     end)
   end
 
-  if doCreatureFitFilters(creature) then
-    addCreature(creature)
-  end
+  addCreature(creature)
 end
 
 function onCreatureDisappear(creature)
@@ -452,7 +438,7 @@ function addCreature(creature)
   end
 
   local localPlayer = g_game.getLocalPlayer()
-  battleButton:setVisible(localPlayer:hasSight(creature:getPosition()) and creature:canBeSeen())
+  battleButton:setVisible(localPlayer:hasSight(creature:getPosition()) and creature:canBeSeen() and doCreatureFitFilters(creature))
 end
 
 function removeAllCreatures()
