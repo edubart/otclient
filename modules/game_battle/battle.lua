@@ -249,25 +249,25 @@ end
 
 function doShowCreatureAtBattle(creature)
   if doCreatureFitFilters(creature) then
-	  local hidePlayers = hidePlayersButton:isChecked()
-	  local hideNPCs = hideNPCsButton:isChecked()
-	  local hideMonsters = hideMonstersButton:isChecked()
-	  local hideSkulls = hideSkullsButton:isChecked()
-	  local hideParty = hidePartyButton:isChecked()
+    local hidePlayers = hidePlayersButton:isChecked()
+    local hideNPCs = hideNPCsButton:isChecked()
+    local hideMonsters = hideMonstersButton:isChecked()
+    local hideSkulls = hideSkullsButton:isChecked()
+    local hideParty = hidePartyButton:isChecked()
 
-	  if hidePlayers and creature:isPlayer() then
-		return false
-	  elseif hideNPCs and creature:isNpc() then
-		return false
-	  elseif hideMonsters and creature:isMonster() then
-		return false
-	  elseif hideSkulls and creature:isPlayer() and creature:getSkull() == SkullNone then
-		return false
-	  elseif hideParty and creature:getShield() > ShieldWhiteBlue then
-		return false
-	  end
+    if hidePlayers and creature:isPlayer() then
+      return false
+    elseif hideNPCs and creature:isNpc() then
+      return false
+    elseif hideMonsters and creature:isMonster() then
+      return false
+    elseif hideSkulls and creature:isPlayer() and creature:getSkull() == SkullNone then
+      return false
+    elseif hideParty and creature:getShield() > ShieldWhiteBlue then
+      return false
+    end
 
-	  return true
+    return true
   end
   return false
 end
