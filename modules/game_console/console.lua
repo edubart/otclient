@@ -882,7 +882,7 @@ function sendMessage(message, tab)
     channel = 0
   end
 
-  local findIni, chatCommandInitial, chatCommandPrivate, chatCommandEnd, chatCommandMessage = message:find("([%*%@])(.+)([%*%@])(.*)")
+  local findIni, findEnd, chatCommandInitial, chatCommandPrivate, chatCommandEnd, chatCommandMessage = message:find("([%*%@])(.+)([%*%@])(.*)")
   if findIni ~= nil and findIni == 1 then -- player used private chat command
     if chatCommandInitial == chatCommandEnd then
       chatCommandPrivateRepeat = false
