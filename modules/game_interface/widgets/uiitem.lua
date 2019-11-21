@@ -22,12 +22,12 @@ end
 function UIItem:onDrop(widget, mousePos)
 
   if not self:canAcceptDrop(widget, mousePos) then
-	return false
+    return false
   end
 
   local item = widget.currentDragThing
   if not item:isItem() then
-	return false
+    return false
   end
 
   local itemPos = item:getPosition()
@@ -38,7 +38,7 @@ function UIItem:onDrop(widget, mousePos)
   
   local toPos = self.position
   if itemPos.x == toPos.x and itemPos.y == toPos.y and itemPos.z == toPos.z then
-	return false
+    return false
   end
 
   if item:getCount() > 1 then
