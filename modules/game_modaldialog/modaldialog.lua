@@ -78,7 +78,8 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   if #choices > 0 then
     choiceList:setVisible(true)
     choiceScrollbar:setVisible(true)
-
+    choiceList:focusChild(choiceList:getFirstChild())
+    
     additionalHeight = math.min(modalDialog.maximumChoices, math.max(modalDialog.minimumChoices, #choices)) * labelHeight
     additionalHeight = additionalHeight + choiceList:getPaddingTop() + choiceList:getPaddingBottom()
   end
