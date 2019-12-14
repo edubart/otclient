@@ -55,6 +55,9 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   end
   choiceList:focusChild(choiceList:getFirstChild())
 
+  g_keyboard.bindKeyPress('Down', function() choiceList:focusNextChild(KeyboardFocusReason) end, modalDialog)
+  g_keyboard.bindKeyPress('Up', function() choiceList:focusPreviousChild(KeyboardFocusReason) end, modalDialog)
+
   local buttonsWidth = 0
   for i = 1, #buttons do
     local buttonId = buttons[i][1]
