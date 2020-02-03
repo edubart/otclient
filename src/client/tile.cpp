@@ -94,9 +94,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
         }
     }
 
-    int redrawPreviousTopW = 0;
-    int redrawPreviousTopH = 0;
-
     if(drawFlags & Otc::DrawItems) {
         // now common items in reverse order
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
@@ -104,31 +101,9 @@ void Tile::draw(const Point& dest, float scaleFactor, int drawFlags, LightView *
             if(thing->isOnTop() || thing->isOnBottom() || thing->isGroundBorder() || thing->isGround() || thing->isCreature())
                 break;
             thing->draw(dest - m_drawElevation*scaleFactor, scaleFactor, animate, lightView);
-
-            if(thing->isLyingCorpse()) {
-                redrawPreviousTopW = std::max<int>(thing->getWidth(), redrawPreviousTopW);
-                redrawPreviousTopH = std::max<int>(thing->getHeight(), redrawPreviousTopH);
-            }
-
             m_drawElevation += thing->getElevation();
             if(m_drawElevation > Otc::MAX_ELEVATION)
                 m_drawElevation = Otc::MAX_ELEVATION;
-        }
-    }
-
-    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
-    if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
-        int topRedrawFlags = drawFlags & (Otc::DrawCreatures | Otc::DrawEffects | Otc::DrawOnTop | Otc::DrawAnimations);
-        if(topRedrawFlags) {
-            for(int x=-redrawPreviousTopW;x<=0;++x) {
-                for(int y=-redrawPreviousTopH;y<=0;++y) {
-                    if(x == 0 && y == 0)
-                        continue;
-                    const TilePtr& tile = g_map.getTile(m_position.translated(x,y));
-                    if(tile)
-                        tile->draw(dest + Point(x*Otc::TILE_PIXELS, y*Otc::TILE_PIXELS)*scaleFactor, scaleFactor, topRedrawFlags);
-                }
-            }
         }
     }
 
