@@ -76,11 +76,10 @@ private:
 //EXPLORATION MODE
 struct MinimapCache
 {
-	bool drawn;
-	Position pos;
-	MinimapTile minimapTile;
-	Point offsetPos;
-	MinimapBlock* block;
+    Position pos;
+    MinimapTile minimapTile;
+    Point offsetPos;
+    MinimapBlock* block;
 };
 
 #pragma pack(pop)
@@ -119,8 +118,12 @@ private:
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z+1];
     
     //EXPLORATION MODE
-	std::map<uint, std::list<MinimapCache>> m_minimapFloorCache;
-	std::map<Position, MinimapTile> m_minimapDrawCache;
+    typedef std::list<MinimapCache> MinimapCacheList;
+    typedef std::map<uint, MinimapCacheList> MinimapFloorCache;
+    typedef std::map<Position, MinimapTile> MinimapDrawCache;
+
+    MinimapFloorCache m_minimapFloorCache;
+    MinimapDrawCache m_minimapDrawCache;
 };
 
 extern Minimap g_minimap;
