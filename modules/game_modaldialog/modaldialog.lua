@@ -53,7 +53,10 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
       labelHeight = label:getHeight()
     end
   end
-  choiceList:focusNextChild()
+  choiceList:focusChild(choiceList:getFirstChild())
+
+  g_keyboard.bindKeyPress('Down', function() choiceList:focusNextChild(KeyboardFocusReason) end, modalDialog)
+  g_keyboard.bindKeyPress('Up', function() choiceList:focusPreviousChild(KeyboardFocusReason) end, modalDialog)
 
   local buttonsWidth = 0
   for i = 1, #buttons do
@@ -78,7 +81,7 @@ function onModalDialog(id, title, message, buttons, enterButton, escapeButton, c
   if #choices > 0 then
     choiceList:setVisible(true)
     choiceScrollbar:setVisible(true)
-
+    
     additionalHeight = math.min(modalDialog.maximumChoices, math.max(modalDialog.minimumChoices, #choices)) * labelHeight
     additionalHeight = additionalHeight + choiceList:getPaddingTop() + choiceList:getPaddingBottom()
   end
