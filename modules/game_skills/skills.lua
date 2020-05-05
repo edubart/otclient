@@ -285,11 +285,11 @@ function onSkillButtonClick(button)
 end
 
 function onExperienceChange(localPlayer, value)
-  setSkillValue('experience', value)
+  setSkillValue('experience', comma_value(value))
 end
 
 function onLevelChange(localPlayer, value, percent)
-  setSkillValue('level', value)
+  setSkillValue('level', comma_value(value))
   local text = tr('You have %s percent to go', 100 - percent) .. '\n' ..
                tr('%s of experience left', expToAdvance(localPlayer:getLevel(), localPlayer:getExperience()))
 
@@ -300,7 +300,7 @@ function onLevelChange(localPlayer, value, percent)
         local hoursLeft = (nextLevelExp - localPlayer:getExperience()) / expPerHour
         local minutesLeft = math.floor((hoursLeft - math.floor(hoursLeft))*60)
         hoursLeft = math.floor(hoursLeft)
-        text = text .. '\n' .. tr('%d of experience per hour', expPerHour)
+        text = text .. '\n' .. tr('%d of experience per hour', comma_value(expPerHour))
         text = text .. '\n' .. tr('Next level in %d hours and %d minutes', hoursLeft, minutesLeft)
      end
   end
@@ -309,21 +309,21 @@ function onLevelChange(localPlayer, value, percent)
 end
 
 function onHealthChange(localPlayer, health, maxHealth)
-  setSkillValue('health', health)
+  setSkillValue('health', comma_value(health))
   checkAlert('health', health, maxHealth, 30)
 end
 
 function onManaChange(localPlayer, mana, maxMana)
-  setSkillValue('mana', mana)
+  setSkillValue('mana', comma_value(mana))
   checkAlert('mana', mana, maxMana, 30)
 end
 
 function onSoulChange(localPlayer, soul)
-  setSkillValue('soul', soul)
+  setSkillValue('soul', comma_value(soul))
 end
 
 function onFreeCapacityChange(localPlayer, freeCapacity)
-  setSkillValue('capacity', freeCapacity)
+  setSkillValue('capacity', comma_value(freeCapacity))
   checkAlert('capacity', freeCapacity, localPlayer:getTotalCapacity(), 20)
 end
 
@@ -397,7 +397,7 @@ function onRegenerationChange(localPlayer, regenerationTime)
 end
 
 function onSpeedChange(localPlayer, speed)
-  setSkillValue('speed', speed)
+  setSkillValue('speed', comma_value(speed))
 
   onBaseSpeedChange(localPlayer, localPlayer:getBaseSpeed())
 end
@@ -407,7 +407,7 @@ function onBaseSpeedChange(localPlayer, baseSpeed)
 end
 
 function onMagicLevelChange(localPlayer, magiclevel, percent)
-  setSkillValue('magiclevel', magiclevel)
+  setSkillValue('magiclevel', comma_value(magiclevel))
   setSkillPercent('magiclevel', percent, tr('You have %s percent to go', 100 - percent))
 
   onBaseMagicLevelChange(localPlayer, localPlayer:getBaseMagicLevel())
@@ -418,7 +418,7 @@ function onBaseMagicLevelChange(localPlayer, baseMagicLevel)
 end
 
 function onSkillChange(localPlayer, id, level, percent)
-  setSkillValue('skillId' .. id, level)
+  setSkillValue('skillId' .. id, comma_value(level))
   setSkillPercent('skillId' .. id, percent, tr('You have %s percent to go', 100 - percent))
 
   onBaseSkillChange(localPlayer, id, localPlayer:getSkillBaseLevel(id))
