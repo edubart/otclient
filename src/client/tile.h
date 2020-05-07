@@ -30,7 +30,7 @@
 #include "item.h"
 #include <framework/luaengine/luaobject.h>
 
-enum tileflags_t
+enum tileflags_t : uint32
 {
     TILESTATE_NONE = 0,
     TILESTATE_PROTECTIONZONE = 1 << 0,

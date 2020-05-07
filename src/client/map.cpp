@@ -362,12 +362,12 @@ void Map::cleanTile(const Position& pos)
             notificateTileUpdate(pos);
         }
     }
-    for(auto it = m_staticTexts.begin();it != m_staticTexts.end();) {
-        const StaticTextPtr& staticText = *it;
+    for(auto itt = m_staticTexts.begin();itt != m_staticTexts.end();) {
+        const StaticTextPtr& staticText = *itt;
         if(staticText->getPosition() == pos && staticText->getMessageMode() == Otc::MessageNone)
-            it = m_staticTexts.erase(it);
+            itt = m_staticTexts.erase(itt);
         else
-            ++it;
+            ++itt;
     }
 }
 

@@ -82,7 +82,7 @@ public:
 
     LuaObjectPtr asLuaObject() { return static_self_cast<LuaObject>(); }
 
-    void operator=(const LuaObject& other) { }
+    void operator=(const LuaObject&) { }
 
 private:
     int m_fieldsTableRef;
