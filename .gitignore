@@ -33,6 +33,8 @@ config.otml
 !.gitignore
 otclient.map
 otclient.layout
+otclient.exp
+otclient.lib
 LOCALTODO
 tags
 Thumbs.db
