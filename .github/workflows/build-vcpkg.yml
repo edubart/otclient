@@ -77,19 +77,14 @@ jobs:
         # Using 'latest' branch, the latest CMake is installed.
         uses: lukka/get-cmake@latest
 
-      - name: Ubuntu - install luajit, remove libmysqlclient-dev
+      - name: Ubuntu - install luajit
         run: |
           sudo apt-get install libluajit-5.1-dev
-          sudo apt-get remove -y libmysqlclient-dev
         if: contains( matrix.os, 'ubuntu')
 
       - name: MacOS - install luajit pkgconfig
         run: brew install luajit pkgconfig
         if: contains( matrix.os, 'macos')
-
-      - name: Windows - remove C:/mysql*
-        run: rm -r -fo C:/mysql-5.7.21-winx64
-        if: contains( matrix.os, 'windows')
 
       - uses: lukka/set-shell-env@v1
         with:
