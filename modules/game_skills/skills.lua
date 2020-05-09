@@ -300,7 +300,7 @@ function onLevelChange(localPlayer, value, percent)
         local hoursLeft = (nextLevelExp - localPlayer:getExperience()) / expPerHour
         local minutesLeft = math.floor((hoursLeft - math.floor(hoursLeft))*60)
         hoursLeft = math.floor(hoursLeft)
-        text = text .. '\n' .. tr('%d of experience per hour', comma_value(expPerHour))
+        text = text .. '\n' .. tr('%s of experience per hour', comma_value(expPerHour))
         text = text .. '\n' .. tr('Next level in %d hours and %d minutes', hoursLeft, minutesLeft)
      end
   end
