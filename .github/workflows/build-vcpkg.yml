@@ -1,0 +1,133 @@
+name: Build with vcpkg
+
+on:
+  push:
+    branches:
+      - master
+      - v*
+
+    tags:
+      - v*
+
+    paths:
+      - cmake/**
+      - src/**
+      - CMakeLists.txt
+
+  pull_request:
+    paths:
+      - cmake/**
+      - src/**
+      - CMakeLists.txt
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        name: [ubuntu-gcc, ubuntu-clang, macos-clang, windows-msvc]
+        buildtype: [Debug, Release]
+        luajit: [on, off]
+        include:
+          - name: windows-msvc
+            os: windows
+            cxx: cl.exe
+            cc: cl.exe
+            triplet: x64-windows
+            packages: >
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+          - name: ubuntu-gcc
+            os: ubuntu
+            cxx: g++
+            cc: gcc
+            triplet: x64-linux
+            packages: >
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+          - name: ubuntu-clang
+            os: ubuntu
+            cxx: clang++
+            cc: clang
+            triplet: x64-linux
+            packages: >
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+          - name: macos-clang
+            os: macos
+            cxx: clang++
+            cc: clang
+            triplet: x64-osx
+            packages: >
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Unshallow
+        run: git fetch --prune --unshallow
+
+      - name: Get latest CMake
+        # Using 'latest' branch, the latest CMake is installed.
+        uses: lukka/get-cmake@latest
+
+      - name: Ubuntu - install luajit
+        run: |
+          sudo apt-get install libluajit-5.1-dev
+        if: contains( matrix.os, 'ubuntu')
+
+      - name: MacOS - install luajit pkgconfig
+        run: brew install luajit pkgconfig
+        if: contains( matrix.os, 'macos')
+
+      - uses: lukka/set-shell-env@v1
+        with:
+          CXX: ${{ matrix.cxx }}
+          CC: ${{ matrix.cc }}
+
+      - name: Run vcpkg
+        uses: lukka/run-vcpkg@v2
+        with:
+          vcpkgArguments: ${{ matrix.packages }}
+          vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
+          vcpkgTriplet: ${{ matrix.triplet }}
+          vcpkgGitCommitId: 7db401cb1ef1fc559ec9f9ce814d064c328fd767
+
+      - name: Build with CMake
+        uses: lukka/run-cmake@v2
+        with:
+          useVcpkgToolchainFile: true
+          buildDirectory: ${{ runner.workspace }}/build
+          cmakeBuildType: ${{ matrix.buildtype }}
+          cmakeAppendedArgs: -DUSE_LUAJIT=${{ matrix.luajit }}
+
+      - name: dir
+        run: find $RUNNER_WORKSPACE
+        shell: bash
+
+      - name: Upload artifact binary
+        uses: actions/upload-artifact@v2
+        with:
+          name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
+          path: ${{ runner.workspace }}/build/otclient
+        if: "! contains( matrix.os, 'windows')"
+
+      - name: Upload artifact binary (exe)
+        uses: actions/upload-artifact@v2
+        with:
+          name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
+          path: ${{ runner.workspace }}/build/otclient.exe
+        if: contains( matrix.os, 'windows')
+
+      - name: Upload artifact binary (dlls)
+        uses: actions/upload-artifact@v2
+        with:
+          name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
+          path: ${{ runner.workspace }}/build/*.dll
+        if: contains( matrix.os, 'windows')
