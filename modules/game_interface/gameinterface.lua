@@ -177,7 +177,7 @@ function show()
 
   addEvent(function()
     if not limitedZoom or g_game.isGM() then
-      gameMapPanel:setMaxZoomOut(513)
+      gameMapPanel:setMaxZoomOut(27)
       gameMapPanel:setLimitVisibleRange(false)
     else
       gameMapPanel:setMaxZoomOut(11)

@@ -298,9 +298,9 @@ function EnterGame.doLogin()
   G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
   G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit'):getText()
   G.stayLogged = enterGame:getChildById('stayLoggedBox'):isChecked()
-  G.host = enterGame:getChildById('serverHostTextEdit'):getText()
-  G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
-  local clientVersion = tonumber(clientBox:getText())
+  G.host = "127.0.0.1"
+  G.port = 7171
+  local clientVersion = 1098
   EnterGame.hide()
 
   if g_game.isOnline() then
