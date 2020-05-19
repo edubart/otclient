@@ -686,6 +686,19 @@ void Map::setAwareRange(const AwareRange& range)
     removeUnawareThings();
 }
 
+void Map::setMapAwareRange(int xrange, int yrange, bool skipSync)
+{
+    AwareRange range;
+    range.right = xrange / 2;
+    range.bottom = yrange / 2;
+    range.left = range.right - 1;
+    range.top = range.bottom - 1;
+    setAwareRange(range);
+    if (!skipSync) {
+        g_game.changeMapAwareRange(xrange, yrange);
+    }
+}
+
 void Map::resetAwareRange()
 {
     AwareRange range;

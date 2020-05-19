@@ -57,7 +57,6 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             else
                 msg->setReadPos(readPos); // restore read pos
 
-            std::cout << opcode << std::endl;
             switch(opcode) {
             case Proto::GameServerLoginOrPendingState:
                 if(g_game.getFeature(Otc::GameLoginPending))
@@ -1992,13 +1991,7 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
     int xrange = msg->getU8();
     int yrange = msg->getU8();
 
-    AwareRange range;
-    range.left = xrange/2 - 1;
-    range.right = xrange/2;
-    range.top = yrange/2 - 1;
-    range.bottom = yrange/2;
-
-    g_map.setAwareRange(range);
+    g_map.setMapAwareRange(xrange, yrange, true);
     g_lua.callGlobalField("g_game", "onMapChangeAwareRange", xrange, yrange);
 }
 

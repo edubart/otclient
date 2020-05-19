@@ -352,7 +352,7 @@ end
 
 function updateStretchShrink()
   if modules.client_options.getOption('dontStretchShrink') and not alternativeView then
-    gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    gameMapPanel:setVisibleDimension({ width = 44, height = 26 })
 
     -- Set gameMapPanel size to height = 11 * 32 + 2
     bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() + (gameMapPanel:getHeight() - 32 * 11) - 10)
@@ -839,7 +839,7 @@ function setupViewMode(mode)
   if mode == 0 then
     local limit = limitedZoom and not g_game.isGM()
     gameMapPanel:setKeepAspectRatio(false)
-    gameMapPanel:setLimitVisibleRange(true)
+    gameMapPanel:setLimitVisibleRange(false)
     gameMapPanel:setMaxZoomOut(23)
     gameMapPanel:setZoom(23)
     gameMapPanel:fill('parent')
@@ -856,7 +856,7 @@ function setupViewMode(mode)
     gameMapPanel:setOn(true)
     gameBottomPanel:setImageColor('#ffffff88')
     modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
-    g_game.changeMapAwareRange(44, 26)
+    g_map.setMapAwareRange(44, 26)
   end
 
   currentViewMode = mode

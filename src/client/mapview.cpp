@@ -63,7 +63,7 @@ MapView::MapView()
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
-    setVisibleDimension(Size(15, 11));
+    setVisibleDimension(Size(44, 26));
 
     m_shader = g_shaders.getDefaultMapShader();
 }
@@ -515,6 +515,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         g_logger.traceError("reach max zoom in");
         return;
     }
+    g_map.setMapAwareRange(visibleDimension.width() + 3, visibleDimension.height() + 3, false);
 
     updateGeometry(visibleDimension, m_optimizedSize);
 }

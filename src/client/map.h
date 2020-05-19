@@ -229,6 +229,7 @@ public:
     bool isAwareOfPosition(const Position& pos);
 
     void setAwareRange(const AwareRange& range);
+    void setMapAwareRange(int xrange, int yrange, bool skipSync);
     void resetAwareRange();
     AwareRange getAwareRange() { return m_awareRange; }
 
