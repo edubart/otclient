@@ -165,6 +165,7 @@ private:
     void parseChallenge(const InputMessagePtr& msg);
     void parseDeath(const InputMessagePtr& msg);
     void parseMapDescription(const InputMessagePtr& msg);
+    void parseFloorDescription(const InputMessagePtr& msg);
     void parseMapMoveNorth(const InputMessagePtr& msg);
     void parseMapMoveEast(const InputMessagePtr& msg);
     void parseMapMoveSouth(const InputMessagePtr& msg);

@@ -2,7 +2,7 @@ UIGameMap = extends(UIMap, "UIGameMap")
 
 function UIGameMap.create()
   local gameMap = UIGameMap.internalCreate()
-  gameMap:setKeepAspectRatio(true)
+  gameMap:setKeepAspectRatio(false)
   gameMap:setVisibleDimension({width = 15, height = 11})
   gameMap:setDrawLights(true)
   return gameMap

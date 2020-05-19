@@ -1463,8 +1463,15 @@ void Game::ping()
 
 void Game::changeMapAwareRange(int xrange, int yrange)
 {
+    AwareRange range;
+    range.right = xrange / 2;
+    range.bottom = yrange / 2;
+    range.left = range.right - 1;
+    range.top = range.bottom - 1;
+    g_map.setAwareRange(range);
+
     if(!canPerformGameAction())
-        return;
+        return; 
     m_protocolGame->sendChangeMapAwareRange(xrange, yrange);
 }
 
@@ -1685,6 +1692,10 @@ void Game::setClientVersion(int version)
 
     if(version >= 1094) {
         enableFeature(Otc::GameAdditionalSkills);
+    }
+
+    if(version >= 1098) {
+        enableFeature(Otc::GameChangeMapAwareRange);
     }
 
     m_clientVersion = version;
