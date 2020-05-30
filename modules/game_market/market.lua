@@ -27,6 +27,7 @@ displaysTabBar = nil
 offersTabBar = nil
 selectionTabBar = nil
 
+nameLabel = nil
 marketOffersPanel = nil
 browsePanel = nil
 overviewPanel = nil
