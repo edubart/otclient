@@ -40,7 +40,6 @@ itemsPanel = nil
 selectedOffer = {}
 selectedMyOffer = {}
 
-nameLabel = nil
 feeLabel = nil
 balanceLabel = nil
 totalPriceEdit = nil
@@ -49,6 +48,8 @@ amountEdit = nil
 searchEdit = nil
 radioItemSet = nil
 selectedItem = nil
+selectedItemLabel = nil
+selectedItemTitleLabel = nil
 offerTypeList = nil
 categoryList = nil
 subCategoryList = nil
@@ -443,7 +444,9 @@ local function updateSelectedItem(widget)
   Market.resetCreateOffer()
   if Market.isItemSelected() then
     selectedItem:setItem(selectedItem.item.displayItem)
-    nameLabel:setText(selectedItem.item.marketData.name)
+    selectedItemLabel:setText('')
+    selectedItemTitleLabel:setText(selectedItem.item.marketData.name)
+    Market:hideOffersTableInstructions()
     clearOffers()
 
     Market.enableCreateOffer(true) -- update offer types
@@ -726,8 +729,10 @@ local function initMarketItems()
           }
 
           -- add new market item
+        if marketItems[marketData.category] ~= nil then
           table.insert(marketItems[marketData.category], marketItem)
           itemSet[marketData.tradeAs] = true
+        end
       end
     end
   end
@@ -741,7 +746,11 @@ local function initInterface()
 
   -- setup 'Market Offer' section tabs
   marketOffersPanel = g_ui.loadUI('ui/marketoffers')
-  mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
+  local mopTab = mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
+  mopTab.onClick = function()
+    mainTabBar:selectTab(mopTab)
+    Market.refreshOffers()
+  end
 
   selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
   selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
@@ -769,7 +778,11 @@ local function initInterface()
 
   -- setup 'My Offer' section tabs
   myOffersPanel = g_ui.loadUI('ui/myoffers')
-  mainTabBar:addTab(tr('My Offers'), myOffersPanel)
+  local moTab = mainTabBar:addTab(tr('My Offers'), myOffersPanel)
+  moTab.onClick = function()
+    mainTabBar:selectTab(moTab)
+    Market.refreshMyOffers()
+  end
 
   offersTabBar = myOffersPanel:getChildById('offersTabBar')
   offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
@@ -790,8 +803,9 @@ local function initInterface()
   sellButton.onClick = function() openAmountWindow(Market.acceptMarketOffer, MarketAction.Sell, 'Sell') end
 
   -- setup selected item
-  nameLabel = marketOffersPanel:getChildById('nameLabel')
   selectedItem = marketOffersPanel:getChildById('selectedItem')
+  selectedItemLabel = selectedItem:getChildById('selectedItemLabel')
+  selectedItemTitleLabel = marketOffersPanel:getChildById('selectedItemTitleLabel')
 
   -- setup create new offer
   totalPriceEdit = marketOffersPanel:getChildById('totalPriceEdit')
@@ -917,10 +931,38 @@ function terminate()
   Market = nil
 end
 
+function Market.showMyOffersTableInstructions()
+  local instruction = tr('Press %s button to update', tr('Refresh Offers'))
+  if sellMyOfferTable then sellMyOfferTable:setText(instruction) end
+  if buyMyOfferTable then buyMyOfferTable:setText(instruction) end
+end
+
+function Market.hideMyOffersTableInstructions()
+  if sellMyOfferTable then sellMyOfferTable:setText('') end
+  if buyMyOfferTable then buyMyOfferTable:setText('') end
+end
+
+function Market.showOffersTableInstructions()
+  local instruction = tr('Select an item to view the offers')
+  if sellOfferTable then sellOfferTable:setText(instruction) end
+  if buyOfferTable then buyOfferTable:setText(instruction) end
+end
+
+function Market.hideOffersTableInstructions()
+  if sellOfferTable then sellOfferTable:setText('') end
+  if buyOfferTable then buyOfferTable:setText('') end
+end
+
+
 function Market.reset()
   balanceLabel:setColor('#bbbbbb')
   categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
+
+  -- When uses closes market at this screen we need to show this instruction again when it gets opened,
+  -- since we cannot load offers for the user ourselves due to the bot protection.
+  Market:showMyOffersTableInstructions()
+
   clearFilters()
   clearMyOffers()
   if not table.empty(information) then
@@ -944,11 +986,13 @@ function Market.clearSelectedItem()
 
     clearOffers()
     radioItemSet:selectWidget(nil)
-    nameLabel:setText('No item selected.')
+    Market:showOffersTableInstructions()
     selectedItem:setItem(nil)
     selectedItem.item = nil
     selectedItem.ref:setChecked(false)
     selectedItem.ref = nil
+    selectedItemLabel:setText('?')
+    selectedItemTitleLabel:setText(tr('No item selected.'))
 
     detailsTable:clearData()
     buyStatsTable:clearData()
@@ -1084,6 +1128,7 @@ function Market.refreshOffers()
 end
 
 function Market.refreshMyOffers()
+  Market:hideMyOffersTableInstructions()
   clearMyOffers()
   MarketProtocol.sendMarketBrowseMyOffers()
 end
@@ -1264,4 +1309,8 @@ end
 
 function Market.onMarketBrowse(offers)
   updateOffers(offers)
+end
+
+function Market.onMarketResourceBalance(balance, money)
+  return
 end
