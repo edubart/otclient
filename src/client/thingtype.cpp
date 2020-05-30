@@ -301,8 +301,17 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         m_animationPhases += groupAnimationsPhases;
 
         if(groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
-            m_animator = AnimatorPtr(new Animator);
-            m_animator->unserialize(groupAnimationsPhases, fin);
+            AnimatorPtr animator = AnimatorPtr(new Animator);
+            animator->unserialize(groupAnimationsPhases, fin);
+
+            switch(frameGroupType) {
+                case FrameGroupIdle:
+                    m_idleAnimator = animator;
+                    break;
+                case FrameGroupMoving:
+                    m_animator = animator;
+                    break;
+            }
         }
 
         int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
@@ -315,6 +324,11 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         totalSpritesCount += totalSprites;
+    }
+
+    if(m_idleAnimator && !m_animator) {
+        m_animator = m_idleAnimator;
+        m_idleAnimator = nullptr;
     }
 
     m_textures.resize(m_animationPhases);
