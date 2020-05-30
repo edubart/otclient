@@ -1,4 +1,6 @@
-[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
+[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient)
+[![Discord Channel](https://img.shields.io/discord/528117503952551936.svg?label=discord)](https://discord.gg/3NxYnyV)
+[![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
 ### What is otclient?
 
@@ -9,15 +11,19 @@ that each functionality is a separated module, giving the possibility to users m
 anything easily. Users can also create new mods and extend game interface for their own purposes.
 Otclient is written in C++11 and heavily scripted in lua.
 
-For a server to connect to, you can build your own with the [forgottenserver](https://github.com/otland/forgottenserver)
+For a server to connect to, you can build your own with the [otservbr-global](https://github.com/opentibiabr/otservbr-global)
 or connect to one listed on [otservlist](https://otservlist.org/).
 
 ### Where do I download?
 
 Compiled for Windows can be found here (but can be outdated):
-* [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
+* [Windows Builds](https://forums.otserv.com.br/index.php?/forums/topic/169346-otservbr-global-otclient/)
 
-**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1098/Tibia.spr`)
+Compatible Dat and Spr with [otservbr-global](https://github.com/opentibiabr/otservbr-global):
+* [Client 10](https://github.com/opentibiabr/tools/blob/master/Tibia%20Client%2010.rar)
+
+
+**NOTE:** You will need to download spr/dat files on your own and place them in `data/things/1231/` (i.e: `data/things/1231/Tibia.spr`)
 
 ### Features
 
