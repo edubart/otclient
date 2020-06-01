@@ -1,6 +1,6 @@
-[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient)
+[![Build Status](https://ci.appveyor.com/api/projects/status/github/opentibiabr/otclient?branch=develop&passingText=develop%20-%20OK&svg=true)](https://ci.appveyor.com/project/opentibiabr/otclient)
+[![Build Status](https://secure.travis-ci.org/opentibiabr/otclient.svg?branch=develop)](http://travis-ci.org/opentibiabr/otclient)
 [![Discord Channel](https://img.shields.io/discord/528117503952551936.svg?label=discord)](https://discord.gg/3NxYnyV)
-[![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
 ### What is otclient?
 
@@ -16,8 +16,8 @@ or connect to one listed on [otservlist](https://otservlist.org/).
 
 ### Where do I download?
 
-Compiled for Windows can be found here (but can be outdated):
-* [Windows Builds](https://forums.otserv.com.br/index.php?/forums/topic/169346-otservbr-global-otclient/)
+Compiled for Windows can be found here:
+* [Windows Builds](https://ci.appveyor.com/project/opentibiabr/otclient)
 
 Compatible Dat and Spr with [otservbr-global](https://github.com/opentibiabr/otservbr-global):
 * [Client 10](https://github.com/opentibiabr/tools/blob/master/Tibia%20Client%2010.rar)

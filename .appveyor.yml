@@ -1,0 +1,48 @@
+image: Visual Studio 2019
+
+shallow_clone: true
+
+platform:
+  - x64
+
+configuration:  
+  - Release
+
+matrix:
+  fast_finish: true
+
+only_commits:
+  files:
+    - src/
+    - vc14/
+    - .appveyor.yml
+
+install:
+  - cmd : vcpkg install boost-iostreams:x64-windows
+  - cmd : vcpkg install boost-asio:x64-windows
+  - cmd : vcpkg install boost-filesystem:x64-windows
+  - cmd : vcpkg install boost-system:x64-windows
+  - cmd : vcpkg install boost-variant:x64-windows
+  - cmd : vcpkg install boost-lockfree:x64-windows
+  - cmd : vcpkg install boost-uuid:x64-windows
+  - cmd : vcpkg install glew:x64-windows
+  - cmd : vcpkg install libvorbis:x64-windows
+  - cmd : vcpkg install libogg:x64-windows
+  - cmd : vcpkg install luajit:x64-windows
+  - cmd : vcpkg install openal-soft:x64-windows
+  - cmd : vcpkg install opengl:x64-windows
+  - cmd : vcpkg install physfs:x64-windows
+  - cmd : vcpkg install zlib:x64-windows  
+
+build:
+  parallel: true
+  # MSBuild verbosity level
+  #verbosity: detailed
+
+cache:
+  - c:\tools\vcpkg\installed\
+
+artifacts:
+  - path: \**\otclient*.exe
+  - path: \**\*.dll
+  
