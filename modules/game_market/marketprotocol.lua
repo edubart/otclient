@@ -130,13 +130,10 @@ local function parseMarketBrowse(protocol, msg)
 end
 
 local function parseMarketResourcesBalance(protocol, msg)
-  msg:getU8()
-  local balance = msg:getU64() -- bank
-  msg:getU8()
-  msg:getU8()
-  local money = msg:getU64() -- inventory
+  local resourceType = msg:getU8() -- type
+  local value = msg:getU64() -- value
 
-  signalcall(Market.onMarketResourceBalance, balance, money)
+  signalcall(Market.onMarketResourceBalance, resourceType, value)
   return true
 end
 

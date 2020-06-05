@@ -93,7 +93,6 @@ protected:
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
-    void processPlayerHelpers(int helpers);
     void processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode, Otc::PVPModes pvpMode);
 
     // message related

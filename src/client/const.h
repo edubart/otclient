@@ -507,6 +507,15 @@ namespace Otc
         StateSale = 2,
         StateTimed = 3
     };
+
+    enum PreyState_t : uint8_t
+    {
+        PREY_STATE_LOCKED = 0,
+        PREY_STATE_INACTIVE = 1,
+        PREY_STATE_ACTIVE = 2,
+        PREY_STATE_SELECTION = 3,
+        PREY_STATE_SELECTION_CHANGE_MONSTER = 4,
+    };
 }
 
 #endif

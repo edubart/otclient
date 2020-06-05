@@ -1312,6 +1312,6 @@ function Market.onMarketBrowse(offers)
   updateOffers(offers)
 end
 
-function Market.onMarketResourceBalance(balance, money)
+function Market.onMarketResourceBalance(resourceType, value)
   return
 end

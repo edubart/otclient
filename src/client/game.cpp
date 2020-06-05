@@ -242,11 +242,6 @@ void Game::processGMActions(const std::vector<uint8>& actions)
     g_lua.callGlobalField("g_game", "onGMActions", actions);
 }
 
-void Game::processPlayerHelpers(int helpers)
-{
-    g_lua.callGlobalField("g_game", "onPlayerHelpersUpdate", helpers);
-}
-
 void Game::processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode, Otc::PVPModes pvpMode)
 {
     m_fightMode = fightMode;

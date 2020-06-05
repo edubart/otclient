@@ -142,6 +142,7 @@ private:
     void parseStoreOffers(const InputMessagePtr& msg);
     void parseCompleteStorePurchase(const InputMessagePtr& msg);
     void parseRequestPurchaseData(const InputMessagePtr& msg);
+    void parseShowDescription(const InputMessagePtr& msg);
     void parseCoinBalance(const InputMessagePtr& msg);
     void parseCoinBalanceUpdating(const InputMessagePtr& msg);
     void parseBlessings(const InputMessagePtr& msg);
@@ -149,7 +150,6 @@ private:
     void parsePvpSituations(const InputMessagePtr& msg);
     void parsePreset(const InputMessagePtr& msg);
     void parseCreatureType(const InputMessagePtr& msg);
-    void parsePlayerHelpers(const InputMessagePtr& msg);
     void parseMessage(const InputMessagePtr& msg);
     void parsePendingGame(const InputMessagePtr& msg);
     void parseEnterGame(const InputMessagePtr& msg);
@@ -242,6 +242,33 @@ private:
     void parseExtendedOpcode(const InputMessagePtr& msg);
     void parseChangeMapAwareRange(const InputMessagePtr& msg);
     void parseCreaturesMark(const InputMessagePtr& msg);
+
+    // 12.x +
+    void parseClientCheck(const InputMessagePtr& msg);
+    void parseGameNews(const InputMessagePtr& msg);
+    void parseBlessDialog(const InputMessagePtr& msg);
+    void parseRestingAreaState(const InputMessagePtr& msg);
+    void parseUpdateImpactTracker(const InputMessagePtr& msg);
+    void parseItemsPrice(const InputMessagePtr& msg);
+    void parseUpdateSupplyTracker(const InputMessagePtr& msg);
+    void parseUpdateLootTracker(const InputMessagePtr& msg);
+    void parseKillTrackerUpdate(const InputMessagePtr& msg);
+    void parseBestiaryEntryChanged(const InputMessagePtr& msg);
+    void parseDailyRewardCollectionState(const InputMessagePtr& msg);
+    void parseOpenRewardWall(const InputMessagePtr& msg);
+    void parseDailyReward(const InputMessagePtr& msg);
+    void parseRewardHistory(const InputMessagePtr& msg);
+    void parsePreyTimeLeft(const InputMessagePtr& msg);
+    void getPreyMonster(const InputMessagePtr& msg);
+    void getPreyMonsters(const InputMessagePtr& msg);
+    void parsePreyData(const InputMessagePtr& msg);
+    void parsePreyRerollPrice(const InputMessagePtr& msg);
+    void getImbuementInfo(const InputMessagePtr& msg);
+    void parseImbuementWindow(const InputMessagePtr& msg);
+    void parseCloseImbuementWindow(const InputMessagePtr& msg);
+    void parseError(const InputMessagePtr& msg);
+    void parseCollectionResource(const InputMessagePtr& msg);
+    void parseTibiaTime(const InputMessagePtr& msg);
 
 public:
     void setMapDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height);
