@@ -140,7 +140,7 @@ MarketItemDescriptionStrings = {
   [13] = 'Charges',
   [14] = 'Weapon Type',
   [15] = 'Weight',
-  [15] = 'Slot'
+  [16] = 'Slot'
 }
 
 function getMarketDescriptionName(id)
