@@ -527,7 +527,7 @@ bool Tile::isSingleDimension()
 bool Tile::isLookPossible()
 {
     for(const ThingPtr& thing : m_things)
-        if(thing->blockProjectile())
+        if(thing->blockProjectile() && !thing->isTranslucent())
             return false;
     return true;
 }
