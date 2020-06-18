@@ -27,7 +27,7 @@
 #include <framework/core/timer.h>
 #include "thing.h"
 
-// @bindclass
+ // @bindclass
 class Missile : public Thing
 {
     enum {
@@ -35,7 +35,7 @@ class Missile : public Thing
     };
 
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
 
     void setId(uint32 id);
     void setPath(const Position& fromPosition, const Position& toPosition);
@@ -46,7 +46,7 @@ public:
     bool isMissile() { return true; }
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
 
 private:
     Timer m_animationTimer;

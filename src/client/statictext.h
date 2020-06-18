@@ -27,7 +27,7 @@
 #include <framework/graphics/cachedtext.h>
 #include <framework/core/timer.h>
 
-// @bindclass
+ // @bindclass
 class StaticText : public Thing
 {
 public:

@@ -36,11 +36,11 @@ public:
     Position() : x(65535), y(65535), z(255) { }
     Position(uint16 x, uint16 y, uint8 z) : x(x), y(y), z(z) { }
 
-    Position(const Position &position) = default;
+    Position(const Position& position) = default;
 
     Position translatedToDirection(Otc::Direction direction) {
         Position pos = *this;
-        switch(direction) {
+        switch (direction) {
         case Otc::North:
             pos.y--;
             break;
@@ -77,7 +77,7 @@ public:
 
     Position translatedToReverseDirection(Otc::Direction direction) {
         Position pos = *this;
-        switch(direction) {
+        switch (direction) {
         case Otc::North:
             pos.y++;
             break;
@@ -116,14 +116,14 @@ public:
         Position lastPos = *this;
         std::vector<Position> positions;
 
-        if(!lastPos.isValid())
+        if (!lastPos.isValid())
             return positions;
 
         positions.push_back(lastPos);
 
-        for(auto dir : dirs) {
+        for (auto dir : dirs) {
             lastPos = lastPos.translatedToDirection(dir);
-            if(!lastPos.isValid())
+            if (!lastPos.isValid())
                 break;
             positions.push_back(lastPos);
         }
@@ -135,11 +135,11 @@ public:
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
         int dx = toPos.x - fromPos.x;
         int dy = toPos.y - fromPos.y;
-        if(dx == 0 && dy == 0)
+        if (dx == 0 && dy == 0)
             return -1;
 
         float angle = std::atan2(dy * -1, dx);
-        if(angle < 0)
+        if (angle < 0)
             angle += 2 * Fw::pi;
 
         return angle;
@@ -150,25 +150,25 @@ public:
     }
 
     static Otc::Direction getDirectionFromPositions(const Position& fromPos,
-                                                    const Position& toPos)
+        const Position& toPos)
     {
         float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
-        if(angle >= 360 - 22.5 || angle < 0 + 22.5)
+        if (angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
-        else if(angle >= 45 - 22.5 && angle < 45 + 22.5)
+        else if (angle >= 45 - 22.5 && angle < 45 + 22.5)
             return Otc::NorthEast;
-        else if(angle >= 90 - 22.5 && angle < 90 + 22.5)
+        else if (angle >= 90 - 22.5 && angle < 90 + 22.5)
             return Otc::North;
-        else if(angle >= 135 - 22.5 && angle < 135 + 22.5)
+        else if (angle >= 135 - 22.5 && angle < 135 + 22.5)
             return Otc::NorthWest;
-        else if(angle >= 180 - 22.5 && angle < 180 + 22.5)
+        else if (angle >= 180 - 22.5 && angle < 180 + 22.5)
             return Otc::West;
-        else if(angle >= 225 - 22.5 && angle < 225 + 22.5)
+        else if (angle >= 225 - 22.5 && angle < 225 + 22.5)
             return Otc::SouthWest;
-        else if(angle >= 270 - 22.5 && angle < 270 + 22.5)
+        else if (angle >= 270 - 22.5 && angle < 270 + 22.5)
             return Otc::South;
-        else if(angle >= 315 - 22.5 && angle < 315 + 22.5)
+        else if (angle >= 315 - 22.5 && angle < 315 + 22.5)
             return Otc::SouthEast;
         else
             return Otc::InvalidDirection;
@@ -178,7 +178,7 @@ public:
         return getDirectionFromPositions(*this, position);
     }
 
-    bool isMapPosition() const { return (x >=0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
+    bool isMapPosition() const { return (x >= 0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
     bool isValid() const { return !(x == 65535 && y == 65535 && z == 255); }
     float distance(const Position& pos) const { return sqrt(pow((pos.x - x), 2) + pow((pos.y - y), 2)); }
     int manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
@@ -186,27 +186,27 @@ public:
     void translate(int dx, int dy, short dz = 0) { x += dx; y += dy; z += dz; }
     Position translated(int dx, int dy, short dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
-    Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z);   }
-    Position& operator+=(const Position& other) { x+=other.x; y+=other.y; z +=other.z; return *this; }
-    Position operator-(const Position& other) const { return Position(x - other.x, y - other.y, z - other.z);   }
-    Position& operator-=(const Position& other) { x-=other.x; y-=other.y; z-=other.z; return *this; }
+    Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z); }
+    Position& operator+=(const Position& other) { x += other.x; y += other.y; z += other.z; return *this; }
+    Position operator-(const Position& other) const { return Position(x - other.x, y - other.y, z - other.z); }
+    Position& operator-=(const Position& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
     // Point conversion(s)
     Position operator+(const Point& other) const { return Position(x + other.x, y + other.y, z); }
     Position& operator+=(const Point& other) { x += other.x; y += other.y; return *this; }
 
     Position& operator=(const Position& other) { x = other.x; y = other.y; z = other.z; return *this; }
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
-    bool operator!=(const Position& other) const { return other.x!=x || other.y!=y || other.z!=z; }
-    bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x-pos.x) <= xRange && std::abs(y-pos.y) <= yRange && z == pos.z; }
+    bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
+    bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange && z == pos.z; }
     bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const {
-        return (pos.x >= x-minXRange && pos.x <= x+maxXRange && pos.y >= y-minYRange && pos.y <= y+maxYRange && pos.z == z);
+        return (pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z);
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }
 
     bool up(int n = 1) {
-        int nz = z-n;
-        if(nz >= 0 && nz <= Otc::MAX_Z) {
+        int nz = z - n;
+        if (nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
         }
@@ -214,8 +214,8 @@ public:
     }
 
     bool down(int n = 1) {
-        int nz = z+n;
-        if(nz >= 0 && nz <= Otc::MAX_Z) {
+        int nz = z + n;
+        if (nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
         }
@@ -223,8 +223,8 @@ public:
     }
 
     bool coveredUp(int n = 1) {
-        int nx = x+n, ny = y+n, nz = z-n;
-        if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
+        int nx = x + n, ny = y + n, nz = z - n;
+        if (nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }
@@ -232,8 +232,8 @@ public:
     }
 
     bool coveredDown(int n = 1) {
-        int nx = x-n, ny = y-n, nz = z+n;
-        if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
+        int nx = x - n, ny = y - n, nz = z + n;
+        if (nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }

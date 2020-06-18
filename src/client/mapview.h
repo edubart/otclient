@@ -30,7 +30,7 @@
 #include <framework/core/declarations.h>
 #include "lightview.h"
 
-// @bindclass
+ // @bindclass
 class MapView : public LuaObject
 {
 public:
@@ -131,7 +131,7 @@ private:
     int calcLastVisibleFloor();
     Point transformPositionTo2D(const Position& position, const Position& relativePosition) {
         return Point((m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
-                     (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
+            (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
     int m_lockedFirstVisibleFloor;

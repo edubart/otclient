@@ -25,7 +25,7 @@
 
 #include <framework/global.h>
 
-// widely used headers
+ // widely used headers
 #include "const.h"
 #include "position.h"
 

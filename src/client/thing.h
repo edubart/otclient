@@ -28,7 +28,7 @@
 #include "thingtypemanager.h"
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 #pragma pack(push,1) // disable memory alignment
 class Thing : public LuaObject
 {
@@ -61,7 +61,7 @@ public:
 
     // type shortcuts
     virtual const ThingTypePtr& getThingType();
-    virtual ThingType *rawGetThingType();
+    virtual ThingType* rawGetThingType();
     Size getSize() { return rawGetThingType()->getSize(); }
     int getWidth() { return rawGetThingType()->getWidth(); }
     int getHeight() { return rawGetThingType()->getHeight(); }

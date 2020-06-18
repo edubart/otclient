@@ -45,7 +45,7 @@ public:
     UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(parentWidget) { }
 
     void addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
-                           const Position& hookedPosition, Fw::AnchorEdge hookedEdge);
+        const Position& hookedPosition, Fw::AnchorEdge hookedEdge);
     void centerInPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
     void fillPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
 

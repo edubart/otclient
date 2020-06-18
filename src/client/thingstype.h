@@ -27,7 +27,7 @@
 #include <framework/core/declarations.h>
 #include "thingtype.h"
 
-//@bindsingleton g_thingsType
+ //@bindsingleton g_thingsType
 class ThingsType
 {
 public:
@@ -45,8 +45,8 @@ public:
 
     bool parseThingType(const FileStreamPtr& fin, ThingType& thingType);
 
-    ThingType *getEmptyThingType() { return &m_emptyThingType; }
-    ThingType *getThingType(uint16 id, Categories category);
+    ThingType* getEmptyThingType() { return &m_emptyThingType; }
+    ThingType* getThingType(uint16 id, Categories category);
 
     uint32 getSignature() { return m_signature; }
     bool isLoaded() { return m_loaded; }

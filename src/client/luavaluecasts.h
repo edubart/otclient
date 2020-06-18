@@ -28,7 +28,7 @@
 #include "game.h"
 #include "outfit.h"
 
-// outfit
+ // outfit
 int push_luavalue(const Outfit& outfit);
 bool luavalue_cast(int index, Outfit& outfit);
 

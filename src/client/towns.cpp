@@ -27,7 +27,7 @@ TownManager g_towns;
 Town::Town(uint32 tid, const std::string& name, const Position& pos)
     : m_id(tid), m_name(name)
 {
-    if(pos.isValid())
+    if (pos.isValid())
         m_pos = pos;
 }
 
@@ -36,24 +36,24 @@ TownManager::TownManager()
     m_nullTown = TownPtr(new Town);
 }
 
-void TownManager::addTown(const TownPtr &town)
+void TownManager::addTown(const TownPtr& town)
 {
-    if(findTown(town->getId()) == m_towns.end())
+    if (findTown(town->getId()) == m_towns.end())
         m_towns.push_back(town);
 }
 
 void TownManager::removeTown(uint32 townId)
 {
     auto it = findTown(townId);
-    if(it != m_towns.end())
+    if (it != m_towns.end())
         m_towns.erase(it);
 }
 
 const TownPtr& TownManager::getTown(uint32 townId)
 {
     auto it = std::find_if(m_towns.begin(), m_towns.end(),
-                           [=] (const TownPtr& town) -> bool { return town->getId() == townId; });
-    if(it != m_towns.end())
+        [=](const TownPtr& town) -> bool { return town->getId() == townId; });
+    if (it != m_towns.end())
         return *it;
     return m_nullTown;
 }
@@ -61,8 +61,8 @@ const TownPtr& TownManager::getTown(uint32 townId)
 const TownPtr& TownManager::getTownByName(std::string name)
 {
     auto it = std::find_if(m_towns.begin(), m_towns.end(),
-                    [=] (const TownPtr& town) -> bool { return town->getName() == name; } );
-    if(it != m_towns.end())
+        [=](const TownPtr& town) -> bool { return town->getName() == name; });
+    if (it != m_towns.end())
         return *it;
     return m_nullTown;
 }
@@ -70,11 +70,11 @@ const TownPtr& TownManager::getTownByName(std::string name)
 TownList::iterator TownManager::findTown(uint32 townId)
 {
     return std::find_if(m_towns.begin(), m_towns.end(),
-                        [=] (const TownPtr& town) -> bool { return town->getId() == townId; });
+        [=](const TownPtr& town) -> bool { return town->getId() == townId; });
 }
 
 void TownManager::sort()
 {
-    m_towns.sort([] (const TownPtr& lhs, const TownPtr& rhs) { return lhs->getName() < rhs->getName(); });
+    m_towns.sort([](const TownPtr& lhs, const TownPtr& rhs) { return lhs->getName() < rhs->getName(); });
 }
 

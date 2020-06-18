@@ -21,6 +21,7 @@
  */
 
 #include "thing.h"
+#include "thing.h"
 #include "spritemanager.h"
 #include "thingtypemanager.h"
 #include <framework/graphics/graphics.h>

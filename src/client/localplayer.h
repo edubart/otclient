@@ -25,7 +25,7 @@
 
 #include "player.h"
 
-// @bindclass
+ // @bindclass
 class LocalPlayer : public Player
 {
     enum {

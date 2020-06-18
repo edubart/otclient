@@ -27,7 +27,7 @@
 #include <framework/core/timer.h>
 #include "thing.h"
 
-// @bindclass
+ // @bindclass
 class Effect : public Thing
 {
     enum {
@@ -35,7 +35,7 @@ class Effect : public Thing
     };
 
 public:
-    void drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView *lightView = nullptr);
+    void drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX = 0, int offsetY = 0, LightView* lightView = nullptr);
 
     void setId(uint32 id);
     uint32 getId() { return m_id; }
@@ -44,7 +44,7 @@ public:
     bool isEffect() { return true; }
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
 
 protected:
     void onAppear();

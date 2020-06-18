@@ -131,7 +131,7 @@ protected:
 
     // outfit
     void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
-                                 const std::vector<std::tuple<int, std::string> >& mountList);
+        const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
     void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items);
@@ -174,7 +174,7 @@ public:
 
     // item related
     void look(const ThingPtr& thing, bool isBattleList = false);
-    void move(const ThingPtr &thing, const Position& toPos, int count);
+    void move(const ThingPtr& thing, const Position& toPos, int count);
     void moveToParentContainer(const ThingPtr& thing, int count);
     void rotate(const ThingPtr& thing);
     void use(const ThingPtr& thing);
@@ -348,7 +348,7 @@ public:
     bool isGM() { return !m_gmActions.empty(); }
     Otc::Direction getLastWalkDir() { return m_lastWalkDir; }
 
-    std::string formatCreatureName(const std::string &name);
+    std::string formatCreatureName(const std::string& name);
     int findEmptyContainerId();
 
 protected:

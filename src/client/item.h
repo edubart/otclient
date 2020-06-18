@@ -82,7 +82,7 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
 
     void setId(uint32 id);
     void setOtbId(uint16 id);
@@ -148,7 +148,7 @@ public:
     int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
 
 private:
     uint16 m_clientId;

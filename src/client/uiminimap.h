@@ -33,8 +33,8 @@ public:
 
     void drawSelf(Fw::DrawPane drawPane);
 
-    bool zoomIn() { return setZoom(m_zoom+1); }
-    bool zoomOut() { return setZoom(m_zoom-1); }
+    bool zoomIn() { return setZoom(m_zoom + 1); }
+    bool zoomOut() { return setZoom(m_zoom - 1); }
 
     bool setZoom(int zoom);
     void setMinZoom(int minZoom) { m_minZoom = minZoom; }

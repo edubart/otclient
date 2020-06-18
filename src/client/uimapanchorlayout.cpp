@@ -30,30 +30,30 @@ int UIPositionAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWi
     UIMinimapPtr minimap = hookedWidget->static_self_cast<UIMinimap>();
     Rect hookedRect = minimap->getTileRect(m_hookedPosition);
     int point = 0;
-        if(hookedRect.isValid()) {
-        switch(m_hookedEdge) {
-            case Fw::AnchorLeft:
-                point = hookedRect.left();
-                break;
-            case Fw::AnchorRight:
-                point = hookedRect.right();
-                break;
-            case Fw::AnchorTop:
-                point = hookedRect.top();
-                break;
-            case Fw::AnchorBottom:
-                point = hookedRect.bottom();
-                break;
-            case Fw::AnchorHorizontalCenter:
-                point = hookedRect.horizontalCenter();
-                break;
-            case Fw::AnchorVerticalCenter:
-                point = hookedRect.verticalCenter();
-                break;
-            default:
-                // must never happens
-                assert(false);
-                break;
+    if (hookedRect.isValid()) {
+        switch (m_hookedEdge) {
+        case Fw::AnchorLeft:
+            point = hookedRect.left();
+            break;
+        case Fw::AnchorRight:
+            point = hookedRect.right();
+            break;
+        case Fw::AnchorTop:
+            point = hookedRect.top();
+            break;
+        case Fw::AnchorBottom:
+            point = hookedRect.bottom();
+            break;
+        case Fw::AnchorHorizontalCenter:
+            point = hookedRect.horizontalCenter();
+            break;
+        case Fw::AnchorVerticalCenter:
+            point = hookedRect.verticalCenter();
+            break;
+        default:
+            // must never happens
+            assert(false);
+            break;
         }
     }
     return point;
@@ -61,14 +61,14 @@ int UIPositionAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWi
 
 void UIMapAnchorLayout::addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge)
 {
-    if(!anchoredWidget)
+    if (!anchoredWidget)
         return;
 
     assert(anchoredWidget != getParentWidget());
 
     UIPositionAnchorPtr anchor(new UIPositionAnchor(anchoredEdge, hookedPosition, hookedEdge));
     UIAnchorGroupPtr& anchorGroup = m_anchorsGroups[anchoredWidget];
-    if(!anchorGroup)
+    if (!anchorGroup)
         anchorGroup = UIAnchorGroupPtr(new UIAnchorGroup);
 
     anchorGroup->addAnchor(anchor);

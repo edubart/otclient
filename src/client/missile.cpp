@@ -27,37 +27,45 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-void Missile::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
+void Missile::draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
-    if(m_id == 0 || !animate)
+    if (m_id == 0 || !animate)
         return;
 
     int xPattern = 0, yPattern = 0;
-    if(m_direction == Otc::NorthWest) {
+    if (m_direction == Otc::NorthWest) {
         xPattern = 0;
         yPattern = 0;
-    } else if(m_direction == Otc::North) {
+    }
+    else if (m_direction == Otc::North) {
         xPattern = 1;
         yPattern = 0;
-    } else if(m_direction == Otc::NorthEast) {
+    }
+    else if (m_direction == Otc::NorthEast) {
         xPattern = 2;
         yPattern = 0;
-    } else if(m_direction == Otc::East) {
+    }
+    else if (m_direction == Otc::East) {
         xPattern = 2;
         yPattern = 1;
-    } else if(m_direction == Otc::SouthEast) {
+    }
+    else if (m_direction == Otc::SouthEast) {
         xPattern = 2;
         yPattern = 2;
-    } else if(m_direction == Otc::South) {
+    }
+    else if (m_direction == Otc::South) {
         xPattern = 1;
         yPattern = 2;
-    } else if(m_direction == Otc::SouthWest) {
+    }
+    else if (m_direction == Otc::SouthWest) {
         xPattern = 0;
         yPattern = 2;
-    } else if(m_direction == Otc::West) {
+    }
+    else if (m_direction == Otc::West) {
         xPattern = 0;
         yPattern = 1;
-    } else {
+    }
+    else {
         xPattern = 1;
         yPattern = 1;
     }
@@ -83,7 +91,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
 void Missile::setId(uint32 id)
 {
-    if(!g_things.isValidDatId(id, ThingCategoryMissile))
+    if (!g_things.isValidDatId(id, ThingCategoryMissile))
         id = 0;
     m_id = id;
 }
