@@ -308,8 +308,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         m_animationPhases += groupAnimationsPhases;
 
         if (groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
-            m_animator = AnimatorPtr(new Animator);
-            m_animator->unserialize(groupAnimationsPhases, fin);
+            AnimatorPtr animator = AnimatorPtr(new Animator);
+            animator->unserialize(groupAnimationsPhases, fin);
+
+            if (groupCount == 1 || frameGroupType == FrameGroupMoving)
+                m_animator = animator;
+            else m_idleAnimator = animator;
         }
 
         int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;

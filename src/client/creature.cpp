@@ -113,7 +113,12 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if (m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = m_walkAnimationPhase;
 
-        if (isAnimateAlways() && animateIdle) {
+        if (getIdleAnimator()) {
+            if (animationPhase == 0) {
+                animationPhase = getIdleAnimator()->getPhase();
+            } else animationPhase += getIdleAnimator()->getAnimationPhases() - 1;            
+        }
+        else if (isAnimateAlways()) {
             int ticksPerFrame = 1000 / getAnimationPhases();
             animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
         }
@@ -504,8 +509,6 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     }
     else footAnimPhases = getAnimationPhases();
 
-    footAnimPhases -= 1;
-
     int footDelay = getStepDuration() / footAnimPhases;
 
     // Since mount is a different outfit we need to get the mount animation phases
@@ -514,15 +517,13 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         footAnimPhases = type->getAnimationPhases() - 1;
     }
 
-    if (footAnimPhases == 0)
-        m_walkAnimationPhase = 0;
-    else if (m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < Otc::TILE_PIXELS) {
-        m_footStep++;
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+    if (m_footTimer.ticksElapsed() >= footDelay) {
+        ++m_walkAnimationPhase;
         m_footTimer.restart();
     }
-    else if (m_walkAnimationPhase == 0 && totalPixelsWalked < Otc::TILE_PIXELS) {
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+
+    if (m_walkAnimationPhase > footAnimPhases) {
+        m_walkAnimationPhase = 1;
     }
 }
 
@@ -886,9 +887,9 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
     const bool useDiagonalFormula = !ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
         m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast);
 
-    if (speed != m_stepDuration.speed || groundSpeed != m_stepDuration.groundSpeed) {
-        m_stepDuration.speed = m_speed;
-        m_stepDuration.groundSpeed = groundSpeed;
+    if (speed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
+        m_stepCache.speed = m_speed;
+        m_stepCache.groundSpeed = groundSpeed;
 
         uint32_t calculatedStepSpeed;
 
@@ -906,11 +907,11 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         double duration = std::floor(1000 * groundSpeed / calculatedStepSpeed);
         int64_t stepDuration = std::ceil(duration / 50) * 50;
 
-        m_stepDuration.duration = stepDuration;
-        m_stepDuration.durationDiagonal = stepDuration * 3;
+        m_stepCache.duration = stepDuration;
+        m_stepCache.durationDiagonal = stepDuration * 3;
     }    
 
-    return useDiagonalFormula ? m_stepDuration.durationDiagonal : m_stepDuration.duration;
+    return useDiagonalFormula ? m_stepCache.durationDiagonal : m_stepCache.duration;
 }
 
 Point Creature::getDisplacement()

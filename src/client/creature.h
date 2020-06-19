@@ -142,7 +142,7 @@ protected:
     virtual void terminateWalk();
 
     virtual void updateWalk(const bool isPreWalking = false);
-    
+
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();
@@ -206,15 +206,15 @@ protected:
     PointF m_jumpOffset;
     Timer m_jumpTimer;
 
-    private:
-        struct StepDuration {
-            int speed = 0;
-            int groundSpeed = 0;
-            int duration = 0;
-            int durationDiagonal = 0;
-        };
+private:
+    struct StepCache {
+        int speed = 0;
+        int groundSpeed = 0;
+        int duration = 0;
+        int durationDiagonal = 0;
+    };
 
-        StepDuration m_stepDuration;
+    StepCache m_stepCache;
 };
 
 // @bindclass
