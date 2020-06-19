@@ -108,6 +108,7 @@ protected:
     void preWalk(Otc::Direction direction);
     void cancelWalk(Otc::Direction direction = Otc::InvalidDirection);
     void stopWalk();
+    virtual void updateWalk(const bool = false) { Creature::updateWalk(m_preWalking); }
 
     friend class Game;
 

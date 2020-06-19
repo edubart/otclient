@@ -141,7 +141,8 @@ protected:
     virtual void nextWalkUpdate();
     virtual void terminateWalk();
 
-    void updateWalk();
+    virtual void updateWalk(const bool isPreWalking = false);
+    
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();

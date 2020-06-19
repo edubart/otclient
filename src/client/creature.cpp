@@ -592,7 +592,7 @@ void Creature::nextWalkUpdate()
     }
 }
 
-void Creature::updateWalk()
+void Creature::updateWalk(const bool isPreWalking)
 {
     const int stepDuration = getStepDuration(true);
     const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
@@ -609,7 +609,7 @@ void Creature::updateWalk()
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are completed
-    if (m_walking && (!isLocalPlayer() || !g_game.getLocalPlayer()->isPreWalking()) && m_walkTimer.ticksElapsed() >= stepDuration) {
+    if (m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= stepDuration) {
         terminateWalk();
     }
 }
