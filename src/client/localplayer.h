@@ -113,7 +113,6 @@ protected:
 
 protected:
     void updateWalkOffset(int totalPixelsWalked);
-    void updateWalk();
     void terminateWalk();
 
 private:
@@ -135,7 +134,6 @@ private:
     stdext::boolean<false> m_pending;
 
     ItemPtr m_inventoryItems[Otc::LastInventorySlot];
-    Timer m_idleTimer;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;

@@ -42,7 +42,10 @@ public:
         VOLATILE_SQUARE_DURATION = 1000
     };
 
+    static double speedA, speedB, speedC;
+
     Creature();
+
 
     virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
 
@@ -70,7 +73,6 @@ public:
     void setTypeTexture(const std::string& filename);
     void setIconTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
-    void setSpeedFormula(double speedA, double speedB, double speedC);
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
@@ -100,8 +102,6 @@ public:
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
     float getStepTicksLeft() { return getStepDuration() - m_walkTimer.ticksElapsed(); }
     ticks_t getWalkTicksElapsed() { return m_walkTimer.ticksElapsed(); }
-    double getSpeedFormula(Otc::SpeedFormula formula) { return m_speedFormula[formula]; }
-    bool hasSpeedFormula();
     std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
     virtual Point getDisplacement();
     virtual int getDisplacementX();
@@ -139,8 +139,9 @@ protected:
     virtual void updateWalkOffset(int totalPixelsWalked);
     void updateWalkingTile();
     virtual void nextWalkUpdate();
-    virtual void updateWalk();
     virtual void terminateWalk();
+
+    void updateWalk();
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();
@@ -188,7 +189,6 @@ protected:
     TilePtr m_walkingTile;
     stdext::boolean<false> m_walking;
     stdext::boolean<false> m_allowAppearWalk;
-    stdext::boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
     ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;
@@ -204,6 +204,16 @@ protected:
     float m_jumpDuration;
     PointF m_jumpOffset;
     Timer m_jumpTimer;
+
+    private:
+        struct StepDuration {
+            int speed = 0;
+            int groundSpeed = 0;
+            int duration = 0;
+            int durationDiagonal = 0;
+        };
+
+        StepDuration m_stepDuration;
 };
 
 // @bindclass

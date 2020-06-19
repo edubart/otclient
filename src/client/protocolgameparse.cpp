@@ -413,12 +413,10 @@ void ProtocolGame::parseLogin(const InputMessagePtr& msg)
     uint playerId = msg->getU32();
     int serverBeat = msg->getU16();
 
-    if (g_game.getFeature(Otc::GameNewSpeedLaw)) {
-        double speedA = msg->getDouble();
-        double speedB = msg->getDouble();
-        double speedC = msg->getDouble();
-        m_localPlayer->setSpeedFormula(speedA, speedB, speedC);
-    }
+    Creature::speedA = msg->getDouble();
+    Creature::speedB = msg->getDouble();
+    Creature::speedC = msg->getDouble();
+
     bool canReportBugs = msg->getU8();
 
     if (g_game.getClientVersion() >= 1054)
