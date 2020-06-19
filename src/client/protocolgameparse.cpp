@@ -2395,6 +2395,10 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr &msg, int type)
         {
             // TODO: Implement hidden creature type specific features
         }
+        else if (creatureType == Proto::CreatureTypePlayer)
+        {
+            int8 vocationId = msg->getU8();
+        }
 
         int8 icon = msg->getU8();
         uint8 mark = msg->getU8();
