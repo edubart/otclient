@@ -16,7 +16,6 @@ limitedZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
-walkFunction = nil
 hookedMenuOptions = {}
 lastDirTime = g_clock.millis()
 
@@ -337,20 +336,13 @@ function changeWalkDir(dir, pop)
 end
 
 function smartWalk(dir)
-  if g_keyboard.getModifiers() == KeyboardNoModifier then
-    local func = walkFunction
-    if not func then
-      if modules.client_options.getOption('dashWalk') then
-        func = g_game.dashWalk
-      else
-        func = g_game.walk
-      end
-    end
-    local dire = smartWalkDir or dir
-    func(dire)
-    return true
+  if g_keyboard.getModifiers() ~= KeyboardNoModifier then
+	return false
   end
-  return false
+  
+  local dire = smartWalkDir or dir
+  g_game.walk(dire)
+  return true
 end
 
 function updateStretchShrink()
