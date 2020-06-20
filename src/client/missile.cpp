@@ -27,9 +27,9 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-void Missile::draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView)
+void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    if (m_id == 0 || !animate)
+    if (m_id == 0)
         return;
 
     int xPattern = 0, yPattern = 0;

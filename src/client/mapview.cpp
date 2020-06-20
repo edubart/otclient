@@ -114,7 +114,11 @@ void MapView::draw(const Rect& rect)
     for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
         for (const auto& tile : m_cachedVisibleTiles[z]) {
             const Position tilePos = tile->getPosition();
-            tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_cachedFirstVisibleFloor) ? nullptr : m_lightView.get());
+            tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
+
+            for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
+                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
+            }
         }
     }
 
@@ -197,7 +201,7 @@ void MapView::draw(const Rect& rect)
             if (m_drawNames) { flags = Otc::DrawNames; }
             if (m_drawHealthBars) { flags |= Otc::DrawBars; }
             if (m_drawManaBar) { flags |= Otc::DrawManaBar; }
-            creature->drawInformation(p, g_map.isCovered(pos, m_cachedFirstVisibleFloor), rect, flags);
+            creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
         }
     }
 
