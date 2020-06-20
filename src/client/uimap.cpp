@@ -170,8 +170,6 @@ void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleN
             setDrawTexts(node->value<bool>());
         else if (node->tag() == "draw-lights")
             setDrawLights(node->value<bool>());
-        else if (node->tag() == "animated")
-            setAnimated(node->value<bool>());
     }
 }
 

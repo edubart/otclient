@@ -58,346 +58,346 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 msg->setReadPos(readPos); // restore read pos
 
             switch (opcode) {
-            case Proto::GameServerLoginOrPendingState:
-                if (g_game.getFeature(Otc::GameLoginPending))
-                    parsePendingGame(msg);
-                else
+                case Proto::GameServerLoginOrPendingState:
+                    if (g_game.getFeature(Otc::GameLoginPending))
+                        parsePendingGame(msg);
+                    else
+                        parseLogin(msg);
+                    break;
+                case Proto::GameServerGMActions:
+                    parseGMActions(msg);
+                    break;
+                case Proto::GameServerUpdateNeeded:
+                    parseUpdateNeeded(msg);
+                    break;
+                case Proto::GameServerLoginError:
+                    parseLoginError(msg);
+                    break;
+                case Proto::GameServerLoginAdvice:
+                    parseLoginAdvice(msg);
+                    break;
+                case Proto::GameServerLoginWait:
+                    parseLoginWait(msg);
+                    break;
+                case Proto::GameServerLoginToken:
+                    parseLoginToken(msg);
+                    break;
+                case Proto::GameServerPing:
+                case Proto::GameServerPingBack:
+                    if ((opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing)) ||
+                        (opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing)))
+                        parsePingBack(msg);
+                    else
+                        parsePing(msg);
+                    break;
+                case Proto::GameServerChallenge:
+                    parseChallenge(msg);
+                    break;
+                case Proto::GameServerDeath:
+                    parseDeath(msg);
+                    break;
+                case Proto::GameServerFullMap:
+                    parseMapDescription(msg);
+                    break;
+                case Proto::GameServerMapTopRow:
+                    parseMapMoveNorth(msg);
+                    break;
+                case Proto::GameServerMapRightRow:
+                    parseMapMoveEast(msg);
+                    break;
+                case Proto::GameServerMapBottomRow:
+                    parseMapMoveSouth(msg);
+                    break;
+                case Proto::GameServerMapLeftRow:
+                    parseMapMoveWest(msg);
+                    break;
+                case Proto::GameServerUpdateTile:
+                    parseUpdateTile(msg);
+                    break;
+                case Proto::GameServerCreateOnMap:
+                    parseTileAddThing(msg);
+                    break;
+                case Proto::GameServerChangeOnMap:
+                    parseTileTransformThing(msg);
+                    break;
+                case Proto::GameServerDeleteOnMap:
+                    parseTileRemoveThing(msg);
+                    break;
+                case Proto::GameServerMoveCreature:
+                    parseCreatureMove(msg);
+                    break;
+                case Proto::GameServerOpenContainer:
+                    parseOpenContainer(msg);
+                    break;
+                case Proto::GameServerCloseContainer:
+                    parseCloseContainer(msg);
+                    break;
+                case Proto::GameServerCreateContainer:
+                    parseContainerAddItem(msg);
+                    break;
+                case Proto::GameServerChangeInContainer:
+                    parseContainerUpdateItem(msg);
+                    break;
+                case Proto::GameServerDeleteInContainer:
+                    parseContainerRemoveItem(msg);
+                    break;
+                case Proto::GameServerSetInventory:
+                    parseAddInventoryItem(msg);
+                    break;
+                case Proto::GameServerDeleteInventory:
+                    parseRemoveInventoryItem(msg);
+                    break;
+                case Proto::GameServerOpenNpcTrade:
+                    parseOpenNpcTrade(msg);
+                    break;
+                case Proto::GameServerPlayerGoods:
+                    parsePlayerGoods(msg);
+                    break;
+                case Proto::GameServerCloseNpcTrade:
+                    parseCloseNpcTrade(msg);
+                    break;
+                case Proto::GameServerOwnTrade:
+                    parseOwnTrade(msg);
+                    break;
+                case Proto::GameServerCounterTrade:
+                    parseCounterTrade(msg);
+                    break;
+                case Proto::GameServerCloseTrade:
+                    parseCloseTrade(msg);
+                    break;
+                case Proto::GameServerAmbient:
+                    parseWorldLight(msg);
+                    break;
+                case Proto::GameServerGraphicalEffect:
+                    parseMagicEffect(msg);
+                    break;
+                case Proto::GameServerTextEffect:
+                    parseAnimatedText(msg);
+                    break;
+                case Proto::GameServerMissleEffect:
+                    parseDistanceMissile(msg);
+                    break;
+                case Proto::GameServerMarkCreature:
+                    parseCreatureMark(msg);
+                    break;
+                case Proto::GameServerTrappers:
+                    parseTrappers(msg);
+                    break;
+                case Proto::GameServerCreatureHealth:
+                    parseCreatureHealth(msg);
+                    break;
+                case Proto::GameServerCreatureLight:
+                    parseCreatureLight(msg);
+                    break;
+                case Proto::GameServerCreatureOutfit:
+                    parseCreatureOutfit(msg);
+                    break;
+                case Proto::GameServerCreatureSpeed:
+                    parseCreatureSpeed(msg);
+                    break;
+                case Proto::GameServerCreatureSkull:
+                    parseCreatureSkulls(msg);
+                    break;
+                case Proto::GameServerCreatureParty:
+                    parseCreatureShields(msg);
+                    break;
+                case Proto::GameServerCreatureUnpass:
+                    parseCreatureUnpass(msg);
+                    break;
+                case Proto::GameServerEditText:
+                    parseEditText(msg);
+                    break;
+                case Proto::GameServerEditList:
+                    parseEditList(msg);
+                    break;
+                    // PROTOCOL>=1038
+                case Proto::GameServerPremiumTrigger:
+                    parsePremiumTrigger(msg);
+                    break;
+                case Proto::GameServerPlayerData:
+                    parsePlayerStats(msg);
+                    break;
+                case Proto::GameServerPlayerSkills:
+                    parsePlayerSkills(msg);
+                    break;
+                case Proto::GameServerPlayerState:
+                    parsePlayerState(msg);
+                    break;
+                case Proto::GameServerClearTarget:
+                    parsePlayerCancelAttack(msg);
+                    break;
+                case Proto::GameServerPlayerModes:
+                    parsePlayerModes(msg);
+                    break;
+                case Proto::GameServerTalk:
+                    parseTalk(msg);
+                    break;
+                case Proto::GameServerChannels:
+                    parseChannelList(msg);
+                    break;
+                case Proto::GameServerOpenChannel:
+                    parseOpenChannel(msg);
+                    break;
+                case Proto::GameServerOpenPrivateChannel:
+                    parseOpenPrivateChannel(msg);
+                    break;
+                case Proto::GameServerRuleViolationChannel:
+                    parseRuleViolationChannel(msg);
+                    break;
+                case Proto::GameServerRuleViolationRemove:
+                    parseRuleViolationRemove(msg);
+                    break;
+                case Proto::GameServerRuleViolationCancel:
+                    parseRuleViolationCancel(msg);
+                    break;
+                case Proto::GameServerRuleViolationLock:
+                    parseRuleViolationLock(msg);
+                    break;
+                case Proto::GameServerOpenOwnChannel:
+                    parseOpenOwnPrivateChannel(msg);
+                    break;
+                case Proto::GameServerCloseChannel:
+                    parseCloseChannel(msg);
+                    break;
+                case Proto::GameServerTextMessage:
+                    parseTextMessage(msg);
+                    break;
+                case Proto::GameServerCancelWalk:
+                    parseCancelWalk(msg);
+                    break;
+                case Proto::GameServerWalkWait:
+                    parseWalkWait(msg);
+                    break;
+                case Proto::GameServerFloorChangeUp:
+                    parseFloorChangeUp(msg);
+                    break;
+                case Proto::GameServerFloorChangeDown:
+                    parseFloorChangeDown(msg);
+                    break;
+                case Proto::GameServerChooseOutfit:
+                    parseOpenOutfitWindow(msg);
+                    break;
+                case Proto::GameServerVipAdd:
+                    parseVipAdd(msg);
+                    break;
+                case Proto::GameServerVipState:
+                    parseVipState(msg);
+                    break;
+                case Proto::GameServerVipLogout:
+                    parseVipLogout(msg);
+                    break;
+                case Proto::GameServerTutorialHint:
+                    parseTutorialHint(msg);
+                    break;
+                case Proto::GameServerAutomapFlag:
+                    parseAutomapFlag(msg);
+                    break;
+                case Proto::GameServerQuestLog:
+                    parseQuestLog(msg);
+                    break;
+                case Proto::GameServerQuestLine:
+                    parseQuestLine(msg);
+                    break;
+                    // PROTOCOL>=870
+                case Proto::GameServerSpellDelay:
+                    parseSpellCooldown(msg);
+                    break;
+                case Proto::GameServerSpellGroupDelay:
+                    parseSpellGroupCooldown(msg);
+                    break;
+                case Proto::GameServerMultiUseDelay:
+                    parseMultiUseCooldown(msg);
+                    break;
+                    // PROTOCOL>=910
+                case Proto::GameServerChannelEvent:
+                    parseChannelEvent(msg);
+                    break;
+                case Proto::GameServerItemInfo:
+                    parseItemInfo(msg);
+                    break;
+                case Proto::GameServerPlayerInventory:
+                    parsePlayerInventory(msg);
+                    break;
+                    // PROTOCOL>=950
+                case Proto::GameServerPlayerDataBasic:
+                    parsePlayerInfo(msg);
+                    break;
+                    // PROTOCOL>=970
+                case Proto::GameServerModalDialog:
+                    parseModalDialog(msg);
+                    break;
+                    // PROTOCOL>=980
+                case Proto::GameServerLoginSuccess:
                     parseLogin(msg);
-                break;
-            case Proto::GameServerGMActions:
-                parseGMActions(msg);
-                break;
-            case Proto::GameServerUpdateNeeded:
-                parseUpdateNeeded(msg);
-                break;
-            case Proto::GameServerLoginError:
-                parseLoginError(msg);
-                break;
-            case Proto::GameServerLoginAdvice:
-                parseLoginAdvice(msg);
-                break;
-            case Proto::GameServerLoginWait:
-                parseLoginWait(msg);
-                break;
-            case Proto::GameServerLoginToken:
-                parseLoginToken(msg);
-                break;
-            case Proto::GameServerPing:
-            case Proto::GameServerPingBack:
-                if ((opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing)) ||
-                    (opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing)))
-                    parsePingBack(msg);
-                else
-                    parsePing(msg);
-                break;
-            case Proto::GameServerChallenge:
-                parseChallenge(msg);
-                break;
-            case Proto::GameServerDeath:
-                parseDeath(msg);
-                break;
-            case Proto::GameServerFullMap:
-                parseMapDescription(msg);
-                break;
-            case Proto::GameServerMapTopRow:
-                parseMapMoveNorth(msg);
-                break;
-            case Proto::GameServerMapRightRow:
-                parseMapMoveEast(msg);
-                break;
-            case Proto::GameServerMapBottomRow:
-                parseMapMoveSouth(msg);
-                break;
-            case Proto::GameServerMapLeftRow:
-                parseMapMoveWest(msg);
-                break;
-            case Proto::GameServerUpdateTile:
-                parseUpdateTile(msg);
-                break;
-            case Proto::GameServerCreateOnMap:
-                parseTileAddThing(msg);
-                break;
-            case Proto::GameServerChangeOnMap:
-                parseTileTransformThing(msg);
-                break;
-            case Proto::GameServerDeleteOnMap:
-                parseTileRemoveThing(msg);
-                break;
-            case Proto::GameServerMoveCreature:
-                parseCreatureMove(msg);
-                break;
-            case Proto::GameServerOpenContainer:
-                parseOpenContainer(msg);
-                break;
-            case Proto::GameServerCloseContainer:
-                parseCloseContainer(msg);
-                break;
-            case Proto::GameServerCreateContainer:
-                parseContainerAddItem(msg);
-                break;
-            case Proto::GameServerChangeInContainer:
-                parseContainerUpdateItem(msg);
-                break;
-            case Proto::GameServerDeleteInContainer:
-                parseContainerRemoveItem(msg);
-                break;
-            case Proto::GameServerSetInventory:
-                parseAddInventoryItem(msg);
-                break;
-            case Proto::GameServerDeleteInventory:
-                parseRemoveInventoryItem(msg);
-                break;
-            case Proto::GameServerOpenNpcTrade:
-                parseOpenNpcTrade(msg);
-                break;
-            case Proto::GameServerPlayerGoods:
-                parsePlayerGoods(msg);
-                break;
-            case Proto::GameServerCloseNpcTrade:
-                parseCloseNpcTrade(msg);
-                break;
-            case Proto::GameServerOwnTrade:
-                parseOwnTrade(msg);
-                break;
-            case Proto::GameServerCounterTrade:
-                parseCounterTrade(msg);
-                break;
-            case Proto::GameServerCloseTrade:
-                parseCloseTrade(msg);
-                break;
-            case Proto::GameServerAmbient:
-                parseWorldLight(msg);
-                break;
-            case Proto::GameServerGraphicalEffect:
-                parseMagicEffect(msg);
-                break;
-            case Proto::GameServerTextEffect:
-                parseAnimatedText(msg);
-                break;
-            case Proto::GameServerMissleEffect:
-                parseDistanceMissile(msg);
-                break;
-            case Proto::GameServerMarkCreature:
-                parseCreatureMark(msg);
-                break;
-            case Proto::GameServerTrappers:
-                parseTrappers(msg);
-                break;
-            case Proto::GameServerCreatureHealth:
-                parseCreatureHealth(msg);
-                break;
-            case Proto::GameServerCreatureLight:
-                parseCreatureLight(msg);
-                break;
-            case Proto::GameServerCreatureOutfit:
-                parseCreatureOutfit(msg);
-                break;
-            case Proto::GameServerCreatureSpeed:
-                parseCreatureSpeed(msg);
-                break;
-            case Proto::GameServerCreatureSkull:
-                parseCreatureSkulls(msg);
-                break;
-            case Proto::GameServerCreatureParty:
-                parseCreatureShields(msg);
-                break;
-            case Proto::GameServerCreatureUnpass:
-                parseCreatureUnpass(msg);
-                break;
-            case Proto::GameServerEditText:
-                parseEditText(msg);
-                break;
-            case Proto::GameServerEditList:
-                parseEditList(msg);
-                break;
-                // PROTOCOL>=1038
-            case Proto::GameServerPremiumTrigger:
-                parsePremiumTrigger(msg);
-                break;
-            case Proto::GameServerPlayerData:
-                parsePlayerStats(msg);
-                break;
-            case Proto::GameServerPlayerSkills:
-                parsePlayerSkills(msg);
-                break;
-            case Proto::GameServerPlayerState:
-                parsePlayerState(msg);
-                break;
-            case Proto::GameServerClearTarget:
-                parsePlayerCancelAttack(msg);
-                break;
-            case Proto::GameServerPlayerModes:
-                parsePlayerModes(msg);
-                break;
-            case Proto::GameServerTalk:
-                parseTalk(msg);
-                break;
-            case Proto::GameServerChannels:
-                parseChannelList(msg);
-                break;
-            case Proto::GameServerOpenChannel:
-                parseOpenChannel(msg);
-                break;
-            case Proto::GameServerOpenPrivateChannel:
-                parseOpenPrivateChannel(msg);
-                break;
-            case Proto::GameServerRuleViolationChannel:
-                parseRuleViolationChannel(msg);
-                break;
-            case Proto::GameServerRuleViolationRemove:
-                parseRuleViolationRemove(msg);
-                break;
-            case Proto::GameServerRuleViolationCancel:
-                parseRuleViolationCancel(msg);
-                break;
-            case Proto::GameServerRuleViolationLock:
-                parseRuleViolationLock(msg);
-                break;
-            case Proto::GameServerOpenOwnChannel:
-                parseOpenOwnPrivateChannel(msg);
-                break;
-            case Proto::GameServerCloseChannel:
-                parseCloseChannel(msg);
-                break;
-            case Proto::GameServerTextMessage:
-                parseTextMessage(msg);
-                break;
-            case Proto::GameServerCancelWalk:
-                parseCancelWalk(msg);
-                break;
-            case Proto::GameServerWalkWait:
-                parseWalkWait(msg);
-                break;
-            case Proto::GameServerFloorChangeUp:
-                parseFloorChangeUp(msg);
-                break;
-            case Proto::GameServerFloorChangeDown:
-                parseFloorChangeDown(msg);
-                break;
-            case Proto::GameServerChooseOutfit:
-                parseOpenOutfitWindow(msg);
-                break;
-            case Proto::GameServerVipAdd:
-                parseVipAdd(msg);
-                break;
-            case Proto::GameServerVipState:
-                parseVipState(msg);
-                break;
-            case Proto::GameServerVipLogout:
-                parseVipLogout(msg);
-                break;
-            case Proto::GameServerTutorialHint:
-                parseTutorialHint(msg);
-                break;
-            case Proto::GameServerAutomapFlag:
-                parseAutomapFlag(msg);
-                break;
-            case Proto::GameServerQuestLog:
-                parseQuestLog(msg);
-                break;
-            case Proto::GameServerQuestLine:
-                parseQuestLine(msg);
-                break;
-                // PROTOCOL>=870
-            case Proto::GameServerSpellDelay:
-                parseSpellCooldown(msg);
-                break;
-            case Proto::GameServerSpellGroupDelay:
-                parseSpellGroupCooldown(msg);
-                break;
-            case Proto::GameServerMultiUseDelay:
-                parseMultiUseCooldown(msg);
-                break;
-                // PROTOCOL>=910
-            case Proto::GameServerChannelEvent:
-                parseChannelEvent(msg);
-                break;
-            case Proto::GameServerItemInfo:
-                parseItemInfo(msg);
-                break;
-            case Proto::GameServerPlayerInventory:
-                parsePlayerInventory(msg);
-                break;
-                // PROTOCOL>=950
-            case Proto::GameServerPlayerDataBasic:
-                parsePlayerInfo(msg);
-                break;
-                // PROTOCOL>=970
-            case Proto::GameServerModalDialog:
-                parseModalDialog(msg);
-                break;
-                // PROTOCOL>=980
-            case Proto::GameServerLoginSuccess:
-                parseLogin(msg);
-                break;
-            case Proto::GameServerEnterGame:
-                parseEnterGame(msg);
-                break;
-            case Proto::GameServerPlayerHelpers:
-                parsePlayerHelpers(msg);
-                break;
-                // PROTOCOL>=1000
-            case Proto::GameServerCreatureMarks:
-                parseCreaturesMark(msg);
-                break;
-            case Proto::GameServerCreatureType:
-                parseCreatureType(msg);
-                break;
-                // PROTOCOL>=1055
-            case Proto::GameServerBlessings:
-                parseBlessings(msg);
-                break;
-            case Proto::GameServerUnjustifiedStats:
-                parseUnjustifiedStats(msg);
-                break;
-            case Proto::GameServerPvpSituations:
-                parsePvpSituations(msg);
-                break;
-            case Proto::GameServerPreset:
-                parsePreset(msg);
-                break;
-                // PROTOCOL>=1080
-            case Proto::GameServerCoinBalanceUpdating:
-                parseCoinBalanceUpdating(msg);
-                break;
-            case Proto::GameServerCoinBalance:
-                parseCoinBalance(msg);
-                break;
-            case Proto::GameServerRequestPurchaseData:
-                parseRequestPurchaseData(msg);
-                break;
-            case Proto::GameServerStoreCompletePurchase:
-                parseCompleteStorePurchase(msg);
-                break;
-            case Proto::GameServerStoreOffers:
-                parseStoreOffers(msg);
-                break;
-            case Proto::GameServerStoreTransactionHistory:
-                parseStoreTransactionHistory(msg);
-                break;
-            case Proto::GameServerStoreError:
-                parseStoreError(msg);
-                break;
-            case Proto::GameServerStore:
-                parseStore(msg);
-                break;
-                // PROTOCOL>=1097
-            case Proto::GameServerStoreButtonIndicators:
-                parseStoreButtonIndicators(msg);
-                break;
-            case Proto::GameServerSetStoreDeepLink:
-                parseSetStoreDeepLink(msg);
-                break;
-                // otclient ONLY
-            case Proto::GameServerExtendedOpcode:
-                parseExtendedOpcode(msg);
-                break;
-            case Proto::GameServerChangeMapAwareRange:
-                parseChangeMapAwareRange(msg);
-                break;
-            default:
-                stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
-                break;
+                    break;
+                case Proto::GameServerEnterGame:
+                    parseEnterGame(msg);
+                    break;
+                case Proto::GameServerPlayerHelpers:
+                    parsePlayerHelpers(msg);
+                    break;
+                    // PROTOCOL>=1000
+                case Proto::GameServerCreatureMarks:
+                    parseCreaturesMark(msg);
+                    break;
+                case Proto::GameServerCreatureType:
+                    parseCreatureType(msg);
+                    break;
+                    // PROTOCOL>=1055
+                case Proto::GameServerBlessings:
+                    parseBlessings(msg);
+                    break;
+                case Proto::GameServerUnjustifiedStats:
+                    parseUnjustifiedStats(msg);
+                    break;
+                case Proto::GameServerPvpSituations:
+                    parsePvpSituations(msg);
+                    break;
+                case Proto::GameServerPreset:
+                    parsePreset(msg);
+                    break;
+                    // PROTOCOL>=1080
+                case Proto::GameServerCoinBalanceUpdating:
+                    parseCoinBalanceUpdating(msg);
+                    break;
+                case Proto::GameServerCoinBalance:
+                    parseCoinBalance(msg);
+                    break;
+                case Proto::GameServerRequestPurchaseData:
+                    parseRequestPurchaseData(msg);
+                    break;
+                case Proto::GameServerStoreCompletePurchase:
+                    parseCompleteStorePurchase(msg);
+                    break;
+                case Proto::GameServerStoreOffers:
+                    parseStoreOffers(msg);
+                    break;
+                case Proto::GameServerStoreTransactionHistory:
+                    parseStoreTransactionHistory(msg);
+                    break;
+                case Proto::GameServerStoreError:
+                    parseStoreError(msg);
+                    break;
+                case Proto::GameServerStore:
+                    parseStore(msg);
+                    break;
+                    // PROTOCOL>=1097
+                case Proto::GameServerStoreButtonIndicators:
+                    parseStoreButtonIndicators(msg);
+                    break;
+                case Proto::GameServerSetStoreDeepLink:
+                    parseSetStoreDeepLink(msg);
+                    break;
+                    // otclient ONLY
+                case Proto::GameServerExtendedOpcode:
+                    parseExtendedOpcode(msg);
+                    break;
+                case Proto::GameServerChangeMapAwareRange:
+                    parseChangeMapAwareRange(msg);
+                    break;
+                default:
+                    stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
+                    break;
             }
             prevOpcode = opcode;
         }
@@ -533,7 +533,7 @@ void ProtocolGame::parseCoinBalance(const InputMessagePtr& msg)
 void ProtocolGame::parseCoinBalanceUpdating(const InputMessagePtr& msg)
 {
     // coin balance can be updating and might not be accurate
-    bool isUpdating = msg->getU8() == 1;
+    msg->getU8(); // == 1; // isUpdating
 }
 
 void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr& msg)
@@ -705,12 +705,12 @@ void ProtocolGame::parseLoginToken(const InputMessagePtr& msg)
     g_game.processLoginToken(unknown);
 }
 
-void ProtocolGame::parsePing(const InputMessagePtr& msg)
+void ProtocolGame::parsePing(const InputMessagePtr&)
 {
     g_game.processPing();
 }
 
-void ProtocolGame::parsePingBack(const InputMessagePtr& msg)
+void ProtocolGame::parsePingBack(const InputMessagePtr&)
 {
     g_game.processPingBack();
 }
@@ -1302,7 +1302,7 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
     }
 
     if (g_game.getClientVersion() <= 1096) {
-        bool something = msg->getU8() == 1;
+        msg->getU8(); // == 1; // something
     }
 }
 
@@ -1407,8 +1407,8 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     if (g_game.getFeature(Otc::GameOfflineTrainingTime)) {
         training = msg->getU16();
         if (g_game.getClientVersion() >= 1097) {
-            int remainingStoreXpBoostSeconds = msg->getU16();
-            bool canBuyMoreStoreXpBoosts = msg->getU8();
+            msg->getU16(); // remainingStoreXpBoostSeconds
+            msg->getU8(); // canBuyMoreStoreXpBoosts
         }
     }
 
@@ -1533,37 +1533,37 @@ void ProtocolGame::parseTalk(const InputMessagePtr& msg)
     Position pos;
 
     switch (mode) {
-    case Otc::MessageSay:
-    case Otc::MessageWhisper:
-    case Otc::MessageYell:
-    case Otc::MessageMonsterSay:
-    case Otc::MessageMonsterYell:
-    case Otc::MessageNpcTo:
-    case Otc::MessageBarkLow:
-    case Otc::MessageBarkLoud:
-    case Otc::MessageSpell:
-    case Otc::MessageNpcFromStartBlock:
-        pos = getPosition(msg);
-        break;
-    case Otc::MessageChannel:
-    case Otc::MessageChannelManagement:
-    case Otc::MessageChannelHighlight:
-    case Otc::MessageGamemasterChannel:
-        channelId = msg->getU16();
-        break;
-    case Otc::MessageNpcFrom:
-    case Otc::MessagePrivateFrom:
-    case Otc::MessageGamemasterBroadcast:
-    case Otc::MessageGamemasterPrivateFrom:
-    case Otc::MessageRVRAnswer:
-    case Otc::MessageRVRContinue:
-        break;
-    case Otc::MessageRVRChannel:
-        msg->getU32();
-        break;
-    default:
-        stdext::throw_exception(stdext::format("unknown message mode %d", mode));
-        break;
+        case Otc::MessageSay:
+        case Otc::MessageWhisper:
+        case Otc::MessageYell:
+        case Otc::MessageMonsterSay:
+        case Otc::MessageMonsterYell:
+        case Otc::MessageNpcTo:
+        case Otc::MessageBarkLow:
+        case Otc::MessageBarkLoud:
+        case Otc::MessageSpell:
+        case Otc::MessageNpcFromStartBlock:
+            pos = getPosition(msg);
+            break;
+        case Otc::MessageChannel:
+        case Otc::MessageChannelManagement:
+        case Otc::MessageChannelHighlight:
+        case Otc::MessageGamemasterChannel:
+            channelId = msg->getU16();
+            break;
+        case Otc::MessageNpcFrom:
+        case Otc::MessagePrivateFrom:
+        case Otc::MessageGamemasterBroadcast:
+        case Otc::MessageGamemasterPrivateFrom:
+        case Otc::MessageRVRAnswer:
+        case Otc::MessageRVRContinue:
+            break;
+        case Otc::MessageRVRChannel:
+            msg->getU32();
+            break;
+        default:
+            stdext::throw_exception(stdext::format("unknown message mode %d", mode));
+            break;
     }
 
     std::string text = msg->getString();
@@ -1640,11 +1640,10 @@ void ProtocolGame::parseRuleViolationRemove(const InputMessagePtr& msg)
 void ProtocolGame::parseRuleViolationCancel(const InputMessagePtr& msg)
 {
     std::string name = msg->getString();
-
     g_game.processRuleViolationCancel(name);
 }
 
-void ProtocolGame::parseRuleViolationLock(const InputMessagePtr& msg)
+void ProtocolGame::parseRuleViolationLock(const InputMessagePtr&)
 {
     g_game.processRuleViolationLock();
 }
@@ -1656,66 +1655,70 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
     std::string text;
 
     switch (mode) {
-    case Otc::MessageChannelManagement: {
-        msg->getU16(); // channelId
-        text = msg->getString();
-        break;
-    }
-    case Otc::MessageGuild:
-    case Otc::MessagePartyManagement:
-    case Otc::MessageParty: {
-        msg->getU16(); // channelId
-        text = msg->getString();
-        break;
-    }
-    case Otc::MessageDamageDealed:
-    case Otc::MessageDamageReceived:
-    case Otc::MessageDamageOthers: {
-        Position pos = getPosition(msg);
-        uint value[2];
-        int color[2];
-
-        // physical damage
-        value[0] = msg->getU32();
-        color[0] = msg->getU8();
-
-        // magic damage
-        value[1] = msg->getU32();
-        color[1] = msg->getU8();
-        text = msg->getString();
-
-        for (int i = 0; i < 2; ++i) {
-            if (value[i] == 0)
-                continue;
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-            animatedText->setColor(color[i]);
-            animatedText->setText(stdext::to_string(value[i]));
-            g_map.addThing(animatedText, pos);
+        case Otc::MessageChannelManagement:
+        {
+            msg->getU16(); // channelId
+            text = msg->getString();
+            break;
         }
-        break;
-    }
-    case Otc::MessageHeal:
-    case Otc::MessageMana:
-    case Otc::MessageExp:
-    case Otc::MessageHealOthers:
-    case Otc::MessageExpOthers: {
-        Position pos = getPosition(msg);
-        uint value = msg->getU32();
-        int color = msg->getU8();
-        text = msg->getString();
+        case Otc::MessageGuild:
+        case Otc::MessagePartyManagement:
+        case Otc::MessageParty:
+        {
+            msg->getU16(); // channelId
+            text = msg->getString();
+            break;
+        }
+        case Otc::MessageDamageDealed:
+        case Otc::MessageDamageReceived:
+        case Otc::MessageDamageOthers:
+        {
+            Position pos = getPosition(msg);
+            uint value[2];
+            int color[2];
 
-        AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-        animatedText->setColor(color);
-        animatedText->setText(stdext::to_string(value));
-        g_map.addThing(animatedText, pos);
-        break;
-    }
-    case Otc::MessageInvalid:
-        stdext::throw_exception(stdext::format("unknown message mode %d", mode));
-        break;
-    default:
-        text = msg->getString();
-        break;
+            // physical damage
+            value[0] = msg->getU32();
+            color[0] = msg->getU8();
+
+            // magic damage
+            value[1] = msg->getU32();
+            color[1] = msg->getU8();
+            text = msg->getString();
+
+            for (int i = 0; i < 2; ++i) {
+                if (value[i] == 0)
+                    continue;
+                AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+                animatedText->setColor(color[i]);
+                animatedText->setText(stdext::to_string(value[i]));
+                g_map.addThing(animatedText, pos);
+            }
+            break;
+        }
+        case Otc::MessageHeal:
+        case Otc::MessageMana:
+        case Otc::MessageExp:
+        case Otc::MessageHealOthers:
+        case Otc::MessageExpOthers:
+        {
+            Position pos = getPosition(msg);
+            uint value = msg->getU32();
+            int color = msg->getU8();
+            text = msg->getString();
+
+            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+            animatedText->setColor(color);
+            animatedText->setText(stdext::to_string(value));
+            g_map.addThing(animatedText, pos);
+            break;
+        }
+        case Otc::MessageInvalid:
+            stdext::throw_exception(stdext::format("unknown message mode %d", mode));
+            break;
+        default:
+            text = msg->getString();
+            break;
     }
 
     g_game.processTextMessage(mode, text);
@@ -2394,7 +2397,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
     return item;
 }
 
-StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int id)
+StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int)
 {
     int colorByte = msg->getU8();
     Color color = Color::from8bit(colorByte);

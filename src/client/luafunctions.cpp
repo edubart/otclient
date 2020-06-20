@@ -746,13 +746,11 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setVisibleDimension", &UIMap::setVisibleDimension);
     g_lua.bindClassMemberFunction<UIMap>("setViewMode", &UIMap::setViewMode);
     g_lua.bindClassMemberFunction<UIMap>("setAutoViewMode", &UIMap::setAutoViewMode);
-    g_lua.bindClassMemberFunction<UIMap>("setDrawFlags", &UIMap::setDrawFlags);
     g_lua.bindClassMemberFunction<UIMap>("setDrawTexts", &UIMap::setDrawTexts);
     g_lua.bindClassMemberFunction<UIMap>("setDrawNames", &UIMap::setDrawNames);
     g_lua.bindClassMemberFunction<UIMap>("setDrawHealthBars", &UIMap::setDrawHealthBars);
     g_lua.bindClassMemberFunction<UIMap>("setDrawLights", &UIMap::setDrawLights);
     g_lua.bindClassMemberFunction<UIMap>("setDrawManaBar", &UIMap::setDrawManaBar);
-    g_lua.bindClassMemberFunction<UIMap>("setAnimated", &UIMap::setAnimated);
     g_lua.bindClassMemberFunction<UIMap>("setKeepAspectRatio", &UIMap::setKeepAspectRatio);
     g_lua.bindClassMemberFunction<UIMap>("setMapShader", &UIMap::setMapShader);
     g_lua.bindClassMemberFunction<UIMap>("setMinimumAmbientLight", &UIMap::setMinimumAmbientLight);
@@ -766,12 +764,10 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("isDrawingLights", &UIMap::isDrawingLights);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingManaBar", &UIMap::isDrawingManaBar);
     g_lua.bindClassMemberFunction<UIMap>("isLimitVisibleRangeEnabled", &UIMap::isLimitVisibleRangeEnabled);
-    g_lua.bindClassMemberFunction<UIMap>("isAnimating", &UIMap::isAnimating);
     g_lua.bindClassMemberFunction<UIMap>("isKeepAspectRatioEnabled", &UIMap::isKeepAspectRatioEnabled);
     g_lua.bindClassMemberFunction<UIMap>("getVisibleDimension", &UIMap::getVisibleDimension);
     g_lua.bindClassMemberFunction<UIMap>("getViewMode", &UIMap::getViewMode);
     g_lua.bindClassMemberFunction<UIMap>("getFollowingCreature", &UIMap::getFollowingCreature);
-    g_lua.bindClassMemberFunction<UIMap>("getDrawFlags", &UIMap::getDrawFlags);
     g_lua.bindClassMemberFunction<UIMap>("getCameraPosition", &UIMap::getCameraPosition);
     g_lua.bindClassMemberFunction<UIMap>("getPosition", &UIMap::getPosition);
     g_lua.bindClassMemberFunction<UIMap>("getTile", &UIMap::getTile);

@@ -302,7 +302,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
     }
 }
 
-void Minimap::saveImage(const std::string& fileName, const Rect& mapRect)
+void Minimap::saveImage(const std::string&, const Rect&)
 {
     //TODO
 }
@@ -325,12 +325,13 @@ bool Minimap::loadOtmm(const std::string& fileName)
         fin->getU32(); // flags
 
         switch (version) {
-        case 1: {
-            fin->getString(); // description
-            break;
-        }
-        default:
-            stdext::throw_exception("OTMM version not supported");
+            case 1:
+            {
+                fin->getString(); // description
+                break;
+            }
+            default:
+                stdext::throw_exception("OTMM version not supported");
         }
 
         fin->seek(start);

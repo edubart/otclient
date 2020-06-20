@@ -96,11 +96,11 @@ void Spawn::save(TiXmlElement* node)
 
     node->SetAttribute("radius", getRadius());
 
-    TiXmlElement* creatureNode = nullptr;
-
     for (const auto& pair : m_creatures) {
         const CreatureTypePtr& creature = pair.second;
-        if (!(creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster")))
+        TiXmlElement* creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster");
+
+        if (!creatureNode)
             stdext::throw_exception("Spawn::save: Ran out of memory while allocating XML element!  Terminating now.");
 
         creatureNode->SetAttribute("name", creature->getName());

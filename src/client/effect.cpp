@@ -25,26 +25,25 @@
 #include "game.h"
 #include <framework/core/eventdispatcher.h>
 
-void Effect::drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX, int offsetY, LightView* lightView)
+void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int offsetY, LightView* lightView)
 {
     if (m_id == 0)
         return;
 
     int animationPhase = 0;
-    if (animate) {
-        if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
-            // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
-            animationPhase = rawGetThingType()->getAnimator()->getPhaseAt(m_animationTimer.ticksElapsed());
-        }
-        else {
-            // hack to fix some animation phases duration, currently there is no better solution
-            int ticks = EFFECT_TICKS_PER_FRAME;
-            if (m_id == 33) {
-                ticks <<= 2;
-            }
 
-            animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
+    if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
+        animationPhase = rawGetThingType()->getAnimator()->getPhaseAt(m_animationTimer.ticksElapsed());
+    }
+    else {
+        // hack to fix some animation phases duration, currently there is no better solution
+        int ticks = EFFECT_TICKS_PER_FRAME;
+        if (m_id == 33) {
+            ticks <<= 2;
         }
+
+        animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
     }
 
     int xPattern = offsetX % getNumPatternX();

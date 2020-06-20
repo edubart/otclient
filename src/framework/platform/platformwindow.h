@@ -28,7 +28,7 @@
 #include <framework/core/timer.h>
 #include <framework/graphics/declarations.h>
 
-//@bindsingleton g_window
+ //@bindsingleton g_window
 class PlatformWindow
 {
     enum {
@@ -51,7 +51,7 @@ public:
     virtual void swapBuffers() = 0;
     virtual void showMouse() = 0;
     virtual void hideMouse() = 0;
-    virtual void displayFatalError(const std::string& message) { }
+    virtual void displayFatalError(const std::string& /*message*/) { }
 
     int loadMouseCursor(const std::string& file, const Point& hotSpot);
     virtual void setMouseCursor(int cursorId) = 0;

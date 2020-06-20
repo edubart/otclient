@@ -32,7 +32,7 @@ public:
     UIPositionAnchor(Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge) :
         UIAnchor(anchoredEdge, std::string(), hookedEdge), m_hookedPosition(hookedPosition) { }
 
-    UIWidgetPtr getHookedWidget(const UIWidgetPtr& widget, const UIWidgetPtr& parentWidget) { return parentWidget; }
+    UIWidgetPtr getHookedWidget(const UIWidgetPtr& /*widget*/, const UIWidgetPtr& parentWidget) { return parentWidget; }
     int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget);
 
 private:

@@ -41,6 +41,7 @@ void Map::loadOtbm(const std::string& fileName)
         FileStreamPtr fin = g_resources.openFile(fileName);
         if (!fin)
             stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
+
         fin->cache();
 
         char identifier[4];
