@@ -86,6 +86,7 @@ void Effect::setId(uint32 id)
 {
     if (!g_things.isValidDatId(id, ThingCategoryEffect))
         id = 0;
+
     m_id = id;
 }
 

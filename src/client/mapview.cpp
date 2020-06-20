@@ -371,7 +371,7 @@ void MapView::updateVisibleTilesCache(int start)
                 int tpy = height / 2 - 2;
                 int count = 0;
                 Rect area(0, 0, m_drawDimension);
-                spiral[count++] = Point(tpx + 1, tpy + 1);
+                spiral[++count] = Point(tpx + 1, tpy + 1);
                 for (int step = 1; tpx >= 0 || tpy >= 0; ++step, --tpx, --tpy) {
                     int qs = 2 * step;
                     Rect lines[4] = {
@@ -388,7 +388,7 @@ void MapView::updateVisibleTilesCache(int start)
                         int ey = std::min<int>(line.bottom(), area.bottom());
                         for (int qx = sx; qx <= ex; ++qx)
                             for (int qy = sy; qy <= ey; ++qy)
-                                spiral[count++] = Point(qx, qy);
+                                spiral[++count] = Point(qx, qy);
                     }
                 }
             }

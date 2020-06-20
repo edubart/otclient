@@ -46,7 +46,6 @@ public:
 
     Creature();
 
-
     virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView* lightView = nullptr);
@@ -135,26 +134,24 @@ public:
     virtual void onDeath();
 
 protected:
-    virtual void updateWalkAnimation(int totalPixelsWalked);
-    virtual void updateWalkOffset(int totalPixelsWalked);
     void updateWalkingTile();
+    virtual void updateWalkAnimation();
+    virtual void updateWalkOffset(int totalPixelsWalked);
+    virtual void updateWalk(const bool isPreWalking = false);
     virtual void nextWalkUpdate();
     virtual void terminateWalk();
-
-    virtual void updateWalk(const bool isPreWalking = false);
-
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();
 
     uint32 m_id;
     std::string m_name;
-    uint8 m_healthPercent;
     Otc::Direction m_direction;
     Outfit m_outfit;
     Light m_light;
     int m_speed;
     double m_baseSpeed;
+    uint8 m_healthPercent;
     uint8 m_skull;
     uint8 m_shield;
     uint8 m_emblem;
@@ -168,14 +165,14 @@ protected:
     stdext::boolean<true> m_showShieldTexture;
     stdext::boolean<false> m_shieldBlink;
     stdext::boolean<false> m_passable;
-    Color m_timedSquareColor;
-    Color m_staticSquareColor;
     stdext::boolean<false> m_showTimedSquare;
     stdext::boolean<false> m_showStaticSquare;
     stdext::boolean<true> m_removed;
-    CachedText m_nameCache;
+    Color m_timedSquareColor;
+    Color m_staticSquareColor;
     Color m_informationColor;
     Color m_outfitColor;
+    CachedText m_nameCache;
     ScheduledEventPtr m_outfitColorUpdateEvent;
     Timer m_outfitColorTimer;
 
@@ -212,6 +209,11 @@ private:
         int groundSpeed = 0;
         int duration = 0;
         int durationDiagonal = 0;
+
+        int getDuration(Otc::Direction dir) {
+            return (dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast) ?
+                durationDiagonal : duration;
+        }
     };
 
     StepCache m_stepCache;

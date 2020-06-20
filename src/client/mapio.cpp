@@ -82,17 +82,17 @@ void Map::loadOtbm(const std::string& fileName)
             uint8 attribute = node->getU8();
             std::string tmp = node->getString();
             switch (attribute) {
-            case OTBM_ATTR_DESCRIPTION:
-                setDescription(tmp);
-                break;
-            case OTBM_ATTR_SPAWN_FILE:
-                setSpawnFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
-                break;
-            case OTBM_ATTR_HOUSE_FILE:
-                setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
-                break;
-            default:
-                stdext::throw_exception(stdext::format("Invalid attribute '%d'", (int)attribute));
+                case OTBM_ATTR_DESCRIPTION:
+                    setDescription(tmp);
+                    break;
+                case OTBM_ATTR_SPAWN_FILE:
+                    setSpawnFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
+                    break;
+                case OTBM_ATTR_HOUSE_FILE:
+                    setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
+                    break;
+                default:
+                    stdext::throw_exception(stdext::format("Invalid attribute '%d'", (int)attribute));
             }
         }
 
@@ -126,30 +126,33 @@ void Map::loadOtbm(const std::string& fileName)
                     while (nodeTile->canRead()) {
                         uint8 tileAttr = nodeTile->getU8();
                         switch (tileAttr) {
-                        case OTBM_ATTR_TILE_FLAGS: {
-                            uint32 _flags = nodeTile->getU32();
-                            if ((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
-                                flags |= TILESTATE_PROTECTIONZONE;
-                            else if ((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
-                                flags |= TILESTATE_OPTIONALZONE;
-                            else if ((_flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
-                                flags |= TILESTATE_HARDCOREZONE;
+                            case OTBM_ATTR_TILE_FLAGS:
+                            {
+                                uint32 _flags = nodeTile->getU32();
+                                if ((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
+                                    flags |= TILESTATE_PROTECTIONZONE;
+                                else if ((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
+                                    flags |= TILESTATE_OPTIONALZONE;
+                                else if ((_flags & TILESTATE_HARDCOREZONE) == TILESTATE_HARDCOREZONE)
+                                    flags |= TILESTATE_HARDCOREZONE;
 
-                            if ((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
-                                flags |= TILESTATE_NOLOGOUT;
+                                if ((_flags & TILESTATE_NOLOGOUT) == TILESTATE_NOLOGOUT)
+                                    flags |= TILESTATE_NOLOGOUT;
 
-                            if ((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
-                                flags |= TILESTATE_REFRESH;
-                            break;
-                        }
-                        case OTBM_ATTR_ITEM: {
-                            addThing(Item::createFromOtb(nodeTile->getU16()), pos);
-                            break;
-                        }
-                        default: {
-                            stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s",
-                                (int)tileAttr, stdext::to_string(pos)));
-                        }
+                                if ((_flags & TILESTATE_REFRESH) == TILESTATE_REFRESH)
+                                    flags |= TILESTATE_REFRESH;
+                                break;
+                            }
+                            case OTBM_ATTR_ITEM:
+                            {
+                                addThing(Item::createFromOtb(nodeTile->getU16()), pos);
+                                break;
+                            }
+                            default:
+                            {
+                                stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s",
+                                    (int)tileAttr, stdext::to_string(pos)));
+                            }
                         }
                     }
 
@@ -418,19 +421,20 @@ bool Map::loadOtcm(const std::string& fileName)
         fin->getU32(); // flags
 
         switch (version) {
-        case 1: {
-            fin->getString(); // description
-            uint32 datSignature = fin->getU32();
-            fin->getU16(); // protocol version
-            fin->getString(); // world name
+            case 1:
+            {
+                fin->getString(); // description
+                uint32 datSignature = fin->getU32();
+                fin->getU16(); // protocol version
+                fin->getString(); // world name
 
-            if (datSignature != g_things.getDatSignature())
-                g_logger.warning("otcm map loaded was created with a different dat signature");
+                if (datSignature != g_things.getDatSignature())
+                    g_logger.warning("otcm map loaded was created with a different dat signature");
 
-            break;
-        }
-        default:
-            stdext::throw_exception("otcm version not supported");
+                break;
+            }
+            default:
+                stdext::throw_exception("otcm version not supported");
         }
 
         fin->seek(start);
@@ -462,7 +466,7 @@ bool Map::loadOtcm(const std::string& fileName)
                 item->setCountOrSubType(countOrSubType);
 
                 if (item->isValid())
-                    tile->addThing(item, stackPos++);
+                    tile->addThing(item, ++stackPos);
             }
 
             g_map.notificateTileUpdate(pos);

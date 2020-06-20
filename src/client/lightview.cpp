@@ -47,8 +47,8 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
     int bubbleDiameter = bubbleRadius * 2;
     ImagePtr lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
 
-    for (int x = 0; x < bubbleDiameter; x++) {
-        for (int y = 0; y < bubbleDiameter; y++) {
+    for (int x = 0; x < bubbleDiameter; ++x) {
+        for (int y = 0; y < bubbleDiameter; ++y) {
             float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
             float intensity = stdext::clamp<float>((bubbleRadius - radius) / (float)(bubbleRadius - centerRadius), 0.0f, 1.0f);
 

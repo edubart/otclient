@@ -141,7 +141,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     int count = 0, attr = -1;
     bool done = false;
     for (int i = 0; i < ThingLastAttr; ++i) {
-        count++;
+        ++count;
         attr = fin->getU8();
         if (attr == ThingLastAttr) {
             done = true;
@@ -322,7 +322,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
         m_spritesIndex.resize((totalSpritesCount + totalSprites));
-        for (int j = totalSpritesCount; j < (totalSpritesCount + totalSprites); j++)
+        for (int j = totalSpritesCount; j < (totalSpritesCount + totalSprites); ++j)
             m_spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         totalSpritesCount += totalSprites;

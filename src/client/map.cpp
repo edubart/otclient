@@ -66,6 +66,7 @@ void Map::notificateTileUpdate(const Position& pos)
 
     for (const MapViewPtr& mapView : m_mapViews)
         mapView->onTileUpdate(pos);
+
     g_minimap.updateTile(pos, getTile(pos));
 }
 
@@ -317,9 +318,11 @@ const TilePtr& Map::getTile(const Position& pos)
 {
     if (!pos.isMapPosition())
         return m_nulltile;
+
     auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if (it != m_tileBlocks[pos.z].end())
         return it->second.get(pos);
+
     return m_nulltile;
 }
 

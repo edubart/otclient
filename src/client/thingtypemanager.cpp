@@ -253,7 +253,7 @@ void ThingTypeManager::loadXml(const std::string& file)
                     if (ids.size() > 1) {
                         int32 i = ids[0];
                         while (i <= ids[1])
-                            parseItemType(i++, element);
+                            parseItemType(++i, element);
                     }
                     else
                         parseItemType(atoi(s.c_str()), element);
@@ -266,7 +266,7 @@ void ThingTypeManager::loadXml(const std::string& file)
                     size_t size = begin.size();
                     for (size_t i = 0; i < size; ++i)
                         while (begin[i] <= end[i])
-                            parseItemType(begin[i]++, element);
+                            parseItemType(++begin[i], element);
                 }
             }
         }

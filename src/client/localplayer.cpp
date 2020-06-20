@@ -75,13 +75,12 @@ bool LocalPlayer::canWalk(Otc::Direction)
     const int stepDuration = getStepDuration();
     const ticks_t walkTimerElapsed = m_walkTimer.ticksElapsed();
 
-
     // last walk is not done yet
     if (walkTimerElapsed < stepDuration && !isAutoWalking())
         return false;
 
     // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && walkTimerElapsed >= stepDuration + PREWALK_TIMEOUT;
+    const bool prewalkTimeouted = m_walking && m_preWalking && walkTimerElapsed >= stepDuration + PREWALK_TIMEOUT;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
     if (!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)

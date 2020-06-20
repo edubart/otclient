@@ -202,13 +202,13 @@ int Animator::getPhaseDuration(int phase)
 void Animator::calculateSynchronous()
 {
     int totalDuration = 0;
-    for (int i = 0; i < m_animationPhases; i++)
+    for (int i = 0; i < m_animationPhases; ++i)
         totalDuration += getPhaseDuration(i);
 
     ticks_t ticks = g_clock.millis();
     int elapsedTicks = (int)(ticks % totalDuration);
     int totalTime = 0;
-    for (int i = 0; i < m_animationPhases; i++) {
+    for (int i = 0; i < m_animationPhases; ++i) {
         int duration = getPhaseDuration(i);
         if (elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
             m_phase = i;

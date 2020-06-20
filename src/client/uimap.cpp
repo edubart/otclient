@@ -145,7 +145,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
     // we must check every floor, from top to bottom to check for a clickable tile
     TilePtr tile;
     tilePos.coveredUp(tilePos.z - m_mapView->getCachedFirstVisibleFloor());
-    for (int i = m_mapView->getCachedFirstVisibleFloor(); i <= m_mapView->getCachedLastVisibleFloor(); i++) {
+    for (int i = m_mapView->getCachedFirstVisibleFloor(); i <= m_mapView->getCachedLastVisibleFloor(); ++i) {
         tile = g_map.getTile(tilePos);
         if (tile && tile->isClickable())
             break;

@@ -125,56 +125,57 @@ void Item::unserializeItem(const BinaryTreePtr& in)
                 break;
 
             switch (attrib) {
-            case ATTR_COUNT:
-            case ATTR_RUNE_CHARGES:
-                setCount(in->getU8());
-                break;
-            case ATTR_CHARGES:
-                setCount(in->getU16());
-                break;
-            case ATTR_HOUSEDOORID:
-            case ATTR_SCRIPTPROTECTED:
-            case ATTR_DUALWIELD:
-            case ATTR_DECAYING_STATE:
-                m_attribs.set(attrib, in->getU8());
-                break;
-            case ATTR_ACTION_ID:
-            case ATTR_UNIQUE_ID:
-            case ATTR_DEPOT_ID:
-                m_attribs.set(attrib, in->getU16());
-                break;
-            case ATTR_CONTAINER_ITEMS:
-            case ATTR_ATTACK:
-            case ATTR_EXTRAATTACK:
-            case ATTR_DEFENSE:
-            case ATTR_EXTRADEFENSE:
-            case ATTR_ARMOR:
-            case ATTR_ATTACKSPEED:
-            case ATTR_HITCHANCE:
-            case ATTR_DURATION:
-            case ATTR_WRITTENDATE:
-            case ATTR_SLEEPERGUID:
-            case ATTR_SLEEPSTART:
-            case ATTR_ATTRIBUTE_MAP:
-                m_attribs.set(attrib, in->getU32());
-                break;
-            case ATTR_TELE_DEST: {
-                Position pos;
-                pos.x = in->getU16();
-                pos.y = in->getU16();
-                pos.z = in->getU8();
-                m_attribs.set(attrib, pos);
-                break;
-            }
-            case ATTR_NAME:
-            case ATTR_TEXT:
-            case ATTR_DESC:
-            case ATTR_ARTICLE:
-            case ATTR_WRITTENBY:
-                m_attribs.set(attrib, in->getString());
-                break;
-            default:
-                stdext::throw_exception(stdext::format("invalid item attribute %d", attrib));
+                case ATTR_COUNT:
+                case ATTR_RUNE_CHARGES:
+                    setCount(in->getU8());
+                    break;
+                case ATTR_CHARGES:
+                    setCount(in->getU16());
+                    break;
+                case ATTR_HOUSEDOORID:
+                case ATTR_SCRIPTPROTECTED:
+                case ATTR_DUALWIELD:
+                case ATTR_DECAYING_STATE:
+                    m_attribs.set(attrib, in->getU8());
+                    break;
+                case ATTR_ACTION_ID:
+                case ATTR_UNIQUE_ID:
+                case ATTR_DEPOT_ID:
+                    m_attribs.set(attrib, in->getU16());
+                    break;
+                case ATTR_CONTAINER_ITEMS:
+                case ATTR_ATTACK:
+                case ATTR_EXTRAATTACK:
+                case ATTR_DEFENSE:
+                case ATTR_EXTRADEFENSE:
+                case ATTR_ARMOR:
+                case ATTR_ATTACKSPEED:
+                case ATTR_HITCHANCE:
+                case ATTR_DURATION:
+                case ATTR_WRITTENDATE:
+                case ATTR_SLEEPERGUID:
+                case ATTR_SLEEPSTART:
+                case ATTR_ATTRIBUTE_MAP:
+                    m_attribs.set(attrib, in->getU32());
+                    break;
+                case ATTR_TELE_DEST:
+                {
+                    Position pos;
+                    pos.x = in->getU16();
+                    pos.y = in->getU16();
+                    pos.z = in->getU8();
+                    m_attribs.set(attrib, pos);
+                    break;
+                }
+                case ATTR_NAME:
+                case ATTR_TEXT:
+                case ATTR_DESC:
+                case ATTR_ARTICLE:
+                case ATTR_WRITTENBY:
+                    m_attribs.set(attrib, in->getString());
+                    break;
+                default:
+                    stdext::throw_exception(stdext::format("invalid item attribute %d", attrib));
             }
         }
     }
@@ -254,16 +255,6 @@ int Item::getCount()
     return 1;
 }
 
-bool Item::isMoveable()
-{
-    return !rawGetThingType()->isNotMoveable();
-}
-
-bool Item::isGround()
-{
-    return rawGetThingType()->isGround();
-}
-
 ItemPtr Item::clone()
 {
     ItemPtr item = ItemPtr(new Item);
@@ -316,63 +307,63 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         int color = Otc::FluidTransparent;
         if (g_game.getFeature(Otc::GameNewFluids)) {
             switch (m_countOrSubType) {
-            case Otc::FluidNone:
-                color = Otc::FluidTransparent;
-                break;
-            case Otc::FluidWater:
-                color = Otc::FluidBlue;
-                break;
-            case Otc::FluidMana:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidBeer:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidOil:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidBlood:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidSlime:
-                color = Otc::FluidGreen;
-                break;
-            case Otc::FluidMud:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidLemonade:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidWine:
-                color = Otc::FluidPurple;
-                break;
-            case Otc::FluidHealth:
-                color = Otc::FluidRed;
-                break;
-            case Otc::FluidUrine:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidRum:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidFruidJuice:
-                color = Otc::FluidYellow;
-                break;
-            case Otc::FluidCoconutMilk:
-                color = Otc::FluidWhite;
-                break;
-            case Otc::FluidTea:
-                color = Otc::FluidBrown;
-                break;
-            case Otc::FluidMead:
-                color = Otc::FluidBrown;
-                break;
-            default:
-                color = Otc::FluidTransparent;
-                break;
+                case Otc::FluidNone:
+                    color = Otc::FluidTransparent;
+                    break;
+                case Otc::FluidWater:
+                    color = Otc::FluidBlue;
+                    break;
+                case Otc::FluidMana:
+                    color = Otc::FluidPurple;
+                    break;
+                case Otc::FluidBeer:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidOil:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidBlood:
+                    color = Otc::FluidRed;
+                    break;
+                case Otc::FluidSlime:
+                    color = Otc::FluidGreen;
+                    break;
+                case Otc::FluidMud:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidLemonade:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidMilk:
+                    color = Otc::FluidWhite;
+                    break;
+                case Otc::FluidWine:
+                    color = Otc::FluidPurple;
+                    break;
+                case Otc::FluidHealth:
+                    color = Otc::FluidRed;
+                    break;
+                case Otc::FluidUrine:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidRum:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidFruidJuice:
+                    color = Otc::FluidYellow;
+                    break;
+                case Otc::FluidCoconutMilk:
+                    color = Otc::FluidWhite;
+                    break;
+                case Otc::FluidTea:
+                    color = Otc::FluidBrown;
+                    break;
+                case Otc::FluidMead:
+                    color = Otc::FluidBrown;
+                    break;
+                default:
+                    color = Otc::FluidTransparent;
+                    break;
             }
         }
         else

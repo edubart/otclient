@@ -271,7 +271,7 @@ void Game::processPing()
 
 void Game::processPingBack()
 {
-    m_pingReceived++;
+    ++m_pingReceived;
 
     if (m_pingReceived == m_pingSent)
         m_ping = m_pingTimer.elapsed_millis();
@@ -649,7 +649,7 @@ bool Game::walk(const Otc::Direction direction)
         if (!(canChangeFloorDown() || canChangeFloorUp() || !toTile || toTile->isEmpty()))
             return false;
 
-        m_localPlayer->lockWalk();            
+        m_localPlayer->lockWalk();
     }
 
     m_localPlayer->stopAutoWalk();
@@ -707,32 +707,32 @@ void Game::forceWalk(Otc::Direction direction)
         return;
 
     switch (direction) {
-    case Otc::North:
-        m_protocolGame->sendWalkNorth();
-        break;
-    case Otc::East:
-        m_protocolGame->sendWalkEast();
-        break;
-    case Otc::South:
-        m_protocolGame->sendWalkSouth();
-        break;
-    case Otc::West:
-        m_protocolGame->sendWalkWest();
-        break;
-    case Otc::NorthEast:
-        m_protocolGame->sendWalkNorthEast();
-        break;
-    case Otc::SouthEast:
-        m_protocolGame->sendWalkSouthEast();
-        break;
-    case Otc::SouthWest:
-        m_protocolGame->sendWalkSouthWest();
-        break;
-    case Otc::NorthWest:
-        m_protocolGame->sendWalkNorthWest();
-        break;
-    default:
-        break;
+        case Otc::North:
+            m_protocolGame->sendWalkNorth();
+            break;
+        case Otc::East:
+            m_protocolGame->sendWalkEast();
+            break;
+        case Otc::South:
+            m_protocolGame->sendWalkSouth();
+            break;
+        case Otc::West:
+            m_protocolGame->sendWalkWest();
+            break;
+        case Otc::NorthEast:
+            m_protocolGame->sendWalkNorthEast();
+            break;
+        case Otc::SouthEast:
+            m_protocolGame->sendWalkSouthEast();
+            break;
+        case Otc::SouthWest:
+            m_protocolGame->sendWalkSouthWest();
+            break;
+        case Otc::NorthWest:
+            m_protocolGame->sendWalkNorthWest();
+            break;
+        default:
+            break;
     }
 
     g_lua.callGlobalField("g_game", "onForceWalk", direction);
@@ -744,20 +744,20 @@ void Game::turn(Otc::Direction direction)
         return;
 
     switch (direction) {
-    case Otc::North:
-        m_protocolGame->sendTurnNorth();
-        break;
-    case Otc::East:
-        m_protocolGame->sendTurnEast();
-        break;
-    case Otc::South:
-        m_protocolGame->sendTurnSouth();
-        break;
-    case Otc::West:
-        m_protocolGame->sendTurnWest();
-        break;
-    default:
-        break;
+        case Otc::North:
+            m_protocolGame->sendTurnNorth();
+            break;
+        case Otc::East:
+            m_protocolGame->sendTurnEast();
+            break;
+        case Otc::South:
+            m_protocolGame->sendTurnSouth();
+            break;
+        case Otc::West:
+            m_protocolGame->sendTurnWest();
+            break;
+        default:
+            break;
     }
 }
 
@@ -941,7 +941,7 @@ void Game::attack(CreaturePtr creature)
             m_seq = creature->getId();
     }
     else
-        m_seq++;
+        ++m_seq;
 
     m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
 }
@@ -966,7 +966,7 @@ void Game::follow(CreaturePtr creature)
             m_seq = creature->getId();
     }
     else
-        m_seq++;
+        ++m_seq;
 
     m_protocolGame->sendFollow(creature ? creature->getId() : 0, m_seq);
 }
@@ -1447,7 +1447,7 @@ void Game::ping()
     m_denyBotCall = false;
     m_protocolGame->sendPing();
     m_denyBotCall = true;
-    m_pingSent++;
+    ++m_pingSent;
     m_pingTimer.restart();
 }
 
@@ -1455,6 +1455,7 @@ void Game::changeMapAwareRange(int xrange, int yrange)
 {
     if (!canPerformGameAction())
         return;
+
     m_protocolGame->sendChangeMapAwareRange(xrange, yrange);
 }
 
@@ -1715,14 +1716,15 @@ std::string Game::formatCreatureName(const std::string& name)
                 upnext = true;
         }
     }
+
     return formatedName;
 }
 
 int Game::findEmptyContainerId()
 {
-    int id = 0;
-    while (m_containers[id] != nullptr)
-        id++;
+    int id = -1;
+    while (m_containers[++id] != nullptr);
+
     return id;
 }
 
@@ -1733,8 +1735,10 @@ int Game::getOs()
 
     if (g_app.getOs() == "windows")
         return 10;
-    else if (g_app.getOs() == "mac")
+
+    if (g_app.getOs() == "mac")
         return 12;
-    else // linux
-        return 11;
+
+    // linux
+    return 11;
 }

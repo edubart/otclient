@@ -57,7 +57,7 @@ void House::addDoor(const ItemPtr& door)
 {
     if (!door) return;
     door->setDoorId(m_lastDoorId);
-    m_doors[m_lastDoorId++] = door;
+    m_doors[++m_lastDoorId] = door;
 }
 
 void House::removeDoorById(uint32 doorId)

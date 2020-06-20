@@ -113,10 +113,10 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if (m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = m_walkAnimationPhase;
 
-        if (getIdleAnimator()) {
-            if (animationPhase == 0) {
-                animationPhase = getIdleAnimator()->getPhase();
-            } else animationPhase += getIdleAnimator()->getAnimationPhases() - 1;            
+        const auto idleAnimator = getIdleAnimator();
+        if (idleAnimator) {
+            if (animationPhase == 0) animationPhase = idleAnimator->getPhase();
+            else animationPhase += idleAnimator->getAnimationPhases() - 1;
         }
         else if (isAnimateAlways()) {
             int ticksPerFrame = 1000 / getAnimationPhases();
@@ -145,7 +145,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
 
         // yPattern => creature addon
-        for (int yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
+        for (int yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
 
             // continue if we dont have this addon
             if (yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern - 1))))
@@ -497,7 +497,7 @@ void Creature::onDeath()
     callLuaField("onDeath");
 }
 
-void Creature::updateWalkAnimation(int totalPixelsWalked)
+void Creature::updateWalkAnimation()
 {
     if (m_outfit.getCategory() != ThingCategoryCreature)
         return;
@@ -509,7 +509,7 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     }
     else footAnimPhases = getAnimationPhases();
 
-    int footDelay = getStepDuration() / footAnimPhases;
+    int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
 
     // Since mount is a different outfit we need to get the mount animation phases
     if (m_outfit.getMount() != 0) {
@@ -518,12 +518,10 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
     }
 
     if (m_footTimer.ticksElapsed() >= footDelay) {
-        ++m_walkAnimationPhase;
-        m_footTimer.restart();
-    }
+        if (m_walkAnimationPhase == footAnimPhases) m_walkAnimationPhase = 1;
+        else ++m_walkAnimationPhase;
 
-    if (m_walkAnimationPhase > footAnimPhases) {
-        m_walkAnimationPhase = 1;
+        m_footTimer.restart();
     }
 }
 
@@ -599,12 +597,13 @@ void Creature::updateWalk(const bool isPreWalking)
     const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
     int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
 
-    // update walk animation and offsets
-    updateWalkAnimation(totalPixelsWalked);
+    // update walk animation
+    updateWalkAnimation();
 
     // needed for paralyze effect
     if (isLocalPlayer()) totalPixelsWalked = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
+    // update offsets
     updateWalkOffset(totalPixelsWalked);
 
     updateWalkingTile();
@@ -875,7 +874,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 
     if (!tilePos.isValid())
         tilePos = m_position;
-    
+
     const TilePtr& tile = g_map.getTile(tilePos);
     if (tile) {
         groundSpeed = tile->getGroundSpeed();
@@ -909,7 +908,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 
         m_stepCache.duration = stepDuration;
         m_stepCache.durationDiagonal = stepDuration * 3;
-    }    
+    }
 
     return useDiagonalFormula ? m_stepCache.durationDiagonal : m_stepCache.duration;
 }
@@ -964,7 +963,7 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
     if (m_outfit.getMount() != 0)
         zPattern = 1;
 
-    for (yPattern = 0; yPattern < getNumPatternY(); yPattern++) {
+    for (yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
         if (yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern - 1))))
             continue;
 

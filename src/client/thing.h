@@ -78,7 +78,7 @@ public:
     AnimatorPtr getIdleAnimator() { return rawGetThingType()->getIdleAnimator(); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
-    Light getLight() { return rawGetThingType()->getLight(); }
+    virtual Light getLight() { return rawGetThingType()->getLight(); }
     int getMinimapColor() { return rawGetThingType()->getMinimapColor(); }
     int getLensHelp() { return rawGetThingType()->getLensHelp(); }
     int getClothSlot() { return rawGetThingType()->getClothSlot(); }
@@ -87,7 +87,7 @@ public:
     bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
-    bool isContainer() { return rawGetThingType()->isContainer(); }
+    virtual bool isContainer() { return rawGetThingType()->isContainer(); }
     bool isStackable() { return rawGetThingType()->isStackable(); }
     bool isForceUse() { return rawGetThingType()->isForceUse(); }
     bool isMultiUse() { return rawGetThingType()->isMultiUse(); }
@@ -98,6 +98,7 @@ public:
     bool isSplash() { return rawGetThingType()->isSplash(); }
     bool isNotWalkable() { return rawGetThingType()->isNotWalkable(); }
     bool isNotMoveable() { return rawGetThingType()->isNotMoveable(); }
+    bool isMoveable() { return !rawGetThingType()->isNotMoveable(); }
     bool blockProjectile() { return rawGetThingType()->blockProjectile(); }
     bool isNotPathable() { return rawGetThingType()->isNotPathable(); }
     bool isPickupable() { return rawGetThingType()->isPickupable(); }
