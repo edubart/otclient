@@ -79,7 +79,10 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     }
 
     for (auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
-        (*it)->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
+        const CreaturePtr& creature = (*it);
+        if (!creature->isWalking()) {
+            creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
+        }
     }
 }
 
@@ -313,12 +316,15 @@ std::vector<ItemPtr> Tile::getItems() {
 
         items.push_back(thing->static_self_cast<Item>());
     }
+
     return items;
 }
 
 ItemPtr Tile::getGround() {
-    if (!m_grounds.empty())
-        return m_grounds.front();
+    if (!m_grounds.empty()) {
+        const auto& ground = m_grounds[0];
+        if (ground->isGround()) return ground;
+    }
 
     return nullptr;
 }
@@ -362,9 +368,6 @@ uint8 Tile::getMinimapColorByte() {
 }
 
 ThingPtr Tile::getTopLookThing() {
-    if (isEmpty())
-        return nullptr;
-
     for (const ItemPtr& item : m_commonItems) {
         if (!item->isIgnoreLook()) return item;
     }
@@ -383,18 +386,19 @@ ThingPtr Tile::getTopLookThing() {
 }
 
 ThingPtr Tile::getTopUseThing() {
-    if (isEmpty())return nullptr;
-
-    for (const ThingPtr& thing : m_commonItems) {
-        if (thing->isForceUse()) return thing;
-    }
+    if (!m_commonItems.empty()) return m_commonItems[0];
 
     for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
-        const ItemPtr& thing = *it;
-        if (!thing->isSplash()) return thing;
+        const ItemPtr& item = *it;
+        if (item->isForceUse()) return item;
     }
 
-    return m_things[0];
+    for (auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+        const ItemPtr& item = *it;
+        if (item->isForceUse()) return item;
+    }
+
+    return nullptr;
 }
 
 CreaturePtr Tile::getTopCreature() {
