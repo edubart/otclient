@@ -1,11 +1,11 @@
-#include "viewportoptimized.h"
+#include "viewportcontrol.h"
 
 #include "map.h"
 
-ViewportOptimized::ViewportOptimized(const Otc::Direction directionWalking)
+ViewportControl::ViewportControl(const Otc::Direction directionWalking)
 {
-    m_top = Map::maxViewportY;
-    m_right = Map::maxViewportX;
+    m_top = maxViewportY;
+    m_right = maxViewportX;
     m_bottom = m_top;
     m_left = m_right;
 
@@ -55,7 +55,7 @@ ViewportOptimized::ViewportOptimized(const Otc::Direction directionWalking)
     }
 }
 
-bool ViewportOptimized::isValid(const TilePtr& tile, const Position cameraPosition) const {
+bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition) const {
     const Position tilePos = tile->getPosition();
     const int diff = std::abs(cameraPosition.z - tilePos.z);
 

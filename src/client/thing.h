@@ -123,6 +123,8 @@ public:
     bool isWrapable() { return rawGetThingType()->isWrapable(); }
     bool isUnwrapable() { return rawGetThingType()->isUnwrapable(); }
     bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
+    bool isOpaque() { return rawGetThingType()->isOpaque(); }
+    bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }

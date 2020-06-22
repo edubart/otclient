@@ -130,7 +130,7 @@ public:
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
-    void updateBasicFlagsCache(const ThingPtr& thing, bool sum);
+    void analyzeThing(const ThingPtr& thing, bool sum);
 
     bool hasGroundsToDraw() const { return !m_grounds.empty(); }
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
@@ -172,6 +172,7 @@ private:
         int hasDisplacement = 0;
         int isNotPathable = 0;
         int elevation = 0;
+        int opaque = 0;
     };
 
     CountFlag m_countFlag;

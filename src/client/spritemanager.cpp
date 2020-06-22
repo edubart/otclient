@@ -84,10 +84,10 @@ void SpriteManager::saveSpr(std::string fileName)
 
         uint32 offset = fin->tell();
         uint32 spriteAddress = offset + 4 * m_spritesCount;
-        for (int i = 1; i <= m_spritesCount; i++)
+        for (int i = 1; i <= m_spritesCount; ++i)
             fin->addU32(0);
 
-        for (int i = 1; i <= m_spritesCount; i++) {
+        for (int i = 1; i <= m_spritesCount; ++i) {
             m_spritesFile->seek((i - 1) * 4 + m_spritesOffset);
             uint32 fromAdress = m_spritesFile->getU32();
             if (fromAdress != 0) {
@@ -157,13 +157,13 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         int read = 0;
         bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
         uint8 channels = useAlpha ? 4 : 3;
-
         // decompress pixels
         while (read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
             uint16 transparentPixels = m_spritesFile->getU16();
             uint16 coloredPixels = m_spritesFile->getU16();
-
-            for (int i = 0; i < transparentPixels && writePos < SPRITE_DATA_SIZE; i++) {
+            if (!image->hasTransparentPixel())
+                image->setTransparentPixel(transparentPixels > 0);
+            for (int i = 0; i < transparentPixels && writePos < SPRITE_DATA_SIZE; ++i) {
                 pixels[writePos + 0] = 0x00;
                 pixels[writePos + 1] = 0x00;
                 pixels[writePos + 2] = 0x00;
@@ -171,7 +171,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 writePos += 4;
             }
 
-            for (int i = 0; i < coloredPixels && writePos < SPRITE_DATA_SIZE; i++) {
+            for (int i = 0; i < coloredPixels && writePos < SPRITE_DATA_SIZE; ++i) {
                 pixels[writePos + 0] = m_spritesFile->getU8();
                 pixels[writePos + 1] = m_spritesFile->getU8();
                 pixels[writePos + 2] = m_spritesFile->getU8();
@@ -181,6 +181,10 @@ ImagePtr SpriteManager::getSpriteImage(int id)
 
             read += 4 + (channels * coloredPixels);
         }
+
+        // Error margin for 4 pixel transparent
+        if (writePos + 4 < SPRITE_DATA_SIZE && !image->hasTransparentPixel())
+            image->setTransparentPixel(true);
 
         // fill remaining pixels with alpha
         while (writePos < SPRITE_DATA_SIZE) {

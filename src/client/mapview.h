@@ -29,7 +29,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
 #include "lightview.h"
-#include "viewportoptimized.h"
+#include "viewportcontrol.h"
 
  // @bindclass
 class MapView : public LuaObject
@@ -163,7 +163,7 @@ private:
 
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
 
-    std::array<ViewportOptimized, Otc::InvalidDirection + 1> m_viewportOptimized;
+    std::array<ViewportControl, Otc::InvalidDirection + 1> m_viewportControl;
     std::array<std::vector<TilePtr>, Otc::MAX_Z + 1> m_cachedVisibleTiles;
 
     PainterShaderProgramPtr m_shader;

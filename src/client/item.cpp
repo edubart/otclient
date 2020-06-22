@@ -40,10 +40,11 @@
 Item::Item() :
     m_clientId(0),
     m_serverId(0),
+    m_phase(0),
     m_countOrSubType(1),
     m_color(Color::alpha),
+    m_canDraw(true),
     m_async(true),
-    m_phase(0),
     m_lastPhase(0)
 {
 }
@@ -69,7 +70,7 @@ std::string Item::getName()
 
 void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
-    if (m_clientId == 0)
+    if (m_clientId == 0 || !canDraw())
         return;
 
     // determine animation phase

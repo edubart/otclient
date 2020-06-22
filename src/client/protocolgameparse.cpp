@@ -493,7 +493,7 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
     parseCoinBalance(msg);
 
     int categories = msg->getU16();
-    for (int i = 0; i < categories; i++) {
+    for (int i = 0; i < categories; ++i) {
         std::string category = msg->getString();
         std::string description = msg->getString();
 
@@ -503,7 +503,7 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
 
         std::vector<std::string> icons;
         int iconCount = msg->getU8();
-        for (int j = 0; j < iconCount; j++) {
+        for (int j = 0; j < iconCount; ++j) {
             std::string icon = msg->getString();
             icons.push_back(icon);
         }
@@ -561,7 +561,7 @@ void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr& msg)
     }
 
     int entries = msg->getU8();
-    for (int i = 0; i < entries; i++) {
+    for (int i = 0; i < entries; ++i) {
         int time = msg->getU16();
         int productType = msg->getU8();
         int coinChange = msg->getU32();
@@ -575,7 +575,7 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
     msg->getString(); // categoryName
 
     int offers = msg->getU16();
-    for (int i = 0; i < offers; i++) {
+    for (int i = 0; i < offers; ++i) {
         msg->getU32(); // offerId
         msg->getString(); // offerName
         msg->getString(); // offerDescription
@@ -594,13 +594,13 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr& msg)
 
         std::vector<std::string> icons;
         int iconCount = msg->getU8();
-        for (int j = 0; j < iconCount; j++) {
+        for (int j = 0; j < iconCount; ++j) {
             std::string icon = msg->getString();
             icons.push_back(icon);
         }
 
         int subOffers = msg->getU16();
-        for (int j = 0; j < subOffers; j++) {
+        for (int j = 0; j < subOffers; ++j) {
             msg->getString(); // name
             msg->getString(); // description
 
@@ -778,7 +778,7 @@ void ProtocolGame::parseMapMoveEast(const InputMessagePtr& msg)
         pos = getPosition(msg);
     else
         pos = g_map.getCentralPosition();
-    pos.x++;
+    ++pos.x;
 
     AwareRange range = g_map.getAwareRange();
     setMapDescription(msg, pos.x + range.right, pos.y - range.top, pos.z, 1, range.vertical());
@@ -908,7 +908,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int itemCount = msg->getU8();
 
     std::vector<ItemPtr> items(itemCount);
-    for (int i = 0; i < itemCount; i++)
+    for (int i = 0; i < itemCount; ++i)
         items[i] = getItem(msg);
 
     g_game.processOpenContainer(containerId, containerItem, name, capacity, hasParent, items, isUnlocked, hasPages, containerSize, firstIndex);
@@ -1019,7 +1019,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
         money = msg->getU32();
 
     int size = msg->getU8();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
         int itemId = msg->getU16();
         int amount;
 
@@ -1045,7 +1045,7 @@ void ProtocolGame::parseOwnTrade(const InputMessagePtr& msg)
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; ++i)
         items[i] = getItem(msg);
 
     g_game.processOwnTrade(name, items);
@@ -1057,7 +1057,7 @@ void ProtocolGame::parseCounterTrade(const InputMessagePtr& msg)
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; ++i)
         items[i] = getItem(msg);
 
     g_game.processCounterTrade(name, items);
@@ -1433,7 +1433,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
     if (g_game.getFeature(Otc::GameAdditionalSkills))
         lastSkill = Otc::LastSkill;
 
-    for (int skill = 0; skill < lastSkill; skill++) {
+    for (int skill = 0; skill < lastSkill; ++skill) {
         int level;
 
         if (g_game.getFeature(Otc::GameDoubleSkills))
@@ -1575,7 +1575,7 @@ void ProtocolGame::parseChannelList(const InputMessagePtr& msg)
 {
     int count = msg->getU8();
     std::vector<std::tuple<int, std::string> > channelList;
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
         int id = msg->getU16();
         std::string name = msg->getString();
         channelList.emplace_back(id, name);
@@ -1754,8 +1754,8 @@ void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)
     else if (pos.z > Otc::SEA_FLOOR)
         skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), 3, skip);
 
-    pos.x++;
-    pos.y++;
+    ++pos.x;
+    ++pos.y;
     g_map.setCentralPosition(pos);
 }
 
@@ -1767,7 +1767,7 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr& msg)
     else
         pos = g_map.getCentralPosition();
     AwareRange range = g_map.getAwareRange();
-    pos.z++;
+    ++pos.z;
 
     int skip = 0;
     if (pos.z == Otc::UNDERGROUND_FLOOR) {
@@ -1790,7 +1790,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
     if (g_game.getFeature(Otc::GameNewOutfitProtocol)) {
         int outfitCount = msg->getU8();
-        for (int i = 0; i < outfitCount; i++) {
+        for (int i = 0; i < outfitCount; ++i) {
             int outfitId = msg->getU16();
             std::string outfitName = msg->getString();
             int outfitAddons = msg->getU8();
@@ -1809,7 +1809,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
             outfitEnd = msg->getU8();
         }
 
-        for (int i = outfitStart; i <= outfitEnd; i++)
+        for (int i = outfitStart; i <= outfitEnd; ++i)
             outfitList.emplace_back(i, "", 0);
     }
 
@@ -1889,7 +1889,7 @@ void ProtocolGame::parseQuestLog(const InputMessagePtr& msg)
 {
     std::vector<std::tuple<int, std::string, bool> > questList;
     int questsCount = msg->getU16();
-    for (int i = 0; i < questsCount; i++) {
+    for (int i = 0; i < questsCount; ++i) {
         int id = msg->getU16();
         std::string name = msg->getString();
         bool completed = msg->getU8();
@@ -1904,7 +1904,7 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr& msg)
     std::vector<std::tuple<std::string, std::string>> questMissions;
     int questId = msg->getU16();
     int missionCount = msg->getU8();
-    for (int i = 0; i < missionCount; i++) {
+    for (int i = 0; i < missionCount; ++i) {
         std::string missionName = msg->getString();
         std::string missionDescrition = msg->getString();
         questMissions.emplace_back(missionName, missionDescrition);
@@ -2078,8 +2078,8 @@ void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, i
 
 int ProtocolGame::setFloorDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height, int offset, int skip)
 {
-    for (int nx = 0; nx < width; nx++) {
-        for (int ny = 0; ny < height; ny++) {
+    for (int nx = 0; nx < width; ++nx) {
+        for (int ny = 0; ny < height; ++ny) {
             Position tilePos(x + nx + offset, y + ny + offset, z);
             if (skip == 0)
                 skip = setTileDescription(msg, tilePos);
@@ -2097,7 +2097,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
     g_map.cleanTile(position);
 
     bool gotEffect = false;
-    for (int stackPos = 0; stackPos < 256; stackPos++) {
+    for (int stackPos = 0; stackPos < 256; ++stackPos) {
         if (msg->peekU16() >= 0xff00)
             return msg->getU16() & 0xff;
 

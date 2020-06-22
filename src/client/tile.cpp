@@ -202,7 +202,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos) {
                 }
             }
 
-            updateBasicFlagsCache(thing, true);
+            analyzeThing(thing, true);
         }
 
         if (m_things.size() > MAX_THINGS)
@@ -234,7 +234,7 @@ bool Tile::removeThing(ThingPtr thing) {
     else {
         const auto it = std::find(m_things.begin(), m_things.end(), thing);
         if (it != m_things.end()) {
-            updateBasicFlagsCache(thing, false);
+            analyzeThing(thing, false);
             m_things.erase(it);
 
             if (thing->isCreature()) {
@@ -491,10 +491,8 @@ bool Tile::isFullGround() {
     return m_countFlag.fullGround > 0;
 }
 
-// TODO: Rewrite
 bool Tile::isFullyOpaque() {
-    ThingPtr firstObject = getThing(0);
-    return firstObject && firstObject->isFullGround();
+    return isFullGround() || m_countFlag.opaque > 0;
 }
 
 bool Tile::isSingleDimension() {
@@ -580,7 +578,7 @@ void Tile::checkTranslucentLight() {
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-void Tile::updateBasicFlagsCache(const ThingPtr& thing, bool sum) {
+void Tile::analyzeThing(const ThingPtr& thing, bool sum) {
     if (!thing->isItem()) return;
 
     const int value = sum ? 1 : -1;
@@ -613,4 +611,51 @@ void Tile::updateBasicFlagsCache(const ThingPtr& thing, bool sum) {
 
     if (thing->hasElevation())
         m_countFlag.elevation += value;
+
+    if (thing->isOpaque()) {
+        m_countFlag.opaque += value;
+    }
+
+    // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
+    if (thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
+        const int commonSize = m_commonItems.size();
+        if (m_countFlag.elevation > (sum ? 3 : 2) && commonSize > 2) {
+            const ItemPtr& subItem = m_commonItems[1];
+            subItem->canDraw(!sum);
+        }
+        else {
+            const ItemPtr& item = thing->static_self_cast<Item>();
+
+            if (!thing->isOnBottom()) {
+                for (const ItemPtr& subItem : m_commonItems) {
+                    if (subItem != item) {
+                        if (subItem->hasElevation() || subItem->isOpaque()) return;
+
+                        if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                            subItem->canDraw(!sum);
+                        }
+                    }
+                }
+            }
+
+            for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+                const ItemPtr& subItem = *it;
+                if (subItem != item) {
+                    if (subItem->hasElevation() || subItem->isOpaque()) return;
+
+                    if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                        subItem->canDraw(!sum);
+                    }
+                }
+            }
+
+            for (const ItemPtr& subItem : m_grounds) {
+                if (subItem->hasElevation()) return;
+
+                if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                    subItem->canDraw(!sum);
+                }
+            }
+        }
+    }
 }

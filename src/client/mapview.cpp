@@ -71,8 +71,8 @@ MapView::MapView()
     m_floorMin = m_floorMax = 0;
 
     for (int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
-        ViewportOptimized viewport((Otc::Direction)dir);
-        m_viewportOptimized[dir] = viewport;
+        ViewportControl viewport((Otc::Direction)dir);
+        m_viewportControl[dir] = viewport;
     }
 }
 
@@ -120,7 +120,7 @@ void MapView::draw(const Rect& rect)
     const LocalPlayerPtr player = g_game.getLocalPlayer();
     const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
 
-    const auto& viewport = isWalking ? m_viewportOptimized[player->getDirection()] : m_viewportOptimized[Otc::InvalidDirection];
+    const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
 
     for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
         for (const auto& tile : m_cachedVisibleTiles[z]) {

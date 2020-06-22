@@ -29,6 +29,7 @@
 #include "statictext.h"
 #include "mapview.h"
 #include "minimap.h"
+#include "viewportcontrol.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
@@ -635,8 +636,8 @@ bool Map::isCovered(const Position& pos, int firstFloor)
     Position tilePos = pos;
     while (tilePos.coveredUp() && tilePos.z >= firstFloor) {
         TilePtr tile = getTile(tilePos);
-        // the below tile is covered when the above tile has a full ground
-        if (tile && tile->isFullGround())
+        // the below tile is covered when the above tile has a full opaque
+        if (tile && tile->isFullyOpaque())
             return true;
     }
     return false;
@@ -701,8 +702,8 @@ void Map::setAwareRange(const AwareRange& range)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = maxViewportX;
-    range.top = maxViewportY;
+    range.left = ViewportControl::maxViewportX;
+    range.top = ViewportControl::maxViewportY;
     range.bottom = range.top + 1;
     range.right = range.left + 1;
     setAwareRange(range);

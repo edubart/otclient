@@ -4,9 +4,12 @@
 #include "declarations.h"
 #include "const.h"
 
-class ViewportOptimized {
+class ViewportControl {
 public:
-    ViewportOptimized(const Otc::Direction directionWalking = Otc::InvalidDirection);
+    static const int32_t maxViewportX = 8;
+    static const int32_t maxViewportY = 6;
+
+    ViewportControl(const Otc::Direction directionWalking = Otc::InvalidDirection);
 
     bool isValid(const TilePtr& tile, const Position cameraPosition) const;
 
