@@ -130,6 +130,7 @@ public:
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
+    bool hasLight() { return m_countFlag.hasLight > 0; }
     void analyzeThing(const ThingPtr& thing, bool sum);
 
     bool hasGroundsToDraw() const { return !m_grounds.empty(); }
@@ -173,6 +174,7 @@ private:
         int isNotPathable = 0;
         int elevation = 0;
         int opaque = 0;
+        int hasLight = 0;
     };
 
     CountFlag m_countFlag;

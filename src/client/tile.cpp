@@ -60,7 +60,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     }
 
     for (auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
-        const ItemPtr& item = *it;
+        const auto& item = *it;
 
         item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
 
@@ -79,7 +79,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     }
 
     for (auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
-        const CreaturePtr& creature = (*it);
+        const auto& creature = (*it);
         if (!creature->isWalking()) {
             creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
         }
@@ -91,8 +91,8 @@ void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView) {
         effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
     }
 
-    for (const ThingPtr& thing : m_topItems) {
-        thing->draw(dest, scaleFactor, true, lightView);
+    for (const auto& item : m_topItems) {
+        item->draw(dest, scaleFactor, true, lightView);
     }
 }
 
@@ -612,9 +612,11 @@ void Tile::analyzeThing(const ThingPtr& thing, bool sum) {
     if (thing->hasElevation())
         m_countFlag.elevation += value;
 
-    if (thing->isOpaque()) {
+    if (thing->isOpaque())
         m_countFlag.opaque += value;
-    }
+
+    if (thing->hasLight())
+        m_countFlag.hasLight += value;
 
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
     if (thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
