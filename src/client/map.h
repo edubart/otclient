@@ -126,8 +126,6 @@ private:
 
 struct AwareRange
 {
-
-
     int top;
     int right;
     int bottom;

@@ -22,6 +22,7 @@
 
 #include "mapview.h"
 
+#include "game.h"
 #include "creature.h"
 #include "map.h"
 #include "tile.h"
@@ -68,6 +69,11 @@ MapView::MapView()
     m_shader = g_shaders.getDefaultMapShader();
 
     m_floorMin = m_floorMax = 0;
+
+    for (int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
+        ViewportOptimized viewport((Otc::Direction)dir);
+        m_viewportOptimized[dir] = viewport;
+    }
 }
 
 MapView::~MapView()
@@ -111,9 +117,17 @@ void MapView::draw(const Rect& rect)
     }
     g_painter->setColor(Color::white);
 
+    const LocalPlayerPtr player = g_game.getLocalPlayer();
+    const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
+
+    const auto& viewport = isWalking ? m_viewportOptimized[player->getDirection()] : m_viewportOptimized[Otc::InvalidDirection];
+
     for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
         for (const auto& tile : m_cachedVisibleTiles[z]) {
+            if (!viewport.isValid(tile, cameraPosition)) continue;
+
             const Position tilePos = tile->getPosition();
+
             tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
 
             for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
@@ -255,29 +269,29 @@ void MapView::updateVisibleTilesCache(int start)
 {
     if (start != 0) {
         m_mustCleanFramebuffer = false;
-        return;
+    }
+    else {
+
+        m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
+        m_cachedLastVisibleFloor = calcLastVisibleFloor();
+
+        assert(m_cachedFirstVisibleFloor >= 0 && m_cachedLastVisibleFloor >= 0 &&
+            m_cachedFirstVisibleFloor <= Otc::MAX_Z && m_cachedLastVisibleFloor <= Otc::MAX_Z);
+
+        if (m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
+            m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
+
+        m_cachedFloorVisibleCreatures.clear();
+
+        m_mustCleanFramebuffer = true;
     }
 
-    m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
-    m_cachedLastVisibleFloor = calcLastVisibleFloor();
-
-    assert(m_cachedFirstVisibleFloor >= 0 && m_cachedLastVisibleFloor >= 0 &&
-        m_cachedFirstVisibleFloor <= Otc::MAX_Z && m_cachedLastVisibleFloor <= Otc::MAX_Z);
-
-    if (m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
-        m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
-
-    m_cachedFloorVisibleCreatures.clear();
-
+    // clear current visible tiles cache
     do {
         m_cachedVisibleTiles[m_floorMin].clear();
     } while (++m_floorMin <= m_floorMax);
-
-    // clear current visible tiles cache
     m_mustUpdateVisibleTilesCache = false;
     m_updateTilesPos = 0;
-
-    m_mustCleanFramebuffer = true;
 
     // there is no tile to render on invalid positions
     const Position cameraPosition = getCameraPosition();
@@ -295,8 +309,8 @@ void MapView::updateVisibleTilesCache(int start)
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
+    const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
     for (int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
-        const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
         // loop through / diagonals beginning at top left and going to top right
         for (int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
             // loop current diagonal tiles
@@ -408,6 +422,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
     m_framebuffer->resize(bufferSize);
+
     requestVisibleTilesCacheUpdate();
 }
 
