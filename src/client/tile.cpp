@@ -201,9 +201,9 @@ void Tile::addThing(const ThingPtr& thing, int stackPos) {
                     m_commonItems.insert(m_commonItems.begin() + originalStack, item);
                 }
             }
-
-            analyzeThing(thing, true);
         }
+
+        analyzeThing(thing, true);
 
         if (m_things.size() > MAX_THINGS)
             removeThing(m_things[MAX_THINGS]);
@@ -579,18 +579,18 @@ void Tile::checkTranslucentLight() {
 }
 
 void Tile::analyzeThing(const ThingPtr& thing, bool sum) {
-    if (!thing->isItem()) return;
-
     const int value = sum ? 1 : -1;
+
+    if (thing->getHeight() != 1 || thing->getWidth() != 1)
+        m_countFlag.notSingleDimension += value;
+
+    if (!thing->isItem()) return;
 
     if (thing->isNotWalkable())
         m_countFlag.notWalkable += value;
 
     if (thing->isNotPathable())
         m_countFlag.notPathable += value;
-
-    if (thing->getHeight() != 1 || thing->getWidth() != 1)
-        m_countFlag.notSingleDimension += value;
 
     if (thing->blockProjectile())
         m_countFlag.blockProjectile += value;
