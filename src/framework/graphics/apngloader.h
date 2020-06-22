@@ -26,7 +26,7 @@
 #include <sstream>
 
 struct apng_data {
-    unsigned char *pdata;
+    unsigned char* pdata;
     unsigned int width;
     unsigned int height;
     unsigned int first_frame;
@@ -35,12 +35,12 @@ struct apng_data {
     unsigned char coltype;
     unsigned int num_frames;
     unsigned int num_plays;
-    unsigned short *frames_delay; // each frame delay in ms
+    unsigned short* frames_delay; // each frame delay in ms
 };
 
 // returns -1 on error, 0 on success
-int load_apng(std::stringstream& file, struct apng_data *apng);
-void save_png(std::stringstream& file, unsigned int width, unsigned int height, int channels, unsigned char *pixels);
-void free_apng(struct apng_data *apng);
+int load_apng(std::stringstream& file, struct apng_data* apng);
+void save_png(std::stringstream& file, unsigned int width, unsigned int height, int channels, unsigned char* pixels);
+void free_apng(struct apng_data* apng);
 
 #endif

@@ -80,6 +80,8 @@ unsigned int    palsize, trnssize;
 unsigned int    hasTRNS;
 unsigned short  trns1, trns2, trns3;
 
+#pragma warning( push )
+#pragma warning( disable : 4244)
 unsigned int read32(std::istream& f1)
 {
     unsigned char a, b, c, d;
@@ -1156,4 +1158,4 @@ void free_apng(struct apng_data* apng)
     if (apng->frames_delay)
         free(apng->frames_delay);
 }
-
+#pragma warning( pop ) 

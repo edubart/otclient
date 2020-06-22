@@ -149,7 +149,6 @@ public:
     ThingType* rawGetThingType();
 
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
-
     bool canDraw()  const { return m_canDraw; }
 
 private:
