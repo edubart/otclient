@@ -60,6 +60,7 @@ MapView::MapView()
     m_updateTilesPos = 0;
     m_fadeOutTime = 0;
     m_fadeInTime = 0;
+    m_redraw = true;
     m_minimumAmbientLight = 0;
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
@@ -92,51 +93,56 @@ void MapView::draw(const Rect& rect)
     float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
-    m_framebuffer->bind();
+    const auto _reDraw = m_redraw;
+    if (m_redraw) {
+        m_framebuffer->bind();
 
-    if (m_mustCleanFramebuffer) {
-        Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
-        g_painter->setColor(Color::black);
-        g_painter->drawFilledRect(clearRect);
+        if (m_mustCleanFramebuffer) {
+            Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
+            g_painter->setColor(Color::black);
+            g_painter->drawFilledRect(clearRect);
 
-        if (m_drawLights) {
-            m_lightView->reset();
-            m_lightView->resize(m_framebuffer->getSize());
+            if (m_drawLights) {
+                m_lightView->reset();
+                m_lightView->resize(m_framebuffer->getSize());
 
-            Light ambientLight;
-            if (cameraPosition.z <= Otc::SEA_FLOOR) {
-                ambientLight = g_map.getLight();
-            }
-            else {
-                ambientLight.color = 215;
-                ambientLight.intensity = 0;
-            }
-            ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
-            m_lightView->setGlobalLight(ambientLight);
-        }
-    }
-    g_painter->setColor(Color::white);
-
-    const LocalPlayerPtr player = g_game.getLocalPlayer();
-    const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
-
-    const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
-
-    for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
-        for (const auto& tile : m_cachedVisibleTiles[z]) {
-            if (!viewport.isValid(tile, cameraPosition)) continue;
-
-            const Position tilePos = tile->getPosition();
-
-            tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
-
-            for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
+                Light ambientLight;
+                if (cameraPosition.z <= Otc::SEA_FLOOR) {
+                    ambientLight = g_map.getLight();
+                }
+                else {
+                    ambientLight.color = 215;
+                    ambientLight.intensity = 0;
+                }
+                ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
+                m_lightView->setGlobalLight(ambientLight);
             }
         }
-    }
+        g_painter->setColor(Color::white);
 
-    m_framebuffer->release();
+        const LocalPlayerPtr player = g_game.getLocalPlayer();
+        const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
+
+        const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
+
+        for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+            for (const auto& tile : m_cachedVisibleTiles[z]) {
+                if (!viewport.isValid(tile, cameraPosition)) continue;
+
+                const Position tilePos = tile->getPosition();
+
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
+
+                for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
+                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
+                }
+            }
+        }
+
+        m_framebuffer->release();
+
+        this->m_redraw = false;
+    }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -221,7 +227,7 @@ void MapView::draw(const Rect& rect)
 
     // lights are drawn after names and before texts
     if (m_drawLights)
-        m_lightView->draw(rect, srcRect);
+        m_lightView->draw(rect, srcRect, _reDraw);
 
     if (m_viewMode == NEAR_VIEW && m_drawTexts) {
         for (const StaticTextPtr& staticText : g_map.getStaticTexts()) {

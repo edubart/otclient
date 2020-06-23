@@ -30,10 +30,6 @@
  // @bindclass
 class Missile : public Thing
 {
-    enum {
-        TICKS_PER_FRAME = 75
-    };
-
 public:
     void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
@@ -49,6 +45,7 @@ public:
     ThingType* rawGetThingType();
 
 private:
+
     Timer m_animationTimer;
     Point m_delta;
     float m_duration;

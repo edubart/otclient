@@ -33,6 +33,9 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
 
+#include <framework/core/scheduledevent.h>
+#include <framework/core/declarations.h>
+
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
     FrameGroupIdle = FrameGroupDefault,
@@ -216,6 +219,18 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
+    void startListenPainter(float duration);
+    void cancelListening() {
+        if (m_countPathListeningRef == 0) return;
+
+        --m_countPathListeningRef;
+
+        if (m_pathListeningEvent && m_countPathListeningRef == 0) {
+            m_pathListeningEvent->cancel();
+            m_pathListeningEvent = nullptr;
+        }
+    }
+
 private:
     Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
@@ -245,6 +260,9 @@ private:
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;
+
+    uint_fast8_t m_countPathListeningRef;
+    ScheduledEventPtr m_pathListeningEvent;
 };
 
 #endif

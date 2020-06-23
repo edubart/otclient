@@ -80,13 +80,15 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     m_position = fromPosition;
     m_delta = Point(toPosition.x - fromPosition.x, toPosition.y - fromPosition.y);
-    m_duration = 150 * std::sqrt(m_delta.length());
+    m_duration = (Otc::MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(m_delta.length());
     m_delta *= Otc::TILE_PIXELS;
     m_animationTimer.restart();
 
     // schedule removal
-    auto self = asMissile();
+    const auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+
+    startListenPainter(m_duration / Otc::TILE_PIXELS);
 }
 
 void Missile::setId(uint32 id)

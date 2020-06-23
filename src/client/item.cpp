@@ -53,6 +53,12 @@ ItemPtr Item::create(int id)
 {
     ItemPtr item(new Item);
     item->setId(id);
+
+    if (item->hasAnimationPhases()) {
+        const AnimatorPtr& animator = item->getAnimator();
+        item->startListenPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
+    }
+
     return item;
 }
 
@@ -382,25 +388,22 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 
 int Item::calculateAnimationPhase(bool animate)
 {
-    if (getAnimationPhases() > 1) {
-        if (animate) {
-            if (getAnimator() != nullptr)
-                return getAnimator()->getPhase();
+    if (!hasAnimationPhases()) return 0;
 
-            if (m_async)
-                return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
-            else {
-                if (g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {
-                    m_phase = (m_phase + 1) % getAnimationPhases();
-                    m_lastPhase = g_clock.millis();
-                }
-                return m_phase;
-            }
-        }
-        else
-            return getAnimationPhases() - 1;
+    if (!animate) return getAnimationPhases() - 1;
+
+    if (getAnimator() != nullptr) return getAnimator()->getPhase();
+
+    if (m_async) {
+        return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
     }
-    return 0;
+
+    if (g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {
+        m_phase = (m_phase + 1) % getAnimationPhases();
+        m_lastPhase = g_clock.millis();
+    }
+
+    return m_phase;
 }
 
 int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)

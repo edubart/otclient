@@ -127,21 +127,23 @@ void LightView::resize(const Size& size)
     m_lightbuffer->resize(size);
 }
 
-void LightView::draw(const Rect& dest, const Rect& src)
+void LightView::draw(const Rect& dest, const Rect& src, bool redraw)
 {
     g_painter->saveAndResetState();
-    m_lightbuffer->bind();
-    g_painter->setCompositionMode(Painter::CompositionMode_Replace);
+    if (redraw) {
+        m_lightbuffer->bind();
+        g_painter->setCompositionMode(Painter::CompositionMode_Replace);
 
-    drawGlobalLight(m_globalLight);
+        drawGlobalLight(m_globalLight);
 
-    g_painter->setBlendEquation(m_blendEquation);
-    g_painter->setCompositionMode(Painter::CompositionMode_Add);
+        g_painter->setBlendEquation(m_blendEquation);
+        g_painter->setCompositionMode(Painter::CompositionMode_Add);
 
-    for (const LightSource& source : m_lightMap)
-        drawLightSource(source.center, source.color, source.radius);
+        for (const LightSource& source : m_lightMap)
+            drawLightSource(source.center, source.color, source.radius);
 
-    m_lightbuffer->release();
+        m_lightbuffer->release();
+    }
     g_painter->setCompositionMode(Painter::CompositionMode_Light);
     m_lightbuffer->draw(dest, src);
     g_painter->restoreSavedState();

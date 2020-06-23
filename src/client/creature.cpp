@@ -88,18 +88,21 @@ void Creature::draw(const Point& dest, float scaleFactor, LightView* lightView)
 
     if (lightView) {
         Light light = rawGetThingType()->getLight();
-        if (m_light.intensity != light.intensity || m_light.color != light.color)
+        if ((m_light.color != 0) && (m_light.intensity != light.intensity || m_light.color != light.color)) {
             light = m_light;
+        }
 
         // local player always have a minimum light in complete darkness
         if (isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
-            light.intensity = std::max<uint8>(light.intensity, 3);
-            if (light.color == 0 || light.color > 215)
+            light.intensity = std::max<uint8>(light.intensity, 1);
+            if (light.color == 0 || light.color > 215) {
                 light.color = 215;
+            }
         }
 
-        if (light.intensity > 0)
+        if (light.intensity > 0) {
             lightView->addLightSource(dest + (m_walkOffset + Point(16, 16)) * scaleFactor, scaleFactor, light);
+        }
     }
 }
 
@@ -446,19 +449,23 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
+    const auto idleAnimator = getIdleAnimator();
+    if (idleAnimator) startListenPainter(idleAnimator->getAverageDuration());
+    else if (isAnimateAlways()) startListenPainter(1000 / getAnimationPhases());
+
     // creature appeared the first time or wasn't seen for a long time
     if (m_removed) {
         stopWalk();
         m_removed = false;
         callLuaField("onAppear");
-        // walk
-    }
+
+    } // walk
     else if (m_oldPosition != m_position && m_oldPosition.isInRange(m_position, 1, 1) && m_allowAppearWalk) {
         m_allowAppearWalk = false;
         walk(m_oldPosition, m_position);
         callLuaField("onWalk", m_oldPosition, m_position);
-        // teleport
-    }
+
+    } // teleport
     else if (m_oldPosition != m_position) {
         stopWalk();
         callLuaField("onDisappear");
@@ -590,6 +597,8 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
+
+        g_map.requestDrawing();
     }, getStepDuration() / Otc::TILE_PIXELS);
 }
 
@@ -643,6 +652,8 @@ void Creature::terminateWalk()
     m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
+
+        g_map.requestDrawing();
     }, g_game.getServerBeat());
 
 }

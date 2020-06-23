@@ -121,6 +121,8 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
+    void requestDrawing() { m_redraw = true; }
+
 private:
 
     int calcFirstVisibleFloor();
@@ -178,6 +180,8 @@ private:
     float m_minimumAmbientLight;
     float m_fadeInTime;
     float m_fadeOutTime;
+
+    bool m_redraw;
 
     Timer m_fadeTimer;
 

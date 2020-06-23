@@ -65,10 +65,18 @@ void Map::notificateTileUpdate(const Position& pos)
     if (!pos.isMapPosition())
         return;
 
-    for (const MapViewPtr& mapView : m_mapViews)
+    for (const MapViewPtr& mapView : m_mapViews) {
         mapView->onTileUpdate(pos);
+        requestDrawing();
+    }
 
     g_minimap.updateTile(pos, getTile(pos));
+}
+
+void Map::requestDrawing()
+{
+    for (const MapViewPtr& mapView : m_mapViews)
+        mapView->requestDrawing();
 }
 
 void Map::clean()
@@ -213,6 +221,10 @@ bool Map::removeThing(const ThingPtr& thing)
     else if (const TilePtr& tile = thing->getTile())
         ret = tile->removeThing(thing);
 
+    if (ret) {
+        thing->cancelListening();
+    }
+
     notificateTileUpdate(thing->getPosition());
     return ret;
 }
@@ -221,6 +233,7 @@ bool Map::removeThingByPos(const Position& pos, int stackPos)
 {
     if (TilePtr tile = getTile(pos))
         return removeThing(tile->getThing(stackPos));
+
     return false;
 }
 

@@ -944,6 +944,8 @@ void Game::attack(CreaturePtr creature)
         ++m_seq;
 
     m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
+
+    g_map.requestDrawing();
 }
 
 void Game::follow(CreaturePtr creature)

@@ -30,10 +30,6 @@
  // @bindclass
 class Effect : public Thing
 {
-    enum {
-        EFFECT_TICKS_PER_FRAME = 75
-    };
-
 public:
     void drawEffect(const Point& dest, float scaleFactor, int offsetX = 0, int offsetY = 0, LightView* lightView = nullptr);
 

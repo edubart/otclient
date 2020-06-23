@@ -24,6 +24,7 @@
 #include "spritemanager.h"
 #include "game.h"
 #include "lightview.h"
+#include "map.h"
 
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texture.h>
@@ -31,6 +32,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/core/filestream.h>
 #include <framework/otml/otml.h>
+#include <framework/core/eventdispatcher.h>
 
 ThingType::ThingType()
 {
@@ -45,6 +47,7 @@ ThingType::ThingType()
     m_layers = 0;
     m_elevation = 0;
     m_opacity = 1.0f;
+    m_countPathListeningRef = 0;
 }
 
 void ThingType::serialize(const FileStreamPtr& fin)
@@ -608,4 +611,14 @@ int ThingType::getExactHeight()
     Size size = m_texturesFramesOriginRects[0][frameIndex].size() - m_texturesFramesOffsets[0][frameIndex].toSize();
 
     return m_exactHeight = size.height();
+}
+
+void ThingType::startListenPainter(float duration) {
+    if (m_countPathListeningRef == 0) {
+        m_pathListeningEvent = g_dispatcher.cycleEvent([=]() {
+            g_map.requestDrawing();
+        }, duration);
+    }
+
+    ++m_countPathListeningRef;
 }

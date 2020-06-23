@@ -43,7 +43,7 @@ public:
     void setGlobalLight(const Light& light);
     void addLightSource(const Point& center, float scaleFactor, const Light& light);
     void resize(const Size& size);
-    void draw(const Rect& dest, const Rect& src);
+    void draw(const Rect& dest, const Rect& src, bool redraw);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
 

@@ -59,6 +59,10 @@ public:
 
     ticks_t getTotalDuration();
 
+    int getAverageDuration() {
+        return getTotalDuration() / getAnimationPhases();
+    }
+
     void resetAnimation();
 
 private:

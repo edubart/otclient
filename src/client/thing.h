@@ -74,6 +74,7 @@ public:
     int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
     int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
     int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
+    bool hasAnimationPhases() { return rawGetThingType()->getAnimationPhases() > 1; }
     AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
     AnimatorPtr getIdleAnimator() { return rawGetThingType()->getIdleAnimator(); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
@@ -126,6 +127,8 @@ public:
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
+    void startListenPainter(float duration) { rawGetThingType()->startListenPainter(duration); }
+    void cancelListening() { rawGetThingType()->cancelListening(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }
     virtual void onAppear() { }

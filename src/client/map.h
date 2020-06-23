@@ -146,6 +146,8 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
 
+    void requestDrawing();
+
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
