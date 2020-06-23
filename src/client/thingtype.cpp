@@ -47,7 +47,7 @@ ThingType::ThingType()
     m_layers = 0;
     m_elevation = 0;
     m_opacity = 1.0f;
-    m_countPathListeningRef = 0;
+    m_countPainterListeningRef = 0;
 }
 
 void ThingType::serialize(const FileStreamPtr& fin)
@@ -613,12 +613,25 @@ int ThingType::getExactHeight()
     return m_exactHeight = size.height();
 }
 
-void ThingType::startListenPainter(float duration) {
-    if (m_countPathListeningRef == 0) {
-        m_pathListeningEvent = g_dispatcher.cycleEvent([=]() {
-            g_map.requestDrawing();
+void ThingType::startListenPainter(const float duration, const bool redrawLight) {
+    if (m_countPainterListeningRef == 0) {
+        m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
+            g_map.requestDrawing(true, redrawLight && hasLight());
         }, duration);
     }
 
-    ++m_countPathListeningRef;
+    ++m_countPainterListeningRef;
+}
+
+void ThingType::cancelListening() {
+    if (m_countPainterListeningRef == 0) return;
+
+    --m_countPainterListeningRef;
+
+    if (m_painterListeningEvent && m_countPainterListeningRef == 0) {
+        g_map.requestDrawing(true, hasLight());
+
+        m_painterListeningEvent->cancel();
+        m_painterListeningEvent = nullptr;
+    }
 }

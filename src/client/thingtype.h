@@ -219,17 +219,8 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
-    void startListenPainter(float duration);
-    void cancelListening() {
-        if (m_countPathListeningRef == 0) return;
-
-        --m_countPathListeningRef;
-
-        if (m_pathListeningEvent && m_countPathListeningRef == 0) {
-            m_pathListeningEvent->cancel();
-            m_pathListeningEvent = nullptr;
-        }
-    }
+    void startListenPainter(const float duration, const bool redrawLight = false);
+    void cancelListening();
 
 private:
     Size getBestTextureDimension(int w, int h, int count);
@@ -261,8 +252,8 @@ private:
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;
 
-    uint_fast8_t m_countPathListeningRef;
-    ScheduledEventPtr m_pathListeningEvent;
+    uint_fast8_t m_countPainterListeningRef;
+    ScheduledEventPtr m_painterListeningEvent;
 };
 
 #endif

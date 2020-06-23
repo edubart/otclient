@@ -121,7 +121,10 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing() { m_redraw = true; }
+    void requestDrawing(const bool tile, const bool light) {
+        if (tile) m_redraw = true;
+        if (light && m_lightView) m_lightView->requestDrawing();
+    }
 
 private:
 

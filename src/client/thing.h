@@ -127,7 +127,7 @@ public:
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
-    void startListenPainter(float duration) { rawGetThingType()->startListenPainter(duration); }
+    void startListenPainter(const float duration, const bool redrawLight = false) { rawGetThingType()->startListenPainter(duration, redrawLight); }
     void cancelListening() { rawGetThingType()->cancelListening(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }
@@ -137,6 +137,7 @@ public:
 protected:
     Position m_position;
     uint16 m_datId;
+
 };
 #pragma pack(pop)
 

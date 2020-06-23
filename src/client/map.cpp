@@ -67,16 +67,16 @@ void Map::notificateTileUpdate(const Position& pos)
 
     for (const MapViewPtr& mapView : m_mapViews) {
         mapView->onTileUpdate(pos);
-        requestDrawing();
     }
 
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing()
+void Map::requestDrawing(const bool tile, const bool light)
 {
+    if (!tile && !light) return;
     for (const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing();
+        mapView->requestDrawing(tile, light);
 }
 
 void Map::clean()
@@ -121,12 +121,15 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if (thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if (tile)
+        if (tile) {
             tile->addThing(thing, stackPos);
+            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer());
+        }
     }
     else {
         if (thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
+            requestDrawing(true, thing->hasLight());
         }
         else if (thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
@@ -221,9 +224,7 @@ bool Map::removeThing(const ThingPtr& thing)
     else if (const TilePtr& tile = thing->getTile())
         ret = tile->removeThing(thing);
 
-    if (ret) {
-        thing->cancelListening();
-    }
+    if (ret) thing->cancelListening();
 
     notificateTileUpdate(thing->getPosition());
     return ret;

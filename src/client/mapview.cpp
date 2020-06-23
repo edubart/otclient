@@ -93,7 +93,6 @@ void MapView::draw(const Rect& rect)
     float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
-    const auto _reDraw = m_redraw;
     if (m_redraw) {
         m_framebuffer->bind();
 
@@ -227,7 +226,7 @@ void MapView::draw(const Rect& rect)
 
     // lights are drawn after names and before texts
     if (m_drawLights)
-        m_lightView->draw(rect, srcRect, _reDraw);
+        m_lightView->draw(rect, srcRect);
 
     if (m_viewMode == NEAR_VIEW && m_drawTexts) {
         for (const StaticTextPtr& staticText : g_map.getStaticTexts()) {
@@ -690,14 +689,11 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
 
 void MapView::setDrawLights(bool enable)
 {
-    if (enable == m_drawLights)
-        return;
+    if (enable == m_drawLights) return;
 
-    if (enable)
-        m_lightView = LightViewPtr(new LightView);
-    else
-        m_lightView = nullptr;
-    m_drawLights = enable;
+    requestDrawing(true, true);
+
+    m_lightView = (m_drawLights = enable) ? LightViewPtr(new LightView) : nullptr;
 }
 
 /* vim: set ts=4 sw=4 et: */

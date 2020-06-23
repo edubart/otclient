@@ -574,8 +574,9 @@ void Creature::updateWalkingTile()
         newWalkingTile->addWalkingCreature(static_self_cast<Creature>());
 
         // recache visible tiles in map views
-        if (newWalkingTile->isEmpty())
+        if (newWalkingTile->isEmpty()) {
             g_map.notificateTileUpdate(newWalkingTile->getPosition());
+        }
     }
 
     m_walkingTile = newWalkingTile;
@@ -598,7 +599,8 @@ void Creature::nextWalkUpdate()
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
 
-        g_map.requestDrawing();
+        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight());
+
     }, getStepDuration() / Otc::TILE_PIXELS);
 }
 
@@ -653,7 +655,8 @@ void Creature::terminateWalk()
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
 
-        g_map.requestDrawing();
+
+        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight());
     }, g_game.getServerBeat());
 
 }

@@ -43,9 +43,10 @@ public:
     void setGlobalLight(const Light& light);
     void addLightSource(const Point& center, float scaleFactor, const Light& light);
     void resize(const Size& size);
-    void draw(const Rect& dest, const Rect& src, bool redraw);
+    void draw(const Rect& dest, const Rect& src);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
+    void requestDrawing() { m_redraw = true; }
 
 private:
     void drawGlobalLight(const Light& light);
@@ -57,6 +58,8 @@ private:
     FrameBufferPtr m_lightbuffer;
     Light m_globalLight;
     std::vector<LightSource> m_lightMap;
+
+    bool m_redraw;
 };
 
 #endif

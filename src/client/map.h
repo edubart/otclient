@@ -146,7 +146,7 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
 
-    void requestDrawing();
+    void requestDrawing(const bool tile, const bool light);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
