@@ -398,6 +398,8 @@ ThingPtr Tile::getTopUseThing() {
         if (item->isForceUse()) return item;
     }
 
+    if (!m_creatures.empty()) return m_creatures[0];
+
     return nullptr;
 }
 
