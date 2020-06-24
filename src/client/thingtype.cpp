@@ -629,7 +629,7 @@ void ThingType::cancelListening() {
     --m_countPainterListeningRef;
 
     if (m_painterListeningEvent && m_countPainterListeningRef == 0) {
-        g_map.requestDrawing(true, hasLight());
+        g_map.requestDrawing(true, hasLight(), true);
 
         m_painterListeningEvent->cancel();
         m_painterListeningEvent = nullptr;

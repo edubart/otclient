@@ -599,7 +599,7 @@ void Creature::nextWalkUpdate()
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
 
-        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight());
+        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
 
     }, getStepDuration() / Otc::TILE_PIXELS);
 }
@@ -656,7 +656,7 @@ void Creature::terminateWalk()
         self->m_walkFinishAnimEvent = nullptr;
 
 
-        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight());
+        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
     }, g_game.getServerBeat());
 
 }

@@ -54,11 +54,6 @@ ItemPtr Item::create(int id)
     ItemPtr item(new Item);
     item->setId(id);
 
-    if (item->hasAnimationPhases()) {
-        const AnimatorPtr& animator = item->getAnimator();
-        item->startListenPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
-    }
-
     return item;
 }
 
@@ -411,6 +406,13 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
     calculatePatterns(xPattern, yPattern, zPattern);
     animationPhase = calculateAnimationPhase(true);
     return Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
+}
+
+void Item::startListenPainter() {
+    if (hasAnimationPhases()) {
+        const AnimatorPtr& animator = getAnimator();
+        Thing::startListenPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
+    }
 }
 
 const ThingTypePtr& Item::getThingType()

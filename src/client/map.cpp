@@ -72,11 +72,11 @@ void Map::notificateTileUpdate(const Position& pos)
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const bool tile, const bool light)
+void Map::requestDrawing(const bool tile, const bool light, const bool force)
 {
     if (!tile && !light) return;
     for (const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing(tile, light);
+        mapView->requestDrawing(tile, light, force);
 }
 
 void Map::clean()
@@ -123,7 +123,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         const TilePtr& tile = getOrCreateTile(pos);
         if (tile) {
             tile->addThing(thing, stackPos);
-            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer());
+
+            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer(), thing->isLocalPlayer());
+            if (thing->isItem()) {
+                thing->static_self_cast<Item>()->startListenPainter();
+            }
         }
     }
     else {
@@ -375,6 +379,7 @@ void Map::cleanTile(const Position& pos)
 {
     if (!pos.isMapPosition())
         return;
+
     auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if (it != m_tileBlocks[pos.z].end()) {
         TileBlock& block = it->second;

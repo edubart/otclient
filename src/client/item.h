@@ -151,6 +151,8 @@ public:
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
     bool canDraw()  const { return m_canDraw; }
 
+    void startListenPainter();
+
 private:
     uint16 m_clientId;
     uint16 m_serverId;

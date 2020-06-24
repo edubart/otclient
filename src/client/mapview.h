@@ -121,9 +121,9 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const bool tile, const bool light) {
-        if (tile) m_redraw = true;
-        if (light && m_lightView) m_lightView->requestDrawing();
+    void requestDrawing(const bool tile, const bool light, const bool force = false) {
+        if (tile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redraw = true;
+        if (light && m_lightView) m_lightView->requestDrawing(force);
     }
 
 private:
@@ -185,10 +185,12 @@ private:
     float m_fadeOutTime;
 
     bool m_redraw;
+    Timer m_minTimeRender;
 
     Timer m_fadeTimer;
 
     uint_fast8_t m_floorMin, m_floorMax;
+
 };
 
 #endif

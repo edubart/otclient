@@ -127,6 +127,7 @@ public:
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
+
     void startListenPainter(const float duration, const bool redrawLight = false) { rawGetThingType()->startListenPainter(duration, redrawLight); }
     void cancelListening() { rawGetThingType()->cancelListening(); }
 

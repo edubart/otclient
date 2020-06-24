@@ -130,9 +130,9 @@ void LightView::resize(const Size& size)
 
 void LightView::draw(const Rect& dest, const Rect& src)
 {
-    // draw light, only if there is darkness
     if (m_globalLight.intensity >= 250) return;
 
+    // draw light, only if there is darkness
     g_painter->saveAndResetState();
     if (m_redraw) {
         m_lightbuffer->bind();
@@ -147,9 +147,12 @@ void LightView::draw(const Rect& dest, const Rect& src)
             drawLightSource(source.center, source.color, source.radius);
 
         m_lightbuffer->release();
+
         m_redraw = false;
+        m_minTimeRender.restart();
     }
     g_painter->setCompositionMode(Painter::CompositionMode_Light);
+
     m_lightbuffer->draw(dest, src);
     g_painter->restoreSavedState();
 }

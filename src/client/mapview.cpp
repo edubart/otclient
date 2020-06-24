@@ -140,8 +140,10 @@ void MapView::draw(const Rect& rect)
 
         m_framebuffer->release();
 
-        this->m_redraw = false;
+        m_minTimeRender.restart();
+        m_redraw = false;
     }
+
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
