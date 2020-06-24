@@ -131,10 +131,10 @@ void MapView::draw(const Rect& rect)
                 const Position tilePos = tile->getPosition();
 
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
+            }
 
-                for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
-                }
+            for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
+                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
             }
         }
 
