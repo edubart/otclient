@@ -353,7 +353,7 @@ void MapView::updateVisibleTilesCache(int start)
 
                     if (iz < m_floorMin)
                         m_floorMin = iz;
-                    else if (iz > cameraZ)
+                    else if (iz > m_floorMax)
                         m_floorMax = iz;
 
                     ++processedTiles;

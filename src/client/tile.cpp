@@ -73,7 +73,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     for (const auto& creature : m_walkingCreatures) {
         creature->draw(
             Point(
-                dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS) * scaleFactor,
+                dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
             ), scaleFactor, lightView);
     }
