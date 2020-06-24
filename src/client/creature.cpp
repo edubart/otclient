@@ -430,6 +430,7 @@ void Creature::updateJump()
         auto self = static_self_cast<Creature>();
         g_dispatcher.scheduleEvent([self] {
             self->updateJump();
+            g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
         }, nextT - m_jumpTimer.ticksElapsed());
     }
     else
