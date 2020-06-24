@@ -451,8 +451,8 @@ void Creature::onAppear()
     }
 
     const auto idleAnimator = getIdleAnimator();
-    if (idleAnimator) startListenPainter(idleAnimator->getAverageDuration());
-    else if (isAnimateAlways()) startListenPainter(1000 / getAnimationPhases());
+    if (idleAnimator) startListenerPainter(idleAnimator->getAverageDuration());
+    else if (isAnimateAlways()) startListenerPainter(1000 / getAnimationPhases());
 
     // creature appeared the first time or wasn't seen for a long time
     if (m_removed) {

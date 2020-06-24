@@ -109,6 +109,8 @@ void Tile::clean() {
     m_commonItems.clear();
     m_creatures.clear();
     m_things.clear();
+
+    cancelListenerPainter();
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature) {
@@ -182,6 +184,8 @@ void Tile::addThing(const ThingPtr& thing, int stackPos) {
         else {
             const auto& item = thing->static_self_cast<Item>();
 
+            if (item->hasAnimationPhases()) m_animatedItems.push_back(item);
+
             if (thing->isGroundBorder() || thing->isGround()) {
                 m_grounds.push_back(item);
             }
@@ -246,6 +250,12 @@ bool Tile::removeThing(ThingPtr thing) {
             }
             else {
                 const ItemPtr& item = thing->static_self_cast<Item>();
+
+                if (item->hasAnimationPhases()) {
+                    const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), item);
+                    if (subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
+                }
+
                 if (thing->isGroundBorder() || thing->isGround()) {
                     const auto& subIt = std::find(m_grounds.begin(), m_grounds.end(), item);
                     if (subIt != m_grounds.end()) m_grounds.erase(subIt);
@@ -578,6 +588,15 @@ void Tile::checkTranslucentLight() {
     }
 
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
+}
+
+void Tile::cancelListenerPainter() {
+    if (m_animatedItems.empty()) return;
+
+    for (const ItemPtr& item : m_animatedItems)
+        item->cancelListenerPainter();
+
+    m_animatedItems.clear();
 }
 
 void Tile::analyzeThing(const ThingPtr& thing, bool sum) {

@@ -126,7 +126,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
             requestDrawing(true, thing->hasLight() || thing->isLocalPlayer(), thing->isLocalPlayer());
             if (thing->isItem()) {
-                thing->static_self_cast<Item>()->startListenPainter();
+                thing->static_self_cast<Item>()->startListenerPainter();
             }
         }
     }
@@ -228,7 +228,7 @@ bool Map::removeThing(const ThingPtr& thing)
     else if (const TilePtr& tile = thing->getTile())
         ret = tile->removeThing(thing);
 
-    if (ret) thing->cancelListening();
+    if (ret) thing->cancelListenerPainter();
 
     notificateTileUpdate(thing->getPosition());
     return ret;
@@ -543,14 +543,16 @@ void Map::removeUnawareThings()
                 TileBlock& block = (*it).second;
                 bool blockEmpty = true;
                 for (const TilePtr& tile : block.getTiles()) {
-                    if (!tile)
-                        continue;
+                    if (!tile) continue;
 
                     const Position& pos = tile->getPosition();
-                    if (!isAwareOfPosition(pos))
-                        block.remove(pos);
-                    else
+                    if (isAwareOfPosition(pos)) {
                         blockEmpty = false;
+                        continue;
+                    }
+
+                    tile->cancelListenerPainter();
+                    block.remove(pos);
                 }
 
                 if (blockEmpty)

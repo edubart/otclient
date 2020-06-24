@@ -219,8 +219,8 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
-    void startListenPainter(const float duration, const bool redrawLight = false);
-    void cancelListening();
+    void startListenerPainter(const float duration, const bool redrawLight = false);
+    void cancelListenerPainter();
 
 private:
     Size getBestTextureDimension(int w, int h, int count);

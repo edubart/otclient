@@ -408,11 +408,11 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
     return Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
 }
 
-void Item::startListenPainter() {
-    if (hasAnimationPhases()) {
-        const AnimatorPtr& animator = getAnimator();
-        Thing::startListenPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
-    }
+void Item::startListenerPainter() {
+    if (!hasAnimationPhases()) return;
+
+    const AnimatorPtr& animator = getAnimator();
+    Thing::startListenerPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
 }
 
 const ThingTypePtr& Item::getThingType()

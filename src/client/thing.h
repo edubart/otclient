@@ -128,8 +128,8 @@ public:
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
-    void startListenPainter(const float duration, const bool redrawLight = false) { rawGetThingType()->startListenPainter(duration, redrawLight); }
-    void cancelListening() { rawGetThingType()->cancelListening(); }
+    void startListenerPainter(const float duration, const bool redrawLight = false) { rawGetThingType()->startListenerPainter(duration, redrawLight); }
+    void cancelListenerPainter() { rawGetThingType()->cancelListenerPainter(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }
     virtual void onAppear() { }

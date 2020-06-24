@@ -95,7 +95,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     const auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 
-    startListenPainter(m_duration / Otc::TILE_PIXELS, hasLight());
+    startListenerPainter(m_duration / Otc::TILE_PIXELS, hasLight());
 }
 
 void Missile::setId(uint32 id)

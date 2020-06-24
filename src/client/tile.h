@@ -141,6 +141,8 @@ public:
     void drawBottom(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawTop(const Point& dest, float scaleFactor, LightView* lightView);
 
+    void cancelListenerPainter();
+
 private:
     void checkTranslucentLight();
 
@@ -160,6 +162,8 @@ private:
     std::vector<ItemPtr> m_commonItems;
     std::vector<ItemPtr> m_bottomItems;
     std::vector<CreaturePtr> m_creatures;
+
+    std::vector<ItemPtr> m_animatedItems;
 
     struct CountFlag {
         int fullGround = 0;

@@ -613,7 +613,7 @@ int ThingType::getExactHeight()
     return m_exactHeight = size.height();
 }
 
-void ThingType::startListenPainter(const float duration, const bool redrawLight) {
+void ThingType::startListenerPainter(const float duration, const bool redrawLight) {
     if (m_countPainterListeningRef == 0) {
         m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
             g_map.requestDrawing(true, redrawLight && hasLight());
@@ -623,7 +623,7 @@ void ThingType::startListenPainter(const float duration, const bool redrawLight)
     ++m_countPainterListeningRef;
 }
 
-void ThingType::cancelListening() {
+void ThingType::cancelListenerPainter() {
     if (m_countPainterListeningRef == 0) return;
 
     --m_countPainterListeningRef;

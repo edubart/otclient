@@ -65,7 +65,7 @@ void Effect::onAppear()
     if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
         duration = getThingType()->getAnimator()->getTotalDuration();
 
-        startListenPainter(getThingType()->getAnimator()->getAverageDuration());
+        startListenerPainter(getThingType()->getAnimator()->getAverageDuration());
     }
     else {
         duration = Otc::EFFECT_TICKS_PER_FRAME;
@@ -77,7 +77,7 @@ void Effect::onAppear()
 
         duration *= getAnimationPhases();
 
-        startListenPainter(Otc::EFFECT_TICKS_PER_FRAME);
+        startListenerPainter(Otc::EFFECT_TICKS_PER_FRAME);
     }
 
     // schedule removal
