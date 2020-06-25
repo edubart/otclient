@@ -381,6 +381,7 @@ function onMouseGrabberRelease(self, mousePosition, mouseButton)
   return true
 end
 
+
 function onUseWith(clickedWidget, mousePosition)
   if clickedWidget:getClassName() == 'UIGameMap' then
     local tile = clickedWidget:getTile(mousePosition)
@@ -396,7 +397,11 @@ function onUseWith(clickedWidget, mousePosition)
   elseif clickedWidget:getClassName() == 'UICreatureButton' then
     local creature = clickedWidget:getCreature()
     if creature then
-      g_game.useWith(selectedThing, creature)
+      if creature:isPlayer() then
+        g_game.useInventoryItemWith(selectedThing:getId(), creature)
+      else
+        g_game.useWith(selectedThing, creature)
+      end
     end
   end
 end
