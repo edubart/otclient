@@ -124,7 +124,7 @@ void MapView::draw(const Rect& rect)
 
         const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
 
-        for (uint_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+        for (int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for (const auto& tile : m_cachedVisibleTiles[z]) {
                 if (!viewport.isValid(tile, cameraPosition)) continue;
 
@@ -688,14 +688,15 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
     m_fadeOutTime = fadeout;
 }
 
-
 void MapView::setDrawLights(bool enable)
 {
     if (enable == m_drawLights) return;
 
-    requestDrawing(true, true);
+    m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 
-    m_lightView = (m_drawLights = enable) ? LightViewPtr(new LightView) : nullptr;
+    requestDrawing(true, true);
+    m_mustCleanFramebuffer = true;
+    m_drawLights = enable;
 }
 
 /* vim: set ts=4 sw=4 et: */

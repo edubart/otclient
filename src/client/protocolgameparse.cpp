@@ -1163,13 +1163,6 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if (creature)
         creature->setHealthPercent(healthPercent);
-
-    // some servers has a bug in get spectators and sends unknown creatures updates
-    // so this code is disabled
-    /*
-    else
-        g_logger.traceError("could not get creature");
-    */
 }
 
 void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
@@ -1181,10 +1174,13 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     light.color = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setLight(light);
-    else
+    if (!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setLight(light);
+    g_map.requestDrawing(true, true);
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
@@ -1193,10 +1189,13 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
     Outfit outfit = getOutfit(msg);
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setOutfit(outfit);
-    else
+    if (!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setOutfit(outfit);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
@@ -1210,18 +1209,11 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
     int speed = msg->getU16();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature) {
-        creature->setSpeed(speed);
-        if (baseSpeed != -1)
-            creature->setBaseSpeed(baseSpeed);
-    }
+    if (!creature) return;
 
-    // some servers has a bug in get spectators and sends unknown creatures updates
-    // so this code is disabled
-    /*
-    else
-        g_logger.traceError("could not get creature");
-    */
+    creature->setSpeed(speed);
+    if (baseSpeed != -1)
+        creature->setBaseSpeed(baseSpeed);
 }
 
 void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
@@ -1230,10 +1222,13 @@ void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
     int skull = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setSkull(skull);
-    else
+    if (!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setSkull(skull);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
@@ -1242,10 +1237,13 @@ void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
     int shield = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setShield(shield);
-    else
+    if (!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setShield(shield);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
@@ -1254,10 +1252,12 @@ void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
     bool unpass = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setPassable(!unpass);
-    else
+    if (!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setPassable(!unpass);
 }
 
 void ProtocolGame::parseEditText(const InputMessagePtr& msg)
@@ -1297,6 +1297,7 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr& msg)
 {
     int triggerCount = msg->getU8();
     std::vector<int> triggers;
+
     for (int i = 0; i < triggerCount; ++i) {
         triggers.push_back(msg->getU8());
     }

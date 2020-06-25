@@ -191,6 +191,7 @@ ThingPtr Map::getThing(const Position& pos, int stackPos)
 {
     if (TilePtr tile = getTile(pos))
         return tile->getThing(stackPos);
+
     return nullptr;
 }
 
@@ -285,6 +286,7 @@ StaticTextPtr Map::getStaticText(const Position& pos)
         if (staticText->getPosition() == pos)
             return staticText;
     }
+
     return nullptr;
 }
 
@@ -292,14 +294,19 @@ const TilePtr& Map::createTile(const Position& pos)
 {
     if (!pos.isMapPosition())
         return m_nulltile;
+
     if (pos.x < m_tilesRect.left())
         m_tilesRect.setLeft(pos.x);
+
     if (pos.y < m_tilesRect.top())
         m_tilesRect.setTop(pos.y);
+
     if (pos.x > m_tilesRect.right())
         m_tilesRect.setRight(pos.x);
+
     if (pos.y > m_tilesRect.bottom())
         m_tilesRect.setBottom(pos.y);
+
     TileBlock& block = m_tileBlocks[pos.z][getBlockIndex(pos)];
     return block.create(pos);
 }
@@ -309,6 +316,7 @@ const TilePtr& Map::createTileEx(const Position& pos, const Items&... items)
 {
     if (!pos.isValid())
         return m_nulltile;
+
     const TilePtr& tile = getOrCreateTile(pos);
     auto vec = { items... };
     for (auto it : vec)
@@ -321,14 +329,19 @@ const TilePtr& Map::getOrCreateTile(const Position& pos)
 {
     if (!pos.isMapPosition())
         return m_nulltile;
+
     if (pos.x < m_tilesRect.left())
         m_tilesRect.setLeft(pos.x);
+
     if (pos.y < m_tilesRect.top())
         m_tilesRect.setTop(pos.y);
+
     if (pos.x > m_tilesRect.right())
         m_tilesRect.setRight(pos.x);
+
     if (pos.y > m_tilesRect.bottom())
         m_tilesRect.setBottom(pos.y);
+
     TileBlock& block = m_tileBlocks[pos.z][getBlockIndex(pos)];
     return block.getOrCreate(pos);
 }
@@ -348,10 +361,9 @@ const TilePtr& Map::getTile(const Position& pos)
 const TileList Map::getTiles(int floor/* = -1*/)
 {
     TileList tiles;
-    if (floor > Otc::MAX_Z) {
-        return tiles;
-    }
-    else if (floor < 0) {
+    if (floor > Otc::MAX_Z) return tiles;
+
+    if (floor < 0) {
         // Search all floors
         for (uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
             for (const auto& pair : m_tileBlocks[z]) {
@@ -372,6 +384,7 @@ const TileList Map::getTiles(int floor/* = -1*/)
             }
         }
     }
+
     return tiles;
 }
 
@@ -391,6 +404,7 @@ void Map::cleanTile(const Position& pos)
             notificateTileUpdate(pos);
         }
     }
+
     for (auto itt = m_staticTexts.begin(); itt != m_staticTexts.end();) {
         const StaticTextPtr& staticText = *itt;
         if (staticText->getPosition() == pos && staticText->getMessageMode() == Otc::MessageNone)
@@ -427,17 +441,19 @@ Color Map::getZoneColor(tileflags_t flag)
     auto it = m_zoneColors.find(flag);
     if (it == m_zoneColors.end())
         return Color::alpha;
+
     return it->second;
 }
 
 void Map::setForceShowAnimations(bool force)
 {
-    if (force) {
-        if (!(m_animationFlags & Animation_Force))
-            m_animationFlags |= Animation_Force;
-    }
-    else
+    if (!force) {
         m_animationFlags &= ~Animation_Force;
+        return;
+    }
+
+    if (!(m_animationFlags & Animation_Force))
+        m_animationFlags |= Animation_Force;
 }
 
 bool Map::isForcingAnimations()
@@ -734,16 +750,16 @@ int Map::getFirstAwareFloor()
 {
     if (m_centralPosition.z > Otc::SEA_FLOOR)
         return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
-    else
-        return 0;
+
+    return 0;
 }
 
 int Map::getLastAwareFloor()
 {
     if (m_centralPosition.z > Otc::SEA_FLOOR)
         return std::min<int>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
-    else
-        return Otc::SEA_FLOOR;
+
+    return Otc::SEA_FLOOR;
 }
 
 std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxComplexity, int flags)

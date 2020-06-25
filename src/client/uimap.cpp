@@ -197,6 +197,8 @@ void UIMap::updateVisibleDimension()
 
     if (m_keepAspectRatio)
         updateMapSize();
+
+    g_map.requestDrawing(true, true);
 }
 
 void UIMap::updateMapSize()
