@@ -142,7 +142,7 @@ function onSoulChange(localPlayer, soul)
 end
 
 function onFreeCapacityChange(player, freeCapacity)
-  capLabel:setText(tr('Cap') .. ': ' .. freeCapacity)
+  capLabel:setText(tr('Cap') .. ': ' .. (freeCapacity * 100))
 end
 
 function onStatesChange(localPlayer, now, old)
