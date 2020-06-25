@@ -664,7 +664,13 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    Outfit oldOutfit = m_outfit;
+    if(m_showStaticSquare && outfit.getCategory() == ThingCategoryEffect && outfit.getAuxId() == 13)
+    {
+        CreaturePtr creature = static_self_cast<Creature>();
+        if(!isLocalPlayer() && (g_game.getAttackingCreature() == creature || g_game.getFollowingCreature() == creature))
+            m_showStaticSquare = false;
+    }
+    Outfit oldOutfit = m_outfit;    
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
             return;
