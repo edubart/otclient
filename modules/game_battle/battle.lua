@@ -344,9 +344,9 @@ function onCreatureAppear(creature)
     end)
   end
 
-  if doCreatureFitFilters(creature) then
-    addCreature(creature)
-  end
+  
+  addCreature(creature)
+  
 end
 
 function onCreatureDisappear(creature)
