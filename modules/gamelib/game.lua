@@ -34,7 +34,7 @@ function g_game.chooseRsa(host)
   end
 
   -- Hack fix to resolve some 760 login issues
-  if g_game.getClientVersion() <= 760 then
+  if g_game.getClientVersion() <= 792 then
     g_game.setCustomOs(2)
   end
 end
