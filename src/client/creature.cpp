@@ -880,8 +880,8 @@ Point Creature::getDrawOffset()
 
 int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
-    int speed = m_speed;
-    if (speed < 1)
+    int stepSpeed = m_speed;
+    if (stepSpeed < 1)
         return 0;
 
     Position tilePos;
@@ -903,32 +903,40 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
     }
     else groundSpeed = 150;
 
-    const bool useDiagonalFormula = !ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
-        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast);
-
-    if (speed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
+    if (stepSpeed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
-        uint32_t calculatedStepSpeed;
+        double stepDuration = 1000 * groundSpeed;
+        if (g_game.getFeature(Otc::GameNewSpeedLaw)) {
+            stepSpeed *= 2;
 
-        int32_t stepSpeed = speed * 2;
-        if (stepSpeed > -Creature::speedB) {
-            calculatedStepSpeed = floor((Creature::speedA * log((stepSpeed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
-            if (calculatedStepSpeed == 0) {
+            uint32_t calculatedStepSpeed;
+            if (stepSpeed > -Creature::speedB) {
+                calculatedStepSpeed = floor((Creature::speedA * log((stepSpeed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
+                if (calculatedStepSpeed == 0) {
+                    calculatedStepSpeed = 1;
+                }
+            }
+            else {
                 calculatedStepSpeed = 1;
             }
-        }
-        else {
-            calculatedStepSpeed = 1;
-        }
 
-        double duration = std::floor(1000 * groundSpeed / calculatedStepSpeed);
-        int64_t stepDuration = std::ceil(duration / 50) * 50;
+            stepDuration = std::floor(stepDuration / calculatedStepSpeed);
+        }
+        else stepDuration /= stepSpeed;
+
+        if (g_game.getClientVersion() >= 900) {
+            const auto serverBeat = g_game.getServerBeat();
+            stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
+        }
 
         m_stepCache.duration = stepDuration;
-        m_stepCache.durationDiagonal = stepDuration * 3;
+        m_stepCache.durationDiagonal = stepDuration * (g_game.getClientVersion() <= 810 ? 2 : 3);
     }
+
+    const bool useDiagonalFormula = !ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
+        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast);
 
     return useDiagonalFormula ? m_stepCache.durationDiagonal : m_stepCache.duration;
 }
