@@ -396,7 +396,11 @@ ThingPtr Tile::getTopLookThing() {
 }
 
 ThingPtr Tile::getTopUseThing() {
-    if (!m_commonItems.empty()) return m_commonItems[0];
+    if (isEmpty()) return nullptr;
+
+    for (const auto& item : m_bottomItems) {
+        if (item->isForceUse()) return item;
+    }
 
     for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& item = *it;
@@ -408,9 +412,10 @@ ThingPtr Tile::getTopUseThing() {
         if (item->isForceUse()) return item;
     }
 
+    if (!m_commonItems.empty()) return m_commonItems.front();
     if (!m_bottomItems.empty()) return m_bottomItems.back();
 
-    return m_things[0];
+    return m_grounds.front();
 }
 
 CreaturePtr Tile::getTopCreature() {
