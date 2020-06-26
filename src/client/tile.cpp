@@ -408,9 +408,9 @@ ThingPtr Tile::getTopUseThing() {
         if (item->isForceUse()) return item;
     }
 
-    if (!m_creatures.empty()) return m_creatures[0];
+    if (!m_bottomItems.empty()) return m_bottomItems.back();
 
-    return nullptr;
+    return m_things[0];
 }
 
 CreaturePtr Tile::getTopCreature() {
