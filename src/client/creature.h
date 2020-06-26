@@ -84,7 +84,8 @@ public:
     uint8 getHealthPercent() { return m_healthPercent; }
     Otc::Direction getDirection() { return m_direction; }
     Outfit getOutfit() { return m_outfit; }
-    Light getLight() { return m_light; }
+    Light getLight();
+    bool hasLight() { return Thing::hasLight() || getLight().color > 0; }
     uint16 getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
     uint8 getSkull() { return m_skull; }

@@ -569,6 +569,16 @@ bool Tile::hasElevation(int elevation) {
     return getElevation() >= elevation;
 }
 
+bool Tile::hasLight() {
+    if (m_countFlag.hasLight > 0) return true;
+
+    for (const CreaturePtr& creature : m_creatures) {
+        if (creature->hasLight()) return true;
+    }
+
+    return false;
+}
+
 void Tile::checkTranslucentLight() {
     if (m_position.z != Otc::SEA_FLOOR)
         return;

@@ -128,7 +128,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 thing->static_self_cast<Item>()->startListenerPainter();
             }
 
-            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer(), true);
+            requestDrawing(true, thing->hasLight(), true);
         }
     }
     else {
@@ -230,7 +230,7 @@ bool Map::removeThing(const ThingPtr& thing)
     else if (const TilePtr& tile = thing->getTile())
         ret = tile->removeThing(thing);
 
-    if (ret) thing->cancelListenerPainter();
+    thing->cancelListenerPainter();
 
     notificateTileUpdate(thing->getPosition());
     return ret;

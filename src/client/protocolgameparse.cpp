@@ -1077,6 +1077,7 @@ void ProtocolGame::parseWorldLight(const InputMessagePtr& msg)
     light.color = msg->getU8();
 
     g_map.setLight(light);
+    g_map.requestDrawing(true, true, true);
 }
 
 void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
@@ -1182,7 +1183,7 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     }
 
     creature->setLight(light);
-    g_map.requestDrawing(true, true);
+    g_map.requestDrawing(true, true, true);
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)

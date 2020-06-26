@@ -80,6 +80,7 @@ public:
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
     virtual Light getLight() { return rawGetThingType()->getLight(); }
+    virtual bool hasLight() { return rawGetThingType()->hasLight(); }
     int getMinimapColor() { return rawGetThingType()->getMinimapColor(); }
     int getLensHelp() { return rawGetThingType()->getLensHelp(); }
     int getClothSlot() { return rawGetThingType()->getClothSlot(); }
@@ -107,7 +108,6 @@ public:
     bool isHookSouth() { return rawGetThingType()->isHookSouth(); }
     bool isHookEast() { return rawGetThingType()->isHookEast(); }
     bool isRotateable() { return rawGetThingType()->isRotateable(); }
-    bool hasLight() { return rawGetThingType()->hasLight(); }
     bool isDontHide() { return rawGetThingType()->isDontHide(); }
     bool isTranslucent() { return rawGetThingType()->isTranslucent(); }
     bool hasDisplacement() { return rawGetThingType()->hasDisplacement(); }
