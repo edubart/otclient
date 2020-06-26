@@ -124,10 +124,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         if (tile) {
             tile->addThing(thing, stackPos);
 
-            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer(), thing->isLocalPlayer());
             if (thing->isItem()) {
                 thing->static_self_cast<Item>()->startListenerPainter();
             }
+
+            requestDrawing(true, thing->hasLight() || thing->isLocalPlayer(), true);
         }
     }
     else {
