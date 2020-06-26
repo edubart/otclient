@@ -87,7 +87,15 @@ void Creature::draw(const Point& dest, float scaleFactor, LightView* lightView)
     internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
 
     if (lightView) {
-        const auto light = getLight();
+        auto light = getLight();
+
+        if (isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
+            light.intensity = std::max<uint8>(light.intensity, 1);
+            if (light.color == 0 || light.color > 215) {
+                light.color = 215;
+            }
+        }
+
         if (light.intensity > 0) {
             lightView->addLightSource(dest + (m_walkOffset + Point(16, 16)) * scaleFactor, scaleFactor, light);
         }
@@ -974,14 +982,9 @@ int Creature::getDisplacementY()
 
 Light Creature::getLight() {
     Light light = Thing::getLight();
-    light = m_light.color != 0 && m_light.intensity >= light.intensity ? m_light : light;
 
-    if (isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
-        light.intensity = std::max<uint8>(light.intensity, 1);
-        if (light.color == 0 || light.color > 215) {
-            light.color = 215;
-        }
-    }
+    if (m_light.color > 0 && m_light.intensity >= light.intensity)
+        light = m_light;
 
     return light;
 }
