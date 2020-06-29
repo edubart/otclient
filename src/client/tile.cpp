@@ -37,40 +37,44 @@ Tile::Tile(const Position& position) :
     m_minimapColor(0),
     m_flags(0),
     m_houseId(0),
-    m_localPlayer(nullptr) {}
+    m_localPlayer(nullptr)
+{
+}
 
-void Tile::drawGround(const Point& dest, float scaleFactor, LightView* lightView) {
+void Tile::drawGround(const Point& dest, float scaleFactor, LightView* lightView)
+{
     m_drawElevation = 0;
 
-    for (const auto& ground : m_grounds) {
+    for(const auto& ground : m_grounds) {
         ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         m_drawElevation += ground->getElevation();
-        if (m_drawElevation > Otc::MAX_ELEVATION)
+        if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 }
 
-void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView) {
-    for (const auto& item : m_bottomItems) {
+void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView)
+{
+    for(const auto& item : m_bottomItems) {
         item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
 
         m_drawElevation += item->getElevation();
-        if (m_drawElevation > Otc::MAX_ELEVATION)
+        if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 
-    for (auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
+    for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
 
         item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
 
         m_drawElevation += item->getElevation();
-        if (m_drawElevation > Otc::MAX_ELEVATION)
+        if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 
 
-    for (const auto& creature : m_walkingCreatures) {
+    for(const auto& creature : m_walkingCreatures) {
         creature->draw(
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
@@ -78,31 +82,34 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
             ), scaleFactor, lightView);
     }
 
-    for (auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
+    for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
         const auto& creature = (*it);
-        if (!creature->isWalking()) {
+        if(!creature->isWalking()) {
             creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
         }
     }
 }
 
-void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView) {
-    for (const auto& effect : m_effects) {
+void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
+{
+    for(const auto& effect : m_effects) {
         effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
     }
 
-    for (const auto& item : m_topItems) {
+    for(const auto& item : m_topItems) {
         item->draw(dest, scaleFactor, true, lightView);
     }
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, LightView* lightView) {
+void Tile::draw(const Point& dest, float scaleFactor, LightView* lightView)
+{
     drawGround(dest, scaleFactor, lightView);
     drawBottom(dest, scaleFactor, lightView);
     drawTop(dest, scaleFactor, lightView);
 }
 
-void Tile::clean() {
+void Tile::clean()
+{
     m_bottomItems.clear();
     m_grounds.clear();
     m_topItems.clear();
@@ -113,30 +120,32 @@ void Tile::clean() {
     cancelListenerPainter();
 }
 
-void Tile::addWalkingCreature(const CreaturePtr& creature) {
+void Tile::addWalkingCreature(const CreaturePtr& creature)
+{
     m_walkingCreatures.push_back(creature);
 }
 
-void Tile::removeWalkingCreature(const CreaturePtr& creature) {
+void Tile::removeWalkingCreature(const CreaturePtr& creature)
+{
     auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
-    if (it != m_walkingCreatures.end())
+    if(it != m_walkingCreatures.end())
         m_walkingCreatures.erase(it);
 }
 
 // TODO: Need refactoring
 // Redo Stack Position System
-void Tile::addThing(const ThingPtr& thing, int stackPos) {
-    if (!thing)
+void Tile::addThing(const ThingPtr& thing, int stackPos)
+{
+    if(!thing)
         return;
 
-    if (thing->isEffect()) {
+    if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
-        if (effect->isTopEffect())
+        if(effect->isTopEffect())
             m_effects.insert(m_effects.begin(), effect);
         else
             m_effects.push_back(effect);
-    }
-    else {
+    } else {
         const uint8_t size = m_things.size();
         uint8_t originalStack = stackPos;
 
@@ -147,61 +156,55 @@ void Tile::addThing(const ThingPtr& thing, int stackPos) {
         // 3 - on top (doors)                 -->      -->
         // 4 - creatures, from top to bottom  <--      -->
         // 5 - items, from top to bottom      <--      <--
-        if (stackPos < 0 || stackPos == 255) {
+        if(stackPos < 0 || stackPos == 255) {
             int priority = thing->getStackPriority();
 
             // -1 or 255 => auto detect position
             // -2        => append
 
             bool append;
-            if (stackPos == -2)
+            if(stackPos == -2)
                 append = true;
             else {
                 append = (priority <= 3);
 
                 // newer protocols does not store creatures in reverse order
-                if (g_game.getClientVersion() >= 854 && priority == 4)
+                if(g_game.getClientVersion() >= 854 && priority == 4)
                     append = !append;
             }
 
 
-            for (stackPos = 0; stackPos < size; ++stackPos) {
+            for(stackPos = 0; stackPos < size; ++stackPos) {
                 int otherPriority = m_things[stackPos]->getStackPriority();
-                if ((append && otherPriority > priority) || (!append && otherPriority >= priority))
+                if((append && otherPriority > priority) || (!append && otherPriority >= priority))
                     break;
             }
-        }
-        else if (stackPos > (int)size)
+        } else if(stackPos > (int)size)
             stackPos = size;
 
         m_things.insert(m_things.begin() + stackPos, thing);
 
-        if (thing->isCreature()) {
+        if(thing->isCreature()) {
             const CreaturePtr& creature = thing->static_self_cast<Creature>();
             m_creatures.push_back(creature);
-            if (thing->isLocalPlayer()) m_localPlayer = creature;
-        }
-        else {
+            if(thing->isLocalPlayer()) m_localPlayer = creature;
+        } else {
             const auto& item = thing->static_self_cast<Item>();
 
-            if (item->hasAnimationPhases()) m_animatedItems.push_back(item);
+            if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
 
-            if (thing->isGroundBorder() || thing->isGround()) {
+            if(thing->isGroundBorder() || thing->isGround()) {
                 m_grounds.push_back(item);
-            }
-            else if (thing->isOnTop()) {
+            } else if(thing->isOnTop()) {
                 m_topItems.push_back(item);
-            }
-            else if (thing->isOnBottom()) {
+            } else if(thing->isOnBottom()) {
                 m_bottomItems.push_back(item);
-            }
-            else {
+            } else {
                 originalStack -= m_grounds.size() + m_bottomItems.size() + m_creatures.size();
 
-                if (originalStack > m_commonItems.size()) {
+                if(originalStack > m_commonItems.size()) {
                     m_commonItems.push_back(item);
-                }
-                else {
+                } else {
                     m_commonItems.insert(m_commonItems.begin() + originalStack, item);
                 }
             }
@@ -209,68 +212,64 @@ void Tile::addThing(const ThingPtr& thing, int stackPos) {
 
         analyzeThing(thing, true);
 
-        if (m_things.size() > MAX_THINGS)
+        if(m_things.size() > MAX_THINGS)
             removeThing(m_things[MAX_THINGS]);
     }
 
     thing->setPosition(m_position);
     thing->onAppear();
 
-    if (thing->isTranslucent())
+    if(thing->isTranslucent())
         checkTranslucentLight();
 }
 
 // TODO: Need refactoring
-bool Tile::removeThing(ThingPtr thing) {
-    if (!thing)
+bool Tile::removeThing(ThingPtr thing)
+{
+    if(!thing)
         return false;
 
     bool removed = false;
 
-    if (thing->isEffect()) {
+    if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
         auto it = std::find(m_effects.begin(), m_effects.end(), effect);
-        if (it != m_effects.end()) {
+        if(it != m_effects.end()) {
             m_effects.erase(it);
             removed = true;
         }
-    }
-    else {
+    } else {
         const auto it = std::find(m_things.begin(), m_things.end(), thing);
-        if (it != m_things.end()) {
+        if(it != m_things.end()) {
             analyzeThing(thing, false);
             m_things.erase(it);
 
-            if (thing->isCreature()) {
+            if(thing->isCreature()) {
                 const auto subIt = std::find(m_creatures.begin(), m_creatures.end(), thing->static_self_cast<Creature>());
-                if (subIt != m_creatures.end()) {
-                    if (thing->isLocalPlayer()) m_localPlayer = nullptr;
+                if(subIt != m_creatures.end()) {
+                    if(thing->isLocalPlayer()) m_localPlayer = nullptr;
                     m_creatures.erase(subIt);
                 }
-            }
-            else {
+            } else {
                 const ItemPtr& item = thing->static_self_cast<Item>();
 
-                if (item->hasAnimationPhases()) {
+                if(item->hasAnimationPhases()) {
                     const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), item);
-                    if (subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
+                    if(subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
                 }
 
-                if (thing->isGroundBorder() || thing->isGround()) {
+                if(thing->isGroundBorder() || thing->isGround()) {
                     const auto& subIt = std::find(m_grounds.begin(), m_grounds.end(), item);
-                    if (subIt != m_grounds.end()) m_grounds.erase(subIt);
-                }
-                else if (thing->isOnTop()) {
+                    if(subIt != m_grounds.end()) m_grounds.erase(subIt);
+                } else if(thing->isOnTop()) {
                     const auto& subIt = std::find(m_topItems.begin(), m_topItems.end(), item);
-                    if (subIt != m_topItems.end()) m_topItems.erase(subIt);
-                }
-                else if (thing->isOnBottom()) {
+                    if(subIt != m_topItems.end()) m_topItems.erase(subIt);
+                } else if(thing->isOnBottom()) {
                     const auto& subIt = std::find(m_bottomItems.begin(), m_bottomItems.end(), item);
-                    if (subIt != m_bottomItems.end()) m_bottomItems.erase(subIt);
-                }
-                else {
+                    if(subIt != m_bottomItems.end()) m_bottomItems.erase(subIt);
+                } else {
                     const auto& subIt = std::find(m_commonItems.begin(), m_commonItems.end(), item);
-                    if (subIt != m_commonItems.end()) m_commonItems.erase(subIt);
+                    if(subIt != m_commonItems.end()) m_commonItems.erase(subIt);
                 }
             }
 
@@ -280,48 +279,53 @@ bool Tile::removeThing(ThingPtr thing) {
 
     thing->onDisappear();
 
-    if (thing->isTranslucent())
+    if(thing->isTranslucent())
         checkTranslucentLight();
 
     return removed;
 }
 
-ThingPtr Tile::getThing(int stackPos) {
-    if (stackPos >= 0 && stackPos < (int)m_things.size())
+ThingPtr Tile::getThing(int stackPos)
+{
+    if(stackPos >= 0 && stackPos < (int)m_things.size())
         return m_things[stackPos];
 
     return nullptr;
 }
 
-int Tile::getThingStackPos(const ThingPtr& thing) {
-    for (int stackpos = -1, s = m_things.size(); ++stackpos < s;) {
-        if (thing == m_things[stackpos]) return stackpos;
+int Tile::getThingStackPos(const ThingPtr& thing)
+{
+    for(int stackpos = -1, s = m_things.size(); ++stackpos < s;) {
+        if(thing == m_things[stackpos]) return stackpos;
     }
 
     return -1;
 }
 
-bool Tile::hasThing(const ThingPtr& thing) {
+bool Tile::hasThing(const ThingPtr& thing)
+{
     return std::find(m_things.begin(), m_things.end(), thing) != m_things.end();
 }
 
-ThingPtr Tile::getTopThing() {
-    if (isEmpty())
+ThingPtr Tile::getTopThing()
+{
+    if(isEmpty())
         return nullptr;
 
     const ThingPtr& topComumItem = m_commonItems.front();
-    if (topComumItem) {
+    if(topComumItem) {
         return topComumItem;
     }
 
     return m_things[m_things.size() - 1];
 }
 
-std::vector<ItemPtr> Tile::getItems() {
+std::vector<ItemPtr> Tile::getItems()
+{
     std::vector<ItemPtr> items;
 
-    for (const ThingPtr& thing : m_things) {
-        if (!thing->isItem())
+    for(const ThingPtr& thing : m_things) {
+        if(!thing->isItem())
             continue;
 
         items.push_back(thing->static_self_cast<Item>());
@@ -330,10 +334,11 @@ std::vector<ItemPtr> Tile::getItems() {
     return items;
 }
 
-ItemPtr Tile::getGround() {
-    if (!m_grounds.empty()) {
+ItemPtr Tile::getGround()
+{
+    if(!m_grounds.empty()) {
         const auto& ground = m_grounds[0];
-        if (ground->isGround()) return ground;
+        if(ground->isGround()) return ground;
     }
 
     return nullptr;
@@ -341,103 +346,108 @@ ItemPtr Tile::getGround() {
 
 EffectPtr Tile::getEffect(uint16 id)
 {
-    for (const EffectPtr& effect : m_effects)
-        if (effect->getId() == id)
+    for(const EffectPtr& effect : m_effects)
+        if(effect->getId() == id)
             return effect;
     return nullptr;
 }
 
-int Tile::getGroundSpeed() {
+int Tile::getGroundSpeed()
+{
     int groundSpeed = 100;
-    if (const ItemPtr& ground = getGround())
+    if(const ItemPtr& ground = getGround())
         groundSpeed = ground->getGroundSpeed();
 
     return groundSpeed;
 }
 
-uint8 Tile::getMinimapColorByte() {
-    if (m_minimapColor != 0)
+uint8 Tile::getMinimapColorByte()
+{
+    if(m_minimapColor != 0)
         return m_minimapColor;
 
-    for (const ItemPtr& item : m_topItems) {
-        if (!item->isIgnoreLook()) return item->getMinimapColor();
+    for(const ItemPtr& item : m_topItems) {
+        if(!item->isIgnoreLook()) return item->getMinimapColor();
     }
 
-    for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& item = *it;
-        if (!item->isIgnoreLook()) return item->getMinimapColor();
+        if(!item->isIgnoreLook()) return item->getMinimapColor();
     }
 
-    for (auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+    for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
         const ItemPtr& item = *it;
         uint8 c = item->getMinimapColor();
-        if (c != 0) return c;
+        if(c != 0) return c;
     }
 
     return 255; // alpha
 }
 
-ThingPtr Tile::getTopLookThing() {
-    for (const ItemPtr& item : m_commonItems) {
-        if (!item->isIgnoreLook()) return item;
+ThingPtr Tile::getTopLookThing()
+{
+    for(const ItemPtr& item : m_commonItems) {
+        if(!item->isIgnoreLook()) return item;
     }
 
-    for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& item = *it;
-        if (!item->isIgnoreLook()) return item;
+        if(!item->isIgnoreLook()) return item;
     }
 
-    for (auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+    for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
         const ItemPtr& item = *it;
-        if (!item->isIgnoreLook()) return item;
+        if(!item->isIgnoreLook()) return item;
     }
 
     return nullptr;
 }
 
-ThingPtr Tile::getTopUseThing() {
-    if (isEmpty()) return nullptr;
+ThingPtr Tile::getTopUseThing()
+{
+    if(isEmpty()) return nullptr;
 
-    for (const auto& item : m_bottomItems) {
-        if (item->isForceUse()) return item;
+    for(const auto& item : m_bottomItems) {
+        if(item->isForceUse()) return item;
     }
 
-    for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& item = *it;
-        if (item->isForceUse()) return item;
+        if(item->isForceUse()) return item;
     }
 
-    for (auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+    for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
         const ItemPtr& item = *it;
-        if (item->isForceUse()) return item;
+        if(item->isForceUse()) return item;
     }
 
-    if (!m_commonItems.empty()) return m_commonItems.front();
-    if (!m_bottomItems.empty()) return m_bottomItems.back();
+    if(!m_commonItems.empty()) return m_commonItems.front();
+    if(!m_bottomItems.empty()) return m_bottomItems.back();
 
     return m_grounds.front();
 }
 
-CreaturePtr Tile::getTopCreature() {
+CreaturePtr Tile::getTopCreature()
+{
     CreaturePtr creature;
-    if (!m_creatures.empty())
+    if(!m_creatures.empty())
         return m_creatures.front();
 
-    if (!m_walkingCreatures.empty())
+    if(!m_walkingCreatures.empty())
         return m_walkingCreatures.back();
 
     // check for walking creatures in tiles around
-    if (!creature) {
-        for (int xi = -1; xi <= 1; ++xi) {
-            for (int yi = -1; yi <= 1; ++yi) {
+    if(!creature) {
+        for(int xi = -1; xi <= 1; ++xi) {
+            for(int yi = -1; yi <= 1; ++yi) {
                 Position pos = m_position.translated(xi, yi);
-                if (pos == m_position)
+                if(pos == m_position)
                     continue;
 
                 const TilePtr& tile = g_map.getTile(pos);
-                if (tile) {
-                    for (const CreaturePtr& c : tile->getCreatures()) {
-                        if (c->isWalking() && c->getLastStepFromPosition() == m_position && c->getStepProgress() < 0.75f) {
+                if(tile) {
+                    for(const CreaturePtr& c : tile->getCreatures()) {
+                        if(c->isWalking() && c->getLastStepFromPosition() == m_position && c->getStepProgress() < 0.75f) {
                             return c;
                         }
                     }
@@ -448,51 +458,54 @@ CreaturePtr Tile::getTopCreature() {
     return nullptr;
 }
 
-ThingPtr Tile::getTopMoveThing() {
-    if (isEmpty())
+ThingPtr Tile::getTopMoveThing()
+{
+    if(isEmpty())
         return nullptr;
 
-    for (const ThingPtr& thing : m_commonItems) {
-        if (!thing->isNotMoveable()) return thing;
+    for(const ThingPtr& thing : m_commonItems) {
+        if(!thing->isNotMoveable()) return thing;
     }
 
-    for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& thing = *it;
-        if (!thing->isNotMoveable()) return thing;
+        if(!thing->isNotMoveable()) return thing;
     }
 
-    if (hasCreature()) return m_creatures.front();
+    if(hasCreature()) return m_creatures.front();
 
     return nullptr;
 }
 
-ThingPtr Tile::getTopMultiUseThing() {
-    if (isEmpty())
+ThingPtr Tile::getTopMultiUseThing()
+{
+    if(isEmpty())
         return nullptr;
 
-    if (CreaturePtr topCreature = getTopCreature())
+    if(CreaturePtr topCreature = getTopCreature())
         return topCreature;
 
-    for (const ThingPtr& thing : m_commonItems) {
-        if (thing->isMultiUse()) return thing;
+    for(const ThingPtr& thing : m_commonItems) {
+        if(thing->isMultiUse()) return thing;
     }
 
-    for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& thing = *it;
-        if (thing->isMultiUse()) return thing;
+        if(thing->isMultiUse()) return thing;
     }
 
     return m_things[0];
 }
 
-bool Tile::isWalkable(bool ignoreCreatures) {
-    if (m_countFlag.notWalkable > 0 || m_grounds.empty()) {
+bool Tile::isWalkable(bool ignoreCreatures)
+{
+    if(m_countFlag.notWalkable > 0 || m_grounds.empty()) {
         return false;
     }
 
-    if (!ignoreCreatures) {
-        for (const CreaturePtr& creature : m_creatures) {
-            if (!creature->isPassable() && creature->canBeSeen())
+    if(!ignoreCreatures) {
+        for(const CreaturePtr& creature : m_creatures) {
+            if(!creature->isPassable() && creature->canBeSeen())
                 return false;
         }
     }
@@ -500,103 +513,120 @@ bool Tile::isWalkable(bool ignoreCreatures) {
     return true;
 }
 
-bool Tile::isPathable() {
+bool Tile::isPathable()
+{
     return m_countFlag.notPathable == 0;
 }
 
-bool Tile::isFullGround() {
+bool Tile::isFullGround()
+{
     return m_countFlag.fullGround > 0;
 }
 
-bool Tile::isFullyOpaque() {
+bool Tile::isFullyOpaque()
+{
     return isFullGround() || m_countFlag.opaque > 0;
 }
 
-bool Tile::isSingleDimension() {
-    if (!m_walkingCreatures.empty())
+bool Tile::isSingleDimension()
+{
+    if(!m_walkingCreatures.empty())
         return false;
 
     return m_countFlag.notSingleDimension == 0;
 }
 
-bool Tile::isLookPossible() {
+bool Tile::isLookPossible()
+{
     return m_countFlag.blockProjectile == 0;
 }
 
-bool Tile::isClickable() {
+bool Tile::isClickable()
+{
 
     return !m_grounds.empty() || !m_commonItems.empty() || !m_bottomItems.empty();
 }
 
-bool Tile::isEmpty() {
+bool Tile::isEmpty()
+{
     return m_things.empty();
 }
 
-bool Tile::canErase() {
+bool Tile::canErase()
+{
     return m_walkingCreatures.empty() && m_effects.empty() && isEmpty() && m_flags == 0 && m_minimapColor == 0;
 }
 
-bool Tile::isDrawable() {
+bool Tile::isDrawable()
+{
     return !isEmpty() || !m_walkingCreatures.empty() || !m_effects.empty();
 }
 
-bool Tile::mustHookEast() {
-    for (const ItemPtr& thing : m_bottomItems)
-        if (thing->isHookEast())
+bool Tile::mustHookEast()
+{
+    for(const ItemPtr& thing : m_bottomItems)
+        if(thing->isHookEast())
             return true;
 
     return false;
 }
 
-bool Tile::mustHookSouth() {
-    for (const ItemPtr& thing : m_bottomItems)
-        if (thing->isHookSouth())
+bool Tile::mustHookSouth()
+{
+    for(const ItemPtr& thing : m_bottomItems)
+        if(thing->isHookSouth())
             return true;
 
     return false;
 }
 
-bool Tile::hasCreature() {
+bool Tile::hasCreature()
+{
     return !m_creatures.empty();
 }
 
-bool Tile::limitsFloorsView(bool isFreeView) {
+bool Tile::limitsFloorsView(bool isFreeView)
+{
     // ground and walls limits the view
     const ThingPtr& firstThing = getThing(0);
     return firstThing && (firstThing->isGround() || (isFreeView ? firstThing->isOnBottom() && firstThing->blockProjectile() : firstThing->isOnBottom()));
 }
 
-int Tile::getElevation() const {
+int Tile::getElevation() const
+{
     return m_countFlag.elevation;
 }
 
-bool Tile::hasElevation(int elevation) {
+bool Tile::hasElevation(int elevation)
+{
     return getElevation() >= elevation;
 }
 
-bool Tile::hasLight() {
-    if (m_countFlag.hasLight > 0) return true;
+bool Tile::hasLight()
+{
+    if(m_countFlag.hasLight > 0) return true;
 
-    for (const CreaturePtr& creature : m_creatures) {
-        if (creature->hasLight()) return true;
+    for(const CreaturePtr& creature : m_creatures) {
+        if(creature->hasLight()) return true;
     }
 
     return false;
 }
 
-void Tile::checkTranslucentLight() {
-    if (m_position.z != Otc::SEA_FLOOR)
+void Tile::checkTranslucentLight()
+{
+    if(m_position.z != Otc::SEA_FLOOR)
         return;
 
     Position downPos = m_position;
-    if (!downPos.down()) return;
+    if(!downPos.down()) return;
 
     TilePtr tile = g_map.getOrCreateTile(downPos);
-    if (!tile)
+    if(!tile)
         return;
 
-    for (const ThingPtr& thing : m_things) {
-        if (thing->isTranslucent() || thing->hasLensHelp()) {
+    for(const ThingPtr& thing : m_things) {
+        if(thing->isTranslucent() || thing->hasLensHelp()) {
             tile->m_flags |= TILESTATE_TRANSLUECENT_LIGHT;
             return;
         }
@@ -605,92 +635,93 @@ void Tile::checkTranslucentLight() {
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-void Tile::cancelListenerPainter() {
-    if (m_animatedItems.empty()) return;
+void Tile::cancelListenerPainter()
+{
+    if(m_animatedItems.empty()) return;
 
-    for (const ItemPtr& item : m_animatedItems)
+    for(const ItemPtr& item : m_animatedItems)
         item->cancelListenerPainter();
 
     m_animatedItems.clear();
 }
 
-void Tile::analyzeThing(const ThingPtr& thing, bool sum) {
+void Tile::analyzeThing(const ThingPtr& thing, bool sum)
+{
     const int value = sum ? 1 : -1;
 
-    if (thing->getHeight() != 1 || thing->getWidth() != 1)
+    if(thing->getHeight() != 1 || thing->getWidth() != 1)
         m_countFlag.notSingleDimension += value;
 
-    if (!thing->isItem()) return;
+    if(!thing->isItem()) return;
 
-    if (thing->isNotWalkable())
+    if(thing->isNotWalkable())
         m_countFlag.notWalkable += value;
 
-    if (thing->isNotPathable())
+    if(thing->isNotPathable())
         m_countFlag.notPathable += value;
 
-    if (thing->blockProjectile())
+    if(thing->blockProjectile())
         m_countFlag.blockProjectile += value;
 
-    if (thing->isHookEast())
+    if(thing->isHookEast())
         m_countFlag.mustHookEast += value;
 
-    if (thing->isHookSouth())
+    if(thing->isHookSouth())
         m_countFlag.mustHookSouth += value;
 
     m_countFlag.totalElevation += thing->getElevation() * value;
 
-    if (thing->hasDisplacement())
+    if(thing->hasDisplacement())
         m_countFlag.hasDisplacement += value;
 
-    if (thing->isFullGround())
+    if(thing->isFullGround())
         m_countFlag.fullGround += value;
 
-    if (thing->hasElevation())
+    if(thing->hasElevation())
         m_countFlag.elevation += value;
 
-    if (thing->isOpaque())
+    if(thing->isOpaque())
         m_countFlag.opaque += value;
 
-    if (thing->hasLight())
+    if(thing->hasLight())
         m_countFlag.hasLight += value;
 
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
-    if (thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
+    if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
         const int commonSize = m_commonItems.size();
-        if (m_countFlag.elevation > (sum ? 3 : 2) && commonSize > 2) {
+        if(m_countFlag.elevation > (sum ? 3 : 2) && commonSize > 2) {
             const ItemPtr& subItem = m_commonItems[1];
             subItem->canDraw(!sum);
-        }
-        else {
+        } else {
             const ItemPtr& item = thing->static_self_cast<Item>();
 
-            if (!thing->isOnBottom()) {
-                for (const ItemPtr& subItem : m_commonItems) {
-                    if (subItem != item) {
-                        if (subItem->hasElevation() || subItem->isOpaque()) return;
+            if(!thing->isOnBottom()) {
+                for(const ItemPtr& subItem : m_commonItems) {
+                    if(subItem != item) {
+                        if(subItem->hasElevation() || subItem->isOpaque()) return;
 
-                        if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                        if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
                             subItem->canDraw(!sum);
                         }
                     }
                 }
             }
 
-            for (auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+            for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
                 const ItemPtr& subItem = *it;
-                if (subItem != item) {
-                    if (subItem->hasElevation() || subItem->isOpaque()) return;
+                if(subItem != item) {
+                    if(subItem->hasElevation() || subItem->isOpaque()) return;
 
-                    if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                    if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
                         subItem->canDraw(!sum);
                     }
                 }
             }
 
-            for (const ItemPtr& subItem : m_grounds) {
-                if (subItem->hasElevation()) return;
+            for(const ItemPtr& subItem : m_grounds) {
+                if(subItem->hasElevation()) return;
 
-                if (subItem->getWidth() == 1 && subItem->getHeight() == 1) {
+                if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
                     subItem->canDraw(!sum);
                 }
             }

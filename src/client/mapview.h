@@ -121,9 +121,10 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const bool tile, const bool light, const bool force = false) {
-        if (tile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redraw = true;
-        if (light && m_lightView) m_lightView->requestDrawing(force);
+    void requestDrawing(const bool tile, const bool light, const bool force = false)
+    {
+        if(tile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redraw = true;
+        if(light && m_lightView) m_lightView->requestDrawing(force);
     }
 
 private:
@@ -132,9 +133,10 @@ private:
     int calcLastVisibleFloor();
 
     Rect calcFramebufferSource(const Size& destSize);
-    Point transformPositionTo2D(const Position& position, const Position& relativePosition) {
+    Point transformPositionTo2D(const Position& position, const Position& relativePosition)
+    {
         return Point((m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
-            (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
+                     (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
     int m_lockedFirstVisibleFloor;

@@ -150,8 +150,9 @@ public:
     int getNumPatternX() { return m_numPatternX; }
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
-    int getAnimationPhases() {
-        if (m_animator) return m_animator->getAnimationPhases();
+    int getAnimationPhases()
+    {
+        if(m_animator) return m_animator->getAnimationPhases();
         return m_animationPhases;
     }
     AnimatorPtr getAnimator() { return m_animator; }

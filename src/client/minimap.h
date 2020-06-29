@@ -42,7 +42,7 @@ enum MinimapTileFlags {
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : flags(0), color(255), speed(10) { }
+    MinimapTile() : flags(0), color(255), speed(10) {}
     uint8 flags;
     uint8 color;
     uint8 speed;
@@ -101,13 +101,15 @@ private:
     Rect calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale);
     bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].find(getBlockIndex(pos)) != m_tileBlocks[pos.z].end(); }
     MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
-    Point getBlockOffset(const Point& pos) {
+    Point getBlockOffset(const Point& pos)
+    {
         return Point(pos.x - pos.x % MMBLOCK_SIZE,
-            pos.y - pos.y % MMBLOCK_SIZE);
+                     pos.y - pos.y % MMBLOCK_SIZE);
     }
-    Position getIndexPosition(int index, int z) {
+    Position getIndexPosition(int index, int z)
+    {
         return Position((index % (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE,
-            (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, z);
+                        (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, z);
     }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[Otc::MAX_Z + 1];

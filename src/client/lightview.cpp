@@ -48,8 +48,8 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
     int bubbleDiameter = bubbleRadius * 2;
     ImagePtr lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
 
-    for (int x = 0; x < bubbleDiameter; ++x) {
-        for (int y = 0; y < bubbleDiameter; ++y) {
+    for(int x = 0; x < bubbleDiameter; ++x) {
+        for(int y = 0; y < bubbleDiameter; ++y) {
             float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
             float intensity = stdext::clamp<float>((bubbleRadius - radius) / (float)(bubbleRadius - centerRadius), 0.0f, 1.0f);
 
@@ -89,9 +89,9 @@ void LightView::addLightSource(const Point& center, float scaleFactor, const Lig
     color.setGreen(color.gF() * brightness);
     color.setBlue(color.bF() * brightness);
 
-    if (m_blendEquation == Painter::BlendEquation_Add && !m_lightMap.empty()) {
+    if(m_blendEquation == Painter::BlendEquation_Add && !m_lightMap.empty()) {
         LightSource prevSource = m_lightMap.back();
-        if (prevSource.center == center && prevSource.color == color && prevSource.radius == radius)
+        if(prevSource.center == center && prevSource.color == color && prevSource.radius == radius)
             return;
     }
 
@@ -130,11 +130,11 @@ void LightView::resize(const Size& size)
 
 void LightView::draw(const Rect& dest, const Rect& src)
 {
-    if (m_globalLight.intensity >= 250 || m_lightbuffer->getTexture() == nullptr) return;
+    if(m_globalLight.intensity >= 250 || m_lightbuffer->getTexture() == nullptr) return;
 
     // draw light, only if there is darkness
     g_painter->saveAndResetState();
-    if (m_redraw) {
+    if(m_redraw) {
         m_lightbuffer->bind();
         g_painter->setCompositionMode(Painter::CompositionMode_Replace);
 
@@ -143,7 +143,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
         g_painter->setBlendEquation(m_blendEquation);
         g_painter->setCompositionMode(Painter::CompositionMode_Add);
 
-        for (const LightSource& source : m_lightMap)
+        for(const LightSource& source : m_lightMap)
             drawLightSource(source.center, source.color, source.radius);
 
         m_lightbuffer->release();

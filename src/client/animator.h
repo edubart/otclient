@@ -59,7 +59,8 @@ public:
 
     ticks_t getTotalDuration();
 
-    int getAverageDuration() {
+    int getAverageDuration()
+    {
         return getTotalDuration() / getAnimationPhases();
     }
 

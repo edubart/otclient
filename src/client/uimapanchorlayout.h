@@ -30,7 +30,9 @@ class UIPositionAnchor : public UIAnchor
 {
 public:
     UIPositionAnchor(Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge) :
-        UIAnchor(anchoredEdge, std::string(), hookedEdge), m_hookedPosition(hookedPosition) { }
+        UIAnchor(anchoredEdge, std::string(), hookedEdge), m_hookedPosition(hookedPosition)
+    {
+    }
 
     UIWidgetPtr getHookedWidget(const UIWidgetPtr& /*widget*/, const UIWidgetPtr& parentWidget) { return parentWidget; }
     int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget);
@@ -42,10 +44,10 @@ private:
 class UIMapAnchorLayout : public UIAnchorLayout
 {
 public:
-    UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(parentWidget) { }
+    UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(parentWidget) {}
 
     void addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
-        const Position& hookedPosition, Fw::AnchorEdge hookedEdge);
+                           const Position& hookedPosition, Fw::AnchorEdge hookedEdge);
     void centerInPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
     void fillPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition);
 

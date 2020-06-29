@@ -71,7 +71,7 @@ MapView::MapView()
 
     m_floorMin = m_floorMax = 0;
 
-    for (int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
+    for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
         ViewportControl viewport((Otc::Direction)dir);
         m_viewportControl[dir] = viewport;
     }
@@ -87,29 +87,28 @@ MapView::~MapView()
 void MapView::draw(const Rect& rect)
 {
     // update visible tiles cache when needed
-    if (m_mustUpdateVisibleTilesCache || m_updateTilesPos > 0)
+    if(m_mustUpdateVisibleTilesCache || m_updateTilesPos > 0)
         updateVisibleTilesCache(m_mustUpdateVisibleTilesCache ? 0 : m_updateTilesPos);
 
     float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
     Position cameraPosition = getCameraPosition();
 
-    if (m_redraw) {
+    if(m_redraw) {
         m_framebuffer->bind();
 
-        if (m_mustCleanFramebuffer) {
+        if(m_mustCleanFramebuffer) {
             Rect clearRect = Rect(0, 0, m_drawDimension * m_tileSize);
             g_painter->setColor(Color::black);
             g_painter->drawFilledRect(clearRect);
 
-            if (m_drawLights) {
+            if(m_drawLights) {
                 m_lightView->reset();
                 m_lightView->resize(m_framebuffer->getSize());
 
                 Light ambientLight;
-                if (cameraPosition.z <= Otc::SEA_FLOOR) {
+                if(cameraPosition.z <= Otc::SEA_FLOOR) {
                     ambientLight = g_map.getLight();
-                }
-                else {
+                } else {
                     ambientLight.color = 215;
                     ambientLight.intensity = 0;
                 }
@@ -124,16 +123,16 @@ void MapView::draw(const Rect& rect)
 
         const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
 
-        for (int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
-            for (const auto& tile : m_cachedVisibleTiles[z]) {
-                if (!viewport.isValid(tile, cameraPosition)) continue;
+        for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+            for(const auto& tile : m_cachedVisibleTiles[z]) {
+                if(!viewport.isValid(tile, cameraPosition)) continue;
 
                 const Position tilePos = tile->getPosition();
 
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
             }
 
-            for (const MissilePtr& missile : g_map.getFloorMissiles(z)) {
+            for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
             }
         }
@@ -149,9 +148,9 @@ void MapView::draw(const Rect& rect)
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
 
     float fadeOpacity = 1.0f;
-    if (!m_shaderSwitchDone && m_fadeOutTime > 0) {
+    if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
         fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
-        if (fadeOpacity < 0.0f) {
+        if(fadeOpacity < 0.0f) {
             m_shader = m_nextShader;
             m_nextShader = nullptr;
             m_shaderSwitchDone = true;
@@ -159,13 +158,13 @@ void MapView::draw(const Rect& rect)
         }
     }
 
-    if (m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
+    if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
         fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
     Rect srcRect = calcFramebufferSource(rect.size());
     Point drawOffset = srcRect.topLeft();
 
-    if (m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
+    if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
         Rect framebufferRect = Rect(0, 0, m_drawDimension * m_tileSize);
         Point center = srcRect.center();
         Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
@@ -197,16 +196,16 @@ void MapView::draw(const Rect& rect)
 
 
     // this could happen if the player position is not known yet
-    if (!cameraPosition.isValid())
+    if(!cameraPosition.isValid())
         return;
 
     float horizontalStretchFactor = rect.width() / (float)srcRect.width();
     float verticalStretchFactor = rect.height() / (float)srcRect.height();
 
     // avoid drawing texts on map in far zoom outs
-    if (m_viewMode == NEAR_VIEW) {
-        for (const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
-            if (!creature->canBeSeen())
+    if(m_viewMode == NEAR_VIEW) {
+        for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
+            if(!creature->canBeSeen())
                 continue;
 
             PointF jumpOffset = creature->getJumpOffset() * scaleFactor;
@@ -219,26 +218,26 @@ void MapView::draw(const Rect& rect)
             p += rect.topLeft();
 
             int flags = 0;
-            if (m_drawNames) { flags = Otc::DrawNames; }
-            if (m_drawHealthBars) { flags |= Otc::DrawBars; }
-            if (m_drawManaBar) { flags |= Otc::DrawManaBar; }
+            if(m_drawNames) { flags = Otc::DrawNames; }
+            if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+            if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
             creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
         }
     }
 
     // lights are drawn after names and before texts
-    if (m_drawLights)
+    if(m_drawLights)
         m_lightView->draw(rect, srcRect);
 
-    if (m_viewMode == NEAR_VIEW && m_drawTexts) {
-        for (const StaticTextPtr& staticText : g_map.getStaticTexts()) {
+    if(m_viewMode == NEAR_VIEW && m_drawTexts) {
+        for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
             Position pos = staticText->getPosition();
 
             // ony draw static texts from current camera floor, unless yells
             //if(pos.z != cameraPosition.z && !staticText->isYell())
             //    continue;
 
-            if (pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
+            if(pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
                 continue;
 
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
@@ -248,7 +247,7 @@ void MapView::draw(const Rect& rect)
             staticText->drawText(p, rect);
         }
 
-        for (const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
+        for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
             Position pos = animatedText->getPosition();
 
             /*
@@ -260,7 +259,7 @@ void MapView::draw(const Rect& rect)
             if(pos.z != cameraPosition.z && g_map.isCovered(pos, m_cachedFirstVisibleFloor))
                 continue;
             */
-            if (pos.z != cameraPosition.z)
+            if(pos.z != cameraPosition.z)
                 continue;
 
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
@@ -274,18 +273,17 @@ void MapView::draw(const Rect& rect)
 
 void MapView::updateVisibleTilesCache(int start)
 {
-    if (start != 0) {
+    if(start != 0) {
         m_mustCleanFramebuffer = false;
-    }
-    else {
+    } else {
 
         m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
         m_cachedLastVisibleFloor = calcLastVisibleFloor();
 
         assert(m_cachedFirstVisibleFloor >= 0 && m_cachedLastVisibleFloor >= 0 &&
-            m_cachedFirstVisibleFloor <= Otc::MAX_Z && m_cachedLastVisibleFloor <= Otc::MAX_Z);
+               m_cachedFirstVisibleFloor <= Otc::MAX_Z && m_cachedLastVisibleFloor <= Otc::MAX_Z);
 
-        if (m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
+        if(m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
             m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
 
         m_cachedFloorVisibleCreatures.clear();
@@ -296,13 +294,13 @@ void MapView::updateVisibleTilesCache(int start)
     // clear current visible tiles cache
     do {
         m_cachedVisibleTiles[m_floorMin].clear();
-    } while (++m_floorMin <= m_floorMax);
+    } while(++m_floorMin <= m_floorMax);
     m_mustUpdateVisibleTilesCache = false;
     m_updateTilesPos = 0;
 
     // there is no tile to render on invalid positions
     const Position cameraPosition = getCameraPosition();
-    if (!cameraPosition.isValid())
+    if(!cameraPosition.isValid())
         return;
 
     const uint_fast8_t cameraZ = cameraPosition.z;
@@ -317,20 +315,20 @@ void MapView::updateVisibleTilesCache(int start)
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
-    for (int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
+    for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
         // loop through / diagonals beginning at top left and going to top right
-        for (int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
+        for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
             // loop current diagonal tiles
             int advance = std::max<int>(diagonal - m_drawDimension.height(), 0);
-            for (int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
+            for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                 // only start really looking tiles in the desired start
-                if (m_updateTilesPos < start) {
+                if(m_updateTilesPos < start) {
                     m_updateTilesPos++;
                     continue;
                 }
 
                 // avoid rendering too much tiles at once
-                if (processedTiles > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
+                if(processedTiles > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
                     stop = true;
                     break;
                 }
@@ -340,20 +338,20 @@ void MapView::updateVisibleTilesCache(int start)
                 Position tilePos = cameraPosition.translated(ix - m_virtualCenterOffset.x, iy - m_virtualCenterOffset.y);
                 // adjust tilePos to the wanted floor
                 tilePos.coveredUp(cameraPosition.z - iz);
-                if (const TilePtr& tile = g_map.getTile(tilePos)) {
+                if(const TilePtr& tile = g_map.getTile(tilePos)) {
                     // skip tiles that have nothing
-                    if (!tile->isDrawable())
+                    if(!tile->isDrawable())
                         continue;
 
                     // skip tiles that are completely behind another tile
-                    if (g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
+                    if(g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
                         continue;
 
                     m_cachedVisibleTiles[iz].push_back(tile);
 
-                    if (iz < m_floorMin)
+                    if(iz < m_floorMin)
                         m_floorMin = iz;
-                    else if (iz > m_floorMax)
+                    else if(iz > m_floorMax)
                         m_floorMax = iz;
 
                     ++processedTiles;
@@ -364,9 +362,9 @@ void MapView::updateVisibleTilesCache(int start)
         }
     }
 
-    if (!stop) m_updateTilesPos = 0;
+    if(!stop) m_updateTilesPos = 0;
 
-    if (start == 0 && m_viewMode <= NEAR_VIEW)
+    if(start == 0 && m_viewMode <= NEAR_VIEW)
         m_cachedFloorVisibleCreatures = g_map.getSightSpectators(cameraPosition, false);
 }
 
@@ -376,17 +374,17 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     Size bufferSize;
 
     int possiblesTileSizes[] = { 1,2,4,8,16,32 };
-    for (int candidateTileSize : possiblesTileSizes) {
+    for(int candidateTileSize : possiblesTileSizes) {
         bufferSize = (visibleDimension + Size(3, 3)) * candidateTileSize;
-        if (bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
+        if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
             break;
 
         tileSize = candidateTileSize;
-        if (optimizedSize.width() < bufferSize.width() - 3 * candidateTileSize && optimizedSize.height() < bufferSize.height() - 3 * candidateTileSize)
+        if(optimizedSize.width() < bufferSize.width() - 3 * candidateTileSize && optimizedSize.height() < bufferSize.height() - 3 * candidateTileSize)
             break;
     }
 
-    if (tileSize == 0) {
+    if(tileSize == 0) {
         g_logger.traceError("reached max zoom out");
         return;
     }
@@ -396,17 +394,17 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     Point visibleCenterOffset = virtualCenterOffset;
 
     ViewMode viewMode = m_viewMode;
-    if (m_autoViewMode) {
-        if (tileSize >= 32 && visibleDimension.area() <= NEAR_VIEW_AREA)
+    if(m_autoViewMode) {
+        if(tileSize >= 32 && visibleDimension.area() <= NEAR_VIEW_AREA)
             viewMode = NEAR_VIEW;
-        else if (tileSize >= 16 && visibleDimension.area() <= MID_VIEW_AREA)
+        else if(tileSize >= 16 && visibleDimension.area() <= MID_VIEW_AREA)
             viewMode = MID_VIEW;
-        else if (tileSize >= 8 && visibleDimension.area() <= FAR_VIEW_AREA)
+        else if(tileSize >= 8 && visibleDimension.area() <= FAR_VIEW_AREA)
             viewMode = FAR_VIEW;
         else
             viewMode = HUGE_VIEW;
 
-        if (viewMode >= FAR_VIEW)
+        if(viewMode >= FAR_VIEW)
             m_multifloor = false;
         else
             m_multifloor = true;
@@ -457,15 +455,15 @@ void MapView::unlockFirstVisibleFloor()
 
 void MapView::setVisibleDimension(const Size& visibleDimension)
 {
-    if (visibleDimension == m_visibleDimension)
+    if(visibleDimension == m_visibleDimension)
         return;
 
-    if (visibleDimension.width() % 2 != 1 || visibleDimension.height() % 2 != 1) {
+    if(visibleDimension.width() % 2 != 1 || visibleDimension.height() % 2 != 1) {
         g_logger.traceError("visible dimension must be odd");
         return;
     }
 
-    if (visibleDimension < Size(3, 3)) {
+    if(visibleDimension < Size(3, 3)) {
         g_logger.traceError("reach max zoom in");
         return;
     }
@@ -482,7 +480,7 @@ void MapView::setViewMode(MapView::ViewMode viewMode)
 void MapView::setAutoViewMode(bool enable)
 {
     m_autoViewMode = enable;
-    if (enable)
+    if(enable)
         updateGeometry(m_visibleDimension, m_optimizedSize);
 }
 
@@ -510,7 +508,7 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     Position cameraPosition = getCameraPosition();
 
     // if we have no camera, its impossible to get the tile
-    if (!cameraPosition.isValid())
+    if(!cameraPosition.isValid())
         return Position();
 
     Rect srcRect = calcFramebufferSource(mapSize);
@@ -521,12 +519,12 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     Point centerOffset = (framebufferPos + srcRect.topLeft()) / m_tileSize;
 
     Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2, 2);
-    if (tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
+    if(tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
         return Position();
 
     Position position = Position(tilePos2D.x, tilePos2D.y, 0) + cameraPosition;
 
-    if (!position.isValid())
+    if(!position.isValid())
         return Position();
 
     return position;
@@ -539,20 +537,20 @@ void MapView::move(int x, int y)
 
     int32_t tmp = m_moveOffset.x / 32;
     bool requestTilesUpdate = false;
-    if (tmp != 0) {
+    if(tmp != 0) {
         m_customCameraPosition.x += tmp;
         m_moveOffset.x %= 32;
         requestTilesUpdate = true;
     }
 
     tmp = m_moveOffset.y / 32;
-    if (tmp != 0) {
+    if(tmp != 0) {
         m_customCameraPosition.y += tmp;
         m_moveOffset.y %= 32;
         requestTilesUpdate = true;
     }
 
-    if (requestTilesUpdate)
+    if(requestTilesUpdate)
         requestVisibleTilesCacheUpdate();
 }
 
@@ -560,9 +558,9 @@ Rect MapView::calcFramebufferSource(const Size& destSize)
 {
     float scaleFactor = m_tileSize / (float)Otc::TILE_PIXELS;
     Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1, 1)).toPoint() / 2) * m_tileSize;
-    if (isFollowingCreature())
+    if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
-    else if (!m_moveOffset.isNull())
+    else if(!m_moveOffset.isNull())
         drawOffset += m_moveOffset * scaleFactor;
 
     Size srcSize = destSize;
@@ -578,47 +576,45 @@ int MapView::calcFirstVisibleFloor()
 {
     int z = 7;
     // return forced first visible floor
-    if (m_lockedFirstVisibleFloor != -1) {
+    if(m_lockedFirstVisibleFloor != -1) {
         z = m_lockedFirstVisibleFloor;
-    }
-    else {
+    } else {
         Position cameraPosition = getCameraPosition();
 
         // this could happens if the player is not known yet
-        if (cameraPosition.isValid()) {
+        if(cameraPosition.isValid()) {
             // avoid rendering multifloors in far views
-            if (!m_multifloor) {
+            if(!m_multifloor) {
                 z = cameraPosition.z;
-            }
-            else {
+            } else {
                 // if nothing is limiting the view, the first visible floor is 0
                 int firstFloor = 0;
 
                 // limits to underground floors while under sea level
-                if (cameraPosition.z > Otc::SEA_FLOOR)
+                if(cameraPosition.z > Otc::SEA_FLOOR)
                     firstFloor = std::max<int>(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::UNDERGROUND_FLOOR);
 
                 // loop in 3x3 tiles around the camera
-                for (int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
-                    for (int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
+                for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
+                    for(int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
                         Position pos = cameraPosition.translated(ix, iy);
 
                         // process tiles that we can look through, e.g. windows, doors
-                        if ((ix == 0 && iy == 0) || ((std::abs(ix) != std::abs(iy)) && g_map.isLookPossible(pos))) {
+                        if((ix == 0 && iy == 0) || ((std::abs(ix) != std::abs(iy)) && g_map.isLookPossible(pos))) {
                             Position upperPos = pos;
                             Position coveredPos = pos;
 
-                            while (coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
+                            while(coveredPos.coveredUp() && upperPos.up() && upperPos.z >= firstFloor) {
                                 // check tiles physically above
                                 TilePtr tile = g_map.getTile(upperPos);
-                                if (tile && tile->limitsFloorsView(!g_map.isLookPossible(pos))) {
+                                if(tile && tile->limitsFloorsView(!g_map.isLookPossible(pos))) {
                                     firstFloor = upperPos.z + 1;
                                     break;
                                 }
 
                                 // check tiles geometrically above
                                 tile = g_map.getTile(coveredPos);
-                                if (tile && tile->limitsFloorsView(g_map.isLookPossible(pos))) {
+                                if(tile && tile->limitsFloorsView(g_map.isLookPossible(pos))) {
                                     firstFloor = coveredPos.z + 1;
                                     break;
                                 }
@@ -638,22 +634,22 @@ int MapView::calcFirstVisibleFloor()
 
 int MapView::calcLastVisibleFloor()
 {
-    if (!m_multifloor)
+    if(!m_multifloor)
         return calcFirstVisibleFloor();
 
     int z = 7;
 
     Position cameraPosition = getCameraPosition();
     // this could happens if the player is not known yet
-    if (cameraPosition.isValid()) {
+    if(cameraPosition.isValid()) {
         // view only underground floors when below sea level
-        if (cameraPosition.z > Otc::SEA_FLOOR)
+        if(cameraPosition.z > Otc::SEA_FLOOR)
             z = cameraPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
         else
             z = Otc::SEA_FLOOR;
     }
 
-    if (m_lockedFirstVisibleFloor != -1)
+    if(m_lockedFirstVisibleFloor != -1)
         z = std::max<int>(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
@@ -663,7 +659,7 @@ int MapView::calcLastVisibleFloor()
 
 Position MapView::getCameraPosition()
 {
-    if (isFollowingCreature())
+    if(isFollowingCreature())
         return m_followingCreature->getPosition();
 
     return m_customCameraPosition;
@@ -671,14 +667,13 @@ Position MapView::getCameraPosition()
 
 void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout)
 {
-    if ((m_shader == shader && m_shaderSwitchDone) || (m_nextShader == shader && !m_shaderSwitchDone))
+    if((m_shader == shader && m_shaderSwitchDone) || (m_nextShader == shader && !m_shaderSwitchDone))
         return;
 
-    if (fadeout > 0.0f && m_shader) {
+    if(fadeout > 0.0f && m_shader) {
         m_nextShader = shader;
         m_shaderSwitchDone = false;
-    }
-    else {
+    } else {
         m_shader = shader;
         m_nextShader = nullptr;
         m_shaderSwitchDone = true;
@@ -690,7 +685,7 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
 
 void MapView::setDrawLights(bool enable)
 {
-    if (enable == m_drawLights) return;
+    if(enable == m_drawLights) return;
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 

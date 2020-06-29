@@ -31,44 +31,37 @@ ViewportControl::ViewportControl(const Otc::Direction directionWalking)
     m_bottom = m_top;
     m_left = m_right;
 
-    if (directionWalking == Otc::North) {
+    if(directionWalking == Otc::North) {
         m_top += 1;
         m_bottom += 1;
-    }
-    else if (directionWalking == Otc::East) {
+    } else if(directionWalking == Otc::East) {
         m_right += 1;
         m_left += 1;
-    }
-    else if (directionWalking == Otc::South) {
+    } else if(directionWalking == Otc::South) {
         m_top += 1;
         m_bottom += 1;
-    }
-    else if (directionWalking == Otc::West) {
+    } else if(directionWalking == Otc::West) {
         m_left += 1;
         m_right += 1;
-    }
-    else if (directionWalking == Otc::NorthEast) {
+    } else if(directionWalking == Otc::NorthEast) {
         m_left += 1;
         m_bottom += 1;
 
         m_top += 1;
         m_right += 1;
-    }
-    else if (directionWalking == Otc::SouthEast) {
+    } else if(directionWalking == Otc::SouthEast) {
         m_right += 1;
         m_bottom += 1;
 
         m_top += 1;
         m_left += 1;
-    }
-    else if (directionWalking == Otc::SouthWest) {
+    } else if(directionWalking == Otc::SouthWest) {
         m_top += 1;
         m_right += 1;
 
         m_left += 1;
         m_bottom += 1;
-    }
-    else if (directionWalking == Otc::NorthWest) {
+    } else if(directionWalking == Otc::NorthWest) {
         m_right += 1;
         m_bottom += 1;
 
@@ -77,7 +70,8 @@ ViewportControl::ViewportControl(const Otc::Direction directionWalking)
     }
 }
 
-bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition) const {
+bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition) const
+{
     const Position tilePos = tile->getPosition();
     const int diff = std::abs(cameraPosition.z - tilePos.z);
 
@@ -86,14 +80,13 @@ bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition
     int top = m_top;
     int down = m_bottom;
 
-    if (tilePos.z != cameraPosition.z) {
-        if (tilePos.z > cameraPosition.z) {
+    if(tilePos.z != cameraPosition.z) {
+        if(tilePos.z > cameraPosition.z) {
             left += diff;
             right -= diff;
             top += diff;
             down -= diff;
-        }
-        else {
+        } else {
             left -= diff;
             right += diff;
             top -= diff;

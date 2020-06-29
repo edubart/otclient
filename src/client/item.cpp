@@ -71,7 +71,7 @@ std::string Item::getName()
 
 void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
-    if (m_clientId == 0 || !canDraw())
+    if(m_clientId == 0 || !canDraw())
         return;
 
     // determine animation phase
@@ -81,20 +81,20 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* l
     int xPattern = 0, yPattern = 0, zPattern = 0;
     calculatePatterns(xPattern, yPattern, zPattern);
 
-    if (m_color != Color::alpha)
+    if(m_color != Color::alpha)
         g_painter->setColor(m_color);
     rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, lightView);
 
     /// Sanity check
     /// This is just to ensure that we don't overwrite some color and
     /// screw up the whole rendering.
-    if (m_color != Color::alpha)
+    if(m_color != Color::alpha)
         g_painter->resetColor();
 }
 
 void Item::setId(uint32 id)
 {
-    if (!g_things.isValidDatId(id, ThingCategoryItem))
+    if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
     m_serverId = g_things.findItemTypeByClientId(id)->getServerId();
     m_clientId = id;
@@ -102,13 +102,13 @@ void Item::setId(uint32 id)
 
 void Item::setOtbId(uint16 id)
 {
-    if (!g_things.isValidOtbId(id))
+    if(!g_things.isValidOtbId(id))
         id = 0;
     auto itemType = g_things.getItemType(id);
     m_serverId = id;
 
     id = itemType->getClientId();
-    if (!g_things.isValidDatId(id, ThingCategoryItem))
+    if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
     m_clientId = id;
 }
@@ -121,67 +121,66 @@ bool Item::isValid()
 void Item::unserializeItem(const BinaryTreePtr& in)
 {
     try {
-        while (in->canRead()) {
+        while(in->canRead()) {
             int attrib = in->getU8();
-            if (attrib == 0)
+            if(attrib == 0)
                 break;
 
-            switch (attrib) {
-                case ATTR_COUNT:
-                case ATTR_RUNE_CHARGES:
-                    setCount(in->getU8());
-                    break;
-                case ATTR_CHARGES:
-                    setCount(in->getU16());
-                    break;
-                case ATTR_HOUSEDOORID:
-                case ATTR_SCRIPTPROTECTED:
-                case ATTR_DUALWIELD:
-                case ATTR_DECAYING_STATE:
-                    m_attribs.set(attrib, in->getU8());
-                    break;
-                case ATTR_ACTION_ID:
-                case ATTR_UNIQUE_ID:
-                case ATTR_DEPOT_ID:
-                    m_attribs.set(attrib, in->getU16());
-                    break;
-                case ATTR_CONTAINER_ITEMS:
-                case ATTR_ATTACK:
-                case ATTR_EXTRAATTACK:
-                case ATTR_DEFENSE:
-                case ATTR_EXTRADEFENSE:
-                case ATTR_ARMOR:
-                case ATTR_ATTACKSPEED:
-                case ATTR_HITCHANCE:
-                case ATTR_DURATION:
-                case ATTR_WRITTENDATE:
-                case ATTR_SLEEPERGUID:
-                case ATTR_SLEEPSTART:
-                case ATTR_ATTRIBUTE_MAP:
-                    m_attribs.set(attrib, in->getU32());
-                    break;
-                case ATTR_TELE_DEST:
-                {
-                    Position pos;
-                    pos.x = in->getU16();
-                    pos.y = in->getU16();
-                    pos.z = in->getU8();
-                    m_attribs.set(attrib, pos);
-                    break;
-                }
-                case ATTR_NAME:
-                case ATTR_TEXT:
-                case ATTR_DESC:
-                case ATTR_ARTICLE:
-                case ATTR_WRITTENBY:
-                    m_attribs.set(attrib, in->getString());
-                    break;
-                default:
-                    stdext::throw_exception(stdext::format("invalid item attribute %d", attrib));
+            switch(attrib) {
+            case ATTR_COUNT:
+            case ATTR_RUNE_CHARGES:
+                setCount(in->getU8());
+                break;
+            case ATTR_CHARGES:
+                setCount(in->getU16());
+                break;
+            case ATTR_HOUSEDOORID:
+            case ATTR_SCRIPTPROTECTED:
+            case ATTR_DUALWIELD:
+            case ATTR_DECAYING_STATE:
+                m_attribs.set(attrib, in->getU8());
+                break;
+            case ATTR_ACTION_ID:
+            case ATTR_UNIQUE_ID:
+            case ATTR_DEPOT_ID:
+                m_attribs.set(attrib, in->getU16());
+                break;
+            case ATTR_CONTAINER_ITEMS:
+            case ATTR_ATTACK:
+            case ATTR_EXTRAATTACK:
+            case ATTR_DEFENSE:
+            case ATTR_EXTRADEFENSE:
+            case ATTR_ARMOR:
+            case ATTR_ATTACKSPEED:
+            case ATTR_HITCHANCE:
+            case ATTR_DURATION:
+            case ATTR_WRITTENDATE:
+            case ATTR_SLEEPERGUID:
+            case ATTR_SLEEPSTART:
+            case ATTR_ATTRIBUTE_MAP:
+                m_attribs.set(attrib, in->getU32());
+                break;
+            case ATTR_TELE_DEST:
+            {
+                Position pos;
+                pos.x = in->getU16();
+                pos.y = in->getU16();
+                pos.z = in->getU8();
+                m_attribs.set(attrib, pos);
+                break;
+            }
+            case ATTR_NAME:
+            case ATTR_TEXT:
+            case ATTR_DESC:
+            case ATTR_ARTICLE:
+            case ATTR_WRITTENBY:
+                m_attribs.set(attrib, in->getString());
+                break;
+            default:
+                stdext::throw_exception(stdext::format("invalid item attribute %d", attrib));
             }
         }
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to unserialize OTBM item: %s", e.what()));
     }
 }
@@ -198,61 +197,61 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     out->addU16(getCountOrSubType());
 
     Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
-    if (dest.isValid()) {
+    if(dest.isValid()) {
         out->addU8(ATTR_TELE_DEST);
         out->addPos(dest.x, dest.y, dest.z);
     }
 
-    if (isDepot()) {
+    if(isDepot()) {
         out->addU8(ATTR_DEPOT_ID);
         out->addU16(getDepotId());
     }
 
-    if (isHouseDoor()) {
+    if(isHouseDoor()) {
         out->addU8(ATTR_HOUSEDOORID);
         out->addU8(getDoorId());
     }
 
     uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
     uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
-    if (aid) {
+    if(aid) {
         out->addU8(ATTR_ACTION_ID);
         out->addU16(aid);
     }
 
-    if (uid) {
+    if(uid) {
         out->addU8(ATTR_UNIQUE_ID);
         out->addU16(uid);
     }
 
     std::string text = getText();
-    if (g_things.getItemType(m_serverId)->isWritable() && !text.empty()) {
+    if(g_things.getItemType(m_serverId)->isWritable() && !text.empty()) {
         out->addU8(ATTR_TEXT);
         out->addString(text);
     }
     std::string desc = getDescription();
-    if (!desc.empty()) {
+    if(!desc.empty()) {
         out->addU8(ATTR_DESC);
         out->addString(desc);
     }
 
     out->endNode();
-    for (auto i : m_containerItems)
+    for(auto i : m_containerItems)
         i->serializeItem(out);
 }
 
 int Item::getSubType()
 {
-    if (isSplash() || isFluidContainer())
+    if(isSplash() || isFluidContainer())
         return m_countOrSubType;
-    if (g_game.getClientVersion() > 862)
+    if(g_game.getClientVersion() > 862)
         return 0;
     return 1;
 }
 
 int Item::getCount()
 {
-    if (isStackable())
+    if(isStackable())
         return m_countOrSubType;
     return 1;
 }
@@ -267,114 +266,105 @@ ItemPtr Item::clone()
 void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 {
     // Avoid crashes with invalid items
-    if (!isValid())
+    if(!isValid())
         return;
 
-    if (isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
-        if (m_countOrSubType <= 0) {
+    if(isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
+        if(m_countOrSubType <= 0) {
             xPattern = 0;
             yPattern = 0;
-        }
-        else if (m_countOrSubType < 5) {
+        } else if(m_countOrSubType < 5) {
             xPattern = m_countOrSubType - 1;
             yPattern = 0;
-        }
-        else if (m_countOrSubType < 10) {
+        } else if(m_countOrSubType < 10) {
             xPattern = 0;
             yPattern = 1;
-        }
-        else if (m_countOrSubType < 25) {
+        } else if(m_countOrSubType < 25) {
             xPattern = 1;
             yPattern = 1;
-        }
-        else if (m_countOrSubType < 50) {
+        } else if(m_countOrSubType < 50) {
             xPattern = 2;
             yPattern = 1;
-        }
-        else {
+        } else {
             xPattern = 3;
             yPattern = 1;
         }
-    }
-    else if (isHangable()) {
+    } else if(isHangable()) {
         const TilePtr& tile = getTile();
-        if (tile) {
-            if (tile->mustHookSouth())
+        if(tile) {
+            if(tile->mustHookSouth())
                 xPattern = getNumPatternX() >= 2 ? 1 : 0;
-            else if (tile->mustHookEast())
+            else if(tile->mustHookEast())
                 xPattern = getNumPatternX() >= 3 ? 2 : 0;
         }
-    }
-    else if (isSplash() || isFluidContainer()) {
+    } else if(isSplash() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
-        if (g_game.getFeature(Otc::GameNewFluids)) {
-            switch (m_countOrSubType) {
-                case Otc::FluidNone:
-                    color = Otc::FluidTransparent;
-                    break;
-                case Otc::FluidWater:
-                    color = Otc::FluidBlue;
-                    break;
-                case Otc::FluidMana:
-                    color = Otc::FluidPurple;
-                    break;
-                case Otc::FluidBeer:
-                    color = Otc::FluidBrown;
-                    break;
-                case Otc::FluidOil:
-                    color = Otc::FluidBrown;
-                    break;
-                case Otc::FluidBlood:
-                    color = Otc::FluidRed;
-                    break;
-                case Otc::FluidSlime:
-                    color = Otc::FluidGreen;
-                    break;
-                case Otc::FluidMud:
-                    color = Otc::FluidBrown;
-                    break;
-                case Otc::FluidLemonade:
-                    color = Otc::FluidYellow;
-                    break;
-                case Otc::FluidMilk:
-                    color = Otc::FluidWhite;
-                    break;
-                case Otc::FluidWine:
-                    color = Otc::FluidPurple;
-                    break;
-                case Otc::FluidHealth:
-                    color = Otc::FluidRed;
-                    break;
-                case Otc::FluidUrine:
-                    color = Otc::FluidYellow;
-                    break;
-                case Otc::FluidRum:
-                    color = Otc::FluidBrown;
-                    break;
-                case Otc::FluidFruidJuice:
-                    color = Otc::FluidYellow;
-                    break;
-                case Otc::FluidCoconutMilk:
-                    color = Otc::FluidWhite;
-                    break;
-                case Otc::FluidTea:
-                    color = Otc::FluidBrown;
-                    break;
-                case Otc::FluidMead:
-                    color = Otc::FluidBrown;
-                    break;
-                default:
-                    color = Otc::FluidTransparent;
-                    break;
+        if(g_game.getFeature(Otc::GameNewFluids)) {
+            switch(m_countOrSubType) {
+            case Otc::FluidNone:
+                color = Otc::FluidTransparent;
+                break;
+            case Otc::FluidWater:
+                color = Otc::FluidBlue;
+                break;
+            case Otc::FluidMana:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidBeer:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidOil:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidBlood:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidSlime:
+                color = Otc::FluidGreen;
+                break;
+            case Otc::FluidMud:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidLemonade:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidWine:
+                color = Otc::FluidPurple;
+                break;
+            case Otc::FluidHealth:
+                color = Otc::FluidRed;
+                break;
+            case Otc::FluidUrine:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidRum:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidFruidJuice:
+                color = Otc::FluidYellow;
+                break;
+            case Otc::FluidCoconutMilk:
+                color = Otc::FluidWhite;
+                break;
+            case Otc::FluidTea:
+                color = Otc::FluidBrown;
+                break;
+            case Otc::FluidMead:
+                color = Otc::FluidBrown;
+                break;
+            default:
+                color = Otc::FluidTransparent;
+                break;
             }
-        }
-        else
+        } else
             color = m_countOrSubType;
 
         xPattern = (color % 4) % getNumPatternX();
         yPattern = (color / 4) % getNumPatternY();
-    }
-    else {
+    } else {
         xPattern = m_position.x % getNumPatternX();
         yPattern = m_position.y % getNumPatternY();
         zPattern = m_position.z % getNumPatternZ();
@@ -383,17 +373,17 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
 
 int Item::calculateAnimationPhase(bool animate)
 {
-    if (!hasAnimationPhases()) return 0;
+    if(!hasAnimationPhases()) return 0;
 
-    if (!animate) return getAnimationPhases() - 1;
+    if(!animate) return getAnimationPhases() - 1;
 
-    if (getAnimator() != nullptr) return getAnimator()->getPhase();
+    if(getAnimator() != nullptr) return getAnimator()->getPhase();
 
-    if (m_async) {
+    if(m_async) {
         return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
     }
 
-    if (g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {
+    if(g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {
         m_phase = (m_phase + 1) % getAnimationPhases();
         m_lastPhase = g_clock.millis();
     }
@@ -408,8 +398,9 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
     return Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
 }
 
-void Item::startListenerPainter() {
-    if (!hasAnimationPhases()) return;
+void Item::startListenerPainter()
+{
+    if(!hasAnimationPhases()) return;
 
     const AnimatorPtr& animator = getAnimator();
     Thing::startListenerPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);

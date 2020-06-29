@@ -37,7 +37,8 @@
 #include <bitset>
 
 struct UnjustifiedPoints {
-    bool operator==(const UnjustifiedPoints& other) {
+    bool operator==(const UnjustifiedPoints& other)
+    {
         return killsDay == other.killsDay &&
             killsDayRemaining == other.killsDayRemaining &&
             killsWeek == other.killsWeek &&
@@ -131,7 +132,7 @@ protected:
 
     // outfit
     void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
-        const std::vector<std::tuple<int, std::string> >& mountList);
+                                 const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
     void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items);

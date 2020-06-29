@@ -43,7 +43,7 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     float t = m_animationTimer.ticksElapsed();
     p.x += (24 - textSize.width() / 2);
 
-    if (g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
+    if(g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
         p.x -= (4 * t / tf) + (8 * t * t / tftf);
     }
 
@@ -51,15 +51,14 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     p += m_offset;
     Rect rect(p, textSize);
 
-    if (visibleRect.contains(rect)) {
+    if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
         float t0 = tf / 1.2;
-        if (t > t0) {
+        if(t > t0) {
             Color color = m_color;
             color.setAlpha((float)(1 - (t - t0) / (tf - t0)));
             g_painter->setColor(color);
-        }
-        else
+        } else
             g_painter->setColor(m_color);
         m_cachedText.draw(rect);
     }
@@ -86,13 +85,13 @@ void AnimatedText::setText(const std::string& text)
 
 bool AnimatedText::merge(const AnimatedTextPtr& other)
 {
-    if (other->getColor() != m_color)
+    if(other->getColor() != m_color)
         return false;
 
-    if (other->getCachedText().getFont() != m_cachedText.getFont())
+    if(other->getCachedText().getFont() != m_cachedText.getFont())
         return false;
 
-    if (m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5)
+    if(m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5)
         return false;
 
     try {
@@ -102,8 +101,7 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
         std::string text = stdext::format("%d", number + otherNumber);
         m_cachedText.setText(text);
         return true;
-    }
-    catch (...) {
+    } catch(...) {
         return false;
     }
 }

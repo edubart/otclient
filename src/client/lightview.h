@@ -46,7 +46,7 @@ public:
     void draw(const Rect& dest, const Rect& src);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
-    void requestDrawing(const bool force) { if (force || m_minTimeRender.ticksElapsed() > 10) m_redraw = true; }
+    void requestDrawing(const bool force) { if(force || m_minTimeRender.ticksElapsed() > 10) m_redraw = true; }
 
 private:
     void drawGlobalLight(const Light& light);

@@ -47,7 +47,7 @@ void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
     m_loopCount = fin->get32();
     m_startPhase = fin->get8();
 
-    for (int i = 0; i < m_animationPhases; ++i) {
+    for(int i = 0; i < m_animationPhases; ++i) {
         int minimum = fin->getU32();
         int maximum = fin->getU32();
         m_phaseDurations.emplace_back(minimum, maximum);
@@ -65,7 +65,7 @@ void Animator::serialize(const FileStreamPtr& fin)
     fin->add32(m_loopCount);
     fin->add8(m_startPhase);
 
-    for (std::tuple<int, int> phase : m_phaseDurations) {
+    for(std::tuple<int, int> phase : m_phaseDurations) {
         fin->addU32(std::get<0>(phase));
         fin->addU32(std::get<1>(phase));
     }
@@ -73,14 +73,14 @@ void Animator::serialize(const FileStreamPtr& fin)
 
 void Animator::setPhase(int phase)
 {
-    if (m_phase == phase) return;
+    if(m_phase == phase) return;
 
-    if (m_async) {
-        if (phase == AnimPhaseAsync)
+    if(m_async) {
+        if(phase == AnimPhaseAsync)
             m_phase = 0;
-        else if (phase == AnimPhaseRandom)
+        else if(phase == AnimPhaseRandom)
             m_phase = (int)stdext::random_range(0, (long)m_animationPhases);
-        else if (phase >= 0 && phase < m_animationPhases)
+        else if(phase >= 0 && phase < m_animationPhases)
             m_phase = phase;
         else
             m_phase = getStartPhase();
@@ -89,37 +89,33 @@ void Animator::setPhase(int phase)
         m_lastPhaseTicks = g_clock.millis();
         m_currentDuration = getPhaseDuration(phase);
         m_currentLoop = 0;
-    }
-    else
+    } else
         calculateSynchronous();
 }
 
 int Animator::getPhase()
 {
     ticks_t ticks = g_clock.millis();
-    if (ticks != m_lastPhaseTicks && !m_isComplete) {
+    if(ticks != m_lastPhaseTicks && !m_isComplete) {
         int elapsedTicks = (int)(ticks - m_lastPhaseTicks);
-        if (elapsedTicks >= m_currentDuration) {
+        if(elapsedTicks >= m_currentDuration) {
             int phase = 0;
-            if (m_loopCount < 0)
+            if(m_loopCount < 0)
                 phase = getPingPongPhase();
             else
                 phase = getLoopPhase();
 
-            if (m_phase != phase) {
+            if(m_phase != phase) {
                 int duration = getPhaseDuration(phase) - (elapsedTicks - m_currentDuration);
-                if (duration < 0 && !m_async) {
+                if(duration < 0 && !m_async) {
                     calculateSynchronous();
-                }
-                else {
+                } else {
                     m_phase = phase;
                     m_currentDuration = std::max<int>(0, duration);
                 }
-            }
-            else
+            } else
                 m_isComplete = true;
-        }
-        else
+        } else
             m_currentDuration -= elapsedTicks;
 
         m_lastPhaseTicks = ticks;
@@ -132,10 +128,10 @@ int Animator::getPhaseAt(ticks_t time)
     int index = 0;
     ticks_t total = 0;
 
-    for (const auto& pair : m_phaseDurations) {
+    for(const auto& pair : m_phaseDurations) {
         total += std::get<1>(pair);
 
-        if (time < total) {
+        if(time < total) {
             return index;
         }
 
@@ -147,7 +143,7 @@ int Animator::getPhaseAt(ticks_t time)
 
 int Animator::getStartPhase()
 {
-    if (m_startPhase > -1)
+    if(m_startPhase > -1)
         return m_startPhase;
     return (int)stdext::random_range(0, (long)m_animationPhases);
 }
@@ -164,7 +160,7 @@ int Animator::getPingPongPhase()
 {
     int count = m_currentDirection == AnimDirForward ? 1 : -1;
     int nextPhase = m_phase + count;
-    if (nextPhase < 0 || nextPhase >= m_animationPhases) {
+    if(nextPhase < 0 || nextPhase >= m_animationPhases) {
         m_currentDirection = m_currentDirection == AnimDirForward ? AnimDirBackward : AnimDirForward;
         count *= -1;
     }
@@ -174,13 +170,13 @@ int Animator::getPingPongPhase()
 int Animator::getLoopPhase()
 {
     int nextPhase = m_phase + 1;
-    if (nextPhase < m_animationPhases)
+    if(nextPhase < m_animationPhases)
         return nextPhase;
 
-    if (m_loopCount == 0)
+    if(m_loopCount == 0)
         return 0;
 
-    if (m_currentLoop < (m_loopCount - 1)) {
+    if(m_currentLoop < (m_loopCount - 1)) {
         m_currentLoop++;
         return 0;
     }
@@ -195,22 +191,22 @@ int Animator::getPhaseDuration(int phase)
     std::tuple<int, int> data = m_phaseDurations.at(phase);
     int min = std::get<0>(data);
     int max = std::get<1>(data);
-    if (min == max) return min;
+    if(min == max) return min;
     return (int)stdext::random_range((long)min, (long)max);
 }
 
 void Animator::calculateSynchronous()
 {
     int totalDuration = 0;
-    for (int i = 0; i < m_animationPhases; ++i)
+    for(int i = 0; i < m_animationPhases; ++i)
         totalDuration += getPhaseDuration(i);
 
     ticks_t ticks = g_clock.millis();
     int elapsedTicks = (int)(ticks % totalDuration);
     int totalTime = 0;
-    for (int i = 0; i < m_animationPhases; ++i) {
+    for(int i = 0; i < m_animationPhases; ++i) {
         int duration = getPhaseDuration(i);
-        if (elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
+        if(elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
             m_phase = i;
             m_currentDuration = duration - (elapsedTicks - totalTime);
             break;
@@ -223,7 +219,7 @@ void Animator::calculateSynchronous()
 ticks_t Animator::getTotalDuration()
 {
     ticks_t time = 0;
-    for (const auto& pair : m_phaseDurations) {
+    for(const auto& pair : m_phaseDurations) {
         time += std::get<1>(pair);
     }
 

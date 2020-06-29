@@ -26,14 +26,15 @@ namespace Proto {
 
     std::map<uint8, uint8> messageModesMap;
 
-    void buildMessageModesMap(int version) {
+    void buildMessageModesMap(int version)
+    {
         messageModesMap.clear();
 
-        if (version >= 1094) {
+        if(version >= 1094) {
             messageModesMap[Otc::MessageMana] = 43;
         }
 
-        if (version >= 1055) { // might be 1054
+        if(version >= 1055) { // might be 1054
             messageModesMap[Otc::MessageNone] = 0;
             messageModesMap[Otc::MessageSay] = 1;
             messageModesMap[Otc::MessageWhisper] = 2;
@@ -77,20 +78,17 @@ namespace Proto {
             messageModesMap[Otc::MessageTutorialHint] = 40;
             messageModesMap[Otc::MessageThankyou] = 41;
             messageModesMap[Otc::MessageMarket] = 42;
-        }
-        else if (version >= 1036) {
-            for (int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i) {
-                if (i >= Otc::MessageNpcTo)
+        } else if(version >= 1036) {
+            for(int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i) {
+                if(i >= Otc::MessageNpcTo)
                     messageModesMap[i] = i + 1;
                 else
                     messageModesMap[i] = i;
             }
-        }
-        else if (version >= 900) {
-            for (int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i)
+        } else if(version >= 900) {
+            for(int i = Otc::MessageNone; i <= Otc::MessageBeyondLast; ++i)
                 messageModesMap[i] = i;
-        }
-        else if (version >= 861) {
+        } else if(version >= 861) {
             messageModesMap[Otc::MessageNone] = 0;
             messageModesMap[Otc::MessageSay] = 1;
             messageModesMap[Otc::MessageWhisper] = 2;
@@ -116,8 +114,7 @@ namespace Proto {
             messageModesMap[Otc::MessageFailure] = 20;
             messageModesMap[Otc::MessageBlue] = 21;
             messageModesMap[Otc::MessageRed] = 22;
-        }
-        else if (version >= 840) {
+        } else if(version >= 840) {
             messageModesMap[Otc::MessageNone] = 0;
             messageModesMap[Otc::MessageSay] = 1;
             messageModesMap[Otc::MessageWhisper] = 2;
@@ -147,8 +144,7 @@ namespace Proto {
             messageModesMap[Otc::MessageLook] = 25;
             messageModesMap[Otc::MessageFailure] = 26;
             messageModesMap[Otc::MessageBlue] = 27;
-        }
-        else if (version >= 760) {
+        } else if(version >= 760) {
             messageModesMap[Otc::MessageNone] = 0;
             messageModesMap[Otc::MessageSay] = 1;
             messageModesMap[Otc::MessageWhisper] = 2;
@@ -181,17 +177,17 @@ namespace Proto {
     Otc::MessageMode translateMessageModeFromServer(uint8 mode)
     {
         auto it = std::find_if(messageModesMap.begin(), messageModesMap.end(), [=](const std::pair<uint8, uint8>& p) { return p.second == mode; });
-        if (it != messageModesMap.end())
+        if(it != messageModesMap.end())
             return (Otc::MessageMode)it->first;
         return Otc::MessageInvalid;
     }
 
     uint8 translateMessageModeToServer(Otc::MessageMode mode)
     {
-        if (mode < 0 || mode >= Otc::LastMessage)
+        if(mode < 0 || mode >= Otc::LastMessage)
             return Otc::MessageInvalid;
         auto it = messageModesMap.find(mode);
-        if (it != messageModesMap.end())
+        if(it != messageModesMap.end())
             return it->second;
         return Otc::MessageInvalid;
     }

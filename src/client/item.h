@@ -77,7 +77,7 @@ class Item : public Thing
 {
 public:
     Item();
-    virtual ~Item() { }
+    virtual ~Item() {}
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);

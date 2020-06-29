@@ -34,11 +34,11 @@ class Thing : public LuaObject
 {
 public:
     Thing();
-    virtual ~Thing() { }
+    virtual ~Thing() {}
 
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, LightView* /*lightView*/ = nullptr) { }
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, LightView* /*lightView*/ = nullptr) {}
 
-    virtual void setId(uint32 /*id*/) { }
+    virtual void setId(uint32 /*id*/) {}
     void setPosition(const Position& position);
 
     virtual uint32 getId() { return 0; }
@@ -131,9 +131,9 @@ public:
     void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration, hasLight()); }
     void cancelListenerPainter() { rawGetThingType()->cancelListenerPainter(); }
 
-    virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }
-    virtual void onAppear() { }
-    virtual void onDisappear() { }
+    virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
+    virtual void onAppear() {}
+    virtual void onDisappear() {}
 
 protected:
     Position m_position;

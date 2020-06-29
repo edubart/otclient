@@ -102,14 +102,16 @@ class TileBlock {
 public:
     TileBlock() { m_tiles.fill(nullptr); }
 
-    const TilePtr& create(const Position& pos) {
+    const TilePtr& create(const Position& pos)
+    {
         TilePtr& tile = m_tiles[getTileIndex(pos)];
         tile = TilePtr(new Tile(pos));
         return tile;
     }
-    const TilePtr& getOrCreate(const Position& pos) {
+    const TilePtr& getOrCreate(const Position& pos)
+    {
         TilePtr& tile = m_tiles[getTileIndex(pos)];
-        if (!tile)
+        if(!tile)
             tile = TilePtr(new Tile(pos));
         return tile;
     }

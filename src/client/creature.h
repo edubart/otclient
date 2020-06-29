@@ -211,7 +211,8 @@ private:
         int duration = 0;
         int durationDiagonal = 0;
 
-        int getDuration(Otc::Direction dir) {
+        int getDuration(Otc::Direction dir)
+        {
             return (dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast) ?
                 durationDiagonal : duration;
         }
