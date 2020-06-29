@@ -89,7 +89,7 @@ public:
     std::vector<ItemPtr> getItems();
     std::vector<CreaturePtr> getWalkingCreatures() { return m_walkingCreatures; }
     std::vector<ThingPtr> getThings() { return m_things; }
-    std::vector<CreaturePtr> Tile::getCreatures() { return m_creatures; }
+    std::vector<CreaturePtr> getCreatures() { return m_creatures; }
     ItemPtr getGround();
     int getGroundSpeed();
     uint8 getMinimapColorByte();
