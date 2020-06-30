@@ -322,7 +322,7 @@ void MapView::updateVisibleTilesCache(int start)
             for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                 // only start really looking tiles in the desired start
                 if(m_updateTilesPos < start) {
-                    m_updateTilesPos++;
+                    ++m_updateTilesPos;
                     continue;
                 }
 
@@ -356,7 +356,7 @@ void MapView::updateVisibleTilesCache(int start)
                     ++processedTiles;
                 }
 
-                m_updateTilesPos++;
+                ++m_updateTilesPos;
             }
         }
     }

@@ -979,7 +979,7 @@ int Creature::getCurrentAnimationPhase(const bool mount)
 
     if(thingType->isAnimateAlways()) {
         const int ticksPerFrame = std::round(1000 / thingType->getAnimationPhases());
-        return (g_clock.millis() % ((int)ticksPerFrame * thingType->getAnimationPhases())) / ticksPerFrame;
+        return (g_clock.millis() % (ticksPerFrame * thingType->getAnimationPhases())) / ticksPerFrame;
     }
 
     return m_walkAnimationPhase;
