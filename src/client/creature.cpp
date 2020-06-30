@@ -133,7 +133,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             xPattern = direction;
 
         int zPattern = 0;
-        if(m_outfit.getMount() != 0) {
+        if(m_outfit.hasMount()) {
             auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
             dest -= datType->getDisplacement() * scaleFactor;
             datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
@@ -501,18 +501,12 @@ void Creature::updateWalkAnimation()
         return;
 
     int footAnimPhases;
-    if(m_outfit.getMount() > 0) { // For Mount
+    if(m_outfit.hasMount()) { // For Mount
         ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
         footAnimPhases = type->getAnimationPhases();
     } else footAnimPhases = getAnimationPhases();
 
     int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
-
-    // Since mount is a different outfit we need to get the mount animation phases
-    if(m_outfit.getMount() != 0) {
-        ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = type->getAnimationPhases() - 1;
-    }
 
     if(m_footTimer.ticksElapsed() >= footDelay) {
         if(m_walkAnimationPhase == footAnimPhases) m_walkAnimationPhase = 1;
@@ -645,7 +639,6 @@ void Creature::terminateWalk()
     m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
-
 
         g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
     }, g_game.getServerBeat());
@@ -893,7 +886,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
-        double stepDuration = 1000 * groundSpeed;
+        double stepDuration = 1000. * groundSpeed;
         if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
             stepSpeed *= 2;
 
@@ -944,7 +937,7 @@ int Creature::getDisplacementX()
     if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
 
-    if(m_outfit.getMount() != 0) {
+    if(m_outfit.hasMount()) {
         const auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
         return datType->getDisplacementX();
     }
@@ -960,7 +953,7 @@ int Creature::getDisplacementY()
     if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
 
-    if(m_outfit.getMount() != 0) {
+    if(m_outfit.hasMount()) {
         const auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
         return datType->getDisplacementY();
     }
@@ -986,7 +979,7 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
     xPattern = Otc::South;
 
     zPattern = 0;
-    if(m_outfit.getMount() != 0)
+    if(m_outfit.hasMount())
         zPattern = 1;
 
     for(yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
