@@ -109,6 +109,9 @@ public:
     virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
     PointF getJumpOffset() { return m_jumpOffset; }
 
+    int getTotalAnimationPhase();
+    int getCurrentAnimationPhase(const bool mount = false);
+
     void updateShield();
 
     // walk related
@@ -123,7 +126,6 @@ public:
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }
     bool isDead() { return m_healthPercent <= 0; }
     bool canBeSeen() { return !isInvisible() || isPlayer(); }
-
     bool isCreature() { return true; }
 
     const ThingTypePtr& getThingType();
@@ -133,6 +135,8 @@ public:
     virtual void onAppear();
     virtual void onDisappear();
     virtual void onDeath();
+
+    ThingType* Creature::rawGetMountThingType();
 
 protected:
     void updateWalkingTile();
