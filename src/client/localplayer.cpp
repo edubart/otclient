@@ -59,7 +59,7 @@ LocalPlayer::LocalPlayer()
 
 void LocalPlayer::lockWalk(int millis)
 {
-    m_walkLockExpiration = std::max<int>(m_walkLockExpiration, (ticks_t) g_clock.millis() + millis);
+    m_walkLockExpiration = std::max<int>(m_walkLockExpiration, (ticks_t)g_clock.millis() + millis);
 }
 
 bool LocalPlayer::canWalk(Otc::Direction)
@@ -72,12 +72,15 @@ bool LocalPlayer::canWalk(Otc::Direction)
     if(m_speed == 0)
         return false;
 
+    const int stepDuration = getStepDuration();
+    const ticks_t walkTimerElapsed = m_walkTimer.ticksElapsed();
+
     // last walk is not done yet
-    if((m_walkTimer.ticksElapsed() < getStepDuration()) && !isAutoWalking())
+    if(walkTimerElapsed < stepDuration && !isAutoWalking())
         return false;
 
     // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    bool prewalkTimeouted = m_walking && m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration() + PREWALK_TIMEOUT;
+    const bool prewalkTimeouted = m_walking && m_preWalking && walkTimerElapsed >= stepDuration + PREWALK_TIMEOUT;
 
     // avoid doing more walks than wanted when receiving a lot of walks from server
     if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
@@ -101,7 +104,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
         // if is to the last prewalk destination, updates the walk preserving the animation
         if(newPos == m_lastPrewalkDestination) {
             updateWalk();
-        // was to another direction, replace the walk
+            // was to another direction, replace the walk
         } else
             Creature::walk(oldPos, newPos);
     }
@@ -143,17 +146,20 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
         stopWalk();
 
     m_lastPrewalkDone = true;
-    m_idleTimer.restart();
     lockWalk();
 
     if(m_autoWalkDestination.isValid()) {
         g_game.stop();
-        auto self = asLocalPlayer();
-        if(m_autoWalkContinueEvent)
+
+        if(m_autoWalkContinueEvent) {
             m_autoWalkContinueEvent->cancel();
+        }
+
+        auto self = asLocalPlayer();
         m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([self]() {
-            if(self->m_autoWalkDestination.isValid())
+            if(self->m_autoWalkDestination.isValid()) {
                 self->autoWalk(self->m_autoWalkDestination);
+            }
         }, 500);
     }
 
@@ -249,7 +255,7 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 {
     // pre walks offsets are calculated in the oposite direction
     if(m_preWalking) {
-        m_walkOffset = Point(0,0);
+        m_walkOffset = Point(0, 0);
         if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
             m_walkOffset.y = -totalPixelsWalked;
         else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
@@ -263,28 +269,12 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
         Creature::updateWalkOffset(totalPixelsWalked);
 }
 
-void LocalPlayer::updateWalk()
-{
-    int stepDuration = getStepDuration();
-    float walkTicksPerPixel = getStepDuration(true) / 32.0f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
-
-    // update walk animation and offsets
-    updateWalkAnimation(totalPixelsWalked);
-    updateWalkOffset(totalPixelsWalked);
-    updateWalkingTile();
-
-    // terminate walk only when client and server side walk are completed
-    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= stepDuration)
-        terminateWalk();
-}
-
 void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
+
     m_preWalking = false;
     m_secondPreWalk = false;
-    m_idleTimer.restart();
 
     auto self = asLocalPlayer();
 

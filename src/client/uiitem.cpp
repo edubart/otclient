@@ -46,14 +46,14 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
 
     if(m_itemVisible && m_item) {
         Rect drawRect = getPaddingRect();
-        Point dest = drawRect.bottomRight() + Point(1,1);
+        Point dest = drawRect.bottomRight() + Point(1, 1);
 
         int exactSize = std::max<int>(32, m_item->getExactSize());
         if(exactSize == 0)
             return;
 
         float scaleFactor = std::min<float>(drawRect.width() / (float)exactSize, drawRect.height() / (float)exactSize);
-        dest += (m_item->getDisplacement() - Point(32,32)) * scaleFactor;
+        dest += (m_item->getDisplacement() - Point(32, 32)) * scaleFactor;
 
         g_painter->setColor(m_color);
         m_item->draw(dest, scaleFactor, true);

@@ -37,7 +37,8 @@
 #include <bitset>
 
 struct UnjustifiedPoints {
-    bool operator==(const UnjustifiedPoints& other) {
+    bool operator==(const UnjustifiedPoints& other)
+    {
         return killsDay == other.killsDay &&
             killsDayRemaining == other.killsDayRemaining &&
             killsWeek == other.killsWeek &&
@@ -164,8 +165,7 @@ public:
     void safeLogout();
 
     // walk related
-    bool walk(Otc::Direction direction, bool dash = false);
-    bool dashWalk(Otc::Direction direction);
+    bool walk(const Otc::Direction direction);
     void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
@@ -173,7 +173,7 @@ public:
 
     // item related
     void look(const ThingPtr& thing, bool isBattleList = false);
-    void move(const ThingPtr &thing, const Position& toPos, int count);
+    void move(const ThingPtr& thing, const Position& toPos, int count);
     void moveToParentContainer(const ThingPtr& thing, int count);
     void rotate(const ThingPtr& thing);
     void use(const ThingPtr& thing);
@@ -347,7 +347,7 @@ public:
     bool isGM() { return !m_gmActions.empty(); }
     Otc::Direction getLastWalkDir() { return m_lastWalkDir; }
 
-    std::string formatCreatureName(const std::string &name);
+    std::string formatCreatureName(const std::string& name);
     int findEmptyContainerId();
 
 protected:

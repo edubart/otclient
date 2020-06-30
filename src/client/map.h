@@ -102,12 +102,14 @@ class TileBlock {
 public:
     TileBlock() { m_tiles.fill(nullptr); }
 
-    const TilePtr& create(const Position& pos) {
+    const TilePtr& create(const Position& pos)
+    {
         TilePtr& tile = m_tiles[getTileIndex(pos)];
         tile = TilePtr(new Tile(pos));
         return tile;
     }
-    const TilePtr& getOrCreate(const Position& pos) {
+    const TilePtr& getOrCreate(const Position& pos)
+    {
         TilePtr& tile = m_tiles[getTileIndex(pos)];
         if(!tile)
             tile = TilePtr(new Tile(pos));
@@ -118,10 +120,10 @@ public:
 
     uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
 
-    const std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE>& getTiles() const { return m_tiles; }
+    const std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE>& getTiles() const { return m_tiles; }
 
 private:
-    std::array<TilePtr, BLOCK_SIZE*BLOCK_SIZE> m_tiles;
+    std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE> m_tiles;
 };
 
 struct AwareRange
@@ -145,6 +147,8 @@ public:
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
+
+    void requestDrawing(const bool tile, const bool light, const bool force = false);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
@@ -247,9 +251,9 @@ private:
     void removeUnawareThings();
     uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
-    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z+1];
+    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
-    std::array<std::vector<MissilePtr>, Otc::MAX_Z+1> m_floorMissiles;
+    std::array<std::vector<MissilePtr>, Otc::MAX_Z + 1> m_floorMissiles;
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;

@@ -50,8 +50,8 @@ void MinimapBlock::update()
     ImagePtr image(new Image(Size(MMBLOCK_SIZE, MMBLOCK_SIZE)));
 
     bool shouldDraw = false;
-    for(int x=0;x<MMBLOCK_SIZE;++x) {
-        for(int y=0;y<MMBLOCK_SIZE;++y) {
+    for(int x = 0; x < MMBLOCK_SIZE; ++x) {
+        for(int y = 0; y < MMBLOCK_SIZE; ++y) {
             uint8 c = getTile(x, y).color;
             uint32 col;
             if(c != 255) {
@@ -77,10 +77,10 @@ void MinimapBlock::update()
 
 void MinimapBlock::updateTile(int x, int y, const MinimapTile& tile)
 {
-    if(m_tiles[getTileIndex(x,y)].color != tile.color)
+    if(m_tiles[getTileIndex(x, y)].color != tile.color)
         m_mustUpdate = true;
 
-    m_tiles[getTileIndex(x,y)] = tile;
+    m_tiles[getTileIndex(x, y)] = tile;
 }
 
 void Minimap::init()
@@ -94,7 +94,7 @@ void Minimap::terminate()
 
 void Minimap::clean()
 {
-    for(int i=0;i<=Otc::MAX_Z;++i)
+    for(int i = 0; i <= Otc::MAX_Z; ++i)
         m_tileBlocks[i].clear();
 }
 
@@ -110,20 +110,20 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     g_painter->resetColor();
     g_painter->setClipRect(screenRect);
 
-    if(MMBLOCK_SIZE*scale <= 1 || !mapCenter.isMapPosition()) {
+    if(MMBLOCK_SIZE * scale <= 1 || !mapCenter.isMapPosition()) {
         g_painter->restoreSavedState();
         return;
     }
 
     Point blockOff = getBlockOffset(mapRect.topLeft());
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
-    Point start = screenRect.topLeft() -(mapRect.topLeft() - blockOff)*scale - off;
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    Point start = screenRect.topLeft() - (mapRect.topLeft() - blockOff) * scale - off;
 
-    for(int y = blockOff.y, ys = start.y;ys<screenRect.bottom();y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE*scale) {
+    for(int y = blockOff.y, ys = start.y; ys < screenRect.bottom(); y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE * scale) {
         if(y < 0 || y >= 65536)
             continue;
 
-        for(int x = blockOff.x, xs = start.x;xs<screenRect.right();x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE*scale) {
+        for(int x = blockOff.x, xs = start.x; xs < screenRect.right(); x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE * scale) {
             if(x < 0 || x >= 65536)
                 continue;
 
@@ -137,7 +137,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
             const TexturePtr& tex = block.getTexture();
             if(tex) {
                 Rect src(0, 0, MMBLOCK_SIZE, MMBLOCK_SIZE);
-                Rect dest(Point(xs,ys), src.size() * scale);
+                Rect dest(Point(xs, ys), src.size() * scale);
 
                 tex->setSmooth(scale < 1.0f);
                 g_painter->drawTexturedRect(dest, tex, src);
@@ -152,12 +152,12 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
-        return Point(-1,-1);
+        return Point(-1, -1);
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
-    Point posoff = (Point(pos.x,pos.y) - mapRect.topLeft())*scale;
-    return posoff + screenRect.topLeft() - off + (Point(1,1)*scale)/2;
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    Point posoff = (Point(pos.x, pos.y) - mapRect.topLeft()) * scale;
+    return posoff + screenRect.topLeft() - off + (Point(1, 1) * scale) / 2;
 }
 
 Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale)
@@ -166,8 +166,8 @@ Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, co
         return Position();
 
     Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint())/2;
-    Point pos2d = (point - screenRect.topLeft() + off)/scale + mapRect.topLeft();
+    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    Point pos2d = (point - screenRect.topLeft() + off) / scale + mapRect.topLeft();
     return Position(pos2d.x, pos2d.y, mapCenter.z);
 }
 
@@ -177,7 +177,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
         return Rect();
 
     int tileSize = 32 * scale;
-    Rect tileRect(0,0,tileSize, tileSize);
+    Rect tileRect(0, 0, tileSize, tileSize);
     tileRect.moveCenter(getTilePoint(pos, screenRect, mapCenter, scale));
     return tileRect;
 }
@@ -185,7 +185,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
 Rect Minimap::calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale)
 {
     int w = screenRect.width() / scale, h = std::ceil(screenRect.height() / scale);
-    Rect mapRect(0,0,w,h);
+    Rect mapRect(0, 0, w, h);
     mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
     return mapRect;
 }
@@ -248,9 +248,9 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
             std::string("#ccffff"), // ice, very light blue
         };
 
-        for(int y=0;y<image->getHeight();++y) {
-            for(int x=0;x<image->getWidth();++x) {
-                Color color = *(uint32*)image->getPixel(x,y);
+        for(int y = 0; y < image->getHeight(); ++y) {
+            for(int x = 0; x < image->getWidth(); ++x) {
+                Color color = *(uint32*)image->getPixel(x, y);
                 uint8 c = Color::to8bit(color * colorFactor);
                 int flags = 0;
 
@@ -260,7 +260,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
                 }
 
                 if(flags != 0) {
-                    for(Color &col : nonWalkableColors) {
+                    for(Color& col : nonWalkableColors) {
                         if(col == color) {
                             flags |= MinimapTileNotWalkable;
                             break;
@@ -269,7 +269,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
                 }
 
                 if(flags != 0) {
-                    for(Color &col : nonPathableColors) {
+                    for(Color& col : nonPathableColors) {
                         if(col == color) {
                             flags |= MinimapTileNotPathable;
                             break;
@@ -298,7 +298,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
     }
 }
 
-void Minimap::saveImage(const std::string& fileName, const Rect& mapRect)
+void Minimap::saveImage(const std::string&, const Rect&)
 {
     //TODO
 }
@@ -321,12 +321,13 @@ bool Minimap::loadOtmm(const std::string& fileName)
         fin->getU32(); // flags
 
         switch(version) {
-            case 1: {
-                fin->getString(); // description
-                break;
-            }
-            default:
-                stdext::throw_exception("OTMM version not supported");
+        case 1:
+        {
+            fin->getString(); // description
+            break;
+        }
+        default:
+            stdext::throw_exception("OTMM version not supported");
         }
 
         fin->seek(start);
@@ -342,7 +343,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
             pos.z = fin->getU8();
 
             // end of file or file is corrupted
-            if(!pos.isValid() || pos.z >= Otc::MAX_Z+1)
+            if(!pos.isValid() || pos.z >= Otc::MAX_Z + 1)
                 break;
 
             MinimapBlock& block = getBlock(pos);

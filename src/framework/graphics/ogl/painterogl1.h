@@ -27,18 +27,18 @@
 
 #include "painterogl.h"
 
-/**
- * Painter using OpenGL 1.1 fixed-function rendering pipeline,
- * compatible with OpenGL ES 1.0 and intended to be used on
- * older graphics cards. Shaders are not available
- * for this painter engine.
- */
+ /**
+  * Painter using OpenGL 1.1 fixed-function rendering pipeline,
+  * compatible with OpenGL ES 1.0 and intended to be used on
+  * older graphics cards. Shaders are not available
+  * for this painter engine.
+  */
 class PainterOGL1 : public PainterOGL
 {
 public:
     enum MatrixMode {
-        MatrixProjection = 0x1701, //GL_PROJECTION
-        MatrixTexture = 0x1702, //GL_TEXTURE
+        MatrixProjection = 0x1701, // GL_PROJECTION
+        MatrixTexture = 0x1702, // GL_TEXTURE
         MatrixTransform = 0x1700 // GL_MODELVIEW
     };
 
@@ -80,6 +80,6 @@ private:
     stdext::boolean<false> m_textureEnabled;
 };
 
-extern PainterOGL1 *g_painterOGL1;
+extern PainterOGL1* g_painterOGL1;
 
 #endif

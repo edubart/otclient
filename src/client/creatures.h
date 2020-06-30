@@ -29,24 +29,24 @@
 
 enum CreatureAttr : uint8
 {
-    CreatureAttrPosition  = 0,
-    CreatureAttrName      = 1,
-    CreatureAttrOutfit    = 2,
+    CreatureAttrPosition = 0,
+    CreatureAttrName = 1,
+    CreatureAttrOutfit = 2,
     CreatureAttrSpawnTime = 3,
-    CreatureAttrDir       = 4,
-    CreatureAttrRace      = 5
+    CreatureAttrDir = 4,
+    CreatureAttrRace = 5
 };
 
 enum CreatureRace : uint8
 {
-    CreatureRaceNpc     = 0,
+    CreatureRaceNpc = 0,
     CreatureRaceMonster = 1
 };
 
 enum SpawnAttr : uint8
 {
-    SpawnAttrRadius  = 0,
-    SpawnAttrCenter  = 1,
+    SpawnAttrRadius = 0,
+    SpawnAttrCenter = 1,
 };
 
 class Spawn : public LuaObject
@@ -55,7 +55,7 @@ public:
     Spawn() = default;
     Spawn(int32 radius) { setRadius(radius); }
 
-    void setRadius(int32 r) { m_attribs.set(SpawnAttrRadius, r) ;}
+    void setRadius(int32 r) { m_attribs.set(SpawnAttrRadius, r); }
     int32 getRadius() { return m_attribs.get<int32>(SpawnAttrRadius); }
 
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }

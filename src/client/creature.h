@@ -33,7 +33,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/cachedtext.h>
 
-// @bindclass
+ // @bindclass
 class Creature : public Thing
 {
 public:
@@ -42,11 +42,13 @@ public:
         VOLATILE_SQUARE_DURATION = 1000
     };
 
+    static double speedA, speedB, speedC;
+
     Creature();
 
-    virtual void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    virtual void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
-    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView = nullptr);
+    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction, LightView* lightView = nullptr);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
 
@@ -70,7 +72,6 @@ public:
     void setTypeTexture(const std::string& filename);
     void setIconTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
-    void setSpeedFormula(double speedA, double speedB, double speedC);
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
@@ -83,7 +84,8 @@ public:
     uint8 getHealthPercent() { return m_healthPercent; }
     Otc::Direction getDirection() { return m_direction; }
     Outfit getOutfit() { return m_outfit; }
-    Light getLight() { return m_light; }
+    Light getLight();
+    bool hasLight() { return Thing::hasLight() || getLight().color > 0; }
     uint16 getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
     uint8 getSkull() { return m_skull; }
@@ -100,8 +102,6 @@ public:
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
     float getStepTicksLeft() { return getStepDuration() - m_walkTimer.ticksElapsed(); }
     ticks_t getWalkTicksElapsed() { return m_walkTimer.ticksElapsed(); }
-    double getSpeedFormula(Otc::SpeedFormula formula) { return m_speedFormula[formula]; }
-    bool hasSpeedFormula();
     std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
     virtual Point getDisplacement();
     virtual int getDisplacementX();
@@ -127,7 +127,7 @@ public:
     bool isCreature() { return true; }
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
 
     virtual void onPositionChange(const Position& newPos, const Position& oldPos);
     virtual void onAppear();
@@ -135,11 +135,11 @@ public:
     virtual void onDeath();
 
 protected:
-    virtual void updateWalkAnimation(int totalPixelsWalked);
-    virtual void updateWalkOffset(int totalPixelsWalked);
     void updateWalkingTile();
+    virtual void updateWalkAnimation();
+    virtual void updateWalkOffset(int totalPixelsWalked);
+    virtual void updateWalk(const bool isPreWalking = false);
     virtual void nextWalkUpdate();
-    virtual void updateWalk();
     virtual void terminateWalk();
 
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
@@ -147,12 +147,12 @@ protected:
 
     uint32 m_id;
     std::string m_name;
-    uint8 m_healthPercent;
     Otc::Direction m_direction;
     Outfit m_outfit;
     Light m_light;
     int m_speed;
     double m_baseSpeed;
+    uint8 m_healthPercent;
     uint8 m_skull;
     uint8 m_shield;
     uint8 m_emblem;
@@ -166,14 +166,14 @@ protected:
     stdext::boolean<true> m_showShieldTexture;
     stdext::boolean<false> m_shieldBlink;
     stdext::boolean<false> m_passable;
-    Color m_timedSquareColor;
-    Color m_staticSquareColor;
     stdext::boolean<false> m_showTimedSquare;
     stdext::boolean<false> m_showStaticSquare;
     stdext::boolean<true> m_removed;
-    CachedText m_nameCache;
+    Color m_timedSquareColor;
+    Color m_staticSquareColor;
     Color m_informationColor;
     Color m_outfitColor;
+    CachedText m_nameCache;
     ScheduledEventPtr m_outfitColorUpdateEvent;
     Timer m_outfitColorTimer;
 
@@ -188,7 +188,6 @@ protected:
     TilePtr m_walkingTile;
     stdext::boolean<false> m_walking;
     stdext::boolean<false> m_allowAppearWalk;
-    stdext::boolean<false> m_footStepDrawn;
     ScheduledEventPtr m_walkUpdateEvent;
     ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;
@@ -204,6 +203,22 @@ protected:
     float m_jumpDuration;
     PointF m_jumpOffset;
     Timer m_jumpTimer;
+
+private:
+    struct StepCache {
+        int speed = 0;
+        int groundSpeed = 0;
+        int duration = 0;
+        int durationDiagonal = 0;
+
+        int getDuration(Otc::Direction dir)
+        {
+            return (dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast) ?
+                durationDiagonal : duration;
+        }
+    };
+
+    StepCache m_stepCache;
 };
 
 // @bindclass

@@ -29,7 +29,8 @@
 UISprite::UISprite() :
     m_spriteId(0),
     m_spriteColor(Color::white)
-{ }
+{
+}
 
 void UISprite::drawSelf(Fw::DrawPane drawPane)
 {

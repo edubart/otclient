@@ -27,15 +27,11 @@
 #include <framework/core/timer.h>
 #include "thing.h"
 
-// @bindclass
+ // @bindclass
 class Missile : public Thing
 {
-    enum {
-        TICKS_PER_FRAME = 75
-    };
-
 public:
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
     void setId(uint32 id);
     void setPath(const Position& fromPosition, const Position& toPosition);
@@ -46,9 +42,10 @@ public:
     bool isMissile() { return true; }
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
 
 private:
+
     Timer m_animationTimer;
     Point m_delta;
     float m_duration;

@@ -48,14 +48,14 @@ void ThingTypeManager::init()
     m_datLoaded = false;
     m_xmlLoaded = false;
     m_otbLoaded = false;
-    for(auto &m_thingType: m_thingTypes)
+    for(auto& m_thingType : m_thingTypes)
         m_thingType.resize(1, m_nullThingType);
     m_itemTypes.resize(1, m_nullItemType);
 }
 
 void ThingTypeManager::terminate()
 {
-    for(auto &m_thingType: m_thingTypes)
+    for(auto& m_thingType : m_thingTypes)
         m_thingType.clear();
     m_itemTypes.clear();
     m_reverseItemTypes.clear();
@@ -77,7 +77,7 @@ void ThingTypeManager::saveDat(std::string fileName)
 
         fin->addU32(m_datSignature);
 
-        for(auto &m_thingType: m_thingTypes)
+        for(auto& m_thingType : m_thingTypes)
             fin->addU16(m_thingType.size() - 1);
 
         for(int category = 0; category < ThingLastCategory; ++category) {
@@ -110,7 +110,7 @@ bool ThingTypeManager::loadDat(std::string file)
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
-        for(auto &m_thingType: m_thingTypes) {
+        for(auto& m_thingType : m_thingTypes) {
             int count = fin->getU16() + 1;
             m_thingType.clear();
             m_thingType.resize(count, m_nullThingType);
@@ -237,7 +237,7 @@ void ThingTypeManager::loadXml(const std::string& file)
         if(!root || root->ValueTStr() != "items")
             stdext::throw_exception("invalid root tag name");
 
-        for(TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+        for(TiXmlElement* element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
             if(unlikely(element->ValueTStr() != "item"))
                 continue;
 
@@ -249,18 +249,18 @@ void ThingTypeManager::loadXml(const std::string& file)
                     if(ids.size() > 1) {
                         int32 i = ids[0];
                         while(i <= ids[1])
-                            parseItemType(i++, element);
+                            parseItemType(++i, element);
                     } else
                         parseItemType(atoi(s.c_str()), element);
                 }
             } else {
                 std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
-                std::vector<int32> end   = stdext::split<int32>(element->Attribute("toid"), ";");
+                std::vector<int32> end = stdext::split<int32>(element->Attribute("toid"), ";");
                 if(begin[0] && begin.size() == end.size()) {
                     size_t size = begin.size();
                     for(size_t i = 0; i < size; ++i)
                         while(begin[i] <= end[i])
-                            parseItemType(begin[i]++, element);
+                            parseItemType(++begin[i], element);
                 }
             }
         }

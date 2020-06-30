@@ -33,7 +33,7 @@ public:
     virtual ~SoundFile() { }
     static SoundFilePtr loadSoundFile(const std::string& filename);
 
-    virtual int read(void *buffer, int bufferSize) { return -1; }
+    virtual int read(void* /*buffer*/, int /*bufferSize*/) { return -1; }
     virtual void reset() { }
     bool eof() { return m_file->eof(); }
 

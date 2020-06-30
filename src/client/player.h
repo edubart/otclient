@@ -25,12 +25,12 @@
 
 #include "creature.h"
 
-// @bindclass
+ // @bindclass
 class Player : public Creature
 {
 public:
-    Player() { }
-    virtual ~Player() { }
+    Player() {}
+    virtual ~Player() {}
 
     PlayerPtr asPlayer() { return static_self_cast<Player>(); }
     bool isPlayer() { return true; }

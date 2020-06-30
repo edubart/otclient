@@ -37,7 +37,7 @@ static bool isInZone(const Position& pos/* placePos*/,
         return true;
     return ((pos.x >= centerPos.x - radius) && (pos.x <= centerPos.x + radius) &&
             (pos.y >= centerPos.y - radius) && (pos.y <= centerPos.y + radius)
-           );
+            );
 }
 
 void CreatureManager::terminate()
@@ -67,7 +67,7 @@ void Spawn::load(TiXmlElement* node)
         stdext::trim(cName);
         stdext::ucwords(cName);
 
-        if (!(cType = g_creatures.getCreatureByName(cName)))
+        if(!(cType = g_creatures.getCreatureByName(cName)))
             continue;
 
         cType->setSpawnTime(cNode->readType<int>("spawntime"));
@@ -96,11 +96,11 @@ void Spawn::save(TiXmlElement* node)
 
     node->SetAttribute("radius", getRadius());
 
-    TiXmlElement* creatureNode = nullptr;
-
     for(const auto& pair : m_creatures) {
         const CreatureTypePtr& creature = pair.second;
-        if(!(creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster")))
+        TiXmlElement* creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster");
+
+        if(!creatureNode)
             stdext::throw_exception("Spawn::save: Ran out of memory while allocating XML element!  Terminating now.");
 
         creatureNode->SetAttribute("name", creature->getName());
@@ -124,9 +124,9 @@ void Spawn::addCreature(const Position& placePos, const CreatureTypePtr& cType)
     int m_radius = getRadius();
     if(!isInZone(placePos, centerPos, m_radius)) {
         g_logger.warning(stdext::format("cannot place creature at %s (spawn's center position: %s, spawn radius: %d) (increment radius)",
-                                               stdext::to_string(placePos), stdext::to_string(centerPos),
-                                               m_radius
-                                              ));
+                                        stdext::to_string(placePos), stdext::to_string(centerPos),
+                                        m_radius
+        ));
         return;
     }
 
@@ -147,7 +147,7 @@ void Spawn::removeCreature(const Position& pos)
 std::vector<CreatureTypePtr> Spawn::getCreatures()
 {
     std::vector<CreatureTypePtr> creatures;
-    for (auto p : m_creatures)
+    for(auto p : m_creatures)
         creatures.push_back(p.second);
     return creatures;
 }
@@ -276,7 +276,7 @@ void CreatureManager::saveSpawns(const std::string& fileName)
             root->LinkEndChild(elem);
         }
 
-        if(!doc.SaveFile("data"+fileName))
+        if(!doc.SaveFile("data" + fileName))
             stdext::throw_exception(stdext::format("failed to save spawns XML %s: %s", fileName, doc.ErrorDesc()));
     } catch(std::exception& e) {
         g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
@@ -346,7 +346,7 @@ const CreatureTypePtr& CreatureManager::getCreatureByName(std::string name)
     stdext::trim(name);
     stdext::ucwords(name);
     auto it = std::find_if(m_creatures.begin(), m_creatures.end(),
-                           [=] (const CreatureTypePtr& m) -> bool { return m->getName() == name; });
+                           [=](const CreatureTypePtr& m) -> bool { return m->getName() == name; });
     if(it != m_creatures.end())
         return *it;
     g_logger.warning(stdext::format("could not find creature with name: %s", name));
@@ -355,7 +355,7 @@ const CreatureTypePtr& CreatureManager::getCreatureByName(std::string name)
 
 const CreatureTypePtr& CreatureManager::getCreatureByLook(int look)
 {
-    auto findFun = [=] (const CreatureTypePtr& c) -> bool
+    auto findFun = [=](const CreatureTypePtr& c) -> bool
     {
         const Outfit& o = c->getOutfit();
         return o.getId() == look || o.getAuxId() == look;
@@ -372,17 +372,17 @@ SpawnPtr CreatureManager::getSpawn(const Position& centerPos)
     auto it = m_spawns.find(centerPos);
     if(it != m_spawns.end())
         return it->second;
-    g_logger.debug(stdext::format("failed to find spawn at center %s",stdext::to_string(centerPos)));
+    g_logger.debug(stdext::format("failed to find spawn at center %s", stdext::to_string(centerPos)));
     return nullptr;
 }
 
 SpawnPtr CreatureManager::getSpawnForPlacePos(const Position& pos)
 {
-    for (const auto& pair : m_spawns) {
+    for(const auto& pair : m_spawns) {
         const Position& centerPos = pair.first;
         const SpawnPtr& spawn = pair.second;
 
-        if (isInZone(pos, centerPos, spawn->getRadius()))
+        if(isInZone(pos, centerPos, spawn->getRadius()))
             return spawn;
     }
 
@@ -418,7 +418,7 @@ void CreatureManager::deleteSpawn(const SpawnPtr& spawn)
 std::vector<SpawnPtr> CreatureManager::getSpawns()
 {
     std::vector<SpawnPtr> spawns;
-    for (auto p : m_spawns)
+    for(auto p : m_spawns)
         spawns.push_back(p.second);
     return spawns;
 }

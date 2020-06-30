@@ -28,17 +28,17 @@
 #include "thingtypemanager.h"
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 #pragma pack(push,1) // disable memory alignment
 class Thing : public LuaObject
 {
 public:
     Thing();
-    virtual ~Thing() { }
+    virtual ~Thing() {}
 
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, LightView* /*lightView*/ = nullptr) { }
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, LightView* /*lightView*/ = nullptr) {}
 
-    virtual void setId(uint32 /*id*/) { }
+    virtual void setId(uint32 /*id*/) {}
     void setPosition(const Position& position);
 
     virtual uint32 getId() { return 0; }
@@ -61,7 +61,7 @@ public:
 
     // type shortcuts
     virtual const ThingTypePtr& getThingType();
-    virtual ThingType *rawGetThingType();
+    virtual ThingType* rawGetThingType();
     Size getSize() { return rawGetThingType()->getSize(); }
     int getWidth() { return rawGetThingType()->getWidth(); }
     int getHeight() { return rawGetThingType()->getHeight(); }
@@ -74,11 +74,13 @@ public:
     int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
     int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
     int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
+    bool hasAnimationPhases() { return rawGetThingType()->getAnimationPhases() > 1; }
     AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
     AnimatorPtr getIdleAnimator() { return rawGetThingType()->getIdleAnimator(); }
     int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
     int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
-    Light getLight() { return rawGetThingType()->getLight(); }
+    virtual Light getLight() { return rawGetThingType()->getLight(); }
+    virtual bool hasLight() { return rawGetThingType()->hasLight(); }
     int getMinimapColor() { return rawGetThingType()->getMinimapColor(); }
     int getLensHelp() { return rawGetThingType()->getLensHelp(); }
     int getClothSlot() { return rawGetThingType()->getClothSlot(); }
@@ -87,7 +89,7 @@ public:
     bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
-    bool isContainer() { return rawGetThingType()->isContainer(); }
+    virtual bool isContainer() { return rawGetThingType()->isContainer(); }
     bool isStackable() { return rawGetThingType()->isStackable(); }
     bool isForceUse() { return rawGetThingType()->isForceUse(); }
     bool isMultiUse() { return rawGetThingType()->isMultiUse(); }
@@ -98,6 +100,7 @@ public:
     bool isSplash() { return rawGetThingType()->isSplash(); }
     bool isNotWalkable() { return rawGetThingType()->isNotWalkable(); }
     bool isNotMoveable() { return rawGetThingType()->isNotMoveable(); }
+    bool isMoveable() { return !rawGetThingType()->isNotMoveable(); }
     bool blockProjectile() { return rawGetThingType()->blockProjectile(); }
     bool isNotPathable() { return rawGetThingType()->isNotPathable(); }
     bool isPickupable() { return rawGetThingType()->isPickupable(); }
@@ -105,7 +108,6 @@ public:
     bool isHookSouth() { return rawGetThingType()->isHookSouth(); }
     bool isHookEast() { return rawGetThingType()->isHookEast(); }
     bool isRotateable() { return rawGetThingType()->isRotateable(); }
-    bool hasLight() { return rawGetThingType()->hasLight(); }
     bool isDontHide() { return rawGetThingType()->isDontHide(); }
     bool isTranslucent() { return rawGetThingType()->isTranslucent(); }
     bool hasDisplacement() { return rawGetThingType()->hasDisplacement(); }
@@ -122,15 +124,21 @@ public:
     bool isWrapable() { return rawGetThingType()->isWrapable(); }
     bool isUnwrapable() { return rawGetThingType()->isUnwrapable(); }
     bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
+    bool isOpaque() { return rawGetThingType()->isOpaque(); }
+    bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
-    virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) { }
-    virtual void onAppear() { }
-    virtual void onDisappear() { }
+    void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration, hasLight()); }
+    void cancelListenerPainter() { rawGetThingType()->cancelListenerPainter(); }
+
+    virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
+    virtual void onAppear() {}
+    virtual void onDisappear() {}
 
 protected:
     Position m_position;
     uint16 m_datId;
+
 };
 #pragma pack(pop)
 

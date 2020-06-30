@@ -29,8 +29,9 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
 #include "lightview.h"
+#include "viewportcontrol.h"
 
-// @bindclass
+ // @bindclass
 class MapView : public LuaObject
 {
 public:
@@ -93,8 +94,6 @@ public:
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
-    void setDrawFlags(Otc::DrawFlags drawFlags) { m_drawFlags = drawFlags; requestVisibleTilesCacheUpdate(); }
-    Otc::DrawFlags getDrawFlags() { return m_drawFlags; }
 
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
@@ -113,9 +112,6 @@ public:
 
     void move(int x, int y);
 
-    void setAnimated(bool animated) { m_animated = animated; requestVisibleTilesCacheUpdate(); }
-    bool isAnimating() { return m_animated; }
-
     void setAddLightMethod(bool add) { m_lightView->setBlendEquation(add ? Painter::BlendEquation_Add : Painter::BlendEquation_Max); }
 
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
@@ -125,11 +121,20 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
+    void requestDrawing(const bool tile, const bool light, const bool force = false)
+    {
+        if(tile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redraw = true;
+        if(light && m_lightView) m_lightView->requestDrawing(force);
+    }
+
 private:
-    Rect calcFramebufferSource(const Size& destSize);
+
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
-    Point transformPositionTo2D(const Position& position, const Position& relativePosition) {
+
+    Rect calcFramebufferSource(const Size& destSize);
+    Point transformPositionTo2D(const Position& position, const Position& relativePosition)
+    {
         return Point((m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
                      (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
@@ -139,18 +144,20 @@ private:
     int m_cachedLastVisibleFloor;
     int m_tileSize;
     int m_updateTilesPos;
+
     Size m_drawDimension;
     Size m_visibleDimension;
     Size m_optimizedSize;
+
     Point m_virtualCenterOffset;
     Point m_visibleCenterOffset;
     Point m_moveOffset;
+
     Position m_customCameraPosition;
+
     stdext::boolean<true> m_mustUpdateVisibleTilesCache;
-    stdext::boolean<true> m_mustDrawVisibleTilesCache;
     stdext::boolean<true> m_mustCleanFramebuffer;
     stdext::boolean<true> m_multifloor;
-    stdext::boolean<true> m_animated;
     stdext::boolean<true> m_autoViewMode;
     stdext::boolean<true> m_drawTexts;
     stdext::boolean<true> m_drawNames;
@@ -158,23 +165,34 @@ private:
     stdext::boolean<false> m_drawLights;
     stdext::boolean<true> m_drawManaBar;
     stdext::boolean<true> m_smooth;
-
     stdext::boolean<true> m_follow;
-    std::vector<TilePtr> m_cachedVisibleTiles;
+    stdext::boolean<true> m_shaderSwitchDone;
+
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
+
+    std::array<ViewportControl, Otc::InvalidDirection + 1> m_viewportControl;
+    std::array<std::vector<TilePtr>, Otc::MAX_Z + 1> m_cachedVisibleTiles;
+
+    PainterShaderProgramPtr m_shader;
+    PainterShaderProgramPtr m_nextShader;
+
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
-    PainterShaderProgramPtr m_shader;
+
     ViewMode m_viewMode;
-    Otc::DrawFlags m_drawFlags;
-    std::vector<Point> m_spiral;
     LightViewPtr m_lightView;
+
     float m_minimumAmbientLight;
-    Timer m_fadeTimer;
-    PainterShaderProgramPtr m_nextShader;
     float m_fadeInTime;
     float m_fadeOutTime;
-    stdext::boolean<true> m_shaderSwitchDone;
+
+    bool m_redraw;
+    Timer m_minTimeRender;
+
+    Timer m_fadeTimer;
+
+    uint_fast8_t m_floorMin, m_floorMax;
+
 };
 
 #endif

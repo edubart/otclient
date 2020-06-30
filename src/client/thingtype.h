@@ -33,6 +33,9 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
 
+#include <framework/core/scheduledevent.h>
+#include <framework/core/declarations.h>
+
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
     FrameGroupIdle = FrameGroupDefault,
@@ -49,53 +52,53 @@ enum ThingCategory : uint8 {
 };
 
 enum ThingAttr : uint8 {
-    ThingAttrGround           = 0,
-    ThingAttrGroundBorder     = 1,
-    ThingAttrOnBottom         = 2,
-    ThingAttrOnTop            = 3,
-    ThingAttrContainer        = 4,
-    ThingAttrStackable        = 5,
-    ThingAttrForceUse         = 6,
-    ThingAttrMultiUse         = 7,
-    ThingAttrWritable         = 8,
-    ThingAttrWritableOnce     = 9,
-    ThingAttrFluidContainer   = 10,
-    ThingAttrSplash           = 11,
-    ThingAttrNotWalkable      = 12,
-    ThingAttrNotMoveable      = 13,
-    ThingAttrBlockProjectile  = 14,
-    ThingAttrNotPathable      = 15,
-    ThingAttrPickupable       = 16,
-    ThingAttrHangable         = 17,
-    ThingAttrHookSouth        = 18,
-    ThingAttrHookEast         = 19,
-    ThingAttrRotateable       = 20,
-    ThingAttrLight            = 21,
-    ThingAttrDontHide         = 22,
-    ThingAttrTranslucent      = 23,
-    ThingAttrDisplacement     = 24,
-    ThingAttrElevation        = 25,
-    ThingAttrLyingCorpse      = 26,
-    ThingAttrAnimateAlways    = 27,
-    ThingAttrMinimapColor     = 28,
-    ThingAttrLensHelp         = 29,
-    ThingAttrFullGround       = 30,
-    ThingAttrLook             = 31,
-    ThingAttrCloth            = 32,
-    ThingAttrMarket           = 33,
-    ThingAttrUsable           = 34,
-    ThingAttrWrapable         = 35,
-    ThingAttrUnwrapable       = 36,
-    ThingAttrTopEffect        = 37,
+    ThingAttrGround = 0,
+    ThingAttrGroundBorder = 1,
+    ThingAttrOnBottom = 2,
+    ThingAttrOnTop = 3,
+    ThingAttrContainer = 4,
+    ThingAttrStackable = 5,
+    ThingAttrForceUse = 6,
+    ThingAttrMultiUse = 7,
+    ThingAttrWritable = 8,
+    ThingAttrWritableOnce = 9,
+    ThingAttrFluidContainer = 10,
+    ThingAttrSplash = 11,
+    ThingAttrNotWalkable = 12,
+    ThingAttrNotMoveable = 13,
+    ThingAttrBlockProjectile = 14,
+    ThingAttrNotPathable = 15,
+    ThingAttrPickupable = 16,
+    ThingAttrHangable = 17,
+    ThingAttrHookSouth = 18,
+    ThingAttrHookEast = 19,
+    ThingAttrRotateable = 20,
+    ThingAttrLight = 21,
+    ThingAttrDontHide = 22,
+    ThingAttrTranslucent = 23,
+    ThingAttrDisplacement = 24,
+    ThingAttrElevation = 25,
+    ThingAttrLyingCorpse = 26,
+    ThingAttrAnimateAlways = 27,
+    ThingAttrMinimapColor = 28,
+    ThingAttrLensHelp = 29,
+    ThingAttrFullGround = 30,
+    ThingAttrLook = 31,
+    ThingAttrCloth = 32,
+    ThingAttrMarket = 33,
+    ThingAttrUsable = 34,
+    ThingAttrWrapable = 35,
+    ThingAttrUnwrapable = 36,
+    ThingAttrTopEffect = 37,
 
     // additional
-    ThingAttrOpacity          = 100,
-    ThingAttrNotPreWalkable   = 101,
+    ThingAttrOpacity = 100,
+    ThingAttrNotPreWalkable = 101,
 
-    ThingAttrFloorChange      = 252,
-    ThingAttrNoMoveAnimation  = 253, // 10.10: real value is 16, but we need to do this for backwards compatibility
-    ThingAttrChargeable       = 254, // deprecated
-    ThingLastAttr             = 255
+    ThingAttrFloorChange = 252,
+    ThingAttrNoMoveAnimation = 253, // 10.10: real value is 16, but we need to do this for backwards compatibility
+    ThingAttrChargeable = 254, // deprecated
+    ThingLastAttr = 255
 };
 
 enum SpriteMask {
@@ -131,7 +134,7 @@ public:
     void serialize(const FileStreamPtr& fin);
     void exportImage(std::string fileName);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView* lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -147,9 +150,14 @@ public:
     int getNumPatternX() { return m_numPatternX; }
     int getNumPatternY() { return m_numPatternY; }
     int getNumPatternZ() { return m_numPatternZ; }
-    int getAnimationPhases() { return m_animationPhases; }
+    int getAnimationPhases()
+    {
+        if(m_animator) return m_animator->getAnimationPhases();
+        return m_animationPhases;
+    }
     AnimatorPtr getAnimator() { return m_animator; }
     AnimatorPtr getIdleAnimator() { return m_idleAnimator; }
+
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
@@ -201,6 +209,7 @@ public:
     bool isWrapable() { return m_attribs.has(ThingAttrWrapable); }
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
+    bool isOpaque() { return isFullGround() || getTexture(0)->isOpaque(); }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
 
@@ -208,9 +217,13 @@ public:
     float getOpacity() { return m_opacity; }
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
+    int getExactHeight();
+    const TexturePtr& getTexture(int animationPhase);
+
+    void startListenerPainter(const float duration, const bool redrawLight = false);
+    void cancelListenerPainter();
 
 private:
-    const TexturePtr& getTexture(int animationPhase);
     Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
@@ -230,6 +243,7 @@ private:
     int m_numPatternX, m_numPatternY, m_numPatternZ;
     int m_layers;
     int m_elevation;
+    int m_exactHeight;
     float m_opacity;
     std::string m_customImage;
 
@@ -238,6 +252,9 @@ private:
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;
+
+    uint_fast8_t m_countPainterListeningRef;
+    ScheduledEventPtr m_painterListeningEvent;
 };
 
 #endif

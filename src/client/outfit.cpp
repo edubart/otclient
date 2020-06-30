@@ -37,7 +37,7 @@ Color Outfit::getColor(int color)
 
     float loc1 = 0, loc2 = 0, loc3 = 0;
     if(color % HSI_H_STEPS != 0) {
-        loc1 = color % HSI_H_STEPS * 1.0/18.0;
+        loc1 = color % HSI_H_STEPS * 1.0 / 18.0;
         loc2 = 1;
         loc3 = 1;
 
@@ -71,11 +71,10 @@ Color Outfit::getColor(int color)
             loc3 = 0.50;
             break;
         }
-    }
-    else {
+    } else {
         loc1 = 0;
         loc2 = 0;
-        loc3 =  1 - (float)color / HSI_H_STEPS / (float)HSI_SI_VALUES;
+        loc3 = 1 - (float)color / HSI_H_STEPS / (float)HSI_SI_VALUES;
     }
 
     if(loc3 == 0)
@@ -88,32 +87,27 @@ Color Outfit::getColor(int color)
 
     float red = 0, green = 0, blue = 0;
 
-    if(loc1 < 1.0/6.0) {
+    if(loc1 < 1.0 / 6.0) {
         red = loc3;
         blue = loc3 * (1 - loc2);
         green = blue + (loc3 - blue) * 6 * loc1;
-    }
-    else if(loc1 < 2.0/6.0) {
+    } else if(loc1 < 2.0 / 6.0) {
         green = loc3;
         blue = loc3 * (1 - loc2);
         red = green - (loc3 - blue) * (6 * loc1 - 1);
-    }
-    else if(loc1 < 3.0/6.0) {
+    } else if(loc1 < 3.0 / 6.0) {
         green = loc3;
         red = loc3 * (1 - loc2);
         blue = red + (loc3 - red) * (6 * loc1 - 2);
-    }
-    else if(loc1 < 4.0/6.0) {
+    } else if(loc1 < 4.0 / 6.0) {
         blue = loc3;
         red = loc3 * (1 - loc2);
         green = blue - (loc3 - red) * (6 * loc1 - 3);
-    }
-    else if(loc1 < 5.0/6.0) {
+    } else if(loc1 < 5.0 / 6.0) {
         blue = loc3;
         green = loc3 * (1 - loc2);
         red = green + (loc3 - green) * (6 * loc1 - 4);
-    }
-    else {
+    } else {
         red = loc3;
         green = loc3 * (1 - loc2);
         blue = red - (loc3 - green) * (6 * loc1 - 5);

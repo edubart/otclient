@@ -77,12 +77,12 @@ class Item : public Thing
 {
 public:
     Item();
-    virtual ~Item() { }
+    virtual ~Item() {}
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
 
     void setId(uint32 id);
     void setOtbId(uint16 id);
@@ -129,8 +129,6 @@ public:
     bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
-    bool isMoveable();
-    bool isGround();
 
     ItemPtr clone();
     ItemPtr asItem() { return static_self_cast<Item>(); }
@@ -148,19 +146,28 @@ public:
     int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
 
     const ThingTypePtr& getThingType();
-    ThingType *rawGetThingType();
+    ThingType* rawGetThingType();
+
+    void canDraw(bool canDraw) { m_canDraw = canDraw; }
+    bool canDraw()  const { return m_canDraw; }
+
+    void startListenerPainter();
 
 private:
     uint16 m_clientId;
     uint16 m_serverId;
+    uint8 m_phase;
     uint8 m_countOrSubType;
-    stdext::packed_storage<uint8> m_attribs;
-    ItemVector m_containerItems;
+
     Color m_color;
+
+    bool m_canDraw;
     bool m_async;
 
-    uint8 m_phase;
     ticks_t m_lastPhase;
+
+    stdext::packed_storage<uint8> m_attribs;
+    ItemVector m_containerItems;
 };
 
 #pragma pack(pop)

@@ -76,6 +76,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../src;</IncludePath>
+    <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);../src;</IncludePath>
@@ -184,6 +185,7 @@
     <ClCompile Include="..\src\client\uiminimap.cpp" />
     <ClCompile Include="..\src\client\uiprogressrect.cpp" />
     <ClCompile Include="..\src\client\uisprite.cpp" />
+    <ClCompile Include="..\src\client\viewportcontrol.cpp" />
     <ClCompile Include="..\src\framework\core\adaptativeframecounter.cpp" />
     <ClCompile Include="..\src\framework\core\application.cpp" />
     <ClCompile Include="..\src\framework\core\asyncdispatcher.cpp" />
@@ -335,6 +337,7 @@
     <ClInclude Include="..\src\client\uiminimap.h" />
     <ClInclude Include="..\src\client\uiprogressrect.h" />
     <ClInclude Include="..\src\client\uisprite.h" />
+    <ClInclude Include="..\src\client\viewportcontrol.h" />
     <ClInclude Include="..\src\framework\const.h" />
     <ClInclude Include="..\src\framework\core\adaptativeframecounter.h" />
     <ClInclude Include="..\src\framework\core\application.h" />

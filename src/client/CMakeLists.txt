@@ -74,6 +74,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/houses.h
     ${CMAKE_CURRENT_LIST_DIR}/towns.cpp
     ${CMAKE_CURRENT_LIST_DIR}/towns.h
+    ${CMAKE_CURRENT_LIST_DIR}/viewportcontrol.h
+    ${CMAKE_CURRENT_LIST_DIR}/viewportcontrol.cpp
     ${CMAKE_CURRENT_LIST_DIR}/creatures.cpp
     ${CMAKE_CURRENT_LIST_DIR}/creatures.h
 

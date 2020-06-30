@@ -25,7 +25,7 @@
 
 #include "player.h"
 
-// @bindclass
+ // @bindclass
 class LocalPlayer : public Player
 {
     enum {
@@ -108,12 +108,12 @@ protected:
     void preWalk(Otc::Direction direction);
     void cancelWalk(Otc::Direction direction = Otc::InvalidDirection);
     void stopWalk();
+    virtual void updateWalk(const bool = false) { Creature::updateWalk(m_preWalking); }
 
     friend class Game;
 
 protected:
     void updateWalkOffset(int totalPixelsWalked);
-    void updateWalk();
     void terminateWalk();
 
 private:
@@ -135,7 +135,6 @@ private:
     stdext::boolean<false> m_pending;
 
     ItemPtr m_inventoryItems[Otc::LastInventorySlot];
-    Timer m_idleTimer;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;

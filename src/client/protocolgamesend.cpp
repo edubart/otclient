@@ -162,33 +162,33 @@ void ProtocolGame::sendAutoWalk(const std::vector<Otc::Direction>& path)
     for(Otc::Direction dir : path) {
         uint8 byte;
         switch(dir) {
-            case Otc::East:
-                byte = 1;
-                break;
-            case Otc::NorthEast:
-                byte = 2;
-                break;
-            case Otc::North:
-                byte = 3;
-                break;
-            case Otc::NorthWest:
-                byte = 4;
-                break;
-            case Otc::West:
-                byte = 5;
-                break;
-            case Otc::SouthWest:
-                byte = 6;
-                break;
-            case Otc::South:
-                byte = 7;
-                break;
-            case Otc::SouthEast:
-                byte = 8;
-                break;
-            default:
-                byte = 0;
-                break;
+        case Otc::East:
+            byte = 1;
+            break;
+        case Otc::NorthEast:
+            byte = 2;
+            break;
+        case Otc::North:
+            byte = 3;
+            break;
+        case Otc::NorthWest:
+            byte = 4;
+            break;
+        case Otc::West:
+            byte = 5;
+            break;
+        case Otc::SouthWest:
+            byte = 6;
+            break;
+        case Otc::South:
+            byte = 7;
+            break;
+        case Otc::SouthEast:
+            byte = 8;
+            break;
+        default:
+            byte = 0;
+            break;
         }
         msg->addU8(byte);
     }
@@ -582,7 +582,7 @@ void ProtocolGame::sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseMod
     msg->addU8(Proto::ClientChangeFightModes);
     msg->addU8(fightMode);
     msg->addU8(chaseMode);
-    msg->addU8(safeFight ? 0x01: 0x00);
+    msg->addU8(safeFight ? 0x01 : 0x00);
     if(g_game.getFeature(Otc::GamePVPMode))
         msg->addU8(pvpMode);
     send(msg);

@@ -128,10 +128,10 @@ int Animator::getPhaseAt(ticks_t time)
     int index = 0;
     ticks_t total = 0;
 
-    for(const auto &pair: m_phaseDurations) {
+    for(const auto& pair : m_phaseDurations) {
         total += std::get<1>(pair);
 
-        if (time < total) {
+        if(time < total) {
             return index;
         }
 
@@ -198,13 +198,13 @@ int Animator::getPhaseDuration(int phase)
 void Animator::calculateSynchronous()
 {
     int totalDuration = 0;
-    for(int i = 0; i < m_animationPhases; i++)
+    for(int i = 0; i < m_animationPhases; ++i)
         totalDuration += getPhaseDuration(i);
 
     ticks_t ticks = g_clock.millis();
     int elapsedTicks = (int)(ticks % totalDuration);
     int totalTime = 0;
-    for(int i = 0; i < m_animationPhases; i++) {
+    for(int i = 0; i < m_animationPhases; ++i) {
         int duration = getPhaseDuration(i);
         if(elapsedTicks >= totalTime && elapsedTicks < totalTime + duration) {
             m_phase = i;
@@ -219,7 +219,7 @@ void Animator::calculateSynchronous()
 ticks_t Animator::getTotalDuration()
 {
     ticks_t time = 0;
-    for (const auto &pair: m_phaseDurations) {
+    for(const auto& pair : m_phaseDurations) {
         time += std::get<1>(pair);
     }
 

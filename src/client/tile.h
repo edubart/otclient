@@ -62,7 +62,7 @@ public:
 
     Tile(const Position& position);
 
-    void draw(const Point& dest, float scaleFactor, int drawFlags, LightView *lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
 public:
     void clean();
@@ -87,9 +87,9 @@ public:
     const Position& getPosition() { return m_position; }
     int getDrawElevation() { return m_drawElevation; }
     std::vector<ItemPtr> getItems();
-    std::vector<CreaturePtr> getCreatures();
     std::vector<CreaturePtr> getWalkingCreatures() { return m_walkingCreatures; }
     std::vector<ThingPtr> getThings() { return m_things; }
+    std::vector<CreaturePtr> getCreatures() { return m_creatures; }
     ItemPtr getGround();
     int getGroundSpeed();
     uint8 getMinimapColorByte();
@@ -129,18 +129,61 @@ public:
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
+    bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
+    bool hasLight();
+    void analyzeThing(const ThingPtr& thing, bool sum);
+
+    bool hasGroundsToDraw() const { return !m_grounds.empty(); }
+    bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
+    bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
+
+    void drawGround(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
+    void drawBottom(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
+    void drawTop(const Point& dest, float scaleFactor, LightView* lightView);
+
+    void cancelListenerPainter();
+
 private:
     void checkTranslucentLight();
 
-    stdext::packed_vector<CreaturePtr> m_walkingCreatures;
-    stdext::packed_vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
-    stdext::packed_vector<ThingPtr> m_things;
     Position m_position;
     uint8 m_drawElevation;
     uint8 m_minimapColor;
     uint32 m_flags, m_houseId;
 
     stdext::boolean<false> m_selected;
+
+    stdext::packed_vector<CreaturePtr> m_walkingCreatures;
+    stdext::packed_vector<ThingPtr> m_things;
+
+    std::vector<EffectPtr> m_effects;
+    std::vector<ItemPtr> m_grounds;
+    std::vector<ItemPtr> m_topItems;
+    std::vector<ItemPtr> m_commonItems;
+    std::vector<ItemPtr> m_bottomItems;
+    std::vector<CreaturePtr> m_creatures;
+
+    std::vector<ItemPtr> m_animatedItems;
+
+    struct CountFlag {
+        int fullGround = 0;
+        int notWalkable = 0;
+        int notPathable = 0;
+        int notSingleDimension = 0;
+        int blockProjectile = 0;
+        int mustHookEast = 0;
+        int mustHookSouth = 0;
+        int totalElevation = 0;
+        int hasDisplacement = 0;
+        int isNotPathable = 0;
+        int elevation = 0;
+        int opaque = 0;
+        int hasLight = 0;
+    };
+
+    CountFlag m_countFlag;
+
+    CreaturePtr m_localPlayer;
 };
 
 #endif

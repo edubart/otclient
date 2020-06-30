@@ -27,9 +27,9 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 
-void Missile::draw(const Point& dest, float scaleFactor, bool animate, LightView *lightView)
+void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    if(m_id == 0 || !animate)
+    if(m_id == 0)
         return;
 
     int xPattern = 0, yPattern = 0;
@@ -68,17 +68,26 @@ void Missile::draw(const Point& dest, float scaleFactor, bool animate, LightView
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 {
-    m_direction = fromPosition.getDirectionFromPosition(toPosition);
-
     m_position = fromPosition;
     m_delta = Point(toPosition.x - fromPosition.x, toPosition.y - fromPosition.y);
-    m_duration = 150 * std::sqrt(m_delta.length());
+
+    const float deltaLength = m_delta.length();
+    if(deltaLength == 0) {
+        g_map.removeThing(this);
+        return;
+    }
+
+    m_direction = fromPosition.getDirectionFromPosition(toPosition);
+
+    m_duration = (Otc::MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(deltaLength);
     m_delta *= Otc::TILE_PIXELS;
     m_animationTimer.restart();
 
     // schedule removal
-    auto self = asMissile();
+    const auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+
+    startListenerPainter(m_duration / Otc::TILE_PIXELS);
 }
 
 void Missile::setId(uint32 id)

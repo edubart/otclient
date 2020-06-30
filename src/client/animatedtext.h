@@ -28,7 +28,7 @@
 #include <framework/core/timer.h>
 #include <framework/graphics/cachedtext.h>
 
-// @bindclass
+ // @bindclass
 class AnimatedText : public Thing
 {
 public:

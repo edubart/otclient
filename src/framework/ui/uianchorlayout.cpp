@@ -27,12 +27,12 @@ UIWidgetPtr UIAnchor::getHookedWidget(const UIWidgetPtr& widget, const UIWidgetP
 {
     // determine hooked widget
     UIWidgetPtr hookedWidget;
-    if(parentWidget) {
-        if(m_hookedWidgetId == "parent")
+    if (parentWidget) {
+        if (m_hookedWidgetId == "parent")
             hookedWidget = parentWidget;
-        else if(m_hookedWidgetId == "next")
+        else if (m_hookedWidgetId == "next")
             hookedWidget = parentWidget->getChildAfter(widget);
-        else if(m_hookedWidgetId == "prev")
+        else if (m_hookedWidgetId == "prev")
             hookedWidget = parentWidget->getChildBefore(widget);
         else
             hookedWidget = parentWidget->getChildById(m_hookedWidgetId);
@@ -44,11 +44,11 @@ int UIAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&
 {
     // determine hooked widget edge point
     Rect hookedWidgetRect = hookedWidget->getRect();
-    if(hookedWidget == parentWidget)
+    if (hookedWidget == parentWidget)
         hookedWidgetRect = parentWidget->getPaddingRect();
 
     int point = 0;
-    switch(m_hookedEdge) {
+    switch (m_hookedEdge) {
         case Fw::AnchorLeft:
             point = hookedWidgetRect.left();
             break;
@@ -73,8 +73,8 @@ int UIAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&
             break;
     }
 
-    if(hookedWidget == parentWidget) {
-        switch(m_hookedEdge) {
+    if (hookedWidget == parentWidget) {
+        switch (m_hookedEdge) {
             case Fw::AnchorLeft:
             case Fw::AnchorRight:
             case Fw::AnchorHorizontalCenter:
@@ -96,8 +96,8 @@ int UIAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&
 void UIAnchorGroup::addAnchor(const UIAnchorPtr& anchor)
 {
     // duplicated anchors must be replaced
-    for(UIAnchorPtr& other : m_anchors) {
-        if(other->getAnchoredEdge() == anchor->getAnchoredEdge()) {
+    for (UIAnchorPtr& other : m_anchors) {
+        if (other->getAnchoredEdge() == anchor->getAnchoredEdge()) {
             other = anchor;
             return;
         }
@@ -106,16 +106,16 @@ void UIAnchorGroup::addAnchor(const UIAnchorPtr& anchor)
 }
 
 void UIAnchorLayout::addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
-                               const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
+    const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
 {
-    if(!anchoredWidget)
+    if (!anchoredWidget)
         return;
 
     assert(anchoredWidget != getParentWidget());
 
     UIAnchorPtr anchor(new UIAnchor(anchoredEdge, hookedWidgetId, hookedEdge));
     UIAnchorGroupPtr& anchorGroup = m_anchorsGroups[anchoredWidget];
-    if(!anchorGroup)
+    if (!anchorGroup)
         anchorGroup = UIAnchorGroupPtr(new UIAnchorGroup);
 
     anchorGroup->addAnchor(anchor);
@@ -149,7 +149,7 @@ void UIAnchorLayout::fill(const UIWidgetPtr& anchoredWidget, const std::string& 
     addAnchor(anchoredWidget, Fw::AnchorBottom, hookedWidgetId, Fw::AnchorBottom);
 }
 
-void UIAnchorLayout::addWidget(const UIWidgetPtr& widget)
+void UIAnchorLayout::addWidget(const UIWidgetPtr&)
 {
     update();
 }
@@ -162,15 +162,15 @@ void UIAnchorLayout::removeWidget(const UIWidgetPtr& widget)
 bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, const UIAnchorGroupPtr& anchorGroup, UIWidgetPtr first)
 {
     UIWidgetPtr parentWidget = getParentWidget();
-    if(!parentWidget)
+    if (!parentWidget)
         return false;
 
-    if(first == widget) {
+    if (first == widget) {
         g_logger.error(stdext::format("child '%s' of parent widget '%s' is recursively anchored to itself, please fix this", widget->getId(), parentWidget->getId()));
         return false;
     }
 
-    if(!first)
+    if (!first)
         first = widget;
 
     Rect newRect = widget->getRect();
@@ -178,47 +178,49 @@ bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, const UIAnchorGroup
     bool horizontalMoved = false;
 
     // calculates new rect based on anchors
-    for(const UIAnchorPtr& anchor : anchorGroup->getAnchors()) {
+    for (const UIAnchorPtr& anchor : anchorGroup->getAnchors()) {
         // skip invalid anchors
-        if(anchor->getHookedEdge() == Fw::AnchorNone)
+        if (anchor->getHookedEdge() == Fw::AnchorNone)
             continue;
 
         // determine hooked widget
         UIWidgetPtr hookedWidget = anchor->getHookedWidget(widget, parentWidget);
 
         // skip invalid anchors
-        if(!hookedWidget)
+        if (!hookedWidget)
             continue;
 
-        if(hookedWidget != getParentWidget()) {
+        if (hookedWidget != getParentWidget()) {
             // update this hooked widget anchors
             auto it = m_anchorsGroups.find(hookedWidget);
-            if(it != m_anchorsGroups.end()) {
+            if (it != m_anchorsGroups.end()) {
                 const UIAnchorGroupPtr& hookedAnchorGroup = it->second;
-                if(!hookedAnchorGroup->isUpdated())
+                if (!hookedAnchorGroup->isUpdated())
                     updateWidget(hookedWidget, hookedAnchorGroup, first);
             }
         }
 
         int point = anchor->getHookedPoint(hookedWidget, parentWidget);
 
-        switch(anchor->getAnchoredEdge()) {
+        switch (anchor->getAnchoredEdge()) {
             case Fw::AnchorHorizontalCenter:
                 newRect.moveHorizontalCenter(point + widget->getMarginLeft() - widget->getMarginRight());
                 horizontalMoved = true;
                 break;
             case Fw::AnchorLeft:
-                if(!horizontalMoved) {
+                if (!horizontalMoved) {
                     newRect.moveLeft(point + widget->getMarginLeft());
                     horizontalMoved = true;
-                } else
+                }
+                else
                     newRect.setLeft(point + widget->getMarginLeft());
                 break;
             case Fw::AnchorRight:
-                if(!horizontalMoved) {
+                if (!horizontalMoved) {
                     newRect.moveRight(point - widget->getMarginRight());
                     horizontalMoved = true;
-                } else
+                }
+                else
                     newRect.setRight(point - widget->getMarginRight());
                 break;
             case Fw::AnchorVerticalCenter:
@@ -226,17 +228,19 @@ bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, const UIAnchorGroup
                 verticalMoved = true;
                 break;
             case Fw::AnchorTop:
-                if(!verticalMoved) {
+                if (!verticalMoved) {
                     newRect.moveTop(point + widget->getMarginTop());
                     verticalMoved = true;
-                } else
+                }
+                else
                     newRect.setTop(point + widget->getMarginTop());
                 break;
             case Fw::AnchorBottom:
-                if(!verticalMoved) {
+                if (!verticalMoved) {
                     newRect.moveBottom(point - widget->getMarginBottom());
                     verticalMoved = true;
-                } else
+                }
+                else
                     newRect.setBottom(point - widget->getMarginBottom());
                 break;
             default:
@@ -245,7 +249,7 @@ bool UIAnchorLayout::updateWidget(const UIWidgetPtr& widget, const UIAnchorGroup
     }
 
     bool changed = false;
-    if(widget->setRect(newRect))
+    if (widget->setRect(newRect))
         changed = true;
     anchorGroup->setUpdated(true);
     return changed;
@@ -256,17 +260,17 @@ bool UIAnchorLayout::internalUpdate()
     bool changed = false;
 
     // reset all anchors groups update state
-    for(auto& it : m_anchorsGroups) {
+    for (auto& it : m_anchorsGroups) {
         const UIAnchorGroupPtr& anchorGroup = it.second;
         anchorGroup->setUpdated(false);
     }
 
     // update all anchors
-    for(auto& it : m_anchorsGroups) {
+    for (auto& it : m_anchorsGroups) {
         const UIWidgetPtr& widget = it.first;
         const UIAnchorGroupPtr& anchorGroup = it.second;
-        if(!anchorGroup->isUpdated()) {
-            if(updateWidget(widget, anchorGroup))
+        if (!anchorGroup->isUpdated()) {
+            if (updateWidget(widget, anchorGroup))
                 changed = true;
         }
     }

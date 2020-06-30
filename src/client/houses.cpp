@@ -30,7 +30,7 @@ House::House()
 {
 }
 
-House::House(uint32 hId, const std::string &name, const Position &pos)
+House::House(uint32 hId, const std::string& name, const Position& pos)
 {
     setId(hId);
     setName(name);
@@ -55,20 +55,20 @@ TilePtr House::getTile(const Position& position)
 
 void House::addDoor(const ItemPtr& door)
 {
-    if (!door) return;
+    if(!door) return;
     door->setDoorId(m_lastDoorId);
-    m_doors[m_lastDoorId++] = door;
+    m_doors[++m_lastDoorId] = door;
 }
 
 void House::removeDoorById(uint32 doorId)
 {
     if(doorId >= m_lastDoorId)
         stdext::throw_exception(stdext::format("Failed to remove door of id %d (would overflow), max id: %d",
-                doorId, m_lastDoorId));
+                                               doorId, m_lastDoorId));
     m_doors[doorId] = nullptr;
 }
 
-void House::load(const TiXmlElement *elem)
+void House::load(const TiXmlElement* elem)
 {
     std::string name = elem->Attribute("name");
     if(name.empty())
@@ -129,7 +129,7 @@ HousePtr HouseManager::getHouse(uint32 houseId)
 HousePtr HouseManager::getHouseByName(std::string name)
 {
     auto it = std::find_if(m_houses.begin(), m_houses.end(),
-                           [=] (const HousePtr& house) -> bool { return house->getName() == name; });
+                           [=](const HousePtr& house) -> bool { return house->getName() == name; });
     return it != m_houses.end() ? *it : nullptr;
 }
 
@@ -141,11 +141,11 @@ void HouseManager::load(const std::string& fileName)
         if(doc.Error())
             stdext::throw_exception(stdext::format("failed to load '%s': %s (House XML)", fileName, doc.ErrorDesc()));
 
-        TiXmlElement *root = doc.FirstChildElement();
+        TiXmlElement* root = doc.FirstChildElement();
         if(!root || root->ValueTStr() != "houses")
             stdext::throw_exception("invalid root tag name");
 
-        for(TiXmlElement *elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
+        for(TiXmlElement* elem = root->FirstChildElement(); elem; elem = elem->NextSiblingElement()) {
             if(elem->ValueTStr() != "house")
                 stdext::throw_exception("invalid house tag.");
 
@@ -175,12 +175,12 @@ void HouseManager::save(const std::string& fileName)
         doc.LinkEndChild(root);
 
         for(auto house : m_houses) {
-            TiXmlElement *elem = new TiXmlElement("house");
+            TiXmlElement* elem = new TiXmlElement("house");
             house->save(elem);
             root->LinkEndChild(elem);
         }
 
-        if(!doc.SaveFile("data"+fileName))
+        if(!doc.SaveFile("data" + fileName))
             stdext::throw_exception(stdext::format("failed to save houses XML %s: %s", fileName, doc.ErrorDesc()));
     } catch(std::exception& e) {
         g_logger.error(stdext::format("Failed to save '%s': %s", fileName, e.what()));
@@ -199,12 +199,12 @@ HouseList HouseManager::filterHouses(uint32 townId)
 HouseList::iterator HouseManager::findHouse(uint32 houseId)
 {
     return std::find_if(m_houses.begin(), m_houses.end(),
-                           [=] (const HousePtr& house) -> bool { return house->getId() == houseId; });
+                        [=](const HousePtr& house) -> bool { return house->getId() == houseId; });
 }
 
 void HouseManager::sort()
 {
-    m_houses.sort([] (const HousePtr& lhs, const HousePtr& rhs) { return lhs->getName() < rhs->getName(); });
+    m_houses.sort([](const HousePtr& lhs, const HousePtr& rhs) { return lhs->getName() < rhs->getName(); });
 }
 
 /* vim: set ts=4 sw=4 et: */

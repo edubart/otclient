@@ -46,6 +46,7 @@ public:
     void draw(const Rect& dest, const Rect& src);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
+    void requestDrawing(const bool force) { if(force || m_minTimeRender.ticksElapsed() > 10) m_redraw = true; }
 
 private:
     void drawGlobalLight(const Light& light);
@@ -57,6 +58,10 @@ private:
     FrameBufferPtr m_lightbuffer;
     Light m_globalLight;
     std::vector<LightSource> m_lightMap;
+
+    bool m_redraw;
+
+    Timer m_minTimeRender;
 };
 
 #endif

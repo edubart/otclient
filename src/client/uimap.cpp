@@ -38,7 +38,7 @@ UIMap::UIMap()
     m_aspectRatio = m_mapView->getVisibleDimension().ratio();
     m_maxZoomIn = 3;
     m_maxZoomOut = 513;
-    m_mapRect.resize(1,1);
+    m_mapRect.resize(1, 1);
     g_map.addMapView(m_mapView);
 }
 
@@ -145,7 +145,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
     // we must check every floor, from top to bottom to check for a clickable tile
     TilePtr tile;
     tilePos.coveredUp(tilePos.z - m_mapView->getCachedFirstVisibleFloor());
-    for(int i = m_mapView->getCachedFirstVisibleFloor(); i <= m_mapView->getCachedLastVisibleFloor(); i++) {
+    for(int i = m_mapView->getCachedFirstVisibleFloor(); i <= m_mapView->getCachedLastVisibleFloor(); ++i) {
         tile = g_map.getTile(tilePos);
         if(tile && tile->isClickable())
             break;
@@ -170,8 +170,6 @@ void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleN
             setDrawTexts(node->value<bool>());
         else if(node->tag() == "draw-lights")
             setDrawLights(node->value<bool>());
-        else if(node->tag() == "animated")
-            setAnimated(node->value<bool>());
     }
 }
 
@@ -199,6 +197,8 @@ void UIMap::updateVisibleDimension()
 
     if(m_keepAspectRatio)
         updateMapSize();
+
+    g_map.requestDrawing(true, true);
 }
 
 void UIMap::updateMapSize()
@@ -207,7 +207,7 @@ void UIMap::updateMapSize()
     Size mapSize;
     if(m_keepAspectRatio) {
         Rect mapRect = clippingRect.expanded(-1);
-        mapSize = Size(m_aspectRatio*m_zoom, m_zoom);
+        mapSize = Size(m_aspectRatio * m_zoom, m_zoom);
         mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
     } else {
         mapSize = clippingRect.expanded(-1).size();

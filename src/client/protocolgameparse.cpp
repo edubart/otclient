@@ -212,7 +212,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerEditList:
                 parseEditList(msg);
                 break;
-            // PROTOCOL>=1038
+                // PROTOCOL>=1038
             case Proto::GameServerPremiumTrigger:
                 parsePremiumTrigger(msg);
                 break;
@@ -300,7 +300,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerQuestLine:
                 parseQuestLine(msg);
                 break;
-            // PROTOCOL>=870
+                // PROTOCOL>=870
             case Proto::GameServerSpellDelay:
                 parseSpellCooldown(msg);
                 break;
@@ -310,7 +310,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerMultiUseDelay:
                 parseMultiUseCooldown(msg);
                 break;
-            // PROTOCOL>=910
+                // PROTOCOL>=910
             case Proto::GameServerChannelEvent:
                 parseChannelEvent(msg);
                 break;
@@ -320,29 +320,29 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerPlayerInventory:
                 parsePlayerInventory(msg);
                 break;
-            // PROTOCOL>=950
+                // PROTOCOL>=950
             case Proto::GameServerPlayerDataBasic:
                 parsePlayerInfo(msg);
                 break;
-            // PROTOCOL>=970
+                // PROTOCOL>=970
             case Proto::GameServerModalDialog:
                 parseModalDialog(msg);
                 break;
-            // PROTOCOL>=980
+                // PROTOCOL>=980
             case Proto::GameServerLoginSuccess:
                 parseLogin(msg);
                 break;
             case Proto::GameServerEnterGame:
                 parseEnterGame(msg);
                 break;
-            // PROTOCOL>=1000
+                // PROTOCOL>=1000
             case Proto::GameServerCreatureMarks:
                 parseCreaturesMark(msg);
                 break;
             case Proto::GameServerCreatureType:
                 parseCreatureType(msg);
                 break;
-            // PROTOCOL>=1055
+                // PROTOCOL>=1055
             case Proto::GameServerBlessings:
                 parseBlessings(msg);
                 break;
@@ -355,7 +355,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerPreset:
                 parsePreset(msg);
                 break;
-            // PROTOCOL>=1080
+                // PROTOCOL>=1080
             case Proto::GameServerCoinBalanceUpdating:
                 parseCoinBalanceUpdating(msg);
                 break;
@@ -383,14 +383,14 @@ void ProtocolGame::parseMessage(const InputMessagePtr &msg)
             case Proto::GameServerStore:
                 parseStore(msg);
                 break;
-            // PROTOCOL>=1097
+                // PROTOCOL>=1097
             case Proto::GameServerStoreButtonIndicators:
                 parseStoreButtonIndicators(msg);
                 break;
             case Proto::GameServerSetStoreDeepLink:
                 parseSetStoreDeepLink(msg);
                 break;
-            // otclient ONLY
+                // otclient ONLY
             case Proto::GameServerExtendedOpcode:
                 parseExtendedOpcode(msg);
                 break;
@@ -483,13 +483,12 @@ void ProtocolGame::parseLogin(const InputMessagePtr &msg)
     uint playerId = msg->getU32();
     int serverBeat = msg->getU16();
 
-    if (g_game.getFeature(Otc::GameNewSpeedLaw))
-    {
-        double speedA = msg->getDouble();
-        double speedB = msg->getDouble();
-        double speedC = msg->getDouble();
-        m_localPlayer->setSpeedFormula(speedA, speedB, speedC);
+    if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
+        Creature::speedA = msg->getDouble();
+        Creature::speedB = msg->getDouble();
+        Creature::speedC = msg->getDouble();
     }
+
     bool canReportBugs = msg->getU8();
 
     if (g_game.getClientVersion() >= 1054)
@@ -584,8 +583,7 @@ void ProtocolGame::parseStore(const InputMessagePtr &msg)
     parseCoinBalance(msg);
 
     int categories = msg->getU16();
-    for (int i = 0; i < categories; i++)
-    {
+    for(int i = 0; i < categories; ++i) {
         std::string category = msg->getString();
         std::string description = msg->getString();
 
@@ -595,8 +593,7 @@ void ProtocolGame::parseStore(const InputMessagePtr &msg)
 
         std::vector<std::string> icons;
         int iconCount = msg->getU8();
-        for (int j = 0; j < iconCount; j++)
-        {
+        for(int j = 0; j < iconCount; ++j) {
             std::string icon = msg->getString();
             icons.push_back(icon);
         }
@@ -627,7 +624,7 @@ void ProtocolGame::parseCoinBalance(const InputMessagePtr &msg)
 void ProtocolGame::parseCoinBalanceUpdating(const InputMessagePtr &msg)
 {
     // coin balance can be updating and might not be accurate
-    bool isUpdating = msg->getU8() == 1;
+    msg->getU8(); // == 1; // isUpdating
 }
 
 void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr &msg)
@@ -642,14 +639,13 @@ void ProtocolGame::parseCompleteStorePurchase(const InputMessagePtr &msg)
     g_logger.info(stdext::format("Purchase Complete: %s\nAvailable coins: %d (transferable: %d)", message, coins, transferableCoins));
 }
 
-void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr &msg)
+void ProtocolGame::parseStoreTransactionHistory(const InputMessagePtr& msg)
 {
     int currentPage = msg->getU32();
     msg->getU32(); // pageCount
 
     int entries = msg->getU8();
-    for (int i = 0; i < entries; i++)
-    {
+    for(int i = 0; i < entries; ++i) {
         int time = msg->getU32();
         int productType = msg->getU8();
         int coinChange = msg->getU32();
@@ -664,9 +660,8 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr &msg)
     msg->getString(); // categoryName
 
     int offers = msg->getU16();
-    for (int i = 0; i < offers; i++)
-    {
-        msg->getU32();    // offerId
+    for(int i = 0; i < offers; ++i) {
+        msg->getU32(); // offerId
         msg->getString(); // offerName
         msg->getString(); // offerDescription
 
@@ -686,15 +681,13 @@ void ProtocolGame::parseStoreOffers(const InputMessagePtr &msg)
 
         std::vector<std::string> icons;
         int iconCount = msg->getU8();
-        for (int j = 0; j < iconCount; j++)
-        {
+        for(int j = 0; j < iconCount; ++j) {
             std::string icon = msg->getString();
             icons.push_back(icon);
         }
 
         int subOffers = msg->getU16();
-        for (int j = 0; j < subOffers; j++)
-        {
+        for(int j = 0; j < subOffers; ++j) {
             msg->getString(); // name
             msg->getString(); // description
 
@@ -788,12 +781,12 @@ void ProtocolGame::parseLoginToken(const InputMessagePtr &msg)
     g_game.processLoginToken(unknown);
 }
 
-void ProtocolGame::parsePing(const InputMessagePtr &msg)
+void ProtocolGame::parsePing(const InputMessagePtr&)
 {
     g_game.processPing();
 }
 
-void ProtocolGame::parsePingBack(const InputMessagePtr &msg)
+void ProtocolGame::parsePingBack(const InputMessagePtr&)
 {
     g_game.processPingBack();
 }
@@ -861,7 +854,7 @@ void ProtocolGame::parseMapMoveEast(const InputMessagePtr &msg)
         pos = getPosition(msg);
     else
         pos = g_map.getCentralPosition();
-    pos.x++;
+    ++pos.x;
 
     AwareRange range = g_map.getAwareRange();
     setMapDescription(msg, pos.x + range.right, pos.y - range.top, pos.z, 1, range.vertical());
@@ -997,7 +990,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr &msg)
     int itemCount = msg->getU8();
 
     std::vector<ItemPtr> items(itemCount);
-    for (int i = 0; i < itemCount; i++)
+    for(int i = 0; i < itemCount; ++i)
         items[i] = getItem(msg);
 
     g_game.processOpenContainer(containerId, containerItem, name, capacity, hasParent, items, isUnlocked, hasPages, containerSize, firstIndex);
@@ -1114,8 +1107,7 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr &msg)
         money = msg->getU32();
 
     int size = msg->getU8();
-    for (int i = 0; i < size; i++)
-    {
+    for(int i = 0; i < size; ++i) {
         int itemId = msg->getU16();
         int amount;
 
@@ -1141,7 +1133,7 @@ void ProtocolGame::parseOwnTrade(const InputMessagePtr &msg)
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
-    for (int i = 0; i < count; i++)
+    for(int i = 0; i < count; ++i)
         items[i] = getItem(msg);
 
     g_game.processOwnTrade(name, items);
@@ -1153,7 +1145,7 @@ void ProtocolGame::parseCounterTrade(const InputMessagePtr &msg)
     int count = msg->getU8();
 
     std::vector<ItemPtr> items(count);
-    for (int i = 0; i < count; i++)
+    for(int i = 0; i < count; ++i)
         items[i] = getItem(msg);
 
     g_game.processCounterTrade(name, items);
@@ -1171,6 +1163,7 @@ void ProtocolGame::parseWorldLight(const InputMessagePtr &msg)
     light.color = msg->getU8();
 
     g_map.setLight(light);
+    g_map.requestDrawing(true, true, true);
 }
 
 void ProtocolGame::parseMagicEffect(const InputMessagePtr &msg)
@@ -1242,8 +1235,7 @@ void ProtocolGame::parseTrappers(const InputMessagePtr &msg)
     if (numTrappers > 8)
         g_logger.traceError("too many trappers");
 
-    for (int i = 0; i < numTrappers; ++i)
-    {
+    for(int i = 0; i < numTrappers; ++i) {
         uint id = msg->getU32();
         CreaturePtr creature = g_map.getCreatureById(id);
         if (creature)
@@ -1263,13 +1255,6 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr &msg)
     CreaturePtr creature = g_map.getCreatureById(id);
     if (creature)
         creature->setHealthPercent(healthPercent);
-
-    // some servers has a bug in get spectators and sends unknown creatures updates
-    // so this code is disabled
-    /*
-    else
-        g_logger.traceError("could not get creature");
-    */
 }
 
 void ProtocolGame::parseCreatureLight(const InputMessagePtr &msg)
@@ -1281,10 +1266,13 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr &msg)
     light.color = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setLight(light);
-    else
+    if(!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setLight(light);
+    g_map.requestDrawing(true, true, true);
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr &msg)
@@ -1293,10 +1281,13 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr &msg)
     Outfit outfit = getOutfit(msg);
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setOutfit(outfit);
-    else
+    if(!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setOutfit(outfit);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureSpeed(const InputMessagePtr &msg)
@@ -1310,19 +1301,11 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr &msg)
     int speed = msg->getU16();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-    {
-        creature->setSpeed(speed);
-        if (baseSpeed != -1)
-            creature->setBaseSpeed(baseSpeed);
-    }
+    if(!creature) return;
 
-    // some servers has a bug in get spectators and sends unknown creatures updates
-    // so this code is disabled
-    /*
-    else
-        g_logger.traceError("could not get creature");
-    */
+    creature->setSpeed(speed);
+    if(baseSpeed != -1)
+        creature->setBaseSpeed(baseSpeed);
 }
 
 void ProtocolGame::parseCreatureSkulls(const InputMessagePtr &msg)
@@ -1331,10 +1314,13 @@ void ProtocolGame::parseCreatureSkulls(const InputMessagePtr &msg)
     int skull = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setSkull(skull);
-    else
+    if(!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setSkull(skull);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureShields(const InputMessagePtr &msg)
@@ -1343,10 +1329,13 @@ void ProtocolGame::parseCreatureShields(const InputMessagePtr &msg)
     int shield = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setShield(shield);
-    else
+    if(!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setShield(shield);
+    g_map.requestDrawing(true, false);
 }
 
 void ProtocolGame::parseCreatureUnpass(const InputMessagePtr &msg)
@@ -1355,10 +1344,12 @@ void ProtocolGame::parseCreatureUnpass(const InputMessagePtr &msg)
     bool unpass = msg->getU8();
 
     CreaturePtr creature = g_map.getCreatureById(id);
-    if (creature)
-        creature->setPassable(!unpass);
-    else
+    if(!creature) {
         g_logger.traceError("could not get creature");
+        return;
+    }
+
+    creature->setPassable(!unpass);
 }
 
 void ProtocolGame::parseEditText(const InputMessagePtr &msg)
@@ -1399,14 +1390,13 @@ void ProtocolGame::parsePremiumTrigger(const InputMessagePtr &msg)
 {
     int triggerCount = msg->getU8();
     std::vector<int> triggers;
-    for (int i = 0; i < triggerCount; ++i)
-    {
+
+    for(int i = 0; i < triggerCount; ++i) {
         triggers.push_back(msg->getU8());
     }
 
-    if (g_game.getClientVersion() <= 1096)
-    {
-        bool something = msg->getU8() == 1;
+    if(g_game.getClientVersion() <= 1096) {
+        msg->getU8(); // == 1; // something
     }
 }
 
@@ -1420,7 +1410,7 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr &msg)
 
     int spellCount = msg->getU16();
     std::vector<int> spells;
-    for (int i = 0; i < spellCount; ++i)
+    for(int i = 0; i < spellCount; ++i)
         spells.push_back(msg->getU8()); // spell id
 
     m_localPlayer->setPremium(premium);
@@ -1473,8 +1463,8 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr &msg)
     double baseSpeed = msg->getU16();
     double regeneration = msg->getU16();
     double training = msg->getU16();
-    int remainingStoreXpBoostSeconds = msg->getU16();
-    bool canBuyMoreStoreXpBoosts = msg->getU8();
+    msg->getU16(); // remainingStoreXpBoostSeconds
+    msg->getU8(); // canBuyMoreStoreXpBoosts
 
     m_localPlayer->setHealth(health, maxHealth);
     m_localPlayer->setFreeCapacity(freeCapacity);
@@ -1499,7 +1489,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr &msg)
     m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
     m_localPlayer->setBaseMagicLevel(baseMagicLevel);
 
-    for (int skill = 0; skill < Otc::LastSkill; skill++) {
+    for (int skill = 0; skill < Otc::LastSkill; ++skill) {
         uint16_t level = msg->getU16();
         uint16_t baseLevel = msg->getU16();
 
@@ -1583,39 +1573,38 @@ void ProtocolGame::parseTalk(const InputMessagePtr &msg)
     int channelId = 0;
     Position pos;
 
-    switch (mode)
-    {
-    case Otc::MessageSay:
-    case Otc::MessageWhisper:
-    case Otc::MessageYell:
-    case Otc::MessageMonsterSay:
-    case Otc::MessageMonsterYell:
-    case Otc::MessageNpcTo:
-    case Otc::MessageBarkLow:
-    case Otc::MessageBarkLoud:
-    case Otc::MessageSpell:
-    case Otc::MessageNpcFromStartBlock:
-        pos = getPosition(msg);
-        break;
-    case Otc::MessageChannel:
-    case Otc::MessageChannelManagement:
-    case Otc::MessageChannelHighlight:
-    case Otc::MessageGamemasterChannel:
-        channelId = msg->getU16();
-        break;
-    case Otc::MessageNpcFrom:
-    case Otc::MessagePrivateFrom:
-    case Otc::MessageGamemasterBroadcast:
-    case Otc::MessageGamemasterPrivateFrom:
-    case Otc::MessageRVRAnswer:
-    case Otc::MessageRVRContinue:
-        break;
-    case Otc::MessageRVRChannel:
-        msg->getU32();
-        break;
-    default:
-        stdext::throw_exception(stdext::format("unknown message mode %d", mode));
-        break;
+    switch(mode) {
+        case Otc::MessageSay:
+        case Otc::MessageWhisper:
+        case Otc::MessageYell:
+        case Otc::MessageMonsterSay:
+        case Otc::MessageMonsterYell:
+        case Otc::MessageNpcTo:
+        case Otc::MessageBarkLow:
+        case Otc::MessageBarkLoud:
+        case Otc::MessageSpell:
+        case Otc::MessageNpcFromStartBlock:
+            pos = getPosition(msg);
+            break;
+        case Otc::MessageChannel:
+        case Otc::MessageChannelManagement:
+        case Otc::MessageChannelHighlight:
+        case Otc::MessageGamemasterChannel:
+            channelId = msg->getU16();
+            break;
+        case Otc::MessageNpcFrom:
+        case Otc::MessagePrivateFrom:
+        case Otc::MessageGamemasterBroadcast:
+        case Otc::MessageGamemasterPrivateFrom:
+        case Otc::MessageRVRAnswer:
+        case Otc::MessageRVRContinue:
+            break;
+        case Otc::MessageRVRChannel:
+            msg->getU32();
+            break;
+        default:
+            stdext::throw_exception(stdext::format("unknown message mode %d", mode));
+            break;
     }
 
     std::string text = msg->getString();
@@ -1626,9 +1615,8 @@ void ProtocolGame::parseTalk(const InputMessagePtr &msg)
 void ProtocolGame::parseChannelList(const InputMessagePtr &msg)
 {
     int count = msg->getU8();
-    std::vector<std::tuple<int, std::string>> channelList;
-    for (int i = 0; i < count; i++)
-    {
+    std::vector<std::tuple<int, std::string> > channelList;
+    for(int i = 0; i < count; ++i) {
         int id = msg->getU16();
         std::string name = msg->getString();
         channelList.emplace_back(id, name);
@@ -1694,11 +1682,10 @@ void ProtocolGame::parseRuleViolationRemove(const InputMessagePtr &msg)
 void ProtocolGame::parseRuleViolationCancel(const InputMessagePtr &msg)
 {
     std::string name = msg->getString();
-
     g_game.processRuleViolationCancel(name);
 }
 
-void ProtocolGame::parseRuleViolationLock(const InputMessagePtr &msg)
+void ProtocolGame::parseRuleViolationLock(const InputMessagePtr&)
 {
     g_game.processRuleViolationLock();
 }
@@ -1709,73 +1696,71 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr &msg)
     Otc::MessageMode mode = Proto::translateMessageModeFromServer(code);
     std::string text;
 
-    switch (mode)
-    {
-    case Otc::MessageChannelManagement:
-    {
-        msg->getU16(); // channelId
-        text = msg->getString();
-        break;
-    }
-    case Otc::MessageGuild:
-    case Otc::MessagePartyManagement:
-    case Otc::MessageParty:
-    {
-        msg->getU16(); // channelId
-        text = msg->getString();
-        break;
-    }
-    case Otc::MessageDamageDealed:
-    case Otc::MessageDamageReceived:
-    case Otc::MessageDamageOthers:
-    {
-        Position pos = getPosition(msg);
-        uint value[2];
-        int color[2];
-
-        // physical damage
-        value[0] = msg->getU32();
-        color[0] = msg->getU8();
-
-        // magic damage
-        value[1] = msg->getU32();
-        color[1] = msg->getU8();
-        text = msg->getString();
-
-        for (int i = 0; i < 2; ++i)
+    switch(mode) {
+        case Otc::MessageChannelManagement:
         {
-            if (value[i] == 0)
-                continue;
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-            animatedText->setColor(color[i]);
-            animatedText->setText(stdext::to_string(value[i]));
-            g_map.addThing(animatedText, pos);
+            msg->getU16(); // channelId
+            text = msg->getString();
+            break;
         }
-        break;
-    }
-    case Otc::MessageHeal:
-    case Otc::MessageMana:
-    case Otc::MessageExp:
-    case Otc::MessageHealOthers:
-    case Otc::MessageExpOthers:
-    {
-        Position pos = getPosition(msg);
-        uint value = msg->getU32();
-        int color = msg->getU8();
-        text = msg->getString();
+        case Otc::MessageGuild:
+        case Otc::MessagePartyManagement:
+        case Otc::MessageParty:
+        {
+            msg->getU16(); // channelId
+            text = msg->getString();
+            break;
+        }
+        case Otc::MessageDamageDealed:
+        case Otc::MessageDamageReceived:
+        case Otc::MessageDamageOthers:
+        {
+            Position pos = getPosition(msg);
+            uint value[2];
+            int color[2];
 
-        AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
-        animatedText->setColor(color);
-        animatedText->setText(stdext::to_string(value));
-        g_map.addThing(animatedText, pos);
-        break;
-    }
-    case Otc::MessageInvalid:
-        stdext::throw_exception(stdext::format("unknown message mode %d", mode));
-        break;
-    default:
-        text = msg->getString();
-        break;
+            // physical damage
+            value[0] = msg->getU32();
+            color[0] = msg->getU8();
+
+            // magic damage
+            value[1] = msg->getU32();
+            color[1] = msg->getU8();
+            text = msg->getString();
+
+            for(int i = 0; i < 2; ++i) {
+                if(value[i] == 0)
+                    continue;
+                AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+                animatedText->setColor(color[i]);
+                animatedText->setText(stdext::to_string(value[i]));
+                g_map.addThing(animatedText, pos);
+            }
+            break;
+        }
+        case Otc::MessageHeal:
+        case Otc::MessageMana:
+        case Otc::MessageExp:
+        case Otc::MessageHealOthers:
+        case Otc::MessageExpOthers:
+        {
+            Position pos = getPosition(msg);
+            uint value = msg->getU32();
+            int color = msg->getU8();
+            text = msg->getString();
+
+            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+            animatedText->setColor(color);
+            animatedText->setText(stdext::to_string(value));
+            g_map.addThing(animatedText, pos);
+            break;
+        }
+        case Otc::MessageInvalid:
+            stdext::throw_exception(stdext::format("unknown message mode %d", mode));
+            break;
+        default:
+            text = msg->getString();
+            break;
     }
 
     g_game.processTextMessage(mode, text);
@@ -1811,8 +1796,8 @@ void ProtocolGame::parseFloorChangeUp(const InputMessagePtr &msg)
     else if (pos.z > Otc::SEA_FLOOR)
         skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), 3, skip);
 
-    pos.x++;
-    pos.y++;
+    ++pos.x;
+    ++pos.y;
     g_map.setCentralPosition(pos);
 }
 
@@ -1824,7 +1809,7 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr &msg)
     else
         pos = g_map.getCentralPosition();
     AwareRange range = g_map.getAwareRange();
-    pos.z++;
+    ++pos.z;
 
     int skip = 0;
     if (pos.z == Otc::UNDERGROUND_FLOOR)
@@ -1832,8 +1817,7 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr &msg)
         int j, i;
         for (i = pos.z, j = -1; i <= pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
             skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, i, range.horizontal(), range.vertical(), j, skip);
-    }
-    else if (pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z - 1)
+    } else if(pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z - 1)
         skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), -3, skip);
 
     pos.x--;
@@ -1848,8 +1832,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr &msg)
 
     // new outfit model size is uint_16
     uint16_t outfitCount = msg->getU16();
-    for (int i = 0; i < outfitCount; i++)
-    {
+    for (int i = 0; i < outfitCount; ++i) {
         int outfitId = msg->getU16();
         std::string outfitName = msg->getString();
         int outfitAddons = msg->getU8();
@@ -1861,12 +1844,10 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr &msg)
     }
 
     std::vector<std::tuple<int, std::string>> mountList;
-    if (g_game.getFeature(Otc::GamePlayerMounts))
-    {
+    if (g_game.getFeature(Otc::GamePlayerMounts)) {
         // new mounts mondel size is uint_16
         int mountCount = msg->getU16();
-        for (int i = 0; i < mountCount; ++i)
-        {
+        for (int i = 0; i < mountCount; ++i) {
             int mountId = msg->getU16();              // mount type
             std::string mountName = msg->getString(); // mount name
 
@@ -1913,9 +1894,7 @@ void ProtocolGame::parseVipState(const InputMessagePtr &msg)
     {
         uint status = msg->getU8();
         g_game.processVipStateChange(id, status);
-    }
-    else
-    {
+    } else {
         g_game.processVipStateChange(id, 1);
     }
 }
@@ -1953,8 +1932,7 @@ void ProtocolGame::parseQuestLog(const InputMessagePtr &msg)
 {
     std::vector<std::tuple<int, std::string, bool>> questList;
     int questsCount = msg->getU16();
-    for (int i = 0; i < questsCount; i++)
-    {
+    for(int i = 0; i < questsCount; ++i) {
         int id = msg->getU16();
         std::string name = msg->getString();
         bool completed = msg->getU8();
@@ -1969,8 +1947,7 @@ void ProtocolGame::parseQuestLine(const InputMessagePtr &msg)
     std::vector<std::tuple<std::string, std::string>> questMissions;
     int questId = msg->getU16();
     int missionCount = msg->getU8();
-    for (int i = 0; i < missionCount; i++)
-    {
+    for(int i = 0; i < missionCount; ++i) {
         msg->getU16(); // repeated quest ID
         std::string missionName = msg->getString();
         std::string missionDescrition = msg->getString();
@@ -1993,8 +1970,7 @@ void ProtocolGame::parseItemInfo(const InputMessagePtr &msg)
 {
     std::vector<std::tuple<ItemPtr, std::string>> list;
     int size = msg->getU8();
-    for (int i = 0; i < size; ++i)
-    {
+    for(int i = 0; i < size; ++i) {
         ItemPtr item(new Item);
         item->setId(msg->getU16());
         item->setCountOrSubType(msg->getU8());
@@ -2009,8 +1985,7 @@ void ProtocolGame::parseItemInfo(const InputMessagePtr &msg)
 void ProtocolGame::parsePlayerInventory(const InputMessagePtr &msg)
 {
     int size = msg->getU16();
-    for (int i = 0; i < size; ++i)
-    {
+    for(int i = 0; i < size; ++i) {
         msg->getU16(); // id
         msg->getU8();  // subtype
         msg->getU16(); // count
@@ -2046,9 +2021,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr &msg)
     {
         escapeButton = msg->getU8();
         enterButton = msg->getU8();
-    }
-    else
-    {
+    } else {
         enterButton = msg->getU8();
         escapeButton = msg->getU8();
     }
@@ -2098,8 +2071,7 @@ void ProtocolGame::parseCreaturesMark(const InputMessagePtr &msg)
         len = msg->getU8();
     }
 
-    for (int i = 0; i < len; ++i)
-    {
+    for(int i = 0; i < len; ++i) {
         uint32 id = msg->getU32();
         bool isPermanent = msg->getU8() != 1;
         uint8 markType = msg->getU8();
@@ -2149,9 +2121,7 @@ void ProtocolGame::setMapDescription(const InputMessagePtr &msg, int x, int y, i
         startz = z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
         endz = std::min<int>(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
         zstep = 1;
-    }
-    else
-    {
+    } else {
         startz = Otc::SEA_FLOOR;
         endz = 0;
         zstep = -1;
@@ -2164,10 +2134,8 @@ void ProtocolGame::setMapDescription(const InputMessagePtr &msg, int x, int y, i
 
 int ProtocolGame::setFloorDescription(const InputMessagePtr &msg, int x, int y, int z, int width, int height, int offset, int skip)
 {
-    for (int nx = 0; nx < width; nx++)
-    {
-        for (int ny = 0; ny < height; ny++)
-        {
+    for(int nx = 0; nx < width; ++nx) {
+        for(int ny = 0; ny < height; ++ny) {
             Position tilePos(x + nx + offset, y + ny + offset, z);
             if (skip == 0)
                 skip = setTileDescription(msg, tilePos);
@@ -2186,9 +2154,8 @@ int ProtocolGame::setTileDescription(const InputMessagePtr &msg, Position positi
     g_map.cleanTile(position);
 
     bool gotEffect = false;
-    for (int stackPos = 0; stackPos < 256; stackPos++)
-    {
-        if (msg->peekU16() >= 0xff00)
+    for(int stackPos = 0; stackPos < 256; ++stackPos) {
+        if(msg->peekU16() >= 0xff00)
             return msg->getU16() & 0xff;
 
         if (g_game.getFeature(Otc::GameEnvironmentEffect) && !gotEffect)
@@ -2233,19 +2200,14 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr &msg)
         outfit.setLegs(legs);
         outfit.setFeet(feet);
         outfit.setAddons(addons);
-    }
-    else
-    {
+    } else {
         int lookTypeEx = msg->getU16();
         if (lookTypeEx == 0)
         {
             outfit.setCategory(ThingCategoryEffect);
             outfit.setAuxId(13); // invisible effect id
-        }
-        else
-        {
-            if (!g_things.isValidDatId(lookTypeEx, ThingCategoryItem))
-            {
+        } else {
+            if(!g_things.isValidDatId(lookTypeEx, ThingCategoryItem)) {
                 g_logger.traceError(stdext::format("invalid outfit looktypeex %d", lookTypeEx));
                 lookTypeEx = 0;
             }
@@ -2348,8 +2310,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr &msg, int type)
                     creature = m_localPlayer;
                 else
                     creature = PlayerPtr(new Player);
-            }
-            else if (creatureType == Proto::CreatureTypeMonster)
+            } else if(creatureType == Proto::CreatureTypeMonster)
                 creature = MonsterPtr(new Monster);
             else if (creatureType == Proto::CreatureTypeNpc)
                 creature = NpcPtr(new Npc);
@@ -2484,7 +2445,7 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr &msg, int id)
     return item;
 }
 
-StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr &msg, int id)
+StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int)
 {
     int colorByte = msg->getU8();
     Color color = Color::from8bit(colorByte);

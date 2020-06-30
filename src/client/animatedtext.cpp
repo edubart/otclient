@@ -58,8 +58,7 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
             Color color = m_color;
             color.setAlpha((float)(1 - (t - t0) / (tf - t0)));
             g_painter->setColor(color);
-        }
-        else
+        } else
             g_painter->setColor(m_color);
         m_cachedText.draw(rect);
     }
@@ -102,8 +101,7 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
         std::string text = stdext::format("%d", number + otherNumber);
         m_cachedText.setText(text);
         return true;
-    }
-    catch(...) {
+    } catch(...) {
         return false;
     }
 }

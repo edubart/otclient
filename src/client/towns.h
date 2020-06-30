@@ -29,8 +29,8 @@
 class Town : public LuaObject
 {
 public:
-    Town() { }
-    Town(uint32 tid, const std::string& name, const Position& pos=Position());
+    Town() {}
+    Town(uint32 tid, const std::string& name, const Position& pos = Position());
 
     void setId(uint32 tid) { m_id = tid; }
     void setName(const std::string& name) { m_name = name; }
