@@ -28,9 +28,9 @@
 class Client
 {
 public:
-    void init(std::vector<std::string>& args);
-    void terminate();
-    void registerLuaFunctions();
+    static void init(std::vector<std::string>& args);
+    static void terminate();
+    static void registerLuaFunctions();
 };
 
 extern Client g_client;

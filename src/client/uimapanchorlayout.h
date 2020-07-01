@@ -23,8 +23,10 @@
 #ifndef UIMAPANCHORLAYOUT_H
 #define UIMAPANCHORLAYOUT_H
 
-#include "declarations.h"
 #include <framework/ui/uianchorlayout.h>
+#include "declarations.h"
+
+#include <utility>
 
 class UIPositionAnchor : public UIAnchor
 {
@@ -34,8 +36,8 @@ public:
     {
     }
 
-    UIWidgetPtr getHookedWidget(const UIWidgetPtr& /*widget*/, const UIWidgetPtr& parentWidget) { return parentWidget; }
-    int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget);
+    UIWidgetPtr getHookedWidget(const UIWidgetPtr& /*widget*/, const UIWidgetPtr& parentWidget) override { return parentWidget; }
+    int getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr& parentWidget) override;
 
 private:
     Position m_hookedPosition;
@@ -44,7 +46,7 @@ private:
 class UIMapAnchorLayout : public UIAnchorLayout
 {
 public:
-    UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(parentWidget) {}
+    UIMapAnchorLayout(UIWidgetPtr parentWidget) : UIAnchorLayout(std::move(parentWidget)) {}
 
     void addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
                            const Position& hookedPosition, Fw::AnchorEdge hookedEdge);

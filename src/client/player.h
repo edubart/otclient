@@ -33,7 +33,7 @@ public:
     virtual ~Player() {}
 
     PlayerPtr asPlayer() { return static_self_cast<Player>(); }
-    bool isPlayer() { return true; }
+    bool isPlayer() override { return true; }
 };
 
 #endif

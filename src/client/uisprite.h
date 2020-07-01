@@ -23,14 +23,14 @@
 #ifndef UISPRITE_H
 #define UISPRITE_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
 
 class UISprite : public UIWidget
 {
 public:
     UISprite();
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void setSpriteId(int id);
     int getSpriteId() { return m_spriteId; }
@@ -44,7 +44,7 @@ public:
     bool hasSprite() { return m_sprite != nullptr; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     TexturePtr m_sprite;
     uint16 m_spriteId;

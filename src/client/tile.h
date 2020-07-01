@@ -23,12 +23,12 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "declarations.h"
-#include "mapview.h"
-#include "effect.h"
-#include "creature.h"
-#include "item.h"
 #include <framework/luaengine/luaobject.h>
+#include "creature.h"
+#include "declarations.h"
+#include "effect.h"
+#include "item.h"
+#include "mapview.h"
 
 enum tileflags_t : uint32
 {
@@ -71,7 +71,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     void addThing(const ThingPtr& thing, int stackPos);
-    bool removeThing(ThingPtr thing);
+    bool removeThing(const ThingPtr& thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);

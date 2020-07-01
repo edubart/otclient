@@ -89,7 +89,7 @@ unsigned int read32(std::istream& f1)
     f1.read((char*)&b, 1);
     f1.read((char*)&c, 1);
     f1.read((char*)&d, 1);
-    return ((unsigned int)a << 24) + ((unsigned int)b << 16) + ((unsigned int)c << 8) + (unsigned int)d;
+    return (static_cast<unsigned int>(a) << 24) + (static_cast<unsigned int>(b) << 16) + (static_cast<unsigned int>(c) << 8) + static_cast<unsigned int>(d);
 }
 
 unsigned short read16(std::istream& f1)
@@ -97,12 +97,12 @@ unsigned short read16(std::istream& f1)
     unsigned char a, b;
     f1.read((char*)&a, 1);
     f1.read((char*)&b, 1);
-    return ((unsigned short)a << 8) + (unsigned short)b;
+    return (static_cast<unsigned short>(a) << 8) + static_cast<unsigned short>(b);
 }
 
 unsigned short readshort(unsigned char* p)
 {
-    return ((unsigned short)(*p) << 8) + (unsigned short)(*(p + 1));
+    return (static_cast<unsigned short>(*p) << 8) + static_cast<unsigned short>(*(p + 1));
 }
 
 void read_sub_row(unsigned char* row, unsigned int rowbytes, unsigned int bpp)
@@ -607,10 +607,10 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
             outimg1 = h * outrow1;
             outimg2 = h * outrow2;
 
-            pOut1 = (unsigned char*)malloc(outimg1);
-            pOut2 = (unsigned char*)malloc(outimg2);
-            pTemp = (unsigned char*)malloc(imagesize);
-            pData = (unsigned char*)malloc(zbuf_size);
+            pOut1 = static_cast<unsigned char*>(malloc(outimg1));
+            pOut2 = static_cast<unsigned char*>(malloc(outimg2));
+            pTemp = static_cast<unsigned char*>(malloc(imagesize));
+            pData = static_cast<unsigned char*>(malloc(zbuf_size));
             pImg1 = pOut1;
             pImg2 = pOut2;
             frames_delay = nullptr;
@@ -681,15 +681,15 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
                     frames = read32(file);
                     if (frames_delay)
                         free(frames_delay);
-                    frames_delay = (unsigned short*)malloc(frames * sizeof(unsigned short));
+                    frames_delay = static_cast<unsigned short*>(malloc(frames * sizeof(unsigned short)));
                     loops = read32(file);
                     /*crc = */read32(file);
                     if (pOut1)
                         free(pOut1);
                     if (pOut2)
                         free(pOut2);
-                    pOut1 = (unsigned char*)malloc((frames + 1) * outimg1);
-                    pOut2 = (unsigned char*)malloc((frames + 1) * outimg2);
+                    pOut1 = static_cast<unsigned char*>(malloc((frames + 1) * outimg1));
+                    pOut2 = static_cast<unsigned char*>(malloc((frames + 1) * outimg2));
                     pImg1 = pOut1;
                     pImg2 = pOut2;
                     memset(pOut1, 0, outimg1);
@@ -813,13 +813,13 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
                 }
                 else
                 {
-                    c = (unsigned char)(chunk >> 24);
+                    c = static_cast<unsigned char>(chunk >> 24);
                     if (notabc(c)) break;
-                    c = (unsigned char)((chunk >> 16) & 0xFF);
+                    c = static_cast<unsigned char>((chunk >> 16) & 0xFF);
                     if (notabc(c)) break;
-                    c = (unsigned char)((chunk >> 8) & 0xFF);
+                    c = static_cast<unsigned char>((chunk >> 8) & 0xFF);
                     if (notabc(c)) break;
-                    c = (unsigned char)(chunk & 0xFF);
+                    c = static_cast<unsigned char>(chunk & 0xFF);
                     if (notabc(c)) break;
 
                     file.seekg(len, std::ios_base::cur);
@@ -903,10 +903,10 @@ void write_IDATs(std::ostream& f, unsigned char* data, unsigned int length, unsi
 
             z_cmf = (z_cmf & 0x0f) | (z_cinfo << 4);
 
-            if (data[0] != (unsigned char)z_cmf) {
-                data[0] = (unsigned char)z_cmf;
+            if (data[0] != static_cast<unsigned char>(z_cmf)) {
+                data[0] = static_cast<unsigned char>(z_cmf);
                 data[1] &= 0xe0;
-                data[1] += (unsigned char)(0x1f - ((z_cmf << 8) + data[1]) % 0x1f);
+                data[1] += static_cast<unsigned char>(0x1f - ((z_cmf << 8) + data[1]) % 0x1f);
             }
         }
     }
@@ -954,13 +954,13 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     unsigned int idat_size = (rowbytes + 1) * height;
     unsigned int zbuf_size = idat_size + ((idat_size + 7) >> 3) + ((idat_size + 63) >> 6) + 11;
 
-    unsigned char* row_buf = (unsigned char*)malloc(rowbytes + 1);
-    unsigned char* sub_row = (unsigned char*)malloc(rowbytes + 1);
-    unsigned char* up_row = (unsigned char*)malloc(rowbytes + 1);
-    unsigned char* avg_row = (unsigned char*)malloc(rowbytes + 1);
-    unsigned char* paeth_row = (unsigned char*)malloc(rowbytes + 1);
-    unsigned char* zbuf1 = (unsigned char*)malloc(zbuf_size);
-    unsigned char* zbuf2 = (unsigned char*)malloc(zbuf_size);
+    unsigned char* row_buf = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    unsigned char* sub_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    unsigned char* up_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    unsigned char* avg_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    unsigned char* paeth_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    unsigned char* zbuf1 = static_cast<unsigned char*>(malloc(zbuf_size));
+    unsigned char* zbuf2 = static_cast<unsigned char*>(malloc(zbuf_size));
 
     if (!row_buf || !sub_row || !up_row || !avg_row || !paeth_row || !zbuf1 || !zbuf2) {
         free(row_buf);
@@ -1013,11 +1013,11 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     prev = nullptr;
     row = pixels;
 
-    for (j = 0; j < (unsigned int)height; j++) {
+    for (j = 0; j < static_cast<unsigned int>(height); j++) {
         unsigned char* out;
         unsigned int    sum = 0;
         unsigned char* best_row = row_buf;
-        unsigned int    mins = ((unsigned int)(-1)) >> 1;
+        unsigned int    mins = static_cast<unsigned int>(-1) >> 1;
 
         out = row_buf + 1;
 

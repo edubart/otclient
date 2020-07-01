@@ -23,13 +23,13 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "creature.h"
-#include "houses.h"
-#include "towns.h"
-#include "creatures.h"
 #include "animatedtext.h"
+#include "creature.h"
+#include "creatures.h"
+#include "houses.h"
 #include "statictext.h"
 #include "tile.h"
+#include "towns.h"
 
 #include <framework/core/clock.h>
 
@@ -118,7 +118,7 @@ public:
     const TilePtr& get(const Position& pos) { return m_tiles[getTileIndex(pos)]; }
     void remove(const Position& pos) { m_tiles[getTileIndex(pos)] = nullptr; }
 
-    uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
+    uint getTileIndex(const Position& pos) { return pos.y % BLOCK_SIZE * BLOCK_SIZE + pos.x % BLOCK_SIZE; }
 
     const std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE>& getTiles() const { return m_tiles; }
 
@@ -148,7 +148,7 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
 
-    void requestDrawing(const bool tile, const bool light, const bool force = false);
+    void requestDrawing(bool tile, bool light, bool force = false);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
@@ -201,7 +201,7 @@ public:
 
     float getZoneOpacity() { return m_zoneOpacity; }
     Color getZoneColor(tileflags_t flag);
-    tileflags_t getZoneFlags() { return (tileflags_t)m_zoneFlags; }
+    tileflags_t getZoneFlags() { return static_cast<tileflags_t>(m_zoneFlags); }
     bool showZones() { return m_zoneFlags != 0; }
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
 
@@ -249,7 +249,7 @@ public:
 
 private:
     void removeUnawareThings();
-    uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
+    uint getBlockIndex(const Position& pos) { return pos.y / BLOCK_SIZE * (65536 / BLOCK_SIZE) + pos.x / BLOCK_SIZE; }
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;

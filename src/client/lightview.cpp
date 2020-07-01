@@ -21,11 +21,11 @@
  */
 
 #include "lightview.h"
-#include "mapview.h"
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/framebuffermanager.h>
-#include <framework/graphics/painter.h>
 #include <framework/graphics/image.h>
+#include <framework/graphics/painter.h>
+#include "mapview.h"
 
 enum {
     MAX_LIGHT_INTENSITY = 8,
@@ -43,19 +43,19 @@ LightView::LightView()
 
 TexturePtr LightView::generateLightBubble(float centerFactor)
 {
-    int bubbleRadius = 256;
-    int centerRadius = bubbleRadius * centerFactor;
-    int bubbleDiameter = bubbleRadius * 2;
+    const int bubbleRadius = 256;
+    const int centerRadius = bubbleRadius * centerFactor;
+    const int bubbleDiameter = bubbleRadius * 2;
     ImagePtr lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
 
     for(int x = 0; x < bubbleDiameter; ++x) {
         for(int y = 0; y < bubbleDiameter; ++y) {
-            float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
-            float intensity = stdext::clamp<float>((bubbleRadius - radius) / (float)(bubbleRadius - centerRadius), 0.0f, 1.0f);
+            const float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
+            float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), 0.0f, 1.0f);
 
             // light intensity varies inversely with the square of the distance
             intensity = intensity * intensity;
-            uint8_t colorByte = intensity * 0xff;
+            const uint8_t colorByte = intensity * 0xff;
 
             uint8_t pixel[4] = { colorByte,colorByte,colorByte,0xff };
             lightImage->setPixel(x, y, pixel);
@@ -79,18 +79,18 @@ void LightView::setGlobalLight(const Light& light)
 
 void LightView::addLightSource(const Point& center, float scaleFactor, const Light& light)
 {
-    int intensity = std::min<int>(light.intensity, MAX_LIGHT_INTENSITY);
-    int radius = intensity * Otc::TILE_PIXELS * scaleFactor;
+    const int intensity = std::min<int>(light.intensity, MAX_LIGHT_INTENSITY);
+    const int radius = intensity * Otc::TILE_PIXELS * scaleFactor;
 
     Color color = Color::from8bit(light.color);
-    float brightness = 0.5f + (intensity / (float)MAX_LIGHT_INTENSITY) * 0.5f;
+    const float brightness = 0.5f + intensity / static_cast<float>(MAX_LIGHT_INTENSITY) * 0.5f;
 
     color.setRed(color.rF() * brightness);
     color.setGreen(color.gF() * brightness);
     color.setBlue(color.bF() * brightness);
 
     if(m_blendEquation == Painter::BlendEquation_Add && !m_lightMap.empty()) {
-        LightSource prevSource = m_lightMap.back();
+        const LightSource prevSource = m_lightMap.back();
         if(prevSource.center == center && prevSource.color == color && prevSource.radius == radius)
             return;
     }
@@ -105,7 +105,7 @@ void LightView::addLightSource(const Point& center, float scaleFactor, const Lig
 void LightView::drawGlobalLight(const Light& light)
 {
     Color color = Color::from8bit(light.color);
-    float brightness = light.intensity / (float)MAX_AMBIENT_LIGHT_INTENSITY;
+    const float brightness = light.intensity / static_cast<float>(MAX_AMBIENT_LIGHT_INTENSITY);
     color.setRed(color.rF() * brightness);
     color.setGreen(color.gF() * brightness);
     color.setBlue(color.bF() * brightness);
@@ -118,7 +118,7 @@ void LightView::drawLightSource(const Point& center, const Color& color, int rad
     // debug draw
     //radius /= 16;
 
-    Rect dest = Rect(center - Point(radius, radius), Size(radius * 2, radius * 2));
+    const Rect dest = Rect(center - Point(radius, radius), Size(radius * 2, radius * 2));
     g_painter->setColor(color);
     g_painter->drawTexturedRect(dest, m_lightTexture);
 }

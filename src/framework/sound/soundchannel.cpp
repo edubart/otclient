@@ -65,7 +65,7 @@ void SoundChannel::update()
         m_currentSource = nullptr;
 
     if(!m_currentSource && !m_queue.empty() && g_sounds.isAudioEnabled() && m_enabled) {
-        QueueEntry entry = m_queue.front();
+        const QueueEntry entry = m_queue.front();
         m_queue.pop_front();
         m_queue.push_back(entry);
         play(entry.filename, entry.fadetime, entry.gain);

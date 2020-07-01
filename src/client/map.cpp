@@ -22,17 +22,17 @@
 
 #include "map.h"
 #include "game.h"
-#include "localplayer.h"
-#include "tile.h"
 #include "item.h"
-#include "missile.h"
-#include "statictext.h"
+#include "localplayer.h"
 #include "mapview.h"
 #include "minimap.h"
+#include "missile.h"
+#include "statictext.h"
+#include "tile.h"
 #include "viewportcontrol.h"
 
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 
 Map g_map;
 TilePtr Map::m_nulltile;
@@ -55,7 +55,7 @@ void Map::addMapView(const MapViewPtr& mapView)
 
 void Map::removeMapView(const MapViewPtr& mapView)
 {
-    auto it = std::find(m_mapViews.begin(), m_mapViews.end(), mapView);
+    const auto it = std::find(m_mapViews.begin(), m_mapViews.end(), mapView);
     if(it != m_mapViews.end())
         m_mapViews.erase(it);
 }
@@ -139,7 +139,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
             AnimatedTextPtr prevAnimatedText;
             bool merged = false;
-            for(auto other : m_animatedTexts) {
+            for(const auto& other : m_animatedTexts) {
                 if(other->getPosition() == pos) {
                     prevAnimatedText = other;
                     if(other->merge(animatedText)) {
@@ -151,9 +151,9 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             if(!merged) {
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();
-                    float t = prevAnimatedText->getTimer().ticksElapsed();
+                    const float t = prevAnimatedText->getTimer().ticksElapsed();
                     if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
-                        int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
+                        const int y = 12 - 48 * t / static_cast<float>(Otc::ANIMATED_TEXT_DURATION);
                         offset += Point(0, y);
                     }
                     offset.y = std::min<int>(offset.y, 12);
@@ -164,7 +164,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         } else if(thing->isStaticText()) {
             StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             bool mustAdd = true;
-            for(auto other : m_staticTexts) {
+            for(const auto& other : m_staticTexts) {
                 // try to combine messages
                 if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
                     mustAdd = false;
@@ -201,22 +201,22 @@ bool Map::removeThing(const ThingPtr& thing)
     bool ret = false;
     if(thing->isMissile()) {
         MissilePtr missile = thing->static_self_cast<Missile>();
-        int z = missile->getPosition().z;
-        auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
+        const int z = missile->getPosition().z;
+        const auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
         if(it != m_floorMissiles[z].end()) {
             m_floorMissiles[z].erase(it);
             ret = true;
         }
     } else if(thing->isAnimatedText()) {
-        AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
-        auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
+        const AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
+        const auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
         if(it != m_animatedTexts.end()) {
             m_animatedTexts.erase(it);
             ret = true;
         }
     } else if(thing->isStaticText()) {
-        StaticTextPtr staticText = thing->static_self_cast<StaticText>();
-        auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
+        const StaticTextPtr staticText = thing->static_self_cast<StaticText>();
+        const auto it = std::find(m_staticTexts.begin(), m_staticTexts.end(), staticText);
         if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);
             ret = true;
@@ -411,9 +411,9 @@ void Map::cleanTile(const Position& pos)
 void Map::setShowZone(tileflags_t zone, bool show)
 {
     if(show)
-        m_zoneFlags |= (uint32)zone;
+        m_zoneFlags |= static_cast<uint32>(zone);
     else
-        m_zoneFlags &= ~(uint32)zone;
+        m_zoneFlags &= ~static_cast<uint32>(zone);
 }
 
 void Map::setShowZones(bool show)
@@ -432,7 +432,7 @@ void Map::setZoneColor(tileflags_t zone, const Color& color)
 
 Color Map::getZoneColor(tileflags_t flag)
 {
-    auto it = m_zoneColors.find(flag);
+    const auto it = m_zoneColors.find(flag);
     if(it == m_zoneColors.end())
         return Color::alpha;
 
@@ -510,7 +510,7 @@ void Map::addCreature(const CreaturePtr& creature)
 
 CreaturePtr Map::getCreatureById(uint32 id)
 {
-    auto it = m_knownCreatures.find(id);
+    const auto it = m_knownCreatures.find(id);
     if(it == m_knownCreatures.end())
         return nullptr;
     return it->second;
@@ -521,7 +521,7 @@ void Map::removeCreatureById(uint32 id)
     if(id == 0)
         return;
 
-    auto it = m_knownCreatures.find(id);
+    const auto it = m_knownCreatures.find(id);
     if(it != m_knownCreatures.end())
         m_knownCreatures.erase(it);
 }
@@ -593,8 +593,8 @@ void Map::setCentralPosition(const Position& centralPosition)
         if(tile && tile->hasThing(localPlayer))
             return;
 
-        Position oldPos = localPlayer->getPosition();
-        Position pos = m_centralPosition;
+        const Position oldPos = localPlayer->getPosition();
+        const Position pos = m_centralPosition;
         if(oldPos != pos) {
             if(!localPlayer->isRemoved())
                 localPlayer->onDisappear();
@@ -748,7 +748,7 @@ int Map::getFirstAwareFloor()
 int Map::getLastAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return std::min<int>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, (int)Otc::MAX_Z);
+        return std::min<int>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, static_cast<int>(Otc::MAX_Z));
 
     return Otc::SEA_FLOOR;
 }
@@ -793,7 +793,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // check the goal pos is walkable
     if(g_map.isAwareOfPosition(goalPos)) {
         const TilePtr goalTile = getTile(goalPos);
-        if(!goalTile || !goalTile->isWalkable((flags & Otc::PathFindAllowCreatures))) {
+        if(!goalTile || !goalTile->isWalkable(flags & Otc::PathFindAllowCreatures)) {
             return ret;
         }
     } else {
@@ -811,7 +811,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     nodes[startPos] = currentNode;
     Node* foundNode = nullptr;
     while(currentNode) {
-        if((int)nodes.size() > maxComplexity) {
+        if(static_cast<int>(nodes.size()) > maxComplexity) {
             result = Otc::PathFindResultTooFar;
             break;
         }
@@ -840,7 +840,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     wasSeen = true;
                     if(const TilePtr& tile = getTile(neighborPos)) {
                         hasCreature = tile->hasCreature();
-                        isNotWalkable = !tile->isWalkable((flags & Otc::PathFindAllowCreatures));
+                        isNotWalkable = !tile->isWalkable(flags & Otc::PathFindAllowCreatures);
                         isNotPathable = !tile->isPathable();
                         speed = tile->getGroundSpeed();
                     }
@@ -875,13 +875,13 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                     }
                 }
 
-                Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
+                const Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
                 if(walkDir >= Otc::NorthEast)
                     walkFactor += 3.0f;
                 else
                     walkFactor += 1.0f;
 
-                float cost = currentNode->cost + (speed * walkFactor) / 100.0f;
+                const float cost = currentNode->cost + speed * walkFactor / 100.0f;
 
                 Node* neighborNode;
                 if(nodes.find(neighborPos) == nodes.end()) {

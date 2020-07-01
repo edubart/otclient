@@ -23,8 +23,8 @@
 #ifndef CREATURES_H
 #define CREATURES_H
 
-#include "declarations.h"
 #include <framework/luaengine/luaobject.h>
+#include "declarations.h"
 #include "outfit.h"
 
 enum CreatureAttr : uint8

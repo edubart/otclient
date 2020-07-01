@@ -41,7 +41,7 @@ Color Outfit::getColor(int color)
         loc2 = 1;
         loc3 = 1;
 
-        switch(int(color / HSI_H_STEPS)) {
+        switch(static_cast<int>(color / HSI_H_STEPS)) {
         case 0:
             loc2 = 0.25;
             loc3 = 1.00;
@@ -74,14 +74,14 @@ Color Outfit::getColor(int color)
     } else {
         loc1 = 0;
         loc2 = 0;
-        loc3 = 1 - (float)color / HSI_H_STEPS / (float)HSI_SI_VALUES;
+        loc3 = 1 - static_cast<float>(color) / HSI_H_STEPS / static_cast<float>(HSI_SI_VALUES);
     }
 
     if(loc3 == 0)
         return Color(0, 0, 0);
 
     if(loc2 == 0) {
-        int loc7 = int(loc3 * 255);
+        const int loc7 = static_cast<int>(loc3 * 255);
         return Color(loc7, loc7, loc7);
     }
 
@@ -112,7 +112,7 @@ Color Outfit::getColor(int color)
         green = loc3 * (1 - loc2);
         blue = red - (loc3 - green) * (6 * loc1 - 5);
     }
-    return Color(int(red * 255), int(green * 255), int(blue * 255));
+    return Color(static_cast<int>(red * 255), static_cast<int>(green * 255), static_cast<int>(blue * 255));
 }
 
 void Outfit::resetClothes()

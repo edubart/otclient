@@ -46,10 +46,9 @@ bool UIHorizontalLayout::internalUpdate()
         std::reverse(widgets.begin(), widgets.end());
 
     bool changed = false;
-    Rect paddingRect = parentWidget->getPaddingRect();
-    Point pos = (m_alignRight) ? paddingRect.topRight() : paddingRect.topLeft();
+    const Rect paddingRect = parentWidget->getPaddingRect();
+    Point pos = m_alignRight ? paddingRect.topRight() : paddingRect.topLeft();
     int preferredWidth = 0;
-    int gap;
 
     for(const UIWidgetPtr& widget : widgets) {
         if(!widget->isExplicitlyVisible())
@@ -57,7 +56,7 @@ bool UIHorizontalLayout::internalUpdate()
 
         Size size = widget->getSize();
 
-        gap = (m_alignRight) ? -(widget->getMarginRight()+widget->getWidth()) : widget->getMarginLeft();
+        int gap = m_alignRight ? -(widget->getMarginRight() + widget->getWidth()) : widget->getMarginLeft();
         pos.x += gap;
         preferredWidth += gap;
 
@@ -68,19 +67,19 @@ bool UIHorizontalLayout::internalUpdate()
                 pos.y = paddingRect.bottom() - widget->getHeight() - widget->getMarginBottom();
                 pos.y = std::max<int>(pos.y, paddingRect.top());
             } else { // center it
-                pos.y = paddingRect.top() + (paddingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom()))/2;
+                pos.y = paddingRect.top() + (paddingRect.height() - (widget->getMarginTop() + widget->getHeight() + widget->getMarginBottom())) / 2;
                 pos.y = std::max<int>(pos.y, paddingRect.top());
             }
         } else {
             // expand height
             size.setHeight(paddingRect.height() - (widget->getMarginTop() + widget->getMarginBottom()));
-            pos.y = paddingRect.top() + (paddingRect.height() - size.height())/2;
+            pos.y = paddingRect.top() + (paddingRect.height() - size.height()) / 2;
         }
 
         if(widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size)))
             changed = true;
 
-        gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
+        gap = m_alignRight ? -widget->getMarginLeft() : widget->getWidth() + widget->getMarginRight();
         gap += m_spacing;
         pos.x += gap;
         preferredWidth += gap;

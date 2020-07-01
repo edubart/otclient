@@ -40,13 +40,13 @@ CoordsBuffer::~CoordsBuffer()
 
 void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
 {
-    int left = dest.left();
-    int right = dest.right();
-    int top = dest.top();
-    int bottom = dest.bottom();
-    int width = dest.width();
-    int height = dest.height();
-    int w = innerLineWidth;
+    const int left = dest.left();
+    const int right = dest.right();
+    const int top = dest.top();
+    const int bottom = dest.bottom();
+    const int width = dest.width();
+    const int height = dest.height();
+    const int w = innerLineWidth;
 
     addRect(Rect(left, top, width - w, w)); // top
     addRect(Rect(right - w + 1, top, w, height - w)); // right
@@ -59,7 +59,7 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
     if(dest.isEmpty() || src.isEmpty())
         return;
 
-    Rect virtualDest(0, 0, dest.size());
+    const Rect virtualDest(0, 0, dest.size());
     for(int y = 0; y <= virtualDest.height(); y += src.height()) {
         for(int x = 0; x <= virtualDest.width(); x += src.width()) {
             Rect partialDest(x, y, src.size());
@@ -98,7 +98,7 @@ void CoordsBuffer::updateCaches()
     if(!m_hardwareCaching || m_hardwareCached)
         return;
 
-    int vertexCount = m_vertexArray.vertexCount();
+    const int vertexCount = m_vertexArray.vertexCount();
 
     // there is only performance improvement when caching a lot of vertices
     if(vertexCount < CACHE_MIN_VERTICES_COUNT)
@@ -108,14 +108,14 @@ void CoordsBuffer::updateCaches()
         if(!m_hardwareVertexArray && m_vertexArray.vertexCount() > 0)
             m_hardwareVertexArray = new HardwareBuffer(HardwareBuffer::VertexBuffer);
         m_hardwareVertexArray->bind();
-        m_hardwareVertexArray->write((void*)m_vertexArray.vertices(), m_vertexArray.size() * sizeof(float), m_hardwareCacheMode);
+        m_hardwareVertexArray->write(static_cast<void*>(m_vertexArray.vertices()), m_vertexArray.size() * sizeof(float), m_hardwareCacheMode);
     }
 
     if(m_textureCoordArray.vertexCount() > 0) {
         if(!m_hardwareTextureCoordArray && m_textureCoordArray.vertexCount() > 0)
             m_hardwareTextureCoordArray = new HardwareBuffer(HardwareBuffer::VertexBuffer);
         m_hardwareTextureCoordArray->bind();
-        m_hardwareTextureCoordArray->write((void*)m_textureCoordArray.vertices(), m_textureCoordArray.size() * sizeof(float), m_hardwareCacheMode);
+        m_hardwareTextureCoordArray->write(static_cast<void*>(m_textureCoordArray.vertices()), m_textureCoordArray.size() * sizeof(float), m_hardwareCacheMode);
     }
 
     m_hardwareCached = true;

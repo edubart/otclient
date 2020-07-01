@@ -23,10 +23,10 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include "const.h"
-#include <framework/stdext/types.h>
 #include <framework/const.h>
+#include <framework/stdext/types.h>
 #include <framework/util/point.h>
+#include "const.h"
 
 #include <vector>
 
@@ -137,8 +137,8 @@ public:
     static double getAngleFromPositions(const Position& fromPos, const Position& toPos)
     {
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
-        int dx = toPos.x - fromPos.x;
-        int dy = toPos.y - fromPos.y;
+        const int dx = toPos.x - fromPos.x;
+        const int dy = toPos.y - fromPos.y;
         if(dx == 0 && dy == 0)
             return -1;
 
@@ -156,7 +156,7 @@ public:
 
     static Otc::Direction getDirectionFromPositions(const Position& fromPos, const Position& toPos)
     {
-        float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
+        const float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
         if(angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
@@ -190,9 +190,9 @@ public:
         return getDirectionFromPositions(*this, position);
     }
 
-    bool isMapPosition() const { return (x >= 0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
+    bool isMapPosition() const { return x >= 0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z; }
     bool isValid() const { return !(x == 65535 && y == 65535 && z == 255); }
-    float distance(const Position& pos) const { return sqrt(pow((pos.x - x), 2) + pow((pos.y - y), 2)); }
+    float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
     int manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
 
     void translate(int dx, int dy, short dz = 0) { x += dx; y += dy; z += dz; }
@@ -212,14 +212,14 @@ public:
     bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange && z == pos.z; }
     bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const
     {
-        return (pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z);
+        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z;
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }
 
     bool up(int n = 1)
     {
-        int nz = z - n;
+        const int nz = z - n;
         if(nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
@@ -229,7 +229,7 @@ public:
 
     bool down(int n = 1)
     {
-        int nz = z + n;
+        const int nz = z + n;
         if(nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
@@ -240,7 +240,7 @@ public:
 
     bool coveredUp(int n = 1)
     {
-        int nx = x + n, ny = y + n, nz = z - n;
+        const int nx = x + n, ny = y + n, nz = z - n;
         if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -251,7 +251,7 @@ public:
 
     bool coveredDown(int n = 1)
     {
-        int nx = x - n, ny = y - n, nz = z + n;
+        const int nx = x - n, ny = y - n, nz = z + n;
         if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -268,13 +268,13 @@ public:
 struct PositionHasher : std::unary_function<Position, std::size_t> {
     std::size_t operator()(const Position& pos) const
     {
-        return (((pos.x * 8192) + pos.y) * 16) + pos.z;
+        return (pos.x * 8192 + pos.y) * 16 + pos.z;
     }
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 {
-    out << (int)pos.x << " " << (int)pos.y << " " << (int)pos.z;
+    out << static_cast<int>(pos.x) << " " << static_cast<int>(pos.y) << " " << static_cast<int>(pos.z);
     return out;
 }
 

@@ -23,18 +23,18 @@
 #ifndef THINGTYPE_H
 #define THINGTYPE_H
 
-#include "declarations.h"
 #include "animator.h"
+#include "declarations.h"
 
 #include <framework/core/declarations.h>
-#include <framework/otml/declarations.h>
-#include <framework/graphics/texture.h>
 #include <framework/graphics/coordsbuffer.h>
+#include <framework/graphics/texture.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
+#include <framework/otml/declarations.h>
 
-#include <framework/core/scheduledevent.h>
 #include <framework/core/declarations.h>
+#include <framework/core/scheduledevent.h>
 
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
@@ -132,7 +132,7 @@ public:
     void unserializeOtml(const OTMLNodePtr& node);
 
     void serialize(const FileStreamPtr& fin);
-    void exportImage(std::string fileName);
+    void exportImage(const std::string& fileName);
 
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView* lightView = nullptr);
 
@@ -220,11 +220,11 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
-    void startListenerPainter(const float duration, const bool redrawLight = false);
+    void startListenerPainter(float duration, bool redrawLight = false);
     void cancelListenerPainter();
 
 private:
-    Size getBestTextureDimension(int w, int h, int count);
+    static Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
 

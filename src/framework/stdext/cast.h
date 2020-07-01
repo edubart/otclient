@@ -83,7 +83,7 @@ template<>
 inline bool cast(const std::string& in, long& l) {
     if(in.find_first_not_of("-0123456789") != std::string::npos)
         return false;
-    std::size_t t = in.find_last_of('-');
+    const std::size_t t = in.find_last_of('-');
     if(t != std::string::npos && t != 0)
         return false;
     l = atol(in.c_str());
@@ -121,7 +121,7 @@ template<>
 inline bool cast(const std::string& in, float& f) {
     double d;
     if(cast(in, d)) {
-        f=(float)d;
+        f=static_cast<float>(d);
         return true;
     }
     return false;
@@ -130,7 +130,7 @@ inline bool cast(const std::string& in, float& f) {
 // special cast from boolean to string
 template<>
 inline bool cast(const bool& in, std::string& out) {
-    out = (in ? "true" : "false");
+    out = in ? "true" : "false";
     return true;
 }
 

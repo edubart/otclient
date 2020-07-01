@@ -21,19 +21,19 @@
  */
 
 #include "thingtypemanager.h"
-#include "spritemanager.h"
-#include "thing.h"
-#include "thingtype.h"
-#include "itemtype.h"
 #include "creature.h"
 #include "creatures.h"
 #include "game.h"
+#include "itemtype.h"
+#include "spritemanager.h"
+#include "thing.h"
+#include "thingtype.h"
 
-#include <framework/core/resourcemanager.h>
-#include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
-#include <framework/xml/tinyxml.h>
+#include <framework/core/filestream.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/otml/otml.h>
+#include <framework/xml/tinyxml.h>
 
 ThingTypeManager g_things;
 
@@ -63,7 +63,7 @@ void ThingTypeManager::terminate()
     m_nullItemType = nullptr;
 }
 
-void ThingTypeManager::saveDat(std::string fileName)
+void ThingTypeManager::saveDat(const std::string& fileName)
 {
     if(!m_datLoaded)
         stdext::throw_exception("failed to save, dat is not loaded");
@@ -111,7 +111,7 @@ bool ThingTypeManager::loadDat(std::string file)
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
         for(auto& m_thingType : m_thingTypes) {
-            int count = fin->getU16() + 1;
+            const int count = fin->getU16() + 1;
             m_thingType.clear();
             m_thingType.resize(count, m_nullThingType);
         }
@@ -122,7 +122,7 @@ bool ThingTypeManager::loadDat(std::string file)
                 firstId = 100;
             for(uint16 id = firstId; id < m_thingTypes[category].size(); ++id) {
                 ThingTypePtr type(new ThingType);
-                type->unserialize(id, (ThingCategory)category, fin);
+                type->unserialize(id, static_cast<ThingCategory>(category), fin);
                 m_thingTypes[category][id] = type;
             }
         }
@@ -157,7 +157,7 @@ bool ThingTypeManager::loadOtml(std::string file)
             }
 
             for(const OTMLNodePtr& node2 : node->children()) {
-                uint16 id = stdext::safe_cast<uint16>(node2->tag());
+                const uint16 id = stdext::safe_cast<uint16>(node2->tag());
                 ThingTypePtr type = getThingType(id, category);
                 if(!type)
                     throw OTMLException(node2, "thing not found");
@@ -187,9 +187,9 @@ void ThingTypeManager::loadOtb(const std::string& file)
         if(signature != 0)
             stdext::throw_exception("invalid otb file");
 
-        uint8 rootAttr = root->getU8();
+        const uint8 rootAttr = root->getU8();
         if(rootAttr == 0x01) { // OTB_ROOT_ATTR_VERSION
-            uint16 size = root->getU16();
+            const uint16 size = root->getU16();
             if(size != 4 + 4 + 4 + 128)
                 stdext::throw_exception("invalid otb root attr version size");
 
@@ -209,7 +209,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
             itemType->unserialize(node);
             addItemType(itemType);
 
-            uint16 clientId = itemType->getClientId();
+            const uint16 clientId = itemType->getClientId();
             if(unlikely(clientId >= m_reverseItemTypes.size()))
                 m_reverseItemTypes.resize(clientId + 1);
             m_reverseItemTypes[clientId] = itemType;
@@ -241,7 +241,7 @@ void ThingTypeManager::loadXml(const std::string& file)
             if(unlikely(element->ValueTStr() != "item"))
                 continue;
 
-            uint16 id = element->readType<uint16>("id");
+            const uint16 id = element->readType<uint16>("id");
             if(id != 0) {
                 std::vector<std::string> s_ids = stdext::split(element->Attribute("id"), ";");
                 for(const std::string& s : s_ids) {
@@ -257,7 +257,7 @@ void ThingTypeManager::loadXml(const std::string& file)
                 std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
                 std::vector<int32> end = stdext::split<int32>(element->Attribute("toid"), ";");
                 if(begin[0] && begin.size() == end.size()) {
-                    size_t size = begin.size();
+                    const size_t size = begin.size();
                     for(size_t i = 0; i < size; ++i)
                         while(begin[i] <= end[i])
                             parseItemType(++begin[i], element);
@@ -331,7 +331,7 @@ void ThingTypeManager::parseItemType(uint16 serverId, TiXmlElement* elem)
 
 void ThingTypeManager::addItemType(const ItemTypePtr& itemType)
 {
-    uint16 id = itemType->getServerId();
+    const uint16 id = itemType->getServerId();
     if(unlikely(id >= m_itemTypes.size()))
         m_itemTypes.resize(id + 1, m_nullItemType);
     m_itemTypes[id] = itemType;
@@ -344,11 +344,10 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
 
     if(m_reverseItemTypes[id])
         return m_reverseItemTypes[id];
-    else
-        return m_nullItemType;
+    return m_nullItemType;
 }
 
-const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
+const ItemTypePtr& ThingTypeManager::findItemTypeByName(const std::string& name)
 {
     for(const ItemTypePtr& it : m_itemTypes)
         if(it->getName() == name)
@@ -356,7 +355,7 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
     return m_nullItemType;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByName(std::string name)
+ItemTypeList ThingTypeManager::findItemTypesByName(const std::string& name)
 {
     ItemTypeList ret;
     for(const ItemTypePtr& it : m_itemTypes)
@@ -365,7 +364,7 @@ ItemTypeList ThingTypeManager::findItemTypesByName(std::string name)
     return ret;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByString(std::string name)
+ItemTypeList ThingTypeManager::findItemTypesByString(const std::string& name)
 {
     ItemTypeList ret;
     for(const ItemTypePtr& it : m_itemTypes)

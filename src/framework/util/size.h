@@ -52,13 +52,13 @@ public:
     TSize<T>& operator+=(const TSize<T>& other) { wd+=other.wd; ht+=other.ht; return *this; }
     TSize<T> operator-(const TSize<T>& other) const { return TSize<T>(wd - other.wd, ht - other.ht);   }
     TSize<T>& operator-=(const TSize<T>& other) { wd-=other.wd; ht-=other.ht; return *this; }
-    TSize<T> operator*(const TSize<T>& other) const { return TSize<T>((T)other.wd*wd, (T)ht*other.ht);  }
-    TSize<T>& operator*=(const TSize<T>& other) { wd=(T)other.wd*wd; ht=(T)ht*other.ht; return *this; }
-    TSize<T> operator/(const TSize<T>& other) const { return TSize<T>((T)wd/other.wd, (T)ht/other.ht);  }
-    TSize<T>& operator/=(const TSize<T>& other) { (T)wd/=other.wd; (T)ht/=other.ht; return *this; }
-    TSize<T> operator*(const float v) const { return TSize<T>((T)wd*v, (T)ht*v);  }
-    TSize<T>& operator*=(const float v) { wd=(T)wd*v; ht=(T)ht*v; return *this; }
-    TSize<T> operator/(const float v) const { return TSize<T>((T)wd/v, (T)ht/v);  }
+    TSize<T> operator*(const TSize<T>& other) const { return TSize<T>(static_cast<T>(other.wd)*wd, static_cast<T>(ht)*other.ht);  }
+    TSize<T>& operator*=(const TSize<T>& other) { wd=static_cast<T>(other.wd)*wd; ht=static_cast<T>(ht)*other.ht; return *this; }
+    TSize<T> operator/(const TSize<T>& other) const { return TSize<T>(static_cast<T>(wd)/other.wd, static_cast<T>(ht)/other.ht);  }
+    TSize<T>& operator/=(const TSize<T>& other) { static_cast<T>(wd)/=other.wd; static_cast<T>(ht)/=other.ht; return *this; }
+    TSize<T> operator*(const float v) const { return TSize<T>(static_cast<T>(wd)*v, static_cast<T>(ht)*v);  }
+    TSize<T>& operator*=(const float v) { wd=static_cast<T>(wd)*v; ht=static_cast<T>(ht)*v; return *this; }
+    TSize<T> operator/(const float v) const { return TSize<T>(static_cast<T>(wd)/v, static_cast<T>(ht)/v);  }
     TSize<T>& operator/=(const float v) { wd/=v; ht/=v; return *this; }
 
     bool operator<=(const TSize<T>&other) const { return wd<=other.wd || ht<=other.ht; }
@@ -97,7 +97,7 @@ public:
     }
     void scale(int w, int h, Fw::AspectRatioMode mode) { scale(TSize<T>(w, h), mode); }
 
-    float ratio() const { return (float)wd/ht; }
+    float ratio() const { return static_cast<float>(wd)/ht; }
     T area() const { return wd*ht; }
 
 private:

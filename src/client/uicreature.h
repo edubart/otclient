@@ -23,14 +23,14 @@
 #ifndef UICREATURE_H
 #define UICREATURE_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
 #include "creature.h"
+#include "declarations.h"
 
 class UICreature : public UIWidget
 {
 public:
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void setCreature(const CreaturePtr& creature) { m_creature = creature; }
     void setFixedCreatureSize(bool fixed) { m_fixedCreatureSize = fixed; }
@@ -40,7 +40,7 @@ public:
     bool isFixedCreatureSize() { return m_fixedCreatureSize; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     CreaturePtr m_creature;
     stdext::boolean<false> m_fixedCreatureSize;

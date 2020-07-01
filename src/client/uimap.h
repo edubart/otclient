@@ -23,8 +23,8 @@
 #ifndef UIMAP_H
 #define UIMAP_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
 #include "tile.h"
 
 #include "mapview.h"
@@ -35,7 +35,7 @@ public:
     UIMap();
     ~UIMap();
 
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void movePixels(int x, int y);
     bool setZoom(int zoom);
@@ -86,8 +86,8 @@ public:
     float getMinimumAmbientLight() { return m_mapView->getMinimumAmbientLight(); }
 
 protected:
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
+    void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
 
 private:
     void updateVisibleDimension();

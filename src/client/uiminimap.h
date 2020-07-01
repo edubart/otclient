@@ -23,15 +23,15 @@
 #ifndef UIMINIMAP_H
 #define UIMINIMAP_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
 
 class UIMinimap : public UIWidget
 {
 public:
     UIMinimap();
 
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     bool zoomIn() { return setZoom(m_zoom + 1); }
     bool zoomOut() { return setZoom(m_zoom - 1); }
@@ -60,7 +60,7 @@ public:
 protected:
     virtual void onZoomChange(int zoom, int oldZoom);
     virtual void onCameraPositionChange(const Position& position, const Position& oldPosition);
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
 private:
     void update();

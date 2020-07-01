@@ -23,8 +23,8 @@
 #ifndef SHADERMANAGER_H
 #define SHADERMANAGER_H
 
-#include "declarations.h"
 #include <framework/graphics/paintershaderprogram.h>
+#include "declarations.h"
 
  //@bindsingleton g_shaders
 class ShaderManager
@@ -53,8 +53,8 @@ public:
     PainterShaderProgramPtr getShader(const std::string& name);
 
 private:
-    void setupItemShader(const PainterShaderProgramPtr& shader);
-    void setupMapShader(const PainterShaderProgramPtr& shader);
+    static void setupItemShader(const PainterShaderProgramPtr& shader);
+    static void setupMapShader(const PainterShaderProgramPtr& shader);
 
     PainterShaderProgramPtr m_defaultItemShader;
     PainterShaderProgramPtr m_defaultMapShader;

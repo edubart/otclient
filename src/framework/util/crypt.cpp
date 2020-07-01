@@ -39,7 +39,7 @@
 #endif
 
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
+static inline bool is_base64(unsigned char c) { return isalnum(c) || c == '+' || c == '/'; }
 
 Crypt g_crypt;
 
@@ -87,7 +87,7 @@ std::string Crypt::base64Encode(const std::string& decoded_string)
             char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
             char_array_4[3] = char_array_3[2] & 0x3f;
 
-            for(i = 0; (i <4) ; i++)
+            for(i = 0; i < 4; i++)
                 ret += base64_chars[char_array_4[i]];
             i = 0;
         }
@@ -102,10 +102,10 @@ std::string Crypt::base64Encode(const std::string& decoded_string)
         char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
         char_array_4[3] = char_array_3[2] & 0x3f;
 
-        for(j = 0; (j < i + 1); j++)
+        for(j = 0; j < i + 1; j++)
             ret += base64_chars[char_array_4[j]];
 
-        while((i++ < 3))
+        while(i++ < 3)
             ret += '=';
     }
 
@@ -121,34 +121,34 @@ std::string Crypt::base64Decode(const std::string& encoded_string)
     uint8 char_array_4[4], char_array_3[3];
     std::string ret;
 
-    while(len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
+    while(len-- && encoded_string[in_] != '=' && is_base64(encoded_string[in_])) {
         char_array_4[i++] = encoded_string[in_]; in_++;
-        if(i ==4) {
-            for(i = 0; i <4; i++)
+        if(i == 4) {
+            for(i = 0; i < 4; i++)
                 char_array_4[i] = base64_chars.find(char_array_4[i]);
 
             char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
             char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
             char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-            for(i = 0; (i < 3); i++)
+            for(i = 0; i < 3; i++)
                 ret += char_array_3[i];
             i = 0;
         }
     }
 
     if(i) {
-        for(j = i; j <4; j++)
+        for(j = i; j < 4; j++)
             char_array_4[j] = 0;
 
-        for(j = 0; j <4; j++)
+        for(j = 0; j < 4; j++)
             char_array_4[j] = base64_chars.find(char_array_4[j]);
 
         char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
         char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
         char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
 
-        for(j = 0; (j < i - 1); j++)
+        for(j = 0; j < i - 1; j++)
             ret += char_array_3[j];
     }
 
@@ -159,8 +159,8 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
 {
     std::string out;
     out.resize(buffer.size());
-    size_t i, j=0;
-    for(i=0;i<buffer.size();++i) {
+    size_t j = 0;
+    for(size_t i = 0; i < buffer.size(); ++i) {
         out[i] = buffer[i] ^ key[j++];
         if(j >= key.size())
             j = 0;
@@ -171,7 +171,7 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
 std::string Crypt::genUUID()
 {
     boost::uuids::random_generator gen;
-    boost::uuids::uuid u = gen();
+    const boost::uuids::uuid u = gen();
     return boost::uuids::to_string(u);
 }
 
@@ -197,26 +197,26 @@ std::string Crypt::getMachineUUID()
 
 std::string Crypt::getCryptKey(bool useMachineUUID)
 {
-    boost::hash<boost::uuids::uuid> uuid_hasher;
+    const boost::hash<boost::uuids::uuid> uuid_hasher;
     boost::uuids::uuid uuid;
     if(useMachineUUID) {
         uuid = m_machineUUID;
     } else {
-        boost::uuids::nil_generator nilgen;
+        const boost::uuids::nil_generator nilgen;
         uuid = nilgen();
     }
     boost::uuids::name_generator namegen(uuid);
-    boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
+    const boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
     std::size_t hash = uuid_hasher(u);
     std::string key;
-    key.assign((const char *)&hash, sizeof(hash));
+    key.assign((const char*)&hash, sizeof hash);
     return key;
 }
 
 std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachineUUID)
 {
     std::string tmp = "0000" + decrypted_string;
-    uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+    const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
     stdext::writeULE32((uint8*)&tmp[0], sum);
     std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
@@ -224,12 +224,12 @@ std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachine
 
 std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachineUUID)
 {
-    std::string decoded = base64Decode(encrypted_string);
-    std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
+    const std::string decoded = base64Decode(encrypted_string);
+    const std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
     if(tmp.length() >= 4) {
-        uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
+        const uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
         std::string decrypted_string = tmp.substr(4);
-        uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+        const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
         if(readsum == sum)
             return decrypted_string;
     }
@@ -251,7 +251,7 @@ void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
         m_rsa->_method_mod_n = nullptr;
     }
 #else
-    BIGNUM *bn = nullptr, *be = nullptr;
+    BIGNUM* bn = nullptr, * be = nullptr;
     BN_dec2bn(&bn, n.c_str());
     BN_dec2bn(&be, e.c_str());
     RSA_set0_key(m_rsa, bn, be, nullptr);
@@ -283,7 +283,7 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
         m_rsa->_method_mod_q = nullptr;
     }
 #else
-    BIGNUM *bp = nullptr, *bq = nullptr, *bd = nullptr;
+    BIGNUM* bp = nullptr, * bq = nullptr, * bd = nullptr;
     BN_dec2bn(&bp, p.c_str());
     BN_dec2bn(&bq, q.c_str());
     BN_dec2bn(&bd, d.c_str());
@@ -293,7 +293,7 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
 #endif
 }
 
-bool Crypt::rsaEncrypt(unsigned char *msg, int size)
+bool Crypt::rsaEncrypt(unsigned char* msg, int size)
 {
     if(size != rsaGetSize())
         return false;
@@ -320,7 +320,7 @@ bool Crypt::rsaEncrypt(unsigned char *msg, int size)
 #endif
 }
 
-bool Crypt::rsaDecrypt(unsigned char *msg, int size)
+bool Crypt::rsaDecrypt(unsigned char* msg, int size)
 {
     if(size != rsaGetSize())
         return false;

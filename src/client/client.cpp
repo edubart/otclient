@@ -21,15 +21,15 @@
  */
 
 #include "client.h"
+#include <framework/core/configmanager.h>
 #include <framework/core/modulemanager.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/graphics.h>
 #include "game.h"
 #include "map.h"
+#include "minimap.h"
 #include "shadermanager.h"
 #include "spritemanager.h"
-#include "minimap.h"
-#include <framework/core/configmanager.h>
 
 Client g_client;
 

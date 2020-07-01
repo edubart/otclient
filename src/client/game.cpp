@@ -21,18 +21,18 @@
  */
 
 #include "game.h"
-#include "localplayer.h"
-#include "map.h"
-#include "tile.h"
-#include "creature.h"
-#include "container.h"
-#include "statictext.h"
+#include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
-#include <framework/core/application.h>
+#include "container.h"
+#include "creature.h"
+#include "localplayer.h"
 #include "luavaluecasts.h"
-#include "protocolgame.h"
+#include "map.h"
 #include "protocolcodes.h"
+#include "protocolgame.h"
+#include "statictext.h"
+#include "tile.h"
 
 Game g_game;
 
@@ -351,7 +351,7 @@ void Game::processInventoryChange(int slot, const ItemPtr& item)
     if(item)
         item->setPosition(Position(65535, slot, 0));
 
-    m_localPlayer->setInventoryItem((Otc::InventorySlot)slot, item);
+    m_localPlayer->setInventoryItem(static_cast<Otc::InventorySlot>(slot), item);
 }
 
 void Game::processChannelList(const std::vector<std::tuple<int, std::string> >& channelList)
@@ -447,7 +447,7 @@ void Game::processOpenOutfitWindow(const Outfit& currentOutfit, const std::vecto
         Outfit mountOutfit;
         mountOutfit.setId(0);
 
-        int mount = currentOutfit.getMount();
+        const int mount = currentOutfit.getMount();
         if(mount > 0)
             mountOutfit.setId(mount);
 
@@ -507,7 +507,9 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
-void Game::processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority)
+void Game::processModalDialog(uint32 id, const std::string& title, const std::string& message, const std::vector<std::tuple<int, std::string> >
+                              & buttonList, int enterButton, int escapeButton, const std::vector<std::tuple<int, std::string> >
+                              & choiceList, bool priority)
 {
     g_lua.callGlobalField("g_game", "onModalDialog", id, title, message, buttonList, enterButton, escapeButton, choiceList, priority);
 }
@@ -538,7 +540,7 @@ void Game::loginWorld(const std::string& account, const std::string& password, c
     m_localPlayer->setName(characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldHost, (uint16)worldPort, characterName, authenticatorToken, sessionKey);
+    m_protocolGame->login(account, password, worldHost, static_cast<uint16>(worldPort), characterName, authenticatorToken, sessionKey);
     m_characterName = characterName;
     m_worldName = worldName;
 }
@@ -595,7 +597,7 @@ bool Game::walk(const Otc::Direction direction)
                 m_walkEvent = nullptr;
             }
 
-            float ticks = std::max<float>(m_localPlayer->getStepTicksLeft(), 1);
+            const float ticks = std::max<float>(m_localPlayer->getStepTicksLeft(), 1);
             m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
         }
         return false;
@@ -674,8 +676,8 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
     if(isFollowing())
         cancelFollow();
 
-    auto it = dirs.begin();
-    Otc::Direction direction = *it;
+    const auto it = dirs.begin();
+    const Otc::Direction direction = *it;
     if(!m_localPlayer->canWalk(direction))
         return;
 
@@ -798,7 +800,7 @@ void Game::moveToParentContainer(const ThingPtr& thing, int count)
     if(!canPerformGameAction() || !thing || count <= 0)
         return;
 
-    Position position = thing->getPosition();
+    const Position position = thing->getPosition();
     move(thing, Position(position.x, position.y, 254), count);
 }
 
@@ -829,7 +831,7 @@ void Game::useInventoryItem(int itemId)
     if(!canPerformGameAction() || !g_things.isValidDatId(itemId, ThingCategoryItem))
         return;
 
-    Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+    const Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     m_protocolGame->sendUseItem(pos, itemId, 0, 0);
 }
@@ -854,7 +856,7 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
     if(!canPerformGameAction() || !toThing)
         return;
 
-    Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+    const Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     if(toThing->isCreature())
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, toThing->getId());
@@ -881,12 +883,7 @@ int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
     if(!canPerformGameAction() || !item)
         return -1;
 
-    int id = 0;
-    if(!previousContainer)
-        id = findEmptyContainerId();
-    else
-        id = previousContainer->getId();
-
+    const int id = previousContainer ? previousContainer->getId() : findEmptyContainerId();
     m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackPos(), id);
     return id;
 }
@@ -1126,7 +1123,7 @@ void Game::removeVip(int playerId)
     if(!canPerformGameAction())
         return;
 
-    auto it = m_vips.find(playerId);
+    const auto it = m_vips.find(playerId);
     if(it == m_vips.end())
         return;
     m_vips.erase(it);
@@ -1138,7 +1135,7 @@ void Game::editVip(int playerId, const std::string& description, int iconId, boo
     if(!canPerformGameAction())
         return;
 
-    auto it = m_vips.find(playerId);
+    const auto it = m_vips.find(playerId);
     if(it == m_vips.end())
         return;
 
@@ -1679,7 +1676,7 @@ void Game::setClientVersion(int version)
 void Game::setAttackingCreature(const CreaturePtr& creature)
 {
     if(creature != m_attackingCreature) {
-        CreaturePtr oldCreature = m_attackingCreature;
+        const CreaturePtr oldCreature = m_attackingCreature;
         m_attackingCreature = creature;
 
         g_lua.callGlobalField("g_game", "onAttackingCreatureChange", creature, oldCreature);
@@ -1688,7 +1685,7 @@ void Game::setAttackingCreature(const CreaturePtr& creature)
 
 void Game::setFollowingCreature(const CreaturePtr& creature)
 {
-    CreaturePtr oldCreature = m_followingCreature;
+    const CreaturePtr oldCreature = m_followingCreature;
     m_followingCreature = creature;
 
     g_lua.callGlobalField("g_game", "onFollowingCreatureChange", creature, oldCreature);
@@ -1700,7 +1697,7 @@ std::string Game::formatCreatureName(const std::string& name)
     if(getFeature(Otc::GameFormatCreatureName) && name.length() > 0) {
         bool upnext = true;
         for(char& i : formatedName) {
-            char ch = i;
+            const char ch = i;
             if(upnext) {
                 i = stdext::upchar(ch);
                 upnext = false;

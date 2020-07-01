@@ -21,10 +21,10 @@
  */
 
 #include "uiminimap.h"
-#include "minimap.h"
 #include "game.h"
-#include "uimapanchorlayout.h"
 #include "luavaluecasts.h"
+#include "minimap.h"
+#include "uimapanchorlayout.h"
 
 #include <framework/graphics/painter.h>
 #include "uimapanchorlayout.h"
@@ -56,7 +56,7 @@ bool UIMinimap::setZoom(int zoom)
     if(zoom < m_minZoom || zoom > m_maxZoom)
         return false;
 
-    int oldZoom = m_zoom;
+    const int oldZoom = m_zoom;
     m_zoom = zoom;
     if(m_zoom < 0)
         m_scale = 1.0f / (1 << std::abs(zoom));
@@ -72,7 +72,7 @@ bool UIMinimap::setZoom(int zoom)
 
 void UIMinimap::setCameraPosition(const Position& pos)
 {
-    Position oldPos = m_cameraPosition;
+    const Position oldPos = m_cameraPosition;
     m_cameraPosition = pos;
     m_layout->update();
 

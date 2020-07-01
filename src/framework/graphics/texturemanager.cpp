@@ -52,7 +52,7 @@ void TextureManager::poll()
 {
     // update only every 16msec, this allows upto 60 fps for animated textures
     static ticks_t lastUpdate = 0;
-    ticks_t now = g_clock.millis();
+    const ticks_t now = g_clock.millis();
     if(now - lastUpdate < 16)
         return;
     lastUpdate = now;
@@ -92,10 +92,10 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     TexturePtr texture;
 
     // before must resolve filename to full path
-    std::string filePath = g_resources.resolvePath(fileName);
+    const std::string filePath = g_resources.resolvePath(fileName);
 
     // check if the texture is already loaded
-    auto it = m_textures.find(filePath);
+    const auto it = m_textures.find(filePath);
     if(it != m_textures.end()) {
         texture = it->second;
     }
@@ -103,7 +103,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     // texture not found, load it
     if(!texture) {
         try {
-            std::string filePathEx = g_resources.guessFilePath(filePath, "png");
+            const std::string filePathEx = g_resources.guessFilePath(filePath, "png");
 
             // load texture file data
             std::stringstream fin;
@@ -130,22 +130,22 @@ TexturePtr TextureManager::loadTexture(std::stringstream& file)
 
     apng_data apng;
     if(load_apng(file, &apng) == 0) {
-        Size imageSize(apng.width, apng.height);
+        const Size imageSize(apng.width, apng.height);
         if(apng.num_frames > 1) { // animated texture
             std::vector<ImagePtr> frames;
             std::vector<int> framesDelay;
             for(uint i=0;i<apng.num_frames;++i) {
-                uchar *frameData = apng.pdata + ((apng.first_frame+i) * imageSize.area() * apng.bpp);
+                uchar *frameData = apng.pdata + (apng.first_frame+i) * imageSize.area() * apng.bpp;
                 int frameDelay = apng.frames_delay[i];
 
                 framesDelay.push_back(frameDelay);
                 frames.push_back(ImagePtr(new Image(imageSize, apng.bpp, frameData)));
             }
-            AnimatedTexturePtr animatedTexture = new AnimatedTexture(imageSize, frames, framesDelay);
+            const AnimatedTexturePtr animatedTexture = new AnimatedTexture(imageSize, frames, framesDelay);
             m_animatedTextures.push_back(animatedTexture);
             texture = animatedTexture;
         } else {
-            ImagePtr image = ImagePtr(new Image(imageSize, apng.bpp, apng.pdata));
+            const ImagePtr image = ImagePtr(new Image(imageSize, apng.bpp, apng.pdata));
             texture = TexturePtr(new Texture(image));
         }
         free_apng(&apng);

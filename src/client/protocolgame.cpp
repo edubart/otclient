@@ -22,9 +22,9 @@
 
 #include "protocolgame.h"
 #include "game.h"
-#include "player.h"
 #include "item.h"
 #include "localplayer.h"
+#include "player.h"
 
 void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
 {
@@ -59,7 +59,7 @@ void ProtocolGame::onRecv(const InputMessagePtr& inputMessage)
         m_firstRecv = false;
 
         if(g_game.getFeature(Otc::GameMessageSizeCheck)) {
-            int size = inputMessage->getU16();
+            const int size = inputMessage->getU16();
             if(size != inputMessage->getUnreadSize()) {
                 g_logger.traceError("invalid message size");
                 return;

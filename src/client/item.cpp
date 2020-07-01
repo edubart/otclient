@@ -21,21 +21,21 @@
  */
 
 #include "item.h"
-#include "thingtypemanager.h"
+#include "container.h"
+#include "game.h"
+#include "houses.h"
+#include "map.h"
+#include "shadermanager.h"
 #include "spritemanager.h"
 #include "thing.h"
+#include "thingtypemanager.h"
 #include "tile.h"
-#include "shadermanager.h"
-#include "container.h"
-#include "map.h"
-#include "houses.h"
-#include "game.h"
 
+#include <framework/core/binarytree.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
 #include <framework/core/filestream.h>
-#include <framework/core/binarytree.h>
+#include <framework/graphics/graphics.h>
 
 Item::Item() :
     m_clientId(0),
@@ -75,7 +75,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* l
         return;
 
     // determine animation phase
-    int animationPhase = calculateAnimationPhase(animate);
+    const int animationPhase = calculateAnimationPhase(animate);
 
     // determine x,y,z patterns
     int xPattern = 0, yPattern = 0, zPattern = 0;
@@ -196,7 +196,7 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     out->addU8(ATTR_CHARGES);
     out->addU16(getCountOrSubType());
 
-    Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
+    const Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
     if(dest.isValid()) {
         out->addU8(ATTR_TELE_DEST);
         out->addPos(dest.x, dest.y, dest.z);
@@ -212,8 +212,8 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU8(getDoorId());
     }
 
-    uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
-    uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
+    const uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
+    const uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if(aid) {
         out->addU8(ATTR_ACTION_ID);
         out->addU16(aid);
@@ -224,19 +224,19 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU16(uid);
     }
 
-    std::string text = getText();
+    const std::string text = getText();
     if(g_things.getItemType(m_serverId)->isWritable() && !text.empty()) {
         out->addU8(ATTR_TEXT);
         out->addString(text);
     }
-    std::string desc = getDescription();
+    const std::string desc = getDescription();
     if(!desc.empty()) {
         out->addU8(ATTR_DESC);
         out->addString(desc);
     }
 
     out->endNode();
-    for(auto i : m_containerItems)
+    for(const auto& i : m_containerItems)
         i->serializeItem(out);
 }
 
@@ -259,7 +259,7 @@ int Item::getCount()
 ItemPtr Item::clone()
 {
     ItemPtr item = ItemPtr(new Item);
-    *(item.get()) = *this;
+    *item.get() = *this;
     return item;
 }
 
@@ -362,8 +362,8 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         } else
             color = m_countOrSubType;
 
-        xPattern = (color % 4) % getNumPatternX();
-        yPattern = (color / 4) % getNumPatternY();
+        xPattern = color % 4 % getNumPatternX();
+        yPattern = color / 4 % getNumPatternY();
     } else {
         xPattern = m_position.x % getNumPatternX();
         yPattern = m_position.y % getNumPatternY();
@@ -380,7 +380,7 @@ int Item::calculateAnimationPhase(bool animate)
     if(getAnimator() != nullptr) return getAnimator()->getPhase();
 
     if(m_async) {
-        return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
+        return g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases()) / Otc::ITEM_TICKS_PER_FRAME;
     }
 
     if(g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {

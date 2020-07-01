@@ -178,7 +178,7 @@ namespace Proto {
     {
         auto it = std::find_if(messageModesMap.begin(), messageModesMap.end(), [=](const std::pair<uint8, uint8>& p) { return p.second == mode; });
         if(it != messageModesMap.end())
-            return (Otc::MessageMode)it->first;
+            return static_cast<Otc::MessageMode>(it->first);
         return Otc::MessageInvalid;
     }
 
@@ -186,7 +186,7 @@ namespace Proto {
     {
         if(mode < 0 || mode >= Otc::LastMessage)
             return Otc::MessageInvalid;
-        auto it = messageModesMap.find(mode);
+        const auto it = messageModesMap.find(mode);
         if(it != messageModesMap.end())
             return it->second;
         return Otc::MessageInvalid;

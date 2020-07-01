@@ -47,7 +47,7 @@ void House::setTile(const TilePtr& tile)
 
 TilePtr House::getTile(const Position& position)
 {
-    TileMap::const_iterator iter = m_tiles.find(position);
+    const TileMap::const_iterator iter = m_tiles.find(position);
     if(iter != m_tiles.end())
         return iter->second;
     return nullptr;
@@ -92,7 +92,7 @@ void House::save(TiXmlElement* elem)
     elem->SetAttribute("name", getName());
     elem->SetAttribute("houseid", getId());
 
-    Position entry = getEntry();
+    const Position entry = getEntry();
     elem->SetAttribute("entryx", entry.x);
     elem->SetAttribute("entryy", entry.y);
     elem->SetAttribute("entryz", entry.z);
@@ -100,7 +100,7 @@ void House::save(TiXmlElement* elem)
     elem->SetAttribute("rent", getRent());
     elem->SetAttribute("townid", getTownId());
     elem->SetAttribute("size", getSize());
-    elem->SetAttribute("guildhall", (int)m_isGuildHall);
+    elem->SetAttribute("guildhall", static_cast<int>(m_isGuildHall));
 }
 
 HouseManager::HouseManager()
@@ -115,21 +115,21 @@ void HouseManager::addHouse(const HousePtr& house)
 
 void HouseManager::removeHouse(uint32 houseId)
 {
-    auto it = findHouse(houseId);
+    const auto it = findHouse(houseId);
     if(it != m_houses.end())
         m_houses.erase(it);
 }
 
 HousePtr HouseManager::getHouse(uint32 houseId)
 {
-    auto it = findHouse(houseId);
+    const auto it = findHouse(houseId);
     return it != m_houses.end() ? *it : nullptr;
 }
 
-HousePtr HouseManager::getHouseByName(std::string name)
+HousePtr HouseManager::getHouseByName(const std::string& name)
 {
-    auto it = std::find_if(m_houses.begin(), m_houses.end(),
-                           [=](const HousePtr& house) -> bool { return house->getName() == name; });
+    const auto it = std::find_if(m_houses.begin(), m_houses.end(),
+                                 [=](const HousePtr& house) -> bool { return house->getName() == name; });
     return it != m_houses.end() ? *it : nullptr;
 }
 
@@ -149,7 +149,7 @@ void HouseManager::load(const std::string& fileName)
             if(elem->ValueTStr() != "house")
                 stdext::throw_exception("invalid house tag.");
 
-            uint32 houseId = elem->readType<uint32>("houseid");
+            const uint32 houseId = elem->readType<uint32>("houseid");
             HousePtr house = getHouse(houseId);
             if(!house)
                 house = HousePtr(new House(houseId)), addHouse(house);
@@ -174,7 +174,7 @@ void HouseManager::save(const std::string& fileName)
         TiXmlElement* root = new TiXmlElement("houses");
         doc.LinkEndChild(root);
 
-        for(auto house : m_houses) {
+        for(const auto& house : m_houses) {
             TiXmlElement* elem = new TiXmlElement("house");
             house->save(elem);
             root->LinkEndChild(elem);

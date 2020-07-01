@@ -21,12 +21,12 @@
  */
 
 #include "uimap.h"
+#include <framework/graphics/graphics.h>
+#include <framework/otml/otml.h>
 #include "game.h"
+#include "localplayer.h"
 #include "map.h"
 #include "mapview.h"
-#include <framework/otml/otml.h>
-#include <framework/graphics/graphics.h>
-#include "localplayer.h"
 
 UIMap::UIMap()
 {
@@ -132,7 +132,7 @@ Position UIMap::getPosition(const Point& mousePos)
     if(!m_mapRect.contains(mousePos))
         return Position();
 
-    Point relativeMousePos = mousePos - m_mapRect.topLeft();
+    const Point relativeMousePos = mousePos - m_mapRect.topLeft();
     return m_mapView->getPosition(relativeMousePos, m_mapRect.size());
 }
 
@@ -203,10 +203,10 @@ void UIMap::updateVisibleDimension()
 
 void UIMap::updateMapSize()
 {
-    Rect clippingRect = getPaddingRect();
+    const Rect clippingRect = getPaddingRect();
     Size mapSize;
     if(m_keepAspectRatio) {
-        Rect mapRect = clippingRect.expanded(-1);
+        const Rect mapRect = clippingRect.expanded(-1);
         mapSize = Size(m_aspectRatio * m_zoom, m_zoom);
         mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
     } else {

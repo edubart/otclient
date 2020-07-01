@@ -21,10 +21,10 @@
  */
 
 #include "uisprite.h"
-#include <framework/otml/otml.h>
+#include <client/spritemanager.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texturemanager.h>
-#include <client/spritemanager.h>
+#include <framework/otml/otml.h>
 
 UISprite::UISprite() :
     m_spriteId(0),
@@ -65,7 +65,7 @@ void UISprite::setSpriteId(int id)
     if(id == 0)
         m_sprite = nullptr;
     else {
-        ImagePtr image = g_sprites.getSpriteImage(id);
+        const ImagePtr image = g_sprites.getSpriteImage(id);
         if(image)
             m_sprite = new Texture(image);
         else

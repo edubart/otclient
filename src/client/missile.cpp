@@ -21,11 +21,11 @@
  */
 
 #include "missile.h"
-#include "thingtypemanager.h"
-#include "map.h"
-#include "tile.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
+#include "map.h"
+#include "thingtypemanager.h"
+#include "tile.h"
 
 void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
 {
@@ -62,7 +62,7 @@ void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
         yPattern = 1;
     }
 
-    float fraction = m_animationTimer.ticksElapsed() / m_duration;
+    const float fraction = m_animationTimer.ticksElapsed() / m_duration;
     rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, lightView);
 }
 
@@ -79,7 +79,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     m_direction = fromPosition.getDirectionFromPosition(toPosition);
 
-    m_duration = (Otc::MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(deltaLength);
+    m_duration = Otc::MISSILE_TICKS_PER_FRAME * 2 * std::sqrt(deltaLength);
     m_delta *= Otc::TILE_PIXELS;
     m_animationTimer.restart();
 
