@@ -48,6 +48,18 @@ namespace Otc
         MAX_AUTOWALK_DIST = 127
     };
 
+    enum ReDrawFlags {
+        ReDrawTile = 1 << 0,
+        ReDrawLight = 1 << 1,
+        ReDrawInformation = 1 << 2,
+
+        ReDrawTile_Light = ReDrawTile | ReDrawLight,
+        ReDrawTile_Information = ReDrawTile | ReDrawInformation,
+        ReDrawTile_Light_Information = ReDrawTile | ReDrawLight | ReDrawInformation,
+
+        RedrawAll = ReDrawTile | ReDrawLight | ReDrawInformation
+    };
+
     enum DrawFlags {
         DrawGround = 1,
         DrawGroundBorders = 2,

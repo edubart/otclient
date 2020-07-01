@@ -198,7 +198,7 @@ void UIMap::updateVisibleDimension()
     if(m_keepAspectRatio)
         updateMapSize();
 
-    g_map.requestDrawing(true, true);
+    g_map.requestDrawing(Otc::ReDrawTile_Light_Information, true);
 }
 
 void UIMap::updateMapSize()

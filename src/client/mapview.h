@@ -121,10 +121,10 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const bool tile, const bool light, const bool force = false)
+    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force = false)
     {
-        if(tile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redraw = true;
-        if(light && m_lightView) m_lightView->requestDrawing(force);
+        if(reDrawFlags & Otc::ReDrawTile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redrawFlag = reDrawFlags;
+        if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
     }
 
 private:
@@ -178,6 +178,7 @@ private:
 
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
+    FrameBufferPtr m_nameFramebuffer;
 
     ViewMode m_viewMode;
     LightViewPtr m_lightView;
@@ -186,7 +187,7 @@ private:
     float m_fadeInTime;
     float m_fadeOutTime;
 
-    bool m_redraw;
+    uint32 m_redrawFlag;
     Timer m_minTimeRender;
 
     Timer m_fadeTimer;

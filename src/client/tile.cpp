@@ -645,9 +645,9 @@ void Tile::cancelListenerPainter()
     m_animatedItems.clear();
 }
 
-void Tile::analyzeThing(const ThingPtr& thing, bool sum)
+void Tile::analyzeThing(const ThingPtr& thing, bool add)
 {
-    const int value = sum ? 1 : -1;
+    const int value = add ? 1 : -1;
 
     if(thing->getHeight() != 1 || thing->getWidth() != 1)
         m_countFlag.notSingleDimension += value;
@@ -689,9 +689,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool sum)
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
     if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
         const int commonSize = m_commonItems.size();
-        if(m_countFlag.elevation > (sum ? 3 : 2) && commonSize > 2) {
+        if(m_countFlag.elevation > (add ? 3 : 2) && commonSize > 2) {
             const ItemPtr& subItem = m_commonItems[1];
-            subItem->canDraw(!sum);
+            subItem->canDraw(!add);
         } else {
             const ItemPtr& item = thing->static_self_cast<Item>();
 
@@ -701,7 +701,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool sum)
                         if(subItem->hasElevation() || subItem->isOpaque()) return;
 
                         if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                            subItem->canDraw(!sum);
+                            subItem->canDraw(!add);
                         }
                     }
                 }
@@ -713,7 +713,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool sum)
                     if(subItem->hasElevation() || subItem->isOpaque()) return;
 
                     if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                        subItem->canDraw(!sum);
+                        subItem->canDraw(!add);
                     }
                 }
             }
@@ -722,7 +722,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool sum)
                 if(subItem->hasElevation()) return;
 
                 if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                    subItem->canDraw(!sum);
+                    subItem->canDraw(!add);
                 }
             }
         }

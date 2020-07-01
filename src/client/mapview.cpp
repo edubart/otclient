@@ -60,11 +60,12 @@ MapView::MapView()
     m_updateTilesPos = 0;
     m_fadeOutTime = 0;
     m_fadeInTime = 0;
-    m_redraw = true;
+    m_redrawFlag = Otc::RedrawAll;
     m_minimumAmbientLight = 0;
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_framebuffer = g_framebuffers.createFrameBuffer();
+    m_nameFramebuffer = g_framebuffers.createFrameBuffer();
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
@@ -93,7 +94,8 @@ void MapView::draw(const Rect& rect)
     const float scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
     const Position cameraPosition = getCameraPosition();
 
-    if(m_redraw) {
+    const auto redrawTile = m_redrawFlag & Otc::ReDrawTile;
+    if(redrawTile) {
         m_framebuffer->bind();
 
         if(m_mustCleanFramebuffer) {
@@ -140,7 +142,7 @@ void MapView::draw(const Rect& rect)
         m_framebuffer->release();
 
         m_minTimeRender.restart();
-        m_redraw = false;
+        m_redrawFlag &= ~Otc::ReDrawTile;
     }
 
 
@@ -204,25 +206,34 @@ void MapView::draw(const Rect& rect)
 
     // avoid drawing texts on map in far zoom outs
     if(m_viewMode == NEAR_VIEW) {
-        for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
-            if(!creature->canBeSeen())
-                continue;
+        if(redrawTile || m_redrawFlag & Otc::ReDrawInformation) {
+            m_nameFramebuffer->bind();
+            g_painter->setAlphaWriting(true);
+            g_painter->clear(Color::alpha);
+            for(const CreaturePtr& creature : m_cachedFloorVisibleCreatures) {
+                if(!creature->canBeSeen())
+                    continue;
 
-            const PointF jumpOffset = creature->getJumpOffset() * scaleFactor;
-            Point creatureOffset = Point(16 - creature->getDisplacementX(), -creature->getDisplacementY() - 2);
-            Position pos = creature->getPosition();
-            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p += (creature->getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
-            p.x = p.x * horizontalStretchFactor;
-            p.y = p.y * verticalStretchFactor;
-            p += rect.topLeft();
+                const PointF jumpOffset = creature->getJumpOffset() * scaleFactor;
+                Point creatureOffset = Point(16 - creature->getDisplacementX(), -creature->getDisplacementY() - 2);
+                Position pos = creature->getPosition();
+                Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
+                p += (creature->getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
+                p.x = p.x * horizontalStretchFactor;
+                p.y = p.y * verticalStretchFactor;
+                p += rect.topLeft();
 
-            int flags = 0;
-            if(m_drawNames) { flags = Otc::DrawNames; }
-            if(m_drawHealthBars) { flags |= Otc::DrawBars; }
-            if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
-            creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
+                int flags = 0;
+                if(m_drawNames) { flags = Otc::DrawNames; }
+                if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+                if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
+                creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
+            }
+            m_nameFramebuffer->release();
+
+            m_redrawFlag &= ~Otc::ReDrawInformation;
         }
+        m_nameFramebuffer->draw();
     }
 
     // lights are drawn after names and before texts
@@ -425,7 +436,9 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_virtualCenterOffset = virtualCenterOffset;
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
+
     m_framebuffer->resize(bufferSize);
+    m_nameFramebuffer->resize(bufferSize * 4);
 
     requestVisibleTilesCacheUpdate();
 }
@@ -688,7 +701,7 @@ void MapView::setDrawLights(bool enable)
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 
-    requestDrawing(true, true);
+    requestDrawing(Otc::ReDrawTile_Light);
     m_mustCleanFramebuffer = true;
     m_drawLights = enable;
 }

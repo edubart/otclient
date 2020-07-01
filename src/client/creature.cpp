@@ -233,11 +233,11 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
 
     // calculate main rects
     Rect backgroundRect = Rect(point.x - 13.5, point.y, 27, 4);
-    backgroundRect.bind(parentRect);
+    // backgroundRect.bind(parentRect);
 
     const Size nameSize = m_nameCache.getTextSize();
     Rect textRect = Rect(point.x - nameSize.width() / 2.0, point.y - 12, nameSize);
-    textRect.bind(parentRect);
+    // textRect.bind(parentRect);
 
     // distance them
     uint32 offset = 12;
@@ -415,7 +415,7 @@ void Creature::updateJump()
         auto self = static_self_cast<Creature>();
         g_dispatcher.scheduleEvent([self] {
             self->updateJump();
-            g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
+            self->requestReDraw();
         }, nextT - m_jumpTimer.ticksElapsed());
     } else
         m_jumpOffset = PointF(0, 0);
@@ -573,7 +573,7 @@ void Creature::nextWalkUpdate()
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
 
-        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
+        self->requestReDraw();
 
     }, getStepDuration() / Otc::TILE_PIXELS);
 }
@@ -629,7 +629,7 @@ void Creature::terminateWalk()
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
 
-        g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
+        self->requestReDraw();
     }, g_game.getServerBeat());
 
 }
@@ -1018,4 +1018,14 @@ ThingType* Creature::rawGetThingType()
 ThingType* Creature::rawGetMountThingType()
 {
     return g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
+}
+
+void Creature::requestReDraw()
+{
+    uint32_t redrawFlag = Otc::RedrawAll;
+
+    if(isLocalPlayer() || hasLight())
+        redrawFlag |= Otc::ReDrawLight;
+
+    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), isLocalPlayer());
 }

@@ -129,7 +129,7 @@ public:
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
     void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration, hasLight()); }
-    void cancelListenerPainter() { rawGetThingType()->cancelListenerPainter(); }
+    bool cancelListenerPainter() { return rawGetThingType()->cancelListenerPainter(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
     virtual void onAppear() {}

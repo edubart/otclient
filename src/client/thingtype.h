@@ -221,7 +221,7 @@ public:
     const TexturePtr& getTexture(int animationPhase);
 
     void startListenerPainter(float duration, bool redrawLight = false);
-    void cancelListenerPainter();
+    bool cancelListenerPainter();
 
 private:
     static Size getBestTextureDimension(int w, int h, int count);

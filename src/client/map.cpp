@@ -72,11 +72,10 @@ void Map::notificateTileUpdate(const Position& pos)
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const bool tile, const bool light, const bool force)
+void Map::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force)
 {
-    if(!tile && !light) return;
     for(const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing(tile, light, force);
+        mapView->requestDrawing(reDrawFlags, force);
 }
 
 void Map::clean()
@@ -128,12 +127,18 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 thing->static_self_cast<Item>()->startListenerPainter();
             }
 
-            requestDrawing(true, thing->hasLight(), true);
+            uint32_t redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+
+            if(thing->isCreature()) redrawFlag |= Otc::ReDrawInformation;
+
+            requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), true);
         }
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-            requestDrawing(true, thing->hasLight());
+
+            const auto redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+            requestDrawing(redrawFlag);
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
@@ -224,7 +229,11 @@ bool Map::removeThing(const ThingPtr& thing)
     } else if(const TilePtr& tile = thing->getTile())
         ret = tile->removeThing(thing);
 
-    thing->cancelListenerPainter();
+    if(!thing->cancelListenerPainter()) {
+        uint32_t redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+        if(thing->isCreature()) redrawFlag |= Otc::ReDrawInformation;
+        requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), true);
+    }
 
     notificateTileUpdate(thing->getPosition());
     return ret;
