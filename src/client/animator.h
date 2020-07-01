@@ -52,7 +52,7 @@ public:
     int getPhase();
     int getPhaseAt(ticks_t time);
 
-    int getStartPhase();
+    int getStartPhase() const;
     int getAnimationPhases() { return m_animationPhases; }
     bool isAsync() { return m_async; }
     bool isComplete() { return m_isComplete; }

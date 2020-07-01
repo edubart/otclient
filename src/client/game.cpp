@@ -886,12 +886,7 @@ int Game::open(const ItemPtr& item, const ContainerPtr& previousContainer)
     if(!canPerformGameAction() || !item)
         return -1;
 
-    int id = 0;
-    if(!previousContainer)
-        id = findEmptyContainerId();
-    else
-        id = previousContainer->getId();
-
+    const int id = previousContainer ? previousContainer->getId() : findEmptyContainerId();
     m_protocolGame->sendUseItem(item->getPosition(), item->getId(), item->getStackPos(), id);
     return id;
 }

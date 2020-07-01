@@ -75,7 +75,6 @@ public:
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
-
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
 
@@ -94,9 +93,10 @@ public:
     uint8 getType() { return m_type; }
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
-    Point getDrawOffset();
     int getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    Point getDrawOffset();
     Point getWalkOffset() { return m_walkOffset; }
+    PointF getJumpOffset() { return m_jumpOffset; }
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
@@ -107,7 +107,7 @@ public:
     virtual int getDisplacementX();
     virtual int getDisplacementY();
     virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
-    PointF getJumpOffset() { return m_jumpOffset; }
+
 
     int getTotalAnimationPhase();
     int getCurrentAnimationPhase(const bool mount = false);
@@ -117,9 +117,9 @@ public:
     // walk related
     void turn(Otc::Direction direction);
     void jump(int height, int duration);
+    void allowAppearWalk() { m_allowAppearWalk = true; }
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
-    void allowAppearWalk() { m_allowAppearWalk = true; }
 
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
@@ -130,13 +130,12 @@ public:
 
     const ThingTypePtr& getThingType();
     ThingType* rawGetThingType();
+    ThingType* Creature::rawGetMountThingType();
 
     virtual void onPositionChange(const Position& newPos, const Position& oldPos);
     virtual void onAppear();
     virtual void onDisappear();
     virtual void onDeath();
-
-    ThingType* Creature::rawGetMountThingType();
 
 protected:
     void updateWalkingTile();

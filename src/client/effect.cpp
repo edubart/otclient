@@ -30,7 +30,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int o
     if(m_id == 0)
         return;
 
-    int animationPhase = 0;
+    int animationPhase;
 
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
         // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
@@ -60,7 +60,7 @@ void Effect::onAppear()
 {
     m_animationTimer.restart();
 
-    int duration = 0;
+    int duration;
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
         duration = getThingType()->getAnimator()->getTotalDuration();
 

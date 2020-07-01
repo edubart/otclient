@@ -985,20 +985,20 @@ int Creature::getCurrentAnimationPhase(const bool mount)
 
 int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
-    int exactSize = 0;
+    const int numPatternY = getNumPatternY(),
+        layers = getLayers();
 
     animationPhase = 0;
-    xPattern = Otc::South;
 
-    zPattern = 0;
     if(m_outfit.hasMount())
-        zPattern = 1;
+        zPattern = m_outfit.hasMount() ? 1 : 0;
 
-    for(yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
+    int exactSize = 0;
+    for(yPattern = 0; yPattern < numPatternY; ++yPattern) {
         if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern - 1))))
             continue;
 
-        for(layer = 0; layer < getLayers(); ++layer)
+        for(layer = 0; layer < layers; ++layer)
             exactSize = std::max<int>(exactSize, Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase));
     }
 

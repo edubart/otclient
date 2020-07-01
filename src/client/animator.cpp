@@ -141,7 +141,7 @@ int Animator::getPhaseAt(ticks_t time)
     return std::min<int>(index, m_animationPhases - 1);
 }
 
-int Animator::getStartPhase()
+int Animator::getStartPhase() const
 {
     if(m_startPhase > -1)
         return m_startPhase;
