@@ -73,7 +73,7 @@ void Image::savePNG(const std::string& fileName)
 
     fin->cache();
     std::stringstream data;
-    save_png(data, m_size.width(), m_size.height(), 4, (unsigned char*)getPixelData());
+    save_png(data, m_size.width(), m_size.height(), 4, static_cast<unsigned char*>(getPixelData()));
     fin->write(data.str().c_str(), data.str().length());
     fin->flush();
     fin->close();

@@ -86,7 +86,7 @@ bool UIGridLayout::internalUpdate()
         numColumns = (clippingRect.width() + m_cellSpacing) / (m_cellSize.width() + m_cellSpacing);
         if (numColumns > 0) {
             m_numColumns = numColumns;
-            m_numLines = std::ceil(widgets.size() / (float)numColumns);
+            m_numLines = std::ceil(widgets.size() / static_cast<float>(numColumns));
         }
     }
 

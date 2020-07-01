@@ -112,13 +112,13 @@ bool luavalue_cast(int index, Color& color)
 {
     if(g_lua.isTable(index)) {
         g_lua.getField("r", index);
-        color.setRed((int)g_lua.popInteger());
+        color.setRed(static_cast<int>(g_lua.popInteger()));
         g_lua.getField("g", index);
-        color.setGreen((int)g_lua.popInteger());
+        color.setGreen(static_cast<int>(g_lua.popInteger()));
         g_lua.getField("b", index);
-        color.setBlue((int)g_lua.popInteger());
+        color.setBlue(static_cast<int>(g_lua.popInteger()));
         g_lua.getField("a", index);
-        color.setAlpha((int)g_lua.popInteger());
+        color.setAlpha(static_cast<int>(g_lua.popInteger()));
         return true;
     } else if(g_lua.isString()) {
         return stdext::cast(g_lua.toString(index), color);

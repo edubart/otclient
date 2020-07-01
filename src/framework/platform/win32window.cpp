@@ -264,7 +264,7 @@ void WIN32Window::terminate()
 
 struct WindowProcProxy {
     static LRESULT CALLBACK call(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-        WIN32Window* window = (WIN32Window*)&g_window;
+        WIN32Window* window = static_cast<WIN32Window*>(&g_window);
         return window->windowProc(hWnd, uMsg, wParam, lParam);
     }
 };
@@ -274,13 +274,13 @@ void WIN32Window::internalCreateWindow()
     m_defaultCursor = LoadCursor(NULL, IDC_ARROW);
     WNDCLASSA wc;
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc = (WNDPROC)WindowProcProxy::call;
+    wc.lpfnWndProc = static_cast<WNDPROC>(WindowProcProxy::call);
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = m_instance;
     wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
     wc.hCursor = m_defaultCursor;
-    wc.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
     wc.lpszMenuName = NULL;
     wc.lpszClassName = g_app.getCompactName().c_str();
 
@@ -444,7 +444,7 @@ bool WIN32Window::isExtensionSupported(const char* ext)
     return false;
 #else
     typedef const char* (WINAPI* wglGetExtensionsStringProc)();
-    wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
+    wglGetExtensionsStringProc wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
     if (!wglGetExtensionsString)
         return false;
 
@@ -462,7 +462,7 @@ void* WIN32Window::getExtensionProcAddress(const char* ext)
     //TODO
     return NULL;
 #else
-    return (void*)wglGetProcAddress(ext);
+    return static_cast<void*>(wglGetProcAddress(ext));
 #endif
 }
 
@@ -724,15 +724,15 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         {
             m_inputEvent.reset(Fw::MouseWheelInputEvent);
             m_inputEvent.mouseButton = Fw::MouseMidButton;
-            m_inputEvent.wheelDirection = ((short)HIWORD(wParam)) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
+            m_inputEvent.wheelDirection = static_cast<short>(HIWORD(wParam)) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
             if (m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
             break;
         }
         case WM_MOVE:
         {
-            m_position.x = (short)LOWORD(lParam);
-            m_position.y = (short)HIWORD(lParam);
+            m_position.x = static_cast<short>(LOWORD(lParam));
+            m_position.y = static_cast<short>(HIWORD(lParam));
             break;
         }
         case WM_GETMINMAXINFO:
@@ -834,7 +834,7 @@ int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hot
 
 void WIN32Window::setMouseCursor(int cursorId)
 {
-    if (cursorId >= (int)m_cursors.size() || cursorId < 0)
+    if (cursorId >= static_cast<int>(m_cursors.size()) || cursorId < 0)
         return;
 
     m_cursor = m_cursors[cursorId];
@@ -894,7 +894,7 @@ void WIN32Window::setVerticalSync(bool enable)
         return;
 
     typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
-    wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
+    wglSwapIntervalProc wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
     if (!wglSwapInterval)
         return;
 
@@ -955,9 +955,9 @@ void WIN32Window::setClipboardText(const std::string& text)
 
     std::wstring wtext = stdext::latin1_to_utf16(text);
 
-    LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
+    LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
     memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
-    lpwstr[text.length()] = (WCHAR)0;
+    lpwstr[text.length()] = static_cast<WCHAR>(0);
     GlobalUnlock(hglb);
 
     EmptyClipboard();
@@ -979,7 +979,7 @@ std::string WIN32Window::getClipboardText()
 
     HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if (hglb) {
-        LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
+        LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
         if (lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);

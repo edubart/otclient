@@ -192,7 +192,7 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
 
     int fileSize = PHYSFS_fileLength(file);
     std::string buffer(fileSize, 0);
-    PHYSFS_readBytes(file, (void*)&buffer[0], fileSize);
+    PHYSFS_readBytes(file, static_cast<void*>(&buffer[0]), fileSize);
     PHYSFS_close(file);
 
     return buffer;

@@ -44,29 +44,29 @@ int push_luavalue(double d);
 bool luavalue_cast(int index, double& d);
 
 // float
-inline int push_luavalue(float f) { push_luavalue((double)f); return 1; }
+inline int push_luavalue(float f) { push_luavalue(static_cast<double>(f)); return 1; }
 inline bool luavalue_cast(int index, float& f) { double d; bool r = luavalue_cast(index, d); f = d; return r; }
 
 // int8
-inline int push_luavalue(int8 v) { push_luavalue((int)v); return 1; }
+inline int push_luavalue(int8 v) { push_luavalue(static_cast<int>(v)); return 1; }
 inline bool luavalue_cast(int index, int8& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint8
-inline int push_luavalue(uint8 v) { push_luavalue((int)v); return 1; }
+inline int push_luavalue(uint8 v) { push_luavalue(static_cast<int>(v)); return 1; }
 inline bool luavalue_cast(int index, uint8& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // int16
-inline int push_luavalue(int16 v) { push_luavalue((int)v); return 1; }
+inline int push_luavalue(int16 v) { push_luavalue(static_cast<int>(v)); return 1; }
 inline bool luavalue_cast(int index, int16& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint16
-inline int push_luavalue(uint16 v) { push_luavalue((int)v); return 1; }
+inline int push_luavalue(uint16 v) { push_luavalue(static_cast<int>(v)); return 1; }
 inline bool luavalue_cast(int index, uint16& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint32
-inline int push_luavalue(uint32 v) { push_luavalue((double)v); return 1; }
+inline int push_luavalue(uint32 v) { push_luavalue(static_cast<double>(v)); return 1; }
 inline bool luavalue_cast(int index, uint32& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 // int64
-inline int push_luavalue(int64 v) { push_luavalue((double)v); return 1; }
+inline int push_luavalue(int64 v) { push_luavalue(static_cast<double>(v)); return 1; }
 inline bool luavalue_cast(int index, int64& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 // uint64
-inline int push_luavalue(uint64 v) { push_luavalue((double)v); return 1; }
+inline int push_luavalue(uint64 v) { push_luavalue(static_cast<double>(v)); return 1; }
 inline bool luavalue_cast(int index, uint64& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 
 // string
@@ -100,7 +100,7 @@ bool luavalue_cast(int index, OTMLNodePtr& node);
 // enum
 template<class T>
 typename std::enable_if<std::is_enum<T>::value, int>::type
-push_luavalue(T e) { return push_luavalue((int)e); }
+push_luavalue(T e) { return push_luavalue(static_cast<int>(e)); }
 
 template<class T>
 typename std::enable_if<std::is_enum<T>::value, bool>::type
@@ -179,7 +179,7 @@ typename std::enable_if<std::is_enum<T>::value, bool>::type
 luavalue_cast(int index, T& myenum) {
     int i;
     if (luavalue_cast(index, i)) {
-        myenum = (T)i;
+        myenum = static_cast<T>(i);
         return true;
     }
     return false;

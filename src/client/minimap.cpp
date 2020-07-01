@@ -52,7 +52,7 @@ void MinimapBlock::update()
     bool shouldDraw = false;
     for(int x = 0; x < MMBLOCK_SIZE; ++x) {
         for(int y = 0; y < MMBLOCK_SIZE; ++y) {
-            uint8 c = getTile(x, y).color;
+            const uint8 c = getTile(x, y).color;
             uint32 col;
             if(c != 255) {
                 col = Color::from8bit(c).rgba();
@@ -103,7 +103,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     if(screenRect.isEmpty())
         return;
 
-    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
+    const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_painter->saveState();
     g_painter->setColor(color);
     g_painter->drawFilledRect(screenRect);
@@ -115,9 +115,9 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
         return;
     }
 
-    Point blockOff = getBlockOffset(mapRect.topLeft());
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
-    Point start = screenRect.topLeft() - (mapRect.topLeft() - blockOff) * scale - off;
+    const Point blockOff = getBlockOffset(mapRect.topLeft());
+    const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    const Point start = screenRect.topLeft() - (mapRect.topLeft() - blockOff) * scale - off;
 
     for(int y = blockOff.y, ys = start.y; ys < screenRect.bottom(); y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE * scale) {
         if(y < 0 || y >= 65536)
@@ -154,9 +154,9 @@ Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const P
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
         return Point(-1, -1);
 
-    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
-    Point posoff = (Point(pos.x, pos.y) - mapRect.topLeft()) * scale;
+    const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
+    const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    const Point posoff = (Point(pos.x, pos.y) - mapRect.topLeft()) * scale;
     return posoff + screenRect.topLeft() - off + (Point(1, 1) * scale) / 2;
 }
 
@@ -165,9 +165,9 @@ Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, co
     if(screenRect.isEmpty())
         return Position();
 
-    Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
-    Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
-    Point pos2d = (point - screenRect.topLeft() + off) / scale + mapRect.topLeft();
+    const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
+    const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
+    const Point pos2d = (point - screenRect.topLeft() + off) / scale + mapRect.topLeft();
     return Position(pos2d.x, pos2d.y, mapCenter.z);
 }
 
@@ -176,7 +176,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
         return Rect();
 
-    int tileSize = 32 * scale;
+    const int tileSize = 32 * scale;
     Rect tileRect(0, 0, tileSize, tileSize);
     tileRect.moveCenter(getTilePoint(pos, screenRect, mapCenter, scale));
     return tileRect;
@@ -184,7 +184,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
 
 Rect Minimap::calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale)
 {
-    int w = screenRect.width() / scale, h = std::ceil(screenRect.height() / scale);
+    const int w = screenRect.width() / scale, h = std::ceil(screenRect.height() / scale);
     Rect mapRect(0, 0, w, h);
     mapRect.moveCenter(Point(mapCenter.x, mapCenter.y));
     return mapRect;
@@ -200,12 +200,12 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
             minimapTile.flags |= MinimapTileNotWalkable;
         if(!tile->isPathable())
             minimapTile.flags |= MinimapTileNotPathable;
-        minimapTile.speed = std::min<int>((int)std::ceil(tile->getGroundSpeed() / 10.0f), 255);
+        minimapTile.speed = std::min<int>(static_cast<int>(std::ceil(tile->getGroundSpeed() / 10.0f)), 255);
     }
 
     if(minimapTile != MinimapTile()) {
         MinimapBlock& block = getBlock(pos);
-        Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+        const Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
         block.updateTile(pos.x - offsetPos.x, pos.y - offsetPos.y, minimapTile);
         block.justSaw();
     }
@@ -216,7 +216,7 @@ const MinimapTile& Minimap::getTile(const Position& pos)
     static MinimapTile nulltile;
     if(pos.z <= Otc::MAX_Z && hasBlock(pos)) {
         MinimapBlock& block = getBlock(pos);
-        Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+        const Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
         return block.getTile(pos.x - offsetPos.x, pos.y - offsetPos.y);
     }
     return nulltile;
@@ -230,7 +230,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
     try {
         ImagePtr image = Image::load(fileName);
 
-        uint8 waterc = Color::to8bit(std::string("#3300cc"));
+        const uint8 waterc = Color::to8bit(std::string("#3300cc"));
 
         // non pathable colors
         Color nonPathableColors[] = {
@@ -282,7 +282,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
 
                 Position pos(topLeft.x + x, topLeft.y + y, topLeft.z);
                 MinimapBlock& block = getBlock(pos);
-                Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+                const Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
                 MinimapTile& tile = block.getTile(pos.x - offsetPos.x, pos.y - offsetPos.y);
                 if(!(tile.flags & MinimapTileWasSeen)) {
                     tile.color = c;
@@ -312,12 +312,12 @@ bool Minimap::loadOtmm(const std::string& fileName)
 
         fin->cache();
 
-        uint32 signature = fin->getU32();
+        const uint32 signature = fin->getU32();
         if(signature != OTMM_SIGNATURE)
             stdext::throw_exception("invalid OTMM file");
 
-        uint16 start = fin->getU16();
-        uint16 version = fin->getU16();
+        const uint16 start = fin->getU16();
+        const uint16 version = fin->getU16();
         fin->getU32(); // flags
 
         switch(version) {
@@ -332,7 +332,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
 
         fin->seek(start);
 
-        uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
+        const uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
         std::vector<uchar> compressBuffer(compressBound(blockSize));
         std::vector<uchar> decompressBuffer(blockSize);
 
@@ -347,10 +347,10 @@ bool Minimap::loadOtmm(const std::string& fileName)
                 break;
 
             MinimapBlock& block = getBlock(pos);
-            ulong len = fin->getU16();
+            const ulong len = fin->getU16();
             ulong destLen = blockSize;
             fin->read(compressBuffer.data(), len);
-            int ret = uncompress(decompressBuffer.data(), &destLen, compressBuffer.data(), len);
+            const int ret = uncompress(decompressBuffer.data(), &destLen, compressBuffer.data(), len);
             if(ret != Z_OK || destLen != blockSize)
                 break;
 
@@ -376,7 +376,7 @@ void Minimap::saveOtmm(const std::string& fileName)
         fin->cache();
 
         //TODO: compression flag with zlib
-        uint32 flags = 0;
+        const uint32 flags = 0;
 
         // header
         fin->addU32(OTMM_SIGNATURE);
@@ -388,29 +388,29 @@ void Minimap::saveOtmm(const std::string& fileName)
         fin->addString("OTMM 1.0"); // description
 
         // go back and rewrite where the map data starts
-        uint32 start = fin->tell();
+        const uint32 start = fin->tell();
         fin->seek(4);
         fin->addU16(start);
         fin->seek(start);
 
-        uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
+        const uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
         std::vector<uchar> compressBuffer(compressBound(blockSize));
         const int COMPRESS_LEVEL = 3;
 
         for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
             for(auto& it : m_tileBlocks[z]) {
-                int index = it.first;
+                const int index = it.first;
                 MinimapBlock& block = it.second;
                 if(!block.wasSeen())
                     continue;
 
-                Position pos = getIndexPosition(index, z);
+                const Position pos = getIndexPosition(index, z);
                 fin->addU16(pos.x);
                 fin->addU16(pos.y);
                 fin->addU8(pos.z);
 
                 ulong len = blockSize;
-                int ret = compress2(compressBuffer.data(), &len, (uchar*)&block.getTiles(), blockSize, COMPRESS_LEVEL);
+                const int ret = compress2(compressBuffer.data(), &len, (uchar*)&block.getTiles(), blockSize, COMPRESS_LEVEL);
                 assert(ret == Z_OK);
                 fin->addU16(len);
                 fin->write(compressBuffer.data(), len);
@@ -418,7 +418,7 @@ void Minimap::saveOtmm(const std::string& fileName)
         }
 
         // end of file
-        Position invalidPos;
+        const Position invalidPos;
         fin->addU16(invalidPos.x);
         fin->addU16(invalidPos.y);
         fin->addU8(invalidPos.z);

@@ -137,8 +137,8 @@ public:
     static double getAngleFromPositions(const Position& fromPos, const Position& toPos)
     {
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
-        int dx = toPos.x - fromPos.x;
-        int dy = toPos.y - fromPos.y;
+        const int dx = toPos.x - fromPos.x;
+        const int dy = toPos.y - fromPos.y;
         if(dx == 0 && dy == 0)
             return -1;
 
@@ -156,7 +156,7 @@ public:
 
     static Otc::Direction getDirectionFromPositions(const Position& fromPos, const Position& toPos)
     {
-        float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
+        const float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
         if(angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
@@ -219,7 +219,7 @@ public:
 
     bool up(int n = 1)
     {
-        int nz = z - n;
+        const int nz = z - n;
         if(nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
@@ -229,7 +229,7 @@ public:
 
     bool down(int n = 1)
     {
-        int nz = z + n;
+        const int nz = z + n;
         if(nz >= 0 && nz <= Otc::MAX_Z) {
             z = nz;
             return true;
@@ -240,7 +240,7 @@ public:
 
     bool coveredUp(int n = 1)
     {
-        int nx = x + n, ny = y + n, nz = z - n;
+        const int nx = x + n, ny = y + n, nz = z - n;
         if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -251,7 +251,7 @@ public:
 
     bool coveredDown(int n = 1)
     {
-        int nx = x - n, ny = y - n, nz = z + n;
+        const int nx = x - n, ny = y - n, nz = z + n;
         if(nx >= 0 && nx <= 65535 && ny >= 0 && ny <= 65535 && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -274,7 +274,7 @@ struct PositionHasher : std::unary_function<Position, std::size_t> {
 
 inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 {
-    out << (int)pos.x << " " << (int)pos.y << " " << (int)pos.z;
+    out << static_cast<int>(pos.x) << " " << static_cast<int>(pos.y) << " " << static_cast<int>(pos.z);
     return out;
 }
 

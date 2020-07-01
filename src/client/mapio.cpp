@@ -55,21 +55,21 @@ void Map::loadOtbm(const std::string& fileName)
         if(root->getU8())
             stdext::throw_exception("could not read root property!");
 
-        uint32 headerVersion = root->getU32();
+        const uint32 headerVersion = root->getU32();
         if(headerVersion > 3)
             stdext::throw_exception(stdext::format("Unknown OTBM version detected: %u.", headerVersion));
 
         setWidth(root->getU16());
         setHeight(root->getU16());
 
-        uint32 headerMajorItems = root->getU8();
+        const uint32 headerMajorItems = root->getU8();
         if(headerMajorItems > g_things.getOtbMajorVersion()) {
             stdext::throw_exception(stdext::format("This map was saved with different OTB version. read %d what it's supposed to be: %d",
                                                    headerMajorItems, g_things.getOtbMajorVersion()));
         }
 
         root->skip(3);
-        uint32 headerMinorItems = root->getU32();
+        const uint32 headerMinorItems = root->getU32();
         if(headerMinorItems > g_things.getOtbMinorVersion()) {
             g_logger.warning(stdext::format("This map needs an updated OTB. read %d what it's supposed to be: %d or less",
                                             headerMinorItems, g_things.getOtbMinorVersion()));
@@ -80,7 +80,7 @@ void Map::loadOtbm(const std::string& fileName)
             stdext::throw_exception("Could not read root data node");
 
         while(node->canRead()) {
-            uint8 attribute = node->getU8();
+            const uint8 attribute = node->getU8();
             std::string tmp = node->getString();
             switch(attribute) {
             case OTBM_ATTR_DESCRIPTION:
@@ -93,12 +93,12 @@ void Map::loadOtbm(const std::string& fileName)
                 setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
                 break;
             default:
-                stdext::throw_exception(stdext::format("Invalid attribute '%d'", (int)attribute));
+                stdext::throw_exception(stdext::format("Invalid attribute '%d'", static_cast<int>(attribute)));
             }
         }
 
         for(const BinaryTreePtr& nodeMapData : node->getChildren()) {
-            uint8 mapDataType = nodeMapData->getU8();
+            const uint8 mapDataType = nodeMapData->getU8();
             if(mapDataType == OTBM_TILE_AREA) {
                 Position basePos;
                 basePos.x = nodeMapData->getU16();
@@ -106,16 +106,16 @@ void Map::loadOtbm(const std::string& fileName)
                 basePos.z = nodeMapData->getU8();
 
                 for(const BinaryTreePtr& nodeTile : nodeMapData->getChildren()) {
-                    uint8 type = nodeTile->getU8();
+                    const uint8 type = nodeTile->getU8();
                     if(unlikely(type != OTBM_TILE && type != OTBM_HOUSETILE))
-                        stdext::throw_exception(stdext::format("invalid node tile type %d", (int)type));
+                        stdext::throw_exception(stdext::format("invalid node tile type %d", static_cast<int>(type)));
 
                     HousePtr house = nullptr;
                     uint32 flags = TILESTATE_NONE;
                     Position pos = basePos + nodeTile->getPoint();
 
                     if(type == OTBM_HOUSETILE) {
-                        uint32 hId = nodeTile->getU32();
+                        const uint32 hId = nodeTile->getU32();
                         TilePtr tile = getOrCreateTile(pos);
                         if(!(house = g_houses.getHouse(hId))) {
                             house = HousePtr(new House(hId));
@@ -125,11 +125,11 @@ void Map::loadOtbm(const std::string& fileName)
                     }
 
                     while(nodeTile->canRead()) {
-                        uint8 tileAttr = nodeTile->getU8();
+                        const uint8 tileAttr = nodeTile->getU8();
                         switch(tileAttr) {
                         case OTBM_ATTR_TILE_FLAGS:
                         {
-                            uint32 _flags = nodeTile->getU32();
+                            const uint32 _flags = nodeTile->getU32();
                             if((_flags & TILESTATE_PROTECTIONZONE) == TILESTATE_PROTECTIONZONE)
                                 flags |= TILESTATE_PROTECTIONZONE;
                             else if((_flags & TILESTATE_OPTIONALZONE) == TILESTATE_OPTIONALZONE)
@@ -152,7 +152,7 @@ void Map::loadOtbm(const std::string& fileName)
                         default:
                         {
                             stdext::throw_exception(stdext::format("invalid tile attribute %d at pos %s",
-                                                                   (int)tileAttr, stdext::to_string(pos)));
+                                                                   static_cast<int>(tileAttr), stdext::to_string(pos)));
                         }
                         }
                     }
@@ -195,7 +195,7 @@ void Map::loadOtbm(const std::string& fileName)
                     if(nodeTown->getU8() != OTBM_TOWN)
                         stdext::throw_exception("invalid town node.");
 
-                    uint32 townId = nodeTown->getU32();
+                    const uint32 townId = nodeTown->getU32();
                     std::string townName = nodeTown->getString();
 
                     Position townCoords;
@@ -223,7 +223,7 @@ void Map::loadOtbm(const std::string& fileName)
                         m_waypoints.insert(std::make_pair(waypointPos, name));
                 }
             } else
-                stdext::throw_exception(stdext::format("Unknown map data node %d", (int)mapDataType));
+                stdext::throw_exception(stdext::format("Unknown map data node %d", static_cast<int>(mapDataType)));
         }
 
         fin->close();
@@ -407,19 +407,19 @@ bool Map::loadOtcm(const std::string& fileName)
 
         fin->cache();
 
-        uint32 signature = fin->getU32();
+        const uint32 signature = fin->getU32();
         if(signature != OTCM_SIGNATURE)
             stdext::throw_exception("invalid otcm file");
 
-        uint16 start = fin->getU16();
-        uint16 version = fin->getU16();
+        const uint16 start = fin->getU16();
+        const uint16 version = fin->getU16();
         fin->getU32(); // flags
 
         switch(version) {
         case 1:
         {
             fin->getString(); // description
-            uint32 datSignature = fin->getU32();
+            const uint32 datSignature = fin->getU32();
             fin->getU16(); // protocol version
             fin->getString(); // world name
 
@@ -449,13 +449,13 @@ bool Map::loadOtcm(const std::string& fileName)
 
             int stackPos = 0;
             while(true) {
-                int id = fin->getU16();
+                const int id = fin->getU16();
 
                 // end of tile
                 if(id == 0xFFFF)
                     break;
 
-                int countOrSubType = fin->getU8();
+                const int countOrSubType = fin->getU8();
 
                 ItemPtr item = Item::create(id);
                 item->setCountOrSubType(countOrSubType);
@@ -485,7 +485,7 @@ void Map::saveOtcm(const std::string& fileName)
         fin->cache();
 
         //TODO: compression flag with zlib
-        uint32 flags = 0;
+        const uint32 flags = 0;
 
         // header
         fin->addU32(OTCM_SIGNATURE);
@@ -500,7 +500,7 @@ void Map::saveOtcm(const std::string& fileName)
         fin->addString(g_game.getWorldName());
 
         // go back and rewrite where the map data starts
-        uint32 start = fin->tell();
+        const uint32 start = fin->tell();
         fin->seek(4);
         fin->addU16(start);
         fin->seek(start);
@@ -512,7 +512,7 @@ void Map::saveOtcm(const std::string& fileName)
                     if(!tile || tile->isEmpty())
                         continue;
 
-                    Position pos = tile->getPosition();
+                    const Position pos = tile->getPosition();
                     fin->addU16(pos.x);
                     fin->addU16(pos.y);
                     fin->addU8(pos.z);
@@ -532,7 +532,7 @@ void Map::saveOtcm(const std::string& fileName)
         }
 
         // end of file
-        Position invalidPos;
+        const Position invalidPos;
         fin->addU16(invalidPos.x);
         fin->addU16(invalidPos.y);
         fin->addU8(invalidPos.z);

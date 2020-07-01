@@ -161,7 +161,7 @@ std::string Platform::getCPUName()
     HKEY hKey;
     if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
         return "";
-    RegQueryValueExA(hKey, "ProcessorNameString", NULL, NULL, (LPBYTE)buf, (LPDWORD)&bufSize);
+    RegQueryValueExA(hKey, "ProcessorNameString", NULL, NULL, (LPBYTE)buf, static_cast<LPDWORD>(&bufSize));
     return buf;
 }
 

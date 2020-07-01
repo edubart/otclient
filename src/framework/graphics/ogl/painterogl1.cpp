@@ -226,7 +226,7 @@ void PainterOGL1::drawBoundingRect(const Rect& dest, int innerLineWidth)
 
 void PainterOGL1::setMatrixMode(PainterOGL1::MatrixMode matrixMode)
 {
-    if (m_matrixMode == (GLenum)matrixMode)
+    if (m_matrixMode == static_cast<GLenum>(matrixMode))
         return;
 
     m_matrixMode = matrixMode;

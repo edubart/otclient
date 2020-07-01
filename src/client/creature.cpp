@@ -74,13 +74,13 @@ void Creature::draw(const Point& dest, float scaleFactor, LightView* lightView)
 
     if(m_showTimedSquare) {
         g_painter->setColor(m_timedSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>((int)(2 * scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
         g_painter->setColor(Color::white);
     }
 
     if(m_showStaticSquare) {
         g_painter->setColor(m_staticSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>((int)(2 * scaleFactor), 1));
+        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
         g_painter->setColor(Color::white);
     }
 
@@ -110,8 +110,6 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = 0;
 
-
-
         // xPattern => creature direction
         int xPattern;
         if(direction == Otc::NorthEast || direction == Otc::SouthEast)
@@ -136,7 +134,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
         if(animateWalk) animationPhase = getCurrentAnimationPhase();
 
-        PointF jumpOffset = m_jumpOffset * scaleFactor;
+        const PointF jumpOffset = m_jumpOffset * scaleFactor;
         dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
 
         // yPattern => creature addon
@@ -151,7 +149,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
-                Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
+                const Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
                 datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase);
@@ -217,8 +215,8 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
         outfitBuffer->release();
         outfitBuffer->draw(destRect, Rect(0, 0, frameSize, frameSize));
     } else {
-        float scaleFactor = destRect.width() / (float)frameSize;
-        Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
+        const float scaleFactor = destRect.width() / static_cast<float>(frameSize);
+        const Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
         internalDrawOutfit(dest, scaleFactor, false, Otc::South);
     }
 }
@@ -237,7 +235,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     Rect backgroundRect = Rect(point.x - (13.5), point.y, 27, 4);
     backgroundRect.bind(parentRect);
 
-    Size nameSize = m_nameCache.getTextSize();
+    const Size nameSize = m_nameCache.getTextSize();
     Rect textRect = Rect(point.x - nameSize.width() / 2.0, point.y - 12, nameSize);
     textRect.bind(parentRect);
 
@@ -276,7 +274,7 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
                 g_painter->drawFilledRect(backgroundRect);
 
                 Rect manaRect = backgroundRect.expanded(-1);
-                double maxMana = player->getMaxMana();
+                const double maxMana = player->getMaxMana();
                 if(maxMana == 0) {
                     manaRect.setWidth(25);
                 } else {
@@ -297,27 +295,27 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
         g_painter->setColor(Color::white);
-        Rect skullRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_skullTexture->getSize());
+        const Rect skullRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_skullTexture->getSize());
         g_painter->drawTexturedRect(skullRect, m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
         g_painter->setColor(Color::white);
-        Rect shieldRect = Rect(backgroundRect.x() + 13.5, backgroundRect.y() + 5, m_shieldTexture->getSize());
+        const Rect shieldRect = Rect(backgroundRect.x() + 13.5, backgroundRect.y() + 5, m_shieldTexture->getSize());
         g_painter->drawTexturedRect(shieldRect, m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
         g_painter->setColor(Color::white);
-        Rect emblemRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 16, m_emblemTexture->getSize());
+        const Rect emblemRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 16, m_emblemTexture->getSize());
         g_painter->drawTexturedRect(emblemRect, m_emblemTexture);
     }
     if(m_type != Proto::CreatureTypeUnknown && m_typeTexture) {
         g_painter->setColor(Color::white);
-        Rect typeRect = Rect(backgroundRect.x() + 13.5 + 12 + 12, backgroundRect.y() + 16, m_typeTexture->getSize());
+        const Rect typeRect = Rect(backgroundRect.x() + 13.5 + 12 + 12, backgroundRect.y() + 16, m_typeTexture->getSize());
         g_painter->drawTexturedRect(typeRect, m_typeTexture);
     }
     if(m_icon != Otc::NpcIconNone && m_iconTexture) {
         g_painter->setColor(Color::white);
-        Rect iconRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_iconTexture->getSize());
+        const Rect iconRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_iconTexture->getSize());
         g_painter->drawTexturedRect(iconRect, m_iconTexture);
     }
 }
@@ -385,13 +383,13 @@ void Creature::jump(int height, int duration)
 
 void Creature::updateJump()
 {
-    int t = m_jumpTimer.ticksElapsed();
-    double a = -4 * m_jumpHeight / (m_jumpDuration * m_jumpDuration);
-    double b = +4 * m_jumpHeight / (m_jumpDuration);
+    const int t = m_jumpTimer.ticksElapsed();
+    const double a = -4 * m_jumpHeight / (m_jumpDuration * m_jumpDuration);
+    const double b = +4 * m_jumpHeight / (m_jumpDuration);
 
-    double height = a * t * t + b * t;
-    int roundHeight = stdext::round(height);
-    int halfJumpDuration = m_jumpDuration / 2;
+    const double height = a * t * t + b * t;
+    const int roundHeight = stdext::round(height);
+    const int halfJumpDuration = m_jumpDuration / 2;
 
     // schedules next update
     if(m_jumpTimer.ticksElapsed() < m_jumpDuration) {
@@ -495,9 +493,9 @@ void Creature::updateWalkAnimation()
     if(m_outfit.getCategory() != ThingCategoryCreature)
         return;
 
-    int footAnimPhases = getTotalAnimationPhase();
+    const int footAnimPhases = getTotalAnimationPhase();
 
-    int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
+    const int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
 
     if(m_footTimer.ticksElapsed() >= footDelay) {
         if(m_walkAnimationPhase == footAnimPhases) m_walkAnimationPhase = 1;
@@ -526,9 +524,9 @@ void Creature::updateWalkingTile()
     // determine new walking tile
     TilePtr newWalkingTile;
 
-    Rect virtualCreatureRect(Otc::TILE_PIXELS + (m_walkOffset.x - getDisplacementX()),
-                             Otc::TILE_PIXELS + (m_walkOffset.y - getDisplacementY()),
-                             Otc::TILE_PIXELS, Otc::TILE_PIXELS);
+    const Rect virtualCreatureRect(Otc::TILE_PIXELS + (m_walkOffset.x - getDisplacementX()),
+                                   Otc::TILE_PIXELS + (m_walkOffset.y - getDisplacementY()),
+                                   Otc::TILE_PIXELS, Otc::TILE_PIXELS);
 
     for(int xi = -1; xi <= 1 && !newWalkingTile; ++xi) {
         for(int yi = -1; yi <= 1 && !newWalkingTile; ++yi) {
@@ -672,7 +670,7 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
-    Outfit oldOutfit = m_outfit;
+    const Outfit oldOutfit = m_outfit;
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
             return;
@@ -703,7 +701,7 @@ void Creature::setOutfitColor(const Color& color, int duration)
         return;
     }
 
-    Color delta = (color - m_outfitColor) / (float)duration;
+    const Color delta = (color - m_outfitColor) / static_cast<float>(duration);
     m_outfitColorTimer.restart();
     updateOutfitColor(m_outfitColor, color, delta, duration);
 }
@@ -717,7 +715,7 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
 
     m_outfitColor = color + delta * m_outfitColorTimer.ticksElapsed();
 
-    auto self = static_self_cast<Creature>();
+    const auto self = static_self_cast<Creature>();
     m_outfitColorUpdateEvent = g_dispatcher.scheduleEvent([=] {
         self->updateOutfitColor(color, finalColor, delta, duration);
     }, 100);
@@ -725,7 +723,7 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
 
 void Creature::setSpeed(uint16 speed)
 {
-    uint16 oldSpeed = m_speed;
+    const uint16 oldSpeed = m_speed;
     m_speed = speed;
 
     // speed can change while walking (utani hur, paralyze, etc..)
@@ -738,7 +736,7 @@ void Creature::setSpeed(uint16 speed)
 void Creature::setBaseSpeed(double baseSpeed)
 {
     if(m_baseSpeed != baseSpeed) {
-        double oldBaseSpeed = m_baseSpeed;
+        const double oldBaseSpeed = m_baseSpeed;
         m_baseSpeed = baseSpeed;
 
         callLuaField("onBaseSpeedChange", baseSpeed, oldBaseSpeed);

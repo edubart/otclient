@@ -65,7 +65,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
     if(g_game.getFeature(Otc::GamePreviewState))
         msg->addU8(0);
 
-    int offset = msg->getMessageSize();
+    const int offset = msg->getMessageSize();
     // first RSA byte must be 0
     msg->addU8(0);
 
@@ -100,12 +100,12 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         msg->addU8(challengeRandom);
     }
 
-    std::string extended = callLuaField<std::string>("getLoginExtendedData");
+    const std::string extended = callLuaField<std::string>("getLoginExtendedData");
     if(!extended.empty())
         msg->addString(extended);
 
     // complete the bytes for rsa encryption with zeros
-    int paddingBytes = g_crypt.rsaGetSize() - (msg->getMessageSize() - offset);
+    const int paddingBytes = g_crypt.rsaGetSize() - (msg->getMessageSize() - offset);
     assert(paddingBytes >= 0);
     msg->addPaddingBytes(paddingBytes);
 

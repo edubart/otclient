@@ -110,22 +110,22 @@ void TiXmlBase::ConvertUTF32ToUTF8( unsigned long input, char* output, int* leng
         /* FALLTHROUGH */
         case 4:
             --output;
-            *output = (char)((input | BYTE_MARK) & BYTE_MASK);
+            *output = static_cast<char>((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
         /* FALLTHROUGH */
         case 3:
             --output;
-            *output = (char)((input | BYTE_MARK) & BYTE_MASK);
+            *output = static_cast<char>((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
         /* FALLTHROUGH */
         case 2:
             --output;
-            *output = (char)((input | BYTE_MARK) & BYTE_MASK);
+            *output = static_cast<char>((input | BYTE_MARK) & BYTE_MASK);
             input >>= 6;
         /* FALLTHROUGH */
         case 1:
             --output;
-            *output = (char)(input | FIRST_BYTE_MARK[*length]);
+            *output = static_cast<char>(input | FIRST_BYTE_MARK[*length]);
     }
 }
 
@@ -377,7 +377,7 @@ const char* TiXmlBase::SkipWhiteSpace( const char* p, TiXmlEncoding encoding )
         if ( !IsWhiteSpace( c ) || c <= 0 )
             return true;
 
-        *tag += (char) in->get();
+        *tag += static_cast<char>(in->get());
     }
 }
 
@@ -393,7 +393,7 @@ const char* TiXmlBase::SkipWhiteSpace( const char* p, TiXmlEncoding encoding )
             return false;
 
         in->get();
-        *tag += (char) c;
+        *tag += static_cast<char>(c);
     }
     return false;
 }
@@ -418,11 +418,11 @@ const char* TiXmlBase::ReadName( const char* p, TIXML_STRING * name, TiXmlEncodi
     // hyphens, or colons. (Colons are valid ony for namespaces,
     // but tinyxml can't tell namespaces from names.)
     if (    p && *p
-         && ( IsAlpha( (unsigned char) *p, encoding ) || *p == '_' ) )
+         && ( IsAlpha( static_cast<unsigned char>(*p), encoding ) || *p == '_' ) )
     {
         const char* start = p;
         while(        p && *p
-                &&    (        IsAlphaNum( (unsigned char ) *p, encoding )
+                &&    (        IsAlphaNum( static_cast<unsigned char>(*p), encoding )
                          || *p == '_'
                          || *p == '-'
                          || *p == '.'
@@ -509,7 +509,7 @@ const char* TiXmlBase::GetEntity( const char* p, char* value, int* length, TiXml
         }
         else
         {
-            *value = (char)ucs;
+            *value = static_cast<char>(ucs);
             *length = 1;
         }
         return p + delta + 1;
@@ -659,7 +659,7 @@ void TiXmlDocument::StreamIn( std::istream * in, TIXML_STRING * tag )
 
     while ( in->good() )
     {
-        int tagIndex = (int) tag->length();
+        int tagIndex = static_cast<int>(tag->length());
         while ( in->good() && in->peek() != '>' )
         {
             int c = in->get();
@@ -668,7 +668,7 @@ void TiXmlDocument::StreamIn( std::istream * in, TIXML_STRING * tag )
                 SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
                 break;
             }
-            (*tag) += (char) c;
+            (*tag) += static_cast<char>(c);
         }
 
         if ( in->good() )
@@ -918,7 +918,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
                 document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
             return;
         }
-        (*tag) += (char) c ;
+        (*tag) += static_cast<char>(c) ;
 
         if ( c == '>' )
             break;
@@ -962,7 +962,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
             // We should be at a "<", regardless.
             if ( !in->good() ) return;
             assert( in->peek() == '<' );
-            int tagIndex = (int) tag->length();
+            int tagIndex = static_cast<int>(tag->length());
 
             bool closingTag = false;
             bool firstCharFound = false;
@@ -984,7 +984,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
                 if ( c == '>' )
                     break;
 
-                *tag += (char) c;
+                *tag += static_cast<char>(c);
                 in->get();
 
                 // Early out if we find the CDATA id.
@@ -1021,7 +1021,7 @@ void TiXmlElement::StreamIn (std::istream * in, TIXML_STRING * tag)
                     return;
                 }
                 assert( c == '>' );
-                *tag += (char) c;
+                *tag += static_cast<char>(c);
 
                 // We are done, once we've found our closing tag.
                 return;
@@ -1264,7 +1264,7 @@ void TiXmlUnknown::StreamIn( std::istream * in, TIXML_STRING * tag )
                 document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
             return;
         }
-        (*tag) += (char) c;
+        (*tag) += static_cast<char>(c);
 
         if ( c == '>' )
         {
@@ -1324,7 +1324,7 @@ void TiXmlComment::StreamIn( std::istream * in, TIXML_STRING * tag )
             return;
         }
 
-        (*tag) += (char) c;
+        (*tag) += static_cast<char>(c);
 
         if ( c == '>'
              && tag->at( tag->length() - 2 ) == '-'
@@ -1484,7 +1484,7 @@ void TiXmlText::StreamIn( std::istream * in, TIXML_STRING * tag )
             return;
         }
 
-        (*tag) += (char) c;
+        (*tag) += static_cast<char>(c);
         in->get();    // "commits" the peek made above
 
         if ( cdata && c == '>' && tag->size() >= 3 ) {
@@ -1562,7 +1562,7 @@ void TiXmlDeclaration::StreamIn( std::istream * in, TIXML_STRING * tag )
                 document->SetError( TIXML_ERROR_EMBEDDED_NULL, 0, 0, TIXML_ENCODING_UNKNOWN );
             return;
         }
-        (*tag) += (char) c;
+        (*tag) += static_cast<char>(c);
 
         if ( c == '>' )
         {

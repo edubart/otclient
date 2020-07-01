@@ -42,7 +42,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int o
             ticks <<= 2;
         }
 
-        animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
+        animationPhase = std::min<int>(static_cast<int>(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
     }
 
     int xPattern = offsetX % getNumPatternX();

@@ -28,7 +28,7 @@
 int UIPositionAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&)
 {
     UIMinimapPtr minimap = hookedWidget->static_self_cast<UIMinimap>();
-    Rect hookedRect = minimap->getTileRect(m_hookedPosition);
+    const Rect hookedRect = minimap->getTileRect(m_hookedPosition);
     int point = 0;
     if(hookedRect.isValid()) {
         switch(m_hookedEdge) {
@@ -66,7 +66,7 @@ void UIMapAnchorLayout::addPositionAnchor(const UIWidgetPtr& anchoredWidget, Fw:
 
     assert(anchoredWidget != getParentWidget());
 
-    UIPositionAnchorPtr anchor(new UIPositionAnchor(anchoredEdge, hookedPosition, hookedEdge));
+    const UIPositionAnchorPtr anchor(new UIPositionAnchor(anchoredEdge, hookedPosition, hookedEdge));
     UIAnchorGroupPtr& anchorGroup = m_anchorsGroups[anchoredWidget];
     if(!anchorGroup)
         anchorGroup = UIAnchorGroupPtr(new UIAnchorGroup);

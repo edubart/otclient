@@ -90,13 +90,13 @@ double InputMessage::getDouble()
 {
     uint8 precision = getU8();
     int32 v = getU32() - INT_MAX;
-    return (v / std::pow((float)10, precision));
+    return (v / std::pow(static_cast<float>(10), precision));
 }
 
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
-    g_crypt.rsaDecrypt((unsigned char*)m_buffer + m_readPos, size);
+    g_crypt.rsaDecrypt(static_cast<unsigned char*>(m_buffer) + m_readPos, size);
     return (getU8() == 0x00);
 }
 

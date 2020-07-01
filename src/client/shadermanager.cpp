@@ -138,7 +138,7 @@ void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)
 
 PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)
 {
-    auto it = m_shaders.find(name);
+    const auto it = m_shaders.find(name);
     if(it != m_shaders.end())
         return it->second;
     return nullptr;

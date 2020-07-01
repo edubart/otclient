@@ -37,17 +37,17 @@ void ItemType::unserialize(const BinaryTreePtr& node)
 {
     m_null = false;
 
-    m_category = (ItemCategory)node->getU8();
+    m_category = static_cast<ItemCategory>(node->getU8());
 
     node->getU32(); // flags
 
     static uint16 lastId = 99;
     while(node->canRead()) {
-        uint8 attr = node->getU8();
+        const uint8 attr = node->getU8();
         if(attr == 0 || attr == 0xFF)
             break;
 
-        uint16 len = node->getU16();
+        const uint16 len = node->getU16();
         switch(attr) {
         case ItemTypeAttrServerId:
         {

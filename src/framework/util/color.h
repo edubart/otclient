@@ -91,8 +91,8 @@ public:
         if(color >= 216 || color <= 0)
             return Color(0, 0, 0);
 
-        int r = int(color / 36) % 6 * 51;
-        int g = int(color / 6) % 6 * 51;
+        int r = static_cast<int>(color / 36) % 6 * 51;
+        int g = static_cast<int>(color / 6) % 6 * 51;
         int b = color % 6 * 51;
         return Color(r, g, b);
     }
@@ -128,10 +128,10 @@ inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
     using namespace std;
     out << "#" << hex << setfill('0')
-        << setw(2) << (int)color.r()
-        << setw(2) << (int)color.g()
-        << setw(2) << (int)color.b()
-        << setw(2) << (int)color.a();
+        << setw(2) << static_cast<int>(color.r())
+        << setw(2) << static_cast<int>(color.g())
+        << setw(2) << static_cast<int>(color.b())
+        << setw(2) << static_cast<int>(color.a());
     out << dec << setfill(' ');
     return out;
 }
@@ -145,15 +145,15 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         in >> tmp;
 
         if(tmp.length() == 6 || tmp.length() == 8) {
-            color.setRed((uint8)stdext::hex_to_dec(tmp.substr(0, 2)));
-            color.setGreen((uint8)stdext::hex_to_dec(tmp.substr(2, 2)));
-            color.setBlue((uint8)stdext::hex_to_dec(tmp.substr(4, 2)));
+            color.setRed(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(0, 2))));
+            color.setGreen(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(2, 2))));
+            color.setBlue(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(4, 2))));
             if(tmp.length() == 8)
-                color.setAlpha((uint8)stdext::hex_to_dec(tmp.substr(6, 2)));
+                color.setAlpha(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(6, 2))));
             else
                 color.setAlpha(255);
         } else
-            in.seekg(-(std::istream::streampos)tmp.length()-1, ios_base::cur);
+            in.seekg(-static_cast<std::istream::streampos>(tmp.length())-1, ios_base::cur);
     } else {
         in.unget();
         in >> tmp;

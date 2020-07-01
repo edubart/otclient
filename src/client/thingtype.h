@@ -224,7 +224,7 @@ public:
     void cancelListenerPainter();
 
 private:
-    Size getBestTextureDimension(int w, int h, int count);
+    static Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
 

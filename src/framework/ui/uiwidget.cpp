@@ -190,9 +190,9 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     index = index <= 0 ? (m_children.size() + index) : index - 1;
 
-    if (!(index >= 0 && (uint)index <= m_children.size())) {
+    if (!(index >= 0 && static_cast<uint>(index) <= m_children.size())) {
         //g_logger.traceWarning("attempt to insert a child UIWidget into an invalid index, using nearest index...");
-        index = stdext::clamp<int>(index, 0, (int)m_children.size());
+        index = stdext::clamp<int>(index, 0, static_cast<int>(m_children.size()));
     }
 
     // retrieve child by index
@@ -421,7 +421,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
     if (!child)
         return;
 
-    if ((uint)index - 1 >= m_children.size()) {
+    if (static_cast<uint>(index) - 1 >= m_children.size()) {
         g_logger.traceError(stdext::format("moving %s to index %d on %s", child->getId(), index, m_id));
         return;
     }
@@ -1159,7 +1159,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 UIWidgetPtr UIWidget::getChildByIndex(int index)
 {
     index = index <= 0 ? (m_children.size() + index) : index - 1;
-    if (index >= 0 && (uint)index < m_children.size())
+    if (index >= 0 && static_cast<uint>(index) < m_children.size())
         return m_children.at(index);
     return nullptr;
 }
@@ -1400,7 +1400,7 @@ void UIWidget::updateStates()
         return;
 
     for (int state = 1; state != Fw::LastWidgetState; state <<= 1)
-        updateState((Fw::WidgetState)state);
+        updateState(static_cast<Fw::WidgetState>(state));
 }
 
 void UIWidget::updateChildrenIndexStates()

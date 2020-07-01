@@ -45,21 +45,21 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
     drawImage(m_rect);
 
     if(m_itemVisible && m_item) {
-        Rect drawRect = getPaddingRect();
+        const Rect drawRect = getPaddingRect();
         Point dest = drawRect.bottomRight() + Point(1, 1);
 
-        int exactSize = std::max<int>(32, m_item->getExactSize());
+        const int exactSize = std::max<int>(32, m_item->getExactSize());
         if(exactSize == 0)
             return;
 
-        float scaleFactor = std::min<float>(drawRect.width() / (float)exactSize, drawRect.height() / (float)exactSize);
+        const float scaleFactor = std::min<float>(drawRect.width() / static_cast<float>(exactSize), drawRect.height() / static_cast<float>(exactSize));
         dest += (m_item->getDisplacement() - Point(32, 32)) * scaleFactor;
 
         g_painter->setColor(m_color);
         m_item->draw(dest, scaleFactor, true);
 
         if(m_font && (m_item->isStackable() || m_item->isChargeable()) && m_item->getCountOrSubType() > 1) {
-            std::string count = stdext::to_string(m_item->getCountOrSubType());
+            const std::string count = stdext::to_string(m_item->getCountOrSubType());
             g_painter->setColor(Color(231, 231, 231));
             m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
         }

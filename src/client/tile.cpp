@@ -127,7 +127,7 @@ void Tile::addWalkingCreature(const CreaturePtr& creature)
 
 void Tile::removeWalkingCreature(const CreaturePtr& creature)
 {
-    auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
+    const auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
     if(it != m_walkingCreatures.end())
         m_walkingCreatures.erase(it);
 }
@@ -157,7 +157,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         // 4 - creatures, from top to bottom  <--      -->
         // 5 - items, from top to bottom      <--      <--
         if(stackPos < 0 || stackPos == 255) {
-            int priority = thing->getStackPriority();
+            const int priority = thing->getStackPriority();
 
             // -1 or 255 => auto detect position
             // -2        => append
@@ -175,11 +175,11 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
 
             for(stackPos = 0; stackPos < size; ++stackPos) {
-                int otherPriority = m_things[stackPos]->getStackPriority();
+                const int otherPriority = m_things[stackPos]->getStackPriority();
                 if((append && otherPriority > priority) || (!append && otherPriority >= priority))
                     break;
             }
-        } else if(stackPos > (int)size)
+        } else if(stackPos > static_cast<int>(size))
             stackPos = size;
 
         m_things.insert(m_things.begin() + stackPos, thing);
@@ -233,7 +233,7 @@ bool Tile::removeThing(ThingPtr thing)
 
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
-        auto it = std::find(m_effects.begin(), m_effects.end(), effect);
+        const auto it = std::find(m_effects.begin(), m_effects.end(), effect);
         if(it != m_effects.end()) {
             m_effects.erase(it);
             removed = true;
@@ -287,7 +287,7 @@ bool Tile::removeThing(ThingPtr thing)
 
 ThingPtr Tile::getThing(int stackPos)
 {
-    if(stackPos >= 0 && stackPos < (int)m_things.size())
+    if(stackPos >= 0 && stackPos < static_cast<int>(m_things.size()))
         return m_things[stackPos];
 
     return nullptr;
@@ -377,7 +377,7 @@ uint8 Tile::getMinimapColorByte()
 
     for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
         const ItemPtr& item = *it;
-        uint8 c = item->getMinimapColor();
+        const uint8 c = item->getMinimapColor();
         if(c != 0) return c;
     }
 
@@ -429,7 +429,7 @@ ThingPtr Tile::getTopUseThing()
 
 CreaturePtr Tile::getTopCreature()
 {
-    CreaturePtr creature;
+    const CreaturePtr creature;
     if(!m_creatures.empty())
         return m_creatures.front();
 

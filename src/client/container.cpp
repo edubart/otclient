@@ -39,7 +39,7 @@ Container::Container(int id, int capacity, const std::string& name, const ItemPt
 
 ItemPtr Container::getItem(int slot)
 {
-    if(slot < 0 || slot >= (int)m_items.size())
+    if(slot < 0 || slot >= static_cast<int>(m_items.size()))
         return nullptr;
     return m_items[slot];
 }
@@ -94,12 +94,12 @@ void Container::onAddItems(const std::vector<ItemPtr>& items)
 void Container::onUpdateItem(int slot, const ItemPtr& item)
 {
     slot -= m_firstIndex;
-    if(slot < 0 || slot >= (int)m_items.size()) {
+    if(slot < 0 || slot >= static_cast<int>(m_items.size())) {
         g_logger.traceError("slot not found");
         return;
     }
 
-    ItemPtr oldItem = m_items[slot];
+    const ItemPtr oldItem = m_items[slot];
     m_items[slot] = item;
     item->setPosition(getSlotPosition(slot));
 
@@ -109,18 +109,18 @@ void Container::onUpdateItem(int slot, const ItemPtr& item)
 void Container::onRemoveItem(int slot, const ItemPtr& lastItem)
 {
     slot -= m_firstIndex;
-    if(m_hasPages && slot >= (int)m_items.size()) {
+    if(m_hasPages && slot >= static_cast<int>(m_items.size())) {
         --m_size;
         callLuaField("onSizeChange", m_size);
         return;
     }
 
-    if(slot < 0 || slot >= (int)m_items.size()) {
+    if(slot < 0 || slot >= static_cast<int>(m_items.size())) {
         g_logger.traceError("slot not found");
         return;
     }
 
-    ItemPtr item = m_items[slot];
+    const ItemPtr item = m_items[slot];
     m_items.erase(m_items.begin() + slot);
 
 
@@ -139,6 +139,6 @@ void Container::onRemoveItem(int slot, const ItemPtr& lastItem)
 
 void Container::updateItemsPositions()
 {
-    for(int slot = 0; slot < (int)m_items.size(); ++slot)
+    for(int slot = 0; slot < static_cast<int>(m_items.size()); ++slot)
         m_items[slot]->setPosition(getSlotPosition(slot));
 }

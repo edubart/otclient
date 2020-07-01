@@ -61,7 +61,8 @@ void LuaInterface::init()
     bindClassMemberFunction<LuaObject>("getUseCount", &LuaObject::getUseCount);
     bindClassMemberFunction<LuaObject>("getClassName", &LuaObject::getClassName);
 
-    registerClassMemberFunction<LuaObject>("getFieldsTable", (LuaCppFunction)([](LuaInterface*) -> int {
+    registerClassMemberFunction<LuaObject>("getFieldsTable", static_cast<LuaCppFunction>([](LuaInterface*) -> int
+    {
         LuaObjectPtr obj = g_lua.popObject();
         obj->luaGetFieldsTable();
         return 1;
@@ -1214,7 +1215,7 @@ bool LuaInterface::isUserdata(int index)
 bool LuaInterface::toBoolean(int index)
 {
     assert(hasIndex(index));
-    return (bool)lua_toboolean(L, index);
+    return static_cast<bool>(lua_toboolean(L, index));
 }
 
 int LuaInterface::toInteger(int index)

@@ -25,12 +25,12 @@
 
 #include <framework/global.h>
 
-/**
- * Class that help counting and limiting frames per second in a application,
- * to make fps limit work as desired, this class requires 2 platforms prerequisites:
- *  - the platform must have timer with a precision of at least 1ms
- *  - the platform sleep must have a precision of at least 4ms
- */
+ /**
+  * Class that help counting and limiting frames per second in a application,
+  * to make fps limit work as desired, this class requires 2 platforms prerequisites:
+  *  - the platform must have timer with a precision of at least 1ms
+  *  - the platform sleep must have a precision of at least 4ms
+  */
 class AdaptativeFrameCounter
 {
 public:
@@ -50,7 +50,7 @@ public:
     int getMaximumSleepMicros();
     float getFrameDelayHit();
     int getLastFps() { return m_lastFps; }
-    int getPartialFps() { return (int)m_partialFps; }
+    int getPartialFps() { return static_cast<int>(m_partialFps); }
     int getMaxFps() { return m_maxFps; }
     int getFrames() { return m_frames; }
     float getMediumFrameDelay() { return m_mediumFrameDelay; }

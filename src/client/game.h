@@ -76,12 +76,12 @@ protected:
     void processPing();
     void processPingBack();
 
-    void processUpdateNeeded(const std::string& signature);
-    void processLoginError(const std::string& error);
-    void processLoginAdvice(const std::string& message);
-    void processLoginWait(const std::string& message, int time);
-    void processLoginToken(bool unknown);
-    void processLogin();
+    static void processUpdateNeeded(const std::string& signature);
+    static void processLoginError(const std::string& error);
+    static void processLoginAdvice(const std::string& message);
+    static void processLoginWait(const std::string& message, int time);
+    static void processLoginToken(bool unknown);
+    static void processLogin();
     void processPendingGame();
     void processEnterGame();
 
@@ -94,12 +94,12 @@ protected:
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
 
-    void processPlayerHelpers(int helpers);
+    static void processPlayerHelpers(int helpers);
     void processPlayerModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeMode, Otc::PVPModes pvpMode);
 
     // message related
-    void processTextMessage(Otc::MessageMode mode, const std::string& text);
-    void processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos);
+    static void processTextMessage(Otc::MessageMode mode, const std::string& text);
+    static void processTalk(const std::string& name, int level, Otc::MessageMode mode, const std::string& text, int channelId, const Position& pos);
 
     // container related
     void processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items, bool isUnlocked, bool hasPages, int containerSize, int firstIndex);
@@ -109,51 +109,51 @@ protected:
     void processContainerRemoveItem(int containerId, int slot, const ItemPtr& lastItem);
 
     // channel related
-    void processChannelList(const std::vector<std::tuple<int, std::string> >& channelList);
-    void processOpenChannel(int channelId, const std::string& name);
-    void processOpenPrivateChannel(const std::string& name);
-    void processOpenOwnPrivateChannel(int channelId, const std::string& name);
-    void processCloseChannel(int channelId);
+    static void processChannelList(const std::vector<std::tuple<int, std::string> >& channelList);
+    static void processOpenChannel(int channelId, const std::string& name);
+    static void processOpenPrivateChannel(const std::string& name);
+    static void processOpenOwnPrivateChannel(int channelId, const std::string& name);
+    static void processCloseChannel(int channelId);
 
     // rule violations
-    void processRuleViolationChannel(int channelId);
-    void processRuleViolationRemove(const std::string& name);
-    void processRuleViolationCancel(const std::string& name);
-    void processRuleViolationLock();
+    static void processRuleViolationChannel(int channelId);
+    static void processRuleViolationRemove(const std::string& name);
+    static void processRuleViolationCancel(const std::string& name);
+    static void processRuleViolationLock();
 
     // vip related
     void processVipAdd(uint id, const std::string& name, uint status, const std::string& description, int iconId, bool notifyLogin);
     void processVipStateChange(uint id, uint status);
 
     // tutorial hint
-    void processTutorialHint(int id);
-    void processAddAutomapFlag(const Position& pos, int icon, const std::string& message);
-    void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
+    static void processTutorialHint(int id);
+    static void processAddAutomapFlag(const Position& pos, int icon, const std::string& message);
+    static void processRemoveAutomapFlag(const Position& pos, int icon, const std::string& message);
 
     // outfit
     void processOpenOutfitWindow(const Outfit& currentOutfit, const std::vector<std::tuple<int, std::string, int> >& outfitList,
                                  const std::vector<std::tuple<int, std::string> >& mountList);
 
     // npc trade
-    void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items);
-    void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int> >& goods);
-    void processCloseNpcTrade();
+    static void processOpenNpcTrade(const std::vector<std::tuple<ItemPtr, std::string, int, int, int> >& items);
+    static void processPlayerGoods(int money, const std::vector<std::tuple<ItemPtr, int> >& goods);
+    static void processCloseNpcTrade();
 
     // player trade
-    void processOwnTrade(const std::string& name, const std::vector<ItemPtr>& items);
-    void processCounterTrade(const std::string& name, const std::vector<ItemPtr>& items);
-    void processCloseTrade();
+    static void processOwnTrade(const std::string& name, const std::vector<ItemPtr>& items);
+    static void processCounterTrade(const std::string& name, const std::vector<ItemPtr>& items);
+    static void processCloseTrade();
 
     // edit text/list
-    void processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writer, const std::string& date);
-    void processEditList(uint id, int doorId, const std::string& text);
+    static void processEditText(uint id, int itemId, int maxLength, const std::string& text, const std::string& writer, const std::string& date);
+    static void processEditList(uint id, int doorId, const std::string& text);
 
     // questlog
-    void processQuestLog(const std::vector<std::tuple<int, std::string, bool> >& questList);
-    void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions);
+    static void processQuestLog(const std::vector<std::tuple<int, std::string, bool> >& questList);
+    static void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions);
 
     // modal dialogs >= 970
-    void processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority);
+    static void processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority);
 
     friend class ProtocolGame;
     friend class Map;

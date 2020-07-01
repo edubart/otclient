@@ -94,7 +94,7 @@ void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
     if(bytes <= 0)
         return;
     checkWrite(bytes);
-    memset((void*)&m_buffer[m_writePos], byte, bytes);
+    memset(static_cast<void*>(&m_buffer[m_writePos]), byte, bytes);
     m_writePos += bytes;
     m_messageSize += bytes;
 }
@@ -105,7 +105,7 @@ void OutputMessage::encryptRsa()
     if(m_messageSize < size)
         throw stdext::exception("insufficient bytes in buffer to encrypt");
 
-    if(!g_crypt.rsaEncrypt((unsigned char*)m_buffer + m_writePos - size, size))
+    if(!g_crypt.rsaEncrypt(static_cast<unsigned char*>(m_buffer) + m_writePos - size, size))
         throw stdext::exception("rsa encryption failed");
 }
 

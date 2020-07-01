@@ -53,7 +53,7 @@ ThingType::ThingType()
 void ThingType::serialize(const FileStreamPtr& fin)
 {
     for(int i = 0; i < ThingLastAttr; ++i) {
-        if(!hasAttr((ThingAttr)i))
+        if(!hasAttr(static_cast<ThingAttr>(i)))
             continue;
 
         int attr = i;
@@ -79,7 +79,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
         }
         case ThingAttrLight:
         {
-            Light light = m_attribs.get<Light>(attr);
+            const Light light = m_attribs.get<Light>(attr);
             fin->addU16(light.intensity);
             fin->addU16(light.color);
             break;
@@ -278,8 +278,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
                                                m_id, m_category, count, attr));
 
-    bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
-    uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
+    const bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
+    const uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     m_animationPhases = 0;
     int totalSpritesCount = 0;
@@ -289,8 +289,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         if(hasFrameGroups)
             frameGroupType = fin->getU8();
 
-        uint8 width = fin->getU8();
-        uint8 height = fin->getU8();
+        const uint8 width = fin->getU8();
+        const uint8 height = fin->getU8();
         m_size = Size(width, height);
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
@@ -306,7 +306,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         else
             m_numPatternZ = 1;
 
-        int groupAnimationsPhases = fin->getU8();
+        const int groupAnimationsPhases = fin->getU8();
         m_animationPhases += groupAnimationsPhases;
 
         if(groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
@@ -318,7 +318,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             else m_idleAnimator = animator;
         }
 
-        int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
+        const int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
 
         if((totalSpritesCount + totalSprites) > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
@@ -396,7 +396,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(!texture)
         return;
 
-    uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    const uint frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
     if(frameIndex >= m_texturesFramesRects[animationPhase].size())
         return;
 
@@ -410,10 +410,10 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         textureRect = m_texturesFramesRects[animationPhase][frameIndex];
     }
 
-    Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
-                    textureRect.size() * scaleFactor);
+    const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
+                          textureRect.size() * scaleFactor);
 
-    bool useOpacity = m_opacity < 1.0f;
+    const bool useOpacity = m_opacity < 1.0f;
 
     if(useOpacity)
         g_painter->setColor(Color(1.0f, 1.0f, 1.0f, m_opacity));
@@ -424,7 +424,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         g_painter->setColor(Color::white);
 
     if(lightView && hasLight()) {
-        Light light = getLight();
+        const Light light = getLight();
         if(light.intensity > 0)
             lightView->addLightSource(screenRect.center(), scaleFactor, light);
     }
@@ -460,7 +460,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
             for(int x = 0; x < m_numPatternX; ++x) {
                 for(int l = 0; l < numLayers; ++l) {
                     const bool spriteMask = (m_category == ThingCategoryCreature && l > 0);
-                    int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
+                    const int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
 
                     Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
                                            frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * Otc::TILE_PIXELS;
@@ -468,7 +468,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                     if(!useCustomImage) {
                         for(int h = 0; h < m_size.height(); ++h) {
                             for(int w = 0; w < m_size.width(); ++w) {
-                                uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
+                                const uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
                                 ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
                                 if(!spriteImage) fullImage->setTransparentPixel(true);
                                 else {
@@ -495,10 +495,10 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                         for(int fy = framePos.y; fy < framePos.y + m_size.height() * Otc::TILE_PIXELS; ++fy) {
                             uint8* p = fullImage->getPixel(fx, fy);
                             if(p[3] != 0x00) {
-                                drawRect.setTop(std::min<int>(fy, (int)drawRect.top()));
-                                drawRect.setLeft(std::min<int>(fx, (int)drawRect.left()));
-                                drawRect.setBottom(std::max<int>(fy, (int)drawRect.bottom()));
-                                drawRect.setRight(std::max<int>(fx, (int)drawRect.right()));
+                                drawRect.setTop(std::min<int>(fy, static_cast<int>(drawRect.top())));
+                                drawRect.setLeft(std::min<int>(fx, static_cast<int>(drawRect.left())));
+                                drawRect.setBottom(std::max<int>(fy, static_cast<int>(drawRect.bottom())));
+                                drawRect.setRight(std::max<int>(fx, static_cast<int>(drawRect.right())));
                             }
                         }
                     }
@@ -531,7 +531,7 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
         k <<= 1;
     h = k;
 
-    int numSprites = w * h * count;
+    const int numSprites = w * h * count;
     assert(numSprites <= MAX * MAX);
     assert(w <= MAX);
     assert(h <= MAX);
@@ -553,7 +553,7 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
 
 uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a)
 {
-    uint index =
+    const uint index =
         ((((((a % m_animationPhases)
              * m_numPatternZ + z)
             * m_numPatternY + y)
@@ -578,8 +578,8 @@ int ThingType::getExactSize(int layer, int xPattern, int yPattern, int zPattern,
         return 0;
 
     getTexture(animationPhase); // we must calculate it anyway.
-    int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
-    Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
+    const int frameIndex = getTextureIndex(layer, xPattern, yPattern, zPattern);
+    const Size size = m_texturesFramesOriginRects[animationPhase][frameIndex].size() - m_texturesFramesOffsets[animationPhase][frameIndex].toSize();
     return std::max<int>(size.width(), size.height());
 }
 
@@ -600,8 +600,8 @@ int ThingType::getExactHeight()
         return m_exactHeight;
 
     getTexture(0);
-    int frameIndex = getTextureIndex(0, 0, 0, 0);
-    Size size = m_texturesFramesOriginRects[0][frameIndex].size() - m_texturesFramesOffsets[0][frameIndex].toSize();
+    const int frameIndex = getTextureIndex(0, 0, 0, 0);
+    const Size size = m_texturesFramesOriginRects[0][frameIndex].size() - m_texturesFramesOffsets[0][frameIndex].toSize();
 
     return m_exactHeight = size.height();
 }

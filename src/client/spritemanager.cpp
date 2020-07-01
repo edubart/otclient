@@ -81,14 +81,14 @@ void SpriteManager::saveSpr(std::string fileName)
         else
             fin->addU16(m_spritesCount);
 
-        uint32 offset = fin->tell();
+        const uint32 offset = fin->tell();
         uint32 spriteAddress = offset + 4 * m_spritesCount;
         for(int i = 1; i <= m_spritesCount; ++i)
             fin->addU32(0);
 
         for(int i = 1; i <= m_spritesCount; ++i) {
             m_spritesFile->seek((i - 1) * 4 + m_spritesOffset);
-            uint32 fromAdress = m_spritesFile->getU32();
+            const uint32 fromAdress = m_spritesFile->getU32();
             if(fromAdress != 0) {
                 fin->seek(offset + (i - 1) * 4);
                 fin->addU32(spriteAddress);
@@ -99,7 +99,7 @@ void SpriteManager::saveSpr(std::string fileName)
                 fin->addU8(m_spritesFile->getU8());
                 fin->addU8(m_spritesFile->getU8());
 
-                uint16 dataSize = m_spritesFile->getU16();
+                const uint16 dataSize = m_spritesFile->getU16();
                 fin->addU16(dataSize);
                 char spriteData[SPRITE_DATA_SIZE];
                 m_spritesFile->read(spriteData, dataSize);
@@ -133,7 +133,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
 
         m_spritesFile->seek(((id - 1) * 4) + m_spritesOffset);
 
-        uint32 spriteAddress = m_spritesFile->getU32();
+        const uint32 spriteAddress = m_spritesFile->getU32();
 
         // no sprite? return an empty texture
         if(spriteAddress == 0)
@@ -146,19 +146,19 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         m_spritesFile->getU8();
         m_spritesFile->getU8();
 
-        uint16 pixelDataSize = m_spritesFile->getU16();
+        const uint16 pixelDataSize = m_spritesFile->getU16();
 
         ImagePtr image(new Image(Size(SPRITE_SIZE, SPRITE_SIZE)));
 
         uint8* pixels = image->getPixelData();
         int writePos = 0;
         int read = 0;
-        bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
-        uint8 channels = useAlpha ? 4 : 3;
+        const bool useAlpha = g_game.getFeature(Otc::GameSpritesAlphaChannel);
+        const uint8 channels = useAlpha ? 4 : 3;
         // decompress pixels
         while(read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
-            uint16 transparentPixels = m_spritesFile->getU16();
-            uint16 coloredPixels = m_spritesFile->getU16();
+            const uint16 transparentPixels = m_spritesFile->getU16();
+            const uint16 coloredPixels = m_spritesFile->getU16();
             if(!image->hasTransparentPixel())
                 image->setTransparentPixel(transparentPixels > 0);
             for(int i = 0; i < transparentPixels && writePos < SPRITE_DATA_SIZE; ++i) {

@@ -201,7 +201,7 @@ public:
 
     float getZoneOpacity() { return m_zoneOpacity; }
     Color getZoneColor(tileflags_t flag);
-    tileflags_t getZoneFlags() { return (tileflags_t)m_zoneFlags; }
+    tileflags_t getZoneFlags() { return static_cast<tileflags_t>(m_zoneFlags); }
     bool showZones() { return m_zoneFlags != 0; }
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
 

@@ -121,7 +121,7 @@ template<>
 inline bool cast(const std::string& in, float& f) {
     double d;
     if(cast(in, d)) {
-        f=(float)d;
+        f=static_cast<float>(d);
         return true;
     }
     return false;
