@@ -26,8 +26,8 @@
 #include <framework/global.h>
 #include <framework/core/declarations.h>
 
-#include "thingtype.h"
 #include "itemtype.h"
+#include "thingtype.h"
 
 class ThingTypeManager
 {

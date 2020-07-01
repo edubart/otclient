@@ -23,8 +23,8 @@
 #ifndef SHADERMANAGER_H
 #define SHADERMANAGER_H
 
-#include "declarations.h"
 #include <framework/graphics/paintershaderprogram.h>
+#include "declarations.h"
 
  //@bindsingleton g_shaders
 class ShaderManager

@@ -23,16 +23,16 @@
 #ifndef PROTOCOLGAME_H
 #define PROTOCOLGAME_H
 
-#include "declarations.h"
-#include "protocolcodes.h"
 #include <framework/net/protocol.h>
 #include "creature.h"
+#include "declarations.h"
+#include "protocolcodes.h"
 
 class ProtocolGame : public Protocol
 {
 public:
     void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey);
-    void send(const OutputMessagePtr& outputMessage);
+    void send(const OutputMessagePtr& outputMessage) override;
 
     void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
     void sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom);
@@ -124,9 +124,9 @@ public:
     void sendChangeMapAwareRange(int xrange, int yrange);
 
 protected:
-    void onConnect();
-    void onRecv(const InputMessagePtr& inputMessage);
-    void onError(const boost::system::error_code& error);
+    void onConnect() override;
+    void onRecv(const InputMessagePtr& inputMessage) override;
+    void onError(const boost::system::error_code& error) override;
 
     friend class Game;
 

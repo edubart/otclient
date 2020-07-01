@@ -23,15 +23,15 @@
 #ifndef UIITEM_H
 #define UIITEM_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
 #include "item.h"
 
 class UIItem : public UIWidget
 {
 public:
     UIItem();
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void setItemId(int id);
     void setItemCount(int count) { if(m_item) m_item->setCount(count); }
@@ -49,7 +49,7 @@ public:
     bool isItemVisible() { return m_itemVisible; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     ItemPtr m_item;
     stdext::boolean<false> m_virtual;

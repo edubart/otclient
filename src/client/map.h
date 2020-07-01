@@ -23,13 +23,13 @@
 #ifndef MAP_H
 #define MAP_H
 
-#include "creature.h"
-#include "houses.h"
-#include "towns.h"
-#include "creatures.h"
 #include "animatedtext.h"
+#include "creature.h"
+#include "creatures.h"
+#include "houses.h"
 #include "statictext.h"
 #include "tile.h"
+#include "towns.h"
 
 #include <framework/core/clock.h>
 
@@ -148,7 +148,7 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
 
-    void requestDrawing(const bool tile, const bool light, const bool force = false);
+    void requestDrawing(bool tile, bool light, bool force = false);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);

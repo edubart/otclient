@@ -23,10 +23,10 @@
 #ifndef ANIMATEDTEXT_H
 #define ANIMATEDTEXT_H
 
-#include "thing.h"
-#include <framework/graphics/fontmanager.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/cachedtext.h>
+#include <framework/graphics/fontmanager.h>
+#include "thing.h"
 
  // @bindclass
 class AnimatedText : public Thing
@@ -48,10 +48,10 @@ public:
     bool merge(const AnimatedTextPtr& other);
 
     AnimatedTextPtr asAnimatedText() { return static_self_cast<AnimatedText>(); }
-    bool isAnimatedText() { return true; }
+    bool isAnimatedText() override { return true; }
 
 protected:
-    virtual void onAppear();
+    void onAppear() override;
 
 private:
     Color m_color;

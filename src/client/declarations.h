@@ -23,9 +23,9 @@
 #ifndef CLIENT_DECLARATIONS_H
 #define CLIENT_DECLARATIONS_H
 
-#include "global.h"
 #include <framework/net/declarations.h>
 #include <framework/ui/declarations.h>
+#include "global.h"
 
  // core
 class Map;

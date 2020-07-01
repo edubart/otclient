@@ -23,9 +23,9 @@
 #ifndef LIGHTVIEW_H
 #define LIGHTVIEW_H
 
-#include "declarations.h"
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/painter.h>
+#include "declarations.h"
 #include "thingtype.h"
 
 struct LightSource {

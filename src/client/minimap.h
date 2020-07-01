@@ -24,8 +24,8 @@
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
-#include "declarations.h"
 #include <framework/graphics/declarations.h>
+#include "declarations.h"
 
 enum {
     MMBLOCK_SIZE = 64,

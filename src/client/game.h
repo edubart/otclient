@@ -23,16 +23,16 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "declarations.h"
-#include "item.h"
+#include <framework/core/timer.h>
 #include "animatedtext.h"
-#include "effect.h"
-#include "creature.h"
 #include "container.h"
-#include "protocolgame.h"
+#include "creature.h"
+#include "declarations.h"
+#include "effect.h"
+#include "item.h"
 #include "localplayer.h"
 #include "outfit.h"
-#include <framework/core/timer.h>
+#include "protocolgame.h"
 
 #include <bitset>
 
@@ -168,7 +168,7 @@ public:
     void safeLogout();
 
     // walk related
-    bool walk(const Otc::Direction direction);
+    bool walk(Otc::Direction direction);
     void autoWalk(std::vector<Otc::Direction> dirs);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);

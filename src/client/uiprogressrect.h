@@ -23,21 +23,21 @@
 #ifndef UIPROGRESSRECT_H
 #define UIPROGRESSRECT_H
 
-#include "declarations.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
 #include "item.h"
 
 class UIProgressRect : public UIWidget
 {
 public:
     UIProgressRect();
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void setPercent(float percent);
     float getPercent() { return m_percent; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     float m_percent;
 };

@@ -23,9 +23,9 @@
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
-#include "thing.h"
-#include <framework/graphics/cachedtext.h>
 #include <framework/core/timer.h>
+#include <framework/graphics/cachedtext.h>
+#include "thing.h"
 
  // @bindclass
 class StaticText : public Thing
@@ -46,7 +46,7 @@ public:
     bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
 
     StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
-    bool isStaticText() { return true; }
+    bool isStaticText() override { return true; }
 
     void setColor(const Color& color) { m_color = color; }
     Color getColor() { return m_color; }

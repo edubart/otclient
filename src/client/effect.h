@@ -33,17 +33,17 @@ class Effect : public Thing
 public:
     void drawEffect(const Point& dest, float scaleFactor, int offsetX = 0, int offsetY = 0, LightView* lightView = nullptr);
 
-    void setId(uint32 id);
-    uint32 getId() { return m_id; }
+    void setId(uint32 id) override;
+    uint32 getId() override { return m_id; }
 
     EffectPtr asEffect() { return static_self_cast<Effect>(); }
-    bool isEffect() { return true; }
+    bool isEffect() override { return true; }
 
-    const ThingTypePtr& getThingType();
-    ThingType* rawGetThingType();
+    const ThingTypePtr& getThingType() override;
+    ThingType* rawGetThingType() override;
 
 protected:
-    void onAppear();
+    void onAppear() override;
 
 private:
     Timer m_animationTimer;

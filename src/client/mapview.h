@@ -23,11 +23,11 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-#include "declarations.h"
-#include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/declarations.h>
-#include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
+#include <framework/graphics/declarations.h>
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/luaengine/luaobject.h>
+#include "declarations.h"
 #include "lightview.h"
 #include "viewportcontrol.h"
 

@@ -23,18 +23,18 @@
 #ifndef THINGTYPE_H
 #define THINGTYPE_H
 
-#include "declarations.h"
 #include "animator.h"
+#include "declarations.h"
 
 #include <framework/core/declarations.h>
-#include <framework/otml/declarations.h>
-#include <framework/graphics/texture.h>
 #include <framework/graphics/coordsbuffer.h>
+#include <framework/graphics/texture.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>
+#include <framework/otml/declarations.h>
 
-#include <framework/core/scheduledevent.h>
 #include <framework/core/declarations.h>
+#include <framework/core/scheduledevent.h>
 
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
@@ -220,7 +220,7 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
-    void startListenerPainter(const float duration, const bool redrawLight = false);
+    void startListenerPainter(float duration, bool redrawLight = false);
     void cancelListenerPainter();
 
 private:

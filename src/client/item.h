@@ -25,9 +25,9 @@
 
 #include <framework/global.h>
 
-#include "thing.h"
 #include "effect.h"
 #include "itemtype.h"
+#include "thing.h"
 
 enum ItemAttr : uint8
 {
@@ -82,9 +82,9 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView = nullptr) override;
 
-    void setId(uint32 id);
+    void setId(uint32 id) override;
     void setOtbId(uint16 id);
     void setCountOrSubType(int value) { m_countOrSubType = value; }
     void setCount(int count) { m_countOrSubType = count; }
@@ -94,7 +94,7 @@ public:
     int getCountOrSubType() { return m_countOrSubType; }
     int getSubType();
     int getCount();
-    uint32 getId() { return m_clientId; }
+    uint32 getId() override { return m_clientId; }
     uint16 getClientId() { return m_clientId; }
     uint16 getServerId() { return m_serverId; }
     std::string getName();
@@ -116,8 +116,8 @@ public:
 
     std::string getText() { return m_attribs.get<std::string>(ATTR_TEXT); }
     std::string getDescription() { return m_attribs.get<std::string>(ATTR_DESC); }
-    void setDescription(std::string desc) { m_attribs.set(ATTR_DESC, desc); }
-    void setText(std::string txt) { m_attribs.set(ATTR_TEXT, txt); }
+    void setDescription(const std::string& desc) { m_attribs.set(ATTR_DESC, desc); }
+    void setText(const std::string& txt) { m_attribs.set(ATTR_TEXT, txt); }
 
     Position getTeleportDestination() { return m_attribs.get<Position>(ATTR_TELE_DEST); }
     void setTeleportDestination(const Position& pos) { m_attribs.set(ATTR_TELE_DEST, pos); }
@@ -126,13 +126,13 @@ public:
 
     bool isHouseDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isDepot() { return m_attribs.has(ATTR_DEPOT_ID); }
-    bool isContainer() { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
+    bool isContainer() override { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
 
     ItemPtr clone();
     ItemPtr asItem() { return static_self_cast<Item>(); }
-    bool isItem() { return true; }
+    bool isItem() override { return true; }
 
     ItemVector getContainerItems() { return m_containerItems; }
     ItemPtr getContainerItem(int slot) { return m_containerItems[slot]; }
@@ -143,10 +143,10 @@ public:
 
     void calculatePatterns(int& xPattern, int& yPattern, int& zPattern);
     int calculateAnimationPhase(bool animate);
-    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
+    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0) override;
 
-    const ThingTypePtr& getThingType();
-    ThingType* rawGetThingType();
+    const ThingTypePtr& getThingType() override;
+    ThingType* rawGetThingType() override;
 
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
     bool canDraw()  const { return m_canDraw; }

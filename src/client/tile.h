@@ -23,12 +23,12 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include "declarations.h"
-#include "mapview.h"
-#include "effect.h"
-#include "creature.h"
-#include "item.h"
 #include <framework/luaengine/luaobject.h>
+#include "creature.h"
+#include "declarations.h"
+#include "effect.h"
+#include "item.h"
+#include "mapview.h"
 
 enum tileflags_t : uint32
 {

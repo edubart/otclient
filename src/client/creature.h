@@ -23,15 +23,15 @@
 #ifndef CREATURE_H
 #define CREATURE_H
 
-#include "thing.h"
-#include "outfit.h"
-#include "tile.h"
-#include "mapview.h"
-#include <framework/core/scheduledevent.h>
 #include <framework/core/declarations.h>
+#include <framework/core/scheduledevent.h>
 #include <framework/core/timer.h>
-#include <framework/graphics/fontmanager.h>
 #include <framework/graphics/cachedtext.h>
+#include <framework/graphics/fontmanager.h>
+#include "mapview.h"
+#include "outfit.h"
+#include "thing.h"
+#include "tile.h"
 
  // @bindclass
 class Creature : public Thing
@@ -52,7 +52,7 @@ public:
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
 
-    void setId(uint32 id) { m_id = id; }
+    void setId(uint32 id) override { m_id = id; }
     void setName(const std::string& name);
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
@@ -78,13 +78,13 @@ public:
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
 
-    uint32 getId() { return m_id; }
+    uint32 getId() override { return m_id; }
     std::string getName() { return m_name; }
     uint8 getHealthPercent() { return m_healthPercent; }
     Otc::Direction getDirection() { return m_direction; }
     Outfit getOutfit() { return m_outfit; }
-    Light getLight();
-    bool hasLight() { return Thing::hasLight() || getLight().color > 0; }
+    Light getLight() override;
+    bool hasLight() override { return Thing::hasLight() || getLight().color > 0; }
     uint16 getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
     uint8 getSkull() { return m_skull; }
@@ -103,14 +103,14 @@ public:
     float getStepTicksLeft() { return getStepDuration() - m_walkTimer.ticksElapsed(); }
     ticks_t getWalkTicksElapsed() { return m_walkTimer.ticksElapsed(); }
     std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
-    virtual Point getDisplacement();
-    virtual int getDisplacementX();
-    virtual int getDisplacementY();
-    virtual int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0);
+    Point getDisplacement() override;
+    int getDisplacementX() override;
+    int getDisplacementY() override;
+    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0) override;
 
 
     int getTotalAnimationPhase();
-    int getCurrentAnimationPhase(const bool mount = false);
+    int getCurrentAnimationPhase(bool mount = false);
 
     void updateShield();
 
@@ -126,22 +126,22 @@ public:
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }
     bool isDead() { return m_healthPercent <= 0; }
     bool canBeSeen() { return !isInvisible() || isPlayer(); }
-    bool isCreature() { return true; }
+    bool isCreature() override { return true; }
 
-    const ThingTypePtr& getThingType();
-    ThingType* rawGetThingType();
+    const ThingTypePtr& getThingType() override;
+    ThingType* rawGetThingType() override;
     ThingType* Creature::rawGetMountThingType();
 
-    virtual void onPositionChange(const Position& newPos, const Position& oldPos);
-    virtual void onAppear();
-    virtual void onDisappear();
+    void onPositionChange(const Position& newPos, const Position& oldPos) override;
+    void onAppear() override;
+    void onDisappear() override;
     virtual void onDeath();
 
 protected:
     void updateWalkingTile();
     virtual void updateWalkAnimation();
     virtual void updateWalkOffset(int totalPixelsWalked);
-    virtual void updateWalk(const bool isPreWalking = false);
+    virtual void updateWalk(bool isPreWalking = false);
     virtual void nextWalkUpdate();
     virtual void terminateWalk();
 
@@ -228,14 +228,14 @@ private:
 class Npc : public Creature
 {
 public:
-    bool isNpc() { return true; }
+    bool isNpc() override { return true; }
 };
 
 // @bindclass
 class Monster : public Creature
 {
 public:
-    bool isMonster() { return true; }
+    bool isMonster() override { return true; }
 };
 
 #endif
