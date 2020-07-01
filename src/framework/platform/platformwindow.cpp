@@ -139,8 +139,8 @@ void PlatformWindow::processKeyUp(Fw::Key keyCode)
 void PlatformWindow::releaseAllKeys()
 {
     for(auto it : m_keysState) {
-        Fw::Key keyCode = it.first;
-        bool pressed = it.second;
+        const Fw::Key keyCode = it.first;
+        const bool pressed = it.second;
 
         if(!pressed)
             continue;
@@ -163,13 +163,13 @@ void PlatformWindow::fireKeysPress()
 
     for(auto it : m_keysState) {
         Fw::Key keyCode = it.first;
-        bool pressed = it.second;
+        const bool pressed = it.second;
 
         if(!pressed)
             continue;
 
-        ticks_t lastPressTicks = m_lastKeysPress[keyCode];
-        ticks_t firstKeyPress = m_firstKeysPress[keyCode];
+        const ticks_t lastPressTicks = m_lastKeysPress[keyCode];
+        const ticks_t firstKeyPress = m_firstKeysPress[keyCode];
         if(g_clock.millis() - lastPressTicks >= KEY_PRESS_REPEAT_INTERVAL) {
             if(m_onInputEvent) {
                 m_inputEvent.reset(Fw::KeyPressInputEvent);

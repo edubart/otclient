@@ -97,7 +97,7 @@ void Connection::connect(const std::string& host, uint16 port, const std::functi
     m_error.clear();
     m_connectCallback = connectCallback;
 
-    asio::ip::tcp::resolver::query query(host, stdext::unsafe_cast<std::string>(port));
+    const asio::ip::tcp::resolver::query query(host, stdext::unsafe_cast<std::string>(port));
     m_resolver.async_resolve(query, std::bind(&Connection::onResolve, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.cancel();
@@ -228,7 +228,7 @@ void Connection::onConnect(const boost::system::error_code& error)
         m_connected = true;
 
         // disable nagle's algorithm, this make the game play smoother
-        boost::asio::ip::tcp::no_delay option(true);
+        const boost::asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 
         if (m_connectCallback)

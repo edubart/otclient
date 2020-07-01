@@ -77,7 +77,7 @@ void Particle::updatePosition(float elapsedTime)
         PointF delta = m_velocity * elapsedTime;
         delta.y *= -1; // painter orientate Y axis in the inverse direction
 
-        PointF position = m_position + delta;
+        const PointF position = m_position + delta;
 
         if(m_position != position) {
             m_position += delta;
@@ -98,10 +98,10 @@ void Particle::updateSize()
 
 void Particle::updateColor()
 {
-    float currentLife = m_elapsedTime / m_duration;
+    const float currentLife = m_elapsedTime / m_duration;
     if(currentLife < m_colorsStops[1]) {
-        float range = m_colorsStops[1] - m_colorsStops[0];
-        float factor = (currentLife - m_colorsStops[0])/range;
+        const float range = m_colorsStops[1] - m_colorsStops[0];
+        const float factor = (currentLife - m_colorsStops[0])/range;
         m_color = m_colors[0] * (1.0f - factor) + m_colors[1] * factor;
     } else {
         if(m_colors.size() > 1) {

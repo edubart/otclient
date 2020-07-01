@@ -78,7 +78,7 @@ void Container::onAddItem(const ItemPtr& item, int slot)
 
 ItemPtr Container::findItemById(uint itemId, int subType)
 {
-    for(const ItemPtr item : m_items)
+    for(const ItemPtr& item : m_items)
         if(item->getId() == itemId && (subType == -1 || item->getSubType() == subType))
             return item;
     return nullptr;

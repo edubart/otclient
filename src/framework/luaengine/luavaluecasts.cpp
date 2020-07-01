@@ -230,7 +230,7 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
             double d;
             long l;
         };
-        std::string value = node->rawValue();
+        const std::string value = node->rawValue();
         if(stdext::cast(value, b))
             g_lua.pushBoolean(b);
         else if(stdext::cast(value, l))

@@ -45,7 +45,7 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
     if(m_maxFps == 0)
         return true;
 
-    ticks_t now = g_clock.micros();
+    const ticks_t now = g_clock.micros();
     if(now - m_lastFrame < m_bestFrameDelay)
         return false;
     return true;
@@ -53,7 +53,7 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
 
 void AdaptativeFrameCounter::processNextFrame()
 {
-    ticks_t now = g_clock.micros();
+    const ticks_t now = g_clock.micros();
     m_frames++;
     m_partialFrames++;
     m_frameDelaySum += now - m_lastFrame;
@@ -62,7 +62,7 @@ void AdaptativeFrameCounter::processNextFrame()
 
 bool AdaptativeFrameCounter::update()
 {
-    ticks_t now = g_clock.micros();
+    const ticks_t now = g_clock.micros();
     ticks_t delta = now - m_lastPartialFpsUpdate;
     if(delta > 41000 && m_partialFrames > 0) {
         m_partialFps = m_partialFrames / (delta / 1000000.0f);

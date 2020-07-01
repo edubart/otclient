@@ -53,8 +53,8 @@ bool Platform::spawnProcess(std::string process, const std::vector<std::string>&
     if (!boost::ends_with(process, ".exe"))
         process += ".exe";
 
-    std::wstring wfile = stdext::utf8_to_utf16(process);
-    std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
+    const std::wstring wfile = stdext::utf8_to_utf16(process);
+    const std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
 
     if ((size_t)ShellExecuteW(NULL, L"open", wfile.c_str(), wcommandLine.c_str(), NULL, SW_SHOWNORMAL) > 32)
         return true;
@@ -75,14 +75,14 @@ bool Platform::isProcessRunning(const std::string& name)
 
 bool Platform::killProcess(const std::string& name)
 {
-    HWND window = FindWindowA(name.c_str(), NULL);
+    const HWND window = FindWindowA(name.c_str(), NULL);
     if (window == NULL)
         return false;
-    DWORD pid = GetProcessId(window);
-    HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
+    const DWORD pid = GetProcessId(window);
+    const HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
     if (handle == NULL)
         return false;
-    bool ok = TerminateProcess(handle, 1) != 0;
+    const bool ok = TerminateProcess(handle, 1) != 0;
     CloseHandle(handle);
     return ok;
 }
@@ -111,8 +111,8 @@ std::string Platform::getCurrentDir()
 bool Platform::fileExists(std::string file)
 {
     boost::replace_all(file, "/", "\\");
-    std::wstring wfile = stdext::utf8_to_utf16(file);
-    DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
+    const std::wstring wfile = stdext::utf8_to_utf16(file);
+    const DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
 
@@ -136,7 +136,7 @@ bool Platform::removeFile(std::string file)
 ticks_t Platform::getFileModificationTime(std::string file)
 {
     boost::replace_all(file, "/", "\\");
-    std::wstring wfile = stdext::utf8_to_utf16(file);
+    const std::wstring wfile = stdext::utf8_to_utf16(file);
     WIN32_FILE_ATTRIBUTE_DATA fileAttrData;
     memset(&fileAttrData, 0, sizeof(fileAttrData));
     GetFileAttributesExW(wfile.c_str(), GetFileExInfoStandard, &fileAttrData);

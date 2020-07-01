@@ -280,7 +280,7 @@ void Map::saveOtbm(const std::string& fileName)
         {
             root->addU32(version);
 
-            Size mapSize = getSize();
+            const Size mapSize = getSize();
             root->addU16(mapSize.width());
             root->addU16(mapSize.height());
 
@@ -368,7 +368,7 @@ void Map::saveOtbm(const std::string& fileName)
                     root->addU32(town->getId());
                     root->addString(town->getName());
 
-                    Position townPos = town->getPos();
+                    const Position townPos = town->getPos();
                     root->addPos(townPos.x, townPos.y, townPos.z);
                     root->endNode();
                 }
@@ -380,7 +380,7 @@ void Map::saveOtbm(const std::string& fileName)
                         root->startNode(OTBM_WAYPOINT);
                         root->addString(it.second);
 
-                        Position pos = it.first;
+                        const Position pos = it.first;
                         root->addPos(pos.x, pos.y, pos.z);
                         root->endNode();
                     }

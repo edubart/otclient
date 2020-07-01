@@ -286,13 +286,13 @@ void WIN32Window::internalCreateWindow()
 
     if (!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
-    DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+    const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    const DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
     // initialize in the center of the screen
     m_position = ((getDisplaySize() - m_size) / 2).toPoint();
 
-    Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
+    const Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
@@ -444,7 +444,7 @@ bool WIN32Window::isExtensionSupported(const char* ext)
     return false;
 #else
     typedef const char* (WINAPI* wglGetExtensionsStringProc)();
-    wglGetExtensionsStringProc wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
+    const wglGetExtensionsStringProc wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
     if (!wglGetExtensionsString)
         return false;
 
@@ -468,8 +468,8 @@ void* WIN32Window::getExtensionProcAddress(const char* ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    Rect clientRect(pos, getClientRect().size());
-    Rect windowRect = adjustWindowRect(clientRect);
+    const Rect clientRect(pos, getClientRect().size());
+    const Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if (m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -479,8 +479,8 @@ void WIN32Window::resize(const Size& size)
 {
     if (size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
         return;
-    Rect clientRect(getClientRect().topLeft(), size);
-    Rect windowRect = adjustWindowRect(clientRect);
+    const Rect clientRect(getClientRect().topLeft(), size);
+    const Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if (m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -530,7 +530,7 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
 
     // lParam will have this state when receiving insert,end,down,etc presses from numpad
     if (!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
-        bool numlockOn = GetKeyState(VK_NUMLOCK);
+        const bool numlockOn = GetKeyState(VK_NUMLOCK);
         // retranslate numpad keys
         switch (wParam) {
             case VK_INSERT:
@@ -737,8 +737,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_GETMINMAXINFO:
         {
-            LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
-            Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
+            const LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
+            const Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
             pMMI->ptMinTrackSize.x = adjustedRect.width();
             pMMI->ptMinTrackSize.y = adjustedRect.height();
             break;
@@ -809,16 +809,16 @@ void WIN32Window::displayFatalError(const std::string& message)
 
 int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
 {
-    int width = image->getWidth();
-    int height = image->getHeight();
-    int numbits = width * height;
-    int numbytes = (width * height) / 8;
+    const int width = image->getWidth();
+    const int height = image->getHeight();
+    const int numbits = width * height;
+    const int numbytes = (width * height) / 8;
 
     std::vector<uchar> andMask(numbytes, 0);
     std::vector<uchar> xorMask(numbytes, 0);
 
     for (int i = 0; i < numbits; ++i) {
-        uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
+        const uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
         if (rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         }
@@ -827,7 +827,7 @@ int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hot
         } // otherwise 0xff000000 => black
     }
 
-    HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    const HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
     m_cursors.push_back(cursor);
     return m_cursors.size() - 1;
 }
@@ -868,12 +868,12 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
     m_fullscreen = fullscreen;
 
-    DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
+    const DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
     static WINDOWPLACEMENT wpPrev;
     wpPrev.length = sizeof(wpPrev);
 
     if (fullscreen) {
-        Size size = getDisplaySize();
+        const Size size = getDisplaySize();
         GetWindowPlacement(m_window, &wpPrev);
         SetWindowLong(m_window, GWL_STYLE, (dwStyle & ~WS_OVERLAPPEDWINDOW) | WS_POPUP | WS_EX_TOPMOST);
         SetWindowPos(m_window, HWND_TOPMOST, 0, 0, size.width(), size.height(), SWP_FRAMECHANGED);
@@ -894,7 +894,7 @@ void WIN32Window::setVerticalSync(bool enable)
         return;
 
     typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
-    wglSwapIntervalProc wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
+    const wglSwapIntervalProc wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
     if (!wglSwapInterval)
         return;
 
@@ -916,7 +916,7 @@ void WIN32Window::setIcon(const std::string& file)
         return;
     }
 
-    int n = image->getWidth() * image->getHeight();
+    const int n = image->getWidth() * image->getHeight();
     std::vector<uint32> iconData(n);
     for (int i = 0; i < n; ++i) {
         uint8* pixel = (uint8*)&iconData[i];
@@ -926,8 +926,8 @@ void WIN32Window::setIcon(const std::string& file)
         pixel[3] = *(image->getPixelData() + (i * 4) + 3);
     }
 
-    HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
-    HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), image->getWidth(), image->getHeight());
+    const HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
+    const HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), image->getWidth(), image->getHeight());
 
     ICONINFO ii;
     ii.fIcon = TRUE;
@@ -949,13 +949,13 @@ void WIN32Window::setClipboardText(const std::string& text)
     if (!OpenClipboard(m_window))
         return;
 
-    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
+    const HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
     if (!hglb)
         return;
 
     std::wstring wtext = stdext::latin1_to_utf16(text);
 
-    LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+    const LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
     memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
     lpwstr[text.length()] = static_cast<WCHAR>(0);
     GlobalUnlock(hglb);
@@ -977,9 +977,9 @@ std::string WIN32Window::getClipboardText()
     if (!OpenClipboard(m_window))
         return text;
 
-    HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
+    const HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if (hglb) {
-        LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+        const LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
         if (lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);
@@ -1003,7 +1003,7 @@ Rect WIN32Window::getClientRect()
 {
     if (m_window) {
         RECT clientRect = { 0,0,0,0 };
-        int ret = GetClientRect(m_window, &clientRect);
+        const int ret = GetClientRect(m_window, &clientRect);
         assert(ret != 0);
         return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
     }
@@ -1016,7 +1016,7 @@ Rect WIN32Window::getWindowRect()
 {
     if (m_window) {
         RECT windowRect = { 0,0,0,0 };
-        int ret = GetWindowRect(m_window, &windowRect);
+        const int ret = GetWindowRect(m_window, &windowRect);
         assert(ret != 0);
         return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
     }

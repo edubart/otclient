@@ -46,7 +46,7 @@ bool UIHorizontalLayout::internalUpdate()
         std::reverse(widgets.begin(), widgets.end());
 
     bool changed = false;
-    Rect paddingRect = parentWidget->getPaddingRect();
+    const Rect paddingRect = parentWidget->getPaddingRect();
     Point pos = (m_alignRight) ? paddingRect.topRight() : paddingRect.topLeft();
     int preferredWidth = 0;
     int gap;

@@ -87,7 +87,7 @@ void SoundManager::terminate()
 void SoundManager::poll()
 {
     static ticks_t lastUpdate = 0;
-    ticks_t now = g_clock.millis();
+    const ticks_t now = g_clock.millis();
 
     if(now - lastUpdate < POLL_DELAY)
         return;
@@ -150,7 +150,7 @@ void SoundManager::preload(std::string filename)
 {
     filename = resolveSoundFile(filename);
 
-    auto it = m_buffers.find(filename);
+    const auto it = m_buffers.find(filename);
     if(it != m_buffers.end())
         return;
 
@@ -222,7 +222,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
     SoundSourcePtr source;
 
     try {
-        auto it = m_buffers.find(filename);
+        const auto it = m_buffers.find(filename);
         if(it != m_buffers.end()) {
             source = SoundSourcePtr(new SoundSource);
             source->setBuffer(it->second);
@@ -265,7 +265,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
 
             source = combinedSource;
 #else
-            StreamSoundSourcePtr streamSource(new StreamSoundSource);
+            const StreamSoundSourcePtr streamSource(new StreamSoundSource);
             m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
                 try {
                     return SoundFile::loadSoundFile(filename);

@@ -171,7 +171,7 @@ std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
 std::string Crypt::genUUID()
 {
     boost::uuids::random_generator gen;
-    boost::uuids::uuid u = gen();
+    const boost::uuids::uuid u = gen();
     return boost::uuids::to_string(u);
 }
 
@@ -197,16 +197,16 @@ std::string Crypt::getMachineUUID()
 
 std::string Crypt::getCryptKey(bool useMachineUUID)
 {
-    boost::hash<boost::uuids::uuid> uuid_hasher;
+    const boost::hash<boost::uuids::uuid> uuid_hasher;
     boost::uuids::uuid uuid;
     if(useMachineUUID) {
         uuid = m_machineUUID;
     } else {
-        boost::uuids::nil_generator nilgen;
+        const boost::uuids::nil_generator nilgen;
         uuid = nilgen();
     }
-    boost::uuids::name_generator namegen(uuid);
-    boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
+    const boost::uuids::name_generator namegen(uuid);
+    const boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
     std::size_t hash = uuid_hasher(u);
     std::string key;
     key.assign((const char *)&hash, sizeof(hash));
@@ -216,7 +216,7 @@ std::string Crypt::getCryptKey(bool useMachineUUID)
 std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachineUUID)
 {
     std::string tmp = "0000" + decrypted_string;
-    uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+    const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
     stdext::writeULE32((uint8*)&tmp[0], sum);
     std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
@@ -224,12 +224,12 @@ std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachine
 
 std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachineUUID)
 {
-    std::string decoded = base64Decode(encrypted_string);
-    std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
+    const std::string decoded = base64Decode(encrypted_string);
+    const std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
     if(tmp.length() >= 4) {
-        uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
+        const uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
         std::string decrypted_string = tmp.substr(4);
-        uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+        const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
         if(readsum == sum)
             return decrypted_string;
     }

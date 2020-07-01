@@ -139,7 +139,7 @@ void PainterShaderProgram::setResolution(const Size& resolution)
 
 void PainterShaderProgram::updateTime()
 {
-    float time = g_clock.seconds() - m_startTime;
+    const float time = g_clock.seconds() - m_startTime;
     if(m_time == time)
         return;
 

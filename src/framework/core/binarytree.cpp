@@ -36,7 +36,7 @@ BinaryTree::~BinaryTree()
 void BinaryTree::skipNodes()
 {
     while(true) {
-        uint8 byte = m_fin->getU8();
+        const uint8 byte = m_fin->getU8();
         switch(byte) {
             case BINARYTREE_NODE_START: {
                 skipNodes();
@@ -84,7 +84,7 @@ BinaryTreeVec BinaryTree::getChildren()
     BinaryTreeVec children;
     m_fin->seek(m_startPos);
     while(true) {
-        uint8 byte = m_fin->getU8();
+        const uint8 byte = m_fin->getU8();
         switch(byte) {
             case BINARYTREE_NODE_START: {
                 BinaryTreePtr node(new BinaryTree(m_fin));
@@ -122,7 +122,7 @@ uint8 BinaryTree::getU8()
     unserialize();
     if(m_pos+1 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU8 failed");
-    uint8 v = m_buffer[m_pos];
+    const uint8 v = m_buffer[m_pos];
     m_pos += 1;
     return v;
 }
@@ -132,7 +132,7 @@ uint16 BinaryTree::getU16()
     unserialize();
     if(m_pos+2 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU16 failed");
-    uint16 v = stdext::readULE16(&m_buffer[m_pos]);
+    const uint16 v = stdext::readULE16(&m_buffer[m_pos]);
     m_pos += 2;
     return v;
 }
@@ -142,7 +142,7 @@ uint32 BinaryTree::getU32()
     unserialize();
     if(m_pos+4 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU32 failed");
-    uint32 v = stdext::readULE32(&m_buffer[m_pos]);
+    const uint32 v = stdext::readULE32(&m_buffer[m_pos]);
     m_pos += 4;
     return v;
 }
@@ -152,7 +152,7 @@ uint64 BinaryTree::getU64()
     unserialize();
     if(m_pos+8 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU64 failed");
-    uint64 v = stdext::readULE64(&m_buffer[m_pos]);
+    const uint64 v = stdext::readULE64(&m_buffer[m_pos]);
     m_pos += 8;
     return v;
 }

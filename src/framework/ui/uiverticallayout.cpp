@@ -47,7 +47,7 @@ bool UIVerticalLayout::internalUpdate()
     if(m_alignBottom)
         std::reverse(widgets.begin(), widgets.end());
 
-    Rect paddingRect = parentWidget->getPaddingRect();
+    const Rect paddingRect = parentWidget->getPaddingRect();
     Point pos = (m_alignBottom) ? paddingRect .bottomLeft() : paddingRect.topLeft();
     int preferredHeight = 0;
     int gap;

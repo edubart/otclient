@@ -434,7 +434,7 @@ template<typename... T>
 int LuaInterface::luaCallGlobalField(const std::string& global, const std::string& field, const T&... args) {
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
-        int numArgs = g_lua.polymorphicPush(args...);
+        const int numArgs = g_lua.polymorphicPush(args...);
         return g_lua.signalCall(numArgs);
     } else
         g_lua.pop(1);
@@ -443,7 +443,7 @@ int LuaInterface::luaCallGlobalField(const std::string& global, const std::strin
 
 template<typename... T>
 void LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
-    int rets = luaCallGlobalField(global, field, args...);
+    const int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0)
         pop(rets);
 }
@@ -451,7 +451,7 @@ void LuaInterface::callGlobalField(const std::string& global, const std::string&
 template<typename R, typename... T>
 R LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
     R result;
-    int rets = luaCallGlobalField(global, field, args...);
+    const int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();

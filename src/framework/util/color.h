@@ -91,9 +91,9 @@ public:
         if(color >= 216 || color <= 0)
             return Color(0, 0, 0);
 
-        int r = static_cast<int>(color / 36) % 6 * 51;
-        int g = static_cast<int>(color / 6) % 6 * 51;
-        int b = color % 6 * 51;
+        const int r = static_cast<int>(color / 36) % 6 * 51;
+        const int g = static_cast<int>(color / 6) % 6 * 51;
+        const int b = color % 6 * 51;
         return Color(r, g, b);
     }
 

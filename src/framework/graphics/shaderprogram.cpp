@@ -72,7 +72,7 @@ bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const
 
 void ShaderProgram::removeShader(const ShaderPtr& shader)
 {
-    auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
+    const auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
     if(it == m_shaders.end())
         return;
 
