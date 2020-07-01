@@ -21,10 +21,10 @@
  */
 
 #include "uiminimap.h"
-#include "minimap.h"
 #include "game.h"
-#include "uimapanchorlayout.h"
 #include "luavaluecasts.h"
+#include "minimap.h"
+#include "uimapanchorlayout.h"
 
 #include <framework/graphics/painter.h>
 #include "uimapanchorlayout.h"

@@ -21,24 +21,24 @@
  */
 
 #include "creature.h"
-#include "thingtypemanager.h"
-#include "localplayer.h"
-#include "map.h"
-#include "tile.h"
-#include "item.h"
-#include "game.h"
 #include "effect.h"
-#include "luavaluecasts.h"
+#include "game.h"
+#include "item.h"
 #include "lightview.h"
+#include "localplayer.h"
+#include "luavaluecasts.h"
+#include "map.h"
+#include "thingtypemanager.h"
+#include "tile.h"
 
-#include <framework/graphics/graphics.h>
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/clock.h>
+#include <framework/core/eventdispatcher.h>
+#include <framework/graphics/graphics.h>
 
-#include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/ogl/painterogl2_shadersources.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/paintershaderprogram.h>
+#include <framework/graphics/texturemanager.h>
+#include <framework/graphics/ogl/painterogl2_shadersources.h>
 #include "spritemanager.h"
 
 double Creature::speedA = 0;
@@ -881,8 +881,8 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
             stepSpeed *= 2;
 
             uint32_t calculatedStepSpeed;
-            if(stepSpeed > -Creature::speedB) {
-                calculatedStepSpeed = floor(Creature::speedA * log(stepSpeed / 2 + Creature::speedB) + Creature::speedC + 0.5);
+            if(stepSpeed > -speedB) {
+                calculatedStepSpeed = floor(speedA * log(stepSpeed / 2 + speedB) + speedC + 0.5);
                 if(calculatedStepSpeed == 0) {
                     calculatedStepSpeed = 1;
                 }

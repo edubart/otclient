@@ -132,7 +132,7 @@ public:
     void unserializeOtml(const OTMLNodePtr& node);
 
     void serialize(const FileStreamPtr& fin);
-    void exportImage(std::string fileName);
+    void exportImage(const std::string& fileName);
 
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView* lightView = nullptr);
 

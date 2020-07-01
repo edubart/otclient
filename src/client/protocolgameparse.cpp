@@ -22,16 +22,16 @@
 
 #include "protocolgame.h"
 
-#include "localplayer.h"
-#include "thingtypemanager.h"
-#include "game.h"
-#include "map.h"
-#include "item.h"
-#include "effect.h"
-#include "missile.h"
-#include "tile.h"
-#include "luavaluecasts.h"
 #include <framework/core/eventdispatcher.h>
+#include "effect.h"
+#include "game.h"
+#include "item.h"
+#include "localplayer.h"
+#include "luavaluecasts.h"
+#include "map.h"
+#include "missile.h"
+#include "thingtypemanager.h"
+#include "tile.h"
 
 void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 {
@@ -54,8 +54,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             const int readPos = msg->getReadPos();
             if(callLuaField<bool>("onOpcode", opcode, msg))
                 continue;
-            else
-                msg->setReadPos(readPos); // restore read pos
+            msg->setReadPos(readPos);
+            // restore read pos
 
             switch(opcode) {
             case Proto::GameServerLoginOrPendingState:
@@ -978,10 +978,9 @@ void ProtocolGame::parseRemoveInventoryItem(const InputMessagePtr& msg)
 void ProtocolGame::parseOpenNpcTrade(const InputMessagePtr& msg)
 {
     std::vector<std::tuple<ItemPtr, std::string, int, int, int>> items;
-    std::string npcName;
 
     if(g_game.getFeature(Otc::GameNameOnNpcTrade))
-        npcName = msg->getString();
+        std::string npcName = msg->getString();
 
     int listCount;
 
@@ -1822,18 +1821,18 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
 {
-    uint id, iconId = 0, status;
-    std::string name, desc = "";
+    uint iconId = 0;
+    std::string desc = "";
     bool notifyLogin = false;
 
-    id = msg->getU32();
-    name = g_game.formatCreatureName(msg->getString());
+    const uint id = msg->getU32();
+    const std::string name = g_game.formatCreatureName(msg->getString());
     if(g_game.getFeature(Otc::GameAdditionalVipInfo)) {
         desc = msg->getString();
         iconId = msg->getU32();
         notifyLogin = msg->getU8();
     }
-    status = msg->getU8();
+    const uint status = msg->getU8();
 
     g_game.processVipAdd(id, name, status, desc, iconId, notifyLogin);
 }
@@ -2225,10 +2224,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             else {
                 if(id >= Proto::PlayerStartId && id < Proto::PlayerEndId)
                     creatureType = Proto::CreatureTypePlayer;
-                else if(id >= Proto::MonsterStartId && id < Proto::MonsterEndId)
-                    creatureType = Proto::CreatureTypeMonster;
-                else
-                    creatureType = Proto::CreatureTypeNpc;
+                else creatureType = Proto::CreatureTypeNpc;
             }
 
             const std::string name = g_game.formatCreatureName(msg->getString());
@@ -2273,7 +2269,6 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         int8 creatureType = -1;
         int8 icon = -1;
         bool unpass = true;
-        uint8 mark;
 
         if(g_game.getFeature(Otc::GameCreatureEmblems) && !known)
             emblem = msg->getU8();
@@ -2287,7 +2282,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         }
 
         if(g_game.getFeature(Otc::GameThingMarks)) {
-            mark = msg->getU8(); // mark
+            const uint8 mark = msg->getU8(); // mark
             msg->getU16(); // helpers
 
             if(creature) {

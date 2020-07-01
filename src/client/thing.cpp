@@ -21,13 +21,13 @@
  */
 
 #include "thing.h"
+#include "thing.h"
+#include <framework/graphics/graphics.h>
 #include "game.h"
 #include "map.h"
 #include "spritemanager.h"
-#include "thing.h"
 #include "thingtypemanager.h"
 #include "tile.h"
-#include <framework/graphics/graphics.h>
 
 Thing::Thing()
     : m_datId(0)

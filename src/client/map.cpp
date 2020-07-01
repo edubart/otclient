@@ -22,17 +22,17 @@
 
 #include "map.h"
 #include "game.h"
-#include "localplayer.h"
-#include "tile.h"
 #include "item.h"
-#include "missile.h"
-#include "statictext.h"
+#include "localplayer.h"
 #include "mapview.h"
 #include "minimap.h"
+#include "missile.h"
+#include "statictext.h"
+#include "tile.h"
 #include "viewportcontrol.h"
 
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 
 Map g_map;
 TilePtr Map::m_nulltile;
@@ -139,7 +139,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
             AnimatedTextPtr prevAnimatedText;
             bool merged = false;
-            for(auto other : m_animatedTexts) {
+            for(const auto& other : m_animatedTexts) {
                 if(other->getPosition() == pos) {
                     prevAnimatedText = other;
                     if(other->merge(animatedText)) {
@@ -164,7 +164,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         } else if(thing->isStaticText()) {
             StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             bool mustAdd = true;
-            for(auto other : m_staticTexts) {
+            for(const auto& other : m_staticTexts) {
                 // try to combine messages
                 if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
                     mustAdd = false;

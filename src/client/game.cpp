@@ -21,18 +21,18 @@
  */
 
 #include "game.h"
-#include "localplayer.h"
-#include "map.h"
-#include "tile.h"
-#include "creature.h"
-#include "container.h"
-#include "statictext.h"
+#include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/ui/uimanager.h>
-#include <framework/core/application.h>
+#include "container.h"
+#include "creature.h"
+#include "localplayer.h"
 #include "luavaluecasts.h"
-#include "protocolgame.h"
+#include "map.h"
 #include "protocolcodes.h"
+#include "protocolgame.h"
+#include "statictext.h"
+#include "tile.h"
 
 Game g_game;
 
@@ -512,7 +512,9 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
-void Game::processModalDialog(uint32 id, std::string title, std::string message, std::vector<std::tuple<int, std::string> > buttonList, int enterButton, int escapeButton, std::vector<std::tuple<int, std::string> > choiceList, bool priority)
+void Game::processModalDialog(uint32 id, const std::string& title, const std::string& message, const std::vector<std::tuple<int, std::string> >
+                              & buttonList, int enterButton, int escapeButton, const std::vector<std::tuple<int, std::string> >
+                              & choiceList, bool priority)
 {
     g_lua.callGlobalField("g_game", "onModalDialog", id, title, message, buttonList, enterButton, escapeButton, choiceList, priority);
 }

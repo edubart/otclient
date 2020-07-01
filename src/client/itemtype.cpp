@@ -21,12 +21,12 @@
  */
 
 
-#include "thingtypemanager.h"
-#include "thingtype.h"
 #include "game.h"
+#include "thingtype.h"
+#include "thingtypemanager.h"
 
-#include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
+#include <framework/core/filestream.h>
 
 ItemType::ItemType()
 {

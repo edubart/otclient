@@ -24,8 +24,8 @@
 #include "creature.h"
 #include "map.h"
 
-#include <framework/xml/tinyxml.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/xml/tinyxml.h>
 
 CreatureManager g_creatures;
 
@@ -146,7 +146,7 @@ void Spawn::removeCreature(const Position& pos)
 std::vector<CreatureTypePtr> Spawn::getCreatures()
 {
     std::vector<CreatureTypePtr> creatures;
-    for(auto p : m_creatures)
+    for(const auto& p : m_creatures)
         creatures.push_back(p.second);
     return creatures;
 }
@@ -173,7 +173,7 @@ CreatureManager::CreatureManager()
 
 void CreatureManager::clearSpawns()
 {
-    for(auto pair : m_spawns)
+    for(const auto& pair : m_spawns)
         pair.second->clear();
     m_spawns.clear();
 }
@@ -269,7 +269,7 @@ void CreatureManager::saveSpawns(const std::string& fileName)
         TiXmlElement* root = new TiXmlElement("spawns");
         doc.LinkEndChild(root);
 
-        for(auto pair : m_spawns) {
+        for(const auto& pair : m_spawns) {
             TiXmlElement* elem = new TiXmlElement("spawn");
             pair.second->save(elem);
             root->LinkEndChild(elem);
@@ -417,7 +417,7 @@ void CreatureManager::deleteSpawn(const SpawnPtr& spawn)
 std::vector<SpawnPtr> CreatureManager::getSpawns()
 {
     std::vector<SpawnPtr> spawns;
-    for(auto p : m_spawns)
+    for(const auto& p : m_spawns)
         spawns.push_back(p.second);
     return spawns;
 }

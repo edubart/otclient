@@ -21,10 +21,10 @@
  */
 
 #include "spritemanager.h"
-#include "game.h"
-#include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
+#include "game.h"
 
 SpriteManager g_sprites;
 
@@ -63,7 +63,7 @@ bool SpriteManager::loadSpr(std::string file)
     }
 }
 
-void SpriteManager::saveSpr(std::string fileName)
+void SpriteManager::saveSpr(const std::string& fileName)
 {
     if(!m_loaded)
         stdext::throw_exception("failed to save, spr is not loaded");

@@ -21,19 +21,19 @@
  */
 
 #include "thingtypemanager.h"
-#include "spritemanager.h"
-#include "thing.h"
-#include "thingtype.h"
-#include "itemtype.h"
 #include "creature.h"
 #include "creatures.h"
 #include "game.h"
+#include "itemtype.h"
+#include "spritemanager.h"
+#include "thing.h"
+#include "thingtype.h"
 
-#include <framework/core/resourcemanager.h>
-#include <framework/core/filestream.h>
 #include <framework/core/binarytree.h>
-#include <framework/xml/tinyxml.h>
+#include <framework/core/filestream.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/otml/otml.h>
+#include <framework/xml/tinyxml.h>
 
 ThingTypeManager g_things;
 
@@ -63,7 +63,7 @@ void ThingTypeManager::terminate()
     m_nullItemType = nullptr;
 }
 
-void ThingTypeManager::saveDat(std::string fileName)
+void ThingTypeManager::saveDat(const std::string& fileName)
 {
     if(!m_datLoaded)
         stdext::throw_exception("failed to save, dat is not loaded");
@@ -344,11 +344,10 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
 
     if(m_reverseItemTypes[id])
         return m_reverseItemTypes[id];
-    else
-        return m_nullItemType;
+    return m_nullItemType;
 }
 
-const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
+const ItemTypePtr& ThingTypeManager::findItemTypeByName(const std::string& name)
 {
     for(const ItemTypePtr& it : m_itemTypes)
         if(it->getName() == name)
@@ -356,7 +355,7 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByName(std::string name)
     return m_nullItemType;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByName(std::string name)
+ItemTypeList ThingTypeManager::findItemTypesByName(const std::string& name)
 {
     ItemTypeList ret;
     for(const ItemTypePtr& it : m_itemTypes)
@@ -365,7 +364,7 @@ ItemTypeList ThingTypeManager::findItemTypesByName(std::string name)
     return ret;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByString(std::string name)
+ItemTypeList ThingTypeManager::findItemTypesByString(const std::string& name)
 {
     ItemTypeList ret;
     for(const ItemTypePtr& it : m_itemTypes)

@@ -21,9 +21,9 @@
  */
 
 #include "effect.h"
-#include "map.h"
-#include "game.h"
 #include <framework/core/eventdispatcher.h>
+#include "game.h"
+#include "map.h"
 
 void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int offsetY, LightView* lightView)
 {

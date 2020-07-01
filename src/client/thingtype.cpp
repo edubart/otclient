@@ -21,18 +21,18 @@
  */
 
 #include "thingtype.h"
-#include "spritemanager.h"
 #include "game.h"
 #include "lightview.h"
 #include "map.h"
+#include "spritemanager.h"
 
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/texture.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/texturemanager.h>
-#include <framework/core/filestream.h>
-#include <framework/otml/otml.h>
 #include <framework/core/eventdispatcher.h>
+#include <framework/core/filestream.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/texture.h>
+#include <framework/graphics/texturemanager.h>
+#include <framework/otml/otml.h>
 
 ThingType::ThingType()
 {
@@ -107,7 +107,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
             break;
         default:
             break;
-        };
+        }
     }
     fin->addU8(ThingLastAttr);
 
@@ -175,7 +175,8 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             if(attr == 8) {
                 m_attribs.set(ThingAttrChargeable, true);
                 continue;
-            } else if(attr > 8)
+            }
+            if(attr > 8)
                 attr -= 1;
         } else if(g_game.getClientVersion() >= 755) {
             /* In 7.55-7.72 attributes 23 is "Floor Change". */
@@ -271,7 +272,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         default:
             m_attribs.set(attr, true);
             break;
-        };
+        }
     }
 
     if(!done)
@@ -336,7 +337,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
-void ThingType::exportImage(std::string fileName)
+void ThingType::exportImage(const std::string& fileName)
 {
     if(m_null)
         stdext::throw_exception("cannot export null thingtype");

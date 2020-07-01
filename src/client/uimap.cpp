@@ -21,12 +21,12 @@
  */
 
 #include "uimap.h"
+#include <framework/graphics/graphics.h>
+#include <framework/otml/otml.h>
 #include "game.h"
+#include "localplayer.h"
 #include "map.h"
 #include "mapview.h"
-#include <framework/otml/otml.h>
-#include <framework/graphics/graphics.h>
-#include "localplayer.h"
 
 UIMap::UIMap()
 {

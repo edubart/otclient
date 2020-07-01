@@ -24,14 +24,14 @@
 #include "minimap.h"
 #include "tile.h"
 
-#include <framework/graphics/image.h>
-#include <framework/graphics/texture.h>
-#include <framework/graphics/painter.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/framebuffermanager.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/core/filestream.h>
 #include <zlib.h>
+#include <framework/core/filestream.h>
+#include <framework/core/resourcemanager.h>
+#include <framework/graphics/framebuffermanager.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/painter.h>
+#include <framework/graphics/texture.h>
 
 Minimap g_minimap;
 

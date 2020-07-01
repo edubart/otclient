@@ -21,11 +21,11 @@
  */
 
 #include "lightview.h"
-#include "mapview.h"
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/framebuffermanager.h>
-#include <framework/graphics/painter.h>
 #include <framework/graphics/image.h>
+#include <framework/graphics/painter.h>
+#include "mapview.h"
 
 enum {
     MAX_LIGHT_INTENSITY = 8,

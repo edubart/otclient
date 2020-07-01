@@ -20,8 +20,8 @@
 * THE SOFTWARE.
 */
 
-#include "declarations.h"
 #include "animator.h"
+#include "declarations.h"
 
 #include <framework/core/clock.h>
 #include <framework/core/filestream.h>

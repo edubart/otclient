@@ -91,7 +91,7 @@ public:
     void addHouse(const HousePtr& house);
     void removeHouse(uint32 houseId);
     HousePtr getHouse(uint32 houseId);
-    HousePtr getHouseByName(std::string name);
+    HousePtr getHouseByName(const std::string& name);
 
     void load(const std::string& fileName);
     void save(const std::string& fileName);

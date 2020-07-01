@@ -126,7 +126,7 @@ HousePtr HouseManager::getHouse(uint32 houseId)
     return it != m_houses.end() ? *it : nullptr;
 }
 
-HousePtr HouseManager::getHouseByName(std::string name)
+HousePtr HouseManager::getHouseByName(const std::string& name)
 {
     const auto it = std::find_if(m_houses.begin(), m_houses.end(),
                                  [=](const HousePtr& house) -> bool { return house->getName() == name; });
@@ -174,7 +174,7 @@ void HouseManager::save(const std::string& fileName)
         TiXmlElement* root = new TiXmlElement("houses");
         doc.LinkEndChild(root);
 
-        for(auto house : m_houses) {
+        for(const auto& house : m_houses) {
             TiXmlElement* elem = new TiXmlElement("house");
             house->save(elem);
             root->LinkEndChild(elem);

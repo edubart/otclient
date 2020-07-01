@@ -21,11 +21,11 @@
  */
 
 #include "localplayer.h"
-#include "map.h"
-#include "game.h"
-#include "tile.h"
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/graphics.h>
+#include "game.h"
+#include "map.h"
+#include "tile.h"
 
 LocalPlayer::LocalPlayer()
 {
@@ -213,8 +213,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
             currentPos = currentPos.translatedToDirection(dir);
             if(!hasSight(currentPos))
                 break;
-            else
-                limitedPath.push_back(dir);
+            limitedPath.push_back(dir);
         }
     }
 

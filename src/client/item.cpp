@@ -21,21 +21,21 @@
  */
 
 #include "item.h"
-#include "thingtypemanager.h"
+#include "container.h"
+#include "game.h"
+#include "houses.h"
+#include "map.h"
+#include "shadermanager.h"
 #include "spritemanager.h"
 #include "thing.h"
+#include "thingtypemanager.h"
 #include "tile.h"
-#include "shadermanager.h"
-#include "container.h"
-#include "map.h"
-#include "houses.h"
-#include "game.h"
 
+#include <framework/core/binarytree.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
 #include <framework/core/filestream.h>
-#include <framework/core/binarytree.h>
+#include <framework/graphics/graphics.h>
 
 Item::Item() :
     m_clientId(0),
@@ -236,7 +236,7 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     }
 
     out->endNode();
-    for(auto i : m_containerItems)
+    for(const auto& i : m_containerItems)
         i->serializeItem(out);
 }
 

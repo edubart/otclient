@@ -22,22 +22,22 @@
 
 #include "mapview.h"
 
-#include "game.h"
-#include "creature.h"
-#include "map.h"
-#include "tile.h"
-#include "statictext.h"
 #include "animatedtext.h"
+#include "creature.h"
+#include "game.h"
+#include "lightview.h"
+#include "map.h"
 #include "missile.h"
 #include "shadermanager.h"
-#include "lightview.h"
+#include "statictext.h"
+#include "tile.h"
 
+#include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
+#include <framework/core/resourcemanager.h>
+#include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/image.h>
-#include <framework/graphics/framebuffermanager.h>
-#include <framework/core/eventdispatcher.h>
-#include <framework/core/application.h>
-#include <framework/core/resourcemanager.h>
 
 
 enum {
@@ -470,7 +470,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
     updateGeometry(visibleDimension, m_optimizedSize);
 }
 
-void MapView::setViewMode(MapView::ViewMode viewMode)
+void MapView::setViewMode(ViewMode viewMode)
 {
     m_viewMode = viewMode;
     requestVisibleTilesCacheUpdate();

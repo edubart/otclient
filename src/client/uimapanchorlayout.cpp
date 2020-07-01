@@ -20,10 +20,10 @@
  * THE SOFTWARE.
  */
 
-#include "declarations.h"
 #include "uimapanchorlayout.h"
-#include "uiminimap.h"
 #include <framework/ui/uiwidget.h>
+#include "declarations.h"
+#include "uiminimap.h"
 
 int UIPositionAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&)
 {

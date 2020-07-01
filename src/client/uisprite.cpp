@@ -21,10 +21,10 @@
  */
 
 #include "uisprite.h"
-#include <framework/otml/otml.h>
+#include <client/spritemanager.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/texturemanager.h>
-#include <client/spritemanager.h>
+#include <framework/otml/otml.h>
 
 UISprite::UISprite() :
     m_spriteId(0),

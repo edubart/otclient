@@ -71,7 +71,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     void addThing(const ThingPtr& thing, int stackPos);
-    bool removeThing(ThingPtr thing);
+    bool removeThing(const ThingPtr& thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);

@@ -21,15 +21,15 @@
  */
 
 #include "tile.h"
-#include "item.h"
-#include "thingtypemanager.h"
-#include "map.h"
-#include "game.h"
-#include "localplayer.h"
-#include "effect.h"
-#include "protocolgame.h"
-#include "lightview.h"
 #include <framework/graphics/fontmanager.h>
+#include "effect.h"
+#include "game.h"
+#include "item.h"
+#include "lightview.h"
+#include "localplayer.h"
+#include "map.h"
+#include "protocolgame.h"
+#include "thingtypemanager.h"
 
 Tile::Tile(const Position& position) :
     m_position(position),
@@ -224,7 +224,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 }
 
 // TODO: Need refactoring
-bool Tile::removeThing(ThingPtr thing)
+bool Tile::removeThing(const ThingPtr& thing)
 {
     if(!thing)
         return false;

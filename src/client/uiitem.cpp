@@ -21,9 +21,9 @@
  */
 
 #include "uiitem.h"
-#include <framework/otml/otml.h>
-#include <framework/graphics/graphics.h>
 #include <framework/graphics/fontmanager.h>
+#include <framework/graphics/graphics.h>
+#include <framework/otml/otml.h>
 
 UIItem::UIItem()
 {
