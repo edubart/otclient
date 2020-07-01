@@ -178,6 +178,7 @@ private:
 
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
+    FrameBufferPtr m_nameFramebuffer;
 
     ViewMode m_viewMode;
     LightViewPtr m_lightView;

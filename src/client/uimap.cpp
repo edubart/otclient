@@ -86,7 +86,7 @@ bool UIMap::zoomIn()
 {
     int delta = 2;
     if(m_zoom - delta < m_maxZoomIn)
-        delta--;
+        --delta;
 
     if(m_zoom - delta < m_maxZoomIn)
         return false;
@@ -100,7 +100,7 @@ bool UIMap::zoomOut()
 {
     int delta = 2;
     if(m_zoom + delta > m_maxZoomOut)
-        delta--;
+        --delta;
 
     if(m_zoom + delta > m_maxZoomOut)
         return false;

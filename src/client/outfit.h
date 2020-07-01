@@ -58,6 +58,9 @@ public:
     int getFeet() const { return m_feet; }
     int getAddons() const { return m_addons; }
     int getMount() const { return m_mount; }
+
+    bool hasMount() const { return m_mount > 0; }
+
     ThingCategory getCategory() const { return m_category; }
 
     Color getHeadColor() const { return m_headColor; }

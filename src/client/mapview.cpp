@@ -263,8 +263,8 @@ void MapView::draw(const Rect& rect)
                 continue;
 
             Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p.x = p.x * horizontalStretchFactor;
-            p.y = p.y * verticalStretchFactor;
+            p.x *= horizontalStretchFactor;
+            p.y *= verticalStretchFactor;
             p += rect.topLeft();
             animatedText->drawText(p, rect);
         }
@@ -276,7 +276,6 @@ void MapView::updateVisibleTilesCache(int start)
     if(start != 0) {
         m_mustCleanFramebuffer = false;
     } else {
-
         m_cachedFirstVisibleFloor = calcFirstVisibleFloor();
         m_cachedLastVisibleFloor = calcLastVisibleFloor();
 
@@ -323,7 +322,7 @@ void MapView::updateVisibleTilesCache(int start)
             for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
                 // only start really looking tiles in the desired start
                 if(m_updateTilesPos < start) {
-                    m_updateTilesPos++;
+                    ++m_updateTilesPos;
                     continue;
                 }
 
@@ -357,7 +356,7 @@ void MapView::updateVisibleTilesCache(int start)
                     ++processedTiles;
                 }
 
-                m_updateTilesPos++;
+                ++m_updateTilesPos;
             }
         }
     }

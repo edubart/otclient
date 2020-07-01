@@ -110,18 +110,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = 0;
 
-        if(animateWalk) {
-            animationPhase = m_walkAnimationPhase;
 
-            const auto idleAnimator = getIdleAnimator();
-            if(idleAnimator) {
-                if(animationPhase == 0) animationPhase = idleAnimator->getPhase();
-                else animationPhase += idleAnimator->getAnimationPhases() - 1;
-            } else if(isAnimateAlways()) {
-                int ticksPerFrame = 1000 / getAnimationPhases();
-                animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
-            }
-        }
 
         if(isAnimateAlways())
             animationPhase = getAnimator()->getPhase();
@@ -136,27 +125,19 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             xPattern = direction;
 
         int zPattern = 0;
-        if(m_outfit.getMount() != 0) {
-            auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
-            int animationPhaseMount = animateWalk ? m_walkAnimationPhase : 0;
-            if (datType->getIdleAnimator() != nullptr && !isWalking())
-                animationPhaseMount = datType->getIdleAnimator()->getPhase();
-            else if (animateWalk && datType->getAnimator() != nullptr && isWalking()) {
-                int animationPhases = getAnimationPhases();
-                if (datType->getAnimationPhases() > animationPhases) {
-                    animationPhase = animationPhase % animationPhases;
-                }
-                int halfAnimationPhasesMount = ceil(datType->getAnimationPhases() / 2);
-                if (datType->getIdleAnimator() != nullptr && animationPhaseMount < halfAnimationPhasesMount) {
-                    animationPhaseMount = halfAnimationPhasesMount;
-                    m_footStep = halfAnimationPhasesMount;
-                }
-            }
+        if(m_outfit.hasMount()) {
+            if(animateWalk) animationPhase = getCurrentAnimationPhase(true);
+
+            const auto& datType = rawGetMountThingType();
+
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhaseMount, lightView);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
             dest += getDisplacement() * scaleFactor;
+
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
         }
+
+        if(animateWalk) animationPhase = getCurrentAnimationPhase();
 
         PointF jumpOffset = m_jumpOffset * scaleFactor;
         dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
@@ -517,19 +498,9 @@ void Creature::updateWalkAnimation()
     if(m_outfit.getCategory() != ThingCategoryCreature)
         return;
 
-    int footAnimPhases;
-    if(m_outfit.getMount() > 0) { // For Mount
-        ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = type->getAnimationPhases();
-    } else footAnimPhases = getAnimationPhases();
+    int footAnimPhases = getTotalAnimationPhase();
 
     int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
-
-    // Since mount is a different outfit we need to get the mount animation phases
-    if(m_outfit.getMount() != 0) {
-        ThingType* type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
-        footAnimPhases = type->getAnimationPhases() - 1;
-    }
 
     if(m_footTimer.ticksElapsed() >= footDelay) {
         if(m_walkAnimationPhase == footAnimPhases) m_walkAnimationPhase = 1;
@@ -663,7 +634,6 @@ void Creature::terminateWalk()
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
 
-
         g_map.requestDrawing(true, self->isLocalPlayer() || self->hasLight(), self->isLocalPlayer());
     }, g_game.getServerBeat());
 
@@ -709,6 +679,7 @@ void Creature::setOutfit(const Outfit& outfit)
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
             return;
+
         m_outfit.setAuxId(outfit.getAuxId());
         m_outfit.setCategory(outfit.getCategory());
     } else {
@@ -910,7 +881,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
-        double stepDuration = 1000 * groundSpeed;
+        double stepDuration = 1000. * groundSpeed;
         if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
             stepSpeed *= 2;
 
@@ -961,10 +932,8 @@ int Creature::getDisplacementX()
     if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
 
-    if(m_outfit.getMount() != 0) {
-        const auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
-        return datType->getDisplacementX();
-    }
+    if(m_outfit.hasMount())
+        return rawGetMountThingType()->getDisplacementX();
 
     return Thing::getDisplacementX();
 }
@@ -977,9 +946,8 @@ int Creature::getDisplacementY()
     if(m_outfit.getCategory() == ThingCategoryItem)
         return 0;
 
-    if(m_outfit.getMount() != 0) {
-        const auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
-        return datType->getDisplacementY();
+    if(m_outfit.hasMount()) {
+        return rawGetMountThingType()->getDisplacementY();
     }
 
     return Thing::getDisplacementY();
@@ -995,6 +963,31 @@ Light Creature::getLight()
     return light;
 }
 
+int Creature::getTotalAnimationPhase()
+{
+    if(!m_outfit.hasMount()) return getAnimationPhases();
+
+    return rawGetMountThingType()->getAnimationPhases();
+}
+
+int Creature::getCurrentAnimationPhase(const bool mount)
+{
+    const auto& thingType = mount ? rawGetMountThingType() : rawGetThingType();
+
+    const auto idleAnimator = thingType->getIdleAnimator();
+    if(idleAnimator) {
+        if(m_walkAnimationPhase == 0) return idleAnimator->getPhase();
+        return m_walkAnimationPhase + idleAnimator->getAnimationPhases() - 1;
+    }
+
+    if(thingType->isAnimateAlways()) {
+        const int ticksPerFrame = std::round(1000 / thingType->getAnimationPhases());
+        return (g_clock.millis() % (ticksPerFrame * thingType->getAnimationPhases())) / ticksPerFrame;
+    }
+
+    return m_walkAnimationPhase;
+}
+
 int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)
 {
     int exactSize = 0;
@@ -1003,7 +996,7 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
     xPattern = Otc::South;
 
     zPattern = 0;
-    if(m_outfit.getMount() != 0)
+    if(m_outfit.hasMount())
         zPattern = 1;
 
     for(yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
@@ -1019,10 +1012,15 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
 
 const ThingTypePtr& Creature::getThingType()
 {
-    return g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);
+    return g_things.getThingType(m_outfit.getId(), m_outfit.getCategory());
 }
 
 ThingType* Creature::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_outfit.getId(), ThingCategoryCreature);
+    return g_things.rawGetThingType(m_outfit.getId(), m_outfit.getCategory());
+}
+
+ThingType* Creature::rawGetMountThingType()
+{
+    return g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
 }
