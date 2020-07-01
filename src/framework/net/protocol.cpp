@@ -186,9 +186,9 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
         uint32 sum = 0xC6EF3720;
 
         for(int32 i = 0; i < 32; i++) {
-            v1 -= (v0 << 4 ^ v0 >> 5) + v0 ^ sum + m_xteaKey[sum>>11 & 3];
+            v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
             sum += delta;
-            v0 -= (v1 << 4 ^ v1 >> 5) + v1 ^ sum + m_xteaKey[sum & 3];
+            v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
         }
         buffer[readPos] = v0; buffer[readPos + 1] = v1;
         readPos = readPos + 2;
@@ -225,9 +225,9 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
         uint32 sum = 0;
 
         for(int32 i = 0; i < 32; i++) {
-            v0 += (v1 << 4 ^ v1 >> 5) + v1 ^ sum + m_xteaKey[sum & 3];
+            v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
             sum -= delta;
-            v1 += (v0 << 4 ^ v0 >> 5) + v0 ^ sum + m_xteaKey[sum>>11 & 3];
+            v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
         }
         buffer[readPos] = v0; buffer[readPos + 1] = v1;
         readPos = readPos + 2;

@@ -552,7 +552,7 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
             if(candidateDimension.area() < numSprites)
                 continue;
             if(candidateDimension.area() < bestDimension.area() ||
-               candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height())
+               (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
                 bestDimension = candidateDimension;
         }
     }
@@ -619,23 +619,27 @@ void ThingType::startListenerPainter(const float duration, const bool redrawLigh
 {
     if(m_countPainterListeningRef == 0) {
         m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
-            g_map.requestDrawing(true, redrawLight && hasLight());
+            const auto redrawFlag = redrawLight && hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+            g_map.requestDrawing(redrawFlag);
         }, duration);
     }
 
     ++m_countPainterListeningRef;
 }
 
-void ThingType::cancelListenerPainter()
+bool ThingType::cancelListenerPainter()
 {
-    if(m_countPainterListeningRef == 0) return;
+    if(m_countPainterListeningRef == 0) return false;
 
     --m_countPainterListeningRef;
 
     if(m_painterListeningEvent && m_countPainterListeningRef == 0) {
-        g_map.requestDrawing(true, hasLight(), true);
+        const auto redrawFlag = hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+        g_map.requestDrawing(redrawFlag, true);
 
         m_painterListeningEvent->cancel();
         m_painterListeningEvent = nullptr;
     }
+
+    return true;
 }

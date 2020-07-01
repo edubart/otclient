@@ -136,6 +136,7 @@ public:
     void onAppear() override;
     void onDisappear() override;
     virtual void onDeath();
+    void requestReDraw();
 
 protected:
     void updateWalkingTile();

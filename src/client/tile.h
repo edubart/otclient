@@ -131,7 +131,7 @@ public:
 
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
-    void analyzeThing(const ThingPtr& thing, bool sum);
+    void analyzeThing(const ThingPtr& thing, bool add);
 
     bool hasGroundsToDraw() const { return !m_grounds.empty(); }
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }

@@ -556,7 +556,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         if (m_firstOnStyle) {
             UIWidgetPtr parent = getParent();
             if (isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled() &&
-                parent && (!parent->getFocusedChild() && parent->getAutoFocusPolicy() == Fw::AutoFocusFirst ||
+                parent && ((!parent->getFocusedChild() && parent->getAutoFocusPolicy() == Fw::AutoFocusFirst) ||
                     parent->getAutoFocusPolicy() == Fw::AutoFocusLast)) {
                 focus();
             }
@@ -1295,7 +1295,7 @@ void UIWidget::updateState(Fw::WidgetState state)
             do {
                 parent = widget->getParent();
                 if (!widget->isExplicitlyEnabled() ||
-                    parent && parent->getFocusedChild() != widget) {
+                    (parent && parent->getFocusedChild() != widget)) {
                     newStatus = false;
                     break;
                 }
@@ -1460,7 +1460,7 @@ void UIWidget::updateStyle()
                     stateStr = stateStr.substr(1);
 
                 const bool stateOn = hasState(Fw::translateState(stateStr));
-                if (!notstate && !stateOn || notstate && stateOn)
+                if ((!notstate && !stateOn) || (notstate && stateOn))
                     match = false;
             }
 
