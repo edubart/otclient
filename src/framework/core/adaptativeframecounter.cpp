@@ -110,7 +110,7 @@ int AdaptativeFrameCounter::getMaximumSleepMicros()
 float AdaptativeFrameCounter::getFrameDelayHit()
 {
     if(m_bestFrameDelay > 0)
-        return ((m_bestFrameDelay - std::abs(m_bestFrameDelay - m_mediumFrameDelay)) * 100.0f) / static_cast<float>(m_bestFrameDelay);
+        return (m_bestFrameDelay - std::abs(m_bestFrameDelay - m_mediumFrameDelay)) * 100.0f / static_cast<float>(m_bestFrameDelay);
     else
         return 100.0f;
 }

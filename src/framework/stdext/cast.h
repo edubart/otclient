@@ -130,7 +130,7 @@ inline bool cast(const std::string& in, float& f) {
 // special cast from boolean to string
 template<>
 inline bool cast(const bool& in, std::string& out) {
-    out = (in ? "true" : "false");
+    out = in ? "true" : "false";
     return true;
 }
 

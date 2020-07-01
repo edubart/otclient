@@ -74,7 +74,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
 
     int res = GL_FALSE;
     glGetShaderiv(m_shaderId, GL_COMPILE_STATUS, &res);
-    return (res == GL_TRUE);
+    return res == GL_TRUE;
 }
 
 bool Shader::compileSourceFile(const std::string& sourceFile)

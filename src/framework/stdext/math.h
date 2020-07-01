@@ -28,7 +28,7 @@
 
 namespace stdext {
 
-inline bool is_power_of_two(size_t v) { return ((v != 0) && !(v & (v - 1))); }
+inline bool is_power_of_two(size_t v) { return v != 0 && !(v & v - 1); }
 inline size_t to_power_of_two(size_t v) { if(v == 0) return 0; size_t r = 1; while(r < v && r != 0xffffffff) r <<= 1; return r; }
 
 inline uint16_t readULE16(const uchar *addr) { return static_cast<uint16_t>(addr[1]) << 8 | addr[0]; }

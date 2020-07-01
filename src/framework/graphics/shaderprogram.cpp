@@ -96,7 +96,7 @@ bool ShaderProgram::link()
 
     int value = GL_FALSE;
     glGetProgramiv(m_programId, GL_LINK_STATUS, &value);
-    m_linked = (value != GL_FALSE);
+    m_linked = value != GL_FALSE;
 
     if(!m_linked)
         g_logger.traceWarning(log());

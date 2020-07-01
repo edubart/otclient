@@ -65,7 +65,7 @@ public:
     int getUnreadSize() { return m_messageSize - (m_readPos - m_headerPos); }
     uint16 getMessageSize() { return m_messageSize; }
 
-    bool eof() { return (m_readPos - m_headerPos) >= m_messageSize; }
+    bool eof() { return m_readPos - m_headerPos >= m_messageSize; }
 
 protected:
     void reset();
@@ -77,7 +77,7 @@ protected:
     uint8* getReadBuffer() { return m_buffer + m_readPos; }
     uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
     uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
-    uint16 getHeaderSize() { return (MAX_HEADER_SIZE - m_headerPos); }
+    uint16 getHeaderSize() { return MAX_HEADER_SIZE - m_headerPos; }
 
     uint16 readSize() { return getU16(); }
     bool readChecksum();

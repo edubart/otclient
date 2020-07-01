@@ -44,10 +44,10 @@ std::vector<uint32> listSubnetAddresses(uint32 address, uint8 mask)
 {
     std::vector<uint32> list;
     if(mask < 32) {
-        const uint32 bitmask = (0xFFFFFFFF >> mask);
+        const uint32 bitmask = 0xFFFFFFFF >> mask;
         for(uint32 i = 0; i <= bitmask; i++) {
-            uint32 ip = boost::asio::detail::socket_ops::host_to_network_long((boost::asio::detail::socket_ops::network_to_host_long(address) & (~bitmask)) | i);
-            if((ip >> 24) != 0 && (ip >> 24) != 0xFF)
+            uint32 ip = boost::asio::detail::socket_ops::host_to_network_long(boost::asio::detail::socket_ops::network_to_host_long(address) & ~bitmask | i);
+            if(ip >> 24 != 0 && ip >> 24 != 0xFF)
                 list.push_back(ip);
         }
     }

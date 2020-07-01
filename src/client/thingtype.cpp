@@ -278,7 +278,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         stdext::throw_exception(stdext::format("corrupt data (id: %d, category: %d, count: %d, lastAttr: %d)",
                                                m_id, m_category, count, attr));
 
-    const bool hasFrameGroups = (category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations));
+    const bool hasFrameGroups = category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations);
     const uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     m_animationPhases = 0;
@@ -320,11 +320,11 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
 
         const int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
 
-        if((totalSpritesCount + totalSprites) > 4096)
+        if(totalSpritesCount + totalSprites > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
-        m_spritesIndex.resize((totalSpritesCount + totalSprites));
-        for(int j = totalSpritesCount; j < (totalSpritesCount + totalSprites); ++j)
+        m_spritesIndex.resize(totalSpritesCount + totalSprites);
+        for(int j = totalSpritesCount; j < totalSpritesCount + totalSprites; ++j)
             m_spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         totalSpritesCount += totalSprites;
@@ -459,7 +459,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
         for(int y = 0; y < m_numPatternY; ++y) {
             for(int x = 0; x < m_numPatternX; ++x) {
                 for(int l = 0; l < numLayers; ++l) {
-                    const bool spriteMask = (m_category == ThingCategoryCreature && l > 0);
+                    const bool spriteMask = m_category == ThingCategoryCreature && l > 0;
                     const int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
 
                     Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
@@ -542,8 +542,8 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
             Size candidateDimension = Size(i, j);
             if(candidateDimension.area() < numSprites)
                 continue;
-            if((candidateDimension.area() < bestDimension.area()) ||
-               (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
+            if(candidateDimension.area() < bestDimension.area() ||
+               candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height())
                 bestDimension = candidateDimension;
         }
     }
@@ -554,7 +554,7 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
 uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a)
 {
     const uint index =
-        ((((((a % m_animationPhases)
+        (((((a % m_animationPhases
              * m_numPatternZ + z)
             * m_numPatternY + y)
            * m_numPatternX + x)

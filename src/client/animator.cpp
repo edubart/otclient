@@ -99,7 +99,7 @@ int Animator::getPhase()
     if(ticks != m_lastPhaseTicks && !m_isComplete) {
         const int elapsedTicks = static_cast<int>(ticks - m_lastPhaseTicks);
         if(elapsedTicks >= m_currentDuration) {
-            int phase = 0;
+            int phase;
             if(m_loopCount < 0)
                 phase = getPingPongPhase();
             else
@@ -176,7 +176,7 @@ int Animator::getLoopPhase()
     if(m_loopCount == 0)
         return 0;
 
-    if(m_currentLoop < (m_loopCount - 1)) {
+    if(m_currentLoop < m_loopCount - 1) {
         ++m_currentLoop;
         return 0;
     }

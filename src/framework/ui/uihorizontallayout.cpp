@@ -47,7 +47,7 @@ bool UIHorizontalLayout::internalUpdate()
 
     bool changed = false;
     const Rect paddingRect = parentWidget->getPaddingRect();
-    Point pos = (m_alignRight) ? paddingRect.topRight() : paddingRect.topLeft();
+    Point pos = m_alignRight ? paddingRect.topRight() : paddingRect.topLeft();
     int preferredWidth = 0;
     int gap;
 
@@ -57,7 +57,7 @@ bool UIHorizontalLayout::internalUpdate()
 
         Size size = widget->getSize();
 
-        gap = (m_alignRight) ? -(widget->getMarginRight()+widget->getWidth()) : widget->getMarginLeft();
+        gap = m_alignRight ? -(widget->getMarginRight()+widget->getWidth()) : widget->getMarginLeft();
         pos.x += gap;
         preferredWidth += gap;
 
@@ -80,7 +80,7 @@ bool UIHorizontalLayout::internalUpdate()
         if(widget->setRect(Rect(pos - parentWidget->getVirtualOffset(), size)))
             changed = true;
 
-        gap = (m_alignRight) ? -widget->getMarginLeft() : (widget->getWidth() + widget->getMarginRight());
+        gap = m_alignRight ? -widget->getMarginLeft() : widget->getWidth() + widget->getMarginRight();
         gap += m_spacing;
         pos.x += gap;
         preferredWidth += gap;

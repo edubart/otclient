@@ -90,14 +90,14 @@ double InputMessage::getDouble()
 {
     const uint8 precision = getU8();
     const int32 v = getU32() - INT_MAX;
-    return (v / std::pow(static_cast<float>(10), precision));
+    return v / std::pow(static_cast<float>(10), precision);
 }
 
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
     g_crypt.rsaDecrypt(static_cast<unsigned char*>(m_buffer) + m_readPos, size);
-    return (getU8() == 0x00);
+    return getU8() == 0x00;
 }
 
 void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
@@ -123,7 +123,7 @@ bool InputMessage::readChecksum()
 
 bool InputMessage::canRead(int bytes)
 {
-    if((m_readPos - m_headerPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
+    if(m_readPos - m_headerPos + bytes > m_messageSize || m_readPos + bytes > BUFFER_MAXSIZE)
         return false;
     return true;
 }

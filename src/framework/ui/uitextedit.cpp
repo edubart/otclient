@@ -152,7 +152,7 @@ void UITextEdit::update(bool focusCursor)
     if (!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
         textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
-        if (size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
+        if (size.width() <= 0 || m_textHorizontalAutoResize && !m_textWrap)
             size.setWidth(textBoxSize.width());
         if (size.height() <= 0 || m_textVerticalAutoResize)
             size.setHeight(textBoxSize.height());
@@ -426,7 +426,7 @@ void UITextEdit::appendText(std::string text)
 
 void UITextEdit::appendCharacter(char c)
 {
-    if ((c == '\n' && !m_multiline) || c == '\r')
+    if (c == '\n' && !m_multiline || c == '\r')
         return;
 
     if (hasSelection())
@@ -453,7 +453,7 @@ void UITextEdit::removeCharacter(bool right)
     std::string tmp = m_text;
     if (m_cursorPos >= 0 && tmp.length() > 0) {
         if (static_cast<uint>(m_cursorPos) >= tmp.length()) {
-            tmp.erase(tmp.begin() + (--m_cursorPos));
+            tmp.erase(tmp.begin() + --m_cursorPos);
         }
         else {
             if (right)

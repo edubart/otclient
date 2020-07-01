@@ -84,8 +84,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
-                if((opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing)) ||
-                   (opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing)))
+                if(opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing) ||
+                   opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing))
                     parsePingBack(msg);
                 else
                     parsePing(msg);
@@ -701,7 +701,7 @@ void ProtocolGame::parseLoginWait(const InputMessagePtr& msg)
 
 void ProtocolGame::parseLoginToken(const InputMessagePtr& msg)
 {
-    const bool unknown = (msg->getU8() == 0);
+    const bool unknown = msg->getU8() == 0;
     g_game.processLoginToken(unknown);
 }
 
@@ -892,7 +892,7 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     const ItemPtr containerItem = getItem(msg);
     const std::string name = msg->getString();
     const int capacity = msg->getU8();
-    const bool hasParent = (msg->getU8() != 0);
+    const bool hasParent = msg->getU8() != 0;
 
     bool isUnlocked = true;
     bool hasPages = false;
@@ -900,8 +900,8 @@ void ProtocolGame::parseOpenContainer(const InputMessagePtr& msg)
     int firstIndex = 0;
 
     if(g_game.getFeature(Otc::GameContainerPagination)) {
-        isUnlocked = (msg->getU8() != 0); // drag and drop
-        hasPages = (msg->getU8() != 0); // pagination
+        isUnlocked = msg->getU8() != 0; // drag and drop
+        hasPages = msg->getU8() != 0; // pagination
         containerSize = msg->getU16(); // container size
         firstIndex = msg->getU16(); // first index
     }
@@ -1995,9 +1995,9 @@ void ProtocolGame::parseChangeMapAwareRange(const InputMessagePtr& msg)
     const int yrange = msg->getU8();
 
     AwareRange range;
-    range.left = xrange / 2 - ((xrange + 1) % 2);
+    range.left = xrange / 2 - (xrange + 1) % 2;
     range.right = xrange / 2;
-    range.top = yrange / 2 - ((yrange + 1) % 2);
+    range.top = yrange / 2 - (yrange + 1) % 2;
     range.bottom = yrange / 2;
 
     g_map.setAwareRange(range);
@@ -2206,7 +2206,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         type = msg->getU16();
 
     CreaturePtr creature;
-    const bool known = (type != Proto::UnknownCreature);
+    const bool known = type != Proto::UnknownCreature;
     if(type == Proto::OutdatedCreature || type == Proto::UnknownCreature) {
         if(known) {
             const uint id = msg->getU32();

@@ -90,7 +90,7 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
         uint8& a = m_pixels[p * 4 + 3];
 
         Color pixelColor(r, g, b, a);
-        Color writeColor = (pixelColor == maskedColor) ? insideColor : outsideColor;
+        Color writeColor = pixelColor == maskedColor ? insideColor : outsideColor;
 
         r = writeColor.r();
         g = writeColor.g();
@@ -164,10 +164,10 @@ bool Image::nextMipmap()
         for (int x = 0; x < ow; ++x) {
             for (int y = 0; y < oh; ++y) {
                 uint8* inPixel[4];
-                inPixel[0] = &m_pixels[((y * 2) * iw + (x * 2)) * 4];
-                inPixel[1] = &m_pixels[((y * 2) * iw + (x * 2) + 1) * 4];
-                inPixel[2] = &m_pixels[((y * 2 + 1) * iw + (x * 2)) * 4];
-                inPixel[3] = &m_pixels[((y * 2 + 1) * iw + (x * 2) + 1) * 4];
+                inPixel[0] = &m_pixels[(y * 2 * iw + x * 2) * 4];
+                inPixel[1] = &m_pixels[(y * 2 * iw + x * 2 + 1) * 4];
+                inPixel[2] = &m_pixels[((y * 2 + 1) * iw + x * 2) * 4];
+                inPixel[3] = &m_pixels[((y * 2 + 1) * iw + x * 2 + 1) * 4];
                 uint8* outPixel = &pixels[(y * ow + x) * 4];
 
                 int pixelsSum[4];

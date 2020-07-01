@@ -70,8 +70,8 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     // calculate glyphs texture coords
     const int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
     for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
-        m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
-                                                ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
+        m_glyphsTextureCoords[glyph].setRect((glyph - m_firstGlyph) % numHorizontalGlyphs * glyphSize.width(),
+                                                (glyph - m_firstGlyph) / numHorizontalGlyphs * glyphSize.height(),
                                                 m_glyphsSize[glyph].width(),
                                                 m_glyphHeight);
     }
@@ -195,7 +195,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
         glyphsPositions.resize(textLength);
 
     // calculate lines width
-    if((align & Fw::AlignRight || align & Fw::AlignHorizontalCenter) || textBoxSize) {
+    if(align & Fw::AlignRight || align & Fw::AlignHorizontalCenter || textBoxSize) {
         lineWidths[0] = 0;
         for(i = 0; i< textLength; ++i) {
             glyph = static_cast<uchar>(text[i]);
@@ -207,7 +207,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
                 lineWidths[lines] = 0;
             } else if(glyph >= 32) {
                 lineWidths[lines] += m_glyphsSize[glyph].width() ;
-                if((i+1 != textLength && text[i+1] != '\n')) // only add space if letter is not the last or before a \n.
+                if(i+1 != textLength && text[i+1] != '\n') // only add space if letter is not the last or before a \n.
                     lineWidths[lines] += m_glyphSpacing.width();
                 maxLineWidth = std::max<int>(maxLineWidth, lineWidths[lines]);
             }
@@ -228,7 +228,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
 
             // calculate start x pos
             if(align & Fw::AlignRight) {
-                virtualPos.x = (maxLineWidth - lineWidths[lines]);
+                virtualPos.x = maxLineWidth - lineWidths[lines];
             } else if(align & Fw::AlignHorizontalCenter) {
                 virtualPos.x = (maxLineWidth - lineWidths[lines]) / 2;
             } else { // AlignLeft
@@ -270,8 +270,8 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
 
     // small AI to auto calculate pixels widths
     for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
-        Rect glyphCoords(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
-                         ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
+        Rect glyphCoords((glyph - m_firstGlyph) % numHorizontalGlyphs * glyphSize.width(),
+                         (glyph - m_firstGlyph) / numHorizontalGlyphs * glyphSize.height(),
                             glyphSize.width(),
                             m_glyphHeight);
         int width = glyphSize.width();
@@ -279,7 +279,7 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
             int filledPixels = 0;
             // check if all vertical pixels are alpha
             for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0)
+                if(texturePixels[y * image->getSize().width() * 4 + x*4 + 3] != 0)
                     filledPixels++;
             }
             if(filledPixels > 0)

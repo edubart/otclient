@@ -306,7 +306,7 @@ public:
     bool isTable(int index = -1);
     bool isFunction(int index = -1);
     bool isCFunction(int index = -1);
-    bool isLuaFunction(int index = -1)  { return (isFunction(index) && !isCFunction(index)); }
+    bool isLuaFunction(int index = -1)  { return isFunction(index) && !isCFunction(index); }
     bool isUserdata(int index = -1);
 
     bool toBoolean(int index = -1);
@@ -320,7 +320,7 @@ public:
     int getTop();
     int stackSize() { return getTop(); }
     void clearStack() { pop(stackSize()); }
-    bool hasIndex(int index) { return (stackSize() >= (index < 0 ? -index : index) && index != 0); }
+    bool hasIndex(int index) { return stackSize() >= (index < 0 ? -index : index) && index != 0; }
 
     void loadFiles(std::string directory, bool recursive = false, std::string contains = "");
 

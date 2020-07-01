@@ -157,7 +157,7 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
 bool ResourceManager::fileExists(const std::string& fileName)
 {
     const std::string path = resolvePath(fileName);
-    return (PHYSFS_exists(path.c_str()) && !directoryExists(path));
+    return PHYSFS_exists(path.c_str()) && !directoryExists(path);
 }
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
@@ -320,7 +320,7 @@ std::string ResourceManager::resolvePath(const std::string& path)
             fullPath += scriptPath + "/";
         fullPath += path;
     }
-    if (!(stdext::starts_with(fullPath, "/")))
+    if (!stdext::starts_with(fullPath, "/"))
         g_logger.traceWarning(stdext::format("the following file path is not fully resolved: %s", path));
     stdext::replace_all(fullPath, "//", "/");
     return fullPath;

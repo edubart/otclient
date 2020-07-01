@@ -113,7 +113,7 @@ bool Platform::fileExists(std::string file)
     boost::replace_all(file, "/", "\\");
     const std::wstring wfile = stdext::utf8_to_utf16(file);
     const DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
-    return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+    return dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
 }
 
 bool Platform::copyFile(std::string from, std::string to)
@@ -138,7 +138,7 @@ ticks_t Platform::getFileModificationTime(std::string file)
     boost::replace_all(file, "/", "\\");
     const std::wstring wfile = stdext::utf8_to_utf16(file);
     WIN32_FILE_ATTRIBUTE_DATA fileAttrData;
-    memset(&fileAttrData, 0, sizeof(fileAttrData));
+    memset(&fileAttrData, 0, sizeof fileAttrData);
     GetFileAttributesExW(wfile.c_str(), GetFileExInfoStandard, &fileAttrData);
     ULARGE_INTEGER uli;
     uli.LowPart = fileAttrData.ftLastWriteTime.dwLowDateTime;
@@ -156,8 +156,8 @@ void Platform::openUrl(std::string url)
 std::string Platform::getCPUName()
 {
     char buf[1024];
-    memset(buf, 0, sizeof(buf));
-    DWORD bufSize = sizeof(buf);
+    memset(buf, 0, sizeof buf);
+    DWORD bufSize = sizeof buf;
     HKEY hKey;
     if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
         return "";
@@ -168,7 +168,7 @@ std::string Platform::getCPUName()
 double Platform::getTotalSystemMemory()
 {
     MEMORYSTATUSEX status;
-    status.dwLength = sizeof(status);
+    status.dwLength = sizeof status;
     GlobalMemoryStatusEx(&status);
     return status.ullTotalPhys;
 }

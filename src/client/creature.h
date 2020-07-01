@@ -217,7 +217,7 @@ private:
 
         int getDuration(Otc::Direction dir)
         {
-            return (dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast) ?
+            return dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast ?
                 durationDiagonal : duration;
         }
     };

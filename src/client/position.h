@@ -190,9 +190,9 @@ public:
         return getDirectionFromPositions(*this, position);
     }
 
-    bool isMapPosition() const { return (x >= 0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z); }
+    bool isMapPosition() const { return x >= 0 && y >= 0 && z >= 0 && x < 65535 && y < 65535 && z <= Otc::MAX_Z; }
     bool isValid() const { return !(x == 65535 && y == 65535 && z == 255); }
-    float distance(const Position& pos) const { return sqrt(pow((pos.x - x), 2) + pow((pos.y - y), 2)); }
+    float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
     int manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
 
     void translate(int dx, int dy, short dz = 0) { x += dx; y += dy; z += dz; }
@@ -212,7 +212,7 @@ public:
     bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange && z == pos.z; }
     bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const
     {
-        return (pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z);
+        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z;
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }
@@ -268,7 +268,7 @@ public:
 struct PositionHasher : std::unary_function<Position, std::size_t> {
     std::size_t operator()(const Position& pos) const
     {
-        return (((pos.x * 8192) + pos.y) * 16) + pos.z;
+        return (pos.x * 8192 + pos.y) * 16 + pos.z;
     }
 };
 

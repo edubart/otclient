@@ -107,7 +107,7 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
                 // remove any other child with the same tag
                 auto it = m_children.begin();
                 while (it != m_children.end()) {
-                    const OTMLNodePtr nodeChild = (*it);
+                    const OTMLNodePtr nodeChild = *it;
                     if (nodeChild != newChild && nodeChild->tag() == newChild->tag()) {
                         it = m_children.erase(it);
                     }

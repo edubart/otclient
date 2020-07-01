@@ -42,7 +42,7 @@ uint32_t adler32(const uint8_t *buffer, size_t size) {
         a %= 65521;
         b %= 65521;
     }
-    return (b << 16) | a;
+    return b << 16 | a;
 }
 
 long random_range(long min, long max)
@@ -50,7 +50,7 @@ long random_range(long min, long max)
     static std::random_device rd;
     static std::mt19937 gen(rd());
     static std::uniform_int_distribution<long> dis(0, 2147483647);
-    return min + (dis(gen) % (max - min + 1));
+    return min + dis(gen) % (max - min + 1);
 }
 
 float random_range(float min, float max)
@@ -63,7 +63,7 @@ float random_range(float min, float max)
 
 double round(double r)
 {
-    return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
+    return r > 0.0 ? floor(r + 0.5) : ceil(r - 0.5);
 }
 
 }

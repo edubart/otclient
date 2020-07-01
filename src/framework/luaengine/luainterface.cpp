@@ -457,7 +457,7 @@ int LuaInterface::safeCall(int numArgs, int numRets)
     if (ret != 0)
         throw LuaException(popString());
 
-    int rets = (stackSize() + numArgs + 1) - previousStackSize;
+    int rets = stackSize() + numArgs + 1 - previousStackSize;
     while (numRets != -1 && rets != numRets) {
         if (rets < numRets) {
             pushNil();
@@ -647,7 +647,7 @@ int LuaInterface::luaCppFunctionCallback(lua_State*)
     // do the call
     try {
         g_lua.m_cppCallbackDepth++;
-        numRets = (*(funcPtr->get()))(&g_lua);
+        numRets = (*funcPtr->get())(&g_lua);
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
     }
@@ -817,7 +817,7 @@ std::string LuaInterface::functionSourcePath()
 
     // gets function source path
     lua_Debug ar;
-    memset(&ar, 0, sizeof(ar));
+    memset(&ar, 0, sizeof ar);
     lua_getinfo(L, ">Sn", &ar);
     if (ar.source) {
         // scripts coming from files has source beginning with '@'

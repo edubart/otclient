@@ -24,7 +24,7 @@
 
 OggSoundFile::OggSoundFile(const FileStreamPtr& fileStream) : SoundFile(fileStream)
 {
-    memset(&m_vorbisFile, 0, sizeof(m_vorbisFile));
+    memset(&m_vorbisFile, 0, sizeof m_vorbisFile);
 }
 
 OggSoundFile::~OggSoundFile()

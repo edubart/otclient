@@ -188,7 +188,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
         return;
     }
 
-    index = index <= 0 ? (m_children.size() + index) : index - 1;
+    index = index <= 0 ? m_children.size() + index : index - 1;
 
     if (!(index >= 0 && static_cast<uint>(index) <= m_children.size())) {
         //g_logger.traceWarning("attempt to insert a child UIWidget into an invalid index, using nearest index...");
@@ -556,7 +556,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
         if (m_firstOnStyle) {
             UIWidgetPtr parent = getParent();
             if (isFocusable() && isExplicitlyVisible() && isExplicitlyEnabled() &&
-                parent && ((!parent->getFocusedChild() && parent->getAutoFocusPolicy() == Fw::AutoFocusFirst) ||
+                parent && (!parent->getFocusedChild() && parent->getAutoFocusPolicy() == Fw::AutoFocusFirst ||
                     parent->getAutoFocusPolicy() == Fw::AutoFocusLast)) {
                 focus();
             }
@@ -1148,7 +1148,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
         return nullptr;
 
     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+        const UIWidgetPtr& child = *it;
         if (child->isExplicitlyVisible() && child->containsPoint(childPos))
             return child;
     }
@@ -1158,7 +1158,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
 
 UIWidgetPtr UIWidget::getChildByIndex(int index)
 {
-    index = index <= 0 ? (m_children.size() + index) : index - 1;
+    index = index <= 0 ? m_children.size() + index : index - 1;
     if (index >= 0 && static_cast<uint>(index) < m_children.size())
         return m_children.at(index);
     return nullptr;
@@ -1183,7 +1183,7 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPh
         return nullptr;
 
     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+        const UIWidgetPtr& child = *it;
         if (child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos, wantsPhantom);
             if (subChild)
@@ -1214,7 +1214,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
         return children;
 
     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+        const UIWidgetPtr& child = *it;
         if (child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             UIWidgetList subChildren = child->recursiveGetChildrenByPos(childPos);
             if (!subChildren.empty())
@@ -1232,7 +1232,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByMarginPos(const Point& childPos)
         return children;
 
     for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+        const UIWidgetPtr& child = *it;
         if (child->isExplicitlyVisible() && child->containsMarginPoint(childPos)) {
             UIWidgetList subChildren = child->recursiveGetChildrenByMarginPos(childPos);
             if (!subChildren.empty())
@@ -1275,7 +1275,7 @@ bool UIWidget::hasState(Fw::WidgetState state)
 {
     if (state == Fw::InvalidState)
         return false;
-    return (m_states & state);
+    return m_states & state;
 }
 
 void UIWidget::updateState(Fw::WidgetState state)
@@ -1295,7 +1295,7 @@ void UIWidget::updateState(Fw::WidgetState state)
             do {
                 parent = widget->getParent();
                 if (!widget->isExplicitlyEnabled() ||
-                    ((parent && parent->getFocusedChild() != widget))) {
+                    parent && parent->getFocusedChild() != widget) {
                     newStatus = false;
                     break;
                 }
@@ -1306,22 +1306,22 @@ void UIWidget::updateState(Fw::WidgetState state)
         }
         case Fw::FocusState:
         {
-            newStatus = (getParent() && getParent()->getFocusedChild() == static_self_cast<UIWidget>());
+            newStatus = getParent() && getParent()->getFocusedChild() == static_self_cast<UIWidget>();
             break;
         }
         case Fw::HoverState:
         {
-            newStatus = (g_ui.getHoveredWidget() == static_self_cast<UIWidget>() && isEnabled());
+            newStatus = g_ui.getHoveredWidget() == static_self_cast<UIWidget>() && isEnabled();
             break;
         }
         case Fw::PressedState:
         {
-            newStatus = (g_ui.getPressedWidget() == static_self_cast<UIWidget>());
+            newStatus = g_ui.getPressedWidget() == static_self_cast<UIWidget>();
             break;
         }
         case Fw::DraggingState:
         {
-            newStatus = (g_ui.getDraggingWidget() == static_self_cast<UIWidget>());
+            newStatus = g_ui.getDraggingWidget() == static_self_cast<UIWidget>();
             break;
         }
         case Fw::DisabledState:
@@ -1340,22 +1340,22 @@ void UIWidget::updateState(Fw::WidgetState state)
         }
         case Fw::FirstState:
         {
-            newStatus = (getParent() && getParent()->getFirstChild() == static_self_cast<UIWidget>());
+            newStatus = getParent() && getParent()->getFirstChild() == static_self_cast<UIWidget>();
             break;
         }
         case Fw::MiddleState:
         {
-            newStatus = (getParent() && getParent()->getFirstChild() != static_self_cast<UIWidget>() && getParent()->getLastChild() != static_self_cast<UIWidget>());
+            newStatus = getParent() && getParent()->getFirstChild() != static_self_cast<UIWidget>() && getParent()->getLastChild() != static_self_cast<UIWidget>();
             break;
         }
         case Fw::LastState:
         {
-            newStatus = (getParent() && getParent()->getLastChild() == static_self_cast<UIWidget>());
+            newStatus = getParent() && getParent()->getLastChild() == static_self_cast<UIWidget>();
             break;
         }
         case Fw::AlternateState:
         {
-            newStatus = (getParent() && (getParent()->getChildIndex(static_self_cast<UIWidget>()) % 2) == 1);
+            newStatus = getParent() && getParent()->getChildIndex(static_self_cast<UIWidget>()) % 2 == 1;
             break;
         }
         case Fw::HiddenState:
@@ -1455,12 +1455,12 @@ void UIWidget::updateStyle()
                 if (stateStr.length() == 0)
                     continue;
 
-                const bool notstate = (stateStr[0] == '!');
+                const bool notstate = stateStr[0] == '!';
                 if (notstate)
                     stateStr = stateStr.substr(1);
 
                 const bool stateOn = hasState(Fw::translateState(stateStr));
-                if ((!notstate && !stateOn) || (notstate && stateOn))
+                if (!notstate && !stateOn || notstate && stateOn)
                     match = false;
             }
 

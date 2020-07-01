@@ -64,7 +64,7 @@ public:
     void setAlpha(float a) { m_a = a; }
 
     void setRGBA(uint8 r, uint8 g, uint8 b, uint8 a = 0xFF) { m_r = r/255.0f; m_g = g/255.0f; m_b = b/255.0f; m_a = a/255.0f; }
-    void setRGBA(uint32 rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); }
+    void setRGBA(uint32 rgba) { setRGBA(rgba >> 0 & 0xff, rgba >> 8 & 0xff, rgba >> 16 & 0xff, rgba >> 24 & 0xff); }
 
     Color operator+(const Color& other) const { return Color(m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a); }
     Color operator-(const Color& other) const { return Color(m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a); }
@@ -81,9 +81,9 @@ public:
 
     static uint8 to8bit(const Color& color) {
         uint8 c = 0;
-        c += (color.r() / 51) * 36;
-        c += (color.g() / 51) * 6;
-        c += (color.b() / 51);
+        c += color.r() / 51 * 36;
+        c += color.g() / 51 * 6;
+        c += color.b() / 51;
         return c;
     }
 

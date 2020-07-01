@@ -83,7 +83,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     }
 
     for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
-        const auto& creature = (*it);
+        const auto& creature = *it;
         if(!creature->isWalking()) {
             creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
         }
@@ -166,7 +166,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             if(stackPos == -2)
                 append = true;
             else {
-                append = (priority <= 3);
+                append = priority <= 3;
 
                 // newer protocols does not store creatures in reverse order
                 if(g_game.getClientVersion() >= 854 && priority == 4)
@@ -176,7 +176,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
             for(stackPos = 0; stackPos < size; ++stackPos) {
                 const int otherPriority = m_things[stackPos]->getStackPriority();
-                if((append && otherPriority > priority) || (!append && otherPriority >= priority))
+                if(append && otherPriority > priority || !append && otherPriority >= priority)
                     break;
             }
         } else if(stackPos > static_cast<int>(size))
