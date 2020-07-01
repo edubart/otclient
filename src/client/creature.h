@@ -136,7 +136,7 @@ public:
     virtual void onDisappear();
     virtual void onDeath();
 
-    ThingType* Creature::rawGetMountThingType();
+    ThingType* rawGetMountThingType();
 
 protected:
     void updateWalkingTile();
