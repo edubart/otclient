@@ -70,30 +70,6 @@ Panel
     maximum: 201
 
   Label
-    id: foregroundFrameRateLabel
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    margin-top: 6
-    @onSetup: |
-      local value = modules.client_options.getOption('foregroundFrameRate')
-      local text = value
-      if value <= 0 or value >= 61 then
-        text = 'max'
-      end
-
-      self:setText(tr('Interface framerate limit: %s', text))
-
-  OptionScrollbar
-    id: foregroundFrameRate
-    anchors.left: parent.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    margin-top: 3
-    minimum: 1
-    maximum: 61
-
-  Label
     id: ambientLightLabel
     anchors.left: parent.left
     anchors.right: parent.right

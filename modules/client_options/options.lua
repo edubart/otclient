@@ -14,7 +14,6 @@ local defaultOptions = {
   showPrivateMessagesInConsole = true,
   showPrivateMessagesOnScreen = true,
   showLeftPanel = false,
-  foregroundFrameRate = 61,
   backgroundFrameRate = 201,
   painterEngine = 0,
   enableAudio = true,
@@ -77,11 +76,6 @@ local function setupGraphicsEngines()
       setOption('painterEngine', 2)
     end
   end
-
-  if not g_graphics.canCacheBackbuffer() then
-    graphicsPanel:getChildById('foregroundFrameRate'):disable()
-    graphicsPanel:getChildById('foregroundFrameRateLabel'):disable()
-  end
 end
 
 function init()
@@ -89,6 +83,8 @@ function init()
     g_settings.setDefault(k, v)
     options[k] = v
   end
+  
+  g_app.setForegroundPaneMaxFps(20)
 
   optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
@@ -207,11 +203,6 @@ function setOption(key, value, force)
     if value <= 0 or value >= 201 then text = 'max' v = 0 end
     graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr('Game framerate limit: %s', text))
     g_app.setBackgroundPaneMaxFps(v)
-  elseif key == 'foregroundFrameRate' then
-    local text, v = value, value
-    if value <= 0 or value >= 61 then  text = 'max' v = 0 end
-    graphicsPanel:getChildById('foregroundFrameRateLabel'):setText(tr('Interface framerate limit: %s', text))
-    g_app.setForegroundPaneMaxFps(v)
   elseif key == 'enableLights' then
     gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
     graphicsPanel:getChildById('ambientLight'):setEnabled(value)
