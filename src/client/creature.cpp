@@ -415,7 +415,7 @@ void Creature::updateJump()
         auto self = static_self_cast<Creature>();
         g_dispatcher.scheduleEvent([self] {
             self->updateJump();
-            self->requestReDraw();
+            self->requestDrawing();
         }, nextT - m_jumpTimer.ticksElapsed());
     } else
         m_jumpOffset = PointF(0, 0);
@@ -573,7 +573,7 @@ void Creature::nextWalkUpdate()
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
 
-        self->requestReDraw();
+        self->requestDrawing();
 
     }, getStepDuration() / Otc::TILE_PIXELS);
 }
@@ -629,7 +629,7 @@ void Creature::terminateWalk()
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
 
-        self->requestReDraw();
+        self->requestDrawing();
     }, g_game.getServerBeat());
 
 }
@@ -1020,9 +1020,9 @@ ThingType* Creature::rawGetMountThingType()
     return g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
 }
 
-void Creature::requestReDraw()
+void Creature::requestDrawing()
 {
-    uint32_t redrawFlag = Otc::RedrawAll;
+    uint32_t redrawFlag = Otc::ReDrawTile_Information;
 
     if(isLocalPlayer() || hasLight())
         redrawFlag |= Otc::ReDrawLight;
