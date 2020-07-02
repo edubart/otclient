@@ -230,14 +230,14 @@ void trim(std::string& str)
 
 char upchar(char c)
 {
-    if((c >= 97 && c <= 122) || (uchar)c >= 224)
+    if((c >= 97 && c <= 122) || static_cast<uchar>(c) >= 224)
         c -= 32;
     return c;
 }
 
 char lochar(char c)
 {
-    if((c >= 65 && c <= 90) || ((uchar)c >= 192 && (uchar)c <= 223))
+    if((c >= 65 && c <= 90) || (static_cast<uchar>(c) >= 192 && static_cast<uchar>(c) <= 223))
         c += 32;
     return c;
 }

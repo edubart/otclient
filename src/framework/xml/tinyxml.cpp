@@ -53,12 +53,12 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
 {
     int i=0;
 
-    while( i<(int)str.length() )
+    while( i<static_cast<int>(str.length()) )
     {
-        unsigned char c = (unsigned char) str[i];
+        unsigned char c = static_cast<unsigned char>(str[i]);
 
         if (    c == '&'
-             && i < ( (int)str.length() - 2 )
+             && i < ( static_cast<int>(str.length()) - 2 )
              && str[i+1] == '#'
              && str[i+2] == 'x' )
         {
@@ -72,7 +72,7 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
             // while fails (error case) and break (semicolon found).
             // However, there is no mechanism (currently) for
             // this function to return an error.
-            while ( i<(int)str.length()-1 )
+            while ( i<static_cast<int>(str.length())-1 )
             {
                 outString->append( str.c_str() + i, 1 );
                 ++i;
@@ -112,21 +112,21 @@ void TiXmlBase::EncodeString( const TIXML_STRING& str, TIXML_STRING* outString )
             char buf[ 32 ];
 
             #if defined(TIXML_SNPRINTF)
-                TIXML_SNPRINTF( buf, sizeof(buf), "&#x%02X;", (unsigned) ( c & 0xff ) );
+                TIXML_SNPRINTF( buf, sizeof(buf), "&#x%02X;", static_cast<unsigned>(c & 0xff) );
             #else
                 sprintf( buf, "&#x%02X;", (unsigned) ( c & 0xff ) );
             #endif
 
             //*ME:    warning C4267: convert 'size_t' to 'int'
             //*ME:    Int-Cast to make compiler happy ...
-            outString->append( buf, (int)strlen( buf ) );
+            outString->append( buf, static_cast<int>(strlen(buf)) );
             ++i;
         }
         else
         {
             //char realc = (char) c;
             //outString->append( &realc, 1 );
-            *outString += (char) c;    // somewhat more efficient function call.
+            *outString += static_cast<char>(c);    // somewhat more efficient function call.
             ++i;
         }
     }

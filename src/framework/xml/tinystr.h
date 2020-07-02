@@ -96,7 +96,7 @@ class TiXmlString
 
     TiXmlString& operator = (const char * copy)
     {
-        return assign( copy, (size_type)strlen(copy));
+        return assign( copy, static_cast<size_type>(strlen(copy)));
     }
 
     TiXmlString& operator = (const TiXmlString & copy)

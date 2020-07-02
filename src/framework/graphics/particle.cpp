@@ -87,7 +87,7 @@ void Particle::updatePosition(float elapsedTime)
         m_velocity += m_acceleration * elapsedTime;
     }
 
-    m_rect.move((int)m_position.x - m_size.width() / 2, (int)m_position.y - m_size.height() / 2);
+    m_rect.move(static_cast<int>(m_position.x) - m_size.width() / 2, static_cast<int>(m_position.y) - m_size.height() / 2);
 }
 
 void Particle::updateSize()

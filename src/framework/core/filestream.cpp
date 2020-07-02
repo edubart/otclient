@@ -115,7 +115,7 @@ int FileStream::read(void *buffer, uint32 size, uint32 nmemb)
         return res;
     } else {
         int writePos = 0;
-        uint8 *outBuffer = (uint8*)buffer;
+        uint8 *outBuffer = static_cast<uint8*>(buffer);
         for(uint i=0;i<nmemb;++i) {
             if(m_pos+size > m_data.size())
                 return i;
@@ -232,7 +232,7 @@ uint64 FileStream::getU64()
 {
     uint64 v = 0;
     if(!m_caching) {
-        if(PHYSFS_readULE64(m_fileHandle, (PHYSFS_uint64*)&v) == 0)
+        if(PHYSFS_readULE64(m_fileHandle, static_cast<PHYSFS_uint64*>(&v)) == 0)
             throwError("read failed", true);
     } else {
         if(m_pos+8 > m_data.size())
@@ -295,7 +295,7 @@ int64 FileStream::get64()
 {
     int64 v = 0;
     if(!m_caching) {
-        if(PHYSFS_readSLE64(m_fileHandle, (PHYSFS_sint64*)&v) == 0)
+        if(PHYSFS_readSLE64(m_fileHandle, static_cast<PHYSFS_sint64*>(&v)) == 0)
             throwError("read failed", true);
     } else {
         if(m_pos+8 > m_data.size())

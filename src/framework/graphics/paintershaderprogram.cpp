@@ -60,7 +60,7 @@ void PainterShaderProgram::setupUniforms()
     setUniformValue(TEX1_UNIFORM, 1);
     setUniformValue(TEX2_UNIFORM, 2);
     setUniformValue(TEX3_UNIFORM, 3);
-    setUniformValue(RESOLUTION_UNIFORM, (float)m_resolution.width(), (float)m_resolution.height());
+    setUniformValue(RESOLUTION_UNIFORM, static_cast<float>(m_resolution.width()), static_cast<float>(m_resolution.height()));
 }
 
 bool PainterShaderProgram::link()
@@ -133,7 +133,7 @@ void PainterShaderProgram::setResolution(const Size& resolution)
         return;
 
     bind();
-    setUniformValue(RESOLUTION_UNIFORM, (float)resolution.width(), (float)resolution.height());
+    setUniformValue(RESOLUTION_UNIFORM, static_cast<float>(resolution.width()), static_cast<float>(resolution.height()));
     m_resolution = resolution;
 }
 

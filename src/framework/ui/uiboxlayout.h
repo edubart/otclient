@@ -25,15 +25,15 @@
 
 #include "uilayout.h"
 
-// @bindclass
+ // @bindclass
 class UIBoxLayout : public UILayout
 {
 public:
     UIBoxLayout(UIWidgetPtr parentWidget);
 
     void applyStyle(const OTMLNodePtr& styleNode);
-    void addWidget(const UIWidgetPtr& widget) { update(); }
-    void removeWidget(const UIWidgetPtr& widget) { update(); }
+    void addWidget(const UIWidgetPtr& /*widget*/) { update(); }
+    void removeWidget(const UIWidgetPtr& /*widget*/) { update(); }
 
     void setSpacing(int spacing) { m_spacing = spacing; update(); }
     void setFitChildren(bool fitParent) { m_fitChildren = fitParent; update(); }
