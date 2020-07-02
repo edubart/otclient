@@ -151,7 +151,7 @@ void MapView::draw(const Rect& rect)
 
     float fadeOpacity = 1.0f;
     if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
-        fadeOpacity = 1.0f - m_fadeTimer.timeElapsed() / m_fadeOutTime;
+        fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
         if(fadeOpacity < 0.0f) {
             m_shader = m_nextShader;
             m_nextShader = nullptr;
@@ -569,7 +569,7 @@ void MapView::move(int x, int y)
 Rect MapView::calcFramebufferSource(const Size& destSize)
 {
     const float scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
-    Point drawOffset = (m_drawDimension - m_visibleDimension - Size(1, 1)).toPoint() / 2 * m_tileSize;
+    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1, 1)).toPoint() / 2) * m_tileSize;
     if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * scaleFactor;
     else if(!m_moveOffset.isNull())
@@ -612,7 +612,7 @@ int MapView::calcFirstVisibleFloor()
                         Position pos = cameraPosition.translated(ix, iy);
 
                         // process tiles that we can look through, e.g. windows, doors
-                        if(ix == 0 && iy == 0 || std::abs(ix) != std::abs(iy) && g_map.isLookPossible(pos)) {
+                        if((ix == 0 && iy == 0) || ((std::abs(ix) != std::abs(iy)) && g_map.isLookPossible(pos))) {
                             Position upperPos = pos;
                             Position coveredPos = pos;
 
@@ -679,7 +679,7 @@ Position MapView::getCameraPosition()
 
 void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout)
 {
-    if(m_shader == shader && m_shaderSwitchDone || m_nextShader == shader && !m_shaderSwitchDone)
+    if((m_shader == shader && m_shaderSwitchDone) || (m_nextShader == shader && !m_shaderSwitchDone))
         return;
 
     if(fadeout > 0.0f && m_shader) {

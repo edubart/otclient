@@ -176,7 +176,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
             for(stackPos = 0; stackPos < size; ++stackPos) {
                 const int otherPriority = m_things[stackPos]->getStackPriority();
-                if(append && otherPriority > priority || !append && otherPriority >= priority)
+                if((append && otherPriority > priority) || (!append && otherPriority >= priority))
                     break;
             }
         } else if(stackPos > static_cast<int>(size))

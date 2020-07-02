@@ -157,7 +157,7 @@ Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const P
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
     const Point posoff = (Point(pos.x, pos.y) - mapRect.topLeft()) * scale;
-    return posoff + screenRect.topLeft() - off + Point(1, 1) * scale / 2;
+    return posoff + screenRect.topLeft() - off + (Point(1, 1) * scale) / 2;
 }
 
 Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale)

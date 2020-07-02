@@ -79,7 +79,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     m_direction = fromPosition.getDirectionFromPosition(toPosition);
 
-    m_duration = Otc::MISSILE_TICKS_PER_FRAME * 2 * std::sqrt(deltaLength);
+    m_duration = (Otc::MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(deltaLength);
     m_delta *= Otc::TILE_PIXELS;
     m_animationTimer.restart();
 

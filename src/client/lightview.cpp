@@ -83,7 +83,7 @@ void LightView::addLightSource(const Point& center, float scaleFactor, const Lig
     const int radius = intensity * Otc::TILE_PIXELS * scaleFactor;
 
     Color color = Color::from8bit(light.color);
-    const float brightness = 0.5f + intensity / static_cast<float>(MAX_LIGHT_INTENSITY) * 0.5f;
+    const float brightness = 0.5f + (intensity / static_cast<float>(MAX_LIGHT_INTENSITY)) * 0.5f;
 
     color.setRed(color.rF() * brightness);
     color.setGreen(color.gF() * brightness);

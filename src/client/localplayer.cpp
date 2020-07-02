@@ -87,7 +87,7 @@ bool LocalPlayer::canWalk(Otc::Direction)
         return false;
 
     // cannot walk while already walking
-    if(m_walking && !isAutoWalking() && (!prewalkTimeouted || m_secondPreWalk))
+    if((m_walking && !isAutoWalking()) && (!prewalkTimeouted || m_secondPreWalk))
         return false;
 
     return true;

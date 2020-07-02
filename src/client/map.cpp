@@ -802,7 +802,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // check the goal pos is walkable
     if(g_map.isAwareOfPosition(goalPos)) {
         const TilePtr goalTile = getTile(goalPos);
-        if(!goalTile || !goalTile->isWalkable(flags & Otc::PathFindAllowCreatures)) {
+        if(!goalTile || !goalTile->isWalkable((flags & Otc::PathFindAllowCreatures))) {
             return ret;
         }
     } else {
@@ -890,7 +890,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 else
                     walkFactor += 1.0f;
 
-                const float cost = currentNode->cost + speed * walkFactor / 100.0f;
+                const float cost = currentNode->cost + (speed * walkFactor) / 100.0f;
 
                 Node* neighborNode;
                 if(nodes.find(neighborPos) == nodes.end()) {

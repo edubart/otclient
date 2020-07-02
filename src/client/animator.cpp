@@ -176,7 +176,7 @@ int Animator::getLoopPhase()
     if(m_loopCount == 0)
         return 0;
 
-    if(m_currentLoop < m_loopCount - 1) {
+    if(m_currentLoop < (m_loopCount - 1)) {
         ++m_currentLoop;
         return 0;
     }

@@ -118,7 +118,7 @@ public:
     const TilePtr& get(const Position& pos) { return m_tiles[getTileIndex(pos)]; }
     void remove(const Position& pos) { m_tiles[getTileIndex(pos)] = nullptr; }
 
-    uint getTileIndex(const Position& pos) { return pos.y % BLOCK_SIZE * BLOCK_SIZE + pos.x % BLOCK_SIZE; }
+    uint getTileIndex(const Position& pos) { return ((pos.y % BLOCK_SIZE) * BLOCK_SIZE) + (pos.x % BLOCK_SIZE); }
 
     const std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE>& getTiles() const { return m_tiles; }
 
@@ -249,7 +249,7 @@ public:
 
 private:
     void removeUnawareThings();
-    uint getBlockIndex(const Position& pos) { return pos.y / BLOCK_SIZE * (65536 / BLOCK_SIZE) + pos.x / BLOCK_SIZE; }
+    uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;

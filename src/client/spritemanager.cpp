@@ -131,7 +131,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         if(id == 0 || !m_spritesFile)
             return nullptr;
 
-        m_spritesFile->seek((id - 1) * 4 + m_spritesOffset);
+        m_spritesFile->seek(((id - 1) * 4) + m_spritesOffset);
 
         const uint32 spriteAddress = m_spritesFile->getU32();
 
@@ -177,7 +177,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 writePos += 4;
             }
 
-            read += 4 + channels * coloredPixels;
+            read += 4 + (channels * coloredPixels);
         }
 
         // Error margin for 4 pixel transparent

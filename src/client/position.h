@@ -23,10 +23,10 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include <framework/const.h>
-#include <framework/stdext/types.h>
-#include <framework/util/point.h>
 #include "const.h"
+#include <framework/stdext/types.h>
+#include <framework/const.h>
+#include <framework/util/point.h>
 
 #include <vector>
 

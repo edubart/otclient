@@ -259,7 +259,7 @@ int Item::getCount()
 ItemPtr Item::clone()
 {
     ItemPtr item = ItemPtr(new Item);
-    *item.get() = *this;
+    *(item.get()) = *this;
     return item;
 }
 
@@ -362,8 +362,8 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         } else
             color = m_countOrSubType;
 
-        xPattern = color % 4 % getNumPatternX();
-        yPattern = color / 4 % getNumPatternY();
+        xPattern = (color % 4) % getNumPatternX();
+        yPattern = (color / 4) % getNumPatternY();
     } else {
         xPattern = m_position.x % getNumPatternX();
         yPattern = m_position.y % getNumPatternY();
@@ -380,7 +380,7 @@ int Item::calculateAnimationPhase(bool animate)
     if(getAnimator() != nullptr) return getAnimator()->getPhase();
 
     if(m_async) {
-        return g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases()) / Otc::ITEM_TICKS_PER_FRAME;
+        return (g_clock.millis() % (Otc::ITEM_TICKS_PER_FRAME * getAnimationPhases())) / Otc::ITEM_TICKS_PER_FRAME;
     }
 
     if(g_clock.millis() - m_lastPhase >= Otc::ITEM_TICKS_PER_FRAME) {

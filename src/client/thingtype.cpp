@@ -325,7 +325,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             stdext::throw_exception("a thing type has more than 4096 sprites");
 
         m_spritesIndex.resize(totalSpritesCount + totalSprites);
-        for(int j = totalSpritesCount; j < totalSpritesCount + totalSprites; ++j)
+        for(int j = totalSpritesCount; j < (totalSpritesCount + totalSprites); ++j)
             m_spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         totalSpritesCount += totalSprites;
@@ -543,8 +543,8 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
             Size candidateDimension = Size(i, j);
             if(candidateDimension.area() < numSprites)
                 continue;
-            if(candidateDimension.area() < bestDimension.area() ||
-               candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height())
+            if((candidateDimension.area() < bestDimension.area()) ||
+               (candidateDimension.area() == bestDimension.area() && candidateDimension.width() + candidateDimension.height() < bestDimension.width() + bestDimension.height()))
                 bestDimension = candidateDimension;
         }
     }
@@ -555,7 +555,7 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
 uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a)
 {
     const uint index =
-        (((((a % m_animationPhases
+        ((((((a % m_animationPhases)
              * m_numPatternZ + z)
             * m_numPatternY + y)
            * m_numPatternX + x)

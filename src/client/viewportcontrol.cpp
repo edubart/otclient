@@ -83,8 +83,8 @@ bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition
 
     // Check for non-visible tiles on the screen and ignore them
     return !(!tile->hasLight() && (
-        cameraPosition.x - tilePos.x >= left || tilePos.x - cameraPosition.x == right && tile->isSingleDimension() /*&& !tile->hasDisplacement()*/ ||
-        cameraPosition.y - tilePos.y >= top || tilePos.y - cameraPosition.y == down && tile->isSingleDimension() /*&& !tile->hasDisplacement()*/ ||
-        tilePos.x - cameraPosition.x > right || tilePos.y - cameraPosition.y > down)
+        (cameraPosition.x - tilePos.x >= left) || (tilePos.x - cameraPosition.x == right && tile->isSingleDimension() /*&& !tile->hasDisplacement()*/) ||
+        (cameraPosition.y - tilePos.y >= top) || (tilePos.y - cameraPosition.y == down && tile->isSingleDimension()  /*&& !tile->hasDisplacement()*/) ||
+        (tilePos.x - cameraPosition.x > right) || (tilePos.y - cameraPosition.y > down))
         );
 }
