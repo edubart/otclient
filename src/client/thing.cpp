@@ -70,6 +70,16 @@ const TilePtr& Thing::getTile()
     return g_map.getTile(m_position);
 }
 
+int Thing::getAnimationPhases()
+{
+    auto animationPhases = rawGetThingType()->getAnimationPhases();
+
+    // Fix for Old Tibia version
+    if(isCreature() && !getAnimator()) animationPhases -= 1;
+
+    return animationPhases;
+}
+
 ContainerPtr Thing::getParentContainer()
 {
     if(m_position.x == 0xffff && m_position.y & 0x40) {
