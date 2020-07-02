@@ -48,7 +48,7 @@ void TiXmlString::reserve (size_type cap)
 
 TiXmlString& TiXmlString::assign(const char* str, size_type len)
 {
-    const size_type cap = capacity();
+    size_type cap = capacity();
     if (len > cap || cap > 3*(len + 8))
     {
         TiXmlString tmp;
@@ -67,7 +67,7 @@ TiXmlString& TiXmlString::assign(const char* str, size_type len)
 
 TiXmlString& TiXmlString::append(const char* str, size_type len)
 {
-    const size_type newsize = length() + len;
+    size_type newsize = length() + len;
     if (newsize > capacity())
     {
         reserve (newsize + capacity());
@@ -90,7 +90,7 @@ TiXmlString operator + (const TiXmlString & a, const TiXmlString & b)
 TiXmlString operator + (const TiXmlString & a, const char* b)
 {
     TiXmlString tmp;
-    const TiXmlString::size_type b_len = static_cast<TiXmlString::size_type>( strlen(b) );
+    TiXmlString::size_type b_len = static_cast<TiXmlString::size_type>( strlen(b) );
     tmp.reserve(a.length() + b_len);
     tmp += a;
     tmp.append(b, b_len);
@@ -100,7 +100,7 @@ TiXmlString operator + (const TiXmlString & a, const char* b)
 TiXmlString operator + (const char* a, const TiXmlString & b)
 {
     TiXmlString tmp;
-    const TiXmlString::size_type a_len = static_cast<TiXmlString::size_type>( strlen(a) );
+    TiXmlString::size_type a_len = static_cast<TiXmlString::size_type>( strlen(a) );
     tmp.reserve(a_len + b.length());
     tmp.append(a, a_len);
     tmp += b;

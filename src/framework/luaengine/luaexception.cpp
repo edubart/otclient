@@ -48,6 +48,6 @@ LuaBadNumberOfArgumentsException::LuaBadNumberOfArgumentsException(int expected,
 
 LuaBadValueCastException::LuaBadValueCastException(const std::string& luaTypeName, const std::string& cppTypeName)
 {
-    const std::string error = stdext::format("attempt to cast a '%s' lua value to '%s'", luaTypeName, cppTypeName);
+    std::string error = stdext::format("attempt to cast a '%s' lua value to '%s'", luaTypeName, cppTypeName);
     generateLuaErrorMessage(error, 0);
 }

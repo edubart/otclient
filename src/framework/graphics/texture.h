@@ -54,7 +54,6 @@ public:
     bool hasRepeat() { return m_repeat; }
     bool hasMipmaps() { return m_hasMipmaps; }
     virtual bool isAnimatedTexture() { return false; }
-    bool isOpaque() const { return m_opaque; }
 
 protected:
     void createTexture();
@@ -62,7 +61,7 @@ protected:
     void setupWrap();
     void setupFilters();
     void setupTranformMatrix();
-    void setupPixels(int level, const Size& size, uchar* pixels, int channels = 4, bool compress = false);
+    void setupPixels(int level, const Size& size, uchar *pixels, int channels = 4, bool compress = false);
 
     uint m_id;
     ticks_t m_time;
@@ -73,7 +72,6 @@ protected:
     stdext::boolean<false> m_smooth;
     stdext::boolean<false> m_upsideDown;
     stdext::boolean<false> m_repeat;
-    stdext::boolean<false> m_opaque;
 };
 
 #endif

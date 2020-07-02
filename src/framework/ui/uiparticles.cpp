@@ -25,7 +25,7 @@
 
 UIParticles::UIParticles()
 {
-    m_referencePos = PointF(-1, -1);
+    m_referencePos = PointF(-1,-1);
 }
 
 void UIParticles::drawSelf(Fw::DrawPane drawPane)
@@ -50,7 +50,7 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
         else
             g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
 
-        for(auto& effect : m_effects)
+        for(auto &effect: m_effects)
             effect->render();
         g_painter->restoreSavedState();
     }
@@ -70,7 +70,7 @@ void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& 
 
 void UIParticles::addEffect(const std::string& name)
 {
-    const ParticleEffectPtr effect = g_particles.createEffect(name);
+    ParticleEffectPtr effect = g_particles.createEffect(name);
     if(effect)
         m_effects.push_back(effect);
 }

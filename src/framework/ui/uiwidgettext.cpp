@@ -46,7 +46,7 @@ void UIWidget::updateText()
         Size textBoxSize = getTextSize();
         textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
-        if(size.width() <= 0 || m_textHorizontalAutoResize && !m_textWrap)
+        if(size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
             size.setWidth(textBoxSize.width());
         if(size.height() <= 0 || m_textVerticalAutoResize)
             size.setHeight(textBoxSize.height());
@@ -122,7 +122,7 @@ void UIWidget::setText(std::string text, bool dontFireLuaCall)
     if(m_text == text)
         return;
 
-    const std::string oldText = m_text;
+    std::string oldText = m_text;
     m_text = text;
     updateText();
 

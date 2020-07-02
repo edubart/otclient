@@ -156,7 +156,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     // write stacktrace to crashreport.log
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
-    const std::string fileName = stdext::format("%s\\crashreport.log", dir);
+    std::string fileName = stdext::format("%s\\crashreport.log", dir);
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
@@ -166,7 +166,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
         g_logger.error("Failed to save crash report!");
 
     // inform the user
-    const std::string msg = stdext::format(
+    std::string msg = stdext::format(
         "The application has crashed.\n\n"
         "A crash report has been written to:\n"
         "%s", fileName.c_str());

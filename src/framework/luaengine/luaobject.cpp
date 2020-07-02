@@ -88,7 +88,7 @@ void LuaObject::luaGetMetatable()
 {
     static std::unordered_map<const std::type_info*, int> metatableMap;
     const std::type_info& tinfo = typeid(*this);
-    const auto it = metatableMap.find(&tinfo);
+    auto it = metatableMap.find(&tinfo);
 
     int metatableRef;
     if(it == metatableMap.end()) {

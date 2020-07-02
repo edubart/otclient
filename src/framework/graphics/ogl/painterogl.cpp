@@ -110,7 +110,7 @@ void PainterOGL::clear(const Color& color)
 
 void PainterOGL::clearRect(const Color& color, const Rect& rect)
 {
-    const Rect oldClipRect = m_clipRect;
+    Rect oldClipRect = m_clipRect;
     setClipRect(rect);
     glClearColor(color.rF(), color.gF(), color.bF(), color.aF());
     glClear(GL_COLOR_BUFFER_BIT);
@@ -185,7 +185,7 @@ void PainterOGL::setResolution(const Size& resolution)
     //   |  x  y  1  |  *  |     0.0      | -2.0 / height |      0.0      |  =  |  x'  y'  1  |
     //   -------------     |    -1.0      |      1.0      |      1.0      |     ---------------
 
-    const Matrix3 projectionMatrix = { 2.0f/resolution.width(),  0.0f,                      0.0f,
+    Matrix3 projectionMatrix = { 2.0f/resolution.width(),  0.0f,                      0.0f,
                                  0.0f,                    -2.0f/resolution.height(),  0.0f,
                                 -1.0f,                     1.0f,                      1.0f };
 
@@ -198,7 +198,7 @@ void PainterOGL::setResolution(const Size& resolution)
 
 void PainterOGL::scale(float x, float y)
 {
-    const Matrix3 scaleMatrix = {
+    Matrix3 scaleMatrix = {
            x,  0.0f,  0.0f,
         0.0f,     y,  0.0f,
         0.0f,  0.0f,  1.0f
@@ -209,7 +209,7 @@ void PainterOGL::scale(float x, float y)
 
 void PainterOGL::translate(float x, float y)
 {
-    const Matrix3 translateMatrix = {
+    Matrix3 translateMatrix = {
         1.0f,  0.0f,     x,
         0.0f,  1.0f,     y,
         0.0f,  0.0f,  1.0f
@@ -220,7 +220,7 @@ void PainterOGL::translate(float x, float y)
 
 void PainterOGL::rotate(float angle)
 {
-    const Matrix3 rotationMatrix = {
+    Matrix3 rotationMatrix = {
         std::cos(angle), -std::sin(angle),  0.0f,
         std::sin(angle),  std::cos(angle),  0.0f,
                    0.0f,             0.0f,  1.0f

@@ -24,7 +24,7 @@
 
 OggSoundFile::OggSoundFile(const FileStreamPtr& fileStream) : SoundFile(fileStream)
 {
-    memset(&m_vorbisFile, 0, sizeof m_vorbisFile);
+    memset(&m_vorbisFile, 0, sizeof(m_vorbisFile));
 }
 
 OggSoundFile::~OggSoundFile()
@@ -34,7 +34,7 @@ OggSoundFile::~OggSoundFile()
 
 bool OggSoundFile::prepareOgg()
 {
-    const ov_callbacks callbacks = { cb_read, cb_seek, cb_close, cb_tell };
+    ov_callbacks callbacks = { cb_read, cb_seek, cb_close, cb_tell };
     ov_open_callbacks(m_file.get(), &m_vorbisFile, nullptr, 0, callbacks);
 
     vorbis_info* vi = ov_info(&m_vorbisFile, -1);
@@ -58,8 +58,8 @@ int OggSoundFile::read(void *buffer, int bufferSize)
     size_t totalBytesRead = 0;
 
     while(bufferSize > 0) {
-        const size_t bytesToRead  = bufferSize;
-        const long bytesRead = ov_read(&m_vorbisFile, bytesBuffer, bytesToRead, 0, 2, 1, &section);
+        size_t bytesToRead  = bufferSize;
+        long bytesRead = ov_read(&m_vorbisFile, bytesBuffer, bytesToRead, 0, 2, 1, &section);
         if(bytesRead == 0)
             break;
 

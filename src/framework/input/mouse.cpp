@@ -54,7 +54,7 @@ void Mouse::loadCursors(std::string filename)
 
 void Mouse::addCursor(const std::string& name, const std::string& file, const Point& hotSpot)
 {
-    const int cursorId = g_window.loadMouseCursor(file, hotSpot);
+    int cursorId = g_window.loadMouseCursor(file, hotSpot);
     if(cursorId >= 0) {
         m_cursors[name] = cursorId;
     } else
@@ -63,11 +63,11 @@ void Mouse::addCursor(const std::string& name, const std::string& file, const Po
 
 bool Mouse::pushCursor(const std::string& name)
 {
-    const auto it = m_cursors.find(name);
+    auto it = m_cursors.find(name);
     if(it == m_cursors.end())
         return false;
 
-    const int cursorId = it->second;
+    int cursorId = it->second;
     g_window.setMouseCursor(cursorId);
     m_cursorStack.push_back(cursorId);
     return true;
@@ -81,7 +81,7 @@ void Mouse::popCursor(const std::string& name)
     if(name.empty() || m_cursors.find(name) == m_cursors.end())
         m_cursorStack.pop_back();
     else {
-        const int cursorId = m_cursors[name];
+        int cursorId = m_cursors[name];
         int index = -1;
         for(uint i=0;i<m_cursorStack.size();++i) {
             if(m_cursorStack[i] == cursorId)

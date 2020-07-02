@@ -71,7 +71,7 @@ void ParticleSystem::update()
     static const float delay = 0.0166; // 60 updates/s
 
     // check time
-    const float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
+    float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
     if(elapsedTime < delay)
         return;
 
@@ -83,7 +83,7 @@ void ParticleSystem::update()
 
     m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
-    const auto self = static_self_cast<ParticleSystem>();
+    auto self = static_self_cast<ParticleSystem>();
     for(int i = 0; i < std::floor(elapsedTime / delay); ++i) {
 
         // update emitters

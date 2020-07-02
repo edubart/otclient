@@ -23,7 +23,7 @@
 #ifndef LUAVALUECASTS_H
 #define LUAVALUECASTS_H
 
- // this file is and must be included only from luainterface.h
+// this file is and must be included only from luainterface.h
 
 #include "declarations.h"
 #include <framework/otml/declarations.h>
@@ -44,38 +44,30 @@ int push_luavalue(double d);
 bool luavalue_cast(int index, double& d);
 
 // float
-inline int push_luavalue(float f) { push_luavalue(static_cast<double>(f)); return 1; }
-inline bool luavalue_cast(int index, float& f) { double d;
-    const bool r = luavalue_cast(index, d); f = d; return r; }
+inline int push_luavalue(float f) { push_luavalue((double)f); return 1; }
+inline bool luavalue_cast(int index, float& f) { double d; bool r = luavalue_cast(index, d); f = d; return r; }
 
 // int8
-inline int push_luavalue(int8 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, int8& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline int push_luavalue(int8 v) { push_luavalue((int)v); return 1; }
+inline bool luavalue_cast(int index, int8& v) { int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint8
-inline int push_luavalue(uint8 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, uint8& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline int push_luavalue(uint8 v) { push_luavalue((int)v); return 1; }
+inline bool luavalue_cast(int index, uint8& v){ int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // int16
-inline int push_luavalue(int16 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, int16& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline int push_luavalue(int16 v) { push_luavalue((int)v); return 1; }
+inline bool luavalue_cast(int index, int16& v){ int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint16
-inline int push_luavalue(uint16 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, uint16& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline int push_luavalue(uint16 v) { push_luavalue((int)v); return 1; }
+inline bool luavalue_cast(int index, uint16& v){ int i; bool r = luavalue_cast(index, i); v = i; return r; }
 // uint32
-inline int push_luavalue(uint32 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, uint32& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline int push_luavalue(uint32 v) { push_luavalue((double)v); return 1; }
+inline bool luavalue_cast(int index, uint32& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 // int64
-inline int push_luavalue(int64 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, int64& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline int push_luavalue(int64 v) { push_luavalue((double)v); return 1; }
+inline bool luavalue_cast(int index, int64& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 // uint64
-inline int push_luavalue(uint64 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, uint64& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline int push_luavalue(uint64 v) { push_luavalue((double)v); return 1; }
+inline bool luavalue_cast(int index, uint64& v) { double d; bool r = luavalue_cast(index, d); v = d; return r; }
 
 // string
 int push_luavalue(const char* cstr);
@@ -108,7 +100,7 @@ bool luavalue_cast(int index, OTMLNodePtr& node);
 // enum
 template<class T>
 typename std::enable_if<std::is_enum<T>::value, int>::type
-push_luavalue(T e) { return push_luavalue(static_cast<int>(e)); }
+push_luavalue(T e) { return push_luavalue((int)e); }
 
 template<class T>
 typename std::enable_if<std::is_enum<T>::value, bool>::type
@@ -186,8 +178,8 @@ template<class T>
 typename std::enable_if<std::is_enum<T>::value, bool>::type
 luavalue_cast(int index, T& myenum) {
     int i;
-    if (luavalue_cast(index, i)) {
-        myenum = static_cast<T>(i);
+    if(luavalue_cast(index, i)) {
+        myenum = (T)i;
         return true;
     }
     return false;
@@ -196,7 +188,7 @@ luavalue_cast(int index, T& myenum) {
 template<class T>
 typename std::enable_if<std::is_base_of<LuaObject, typename T::element_type>::value, int>::type
 push_luavalue(const T& obj) {
-    if (obj)
+    if(obj)
         g_lua.pushObject(obj);
     else
         g_lua.pushNil();
@@ -207,9 +199,9 @@ template<class T>
 typename std::enable_if<std::is_base_of<LuaObject, T>::value, bool>::type
 luavalue_cast(int index, stdext::shared_object_ptr<T>& ptr) {
     LuaObjectPtr obj;
-    if (!luavalue_cast(index, obj))
+    if(!luavalue_cast(index, obj))
         return false;
-    if (obj)
+    if(obj)
         ptr = obj->dynamic_self_cast<T>();
     else
         ptr = nullptr;
@@ -218,44 +210,40 @@ luavalue_cast(int index, stdext::shared_object_ptr<T>& ptr) {
 
 template<typename Ret, typename... Args>
 int push_luavalue(const std::function<Ret(Args...)>& func) {
-    if (func) {
-        const LuaCppFunction f = luabinder::bind_fun(func);
+    if(func) {
+        LuaCppFunction f = luabinder::bind_fun(func);
         g_lua.pushCppFunction(f);
-    }
-    else
+    } else
         g_lua.pushNil();
     return 1;
 }
 
 template<typename... Args>
 bool luavalue_cast(int index, std::function<void(Args...)>& func) {
-    if (g_lua.isFunction(index)) {
+    if(g_lua.isFunction(index)) {
         g_lua.pushValue(index);
         // weak references are used here, this means that the script must hold another reference
         // to this function, otherwise it will expire
-        const int funcWeakRef = g_lua.weakRef();
+        int funcWeakRef = g_lua.weakRef();
         func = [=](Args... args) {
             // note that we must catch exceptions, because this lambda can be called from anywhere
             // and most of them won't catch exceptions (e.g. dispatcher)
             g_lua.getWeakRef(funcWeakRef);
             try {
-                if (g_lua.isFunction()) {
-                    const int numArgs = g_lua.polymorphicPush(args...);
-                    const int rets = g_lua.safeCall(numArgs);
+                if(g_lua.isFunction()) {
+                    int numArgs = g_lua.polymorphicPush(args...);
+                    int rets = g_lua.safeCall(numArgs);
                     g_lua.pop(rets);
-                }
-                else {
+                } else {
                     throw LuaException("attempt to call an expired lua function from C++,"
-                        "did you forget to hold a reference for that function?", 0);
+                                       "did you forget to hold a reference for that function?", 0);
                 }
-            }
-            catch (LuaException& e) {
+            } catch(LuaException& e) {
                 g_logger.error(stdext::format("lua function callback failed: %s", e.what()));
             }
         };
         return true;
-    }
-    else if (g_lua.isNil(index)) {
+    } else if(g_lua.isNil(index)) {
         func = std::function<void(Args...)>();
         return true;
     }
@@ -265,35 +253,32 @@ bool luavalue_cast(int index, std::function<void(Args...)>& func) {
 template<typename Ret, typename... Args>
 typename std::enable_if<!std::is_void<Ret>::value, bool>::type
 luavalue_cast(int index, std::function<Ret(Args...)>& func) {
-    if (g_lua.isFunction(index)) {
+    if(g_lua.isFunction(index)) {
         g_lua.pushValue(index);
         // weak references are used here, this means that the script must hold another reference
         // to this function, otherwise it will expire
-        const int funcWeakRef = g_lua.weakRef();
+        int funcWeakRef = g_lua.weakRef();
         func = [=](Args... args) -> Ret {
             // note that we must catch exceptions, because this lambda can be called from anywhere
             // and most of them won't catch exceptions (e.g. dispatcher)
             try {
                 g_lua.getWeakRef(funcWeakRef);
-                if (g_lua.isFunction()) {
-                    const int numArgs = g_lua.polymorphicPush(args...);
-                    if (g_lua.safeCall(numArgs) != 1)
+                if(g_lua.isFunction()) {
+                    int numArgs = g_lua.polymorphicPush(args...);
+                    if(g_lua.safeCall(numArgs) != 1)
                         throw LuaException("a function from lua didn't retrieve the expected number of results", 0);
                     return g_lua.polymorphicPop<Ret>();
-                }
-                else {
+                } else {
                     throw LuaException("attempt to call an expired lua function from C++,"
-                        "did you forget to hold a reference for that function?", 0);
+                                       "did you forget to hold a reference for that function?", 0);
                 }
-            }
-            catch (LuaException& e) {
+            } catch(LuaException& e) {
                 g_logger.error(stdext::format("lua function callback failed: %s", e.what()));
             }
             return Ret();
         };
         return true;
-    }
-    else if (g_lua.isNil(index)) {
+    } else if(g_lua.isNil(index)) {
         func = std::function<Ret(Args...)>();
         return true;
     }
@@ -304,7 +289,7 @@ template<typename T>
 int push_luavalue(const std::list<T>& list) {
     g_lua.createTable(list.size(), 0);
     int i = 1;
-    for (const T& v : list) {
+    for(const T& v : list) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
         i++;
@@ -315,11 +300,11 @@ int push_luavalue(const std::list<T>& list) {
 template<typename T>
 bool luavalue_cast(int index, std::list<T>& list)
 {
-    if (g_lua.isTable(index)) {
+    if(g_lua.isTable(index)) {
         g_lua.pushNil();
-        while (g_lua.next(index < 0 ? index - 1 : index)) {
+        while(g_lua.next(index < 0 ? index-1 : index)) {
             T value;
-            if (luavalue_cast(-1, value))
+            if(luavalue_cast(-1, value))
                 list.push_back(value);
             g_lua.pop();
         }
@@ -332,7 +317,7 @@ template<typename T>
 int push_luavalue(const std::vector<T>& vec) {
     g_lua.createTable(vec.size(), 0);
     int i = 1;
-    for (const T& v : vec) {
+    for(const T& v : vec) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
         i++;
@@ -343,11 +328,11 @@ int push_luavalue(const std::vector<T>& vec) {
 template<typename T>
 bool luavalue_cast(int index, std::vector<T>& vec)
 {
-    if (g_lua.isTable(index)) {
+    if(g_lua.isTable(index)) {
         g_lua.pushNil();
-        while (g_lua.next(index < 0 ? index - 1 : index)) {
+        while(g_lua.next(index < 0 ? index-1 : index)) {
             T value;
-            if (luavalue_cast(-1, value))
+            if(luavalue_cast(-1, value))
                 vec.push_back(value);
             g_lua.pop();
         }
@@ -360,7 +345,7 @@ template<typename T>
 int push_luavalue(const std::deque<T>& vec) {
     g_lua.createTable(vec.size(), 0);
     int i = 1;
-    for (const T& v : vec) {
+    for(const T& v : vec) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
         i++;
@@ -371,11 +356,11 @@ int push_luavalue(const std::deque<T>& vec) {
 template<typename T>
 bool luavalue_cast(int index, std::deque<T>& vec)
 {
-    if (g_lua.isTable(index)) {
+    if(g_lua.isTable(index)) {
         g_lua.pushNil();
-        while (g_lua.next(index < 0 ? index - 1 : index)) {
+        while(g_lua.next(index < 0 ? index-1 : index)) {
             T value;
-            if (luavalue_cast(-1, value))
+            if(luavalue_cast(-1, value))
                 vec.push_back(value);
             g_lua.pop();
         }
@@ -388,7 +373,7 @@ template<class K, class V>
 int push_luavalue(const std::map<K, V>& map)
 {
     g_lua.newTable();
-    for (auto& it : map) {
+    for(auto& it : map) {
         push_internal_luavalue(it.first);
         push_internal_luavalue(it.second);
         g_lua.rawSet();
@@ -399,12 +384,12 @@ int push_luavalue(const std::map<K, V>& map)
 template<class K, class V>
 bool luavalue_cast(int index, std::map<K, V>& map)
 {
-    if (g_lua.isTable(index)) {
+    if(g_lua.isTable(index)) {
         g_lua.pushNil();
-        while (g_lua.next(index < 0 ? index - 1 : index)) {
+        while(g_lua.next(index < 0 ? index-1 : index)) {
             K key;
             V value;
-            if (luavalue_cast(-1, value) && luavalue_cast(-2, key))
+            if(luavalue_cast(-1, value) && luavalue_cast(-2, key))
                 map[key] = value;
             g_lua.pop();
         }
@@ -418,16 +403,16 @@ template<int N>
 struct push_tuple_internal_luavalue {
     template<typename Tuple>
     static void call(const Tuple& tuple) {
-        push_internal_luavalue(std::get<N - 1>(tuple));
+        push_internal_luavalue(std::get<N-1>(tuple));
         g_lua.rawSeti(N);
-        push_tuple_internal_luavalue<N - 1>::call(tuple);
+        push_tuple_internal_luavalue<N-1>::call(tuple);
     }
 };
 
 template<>
 struct push_tuple_internal_luavalue<0> {
     template<typename Tuple>
-    static void call(const Tuple& /*tuple*/) { }
+    static void call(const Tuple& tuple) { }
 };
 
 template<typename... Args>
@@ -442,14 +427,14 @@ struct push_tuple_luavalue {
     template<typename Tuple>
     static void call(const Tuple& tuple) {
         push_internal_luavalue(std::get<std::tuple_size<Tuple>::value - N>(tuple));
-        push_tuple_luavalue<N - 1>::call(tuple);
+        push_tuple_luavalue<N-1>::call(tuple);
     }
 };
 
 template<>
 struct push_tuple_luavalue<0> {
     template<typename Tuple>
-    static void call(const Tuple& /*tuple*/) { }
+    static void call(const Tuple& tuple) { }
 };
 
 template<typename... Args>

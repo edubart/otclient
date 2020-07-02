@@ -55,7 +55,7 @@ void ModuleManager::discoverModules()
 void ModuleManager::autoLoadModules(int maxPriority)
 {
     for(auto& pair : m_autoLoadModules) {
-        const int priority = pair.first;
+        int priority = pair.first;
         if(priority > maxPriority)
             break;
         ModulePtr module = pair.second;
@@ -70,7 +70,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
         OTMLDocumentPtr doc = OTMLDocument::parse(moduleFile);
         OTMLNodePtr moduleNode = doc->at("Module");
 
-        const std::string name = moduleNode->valueAt("name");
+        std::string name = moduleNode->valueAt("name");
 
         bool push = false;
         module = getModule(name);
@@ -132,7 +132,7 @@ ModulePtr ModuleManager::getModule(const std::string& moduleName)
 
 void ModuleManager::updateModuleLoadOrder(ModulePtr module)
 {
-    const auto it = std::find(m_modules.begin(), m_modules.end(), module);
+    auto it = std::find(m_modules.begin(), m_modules.end(), module);
     if(it != m_modules.end())
         m_modules.erase(it);
     if(module->isLoaded())

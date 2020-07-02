@@ -45,7 +45,7 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
     if(m_maxFps == 0)
         return true;
 
-    const ticks_t now = g_clock.micros();
+    ticks_t now = g_clock.micros();
     if(now - m_lastFrame < m_bestFrameDelay)
         return false;
     return true;
@@ -53,16 +53,16 @@ bool AdaptativeFrameCounter::shouldProcessNextFrame()
 
 void AdaptativeFrameCounter::processNextFrame()
 {
-    const ticks_t now = g_clock.micros();
+    ticks_t now = g_clock.micros();
     m_frames++;
     m_partialFrames++;
     m_frameDelaySum += now - m_lastFrame;
-    m_lastFrame = now;
+    m_lastFrame = now ;
 }
 
 bool AdaptativeFrameCounter::update()
 {
-    const ticks_t now = g_clock.micros();
+    ticks_t now = g_clock.micros();
     ticks_t delta = now - m_lastPartialFpsUpdate;
     if(delta > 41000 && m_partialFrames > 0) {
         m_partialFps = m_partialFrames / (delta / 1000000.0f);
@@ -70,7 +70,7 @@ bool AdaptativeFrameCounter::update()
         m_partialFrames = 0;
     }
 
-    delta = now - m_lastFpsUpdate;
+    delta =  now - m_lastFpsUpdate;
     if(delta >= 1000000) {
         m_lastFps = m_frames;
         if(m_frames > 0)
@@ -110,7 +110,7 @@ int AdaptativeFrameCounter::getMaximumSleepMicros()
 float AdaptativeFrameCounter::getFrameDelayHit()
 {
     if(m_bestFrameDelay > 0)
-        return (m_bestFrameDelay - std::abs(m_bestFrameDelay - m_mediumFrameDelay)) * 100.0f / static_cast<float>(m_bestFrameDelay);
+        return ((m_bestFrameDelay - std::abs(m_bestFrameDelay - m_mediumFrameDelay)) * 100.0f) / (float)m_bestFrameDelay;
     else
         return 100.0f;
 }

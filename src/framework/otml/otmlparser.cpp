@@ -57,7 +57,7 @@ int OTMLParser::getLineDepth(const std::string& line, bool multilining)
         spaces++;
 
     // pre calculate depth
-    const int depth = spaces / 2;
+    int depth = spaces / 2;
 
     if(!multilining || depth <= currentDepth) {
         // check the next character is a tab
@@ -74,7 +74,7 @@ int OTMLParser::getLineDepth(const std::string& line, bool multilining)
 
 void OTMLParser::parseLine(std::string line)
 {
-    const int depth = getLineDepth(line);
+    int depth = getLineDepth(line);
 
     if(depth == -1)
         return;

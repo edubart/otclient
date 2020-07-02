@@ -37,7 +37,7 @@ void InputMessage::reset()
 
 void InputMessage::setBuffer(const std::string& buffer)
 {
-    const int len = buffer.size();
+    int len = buffer.size();
     reset();
     checkWrite(len);
     memcpy((char*)(m_buffer + m_readPos), buffer.c_str(), len);
@@ -48,7 +48,7 @@ void InputMessage::setBuffer(const std::string& buffer)
 uint8 InputMessage::getU8()
 {
     checkRead(1);
-    const uint8 v = m_buffer[m_readPos];
+    uint8 v = m_buffer[m_readPos];
     m_readPos += 1;
     return v;
 }
@@ -56,7 +56,7 @@ uint8 InputMessage::getU8()
 uint16 InputMessage::getU16()
 {
     checkRead(2);
-    const uint16 v = stdext::readULE16(m_buffer + m_readPos);
+    uint16 v = stdext::readULE16(m_buffer + m_readPos);
     m_readPos += 2;
     return v;
 }
@@ -64,7 +64,7 @@ uint16 InputMessage::getU16()
 uint32 InputMessage::getU32()
 {
     checkRead(4);
-    const uint32 v = stdext::readULE32(m_buffer + m_readPos);
+    uint32 v = stdext::readULE32(m_buffer + m_readPos);
     m_readPos += 4;
     return v;
 }
@@ -72,14 +72,14 @@ uint32 InputMessage::getU32()
 uint64 InputMessage::getU64()
 {
     checkRead(8);
-    const uint64 v = stdext::readULE64(m_buffer + m_readPos);
+    uint64 v = stdext::readULE64(m_buffer + m_readPos);
     m_readPos += 8;
     return v;
 }
 
 std::string InputMessage::getString()
 {
-    const uint16 stringLength = getU16();
+    uint16 stringLength = getU16();
     checkRead(stringLength);
     char* v = (char*)(m_buffer + m_readPos);
     m_readPos += stringLength;
@@ -88,16 +88,16 @@ std::string InputMessage::getString()
 
 double InputMessage::getDouble()
 {
-    const uint8 precision = getU8();
-    const int32 v = getU32() - INT_MAX;
-    return v / std::pow(static_cast<float>(10), precision);
+    uint8 precision = getU8();
+    int32 v = getU32() - INT_MAX;
+    return (v / std::pow((float)10, precision));
 }
 
 bool InputMessage::decryptRsa(int size)
 {
     checkRead(size);
-    g_crypt.rsaDecrypt(static_cast<unsigned char*>(m_buffer) + m_readPos, size);
-    return getU8() == 0x00;
+    g_crypt.rsaDecrypt((unsigned char*)m_buffer + m_readPos, size);
+    return (getU8() == 0x00);
 }
 
 void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
@@ -116,14 +116,14 @@ void InputMessage::setHeaderSize(uint16 size)
 
 bool InputMessage::readChecksum()
 {
-    const uint32 receivedCheck = getU32();
-    const uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
+    uint32 receivedCheck = getU32();
+    uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
     return receivedCheck == checksum;
 }
 
 bool InputMessage::canRead(int bytes)
 {
-    if(m_readPos - m_headerPos + bytes > m_messageSize || m_readPos + bytes > BUFFER_MAXSIZE)
+    if((m_readPos - m_headerPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
         return false;
     return true;
 }

@@ -184,7 +184,7 @@ void UIWidget::setImageSource(const std::string& source)
 
     if(m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
         Size size = getSize();
-        const Size imageSize = m_imageTexture->getSize();
+        Size imageSize = m_imageTexture->getSize();
         if(size.width() <= 0 || m_imageAutoResize)
             size.setWidth(imageSize.width());
         if(size.height() <= 0 || m_imageAutoResize)

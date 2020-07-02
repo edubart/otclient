@@ -111,7 +111,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     // read message size
     m_inputMessage->fillBuffer(buffer, size);
-    const uint16 remainingSize = m_inputMessage->readSize();
+    uint16 remainingSize = m_inputMessage->readSize();
 
     // read remaining message data
     if(m_connection)
@@ -145,7 +145,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 void Protocol::generateXteaKey()
 {
     std::mt19937 eng(std::time(nullptr));
-    const std::uniform_int_distribution<uint32> unif(0, 0xFFFFFFFF);
+    std::uniform_int_distribution<uint32> unif(0, 0xFFFFFFFF);
     m_xteaKey[0] = unif(eng);
     m_xteaKey[1] = unif(eng);
     m_xteaKey[2] = unif(eng);
@@ -171,31 +171,31 @@ std::vector<uint32> Protocol::getXteaKey()
 
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
-    const uint16 encryptedSize = inputMessage->getUnreadSize();
+    uint16 encryptedSize = inputMessage->getUnreadSize();
     if(encryptedSize % 8 != 0) {
         g_logger.traceError("invalid encrypted network message");
         return false;
     }
 
-    uint32 *buffer = (uint32*)inputMessage->getReadBuffer();
+    uint32 *buffer = (uint32*)(inputMessage->getReadBuffer());
     int readPos = 0;
 
     while(readPos < encryptedSize/4) {
         uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
-        const uint32 delta = 0x61C88647;
+        uint32 delta = 0x61C88647;
         uint32 sum = 0xC6EF3720;
 
         for(int32 i = 0; i < 32; i++) {
-            v1 -= (v0 << 4 ^ v0 >> 5) + v0 ^ sum + m_xteaKey[sum>>11 & 3];
+            v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
             sum += delta;
-            v0 -= (v1 << 4 ^ v1 >> 5) + v1 ^ sum + m_xteaKey[sum & 3];
+            v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
         }
         buffer[readPos] = v0; buffer[readPos + 1] = v1;
         readPos = readPos + 2;
     }
 
-    const uint16 decryptedSize = inputMessage->getU16() + 2;
-    const int sizeDelta = decryptedSize - encryptedSize;
+    uint16 decryptedSize = inputMessage->getU16() + 2;
+    int sizeDelta = decryptedSize - encryptedSize;
     if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
         g_logger.traceError("invalid decrypted network message");
         return false;
@@ -211,8 +211,8 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
     uint16 encryptedSize = outputMessage->getMessageSize();
 
     //add bytes until reach 8 multiple
-    if(encryptedSize % 8 != 0) {
-        const uint16 n = 8 - encryptedSize % 8;
+    if((encryptedSize % 8) != 0) {
+        uint16 n = 8 - (encryptedSize % 8);
         outputMessage->addPaddingBytes(n);
         encryptedSize += n;
     }
@@ -221,13 +221,13 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
     uint32 *buffer = (uint32*)(outputMessage->getDataBuffer() - 2);
     while(readPos < encryptedSize / 4) {
         uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
-        const uint32 delta = 0x61C88647;
+        uint32 delta = 0x61C88647;
         uint32 sum = 0;
 
         for(int32 i = 0; i < 32; i++) {
-            v0 += (v1 << 4 ^ v1 >> 5) + v1 ^ sum + m_xteaKey[sum & 3];
+            v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
             sum -= delta;
-            v1 += (v0 << 4 ^ v0 >> 5) + v0 ^ sum + m_xteaKey[sum>>11 & 3];
+            v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
         }
         buffer[readPos] = v0; buffer[readPos + 1] = v1;
         readPos = readPos + 2;

@@ -132,7 +132,7 @@ void GraphicalApplication::run()
             bool redraw = false;
             bool updateForeground = false;
 
-            const bool cacheForeground = g_graphics.canCacheBackbuffer() && m_foregroundFrameCounter.getMaxFps() != 0;
+            bool cacheForeground = g_graphics.canCacheBackbuffer() && m_foregroundFrameCounter.getMaxFps() != 0;
 
             if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
                 redraw = true;
@@ -188,7 +188,7 @@ void GraphicalApplication::run()
                 g_lua.callGlobalField("g_app", "onFps", m_backgroundFrameCounter.getLastFps());
             m_foregroundFrameCounter.update();
 
-            const int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();
+            int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();
             if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP)
                 stdext::microsleep(sleepMicros);
 

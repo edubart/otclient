@@ -122,8 +122,8 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, float elaps
     if(!m_active)
         return;
 
-    const PointF pPosition = particle->getPosition();
-    const PointF d = PointF(m_position.x - pPosition.x, pPosition.y - m_position.y);
+    PointF pPosition = particle->getPosition();
+    PointF d = PointF(m_position.x - pPosition.x, pPosition.y - m_position.y);
     if(d.length() == 0)
         return;
 
@@ -131,6 +131,6 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, float elaps
     if(m_repelish)
         direction = PointF(-1, -1);
 
-    const PointF pVelocity = particle->getVelocity() + d / d.length() * m_acceleration * elapsedTime * direction;
+    PointF pVelocity = particle->getVelocity() + (d / d.length() * m_acceleration * elapsedTime) * direction;
     particle->setVelocity(pVelocity - pVelocity * m_reduction/100.0 * elapsedTime);
 }

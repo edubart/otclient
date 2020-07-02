@@ -306,7 +306,7 @@ public:
     bool isTable(int index = -1);
     bool isFunction(int index = -1);
     bool isCFunction(int index = -1);
-    bool isLuaFunction(int index = -1)  { return isFunction(index) && !isCFunction(index); }
+    bool isLuaFunction(int index = -1)  { return (isFunction(index) && !isCFunction(index)); }
     bool isUserdata(int index = -1);
 
     bool toBoolean(int index = -1);
@@ -320,7 +320,7 @@ public:
     int getTop();
     int stackSize() { return getTop(); }
     void clearStack() { pop(stackSize()); }
-    bool hasIndex(int index) { return stackSize() >= (index < 0 ? -index : index) && index != 0; }
+    bool hasIndex(int index) { return (stackSize() >= (index < 0 ? -index : index) && index != 0); }
 
     void loadFiles(std::string directory, bool recursive = false, std::string contains = "");
 
@@ -434,7 +434,7 @@ template<typename... T>
 int LuaInterface::luaCallGlobalField(const std::string& global, const std::string& field, const T&... args) {
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
-        const int numArgs = g_lua.polymorphicPush(args...);
+        int numArgs = g_lua.polymorphicPush(args...);
         return g_lua.signalCall(numArgs);
     } else
         g_lua.pop(1);
@@ -443,7 +443,7 @@ int LuaInterface::luaCallGlobalField(const std::string& global, const std::strin
 
 template<typename... T>
 void LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
-    const int rets = luaCallGlobalField(global, field, args...);
+    int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0)
         pop(rets);
 }
@@ -451,7 +451,7 @@ void LuaInterface::callGlobalField(const std::string& global, const std::string&
 template<typename R, typename... T>
 R LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args) {
     R result;
-    const int rets = luaCallGlobalField(global, field, args...);
+    int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();

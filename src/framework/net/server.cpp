@@ -53,7 +53,7 @@ void Server::acceptNext()
 {
     ConnectionPtr connection = ConnectionPtr(new Connection);
     connection->m_connecting = true;
-    const auto self = static_self_cast<Server>();
+    auto self = static_self_cast<Server>();
     m_acceptor.async_accept(connection->m_socket, [=](const boost::system::error_code& error) {
         if(!error) {
             connection->m_connected = true;

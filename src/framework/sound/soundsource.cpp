@@ -118,12 +118,12 @@ void SoundSource::setVelocity(const Point& velocity)
 
 void SoundSource::setFading(FadeState state, float fadeTime)
 {
-    const float now = stdext::millis() / 1000.0f;
+    float now = stdext::millis() / 1000.0f;
     if(m_fadeState != NoFading) {
-        const float elapsed = now - m_fadeStartTime;
+        float elapsed = now - m_fadeStartTime;
         float add;
         if(m_fadeState == FadingOn)
-            add = -(1-elapsed / m_fadeTime)*fadeTime;
+            add = -(1-(elapsed / m_fadeTime))*fadeTime;
         else
             add = -(elapsed / m_fadeTime)*fadeTime;
         m_fadeStartTime = now + add;
@@ -140,22 +140,22 @@ void SoundSource::setFading(FadeState state, float fadeTime)
 
 void SoundSource::update()
 {
-    const float now = stdext::millis() / 1000.0f;
+    float now = stdext::millis() / 1000.0f;
     if(m_fadeState == FadingOn) {
-        const float elapsed = now - m_fadeStartTime;
+        float elapsed = now - m_fadeStartTime;
         if(elapsed >= m_fadeTime) {
             m_fadeState = NoFading;
         } else {
-            setGain(elapsed / m_fadeTime  * m_fadeGain);
+            setGain((elapsed / m_fadeTime)  * m_fadeGain);
         }
     } else if(m_fadeState == FadingOff) {
-        const float elapsed = now - m_fadeStartTime;
+        float elapsed = now - m_fadeStartTime;
         if(elapsed >= m_fadeTime) {
             setGain(m_fadeGain);
             stop();
             m_fadeState = NoFading;
         } else {
-            setGain((m_fadeTime - elapsed) / m_fadeTime * m_fadeGain);
+            setGain(((m_fadeTime - elapsed) / m_fadeTime) * m_fadeGain);
         }
     }
 }

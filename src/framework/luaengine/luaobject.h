@@ -160,7 +160,7 @@ int LuaObject::luaCallLuaField(const std::string& field, const T&... args) {
     if(!g_lua.isNil()) {
         // the first argument is always this object (self)
         g_lua.insert(-2);
-        const int numArgs = g_lua.polymorphicPush(args...);
+        int numArgs = g_lua.polymorphicPush(args...);
         return g_lua.signalCall(1 + numArgs);
     } else {
         g_lua.pop(2);
@@ -171,7 +171,7 @@ int LuaObject::luaCallLuaField(const std::string& field, const T&... args) {
 template<typename R, typename... T>
 R LuaObject::callLuaField(const std::string& field, const T&... args) {
     R result;
-    const int rets = luaCallLuaField(field, args...);
+    int rets = luaCallLuaField(field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();
@@ -182,7 +182,7 @@ R LuaObject::callLuaField(const std::string& field, const T&... args) {
 
 template<typename... T>
 void LuaObject::callLuaField(const std::string& field, const T&... args) {
-    const int rets = luaCallLuaField(field, args...);
+    int rets = luaCallLuaField(field, args...);
     if(rets > 0)
         g_lua.pop(rets);
 }

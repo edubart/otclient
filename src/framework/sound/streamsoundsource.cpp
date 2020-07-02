@@ -180,7 +180,7 @@ bool StreamSoundSource::fillBufferAndQueue(uint buffer)
     }
 
     // return false if there aren't more buffers to fill
-    return bytesRead >= STREAM_FRAGMENT_SIZE && !m_eof;
+    return (bytesRead >= STREAM_FRAGMENT_SIZE && !m_eof);
 }
 
 void StreamSoundSource::downMix(StreamSoundSource::DownMix downMix)

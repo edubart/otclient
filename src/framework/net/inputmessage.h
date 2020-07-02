@@ -49,14 +49,10 @@ public:
     std::string getString();
     double getDouble();
 
-    uint8 peekU8() {
-        const uint8 v = getU8(); m_readPos-=1; return v; }
-    uint16 peekU16() {
-        const uint16 v = getU16(); m_readPos-=2; return v; }
-    uint32 peekU32() {
-        const uint32 v = getU32(); m_readPos-=4; return v; }
-    uint64 peekU64() {
-        const uint64 v = getU64(); m_readPos-=8; return v; }
+    uint8 peekU8() { uint8 v = getU8(); m_readPos-=1; return v; }
+    uint16 peekU16() { uint16 v = getU16(); m_readPos-=2; return v; }
+    uint32 peekU32() { uint32 v = getU32(); m_readPos-=4; return v; }
+    uint64 peekU64() { uint64 v = getU64(); m_readPos-=8; return v; }
 
     bool decryptRsa(int size);
 
@@ -65,7 +61,7 @@ public:
     int getUnreadSize() { return m_messageSize - (m_readPos - m_headerPos); }
     uint16 getMessageSize() { return m_messageSize; }
 
-    bool eof() { return m_readPos - m_headerPos >= m_messageSize; }
+    bool eof() { return (m_readPos - m_headerPos) >= m_messageSize; }
 
 protected:
     void reset();
@@ -77,7 +73,7 @@ protected:
     uint8* getReadBuffer() { return m_buffer + m_readPos; }
     uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
     uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
-    uint16 getHeaderSize() { return MAX_HEADER_SIZE - m_headerPos; }
+    uint16 getHeaderSize() { return (MAX_HEADER_SIZE - m_headerPos); }
 
     uint16 readSize() { return getU16(); }
     bool readChecksum();

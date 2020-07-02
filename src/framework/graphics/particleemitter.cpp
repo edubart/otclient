@@ -78,26 +78,26 @@ void ParticleEmitter::update(float elapsedTime, const ParticleSystemPtr& system)
     if(!m_active)
         return;
 
-    const int nextBurst = std::floor((m_elapsedTime - m_delay) * m_burstRate) + 1;
+    int nextBurst = std::floor((m_elapsedTime - m_delay) * m_burstRate) + 1;
     const ParticleType *type = m_particleType.get();
     for(int b = m_currentBurst; b < nextBurst; ++b) {
         // every burst created at same position.
-        const float pRadius = stdext::random_range(type->pMinPositionRadius, type->pMaxPositionRadius);
-        const float pAngle = stdext::random_range(type->pMinPositionAngle, type->pMaxPositionAngle);
+        float pRadius = stdext::random_range(type->pMinPositionRadius, type->pMaxPositionRadius);
+        float pAngle = stdext::random_range(type->pMinPositionAngle, type->pMaxPositionAngle);
 
         Point pPosition = m_position + Point(pRadius * std::cos(pAngle), pRadius * std::sin(pAngle));
 
         for(int p = 0; p < m_burstCount; ++p) {
-            const float pDuration = stdext::random_range(type->pMinDuration, type->pMaxDuration);
+            float pDuration = stdext::random_range(type->pMinDuration, type->pMaxDuration);
 
             // particles initial velocity
-            const float pVelocityAbs = stdext::random_range(type->pMinVelocity, type->pMaxVelocity);
-            const float pVelocityAngle = stdext::random_range(type->pMinVelocityAngle, type->pMaxVelocityAngle);
+            float pVelocityAbs = stdext::random_range(type->pMinVelocity, type->pMaxVelocity);
+            float pVelocityAngle = stdext::random_range(type->pMinVelocityAngle, type->pMaxVelocityAngle);
             PointF pVelocity(pVelocityAbs * std::cos(pVelocityAngle), pVelocityAbs * std::sin(pVelocityAngle));
 
             // particles initial acceleration
-            const float pAccelerationAbs = stdext::random_range(type->pMinAcceleration, type->pMaxAcceleration);
-            const float pAccelerationAngle = stdext::random_range(type->pMinAccelerationAngle, type->pMaxAccelerationAngle);
+            float pAccelerationAbs = stdext::random_range(type->pMinAcceleration, type->pMaxAcceleration);
+            float pAccelerationAngle = stdext::random_range(type->pMinAccelerationAngle, type->pMaxAccelerationAngle);
             PointF pAcceleration(pAccelerationAbs * std::cos(pAccelerationAngle), pAccelerationAbs * std::sin(pAccelerationAngle));
 
             ParticlePtr particle(new Particle(pPosition, type->pStartSize, type->pFinalSize,

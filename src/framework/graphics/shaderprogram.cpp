@@ -72,7 +72,7 @@ bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const
 
 void ShaderProgram::removeShader(const ShaderPtr& shader)
 {
-    const auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
+    auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
     if(it == m_shaders.end())
         return;
 
@@ -96,7 +96,7 @@ bool ShaderProgram::link()
 
     int value = GL_FALSE;
     glGetProgramiv(m_programId, GL_LINK_STATUS, &value);
-    m_linked = value != GL_FALSE;
+    m_linked = (value != GL_FALSE);
 
     if(!m_linked)
         g_logger.traceWarning(log());

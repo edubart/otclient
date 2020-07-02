@@ -351,28 +351,28 @@ void UIWidget::drawBorder(const Rect& screenCoords)
     if(m_borderWidth.top > 0) {
         g_painter->setColor(m_borderColor.top);
 
-        const Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
+        Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
         g_painter->drawFilledRect(borderRect);
     }
     // right
     if(m_borderWidth.right > 0) {
         g_painter->setColor(m_borderColor.right);
 
-        const Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
+        Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
         g_painter->drawFilledRect(borderRect);
     }
     // bottom
     if(m_borderWidth.bottom > 0) {
         g_painter->setColor(m_borderColor.bottom);
 
-        const Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
+        Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
         g_painter->drawFilledRect(borderRect);
     }
     // left
     if(m_borderWidth.left > 0) {
         g_painter->setColor(m_borderColor.left);
 
-        const Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
+        Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
         g_painter->drawFilledRect(borderRect);
     }
 }

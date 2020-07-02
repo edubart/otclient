@@ -48,7 +48,7 @@ const char* demangle_name(const char* name)
     static char Buffer[BufferSize] = {};
 
 #ifdef _MSC_VER
-    const int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
+    int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
     Buffer[written] = '\0';
 #else
     size_t len;

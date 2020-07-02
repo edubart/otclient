@@ -64,7 +64,7 @@ void Graphics::init()
     g_painterOGL1 = new PainterOGL1;
 #else
     // init GL extensions
-    const GLenum err = glewInit();
+    GLenum err = glewInit();
     if(err != GLEW_OK)
         g_logger.fatal(stdext::format("Unable to init GLEW: %s", glewGetErrorString(err)));
 

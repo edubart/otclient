@@ -65,11 +65,11 @@ void PainterOGL2::unbind()
 
 void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
-    const int vertexCount = coordsBuffer.getVertexCount();
+    int vertexCount = coordsBuffer.getVertexCount();
     if(vertexCount == 0)
         return;
 
-    const bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
+    bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
 
     // skip drawing of empty textures
     if(textured && m_texture->isEmpty())
@@ -90,7 +90,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
     // update coords buffer hardware caches if enabled
     coordsBuffer.updateCaches();
-    const bool hardwareCached = coordsBuffer.isHardwareCached();
+    bool hardwareCached = coordsBuffer.isHardwareCached();
 
     // only set texture coords arrays when needed
     if(textured) {

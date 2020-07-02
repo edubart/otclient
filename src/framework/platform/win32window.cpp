@@ -31,12 +31,12 @@
 
 WIN32Window::WIN32Window()
 {
-    m_window = nullptr;
-    m_instance = nullptr;
-    m_deviceContext = nullptr;
-    m_cursor = nullptr;
-    m_minimumSize = Size(600, 480);
-    m_size = Size(600, 480);
+    m_window = 0;
+    m_instance = 0;
+    m_deviceContext = 0;
+    m_cursor = 0;
+    m_minimumSize = Size(600,480);
+    m_size = Size(600,480);
     m_hidden = true;
 
 #ifdef OPENGL_ES
@@ -45,7 +45,7 @@ WIN32Window::WIN32Window()
     m_eglDisplay = 0;
     m_eglSurface = 0;
 #else
-    m_wglContext = nullptr;
+    m_wglContext = 0;
 #endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
@@ -202,7 +202,7 @@ WIN32Window::WIN32Window()
 
 void WIN32Window::init()
 {
-    m_instance = GetModuleHandle(nullptr);
+    m_instance = GetModuleHandle(NULL);
 
 #ifdef DIRECTX
     m_d3d = Direct3DCreate9(D3D_SDK_VERSION);    // create the Direct3D interface
@@ -216,11 +216,11 @@ void WIN32Window::init()
 
     // create a device class using this information and information from the d3dpp stuct
     m_d3d->CreateDevice(D3DADAPTER_DEFAULT,
-                        D3DDEVTYPE_HAL,
-                        m_window,
-                        D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-                        &d3dpp,
-                        &m_d3ddev);
+                      D3DDEVTYPE_HAL,
+                      m_window,
+                      D3DCREATE_SOFTWARE_VERTEXPROCESSING,
+                      &d3dpp,
+                      &m_d3ddev);
 
 #endif
 
@@ -231,10 +231,10 @@ void WIN32Window::init()
 
 void WIN32Window::terminate()
 {
-    SetCursor(nullptr);
+    SetCursor(NULL);
     if(m_defaultCursor) {
         DestroyCursor(m_defaultCursor);
-        m_defaultCursor = nullptr;
+        m_defaultCursor = NULL;
     }
 
     for(HCURSOR& cursor : m_cursors)
@@ -246,68 +246,67 @@ void WIN32Window::terminate()
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
             g_logger.error("Release device context failed.");
-        m_deviceContext = nullptr;
+        m_deviceContext = NULL;
     }
 
     if(m_window) {
         if(!DestroyWindow(m_window))
             g_logger.error("ERROR: Destroy window failed.");
-        m_window = nullptr;
+        m_window = NULL;
     }
 
     if(m_instance) {
         if(!UnregisterClassA(g_app.getCompactName().c_str(), m_instance))
             g_logger.error("UnregisterClassA failed");
-        m_instance = nullptr;
+        m_instance = NULL;
     }
 }
 
 struct WindowProcProxy {
-    static LRESULT CALLBACK call(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-    {
-        WIN32Window* window = static_cast<WIN32Window*>(&g_window);
+    static LRESULT CALLBACK call(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+        WIN32Window *window = (WIN32Window*)&g_window;
         return window->windowProc(hWnd, uMsg, wParam, lParam);
     }
 };
 
 void WIN32Window::internalCreateWindow()
 {
-    m_defaultCursor = LoadCursor(nullptr, IDC_ARROW);
+    m_defaultCursor = LoadCursor(NULL, IDC_ARROW);
     WNDCLASSA wc;
-    wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc = static_cast<WNDPROC>(WindowProcProxy::call);
-    wc.cbClsExtra = 0;
-    wc.cbWndExtra = 0;
-    wc.hInstance = m_instance;
-    wc.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
-    wc.hCursor = m_defaultCursor;
-    wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    wc.lpszMenuName = nullptr;
-    wc.lpszClassName = g_app.getCompactName().c_str();
+    wc.style            = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.lpfnWndProc      = (WNDPROC)WindowProcProxy::call;
+    wc.cbClsExtra       = 0;
+    wc.cbWndExtra       = 0;
+    wc.hInstance        = m_instance;
+    wc.hIcon            = LoadIcon(NULL, IDI_WINLOGO);
+    wc.hCursor          = m_defaultCursor;
+    wc.hbrBackground    = (HBRUSH)GetStockObject(WHITE_BRUSH);
+    wc.lpszMenuName     = NULL;
+    wc.lpszClassName    = g_app.getCompactName().c_str();
 
     if(!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
-    const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    const DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+    DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
     // initialize in the center of the screen
     m_position = ((getDisplaySize() - m_size) / 2).toPoint();
 
-    const Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
+    Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
                                g_app.getCompactName().c_str(),
-                               nullptr,
+                               NULL,
                                dwStyle,
                                screenRect.left(),
                                screenRect.top(),
                                screenRect.width(),
                                screenRect.height(),
-                               nullptr,
-                               nullptr,
+                               NULL,
+                               NULL,
                                m_instance,
-                               nullptr);
+                               NULL);
 
     if(!m_window)
         g_logger.fatal("Unable to create window");
@@ -367,7 +366,7 @@ void WIN32Window::internalCreateGLContext()
         g_logger.fatal(stdext::format("Unable to create EGL surface: %s", eglGetError()));
 
     m_eglContext = eglCreateContext(m_eglDisplay, m_eglConfig, EGL_NO_CONTEXT, contextAtrrList);
-    if(m_eglContext == EGL_NO_CONTEXT)
+    if(m_eglContext == EGL_NO_CONTEXT )
         g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
 
 #else
@@ -396,7 +395,7 @@ void WIN32Window::internalCreateGLContext()
     if(!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
         g_logger.fatal("Could not set the pixel format");
 
-    if((m_wglContext = wglCreateContext(m_deviceContext)) == nullptr)
+    if(!(m_wglContext = wglCreateContext(m_deviceContext)))
         g_logger.fatal("Unable to create GL context");
 #endif
 }
@@ -418,11 +417,11 @@ void WIN32Window::internalDestroyGLContext()
     }
 #else
     if(m_wglContext) {
-        if(!wglMakeCurrent(nullptr, nullptr))
+        if(!wglMakeCurrent(NULL, NULL))
             g_logger.error("Release of dc and rc failed.");
         if(!wglDeleteContext(m_wglContext))
             g_logger.error("Release rendering context failed.");
-        m_wglContext = nullptr;
+        m_wglContext = NULL;
     }
 #endif
 }
@@ -438,18 +437,18 @@ void WIN32Window::internalRestoreGLContext()
 #endif
 }
 
-bool WIN32Window::isExtensionSupported(const char* ext)
+bool WIN32Window::isExtensionSupported(const char *ext)
 {
 #ifdef OPENGL_ES
     //TODO
     return false;
 #else
-    typedef const char* (WINAPI* wglGetExtensionsStringProc)();
-    const wglGetExtensionsStringProc wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
+    typedef const char* (WINAPI * wglGetExtensionsStringProc)();
+    wglGetExtensionsStringProc wglGetExtensionsString = (wglGetExtensionsStringProc)getExtensionProcAddress("wglGetExtensionsStringEXT");
     if(!wglGetExtensionsString)
         return false;
 
-    const char* exts = wglGetExtensionsString();
+    const char *exts = wglGetExtensionsString();
     if(exts && strstr(exts, ext))
         return true;
 
@@ -457,20 +456,20 @@ bool WIN32Window::isExtensionSupported(const char* ext)
 #endif
 }
 
-void* WIN32Window::getExtensionProcAddress(const char* ext)
+void *WIN32Window::getExtensionProcAddress(const char *ext)
 {
 #ifdef OPENGL_ES
     //TODO
     return NULL;
 #else
-    return static_cast<void*>(wglGetProcAddress(ext));
+    return (void*)wglGetProcAddress(ext);
 #endif
 }
 
 void WIN32Window::move(const Point& pos)
 {
-    const Rect clientRect(pos, getClientRect().size());
-    const Rect windowRect = adjustWindowRect(clientRect);
+    Rect clientRect(pos, getClientRect().size());
+    Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if(m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -480,8 +479,8 @@ void WIN32Window::resize(const Size& size)
 {
     if(size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
         return;
-    const Rect clientRect(getClientRect().topLeft(), size);
-    const Rect windowRect = adjustWindowRect(clientRect);
+    Rect clientRect(getClientRect().topLeft(), size);
+    Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if(m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -515,7 +514,7 @@ void WIN32Window::poll()
     fireKeysPress();
 
     MSG msg;
-    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -526,34 +525,34 @@ void WIN32Window::poll()
 Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
 {
     // ignore numpad keys when numlock is on
-    if(wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9 || wParam == VK_SEPARATOR)
+    if((wParam >= VK_NUMPAD0 && wParam <= VK_NUMPAD9) || wParam == VK_SEPARATOR)
         return Fw::KeyUnknown;
 
     // lParam will have this state when receiving insert,end,down,etc presses from numpad
-    if(!(HIWORD(lParam) >> 8 & 0xFF & 1)) {
-        const bool numlockOn = GetKeyState(VK_NUMLOCK);
+    if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
+        bool numlockOn = GetKeyState(VK_NUMLOCK);
         // retranslate numpad keys
         switch(wParam) {
-        case VK_INSERT:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad0;
-        case VK_END:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad1;
-        case VK_DOWN:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad2;
-        case VK_NEXT:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad3;
-        case VK_LEFT:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad4;
-        case VK_CLEAR:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad5;
-        case VK_RIGHT:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad6;
-        case VK_HOME:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad7;
-        case VK_UP:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad8;
-        case VK_PRIOR:
-            return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad9;
+            case VK_INSERT:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad0;
+            case VK_END:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad1;
+            case VK_DOWN:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad2;
+            case VK_NEXT:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad3;
+            case VK_LEFT:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad4;
+            case VK_CLEAR:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad5;
+            case VK_RIGHT:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad6;
+            case VK_HOME:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad7;
+            case VK_UP:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad8;
+            case VK_PRIOR:
+                return numlockOn ? Fw::KeyUnknown : Fw::KeyNumpad9;
         }
     }
 
@@ -582,203 +581,183 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
     switch(uMsg)
     {
-    case WM_SETCURSOR:
-    {
-        if(m_cursor)
-            SetCursor(m_cursor);
-        else
-            return DefWindowProc(hWnd, uMsg, wParam, lParam);
-        break;
-    }
-    case WM_ACTIVATE:
-    {
-        m_focused = !(wParam == WA_INACTIVE);
-        releaseAllKeys();
-        break;
-    }
-    case WM_SETFOCUS:
-    case WM_KILLFOCUS:
-    {
-        releaseAllKeys();
-        break;
-    }
-    case WM_CHAR:
-    {
-        if(wParam >= 32 && wParam <= 255) {
-            m_inputEvent.reset(Fw::KeyTextInputEvent);
-            m_inputEvent.keyText = wParam;
+        case WM_SETCURSOR: {
+            if(m_cursor)
+                SetCursor(m_cursor);
+            else
+                return DefWindowProc(hWnd, uMsg, wParam, lParam);
+            break;
+        }
+        case WM_ACTIVATE: {
+            m_focused = !(wParam == WA_INACTIVE);
+            releaseAllKeys();
+            break;
+        }
+        case WM_SETFOCUS:
+        case WM_KILLFOCUS: {
+            releaseAllKeys();
+            break;
+        }
+        case WM_CHAR: {
+            if(wParam >= 32 && wParam <= 255) {
+                m_inputEvent.reset(Fw::KeyTextInputEvent);
+                m_inputEvent.keyText = wParam;
+                if(m_onInputEvent)
+                    m_onInputEvent(m_inputEvent);
+            }
+            break;
+        }
+        case WM_CLOSE: {
+            m_onClose();
+            break;
+        }
+        case WM_KEYDOWN: {
+            processKeyDown(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
+        case WM_KEYUP: {
+            processKeyUp(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
+        case WM_SYSKEYUP: {
+            processKeyUp(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
+        case WM_SYSKEYDOWN: {
+            if(wParam == VK_F4 && m_inputEvent.keyboardModifiers & Fw::KeyboardAltModifier)
+                return DefWindowProc(hWnd, uMsg, wParam, lParam);
+
+            processKeyDown(retranslateVirtualKey(wParam, lParam));
+            break;
+        }
+        case WM_LBUTTONDOWN: {
+            SetCapture(m_window);
+            m_inputEvent.reset(Fw::MousePressInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_mouseButtonStates[Fw::MouseLeftButton] = true;
             if(m_onInputEvent)
                 m_onInputEvent(m_inputEvent);
+            break;
         }
-        break;
-    }
-    case WM_CLOSE:
-    {
-        m_onClose();
-        break;
-    }
-    case WM_KEYDOWN:
-    {
-        processKeyDown(retranslateVirtualKey(wParam, lParam));
-        break;
-    }
-    case WM_KEYUP:
-    {
-        processKeyUp(retranslateVirtualKey(wParam, lParam));
-        break;
-    }
-    case WM_SYSKEYUP:
-    {
-        processKeyUp(retranslateVirtualKey(wParam, lParam));
-        break;
-    }
-    case WM_SYSKEYDOWN:
-    {
-        if(wParam == VK_F4 && m_inputEvent.keyboardModifiers & Fw::KeyboardAltModifier)
+        case WM_LBUTTONUP: {
+            SetCapture(NULL);
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseLeftButton;
+            m_mouseButtonStates[Fw::MouseLeftButton] = false;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_MBUTTONDOWN: {
+            SetCapture(m_window);
+            m_inputEvent.reset(Fw::MousePressInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_mouseButtonStates[Fw::MouseMidButton] = true;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_MBUTTONUP: {
+            SetCapture(NULL);
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_mouseButtonStates[Fw::MouseMidButton] = false;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_RBUTTONDOWN: {
+            SetCapture(m_window);
+            m_inputEvent.reset(Fw::MousePressInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_mouseButtonStates[Fw::MouseRightButton] = true;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_RBUTTONUP: {
+            SetCapture(NULL);
+            m_inputEvent.reset(Fw::MouseReleaseInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseRightButton;
+            m_mouseButtonStates[Fw::MouseRightButton] = false;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_MOUSEMOVE: {
+            m_inputEvent.reset(Fw::MouseMoveInputEvent);
+
+            Point newMousePos(LOWORD(lParam), HIWORD(lParam));
+            if(newMousePos.x >= 32767)
+                newMousePos.x = 0;
+            else
+                newMousePos.x = std::min<int32>(newMousePos.x, m_size.width());
+
+            if(newMousePos.y >= 32767)
+                newMousePos.y = 0;
+            else
+                newMousePos.y = std::min<int32>(newMousePos.y, m_size.height());
+
+            m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
+            m_inputEvent.mousePos = newMousePos;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_MOUSEWHEEL: {
+            m_inputEvent.reset(Fw::MouseWheelInputEvent);
+            m_inputEvent.mouseButton = Fw::MouseMidButton;
+            m_inputEvent.wheelDirection = ((short)HIWORD(wParam)) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
+            if(m_onInputEvent)
+                m_onInputEvent(m_inputEvent);
+            break;
+        }
+        case WM_MOVE: {
+            m_position.x = (short)LOWORD(lParam);
+            m_position.y = (short)HIWORD(lParam);
+            break;
+        }
+        case WM_GETMINMAXINFO: {
+            LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
+            Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
+            pMMI->ptMinTrackSize.x = adjustedRect.width();
+            pMMI->ptMinTrackSize.y = adjustedRect.height();
+            break;
+        }
+        case WM_SIZE: {
+            bool forceResize = false;
+            switch(wParam) {
+                case SIZE_MAXIMIZED:
+                    m_maximized = true;
+                    m_visible = true;
+                    forceResize = true;
+                    break;
+                case SIZE_RESTORED:
+                    m_maximized = false;
+                    m_visible = true;
+                    forceResize = true;
+                    break;
+                case SIZE_MINIMIZED:
+                    m_visible = false;
+                    break;
+            }
+
+            if(m_visible && m_deviceContext)
+                internalRestoreGLContext();
+
+            Size size = Size(LOWORD(lParam), HIWORD(lParam));
+            size.setWidth(std::max<int32>(std::min<int32>(size.width(), 7680), 32));
+            size.setHeight(std::max<int32>(std::min<int32>(size.height(), 4320), 32));
+
+            if(m_visible && (forceResize || m_size != size)) {
+                m_size = size;
+                m_onResize(m_size);
+            }
+
+            break;
+        }
+        default:
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
-
-        processKeyDown(retranslateVirtualKey(wParam, lParam));
-        break;
-    }
-    case WM_LBUTTONDOWN:
-    {
-        SetCapture(m_window);
-        m_inputEvent.reset(Fw::MousePressInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseLeftButton;
-        m_mouseButtonStates[Fw::MouseLeftButton] = true;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_LBUTTONUP:
-    {
-        SetCapture(nullptr);
-        m_inputEvent.reset(Fw::MouseReleaseInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseLeftButton;
-        m_mouseButtonStates[Fw::MouseLeftButton] = false;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_MBUTTONDOWN:
-    {
-        SetCapture(m_window);
-        m_inputEvent.reset(Fw::MousePressInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseMidButton;
-        m_mouseButtonStates[Fw::MouseMidButton] = true;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_MBUTTONUP:
-    {
-        SetCapture(nullptr);
-        m_inputEvent.reset(Fw::MouseReleaseInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseMidButton;
-        m_mouseButtonStates[Fw::MouseMidButton] = false;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_RBUTTONDOWN:
-    {
-        SetCapture(m_window);
-        m_inputEvent.reset(Fw::MousePressInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseRightButton;
-        m_mouseButtonStates[Fw::MouseRightButton] = true;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_RBUTTONUP:
-    {
-        SetCapture(nullptr);
-        m_inputEvent.reset(Fw::MouseReleaseInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseRightButton;
-        m_mouseButtonStates[Fw::MouseRightButton] = false;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_MOUSEMOVE:
-    {
-        m_inputEvent.reset(Fw::MouseMoveInputEvent);
-
-        Point newMousePos(LOWORD(lParam), HIWORD(lParam));
-        if(newMousePos.x >= 32767)
-            newMousePos.x = 0;
-        else
-            newMousePos.x = std::min<int32>(newMousePos.x, m_size.width());
-
-        if(newMousePos.y >= 32767)
-            newMousePos.y = 0;
-        else
-            newMousePos.y = std::min<int32>(newMousePos.y, m_size.height());
-
-        m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
-        m_inputEvent.mousePos = newMousePos;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_MOUSEWHEEL:
-    {
-        m_inputEvent.reset(Fw::MouseWheelInputEvent);
-        m_inputEvent.mouseButton = Fw::MouseMidButton;
-        m_inputEvent.wheelDirection = static_cast<short>(HIWORD(wParam)) > 0 ? Fw::MouseWheelUp : Fw::MouseWheelDown;
-        if(m_onInputEvent)
-            m_onInputEvent(m_inputEvent);
-        break;
-    }
-    case WM_MOVE:
-    {
-        m_position.x = static_cast<short>(LOWORD(lParam));
-        m_position.y = static_cast<short>(HIWORD(lParam));
-        break;
-    }
-    case WM_GETMINMAXINFO:
-    {
-        const LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
-        const Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
-        pMMI->ptMinTrackSize.x = adjustedRect.width();
-        pMMI->ptMinTrackSize.y = adjustedRect.height();
-        break;
-    }
-    case WM_SIZE:
-    {
-        bool forceResize = false;
-        switch(wParam) {
-        case SIZE_MAXIMIZED:
-            m_maximized = true;
-            m_visible = true;
-            forceResize = true;
-            break;
-        case SIZE_RESTORED:
-            m_maximized = false;
-            m_visible = true;
-            forceResize = true;
-            break;
-        case SIZE_MINIMIZED:
-            m_visible = false;
-            break;
-        }
-
-        if(m_visible && m_deviceContext)
-            internalRestoreGLContext();
-
-        Size size = Size(LOWORD(lParam), HIWORD(lParam));
-        size.setWidth(std::max<int32>(std::min<int32>(size.width(), 7680), 32));
-        size.setHeight(std::max<int32>(std::min<int32>(size.height(), 4320), 32));
-
-        if(m_visible && (forceResize || m_size != size)) {
-            m_size = size;
-            m_onResize(m_size);
-        }
-
-        break;
-    }
-    default:
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
 
     return 0;
@@ -810,16 +789,16 @@ void WIN32Window::displayFatalError(const std::string& message)
 
 int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
 {
-    const int width = image->getWidth();
-    const int height = image->getHeight();
-    const int numbits = width * height;
-    const int numbytes = width * height / 8;
+    int width = image->getWidth();
+    int height = image->getHeight();
+    int numbits = width * height;
+    int numbytes = (width * height)/8;
 
     std::vector<uchar> andMask(numbytes, 0);
     std::vector<uchar> xorMask(numbytes, 0);
 
-    for(int i = 0; i < numbits; ++i) {
-        const uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
+    for(int i=0;i<numbits;++i) {
+        uint32 rgba = stdext::readULE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         } else if(rgba == 0x00000000) { //alpha
@@ -827,14 +806,14 @@ int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hot
         } // otherwise 0xff000000 => black
     }
 
-    const HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
     m_cursors.push_back(cursor);
-    return m_cursors.size() - 1;
+    return m_cursors.size()-1;
 }
 
 void WIN32Window::setMouseCursor(int cursorId)
 {
-    if(cursorId >= static_cast<int>(m_cursors.size()) || cursorId < 0)
+    if(cursorId >= (int)m_cursors.size() || cursorId < 0)
         return;
 
     m_cursor = m_cursors[cursorId];
@@ -845,7 +824,7 @@ void WIN32Window::setMouseCursor(int cursorId)
 void WIN32Window::restoreMouseCursor()
 {
     if(m_cursor) {
-        m_cursor = nullptr;
+        m_cursor = NULL;
         SetCursor(m_defaultCursor);
         ShowCursor(true);
     }
@@ -868,17 +847,17 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
     m_fullscreen = fullscreen;
 
-    const DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
+    DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
     static WINDOWPLACEMENT wpPrev;
-    wpPrev.length = sizeof wpPrev;
+    wpPrev.length = sizeof(wpPrev);
 
     if(fullscreen) {
-        const Size size = getDisplaySize();
+        Size size = getDisplaySize();
         GetWindowPlacement(m_window, &wpPrev);
-        SetWindowLong(m_window, GWL_STYLE, dwStyle & ~WS_OVERLAPPEDWINDOW | WS_POPUP | WS_EX_TOPMOST);
+        SetWindowLong(m_window, GWL_STYLE, (dwStyle & ~WS_OVERLAPPEDWINDOW) | WS_POPUP | WS_EX_TOPMOST);
         SetWindowPos(m_window, HWND_TOPMOST, 0, 0, size.width(), size.height(), SWP_FRAMECHANGED);
     } else {
-        SetWindowLong(m_window, GWL_STYLE, dwStyle & ~(WS_POPUP | WS_EX_TOPMOST) | WS_OVERLAPPEDWINDOW);
+        SetWindowLong(m_window, GWL_STYLE, (dwStyle & ~(WS_POPUP | WS_EX_TOPMOST)) | WS_OVERLAPPEDWINDOW);
         SetWindowPlacement(m_window, &wpPrev);
         SetWindowPos(m_window, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
     }
@@ -892,8 +871,8 @@ void WIN32Window::setVerticalSync(bool enable)
     if(!isExtensionSupported("WGL_EXT_swap_control"))
         return;
 
-    typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
-    const wglSwapIntervalProc wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
+    typedef BOOL (WINAPI * wglSwapIntervalProc)(int);
+    wglSwapIntervalProc wglSwapInterval = (wglSwapIntervalProc)getExtensionProcAddress("wglSwapIntervalEXT");
     if(!wglSwapInterval)
         return;
 
@@ -915,18 +894,18 @@ void WIN32Window::setIcon(const std::string& file)
         return;
     }
 
-    const int n = image->getWidth() * image->getHeight();
+    int n = image->getWidth() * image->getHeight();
     std::vector<uint32> iconData(n);
-    for(int i = 0; i < n; ++i) {
-        uint8* pixel = (uint8*)&iconData[i];
-        pixel[2] = *(image->getPixelData() + i * 4 + 0);
-        pixel[1] = *(image->getPixelData() + i * 4 + 1);
-        pixel[0] = *(image->getPixelData() + i * 4 + 2);
-        pixel[3] = *(image->getPixelData() + i * 4 + 3);
+    for(int i=0; i < n;++i) {
+        uint8 *pixel = (uint8*)&iconData[i];
+        pixel[2] = *(image->getPixelData() + (i * 4) + 0);
+        pixel[1] = *(image->getPixelData() + (i * 4) + 1);
+        pixel[0] = *(image->getPixelData() + (i * 4) + 2);
+        pixel[3] = *(image->getPixelData() + (i * 4) + 3);
     }
 
-    const HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
-    const HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(nullptr), image->getWidth(), image->getHeight());
+    HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
+    HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), image->getWidth(), image->getHeight());
 
     ICONINFO ii;
     ii.fIcon = TRUE;
@@ -948,15 +927,15 @@ void WIN32Window::setClipboardText(const std::string& text)
     if(!OpenClipboard(m_window))
         return;
 
-    const HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
+    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
     if(!hglb)
         return;
 
     std::wstring wtext = stdext::latin1_to_utf16(text);
 
-    const LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+    LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
     memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
-    lpwstr[text.length()] = static_cast<WCHAR>(0);
+    lpwstr[text.length()] = (WCHAR)0;
     GlobalUnlock(hglb);
 
     EmptyClipboard();
@@ -976,9 +955,9 @@ std::string WIN32Window::getClipboardText()
     if(!OpenClipboard(m_window))
         return text;
 
-    const HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
+    HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if(hglb) {
-        const LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+        LPWSTR lpwstr = (LPWSTR)GlobalLock(hglb);
         if(lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);
@@ -1001,8 +980,8 @@ std::string WIN32Window::getPlatformType()
 Rect WIN32Window::getClientRect()
 {
     if(m_window) {
-        RECT clientRect = { 0,0,0,0 };
-        const int ret = GetClientRect(m_window, &clientRect);
+        RECT clientRect = {0,0,0,0};
+        int ret = GetClientRect(m_window, &clientRect);
         assert(ret != 0);
         return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
     } else {
@@ -1013,8 +992,8 @@ Rect WIN32Window::getClientRect()
 Rect WIN32Window::getWindowRect()
 {
     if(m_window) {
-        RECT windowRect = { 0,0,0,0 };
-        const int ret = GetWindowRect(m_window, &windowRect);
+        RECT windowRect = {0,0,0,0};
+        int ret = GetWindowRect(m_window, &windowRect);
         assert(ret != 0);
         return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
     } else {
@@ -1039,7 +1018,7 @@ Rect WIN32Window::adjustWindowRect(const Rect& clientRect)
         rect = Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
     } else {
         g_logger.traceError("AdjustWindowRectEx failed");
-        rect = Rect(0, 0, m_minimumSize);
+        rect = Rect(0,0, m_minimumSize);
     }
     return rect;
 }

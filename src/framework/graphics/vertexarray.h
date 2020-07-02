@@ -36,10 +36,10 @@ public:
         addVertex(c.x, c.y);
     }
     inline void addRect(const Rect& rect) {
-        const float top = rect.top();
-        const float right = rect.right()+1;
-        const float bottom = rect.bottom()+1;
-        const float left = rect.left();
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
 
         addVertex(left, top);
         addVertex(right, top);
@@ -50,10 +50,10 @@ public:
     }
 
     inline void addQuad(const Rect& rect) {
-        const float top = rect.top();
-        const float right = rect.right()+1;
-        const float bottom = rect.bottom()+1;
-        const float left = rect.left();
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
 
         addVertex(left, top);
         addVertex(right, top);
@@ -62,10 +62,10 @@ public:
     }
 
     inline void addUpsideDownQuad(const Rect& rect) {
-        const float top = rect.top();
-        const float right = rect.right()+1;
-        const float bottom = rect.bottom()+1;
-        const float left = rect.left();
+        float top = rect.top();
+        float right = rect.right()+1;
+        float bottom = rect.bottom()+1;
+        float left = rect.left();
 
         addVertex(left, bottom);
         addVertex(right, bottom);

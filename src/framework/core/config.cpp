@@ -40,7 +40,7 @@ bool Config::load(const std::string& file)
         return false;
 
     try {
-        const OTMLDocumentPtr confsDoc = OTMLDocument::parse(file);
+        OTMLDocumentPtr confsDoc = OTMLDocument::parse(file);
         if(confsDoc)
             m_confsDoc = confsDoc;
         return true;
@@ -79,7 +79,7 @@ void Config::setValue(const std::string& key, const std::string& value)
         return;
     }
 
-    const OTMLNodePtr child = OTMLNode::create(key, value);
+    OTMLNodePtr child = OTMLNode::create(key, value);
     m_confsDoc->addChild(child);
 }
 
@@ -123,7 +123,7 @@ std::vector<std::string> Config::getList(const std::string& key)
 
 void Config::remove(const std::string& key)
 {
-    const OTMLNodePtr child = m_confsDoc->get(key);
+    OTMLNodePtr child = m_confsDoc->get(key);
     if(child)
         m_confsDoc->removeChild(child);
 }
