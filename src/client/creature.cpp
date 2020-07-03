@@ -580,6 +580,9 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
+    // Generate step cache for creature
+    if(!isLocalPlayer()) getStepDuration(true);
+
     // update walk animation
     updateWalkAnimation();
 

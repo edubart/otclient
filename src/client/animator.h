@@ -47,45 +47,40 @@ public:
 
     void unserialize(int animationPhases, const FileStreamPtr& fin);
     void serialize(const FileStreamPtr& fin);
-
     void setPhase(int phase);
+    void resetAnimation();
+
     int getPhase();
     int getPhaseAt(ticks_t time);
-
     int getStartPhase() const;
     int getAnimationPhases() { return m_animationPhases; }
+    int getAverageDuration() { return getTotalDuration() / getAnimationPhases(); }
+
     bool isAsync() { return m_async; }
     bool isComplete() { return m_isComplete; }
 
     ticks_t getTotalDuration();
 
-    int getAverageDuration()
-    {
-        return getTotalDuration() / getAnimationPhases();
-    }
-
-    void resetAnimation();
-
 private:
     int getPingPongPhase();
     int getLoopPhase();
     int getPhaseDuration(int phase);
+
     void calculateSynchronous();
 
+    int m_currentDuration;
     int m_animationPhases;
+    int m_currentLoop;
     int m_startPhase;
     int m_loopCount;
-    bool m_async;
-    std::vector< std::tuple<int, int> > m_phaseDurations;
-
-    int m_currentDuration;
-    AnimationDirection m_currentDirection;
-    int m_currentLoop;
-
-    ticks_t m_lastPhaseTicks;
-    bool m_isComplete;
-
     int m_phase;
+
+    bool m_isComplete;
+    bool m_async;
+
+    std::vector<std::tuple<int, int>> m_phaseDurations;
+    AnimationDirection m_currentDirection;
+    ticks_t m_lastPhaseTicks;
 };
 
 #endif
