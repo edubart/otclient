@@ -607,11 +607,11 @@ int ThingType::getExactHeight()
     return m_exactHeight = size.height();
 }
 
-void ThingType::startListenerPainter(const float duration, const bool redrawLight)
+void ThingType::startListenerPainter(const float duration)
 {
     if(m_countPainterListeningRef == 0) {
         m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
-            const auto redrawFlag = redrawLight && hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
+            const auto redrawFlag = getCategory() == ThingCategoryMissile && hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
             g_map.requestDrawing(redrawFlag);
         }, duration);
     }

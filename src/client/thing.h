@@ -128,7 +128,7 @@ public:
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
-    void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration, hasLight()); }
+    void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration); }
     bool cancelListenerPainter() { return rawGetThingType()->cancelListenerPainter(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}

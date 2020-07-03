@@ -220,7 +220,7 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase);
 
-    void startListenerPainter(float duration, bool redrawLight = false);
+    void startListenerPainter(float duration);
     bool cancelListenerPainter();
 
 private:
