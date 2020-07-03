@@ -574,31 +574,31 @@ void Creature::nextWalkUpdate()
         self->nextWalkUpdate();
 
         self->requestDrawing();
-
     }, std::max<int>(m_stepCache.getDuration(m_lastStepDirection) / Otc::TILE_PIXELS, 15));
 }
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    // Generate step cache for creature
+    // Generate step cache for no-localPlayer
     if(!isLocalPlayer()) getStepDuration(true);
 
     // update walk animation
     updateWalkAnimation();
 
-    const float walkTicksPerPixel = m_stepCache.duration / Otc::TILE_PIXELS;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
+    int stepDuration = m_stepCache.duration + (12 - m_stepCache.duration * .01);
+    const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
+    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
 
     // needed for paralyze effect
-    if(isLocalPlayer()) totalPixelsWalked = std::max<int>(m_walkedPixels, totalPixelsWalked);
+    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
     // update offsets
-    updateWalkOffset(totalPixelsWalked);
+    updateWalkOffset(m_walkedPixels);
 
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are completed
-    if(m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= m_stepCache.duration) {
+    if(m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= stepDuration) {
         terminateWalk();
     }
 }
@@ -727,6 +727,16 @@ void Creature::setSpeed(uint16 speed)
 {
     const uint16 oldSpeed = m_speed;
     m_speed = speed;
+
+    // Cache for stepSpeed Law
+    if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
+        speed *= 2;
+
+        if(speed > -speedB) {
+            m_calculatedStepSpeed = floor((Creature::speedA * log((speed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
+            if(m_calculatedStepSpeed == 0) m_calculatedStepSpeed = 1;
+        } else m_calculatedStepSpeed = 1;
+    }
 
     // speed can change while walking (utani hur, paralyze, etc..)
     if(m_walking)
@@ -880,19 +890,7 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 
         double stepDuration = 1000. * groundSpeed;
         if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
-            stepSpeed *= 2;
-
-            uint32_t calculatedStepSpeed;
-            if(stepSpeed > -speedB) {
-                calculatedStepSpeed = floor((Creature::speedA * log((stepSpeed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
-                if(calculatedStepSpeed == 0) {
-                    calculatedStepSpeed = 1;
-                }
-            } else {
-                calculatedStepSpeed = 1;
-            }
-
-            stepDuration = std::floor(stepDuration / calculatedStepSpeed);
+            stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
         } else stepDuration /= stepSpeed;
 
         if(g_game.getClientVersion() >= 900) {

@@ -134,6 +134,8 @@ public:
         return positions;
     }
 
+    static bool isDiagonal(const Otc::Direction dir) { return dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast; };
+
     static double getAngleFromPositions(const Position& fromPos, const Position& toPos)
     {
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.

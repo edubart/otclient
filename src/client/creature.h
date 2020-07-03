@@ -154,7 +154,10 @@ protected:
     Otc::Direction m_direction;
     Outfit m_outfit;
     Light m_light;
+
     int m_speed;
+    int m_calculatedStepSpeed;
+
     double m_baseSpeed;
     uint8 m_healthPercent;
     uint8 m_skull;
@@ -215,11 +218,7 @@ private:
         int duration = 0;
         int diagonalDuration = 0;
 
-        int getDuration(Otc::Direction dir)
-        {
-            return dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast ?
-                diagonalDuration : duration;
-        }
+        int getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
     };
 
     StepCache m_stepCache;
