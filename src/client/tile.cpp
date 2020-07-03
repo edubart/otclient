@@ -242,7 +242,6 @@ bool Tile::removeThing(const ThingPtr& thing)
         const auto it = std::find(m_things.begin(), m_things.end(), thing);
         if(it != m_things.end()) {
             analyzeThing(thing, false);
-            m_things.erase(it);
 
             if(thing->isCreature()) {
                 const auto subIt = std::find(m_creatures.begin(), m_creatures.end(), thing->static_self_cast<Creature>());
@@ -272,6 +271,8 @@ bool Tile::removeThing(const ThingPtr& thing)
                     if(subIt != m_commonItems.end()) m_commonItems.erase(subIt);
                 }
             }
+
+            m_things.erase(it);
 
             removed = true;
         }
