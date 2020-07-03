@@ -595,7 +595,8 @@ void ThingType::setPathable(bool var)
 int ThingType::getAnimationPhases()
 {
     if(m_animator) return m_animator->getAnimationPhases();
-    else if(m_category == ThingCategoryCreature) m_animationPhases -= 1;
+
+    if(m_category == ThingCategoryCreature) return m_animationPhases - 1;
 
     return m_animationPhases;
 }
