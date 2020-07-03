@@ -64,30 +64,15 @@ void LocalPlayer::lockWalk(int millis)
 
 bool LocalPlayer::canWalk(Otc::Direction)
 {
-    // cannot walk while locked
-    if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
-        return false;
-
     // paralyzed
     if(m_speed == 0)
         return false;
 
-    const int stepDuration = getStepDuration();
-    const ticks_t walkTimerElapsed = m_walkTimer.ticksElapsed();
-
-    // last walk is not done yet
-    if(walkTimerElapsed < stepDuration && !isAutoWalking())
+    // cannot walk while locked
+    if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
         return false;
 
-    // prewalk has a timeout, because for some reason that I don't know yet the server sometimes doesn't answer the prewalk
-    const bool prewalkTimeouted = m_walking && m_preWalking && walkTimerElapsed >= stepDuration + PREWALK_TIMEOUT;
-
-    // avoid doing more walks than wanted when receiving a lot of walks from server
-    if(!m_lastPrewalkDone && m_preWalking && !prewalkTimeouted)
-        return false;
-
-    // cannot walk while already walking
-    if((m_walking && !isAutoWalking()) && (!prewalkTimeouted || m_secondPreWalk))
+    if(m_walkTimer.ticksElapsed() < getStepDuration() && !isAutoWalking())
         return false;
 
     return true;
