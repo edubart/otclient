@@ -213,12 +213,12 @@ private:
         int speed = 0;
         int groundSpeed = 0;
         int duration = 0;
-        int durationDiagonal = 0;
+        int diagonalDuration = 0;
 
         int getDuration(Otc::Direction dir)
         {
             return dir == Otc::NorthWest || dir == Otc::NorthEast || dir == Otc::SouthWest || dir == Otc::SouthEast ?
-                durationDiagonal : duration;
+                diagonalDuration : duration;
         }
     };
 

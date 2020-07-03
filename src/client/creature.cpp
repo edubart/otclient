@@ -575,17 +575,16 @@ void Creature::nextWalkUpdate()
 
         self->requestDrawing();
 
-    }, getStepDuration() / Otc::TILE_PIXELS);
+    }, std::max<int>(m_stepCache.getDuration(m_lastStepDirection) / Otc::TILE_PIXELS, 15));
 }
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    const int stepDuration = getStepDuration(true);
-    const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
-
     // update walk animation
     updateWalkAnimation();
+
+    const float walkTicksPerPixel = m_stepCache.duration / Otc::TILE_PIXELS;
+    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
 
     // needed for paralyze effect
     if(isLocalPlayer()) totalPixelsWalked = std::max<int>(m_walkedPixels, totalPixelsWalked);
@@ -596,7 +595,7 @@ void Creature::updateWalk(const bool isPreWalking)
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are completed
-    if(m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= stepDuration) {
+    if(m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= m_stepCache.duration) {
         terminateWalk();
     }
 }
@@ -899,13 +898,10 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         }
 
         m_stepCache.duration = stepDuration;
-        m_stepCache.durationDiagonal = stepDuration * (g_game.getClientVersion() <= 810 ? 2 : 3);
+        m_stepCache.diagonalDuration = stepDuration * (g_game.getClientVersion() <= 810 ? 2 : 3);
     }
 
-    const bool useDiagonalFormula = !ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
-                                                        m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast);
-
-    return useDiagonalFormula ? m_stepCache.durationDiagonal : m_stepCache.duration;
+    return ignoreDiagonal ? m_stepCache.duration : m_stepCache.getDuration(m_lastStepDirection);
 }
 
 Point Creature::getDisplacement()
