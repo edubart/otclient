@@ -592,6 +592,14 @@ void ThingType::setPathable(bool var)
         m_attribs.set(ThingAttrNotPathable, true);
 }
 
+int ThingType::getAnimationPhases()
+{
+    if(m_animator) return m_animator->getAnimationPhases();
+    else if(m_category == ThingCategoryCreature) m_animationPhases -= 1;
+
+    return m_animationPhases;
+}
+
 int ThingType::getExactHeight()
 {
     if(m_null)

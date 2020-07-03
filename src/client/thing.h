@@ -73,7 +73,7 @@ public:
     int getNumPatternX() { return rawGetThingType()->getNumPatternX(); }
     int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
     int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
-    int getAnimationPhases();
+    int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
     bool hasAnimationPhases() { return rawGetThingType()->getAnimationPhases() > 1; }
     AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
     AnimatorPtr getIdleAnimator() { return rawGetThingType()->getIdleAnimator(); }
