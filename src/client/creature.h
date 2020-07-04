@@ -130,7 +130,7 @@ public:
 
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
-    ThingType* Creature::rawGetMountThingType();
+    ThingType* rawGetMountThingType();
 
     void onPositionChange(const Position& newPos, const Position& oldPos) override;
     void onAppear() override;
