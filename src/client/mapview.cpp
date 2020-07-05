@@ -66,6 +66,11 @@ MapView::MapView()
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
+
+    for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
+        MapViewControl mapview = MapViewControl((Otc::Direction)dir);
+        m_mapViewControl[dir] = mapview;
+    }
 }
 
 MapView::~MapView()
@@ -127,6 +132,10 @@ void MapView::draw(const Rect& rect)
         }
         g_painter->setColor(Color::white);
 
+        const LocalPlayerPtr player = g_game.getLocalPlayer();
+        const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
+        const auto& mapview = isWalking ? m_mapViewControl[player->getDirection()] : m_mapViewControl[Otc::InvalidDirection];
+
         auto it = m_cachedVisibleTiles.begin();
         auto end = m_cachedVisibleTiles.end();
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
@@ -138,6 +147,9 @@ void MapView::draw(const Rect& rect)
                     break;
                 else
                     ++it;
+
+                if(!mapview.isValid(tile, cameraPosition))
+                    continue;
 
                 if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
                     tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
