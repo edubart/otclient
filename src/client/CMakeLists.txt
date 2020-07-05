@@ -76,6 +76,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/towns.h
     ${CMAKE_CURRENT_LIST_DIR}/creatures.cpp
     ${CMAKE_CURRENT_LIST_DIR}/creatures.h
+    ${CMAKE_CURRENT_LIST_DIR}/mapviewcontrol.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mapviewcontrol.h
 
     # lua
     ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.cpp
