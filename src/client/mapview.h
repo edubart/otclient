@@ -29,6 +29,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
 #include "lightview.h"
+#include "mapviewcontrol.h"
 
 // @bindclass
 class MapView : public LuaObject
@@ -162,6 +163,7 @@ private:
     stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
+    std::array<MapViewControl, Otc::InvalidDirection + 1> m_mapViewControl;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
     PainterShaderProgramPtr m_shader;
