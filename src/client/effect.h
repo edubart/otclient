@@ -31,6 +31,8 @@
 class Effect : public Thing
 {
 public:
+    Effect();
+
     void drawEffect(const Point& dest, float scaleFactor, int offsetX = 0, int offsetY = 0, LightView* lightView = nullptr);
 
     void setId(uint32 id) override;
@@ -42,12 +44,19 @@ public:
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
 
+    void waitFor(const EffectPtr& firstEffect);
+
 protected:
     void onAppear() override;
 
 private:
     Timer m_animationTimer;
+    Timer m_lastTimer;
+
     uint16 m_id;
+
+    int m_duration;
+    int m_timeToStartDrawing;
 };
 
 #endif

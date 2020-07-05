@@ -29,9 +29,19 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-Thing::Thing()
-    : m_datId(0)
+Thing::Thing() : m_datId(0) {}
+
+
+void Thing::requestDrawing(const bool force)
 {
+    if(isItem()) static_self_cast<Item>()->startListenerPainter();
+
+    uint32_t redrawFlag = Otc::ReDrawTile;
+
+    if(isLocalPlayer() || hasLight()) redrawFlag |= Otc::ReDrawLight;
+    if(isCreature()) redrawFlag |= Otc::ReDrawInformation;
+
+    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), force || isLocalPlayer());
 }
 
 void Thing::setPosition(const Position& position)

@@ -1016,13 +1016,3 @@ ThingType* Creature::rawGetMountThingType()
 {
     return g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
 }
-
-void Creature::requestDrawing()
-{
-    uint32_t redrawFlag = Otc::ReDrawTile_Information;
-
-    if(isLocalPlayer() || hasLight())
-        redrawFlag |= Otc::ReDrawLight;
-
-    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), isLocalPlayer());
-}

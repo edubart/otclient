@@ -137,8 +137,17 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(!thing)
         return;
 
+    bool removed = false;
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
+
+        // find the first effect equal and wait for it to finish.
+        for(const EffectPtr& firstEffect : m_effects) {
+            if(effect->getId() == firstEffect->getId()) {
+                effect->waitFor(firstEffect);
+            }
+        }
+
         if(effect->isTopEffect())
             m_effects.insert(m_effects.begin(), effect);
         else
@@ -210,11 +219,13 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         analyzeThing(thing, true);
 
         if(m_things.size() > MAX_THINGS)
-            removeThing(m_things[MAX_THINGS]);
+            removed = removeThing(m_things[MAX_THINGS]);
     }
 
     thing->setPosition(m_position);
     thing->onAppear();
+
+    if(!removed) thing->requestDrawing(true);
 
     if(thing->isTranslucent())
         checkTranslucentLight();

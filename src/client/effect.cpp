@@ -25,10 +25,14 @@
 #include "game.h"
 #include "map.h"
 
+Effect::Effect() : m_timeToStartDrawing(0) {}
+
 void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int offsetY, LightView* lightView)
 {
-    if(m_id == 0)
-        return;
+    if(m_id == 0) return;
+
+    // It only starts to draw when the first effect as it is about to end.
+    if(m_animationTimer.ticksElapsed() < m_timeToStartDrawing) return;
 
     int animationPhase;
 
@@ -60,27 +64,34 @@ void Effect::onAppear()
 {
     m_animationTimer.restart();
 
-    int duration;
+    int ticksPerFrame;
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
-        duration = getThingType()->getAnimator()->getTotalDuration();
+        m_duration = getThingType()->getAnimator()->getTotalDuration();
 
-        startListenerPainter(getThingType()->getAnimator()->getAverageDuration());
+        ticksPerFrame = getThingType()->getAnimator()->getAverageDuration();
     } else {
-        duration = Otc::EFFECT_TICKS_PER_FRAME;
+        m_duration = Otc::EFFECT_TICKS_PER_FRAME;
 
         // hack to fix some animation phases duration, currently there is no better solution
         if(m_id == 33) {
-            duration <<= 2;
+            m_duration <<= 2;
         }
 
-        duration *= getAnimationPhases();
+        ticksPerFrame = m_duration;
 
-        startListenerPainter(Otc::EFFECT_TICKS_PER_FRAME);
+        m_duration *= getAnimationPhases();
     }
 
+    startListenerPainter(ticksPerFrame);
+
     // schedule removal
-    auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, duration);
+    const auto self = asEffect();
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+}
+
+void Effect::waitFor(const EffectPtr& firstEffect)
+{
+    m_timeToStartDrawing = (firstEffect->m_duration * .6) - firstEffect->m_animationTimer.ticksElapsed();
 }
 
 void Effect::setId(uint32 id)

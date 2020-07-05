@@ -120,29 +120,16 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if(tile) {
-            tile->addThing(thing, stackPos);
-
-            if(thing->isItem()) {
-                thing->static_self_cast<Item>()->startListenerPainter();
-            }
-
-            uint32_t redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
-
-            if(thing->isCreature()) redrawFlag |= Otc::ReDrawInformation;
-
-            requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), true);
-        }
+        if(tile) tile->addThing(thing, stackPos);
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-
-            const auto redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
-            requestDrawing(redrawFlag);
+            thing->requestDrawing(true);
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
-            AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
+            const AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
             AnimatedTextPtr prevAnimatedText;
+
             bool merged = false;
             for(const auto& other : m_animatedTexts) {
                 if(other->getPosition() == pos) {
@@ -153,6 +140,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                     }
                 }
             }
+
             if(!merged) {
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();
@@ -167,20 +155,15 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 m_animatedTexts.push_back(animatedText);
             }
         } else if(thing->isStaticText()) {
-            StaticTextPtr staticText = thing->static_self_cast<StaticText>();
-            bool mustAdd = true;
+            const StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             for(const auto& other : m_staticTexts) {
                 // try to combine messages
                 if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
-                    mustAdd = false;
-                    break;
+                    return;
                 }
             }
 
-            if(mustAdd)
-                m_staticTexts.push_back(staticText);
-            else
-                return;
+            m_staticTexts.push_back(staticText);
         }
 
         thing->setPosition(pos);

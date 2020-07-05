@@ -40,6 +40,7 @@ public:
 
     virtual void setId(uint32 /*id*/) {}
     void setPosition(const Position& position);
+    void requestDrawing(const bool force = false);
 
     virtual uint32 getId() { return 0; }
     Position getPosition() { return m_position; }
