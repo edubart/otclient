@@ -23,6 +23,7 @@
 #include "mapview.h"
 
 #include "creature.h"
+#include "game.h"
 #include "map.h"
 #include "tile.h"
 #include "statictext.h"
@@ -68,8 +69,8 @@ MapView::MapView()
     m_shader = g_shaders.getDefaultMapShader();
 
     for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
-        MapViewControl mapview = MapViewControl((Otc::Direction)dir);
-        m_mapViewControl[dir] = mapview;
+        MapViewControl mapViewControl = MapViewControl((Otc::Direction) dir);
+        m_mapViewControl[dir] = mapViewControl;
     }
 }
 
@@ -134,12 +135,11 @@ void MapView::draw(const Rect& rect)
 
         const LocalPlayerPtr player = g_game.getLocalPlayer();
         const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
-        const auto& mapview = isWalking ? m_mapViewControl[player->getDirection()] : m_mapViewControl[Otc::InvalidDirection];
+        const auto& mapViewControl = isWalking ? m_mapViewControl[player->getDirection()] : m_mapViewControl[Otc::InvalidDirection];
 
         auto it = m_cachedVisibleTiles.begin();
         auto end = m_cachedVisibleTiles.end();
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
-
             while(it != end) {
                 const TilePtr& tile = *it;
                 Position tilePos = tile->getPosition();
@@ -148,7 +148,7 @@ void MapView::draw(const Rect& rect)
                 else
                     ++it;
 
-                if(!mapview.isValid(tile, cameraPosition))
+                if(!mapViewControl.isValid(tile, cameraPosition))
                     continue;
 
                 if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
@@ -171,7 +171,6 @@ void MapView::draw(const Rect& rect)
 
         m_mustDrawVisibleTilesCache = false;
     }
-
 
     float fadeOpacity = 1.0f;
     if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
