@@ -49,7 +49,6 @@ public:
 private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache(int start = 0);
-    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
     void onTileUpdate(const Position& pos);
@@ -58,6 +57,8 @@ protected:
     friend class Map;
 
 public:
+    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
+
     // floor visibility related
     void lockFirstVisibleFloor(int firstVisibleFloor);
     void unlockFirstVisibleFloor();

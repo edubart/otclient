@@ -144,6 +144,7 @@ public:
 
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
+    const std::vector<MapViewPtr> &getMapViews() const { return m_mapViews; }
     void notificateTileUpdate(const Position& pos);
 
     bool loadOtcm(const std::string& fileName);
