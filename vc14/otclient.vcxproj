@@ -161,6 +161,7 @@
     <ClCompile Include="..\src\client\map.cpp" />
     <ClCompile Include="..\src\client\mapio.cpp" />
     <ClCompile Include="..\src\client\mapview.cpp" />
+    <ClCompile Include="..\src\client\mapviewcontrol.cpp" />
     <ClCompile Include="..\src\client\minimap.cpp" />
     <ClCompile Include="..\src\client\missile.cpp" />
     <ClCompile Include="..\src\client\outfit.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="..\src\client\luavaluecasts.h" />
     <ClInclude Include="..\src\client\map.h" />
     <ClInclude Include="..\src\client\mapview.h" />
+    <ClInclude Include="..\src\client\mapviewcontrol.h" />
     <ClInclude Include="..\src\client\minimap.h" />
     <ClInclude Include="..\src\client\missile.h" />
     <ClInclude Include="..\src\client\outfit.h" />
