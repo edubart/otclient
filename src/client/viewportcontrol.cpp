@@ -59,32 +59,26 @@ ViewportControl::ViewportControl(const Otc::Direction directionWalking)
     }
 }
 
-bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition) const
+bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition, LightView* lightView) const
 {
     const Position tilePos = tile->getPosition();
-    const int diff = std::abs(cameraPosition.z - tilePos.z);
 
-    int left = m_left;
-    int right = m_right;
-    int top = m_top;
-    int down = m_bottom;
-
-    if(tilePos.z > cameraPosition.z) {
-        left += diff;
-        right -= diff;
-        top += diff;
-        down -= diff;
-    } else if(tilePos.z < cameraPosition.z) {
-        left -= diff;
-        right += diff;
-        top -= diff;
-        down += diff;
-    }
+    const int dz = tilePos.z - cameraPosition.z;
+    const Position checkPos = tilePos.translated(dz, dz);
 
     // Check for non-visible tiles on the screen and ignore them
-    return !(!tile->hasLight() && (
-        (cameraPosition.x - tilePos.x >= left) || (tilePos.x - cameraPosition.x == right && tile->isSingleDimension() /*&& !tile->hasDisplacement()*/) ||
-        (cameraPosition.y - tilePos.y >= top) || (tilePos.y - cameraPosition.y == down && tile->isSingleDimension()  /*&& !tile->hasDisplacement()*/) ||
-        (tilePos.x - cameraPosition.x > right) || (tilePos.y - cameraPosition.y > down))
-        );
+    {
+        if(lightView && lightView->isNight() && tile->hasLight()) return true;
+
+        if((cameraPosition.x - checkPos.x >= m_left) || (checkPos.x - cameraPosition.x == m_right && tile->isSingleDimension()))
+            return false;
+
+        if((cameraPosition.y - checkPos.y >= m_top) || (checkPos.y - cameraPosition.y == m_bottom && tile->isSingleDimension()))
+            return false;
+
+        if((checkPos.x - cameraPosition.x > m_right) || (checkPos.y - cameraPosition.y > m_bottom))
+            return false;
+    }
+
+    return true;
 }

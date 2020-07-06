@@ -379,8 +379,9 @@ uint8 Tile::getMinimapColorByte()
         if(c != 0) return c;
     }
 
-    if(!m_grounds.empty()) {
-        const uint8 c = m_grounds.back()->getMinimapColor();
+    const auto& ground = getGround();
+    if(ground) {
+        const uint8 c = ground->getMinimapColor();
         if(c != 0) return c;
     }
 
@@ -542,10 +543,7 @@ bool Tile::isFullyOpaque()
 
 bool Tile::isSingleDimension()
 {
-    if(!m_walkingCreatures.empty())
-        return false;
-
-    return m_countFlag.notSingleDimension == 0;
+    return m_countFlag.notSingleDimension == 0 && m_walkingCreatures.empty();
 }
 
 bool Tile::isLookPossible()
@@ -655,7 +653,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 {
     const int value = add ? 1 : -1;
 
-    if(thing->getHeight() != 1 || thing->getWidth() != 1)
+    if(thing->getRealSize() > Otc::TILE_PIXELS)
         m_countFlag.notSingleDimension += value;
 
     if(thing->hasLight())

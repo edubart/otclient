@@ -33,7 +33,7 @@ public:
 
     ViewportControl(Otc::Direction directionWalking = Otc::InvalidDirection);
 
-    bool isValid(const TilePtr& tile, Position cameraPosition) const;
+    bool isValid(const TilePtr& tile, const Position cameraPosition, LightView* lightView) const;
 
     int top() const { return m_top; }
     int right() const { return m_right; }

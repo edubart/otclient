@@ -123,19 +123,19 @@ void MapView::draw(const Rect& rect)
         const LocalPlayerPtr player = g_game.getLocalPlayer();
         const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
 
+        const auto& lightView = m_lightView.get();
         const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
-
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!viewport.isValid(tile, cameraPosition)) continue;
+                if(!viewport.isValid(tile, cameraPosition, lightView)) continue;
 
                 const Position tilePos = tile->getPosition();
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : m_lightView.get());
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
 
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, m_lightView.get());
+                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), scaleFactor, lightView);
             }
         }
 
