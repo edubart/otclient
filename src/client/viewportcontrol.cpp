@@ -68,7 +68,7 @@ bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition
 
     // Check for non-visible tiles on the screen and ignore them
     {
-        if(lightView && lightView->isNight() && tile->hasLight()) return true;
+        if(lightView && lightView->isDark() && tile->hasLight()) return true;
 
         if((cameraPosition.x - checkPos.x >= m_left) || (checkPos.x - cameraPosition.x == m_right && tile->isSingleDimension()))
             return false;

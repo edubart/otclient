@@ -48,7 +48,7 @@ public:
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
     void requestDrawing(const bool force) { if(force || m_minTimeRender.ticksElapsed() > 10) m_redraw = true; }
 
-    bool isNight() { return m_globalLight.intensity < 250; }
+    bool isDark() { return m_globalLight.intensity < 250; }
 
 private:
     void drawGlobalLight(const Light& light);
