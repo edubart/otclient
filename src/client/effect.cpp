@@ -49,13 +49,8 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int o
         animationPhase = std::min<int>(static_cast<int>(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
     }
 
-    int xPattern = offsetX % getNumPatternX();
-    if(xPattern < 0)
-        xPattern += getNumPatternX();
-
-    int yPattern = offsetY % getNumPatternY();
-    if(yPattern < 0)
-        yPattern += getNumPatternY();
+    const int xPattern = m_position.x % getNumPatternX();
+    const int yPattern = m_position.y % getNumPatternY();
 
     rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, lightView);
 }
