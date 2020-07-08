@@ -390,19 +390,21 @@ function doKeyCombo(keyCombo)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USE then
     if g_game.getClientVersion() < 780 or hotKey.subType then
-      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
-      if item then
-        g_game.use(item)
-      end
+      return false
+      -- local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
+      -- if item then
+      --   g_game.use(item)
+      -- end
     else
       g_game.useInventoryItem(hotKey.itemId)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEONSELF then
     if g_game.getClientVersion() < 780 or hotKey.subType then
-      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
-      if item then
-        g_game.useWith(item, g_game.getLocalPlayer())
-      end
+      return false
+      -- local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
+      -- if item then
+      --   g_game.useWith(item, g_game.getLocalPlayer())
+      -- end
     else
       g_game.useInventoryItemWith(hotKey.itemId, g_game.getLocalPlayer())
     end
@@ -422,19 +424,21 @@ function doKeyCombo(keyCombo)
 
     if not attackingCreature:getTile() then return end
     if g_game.getClientVersion() < 780 or hotKey.subType then
-      local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
-      if item then
-        g_game.useWith(item, attackingCreature)
-      end
+      return false
+      -- local item = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
+      -- if item then
+      --   g_game.useWith(item, attackingCreature)
+      -- end
     else
       g_game.useInventoryItemWith(hotKey.itemId, attackingCreature)
     end
   elseif hotKey.useType == HOTKEY_MANAGER_USEWITH then
     local item = Item.create(hotKey.itemId)
     if g_game.getClientVersion() < 780 or hotKey.subType then
-      local tmpItem = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
-      if not tmpItem then return true end
-      item = tmpItem
+      return false
+      -- local tmpItem = g_game.findPlayerItem(hotKey.itemId, hotKey.subType or -1)
+      -- if not tmpItem then return true end
+      -- item = tmpItem
     end
     modules.game_interface.startUseWith(item)
   end

@@ -96,66 +96,7 @@ MainWindow
     margin-top: 5
     @onCheckChange: modules.game_hotkeys.onSendAutomaticallyChange(self:isChecked())
 
-  Item
-    id: itemPreview
-    anchors.left: parent.left
-    anchors.top: prev.bottom
-    margin-top: 10
-    virtual: true
 
-  Button
-    id: selectObjectButton
-    !text: tr('Select object')
-    width: 128
-    enabled: false
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin-left: 10
-    @onClick: modules.game_hotkeys.startChooseItem()
-
-  Button
-    id: clearObjectButton
-    !text: tr('Clear object')
-    width: 128
-    enabled: false
-    anchors.left: prev.left
-    anchors.right: prev.right
-    anchors.top: prev.bottom
-    margin-top: 2
-    @onClick: modules.game_hotkeys.clearObject()
-
-  ButtonBox
-    id: useOnSelf
-    !text: tr('Use on yourself')
-    width: 128
-    enabled: false
-    anchors.left: selectObjectButton.right
-    anchors.right: parent.right
-    anchors.top: selectObjectButton.top
-    checked: false
-    margin-left: 10
-
-  ButtonBox
-    id: useOnTarget
-    !text: tr('Use on target')
-    width: 128
-    enabled: false
-    anchors.left: prev.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    checked: false
-    margin-top: 2
-
-  ButtonBox
-    id: useWith
-    !text: tr('With crosshair')
-    width: 128
-    enabled: false
-    anchors.left: prev.left
-    anchors.right: parent.right
-    anchors.top: prev.bottom
-    checked: false
-    margin-top: 2
 
   HorizontalSeparator
     id: separator
