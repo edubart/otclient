@@ -29,7 +29,6 @@
 #include "missile.h"
 #include "statictext.h"
 #include "tile.h"
-#include "viewportcontrol.h"
 
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
@@ -722,8 +721,8 @@ void Map::setAwareRange(const AwareRange& range)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = ViewportControl::maxViewportX;
-    range.top = ViewportControl::maxViewportY;
+    range.left = MapViewControl::maxViewportX;
+    range.top = MapViewControl::maxViewportY;
     range.bottom = range.top + 1;
     range.right = range.left + 1;
     setAwareRange(range);

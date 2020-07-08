@@ -91,7 +91,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
 void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
 {
     for(const auto& effect : m_effects) {
-        effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, m_position.x - g_map.getCentralPosition().x, m_position.y - g_map.getCentralPosition().y, lightView);
+        effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
     }
 
     for(const auto& item : m_topItems) {

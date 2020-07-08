@@ -27,7 +27,7 @@
 
 Effect::Effect() : m_timeToStartDrawing(0) {}
 
-void Effect::drawEffect(const Point& dest, float scaleFactor, int offsetX, int offsetY, LightView* lightView)
+void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if(m_id == 0) return;
 

@@ -26,12 +26,12 @@
 #include "const.h"
 #include "declarations.h"
 
-class ViewportControl {
+class MapViewControl {
 public:
-    static const int32_t maxViewportX = 8;
-    static const int32_t maxViewportY = 6;
+    static constexpr int32_t maxViewportX = 8;
+    static constexpr int32_t maxViewportY = 6;
 
-    ViewportControl(Otc::Direction directionWalking = Otc::InvalidDirection);
+    MapViewControl(Otc::Direction directionWalking = Otc::InvalidDirection);
 
     bool isValid(const TilePtr& tile, const Position cameraPosition, LightView* lightView) const;
 

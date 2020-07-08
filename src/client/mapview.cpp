@@ -72,7 +72,7 @@ MapView::MapView()
     m_floorMin = m_floorMax = 0;
 
     for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
-        const ViewportControl viewport(static_cast<Otc::Direction>(dir));
+        const MapViewControl viewport(static_cast<Otc::Direction>(dir));
         m_viewportControl[dir] = viewport;
     }
 }

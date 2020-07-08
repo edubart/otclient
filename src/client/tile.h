@@ -153,8 +153,8 @@ private:
 
     stdext::boolean<false> m_selected;
 
-    stdext::packed_vector<CreaturePtr> m_walkingCreatures;
-    stdext::packed_vector<ThingPtr> m_things;
+    std::vector<CreaturePtr> m_walkingCreatures;
+    std::vector<ThingPtr> m_things;
 
     std::vector<EffectPtr> m_effects;
     std::vector<ItemPtr> m_grounds;

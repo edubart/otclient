@@ -46,6 +46,8 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/mapio.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mapview.h
+	${CMAKE_CURRENT_LIST_DIR}/mapviewcontrol.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mapviewcontrol.h
     ${CMAKE_CURRENT_LIST_DIR}/minimap.cpp
     ${CMAKE_CURRENT_LIST_DIR}/minimap.h
     ${CMAKE_CURRENT_LIST_DIR}/lightview.cpp
@@ -76,8 +78,6 @@ set(client_SOURCES ${client_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/towns.h
     ${CMAKE_CURRENT_LIST_DIR}/creatures.cpp
     ${CMAKE_CURRENT_LIST_DIR}/creatures.h
-    ${CMAKE_CURRENT_LIST_DIR}/viewportcontrol.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/viewportcontrol.h
 
     # lua
     ${CMAKE_CURRENT_LIST_DIR}/luavaluecasts.cpp

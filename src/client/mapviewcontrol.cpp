@@ -20,11 +20,11 @@
  * THE SOFTWARE.
  */
 
-#include "viewportcontrol.h"
+#include "mapviewcontrol.h"
 
 #include "map.h"
 
-ViewportControl::ViewportControl(const Otc::Direction directionWalking)
+MapViewControl::MapViewControl(const Otc::Direction directionWalking)
 {
     m_top = maxViewportY;
     m_right = maxViewportX;
@@ -59,7 +59,7 @@ ViewportControl::ViewportControl(const Otc::Direction directionWalking)
     }
 }
 
-bool ViewportControl::isValid(const TilePtr& tile, const Position cameraPosition, LightView* lightView) const
+bool MapViewControl::isValid(const TilePtr& tile, const Position cameraPosition, LightView* lightView) const
 {
     const Position tilePos = tile->getPosition();
 
