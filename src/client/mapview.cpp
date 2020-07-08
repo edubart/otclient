@@ -310,8 +310,6 @@ void MapView::updateVisibleTilesCache()
     if(m_cachedLastVisibleFloor < m_cachedFirstVisibleFloor)
         m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
 
-    m_cachedFloorVisibleCreatures.clear();
-
     // clear current visible tiles cache
     do {
         m_cachedVisibleTiles[m_floorMin].clear();
@@ -364,9 +362,6 @@ void MapView::updateVisibleTilesCache()
             }
         }
     }
-
-    if(m_viewMode <= NEAR_VIEW)
-        m_cachedFloorVisibleCreatures = g_map.getSightSpectators(cameraPosition, false);
 
     m_mustUpdateVisibleTilesCache = false;
 }
@@ -439,6 +434,9 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onTileUpdate(const Position&)
 {
+    m_cachedFloorVisibleCreatures.clear();
+    if(m_viewMode <= NEAR_VIEW)
+        m_cachedFloorVisibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
 }
 
 void MapView::onMapCenterChange(const Position&)
