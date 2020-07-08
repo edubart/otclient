@@ -294,19 +294,10 @@ void MapView::updateVisibleTilesCache()
 
     const LocalPlayerPtr player = g_game.getLocalPlayer();
 
-    int distanceToUpdate = 2;
-    switch(player->getDirection()) {
-    case Otc::SouthEast:
-    case Otc::South:
-    case Otc::East:
-        distanceToUpdate = 3;
-        break;
-    }
-
     if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
        m_cachedLastVisibleFloor == cachedLastVisibleFloor &&
        cameraPosition.z == m_lastCameraPosition.z &&
-       cameraPosition.distance(m_lastCameraPosition) < distanceToUpdate
+       cameraPosition.distance(m_lastCameraPosition) < 2
        ) return;
 
     m_lastCameraPosition = cameraPosition;
