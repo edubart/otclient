@@ -48,7 +48,7 @@ public:
 
 private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
-    void updateVisibleTilesCache(int start = 0);
+    void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
@@ -143,7 +143,6 @@ private:
     int m_cachedFirstVisibleFloor;
     int m_cachedLastVisibleFloor;
     int m_tileSize;
-    int m_updateTilesPos;
 
     Size m_drawDimension;
     Size m_visibleDimension;
@@ -194,6 +193,7 @@ private:
 
     uint_fast8_t m_floorMin, m_floorMax;
 
+    Position m_lastCameraPosition;
 };
 
 #endif
