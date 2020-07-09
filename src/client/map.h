@@ -148,7 +148,7 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos);
 
-    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, bool force = false);
+    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
@@ -232,6 +232,8 @@ public:
     bool isCompletelyCovered(const Position& pos, int firstFloor = 0);
     bool isAwareOfPosition(const Position& pos);
 
+    void resetLastCamera();
+
     void setAwareRange(const AwareRange& range);
     void resetAwareRange();
     AwareRange getAwareRange() { return m_awareRange; }
@@ -248,15 +250,21 @@ public:
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxComplexity, int flags = 0);
 
 private:
+    void addVisibleCreature(const CreaturePtr& creature);
+    void removeVisibleCreature(const CreaturePtr& creature);
     void removeUnawareThings();
+
     uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
-    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
-    std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
     std::array<std::vector<MissilePtr>, Otc::MAX_Z + 1> m_floorMissiles;
+
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
+
+
+    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
+    std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
     std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
 
     uint8 m_animationFlags;

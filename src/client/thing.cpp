@@ -38,10 +38,12 @@ void Thing::requestDrawing(const bool force)
 
     uint32_t redrawFlag = Otc::ReDrawTile;
 
-    if(isLocalPlayer() || hasLight()) redrawFlag |= Otc::ReDrawLight;
+    const auto _isLocalPlayer = isLocalPlayer();
+
+    if(_isLocalPlayer || hasLight()) redrawFlag |= Otc::ReDrawLight;
     if(isCreature()) redrawFlag |= Otc::ReDrawInformation;
 
-    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), force || isLocalPlayer());
+    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), force || _isLocalPlayer, _isLocalPlayer);
 }
 
 void Thing::setPosition(const Position& position)

@@ -2214,6 +2214,8 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             creature = g_map.getCreatureById(id);
             if(!creature)
                 g_logger.traceError("server said that a creature is known, but it's not");
+
+            if(creature->isLocalPlayer()) g_map.resetLastCamera();
         } else {
             const uint removeId = msg->getU32();
             g_map.removeCreatureById(removeId);

@@ -71,10 +71,10 @@ void Map::notificateTileUpdate(const Position& pos)
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force)
+void Map::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
 {
     for(const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing(reDrawFlags, force);
+        mapView->requestDrawing(reDrawFlags, force, isLocalPlayer);
 }
 
 void Map::clean()
@@ -119,7 +119,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if(tile) tile->addThing(thing, stackPos);
+        if(tile) {
+            tile->addThing(thing, stackPos);
+            if(thing->isCreature()) addVisibleCreature(thing->static_self_cast<Creature>());
+        }
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
@@ -208,8 +211,12 @@ bool Map::removeThing(const ThingPtr& thing)
             m_staticTexts.erase(it);
             ret = true;
         }
-    } else if(const TilePtr& tile = thing->getTile())
+    } else if(const TilePtr& tile = thing->getTile()) {
         ret = tile->removeThing(thing);
+        if(thing->isCreature()) removeVisibleCreature(thing->static_self_cast<Creature>());
+    }
+
+
 
     if(!thing->cancelListenerPainter()) {
         uint32_t redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
@@ -914,4 +921,22 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         delete it.second;
 
     return ret;
+}
+
+void Map::addVisibleCreature(const CreaturePtr& creature)
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->addVisibleCreature(creature);
+}
+
+void Map::removeVisibleCreature(const CreaturePtr& creature)
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->removeVisibleCreature(creature);
+}
+
+void  Map::resetLastCamera()
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->resetLastCamera();
 }

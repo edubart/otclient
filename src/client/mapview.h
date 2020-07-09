@@ -121,11 +121,10 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force = false)
-    {
-        if(reDrawFlags & Otc::ReDrawTile && (force || m_minTimeRender.ticksElapsed() > 10)) m_redrawFlag = reDrawFlags;
-        if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
-    }
+    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
+    void addVisibleCreature(const CreaturePtr& creature);
+    void removeVisibleCreature(const CreaturePtr& creature);
+    void resetLastCamera() { m_lastCameraPosition = Position(); }
 
 private:
 
@@ -143,6 +142,8 @@ private:
     int m_cachedFirstVisibleFloor;
     int m_cachedLastVisibleFloor;
     int m_tileSize;
+
+    Rect m_rectDimension;
 
     Size m_drawDimension;
     Size m_visibleDimension;
@@ -167,7 +168,7 @@ private:
     stdext::boolean<true> m_follow;
     stdext::boolean<true> m_shaderSwitchDone;
 
-    std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
+    std::vector<CreaturePtr> m_visibleCreatures;
 
     std::array<MapViewControl, Otc::InvalidDirection + 1> m_viewportControl;
     std::array<std::vector<TilePtr>, Otc::MAX_Z + 1> m_cachedVisibleTiles;
@@ -185,6 +186,7 @@ private:
     float m_minimumAmbientLight;
     float m_fadeInTime;
     float m_fadeOutTime;
+    float m_scaleFactor;
 
     uint32 m_redrawFlag;
     Timer m_minTimeRender;
