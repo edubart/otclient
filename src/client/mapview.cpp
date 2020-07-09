@@ -340,8 +340,6 @@ void MapView::updateVisibleTilesCache()
             }
         }
     }
-
-    m_mustUpdateVisibleTilesCache = false;
 }
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
