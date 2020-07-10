@@ -531,9 +531,6 @@
     <ClCompile Include="..\src\client\animator.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\client\mapviewcontrol.cpp">
-      <Filter>Source Files\client</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1056,9 +1053,6 @@
       <Filter>Header Files\framework\core</Filter>
     </ClInclude>
     <ClInclude Include="..\src\client\animator.h">
-      <Filter>Header Files\client</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\client\mapviewcontrol.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>

@@ -141,6 +141,9 @@ struct AwareRange
 class Map
 {
 public:
+    static constexpr uint8_t maxViewportX = 8;
+    static constexpr uint8_t maxViewportY = 6;
+
     void init();
     void terminate();
 

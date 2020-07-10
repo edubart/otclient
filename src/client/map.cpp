@@ -728,8 +728,8 @@ void Map::setAwareRange(const AwareRange& range)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = MapViewControl::maxViewportX;
-    range.top = MapViewControl::maxViewportY;
+    range.left = maxViewportX;
+    range.top = maxViewportY;
     range.bottom = range.top + 1;
     range.right = range.left + 1;
     setAwareRange(range);
@@ -737,10 +737,10 @@ void Map::resetAwareRange()
 
 int Map::getFirstAwareFloor()
 {
-    if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+    if(m_centralPosition.z <= Otc::SEA_FLOOR)
+        return 0;
 
-    return 0;
+    return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
 }
 
 int Map::getLastAwareFloor()

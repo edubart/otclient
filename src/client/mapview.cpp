@@ -71,10 +71,7 @@ MapView::MapView()
 
     m_floorMin = m_floorMax = 0;
 
-    for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
-        const MapViewControl viewport(static_cast<Otc::Direction>(dir));
-        m_viewportControl[dir] = viewport;
-    }
+    initViewPortDirection();
 }
 
 MapView::~MapView()
@@ -119,14 +116,11 @@ void MapView::draw(const Rect& rect)
         }
         g_painter->setColor(Color::white);
 
-        const LocalPlayerPtr player = g_game.getLocalPlayer();
-        const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
-
         const auto& lightView = m_lightView.get();
-        const auto& viewport = isWalking ? m_viewportControl[player->getDirection()] : m_viewportControl[Otc::InvalidDirection];
+        const auto& viewPort = m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!viewport.isValid(tile, cameraPosition, lightView)) continue;
+                if(!canRenderTile(tile, viewPort, lightView)) continue;
 
                 const Position tilePos = tile->getPosition();
 
@@ -273,8 +267,6 @@ void MapView::updateVisibleTilesCache()
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
 
     m_mustCleanFramebuffer = true;
-
-    const LocalPlayerPtr player = g_game.getLocalPlayer();
 
     if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
        m_cachedLastVisibleFloor == cachedLastVisibleFloor &&
@@ -669,6 +661,69 @@ void MapView::setDrawLights(bool enable)
     requestDrawing(Otc::ReDrawTile_Light);
     m_mustCleanFramebuffer = true;
     m_drawLights = enable;
+}
+
+void MapView::initViewPortDirection()
+{
+    for(int dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
+        ViewPort& vp = m_viewPortDirection[dir];
+        vp.top = Map::maxViewportY;
+        vp.right = Map::maxViewportX;
+        vp.bottom = vp.top;
+        vp.left = vp.right;
+
+        switch(dir) {
+        case Otc::North:
+        case Otc::South:
+            vp.top += 1;
+            vp.bottom += 1;
+            break;
+
+        case Otc::West:
+        case Otc::East:
+            vp.right += 1;
+            vp.left += 1;
+            break;
+
+        case Otc::NorthEast:
+        case Otc::SouthEast:
+        case Otc::NorthWest:
+        case Otc::SouthWest:
+            vp.left += 1;
+            vp.bottom += 1;
+            vp.top += 1;
+            vp.right += 1;
+            break;
+
+        default:
+            break;
+        }
+    }
+}
+
+bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
+{
+    const Position cameraPosition = getCameraPosition();
+    const Position tilePos = tile->getPosition();
+
+    const int dz = tilePos.z - cameraPosition.z;
+    const Position checkPos = tilePos.translated(dz, dz);
+
+    if(lightView && lightView->isDark() && tile->hasLight()) return true;
+
+    // Check for non-visible tiles on the screen and ignore them
+    {
+        if((cameraPosition.x - checkPos.x >= viewPort.left) || (checkPos.x - cameraPosition.x == viewPort.right && tile->isSingleDimension()))
+            return false;
+
+        if((cameraPosition.y - checkPos.y >= viewPort.top) || (checkPos.y - cameraPosition.y == viewPort.bottom && tile->isSingleDimension()))
+            return false;
+
+        if((checkPos.x - cameraPosition.x > viewPort.right) || (checkPos.y - cameraPosition.y > viewPort.bottom))
+            return false;
+    }
+
+    return true;
 }
 
 void MapView::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
