@@ -71,7 +71,7 @@ void Map::notificateTileUpdate(const Position& pos)
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
+void Map::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
 {
     for(const MapViewPtr& mapView : m_mapViews)
         mapView->requestDrawing(reDrawFlags, force, isLocalPlayer);
@@ -157,6 +157,8 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 m_animatedTexts.push_back(animatedText);
             }
         } else if(thing->isStaticText()) {
+            thing->requestDrawing(true);
+
             const StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             for(const auto& other : m_staticTexts) {
                 // try to combine messages
@@ -189,15 +191,7 @@ bool Map::removeThing(const ThingPtr& thing)
         return false;
 
     bool ret = false;
-    if(thing->isMissile()) {
-        MissilePtr missile = thing->static_self_cast<Missile>();
-        const int z = missile->getPosition().z;
-        const auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
-        if(it != m_floorMissiles[z].end()) {
-            m_floorMissiles[z].erase(it);
-            ret = true;
-        }
-    } else if(thing->isAnimatedText()) {
+    if(thing->isAnimatedText()) {
         const AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
         const auto it = std::find(m_animatedTexts.begin(), m_animatedTexts.end(), animatedText);
         if(it != m_animatedTexts.end()) {
@@ -210,21 +204,34 @@ bool Map::removeThing(const ThingPtr& thing)
         if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);
             ret = true;
+
+            requestDrawing(Otc::ReDrawStaticText, true);
         }
-    } else if(const TilePtr& tile = thing->getTile()) {
-        ret = tile->removeThing(thing);
-        if(thing->isCreature()) removeVisibleCreature(thing->static_self_cast<Creature>());
-    }
+    } else {
+        if(thing->isMissile()) {
+            MissilePtr missile = thing->static_self_cast<Missile>();
+            const int z = missile->getPosition().z;
+            const auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
+            if(it != m_floorMissiles[z].end()) {
+                m_floorMissiles[z].erase(it);
+                ret = true;
+            }
+        } else if(const TilePtr& tile = thing->getTile()) {
+            ret = tile->removeThing(thing);
+            if(thing->isCreature()) removeVisibleCreature(thing->static_self_cast<Creature>());
+        }
 
+        if(!thing->cancelListenerPainter()) {
+            uint32_t redrawFlag = Otc::ReDrawThing;
+            if(thing->hasLight()) redrawFlag |= Otc::ReDrawLight;
+            if(thing->isCreature()) redrawFlag |= Otc::ReDrawCreatureInformation;
 
-
-    if(!thing->cancelListenerPainter()) {
-        uint32_t redrawFlag = thing->hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
-        if(thing->isCreature()) redrawFlag |= Otc::ReDrawInformation;
-        requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), true);
+            requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag), true);
+        }
     }
 
     notificateTileUpdate(thing->getPosition());
+
     return ret;
 }
 
@@ -737,10 +744,12 @@ void Map::resetAwareRange()
 
 int Map::getFirstAwareFloor()
 {
-    if(m_centralPosition.z <= Otc::SEA_FLOOR)
-        return 0;
+    if(m_centralPosition.z > Otc::SEA_FLOOR)
+        return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
 
-    return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+    return 0;
+
+
 }
 
 int Map::getLastAwareFloor()

@@ -34,16 +34,19 @@ Thing::Thing() : m_datId(0) {}
 
 void Thing::requestDrawing(const bool force)
 {
-    if(isItem()) static_self_cast<Item>()->startListenerPainter();
-
-    uint32_t redrawFlag = Otc::ReDrawTile;
-
     const auto _isLocalPlayer = isLocalPlayer();
+    uint32_t redrawFlag;
 
-    if(_isLocalPlayer || hasLight()) redrawFlag |= Otc::ReDrawLight;
-    if(isCreature()) redrawFlag |= Otc::ReDrawInformation;
+    if(isStaticText()) redrawFlag = Otc::ReDrawStaticText;
+    else {
+        redrawFlag = Otc::ReDrawThing;
 
-    g_map.requestDrawing(static_cast<Otc::ReDrawFlags>(redrawFlag), force || _isLocalPlayer, _isLocalPlayer);
+        if(isItem()) static_self_cast<Item>()->startListenerPainter();
+        if(isCreature()) redrawFlag |= Otc::ReDrawAllInformation;
+        if(_isLocalPlayer || hasLight()) redrawFlag |= Otc::ReDrawLight;
+    }
+
+    g_map.requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag), force || _isLocalPlayer, _isLocalPlayer);
 }
 
 void Thing::setPosition(const Position& position)

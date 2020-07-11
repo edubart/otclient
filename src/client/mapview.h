@@ -119,7 +119,7 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
+    void requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
     void addVisibleCreature(const CreaturePtr& creature);
     void removeVisibleCreature(const CreaturePtr& creature);
     void resetLastCamera() { m_lastCameraPosition = Position(); }
@@ -129,12 +129,21 @@ private:
         int top, right, bottom, left;
     };
 
+    struct FrameCache {
+        FrameBufferPtr tile, staticText,
+            creatureInformation;
+    };
+
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
 
     void initViewPortDirection();
 
+    void drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);
+    void drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);
+
     Rect calcFramebufferSource(const Size& destSize);
+
     Point transformPositionTo2D(const Position& position, const Position& relativePosition)
     {
         return Point((m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
@@ -184,8 +193,8 @@ private:
     PainterShaderProgramPtr m_nextShader;
 
     CreaturePtr m_followingCreature;
-    FrameBufferPtr m_framebuffer;
-    FrameBufferPtr m_nameFramebuffer;
+
+    FrameCache m_frameCache;
 
     ViewMode m_viewMode;
     LightViewPtr m_lightView;

@@ -69,7 +69,7 @@ std::string Item::getName()
     return g_things.findItemTypeByClientId(m_clientId)->getName();
 }
 
-void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* lightView)
+void Item::draw(const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView)
 {
     if(m_clientId == 0 || !canDraw())
         return;
@@ -83,7 +83,8 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, LightView* l
 
     if(m_color != Color::alpha)
         g_painter->setColor(m_color);
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, lightView);
+
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, redrawFlag, lightView);
 
     /// Sanity check
     /// This is just to ensure that we don't overwrite some color and

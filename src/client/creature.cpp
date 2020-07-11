@@ -67,26 +67,28 @@ Creature::Creature() : Thing()
     m_outfitColor = Color::white;
 }
 
-void Creature::draw(const Point& dest, float scaleFactor, LightView* lightView)
+void Creature::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     if(!canBeSeen())
         return;
 
-    if(m_showTimedSquare) {
-        g_painter->setColor(m_timedSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
-        g_painter->setColor(Color::white);
+    if(reDrawFlags & Otc::ReDrawThing) {
+        if(m_showTimedSquare) {
+            g_painter->setColor(m_timedSquareColor);
+            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
+            g_painter->setColor(Color::white);
+        }
+
+        if(m_showStaticSquare) {
+            g_painter->setColor(m_staticSquareColor);
+            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
+            g_painter->setColor(Color::white);
+        }
+
+        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
     }
 
-    if(m_showStaticSquare) {
-        g_painter->setColor(m_staticSquareColor);
-        g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
-        g_painter->setColor(Color::white);
-    }
-
-    internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
-
-    if(lightView) {
+    if(lightView && reDrawFlags & Otc::ReDrawLight) {
         auto light = getLight();
 
         if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
@@ -102,7 +104,7 @@ void Creature::draw(const Point& dest, float scaleFactor, LightView* lightView)
     }
 }
 
-void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction, LightView* lightView)
+void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction)
 {
     g_painter->setColor(m_outfitColor);
 
@@ -126,7 +128,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             const auto& datType = rawGetMountThingType();
 
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase);
             dest += getDisplacement() * scaleFactor;
 
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
@@ -145,7 +147,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             auto* datType = rawGetThingType();
-            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, yPattern == 0 ? lightView : nullptr);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase);
 
             if(getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
@@ -185,7 +187,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getCategory() == ThingCategoryEffect)
             animationPhase = std::min<int>(animationPhase + 1, animationPhases);
 
-        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, lightView);
+        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase);
     }
 
     g_painter->resetColor();

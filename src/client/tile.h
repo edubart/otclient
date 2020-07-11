@@ -62,9 +62,11 @@ public:
 
     Tile(const Position& position);
 
-    void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
+    void drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
+    void drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
+    void drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView);
 
-public:
     void clean();
 
     void addWalkingCreature(const CreaturePtr& creature);
@@ -136,10 +138,6 @@ public:
     bool hasGroundsToDraw() const { return !m_grounds.empty(); }
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
     bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
-
-    void drawGround(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
-    void drawBottom(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
-    void drawTop(const Point& dest, float scaleFactor, LightView* lightView);
 
     void cancelListenerPainter();
 

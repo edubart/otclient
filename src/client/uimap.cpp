@@ -198,7 +198,7 @@ void UIMap::updateVisibleDimension()
     if(m_keepAspectRatio)
         updateMapSize();
 
-    g_map.requestDrawing(Otc::ReDrawTile_Light_Information, true);
+    g_map.requestDrawing(Otc::RedrawAll, true);
 }
 
 void UIMap::updateMapSize()
@@ -219,6 +219,9 @@ void UIMap::updateMapSize()
 
     if(!m_keepAspectRatio)
         updateVisibleDimension();
+    else {
+        g_map.requestDrawing(Otc::RedrawAll, true);
+    }
 }
 
 /* vim: set ts=4 sw=4 et: */

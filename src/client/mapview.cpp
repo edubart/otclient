@@ -54,22 +54,25 @@ enum {
 MapView::MapView()
 {
     m_viewMode = NEAR_VIEW;
+    m_redrawFlag = Otc::RedrawAll;
     m_lockedFirstVisibleFloor = -1;
     m_cachedFirstVisibleFloor = 7;
     m_cachedLastVisibleFloor = 7;
+    m_minimumAmbientLight = 0;
     m_fadeOutTime = 0;
     m_fadeInTime = 0;
-    m_redrawFlag = Otc::RedrawAll;
-    m_minimumAmbientLight = 0;
+    m_floorMax = 0;
+    m_floorMin = 0;
+
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
-    m_framebuffer = g_framebuffers.createFrameBuffer();
-    m_nameFramebuffer = g_framebuffers.createFrameBuffer();
+    m_frameCache.tile = g_framebuffers.createFrameBuffer();
+    m_frameCache.staticText = g_framebuffers.createFrameBuffer();
+    m_frameCache.creatureInformation = g_framebuffers.createFrameBuffer();
+
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
-
-    m_floorMin = m_floorMax = 0;
 
     initViewPortDirection();
 }
@@ -89,34 +92,33 @@ void MapView::draw(const Rect& rect)
 
     const Position cameraPosition = getCameraPosition();
 
-    const auto redrawTile = m_redrawFlag & Otc::ReDrawTile;
-    if(redrawTile) {
-        m_framebuffer->bind();
+    if(m_redrawFlag & Otc::ReDrawThing || m_redrawFlag & Otc::ReDrawLight) {
+        m_frameCache.tile->bind();
 
         if(m_mustCleanFramebuffer) {
             g_painter->setColor(Color::black);
             g_painter->drawFilledRect(m_rectDimension);
-
-            if(m_drawLights) {
-                m_lightView->reset();
-                m_lightView->resize(m_framebuffer->getSize());
-
-                Light ambientLight;
-                if(cameraPosition.z <= Otc::SEA_FLOOR) {
-                    ambientLight = g_map.getLight();
-                } else {
-                    ambientLight.color = 215;
-                    ambientLight.intensity = 0;
-                }
-                ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
-                m_lightView->setGlobalLight(ambientLight);
-            }
-
             m_mustCleanFramebuffer = false;
         }
+
+        if(m_redrawFlag & Otc::ReDrawLight && m_drawLights) {
+            m_lightView->reset();
+            m_lightView->resize(m_frameCache.tile->getSize());
+
+            Light ambientLight;
+            if(cameraPosition.z <= Otc::SEA_FLOOR) {
+                ambientLight = g_map.getLight();
+            } else {
+                ambientLight.color = 215;
+                ambientLight.intensity = 0;
+            }
+            ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
+            m_lightView->setGlobalLight(ambientLight);
+        }
+
         g_painter->setColor(Color::white);
 
-        const auto& lightView = m_lightView.get();
+        const auto& lightView = m_lightView->isDark() ? m_lightView.get() : nullptr;
         const auto& viewPort = m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for(const auto& tile : m_cachedVisibleTiles[z]) {
@@ -124,20 +126,18 @@ void MapView::draw(const Rect& rect)
 
                 const Position tilePos = tile->getPosition();
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
 
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
+                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
         }
 
-        m_framebuffer->release();
+        m_frameCache.tile->release();
 
         m_minTimeRender.restart();
-        m_redrawFlag &= ~Otc::ReDrawTile;
     }
-
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -172,7 +172,7 @@ void MapView::draw(const Rect& rect)
     g_painter->setColor(Color::white);
     g_painter->setOpacity(fadeOpacity);
     glDisable(GL_BLEND);
-    m_framebuffer->draw(rect, srcRect);
+    m_frameCache.tile->draw(rect, srcRect);
     g_painter->resetShaderProgram();
     g_painter->resetOpacity();
     glEnable(GL_BLEND);
@@ -185,11 +185,39 @@ void MapView::draw(const Rect& rect)
     const float verticalStretchFactor = rect.height() / static_cast<float>(srcRect.height());
 
     // avoid drawing texts on map in far zoom outs
-    if(m_viewMode == NEAR_VIEW) {
-        if(redrawTile || m_redrawFlag & Otc::ReDrawInformation) {
-            m_nameFramebuffer->bind();
-            g_painter->setAlphaWriting(true);
-            g_painter->clear(Color::alpha);
+    // if(m_viewMode == NEAR_VIEW)
+    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+
+    // lights are drawn after names and before texts
+    if(m_drawLights)
+        m_lightView->draw(rect, srcRect);
+
+    if(m_viewMode == NEAR_VIEW && m_drawTexts)
+        drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+
+    m_redrawFlag = 0;
+}
+
+void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
+{
+    const bool drawStaticCreatureInf = m_redrawFlag & Otc::ReDrawStaticCreatureInformation;
+
+    if(m_redrawFlag & Otc::ReDrawDynamicInformation || drawStaticCreatureInf) {
+        int flags = 0;
+        if(m_drawNames && drawStaticCreatureInf) { flags = Otc::DrawNames; }
+        if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+        if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
+
+        if(flags) {
+            const Position cameraPosition = getCameraPosition();
+
+            m_frameCache.creatureInformation->bind();
+
+            if(drawStaticCreatureInf) {
+                g_painter->setAlphaWriting(true);
+                g_painter->clear(Color::alpha);
+            }
+
             for(const CreaturePtr& creature : m_visibleCreatures) {
                 if(!creature->canBeSeen())
                     continue;
@@ -203,55 +231,63 @@ void MapView::draw(const Rect& rect)
                 p.y = p.y * verticalStretchFactor;
                 p += rect.topLeft();
 
-                int flags = 0;
-                if(m_drawNames) { flags = Otc::DrawNames; }
-                if(m_drawHealthBars) { flags |= Otc::DrawBars; }
-                if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
                 creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
             }
-            m_nameFramebuffer->release();
-
-            m_redrawFlag &= ~Otc::ReDrawInformation;
         }
-        m_nameFramebuffer->draw();
+
+        m_frameCache.creatureInformation->release();
+    }
+    m_frameCache.creatureInformation->draw();
+}
+
+void MapView::drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
+{
+    const Position cameraPosition = getCameraPosition();
+
+    if(!g_map.getStaticTexts().empty()) {
+        if(m_redrawFlag & Otc::ReDrawStaticText) {
+            m_frameCache.staticText->bind();
+
+            g_painter->setAlphaWriting(true);
+            g_painter->clear(Color::alpha);
+
+            for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
+                const Position pos = staticText->getPosition();
+
+                if(pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
+                    continue;
+
+                Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
+                p.x = p.x * horizontalStretchFactor;
+                p.y = p.y * verticalStretchFactor;
+                p += rect.topLeft();
+                staticText->drawText(p, rect);
+            }
+            m_frameCache.staticText->release();
+        }
+
+        m_frameCache.staticText->draw();
     }
 
-    // lights are drawn after names and before texts
-    if(m_drawLights)
-        m_lightView->draw(rect, srcRect);
+    for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
+        const Position pos = animatedText->getPosition();
 
-    if(m_viewMode == NEAR_VIEW && m_drawTexts) {
-        for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
-            const Position pos = staticText->getPosition();
+        if(pos.z != cameraPosition.z)
+            continue;
 
-            if(pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
-                continue;
+        Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
+        p.x *= horizontalStretchFactor;
+        p.y *= verticalStretchFactor;
+        p += rect.topLeft();
 
-            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p.x = p.x * horizontalStretchFactor;
-            p.y = p.y * verticalStretchFactor;
-            p += rect.topLeft();
-            staticText->drawText(p, rect);
-        }
-
-        for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
-            const Position pos = animatedText->getPosition();
-
-            if(pos.z != cameraPosition.z)
-                continue;
-
-            Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-            p.x *= horizontalStretchFactor;
-            p.y *= verticalStretchFactor;
-            p += rect.topLeft();
-
-            animatedText->drawText(p, rect);
-        }
+        animatedText->drawText(p, rect);
     }
 }
 
 void MapView::updateVisibleTilesCache()
 {
+    m_mustUpdateVisibleTilesCache = false;
+
     // there is no tile to render on invalid positions
     const Position cameraPosition = getCameraPosition();
     if(!cameraPosition.isValid())
@@ -375,13 +411,11 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     }
 
     // draw actually more than what is needed to avoid massive recalculations on huge views
-
-    if(viewMode >= HUGE_VIEW) {
+    /* if(viewMode >= HUGE_VIEW) {
         Size oldDimension = drawDimension;
         drawDimension = (m_framebuffer->getSize() / tileSize);
         virtualCenterOffset += (drawDimension - oldDimension).toPoint() / 2;
-    }
-
+    }*/
 
     m_viewMode = viewMode;
     m_visibleDimension = visibleDimension;
@@ -395,8 +429,11 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
     m_scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
 
-    m_framebuffer->resize(bufferSize);
-    m_nameFramebuffer->resize(bufferSize * 4);
+    m_frameCache.tile->resize(bufferSize);
+
+    const Size aboveMapSize = bufferSize * 4;
+    m_frameCache.staticText->resize(aboveMapSize);
+    m_frameCache.creatureInformation->resize(aboveMapSize);
 
     resetLastCamera();
     requestVisibleTilesCacheUpdate();
@@ -658,7 +695,7 @@ void MapView::setDrawLights(bool enable)
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 
-    requestDrawing(Otc::ReDrawTile_Light);
+    requestDrawing(Otc::ReDrawLight);
     m_mustCleanFramebuffer = true;
     m_drawLights = enable;
 }
@@ -726,9 +763,11 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
     return true;
 }
 
-void MapView::requestDrawing(const Otc::ReDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
+void MapView::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
 {
-    if(reDrawFlags & Otc::ReDrawTile && (force && (!isLocalPlayer || m_viewMode == NEAR_VIEW) || m_minTimeRender.ticksElapsed() > 10)) m_redrawFlag = reDrawFlags;
+    if((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW) || m_minTimeRender.ticksElapsed() > 10))
+        m_redrawFlag |= reDrawFlags;
+
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
 }
 

@@ -109,6 +109,7 @@ void LightView::drawGlobalLight(const Light& light)
     color.setRed(color.rF() * brightness);
     color.setGreen(color.gF() * brightness);
     color.setBlue(color.bF() * brightness);
+
     g_painter->setColor(color);
     g_painter->drawFilledRect(Rect(0, 0, m_lightbuffer->getSize()));
 }
@@ -146,9 +147,8 @@ void LightView::draw(const Rect& dest, const Rect& src)
         for(const LightSource& source : m_lightMap)
             drawLightSource(source.center, source.color, source.radius);
 
-        m_lightbuffer->release();
-
         m_redraw = false;
+        m_lightbuffer->release();
         m_minTimeRender.restart();
     }
     g_painter->setCompositionMode(Painter::CompositionMode_Light);

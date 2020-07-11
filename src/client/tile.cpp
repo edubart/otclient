@@ -41,22 +41,22 @@ Tile::Tile(const Position& position) :
 {
 }
 
-void Tile::drawGround(const Point& dest, float scaleFactor, LightView* lightView)
+void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     m_drawElevation = 0;
 
     for(const auto& ground : m_grounds) {
-        ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
         m_drawElevation += ground->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 }
 
-void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView)
+void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     for(const auto& item : m_bottomItems) {
-        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -66,7 +66,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
     for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
 
-        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -79,31 +79,31 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-            ), scaleFactor, lightView);
+            ), scaleFactor, reDrawFlags, lightView);
     }
 
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
-        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
+        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
     }
 }
 
-void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
+void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     for(const auto& effect : m_effects) {
-        effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
+        effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
     }
 
     for(const auto& item : m_topItems) {
-        item->draw(dest, scaleFactor, true, lightView);
+        item->draw(dest, scaleFactor, true, reDrawFlags, lightView);
     }
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, LightView* lightView)
+void Tile::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
-    drawGround(dest, scaleFactor, lightView);
-    drawBottom(dest, scaleFactor, lightView);
-    drawTop(dest, scaleFactor, lightView);
+    drawGround(dest, scaleFactor, reDrawFlags, lightView);
+    drawBottom(dest, scaleFactor, reDrawFlags, lightView);
+    drawTop(dest, scaleFactor, reDrawFlags, lightView);
 }
 
 void Tile::clean()

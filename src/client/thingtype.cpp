@@ -385,7 +385,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, int reDrawFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -414,17 +414,19 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
                           textureRect.size() * scaleFactor);
 
-    const bool useOpacity = m_opacity < 1.0f;
+    if(reDrawFlags & Otc::ReDrawThing) {
+        const bool useOpacity = m_opacity < 1.0f;
 
-    if(useOpacity)
-        g_painter->setColor(Color(1.0f, 1.0f, 1.0f, m_opacity));
+        if(useOpacity)
+            g_painter->setColor(Color(1.0f, 1.0f, 1.0f, m_opacity));
 
-    g_painter->drawTexturedRect(screenRect, texture, textureRect);
+        g_painter->drawTexturedRect(screenRect, texture, textureRect);
 
-    if(useOpacity)
-        g_painter->setColor(Color::white);
+        if(useOpacity)
+            g_painter->setColor(Color::white);
+    }
 
-    if(lightView && hasLight()) {
+    if(lightView && hasLight() && reDrawFlags & Otc::ReDrawLight) {
         const Light light = getLight();
         if(light.intensity > 0)
             lightView->addLightSource(screenRect.center(), scaleFactor, light);
@@ -620,8 +622,12 @@ void ThingType::startListenerPainter(const float duration)
 {
     if(m_countPainterListeningRef == 0) {
         m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
-            const auto redrawFlag = getCategory() == ThingCategoryMissile && hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
-            g_map.requestDrawing(redrawFlag);
+            uint32_t redrawFlag = Otc::ReDrawThing;
+
+            if(getCategory() == ThingCategoryMissile && hasLight())
+                redrawFlag |= Otc::ReDrawLight;
+
+            g_map.requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag));
         }, duration);
     }
 
@@ -635,8 +641,10 @@ bool ThingType::cancelListenerPainter()
     --m_countPainterListeningRef;
 
     if(m_painterListeningEvent && m_countPainterListeningRef == 0) {
-        const auto redrawFlag = hasLight() ? Otc::ReDrawTile_Light : Otc::ReDrawTile;
-        g_map.requestDrawing(redrawFlag, true);
+        uint32_t redrawFlag = Otc::ReDrawThing;
+        if(hasLight()) redrawFlag |= Otc::ReDrawLight;
+
+        g_map.requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag), true);
 
         m_painterListeningEvent->cancel();
         m_painterListeningEvent = nullptr;
