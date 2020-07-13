@@ -185,8 +185,8 @@ void MapView::draw(const Rect& rect)
     const float verticalStretchFactor = rect.height() / static_cast<float>(srcRect.height());
 
     // avoid drawing texts on map in far zoom outs
-    // if(m_viewMode == NEAR_VIEW)
-    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+    if(m_viewMode == NEAR_VIEW)
+        drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     // lights are drawn after names and before texts
     if(m_drawLights)
@@ -368,9 +368,6 @@ void MapView::updateVisibleTilesCache()
             }
         }
     }
-
-    if(m_viewMode <= NEAR_VIEW)
-        m_visibleCreatures = g_map.getSightSpectators(cameraPosition, false);
 }
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
@@ -442,7 +439,12 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onTileUpdate(const Position&) {}
+void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing)
+{
+    if(m_viewMode <= NEAR_VIEW && thing && thing->isCreature()) {
+        m_visibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
+    }
+}
 
 void MapView::onMapCenterChange(const Position&)
 {
@@ -705,10 +707,11 @@ void MapView::setDrawLights(bool enable)
 
 void MapView::initViewPortDirection()
 {
+    const AwareRange& awareRange = g_map.getAwareRange();
     for(int dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
         ViewPort& vp = m_viewPortDirection[dir];
-        vp.top = Map::maxViewportY;
-        vp.right = Map::maxViewportX;
+        vp.top = awareRange.top;
+        vp.right = awareRange.right;
         vp.bottom = vp.top;
         vp.left = vp.right;
 
@@ -768,7 +771,7 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
 
 void MapView::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
 {
-    if((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW) || m_minTimeRender.ticksElapsed() > 10))
+    if(((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW)) || m_minTimeRender.ticksElapsed() > 10))
         m_redrawFlag |= reDrawFlags;
 
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);

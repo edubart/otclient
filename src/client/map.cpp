@@ -59,13 +59,23 @@ void Map::removeMapView(const MapViewPtr& mapView)
         m_mapViews.erase(it);
 }
 
-void Map::notificateTileUpdate(const Position& pos)
+void Map::resetAwareRange()
+{
+    AwareRange range;
+    range.left = 8;
+    range.top = 6;
+    range.bottom = range.top + 1;
+    range.right = range.left + 1;
+    setAwareRange(range);
+}
+
+void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing)
 {
     if(!pos.isMapPosition())
         return;
 
     for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->onTileUpdate(pos);
+        mapView->onTileUpdate(pos, thing);
     }
 
     g_minimap.updateTile(pos, getTile(pos));
@@ -171,7 +181,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         thing->onAppear();
     }
 
-    notificateTileUpdate(pos);
+    notificateTileUpdate(pos, thing);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
@@ -226,7 +236,7 @@ bool Map::removeThing(const ThingPtr& thing)
         }
     }
 
-    notificateTileUpdate(thing->getPosition());
+    notificateTileUpdate(thing->getPosition(), thing);
 
     return ret;
 }
@@ -729,24 +739,12 @@ void Map::setAwareRange(const AwareRange& range)
     removeUnawareThings();
 }
 
-void Map::resetAwareRange()
-{
-    AwareRange range;
-    range.left = maxViewportX;
-    range.top = maxViewportY;
-    range.bottom = range.top + 1;
-    range.right = range.left + 1;
-    setAwareRange(range);
-}
-
 int Map::getFirstAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
         return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
 
     return 0;
-
-
 }
 
 int Map::getLastAwareFloor()

@@ -27,7 +27,6 @@
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/luaengine/luaobject.h>
-#include "declarations.h"
 #include "lightview.h"
 
  // @bindclass
@@ -51,7 +50,7 @@ private:
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
-    void onTileUpdate(const Position& pos);
+    void onTileUpdate(const Position& pos, const ThingPtr& thing);
     void onMapCenterChange(const Position& pos);
 
     friend class Map;

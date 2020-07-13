@@ -141,15 +141,12 @@ struct AwareRange
 class Map
 {
 public:
-    static constexpr uint8_t maxViewportX = 8;
-    static constexpr uint8_t maxViewportY = 6;
-
     void init();
     void terminate();
 
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
-    void notificateTileUpdate(const Position& pos);
+    void notificateTileUpdate(const Position& pos, const ThingPtr& thing = nullptr);
 
     void requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
 
