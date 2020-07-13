@@ -120,8 +120,6 @@ public:
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
     void requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
-    void addVisibleCreature(const CreaturePtr& creature);
-    void removeVisibleCreature(const CreaturePtr& creature);
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
 private:

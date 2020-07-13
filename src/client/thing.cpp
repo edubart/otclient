@@ -42,7 +42,7 @@ void Thing::requestDrawing(const bool force)
         redrawFlag = Otc::ReDrawThing;
 
         if(isItem()) static_self_cast<Item>()->startListenerPainter();
-        if(isCreature()) redrawFlag |= Otc::ReDrawAllInformation;
+        else if(isCreature()) redrawFlag |= Otc::ReDrawAllInformation;
         if(_isLocalPlayer || hasLight()) redrawFlag |= Otc::ReDrawLight;
     }
 

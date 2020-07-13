@@ -368,6 +368,9 @@ void MapView::updateVisibleTilesCache()
             }
         }
     }
+
+    if(m_viewMode <= NEAR_VIEW)
+        m_visibleCreatures = g_map.getSightSpectators(cameraPosition, false);
 }
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
@@ -769,22 +772,6 @@ void MapView::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool
         m_redrawFlag |= reDrawFlags;
 
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
-}
-
-void MapView::addVisibleCreature(const CreaturePtr& creature)
-{
-    const auto it = std::find(m_visibleCreatures.begin(), m_visibleCreatures.end(), creature);
-    if(it != m_visibleCreatures.end()) return;
-
-    m_visibleCreatures.push_back(creature);
-}
-
-void MapView::removeVisibleCreature(const CreaturePtr& creature)
-{
-    const auto it = std::find(m_visibleCreatures.begin(), m_visibleCreatures.end(), creature);
-    if(it == m_visibleCreatures.end()) return;
-
-    m_visibleCreatures.erase(it);
 }
 
 /* vim: set ts=4 sw=4 et: */

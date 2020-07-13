@@ -253,8 +253,6 @@ public:
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxComplexity, int flags = 0);
 
 private:
-    void addVisibleCreature(const CreaturePtr& creature);
-    void removeVisibleCreature(const CreaturePtr& creature);
     void removeUnawareThings();
 
     uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }

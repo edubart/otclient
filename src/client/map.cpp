@@ -119,10 +119,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if(tile) {
-            tile->addThing(thing, stackPos);
-            if(thing->isCreature()) addVisibleCreature(thing->static_self_cast<Creature>());
-        }
+        if(tile) tile->addThing(thing, stackPos);
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
@@ -218,7 +215,6 @@ bool Map::removeThing(const ThingPtr& thing)
             }
         } else if(const TilePtr& tile = thing->getTile()) {
             ret = tile->removeThing(thing);
-            if(thing->isCreature()) removeVisibleCreature(thing->static_self_cast<Creature>());
         }
 
         if(!thing->cancelListenerPainter()) {
@@ -720,6 +716,7 @@ bool Map::isAwareOfPosition(const Position& pos)
             groundedPos.coveredDown();
         }
     }
+
     return m_centralPosition.isInRange(groundedPos, m_awareRange.left,
                                        m_awareRange.right,
                                        m_awareRange.top,
@@ -930,18 +927,6 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         delete it.second;
 
     return ret;
-}
-
-void Map::addVisibleCreature(const CreaturePtr& creature)
-{
-    for(const MapViewPtr& mapView : m_mapViews)
-        mapView->addVisibleCreature(creature);
-}
-
-void Map::removeVisibleCreature(const CreaturePtr& creature)
-{
-    for(const MapViewPtr& mapView : m_mapViews)
-        mapView->removeVisibleCreature(creature);
 }
 
 void  Map::resetLastCamera()
