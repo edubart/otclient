@@ -304,13 +304,14 @@ void MapView::updateVisibleTilesCache()
 
     m_mustCleanFramebuffer = true;
 
-    if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
+    // TODO: Review
+    /*if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
        m_cachedLastVisibleFloor == cachedLastVisibleFloor &&
        cameraPosition.z == m_lastCameraPosition.z &&
        cameraPosition.distance(m_lastCameraPosition) < 2
-       ) return;
+       ) return;*/
 
-    m_lastCameraPosition = cameraPosition;
+       // m_lastCameraPosition = cameraPosition;
     m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
     m_cachedLastVisibleFloor = cachedLastVisibleFloor;
 
@@ -439,7 +440,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing)
+void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing)
 {
     if(m_viewMode <= NEAR_VIEW && thing && thing->isCreature()) {
         m_visibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
