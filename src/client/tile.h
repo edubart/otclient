@@ -135,7 +135,7 @@ public:
     bool hasLight();
     void analyzeThing(const ThingPtr& thing, bool add);
 
-    bool hasGroundsToDraw() const { return !m_grounds.empty(); }
+    bool hasGroundToDraw() const { return !m_ground.empty(); }
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
     bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
 
@@ -155,7 +155,7 @@ private:
     std::vector<ThingPtr> m_things;
 
     std::vector<EffectPtr> m_effects;
-    std::vector<ItemPtr> m_grounds;
+    std::vector<ItemPtr> m_ground;
     std::vector<ItemPtr> m_topItems;
     std::vector<ItemPtr> m_commonItems;
     std::vector<ItemPtr> m_bottomItems;

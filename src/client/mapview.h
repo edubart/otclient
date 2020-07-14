@@ -23,6 +23,9 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+ // Define 1, to draw separately. (Ground first => remainder after)
+#define DRAW_SEPARATELY 0
+
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>
@@ -135,6 +138,10 @@ private:
     int calcLastVisibleFloor();
 
     void initViewPortDirection();
+
+#if DRAW_SEPARATELY == 1
+    void drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView);
+#endif
 
     void drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);
     void drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);

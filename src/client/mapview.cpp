@@ -39,7 +39,6 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/image.h>
 
-
 enum {
     // 3840x2160 => 1080p optimized
     // 2560x1440 => 720p optimized
@@ -121,14 +120,17 @@ void MapView::draw(const Rect& rect)
         const auto& lightView = (m_lightView && m_lightView->isDark()) ? m_lightView.get() : nullptr;
         const auto& viewPort = m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+#if DRAW_SEPARATELY == 1
+            drawSeparately(z, viewPort, lightView);
+#else
             for(const auto& tile : m_cachedVisibleTiles[z]) {
                 if(!canRenderTile(tile, viewPort, lightView)) continue;
 
-                const Position tilePos = tile->getPosition();
+                const Position& tilePos = tile->getPosition();
 
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
-
+#endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
@@ -748,7 +750,7 @@ void MapView::initViewPortDirection()
 bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
 {
     const Position cameraPosition = getCameraPosition();
-    const Position tilePos = tile->getPosition();
+    const Position& tilePos = tile->getPosition();
 
     const int dz = tilePos.z - cameraPosition.z;
     const Position checkPos = tilePos.translated(dz, dz);
@@ -778,4 +780,33 @@ void MapView::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
 }
 
+#if DRAW_SEPARATELY == 1
+void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView)
+{
+    const Position cameraPosition = getCameraPosition();
+    const auto& tiles = m_cachedVisibleTiles[floor];
+
+    for(const auto& tile : tiles) {
+        if(!tile->hasGroundToDraw()) continue;
+
+        if(!canRenderTile(tile, viewPort, lightView)) continue;
+        const Position& tilePos = tile->getPosition();
+        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+    }
+
+    for(const auto& tile : tiles) {
+        if(!tile->hasBottomToDraw() && !tile->hasTopToDraw()) continue;
+
+        if(!canRenderTile(tile, viewPort, lightView)) continue;
+
+        const Position& tilePos = tile->getPosition();
+
+        const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
+        const auto& drawLight = g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
+
+        tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
+        tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
+    }
+}
+#endif
 /* vim: set ts=4 sw=4 et: */

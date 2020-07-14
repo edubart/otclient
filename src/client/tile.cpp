@@ -45,7 +45,7 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 {
     m_drawElevation = 0;
 
-    for(const auto& ground : m_grounds) {
+    for(const auto& ground : m_ground) {
         ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
         m_drawElevation += ground->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -109,7 +109,7 @@ void Tile::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView
 void Tile::clean()
 {
     m_bottomItems.clear();
-    m_grounds.clear();
+    m_ground.clear();
     m_topItems.clear();
     m_commonItems.clear();
     m_creatures.clear();
@@ -200,13 +200,13 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
 
             if(thing->isGroundBorder() || thing->isGround()) {
-                m_grounds.push_back(item);
+                m_ground.push_back(item);
             } else if(thing->isOnTop()) {
                 m_topItems.push_back(item);
             } else if(thing->isOnBottom()) {
                 m_bottomItems.push_back(item);
             } else {
-                originalStack -= m_grounds.size() + m_bottomItems.size() + m_creatures.size();
+                originalStack -= m_ground.size() + m_bottomItems.size() + m_creatures.size();
 
                 if(originalStack > m_commonItems.size()) {
                     m_commonItems.push_back(item);
@@ -266,8 +266,8 @@ bool Tile::removeThing(const ThingPtr& thing)
                 }
 
                 if(thing->isGroundBorder() || thing->isGround()) {
-                    const auto& subIt = std::find(m_grounds.begin(), m_grounds.end(), item);
-                    if(subIt != m_grounds.end()) m_grounds.erase(subIt);
+                    const auto& subIt = std::find(m_ground.begin(), m_ground.end(), item);
+                    if(subIt != m_ground.end()) m_ground.erase(subIt);
                 } else if(thing->isOnTop()) {
                     const auto& subIt = std::find(m_topItems.begin(), m_topItems.end(), item);
                     if(subIt != m_topItems.end()) m_topItems.erase(subIt);
@@ -342,7 +342,7 @@ std::vector<ItemPtr> Tile::getItems()
 
 ItemPtr Tile::getGround()
 {
-    if(!m_grounds.empty()) return m_grounds.front();
+    if(!m_ground.empty()) return m_ground.front();
 
     return nullptr;
 }
@@ -408,7 +408,7 @@ ThingPtr Tile::getTopLookThing()
         if(!item->isIgnoreLook()) return item;
     }
 
-    for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+    for(auto it = m_ground.rbegin(); it != m_ground.rend(); ++it) {
         const ItemPtr& item = *it;
         if(!item->isIgnoreLook()) return item;
     }
@@ -429,7 +429,7 @@ ThingPtr Tile::getTopUseThing()
         if(item->isForceUse()) return item;
     }
 
-    for(auto it = m_grounds.rbegin(); it != m_grounds.rend(); ++it) {
+    for(auto it = m_ground.rbegin(); it != m_ground.rend(); ++it) {
         const ItemPtr& item = *it;
         if(item->isForceUse()) return item;
     }
@@ -438,7 +438,7 @@ ThingPtr Tile::getTopUseThing()
     if(!m_commonItems.empty()) return m_commonItems.front();
     if(!m_bottomItems.empty()) return m_bottomItems.back();
 
-    return m_grounds.front();
+    return m_ground.front();
 }
 
 CreaturePtr Tile::getTopCreature()
@@ -502,8 +502,8 @@ ThingPtr Tile::getTopMultiUseThing()
         if(thing->isMultiUse()) return thing;
     }
 
-    if(!m_grounds.empty()) {
-        const ItemPtr& ground = m_grounds.front();
+    if(!m_ground.empty()) {
+        const ItemPtr& ground = m_ground.front();
         if(ground->isMultiUse()) return ground;
     }
 
@@ -512,7 +512,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
 bool Tile::isWalkable(bool ignoreCreatures)
 {
-    if(m_countFlag.notWalkable > 0 || m_grounds.empty()) {
+    if(m_countFlag.notWalkable > 0 || m_ground.empty()) {
         return false;
     }
 
@@ -554,7 +554,7 @@ bool Tile::isLookPossible()
 bool Tile::isClickable()
 {
 
-    return !m_grounds.empty() || !m_commonItems.empty() || !m_bottomItems.empty();
+    return !m_ground.empty() || !m_commonItems.empty() || !m_bottomItems.empty();
 }
 
 bool Tile::isEmpty()
@@ -722,7 +722,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
                 }
             }
 
-            for(const ItemPtr& subItem : m_grounds) {
+            for(const ItemPtr& subItem : m_ground) {
                 if(subItem->hasElevation()) return;
 
                 if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
