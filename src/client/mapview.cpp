@@ -118,7 +118,7 @@ void MapView::draw(const Rect& rect)
 
         g_painter->setColor(Color::white);
 
-        const auto& lightView = m_lightView->isDark() ? m_lightView.get() : nullptr;
+        const auto& lightView = (m_lightView && m_lightView->isDark()) ? m_lightView.get() : nullptr;
         const auto& viewPort = m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for(const auto& tile : m_cachedVisibleTiles[z]) {
