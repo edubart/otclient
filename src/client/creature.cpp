@@ -874,8 +874,7 @@ Point Creature::getDrawOffset()
 
 int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
-    int stepSpeed = m_speed;
-    if(stepSpeed < 1)
+    if(isParalyzed())
         return 0;
 
     Position tilePos;
@@ -896,14 +895,14 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
             groundSpeed = 150;
     } else groundSpeed = 150;
 
-    if(stepSpeed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
+    if(m_speed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
         double stepDuration = 1000. * groundSpeed;
         if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
             stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
-        } else stepDuration /= stepSpeed;
+        } else stepDuration /= m_speed;
 
         if(g_game.getClientVersion() >= 900) {
             const auto serverBeat = g_game.getServerBeat();

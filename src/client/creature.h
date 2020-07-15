@@ -128,6 +128,7 @@ public:
     bool isDead() { return m_healthPercent <= 0; }
     bool canBeSeen() { return !isInvisible() || isPlayer(); }
     bool isCreature() override { return true; }
+    bool isParalyzed() const { return m_speed < 10; }
 
     void updateDynamicInformation(bool update) { m_updateDynamicInformation = update; }
     bool updateDynamicInformation() const { return m_updateDynamicInformation; }

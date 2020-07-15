@@ -65,7 +65,7 @@ void LocalPlayer::lockWalk(int millis)
 bool LocalPlayer::canWalk(Otc::Direction)
 {
     // paralyzed
-    if(m_speed == 0)
+    if(isParalyzed())
         return false;
 
     // cannot walk while locked
