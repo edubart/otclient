@@ -579,15 +579,14 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    // Generate step cache for no-localPlayer
-    if(!isLocalPlayer()) getStepDuration(true);
+    int stepDuration = getStepDuration(true);
+    stepDuration += (12 - stepDuration * .01);
+
+    const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
+    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
 
     // update walk animation
     updateWalkAnimation();
-
-    int stepDuration = m_stepCache.duration + (12 - m_stepCache.duration * .01);
-    const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
-    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
