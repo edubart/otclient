@@ -452,10 +452,11 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation)
+void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
 {
     // Need Optimization (update only the specific Tile)
-    requestVisibleTilesCacheUpdate();
+    if(Otc::OPERATION_CLEAN == operation || m_followingCreature->isWalking())
+        requestVisibleTilesCacheUpdate();
 
     if(m_viewMode <= NEAR_VIEW && thing && thing->isCreature()) {
         m_visibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
