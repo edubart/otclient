@@ -31,6 +31,9 @@
 #include "protocolgame.h"
 #include "thingtypemanager.h"
 
+ // Define 1 to render behind the first creature added.
+#define RENDER_CREATURE_BEHIND 0
+
 Tile::Tile(const Position& position) :
     m_position(position),
     m_drawElevation(0),
@@ -73,6 +76,21 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 
+#if RENDER_CREATURE_BEHIND == 1
+    for(const auto& creature : m_walkingCreatures) {
+        creature->draw(
+            Point(
+                dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
+                dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
+            ), scaleFactor, reDrawFlags, lightView);
+    }
+
+    for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
+        const auto& creature = *it;
+        if(creature->isWalking()) continue;
+        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
+    }
+#else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
         creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
@@ -85,6 +103,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
             ), scaleFactor, reDrawFlags, lightView);
     }
+#endif    
 }
 
 void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
