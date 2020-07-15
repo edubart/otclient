@@ -452,10 +452,10 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
+void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation)
 {
-    if(operation == Otc::OPERATION_CLEAN)
-        requestVisibleTilesCacheUpdate();
+    // Need Optimization (update only the specific Tile)
+    requestVisibleTilesCacheUpdate();
 
     if(m_viewMode <= NEAR_VIEW && thing && thing->isCreature()) {
         m_visibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
@@ -822,7 +822,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */
