@@ -152,6 +152,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         else
             m_effects.push_back(effect);
 
+        analyzeThing(thing, true);
         thing->setPosition(m_position);
         thing->onAppear();
         return;
@@ -225,6 +226,9 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
+    if(thing->isTranslucent())
+        checkTranslucentLight();
+
     thing->setPosition(m_position);
     thing->onAppear();
 }
@@ -232,61 +236,63 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 // TODO: Need refactoring
 bool Tile::removeThing(const ThingPtr& thing)
 {
-    if(!thing)
-        return false;
-
-    bool removed = false;
+    if(!thing) return false;
 
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
         const auto it = std::find(m_effects.begin(), m_effects.end(), effect);
-        if(it != m_effects.end()) {
-            m_effects.erase(it);
-            removed = true;
+        if(it == m_effects.end())
+            return false;
+
+        analyzeThing(thing, false);
+
+        m_effects.erase(it);
+        return true;
+    }
+
+    const auto it = std::find(m_things.begin(), m_things.end(), thing);
+    if(it == m_things.end())
+        return false;
+
+    analyzeThing(thing, false);
+
+    if(thing->isCreature()) {
+        const auto subIt = std::find(m_creatures.begin(), m_creatures.end(), thing->static_self_cast<Creature>());
+        if(subIt != m_creatures.end()) {
+            if(thing->isLocalPlayer()) m_localPlayer = nullptr;
+            m_creatures.erase(subIt);
         }
     } else {
-        const auto it = std::find(m_things.begin(), m_things.end(), thing);
-        if(it != m_things.end()) {
-            analyzeThing(thing, false);
+        const ItemPtr& item = thing->static_self_cast<Item>();
 
-            thing->onDisappear();
+        if(item->hasAnimationPhases()) {
+            const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), item);
+            if(subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
+        }
 
-            if(thing->isCreature()) {
-                const auto subIt = std::find(m_creatures.begin(), m_creatures.end(), thing->static_self_cast<Creature>());
-                if(subIt != m_creatures.end()) {
-                    if(thing->isLocalPlayer()) m_localPlayer = nullptr;
-                    m_creatures.erase(subIt);
-                }
-            } else {
-                const ItemPtr& item = thing->static_self_cast<Item>();
-
-                if(item->hasAnimationPhases()) {
-                    const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), item);
-                    if(subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
-                }
-
-                if(thing->isGroundBorder() || thing->isGround()) {
-                    const auto& subIt = std::find(m_ground.begin(), m_ground.end(), item);
-                    if(subIt != m_ground.end()) m_ground.erase(subIt);
-                } else if(thing->isOnTop()) {
-                    const auto& subIt = std::find(m_topItems.begin(), m_topItems.end(), item);
-                    if(subIt != m_topItems.end()) m_topItems.erase(subIt);
-                } else if(thing->isOnBottom()) {
-                    const auto& subIt = std::find(m_bottomItems.begin(), m_bottomItems.end(), item);
-                    if(subIt != m_bottomItems.end()) m_bottomItems.erase(subIt);
-                } else {
-                    const auto& subIt = std::find(m_commonItems.begin(), m_commonItems.end(), item);
-                    if(subIt != m_commonItems.end()) m_commonItems.erase(subIt);
-                }
-            }
-
-            m_things.erase(it);
-
-            removed = true;
+        if(thing->isGroundBorder() || thing->isGround()) {
+            const auto& subIt = std::find(m_ground.begin(), m_ground.end(), item);
+            if(subIt != m_ground.end()) m_ground.erase(subIt);
+        } else if(thing->isOnTop()) {
+            const auto& subIt = std::find(m_topItems.begin(), m_topItems.end(), item);
+            if(subIt != m_topItems.end()) m_topItems.erase(subIt);
+        } else if(thing->isOnBottom()) {
+            const auto& subIt = std::find(m_bottomItems.begin(), m_bottomItems.end(), item);
+            if(subIt != m_bottomItems.end()) m_bottomItems.erase(subIt);
+        } else {
+            const auto& subIt = std::find(m_commonItems.begin(), m_commonItems.end(), item);
+            if(subIt != m_commonItems.end()) m_commonItems.erase(subIt);
         }
     }
 
-    return removed;
+    m_things.erase(it);
+
+    if(thing->isTranslucent())
+        checkTranslucentLight();
+
+    thing->onDisappear();
+
+    return true;
 }
 
 ThingPtr Tile::getThing(int stackPos)
@@ -648,8 +654,15 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 {
     const int value = add ? 1 : -1;
 
-    if(thing->isTranslucent())
-        checkTranslucentLight();
+    if(thing->hasLight())
+        m_countFlag.hasLight += value;
+
+    if(thing->hasDisplacement())
+        m_countFlag.hasDisplacement += value;
+
+    if(thing->isEffect()) return;
+
+    // Creatures and items
 
     if(thing->getRealSize() > Otc::TILE_PIXELS)
         m_countFlag.notSingleDimension += value;
@@ -675,9 +688,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.mustHookSouth += value;
 
     m_countFlag.totalElevation += thing->getElevation() * value;
-
-    if(thing->hasDisplacement())
-        m_countFlag.hasDisplacement += value;
 
     if(thing->isFullGround())
         m_countFlag.fullGround += value;
