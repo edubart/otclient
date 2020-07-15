@@ -574,7 +574,7 @@ void Creature::nextWalkUpdate()
         self->nextWalkUpdate();
 
         self->requestDrawing();
-    }, std::max<int>(m_stepCache.getDuration(m_lastStepDirection) / Otc::TILE_PIXELS, 15));
+    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 15));
 }
 
 void Creature::updateWalk(const bool isPreWalking)
