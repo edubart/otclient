@@ -131,7 +131,7 @@ void MapView::draw(const Rect& rect)
 
                 const Position& tilePos = tile->getPosition();
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, Otc::ReDrawThing, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
