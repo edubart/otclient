@@ -146,7 +146,7 @@ public:
 
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
-    void notificateTileUpdate(const Position& pos, const ThingPtr& thing = nullptr);
+    void notificateTileUpdate(const Position& pos, const ThingPtr& thing = nullptr, const Otc::Operation operation = Otc::OPERATION_NEUTRAL);
 
     void requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
 
@@ -224,7 +224,7 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    void setLight(const Light& light) { m_light = light; }
+    void setLight(const Light& light) { m_light = light; requestDrawing(Otc::ReDrawLight, true); }
     void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);
@@ -259,7 +259,6 @@ private:
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
-
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;

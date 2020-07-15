@@ -25,6 +25,10 @@
 
 namespace Otc
 {
+    enum Operation {
+        OPERATION_NEUTRAL, OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
+    };
+
     enum {
         TILE_PIXELS = 32,
         MAX_ELEVATION = 24,

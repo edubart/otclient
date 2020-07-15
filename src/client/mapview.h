@@ -53,7 +53,7 @@ private:
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
-    void onTileUpdate(const Position& pos, const ThingPtr& thing);
+    void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
     void onMapCenterChange(const Position& pos);
 
     friend class Map;
@@ -91,23 +91,23 @@ public:
     Position getCameraPosition();
     void setCameraPosition(const Position& pos);
 
-    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; }
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Otc::ReDrawLight, true); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawNames(bool enable) { m_drawNames = enable; }
+    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Otc::ReDrawStaticCreatureInformation, true); }
     bool isDrawingNames() { return m_drawNames; }
 
-    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; }
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Otc::ReDrawDynamicInformation, true); }
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
-    void setDrawManaBar(bool enable) { m_drawManaBar = enable; }
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Otc::ReDrawDynamicInformation, true); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
     void move(int x, int y);

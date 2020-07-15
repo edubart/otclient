@@ -137,7 +137,6 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(!thing)
         return;
 
-    bool removed = false;
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
 
@@ -152,83 +151,82 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             m_effects.insert(m_effects.begin(), effect);
         else
             m_effects.push_back(effect);
-    } else {
-        const uint8_t size = m_things.size();
-        uint8_t originalStack = stackPos;
 
-        // priority                                    854
-        // 0 - ground,                        -->      -->
-        // 1 - ground borders                 -->      -->
-        // 2 - bottom (walls),                -->      -->
-        // 3 - on top (doors)                 -->      -->
-        // 4 - creatures, from top to bottom  <--      -->
-        // 5 - items, from top to bottom      <--      <--
-        if(stackPos < 0 || stackPos == 255) {
-            const int priority = thing->getStackPriority();
+        thing->setPosition(m_position);
+        thing->onAppear();
+        return;
+    }
 
-            // -1 or 255 => auto detect position
-            // -2        => append
+    const uint8_t size = m_things.size();
+    uint8_t originalStack = stackPos;
 
-            bool append;
-            if(stackPos == -2)
-                append = true;
-            else {
-                append = priority <= 3;
+    // priority                                    854
+    // 0 - ground,                        -->      -->
+    // 1 - ground borders                 -->      -->
+    // 2 - bottom (walls),                -->      -->
+    // 3 - on top (doors)                 -->      -->
+    // 4 - creatures, from top to bottom  <--      -->
+    // 5 - items, from top to bottom      <--      <--
+    if(stackPos < 0 || stackPos == 255) {
+        const int priority = thing->getStackPriority();
 
-                // newer protocols does not store creatures in reverse order
-                if(g_game.getClientVersion() >= 854 && priority == 4)
-                    append = !append;
-            }
+        // -1 or 255 => auto detect position
+        // -2        => append
 
-            for(stackPos = 0; stackPos < size; ++stackPos) {
-                const int otherPriority = m_things[stackPos]->getStackPriority();
-                if((append && otherPriority > priority) || (!append && otherPriority >= priority))
-                    break;
-            }
-        } else if(stackPos > static_cast<int>(size))
-            stackPos = size;
+        bool append;
+        if(stackPos == -2)
+            append = true;
+        else {
+            append = priority <= 3;
 
-        m_things.insert(m_things.begin() + stackPos, thing);
-
-        if(thing->isCreature()) {
-            const CreaturePtr& creature = thing->static_self_cast<Creature>();
-            m_creatures.push_back(creature);
-            if(thing->isLocalPlayer()) m_localPlayer = creature;
-        } else {
-            const auto& item = thing->static_self_cast<Item>();
-
-            if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
-
-            if(thing->isGroundBorder() || thing->isGround()) {
-                m_ground.push_back(item);
-            } else if(thing->isOnTop()) {
-                m_topItems.push_back(item);
-            } else if(thing->isOnBottom()) {
-                m_bottomItems.push_back(item);
-            } else {
-                originalStack -= m_ground.size() + m_bottomItems.size() + m_creatures.size();
-
-                if(originalStack > m_commonItems.size()) {
-                    m_commonItems.push_back(item);
-                } else {
-                    m_commonItems.insert(m_commonItems.begin() + originalStack, item);
-                }
-            }
+            // newer protocols does not store creatures in reverse order
+            if(g_game.getClientVersion() >= 854 && priority == 4)
+                append = !append;
         }
 
-        analyzeThing(thing, true);
+        for(stackPos = 0; stackPos < size; ++stackPos) {
+            const int otherPriority = m_things[stackPos]->getStackPriority();
+            if((append && otherPriority > priority) || (!append && otherPriority >= priority))
+                break;
+        }
+    } else if(stackPos > static_cast<int>(size))
+        stackPos = size;
 
-        if(m_things.size() > MAX_THINGS)
-            removed = removeThing(m_things[MAX_THINGS]);
+    m_things.insert(m_things.begin() + stackPos, thing);
+
+    if(thing->isCreature()) {
+        const CreaturePtr& creature = thing->static_self_cast<Creature>();
+        m_creatures.push_back(creature);
+        if(thing->isLocalPlayer()) m_localPlayer = creature;
+    } else {
+        const auto& item = thing->static_self_cast<Item>();
+
+        if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
+
+        if(thing->isGroundBorder() || thing->isGround()) {
+            m_ground.push_back(item);
+        } else if(thing->isOnTop()) {
+            m_topItems.push_back(item);
+        } else if(thing->isOnBottom()) {
+            m_bottomItems.push_back(item);
+        } else {
+            originalStack -= m_ground.size() + m_bottomItems.size() + m_creatures.size();
+
+            if(originalStack > m_commonItems.size()) {
+                m_commonItems.push_back(item);
+            } else {
+                m_commonItems.insert(m_commonItems.begin() + originalStack, item);
+            }
+        }
     }
+
+    analyzeThing(thing, true);
+
+    if(m_things.size() > MAX_THINGS)
+        removeThing(m_things[MAX_THINGS]);
 
     thing->setPosition(m_position);
     thing->onAppear();
-
-    if(!removed) thing->requestDrawing(true);
-
-    if(thing->isTranslucent())
-        checkTranslucentLight();
 }
 
 // TODO: Need refactoring
@@ -250,6 +248,8 @@ bool Tile::removeThing(const ThingPtr& thing)
         const auto it = std::find(m_things.begin(), m_things.end(), thing);
         if(it != m_things.end()) {
             analyzeThing(thing, false);
+
+            thing->onDisappear();
 
             if(thing->isCreature()) {
                 const auto subIt = std::find(m_creatures.begin(), m_creatures.end(), thing->static_self_cast<Creature>());
@@ -285,11 +285,6 @@ bool Tile::removeThing(const ThingPtr& thing)
             removed = true;
         }
     }
-
-    thing->onDisappear();
-
-    if(thing->isTranslucent())
-        checkTranslucentLight();
 
     return removed;
 }
@@ -652,6 +647,9 @@ void Tile::cancelListenerPainter()
 void Tile::analyzeThing(const ThingPtr& thing, bool add)
 {
     const int value = add ? 1 : -1;
+
+    if(thing->isTranslucent())
+        checkTranslucentLight();
 
     if(thing->getRealSize() > Otc::TILE_PIXELS)
         m_countFlag.notSingleDimension += value;

@@ -69,13 +69,13 @@ void Map::resetAwareRange()
     setAwareRange(range);
 }
 
-void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing)
+void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
 {
     if(!pos.isMapPosition())
         return;
 
     for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->onTileUpdate(pos, thing);
+        mapView->onTileUpdate(pos, thing, operation);
     }
 
     g_minimap.updateTile(pos, getTile(pos));
@@ -129,7 +129,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if(tile) tile->addThing(thing, stackPos);
+        if(tile) {
+            tile->addThing(thing, stackPos);
+            thing->requestDrawing(true);
+        }
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
@@ -181,7 +184,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         thing->onAppear();
     }
 
-    notificateTileUpdate(pos, thing);
+    notificateTileUpdate(pos, thing, Otc::OPERATION_ADD);
 }
 
 ThingPtr Map::getThing(const Position& pos, int stackPos)
@@ -236,7 +239,7 @@ bool Map::removeThing(const ThingPtr& thing)
         }
     }
 
-    notificateTileUpdate(thing->getPosition(), thing);
+    notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_REMOVE);
 
     return ret;
 }
@@ -406,7 +409,7 @@ void Map::cleanTile(const Position& pos)
             if(tile->canErase())
                 block.remove(pos);
 
-            notificateTileUpdate(pos);
+            notificateTileUpdate(pos, nullptr, Otc::OPERATION_CLEAN);
         }
     }
 
