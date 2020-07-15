@@ -73,6 +73,10 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
             m_drawElevation = Otc::MAX_ELEVATION;
     }
 
+    for(const auto& creature : m_creatures) {
+        if(creature->isWalking()) continue;
+        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
+    }
 
     for(const auto& creature : m_walkingCreatures) {
         creature->draw(
@@ -80,11 +84,6 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
             ), scaleFactor, reDrawFlags, lightView);
-    }
-
-    for(const auto& creature : m_creatures) {
-        if(creature->isWalking()) continue;
-        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
     }
 }
 
