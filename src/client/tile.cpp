@@ -574,8 +574,7 @@ bool Tile::isLookPossible()
 
 bool Tile::isClickable()
 {
-
-    return !m_ground.empty() || !m_commonItems.empty() || !m_bottomItems.empty();
+    return getTopLookThing() && (!m_ground.empty() || !m_bottomItems.empty());
 }
 
 bool Tile::isEmpty()
