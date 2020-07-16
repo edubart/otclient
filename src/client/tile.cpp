@@ -524,6 +524,8 @@ ThingPtr Tile::getTopMultiUseThing()
     if(!m_ground.empty()) {
         const ItemPtr& ground = m_ground.front();
         if(ground->isMultiUse()) return ground;
+
+        return ground;
     }
 
     return nullptr;
