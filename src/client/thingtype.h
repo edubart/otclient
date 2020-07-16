@@ -205,7 +205,7 @@ public:
     bool isWrapable() { return m_attribs.has(ThingAttrWrapable); }
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
-    bool isOpaque() { return isFullGround() || getTexture(0)->isOpaque(); }
+    bool isOpaque() { return isFullGround() || hasTexture() && getTexture(0)->isOpaque(); }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
 
@@ -220,6 +220,8 @@ public:
     bool cancelListenerPainter();
 
 private:
+    bool hasTexture() const { return !m_textures.empty(); }
+
     static Size getBestTextureDimension(int w, int h, int count);
     uint getSpriteIndex(int w, int h, int l, int x, int y, int z, int a);
     uint getTextureIndex(int l, int x, int y, int z);
