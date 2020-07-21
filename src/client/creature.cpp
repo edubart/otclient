@@ -656,8 +656,9 @@ void Creature::setHealthPercent(uint8 healthPercent)
     else
         m_informationColor = Color(0x85, 0x0C, 0x0C);
 
+    const uint8 oldHealthPercent = m_healthPercent;
     m_healthPercent = healthPercent;
-    callLuaField("onHealthPercentChange", healthPercent);
+    callLuaField("onHealthPercentChange", healthPercent, oldHealthPercent);
 
     if(healthPercent <= 0)
         onDeath();
