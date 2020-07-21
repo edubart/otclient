@@ -285,6 +285,9 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     m_animationPhases = 0;
     int totalSpritesCount = 0;
 
+    std::vector<Size> sizes;
+    std::vector<int> total_sprites;
+
     for(int i = 0; i < groupCount; ++i) {
         uint8 frameGroupType = FrameGroupDefault;
         if(hasFrameGroups)
@@ -293,6 +296,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         const uint8 width = fin->getU8();
         const uint8 height = fin->getU8();
         m_size = Size(width, height);
+        sizes.push_back(m_size);
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
             m_exactSize = std::min<int>(m_realSize, std::max<int>(width * 32, height * 32));
@@ -320,6 +324,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         }
 
         const int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
+        total_sprites.push_back(totalSprites);
 
         if(totalSpritesCount + totalSprites > 4096)
             stdext::throw_exception("a thing type has more than 4096 sprites");
@@ -329,6 +334,41 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_spritesIndex[j] = g_game.getFeature(Otc::GameSpritesU32) ? fin->getU32() : fin->getU16();
 
         totalSpritesCount += totalSprites;
+    }
+
+    if(sizes.size() > 1) {
+        // correction for some sprites
+        for(auto& s : sizes) {
+            m_size.setWidth(std::max<int>(m_size.width(), s.width()));
+            m_size.setHeight(std::max<int>(m_size.height(), s.height()));
+        }
+        size_t expectedSize = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+        if(expectedSize != m_spritesIndex.size()) {
+            std::vector<int> sprites(std::move(m_spritesIndex));
+            m_spritesIndex.clear();
+            m_spritesIndex.reserve(expectedSize);
+            for(size_t i = 0, idx = 0; i < sizes.size(); ++i) {
+                int totalSprites = total_sprites[i];
+                if(m_size == sizes[i]) {
+                    for(int j = 0; j < totalSprites; ++j) {
+                        m_spritesIndex.push_back(sprites[idx++]);
+                    }
+                    continue;
+                }
+                size_t patterns = (totalSprites / sizes[i].area());
+                for(size_t p = 0; p < patterns; ++p) {
+                    for(int x = 0; x < m_size.width(); ++x) {
+                        for(int y = 0; y < m_size.height(); ++y) {
+                            if(x < sizes[i].width() && y < sizes[i].height()) {
+                                m_spritesIndex.push_back(sprites[idx++]);
+                                continue;
+                            }
+                            m_spritesIndex.push_back(0);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     m_textures.resize(m_animationPhases);
