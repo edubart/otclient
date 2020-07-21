@@ -1015,15 +1015,15 @@ int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, 
 
 const ThingTypePtr& Creature::getThingType()
 {
-    return g_things.getThingType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);
 }
 
 ThingType* Creature::rawGetThingType()
 {
-    return g_things.rawGetThingType(m_outfit.getId(), m_outfit.getCategory());
+    return g_things.rawGetThingType(m_outfit.getId(), ThingCategoryCreature);
 }
 
 ThingType* Creature::rawGetMountThingType()
 {
-    return g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
+    return g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
 }

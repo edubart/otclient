@@ -244,11 +244,11 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
-    if(thing->isTranslucent())
-        checkTranslucentLight();
-
     thing->setPosition(m_position);
     thing->onAppear();
+
+    if(thing->isTranslucent())
+        checkTranslucentLight();
 }
 
 // TODO: Need refactoring
@@ -305,10 +305,10 @@ bool Tile::removeThing(const ThingPtr& thing)
 
     m_things.erase(it);
 
+    thing->onDisappear();
+
     if(thing->isTranslucent())
         checkTranslucentLight();
-
-    thing->onDisappear();
 
     return true;
 }
