@@ -521,10 +521,11 @@ ThingPtr Tile::getTopMultiUseThing()
         if(thing->isMultiUse()) return thing;
     }
 
-    if(!m_ground.empty())
-        return m_ground.front();
+    if(!m_topItems.empty()) return m_topItems.back();
+    if(!m_commonItems.empty()) return m_commonItems.front();
+    if(!m_bottomItems.empty()) return m_bottomItems.back();
 
-    return nullptr;
+    return m_ground.front();
 }
 
 bool Tile::isWalkable(bool ignoreCreatures)
