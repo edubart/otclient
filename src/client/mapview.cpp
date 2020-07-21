@@ -209,7 +209,7 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
 
     if(m_redrawFlag & Otc::ReDrawDynamicInformation || drawStaticCreatureInf) {
         int flags = 0;
-        if(m_drawNames && drawStaticCreatureInf) { flags = Otc::DrawNames; }
+        if(m_drawNames) { flags = Otc::DrawNames; }
         if(m_drawHealthBars) { flags |= Otc::DrawBars; }
         if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
