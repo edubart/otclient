@@ -513,15 +513,14 @@ ThingPtr Tile::getTopMultiUseThing()
         return topCreature;
 
     for(const ThingPtr& thing : m_commonItems) {
-        if(thing->isMultiUse()) return thing;
+        if(thing->isForceUse()) return thing;
     }
 
     for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& thing = *it;
-        if(thing->isMultiUse()) return thing;
+        if(thing->isForceUse()) return thing;
     }
 
-    if(!m_topItems.empty()) return m_topItems.back();
     if(!m_commonItems.empty()) return m_commonItems.front();
     if(!m_bottomItems.empty()) return m_bottomItems.back();
 
