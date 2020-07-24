@@ -177,8 +177,8 @@ local function binaryInsert(tbl, value, comparator, ...) -- Binary Insertion fun
 	
 	local mini = 1
 	local maxi = #tbl
-    local state = 0
-    local mid = 1
+	local state = 0
+	local mid = 1
 	
 	while mini <= maxi do
 		mid = math.floor((maxi+mini)/2)
