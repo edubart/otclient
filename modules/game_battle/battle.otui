@@ -64,27 +64,27 @@ MiniWindow
       BattlePlayers
         id: hidePlayers
         !tooltip: tr('Hide players')
-        @onCheckChange: modules.game_battle.checkCreatures(true)
+        @onCheckChange: modules.game_battle.checkCreatures()
 
       BattleNPCs
         id: hideNPCs
         !tooltip: tr('Hide Npcs')
-        @onCheckChange: modules.game_battle.checkCreatures(true)
+        @onCheckChange: modules.game_battle.checkCreatures()
 
       BattleMonsters
         id: hideMonsters
         !tooltip: tr('Hide monsters')
-        @onCheckChange: modules.game_battle.checkCreatures(true)
+        @onCheckChange: modules.game_battle.checkCreatures()
 
       BattleSkulls
         id: hideSkulls
         !tooltip: tr('Hide non-skull players')
-        @onCheckChange: modules.game_battle.checkCreatures(true)
+        @onCheckChange: modules.game_battle.checkCreatures()
 
       BattleParty
         id: hideParty
         !tooltip: tr('Hide party members')
-        @onCheckChange: modules.game_battle.checkCreatures(true)
+        @onCheckChange: modules.game_battle.checkCreatures()
 
     Panel
       anchors.top: prev.bottom
