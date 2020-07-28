@@ -55,7 +55,7 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
 
             // light intensity varies inversely with the square of the distance
             intensity = intensity * intensity;
-            const uint8_t colorByte = intensity * 0x6E;
+            const uint8_t colorByte = intensity * 0x8C;
 
             uint8_t pixel[4] = { colorByte,colorByte,colorByte,0xff };
             lightImage->setPixel(x, y, pixel);
