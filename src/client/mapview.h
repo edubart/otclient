@@ -27,7 +27,7 @@
 #define DRAW_SEPARATELY 0
 
  // Define 1, to draw creature information after light.
-#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 1
+#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 0
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
