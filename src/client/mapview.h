@@ -26,6 +26,9 @@
  // Define 1, to draw separately. (Ground first => remainder after)
 #define DRAW_SEPARATELY 0
 
+ // Define 1, to draw creature information after light.
+#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 1
+
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>

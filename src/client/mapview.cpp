@@ -190,21 +190,27 @@ void MapView::draw(const Rect& rect)
     const float verticalStretchFactor = rect.height() / static_cast<float>(srcRect.height());
 
     // avoid drawing texts on map in far zoom outs
-    if(m_viewMode == NEAR_VIEW)
-        drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+#if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
+    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+#endif
 
     // lights are drawn after names and before texts
     if(m_drawLights)
         m_lightView->draw(rect, srcRect);
 
-    if(m_viewMode == NEAR_VIEW && m_drawTexts)
-        drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+#if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 1
+    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+#endif
+
+    drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     m_redrawFlag = 0;
 }
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
+    if(m_viewMode != NEAR_VIEW) return;
+
     const bool drawStaticCreatureInf = m_redrawFlag & Otc::ReDrawStaticCreatureInformation;
 
     if(m_redrawFlag & Otc::ReDrawDynamicInformation || drawStaticCreatureInf) {
@@ -254,6 +260,8 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
 
 void MapView::drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
+    if(m_viewMode != NEAR_VIEW || !m_drawTexts) return;
+
     const Position cameraPosition = getCameraPosition();
 
     if(!g_map.getStaticTexts().empty()) {
@@ -823,7 +831,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
-    }
+}
 }
 #endif
 /* vim: set ts=4 sw=4 et: */
