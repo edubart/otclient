@@ -108,7 +108,7 @@ void MapView::draw(const Rect& rect)
             Light ambientLight;
             if(cameraPosition.z > Otc::SEA_FLOOR) {
                 ambientLight.color = 215;
-                ambientLight.intensity = 0;                
+                ambientLight.intensity = 0;
             } else ambientLight = g_map.getLight();
 
             ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
@@ -807,7 +807,7 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
 {
     if(!isLocalPlayer && pos.isValid() && !isInRange(pos)) return;
 
-    if(((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW)) || m_minTimeRender.ticksElapsed() > 10))
+    if(((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW)) || m_minTimeRender.ticksElapsed() > 15))
         m_redrawFlag |= reDrawFlags;
 
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
