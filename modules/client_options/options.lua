@@ -256,6 +256,14 @@ function addTab(name, panel, icon)
   optionsTabBar:addTab(name, panel, icon)
 end
 
+function removeTab(v)
+  if type(v) == "string" then
+    v = optionsTabBar:getTab(v)
+  end
+  
+  optionsTabBar:removeTab(v)
+end
+
 function addButton(name, func, icon)
   optionsTabBar:addButton(name, func, icon)
 end
