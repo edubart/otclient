@@ -383,6 +383,11 @@ void Creature::jump(int height, int duration)
 
 void Creature::updateJump()
 {
+    if(m_jumpTimer.ticksElapsed() >= m_jumpDuration) {
+        m_jumpOffset = PointF(0, 0);
+        return;
+    }
+
     const int t = m_jumpTimer.ticksElapsed();
     const double a = -4 * m_jumpHeight / (m_jumpDuration * m_jumpDuration);
     const double b = +4 * m_jumpHeight / m_jumpDuration;
@@ -391,34 +396,32 @@ void Creature::updateJump()
     const int roundHeight = stdext::round(height);
     const int halfJumpDuration = m_jumpDuration / 2;
 
-    // schedules next update
-    if(m_jumpTimer.ticksElapsed() < m_jumpDuration) {
-        m_jumpOffset = PointF(height, height);
+    m_jumpOffset = PointF(height, height);
 
-        int diff = 0;
-        if(m_jumpTimer.ticksElapsed() < halfJumpDuration)
+    requestDrawing();
+
+    int diff = 0;
+    if(m_jumpTimer.ticksElapsed() < halfJumpDuration)
+        diff = 1;
+    else if(m_jumpTimer.ticksElapsed() > halfJumpDuration)
+        diff = -1;
+
+    int nextT, i = 1;
+    do {
+        nextT = stdext::round((-b + std::sqrt(std::max<double>(b * b + 4 * a * (roundHeight + diff * i), 0.0)) * diff) / (2 * a));
+        ++i;
+
+        if(nextT < halfJumpDuration)
             diff = 1;
-        else if(m_jumpTimer.ticksElapsed() > halfJumpDuration)
+        else if(nextT > halfJumpDuration)
             diff = -1;
+    } while(nextT - m_jumpTimer.ticksElapsed() == 0 && i < 3);
 
-        int nextT, i = 1;
-        do {
-            nextT = stdext::round((-b + std::sqrt(std::max<double>(b * b + 4 * a * (roundHeight + diff * i), 0.0)) * diff) / (2 * a));
-            ++i;
-
-            if(nextT < halfJumpDuration)
-                diff = 1;
-            else if(nextT > halfJumpDuration)
-                diff = -1;
-        } while(nextT - m_jumpTimer.ticksElapsed() == 0 && i < 3);
-
-        auto self = static_self_cast<Creature>();
-        g_dispatcher.scheduleEvent([self] {
-            self->updateJump();
-            self->requestDrawing();
-        }, nextT - m_jumpTimer.ticksElapsed());
-    } else
-        m_jumpOffset = PointF(0, 0);
+    // schedules next update
+    const auto self = static_self_cast<Creature>();
+    g_dispatcher.scheduleEvent([self] {
+        self->updateJump();
+    }, nextT - m_jumpTimer.ticksElapsed());
 }
 
 void Creature::onPositionChange(const Position& newPos, const Position& oldPos)
@@ -564,6 +567,7 @@ void Creature::nextWalkUpdate()
 
     // do the update
     updateWalk();
+    requestDrawing();
 
     if(!m_walking) return;
 
@@ -572,8 +576,6 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-
-        self->requestDrawing();
     }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 15));
 }
 

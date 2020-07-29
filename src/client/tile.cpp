@@ -350,10 +350,8 @@ std::vector<ItemPtr> Tile::getItems()
     std::vector<ItemPtr> items;
 
     for(const ThingPtr& thing : m_things) {
-        if(!thing->isItem())
-            continue;
-
-        items.push_back(thing->static_self_cast<Item>());
+        if(thing->isItem())
+            items.push_back(thing->static_self_cast<Item>());
     }
 
     return items;
@@ -361,9 +359,9 @@ std::vector<ItemPtr> Tile::getItems()
 
 ItemPtr Tile::getGround()
 {
-    if(!m_ground.empty()) return m_ground.front();
+    if(m_ground.empty()) return nullptr;
 
-    return nullptr;
+    return m_ground.front();
 }
 
 EffectPtr Tile::getEffect(uint16 id)
