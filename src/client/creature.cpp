@@ -576,7 +576,7 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 15));
+    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
 }
 
 void Creature::updateWalk(const bool isPreWalking)

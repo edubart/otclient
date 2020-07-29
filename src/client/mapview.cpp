@@ -105,7 +105,12 @@ void MapView::draw(const Rect& rect)
             m_lightView->reset();
             m_lightView->resize(m_frameCache.tile->getSize());
 
-            Light ambientLight = ambientLight = g_map.getLight();
+            Light ambientLight;
+            if(cameraPosition.z > Otc::SEA_FLOOR) {
+                ambientLight.color = 215;
+                ambientLight.intensity = 0;                
+            } else ambientLight = g_map.getLight();
+
             ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
             m_lightView->setGlobalLight(ambientLight);
         }
