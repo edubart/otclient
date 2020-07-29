@@ -26,17 +26,17 @@ HealthCircleFront < UIProgressBar
 ManaCircleFront < UIProgressBar
   image-source: /game_healthcircle/img_game_healthcircle/right_full
   opacity: 0.7
-  image-color: #0000FFFF
+  image-color: #3F92EA
   phantom: true
 
 ExpCircleFront < UIProgressBar
   image-source: /game_healthcircle/img_game_healthcircle/top_full
   opacity: 0.7
-  image-color: #FFD700
+  image-color: #ecff57
   phantom: true
 
 SkillCircleFront < UIProgressBar
   image-source: /game_healthcircle/img_game_healthcircle/bottom_full
   opacity: 0.7
-  image-color: #FFFFFF
+  image-color: #FC8CFF
   phantom: true

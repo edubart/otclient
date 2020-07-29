@@ -29,7 +29,7 @@ skillType = g_settings.getString('healthcircle_skilltype')
 skillsLoaded = false
 
 distanceFromCenter = g_settings.getNumber('healthcircle_distfromcenter')
-opacityCircle = g_settings.getNumber('healthcircle_opacity', 0.7)
+opacityCircle = g_settings.getNumber('healthcircle_opacity', 0.35)
 
 if not (skillType == 'magic' or skillType == 'fist' or skillType == 'club' or skillType == 'sword' or skillType == 'axe' or skillType == 'distance' or skillType == 'shielding' or skillType == 'fishing') then
   skillType = 'magic'
