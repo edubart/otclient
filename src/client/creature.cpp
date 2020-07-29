@@ -579,7 +579,7 @@ void Creature::nextWalkUpdate()
     }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
 }
 
-void Creature::updateWalk(const bool isPreWalking)
+void Creature::updateWalk()
 {
     int stepDuration = getStepDuration(true);
     stepDuration += (12 - stepDuration * .01);
@@ -599,7 +599,7 @@ void Creature::updateWalk(const bool isPreWalking)
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are completed
-    if(m_walking && !isPreWalking && m_walkTimer.ticksElapsed() >= stepDuration) {
+    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration) {
         terminateWalk();
     }
 }

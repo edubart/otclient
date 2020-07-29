@@ -108,7 +108,7 @@ protected:
     void preWalk(Otc::Direction direction);
     void cancelWalk(Otc::Direction direction = Otc::InvalidDirection);
     void stopWalk() override;
-    void updateWalk(const bool = false) override { Creature::updateWalk(m_preWalking); }
+    void updateWalk() override { Creature::updateWalk(); }
 
     friend class Game;
 

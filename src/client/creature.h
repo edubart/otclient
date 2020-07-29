@@ -146,7 +146,7 @@ protected:
     void updateWalkingTile();
     virtual void updateWalkAnimation();
     virtual void updateWalkOffset(int totalPixelsWalked);
-    virtual void updateWalk(bool isPreWalking = false);
+    virtual void updateWalk();
     virtual void nextWalkUpdate();
     virtual void terminateWalk();
 
