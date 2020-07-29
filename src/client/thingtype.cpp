@@ -667,7 +667,7 @@ void ThingType::startListenerPainter(const float duration)
             if(getCategory() == ThingCategoryMissile && hasLight())
                 redrawFlag |= Otc::ReDrawLight;
 
-            g_map.requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag));
+            g_map.requestDrawing(Position(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
         }, duration);
     }
 
@@ -684,7 +684,7 @@ bool ThingType::cancelListenerPainter()
         uint32_t redrawFlag = Otc::ReDrawThing;
         if(hasLight()) redrawFlag |= Otc::ReDrawLight;
 
-        g_map.requestDrawing(static_cast<Otc::RequestDrawFlags>(redrawFlag), true);
+        g_map.requestDrawing(Position(), static_cast<Otc::RequestDrawFlags>(redrawFlag), true);
 
         m_painterListeningEvent->cancel();
         m_painterListeningEvent = nullptr;

@@ -94,23 +94,23 @@ public:
     Position getCameraPosition();
     void setCameraPosition(const Position& pos);
 
-    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Otc::ReDrawLight, true); }
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Position(), Otc::ReDrawLight, true); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Otc::ReDrawAllInformation, true); }
+    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
     bool isDrawingNames() { return m_drawNames; }
 
-    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Otc::ReDrawAllInformation, true); }
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
-    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Otc::ReDrawAllInformation, true); }
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
     void move(int x, int y);
@@ -124,7 +124,7 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
+    void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
 private:
@@ -157,6 +157,7 @@ private:
                      (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
+    bool isInRange(const Position& pos);
     bool canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView);
 
     int m_lockedFirstVisibleFloor;

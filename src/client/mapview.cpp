@@ -209,8 +209,6 @@ void MapView::draw(const Rect& rect)
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
-    if(m_viewMode != NEAR_VIEW) return;
-
     const bool drawStaticCreatureInf = m_redrawFlag & Otc::ReDrawStaticCreatureInformation;
 
     if(m_redrawFlag & Otc::ReDrawDynamicInformation || drawStaticCreatureInf) {
@@ -229,7 +227,7 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
                 g_painter->clear(Color::alpha);
             }
 
-            for(const CreaturePtr& creature : m_visibleCreatures) {
+            for(const auto& creature : m_visibleCreatures) {
                 if(!creature->canBeSeen())
                     continue;
 
@@ -260,7 +258,7 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
 
 void MapView::drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
-    if(m_viewMode != NEAR_VIEW || !m_drawTexts) return;
+    if(!m_drawTexts) return;
 
     const Position cameraPosition = getCameraPosition();
 
@@ -331,7 +329,10 @@ void MapView::updateVisibleTilesCache()
        cameraPosition.distance(m_lastCameraPosition) < 2
        ) return;*/
 
-       // m_lastCameraPosition = cameraPosition;
+    if(m_lastCameraPosition.z != cameraPosition.z)
+        m_visibleCreatures = g_map.getSightSpectators(cameraPosition, false);
+
+    m_lastCameraPosition = cameraPosition;
     m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
     m_cachedLastVisibleFloor = cachedLastVisibleFloor;
 
@@ -466,8 +467,15 @@ void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const
     if(Otc::OPERATION_CLEAN == operation || m_followingCreature->isWalking())
         requestVisibleTilesCacheUpdate();
 
-    if(m_viewMode <= NEAR_VIEW && thing && thing->isCreature()) {
-        m_visibleCreatures = g_map.getSightSpectators(getCameraPosition(), false);
+    if(thing && thing->isCreature() && !thing->isLocalPlayer() && m_lastCameraPosition.z == getCameraPosition().z) {
+        const CreaturePtr& creature = thing->static_self_cast<Creature>();
+        if(Otc::OPERATION_ADD == operation && isInRange(thing->getPosition())) {
+            m_visibleCreatures.push_back(creature);
+        } else if(Otc::OPERATION_REMOVE == operation) {
+            const auto it = std::find(m_visibleCreatures.begin(), m_visibleCreatures.end(), creature);
+            if(it != m_visibleCreatures.end())
+                m_visibleCreatures.erase(it);
+        }
     }
 }
 
@@ -725,7 +733,7 @@ void MapView::setDrawLights(bool enable)
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 
-    requestDrawing(Otc::ReDrawLight);
+    requestDrawing(Position(), Otc::ReDrawLight);
     m_mustCleanFramebuffer = true;
     m_drawLights = enable;
 }
@@ -794,12 +802,24 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
     return true;
 }
 
-void MapView::requestDrawing(const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
+void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
 {
+    if(!isLocalPlayer && pos.isValid() && !isInRange(pos)) return;
+
     if(((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW)) || m_minTimeRender.ticksElapsed() > 10))
         m_redrawFlag |= reDrawFlags;
 
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
+}
+
+bool MapView::isInRange(const Position& pos)
+{
+    const Position camera = getCameraPosition();
+
+    if(camera.z != m_lastCameraPosition.z) return false;
+
+    const AwareRange& awareRange = g_map.getAwareRange();
+    return camera.isInRange(pos, awareRange.left, awareRange.right, awareRange.top, awareRange.bottom);
 }
 
 #if DRAW_SEPARATELY == 1

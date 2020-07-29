@@ -666,7 +666,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
         onDeath();
 
     m_updateDynamicInformation = true;
-    g_map.requestDrawing(Otc::ReDrawDynamicInformation, true);
+    g_map.requestDrawing(m_position, Otc::ReDrawDynamicInformation, true, isLocalPlayer());
 }
 
 void Creature::setDirection(Otc::Direction direction)
@@ -695,7 +695,7 @@ void Creature::setOutfit(const Outfit& outfit)
 
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
-    g_map.requestDrawing(Otc::ReDrawThing);
+    g_map.requestDrawing(m_position, Otc::ReDrawThing);
 }
 
 void Creature::setOutfitColor(const Color& color, int duration)
@@ -767,7 +767,7 @@ void Creature::setSkull(uint8 skull)
     m_skull = skull;
     callLuaField("onSkullChange", m_skull);
 
-    g_map.requestDrawing(Otc::ReDrawStaticCreatureInformation, true);
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
 }
 
 void Creature::setShield(uint8 shield)
@@ -775,7 +775,7 @@ void Creature::setShield(uint8 shield)
     m_shield = shield;
     callLuaField("onShieldChange", m_shield);
 
-    g_map.requestDrawing(Otc::ReDrawStaticCreatureInformation, true);
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
 }
 
 void Creature::setEmblem(uint8 emblem)
@@ -855,7 +855,7 @@ void Creature::updateShield()
     } else if(!m_shieldBlink)
         m_showShieldTexture = true;
 
-    g_map.requestDrawing(Otc::ReDrawStaticCreatureInformation, true);
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
 }
 
 Point Creature::getDrawOffset()

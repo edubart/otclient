@@ -404,7 +404,7 @@ void LocalPlayer::setMana(double mana, double maxMana)
 
         callLuaField("onManaChange", mana, maxMana, oldMana, oldMaxMana);
 
-        g_map.requestDrawing(Otc::ReDrawDynamicInformation, true);
+        g_map.requestDrawing(Position(), Otc::ReDrawDynamicInformation, true);
         m_updateDynamicInformation = true;
     }
 }
