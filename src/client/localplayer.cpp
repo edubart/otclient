@@ -143,7 +143,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
             if(self->m_autoWalkDestination.isValid()) {
                 self->autoWalk(self->m_autoWalkDestination);
             }
-        }, 500);
+        }, 1000);
     }
 
     // turn to the cancel direction
@@ -155,7 +155,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 bool LocalPlayer::autoWalk(const Position& destination)
 {
-    if(g_game.getClientVersion() <= 740 && m_position.isInRange(destination, 1, 1))
+    if(m_position.isInRange(destination, 1, 1))
         return g_game.walk(m_position.getDirectionFromPosition(destination));
 
     bool tryKnownPath = false;
