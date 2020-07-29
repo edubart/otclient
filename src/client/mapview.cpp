@@ -790,10 +790,10 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
 
     // Check for non-visible tiles on the screen and ignore them
     {
-        if((cameraPosition.x - checkPos.x >= viewPort.left) || (checkPos.x - cameraPosition.x == viewPort.right && tile->isSingleDimension()))
+        if((cameraPosition.x - checkPos.x >= viewPort.left) || (checkPos.x - cameraPosition.x == viewPort.right && tile->isSingleDimension() && !tile->hasDisplacement()))
             return false;
 
-        if((cameraPosition.y - checkPos.y >= viewPort.top) || (checkPos.y - cameraPosition.y == viewPort.bottom && tile->isSingleDimension()))
+        if((cameraPosition.y - checkPos.y >= viewPort.top) || (checkPos.y - cameraPosition.y == viewPort.bottom && tile->isSingleDimension() && !tile->hasDisplacement()))
             return false;
 
         if((checkPos.x - cameraPosition.x > viewPort.right) || (checkPos.y - cameraPosition.y > viewPort.bottom))
