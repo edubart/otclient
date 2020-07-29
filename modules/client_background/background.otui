@@ -2,7 +2,7 @@ Panel
   id: background
   image-source: /images/background
   image-smooth: true
-  image-fixed-ratio: true
+  image-fixed-ratio: false
   anchors.top: topMenu.bottom
   anchors.left: parent.left
   anchors.right: parent.right
