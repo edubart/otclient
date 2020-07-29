@@ -457,6 +457,8 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
 {
+    m_mustCleanFramebuffer = true;
+
     // Need Optimization (update only the specific Tile)
     if(Otc::OPERATION_CLEAN == operation || m_followingCreature->isWalking())
         requestVisibleTilesCacheUpdate();
