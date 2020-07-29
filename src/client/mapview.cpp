@@ -831,7 +831,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */
