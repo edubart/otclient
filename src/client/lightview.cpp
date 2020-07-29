@@ -55,7 +55,7 @@ TexturePtr LightView::generateLightBubble(float centerFactor)
 
             // light intensity varies inversely with the square of the distance
             intensity *= intensity;
-            const uint8_t colorByte = intensity * 0x8C;
+            const uint8_t colorByte = intensity * 0xB4;
 
             uint8_t pixel[4] = { colorByte, colorByte, colorByte, 0xff };
             lightImage->setPixel(x, y, pixel);
@@ -79,11 +79,13 @@ void LightView::setGlobalLight(const Light& light)
 
 void LightView::addLightSource(const Point& center, float scaleFactor, const Light& light)
 {
-    const int intensity = std::min<int>(light.intensity, MAX_LIGHT_INTENSITY);
-    const int radius = intensity * Otc::TILE_PIXELS * scaleFactor;
+    const int intensity = light.intensity;
+    const int radius = (intensity * Otc::TILE_PIXELS * scaleFactor) * 1.25;
 
     Color color = Color::from8bit(light.color);
-    const float brightness = 0.5f + (intensity / static_cast<float>(MAX_LIGHT_INTENSITY)) * 0.5f;
+
+    const float brightnessLevel = light.intensity > 1 ? 0.7 : 0.2f;
+    const float brightness = brightnessLevel + (intensity / static_cast<float>(MAX_LIGHT_INTENSITY)) * brightnessLevel;
 
     color.setRed(color.rF() * brightness);
     color.setGreen(color.gF() * brightness);
