@@ -1,165 +1,159 @@
-minimapWidget = nil
-minimapButton = nil
-minimapWindow = nil
-otmm = true
-preloaded = false
-fullmapView = false
-oldZoom = nil
-oldPos = nil
+local minimapWidget = nil
+local otmm = true
+local fullmapView = false
+local oldZoom = nil
+local oldPos = nil
 
-function init()
-  minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', 
-    tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
-  minimapButton:setOn(true)
+local function updateCameraPosition()
+	local player = g_game.getLocalPlayer()
+	if not player then
+		return
+	end
 
-  minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
-  minimapWindow:setContentMinimumHeight(64)
+	local pos = player:getPosition()
+	if not pos then
+		return
+	end
 
-  minimapWidget = minimapWindow:recursiveGetChildById('minimap')
+	if minimapWidget:isDragging() then
+		return
+	end
 
-  local gameRootPanel = modules.game_interface.getRootPanel()
-  g_keyboard.bindKeyPress('Alt+Left', function() minimapWidget:move(1,0) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Right', function() minimapWidget:move(-1,0) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Up', function() minimapWidget:move(0,1) end, gameRootPanel)
-  g_keyboard.bindKeyPress('Alt+Down', function() minimapWidget:move(0,-1) end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+M', toggle)
-  g_keyboard.bindKeyDown('Ctrl+Shift+M', toggleFullMap)
+	if not fullmapView then
+		minimapWidget:setCameraPosition(pos)
+	end
 
-  minimapWindow:setup()
-
-  connect(g_game, {
-    onGameStart = online,
-    onGameEnd = offline,
-  })
-
-  connect(LocalPlayer, {
-    onPositionChange = updateCameraPosition
-  })
-
-  if g_game.isOnline() then
-    online()
-  end
+	minimapWidget:setCrossPosition(pos)
 end
 
-function terminate()
-  if g_game.isOnline() then
-    saveMap()
-  end
+local function toggle()
+	local minimapWindow = controller.widgets.minimapWindow
 
-  disconnect(g_game, {
-    onGameStart = online,
-    onGameEnd = offline,
-  })
-
-  disconnect(LocalPlayer, {
-    onPositionChange = updateCameraPosition
-  })
-
-  local gameRootPanel = modules.game_interface.getRootPanel()
-  g_keyboard.unbindKeyPress('Alt+Left', gameRootPanel)
-  g_keyboard.unbindKeyPress('Alt+Right', gameRootPanel)
-  g_keyboard.unbindKeyPress('Alt+Up', gameRootPanel)
-  g_keyboard.unbindKeyPress('Alt+Down', gameRootPanel)
-  g_keyboard.unbindKeyDown('Ctrl+M')
-  g_keyboard.unbindKeyDown('Ctrl+Shift+M')
-
-  minimapWindow:destroy()
-  minimapButton:destroy()
+	if controller.widgets.minimapButton:isOn() then
+		minimapWindow:close()
+	else
+		minimapWindow:open()
+	end
 end
 
-function toggle()
-  if minimapButton:isOn() then
-    minimapWindow:close()
-    minimapButton:setOn(false)
-  else
-    minimapWindow:open()
-    minimapButton:setOn(true)
-  end
+local function toggleFullMap()
+	local minimapWindow = controller.widgets.minimapWindow
+
+	if fullmapView then
+		minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
+		minimapWidget:fill('parent')
+		minimapWindow:show()
+	else
+		minimapWindow:hide()
+		minimapWidget:setParent(modules.game_interface.getRootPanel())
+		minimapWidget:fill('parent')
+	end
+
+	fullmapView = not fullmapView
+	minimapWidget:setAlternativeWidgetsVisible(fullmapView)
+
+	local zoom = oldZoom or 0
+	local pos = oldPos or minimapWidget:getCameraPosition()
+	oldZoom = minimapWidget:getZoom()
+	oldPos = minimapWidget:getCameraPosition()
+	minimapWidget:setZoom(zoom)
+	minimapWidget:setCameraPosition(pos)
+end
+
+local localPlayerEvent = EventController:new(LocalPlayer, {onPositionChange = updateCameraPosition})
+
+controller = Controller:new()
+controller:attachExternalEvent(localPlayerEvent)
+
+function controller:onInit()
+	local minimapButton =
+		modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)', '/images/topbuttons/minimap', toggle)
+	minimapButton:setOn(true)
+
+	local minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
+	minimapWindow:setContentMinimumHeight(80)
+
+	minimapWidget = minimapWindow:recursiveGetChildById('minimap')
+
+	local gameRootPanel = modules.game_interface.getRootPanel()
+	self:bindKeyPress(
+		'Alt+Left',
+		function()
+			minimapWidget:move(1, 0)
+		end,
+		gameRootPanel
+	)
+	self:bindKeyPress(
+		'Alt+Right',
+		function()
+			minimapWidget:move(-1, 0)
+		end,
+		gameRootPanel
+	)
+	self:bindKeyPress(
+		'Alt+Up',
+		function()
+			minimapWidget:move(0, 1)
+		end,
+		gameRootPanel
+	)
+	self:bindKeyPress(
+		'Alt+Down',
+		function()
+			minimapWidget:move(0, -1)
+		end,
+		gameRootPanel
+	)
+	self:bindKeyDown('Ctrl+M', toggle)
+	self:bindKeyDown('Ctrl+Shift+M', toggleFullMap)
+
+	self:registerWidget('minimapButton', minimapButton)
+	self:registerWidget('minimapWindow', minimapWindow)
+
+	minimapWindow:setup()
+	localPlayerEvent:connect()
+end
+
+controller:onGameStart(
+	function()
+		-- Load Map
+		g_minimap.clean()
+
+		if otmm then
+			local minimapFile = '/minimap.otmm'
+			if g_resources.fileExists(minimapFile) then
+				g_minimap.loadOtmm(minimapFile)
+			end
+		else
+			local minimapFile = '/minimap_' .. g_game.getClientVersion() .. '.otcm'
+			if g_resources.fileExists(minimapFile) then
+				g_map.loadOtcm(minimapFile)
+			end
+		end
+
+		minimapWidget:load()
+	end
+)
+controller:onGameEnd(
+	function()
+		-- Save Map
+		if otmm then
+			g_minimap.saveOtmm('/minimap.otmm')
+		else
+			g_map.saveOtcm('/minimap_' .. g_game.getClientVersion() .. '.otcm')
+		end
+
+		minimapWidget:save()
+	end
+)
+
+function onMiniWindowOpen()
+	controller.widgets.minimapButton:setOn(true)
+	localPlayerEvent:connect()
+	localPlayerEvent:execute('onPositionChange')
 end
 
 function onMiniWindowClose()
-  minimapButton:setOn(false)
-end
-
-function preload()
-  loadMap(false)
-  preloaded = true
-end
-
-function online()
-  loadMap(not preloaded)
-  updateCameraPosition()
-end
-
-function offline()
-  saveMap()
-end
-
-function loadMap(clean)
-  local clientVersion = g_game.getClientVersion()
-
-  if clean then
-    g_minimap.clean()
-  end
-
-  if otmm then
-    local minimapFile = '/minimap.otmm'
-    if g_resources.fileExists(minimapFile) then
-      g_minimap.loadOtmm(minimapFile)
-    end
-  else
-    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
-    if g_resources.fileExists(minimapFile) then
-      g_map.loadOtcm(minimapFile)
-    end
-  end
-  minimapWidget:load()
-end
-
-function saveMap()
-  local clientVersion = g_game.getClientVersion()
-  if otmm then
-    local minimapFile = '/minimap.otmm'
-    g_minimap.saveOtmm(minimapFile)
-  else
-    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
-    g_map.saveOtcm(minimapFile)
-  end
-  minimapWidget:save()
-end
-
-function updateCameraPosition()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  local pos = player:getPosition()
-  if not pos then return end
-  if not minimapWidget:isDragging() then
-    if not fullmapView then
-      minimapWidget:setCameraPosition(player:getPosition())
-    end
-    minimapWidget:setCrossPosition(player:getPosition())
-  end
-end
-
-function toggleFullMap()
-  if not fullmapView then
-    fullmapView = true
-    minimapWindow:hide()
-    minimapWidget:setParent(modules.game_interface.getRootPanel())
-    minimapWidget:fill('parent')
-    minimapWidget:setAlternativeWidgetsVisible(true)
-  else
-    fullmapView = false
-    minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
-    minimapWidget:fill('parent')
-    minimapWindow:show()
-    minimapWidget:setAlternativeWidgetsVisible(false)
-  end
-
-  local zoom = oldZoom or 0
-  local pos = oldPos or minimapWidget:getCameraPosition()
-  oldZoom = minimapWidget:getZoom()
-  oldPos = minimapWidget:getCameraPosition()
-  minimapWidget:setZoom(zoom)
-  minimapWidget:setCameraPosition(pos)
+	controller.widgets.minimapButton:setOn(false)
+	localPlayerEvent:disconnect()
 end

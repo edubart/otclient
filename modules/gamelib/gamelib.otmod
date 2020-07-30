@@ -23,4 +23,7 @@ Module
     dofile 'thing'
     dofile 'spells'
 
+    dofile 'eventcontroller'
+    dofile 'controller'
+
     dofiles 'ui'

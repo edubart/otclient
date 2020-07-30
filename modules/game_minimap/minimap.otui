@@ -3,7 +3,8 @@ MiniWindow
   !text: tr('Minimap')
   height: 150
   icon: /images/topbuttons/minimap
-  @onClose: modules.game_minimap.onMiniWindowClose()
+  @onOpen: onMiniWindowOpen()
+  @onClose: onMiniWindowClose()
   &save: true
 
   Label

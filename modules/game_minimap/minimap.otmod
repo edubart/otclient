@@ -5,5 +5,5 @@ Module
   website: https://github.com/edubart/otclient
   sandboxed: true
   scripts: [ minimap ]
-  @onLoad: init()
-  @onUnload: terminate()
+  @onLoad: controller:init()
+  @onUnload: controller:terminate()
