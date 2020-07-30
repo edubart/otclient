@@ -1,5 +1,6 @@
 Controller = {
 	events = nil,
+	externalEvents = nil,
 	widgets = nil,
 	keyboardEvents = nil,
 	attributes = nil,

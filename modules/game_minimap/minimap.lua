@@ -76,34 +76,11 @@ function controller:onInit()
 	minimapWidget = minimapWindow:recursiveGetChildById('minimap')
 
 	local gameRootPanel = modules.game_interface.getRootPanel()
-	self:bindKeyPress(
-		'Alt+Left',
-		function()
-			minimapWidget:move(1, 0)
-		end,
-		gameRootPanel
-	)
-	self:bindKeyPress(
-		'Alt+Right',
-		function()
-			minimapWidget:move(-1, 0)
-		end,
-		gameRootPanel
-	)
-	self:bindKeyPress(
-		'Alt+Up',
-		function()
-			minimapWidget:move(0, 1)
-		end,
-		gameRootPanel
-	)
-	self:bindKeyPress(
-		'Alt+Down',
-		function()
-			minimapWidget:move(0, -1)
-		end,
-		gameRootPanel
-	)
+	self:bindKeyPress('Alt+Left', function() minimapWidget:move(1, 0)	end, gameRootPanel)
+	self:bindKeyPress('Alt+Right', function() minimapWidget:move(-1, 0) end, gameRootPanel)
+	self:bindKeyPress('Alt+Up', function() minimapWidget:move(0, 1) end, gameRootPanel)
+	self:bindKeyPress('Alt+Down', function() minimapWidget:move(0, -1) end,	gameRootPanel)
+
 	self:bindKeyDown('Ctrl+M', toggle)
 	self:bindKeyDown('Ctrl+Shift+M', toggleFullMap)
 
@@ -114,28 +91,29 @@ function controller:onInit()
 	localPlayerEvent:connect()
 end
 
-controller:onGameStart(
-	function()
+controller:onGameStart(function()
 		-- Load Map
 		g_minimap.clean()
 
+		local minimapFile = '/minimap'
+		local loadFnc = nil
+
 		if otmm then
-			local minimapFile = '/minimap.otmm'
-			if g_resources.fileExists(minimapFile) then
-				g_minimap.loadOtmm(minimapFile)
-			end
+			minimapFile = minimapFile .. '.otmm'
+			loadFnc = g_minimap.loadOtmm
 		else
-			local minimapFile = '/minimap_' .. g_game.getClientVersion() .. '.otcm'
-			if g_resources.fileExists(minimapFile) then
-				g_map.loadOtcm(minimapFile)
-			end
+			minimapFile = minimapFile .. '_' .. g_game.getClientVersion() .. '.otcm'
+			loadFnc = g_map.loadOtcm
+		end
+
+		if g_resources.fileExists(minimapFile) then
+			loadFnc(minimapFile)
 		end
 
 		minimapWidget:load()
-	end
-)
-controller:onGameEnd(
-	function()
+end)
+
+controller:onGameEnd(function()
 		-- Save Map
 		if otmm then
 			g_minimap.saveOtmm('/minimap.otmm')
@@ -144,8 +122,7 @@ controller:onGameEnd(
 		end
 
 		minimapWidget:save()
-	end
-)
+end)
 
 function onMiniWindowOpen()
 	controller.widgets.minimapButton:setOn(true)
