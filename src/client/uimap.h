@@ -73,6 +73,8 @@ public:
     bool isKeepAspectRatioEnabled() { return m_keepAspectRatio; }
     bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }
 
+    std::vector<CreaturePtr> getVisibleCreatures() { return m_mapView->getVisibleCreatures(); }
+
     Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
     MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }
     CreaturePtr getFollowingCreature() { return m_mapView->getFollowingCreature(); }

@@ -776,6 +776,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getZoom", &UIMap::getZoom);
     g_lua.bindClassMemberFunction<UIMap>("getMapShader", &UIMap::getMapShader);
     g_lua.bindClassMemberFunction<UIMap>("getMinimumAmbientLight", &UIMap::getMinimumAmbientLight);
+    g_lua.bindClassMemberFunction<UIMap>("getVisibleCreatures", &UIMap::getVisibleCreatures);
 
     g_lua.registerClass<UIMinimap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMinimap>("create", [] { return UIMinimapPtr(new UIMinimap); });

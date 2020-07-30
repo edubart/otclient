@@ -127,6 +127,8 @@ public:
     void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
+    std::vector<CreaturePtr> getVisibleCreatures() { return m_visibleCreatures; }
+
 private:
     struct ViewPort {
         int top, right, bottom, left;
