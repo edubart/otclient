@@ -9,8 +9,6 @@ local lastBattleButtonSwitched
 -- Hide Buttons ("hidePlayers", "hideNPCs", "hideMonsters", "hideSkulls", "hideParty")
 local hideButtons = {}
 
-local debugMode = false
-
 local function connecting()
 	-- TODO: Just connect when you will be using
 	connect(g_game, {
@@ -63,7 +61,6 @@ local function disconnecting()
 end
 
 function init() -- Initiating the module (load)
-	if debugMode then print("Calling init") end
 	g_ui.importStyle('battlebutton')
 	battleButton = modules.client_topmenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', '/images/topbuttons/battle', toggle)
 	battleButton:setOn(true)
@@ -166,12 +163,6 @@ local function BSComparator(a, b) -- Default comparator function, we probably wo
 end
 
 local function BSComparatorSortType(a, b, sortType, id) -- Comparator function by sortType (and id optionally)
-    assert(type(sortType) == 'string', "invalid sortType, string expected got ".. type(sortType) ..".")	
-	if debugMode and a == nil or b == nil then
-		print("--> Nil Found, DEBUGING:")
-		debugTables()
-	end
-	
     local comparatorA, comparatorB
 	if sortType == 'distance' then
 		comparatorA, comparatorB = a.distance, (type(b) == "table" and b.distance or b)
@@ -256,7 +247,6 @@ local function swap(index, newIndex) -- Swap indexes of a given table
 end
 
 local function correctBattleButtons(sortOrder) -- Update battleButton index based upon our binary tree
-	if debugMode then print("Calling correctBattleButtons with: ", sortOrder) end
 	local sortOrder = sortOrder or getSortOrder()
 	
 	local start = sortOrder == "A" and 1 or #binaryTree
@@ -276,7 +266,6 @@ return true
 end
 
 local function reSort(oldSortType, newSortType, oldSortOrder, newSortOrder) -- Resort the binaryTree and update battlebuttons
-	if debugMode then print("Calling reSort with parameters [", oldSortType, newSortType, oldSortOrder, newSortOrder) end
 	if #binaryTree > 1 then
 		if newSortType and newSortType ~= oldSortType then
 			-- Unfortunately we cannot use this as we have no guarantees that other sort types have their information updated
@@ -294,7 +283,6 @@ end
 
 -- Sort Type Methods
 function getSortType() -- Return the current sort type (distance, age, name, health)
-	if debugMode then print("Calling getSortType") end
 	local settings = g_settings.getNode('BattleList')
 	if not settings then
 		return 'name'
@@ -303,18 +291,15 @@ function getSortType() -- Return the current sort type (distance, age, name, hea
 end
 
 function setSortType(state, oldSortType) -- Setting the current sort type (distance, age, name, health)
-	if debugMode then print("Calling setSortType with state: ".. state) end	
 	settings = {}
 	settings['sortType'] = state
 	g_settings.mergeNode('BattleList', settings)
 	
 	local order = getSortOrder()
-
 	reSort(oldSortType, state, order, order)
 end
 
 function onChangeSortType(comboBox, option) -- Callback when change the sort type (distance, age, name, health)
-	if debugMode then print("Calling onChangeSortType with option: ".. option) end
 	local loption = option:lower()
 	local oldType = getSortType()
 	
@@ -325,7 +310,6 @@ end
 
 -- Sort Order Methods
 function getSortOrder() -- Return the current sort ordenation (asc/desc)
-	if debugMode then print("Calling getSortOrder") end
 	local settings = g_settings.getNode('BattleList')
 	if not settings then
 		return 'A'
@@ -334,7 +318,6 @@ function getSortOrder() -- Return the current sort ordenation (asc/desc)
 end
 
 function setSortOrder(state, oldSortOrder) -- Setting the current sort ordenation (desc/asc)
-	if debugMode then print("Calling setSortOrder with state: ".. state) end
 	settings = {}
 	settings['sortOrder'] = state
 	g_settings.mergeNode('BattleList', settings)
@@ -343,19 +326,16 @@ function setSortOrder(state, oldSortOrder) -- Setting the current sort ordenatio
 end
 
 function isSortAsc() -- Return true if sorted Asc
-	if debugMode then print("Calling isSortAsc") end
     return getSortOrder() == 'A'
 end
 
 function isSortDesc() -- Return true if sorted Desc
-	if debugMode then print("Calling isSortDesc") end
     return getSortOrder() == 'D'
 end
 
 function onChangeSortOrder(comboBox, option) -- Callback when change the sort ordenation	
 	local soption = option:sub(1, 1)
 	local oldOrder = getSortOrder()
-	if debugMode then print("Calling onChangeSortOrder with option:", option, "current sort order:", oldOrder) end
 	
 	if soption ~= oldOrder then 
 		setSortOrder(option:sub(1, 1), oldOrder)
@@ -364,7 +344,6 @@ end
 
 -- Initially checking creatures
 function checkCreatures() -- Function that initially populates our tree once the module is initialized
-	if debugMode then print("Calling checkCreatures with clean: ".. (clean and "true" or "false")) end
 	if not battlePanel or not g_game.isOnline() then
 		return false
 	end
@@ -379,6 +358,7 @@ function checkCreatures() -- Function that initially populates our tree once the
 	--[[ TODO: just search inside the dimensions of screen
 	local dimension = modules.game_interface.getMapPanel():getVisibleDimension() -- not being used yet
 	local spectators = g_map.getSpectatorsInRangeEx(player:getPosition(), false, math.floor(dimension.width / 2), math.floor(dimension.width / 2), math.floor(dimension.height / 2), math.floor(dimension.height / 2))
+	-- Will also require an event to update the list when the zoom in screen is increased/reduced.
 	]]
 	
 	local spectators = g_map.getSpectators(player:getPosition(), false)
@@ -389,11 +369,9 @@ function checkCreatures() -- Function that initially populates our tree once the
 			addCreature(creature, sortType)
 		end
 	end
-	if debugMode then debugTables() end	
 end
 
 function doCreatureFitFilters(creature) -- Check if creature fit current applied filters (By changing the filter we will call checkCreatures(true) to recreate the tree)
-	if debugMode then print("Calling doCreatureFitFilters with creature: ".. creature:getName()) end
 	if creature:isLocalPlayer() then
 		return false
 	end
@@ -419,13 +397,11 @@ function doCreatureFitFilters(creature) -- Check if creature fit current applied
 end
 
 local function getDistanceBetween(p1, p2) -- Calculate distance
-	if debugMode then print("Calling getDistanceBetween") end
     return math.max(math.abs(p1.x - p2.x), math.abs(p1.y - p2.y))
 end
 
 -- Adding and Removing creatures
 local function getAttributeByOrderType(battleButton, orderType) -- Return the attribute of battleButton based on the orderType
-	if debugMode then print("Running getAttributeByOrderType with creature: ".. type(battleButton.data) .." and order type: ".. orderType) end
 	if battleButton.data then
 		local battleButton = battleButton.data
 		if orderType == 'distance' then
@@ -443,11 +419,10 @@ end
 
 local lastAge = 0
 function addCreature(creature, sortType) -- Insert a creature in our binary tree
-	if debugMode then print("Calling addCreature with creature: ".. creature:getName() .." and sortType: " ..sortType) end
 	local creatureId = creature:getId()
 	local battleButton = battleButtons[creatureId]
 	if battleButton then
-		if debugMode then print("Creature already exist in battleButton") end
+		-- I don't think this situation will exist but let's keep it here.
 		battleButton:setLifeBarPercent(creature:getHealthPercent())
 	else		
 		local newCreature = {}
@@ -460,9 +435,6 @@ function addCreature(creature, sortType) -- Insert a creature in our binary tree
 		
 		--Binary Insertion	
 		local newIndex = binaryInsert(binaryTree, newCreature, BSComparatorSortType, sortType, true)
-		if debugMode then
-			print("--> Adding Creature: " .. creature:getName() .." [".. creatureId .."] in index : ".. newIndex) 
-		end
 		
 		battleButton = g_ui.createWidget('BattleButton')
 		battleButton:setup(creature)
@@ -479,8 +451,6 @@ function addCreature(creature, sortType) -- Insert a creature in our binary tree
 		battleButton.onMouseRelease = onBattleButtonMouseRelease
 		battleButtons[creatureId] = battleButton
 		
-		if debugMode then debugTables() end
-
 		if creature == g_game.getAttackingCreature() then
 			onAttack(creature)
 		end
@@ -495,7 +465,6 @@ function addCreature(creature, sortType) -- Insert a creature in our binary tree
 		else
 			battlePanel:insertChild((#binaryTree - newIndex + 1), battleButton)
 		end
-		if debugMode then debugTables() end
 	end
 	
 	local localPlayer = g_game.getLocalPlayer()
@@ -504,13 +473,11 @@ function addCreature(creature, sortType) -- Insert a creature in our binary tree
 end
 
 function removeAllCreatures() -- Remove all creatures from our binary tree
-	if debugMode then print("Calling removeAllCreatures.") end
 	removeCreature(false, true)
 return true
 end
 
 function removeCreature(creature, all) -- Remove a single creature or all
-	if debugMode then print("Calling removeCreature:".. (creature and creature:getName() or "Nil" ) .. ". All: " .. (all and "true" or "false")) end
 	if all then
 		binaryTree = {}
 		lastBattleButtonSwitched = nil
@@ -524,11 +491,6 @@ function removeCreature(creature, all) -- Remove a single creature or all
 	
 	local creatureId = creature:getId()
 	local battleButton = battleButtons[creatureId]
-	if debugMode then
-		debugTables()
-		print(creatureId, type(battleButton), battleButton.creature and "exist" or "don't exist") 
-	end
-	
 	
 	if battleButton then
 		if lastBattleButtonSwitched == battleButton then
@@ -539,15 +501,10 @@ function removeCreature(creature, all) -- Remove a single creature or all
 		local valuetoSearch = getAttributeByOrderType(battleButton, sortType) --Search for the current ordered attribute to get O(log2(N))
 		assert(valuetoSearch, "Could not find information (data) in sent battleButton")
 		valuetoSearch.id = creatureId
+		
 		local index = binarySearch(binaryTree, valuetoSearch, BSComparatorSortType, sortType, creatureId)
-		if debugMode then print(index, creatureId, binaryTree[index].id) end
 		if index ~= nil and creatureId == binaryTree[index].id then -- Safety first :)
 			local creatureListSize = #binaryTree
-			if debugMode then
-				print("-->Removing index", index, "size is ", creatureListSize)
-				print("-->Debugging BEFORE removal")
-				debugTables()
-			end
 			if index < creatureListSize then
 				for i = index, creatureListSize - 1 do
 					swap(i, i+1)
@@ -557,10 +514,6 @@ function removeCreature(creature, all) -- Remove a single creature or all
 			battleButton.creature:hideStaticSquare()
 			battleButton:destroy()
 			battleButtons[creatureId] = nil
-			if debugMode then 
-				print("-->Debugging AFTER removal")
-				debugTables()
-			end
 			return true
 		else
 			local msg = ""
@@ -656,7 +609,6 @@ function updateCreatureEmblem(creature, emblemId) -- Update emblem
 end
 
 function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButton once you or monsters move
-	if debugMode then print("Calling onCreaturePositionChange", creature:getName()) end
 	local sortType = getSortType()
 	-- If it's the local player moving
 	if creature:isLocalPlayer() then
@@ -665,7 +617,6 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 		elseif oldPos and newPos and (newPos.x ~= oldPos.x or newPos.y ~= oldPos.y) then
 			-- Distance will change when moving, recalculate and move to correct index
 			if #binaryTree > 0 and sortType == 'distance' then
-				if debugMode then debugTables(sortType) end
 				-- TODO: If the amount of creatures is higher than a given number, instead of using this approach we simply recalculate each 200ms.
 				for i, v in ipairs(binaryTree) do
 					local oldDistance = v.distance
@@ -701,12 +652,10 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 			elseif fit then
 				if oldPos and newPos and (newPos.x ~= oldPos.x or newPos.y ~= oldPos.y) then
 					if sortType == 'distance' then
-						if debugMode then 
-							debugTables(sortType) 
-						end
 						local localPlayer = g_game.getLocalPlayer()
 						local newDistance = getDistanceBetween(localPlayer:getPosition(), newPos)
 						local oldDistance = battleButton.data.distance
+
 						local index = binarySearch(binaryTree, {distance = oldDistance, id = creatureId}, BSComparatorSortType, 'distance', true)
 						if index ~= nil and creatureId == binaryTree[index].id then -- Safety first :)
 							binaryTree[index].distance = newDistance
@@ -736,11 +685,6 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 							end
 							correctBattleButtons()
 						else
-							if debugMode then 
-								print("Searching for {".. oldDistance ..", ".. battleButton.data.name .."[".. creatureId .."]} in binaryTree, got: ".. (type(index) ~= nil and index or "Nil")) 
-								debugTables(sortType)
-								debugTables()
-							end
 							assert(index ~= nil, "Not able to update Position Change. Creature: ".. creature:getName() .." id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldDistance ..".\n")
 						end	
 					end
@@ -751,13 +695,11 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 end
 
 function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent) -- Update battleButton mobs lose/gain health
-	if debugMode then print("Calling onCreatureHealthPercentChange", creature:getName(), healthPercent, oldHealthPercent) end
 	local creatureId = creature:getId()
 	local battleButton = battleButtons[creatureId]
 	if battleButton then
 		local sortType = getSortType()
 		if sortType == 'health' then
-			if debugMode then print("Healthchange: ", creature:getName(), "to", healthPercent, "from", oldHealthPercent) end
 			if healthPercent == oldHealthPercent then return false end -- Sanity Check			
 			if healthPercent == 0 then return false end -- if healthpercent is 0 the creature is dead, let onCreatureDisappear handles that.
 			
@@ -788,10 +730,6 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 				end
 				correctBattleButtons()
 			else
-				if debugMode then
-					debugTables()
-					debugTables(sortType)
-				end
 				assert(index ~= nil, "Not able to update HealthPercent Change. Creature: id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldHealthPercent ..".")
 			end			
 			
@@ -801,7 +739,6 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 end
 
 function onCreatureAppear(creature) -- Update battleButton once a creature appear (add)
-	if debugMode then print("Calling onCreatureAppear", creature:getName()) end
 	if creature:isLocalPlayer() then
 		addEvent(function()
 			updateStaticSquare()
@@ -816,13 +753,11 @@ function onCreatureAppear(creature) -- Update battleButton once a creature appea
 end
 
 function onCreatureDisappear(creature) -- Update battleButton once a creature disappear (remove/dead)
-	if debugMode then print("Calling onCreatureDisappear", creature:getName()) return end
 	removeCreature(creature)
 end
 
 -- BattleWindow controllers
 function onBattleButtonMouseRelease(self, mousePosition, mouseButton) -- Interactions with mouse (right, left, right + left and shift interactions)
-	if debugMode then print("Calling onBattleButtonMouseRelease", mousePosition, mouseButton) end
 	if mouseWidget.cancelNextRelease then
 		mouseWidget.cancelNextRelease = false
 		return false
@@ -871,7 +806,6 @@ function updateBattleButton(battleButton) -- Update battleButton with attack/fol
 end
 
 function onBattleButtonHoverChange(battleButton, hovered) -- Interaction with mouse (hovering)
-	if debugMode then print("Calling onBattleButtonHoverChange", hovered) end
 	if battleButton.isBattleButton then
 		battleButton.isHovered = hovered
 		updateBattleButton(battleButton)
@@ -879,7 +813,6 @@ function onBattleButtonHoverChange(battleButton, hovered) -- Interaction with mo
 end
 
 function toggle() -- Close/Open the battle window or Pressing Ctrl + B
-	if debugMode then print("Calling toggle") end
 	if battleButton:isOn() then
 		battleWindow:close()
 		battleButton:setOn(false)
@@ -893,7 +826,6 @@ function toggle() -- Close/Open the battle window or Pressing Ctrl + B
 end
 
 function terminate() -- Terminating the Module (unload)
-	if debugMode then print("Calling terminate") end
 	binaryTree = {}
 	battleButtons = {}
 	
@@ -907,6 +839,5 @@ function terminate() -- Terminating the Module (unload)
 end
 
 function onMiniWindowClose() -- Callback when we close the module window
-	if debugMode then print("Calling onMiniWindowClose") end
 	battleButton:setOn(false)
 end
