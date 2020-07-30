@@ -11,6 +11,57 @@ local hideButtons = {}
 
 local debugMode = false
 
+local function connecting()
+	-- TODO: Just connect when you will be using
+	connect(g_game, {
+		onAttackingCreatureChange = onAttack,
+		onFollowingCreatureChange = onFollow,
+		onGameEnd = removeAllCreatures
+	})
+	
+	connect(LocalPlayer, {
+		onPositionChange = onCreaturePositionChange
+	})
+	
+	connect(Creature, {
+		onSkullChange = updateCreatureSkull,
+		onEmblemChange = updateCreatureEmblem,
+		onOutfitChange = onCreatureOutfitChange,
+		onHealthPercentChange = onCreatureHealthPercentChange,
+		onPositionChange = onCreaturePositionChange,
+		onAppear = onCreatureAppear,
+		onDisappear = onCreatureDisappear
+	})
+	
+	-- Check creatures around you
+	checkCreatures()
+	return true
+end
+
+local function disconnecting()
+	-- TODO: Just disconnect what you're not using
+	disconnect(g_game, {
+		onAttackingCreatureChange = onAttack,
+		onFollowingCreatureChange = onFollow,
+		onGameEnd = removeAllCreatures
+	})
+
+	disconnect(LocalPlayer, {
+		onPositionChange = onCreaturePositionChange
+	})
+
+	disconnect(Creature, {
+		onSkullChange = updateCreatureSkull,
+		onEmblemChange = updateCreatureEmblem,
+		onOutfitChange = onCreatureOutfitChange,
+		onHealthPercentChange = onCreatureHealthPercentChange,
+		onPositionChange = onCreaturePositionChange,
+		onAppear = onCreatureAppear,
+		onDisappear = onCreatureDisappear
+	})
+	return true
+end
+
 function init() -- Initiating the module (load)
 	if debugMode then print("Calling init") end
 	g_ui.importStyle('battlebutton')
@@ -61,29 +112,8 @@ function init() -- Initiating the module (load)
 	mouseWidget:setFocusable(false)
 	mouseWidget.cancelNextRelease = false
 	
-	-- Setting Connectors:
-	connect(g_game, {
-		onAttackingCreatureChange = onAttack,
-		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures
-	})
-	
-	connect(LocalPlayer, {
-		onPositionChange = onCreaturePositionChange
-	})
-	
-	connect(Creature, {
-		onSkullChange = updateCreatureSkull,
-		onEmblemChange = updateCreatureEmblem,
-		onOutfitChange = onCreatureOutfitChange,
-		onHealthPercentChange = onCreatureHealthPercentChange,
-		onPositionChange = onCreaturePositionChange,
-		onAppear = onCreatureAppear,
-		onDisappear = onCreatureDisappear
-	})
-	
-	-- Check creatures around you
-	checkCreatures()
+	-- Setting Connectors
+	connecting()
 	
 	-- Determining Height and Setting up!
 	battleWindow:setContentMinimumHeight(80)
@@ -695,7 +725,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 								battleButton:setVisible(localPlayer:hasSight(newPos) and creature:canBeSeen())
 								--battlePanel:getLayout():update()
 								if index > 1 then
-									for i = index, #binaryTree do
+									for i = index, 2, -1 do
 										local a = binaryTree[i-1]
 										local b = binaryTree[i]
 										if a.distance > b.distance or (a.distance == b.distance and a.id > b.id) then
@@ -706,11 +736,11 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 							end
 							correctBattleButtons()
 						else
-							--if debugMode then 
+							if debugMode then 
 								print("Searching for {".. oldDistance ..", ".. battleButton.data.name .."[".. creatureId .."]} in binaryTree, got: ".. (type(index) ~= nil and index or "Nil")) 
-							--end
-							debugTables(sortType)
-							debugTables()
+								debugTables(sortType)
+								debugTables()
+							end
 							assert(index ~= nil, "Not able to update Position Change. Creature: ".. creature:getName() .." id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldDistance ..".\n")
 						end	
 					end
@@ -727,16 +757,15 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 	if battleButton then
 		local sortType = getSortType()
 		if sortType == 'health' then
-			print(creature:getName(), healthPercent, oldHealthPercent)
-			if healthPercent == oldHealthPercent then -- Sanity Check
-				return false
-			end
+			if debugMode then print("Healthchange: ", creature:getName(), "to", healthPercent, "from", oldHealthPercent) end
+			if healthPercent == oldHealthPercent then return false end -- Sanity Check			
+			if healthPercent == 0 then return false end -- if healthpercent is 0 the creature is dead, let onCreatureDisappear handles that.
 			
 			local index = binarySearch(binaryTree, {healthpercent = oldHealthPercent, id = creatureId}, BSComparatorSortType, 'health', true)
 			if index ~= nil and creatureId == binaryTree[index].id then -- Safety first :)
 				binaryTree[index].healthpercent = healthPercent
 				battleButton.data.healthpercent = healthPercent
-				if healthPercent > oldHealthPercent then -- Check if health is positive or negative to update it more efficently.				
+				if healthPercent > oldHealthPercent then -- Check if health is positive or negative to update it more efficently.
 					if index < #binaryTree then
 						for i = index, #binaryTree - 1 do
 							local a = binaryTree[i]
@@ -748,7 +777,7 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 					end
 				else
 					if index > 1 then
-						for i = index, #binaryTree do
+						for i = index, 2, -1 do
 							local a = binaryTree[i-1]
 							local b = binaryTree[i]
 							if a.healthpercent > b.healthpercent or (a.healthpercent == b.healthpercent and a.id > b.id) then
@@ -759,8 +788,10 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 				end
 				correctBattleButtons()
 			else
-				debugTables()
-				debugTables(sortType)
+				if debugMode then
+					debugTables()
+					debugTables(sortType)
+				end
 				assert(index ~= nil, "Not able to update HealthPercent Change. Creature: id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldHealthPercent ..".")
 			end			
 			
@@ -852,41 +883,27 @@ function toggle() -- Close/Open the battle window or Pressing Ctrl + B
 	if battleButton:isOn() then
 		battleWindow:close()
 		battleButton:setOn(false)
+		-- TODO: Not working to disconnect when closing module window
+		disconnecting()
 	else
 		battleWindow:open()
 		battleButton:setOn(true)
+		connecting()
 	end
 end
 
 function terminate() -- Terminating the Module (unload)
 	if debugMode then print("Calling terminate") end
 	binaryTree = {}
-	battlebuttons = {}
+	battleButtons = {}
 	
 	battleButton:destroy()
 	battleWindow:destroy()
 	mouseWidget:destroy()
 	g_keyboard.unbindKeyDown('Ctrl+B')
 	
-	disconnect(g_game, {
-		onAttackingCreatureChange = onAttack,
-		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures
-	})
-	
-	disconnect(LocalPlayer, {
-		onPositionChange = onCreaturePositionChange
-	})
-	
-	disconnect(Creature, {
-		onSkullChange = updateCreatureSkull,
-		onEmblemChange = updateCreatureEmblem,
-		onOutfitChange = onCreatureOutfitChange,
-		onHealthPercentChange = onCreatureHealthPercentChange,
-		onPositionChange = onCreaturePositionChange,
-		onAppear = onCreatureAppear,
-		onDisappear = onCreatureDisappear
-	})	
+	-- Removing the connectors
+	disconnecting()
 end
 
 function onMiniWindowClose() -- Callback when we close the module window
