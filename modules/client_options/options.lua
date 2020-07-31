@@ -1,5 +1,5 @@
 local defaultOptions = {
-  vsync = false,
+  vsync = true,
   showFps = false,
   showPing = false,
   fullscreen = false,
@@ -20,7 +20,7 @@ local defaultOptions = {
   enableMusicSound = true,
   musicSoundVolume = 100,
   enableLights = true,
-  ambientLight = 25,
+  ambientLight = 0,
   displayNames = true,
   displayHealth = true,
   displayMana = true,
