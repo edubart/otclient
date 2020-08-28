@@ -24,7 +24,7 @@
 
 ScheduledEvent::ScheduledEvent(const std::function<void()>& callback, int delay, int maxCycles) : Event(callback)
 {
-    m_ticks = g_clock.millis() + delay;
+    m_ticks = g_clock.micros() + delay;
     m_delay = delay;
     m_maxCycles = maxCycles;
     m_cyclesExecuted = 0;

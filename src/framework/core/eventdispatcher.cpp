@@ -74,13 +74,15 @@ void EventDispatcher::poll()
             event->execute();
         }
         m_pollEventsSize = m_eventList.size();
-        
+
         loops++;
     }
 }
 
 ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
 {
+    delay *= 1000;// SheduledEvent is in microseconds
+
     if(m_disabled)
         return ScheduledEventPtr(new ScheduledEvent(nullptr, delay, 1));
 
@@ -92,6 +94,8 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& ca
 
 ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callback, int delay)
 {
+    delay *= 1000;// SheduledEvent is in microseconds
+
     if(m_disabled)
         return ScheduledEventPtr(new ScheduledEvent(nullptr, delay, 0));
 
@@ -116,4 +120,3 @@ EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool p
         m_eventList.push_back(event);
     return event;
 }
-
