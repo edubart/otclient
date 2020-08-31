@@ -497,6 +497,10 @@ void Creature::updateWalkAnimation()
         return;
 
     const int footAnimPhases = getTotalAnimationPhase();
+    if (footAnimPhases == 0) {
+        // looktype has no animations
+        return;
+    }
 
     const int footDelay = m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases;
 
