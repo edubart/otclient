@@ -135,7 +135,7 @@ public:
     virtual void onDeath();
 
 protected:
-    virtual void updateWalkAnimation(int totalPixelsWalked);
+    virtual void updateWalkAnimation(int totalPixelsWalked, int stepDuration);
     virtual void updateWalkOffset(int totalPixelsWalked);
     void updateWalkingTile();
     virtual void nextWalkUpdate();

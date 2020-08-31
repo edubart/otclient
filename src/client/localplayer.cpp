@@ -265,11 +265,11 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 
 void LocalPlayer::updateWalk()
 {
-    float walkTicksPerPixel = getStepDuration(true) / 32.f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32);
+    int stepDuration = getStepDuration(true);
+    int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() * 32) / stepDuration, 32);
 
     // update walk animation and offsets
-    updateWalkAnimation(totalPixelsWalked);
+    updateWalkAnimation(totalPixelsWalked, stepDuration);
     updateWalkOffset(totalPixelsWalked);
     updateWalkingTile();
 

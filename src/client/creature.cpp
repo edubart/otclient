@@ -483,14 +483,14 @@ void Creature::onDeath()
     callLuaField("onDeath");
 }
 
-void Creature::updateWalkAnimation(int totalPixelsWalked)
+void Creature::updateWalkAnimation(int totalPixelsWalked, int stepDuration)
 {
     // update outfit animation
     if(m_outfit.getCategory() != ThingCategoryCreature)
         return;
 
     int footAnimPhases = getAnimationPhases() - 1;
-    int footDelay = getStepDuration(true) / 3;
+    int footDelay = stepDuration / 3;
     // Since mount is a different outfit we need to get the mount animation phases
     if(m_outfit.getMount() != 0) {
         ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
@@ -585,14 +585,14 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = getStepDuration(true) / 32.f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32);
+    int stepDuration = getStepDuration(true);
+    int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() * 32) / stepDuration, 32);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
     // update walk animation and offsets
-    updateWalkAnimation(totalPixelsWalked);
+    updateWalkAnimation(totalPixelsWalked, stepDuration);
     updateWalkOffset(m_walkedPixels);
     updateWalkingTile();
 
