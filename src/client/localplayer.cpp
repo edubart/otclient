@@ -265,9 +265,8 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 
 void LocalPlayer::updateWalk()
 {
-    int stepDuration = getStepDuration();
-    float walkTicksPerPixel = getStepDuration(true) / 32.0f;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+    float walkTicksPerPixel = getStepDuration(true) / 32.f;
+    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32);
 
     // update walk animation and offsets
     updateWalkAnimation(totalPixelsWalked);
@@ -275,7 +274,7 @@ void LocalPlayer::updateWalk()
     updateWalkingTile();
 
     // terminate walk only when client and server side walk are completed
-    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= stepDuration)
+    if(m_walking && !m_preWalking && m_walkTimer.ticksElapsed() >= getStepDuration())
         terminateWalk();
 }
 

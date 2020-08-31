@@ -579,14 +579,14 @@ void Creature::nextWalkUpdate()
         m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
             self->m_walkUpdateEvent = nullptr;
             self->nextWalkUpdate();
-        }, getStepDuration() / 32);
+        }, getStepDuration(true) / 32);
     }
 }
 
 void Creature::updateWalk()
 {
-    float walkTicksPerPixel = getStepDuration(true) / 32;
-    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32.0f);
+    float walkTicksPerPixel = getStepDuration(true) / 32.f;
+    int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, 32);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
