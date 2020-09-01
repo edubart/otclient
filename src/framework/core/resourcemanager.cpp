@@ -156,14 +156,13 @@ void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const
 
 bool ResourceManager::fileExists(const std::string& fileName)
 {
-    const std::string path = resolvePath(fileName);
-    return (PHYSFS_exists(path.c_str()) && !directoryExists(path));
+    return (PHYSFS_exists(resolvePath(fileName).c_str()) && !directoryExists(fileName));
 }
 
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
     PHYSFS_Stat stat = {};
-    if (!PHYSFS_stat(directoryName.c_str(), &stat)) {
+    if (!PHYSFS_stat(resolvePath(directoryName).c_str(), &stat)) {
         return false;
     }
 

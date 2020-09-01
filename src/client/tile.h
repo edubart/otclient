@@ -144,6 +144,10 @@ public:
 private:
     void checkTranslucentLight();
 
+    std::vector<CreaturePtr> m_walkingCreatures;
+    std::vector<EffectPtr> m_effects; // leave this outside m_things because it has no stackpos.
+    std::vector<ThingPtr> m_things;
+
     Position m_position;
     uint8 m_drawElevation;
     uint8 m_minimapColor;
