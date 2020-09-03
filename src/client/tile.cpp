@@ -27,6 +27,7 @@
 #include "item.h"
 #include "lightview.h"
 #include "localplayer.h"
+#include "protocolgame.h"
 #include "map.h"
 #include "thingtypemanager.h"
 
@@ -254,7 +255,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 bool Tile::removeThing(const ThingPtr& thing)
 {
     if(!thing) return false;
-  
+
     ThingPtr temporaryReference = thing;
 
     if(thing->isEffect()) {
