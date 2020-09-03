@@ -28,7 +28,6 @@
 #include "lightview.h"
 #include "localplayer.h"
 #include "map.h"
-#include "protocolgame.h"
 #include "thingtypemanager.h"
 
  // Define 1 to render behind the first creature added.
@@ -255,6 +254,8 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 bool Tile::removeThing(const ThingPtr& thing)
 {
     if(!thing) return false;
+  
+    ThingPtr temporaryReference = thing;
 
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
@@ -310,6 +311,7 @@ bool Tile::removeThing(const ThingPtr& thing)
     if(thing->isTranslucent())
         checkTranslucentLight();
 
+    temporaryReference = nullptr;
     return true;
 }
 
