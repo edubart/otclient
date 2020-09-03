@@ -66,13 +66,13 @@ MapView::MapView()
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_frameCache.tile = g_framebuffers.createFrameBuffer();
+    m_frameCache.crosshair = g_framebuffers.createFrameBuffer();
     m_frameCache.staticText = g_framebuffers.createFrameBuffer();
     m_frameCache.creatureInformation = g_framebuffers.createFrameBuffer();
 
-    setVisibleDimension(Size(15, 11));
-
     m_shader = g_shaders.getDefaultMapShader();
 
+    setVisibleDimension(Size(15, 11));
     initViewPortDirection();
 }
 
@@ -184,6 +184,24 @@ void MapView::draw(const Rect& rect)
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())
         return;
+
+    // Crosshair
+    if(m_crosshair.texture && m_crosshair.position.isValid()) {
+        if(m_crosshair.positionChanged) {
+            m_frameCache.crosshair->bind();
+            g_painter->setAlphaWriting(true);
+            g_painter->clear(Color::alpha);
+
+            const Point& point = transformPositionTo2D(m_crosshair.position, cameraPosition);
+            const Rect crosshairRect = Rect(point * m_scaleFactor, m_crosshair.texture->getWidth(), m_crosshair.texture->getHeight());
+            g_painter->drawTexturedRect(crosshairRect, m_crosshair.texture);
+            m_frameCache.crosshair->release();
+
+            m_crosshair.positionChanged = false;
+        }
+
+        m_frameCache.crosshair->draw(rect, srcRect);
+    }
 
     const float horizontalStretchFactor = rect.width() / static_cast<float>(srcRect.width());
     const float verticalStretchFactor = rect.height() / static_cast<float>(srcRect.height());
@@ -451,6 +469,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
 
     m_frameCache.tile->resize(bufferSize);
+    m_frameCache.crosshair->resize(bufferSize);
 
     const Size aboveMapSize = bufferSize * 4;
     m_frameCache.staticText->resize(aboveMapSize);
@@ -821,6 +840,18 @@ bool MapView::isInRange(const Position& pos)
 
     const AwareRange& awareRange = g_map.getAwareRange();
     return camera.isInRange(pos, awareRange.left, awareRange.right, awareRange.top, awareRange.bottom);
+}
+
+void MapView::setCrosshairPosition(const Position& pos)
+{
+    if(pos == m_crosshair.position) return;
+
+    m_crosshair.position = pos;
+    m_crosshair.positionChanged = true;
+}
+void MapView::setCrosshairTexture(const std::string& texturePath)
+{
+    m_crosshair.texture = texturePath.empty() ? nullptr : g_textures.getTexture(texturePath);
 }
 
 #if DRAW_SEPARATELY == 1

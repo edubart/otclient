@@ -28,6 +28,7 @@ local defaultOptions = {
   dontStretchShrink = false,
   turnDelay = 50,
   hotkeyDelay = 50,
+  crosshair = 'default'
 }
 
 local optionsWindow
@@ -39,6 +40,8 @@ local consolePanel
 local graphicsPanel
 local soundPanel
 local audioButton
+
+local crosshairCombobox
 
 local function setupGraphicsEngines()
   local enginesRadioGroup = UIRadioGroup.create()
@@ -83,7 +86,7 @@ function init()
     g_settings.setDefault(k, v)
     options[k] = v
   end
-  
+
   g_app.setForegroundPaneMaxFps(20)
 
   optionsWindow = g_ui.displayUI('options')
@@ -97,6 +100,16 @@ function init()
 
   generalPanel = g_ui.loadUI('game')
   optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')
+
+  crosshairCombobox = generalPanel:recursiveGetChildById('crosshairComboBox')
+
+  crosshairCombobox:addOption('Disabled', '')
+  crosshairCombobox:addOption('Default', 'default')
+  crosshairCombobox:addOption('Full', 'full')
+
+  crosshairCombobox.onOptionChange = function(comboBox, option)
+    setOption('crosshair', comboBox:getCurrentOption().data)
+  end
 
   consolePanel = g_ui.loadUI('console')
   optionsTabBar:addTab(tr('Console'), consolePanel, '/images/optionstab/console')
@@ -130,6 +143,8 @@ function setup()
       setOption(k, g_settings.getBoolean(k), true)
     elseif type(v) == 'number' then
       setOption(k, g_settings.getNumber(k), true)
+    elseif type(v) == 'string' then
+      setOption(k, g_settings.getString(k), true)
     end
   end
 end
@@ -229,6 +244,10 @@ function setOption(key, value, force)
     generalPanel:getChildById('turnDelayLabel'):setText(tr('Turn delay: %sms', value))
   elseif key == 'hotkeyDelay' then
     generalPanel:getChildById('hotkeyDelayLabel'):setText(tr('Hotkey delay: %sms', value))
+  elseif key == 'crosshair' then
+    local crossPath = '/images/game/crosshair/'
+    gameMapPanel:setCrosshairTexture(value and crossPath .. value or nil)
+    crosshairCombobox:setCurrentOptionByData(value, false)
   end
 
   -- change value for keybind updates
@@ -260,10 +279,14 @@ function removeTab(v)
   if type(v) == "string" then
     v = optionsTabBar:getTab(v)
   end
-  
+
   optionsTabBar:removeTab(v)
 end
 
 function addButton(name, func, icon)
   optionsTabBar:addButton(name, func, icon)
+end
+
+function crosshairEnabled()
+  return crosshairCombobox:getCurrentOption().data ~= ''
 end

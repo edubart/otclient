@@ -38,6 +38,24 @@ Panel
     !text: tr('Display text messages')
 
   Label
+    id: chooseCrosshairLabel
+    width: 60
+    !text: tr('Crosshair:')
+    phantom: false
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 13
+
+  ComboBox
+    id: crosshairComboBox
+    width: 120
+    anchors.left: prev.right
+    anchors.top: displayText.bottom
+    margin-top: 10
+    margin-left: 5
+    mouse-scroll: false
+
+  Label
     id: turnDelayLabel
     !text: tr('Turn delay: %sms', 30)
     anchors.left: parent.left

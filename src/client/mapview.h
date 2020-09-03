@@ -31,6 +31,7 @@
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
+#include <framework/graphics/texturemanager.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/luaengine/luaobject.h>
 #include "lightview.h"
@@ -129,6 +130,9 @@ public:
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_visibleCreatures; }
 
+    void setCrosshairPosition(const Position& pos);
+    void setCrosshairTexture(const std::string& texturePath);
+
 private:
     struct ViewPort {
         int top, right, bottom, left;
@@ -136,7 +140,13 @@ private:
 
     struct FrameCache {
         FrameBufferPtr tile, staticText,
-            creatureInformation;
+            creatureInformation, crosshair;
+    };
+
+    struct Crosshair {
+        bool positionChanged = false;
+        Position position;
+        TexturePtr texture;
     };
 
     int calcFirstVisibleFloor();
@@ -205,6 +215,7 @@ private:
     CreaturePtr m_followingCreature;
 
     FrameCache m_frameCache;
+    Crosshair m_crosshair;
 
     ViewMode m_viewMode;
     LightViewPtr m_lightView;

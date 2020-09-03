@@ -38,11 +38,7 @@ public:
     void drawSelf(Fw::DrawPane drawPane) override;
 
     void movePixels(int x, int y);
-    bool setZoom(int zoom);
-    bool zoomIn();
-    bool zoomOut();
     void followCreature(const CreaturePtr& creature) { m_mapView->followCreature(creature); }
-
     void setCameraPosition(const Position& pos) { m_mapView->setCameraPosition(pos); }
     void setMaxZoomIn(int maxZoomIn) { m_maxZoomIn = maxZoomIn; }
     void setMaxZoomOut(int maxZoomOut) { m_maxZoomOut = maxZoomOut; }
@@ -63,6 +59,9 @@ public:
     void setLimitVisibleRange(bool limitVisibleRange) { m_limitVisibleRange = limitVisibleRange; updateVisibleDimension(); }
     void setAddLightMethod(bool add) { m_mapView->setAddLightMethod(add); }
 
+    bool zoomIn();
+    bool zoomOut();
+    bool setZoom(int zoom);
     bool isMultifloor() { return m_mapView->isMultifloor(); }
     bool isAutoViewModeEnabled() { return m_mapView->isAutoViewModeEnabled(); }
     bool isDrawingTexts() { return m_mapView->isDrawingTexts(); }
@@ -75,17 +74,22 @@ public:
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_mapView->getVisibleCreatures(); }
 
-    Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
+    PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }
     MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }
     CreaturePtr getFollowingCreature() { return m_mapView->getFollowingCreature(); }
     Position getCameraPosition() { return m_mapView->getCameraPosition(); }
     Position getPosition(const Point& mousePos);
     TilePtr getTile(const Point& mousePos);
+    Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
+
     int getMaxZoomIn() { return m_maxZoomIn; }
     int getMaxZoomOut() { return m_maxZoomOut; }
     int getZoom() { return m_zoom; }
-    PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }
+
     float getMinimumAmbientLight() { return m_mapView->getMinimumAmbientLight(); }
+
+    void setCrosshairPosition(const Position& pos) { m_mapView->setCrosshairPosition(pos); }
+    void setCrosshairTexture(const std::string& texturePath) { m_mapView->setCrosshairTexture(texturePath); }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
