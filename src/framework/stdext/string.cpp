@@ -45,13 +45,13 @@ std::string resolve_path(const std::string& filePath, std::string sourcePath)
     return sourcePath + filePath;
 }
 
-std::string date_time_string()
+std::string date_time_string(const char* format/* = "%b %d %Y %H:%M:%S"*/)
 {
-    char date[32];
+    char date[100];
     std::time_t tnow;
     std::time(&tnow);
     std::tm *ts = std::localtime(&tnow);
-    std::strftime(date, 32, "%b %d %Y %H:%M:%S", ts);
+    std::strftime(date, 100, format, ts);
     return std::string(date);
 }
 
