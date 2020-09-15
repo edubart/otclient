@@ -45,7 +45,7 @@ std::string resolve_path(const std::string& filePath, std::string sourcePath)
     return sourcePath + filePath;
 }
 
-std::string date_time_string(const char* format)
+std::string date_time_string(const char* format/* = "%b %d %Y %H:%M:%S"*/)
 {
     char date[100];
     std::time_t tnow;
