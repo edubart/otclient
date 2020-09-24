@@ -586,7 +586,7 @@ void Creature::nextWalkUpdate()
 void Creature::updateWalk()
 {
     int stepDuration = getStepDuration(true);
-    int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() * 32) / stepDuration, 32);
+    int totalPixelsWalked = stepDuration ? std::min<int>((m_walkTimer.ticksElapsed() * 32) / stepDuration, 32) : 0;
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
