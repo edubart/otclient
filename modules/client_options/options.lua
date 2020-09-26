@@ -28,7 +28,8 @@ local defaultOptions = {
   dontStretchShrink = false,
   turnDelay = 50,
   hotkeyDelay = 50,
-  crosshair = 'default'
+  crosshair = 'default',
+  enableHighlightMouseTarget = true
 }
 
 local optionsWindow

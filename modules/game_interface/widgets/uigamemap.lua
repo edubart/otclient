@@ -131,10 +131,29 @@ function UIGameMap:canAcceptDrop(widget, mousePos)
   return false
 end
 
+local lastTile
 function UIGameMap:onMouseMove(mousePos, mouseMoved)
 	local pos = self:getPosition(mousePos)
 
 	if modules.client_options.crosshairEnabled() then
 		self:setCrosshairPosition(pos or {})
-	end
+  end
+
+  if modules.client_options.getOption('enableHighlightMouseTarget') then
+    if pos == nil then
+      if lastTile then
+        lastTile:unselect()
+        lastTile = nil
+      end
+    elseif lastTile == nil or not Position.equals(pos, lastTile:getPosition()) then
+      if lastTile then
+        lastTile:unselect()
+      end
+
+      lastTile = g_map.getTile(pos)
+      if lastTile then
+        lastTile:select()
+      end
+    end
+  end
 end

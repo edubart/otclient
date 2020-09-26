@@ -106,7 +106,8 @@ void Creature::draw(const Point& dest, float scaleFactor, int reDrawFlags, Light
 
 void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction)
 {
-    g_painter->setColor(m_outfitColor);
+    if(!m_selected)
+        g_painter->setColor(m_outfitColor);
 
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
@@ -497,7 +498,7 @@ void Creature::updateWalkAnimation()
         return;
 
     const int footAnimPhases = getTotalAnimationPhase();
-    if (footAnimPhases == 0) {
+    if(footAnimPhases == 0) {
         // looktype has no animations
         return;
     }

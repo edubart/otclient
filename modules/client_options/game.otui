@@ -37,6 +37,10 @@ Panel
     id: displayText
     !text: tr('Display text messages')
 
+  OptionCheckBox
+    id: enableHighlightMouseTarget
+    !text: tr('Highlight mouse target')
+
   Label
     id: chooseCrosshairLabel
     width: 60
@@ -50,7 +54,7 @@ Panel
     id: crosshairComboBox
     width: 120
     anchors.left: prev.right
-    anchors.top: displayText.bottom
+    anchors.top: enableHighlightMouseTarget.bottom
     margin-top: 10
     margin-left: 5
     mouse-scroll: false

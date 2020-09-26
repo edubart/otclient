@@ -113,6 +113,10 @@ public:
     int getTotalAnimationPhase();
     int getCurrentAnimationPhase(bool mount = false);
 
+    bool isSelected() { return m_selected; }
+    void select() { m_selected = true; }
+    void unselect() { m_selected = false; }
+
     void updateShield();
 
     // walk related
@@ -200,6 +204,7 @@ protected:
     stdext::boolean<false> m_walking;
     stdext::boolean<false> m_allowAppearWalk;
     stdext::boolean<false> m_updateDynamicInformation;
+    stdext::boolean<false> m_selected;
     ScheduledEventPtr m_walkUpdateEvent;
     ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;

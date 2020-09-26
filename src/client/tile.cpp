@@ -30,6 +30,7 @@
 #include "protocolgame.h"
 #include "map.h"
 #include "thingtypemanager.h"
+#include <framework/core/eventdispatcher.h>
 
  // Define 1 to render behind the first creature added.
 #define RENDER_CREATURE_BEHIND 0
@@ -48,8 +49,25 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 {
     m_drawElevation = 0;
 
+    if(m_highlight.update) {
+        m_highlight.color += 8 * (m_highlight.invertedColorSelection ? 1 : -1);
+        m_highlight.update = false;
+        m_highlight.rgbColor = Color(255 - m_highlight.color, 255 - m_highlight.color, m_highlight.color);
+
+        if((!m_highlight.invertedColorSelection && m_highlight.color <= 0) || (m_highlight.invertedColorSelection && m_highlight.color >= 120)) {
+            m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
+        }
+    }
+
     for(const auto& ground : m_ground) {
+        const bool highlighted = m_highlight.enabled && ground == m_highlight.thing;
+
+        if(highlighted) g_painter->setColor(m_highlight.rgbColor);
+
         ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+
+        if(highlighted) g_painter->resetColor();
+
         m_drawElevation += ground->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
@@ -59,7 +77,13 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     for(const auto& item : m_bottomItems) {
+        const bool highlighted = m_highlight.enabled && item == m_highlight.thing;
+
+        if(highlighted) g_painter->setColor(m_highlight.rgbColor);
+
         item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+
+        if(highlighted) g_painter->resetColor();
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -68,8 +92,13 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 
     for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
+        const bool highlighted = m_highlight.enabled && item == m_highlight.thing;
+
+        if(highlighted) g_painter->setColor(m_highlight.rgbColor);
 
         item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+
+        if(highlighted) g_painter->resetColor();
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -78,11 +107,23 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 
 #if RENDER_CREATURE_BEHIND == 1
     for(const auto& creature : m_walkingCreatures) {
+        const bool highlighted = m_highlight.enabled && creature == m_highlight.thing;
+
+        if(highlighted) {
+            g_painter->setColor(m_highlight.rgbColor);
+            creature->select();
+        }
+
         creature->draw(
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
             ), scaleFactor, reDrawFlags, lightView);
+
+        if(highlighted) {
+            creature->unselect();
+            g_painter->resetColor();
+        }
     }
 
     for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
@@ -93,15 +134,40 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
+
+        const bool highlighted = m_highlight.enabled && creature == m_highlight.thing;
+
+        if(highlighted) {
+            g_painter->setColor(m_highlight.rgbColor);
+            creature->select();
+        }
+
         creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
+
+        if(highlighted) {
+            creature->unselect();
+            g_painter->resetColor();
+        }
     }
 
     for(const auto& creature : m_walkingCreatures) {
+        const bool highlighted = m_highlight.enabled && creature == m_highlight.thing;
+
+        if(highlighted) {
+            g_painter->setColor(m_highlight.rgbColor);
+            creature->select();
+        }
+
         creature->draw(
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
             ), scaleFactor, reDrawFlags, lightView);
+
+        if(highlighted) {
+            creature->unselect();
+            g_painter->resetColor();
+        }
     }
 #endif    
 }
@@ -113,7 +179,13 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightV
     }
 
     for(const auto& item : m_topItems) {
+        const bool highlighted = m_highlight.enabled && item == m_highlight.thing;
+
+        if(highlighted) g_painter->setColor(m_highlight.rgbColor);
+
         item->draw(dest, scaleFactor, true, reDrawFlags, lightView);
+
+        if(highlighted) g_painter->resetColor();
     }
 }
 
@@ -489,6 +561,7 @@ CreaturePtr Tile::getTopCreature()
             }
         }
     }
+
     return nullptr;
 }
 
@@ -666,6 +739,46 @@ void Tile::cancelListenerPainter()
     m_animatedItems.clear();
 }
 
+void Tile::checkForDetachableThing()
+{
+    m_highlight.thing = nullptr;
+
+    for(const ItemPtr& item : m_commonItems) {
+        if((item->canDraw()) && (item->isUsable() || item->isForceUse() || !item->isNotMoveable() || item->hasLensHelp() || item->isContainer())) {
+            m_highlight.thing = item;
+            return;
+        }
+    }
+
+    for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
+        const ItemPtr& item = *it;
+        if((item->canDraw()) && (item->hasLight() || item->isUsable() || item->isForceUse())) {
+            m_highlight.thing = item;
+            return;
+        }
+    }
+
+    for(auto it = m_ground.rbegin(); it != m_ground.rend(); ++it) {
+        const ItemPtr& ground = *it;
+        if((ground->canDraw()) && (ground->isUsable() || ground->isForceUse())) {
+            m_highlight.thing = ground;
+            return;
+        }
+    }
+
+    for(auto it = m_topItems.rbegin(); it != m_topItems.rend(); ++it) {
+        const ItemPtr& item = *it;
+        if(item->canDraw() && item->hasLensHelp()) {
+            m_highlight.thing = item;
+            return;
+        }
+    }
+
+    m_highlight.thing = getTopCreature();
+
+    if(!m_highlight.thing) unselect();
+}
+
 void Tile::analyzeThing(const ThingPtr& thing, bool add)
 {
     const int value = add ? 1 : -1;
@@ -677,6 +790,8 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.hasDisplacement += value;
 
     if(thing->isEffect()) return;
+
+    checkForDetachableThing();
 
     // Creatures and items
 
@@ -755,4 +870,29 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
             }
         }
     }
+}
+
+void Tile::select()
+{
+    if(!m_highlight.thing) return;
+
+    m_highlight.enabled = true;
+    m_highlight.invertedColorSelection = false;
+    m_highlight.color = 0;
+
+    m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
+        m_highlight.update = true;
+        g_map.requestDrawing(m_position, Otc::ReDrawThing);
+    }, 30);
+}
+
+void Tile::unselect()
+{
+    if(!m_highlight.listeningEvent) return;
+
+    m_highlight.enabled = false;
+    m_highlight.listeningEvent->cancel();
+    m_highlight.listeningEvent = nullptr;
+
+    g_map.requestDrawing(m_position, Otc::ReDrawThing);
 }

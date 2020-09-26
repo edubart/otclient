@@ -125,9 +125,9 @@ public:
     uint32 getHouseId() { return m_houseId; }
     bool isHouseTile() { return m_houseId != 0 && (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
-    void select() { m_selected = true; }
-    void unselect() { m_selected = false; }
-    bool isSelected() { return m_selected; }
+    void select();
+    void unselect();
+    bool isSelected() { return m_highlight.enabled; }
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
@@ -142,27 +142,6 @@ public:
     void cancelListenerPainter();
 
 private:
-    void checkTranslucentLight();
-
-    Position m_position;
-    uint8 m_drawElevation;
-    uint8 m_minimapColor;
-    uint32 m_flags, m_houseId;
-
-    stdext::boolean<false> m_selected;
-
-    std::vector<CreaturePtr> m_walkingCreatures;
-    std::vector<ThingPtr> m_things;
-
-    std::vector<EffectPtr> m_effects;
-    std::vector<ItemPtr> m_ground;
-    std::vector<ItemPtr> m_topItems;
-    std::vector<ItemPtr> m_commonItems;
-    std::vector<ItemPtr> m_bottomItems;
-    std::vector<CreaturePtr> m_creatures;
-
-    std::vector<ItemPtr> m_animatedItems;
-
     struct CountFlag {
         int fullGround = 0;
         int notWalkable = 0;
@@ -179,7 +158,41 @@ private:
         int hasLight = 0;
     };
 
+    struct Highlight {
+        int color;
+        Color rgbColor;
+        ThingPtr thing;
+        ScheduledEventPtr listeningEvent;
+        stdext::boolean<false> enabled;
+        stdext::boolean<false> update;
+        stdext::boolean<false> invertedColorSelection;
+    };
+
+    void checkForDetachableThing();
+    void checkTranslucentLight();
+
+    Position m_position;
+    uint8 m_drawElevation;
+    uint8 m_minimapColor;
+    uint32 m_flags, m_houseId;
+
+    Timer m_selectColorTimeChange;
+
+
+    std::vector<CreaturePtr> m_walkingCreatures;
+    std::vector<ThingPtr> m_things;
+
+    std::vector<EffectPtr> m_effects;
+    std::vector<ItemPtr> m_ground;
+    std::vector<ItemPtr> m_topItems;
+    std::vector<ItemPtr> m_commonItems;
+    std::vector<ItemPtr> m_bottomItems;
+    std::vector<CreaturePtr> m_creatures;
+
+    std::vector<ItemPtr> m_animatedItems;
+
     CountFlag m_countFlag;
+    Highlight m_highlight;
 
     CreaturePtr m_localPlayer;
 };
