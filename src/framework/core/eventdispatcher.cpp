@@ -74,7 +74,7 @@ void EventDispatcher::poll()
             event->execute();
         }
         m_pollEventsSize = m_eventList.size();
-        
+
         loops++;
     }
 }
@@ -116,4 +116,3 @@ EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool p
         m_eventList.push_back(event);
     return event;
 }
-
