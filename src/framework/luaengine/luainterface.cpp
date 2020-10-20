@@ -24,7 +24,11 @@
 #include "luaobject.h"
 
 #include <framework/core/resourcemanager.h>
+#if __has_include("luajit/lua.hpp")
+#include <luajit/lua.hpp>
+#else
 #include <lua.hpp>
+#endif
 
 #include "lbitlib.h"
 
