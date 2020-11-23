@@ -77,7 +77,7 @@ public:
     T manhattanLength() const { return std::abs(x) + std::abs(y); }
 
     float distanceFrom(const TPoint<T>& other) const {
-        return TPoint<T>(x - other.x, y - other.y).getLength();
+        return TPoint<T>(x - other.x, y - other.y).length();
     }
 
     T x, y;
