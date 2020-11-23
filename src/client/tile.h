@@ -88,8 +88,8 @@ public:
     int getDrawElevation() { return m_drawElevation; }
     std::vector<ItemPtr> getItems();
     std::vector<CreaturePtr> getCreatures();
-    std::vector<CreaturePtr> getWalkingCreatures() { return m_walkingCreatures; }
-    std::vector<ThingPtr> getThings() { return m_things; }
+    const std::vector<CreaturePtr>& getWalkingCreatures() { return m_walkingCreatures; }
+    const std::vector<ThingPtr>& getThings() { return m_things; }
     ItemPtr getGround();
     int getGroundSpeed();
     uint8 getMinimapColorByte();
