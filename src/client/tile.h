@@ -176,9 +176,6 @@ private:
     uint8 m_minimapColor;
     uint32 m_flags, m_houseId;
 
-    Timer m_selectColorTimeChange;
-
-
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
 
