@@ -660,7 +660,7 @@ int ThingType::getExactHeight()
 
 void ThingType::startListenerPainter(const float duration)
 {
-    if(m_countPainterListeningRef == 0) {
+    if(!hasListenerPainter()) {
         m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
             uint32_t redrawFlag = Otc::ReDrawThing;
 
@@ -676,7 +676,7 @@ void ThingType::startListenerPainter(const float duration)
 
 bool ThingType::cancelListenerPainter()
 {
-    if(m_countPainterListeningRef == 0) return false;
+    if(!hasListenerPainter()) return false;
 
     --m_countPainterListeningRef;
 

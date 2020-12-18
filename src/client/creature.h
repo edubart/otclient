@@ -231,6 +231,8 @@ private:
         int getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
     };
 
+    void checkAndStartAnimation();
+
     StepCache m_stepCache;
 };
 

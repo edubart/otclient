@@ -438,9 +438,7 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
-    const auto idleAnimator = getIdleAnimator();
-    if(idleAnimator) startListenerPainter(idleAnimator->getAverageDuration());
-    else if(isAnimateAlways()) startListenerPainter(1000 / getAnimationPhases());
+    checkAndStartAnimation();
 
     // creature appeared the first time or wasn't seen for a long time
     if(m_removed) {
@@ -682,6 +680,10 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
+    if(m_type != Proto::CreatureTypeUnknown) {
+        cancelListenerPainter();
+    }
+
     const Outfit oldOutfit = m_outfit;
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
@@ -700,7 +702,10 @@ void Creature::setOutfit(const Outfit& outfit)
 
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
-    g_map.requestDrawing(m_position, Otc::ReDrawThing);
+    if(m_type != Proto::CreatureTypeUnknown) {
+        g_map.requestDrawing(m_position, Otc::ReDrawThing, true, isLocalPlayer());
+        checkAndStartAnimation();
+    }
 }
 
 void Creature::setOutfitColor(const Color& color, int duration)
@@ -996,6 +1001,15 @@ int Creature::getCurrentAnimationPhase(const bool mount)
     }
 
     return m_walkAnimationPhase;
+}
+
+void Creature::checkAndStartAnimation()
+{
+    const auto& datType = m_outfit.hasMount() ? rawGetMountThingType() : rawGetThingType();
+
+    const auto idleAnimator = datType->getIdleAnimator();
+    if(idleAnimator) startListenerPainter(idleAnimator->getAverageDuration());
+    else if(datType->isAnimateAlways()) startListenerPainter(1000 / datType->getAnimationPhases());
 }
 
 int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)

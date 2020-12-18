@@ -132,6 +132,7 @@ public:
 
     void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration); }
     bool cancelListenerPainter() { return rawGetThingType()->cancelListenerPainter(); }
+    bool hasListenerPainter() { return rawGetThingType()->hasListenerPainter(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
     virtual void onAppear() {}

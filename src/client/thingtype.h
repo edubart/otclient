@@ -218,6 +218,7 @@ public:
 
     void startListenerPainter(float duration);
     bool cancelListenerPainter();
+    const bool hasListenerPainter() { return m_countPainterListeningRef > 0; }
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }
