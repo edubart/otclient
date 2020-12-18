@@ -86,12 +86,13 @@ public:
     ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 
+    const int getDrawElevation() { return m_drawElevation; }
     const Position& getPosition() { return m_position; }
-    int getDrawElevation() { return m_drawElevation; }
+    const std::vector<CreaturePtr>& getWalkingCreatures() { return m_walkingCreatures; }
+    const std::vector<ThingPtr>& getThings() { return m_things; }
+    const std::vector<CreaturePtr>& getCreatures() { return m_creatures; }
+
     std::vector<ItemPtr> getItems();
-    std::vector<CreaturePtr> getWalkingCreatures() { return m_walkingCreatures; }
-    std::vector<ThingPtr> getThings() { return m_things; }
-    std::vector<CreaturePtr> getCreatures() { return m_creatures; }
     ItemPtr getGround();
     int getGroundSpeed();
     uint8 getMinimapColorByte();

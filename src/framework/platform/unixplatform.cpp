@@ -130,12 +130,13 @@ std::string Platform::getCPUName()
     std::ifstream in("/proc/cpuinfo");
     while(getline(in, line)) {
         auto strs = stdext::split(line, ":");
-        std::string first = strs[0];
-        std::string second = strs[1];
-        stdext::trim(first);
-        stdext::trim(second);
-        if(strs.size() == 2 && first == "model name")
-            return second;
+        if(strs.size() == 2) {
+            stdext::trim(strs[0]);
+            if(strs[0] == "model name") {
+                stdext::trim(strs[1]);
+                return strs[1];
+            }
+        }
     }
     return std::string();
 }
@@ -146,12 +147,13 @@ double Platform::getTotalSystemMemory()
     std::ifstream in("/proc/meminfo");
     while(getline(in, line)) {
         auto strs = stdext::split(line, ":");
-        std::string first = strs[0];
-        std::string second = strs[1];
-        stdext::trim(first);
-        stdext::trim(second);
-        if(strs.size() == 2 && first == "MemTotal")
-            return stdext::unsafe_cast<double>(second.substr(0, second.length() - 3)) * 1000.0;
+        if(strs.size() == 2) {
+            stdext::trim(strs[0]);
+            if(strs[0] == "MemTotal") {
+                stdext::trim(strs[1]);
+                return stdext::unsafe_cast<double>(strs[1].substr(0, strs[1].length() - 3)) * 1000;
+            }
+        }
     }
     return 0;
 }
@@ -161,8 +163,7 @@ std::string Platform::getOSName()
     std::string line;
     std::ifstream in("/etc/issue");
     if(getline(in, line)) {
-        std::size_t end = line.find('\\');
-        std::string res = line.substr(0, end);
+        auto res = line.substr(0, line.find('\\'));
         stdext::trim(res);
         return res;
     }
