@@ -347,7 +347,7 @@ void MapView::updateVisibleTilesCache()
        ) return;*/
 
     if(m_lastCameraPosition.z != cameraPosition.z)
-        m_visibleCreatures = g_map.getSightSpectators(cameraPosition, false);
+        m_visibleCreatures = g_map.getSpectators(cameraPosition, false);
 
     m_lastCameraPosition = cameraPosition;
     m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
