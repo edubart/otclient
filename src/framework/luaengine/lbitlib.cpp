@@ -33,8 +33,17 @@
 #define LUA_LIB
 
 extern "C" {
+#if __has_include("luajit/lua.h")
+#include <luajit/lua.h>
+#else
 #include <lua.h>
+#endif
+
+#if __has_include("luajit/lauxlib.h")
+#include <luajit/lauxlib.h>
+#else
 #include <lauxlib.h>
+#endif
 }
 
 /* ----- adapted from lua-5.2.0 luaconf.h: ----- */
@@ -175,10 +184,23 @@ static lua_Unsigned luaL_checkunsigned (lua_State *L, int arg) {
 #define lbitlib_c
 #define LUA_LIB
 
-#include "lua.h"
+#if __has_include("luajit/lua.h")
+#include <luajit/lua.h>
+#else
+#include <lua.h>
+#endif
 
-#include "lauxlib.h"
-#include "lualib.h"
+#if __has_include("luajit/lauxlib.h")
+#include <luajit/lauxlib.h>
+#else
+#include <lauxlib.h>
+#endif
+
+#if __has_include("luajit/lualib.h")
+#include <luajit/lualib.h>
+#else
+#include <lualib.h>
+#endif
 
 
 /* number of bits to consider in a number */

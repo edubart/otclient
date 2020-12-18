@@ -38,7 +38,7 @@ template<typename T> T from_string(const std::string& str, T def = T()) { return
 /// Resolve a file path by combining sourcePath with filePath
 std::string resolve_path(const std::string& filePath, std::string sourcePath);
 /// Get current date and time in a std::string
-std::string date_time_string();
+std::string date_time_string(const char* format = "%b %d %Y %H:%M:%S");
 
 std::string dec_to_hex(uint64_t num);
 uint64_t hex_to_dec(const std::string& str);
