@@ -882,7 +882,7 @@ void Tile::select()
 
     m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
         m_highlight.update = true;
-        g_map.requestDrawing(m_position, Otc::ReDrawThing);
+        g_map.requestDrawing(m_position, Otc::ReDrawThing, false);
     }, 30);
 }
 
@@ -894,5 +894,5 @@ void Tile::unselect()
     m_highlight.listeningEvent->cancel();
     m_highlight.listeningEvent = nullptr;
 
-    g_map.requestDrawing(m_position, Otc::ReDrawThing);
+    g_map.requestDrawing(m_position, Otc::ReDrawThing, false);
 }

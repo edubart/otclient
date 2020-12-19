@@ -81,10 +81,10 @@ void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
+void Map::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force)
 {
     for(const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing(pos, reDrawFlags, force, isLocalPlayer);
+        mapView->requestDrawing(pos, reDrawFlags, force);
 }
 
 void Map::clean()
@@ -215,7 +215,7 @@ bool Map::removeThing(const ThingPtr& thing)
             m_staticTexts.erase(it);
             ret = true;
 
-            requestDrawing(thing->getPosition(), Otc::ReDrawStaticText, true);
+            requestDrawing(thing->getPosition(), Otc::ReDrawStaticText);
         }
     } else {
         if(thing->isMissile()) {
@@ -235,7 +235,7 @@ bool Map::removeThing(const ThingPtr& thing)
             if(thing->hasLight()) redrawFlag |= Otc::ReDrawLight;
             if(thing->isCreature()) redrawFlag |= Otc::ReDrawCreatureInformation;
 
-            requestDrawing(thing->getPosition(), static_cast<Otc::RequestDrawFlags>(redrawFlag), true);
+            requestDrawing(thing->getPosition(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
         }
     }
 

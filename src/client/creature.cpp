@@ -579,7 +579,7 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
+    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, Otc::MIN_TIME_TO_RENDER));
 }
 
 void Creature::updateWalk()
@@ -669,7 +669,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
         onDeath();
 
     m_updateDynamicInformation = true;
-    g_map.requestDrawing(m_position, Otc::ReDrawDynamicInformation, true, isLocalPlayer());
+    g_map.requestDrawing(m_position, Otc::ReDrawDynamicCreatureInformation);
 }
 
 void Creature::setDirection(Otc::Direction direction)
@@ -703,7 +703,7 @@ void Creature::setOutfit(const Outfit& outfit)
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
     if(m_type != Proto::CreatureTypeUnknown) {
-        g_map.requestDrawing(m_position, Otc::ReDrawThing, true, isLocalPlayer());
+        g_map.requestDrawing(m_position, Otc::ReDrawThing);
         checkAndStartAnimation();
     }
 }
@@ -777,7 +777,7 @@ void Creature::setSkull(uint8 skull)
     m_skull = skull;
     callLuaField("onSkullChange", m_skull);
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
 }
 
 void Creature::setShield(uint8 shield)
@@ -785,7 +785,7 @@ void Creature::setShield(uint8 shield)
     m_shield = shield;
     callLuaField("onShieldChange", m_shield);
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
 }
 
 void Creature::setEmblem(uint8 emblem)
@@ -865,7 +865,7 @@ void Creature::updateShield()
     } else if(!m_shieldBlink)
         m_showShieldTexture = true;
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation, true, isLocalPlayer());
+    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
 }
 
 Point Creature::getDrawOffset()

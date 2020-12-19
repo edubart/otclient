@@ -95,23 +95,23 @@ public:
     Position getCameraPosition();
     void setCameraPosition(const Position& pos);
 
-    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Position(), Otc::ReDrawLight, true); }
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Position(), Otc::ReDrawLight); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
+    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
     bool isDrawingNames() { return m_drawNames; }
 
-    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
-    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation, true); }
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
     void move(int x, int y);
@@ -125,7 +125,7 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = false, const bool isLocalPlayer = false);
+    void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = true);
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_visibleCreatures; }
@@ -227,7 +227,8 @@ private:
 
     uint32 m_redrawFlag;
 
-    Timer m_minTimeRender;
+    Timer m_thingTimeRender;
+    Timer m_creatureInfTimeRender;
     Timer m_fadeTimer;
 
     uint_fast8_t m_floorMin, m_floorMax;

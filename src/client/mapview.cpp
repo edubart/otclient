@@ -140,7 +140,9 @@ void MapView::draw(const Rect& rect)
 
         m_frameCache.tile->release();
 
-        m_minTimeRender.restart();
+        m_thingTimeRender.restart();
+
+        m_redrawFlag &= ~Otc::ReDrawThing;
     }
 
     // generating mipmaps each frame can be slow in older cards
@@ -212,23 +214,23 @@ void MapView::draw(const Rect& rect)
 #endif
 
     // lights are drawn after names and before texts
-    if(m_drawLights)
+    if(m_drawLights) {
         m_lightView->draw(rect, srcRect);
+        m_redrawFlag &= ~Otc::ReDrawLight;
+    }
 
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 1
     drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 #endif
 
     drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
-
-    m_redrawFlag = 0;
 }
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
     const bool drawStaticCreatureInf = m_redrawFlag & Otc::ReDrawStaticCreatureInformation;
 
-    if(m_redrawFlag & Otc::ReDrawDynamicInformation || drawStaticCreatureInf) {
+    if(m_redrawFlag & Otc::ReDrawDynamicCreatureInformation || drawStaticCreatureInf) {
         int flags = 0;
         if(m_drawNames) { flags = Otc::DrawNames; }
         if(m_drawHealthBars) { flags |= Otc::DrawBars; }
@@ -269,6 +271,11 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
 
             m_frameCache.creatureInformation->release();
         }
+
+        m_creatureInfTimeRender.restart();
+
+        m_redrawFlag &= ~Otc::ReDrawStaticCreatureInformation;
+        m_redrawFlag &= ~Otc::ReDrawDynamicCreatureInformation;
     }
     m_frameCache.creatureInformation->draw();
 }
@@ -299,6 +306,8 @@ void MapView::drawText(const Rect& rect, Point drawOffset, const float horizonta
                 staticText->drawText(p, rect);
             }
             m_frameCache.staticText->release();
+
+            m_redrawFlag &= ~Otc::ReDrawStaticText;
         }
 
         m_frameCache.staticText->draw();
@@ -753,7 +762,7 @@ void MapView::setDrawLights(bool enable)
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
 
-    requestDrawing(Position(), Otc::ReDrawLight);
+    requestDrawing(Position(), Otc::ReDrawLight, false);
     m_mustCleanFramebuffer = true;
     m_drawLights = enable;
 }
@@ -822,12 +831,26 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
     return true;
 }
 
-void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force, const bool isLocalPlayer)
+void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force)
 {
-    if(!isLocalPlayer && pos.isValid() && !isInRange(pos)) return;
+    // Possible LocalPlayer
+    const bool isInCenter = pos == getCameraPosition();
 
-    if(((force && (!isLocalPlayer || m_viewMode == NEAR_VIEW)) || m_minTimeRender.ticksElapsed() > 15))
+    if(!isInCenter && pos.isValid() && !isInRange(pos)) return;
+
+    if(m_creatureInfTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
+        if(reDrawFlags & Otc::ReDrawStaticCreatureInformation) {
+            m_redrawFlag |= Otc::ReDrawStaticCreatureInformation;
+        }
+
+        if(reDrawFlags & Otc::ReDrawDynamicCreatureInformation) {
+            m_redrawFlag |= Otc::ReDrawDynamicCreatureInformation;
+        }
+    }
+
+    if(force || m_thingTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
         m_redrawFlag |= reDrawFlags;
+    }
 
     if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
 }
