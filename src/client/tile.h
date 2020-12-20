@@ -103,6 +103,7 @@ public:
     bool isFullyOpaque();
     bool isSingleDimension();
     bool hasTallThings();
+    bool hasWideThings();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
@@ -159,6 +160,7 @@ private:
         int opaque = 0;
         int hasLight = 0;
         int hasTallThings = 0;
+        int hasWideThings = 0;
     };
 
     struct Highlight {

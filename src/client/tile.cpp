@@ -642,6 +642,11 @@ bool Tile::hasTallThings()
     return m_countFlag.hasTallThings > 0;
 }
 
+bool Tile::hasWideThings()
+{
+    return m_countFlag.hasWideThings > 0;
+}
+
 bool Tile::isLookPossible()
 {
     return m_countFlag.blockProjectile == 0;
@@ -805,6 +810,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->getHeight() > 1)
         m_countFlag.hasTallThings += value;
+
+    if(thing->getWidth() > 1)
+        m_countFlag.hasWideThings += value;
 
     if(thing->hasLight())
         m_countFlag.hasLight += value;
