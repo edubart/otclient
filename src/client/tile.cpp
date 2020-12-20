@@ -637,6 +637,11 @@ bool Tile::isSingleDimension()
     return m_countFlag.notSingleDimension == 0 && m_walkingCreatures.empty();
 }
 
+bool Tile::hasTallThings()
+{
+    return m_countFlag.hasTallThings > 0;
+}
+
 bool Tile::isLookPossible()
 {
     return m_countFlag.blockProjectile == 0;
@@ -797,6 +802,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->getRealSize() > Otc::TILE_PIXELS)
         m_countFlag.notSingleDimension += value;
+
+    if(thing->getHeight() > 1)
+        m_countFlag.hasTallThings += value;
 
     if(thing->hasLight())
         m_countFlag.hasLight += value;

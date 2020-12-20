@@ -102,6 +102,7 @@ public:
     bool isFullGround();
     bool isFullyOpaque();
     bool isSingleDimension();
+    bool hasTallThings();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
@@ -157,6 +158,7 @@ private:
         int elevation = 0;
         int opaque = 0;
         int hasLight = 0;
+        int hasTallThings = 0;
     };
 
     struct Highlight {
