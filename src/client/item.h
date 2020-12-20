@@ -126,7 +126,7 @@ public:
 
     bool isHouseDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isDepot() { return m_attribs.has(ATTR_DEPOT_ID); }
-    bool isContainer() override { return m_attribs.has(ATTR_CONTAINER_ITEMS); }
+    bool isContainer() override { return m_attribs.has(ATTR_CONTAINER_ITEMS) || Thing::isContainer(); }
     bool isDoor() { return m_attribs.has(ATTR_HOUSEDOORID); }
     bool isTeleport() { return m_attribs.has(ATTR_TELE_DEST); }
 
