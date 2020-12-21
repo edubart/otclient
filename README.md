@@ -1,11 +1,12 @@
-# This is Optimized Version
-   ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
+# This is Optimized Version   
    ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
+   
+   ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
    ### Features   
    - Tile/Light/Creature Render optimized
    - Rendering System by event (g_map.requestDrawing)   
    - Idle Animation Support
-   - Highlight Mouse Target
+   - Highlight Mouse Target (Beta)
    - Crosshair
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
    - Refactored Walk System
