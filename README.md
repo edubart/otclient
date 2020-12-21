@@ -17,7 +17,13 @@
    - optimize UI
    - Compatibility with other protocols
    
-   ### What help? Just open a PR.
+   <h2>
+   
+   ```diff
+   - What help? Just open a PR.
+   ```
+   
+   </h2>
 
 [![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
