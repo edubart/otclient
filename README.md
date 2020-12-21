@@ -1,5 +1,6 @@
 # This is Optimized Version
-   ### Features
+### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
+   ### Features   
    - Tile/Light/Creature Render optimized
    - Rendering System by event (g_map.requestDrawing)   
    - Idle Animation Support
