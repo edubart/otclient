@@ -5,11 +5,11 @@
    - Idle Animation Support
    - Highlight Mouse Target
    - Crosshair
-   - Module Controller System (ex: https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua)
+   - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
    - Refactored Walk System
    - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
-   - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) (https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle)
-   - Tibia Theme 1.2 by Zews (https://otland.net/threads/otc-tibia-theme-v1-2.230988/)  
+   - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
+   - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))  
    
    What I don't intend to do
    - Fade Tile
