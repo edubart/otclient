@@ -1,4 +1,30 @@
 # This is Optimized Version
+   ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
+   ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
+   ### Features   
+   - Tile/Light/Creature Render optimized
+   - Rendering System by event (g_map.requestDrawing)   
+   - Idle Animation Support
+   - Highlight Mouse Target
+   - Crosshair
+   - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
+   - Refactored Walk System
+   - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
+   - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
+   - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))  
+   
+   ### What I don't intend to do
+   - Floor Fading
+   - Optimize UI
+   - Compatibility with other protocols
+   
+   <h2>
+   
+   ```diff
+   - Want to help? Just open a PR.
+   ```
+   
+   </h2>
 
 [![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
@@ -12,7 +38,7 @@ anything easily. Users can also create new mods and extend game interface for th
 Otclient is written in C++11 and heavily scripted in lua.
 
 For a server to connect to, you can build your own with the [forgottenserver](https://github.com/otland/forgottenserver)
-or connect to one listed on [otservlist](https://otservlist.org/).
+or connect to one listed on [otservlist](https://otservlist.org/).#
 
 ### Where do I download?
 
