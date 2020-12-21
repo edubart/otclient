@@ -1,5 +1,5 @@
 # This is Optimized Version
-   Features
+   ### Features
    - Tile/Light/Creature Render optimized
    - Rendering System by event (g_map.requestDrawing)   
    - Idle Animation Support
@@ -11,7 +11,7 @@
    - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
    - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))  
    
-   What I don't intend to do
+   ### What I don't intend to do
    - Fade Tile
    - optimize UI
    - Compatibility with other protocols
