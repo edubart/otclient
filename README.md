@@ -14,7 +14,7 @@
    
    ### What I don't intend to do
    - Floor Fading
-   - optimize UI
+   - Optimize UI
    - Compatibility with other protocols
    
    <h2>
