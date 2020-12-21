@@ -1,8 +1,6 @@
 # This is Optimized Version
-### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
-   ```diff
-   Tested on Tibia 10.98
-   ```
+   ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
+   ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
    ### Features   
    - Tile/Light/Creature Render optimized
    - Rendering System by event (g_map.requestDrawing)   
