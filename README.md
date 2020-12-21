@@ -12,7 +12,7 @@
    - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))  
    
    ### What I don't intend to do
-   - Fade Tile
+   - Floor Fading
    - optimize UI
    - Compatibility with other protocols
    
