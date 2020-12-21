@@ -1,4 +1,22 @@
 # This is Optimized Version
+   Features
+   - Tile/Light/Creature Render optimized
+   - Rendering System by event (g_map.requestDrawing)   
+   - Idle Animation Support
+   - Highlight Mouse Target
+   - Crosshair
+   - Module Controller System (ex: https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua)
+   - Refactored Walk System
+   - Refactored Battle Module by @andersonfaaria
+   - Health&Mana Circle by @EgzoT, @GustavoBlaze, @Tekadon58 (https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle)
+   - Tibia Theme 1.2 by Zews (https://otland.net/threads/otc-tibia-theme-v1-2.230988/)  
+   
+   What I don't intend to do
+   - Fade Tile
+   - optimize UI
+   - Compatibility with other protocols
+   
+   ### What help? Just open a PR.
 
 [![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
