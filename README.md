@@ -21,7 +21,7 @@
    <h2>
    
    ```diff
-   - What help? Just open a PR.
+   - Want to help? Just open a PR.
    ```
    
    </h2>
