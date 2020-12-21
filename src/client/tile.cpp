@@ -50,11 +50,11 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
     m_drawElevation = 0;
 
     if(m_highlight.update) {
-        m_highlight.color += 8 * (m_highlight.invertedColorSelection ? 1 : -1);
+        m_highlight.color += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
         m_highlight.update = false;
-        m_highlight.rgbColor = Color(255 - m_highlight.color, 255 - m_highlight.color, m_highlight.color);
+        m_highlight.rgbColor = Color(255, 255, 255 - m_highlight.color);
 
-        if((!m_highlight.invertedColorSelection && m_highlight.color <= 0) || (m_highlight.invertedColorSelection && m_highlight.color >= 120)) {
+        if((!m_highlight.invertedColorSelection && m_highlight.color < 0) || (m_highlight.invertedColorSelection && m_highlight.color > 255)) {
             m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
         }
     }
