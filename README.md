@@ -1,5 +1,8 @@
 # This is Optimized Version
 ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
+   ```diff
+   + Tested on Tibia 10.98
+   ```
    ### Features   
    - Tile/Light/Creature Render optimized
    - Rendering System by event (g_map.requestDrawing)   
@@ -37,7 +40,7 @@ anything easily. Users can also create new mods and extend game interface for th
 Otclient is written in C++11 and heavily scripted in lua.
 
 For a server to connect to, you can build your own with the [forgottenserver](https://github.com/otland/forgottenserver)
-or connect to one listed on [otservlist](https://otservlist.org/).
+or connect to one listed on [otservlist](https://otservlist.org/).#
 
 ### Where do I download?
 
