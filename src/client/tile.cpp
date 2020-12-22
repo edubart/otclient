@@ -770,7 +770,7 @@ void Tile::checkForDetachableThing()
 
     for(auto it = m_ground.rbegin(); it != m_ground.rend(); ++it) {
         const ItemPtr& ground = *it;
-        if((ground->canDraw()) && (ground->isUsable() || ground->isForceUse() || ground->isContainer())) {
+        if((ground->canDraw()) && (ground->isUsable() || ground->isForceUse() || ground->isContainer() || ground->isTranslucent())) {
             m_highlight.thing = ground;
             return;
         }
