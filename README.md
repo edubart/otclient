@@ -1,4 +1,4 @@
-# This is Optimized Version   
+# OTCLient "1.0"
    ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
    
    ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
