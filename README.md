@@ -13,7 +13,7 @@
    - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
    - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
    - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))
-   - Some bugs fixed from the [edubart/otclient](https://github.com/edubart/otclient)
+   - Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
    
    ### What I don't intend to do
    - Floor Fading
