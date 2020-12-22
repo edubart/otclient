@@ -762,7 +762,7 @@ void Tile::checkForDetachableThing()
 
     for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
         const ItemPtr& item = *it;
-        if((item->canDraw()) && (item->hasLight() || item->isUsable() || item->isForceUse())) {
+        if((item->canDraw()) && (item->isUsable() || item->isForceUse() || item->hasLight() || item->isContainer())) {
             m_highlight.thing = item;
             return;
         }
@@ -770,7 +770,7 @@ void Tile::checkForDetachableThing()
 
     for(auto it = m_ground.rbegin(); it != m_ground.rend(); ++it) {
         const ItemPtr& ground = *it;
-        if((ground->canDraw()) && (ground->isUsable() || ground->isForceUse())) {
+        if((ground->canDraw()) && (ground->isUsable() || ground->isForceUse() || ground->isContainer())) {
             m_highlight.thing = ground;
             return;
         }

@@ -160,6 +160,14 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
              */
             if(attr == 16)
                 attr = ThingAttrNoMoveAnimation;
+            else if(attr == 254) { // Usable
+                m_attribs.set(ThingAttrUsable, true);
+                continue;
+            }
+            else if(attr == 35) { // Default Action
+                m_attribs.set(attr, fin->getU16());
+                continue;
+            }
             else if(attr > 16)
                 attr -= 1;
         } else if(g_game.getClientVersion() >= 860) {
