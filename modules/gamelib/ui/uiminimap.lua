@@ -227,10 +227,15 @@ function UIMinimap:onMouseRelease(pos, button)
   self.allowNextRelease = false
 
   local mapPos = self:getTilePosition(pos)
-  if not mapPos then return end
+  if not mapPos then return false end
 
   if button == MouseLeftButton then
     local player = g_game.getLocalPlayer()
+    if Position.distance(player:getPosition(), mapPos) > 100 then
+    	modules.game_textmessage.displayStatusMessage(tr("Destination is out of range."))
+    	return false
+    end
+
     if self.autowalk then
       player:autoWalk(mapPos)
     end

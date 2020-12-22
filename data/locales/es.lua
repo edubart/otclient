@@ -378,7 +378,8 @@ locale = {
     ["You read the following, written on \n%s.\n"] = "Lees lo siguiente, escrito en \n%s\n",
     ["Your Money:"] = "Tu dinero:",
     ["Change language"] = "Cambiar idioma",
-    ["Don't stretch or shrink Game Window"] = "No estirar ni encoger la ventana de juego"
+    ["Don't stretch or shrink Game Window"] = "No estirar ni encoger la ventana de juego",
+	["Destination is out of range."] = "Destination is out of range.",
   }
 }
 
