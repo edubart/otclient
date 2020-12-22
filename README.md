@@ -3,8 +3,8 @@
    
    ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.727
    ### Features   
-   - Tile/Light/Creature Render optimized
-   - Rendering System by event (g_map.requestDrawing)   
+   - Tile/Light/Creature Render Optimized
+   - Event-based Rendering (g_map.requestDrawing)   
    - Idle Animation Support
    - Highlight Mouse Target (Beta)
    - Crosshair
