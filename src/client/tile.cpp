@@ -294,7 +294,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
         if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
 
-        if(thing->isGround() && m_ground.size() > 0) {
+        if(thing->isGround() && hasGroundToDraw()) {
             m_ground.insert(m_ground.begin(), item);
         } else if(thing->isGroundBorder() || thing->isGround()) {
             m_ground.push_back(item);
