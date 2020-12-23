@@ -37,6 +37,7 @@ public:
     void savePNG(const std::string& fileName);
 
     void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);
+    void overwrite(const Color& color);
     void blit(const Point& dest, const ImagePtr& other);
     void paste(const ImagePtr& other);
     void resize(const Size& size) { m_size = size; m_pixels.resize(size.area() * m_bpp, 0); }

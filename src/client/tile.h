@@ -164,8 +164,8 @@ private:
     };
 
     struct Highlight {
-        int color;
-        Color rgbColor;
+        int fadeLevel;
+        Color rgbColor = Color::alpha;
         ThingPtr thing;
         ScheduledEventPtr listeningEvent;
         stdext::boolean<false> enabled;

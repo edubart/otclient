@@ -156,14 +156,12 @@ public:
 private:
     uint16 m_clientId;
     uint16 m_serverId;
-    uint8 m_phase;
     uint8 m_countOrSubType;
-
     Color m_color;
-
     bool m_canDraw;
     bool m_async;
 
+    uint8 m_phase;
     ticks_t m_lastPhase;
 
     stdext::packed_storage<uint8> m_attribs;

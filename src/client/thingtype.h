@@ -95,7 +95,7 @@ enum ThingAttr : uint8 {
     ThingAttrOpacity = 100,
     ThingAttrNotPreWalkable = 101,
 
-    ThingAttrDefaultAction = 102,
+    ThingAttrDefaultAction = 251,
 
     ThingAttrFloorChange = 252,
     ThingAttrNoMoveAnimation = 253, // 10.10: real value is 16, but we need to do this for backwards compatibility
@@ -136,7 +136,7 @@ public:
     void serialize(const FileStreamPtr& fin);
     void exportImage(const std::string& fileName);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, int reDrawFlags = Otc::ReDrawThing, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int reDrawFlags = Otc::ReDrawThing, LightView* lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -207,6 +207,7 @@ public:
     bool isWrapable() { return m_attribs.has(ThingAttrWrapable); }
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
+    bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { return isFullGround() || hasTexture() && getTexture(0)->isOpaque(); }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
@@ -216,7 +217,7 @@ public:
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
     int getExactHeight();
-    const TexturePtr& getTexture(int animationPhase);
+    const TexturePtr& getTexture(int animationPhase, bool allBlank = false);
 
     void startListenerPainter(float duration);
     bool cancelListenerPainter();
@@ -250,6 +251,7 @@ private:
 
     std::vector<int> m_spritesIndex;
     std::vector<TexturePtr> m_textures;
+    std::vector<TexturePtr> m_blankTextures;
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;

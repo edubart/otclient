@@ -29,7 +29,7 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-Thing::Thing() : m_datId(0) {}
+Thing::Thing() : m_datId(0), m_useBlankTexture(false) {}
 
 
 void Thing::requestDrawing(const bool force)

@@ -163,12 +163,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             else if(attr == 254) { // Usable
                 m_attribs.set(ThingAttrUsable, true);
                 continue;
-            }
-            else if(attr == 35) { // Default Action
-                m_attribs.set(attr, fin->getU16());
+            } else if(attr == 35) { // Default Action
+                m_attribs.set(ThingAttrDefaultAction, fin->getU16());
                 continue;
-            }
-            else if(attr > 16)
+            } else if(attr > 16)
                 attr -= 1;
         } else if(g_game.getClientVersion() >= 860) {
             /* Default attribute values follow
@@ -380,6 +378,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     }
 
     m_textures.resize(m_animationPhases);
+    m_blankTextures.resize(m_animationPhases);
     m_texturesFramesRects.resize(m_animationPhases);
     m_texturesFramesOriginRects.resize(m_animationPhases);
     m_texturesFramesOffsets.resize(m_animationPhases);
@@ -433,7 +432,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, int reDrawFlags, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int reDrawFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -441,7 +440,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(animationPhase >= m_animationPhases)
         return;
 
-    const TexturePtr& texture = getTexture(animationPhase); // texture might not exists, neither its rects.
+    const TexturePtr& texture = getTexture(animationPhase, useBlankTexture); // texture might not exists, neither its rects.
     if(!texture)
         return;
 
@@ -481,9 +480,9 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     }
 }
 
-const TexturePtr& ThingType::getTexture(int animationPhase)
+const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
 {
-    TexturePtr& animationPhaseTexture = m_textures[animationPhase];
+    TexturePtr& animationPhaseTexture = (allBlank ? m_blankTextures : m_textures)[animationPhase];
     if(animationPhaseTexture) return animationPhaseTexture;
 
     bool useCustomImage = false;
@@ -528,7 +527,10 @@ const TexturePtr& ThingType::getTexture(int animationPhase)
                                             fullImage->setTransparentPixel(true);
                                         }
                                     }
-                                    if(spriteMask) {
+
+                                    if(allBlank) {
+                                        spriteImage->overwrite(Color::white);
+                                    } else if(spriteMask) {
                                         static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
                                         spriteImage->overwriteMask(maskColors[l - 1]);
                                     }

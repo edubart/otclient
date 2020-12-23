@@ -126,6 +126,7 @@ public:
     bool isWrapable() { return rawGetThingType()->isWrapable(); }
     bool isUnwrapable() { return rawGetThingType()->isUnwrapable(); }
     bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
+    bool hasAction() { return rawGetThingType()->hasAction(); }
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
@@ -138,10 +139,12 @@ public:
     virtual void onAppear() {}
     virtual void onDisappear() {}
 
-protected:
-    Position m_position;
-    uint16 m_datId;
+    void useBlankTexture(bool use) { m_useBlankTexture = use; }
 
+protected:
+    uint16 m_datId;
+    bool m_useBlankTexture;
+    Position m_position;
 };
 #pragma pack(pop)
 

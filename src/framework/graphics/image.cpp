@@ -33,7 +33,7 @@ Image::Image(const Size& size, int bpp, uint8* pixels)
     m_bpp = bpp;
 
     m_pixels.resize(size.area() * bpp, 0);
-    if (pixels)
+    if(pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
 
@@ -45,8 +45,7 @@ ImagePtr Image::load(std::string file)
 
         // load image file data
         image = loadPNG(file);
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("unable to load image '%s': %s", file, e.what()));
     }
     return image;
@@ -58,7 +57,7 @@ ImagePtr Image::loadPNG(const std::string& file)
     g_resources.readFileStream(file, fin);
     ImagePtr image;
     apng_data apng;
-    if (load_apng(fin, &apng) == 0) {
+    if(load_apng(fin, &apng) == 0) {
         image = ImagePtr(new Image(Size(apng.width, apng.height), apng.bpp, apng.pdata));
         free_apng(&apng);
     }
@@ -68,7 +67,7 @@ ImagePtr Image::loadPNG(const std::string& file)
 void Image::savePNG(const std::string& fileName)
 {
     FileStreamPtr fin = g_resources.createFile(fileName);
-    if (!fin)
+    if(!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
     fin->cache();
@@ -83,7 +82,7 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
 {
     assert(m_bpp == 4);
 
-    for (int p = 0; p < getPixelCount(); ++p) {
+    for(int p = 0; p < getPixelCount(); ++p) {
         uint8& r = m_pixels[p * 4 + 0];
         uint8& g = m_pixels[p * 4 + 1];
         uint8& b = m_pixels[p * 4 + 2];
@@ -99,22 +98,42 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
     }
 }
 
+void Image::overwrite(const Color& color)
+{
+    assert(m_bpp == 4);
+
+    for(int p = 0; p < getPixelCount(); ++p) {
+        uint8& r = m_pixels[p * 4 + 0];
+        uint8& g = m_pixels[p * 4 + 1];
+        uint8& b = m_pixels[p * 4 + 2];
+        uint8& a = m_pixels[p * 4 + 3];
+
+        Color pixelColor(r, g, b, a);
+        Color writeColor = (pixelColor == Color::alpha) ? Color::alpha : color;
+
+        r = writeColor.r();
+        g = writeColor.g();
+        b = writeColor.b();
+        a = writeColor.a();
+    }
+}
+
 void Image::blit(const Point& dest, const ImagePtr& other)
 {
     assert(m_bpp == 4);
 
-    if (!other)
+    if(!other)
         return;
 
     int coloredPixelSize = 0;
 
     uint8* otherPixels = other->getPixelData();
-    for (int p = 0; p < other->getPixelCount(); ++p) {
+    for(int p = 0; p < other->getPixelCount(); ++p) {
         int x = p % other->getWidth();
         int y = p / other->getWidth();
         int pos = ((dest.y + y) * m_size.width() + (dest.x + x)) * 4;
 
-        if (otherPixels[p * 4 + 3] != 0) {
+        if(otherPixels[p * 4 + 3] != 0) {
             m_pixels[pos + 0] = otherPixels[p * 4 + 0];
             m_pixels[pos + 1] = otherPixels[p * 4 + 1];
             m_pixels[pos + 2] = otherPixels[p * 4 + 2];
@@ -128,11 +147,11 @@ void Image::paste(const ImagePtr& other)
 {
     assert(m_bpp == 4);
 
-    if (!other)
+    if(!other)
         return;
 
     uint8* otherPixels = other->getPixelData();
-    for (int p = 0; p < other->getPixelCount(); ++p) {
+    for(int p = 0; p < other->getPixelCount(); ++p) {
         int x = p % other->getWidth();
         int y = p / other->getWidth();
         int pos = (y * m_size.width() + x) * 4;
@@ -151,7 +170,7 @@ bool Image::nextMipmap()
 
     int iw = m_size.width();
     int ih = m_size.height();
-    if (iw == 1 && ih == 1)
+    if(iw == 1 && ih == 1)
         return false;
 
     int ow = iw > 1 ? iw / 2 : 1;
@@ -160,9 +179,9 @@ bool Image::nextMipmap()
     std::vector<uint8> pixels(ow * oh * 4, 0xFF);
 
     //FIXME: calculate mipmaps for 8x1, 4x1, 2x1 ...
-    if (iw != 1 && ih != 1) {
-        for (int x = 0; x < ow; ++x) {
-            for (int y = 0; y < oh; ++y) {
+    if(iw != 1 && ih != 1) {
+        for(int x = 0; x < ow; ++x) {
+            for(int y = 0; y < oh; ++y) {
                 uint8* inPixel[4];
                 inPixel[0] = &m_pixels[((y * 2) * iw + (x * 2)) * 4];
                 inPixel[1] = &m_pixels[((y * 2) * iw + (x * 2) + 1) * 4];
@@ -171,24 +190,24 @@ bool Image::nextMipmap()
                 uint8* outPixel = &pixels[(y * ow + x) * 4];
 
                 int pixelsSum[4];
-                for (int i = 0; i < 4; ++i)
+                for(int i = 0; i < 4; ++i)
                     pixelsSum[i] = 0;
 
                 int usedPixels = 0;
-                for (int j = 0; j < 4; ++j) {
+                for(int j = 0; j < 4; ++j) {
                     // ignore colors of complete alpha pixels
-                    if (inPixel[j][3] < 16)
+                    if(inPixel[j][3] < 16)
                         continue;
 
-                    for (int i = 0; i < 4; ++i)
+                    for(int i = 0; i < 4; ++i)
                         pixelsSum[i] += inPixel[j][i];
 
                     usedPixels++;
                 }
 
                 // try to guess the alpha pixel more accurately
-                for (int i = 0; i < 4; ++i) {
-                    if (usedPixels > 0)
+                for(int i = 0; i < 4; ++i) {
+                    if(usedPixels > 0)
                         outPixel[i] = pixelsSum[i] / usedPixels;
                     else
                         outPixel[i] = 0;
