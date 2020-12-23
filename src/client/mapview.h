@@ -23,12 +23,6 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
- // Define 1, to draw separately. (Ground first => remainder after)
-#define DRAW_SEPARATELY 0
-
- // Define 1, to draw creature information after light.
-#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 0
-
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/texturemanager.h>
@@ -154,7 +148,7 @@ private:
 
     void initViewPortDirection();
 
-#if DRAW_SEPARATELY == 1
+#if DRAW_ALL_GROUND_FIRST == 1
     void drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView);
 #endif
 

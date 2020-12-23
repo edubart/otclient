@@ -336,6 +336,7 @@
     <ClInclude Include="..\src\client\uiminimap.h" />
     <ClInclude Include="..\src\client\uiprogressrect.h" />
     <ClInclude Include="..\src\client\uisprite.h" />
+	<ClInclude Include="..\src\client\features.h" />
     <ClInclude Include="..\src\framework\const.h" />
     <ClInclude Include="..\src\framework\core\adaptativeframecounter.h" />
     <ClInclude Include="..\src\framework\core\application.h" />

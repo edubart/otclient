@@ -120,7 +120,7 @@ void MapView::draw(const Rect& rect)
         const auto& lightView = (m_lightView && m_lightView->isDark()) ? m_lightView.get() : nullptr;
         const auto& viewPort = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
-#if DRAW_SEPARATELY == 1
+#if DRAW_ALL_GROUND_FIRST == 1
             drawSeparately(z, viewPort, lightView);
 #else
             for(const auto& tile : m_cachedVisibleTiles[z]) {
@@ -882,7 +882,7 @@ void MapView::setCrosshairTexture(const std::string& texturePath)
     m_crosshair.texture = texturePath.empty() ? nullptr : g_textures.getTexture(texturePath);
 }
 
-#if DRAW_SEPARATELY == 1
+#if DRAW_ALL_GROUND_FIRST == 1
 void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView)
 {
     const Position cameraPosition = getCameraPosition();

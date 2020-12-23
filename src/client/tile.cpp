@@ -32,9 +32,6 @@
 #include "thingtypemanager.h"
 #include <framework/core/eventdispatcher.h>
 
- // Define 1 to render behind the first creature added.
-#define RENDER_CREATURE_BEHIND 0
-
 Tile::Tile(const Position& position) :
     m_position(position),
     m_drawElevation(0),

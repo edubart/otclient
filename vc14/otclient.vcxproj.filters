@@ -1052,6 +1052,9 @@
     <ClInclude Include="..\src\client\animator.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\client\features.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\otcicon.rc">

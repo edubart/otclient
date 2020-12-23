@@ -20,14 +20,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_GLOBAL_H
-#define CLIENT_GLOBAL_H
+ // Define 1, to draw all ground first. (Ground first => remainder after)
+#define DRAW_ALL_GROUND_FIRST 0
 
-#include <framework/global.h>
+ // Define 1, to draw creature information after light.
+#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 0
 
- // widely used headers
-#include "const.h"
-#include "position.h"
-#include "features.h"
-
-#endif
+ // Define 1 to render behind the first creature added.
+#define RENDER_CREATURE_BEHIND 0
