@@ -69,7 +69,7 @@ std::string Item::getName()
     return g_things.findItemTypeByClientId(m_clientId)->getName();
 }
 
-void Item::draw(const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView)
+void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int redrawFlag, LightView* lightView)
 {
     if(m_clientId == 0 || !canDraw())
         return;
@@ -91,6 +91,14 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, int redrawFl
     /// screw up the whole rendering.
     if(m_color != Color::alpha)
         g_painter->resetColor();
+
+    if(highLight.enabled && this == highLight.thing) {
+        g_painter->setColor(highLight.rgbColor);
+        useBlankTexture(true);
+        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture, redrawFlag, lightView);
+        useBlankTexture(false);
+        g_painter->resetColor();
+    }
 }
 
 void Item::setId(uint32 id)

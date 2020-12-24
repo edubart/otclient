@@ -896,6 +896,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
     const Position cameraPosition = getCameraPosition();
     const auto& tiles = m_cachedVisibleTiles[floor];
     const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
+    const auto redrawLight = m_drawLights && m_redrawFlag & Otc::ReDrawLight;
 
     for(const auto& tile : tiles) {
         if(!tile->hasGroundToDraw()) continue;

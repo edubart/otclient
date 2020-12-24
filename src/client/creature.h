@@ -46,7 +46,7 @@ public:
 
     Creature();
 
-    virtual void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int reDrawFlags, LightView* lightView = nullptr) override;
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction);
 

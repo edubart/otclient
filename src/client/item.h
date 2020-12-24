@@ -24,7 +24,6 @@
 #define ITEM_H
 
 #include <framework/global.h>
-
 #include "effect.h"
 #include "itemtype.h"
 #include "thing.h"
@@ -82,7 +81,7 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, int redrawFlag = Otc::ReDrawThing, LightView* lightView = nullptr) override;
+    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int redrawFlag = Otc::ReDrawThing, LightView* lightView = nullptr) override;
 
     void setId(uint32 id) override;
     void setOtbId(uint16 id);

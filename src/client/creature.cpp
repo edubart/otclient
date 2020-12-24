@@ -67,7 +67,7 @@ Creature::Creature() : Thing()
     m_outfitColor = Color::white;
 }
 
-void Creature::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int reDrawFlags, LightView* lightView)
 {
     if(!canBeSeen())
         return;
@@ -86,6 +86,16 @@ void Creature::draw(const Point& dest, float scaleFactor, int reDrawFlags, Light
         }
 
         internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
+
+        if(highLight.enabled && this == highLight.thing) {
+            g_painter->setColor(highLight.rgbColor);
+            select();
+            useBlankTexture(true);
+            internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
+            useBlankTexture(false);
+            unselect();
+            g_painter->resetColor();
+        }
     }
 
     if(lightView && reDrawFlags & Otc::ReDrawLight) {

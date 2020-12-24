@@ -163,16 +163,6 @@ private:
         int hasWideThings = 0;
     };
 
-    struct Highlight {
-        int fadeLevel;
-        Color rgbColor = Color::alpha;
-        ThingPtr thing;
-        ScheduledEventPtr listeningEvent;
-        stdext::boolean<false> enabled;
-        stdext::boolean<false> update;
-        stdext::boolean<false> invertedColorSelection;
-    };
-
     void checkForDetachableThing();
     void checkTranslucentLight();
 

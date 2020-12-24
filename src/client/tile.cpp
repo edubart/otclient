@@ -57,15 +57,7 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
     }
 
     for(const auto& ground : m_ground) {
-        ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && ground == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            ground->useBlankTexture(true);
-            ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-            ground->useBlankTexture(false);
-            g_painter->resetColor();
-        }
+        ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
 
         m_drawElevation += ground->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -76,15 +68,7 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
 void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
     for(const auto& item : m_bottomItems) {
-        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && item == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            item->useBlankTexture(true);
-            item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-            item->useBlankTexture(false);
-            g_painter->resetColor();
-        }
+        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -94,15 +78,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
     for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
 
-        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && item == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            item->useBlankTexture(true);
-            item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-            item->useBlankTexture(false);
-            g_painter->resetColor();
-        }
+        item->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
 
         m_drawElevation += item->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -115,54 +91,19 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-            ), scaleFactor, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && creature == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            creature->select();
-            creature->useBlankTexture(true);
-            creature->draw(
-                Point(
-                    dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-                    dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-                ), scaleFactor, reDrawFlags, lightView);
-            creature->useBlankTexture(false);
-            creature->unselect();
-            g_painter->resetColor();
-        }
+            ), scaleFactor, true, m_highlight, reDrawFlags, lightView);
     }
 
     for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
         const auto& creature = *it;
         if(creature->isWalking()) continue;
 
-        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && creature == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            creature->select();
-            creature->useBlankTexture(true);
-            creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
-            creature->useBlankTexture(false);
-            creature->unselect();
-            g_painter->resetColor();
-        }
+        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
     }
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
-
-        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && creature == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            creature->select();
-            creature->useBlankTexture(true);
-            creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, reDrawFlags, lightView);
-            creature->useBlankTexture(false);
-            creature->unselect();
-            g_painter->resetColor();
-        }
+        creature->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
     }
 
     for(const auto& creature : m_walkingCreatures) {
@@ -170,21 +111,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
             Point(
                 dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
                 dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-            ), scaleFactor, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && creature == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            creature->select();
-            creature->useBlankTexture(true);
-            creature->draw(
-                Point(
-                    dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-                    dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-                ), scaleFactor, reDrawFlags, lightView);
-            creature->useBlankTexture(false);
-            creature->unselect();
-            g_painter->resetColor();
-        }
+            ), scaleFactor, true, m_highlight, reDrawFlags, lightView);
     }
 #endif    
 }
@@ -196,15 +123,7 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightV
     }
 
     for(const auto& item : m_topItems) {
-        item->draw(dest, scaleFactor, true, reDrawFlags, lightView);
-
-        if(m_highlight.enabled && item == m_highlight.thing) {
-            g_painter->setColor(m_highlight.rgbColor);
-            item->useBlankTexture(true);
-            item->draw(dest, scaleFactor, true, reDrawFlags, lightView);
-            item->useBlankTexture(false);
-            g_painter->resetColor();
-        }
+        item->draw(dest, scaleFactor, true, m_highlight, reDrawFlags, lightView);
     }
 }
 

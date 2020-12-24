@@ -28,7 +28,17 @@
 #include "thingtype.h"
 #include "thingtypemanager.h"
 
- // @bindclass
+struct Highlight {
+    int fadeLevel;
+    Color rgbColor = Color::alpha;
+    ThingPtr thing;
+    ScheduledEventPtr listeningEvent;
+    stdext::boolean<false> enabled;
+    stdext::boolean<false> update;
+    stdext::boolean<false> invertedColorSelection;
+};
+
+// @bindclass
 #pragma pack(push,1) // disable memory alignment
 class Thing : public LuaObject
 {
@@ -36,7 +46,7 @@ public:
     Thing();
     virtual ~Thing() {}
 
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, int /*redrawFlag*/ = Otc::ReDrawThing, LightView* /*lightView*/ = nullptr) {}
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, int /*redrawFlag*/ = Otc::ReDrawThing, LightView* /*lightView*/ = nullptr) {}
 
     virtual void setId(uint32 /*id*/) {}
     void setPosition(const Position& position);

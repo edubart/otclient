@@ -56,7 +56,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
         dest += (m_item->getDisplacement() - Point(32, 32)) * scaleFactor;
 
         g_painter->setColor(m_color);
-        m_item->draw(dest, scaleFactor, true);
+        m_item->draw(dest, scaleFactor, true, Highlight());
 
         if(m_font && (m_item->isStackable() || m_item->isChargeable()) && m_item->getCountOrSubType() > 1) {
             const std::string count = stdext::to_string(m_item->getCountOrSubType());
