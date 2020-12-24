@@ -85,13 +85,13 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
             g_painter->setColor(Color::white);
         }
 
-        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
+        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
 
         if(highLight.enabled && this == highLight.thing) {
             g_painter->setColor(highLight.rgbColor);
             select();
             useBlankTexture(true);
-            internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, true, m_direction);
+            internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
             useBlankTexture(false);
             unselect();
             g_painter->resetColor();
