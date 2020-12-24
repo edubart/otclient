@@ -92,16 +92,11 @@ void MapView::draw(const Rect& rect)
     const Position cameraPosition = getCameraPosition();
 
     const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
-    if(redrawThing || m_redrawFlag & Otc::ReDrawLight) {
+    const auto redrawLight = m_drawLights && m_redrawFlag & Otc::ReDrawLight;
+    if(redrawThing || redrawLight) {
         m_frameCache.tile->bind();
 
-        if(m_mustCleanFramebuffer) {
-            g_painter->setColor(Color::black);
-            g_painter->drawFilledRect(m_rectDimension);
-            m_mustCleanFramebuffer = false;
-        }
-
-        if(m_redrawFlag & Otc::ReDrawLight && m_drawLights) {
+        if(redrawLight) {
             m_lightView->reset();
             m_lightView->resize(m_frameCache.tile->getSize());
 
@@ -115,16 +110,22 @@ void MapView::draw(const Rect& rect)
             m_lightView->setGlobalLight(ambientLight);
         }
 
+        if(redrawThing && m_mustCleanFramebuffer) {
+            g_painter->setColor(Color::black);
+            g_painter->drawFilledRect(m_rectDimension);
+            m_mustCleanFramebuffer = false;
+        }
+
         g_painter->setColor(Color::white);
 
-        const auto& lightView = (m_lightView && m_lightView->isDark()) ? m_lightView.get() : nullptr;
+        const auto& lightView = (m_drawLights && m_lightView->isDark()) ? m_lightView.get() : nullptr;
         const auto& viewPort = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
 #if DRAW_ALL_GROUND_FIRST == 1
             drawSeparately(z, viewPort, lightView);
 #else
             for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!redrawThing && !tile->hasLight()) continue;
+                if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
 
                 if(!canRenderTile(tile, viewPort, lightView)) continue;
 
@@ -136,14 +137,14 @@ void MapView::draw(const Rect& rect)
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
-        }
+    }
 
         m_frameCache.tile->release();
 
         m_thingTimeRender.restart();
 
         m_redrawFlag &= ~Otc::ReDrawThing;
-    }
+}
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -490,8 +491,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
 {
-    m_mustCleanFramebuffer = true;
-
     // Need Optimization (update only the specific Tile)
     if(Otc::OPERATION_CLEAN == operation || m_followingCreature->isWalking())
         requestVisibleTilesCacheUpdate();
@@ -760,10 +759,10 @@ void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights) return;
 
-    m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
-
-    requestDrawing(Position(), Otc::ReDrawLight, false);
     m_mustCleanFramebuffer = true;
+    requestDrawing(Position(), Otc::RedrawAll, true);
+
+    m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
     m_drawLights = enable;
 }
 
@@ -857,7 +856,7 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
         m_redrawFlag |= reDrawFlags;
     }
 
-    if(reDrawFlags & Otc::ReDrawLight && m_lightView) m_lightView->requestDrawing(force);
+    if(m_lightView && reDrawFlags & Otc::ReDrawLight) m_lightView->requestDrawing(force);
 }
 
 bool MapView::isInRange(const Position& pos)
