@@ -614,20 +614,12 @@ bool Tile::isDrawable()
 
 bool Tile::mustHookEast()
 {
-    for(const ItemPtr& thing : m_bottomItems)
-        if(thing->isHookEast())
-            return true;
-
-    return false;
+    return m_countFlag.hasHookEast > 0;
 }
 
 bool Tile::mustHookSouth()
 {
-    for(const ItemPtr& thing : m_bottomItems)
-        if(thing->isHookSouth())
-            return true;
-
-    return false;
+    return m_countFlag.hasHookSouth > 0;
 }
 
 bool Tile::hasCreature()
@@ -745,6 +737,14 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     // Creatures and items
 
+    if(thing->isOnBottom()) {
+        if(thing->isHookSouth())
+            m_countFlag.hasHookSouth += value;
+
+        if(thing->isHookEast())
+            m_countFlag.hasHookEast += value;
+    }
+
     if(thing->getRealSize() > Otc::TILE_PIXELS)
         m_countFlag.notSingleDimension += value;
 
@@ -767,12 +767,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->blockProjectile())
         m_countFlag.blockProjectile += value;
-
-    if(thing->isHookEast())
-        m_countFlag.mustHookEast += value;
-
-    if(thing->isHookSouth())
-        m_countFlag.mustHookSouth += value;
 
     m_countFlag.totalElevation += thing->getElevation() * value;
 

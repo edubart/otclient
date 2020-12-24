@@ -151,8 +151,6 @@ private:
         int notPathable = 0;
         int notSingleDimension = 0;
         int blockProjectile = 0;
-        int mustHookEast = 0;
-        int mustHookSouth = 0;
         int totalElevation = 0;
         int hasDisplacement = 0;
         int isNotPathable = 0;
@@ -161,6 +159,8 @@ private:
         int hasLight = 0;
         int hasTallThings = 0;
         int hasWideThings = 0;
+        int hasHookEast = 0;
+        int hasHookSouth = 0;
     };
 
     void checkForDetachableThing();
