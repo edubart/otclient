@@ -93,6 +93,7 @@ void MapView::draw(const Rect& rect)
 
     const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
     const auto redrawLight = m_drawLights && m_redrawFlag & Otc::ReDrawLight;
+
     if(redrawThing || redrawLight) {
         m_frameCache.tile->bind();
 
@@ -127,13 +128,13 @@ void MapView::draw(const Rect& rect)
             drawSeparately(z, viewPort, lightView);
 #else
             for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
+                const auto hasLight = redrawLight && tile->hasLight();
 
-                if(!canRenderTile(tile, viewPort, lightView)) continue;
+                if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
                 const Position& tilePos = tile->getPosition();
 
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
@@ -818,13 +819,13 @@ void MapView::initViewPortDirection()
 
 bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
 {
+    if(lightView && lightView->isDark() && tile->hasLight()) return true;
+
     const Position cameraPosition = getCameraPosition();
     const Position& tilePos = tile->getPosition();
 
     const int dz = tilePos.z - cameraPosition.z;
     const Position checkPos = tilePos.translated(dz, dz);
-
-    if(lightView && lightView->isDark() && tile->hasLight()) return true;
 
     // Check for non-visible tiles on the screen and ignore them
     {
@@ -900,23 +901,26 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
     for(const auto& tile : tiles) {
         if(!tile->hasGroundToDraw()) continue;
-        if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
 
-        if(!canRenderTile(tile, viewPort, lightView)) continue;
+        const auto hasLight = redrawLight && tile->hasLight();
+
+        if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
+
         const Position& tilePos = tile->getPosition();
-        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
     }
 
     for(const auto& tile : tiles) {
         if(!tile->hasBottomToDraw() && !tile->hasTopToDraw()) continue;
-        if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
 
-        if(!canRenderTile(tile, viewPort, lightView)) continue;
+        const auto hasLight = redrawLight && tile->hasLight();
+
+        if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
 
         const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
-        const auto& drawLight = g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
+        const auto& drawLight = hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
