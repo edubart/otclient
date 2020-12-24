@@ -181,6 +181,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
             m_effects.push_back(effect);
 
         analyzeThing(thing, true);
+
         thing->setPosition(m_position);
         thing->onAppear();
         return;
@@ -252,6 +253,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     }
 
     analyzeThing(thing, true);
+    checkForDetachableThing();
 
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
@@ -318,6 +320,8 @@ bool Tile::removeThing(const ThingPtr& thing)
     }
 
     m_things.erase(it);
+
+    checkForDetachableThing();
 
     thing->onDisappear();
 
@@ -732,8 +736,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.hasDisplacement += value;
 
     if(thing->isEffect()) return;
-
-    checkForDetachableThing();
 
     // Creatures and items
 

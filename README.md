@@ -6,7 +6,7 @@
    - Tile/Light/Creature Render Optimized
    - Event-based Rendering (g_map.requestDrawing)   
    - Idle Animation Support
-   - Highlight Mouse Target (Beta)
+   - Highlight Mouse Target
    - Crosshair
    - Adjusted Path Finding
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
