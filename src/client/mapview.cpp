@@ -96,10 +96,7 @@ void MapView::draw(const Rect& rect)
     if(redrawThing || redrawLight) {
         m_frameCache.tile->bind();
 
-        if(redrawLight) {
-            m_lightView->reset();
-            m_lightView->resize(m_frameCache.tile->getSize());
-
+        if(m_drawLights) {
             Light ambientLight;
             if(cameraPosition.z > Otc::SEA_FLOOR) {
                 ambientLight.color = 215;
@@ -108,6 +105,11 @@ void MapView::draw(const Rect& rect)
 
             ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
             m_lightView->setGlobalLight(ambientLight);
+
+            if(redrawLight) {
+                m_lightView->reset();
+                m_lightView->resize(m_frameCache.tile->getSize());
+            }
         }
 
         if(redrawThing && m_mustCleanFramebuffer) {
@@ -118,7 +120,7 @@ void MapView::draw(const Rect& rect)
 
         g_painter->setColor(Color::white);
 
-        const auto& lightView = (m_drawLights && m_lightView->isDark()) ? m_lightView.get() : nullptr;
+        const auto& lightView = redrawLight ? m_lightView.get() : nullptr;
         const auto& viewPort = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
 #if DRAW_ALL_GROUND_FIRST == 1
@@ -137,14 +139,14 @@ void MapView::draw(const Rect& rect)
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
-    }
+        }
 
         m_frameCache.tile->release();
 
         m_thingTimeRender.restart();
 
         m_redrawFlag &= ~Otc::ReDrawThing;
-}
+    }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -348,6 +350,10 @@ void MapView::updateVisibleTilesCache()
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
 
     m_mustCleanFramebuffer = true;
+
+    if(m_drawLights && cameraPosition.z != m_lastCameraPosition.z) {
+        m_redrawFlag |= Otc::ReDrawLight;
+    }
 
     // TODO: Review
     /*if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
@@ -856,7 +862,10 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
         m_redrawFlag |= reDrawFlags;
     }
 
-    if(m_lightView && reDrawFlags & Otc::ReDrawLight) m_lightView->requestDrawing(force);
+    if(reDrawFlags & Otc::ReDrawLight) {
+        if(m_lightView && m_lightView->isDark()) m_lightView->requestDrawing(force);
+        else m_redrawFlag &= ~Otc::ReDrawLight;
+    }
 }
 
 bool MapView::isInRange(const Position& pos)
@@ -890,7 +899,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
     for(const auto& tile : tiles) {
         if(!tile->hasGroundToDraw()) continue;
-        if(!redrawThing && !tile->hasLight()) continue;
+        if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
 
         if(!canRenderTile(tile, viewPort, lightView)) continue;
         const Position& tilePos = tile->getPosition();
@@ -899,7 +908,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
     for(const auto& tile : tiles) {
         if(!tile->hasBottomToDraw() && !tile->hasTopToDraw()) continue;
-        if(!redrawThing && !tile->hasLight()) continue;
+        if(!redrawThing && (!redrawLight || !tile->hasLight())) continue;
 
         if(!canRenderTile(tile, viewPort, lightView)) continue;
 
