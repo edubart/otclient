@@ -186,7 +186,6 @@ private:
     std::array<ViewPort, Otc::InvalidDirection + 1> m_viewPortDirection;
 
     stdext::boolean<true> m_mustUpdateVisibleTilesCache;
-    stdext::boolean<true> m_mustCleanFramebuffer;
     stdext::boolean<true> m_shaderSwitchDone;
     stdext::boolean<true> m_drawHealthBars;
     stdext::boolean<true> m_autoViewMode;

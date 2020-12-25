@@ -95,8 +95,6 @@ void MapView::draw(const Rect& rect)
     const auto redrawLight = m_drawLights && m_redrawFlag & Otc::ReDrawLight;
 
     if(redrawThing || redrawLight) {
-        m_frameCache.tile->bind();
-
         if(m_drawLights) {
             Light ambientLight;
             if(cameraPosition.z > Otc::SEA_FLOOR) {
@@ -113,10 +111,11 @@ void MapView::draw(const Rect& rect)
             }
         }
 
-        if(redrawThing && m_mustCleanFramebuffer) {
+        m_frameCache.tile->bind();
+
+        if(redrawThing) {
             g_painter->setColor(Color::black);
             g_painter->drawFilledRect(m_rectDimension);
-            m_mustCleanFramebuffer = false;
         }
 
         g_painter->setColor(Color::white);
@@ -349,8 +348,6 @@ void MapView::updateVisibleTilesCache()
 
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
-
-    m_mustCleanFramebuffer = true;
 
     if(m_drawLights && cameraPosition.z != m_lastCameraPosition.z) {
         m_redrawFlag |= Otc::ReDrawLight;
@@ -766,7 +763,6 @@ void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights) return;
 
-    m_mustCleanFramebuffer = true;
     requestDrawing(Position(), Otc::RedrawAll, true);
 
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
