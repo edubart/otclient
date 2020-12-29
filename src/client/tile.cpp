@@ -42,7 +42,7 @@ Tile::Tile(const Position& position) :
 {
 }
 
-void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Tile::bootstrap()
 {
     m_drawElevation = 0;
 
@@ -55,7 +55,10 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, Lig
             m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
         }
     }
+}
 
+void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+{
     for(const auto& ground : m_ground) {
         ground->draw(dest - m_drawElevation * scaleFactor, scaleFactor, true, m_highlight, reDrawFlags, lightView);
 
@@ -129,6 +132,7 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightV
 
 void Tile::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
+    bootstrap();
     drawGround(dest, scaleFactor, reDrawFlags, lightView);
     drawBottom(dest, scaleFactor, reDrawFlags, lightView);
     drawTop(dest, scaleFactor, reDrawFlags, lightView);

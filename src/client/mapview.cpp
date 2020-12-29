@@ -903,6 +903,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
+        tile->bootstrap();
         tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
     }
 
@@ -917,6 +918,8 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
         const auto& drawLight = hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
+
+        if(!tile->hasGroundToDraw()) tile->bootstrap();
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);

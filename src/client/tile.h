@@ -62,6 +62,7 @@ public:
 
     Tile(const Position& position);
 
+    void bootstrap();
     void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
