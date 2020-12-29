@@ -763,10 +763,10 @@ void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights) return;
 
-    requestDrawing(Position(), Otc::RedrawAll, true);
-
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
     m_drawLights = enable;
+
+    requestDrawing(Position(), Otc::RedrawAll, true);
 }
 
 void MapView::initViewPortDirection()
