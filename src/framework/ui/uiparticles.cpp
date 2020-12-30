@@ -42,7 +42,7 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
     if(drawPane & Fw::BackgroundPane) {
         UIWidget::drawSelf(Fw::ForegroundPane);
         g_painter->saveAndResetState();
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         g_painter->setClipRect(getPaddingRect());
 
         if(m_referencePos.x < 0 && m_referencePos.y < 0)

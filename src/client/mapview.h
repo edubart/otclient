@@ -49,7 +49,9 @@ private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
+    void onFloorDrawingStart(const short floor);
     void onFloorDrawingEnd(const short floor);
+    void onFloorChange(const short floor, const short previousFloor);
 
 protected:
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);

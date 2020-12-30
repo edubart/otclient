@@ -470,7 +470,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         g_painter->drawTexturedRect(screenRect, texture, textureRect);
 
         if(useOpacity)
-            g_painter->setColor(Color::white);
+            g_painter->resetColor();
     }
 
     if(lightView && hasLight() && reDrawFlags & Otc::ReDrawLight) {

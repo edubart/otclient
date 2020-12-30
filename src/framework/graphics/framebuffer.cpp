@@ -138,7 +138,7 @@ void FrameBuffer::internalRelease()
         // restore screen original content
         if(m_backuping) {
             glDisable(GL_BLEND);
-            g_painter->setColor(Color::white);
+            g_painter->resetColor();
             g_painter->drawTexturedRect(screenRect, m_screenBackup, screenRect);
             glEnable(GL_BLEND);
         }

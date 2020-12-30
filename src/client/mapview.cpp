@@ -118,11 +118,13 @@ void MapView::draw(const Rect& rect)
             g_painter->drawFilledRect(m_rectDimension);
         }
 
-        g_painter->setColor(Color::white);
-
         const auto& lightView = redrawLight ? m_lightView.get() : nullptr;
         const auto& viewPort = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
+
+        g_painter->resetColor();
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+            onFloorDrawingStart(z);
+
 #if DRAW_ALL_GROUND_FIRST == 1
             drawSeparately(z, viewPort, lightView);
 #else
@@ -181,7 +183,7 @@ void MapView::draw(const Rect& rect)
         g_painter->setShaderProgram(m_shader);
     }
 
-    g_painter->setColor(Color::white);
+    g_painter->resetColor();
     g_painter->setOpacity(fadeOpacity);
     glDisable(GL_BLEND);
     m_frameCache.tile->draw(rect, srcRect);
@@ -352,8 +354,9 @@ void MapView::updateVisibleTilesCache()
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
 
-    if(m_drawLights && cameraPosition.z != m_lastCameraPosition.z) {
-        m_redrawFlag |= Otc::ReDrawLight;
+    // on floor change
+    if(cameraPosition.z != m_lastCameraPosition.z) {
+        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
     }
 
     // TODO: Review
@@ -496,16 +499,35 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onFloorDrawingEnd(const short floor)
+void MapView::onFloorChange(const short floor, const short previousFloor)
+{
+    if(m_drawLights)
+        m_redrawFlag |= Otc::ReDrawLight;
+}
+
+void MapView::onFloorDrawingStart(const short floor)
 {
     const auto cameraPosition = getCameraPosition();
-    const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
 
-    if(m_drawFloorShadowing && redrawThing && floor == cameraPosition.z + 1) {
-        g_painter->setColor(Color::black);
-        g_painter->setOpacity(0.5);
-        g_painter->drawFilledRect(Rect(0, 0, m_frameCache.tile->getSize()));
-        g_painter->resetOpacity();
+    if(m_drawFloorShadowing) {
+        float brightness = 1.0f;
+        if(floor > Otc::SEA_FLOOR && floor != cameraPosition.z) {
+            int formula = cameraPosition.z - floor;
+            if(floor > cameraPosition.z) formula *= -1;
+
+            g_painter->setColor(Color(215, 0, 0.6f - (formula * .12f)));
+        } else if(floor < cameraPosition.z) {
+            g_painter->setColor(Color((int)g_map.getLight().color, (int)g_map.getLight().intensity / 100, .8f));
+        } else if(floor > cameraPosition.z) {
+            g_painter->setColor(Color(215, 0, .6f));
+        }
+    }
+}
+
+
+void MapView::onFloorDrawingEnd(const short floor)
+{
+    if(m_drawFloorShadowing) {
         g_painter->resetColor();
     }
 }

@@ -76,24 +76,22 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         if(m_showTimedSquare) {
             g_painter->setColor(m_timedSquareColor);
             g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
-            g_painter->setColor(Color::white);
+            g_painter->resetColor();
         }
 
         if(m_showStaticSquare) {
             g_painter->setColor(m_staticSquareColor);
             g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
-            g_painter->setColor(Color::white);
+            g_painter->resetColor();
         }
 
         internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
 
         if(highLight.enabled && this == highLight.thing) {
             g_painter->setColor(highLight.rgbColor);
-            select();
             useBlankTexture(true);
             internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
             useBlankTexture(false);
-            unselect();
             g_painter->resetColor();
         }
     }
@@ -116,7 +114,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
 
 void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction)
 {
-    if(!m_selected)
+    if(m_outfitColor != Color::white)
         g_painter->setColor(m_outfitColor);
 
     // outfit is a real creature
@@ -201,7 +199,8 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, m_useBlankTexture);
     }
 
-    g_painter->resetColor();
+    if(m_outfitColor != Color::white)
+        g_painter->resetColor();
 }
 
 void Creature::drawOutfit(const Rect& destRect, bool resize)
@@ -305,27 +304,27 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     }
 
     if(m_skull != Otc::SkullNone && m_skullTexture) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         const Rect skullRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_skullTexture->getSize());
         g_painter->drawTexturedRect(skullRect, m_skullTexture);
     }
     if(m_shield != Otc::ShieldNone && m_shieldTexture && m_showShieldTexture) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         const Rect shieldRect = Rect(backgroundRect.x() + 13.5, backgroundRect.y() + 5, m_shieldTexture->getSize());
         g_painter->drawTexturedRect(shieldRect, m_shieldTexture);
     }
     if(m_emblem != Otc::EmblemNone && m_emblemTexture) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         const Rect emblemRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 16, m_emblemTexture->getSize());
         g_painter->drawTexturedRect(emblemRect, m_emblemTexture);
     }
     if(m_type != Proto::CreatureTypeUnknown && m_typeTexture) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         const Rect typeRect = Rect(backgroundRect.x() + 13.5 + 12 + 12, backgroundRect.y() + 16, m_typeTexture->getSize());
         g_painter->drawTexturedRect(typeRect, m_typeTexture);
     }
     if(m_icon != Otc::NpcIconNone && m_iconTexture) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         const Rect iconRect = Rect(backgroundRect.x() + 13.5 + 12, backgroundRect.y() + 5, m_iconTexture->getSize());
         g_painter->drawTexturedRect(iconRect, m_iconTexture);
     }

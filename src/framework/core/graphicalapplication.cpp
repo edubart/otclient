@@ -168,7 +168,7 @@ void GraphicalApplication::run()
                     g_ui.render(Fw::BackgroundPane);
 
                     // draw the foreground (steady stuff)
-                    g_painter->setColor(Color::white);
+                    g_painter->resetColor();
                     g_painter->setOpacity(1.0);
                     g_painter->drawTexturedRect(viewportRect, m_foreground, viewportRect);
                 } else {

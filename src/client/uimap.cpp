@@ -65,7 +65,7 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
     }
 
     if(drawPane & Fw::BackgroundPane) {
-        g_painter->setColor(Color::white);
+        g_painter->resetColor();
         m_mapView->draw(m_mapRect);
     }
 }
