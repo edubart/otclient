@@ -501,7 +501,7 @@ CreaturePtr Tile::getTopCreature()
                 const TilePtr& tile = g_map.getTile(pos);
                 if(tile) {
                     for(const CreaturePtr& c : tile->getCreatures()) {
-                        if(c->isWalking() && c->getLastStepFromPosition() == m_position && c->getStepProgress() < 0.75f) {
+                        if(c->isWalking() && c->getLastStepFromPosition() == m_position && c->getStepProgress() < .75f) {
                             return c;
                         }
                     }

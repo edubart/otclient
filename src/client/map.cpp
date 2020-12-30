@@ -230,13 +230,12 @@ bool Map::removeThing(const ThingPtr& thing)
             ret = tile->removeThing(thing);
         }
 
-        if(!thing->cancelListenerPainter()) {
-            uint32_t redrawFlag = Otc::ReDrawThing;
-            if(thing->hasLight()) redrawFlag |= Otc::ReDrawLight;
-            if(thing->isCreature()) redrawFlag |= Otc::ReDrawCreatureInformation;
+        thing->cancelListenerPainter();
+        uint32_t redrawFlag = Otc::ReDrawThing;
+        if(thing->hasLight()) redrawFlag |= Otc::ReDrawLight;
+        if(thing->isCreature()) redrawFlag |= Otc::ReDrawCreatureInformation;
 
-            requestDrawing(thing->getPosition(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
-        }
+        requestDrawing(thing->getPosition(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
     }
 
     notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_REMOVE);

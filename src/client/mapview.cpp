@@ -95,7 +95,7 @@ void MapView::draw(const Rect& rect)
     const auto redrawLight = m_drawLights && m_redrawFlag & Otc::ReDrawLight;
 
     if(redrawThing || redrawLight) {
-        if(m_drawLights) {
+        if(redrawLight) {
             Light ambientLight;
             if(cameraPosition.z > Otc::SEA_FLOOR) {
                 ambientLight.color = 215;
@@ -105,10 +105,8 @@ void MapView::draw(const Rect& rect)
             ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
             m_lightView->setGlobalLight(ambientLight);
 
-            if(redrawLight) {
-                m_lightView->reset();
-                m_lightView->resize(m_frameCache.tile->getSize());
-            }
+            m_lightView->reset();
+            m_lightView->resize(m_frameCache.tile->getSize());
         }
 
         m_frameCache.tile->bind();
@@ -137,21 +135,21 @@ void MapView::draw(const Rect& rect)
 
                 tile->bootstrap();
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
-            }
+        }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
 
             onFloorDrawingEnd(z);
-        }
+    }
 
         m_frameCache.tile->release();
 
         m_thingTimeRender.restart();
 
         m_redrawFlag &= ~Otc::ReDrawThing;
-    }
+}
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -354,11 +352,6 @@ void MapView::updateVisibleTilesCache()
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
 
-    // on floor change
-    if(cameraPosition.z != m_lastCameraPosition.z) {
-        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
-    }
-
     // TODO: Review
     /*if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
        m_cachedLastVisibleFloor == cachedLastVisibleFloor &&
@@ -366,8 +359,9 @@ void MapView::updateVisibleTilesCache()
        cameraPosition.distance(m_lastCameraPosition) < 2
        ) return;*/
 
-    if(m_lastCameraPosition.z != cameraPosition.z)
-        m_visibleCreatures = g_map.getSpectators(cameraPosition, false);
+    if(m_lastCameraPosition.z != cameraPosition.z) {
+        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
+    }
 
     m_lastCameraPosition = cameraPosition;
     m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
@@ -499,10 +493,14 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onFloorChange(const short floor, const short previousFloor)
+void MapView::onFloorChange(const short /*floor*/, const short /*previousFloor*/)
 {
+    const auto cameraPosition = getCameraPosition();
+
     if(m_drawLights)
         m_redrawFlag |= Otc::ReDrawLight;
+
+    m_visibleCreatures = g_map.getSpectators(cameraPosition, false);
 }
 
 void MapView::onFloorDrawingStart(const short floor)
@@ -510,12 +508,16 @@ void MapView::onFloorDrawingStart(const short floor)
     const auto cameraPosition = getCameraPosition();
 
     if(m_drawFloorShadowing) {
-        float brightness = 1.0f;
         if(floor > Otc::SEA_FLOOR && floor != cameraPosition.z) {
-            int formula = cameraPosition.z - floor;
-            if(floor > cameraPosition.z) formula *= -1;
+            float brightnessLevelStart = .6f;
+            float brightnessLevel = cameraPosition.z - floor;
+            if(floor > cameraPosition.z)
+                brightnessLevel *= -1;
+            else brightnessLevelStart -= .1f;
 
-            g_painter->setColor(Color(215, 0, 0.6f - (formula * .12f)));
+            brightnessLevel *= .12f;
+
+            g_painter->setColor(Color(215, 0, brightnessLevelStart - brightnessLevel));
         } else if(floor < cameraPosition.z) {
             g_painter->setColor(Color((int)g_map.getLight().color, (int)g_map.getLight().intensity / 100, .8f));
         } else if(floor > cameraPosition.z) {
@@ -884,7 +886,7 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
 
     if(!isInCenter && pos.isValid() && !isInRange(pos)) return;
 
-    if(m_creatureInfTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
+    if(force || m_creatureInfTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
         if(reDrawFlags & Otc::ReDrawStaticCreatureInformation) {
             m_redrawFlag |= Otc::ReDrawStaticCreatureInformation;
         }
