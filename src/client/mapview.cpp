@@ -135,21 +135,21 @@ void MapView::draw(const Rect& rect)
 
                 tile->bootstrap();
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
-        }
+            }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
 
             onFloorDrawingEnd(z);
-    }
+        }
 
         m_frameCache.tile->release();
 
         m_thingTimeRender.restart();
 
         m_redrawFlag &= ~Otc::ReDrawThing;
-}
+    }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -526,8 +526,7 @@ void MapView::onFloorDrawingStart(const short floor)
     }
 }
 
-
-void MapView::onFloorDrawingEnd(const short floor)
+void MapView::onFloorDrawingEnd(const short /*floor*/)
 {
     if(m_drawFloorShadowing) {
         g_painter->resetColor();
@@ -537,7 +536,7 @@ void MapView::onFloorDrawingEnd(const short floor)
 void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
 {
     // Need Optimization (update only the specific Tile)
-    if(Otc::OPERATION_CLEAN == operation || m_followingCreature->isWalking())
+    if(Otc::OPERATION_CLEAN == operation || isFollowingCreature() && m_followingCreature->isWalking())
         requestVisibleTilesCacheUpdate();
 
     if(thing && thing->isCreature() && !thing->isLocalPlayer() && m_lastCameraPosition.z == getCameraPosition().z) {
