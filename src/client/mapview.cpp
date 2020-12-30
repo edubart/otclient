@@ -500,7 +500,6 @@ void MapView::onFloorDrawingEnd(const short floor)
 {
     const auto cameraPosition = getCameraPosition();
     const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
-    const auto tiles = m_cachedVisibleTiles[floor];
 
     if(m_drawFloorShadowing && redrawThing && floor == cameraPosition.z + 1) {
         g_painter->setColor(Color::black);
