@@ -129,7 +129,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
         const TilePtr& tile = getOrCreateTile(pos);
-        if(tile) {
+        if(tile && (m_drawEffectWithoutGround || !thing->isEffect() || tile->getGround())) {
             tile->addThing(thing, stackPos);
             thing->requestDrawing(true);
         }

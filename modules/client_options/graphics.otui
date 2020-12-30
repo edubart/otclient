@@ -44,6 +44,10 @@ Panel
     !text: tr('Draw Viewport Edge')
 
   OptionCheckBox
+    id: drawEffectWithoutGround
+    !text: tr('Draw effect without ground')
+
+  OptionCheckBox
     id: fullscreen
     !text: tr('Fullscreen')
     tooltip: Ctrl+Shift+F

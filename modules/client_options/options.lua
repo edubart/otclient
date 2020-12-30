@@ -22,6 +22,7 @@ local defaultOptions = {
   enableLights = true,
   enableFloorShadowing = true,
   drawViewportEdge = false,
+  drawEffectWithoutGround = false,
   ambientLight = 0,
   displayNames = true,
   displayHealth = true,
@@ -233,6 +234,8 @@ function setOption(key, value, force)
     gameMapPanel:setDrawFloorShadowing(value)
   elseif key == 'drawViewportEdge' then
     gameMapPanel:setDrawViewportEdge(value)
+  elseif key == 'drawEffectWithoutGround' then
+    g_map.setDrawEffectWithoutGround(value)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
   elseif key == 'displayNames' then

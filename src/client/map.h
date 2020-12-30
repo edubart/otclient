@@ -249,6 +249,9 @@ public:
 
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxComplexity, int flags = 0);
 
+    void setDrawEffectWithoutGround(bool enable) { m_drawEffectWithoutGround = enable; }
+    bool isDrawingEffectWithoutGround() { return m_drawEffectWithoutGround; }
+
 private:
     void removeUnawareThings();
 
@@ -276,6 +279,8 @@ private:
     stdext::packed_storage<uint8> m_attribs;
     AwareRange m_awareRange;
     static TilePtr m_nulltile;
+
+    stdext::boolean<true> m_drawEffectWithoutGround;
 };
 
 extern Map g_map;

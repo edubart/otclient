@@ -383,7 +383,8 @@ ItemPtr Tile::getGround()
 {
     if(m_ground.empty()) return nullptr;
 
-    return m_ground.front();
+    const auto& firstGround = m_ground.front();
+    return firstGround->isGround() ? firstGround : nullptr;
 }
 
 EffectPtr Tile::getEffect(uint16 id)

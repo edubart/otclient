@@ -430,6 +430,7 @@ locale = {
     ["Destination is out of range."] = "O destino está fora de alcance.",
 	["Enable Floor Shadowing"] = "Ativar sombreamento de piso",
 	["Draw Viewport Edge"] = "Desenhar borda da janela de visualização",
+	["Draw effect without ground"] = "Desenhar efeito sem solo",
   }
 }
 

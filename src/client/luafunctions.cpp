@@ -153,6 +153,8 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_map", "beginGhostMode", &Map::beginGhostMode, &g_map);
     g_lua.bindSingletonFunction("g_map", "endGhostMode", &Map::endGhostMode, &g_map);
     g_lua.bindSingletonFunction("g_map", "findItemsById", &Map::findItemsById, &g_map);
+    g_lua.bindSingletonFunction("g_map", "setDrawEffectWithoutGround", &Map::setDrawEffectWithoutGround, &g_map);
+    g_lua.bindSingletonFunction("g_map", "isDrawingEffectWithoutGround", &Map::isDrawingEffectWithoutGround, &g_map);
 
     g_lua.registerSingletonClass("g_minimap");
     g_lua.bindSingletonFunction("g_minimap", "clean", &Minimap::clean, &g_minimap);
