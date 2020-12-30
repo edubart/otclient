@@ -49,6 +49,7 @@ private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
+    void onFloorDrawingEnd(const short floor);
 
 protected:
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
@@ -104,6 +105,9 @@ public:
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
+
+    void setDrawFloorShadowing(bool enable) { m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
+    bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
 
     void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
@@ -187,6 +191,7 @@ private:
 
     stdext::boolean<true> m_mustUpdateVisibleTilesCache;
     stdext::boolean<true> m_shaderSwitchDone;
+    stdext::boolean<true> m_drawFloorShadowing;
     stdext::boolean<true> m_drawHealthBars;
     stdext::boolean<true> m_autoViewMode;
     stdext::boolean<true> m_drawManaBar;

@@ -373,6 +373,7 @@ locale = {
     ["You read the following, written on \n%s.\n"] = false,
     ["Your Money:"] = "Dina Pengar:",
     ["Destination is out of range."] = "Destination is out of range.",
+	["Enable Floor Shadowing"] = "Enable Floor Shadowing",
   }
 }
 

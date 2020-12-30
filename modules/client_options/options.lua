@@ -20,6 +20,7 @@ local defaultOptions = {
   enableMusicSound = true,
   musicSoundVolume = 100,
   enableLights = true,
+  enableFloorShadowing = true,
   ambientLight = 0,
   displayNames = true,
   displayHealth = true,
@@ -227,6 +228,8 @@ function setOption(key, value, force)
     graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
     gameMapPanel:setMinimumAmbientLight(value/100)
     gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
+  elseif key == 'enableFloorShadowing' then
+    gameMapPanel:setDrawFloorShadowing(value)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
   elseif key == 'displayNames' then

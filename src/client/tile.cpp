@@ -132,7 +132,6 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightV
 
 void Tile::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
 {
-    bootstrap();
     drawGround(dest, scaleFactor, reDrawFlags, lightView);
     drawBottom(dest, scaleFactor, reDrawFlags, lightView);
     drawTop(dest, scaleFactor, reDrawFlags, lightView);

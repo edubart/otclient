@@ -428,6 +428,7 @@ locale = {
     ["Your connection has been lost. (err: %d)"] = "A sua conexão foi perdida. (err: %d)",
     ["Your Money"] = "Seu dinheiro",
     ["Destination is out of range."] = "O destino está fora de alcance.",
+	["Enable Floor Shadowing"] = "Ativar Sombreamento de Piso",
   }
 }
 

@@ -133,12 +133,15 @@ void MapView::draw(const Rect& rect)
 
                 const Position& tilePos = tile->getPosition();
 
+                tile->bootstrap();
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
             }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
             }
+
+            onFloorDrawingEnd(z);
         }
 
         m_frameCache.tile->release();
@@ -491,6 +494,21 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
     resetLastCamera();
     requestVisibleTilesCacheUpdate();
+}
+
+void MapView::onFloorDrawingEnd(const short floor)
+{
+    const auto cameraPosition = getCameraPosition();
+    const auto redrawThing = m_redrawFlag & Otc::ReDrawThing;
+    const auto tiles = m_cachedVisibleTiles[floor];
+
+    if(m_drawFloorShadowing && redrawThing && floor == cameraPosition.z + 1) {
+        g_painter->setColor(Color::black);
+        g_painter->setOpacity(0.5);
+        g_painter->drawFilledRect(Rect(0, 0, m_frameCache.tile->getSize()));
+        g_painter->resetOpacity();
+        g_painter->resetColor();
+    }
 }
 
 void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)

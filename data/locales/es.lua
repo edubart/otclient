@@ -380,6 +380,7 @@ locale = {
     ["Change language"] = "Cambiar idioma",
     ["Don't stretch or shrink Game Window"] = "No estirar ni encoger la ventana de juego",
 	["Destination is out of range."] = "Destination is out of range.",
+	["Enable Floor Shadowing"] = "Enable Floor Shadowing",
   }
 }
 

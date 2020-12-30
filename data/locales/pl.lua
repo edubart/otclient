@@ -414,6 +414,7 @@ locale = {
     ["Paladin"] = "Paladyn",
     ["Knight"] = "Rycerz",
     ["Destination is out of range."] = "Destination is out of range.",
+	["Enable Floor Shadowing"] = "Enable Floor Shadowing",
   }
 }
 

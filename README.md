@@ -8,6 +8,7 @@
    - Idle Animation Support
    - Highlight Mouse Target
    - Crosshair
+   - Floor Shadowing
    - Adjusted Path Finding
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
    - Refactored Walk System
