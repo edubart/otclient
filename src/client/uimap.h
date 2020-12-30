@@ -53,6 +53,7 @@ public:
     void setDrawHealthBars(bool enable) { m_mapView->setDrawHealthBars(enable); }
     void setDrawLights(bool enable) { m_mapView->setDrawLights(enable); }
     void setDrawFloorShadowing(bool enable) { m_mapView->setDrawFloorShadowing(enable); }
+    void setDrawViewportEdge(bool enable) { m_mapView->setDrawViewportEdge(enable); }
     void setDrawManaBar(bool enable) { m_mapView->setDrawManaBar(enable); }
     void setKeepAspectRatio(bool enable);
     void setMapShader(const PainterShaderProgramPtr& shader, float fadeout, float fadein) { m_mapView->setShader(shader, fadein, fadeout); }
@@ -70,6 +71,7 @@ public:
     bool isDrawingHealthBars() { return m_mapView->isDrawingHealthBars(); }
     bool isDrawingLights() { return m_mapView->isDrawingLights(); }
     bool isDrawingFloorShadowing() { return m_mapView->isDrawingFloorShadowing(); }
+    bool isDrawingViewportEdge() { return m_mapView->isDrawingViewportEdge(); }
     bool isDrawingManaBar() { return m_mapView->isDrawingManaBar(); }
     bool isKeepAspectRatioEnabled() { return m_keepAspectRatio; }
     bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }

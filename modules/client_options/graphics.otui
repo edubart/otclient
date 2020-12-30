@@ -40,6 +40,10 @@ Panel
     !text: tr('Enable Floor Shadowing')
 
   OptionCheckBox
+    id: drawViewportEdge
+    !text: tr('Draw Viewport Edge')
+
+  OptionCheckBox
     id: fullscreen
     !text: tr('Fullscreen')
     tooltip: Ctrl+Shift+F

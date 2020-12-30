@@ -832,7 +832,7 @@ void MapView::initViewPortDirection()
 
 bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
 {
-    if(lightView && lightView->isDark() && tile->hasLight()) return true;
+    if(m_drawViewportEdge || lightView && lightView->isDark() && tile->hasLight()) return true;
 
     const Position cameraPosition = getCameraPosition();
     const Position& tilePos = tile->getPosition();

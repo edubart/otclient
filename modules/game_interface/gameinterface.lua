@@ -853,11 +853,13 @@ function setupViewMode(mode)
     gameMapPanel:setLimitVisibleRange(false)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    modules.client_options.setOption('drawViewportEdge', false)
   elseif mode == 1 then
     gameMapPanel:setKeepAspectRatio(false)
     gameMapPanel:setLimitVisibleRange(true)
     gameMapPanel:setZoom(11)
     gameMapPanel:setVisibleDimension({ width = 15, height = 11 })
+    modules.client_options.setOption('drawViewportEdge', false)
   elseif mode == 2 then
     local limit = limitedZoom and not g_game.isGM()
     gameMapPanel:setLimitVisibleRange(limit)
@@ -880,6 +882,8 @@ function setupViewMode(mode)
     if not limit then
       g_game.changeMapAwareRange(24, 20)
     end
+
+    modules.client_options.setOption('drawViewportEdge', true)
   end
 
   currentViewMode = mode

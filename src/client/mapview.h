@@ -109,6 +109,9 @@ public:
     void setDrawFloorShadowing(bool enable) { m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
     bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
 
+    void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; requestDrawing(Position(), Otc::ReDrawThing); }
+    bool isDrawingViewportEdge() { return m_drawViewportEdge; }
+
     void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
@@ -202,6 +205,7 @@ private:
     stdext::boolean<true> m_follow;
 
     stdext::boolean<false> m_drawLights;
+    stdext::boolean<false> m_drawViewportEdge;
 
     std::vector<CreaturePtr> m_visibleCreatures;
 

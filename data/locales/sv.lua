@@ -374,6 +374,7 @@ locale = {
     ["Your Money:"] = "Dina Pengar:",
     ["Destination is out of range."] = "Destination is out of range.",
 	["Enable Floor Shadowing"] = "Enable Floor Shadowing",
+	["Draw Viewport Edge"] = "Draw Viewport Edge",
   }
 }
 

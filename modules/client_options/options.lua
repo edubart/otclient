@@ -21,6 +21,7 @@ local defaultOptions = {
   musicSoundVolume = 100,
   enableLights = true,
   enableFloorShadowing = true,
+  drawViewportEdge = false,
   ambientLight = 0,
   displayNames = true,
   displayHealth = true,
@@ -230,6 +231,8 @@ function setOption(key, value, force)
     gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
   elseif key == 'enableFloorShadowing' then
     gameMapPanel:setDrawFloorShadowing(value)
+  elseif key == 'drawViewportEdge' then
+    gameMapPanel:setDrawViewportEdge(value)
   elseif key == 'painterEngine' then
     g_graphics.selectPainterEngine(value)
   elseif key == 'displayNames' then
