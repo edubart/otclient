@@ -62,11 +62,14 @@ public:
 
     Tile(const Position& position);
 
-    void bootstrap();
+    void drawStart(const MapViewPtr& mapView, const Color shadowColor);
+    void drawEnd(const MapViewPtr& mapView);
+    void onVisibleTileList(const MapViewPtr& mapView);
     void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
     void drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView);
+    void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView);
 
     void clean();
 
@@ -145,6 +148,8 @@ public:
 
     void cancelListenerPainter();
 
+    const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
+
 private:
     struct CountFlag {
         int fullGround = 0;
@@ -167,10 +172,13 @@ private:
     void checkForDetachableThing();
     void checkTranslucentLight();
 
+    Color m_shadowColor;
     Position m_position;
     uint8 m_drawElevation;
     uint8 m_minimapColor;
     uint32 m_flags, m_houseId;
+
+    std::array<Position, 8> m_positionsAround;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
@@ -188,6 +196,8 @@ private:
     Highlight m_highlight;
 
     CreaturePtr m_localPlayer;
+
+    Color m_borderShadowColor;
 };
 
 #endif

@@ -200,6 +200,22 @@ public:
     void translate(int dx, int dy, short dz = 0) { x += dx; y += dy; z += dz; }
     Position translated(int dx, int dy, short dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
+    std::array<Position, 8> getPositionsAround() const
+    {
+        std::array<Position, 8> positions;
+        int i = -1;
+        for(int xi = -1; xi <= 1; ++xi) {
+            for(int yi = -1; yi <= 1; ++yi) {
+                const Position pos = translated(xi, yi);
+                if(pos == *this)
+                    continue;
+                positions[++i] = pos;
+            }
+        }
+
+        return positions;
+    }
+
     Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z); }
     Position& operator+=(const Position& other) { x += other.x; y += other.y; z += other.z; return *this; }
     Position operator-(const Position& other) const { return Position(x - other.x, y - other.y, z - other.z); }

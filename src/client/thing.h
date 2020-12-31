@@ -139,6 +139,8 @@ public:
     bool hasAction() { return rawGetThingType()->hasAction(); }
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isTopGround() { return getWidth() != 1 && getHeight() != 1 && isGround(); }
+    bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
+
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
     void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration); }

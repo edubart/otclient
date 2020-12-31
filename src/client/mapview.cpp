@@ -72,6 +72,8 @@ MapView::MapView()
 
     m_shader = g_shaders.getDefaultMapShader();
 
+    m_lastFloorShadowingColor = Color::white;
+
     setVisibleDimension(Size(15, 11));
     initViewPortDirection();
 }
@@ -133,8 +135,9 @@ void MapView::draw(const Rect& rect)
 
                 const Position& tilePos = tile->getPosition();
 
-                tile->bootstrap();
+                tile->drawStart(this, m_lastFloorShadowingColor);
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+                tile->drawEnd(this);
             }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
@@ -411,6 +414,8 @@ void MapView::updateVisibleTilesCache()
 
                     floor.push_back(tile);
 
+                    tile->onVisibleTileList(this);
+
                     if(iz < m_floorMin)
                         m_floorMin = iz;
                     else if(iz > m_floorMax)
@@ -508,6 +513,7 @@ void MapView::onFloorDrawingStart(const short floor)
     const auto cameraPosition = getCameraPosition();
 
     if(m_drawFloorShadowing) {
+        Color shadowColor = Color::white;
         if(floor > Otc::SEA_FLOOR && floor != cameraPosition.z) {
             float brightnessLevelStart = .6f;
             float brightnessLevel = cameraPosition.z - floor;
@@ -517,12 +523,15 @@ void MapView::onFloorDrawingStart(const short floor)
 
             brightnessLevel *= .12f;
 
-            g_painter->setColor(Color(215, 0, brightnessLevelStart - brightnessLevel));
+            shadowColor = Color(215, 0, brightnessLevelStart - brightnessLevel);
         } else if(floor < cameraPosition.z) {
-            g_painter->setColor(Color((int)g_map.getLight().color, (int)g_map.getLight().intensity / 100, .8f));
+            shadowColor = Color((int)g_map.getLight().color, (int)g_map.getLight().intensity / 100, .8f);
         } else if(floor > cameraPosition.z) {
-            g_painter->setColor(Color(215, 0, .6f));
+            shadowColor = Color(215, 0, .6f);
         }
+
+        g_painter->setColor(shadowColor);
+        m_lastFloorShadowingColor = shadowColor;
     }
 }
 
@@ -753,7 +762,7 @@ int MapView::calcLastVisibleFloor()
     if(!m_multifloor)
         return calcFirstVisibleFloor();
 
-    int z = 7;
+    int z = Otc::SEA_FLOOR;
 
     const Position cameraPosition = getCameraPosition();
     // this could happens if the player is not known yet
@@ -943,8 +952,9 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
-        tile->bootstrap();
+        tile->drawStart(this, m_lastFloorShadowingColor);
         tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+        tile->drawEnd(this);
     }
 
     for(const auto& tile : tiles) {
@@ -959,11 +969,13 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
         const auto& drawLight = hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
 
-        if(!tile->hasGroundToDraw()) tile->bootstrap();
+        if(!tile->hasGroundToDraw()) tile->drawStart(this, m_lastFloorShadowingColor);
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
-    }
+
+        if(!tile->hasGroundToDraw()) tile->drawEnd(this);
+}
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

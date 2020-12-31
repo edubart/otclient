@@ -108,7 +108,7 @@ public:
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights; }
 
-    void setDrawFloorShadowing(bool enable) { m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
+    void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
     bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
 
     void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; requestDrawing(Position(), Otc::ReDrawThing); }
@@ -228,6 +228,8 @@ private:
     float m_fadeInTime;
     float m_fadeOutTime;
     float m_scaleFactor;
+
+    Color m_lastFloorShadowingColor;
 
     uint32 m_redrawFlag;
 
