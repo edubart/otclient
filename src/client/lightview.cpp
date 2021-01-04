@@ -30,8 +30,9 @@
 enum {
 #ifdef OLDSCHOOL_LIGHT
     MAX_LIGHT_INTENSITY = 15,
-#endif
+#else
     MAX_LIGHT_INTENSITY = 8,
+#endif
     MAX_AMBIENT_LIGHT_INTENSITY = 255
 };
 
