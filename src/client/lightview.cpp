@@ -28,6 +28,9 @@
 #include <framework/graphics/image.h>
 
 enum {
+#ifdef OLDSCHOOL_LIGHT
+    MAX_LIGHT_INTENSITY = 15,
+#endif
     MAX_LIGHT_INTENSITY = 8,
     MAX_AMBIENT_LIGHT_INTENSITY = 255
 };
