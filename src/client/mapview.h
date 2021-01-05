@@ -110,6 +110,7 @@ public:
 
     void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
     bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
+    const Color getLastFloorShadowingColor() { return m_lastFloorShadowingColor; }
 
     void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; requestDrawing(Position(), Otc::ReDrawThing); }
     bool isDrawingViewportEdge() { return m_drawViewportEdge; }

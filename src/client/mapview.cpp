@@ -55,8 +55,8 @@ MapView::MapView()
     m_viewMode = NEAR_VIEW;
     m_redrawFlag = Otc::RedrawAll;
     m_lockedFirstVisibleFloor = -1;
-    m_cachedFirstVisibleFloor = 7;
-    m_cachedLastVisibleFloor = 7;
+    m_cachedFirstVisibleFloor = Otc::SEA_FLOOR;
+    m_cachedLastVisibleFloor = Otc::SEA_FLOOR;
     m_minimumAmbientLight = 0;
     m_fadeOutTime = 0;
     m_fadeInTime = 0;
@@ -135,7 +135,7 @@ void MapView::draw(const Rect& rect)
 
                 const Position& tilePos = tile->getPosition();
 
-                tile->drawStart(this, m_lastFloorShadowingColor);
+                tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
                 tile->drawEnd(this);
             }
@@ -271,8 +271,8 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
                 Position pos = creature->getPosition();
                 Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
                 p += (creature->getDrawOffset() + creatureOffset) * m_scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
-                p.x = p.x * horizontalStretchFactor;
-                p.y = p.y * verticalStretchFactor;
+                p.x *= horizontalStretchFactor;
+                p.y *= verticalStretchFactor;
                 p += rect.topLeft();
 
                 creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
@@ -309,8 +309,8 @@ void MapView::drawText(const Rect& rect, Point drawOffset, const float horizonta
                     continue;
 
                 Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-                p.x = p.x * horizontalStretchFactor;
-                p.y = p.y * verticalStretchFactor;
+                p.x *= horizontalStretchFactor;
+                p.y *= verticalStretchFactor;
                 p += rect.topLeft();
                 staticText->drawText(p, rect);
             }
@@ -697,7 +697,7 @@ Rect MapView::calcFramebufferSource(const Size& destSize)
 
 int MapView::calcFirstVisibleFloor()
 {
-    int z = 7;
+    int z = Otc::SEA_FLOOR;
     // return forced first visible floor
     if(m_lockedFirstVisibleFloor != -1) {
         z = m_lockedFirstVisibleFloor;
@@ -952,7 +952,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
-        tile->drawStart(this, m_lastFloorShadowingColor);
+        tile->drawStart(this);
         tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
         tile->drawEnd(this);
     }
@@ -969,13 +969,13 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
         const auto& drawLight = hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
 
-        if(!tile->hasGroundToDraw()) tile->drawStart(this, m_lastFloorShadowingColor);
+        if(!tile->hasGroundToDraw()) tile->drawStart(this);
 
         tile->drawBottom(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
         tile->drawTop(pos2d, m_scaleFactor, m_redrawFlag, drawLight);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

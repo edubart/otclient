@@ -209,7 +209,7 @@ public:
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { return isFullGround() || hasTexture() && getTexture(0)->isOpaque(); }
-    bool isTall(const bool useRealSize = false) { return useRealSize && getRealSize() > Otc::TILE_PIXELS || !useRealSize && getHeight() > 1; }
+    bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
 

@@ -62,7 +62,7 @@ public:
 
     Tile(const Position& position);
 
-    void drawStart(const MapViewPtr& mapView, const Color shadowColor);
+    void drawStart(const MapViewPtr& mapView);
     void drawEnd(const MapViewPtr& mapView);
     void onVisibleTileList(const MapViewPtr& mapView);
     void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);

@@ -43,7 +43,7 @@ Tile::Tile(const Position& position) :
     m_positionsAround = position.getPositionsAround();
 }
 
-void Tile::onVisibleTileList(const MapViewPtr& mapView)
+void Tile::onVisibleTileList(const MapViewPtr& /*mapView*/)
 {
     m_borderShadowColor = Color::white;
 
@@ -58,17 +58,17 @@ void Tile::onVisibleTileList(const MapViewPtr& mapView)
     }
 }
 
-void Tile::drawStart(const MapViewPtr& mapView, const Color shadowColor)
+void Tile::drawStart(const MapViewPtr& mapView)
 {
     m_drawElevation = 0;
-    m_shadowColor = shadowColor;
+    m_shadowColor = mapView->getLastFloorShadowingColor();
 
     if(m_highlight.update) {
         m_highlight.fadeLevel += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
         m_highlight.update = false;
         m_highlight.rgbColor = Color(255, 255, 0, m_highlight.fadeLevel);
 
-        if((!m_highlight.invertedColorSelection && m_highlight.fadeLevel < 0) || (m_highlight.invertedColorSelection && m_highlight.fadeLevel > 120)) {
+        if(m_highlight.invertedColorSelection ? m_highlight.fadeLevel > 120 : m_highlight.fadeLevel < 0) {
             m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
         }
     }
