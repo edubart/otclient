@@ -258,6 +258,8 @@ function show()
   terminalWindow:show()
   terminalWindow:raise()
   terminalWindow:focus()
+
+  flushLines()
 end
 
 function hide()
@@ -271,12 +273,15 @@ function disable()
 end
 
 function flushLines()
-  local numLines = terminalBuffer:getChildCount() + #cachedLines
   local fulltext = terminalSelectText:getText()
 
-  for _,line in pairs(cachedLines) do
+  local start = #cachedLines + 1 - MaxLogLines
+  if start < 0 then start = 1 end
+
+  for i=start, #cachedLines do
+    line = cachedLines[i]
     -- delete old lines if needed
-    if numLines > MaxLogLines then
+    if terminalBuffer:getChildCount() >= MaxLogLines then
       local firstChild = terminalBuffer:getChildByIndex(1)
       if firstChild then
         local len = #firstChild:getText()
@@ -287,7 +292,7 @@ function flushLines()
     end
 
     local label = g_ui.createWidget('TerminalLabel', terminalBuffer)
-    label:setId('terminalLabel' .. numLines)
+    label:setId('terminalLabel' .. i)
     label:setText(line.text)
     label:setColor(line.color)
 
@@ -304,12 +309,12 @@ function flushLines()
 end
 
 function addLine(text, color)
-  if not flushEvent then
-    flushEvent = scheduleEvent(flushLines, 10)
-  end
-
   text = string.gsub(text, '\t', '    ')
   table.insert(cachedLines, {text=text, color=color})
+
+  if terminalWindow:isVisible() and not flushEvent then
+    flushEvent = scheduleEvent(flushLines, 10)
+  end
 end
 
 function executeCommand(command)
