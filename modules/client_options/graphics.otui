@@ -44,8 +44,8 @@ Panel
     !text: tr('Draw Viewport Edge')
 
   OptionCheckBox
-    id: drawEffectWithoutGround
-    !text: tr('Draw effect without ground')
+    id: floatingEffect
+    !text: tr('Draw Floating Effects')
 
   OptionCheckBox
     id: fullscreen
