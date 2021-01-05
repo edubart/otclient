@@ -545,8 +545,9 @@ void MapView::onFloorDrawingEnd(const short /*floor*/)
 void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
 {
     // Need Optimization (update only the specific Tile)
-    if(Otc::OPERATION_CLEAN == operation || isFollowingCreature() && m_followingCreature->isWalking())
+    if(Otc::OPERATION_CLEAN == operation || thing && thing->isLocalPlayer() && Otc::OPERATION_ADD == operation) {
         requestVisibleTilesCacheUpdate();
+    }
 
     if(thing && thing->isCreature() && !thing->isLocalPlayer() && m_lastCameraPosition.z == getCameraPosition().z) {
         const CreaturePtr& creature = thing->static_self_cast<Creature>();
