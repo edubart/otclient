@@ -9,6 +9,7 @@
    - Highlight Mouse Target
    - Crosshair
    - Floor Shadowing
+   - Floating Effects Option
    - Adjusted Path Finding
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
    - Optimized Terminal
