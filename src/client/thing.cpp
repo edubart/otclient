@@ -46,7 +46,7 @@ void Thing::requestDrawing(const bool force)
         if(isLocalPlayer() || hasLight()) redrawFlag |= Otc::ReDrawLight;
     }
 
-    g_map.requestDrawing(m_position, static_cast<Otc::RequestDrawFlags>(redrawFlag), force);
+    g_map.requestDrawing(m_position, static_cast<Otc::RequestDrawFlags>(redrawFlag), force || isLocalPlayer());
 }
 
 void Thing::setPosition(const Position& position)

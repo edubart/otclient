@@ -106,7 +106,7 @@ public:
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
-    bool isDrawingLights() { return m_drawLights; }
+    bool isDrawingLights() { return m_drawLights && m_lightView->isDark(); }
 
     void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
     bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }

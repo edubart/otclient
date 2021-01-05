@@ -909,7 +909,7 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
     }
 
     if(reDrawFlags & Otc::ReDrawLight) {
-        if(m_lightView && m_lightView->isDark()) m_lightView->requestDrawing(force);
+        if(isDrawingLights()) m_lightView->requestDrawing(force);
         else m_redrawFlag &= ~Otc::ReDrawLight;
     }
 }
