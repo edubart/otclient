@@ -838,16 +838,21 @@ function onBattleButtonHoverChange(battleButton, hovered) -- Interaction with mo
 	end
 end
 
+function onOpen()
+		battleButton:setOn(true)
+		connecting()
+end
+
+function onClose()
+		battleButton:setOn(false)
+		disconnecting()
+end
+
 function toggle() -- Close/Open the battle window or Pressing Ctrl + B
 	if battleButton:isOn() then
 		battleWindow:close()
-		battleButton:setOn(false)
-		-- TODO: Not working to disconnect when closing module window
-		disconnecting()
 	else
 		battleWindow:open()
-		battleButton:setOn(true)
-		connecting()
 	end
 end
 
@@ -862,8 +867,4 @@ function terminate() -- Terminating the Module (unload)
 
 	-- Removing the connectors
 	disconnecting()
-end
-
-function onMiniWindowClose() -- Callback when we close the module window
-	battleButton:setOn(false)
 end

@@ -41,7 +41,8 @@ MiniWindow
   !text: tr('Battle')
   height: 166
   icon: /images/topbuttons/battle
-  @onClose: modules.game_battle.onMiniWindowClose()
+  @onOpen: onOpen()
+  @onClose: onClose()
   &save: true
 
   Panel
