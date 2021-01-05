@@ -173,6 +173,11 @@ local function BSComparatorSortType(a, b, sortType, id) -- Comparator function b
     elseif sortType == 'name' then
         comparatorA, comparatorB = (a.name):lower(), type(b) == "table" and (b.name):lower() or b
 	end
+
+	if comparatorA == nil or comparatorB == nil then
+		return 0
+	end
+
 	if comparatorA > comparatorB then return -1
 	elseif comparatorA < comparatorB then return 1
 	else
@@ -252,13 +257,13 @@ local function correctBattleButtons(sortOrder, start_index, end_index) -- Update
 	local size = #binaryTree
 	local start_index = start_index or 1
 	local end_index = end_index or size
-	
+
 	local start = start_index
 	local finish = end_index
 	if sortOrder ~= "A" then
 		start = size - start + 1
 		finish = size - finish + 1
-	end	
+	end
 	local increment = start <= finish and 1 or -1
     local increment_index = start_index <= end_index and 1 or -1
 
@@ -626,7 +631,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 	-- If it's the local player moving
 	if creature:isLocalPlayer() then
 		if oldPos and newPos and newPos.z ~= oldPos.z then -- Changing the z makes easier to just recalculate everything
-			checkCreatures() 
+			checkCreatures()
 		elseif oldPos and newPos and (newPos.x ~= oldPos.x or newPos.y ~= oldPos.y) then
 			-- Distance will change when moving, recalculate and move to correct index
 			if #binaryTree > 0 and sortType == 'distance' then
@@ -637,7 +642,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 					local battleButton = battleButtons[v.id]
 					local mob = battleButton.creature or g_map.getCreatureById(v.id)
 					local mob_pos = mob:getPosition()
-					
+
 					local newDistance = getDistanceBetween(newPos, mob_pos)
 					if oldDistance ~= newDistance then
 						v.distance = newDistance
@@ -647,7 +652,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 				end
 				table.sort(binaryTree, function(a, b) return BSComparatorSortType(a, b, 'distance', true) == 1 end)
 				correctBattleButtons(getSortOrder())
-			else			
+			else
 				for i, v in pairs(battleButtons) do
 					local mob = v.creature
 					if mob and mob:getPosition() then
@@ -748,7 +753,7 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 							end
 						end
 						correctBattleButtons(getSortOrder(), index, -1)
-					end						
+					end
 				end
 			else
 				assert(index ~= nil, "Not able to update HealthPercent Change. Creature: id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldHealthPercent ..".")
@@ -765,8 +770,8 @@ function onCreatureAppear(creature) -- Update battleButton once a creature appea
 			updateStaticSquare()
 		end)
 	end
-	
-	local sortType = getSortType()	
+
+	local sortType = getSortType()
 
 	if doCreatureFitFilters(creature) then
 		addCreature(creature, sortType)
