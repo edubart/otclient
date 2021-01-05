@@ -11,6 +11,7 @@
    - Floor Shadowing
    - Adjusted Path Finding
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
+   - Optimized Terminal
    - Refactored Walk System
    - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
    - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
