@@ -23,6 +23,8 @@ function ServerList.terminate()
   g_settings.setNode('ServerList', servers)
 
   ServerList = nil
+  serverListWindow = nil
+  serverTextList = nil
 end
 
 function ServerList.load()

@@ -1,4 +1,3 @@
-local minimapWidget = nil
 local otmm = true
 local fullmapView = false
 local oldZoom = nil
@@ -15,6 +14,7 @@ local function updateCameraPosition()
 		return
 	end
 
+	local minimapWidget = controller.widgets.minimapWidget
 	if minimapWidget:isDragging() then
 		return
 	end
@@ -38,6 +38,7 @@ end
 
 local function toggleFullMap()
 	local minimapWindow = controller.widgets.minimapWindow
+	local minimapWidget = controller.widgets.minimapWidget
 
 	if fullmapView then
 		minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
@@ -73,7 +74,7 @@ function controller:onInit()
 	local minimapWindow = g_ui.loadUI('minimap', modules.game_interface.getRightPanel())
 	minimapWindow:setContentMinimumHeight(80)
 
-	minimapWidget = minimapWindow:recursiveGetChildById('minimap')
+	local minimapWidget = minimapWindow:recursiveGetChildById('minimap')
 
 	local gameRootPanel = modules.game_interface.getRootPanel()
 	self:bindKeyPress('Alt+Left', function() minimapWidget:move(1, 0)	end, gameRootPanel)
@@ -86,6 +87,7 @@ function controller:onInit()
 
 	self:registerWidget('minimapButton', minimapButton)
 	self:registerWidget('minimapWindow', minimapWindow)
+	self:registerWidget('minimapWidget', minimapWidget)
 
 	minimapWindow:setup()
 	localPlayerEvent:connect()
@@ -110,6 +112,7 @@ controller:onGameStart(function()
 			loadFnc(minimapFile)
 		end
 
+		local minimapWidget = controller.widgets.minimapWidget
 		minimapWidget:load()
 end)
 
@@ -121,6 +124,7 @@ controller:onGameEnd(function()
 			g_map.saveOtcm('/minimap_' .. g_game.getClientVersion() .. '.otcm')
 		end
 
+		local minimapWidget = controller.widgets.minimapWidget
 		minimapWidget:save()
 end)
 

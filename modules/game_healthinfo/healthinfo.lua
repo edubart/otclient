@@ -78,6 +78,13 @@ function terminate()
 
   healthInfoWindow:destroy()
   healthInfoButton:destroy()
+
+  healthInfoWindow = nil
+  healthBar = nil
+  manaBar = nil
+  experienceBar = nil
+  soulLabel = nil
+  capLabel = nil
 end
 
 function toggle()

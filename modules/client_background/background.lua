@@ -27,7 +27,8 @@ function terminate()
   g_effects.cancelFade(background:getChildById('clientVersionLabel'))
   background:destroy()
 
-  Background = nil
+  background = nil
+  clientVersionLabel = nil
 end
 
 function hide()

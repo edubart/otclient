@@ -70,6 +70,7 @@ function terminate()
   disconnect(g_game, 'onGameEnd', clearMessages)
   clearMessages()
   messagesPanel:destroy()
+  messagesPanel = nil
 end
 
 function calculateVisibleTime(text)

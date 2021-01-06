@@ -15,7 +15,7 @@ fightModeRadioGroup = nil
 pvpModeRadioGroup = nil
 
 function init()
-  combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton', 
+  combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton',
     tr('Combat Controls'), '/images/topbuttons/combatcontrols', toggle)
   combatControlsButton:setOn(true)
   combatControlsWindow = g_ui.loadUI('combatcontrols', modules.game_interface.getRightPanel())
@@ -95,6 +95,22 @@ function terminate()
   })
 
   disconnect(LocalPlayer, { onOutfitChange = onOutfitChange })
+
+  combatControlsButton = nil
+  combatControlsWindow = nil
+  fightOffensiveBox = nil
+  fightBalancedBox = nil
+  fightDefensiveBox = nil
+  chaseModeButton = nil
+  safeFightButton = nil
+  whiteDoveBox = nil
+  whiteHandBox = nil
+  yellowHandBox = nil
+  redFistBox = nil
+  mountButton = nil
+  pvpModesPanel = nil
+  fightModeRadioGroup = nil
+  pvpModeRadioGroup = nil
 end
 
 function update()

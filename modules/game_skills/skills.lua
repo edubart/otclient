@@ -62,6 +62,9 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+S')
   skillsWindow:destroy()
   skillsButton:destroy()
+
+  skillsWindow = nil
+  skillsButton = nil
 end
 
 function expForLevel(level)

@@ -94,6 +94,21 @@ function terminate()
   hotkeysWindow:destroy()
   hotkeysButton:destroy()
   mouseGrabberWidget:destroy()
+  hotkeysWindow = nil
+  hotkeysButton = nil
+  hotKeyTextLabel = nil
+  hotkeyText = nil
+  sendAutomatically = nil
+  selectObjectButton = nil
+  clearObjectButton = nil
+  mouseGrabberWidget = nil
+  addHotkeyButton = nil
+  removeHotkeyButton = nil
+  itemPreview = nil
+  useOnSelf = nil
+  useOnTarget = nil
+  useWith = nil
+  currentHotkeys = nil
 end
 
 function configure(savePerServer, savePerCharacter)

@@ -199,6 +199,9 @@ function terminate()
   terminalWindow:destroy()
   terminalButton:destroy()
   commandEnv = nil
+  terminalWindow = nil
+  terminalButton = nil
+
   _G.terminalLines = allLines
 end
 

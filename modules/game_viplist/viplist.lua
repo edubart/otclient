@@ -45,6 +45,9 @@ function terminate()
 
   vipWindow:destroy()
   vipButton:destroy()
+
+  vipWindow = nil
+  vipButton = nil
 end
 
 function loadVipInfo()

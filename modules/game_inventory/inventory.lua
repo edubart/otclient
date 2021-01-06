@@ -56,6 +56,11 @@ function terminate()
 
   inventoryWindow:destroy()
   inventoryButton:destroy()
+
+  inventoryWindow = nil
+  inventoryPanel = nil
+  inventoryButton = nil
+  purseButton = nil
 end
 
 function toggleAdventurerStyle(hasBlessing)

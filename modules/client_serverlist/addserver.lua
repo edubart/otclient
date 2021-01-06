@@ -10,6 +10,7 @@ end
 
 function AddServer.terminate()
   addServerWindow:destroy()
+  addServerWindow = nil
 end
 
 function AddServer.add()

@@ -859,10 +859,19 @@ end
 function terminate() -- Terminating the Module (unload)
 	binaryTree = {}
 	battleButtons = {}
+	hideButtons = {}
 
 	battleButton:destroy()
 	battleWindow:destroy()
 	mouseWidget:destroy()
+
+	battlePanel = nil
+	battleButton = nil
+	battleWindow = nil
+	mouseWidget = nil
+	filterPanel = nil
+	toggleFilterButton = nil
+
 	g_keyboard.unbindKeyDown('Ctrl+B')
 
 	-- Removing the connectors
