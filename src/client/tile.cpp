@@ -43,7 +43,7 @@ Tile::Tile(const Position& position) :
     m_positionsAround = position.getPositionsAround();
 }
 
-void Tile::onVisibleTileList(const MapViewPtr& /*mapView*/)
+void Tile::onVisibleTileList(const MapViewPtr& mapView)
 {
     m_borderShadowColor = Color::white;
 
@@ -56,6 +56,8 @@ void Tile::onVisibleTileList(const MapViewPtr& /*mapView*/)
             }
         }
     }
+
+    m_covered = g_map.isCovered(m_position, mapView->getCachedFirstVisibleFloor());
 }
 
 void Tile::drawStart(const MapViewPtr& mapView)
@@ -88,6 +90,13 @@ void Tile::drawEnd(const MapViewPtr& mapView)
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView)
 {
+    if(isCovered()) {
+        if(thing->isCreature() && !isWalkable(true)) {
+            const auto& tile = thing->getTile();
+            if(!tile || tile->isCovered()) lightView = nullptr;
+        } else lightView = nullptr;
+    }
+
     const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall(true));
 
     if(putShadowColor) {
@@ -140,7 +149,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
         const auto& creature = *it;
         if(creature->isWalking()) continue;
         drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-    }
+}
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;

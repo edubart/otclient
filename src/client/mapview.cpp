@@ -136,7 +136,7 @@ void MapView::draw(const Rect& rect)
                 const Position& tilePos = tile->getPosition();
 
                 tile->drawStart(this);
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, lightView);
                 tile->drawEnd(this);
             }
 #endif
@@ -264,6 +264,9 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
                     continue;
                 }
 
+                const auto& tile = creature->getTile();
+                if(!tile) continue;
+
                 creature->updateDynamicInformation(false);
 
                 const PointF jumpOffset = creature->getJumpOffset() * m_scaleFactor;
@@ -275,7 +278,7 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
                 p.y *= verticalStretchFactor;
                 p += rect.topLeft();
 
-                creature->drawInformation(p, g_map.isCovered(pos, m_floorMin), rect, flags);
+                creature->drawInformation(p, tile->isCovered(), rect, flags);
             }
 
             m_frameCache.creatureInformation->release();
@@ -895,23 +898,26 @@ void MapView::requestDrawing(const Position& pos, const Otc::RequestDrawFlags re
 
     if(!isInCenter && pos.isValid() && !isInRange(pos)) return;
 
-    if(force || m_creatureInfTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
-        if(reDrawFlags & Otc::ReDrawStaticCreatureInformation) {
+    const auto redrawSCI = reDrawFlags & Otc::ReDrawStaticCreatureInformation;
+    const auto redrawDCI = reDrawFlags & Otc::ReDrawDynamicCreatureInformation;
+
+    if((redrawSCI || redrawDCI) && (force || m_creatureInfTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER)) {
+        if(redrawSCI) {
             m_redrawFlag |= Otc::ReDrawStaticCreatureInformation;
         }
 
-        if(reDrawFlags & Otc::ReDrawDynamicCreatureInformation) {
+        if(redrawDCI) {
             m_redrawFlag |= Otc::ReDrawDynamicCreatureInformation;
         }
     }
 
-    if(force || m_thingTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) {
-        m_redrawFlag |= reDrawFlags;
+    if(reDrawFlags & Otc::ReDrawThing && (force || m_thingTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER)) {
+        m_redrawFlag |= Otc::ReDrawThing;
     }
 
-    if(reDrawFlags & Otc::ReDrawLight) {
-        if(isDrawingLights()) m_lightView->requestDrawing(force);
-        else m_redrawFlag &= ~Otc::ReDrawLight;
+    if(isDrawingLights() && reDrawFlags & Otc::ReDrawLight) {
+        m_redrawFlag |= Otc::ReDrawLight;
+        m_lightView->requestDrawing(force);
     }
 }
 
@@ -954,7 +960,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         const Position& tilePos = tile->getPosition();
         tile->drawStart(this);
-        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView);
+        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_redrawFlag, tile->isCovered() ? nullptr : lightView);
         tile->drawEnd(this);
     }
 
@@ -968,7 +974,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         const Position& tilePos = tile->getPosition();
 
         const Point pos2d = transformPositionTo2D(tilePos, cameraPosition);
-        const auto& drawLight = hasLight && g_map.isCovered(tilePos, m_floorMin) ? nullptr : lightView;
+        const auto& drawLight = tile->isCovered() ? nullptr : lightView;
 
         if(!tile->hasGroundToDraw()) tile->drawStart(this);
 

@@ -150,6 +150,8 @@ public:
 
     const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
 
+    const bool isCovered() { return m_covered; };
+
 private:
     struct CountFlag {
         int fullGround = 0;
@@ -198,6 +200,8 @@ private:
     CreaturePtr m_localPlayer;
 
     Color m_borderShadowColor;
+
+    stdext::boolean<false> m_covered;
 };
 
 #endif
