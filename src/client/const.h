@@ -50,22 +50,18 @@ namespace Otc
         MAX_STATIC_TEXT_WIDTH = 200,
         MAX_AUTOWALK_STEPS_RETRY = 10,
         MAX_AUTOWALK_DIST = 127,
-
-        MIN_TIME_TO_RENDER = 16
     };
 
-    enum RequestDrawFlags {
-        ReDrawThing = 1 << 0,
-        ReDrawLight = 1 << 1,
-        ReDrawStaticText = 1 << 2,
-        ReDrawStaticCreatureInformation = 1 << 3,
-        ReDrawDynamicCreatureInformation = 1 << 4,
+    enum FrameUpdate {
+        FUpdateThing = 1 << 0,
+        FUpdateLight = 1 << 1,
+        FUpdateStaticText = 1 << 2,
+        FUpdateCreatureInformation = 1 << 3,
+        FUpdateDynamicCreatureInformation = 1 << 4,
 
-        ReDrawCreatureInformation = ReDrawStaticCreatureInformation | ReDrawDynamicCreatureInformation,
+        FUpdateAllInformation = FUpdateStaticText | FUpdateCreatureInformation,
 
-        ReDrawAllInformation = ReDrawStaticText | ReDrawCreatureInformation,
-
-        RedrawAll = ReDrawThing | ReDrawLight | ReDrawStaticText | ReDrawCreatureInformation
+        FUpdateAll = FUpdateThing | FUpdateLight | FUpdateStaticText | FUpdateCreatureInformation
     };
 
     enum DrawFlags {

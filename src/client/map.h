@@ -32,6 +32,7 @@
 #include "towns.h"
 
 #include <framework/core/clock.h>
+#include <framework/graphics/framebuffer.h>
 
 enum OTBM_ItemAttr
 {
@@ -148,7 +149,8 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos, const ThingPtr& thing = nullptr, const Otc::Operation operation = Otc::OPERATION_NEUTRAL);
 
-    void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = true);
+    void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
+    void cancelScheduledPainting(const Otc::FrameUpdate frameFlags, const uint16_t delay);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
@@ -224,7 +226,7 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    void setLight(const Light& light) { m_light = light; requestDrawing(Position(), Otc::ReDrawLight); }
+    void setLight(const Light& light) { m_light = light; schedulePainting(Otc::FUpdateLight); }
     void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);

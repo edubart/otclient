@@ -48,7 +48,7 @@ double Creature::speedC = 0;
 Creature::Creature() : Thing()
 {
     m_id = 0;
-    m_healthPercent = 100;
+    m_healthPercent = 101;
     m_speed = 200;
     m_direction = Otc::South;
     m_walkAnimationPhase = 0;
@@ -67,12 +67,12 @@ Creature::Creature() : Thing()
     m_outfitColor = Color::white;
 }
 
-void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int reDrawFlags, LightView* lightView)
+void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlags, LightView* lightView)
 {
     if(!canBeSeen())
         return;
 
-    if(reDrawFlags & Otc::ReDrawThing) {
+    if(frameFlags & Otc::FUpdateThing) {
         if(m_showTimedSquare) {
             g_painter->setColor(m_timedSquareColor);
             g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
@@ -96,7 +96,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         }
     }
 
-    if(lightView && reDrawFlags & Otc::ReDrawLight) {
+    if(lightView && frameFlags & Otc::FUpdateLight) {
         auto light = getLight();
 
         if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
@@ -233,10 +233,15 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     }
 }
 
-void Creature::drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags)
+void Creature::drawInformation(const Rect& parentRect, int drawFlags)
 {
     if(m_healthPercent < 1) // creature is dead
         return;
+
+    const auto& tile = getTile();
+    if(!tile) return;
+
+    bool useGray = tile->isCovered();
 
     Color fillColor = Color(96, 96, 96);
 
@@ -244,10 +249,10 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
         fillColor = m_informationColor;
 
     // calculate main rects
-    Rect backgroundRect = Rect(point.x - (13.5), point.y, 27, 4);
+    Rect backgroundRect = Rect(m_visualPoint.x - (13.5), m_visualPoint.y, 27, 4);
 
     const Size nameSize = m_nameCache.getTextSize();
-    Rect textRect = Rect(point.x - nameSize.width() / 2.0, point.y - 12, nameSize);
+    Rect textRect = Rect(m_visualPoint.x - nameSize.width() / 2.0, m_visualPoint.y - 12, nameSize);
 
     // distance them
     uint32 offset = 12;
@@ -408,7 +413,7 @@ void Creature::updateJump()
 
     m_jumpOffset = PointF(height, height);
 
-    requestDrawing();
+    schedulePainting();
 
     int diff = 0;
     if(m_jumpTimer.ticksElapsed() < halfJumpDuration)
@@ -447,7 +452,7 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
-    checkAndStartAnimation();
+    g_map.schedulePainting(Otc::FUpdateThing, getAnimationInterval());
 
     // creature appeared the first time or wasn't seen for a long time
     if(m_removed) {
@@ -579,7 +584,7 @@ void Creature::nextWalkUpdate()
 
     // do the update
     updateWalk();
-    requestDrawing();
+    schedulePainting();
 
     if(!m_walking) return;
 
@@ -588,7 +593,7 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, Otc::MIN_TIME_TO_RENDER));
+    }, std::max<int>(m_stepCache.duration / Otc::TILE_PIXELS, FrameBuffer::MIN_TIME_UPDATE));
 }
 
 void Creature::updateWalk()
@@ -644,7 +649,7 @@ void Creature::terminateWalk()
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
 
-        self->requestDrawing();
+        self->schedulePainting();
     }, g_game.getServerBeat());
 
 }
@@ -657,6 +662,8 @@ void Creature::setName(const std::string& name)
 
 void Creature::setHealthPercent(uint8 healthPercent)
 {
+    if(m_healthPercent == healthPercent) return;
+
     if(healthPercent > 92)
         m_informationColor = Color(0x00, 0xBC, 0x00);
     else if(healthPercent > 60)
@@ -678,7 +685,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
         onDeath();
 
     m_updateDynamicInformation = true;
-    g_map.requestDrawing(m_position, Otc::ReDrawDynamicCreatureInformation);
+    g_map.schedulePainting(Otc::FUpdateDynamicCreatureInformation);
 }
 
 void Creature::setDirection(Otc::Direction direction)
@@ -690,7 +697,7 @@ void Creature::setDirection(Otc::Direction direction)
 void Creature::setOutfit(const Outfit& outfit)
 {
     if(m_type != Proto::CreatureTypeUnknown) {
-        cancelListenerPainter();
+        cancelScheduledPainting();
     }
 
     const Outfit oldOutfit = m_outfit;
@@ -712,8 +719,8 @@ void Creature::setOutfit(const Outfit& outfit)
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
     if(m_type != Proto::CreatureTypeUnknown) {
-        g_map.requestDrawing(m_position, Otc::ReDrawThing);
-        checkAndStartAnimation();
+        g_map.schedulePainting(Otc::FUpdateThing);
+        g_map.schedulePainting(Otc::FUpdateThing, getAnimationInterval());
     }
 }
 
@@ -786,7 +793,7 @@ void Creature::setSkull(uint8 skull)
     m_skull = skull;
     callLuaField("onSkullChange", m_skull);
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
+    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
 }
 
 void Creature::setShield(uint8 shield)
@@ -794,7 +801,7 @@ void Creature::setShield(uint8 shield)
     m_shield = shield;
     callLuaField("onShieldChange", m_shield);
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
+    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
 }
 
 void Creature::setEmblem(uint8 emblem)
@@ -874,7 +881,7 @@ void Creature::updateShield()
     } else if(!m_shieldBlink)
         m_showShieldTexture = true;
 
-    g_map.requestDrawing(m_position, Otc::ReDrawStaticCreatureInformation);
+    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
 }
 
 Point Creature::getDrawOffset()
@@ -1012,13 +1019,15 @@ int Creature::getCurrentAnimationPhase(const bool mount)
     return m_walkAnimationPhase;
 }
 
-void Creature::checkAndStartAnimation()
+int Creature::getAnimationInterval()
 {
     const auto& datType = m_outfit.hasMount() ? rawGetMountThingType() : rawGetThingType();
 
     const auto idleAnimator = datType->getIdleAnimator();
-    if(idleAnimator) startListenerPainter(idleAnimator->getAverageDuration());
-    else if(datType->isAnimateAlways()) startListenerPainter(1000 / datType->getAnimationPhases());
+    if(idleAnimator) return idleAnimator->getAverageDuration();
+    if(datType->isAnimateAlways()) return 1000 / datType->getAnimationPhases();
+
+    return 0;
 }
 
 int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)

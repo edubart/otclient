@@ -23,6 +23,7 @@
 #ifndef LIGHTVIEW_H
 #define LIGHTVIEW_H
 
+#include <framework/graphics/framebuffer.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/painter.h>
 #include "declarations.h"
@@ -46,24 +47,25 @@ public:
     void draw(const Rect& dest, const Rect& src);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
-    void requestDrawing(const bool force) { if(force || m_minTimeRender.ticksElapsed() >= Otc::MIN_TIME_TO_RENDER) m_redraw = true; }
+    void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) { m_lightbuffer->schedulePainting(delay); }
+    bool canUpdate() const { return isDark() && m_lightbuffer->canUpdate(); }
 
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
     void drawGlobalLight(const Light& light);
     void drawLightSource(const Point& center, const Color& color, int radius);
+
+    Light m_globalLight;
+
     TexturePtr generateLightBubble(float centerFactor);
+    TexturePtr m_lightTexture;
 
     Painter::BlendEquation m_blendEquation;
-    TexturePtr m_lightTexture;
+
     FrameBufferPtr m_lightbuffer;
-    Light m_globalLight;
+
     std::vector<LightSource> m_lightMap;
-
-    bool m_redraw;
-
-    Timer m_minTimeRender;
 };
 
 #endif

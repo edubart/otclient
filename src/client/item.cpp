@@ -69,7 +69,7 @@ std::string Item::getName()
     return g_things.findItemTypeByClientId(m_clientId)->getName();
 }
 
-void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int redrawFlag, LightView* lightView)
+void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlag, LightView* lightView)
 {
     if(m_clientId == 0 || !canDraw())
         return;
@@ -84,7 +84,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highli
     if(m_color != Color::alpha)
         g_painter->setColor(m_color);
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture, redrawFlag, lightView);
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture, frameFlag, lightView);
 
     /// Sanity check
     /// This is just to ensure that we don't overwrite some color and
@@ -95,7 +95,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highli
     if(highLight.enabled && this == highLight.thing) {
         g_painter->setColor(highLight.rgbColor);
         useBlankTexture(true);
-        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture, redrawFlag, lightView);
+        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture, frameFlag, lightView);
         useBlankTexture(false);
         g_painter->resetColor();
     }
@@ -407,12 +407,12 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
     return Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
 }
 
-void Item::startListenerPainter()
+int Item::getAnimationInterval()
 {
-    if(!hasAnimationPhases()) return;
+    if(!hasAnimationPhases()) return 0;
 
     const AnimatorPtr& animator = getAnimator();
-    Thing::startListenerPainter(animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME);
+    return animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME;
 }
 
 const ThingTypePtr& Item::getThingType()

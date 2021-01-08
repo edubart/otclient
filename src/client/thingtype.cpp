@@ -432,7 +432,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int reDrawFlags, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -461,7 +461,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * 32) * scaleFactor,
                           textureRect.size() * scaleFactor);
 
-    if(reDrawFlags & Otc::ReDrawThing) {
+    if(frameFlags & Otc::FUpdateThing) {
         const bool useOpacity = m_opacity < 1.0f;
 
         if(useOpacity)
@@ -473,7 +473,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
             g_painter->resetColor();
     }
 
-    if(lightView && hasLight() && reDrawFlags & Otc::ReDrawLight) {
+    if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
         const Light light = getLight();
         if(light.intensity > 0)
             lightView->addLightSource(screenRect.center(), scaleFactor, light);
@@ -666,39 +666,4 @@ int ThingType::getExactHeight()
     const Size size = m_texturesFramesOriginRects[0][frameIndex].size() - m_texturesFramesOffsets[0][frameIndex].toSize();
 
     return m_exactHeight = size.height();
-}
-
-void ThingType::startListenerPainter(const float duration)
-{
-    if(!hasListenerPainter()) {
-        m_painterListeningEvent = g_dispatcher.cycleEvent([=]() {
-            uint32_t redrawFlag = Otc::ReDrawThing;
-
-            if(getCategory() == ThingCategoryMissile && hasLight())
-                redrawFlag |= Otc::ReDrawLight;
-
-            g_map.requestDrawing(Position(), static_cast<Otc::RequestDrawFlags>(redrawFlag), false);
-        }, duration);
-    }
-
-    ++m_countPainterListeningRef;
-}
-
-bool ThingType::cancelListenerPainter()
-{
-    if(!hasListenerPainter()) return false;
-
-    --m_countPainterListeningRef;
-
-    if(m_painterListeningEvent && m_countPainterListeningRef == 0) {
-        uint32_t redrawFlag = Otc::ReDrawThing;
-        if(hasLight()) redrawFlag |= Otc::ReDrawLight;
-
-        g_map.requestDrawing(Position(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
-
-        m_painterListeningEvent->cancel();
-        m_painterListeningEvent = nullptr;
-    }
-
-    return true;
 }

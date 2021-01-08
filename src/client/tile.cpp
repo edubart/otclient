@@ -88,7 +88,7 @@ void Tile::drawEnd(const MapViewPtr& mapView)
     }
 }
 
-void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView)
+void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
 {
     if(isCovered()) {
         if(thing->isCreature() && !isWalkable(true)) {
@@ -104,9 +104,9 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 
     if(thing->isEffect()) {
-        thing->static_self_cast<Effect>()->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, redrawFlag, lightView);
+        thing->static_self_cast<Effect>()->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, frameFlag, lightView);
     } else {
-        thing->draw(dest, scaleFactor, animate, m_highlight, redrawFlag, lightView);
+        thing->draw(dest, scaleFactor, animate, m_highlight, frameFlag, lightView);
 
         m_drawElevation += thing->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
@@ -119,22 +119,22 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 }
 
-void Tile::drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     for(const auto& ground : m_ground) {
-        drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 }
 
-void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     for(const auto& item : m_bottomItems) {
-        drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 
     for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
-        drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 
 #if RENDER_CREATURE_BEHIND == 1
@@ -142,45 +142,45 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, Lig
         drawThing(creature, Point(
             dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, reDrawFlags, lightView);
+        ), scaleFactor, true, frameFlags, lightView);
     }
 
     for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
         const auto& creature = *it;
         if(creature->isWalking()) continue;
-        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
-}
+        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+    }
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
-        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
             dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, reDrawFlags, lightView);
+        ), scaleFactor, true, frameFlags, lightView);
     }
 #endif    
 }
 
-void Tile::drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     for(const auto& effect : m_effects) {
-        drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 
     for(const auto& item : m_topItems) {
-        drawThing(item, dest, scaleFactor, true, reDrawFlags, lightView);
+        drawThing(item, dest, scaleFactor, true, frameFlags, lightView);
     }
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView)
+void Tile::draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-    drawGround(dest, scaleFactor, reDrawFlags, lightView);
-    drawBottom(dest, scaleFactor, reDrawFlags, lightView);
-    drawTop(dest, scaleFactor, reDrawFlags, lightView);
+    drawGround(dest, scaleFactor, frameFlags, lightView);
+    drawBottom(dest, scaleFactor, frameFlags, lightView);
+    drawTop(dest, scaleFactor, frameFlags, lightView);
 }
 
 void Tile::clean()
@@ -192,7 +192,7 @@ void Tile::clean()
     m_creatures.clear();
     m_things.clear();
 
-    cancelListenerPainter();
+    cancelScheduledPainting();
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)
@@ -350,7 +350,9 @@ bool Tile::removeThing(const ThingPtr& thing)
 
         if(item->hasAnimationPhases()) {
             const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), item);
-            if(subIt != m_animatedItems.end()) m_animatedItems.erase(subIt);
+            if(subIt != m_animatedItems.end()) {
+                m_animatedItems.erase(subIt);
+            }
         }
 
         if(thing->isGroundBorder() || thing->isGround()) {
@@ -719,12 +721,12 @@ void Tile::checkTranslucentLight()
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-void Tile::cancelListenerPainter()
+void Tile::cancelScheduledPainting()
 {
     if(m_animatedItems.empty()) return;
 
     for(const ItemPtr& item : m_animatedItems)
-        item->cancelListenerPainter();
+        item->cancelScheduledPainting();
 
     m_animatedItems.clear();
 }
@@ -878,7 +880,7 @@ void Tile::select()
 
     m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
         m_highlight.update = true;
-        g_map.requestDrawing(m_position, Otc::ReDrawThing, false);
+        g_map.schedulePainting(Otc::FUpdateThing);
     }, 30);
 }
 
@@ -890,5 +892,5 @@ void Tile::unselect()
     m_highlight.listeningEvent->cancel();
     m_highlight.listeningEvent = nullptr;
 
-    g_map.requestDrawing(m_position, Otc::ReDrawThing, false);
+    g_map.schedulePainting(Otc::FUpdateThing);
 }

@@ -46,12 +46,12 @@ public:
 
     Creature();
 
-    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int reDrawFlags, LightView* lightView = nullptr) override;
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlags, LightView* lightView = nullptr) override;
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction);
 
     void drawOutfit(const Rect& destRect, bool resize);
-    void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
+    void drawInformation(const Rect& parentRect, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
     void setName(const std::string& name);
@@ -122,6 +122,7 @@ public:
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
 
+    int getAnimationInterval() override;
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }
@@ -141,6 +142,9 @@ public:
     void onAppear() override;
     void onDisappear() override;
     virtual void onDeath();
+
+    void setVisualPoint(const Point& point) { m_visualPoint = point; }
+    const Point getVisualPoint() { return m_visualPoint; }
 
 protected:
     void updateWalkingTile();
@@ -226,9 +230,9 @@ private:
         int getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
     };
 
-    void checkAndStartAnimation();
-
     StepCache m_stepCache;
+
+    Point m_visualPoint;
 };
 
 // @bindclass

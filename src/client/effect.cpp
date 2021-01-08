@@ -27,7 +27,7 @@
 
 Effect::Effect() : m_timeToStartDrawing(0) {}
 
-void Effect::drawEffect(const Point& dest, float scaleFactor, int redrawFlag, LightView* lightView)
+void Effect::drawEffect(const Point& dest, float scaleFactor, int frameFlag, LightView* lightView)
 {
     if(m_id == 0) return;
 
@@ -52,13 +52,22 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int redrawFlag, Li
     const int xPattern = m_position.x % getNumPatternX();
     const int yPattern = m_position.y % getNumPatternY();
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, m_useBlankTexture, redrawFlag, lightView);
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, m_useBlankTexture, frameFlag, lightView);
 }
 
 void Effect::onAppear()
 {
-    m_animationTimer.restart();
+    m_animationTimer.restart();    
 
+    schedulePainting(getAnimationInterval());
+
+    // schedule removal
+    const auto self = asEffect();
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+}
+
+int Effect::getAnimationInterval()
+{
     int ticksPerFrame;
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
         m_duration = getThingType()->getAnimator()->getTotalDuration();
@@ -77,11 +86,7 @@ void Effect::onAppear()
         m_duration *= getAnimationPhases();
     }
 
-    startListenerPainter(ticksPerFrame);
-
-    // schedule removal
-    const auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+    return ticksPerFrame;
 }
 
 void Effect::waitFor(const EffectPtr& firstEffect)

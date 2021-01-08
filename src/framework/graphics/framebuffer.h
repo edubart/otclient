@@ -25,6 +25,11 @@
 
 #include "declarations.h"
 #include "texture.h"
+#include <framework/core/scheduledevent.h>
+#include <framework/core/timer.h>
+#include <client/const.h>
+
+static constexpr int32_t MAX_NODES = 512;
 
 class FrameBuffer : public stdext::shared_object
 {
@@ -34,6 +39,12 @@ protected:
     friend class FrameBufferManager;
 
 public:
+    const static uint8_t
+        MIN_TIME_UPDATE = 16,
+        MAX_TIME_UPDATE = MIN_TIME_UPDATE * 2,
+        FORCE_UPDATE = 1,
+        FLUSH_AMOUNT = 25;
+
     virtual ~FrameBuffer();
 
     void resize(const Size& size);
@@ -45,26 +56,42 @@ public:
 
     void setBackuping(bool enabled) { m_backuping = enabled; }
     void setSmooth(bool enabled) { m_smooth = enabled; }
+    void setDrawable(bool enabled) { m_drawable = enabled; }
 
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
     bool isBackuping() { return m_backuping; }
     bool isSmooth() { return m_smooth; }
+    bool isDrawable() { return m_drawable; }
+
+    const bool canUpdate();
+    void update();
+    void schedulePainting(const uint16_t time);
+    void removeRenderingTime(const uint16_t time);
 
 private:
     void internalCreate();
     void internalBind();
     void internalRelease();
 
+    const uint8_t flushTime();
+
     TexturePtr m_texture;
     TexturePtr m_screenBackup;
     Size m_oldViewportSize;
     uint m_fbo;
     uint m_prevBoundFbo;
+    stdext::boolean<true> m_forceUpdate;
     stdext::boolean<true> m_backuping;
     stdext::boolean<true> m_smooth;
+    stdext::boolean<true> m_drawable;
 
     static uint boundFbo;
+
+    std::unordered_map<uint16_t, std::pair<uint16_t, ScheduledEventPtr>> m_schedules;
+    Timer m_lastRenderedTime;
+    uint16_t m_requestAmount;
+
 };
 
 #endif

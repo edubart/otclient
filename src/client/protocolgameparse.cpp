@@ -1176,7 +1176,7 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     }
 
     creature->setLight(light);
-    g_map.requestDrawing(Position(), Otc::ReDrawLight);
+    g_map.schedulePainting(Otc::FUpdateLight);
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)

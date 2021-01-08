@@ -92,30 +92,30 @@ public:
     Position getCameraPosition();
     void setCameraPosition(const Position& pos);
 
-    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; requestDrawing(Position(), Otc::ReDrawLight); }
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; schedulePainting(Otc::FUpdateLight); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawNames(bool enable) { m_drawNames = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
+    void setDrawNames(bool enable) { m_drawNames = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
     bool isDrawingNames() { return m_drawNames; }
 
-    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights && m_lightView->isDark(); }
 
-    void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; requestDrawing(Position(), Otc::ReDrawThing); }
+    void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; schedulePainting(Otc::FUpdateThing); }
     bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
     const Color getLastFloorShadowingColor() { return m_lastFloorShadowingColor; }
 
-    void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; requestDrawing(Position(), Otc::ReDrawThing); }
+    void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; schedulePainting(Otc::FUpdateThing); }
     bool isDrawingViewportEdge() { return m_drawViewportEdge; }
 
-    void setDrawManaBar(bool enable) { m_drawManaBar = enable; requestDrawing(Position(), Otc::ReDrawAllInformation); }
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
     void move(int x, int y);
@@ -129,7 +129,9 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force = true);
+    void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
+    void cancelScheduledPainting(const Otc::FrameUpdate frameFlags, uint16_t delay);
+
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_visibleCreatures; }
@@ -144,7 +146,9 @@ private:
 
     struct FrameCache {
         FrameBufferPtr tile, staticText,
-            creatureInformation, crosshair;
+            crosshair, creatureInformation, creatureDynamicInformation;
+
+        uint32_t flags = 0;
     };
 
     struct Crosshair {
@@ -232,10 +236,6 @@ private:
 
     Color m_lastFloorShadowingColor;
 
-    uint32 m_redrawFlag;
-
-    Timer m_thingTimeRender;
-    Timer m_creatureInfTimeRender;
     Timer m_fadeTimer;
 
     uint_fast8_t m_floorMin, m_floorMax;

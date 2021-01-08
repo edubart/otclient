@@ -65,11 +65,11 @@ public:
     void drawStart(const MapViewPtr& mapView);
     void drawEnd(const MapViewPtr& mapView);
     void onVisibleTileList(const MapViewPtr& mapView);
-    void draw(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
-    void drawGround(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
-    void drawBottom(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView = nullptr);
-    void drawTop(const Point& dest, float scaleFactor, int reDrawFlags, LightView* lightView);
-    void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int redrawFlag, LightView* lightView);
+    void draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView);
+    void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);
 
     void clean();
 
@@ -146,7 +146,7 @@ public:
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
     bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
 
-    void cancelListenerPainter();
+    void cancelScheduledPainting();
 
     const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
 

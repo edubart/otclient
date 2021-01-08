@@ -81,7 +81,7 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int redrawFlag = Otc::ReDrawThing, LightView* lightView = nullptr) override;
+    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlag = Otc::FUpdateThing, LightView* lightView = nullptr) override;
 
     void setId(uint32 id) override;
     void setOtbId(uint16 id);
@@ -132,7 +132,7 @@ public:
     ItemPtr clone();
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() override { return true; }
-
+    
     ItemVector getContainerItems() { return m_containerItems; }
     ItemPtr getContainerItem(int slot) { return m_containerItems[slot]; }
     void addContainerItemIndexed(const ItemPtr& i, int slot) { m_containerItems[slot] = i; }
@@ -150,7 +150,8 @@ public:
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
     bool canDraw()  const { return m_canDraw; }
 
-    void startListenerPainter();
+protected:
+    int getAnimationInterval() override;
 
 private:
     uint16 m_clientId;

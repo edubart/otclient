@@ -136,7 +136,7 @@ public:
     void serialize(const FileStreamPtr& fin);
     void exportImage(const std::string& fileName);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int reDrawFlags = Otc::ReDrawThing, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags = Otc::FUpdateThing, LightView* lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -219,10 +219,6 @@ public:
     void setPathable(bool var);
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase, bool allBlank = false);
-
-    void startListenerPainter(float duration);
-    bool cancelListenerPainter();
-    const bool hasListenerPainter() { return m_countPainterListeningRef > 0; }
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }

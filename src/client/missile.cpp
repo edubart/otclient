@@ -27,7 +27,7 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-void Missile::draw(const Point& dest, float scaleFactor, int redrawFlag, LightView* lightView)
+void Missile::draw(const Point& dest, float scaleFactor, int frameFlag, LightView* lightView)
 {
     if(m_id == 0)
         return;
@@ -63,7 +63,7 @@ void Missile::draw(const Point& dest, float scaleFactor, int redrawFlag, LightVi
     }
 
     const float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, m_useBlankTexture, redrawFlag, lightView);
+    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, m_useBlankTexture, frameFlag, lightView);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -87,7 +87,12 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     const auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 
-    startListenerPainter(m_duration / Otc::TILE_PIXELS);
+    schedulePainting(getAnimationInterval());
+}
+
+int Missile::getAnimationInterval()
+{
+    return m_duration / Otc::TILE_PIXELS;
 }
 
 void Missile::setId(uint32 id)

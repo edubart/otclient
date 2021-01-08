@@ -198,7 +198,7 @@ void UIMap::updateVisibleDimension()
     if(m_keepAspectRatio)
         updateMapSize();
 
-    g_map.requestDrawing(Position(), Otc::RedrawAll);
+    g_map.schedulePainting(Otc::FUpdateAll, FrameBuffer::FORCE_UPDATE);
 }
 
 void UIMap::updateMapSize()
@@ -220,7 +220,7 @@ void UIMap::updateMapSize()
     if(!m_keepAspectRatio)
         updateVisibleDimension();
     else {
-        g_map.requestDrawing(Position(), Otc::RedrawAll);
+        g_map.schedulePainting(Otc::FUpdateAll, FrameBuffer::FORCE_UPDATE);
     }
 }
 

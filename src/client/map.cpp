@@ -81,10 +81,16 @@ void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::requestDrawing(const Position& pos, const Otc::RequestDrawFlags reDrawFlags, const bool force)
+void Map::cancelScheduledPainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
 {
     for(const MapViewPtr& mapView : m_mapViews)
-        mapView->requestDrawing(pos, reDrawFlags, force);
+        mapView->cancelScheduledPainting(frameFlags, delay);
+}
+
+void Map::schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->schedulePainting(frameFlags, delay);
 }
 
 void Map::clean()
@@ -131,12 +137,12 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
         const TilePtr& tile = getOrCreateTile(pos);
         if(tile && (m_floatingEffect || !thing->isEffect() || tile->getGround())) {
             tile->addThing(thing, stackPos);
-            thing->requestDrawing(true);
+            thing->schedulePainting();
         }
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-            thing->requestDrawing(true);
+            thing->schedulePainting();
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
             const AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
@@ -167,7 +173,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 m_animatedTexts.push_back(animatedText);
             }
         } else if(thing->isStaticText()) {
-            thing->requestDrawing(true);
+            thing->schedulePainting();
 
             const StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             for(const auto& other : m_staticTexts) {
@@ -215,7 +221,7 @@ bool Map::removeThing(const ThingPtr& thing)
             m_staticTexts.erase(it);
             ret = true;
 
-            requestDrawing(thing->getPosition(), Otc::ReDrawStaticText);
+            thing->schedulePainting();
         }
     } else {
         if(thing->isMissile()) {
@@ -230,12 +236,11 @@ bool Map::removeThing(const ThingPtr& thing)
             ret = tile->removeThing(thing);
         }
 
-        thing->cancelListenerPainter();
-        uint32_t redrawFlag = Otc::ReDrawThing;
-        if(thing->hasLight()) redrawFlag |= Otc::ReDrawLight;
-        if(thing->isCreature()) redrawFlag |= Otc::ReDrawCreatureInformation;
-
-        requestDrawing(thing->getPosition(), static_cast<Otc::RequestDrawFlags>(redrawFlag));
+        thing->cancelScheduledPainting();
+        uint32_t frameFlag = Otc::FUpdateThing;
+        if(thing->hasLight()) frameFlag |= Otc::FUpdateLight;
+        if(thing->isCreature()) frameFlag |= Otc::FUpdateCreatureInformation;
+        schedulePainting(static_cast<Otc::FrameUpdate>(frameFlag));
     }
 
     notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_REMOVE);
@@ -578,7 +583,7 @@ void Map::removeUnawareThings()
                         notificateTileUpdate(tile->getPosition(), creature, Otc::OPERATION_REMOVE);
                     }*/
 
-                    tile->cancelListenerPainter();
+                    tile->cancelScheduledPainting();
                     block.remove(pos);
                 }
 

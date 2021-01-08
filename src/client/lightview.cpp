@@ -37,7 +37,6 @@ LightView::LightView()
     m_lightbuffer = g_framebuffers.createFrameBuffer();
     m_lightTexture = generateLightBubble(0.1f);
     m_blendEquation = Painter::BlendEquation_Add;
-    m_redraw = true;
     reset();
 }
 
@@ -137,7 +136,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
     // draw light, only if there is darkness
     g_painter->saveAndResetState();
-    if(m_redraw) {
+    if(m_lightbuffer->canUpdate()) {
         m_lightbuffer->bind();
         g_painter->setCompositionMode(Painter::CompositionMode_Replace);
 
@@ -149,9 +148,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
         for(const LightSource& source : m_lightMap)
             drawLightSource(source.center, source.color, source.radius);
 
-        m_redraw = false;
         m_lightbuffer->release();
-        m_minTimeRender.restart();
     }
     g_painter->setCompositionMode(Painter::CompositionMode_Light);
 

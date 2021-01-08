@@ -23,6 +23,7 @@
 #ifndef THING_H
 #define THING_H
 
+#include <framework/graphics/framebuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include "declarations.h"
 #include "thingtype.h"
@@ -45,12 +46,13 @@ class Thing : public LuaObject
 public:
     Thing();
     virtual ~Thing() {}
-
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, int /*redrawFlag*/ = Otc::ReDrawThing, LightView* /*lightView*/ = nullptr) {}
-
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, int /*frameFlag*/ = Otc::FUpdateThing, LightView* /*lightView*/ = nullptr) {}
     virtual void setId(uint32 /*id*/) {}
+
+    void schedulePainting(uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
+    void cancelScheduledPainting();
+
     void setPosition(const Position& position);
-    void requestDrawing(const bool force = false);
 
     virtual uint32 getId() { return 0; }
     Position getPosition() { return m_position; }
@@ -59,6 +61,7 @@ public:
     ContainerPtr getParentContainer();
     int getStackPos();
 
+    virtual int getAnimationInterval() { return 0; }
     virtual bool isItem() { return false; }
     virtual bool isEffect() { return false; }
     virtual bool isMissile() { return false; }
@@ -142,10 +145,6 @@ public:
     bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
 
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
-
-    void startListenerPainter(const float duration) { rawGetThingType()->startListenerPainter(duration); }
-    bool cancelListenerPainter() { return rawGetThingType()->cancelListenerPainter(); }
-    bool hasListenerPainter() { return rawGetThingType()->hasListenerPainter(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
     virtual void onAppear() {}
