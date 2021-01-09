@@ -183,6 +183,7 @@ protected:
     stdext::boolean<false> m_passable;
     stdext::boolean<false> m_showTimedSquare;
     stdext::boolean<false> m_showStaticSquare;
+    stdext::boolean<false> m_forceWalk;
     stdext::boolean<true> m_removed;
     Color m_timedSquareColor;
     Color m_staticSquareColor;

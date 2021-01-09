@@ -73,9 +73,12 @@ bool LocalPlayer::canWalk(Otc::Direction)
         return false;
 
     if(!isAutoWalking()) {
-        const int stepDuration = std::max<int>(getStepDuration(), g_game.getPing());
-        if(m_walkTimer.ticksElapsed() < stepDuration)
-            return false;
+        if(m_forceWalk) m_forceWalk = false;
+        else {
+            const int stepDuration = std::max<int>(getStepDuration(), g_game.getPing());
+            if(m_walkTimer.ticksElapsed() < stepDuration)
+                return false;
+        }
     }
 
     return true;
@@ -288,6 +291,10 @@ void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPo
         stopAutoWalk();
     else if(m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
         autoWalk(m_autoWalkDestination);
+
+    if(newPos.z != oldPos.z) {
+        m_forceWalk = true;
+    }
 }
 
 void LocalPlayer::setStates(int states)
