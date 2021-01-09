@@ -46,8 +46,7 @@ enum {
 
     NEAR_VIEW_AREA = 32 * 32,
     MID_VIEW_AREA = 64 * 64,
-    FAR_VIEW_AREA = 128 * 128,
-    MAX_TILE_DRAWS = NEAR_VIEW_AREA * 7
+    FAR_VIEW_AREA = 128 * 128
 };
 
 MapView::MapView()
@@ -344,12 +343,19 @@ void MapView::drawText(const Rect& rect, Point drawOffset, const float horizonta
 
 void MapView::updateVisibleTilesCache()
 {
-    m_mustUpdateVisibleTilesCache = false;
-
     // there is no tile to render on invalid positions
     const Position cameraPosition = getCameraPosition();
     if(!cameraPosition.isValid())
         return;
+
+    if(cameraPosition.z == m_lastCameraPosition.z && m_timeUpdateVisibleTilesCache.ticksElapsed() <= FrameBuffer::MIN_TIME_UPDATE)
+        return;
+
+    m_mustUpdateVisibleTilesCache = false;
+
+    if(m_lastCameraPosition.z != cameraPosition.z) {
+        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
+    }
 
     const int cachedFirstVisibleFloor = calcFirstVisibleFloor();
     int cachedLastVisibleFloor = calcLastVisibleFloor();
@@ -360,17 +366,6 @@ void MapView::updateVisibleTilesCache()
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;
 
-    // TODO: Review
-    /*if(m_cachedFirstVisibleFloor == cachedFirstVisibleFloor &&
-       m_cachedLastVisibleFloor == cachedLastVisibleFloor &&
-       cameraPosition.z == m_lastCameraPosition.z &&
-       cameraPosition.distance(m_lastCameraPosition) < 2
-       ) return;*/
-
-    if(m_lastCameraPosition.z != cameraPosition.z) {
-        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
-    }
-
     m_lastCameraPosition = cameraPosition;
     m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
     m_cachedLastVisibleFloor = cachedLastVisibleFloor;
@@ -380,28 +375,20 @@ void MapView::updateVisibleTilesCache()
         m_cachedVisibleTiles[m_floorMin].clear();
     } while(++m_floorMin <= m_floorMax);
 
-    uint_fast16_t processedTiles = 0;
     m_floorMin = cameraPosition.z;
     m_floorMax = cameraPosition.z;
-
-    bool stop = false;
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
-    for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
+    for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor; --iz) {
         auto& floor = m_cachedVisibleTiles[iz];
 
         // loop through / diagonals beginning at top left and going to top right
-        for(int diagonal = 0; diagonal < numDiagonals && !stop; ++diagonal) {
+        for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
             // loop current diagonal tiles
             const int advance = std::max<int>(diagonal - m_drawDimension.height(), 0);
-            for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width() && !stop; --iy, ++ix) {
-                // avoid rendering too much tiles at once
-                if(processedTiles > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
-                    stop = true;
-                    break;
-                }
+            for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
 
                 // position on current floor
                 //TODO: check position limits
@@ -425,8 +412,6 @@ void MapView::updateVisibleTilesCache()
                         m_floorMin = iz;
                     else if(iz > m_floorMax)
                         m_floorMax = iz;
-
-                    ++processedTiles;
                 }
             }
         }
@@ -499,7 +484,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
     m_frameCache.creatureDynamicInformation->resize(g_graphics.getViewportSize());
 
-    resetLastCamera();
     requestVisibleTilesCacheUpdate();
 }
 

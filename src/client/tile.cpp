@@ -531,7 +531,6 @@ ThingPtr Tile::getTopUseThing()
 
 CreaturePtr Tile::getTopCreature(const bool checkAround)
 {
-    const CreaturePtr creature;
     if(!m_creatures.empty())
         return m_creatures.back();
 
@@ -542,7 +541,7 @@ CreaturePtr Tile::getTopCreature(const bool checkAround)
     }
 
     // check for walking creatures in tiles around
-    if(checkAround && !creature) {
+    if(checkAround) {
         for(const auto& position : m_positionsAround) {
             const TilePtr& tile = g_map.getTile(position);
             if(!tile) continue;

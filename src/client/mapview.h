@@ -48,7 +48,7 @@ public:
 private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
-    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
+    void requestVisibleTilesCacheUpdate() { m_timeUpdateVisibleTilesCache.restart();  m_mustUpdateVisibleTilesCache = true; }
     void onFloorDrawingStart(const short floor);
     void onFloorDrawingEnd(const short floor);
     void onFloorChange(const short floor, const short previousFloor);
@@ -203,7 +203,6 @@ private:
     stdext::boolean<true> m_shaderSwitchDone;
     stdext::boolean<true> m_drawFloorShadowing;
     stdext::boolean<true> m_drawHealthBars;
-    stdext::boolean<true> m_autoViewMode;
     stdext::boolean<true> m_drawManaBar;
     stdext::boolean<true> m_multifloor;
     stdext::boolean<true> m_drawTexts;
@@ -212,6 +211,7 @@ private:
     stdext::boolean<true> m_follow;
 
     stdext::boolean<false> m_drawLights;
+    stdext::boolean<false> m_autoViewMode;
     stdext::boolean<false> m_drawViewportEdge;
 
     std::vector<CreaturePtr> m_visibleCreatures;
@@ -236,7 +236,7 @@ private:
 
     Color m_lastFloorShadowingColor;
 
-    Timer m_fadeTimer;
+    Timer m_fadeTimer, m_timeUpdateVisibleTilesCache;
 
     uint_fast8_t m_floorMin, m_floorMax;
 

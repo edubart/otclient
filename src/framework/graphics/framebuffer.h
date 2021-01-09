@@ -41,7 +41,7 @@ protected:
 public:
     const static uint8_t
         MIN_TIME_UPDATE = 16,
-        MAX_TIME_UPDATE = MIN_TIME_UPDATE * 2,
+        MAX_TIME_UPDATE = MIN_TIME_UPDATE * 3,
         FORCE_UPDATE = 1,
         FLUSH_AMOUNT = 25;
 
