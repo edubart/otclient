@@ -91,8 +91,13 @@ bool UIMap::zoomIn()
     if(m_zoom - delta < m_maxZoomIn)
         return false;
 
+    const auto oldZoom = m_zoom;
+
     m_zoom -= delta;
     updateVisibleDimension();
+
+    callLuaField("onZoomChange", m_zoom, oldZoom);
+
     return true;
 }
 
@@ -105,8 +110,13 @@ bool UIMap::zoomOut()
     if(m_zoom + delta > m_maxZoomOut)
         return false;
 
+    const auto oldZoom = m_zoom;
+
     m_zoom += 2;
     updateVisibleDimension();
+
+    callLuaField("onZoomChange", m_zoom, oldZoom);
+
     return true;
 }
 

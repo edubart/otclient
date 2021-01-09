@@ -31,6 +31,10 @@ local function connecting()
 		onDisappear = onCreatureDisappear
 	})
 
+	connect(UIMap, {
+		onZoomChange = onZoomChange
+	})
+
 	-- Check creatures around you
 	checkCreatures()
 	return true
@@ -57,6 +61,11 @@ local function disconnecting()
 		onAppear = onCreatureAppear,
 		onDisappear = onCreatureDisappear
 	})
+
+	disconnect(UIMap, {
+		onZoomChange = onZoomChange
+	})
+
 	return true
 end
 
@@ -315,6 +324,12 @@ function setSortType(state, oldSortType) -- Setting the current sort type (dista
 	reSort(oldSortType, state, order, order)
 end
 
+local eventOnZoomChange = nil
+function onZoomChange()
+	removeEvent(eventOnZoomChange)
+	eventOnZoomChange = scheduleEvent(checkCreatures, 200)
+end
+
 function onChangeSortType(comboBox, option) -- Callback when change the sort type (distance, age, name, health)
 	local loption = option:lower()
 	local oldType = getSortType()
@@ -377,7 +392,7 @@ function checkCreatures() -- Function that initially populates our tree once the
 	-- Will also require an event to update the list when the zoom in screen is increased/reduced.
 	]]
 
-	local spectators = g_map.getSpectators(player:getPosition(), false)
+	local spectators = modules.game_interface.getMapPanel():getSpectators(player:getPosition(), false)
 	local sortType = getSortType()
 
 	for _, creature in ipairs(spectators) do
@@ -435,6 +450,10 @@ end
 
 local lastAge = 0
 function addCreature(creature, sortType) -- Insert a creature in our binary tree
+	if not modules.game_interface.getMapPanel():isInRange(creature:getPosition()) then
+		return
+	end
+
 	local creatureId = creature:getId()
 	local battleButton = battleButtons[creatureId]
 	if battleButton then

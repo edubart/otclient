@@ -77,6 +77,8 @@ public:
     bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_mapView->getVisibleCreatures(); }
+    std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor) { return m_mapView->getSpectators(centerPos, multiFloor); }
+    bool isInRange(const Position& pos) { return m_mapView->isInRange(pos); }
 
     PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }
     MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }

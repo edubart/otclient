@@ -75,7 +75,6 @@ MapView::MapView()
     m_lastFloorShadowingColor = Color::white;
 
     setVisibleDimension(Size(15, 11));
-    initViewPortDirection();
 }
 
 MapView::~MapView()
@@ -140,18 +139,18 @@ void MapView::draw(const Rect& rect)
                 tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
                 tile->drawEnd(this);
-            }
+        }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
             }
 
             onFloorDrawingEnd(z);
-        }
+    }
 
         if(redrawThing)
             m_frameCache.tile->release();
-    }
+}
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -233,17 +232,19 @@ void MapView::draw(const Rect& rect)
     drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     m_frameCache.flags = 0;
-}
+    }
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
+    if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
+
     const bool drawStatic = m_frameCache.creatureInformation->canUpdate();
     const bool drawDynamic = m_frameCache.creatureDynamicInformation->canUpdate();
 
     if(drawStatic || drawDynamic) {
         const Position cameraPosition = getCameraPosition();
-        uint32_t flags = 0;
 
+        uint32_t flags = 0;
         if(m_drawNames) { flags = Otc::DrawNames; }
         if(m_drawHealthBars) { flags |= Otc::DrawBars; }
         if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
@@ -406,7 +407,7 @@ void MapView::updateVisibleTilesCache()
 
                     floor.push_back(tile);
 
-                    tile->onVisibleTileList(this);
+                    tile->onAddVisibleTileList(this);
 
                     if(iz < m_floorMin)
                         m_floorMin = iz;
@@ -484,6 +485,13 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
     m_frameCache.creatureDynamicInformation->resize(g_graphics.getViewportSize());
 
+    m_awareRange.left = std::min<int>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
+    m_awareRange.top = std::min<int>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
+    m_awareRange.bottom = m_awareRange.top + 1;
+    m_awareRange.right = m_awareRange.left + 1;
+
+    updateViewportDirectionCache();
+
     requestVisibleTilesCacheUpdate();
 }
 
@@ -495,7 +503,7 @@ void MapView::onFloorChange(const short /*floor*/, const short /*previousFloor*/
         m_lightView->schedulePainting();
     }
 
-    m_visibleCreatures = g_map.getSpectators(cameraPosition, false);
+    m_visibleCreatures = getSpectators(cameraPosition, false);
 }
 
 void MapView::onFloorDrawingStart(const short floor)
@@ -608,6 +616,9 @@ void MapView::followCreature(const CreaturePtr& creature)
 {
     m_follow = true;
     m_followingCreature = creature;
+    m_visibleCreatures.clear();
+    m_visibleCreatures.push_back(creature);
+
     requestVisibleTilesCacheUpdate();
 }
 
@@ -809,13 +820,12 @@ void MapView::setDrawLights(bool enable)
     schedulePainting(Otc::FUpdateAll);
 }
 
-void MapView::initViewPortDirection()
+void MapView::updateViewportDirectionCache()
 {
-    const AwareRange& awareRange = g_map.getAwareRange();
     for(int dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
         ViewPort& vp = m_viewPortDirection[dir];
-        vp.top = awareRange.top;
-        vp.right = awareRange.right;
+        vp.top = m_awareRange.top;
+        vp.right = m_awareRange.right;
         vp.bottom = vp.top;
         vp.left = vp.right;
 
@@ -880,6 +890,15 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
 
 void MapView::schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
 {
+    schedulePainting(Position(), frameFlags, delay);
+}
+
+void MapView::schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay)
+{
+    if(delay <= FrameBuffer::MIN_TIME_UPDATE && pos.isValid() && !isInRange(pos)) {
+        return;
+    }
+
     if(frameFlags & Otc::FUpdateStaticText) {
         m_frameCache.staticText->schedulePainting(delay);
     }
@@ -906,14 +925,23 @@ void MapView::cancelScheduledPainting(const Otc::FrameUpdate frameFlags, uint16_
     }
 }
 
+std::vector<CreaturePtr> MapView::getSightSpectators(const Position& centerPos, bool multiFloor)
+{
+    return g_map.getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2);
+}
+
+std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool multiFloor)
+{
+    return g_map.getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
+}
+
 bool MapView::isInRange(const Position& pos)
 {
     const Position camera = getCameraPosition();
 
     if(camera.z != m_lastCameraPosition.z) return false;
 
-    const AwareRange& awareRange = g_map.getAwareRange();
-    return camera.isInRange(pos, awareRange.left, awareRange.right, awareRange.top, awareRange.bottom);
+    return camera.isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
 }
 
 void MapView::setCrosshairPosition(const Position& pos)

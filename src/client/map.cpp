@@ -87,6 +87,12 @@ void Map::cancelScheduledPainting(const Otc::FrameUpdate frameFlags, const uint1
         mapView->cancelScheduledPainting(frameFlags, delay);
 }
 
+void Map::schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay)
+{
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->schedulePainting(pos, frameFlags, delay);
+}
+
 void Map::schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
 {
     for(const MapViewPtr& mapView : m_mapViews)
@@ -240,7 +246,7 @@ bool Map::removeThing(const ThingPtr& thing)
         uint32_t frameFlag = Otc::FUpdateThing;
         if(thing->hasLight()) frameFlag |= Otc::FUpdateLight;
         if(thing->isCreature()) frameFlag |= Otc::FUpdateCreatureInformation;
-        schedulePainting(static_cast<Otc::FrameUpdate>(frameFlag));
+        schedulePainting(thing->getPosition(), static_cast<Otc::FrameUpdate>(frameFlag));
     }
 
     notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_REMOVE);

@@ -51,7 +51,7 @@ void Thing::schedulePainting(uint16_t delay)
         if(isLocalPlayer() || hasLight()) frameFlag |= Otc::FUpdateLight;
     }
 
-    g_map.schedulePainting(static_cast<Otc::FrameUpdate>(frameFlag), delay);
+    g_map.schedulePainting(m_position, static_cast<Otc::FrameUpdate>(frameFlag), delay);
 }
 
 void Thing::cancelScheduledPainting()

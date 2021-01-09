@@ -43,7 +43,7 @@ Tile::Tile(const Position& position) :
     m_positionsAround = position.getPositionsAround();
 }
 
-void Tile::onVisibleTileList(const MapViewPtr& mapView)
+void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
     m_borderShadowColor = Color::white;
 
@@ -58,6 +58,16 @@ void Tile::onVisibleTileList(const MapViewPtr& mapView)
     }
 
     m_covered = g_map.isCovered(m_position, mapView->getCachedFirstVisibleFloor());
+    if(hasCreature()) {
+        auto& visibleCreatures = mapView->getVisibleCreatures();
+        for(const auto& creature : m_creatures) {
+            if(creature->isLocalPlayer()) continue;
+
+            const auto it = std::find(visibleCreatures.begin(), visibleCreatures.end(), creature);
+            if(it == visibleCreatures.end())
+                visibleCreatures.push_back(creature);
+        }
+    }
 }
 
 void Tile::drawStart(const MapViewPtr& mapView)

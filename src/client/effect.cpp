@@ -57,7 +57,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int frameFlag, Lig
 
 void Effect::onAppear()
 {
-    m_animationTimer.restart();    
+    m_animationTimer.restart();
 
     schedulePainting(getAnimationInterval());
 

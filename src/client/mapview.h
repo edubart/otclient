@@ -30,7 +30,18 @@
 #include <framework/luaengine/luaobject.h>
 #include "lightview.h"
 
- // @bindclass
+struct AwareRange
+{
+    int top;
+    int right;
+    int bottom;
+    int left;
+
+    int horizontal() { return left + right + 1; }
+    int vertical() { return top + bottom + 1; }
+};
+
+// @bindclass
 class MapView : public LuaObject
 {
 public:
@@ -49,13 +60,15 @@ private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_timeUpdateVisibleTilesCache.restart();  m_mustUpdateVisibleTilesCache = true; }
+
+protected:
     void onFloorDrawingStart(const short floor);
     void onFloorDrawingEnd(const short floor);
     void onFloorChange(const short floor, const short previousFloor);
-
-protected:
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
     void onMapCenterChange(const Position& pos);
+
+    std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
     friend class Map;
 
@@ -130,11 +143,14 @@ public:
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
     void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
+    void schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
     void cancelScheduledPainting(const Otc::FrameUpdate frameFlags, uint16_t delay);
 
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
-    std::vector<CreaturePtr> getVisibleCreatures() { return m_visibleCreatures; }
+    std::vector<CreaturePtr>& getVisibleCreatures() { return m_visibleCreatures; }
+    std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
+    bool isInRange(const Position& pos);
 
     void setCrosshairPosition(const Position& pos);
     void setCrosshairTexture(const std::string& texturePath);
@@ -160,7 +176,7 @@ private:
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
 
-    void initViewPortDirection();
+    void updateViewportDirectionCache();
 
 #if DRAW_ALL_GROUND_FIRST == 1
     void drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView);
@@ -177,7 +193,6 @@ private:
                      (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
-    bool isInRange(const Position& pos);
     bool canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView);
 
     int m_lockedFirstVisibleFloor;
@@ -241,6 +256,8 @@ private:
     uint_fast8_t m_floorMin, m_floorMax;
 
     Position m_lastCameraPosition;
+
+    AwareRange m_awareRange;
 };
 
 #endif

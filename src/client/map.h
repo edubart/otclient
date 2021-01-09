@@ -127,17 +127,6 @@ private:
     std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE> m_tiles;
 };
 
-struct AwareRange
-{
-    int top;
-    int right;
-    int bottom;
-    int left;
-
-    int horizontal() { return left + right + 1; }
-    int vertical() { return top + bottom + 1; }
-};
-
 //@bindsingleton g_map
 class Map
 {
@@ -150,6 +139,7 @@ public:
     void notificateTileUpdate(const Position& pos, const ThingPtr& thing = nullptr, const Otc::Operation operation = Otc::OPERATION_NEUTRAL);
 
     void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
+    void schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
     void cancelScheduledPainting(const Otc::FrameUpdate frameFlags, const uint16_t delay);
 
     bool loadOtcm(const std::string& fileName);

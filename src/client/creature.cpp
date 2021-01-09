@@ -452,7 +452,7 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
-    g_map.schedulePainting(Otc::FUpdateThing, getAnimationInterval());
+    g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
 
     // creature appeared the first time or wasn't seen for a long time
     if(m_removed) {
@@ -685,7 +685,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
         onDeath();
 
     m_updateDynamicInformation = true;
-    g_map.schedulePainting(Otc::FUpdateDynamicCreatureInformation);
+    g_map.schedulePainting(m_position, Otc::FUpdateDynamicCreatureInformation);
 }
 
 void Creature::setDirection(Otc::Direction direction)
@@ -719,8 +719,8 @@ void Creature::setOutfit(const Outfit& outfit)
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
     if(m_type != Proto::CreatureTypeUnknown) {
-        g_map.schedulePainting(Otc::FUpdateThing);
-        g_map.schedulePainting(Otc::FUpdateThing, getAnimationInterval());
+        g_map.schedulePainting(m_position, Otc::FUpdateThing);
+        g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
     }
 }
 
@@ -793,7 +793,7 @@ void Creature::setSkull(uint8 skull)
     m_skull = skull;
     callLuaField("onSkullChange", m_skull);
 
-    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
+    g_map.schedulePainting(m_position, Otc::FUpdateCreatureInformation);
 }
 
 void Creature::setShield(uint8 shield)
@@ -801,7 +801,7 @@ void Creature::setShield(uint8 shield)
     m_shield = shield;
     callLuaField("onShieldChange", m_shield);
 
-    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
+    g_map.schedulePainting(m_position, Otc::FUpdateCreatureInformation);
 }
 
 void Creature::setEmblem(uint8 emblem)
@@ -881,7 +881,7 @@ void Creature::updateShield()
     } else if(!m_shieldBlink)
         m_showShieldTexture = true;
 
-    g_map.schedulePainting(Otc::FUpdateCreatureInformation);
+    g_map.schedulePainting(m_position, Otc::FUpdateCreatureInformation);
 }
 
 Point Creature::getDrawOffset()
