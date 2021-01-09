@@ -48,7 +48,7 @@ public:
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
     void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) { m_lightbuffer->schedulePainting(delay); }
-    bool canUpdate() const { return isDark() && m_lightbuffer->canUpdate(); }
+    bool canUpdate() const { return m_lightbuffer->canUpdate(); }
 
     bool isDark() const { return m_globalLight.intensity < 250; }
 
