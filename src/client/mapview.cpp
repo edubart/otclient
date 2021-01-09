@@ -500,6 +500,10 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.creatureInformation->resize(aboveMapSize);
     m_frameCache.creatureDynamicInformation->resize(aboveMapSize);
 
+    m_frameCache.staticText->resize(g_graphics.getViewportSize());
+    m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
+    m_frameCache.creatureDynamicInformation->resize(g_graphics.getViewportSize());
+
     resetLastCamera();
     requestVisibleTilesCacheUpdate();
 }
