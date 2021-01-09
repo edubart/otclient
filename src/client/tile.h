@@ -86,7 +86,7 @@ public:
 
     ThingPtr getTopLookThing();
     ThingPtr getTopUseThing();
-    CreaturePtr getTopCreature();
+    CreaturePtr getTopCreature(const bool checkAround = false);
     ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 

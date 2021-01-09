@@ -529,17 +529,20 @@ ThingPtr Tile::getTopUseThing()
     return m_ground.front();
 }
 
-CreaturePtr Tile::getTopCreature()
+CreaturePtr Tile::getTopCreature(const bool checkAround)
 {
     const CreaturePtr creature;
     if(!m_creatures.empty())
         return m_creatures.back();
 
-    if(!m_walkingCreatures.empty())
-        return m_walkingCreatures.back();
+    if(!m_walkingCreatures.empty()) {
+        const CreaturePtr& creature = m_walkingCreatures.back();
+        if(creature->getTile() == this)
+            return creature;
+    }
 
     // check for walking creatures in tiles around
-    if(!creature) {
+    if(checkAround && !creature) {
         for(const auto& position : m_positionsAround) {
             const TilePtr& tile = g_map.getTile(position);
             if(!tile) continue;
