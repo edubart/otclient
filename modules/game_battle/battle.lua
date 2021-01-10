@@ -14,7 +14,8 @@ local function connecting()
 	connect(g_game, {
 		onAttackingCreatureChange = onAttack,
 		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures
+		onGameEnd = removeAllCreatures,
+		onGameStart = onGameStart
 	})
 
 	connect(LocalPlayer, {
@@ -45,7 +46,8 @@ local function disconnecting()
 	disconnect(g_game, {
 		onAttackingCreatureChange = onAttack,
 		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures
+		onGameEnd = removeAllCreatures,
+		onGameStart = onGameStart
 	})
 
 	disconnect(LocalPlayer, {
@@ -62,9 +64,7 @@ local function disconnecting()
 		onDisappear = onCreatureDisappear
 	})
 
-	disconnect(UIMap, {
-		onZoomChange = onZoomChange
-	})
+	disconnect(UIMap, { onZoomChange = onZoomChange })
 
 	return true
 end
@@ -118,12 +118,11 @@ function init() -- Initiating the module (load)
 	mouseWidget:setFocusable(false)
 	mouseWidget.cancelNextRelease = false
 
-	-- Setting Connectors
-	connecting()
 
 	-- Determining Height and Setting up!
 	battleWindow:setContentMinimumHeight(80)
 	battleWindow:setup()
+	connecting()
 end
 
 -- Binary Search, Insertion and Resort functions
@@ -304,6 +303,11 @@ local function reSort(oldSortType, newSortType, oldSortOrder, newSortOrder) -- R
 	end
 
 return true
+end
+
+function onGameStart()
+	-- Temp fix
+	scheduleEvent(checkCreatures, 200)
 end
 
 -- Sort Type Methods

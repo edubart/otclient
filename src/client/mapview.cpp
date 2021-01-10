@@ -139,18 +139,18 @@ void MapView::draw(const Rect& rect)
                 tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
                 tile->drawEnd(this);
-        }
+            }
 #endif
             for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
                 missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
             }
 
             onFloorDrawingEnd(z);
-    }
+        }
 
         if(redrawThing)
             m_frameCache.tile->release();
-}
+    }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -232,7 +232,7 @@ void MapView::draw(const Rect& rect)
     drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     m_frameCache.flags = 0;
-    }
+}
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
