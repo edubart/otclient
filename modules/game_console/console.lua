@@ -564,6 +564,8 @@ function addTabText(text, speaktype, tab, creatureName)
       labelHighlight:setId('consoleLabelHighlight' .. consoleBuffer:getChildCount())
       labelHighlight:setColor("#1f9ffe")
 
+      local highlightOptions = {}
+
       -- Remove the curly braces
       for i = 1, #highlightData / 3 do
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
@@ -572,8 +574,28 @@ function addTabText(text, speaktype, tab, creatureName)
         -- Recalculate positions as braces are removed
         highlightData[(i-1)*3+1] = dataBlock._start - ((i-1) * 2)
         highlightData[(i-1)*3+2] = dataBlock._end - (1 + (i-1) * 2)
+	    highlightOptions[#highlightOptions + 1] = dataBlock.words
       end
       label:setText(text)
+
+      if (#highlightOptions > 1) then
+        labelHighlight.onMousePress = function(widget, mousePos, button)
+          if (button == MouseLeftButton) then
+              local menu = g_ui.createWidget('PopupMenu')
+
+              for k, v in pairs(highlightOptions) do
+                menu:addOption(v, function() sendMessage(v, consoleTabBar:getTab('NPCs')) end)
+              end
+              menu:display(mousePos)
+          end
+        end
+
+      elseif (#highlightOptions == 1) then
+        labelHighlight.onMousePress = function(widget, mousePos, button)
+          if (button == MouseLeftButton) then
+            sendMessage(highlightOptions[1], consoleTabBar:getTab('NPCs')) end
+          end
+      end
 
       -- Calculate the positions of the highlighted text and fill with string.char(127) [Width: 1]
       local drawText = label:getDrawText()
