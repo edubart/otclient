@@ -71,6 +71,7 @@ protected:
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
     friend class Map;
+    friend class Tile;
 
 public:
     // floor visibility related
