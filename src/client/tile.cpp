@@ -61,11 +61,7 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
     if(hasCreature()) {
         auto& visibleCreatures = mapView->getVisibleCreatures();
         for(const auto& creature : m_creatures) {
-            if(creature->isLocalPlayer()) continue;
-
-            const auto it = std::find(visibleCreatures.begin(), visibleCreatures.end(), creature);
-            if(it == visibleCreatures.end())
-                visibleCreatures.push_back(creature);
+            mapView->onTileUpdate(m_position, creature, Otc::OPERATION_ADD);
         }
     }
 }
