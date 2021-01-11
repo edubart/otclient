@@ -159,7 +159,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         const auto& creature = *it;
         if(creature->isWalking()) continue;
         drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-}
+    }
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;
@@ -805,7 +805,10 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
             m_countFlag.hasHookEast += value;
     }
 
-    if(thing->getRealSize() > Otc::TILE_PIXELS)
+    // best option to have something more real, but in some cases as a custom project,
+    // the developers are not defining crop size
+    //if(thing->getRealSize() > Otc::TILE_PIXELS)
+    if(thing->getHeight() != 1 || thing->getWidth() != 1)
         m_countFlag.notSingleDimension += value;
 
     if(thing->getHeight() > 1)
