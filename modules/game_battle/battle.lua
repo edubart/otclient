@@ -596,10 +596,7 @@ end
 -- Connector Callbacks
 function onAttack(creature) -- Update battleButton once you're attacking a target
 	local battleButton = creature and (battleButtons[creature:getId()]) or lastBattleButtonSwitched
-print(battleButton)
-print(creature)
-print(lastCreatureSelected)
-print('----')
+
 	if battleButton then
 		battleButton.isTarget = creature and true or false
 		updateBattleButton(battleButton)
