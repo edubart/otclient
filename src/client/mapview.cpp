@@ -540,7 +540,7 @@ void MapView::onFloorDrawingEnd(const short /*floor*/)
     }
 }
 
-void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const Otc::Operation operation)
+void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
 {
     // Need Optimization (update only the specific Tile)
     if(Otc::OPERATION_CLEAN == operation || thing && thing->isLocalPlayer() && Otc::OPERATION_ADD == operation) {
@@ -549,7 +549,7 @@ void MapView::onTileUpdate(const Position& /*pos*/, const ThingPtr& thing, const
 
     if(thing && thing->isCreature() && !thing->isLocalPlayer() && m_lastCameraPosition.z == getCameraPosition().z) {
         const CreaturePtr& creature = thing->static_self_cast<Creature>();
-        if(Otc::OPERATION_ADD == operation && isInRange(thing->getPosition())) {
+        if(Otc::OPERATION_ADD == operation && isInRange(pos)) {
             m_visibleCreatures.push_back(creature);
         } else if(Otc::OPERATION_REMOVE == operation) {
             const auto it = std::find(m_visibleCreatures.begin(), m_visibleCreatures.end(), creature);

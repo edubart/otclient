@@ -25,6 +25,10 @@ function UICreatureButton.create()
   return button
 end
 
+function UICreatureButton.getCreatureButtonColors()
+  return CreatureButtonColors
+end
+
 function UICreatureButton:setCreature(creature)
     self.creature = creature
 end

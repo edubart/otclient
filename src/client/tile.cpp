@@ -61,7 +61,11 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
     if(hasCreature()) {
         auto& visibleCreatures = mapView->getVisibleCreatures();
         for(const auto& creature : m_creatures) {
-            mapView->onTileUpdate(m_position, creature, Otc::OPERATION_ADD);
+            if(creature->isLocalPlayer()) continue;
+
+            const auto it = std::find(visibleCreatures.begin(), visibleCreatures.end(), creature);
+            if(it == visibleCreatures.end())
+                mapView->onTileUpdate(m_position, creature, Otc::OPERATION_ADD);
         }
     }
 }
@@ -155,7 +159,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         const auto& creature = *it;
         if(creature->isWalking()) continue;
         drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-    }
+}
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;

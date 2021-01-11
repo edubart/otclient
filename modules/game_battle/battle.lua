@@ -4,19 +4,21 @@ local battleButtons = {} -- map of creature id
 
 -- Global variables that will inherit from init
 local battleWindow, battleButton, battlePanel, mouseWidget, filterPanel, toggleFilterButton
-local lastBattleButtonSwitched
+local lastBattleButtonSwitched, lastCreatureSelected
 
 -- Hide Buttons ("hidePlayers", "hideNPCs", "hideMonsters", "hideSkulls", "hideParty")
 local hideButtons = {}
 
-local function connecting()
+local function connecting(gameEvent)
 	-- TODO: Just connect when you will be using
-	connect(g_game, {
-		onAttackingCreatureChange = onAttack,
-		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures,
-		onGameStart = onGameStart
-	})
+	if gameEvent then
+		connect(g_game, {
+			onAttackingCreatureChange = onAttack,
+			onFollowingCreatureChange = onFollow,
+			onGameEnd = removeAllCreatures,
+			onGameStart = onGameStart
+		})
+	end
 
 	connect(LocalPlayer, {
 		onPositionChange = onCreaturePositionChange
@@ -41,14 +43,16 @@ local function connecting()
 	return true
 end
 
-local function disconnecting()
+local function disconnecting(gameEvent)
 	-- TODO: Just disconnect what you're not using
-	disconnect(g_game, {
-		onAttackingCreatureChange = onAttack,
-		onFollowingCreatureChange = onFollow,
-		onGameEnd = removeAllCreatures,
-		onGameStart = onGameStart
-	})
+	if gameEvent then
+		disconnect(g_game, {
+			onAttackingCreatureChange = onAttack,
+			onFollowingCreatureChange = onFollow,
+			onGameEnd = removeAllCreatures,
+			onGameStart = onGameStart
+		})
+	end
 
 	disconnect(LocalPlayer, {
 		onPositionChange = onCreaturePositionChange
@@ -118,11 +122,11 @@ function init() -- Initiating the module (load)
 	mouseWidget:setFocusable(false)
 	mouseWidget.cancelNextRelease = false
 
+	connecting(true)
 
 	-- Determining Height and Setting up!
 	battleWindow:setContentMinimumHeight(80)
 	battleWindow:setup()
-	connecting()
 end
 
 -- Binary Search, Insertion and Resort functions
@@ -163,7 +167,7 @@ local function debugTables(sortType) -- Print both battlebutton and binarytree t
 return true
 end
 
-local function BSComparator(a, b) -- Default comparator function, we won't use it here but can be re-used for future reworks.
+local function BSComparator(a, b) -- Default comparator function, we probably won't use it here.
 	if a > b then return -1
 	elseif a < b then return 1
 	else return 0
@@ -259,31 +263,20 @@ local function swap(index, newIndex) -- Swap indexes of a given table
 	binaryTree[highest] = tmp
 end
 
-local function correctBattleButtons(sortOrder, start_index, end_index) -- Update battleButton index based upon our binary tree
-	--print("Received: ", sortOrder, start_index, end_index)
+local function correctBattleButtons(sortOrder) -- Update battleButton index based upon our binary tree
 	local sortOrder = sortOrder or getSortOrder()
-	local size = #binaryTree
-	local start_index = start_index or 1
-	local end_index = end_index or size
 
-	local start = start_index
-	local finish = end_index
-	if sortOrder ~= "A" then
-		start = size - start + 1
-		finish = size - finish + 1
-	end
+	local start = sortOrder == "A" and 1 or #binaryTree
+	local finish = #binaryTree - start + 1
 	local increment = start <= finish and 1 or -1
-    local increment_index = start_index <= end_index and 1 or -1
 
-	local index = start
-	for i = start_index, end_index, increment_index do
+	local index = 1
+	for i = start, finish, increment do
 		local v = binaryTree[i]
-		if v then
-			local battleButton = battleButtons[v.id]
-			if battleButton ~= nil then
-				battlePanel:moveChildToIndex(battleButton, index)
-				index = index + increment
-			end
+		local battleButton = battleButtons[v.id]
+		if battleButton ~= nil then
+			battlePanel:moveChildToIndex(battleButton, index)
+			index = index + 1
 		end
 	end
 return true
@@ -390,12 +383,6 @@ function checkCreatures() -- Function that initially populates our tree once the
 
 	removeAllCreatures() -- Remove all cache if there's any
 
-	--[[ TODO: just search inside the dimensions of screen
-	local dimension = modules.game_interface.getMapPanel():getVisibleDimension() -- not being used yet
-	local spectators = g_map.getSpectatorsInRangeEx(player:getPosition(), false, math.floor(dimension.width / 2), math.floor(dimension.width / 2), math.floor(dimension.height / 2), math.floor(dimension.height / 2))
-	-- Will also require an event to update the list when the zoom in screen is increased/reduced.
-	]]
-
 	local spectators = modules.game_interface.getMapPanel():getSpectators(player:getPosition(), false)
 	local sortType = getSortType()
 
@@ -429,6 +416,10 @@ function doCreatureFitFilters(creature) -- Check if creature fit current applied
 	end
 
 	return true
+end
+
+local function canBeSeen(creature)
+		return creature and creature:canBeSeen() and modules.game_interface.getMapPanel():isInRange(creature:getPosition())
 end
 
 local function getDistanceBetween(p1, p2) -- Calculate distance
@@ -504,11 +495,9 @@ function addCreature(creature, sortType) -- Insert a creature in our binary tree
 		else
 			battlePanel:insertChild((#binaryTree - newIndex + 1), battleButton)
 		end
-		--correctBattleButtons(getSortOrder(), newIndex, 1)
 	end
 
-	local localPlayer = g_game.getLocalPlayer()
-	battleButton:setVisible(localPlayer:hasSight(creature:getPosition()) and creature:canBeSeen())
+	battleButton:setVisible(canBeSeen(creature))
 	battlePanel:getLayout():update()
 end
 
@@ -522,7 +511,7 @@ function removeCreature(creature, all) -- Remove a single creature or all
 		binaryTree = {}
 		lastBattleButtonSwitched = nil
 		for i, v in pairs(battleButtons) do
-			v.creature:hideStaticSquare() -- Is this correct?
+			-- v.creature:hideStaticSquare() -- Is this correct?
 			v:destroy()
 		end
 		battleButtons = {}
@@ -549,10 +538,9 @@ function removeCreature(creature, all) -- Remove a single creature or all
 				for i = index, creatureListSize - 1 do
 					swap(i, i+1)
 				end
-				--correctBattleButtons(getSortOrder(), index, 1)
 			end
 			binaryTree[creatureListSize] = nil
-			battleButton.creature:hideStaticSquare()
+			--battleButton.creature:hideStaticSquare()
 			battleButton:destroy()
 			battleButtons[creatureId] = nil
 			return true
@@ -607,10 +595,19 @@ end
 
 -- Connector Callbacks
 function onAttack(creature) -- Update battleButton once you're attacking a target
-	local battleButton = creature and battleButtons[creature:getId()] or lastBattleButtonSwitched
+	local battleButton = creature and (battleButtons[creature:getId()]) or lastBattleButtonSwitched
+print(battleButton)
+print(creature)
+print(lastCreatureSelected)
+print('----')
 	if battleButton then
 		battleButton.isTarget = creature and true or false
 		updateBattleButton(battleButton)
+	elseif creature then
+		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onTargeted.notHovered)
+		lastCreatureSelected = creature
+	elseif lastCreatureSelected then
+		lastCreatureSelected:hideStaticSquare()
 	end
 end
 
@@ -619,6 +616,12 @@ function onFollow(creature) -- Update battleButton once you're following a targe
 	if battleButton then
 		battleButton.isFollowed = creature and true or false
 		updateBattleButton(battleButton)
+	elseif creature then
+		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onFollowed.notHovered)
+		lastCreatureSelected = creature
+		print(lastCreatureSelected)
+	elseif lastCreatureSelected then
+		lastCreatureSelected:hideStaticSquare()
 	end
 end
 
@@ -653,36 +656,33 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 	local sortType = getSortType()
 	-- If it's the local player moving
 	if creature:isLocalPlayer() then
-		if oldPos and newPos and newPos.z ~= oldPos.z then -- Changing the z makes easier to just recalculate everything
-			checkCreatures()
+		if oldPos and newPos and newPos.z ~= oldPos.z then
+			checkCreatures() -- Changing the z makes easier to just recalculate everything
 		elseif oldPos and newPos and (newPos.x ~= oldPos.x or newPos.y ~= oldPos.y) then
 			-- Distance will change when moving, recalculate and move to correct index
 			if #binaryTree > 0 and sortType == 'distance' then
 				-- TODO: If the amount of creatures is higher than a given number, instead of using this approach we simply recalculate each 200ms.
-				--[[ if getCreatureNumber() > X then ... mode = auto end else mode = default]]
 				for i, v in ipairs(binaryTree) do
 					local oldDistance = v.distance
 					local battleButton = battleButtons[v.id]
 					local mob = battleButton.creature or g_map.getCreatureById(v.id)
-					local mob_pos = mob:getPosition()
-
-					local newDistance = getDistanceBetween(newPos, mob_pos)
+					local newDistance = getDistanceBetween(newPos, mob:getPosition())
 					if oldDistance ~= newDistance then
 						v.distance = newDistance
 						battleButton.data.distance = newDistance
 					end
-					battleButton:setVisible(creature:hasSight(mob_pos) and mob:canBeSeen())
 				end
 				table.sort(binaryTree, function(a, b) return BSComparatorSortType(a, b, 'distance', true) == 1 end)
-				correctBattleButtons(getSortOrder())
-			else
-				for i, v in pairs(battleButtons) do
-					local mob = v.creature
-					if mob and mob:getPosition() then
-						v:setVisible(creature:hasSight(mob:getPosition()) and mob:canBeSeen())
-					end
+				correctBattleButtons()
+			end
+
+			for i, v in pairs(battleButtons) do
+				local mob = v.creature
+				if mob and mob:getPosition() then
+					v:setVisible(canBeSeen(mob))
 				end
 			end
+			--battlePanel:getLayout():update()
 		end
 	else
 		-- If it's a creature moving
@@ -706,32 +706,28 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 							battleButton.data.distance = newDistance
 							if newDistance > oldDistance then
 								if index < #binaryTree then
-									local last_index = index
 									for i = index, #binaryTree - 1 do
 										local a = binaryTree[i]
 										local b = binaryTree[i + 1]
 										if a.distance > b.distance or (a.distance == b.distance and a.id > b.id) then
 											swap(i, i+1)
-											last_index = i+i
 										end
 									end
-									correctBattleButtons(getSortOrder(), index, last_index)
 								end
 							elseif newDistance < oldDistance then
-								battleButton:setVisible(localPlayer:hasSight(newPos) and creature:canBeSeen())
+								battleButton:setVisible(canBeSeen(creature))
+								--battlePanel:getLayout():update()
 								if index > 1 then
-									local last_index = index
 									for i = index, 2, -1 do
 										local a = binaryTree[i-1]
 										local b = binaryTree[i]
 										if a.distance > b.distance or (a.distance == b.distance and a.id > b.id) then
 											swap(i-1, i)
-											last_index = i-1
 										end
 									end
-									correctBattleButtons(getSortOrder(), index, last_index)
 								end
 							end
+							correctBattleButtons()
 						else
 							assert(index ~= nil, "Not able to update Position Change. Creature: ".. creature:getName() .." id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldDistance ..".\n")
 						end
@@ -764,7 +760,6 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 								swap(i, i+1)
 							end
 						end
-						correctBattleButtons(getSortOrder(), index, 1)
 					end
 				else
 					if index > 1 then
@@ -775,9 +770,9 @@ function onCreatureHealthPercentChange(creature, healthPercent, oldHealthPercent
 								swap(i-1, i)
 							end
 						end
-						correctBattleButtons(getSortOrder(), index, -1)
 					end
 				end
+				correctBattleButtons()
 			else
 				assert(index ~= nil, "Not able to update HealthPercent Change. Creature: id ".. creatureId .." not found in binary search using ".. sortType .." to find value ".. oldHealthPercent ..".")
 			end
@@ -789,9 +784,7 @@ end
 
 function onCreatureAppear(creature) -- Update battleButton once a creature appear (add)
 	if creature:isLocalPlayer() then
-		addEvent(function()
-			updateStaticSquare()
-		end)
+		addEvent(updateStaticSquare)
 	end
 
 	local sortType = getSortType()
@@ -888,6 +881,8 @@ function terminate() -- Terminating the Module (unload)
 	battleWindow:destroy()
 	mouseWidget:destroy()
 
+	lastCreatureSelected = nil
+
 	battlePanel = nil
 	battleButton = nil
 	battleWindow = nil
@@ -898,5 +893,5 @@ function terminate() -- Terminating the Module (unload)
 	g_keyboard.unbindKeyDown('Ctrl+B')
 
 	-- Removing the connectors
-	disconnecting()
+	disconnecting(true)
 end
