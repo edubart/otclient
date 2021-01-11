@@ -132,9 +132,8 @@ void LightView::resize(const Size& size)
 
 void LightView::draw(const Rect& dest, const Rect& src)
 {
-    if(!isDark() || m_lightbuffer->getTexture() == nullptr) return;
-
     // draw light, only if there is darkness
+    if(!isDark() || m_lightbuffer->getTexture() == nullptr) return;
     g_painter->saveAndResetState();
     if(m_lightbuffer->canUpdate()) {
         m_lightbuffer->bind();

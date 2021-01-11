@@ -960,10 +960,11 @@ void MapView::setCrosshairTexture(const std::string& texturePath)
 #if DRAW_ALL_GROUND_FIRST == 1
 void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView)
 {
+
     const Position cameraPosition = getCameraPosition();
     const auto& tiles = m_cachedVisibleTiles[floor];
-    const auto redrawThing = m_frameFlag & Otc::FUpdateThing;
-    const auto redrawLight = m_drawLights && m_frameFlag & Otc::FUpdateLight;
+    const auto redrawThing = m_frameCache.flags & Otc::FUpdateThing;
+    const auto redrawLight = m_drawLights && m_frameCache.flags & Otc::FUpdateLight;
 
     for(const auto& tile : tiles) {
         if(!tile->hasGroundToDraw()) continue;
@@ -974,7 +975,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         const Position& tilePos = tile->getPosition();
         tile->drawStart(this);
-        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_frameFlag, lightView);
+        tile->drawGround(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
         tile->drawEnd(this);
     }
 
@@ -991,8 +992,8 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
 
         if(!tile->hasGroundToDraw()) tile->drawStart(this);
 
-        tile->drawBottom(pos2d, m_scaleFactor, m_frameFlag, lightView);
-        tile->drawTop(pos2d, m_scaleFactor, m_frameFlag, lightView);
+        tile->drawBottom(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
+        tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
     }
