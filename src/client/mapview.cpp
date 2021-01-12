@@ -895,7 +895,7 @@ void MapView::schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t
 
 void MapView::schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay)
 {
-    if(delay <= FrameBuffer::MIN_TIME_UPDATE && pos.isValid() && !isInRange(pos)) {
+    if(delay <= FrameBuffer::MIN_TIME_UPDATE && pos.isValid() && !isInRange(pos, true)) {
         return;
     }
 
@@ -935,13 +935,9 @@ std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool 
     return g_map.getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
 }
 
-bool MapView::isInRange(const Position& pos)
+bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 {
-    const Position camera = getCameraPosition();
-
-    if(camera.z != m_lastCameraPosition.z) return false;
-
-    return camera.isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
+    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
 void MapView::setCrosshairPosition(const Position& pos)

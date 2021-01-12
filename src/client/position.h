@@ -227,10 +227,15 @@ public:
     Position& operator=(const Position& other) { x = other.x; y = other.y; z = other.z; return *this; }
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
-    bool isInRange(const Position& pos, int xRange, int yRange) const { return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange && z == pos.z; }
-    bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange) const
+    bool isInRange(const Position& pos, int xRange, int yRange, const bool ignoreZ = false) const
     {
-        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange && pos.z == z;
+        if(!ignoreZ && pos.z != z) return false;
+        return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange;
+    }
+    bool isInRange(const Position& pos, int minXRange, int maxXRange, int minYRange, int maxYRange, const bool ignoreZ = false) const
+    {
+        if(!ignoreZ && pos.z != z) return false;
+        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange;
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }

@@ -151,7 +151,7 @@ public:
 
     std::vector<CreaturePtr>& getVisibleCreatures() { return m_visibleCreatures; }
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
-    bool isInRange(const Position& pos);
+    bool isInRange(const Position& pos, const bool ignoreZ = false);
 
     void setCrosshairPosition(const Position& pos);
     void setCrosshairTexture(const std::string& texturePath);
