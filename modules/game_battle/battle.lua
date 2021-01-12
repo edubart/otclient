@@ -595,39 +595,35 @@ end
 
 -- Connector Callbacks
 function onAttack(creature) -- Update battleButton once you're attacking a target
+	if lastCreatureSelected then
+		lastCreatureSelected:hideStaticSquare()
+		lastCreatureSelected = nil
+	end
+
 	local battleButton = creature and (battleButtons[creature:getId()]) or lastBattleButtonSwitched
 
 	if battleButton then
 		battleButton.isTarget = creature and true or false
 		updateBattleButton(battleButton)
-	else
-		if lastCreatureSelected then
-			lastCreatureSelected:hideStaticSquare()
-			lastCreatureSelected = nil
-		end
-
-		if creature then
-			creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onTargeted.notHovered)
-			lastCreatureSelected = creature
-		end
+	elseif creature then
+		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onTargeted.notHovered)
+		lastCreatureSelected = creature
 	end
 end
 
 function onFollow(creature) -- Update battleButton once you're following a target
+	if lastCreatureSelected then
+		lastCreatureSelected:hideStaticSquare()
+		lastCreatureSelected = nil
+	end
+
 	local battleButton = creature and battleButtons[creature:getId()] or lastBattleButtonSwitched
 	if battleButton then
 		battleButton.isFollowed = creature and true or false
 		updateBattleButton(battleButton)
-	else
-		if lastCreatureSelected then
-			lastCreatureSelected:hideStaticSquare()
-			lastCreatureSelected = nil
-		end
-
-		if creature then
-			creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onFollowed.notHovered)
-			lastCreatureSelected = creature
-		end
+	elseif creature then
+		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onFollowed.notHovered)
+		lastCreatureSelected = creature
 	end
 end
 
