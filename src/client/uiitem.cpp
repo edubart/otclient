@@ -53,7 +53,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
             return;
 
         const float scaleFactor = std::min<float>(drawRect.width() / static_cast<float>(exactSize), drawRect.height() / static_cast<float>(exactSize));
-        dest += (m_item->getDisplacement() - Point(32, 32)) * scaleFactor;
+        dest += (m_item->getDisplacement() - Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS)) * scaleFactor;
 
         g_painter->setColor(m_color);
         m_item->draw(dest, scaleFactor, true, Highlight());

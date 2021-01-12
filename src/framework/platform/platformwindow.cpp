@@ -150,7 +150,7 @@ void PlatformWindow::releaseAllKeys()
 
     m_inputEvent.keyboardModifiers = 0;
 
-    for(auto &mouseButtonState: m_mouseButtonStates)
+    for(auto& mouseButtonState : m_mouseButtonStates)
         mouseButtonState = false;
 }
 

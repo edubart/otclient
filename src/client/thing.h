@@ -150,11 +150,8 @@ public:
     virtual void onAppear() {}
     virtual void onDisappear() {}
 
-    void useBlankTexture(bool use) { m_useBlankTexture = use; }
-
 protected:
     uint16 m_datId;
-    bool m_useBlankTexture;
     Position m_position;
 };
 #pragma pack(pop)

@@ -29,7 +29,7 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-Thing::Thing() : m_datId(0), m_useBlankTexture(false) {}
+Thing::Thing() : m_datId(0) {}
 
 void Thing::schedulePainting(uint16_t delay)
 {

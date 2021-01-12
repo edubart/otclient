@@ -179,8 +179,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 m_animatedTexts.push_back(animatedText);
             }
         } else if(thing->isStaticText()) {
-            thing->schedulePainting();
-
             const StaticTextPtr staticText = thing->static_self_cast<StaticText>();
             for(const auto& other : m_staticTexts) {
                 // try to combine messages
@@ -188,8 +186,9 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                     return;
                 }
             }
-
             m_staticTexts.push_back(staticText);
+
+            thing->schedulePainting();
         }
 
         thing->setPosition(pos);

@@ -48,7 +48,7 @@ public:
 
     virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlags, LightView* lightView = nullptr) override;
 
-    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction);
+    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool useBlank, Otc::Direction direction);
 
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Rect& parentRect, int drawFlags);
@@ -222,6 +222,10 @@ protected:
     Timer m_jumpTimer;
 
 private:
+    struct DrawCache {
+        int exactSize, frameSizeNotResized;
+    };
+
     struct StepCache {
         int speed = 0;
         int groundSpeed = 0;
@@ -232,6 +236,7 @@ private:
     };
 
     StepCache m_stepCache;
+    DrawCache m_drawCache;
 
     Point m_visualPoint;
 };

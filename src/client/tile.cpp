@@ -107,7 +107,7 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
         } else lightView = nullptr;
     }
 
-    const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall(true));
+    const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall());
 
     if(putShadowColor) {
         g_painter->setColor(m_shadowColor);
@@ -703,7 +703,7 @@ int Tile::getElevation() const
 
 bool Tile::hasElevation(int elevation)
 {
-    return getElevation() >= elevation;
+    return m_countFlag.elevation >= elevation;
 }
 
 bool Tile::hasLight()

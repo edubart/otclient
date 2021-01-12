@@ -24,7 +24,7 @@
 #include "painterogl2_shadersources.h"
 #include <framework/platform/platformwindow.h>
 
-PainterOGL2 *g_painterOGL2 = nullptr;
+PainterOGL2* g_painterOGL2 = nullptr;
 
 PainterOGL2::PainterOGL2()
 {
@@ -69,7 +69,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     if(vertexCount == 0)
         return;
 
-    bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
+    const bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
 
     // skip drawing of empty textures
     if(textured && m_texture->isEmpty())

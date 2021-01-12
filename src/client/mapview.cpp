@@ -202,7 +202,7 @@ void MapView::draw(const Rect& rect)
             g_painter->clear(Color::alpha);
 
             const Point& point = transformPositionTo2D(m_crosshair.position, cameraPosition);
-            const Rect crosshairRect = Rect(point * m_scaleFactor, m_crosshair.texture->getWidth(), m_crosshair.texture->getHeight());
+            const Rect crosshairRect = Rect(point, m_tileSize, m_tileSize);
             g_painter->drawTexturedRect(crosshairRect, m_crosshair.texture);
             m_frameCache.crosshair->release();
 
@@ -447,7 +447,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     ViewMode viewMode = m_viewMode;
     if(m_autoViewMode) {
 
-        if(tileSize >= 32 && visibleDimension.area() <= NEAR_VIEW_AREA)
+        if(tileSize >= Otc::TILE_PIXELS && visibleDimension.area() <= NEAR_VIEW_AREA)
             viewMode = NEAR_VIEW;
         else if(tileSize >= 16 && visibleDimension.area() <= MID_VIEW_AREA)
             viewMode = MID_VIEW;
@@ -490,8 +490,9 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_awareRange.bottom = m_awareRange.top + 1;
     m_awareRange.right = m_awareRange.left + 1;
 
-    updateViewportDirectionCache();
+    m_crosshair.positionChanged = true;
 
+    updateViewportDirectionCache();
     requestVisibleTilesCacheUpdate();
 }
 
@@ -543,11 +544,21 @@ void MapView::onFloorDrawingEnd(const short /*floor*/)
 void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
 {
     // Need Optimization (update only the specific Tile)
-    if(Otc::OPERATION_CLEAN == operation || thing && thing->isLocalPlayer() && Otc::OPERATION_ADD == operation) {
+    if(Otc::OPERATION_CLEAN == operation) {
         requestVisibleTilesCacheUpdate();
+        return;
     }
 
-    if(thing && thing->isCreature() && !thing->isLocalPlayer() && m_lastCameraPosition.z == getCameraPosition().z) {
+    if(!thing) return;
+
+    if(thing->isLocalPlayer()) {
+        if(Otc::OPERATION_ADD == operation)
+            requestVisibleTilesCacheUpdate();
+
+        return;
+    }
+
+    if(thing->isCreature() && m_lastCameraPosition.z == getCameraPosition().z) {
         const CreaturePtr& creature = thing->static_self_cast<Creature>();
         if(Otc::OPERATION_ADD == operation && isInRange(pos)) {
             m_visibleCreatures.push_back(creature);
@@ -661,18 +672,18 @@ void MapView::move(int x, int y)
     m_moveOffset.x += x;
     m_moveOffset.y += y;
 
-    int32_t tmp = m_moveOffset.x / 32;
+    int32_t tmp = m_moveOffset.x / Otc::TILE_PIXELS;
     bool requestTilesUpdate = false;
     if(tmp != 0) {
         m_customCameraPosition.x += tmp;
-        m_moveOffset.x %= 32;
+        m_moveOffset.x %= Otc::TILE_PIXELS;
         requestTilesUpdate = true;
     }
 
-    tmp = m_moveOffset.y / 32;
+    tmp = m_moveOffset.y / Otc::TILE_PIXELS;
     if(tmp != 0) {
         m_customCameraPosition.y += tmp;
-        m_moveOffset.y %= 32;
+        m_moveOffset.y %= Otc::TILE_PIXELS;
         requestTilesUpdate = true;
     }
 

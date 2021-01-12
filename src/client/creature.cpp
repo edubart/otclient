@@ -85,13 +85,11 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
             g_painter->resetColor();
         }
 
-        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
+        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, false, m_direction);
 
         if(highLight.enabled && this == highLight.thing) {
             g_painter->setColor(highLight.rgbColor);
-            useBlankTexture(true);
-            internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, m_direction);
-            useBlankTexture(false);
+            internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, true, m_direction);
             g_painter->resetColor();
         }
     }
@@ -112,7 +110,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
     }
 }
 
-void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, Otc::Direction direction)
+void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool useBlank, Otc::Direction direction)
 {
     if(m_outfitColor != Color::white)
         g_painter->setColor(m_outfitColor);
@@ -137,7 +135,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             const auto& datType = rawGetMountThingType();
 
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, m_useBlankTexture);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, useBlank);
             dest += getDisplacement() * scaleFactor;
 
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
@@ -156,9 +154,9 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             auto* datType = rawGetThingType();
-            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, m_useBlankTexture);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, useBlank);
 
-            if(!m_useBlankTexture && getLayers() > 1) {
+            if(!useBlank && getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 const Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
@@ -196,7 +194,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getCategory() == ThingCategoryEffect)
             animationPhase = std::min<int>(animationPhase + 1, animationPhases);
 
-        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, m_useBlankTexture);
+        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, useBlank);
     }
 
     if(m_outfitColor != Color::white)
@@ -205,16 +203,10 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
 void Creature::drawOutfit(const Rect& destRect, bool resize)
 {
-    int exactSize;
-    if(m_outfit.getCategory() == ThingCategoryCreature)
-        exactSize = getExactSize();
-    else
-        exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
-
     int frameSize;
     if(!resize)
-        frameSize = std::max<int>(exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f);
-    else if((frameSize = exactSize) == 0)
+        frameSize = m_drawCache.frameSizeNotResized;
+    else if((frameSize = m_drawCache.exactSize) == 0)
         return;
 
     if(g_graphics.canUseFBO()) {
@@ -223,13 +215,13 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
         outfitBuffer->bind();
         g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);
-        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, true, Otc::South);
+        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, true, false, Otc::South);
         outfitBuffer->release();
         outfitBuffer->draw(destRect, Rect(0, 0, frameSize, frameSize));
     } else {
         const float scaleFactor = destRect.width() / static_cast<float>(frameSize);
         const Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
-        internalDrawOutfit(dest, scaleFactor, true, Otc::South);
+        internalDrawOutfit(dest, scaleFactor, true, false, Otc::South);
     }
 }
 
@@ -721,6 +713,16 @@ void Creature::setOutfit(const Outfit& outfit)
     if(m_type != Proto::CreatureTypeUnknown) {
         g_map.schedulePainting(m_position, Otc::FUpdateThing);
         g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
+    }
+
+    // Cache
+    {
+        if(m_outfit.getCategory() == ThingCategoryCreature)
+            m_drawCache.exactSize = getExactSize();
+        else
+            m_drawCache.exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
+
+        m_drawCache.frameSizeNotResized = std::max<int>(m_drawCache.exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f);
     }
 }
 
