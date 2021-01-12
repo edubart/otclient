@@ -600,11 +600,16 @@ function onAttack(creature) -- Update battleButton once you're attacking a targe
 	if battleButton then
 		battleButton.isTarget = creature and true or false
 		updateBattleButton(battleButton)
-	elseif creature then
-		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onTargeted.notHovered)
-		lastCreatureSelected = creature
-	elseif lastCreatureSelected then
-		lastCreatureSelected:hideStaticSquare()
+	else
+		if lastCreatureSelected then
+			lastCreatureSelected:hideStaticSquare()
+			lastCreatureSelected = nil
+		end
+
+		if creature then
+			creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onTargeted.notHovered)
+			lastCreatureSelected = creature
+		end
 	end
 end
 
@@ -613,12 +618,16 @@ function onFollow(creature) -- Update battleButton once you're following a targe
 	if battleButton then
 		battleButton.isFollowed = creature and true or false
 		updateBattleButton(battleButton)
-	elseif creature then
-		creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onFollowed.notHovered)
-		lastCreatureSelected = creature
-		print(lastCreatureSelected)
-	elseif lastCreatureSelected then
-		lastCreatureSelected:hideStaticSquare()
+	else
+		if lastCreatureSelected then
+			lastCreatureSelected:hideStaticSquare()
+			lastCreatureSelected = nil
+		end
+
+		if creature then
+			creature:showStaticSquare(UICreatureButton.getCreatureButtonColors().onFollowed.notHovered)
+			lastCreatureSelected = creature
+		end
 	end
 end
 
