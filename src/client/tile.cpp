@@ -57,7 +57,6 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
         }
     }
 
-    m_covered = g_map.isCovered(m_position, mapView->getCachedFirstVisibleFloor());
     if(hasCreature()) {
         auto& visibleCreatures = mapView->getVisibleCreatures();
         for(const auto& creature : m_creatures) {
@@ -68,6 +67,16 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
                 mapView->onTileUpdate(m_position, creature, Otc::OPERATION_ADD);
         }
     }
+}
+
+bool Tile::isCompletelyCovered(int firstFloor)
+{
+    bool covered = g_map.isCompletelyCovered(m_position, firstFloor);
+    if(!(m_covered = covered)) {
+        m_covered = g_map.isCovered(m_position, firstFloor);
+    }
+
+    return covered;
 }
 
 void Tile::drawStart(const MapViewPtr& mapView)
