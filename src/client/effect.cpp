@@ -59,7 +59,8 @@ void Effect::onAppear()
 {
     m_animationTimer.restart();
 
-    schedulePainting(getAnimationInterval());
+    // Cache m_duration
+    getAnimationInterval();
 
     // schedule removal
     const auto self = asEffect();
