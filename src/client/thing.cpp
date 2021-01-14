@@ -43,7 +43,7 @@ void Thing::schedulePainting(uint16_t delay)
             g_map.schedulePainting(static_cast<Otc::FrameUpdate>(frameFlag), getAnimationInterval());
         } else if(isCreature()) {
             if(isLocalPlayer()) {
-                frameFlag |= Otc::FUpdateAllInformation;
+                frameFlag |= Otc::FUpdateTextInformation;
                 delay = FrameBuffer::FORCE_UPDATE;
             } else frameFlag |= Otc::FUpdateCreatureInformation;
         }
@@ -63,7 +63,7 @@ void Thing::cancelScheduledPainting()
     uint32_t frameFlag = Otc::FUpdateThing;
 
     if(isLocalPlayer() || hasLight()) frameFlag |= Otc::FUpdateLight;
-    if(isCreature()) frameFlag |= Otc::FUpdateAllInformation;
+    if(isCreature()) frameFlag |= Otc::FUpdateTextInformation;
 
     g_map.cancelScheduledPainting(static_cast<Otc::FrameUpdate>(frameFlag), delay);
 }

@@ -711,7 +711,7 @@ void Creature::setOutfit(const Outfit& outfit)
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
     if(m_type != Proto::CreatureTypeUnknown) {
-        g_map.schedulePainting(m_position, Otc::FUpdateThing);
+        g_map.schedulePainting(m_position, Otc::FupdateCreature);
         g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
     }
 

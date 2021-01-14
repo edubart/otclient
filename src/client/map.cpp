@@ -183,11 +183,12 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
             for(const auto& other : m_staticTexts) {
                 // try to combine messages
                 if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
+                    thing->schedulePainting();
                     return;
                 }
             }
-            m_staticTexts.push_back(staticText);
 
+            m_staticTexts.push_back(staticText);
             thing->schedulePainting();
         }
 
