@@ -190,8 +190,6 @@ void FrameBuffer::schedulePainting(const uint16_t time)
     }
 
     if(time <= MIN_TIME_UPDATE) {
-
-
         update();
         return;
     }
@@ -199,7 +197,11 @@ void FrameBuffer::schedulePainting(const uint16_t time)
     auto& schedule = m_schedules[time];
     if(schedule.first == 0) {
         schedule.second = g_dispatcher.cycleEvent([=]() {
+#if FORCE_ANIMATED_RENDERING == 1
+            m_forceUpdate = true;
+#else
             update();
+#endif
         }, time);
     }
 
