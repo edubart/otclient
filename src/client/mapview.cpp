@@ -627,6 +627,8 @@ void MapView::followCreature(const CreaturePtr& creature)
 {
     m_follow = true;
     m_followingCreature = creature;
+    m_lastCameraPosition = Position();
+
     m_visibleCreatures.clear();
     m_visibleCreatures.push_back(creature);
 
