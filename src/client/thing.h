@@ -151,8 +151,8 @@ public:
     virtual void onDisappear() {}
 
 protected:
-    uint16 m_datId;
     Position m_position;
+    uint16 m_datId;
 };
 #pragma pack(pop)
 

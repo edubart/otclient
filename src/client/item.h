@@ -132,7 +132,7 @@ public:
     ItemPtr clone();
     ItemPtr asItem() { return static_self_cast<Item>(); }
     bool isItem() override { return true; }
-    
+
     ItemVector getContainerItems() { return m_containerItems; }
     ItemPtr getContainerItem(int slot) { return m_containerItems[slot]; }
     void addContainerItemIndexed(const ItemPtr& i, int slot) { m_containerItems[slot] = i; }
@@ -157,15 +157,14 @@ private:
     uint16 m_clientId;
     uint16 m_serverId;
     uint8 m_countOrSubType;
+    stdext::packed_storage<uint8> m_attribs;
+    ItemVector m_containerItems;
     Color m_color;
-    bool m_canDraw;
-    bool m_async;
-
     uint8 m_phase;
     ticks_t m_lastPhase;
 
-    stdext::packed_storage<uint8> m_attribs;
-    ItemVector m_containerItems;
+    stdext::boolean<true> m_canDraw;
+    stdext::boolean<true> m_async;
 };
 
 #pragma pack(pop)
