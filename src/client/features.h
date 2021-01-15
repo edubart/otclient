@@ -31,3 +31,7 @@
 
 // Define 1 to force the rendering of animated things without waiting for the minimum mandatory interval.
 #define FORCE_ANIMATED_RENDERING 0
+
+// #Define 1 to increase "flush time" when there are many rendering requests,
+// thus avoiding CPU consumption, however there will be a delay in rendering.
+#define FLUSH_CONTROL_FOR_RENDERING 1
