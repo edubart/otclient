@@ -148,6 +148,8 @@ public:
     bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
     bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
 
+    bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
+
     void cancelScheduledPainting();
 
     const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
@@ -171,6 +173,7 @@ private:
         int hasWideThings = 0;
         int hasHookEast = 0;
         int hasHookSouth = 0;
+        int hasTopGround = 0;
     };
 
     void checkForDetachableThing();

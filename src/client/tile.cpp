@@ -851,6 +851,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->isOpaque())
         m_countFlag.opaque += value;
 
+    if(thing->isTopGround())
+        m_countFlag.hasTopGround += value;
+
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
     if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
         const int commonSize = m_commonItems.size();
