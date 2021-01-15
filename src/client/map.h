@@ -216,7 +216,8 @@ public:
     std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
     std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
 
-    void setLight(const Light& light) { m_light = light; schedulePainting(Otc::FUpdateLight); }
+    void setLight(const Light& light);
+
     void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);

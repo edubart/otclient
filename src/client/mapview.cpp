@@ -96,21 +96,7 @@ void MapView::draw(const Rect& rect)
     const auto redrawLight = m_drawLights && m_lightView->canUpdate();
 
     if(redrawThing || redrawLight) {
-        if(redrawLight) {
-            Light ambientLight;
-            if(cameraPosition.z > Otc::SEA_FLOOR) {
-                ambientLight.color = 215;
-                ambientLight.intensity = 0;
-            } else ambientLight = g_map.getLight();
-
-            ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
-            m_lightView->setGlobalLight(ambientLight);
-
-            m_lightView->reset();
-            m_lightView->resize(m_frameCache.tile->getSize());
-
-            m_frameCache.flags |= Otc::FUpdateLight;
-        }
+        if(redrawLight) m_frameCache.flags |= Otc::FUpdateLight;
 
         if(redrawThing) {
             m_frameCache.tile->bind();
@@ -496,15 +482,35 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
+void MapView::onGlobalLightChange(const Light&)
+{
+    updateLight();
+}
+
+void MapView::updateLight()
+{
+    if(!m_drawLights) return;
+
+    const auto cameraPosition = getCameraPosition();
+    Light ambientLight;
+    if(cameraPosition.z > Otc::SEA_FLOOR) {
+        ambientLight.color = 215;
+        ambientLight.intensity = 0;
+    } else ambientLight = g_map.getLight();
+    ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
+
+    m_lightView->setGlobalLight(ambientLight);
+    m_lightView->resize(m_frameCache.tile->getSize());
+    m_lightView->schedulePainting();
+}
+
 void MapView::onFloorChange(const short /*floor*/, const short /*previousFloor*/)
 {
     const auto cameraPosition = getCameraPosition();
 
-    if(m_drawLights) {
-        m_lightView->schedulePainting();
-    }
-
     m_visibleCreatures = getSpectators(cameraPosition, false);
+
+    updateLight();
 }
 
 void MapView::onFloorDrawingStart(const short floor)
@@ -830,7 +836,7 @@ void MapView::setDrawLights(bool enable)
     m_lightView = enable ? LightViewPtr(new LightView) : nullptr;
     m_drawLights = enable;
 
-    schedulePainting(Otc::FUpdateAll);
+    updateLight();
 }
 
 void MapView::updateViewportDirectionCache()

@@ -62,6 +62,7 @@ private:
     void requestVisibleTilesCacheUpdate() { m_timeUpdateVisibleTilesCache.restart();  m_mustUpdateVisibleTilesCache = true; }
 
 protected:
+    void onGlobalLightChange(const Light& light);
     void onFloorDrawingStart(const short floor);
     void onFloorDrawingEnd(const short floor);
     void onFloorChange(const short floor, const short previousFloor);
@@ -177,6 +178,7 @@ private:
     int calcFirstVisibleFloor();
     int calcLastVisibleFloor();
 
+    void updateLight();
     void updateViewportDirectionCache();
 
 #if DRAW_ALL_GROUND_FIRST == 1

@@ -148,6 +148,8 @@ void LightView::draw(const Rect& dest, const Rect& src)
         for(const LightSource& source : m_lightMap)
             drawLightSource(source.center, source.color, source.radius);
 
+        m_lightMap.clear();
+
         m_lightbuffer->release();
     }
     g_painter->setCompositionMode(Painter::CompositionMode_Light);

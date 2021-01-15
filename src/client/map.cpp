@@ -637,6 +637,13 @@ void Map::setCentralPosition(const Position& centralPosition)
         mapView->onMapCenterChange(centralPosition);
 }
 
+void Map::setLight(const Light& light)
+{
+    m_light = light;
+    for(const MapViewPtr& mapView : m_mapViews)
+        mapView->onGlobalLightChange(m_light);
+}
+
 std::vector<CreaturePtr> Map::getSightSpectators(const Position& centerPos, bool multiFloor)
 {
     return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2);
