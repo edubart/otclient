@@ -111,7 +111,7 @@ void LightView::addLightSource(const Position& pos, const Point& center, float s
 void LightView::addLightSourceV1(const Point& center, float scaleFactor, const Light& light)
 {
     const int intensity = light.intensity;
-    const int radius = (intensity * Otc::TILE_PIXELS * scaleFactor) * 2.5;
+    const int radius = (intensity * Otc::TILE_PIXELS * scaleFactor) * 1.25;
 
     Color color = Color::from8bit(light.color);
 
