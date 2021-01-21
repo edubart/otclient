@@ -32,10 +32,6 @@ Panel
     !text: tr('Show frame rate')
 
   OptionCheckBox
-    id: enableLights
-    !text: tr('Enable lights')
-
-  OptionCheckBox
     id: enableFloorShadowing
     !text: tr('Enable Floor Shadowing')
 
@@ -80,6 +76,23 @@ Panel
     margin-top: 3
     minimum: 10
     maximum: 201
+
+  Label
+    id: lightVersionLabel
+    !text: tr('Light Version')..':'
+    phantom: false
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 13
+
+  ComboBox
+    id: lightVersion
+    width: 120
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 5
+    margin-left: 5
+    mouse-scroll: false
 
   Label
     id: ambientLightLabel

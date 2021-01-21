@@ -52,7 +52,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, int frameFlag, Lig
     const int xPattern = m_position.x % getNumPatternX();
     const int yPattern = m_position.y % getNumPatternY();
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, false, frameFlag, lightView);
+    rawGetThingType()->draw(m_position, dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, false, frameFlag, lightView);
 }
 
 void Effect::onAppear()

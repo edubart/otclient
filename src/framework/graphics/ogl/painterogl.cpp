@@ -63,7 +63,7 @@ void PainterOGL::refreshState()
 
 void PainterOGL::saveState()
 {
-    assert(m_oldStateIndex<10);
+    assert(m_oldStateIndex < 10);
     m_olderStates[m_oldStateIndex].resolution = m_resolution;
     m_olderStates[m_oldStateIndex].transformMatrix = m_transformMatrix;
     m_olderStates[m_oldStateIndex].projectionMatrix = m_projectionMatrix;
@@ -185,8 +185,8 @@ void PainterOGL::setResolution(const Size& resolution)
     //   |  x  y  1  |  *  |     0.0      | -2.0 / height |      0.0      |  =  |  x'  y'  1  |
     //   -------------     |    -1.0      |      1.0      |      1.0      |     ---------------
 
-    Matrix3 projectionMatrix = { 2.0f/resolution.width(),  0.0f,                      0.0f,
-                                 0.0f,                    -2.0f/resolution.height(),  0.0f,
+    Matrix3 projectionMatrix = { 2.0f / resolution.width(),  0.0f,                      0.0f,
+                                 0.0f,                    -2.0f / resolution.height(),  0.0f,
                                 -1.0f,                     1.0f,                      1.0f };
 
     m_resolution = resolution;
@@ -258,27 +258,27 @@ void PainterOGL::updateGlTexture()
 void PainterOGL::updateGlCompositionMode()
 {
     switch(m_compositionMode) {
-        case CompositionMode_Normal:
-            if(g_graphics.canUseBlendFuncSeparate())
-                glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-            else
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            break;
-        case CompositionMode_Multiply:
-            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-            break;
-        case CompositionMode_Add:
-            glBlendFunc(GL_ONE, GL_ONE);
-            break;
-        case CompositionMode_Replace:
-            glBlendFunc(GL_ONE, GL_ZERO);
-            break;
-        case CompositionMode_DestBlending:
-            glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
-            break;
-        case CompositionMode_Light:
-            glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-            break;
+    case CompositionMode_Normal:
+        if(g_graphics.canUseBlendFuncSeparate())
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+        else
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        break;
+    case CompositionMode_Multiply:
+        glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+        break;
+    case CompositionMode_Add:
+        glBlendFunc(GL_ONE, GL_ONE);
+        break;
+    case CompositionMode_Replace:
+        glBlendFunc(GL_ONE, GL_ZERO);
+        break;
+    case CompositionMode_DestBlending:
+        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+        break;
+    case CompositionMode_Light:
+        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+        break;
     }
 }
 
@@ -290,6 +290,12 @@ void PainterOGL::updateGlBlendEquation()
         glBlendEquation(0x8006); // GL_FUNC_ADD
     else if(m_blendEquation == BlendEquation_Max)
         glBlendEquation(0x8008); // GL_MAX
+    else if(m_blendEquation == BlendEquation_Min)
+        glBlendEquation(0x8007); // GL_MIN
+    else if(m_blendEquation == BlendEquation_Subtract)
+        glBlendEquation(0x800A); // GL_FUNC_SUBTRACT
+    else if(m_blendEquation == BlendEquation_Rever_Subtract)
+        glBlendEquation(0x800B); // GL_FUNC_REVERSE_SUBTRACT
 }
 
 void PainterOGL::updateGlClipRect()
@@ -306,9 +312,9 @@ void PainterOGL::updateGlClipRect()
 void PainterOGL::updateGlAlphaWriting()
 {
     if(m_alphaWriting)
-        glColorMask(1,1,1,1);
+        glColorMask(1, 1, 1, 1);
     else
-        glColorMask(1,1,1,0);
+        glColorMask(1, 1, 1, 0);
 }
 
 void PainterOGL::updateGlViewport()

@@ -146,6 +146,8 @@ public:
     void setVisualPoint(const Point& point) { m_visualPoint = point; }
     const Point getVisualPoint() { return m_visualPoint; }
 
+    int getWalkedPixel() const { return m_walkedPixels; }
+
 protected:
     void updateWalkingTile();
     virtual void updateWalkAnimation();

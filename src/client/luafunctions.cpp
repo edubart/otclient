@@ -787,6 +787,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getSpectators", &UIMap::getSpectators);
     g_lua.bindClassMemberFunction<UIMap>("setCrosshairPosition", &UIMap::setCrosshairPosition);
     g_lua.bindClassMemberFunction<UIMap>("setCrosshairTexture", &UIMap::setCrosshairTexture);
+    g_lua.bindClassMemberFunction<UIMap>("setLightVersion", &UIMap::setLightVersion);
+    g_lua.bindClassMemberFunction<UIMap>("getLightVersion", &UIMap::getLightVersion);
 
     g_lua.registerClass<UIMinimap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMinimap>("create", [] { return UIMinimapPtr(new UIMinimap); });

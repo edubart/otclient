@@ -48,9 +48,9 @@ protected:
     int getAnimationInterval() override;
 
 private:
-
     Timer m_animationTimer;
     Point m_delta;
+    uint8 m_distance;
     float m_duration;
     uint16 m_id;
     Otc::Direction m_direction;

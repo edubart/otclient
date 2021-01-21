@@ -432,7 +432,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags, LightView* lightView)
+void ThingType::draw(const Position& pos, const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -475,8 +475,13 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
 
     if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
         const Light light = getLight();
-        if(light.intensity > 0)
-            lightView->addLightSource(screenRect.center(), scaleFactor, light);
+        if(light.intensity > 0) {
+            auto _pos = pos;
+            if(getCategory() == ThingCategoryMissile)
+                _pos = Position();
+
+            lightView->addLightSource(_pos, screenRect.center(), scaleFactor, light);
+        }
     }
 }
 

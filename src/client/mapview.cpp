@@ -91,9 +91,10 @@ void MapView::draw(const Rect& rect)
         updateVisibleTilesCache();
 
     const Position cameraPosition = getCameraPosition();
-
     const auto redrawThing = m_frameCache.tile->canUpdate();
     const auto redrawLight = m_drawLights && m_lightView->canUpdate();
+
+    m_srcRect = calcFramebufferSource(rect.size());
 
     if(redrawThing || redrawLight) {
         if(redrawLight) m_frameCache.flags |= Otc::FUpdateLight;
@@ -120,10 +121,8 @@ void MapView::draw(const Rect& rect)
 
                 if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
 
-                const Position& tilePos = tile->getPosition();
-
                 tile->drawStart(this);
-                tile->draw(transformPositionTo2D(tilePos, cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
+                tile->draw(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
                 tile->drawEnd(this);
             }
 #endif
@@ -155,7 +154,7 @@ void MapView::draw(const Rect& rect)
     if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
         fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
-    const Rect srcRect = calcFramebufferSource(rect.size());
+    const Rect srcRect = m_srcRect;
     const Point drawOffset = srcRect.topLeft();
 
     if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
@@ -388,7 +387,7 @@ void MapView::updateVisibleTilesCache()
                         continue;
 
                     // skip tiles that are completely behind another tile
-                    if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor))
+                    if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
                         continue;
 
                     floor.push_back(tile);
@@ -466,7 +465,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
     m_frameCache.tile->resize(bufferSize);
     m_frameCache.crosshair->resize(bufferSize);
-    if(m_drawLights) m_lightView->resize(bufferSize);
+    if(m_drawLights) m_lightView->resize();
 
     m_frameCache.staticText->resize(g_graphics.getViewportSize());
     m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
@@ -834,8 +833,8 @@ void MapView::setDrawLights(bool enable)
     if(enable == m_drawLights) return;
 
     if(enable) {
-        m_lightView = LightViewPtr(new LightView);
-        m_lightView->resize(m_frameCache.tile->getSize());
+        m_lightView = LightViewPtr(new LightView(this, m_lightVersion));
+        m_lightView->resize();
     } else m_lightView = nullptr;
 
     m_drawLights = enable;
@@ -1015,7 +1014,7 @@ void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightVie
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

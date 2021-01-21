@@ -5,6 +5,7 @@
    ### Features   
    - Tile/Light/Creature Render Optimized
    - Adaptive/Event-based Rendering (g_map.schedulePainting)   
+   - New Light System
    - Idle Animation Support
    - Highlight Mouse Target
    - Crosshair

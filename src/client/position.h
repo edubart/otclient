@@ -34,7 +34,7 @@ class Position
 {
 public:
     Position() : x(65535), y(65535), z(255) {}
-    Position(uint16 x, uint16 y, uint8 z) : x(x), y(y), z(z) {}
+    Position(int x, int y, uint8 z) : x(x), y(y), z(z) {}
 
     Position(const Position& position) = default;
 

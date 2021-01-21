@@ -71,16 +71,18 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 
 bool Tile::isCompletelyCovered(int firstFloor)
 {
-    bool covered = g_map.isCompletelyCovered(m_position, firstFloor);
-    if(!(m_covered = covered)) {
+    m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
+    if(!(m_covered = m_completelyCovered)) {
         m_covered = g_map.isCovered(m_position, firstFloor);
     }
 
-    return covered;
+    return m_completelyCovered;
 }
 
 void Tile::drawStart(const MapViewPtr& mapView)
 {
+    if(m_completelyCovered) return;
+
     m_drawElevation = 0;
     m_shadowColor = mapView->getLastFloorShadowingColor();
 
@@ -101,6 +103,8 @@ void Tile::drawStart(const MapViewPtr& mapView)
 
 void Tile::drawEnd(const MapViewPtr& mapView)
 {
+    if(m_completelyCovered) return;
+
     // Reset Border Shadow Color
     if(mapView->isDrawingFloorShadowing() && hasBorderShadowColor()) {
         g_painter->setColor(m_shadowColor);
@@ -109,11 +113,17 @@ void Tile::drawEnd(const MapViewPtr& mapView)
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
 {
-    if(isCovered()) {
-        if(thing->isCreature() && !isWalkable(true)) {
-            const auto& tile = thing->getTile();
-            if(!tile || tile->isCovered()) lightView = nullptr;
-        } else lightView = nullptr;
+    if(lightView) {
+        if(lightView->getVersion() >= 2) {
+            if(m_completelyCovered) {
+                frameFlag = Otc::FUpdateLight;
+            }
+        } else if(isCovered()) {
+            if(thing->isCreature() && !isWalkable(true)) {
+                const auto& tile = thing->getTile();
+                if(!tile || tile->isCovered()) lightView = nullptr;
+            } else lightView = nullptr;
+        }
     }
 
     const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall());
@@ -853,6 +863,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->isTopGround())
         m_countFlag.hasTopGround += value;
+
+    if(thing->isGroundBorder() && thing->isNotWalkable())
+        m_countFlag.hasNoWalkableEdge += value;
 
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
     if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {

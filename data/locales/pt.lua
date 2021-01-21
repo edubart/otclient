@@ -431,6 +431,7 @@ locale = {
 	["Enable Floor Shadowing"] = "Ativar sombreamento de piso",
 	["Draw Viewport Edge"] = "Desenhar borda da janela de visualização",
 	["Draw Floating Effects"] = "Desenhar Efeitos Flutuantes",
+	["Light Version"] = "Versão da luz",
   }
 }
 

@@ -33,7 +33,10 @@ class Painter
 public:
     enum BlendEquation {
         BlendEquation_Add,
-        BlendEquation_Max
+        BlendEquation_Max,
+        BlendEquation_Min,
+        BlendEquation_Subtract,
+        BlendEquation_Rever_Subtract,
     };
     enum CompositionMode {
         CompositionMode_Normal,
@@ -50,10 +53,10 @@ public:
 
 
     Painter();
-    virtual ~Painter() { }
+    virtual ~Painter() {}
 
-    virtual void bind() { }
-    virtual void unbind() { }
+    virtual void bind() {}
+    virtual void unbind() {}
 
     virtual void saveState() = 0;
     virtual void saveAndResetState() = 0;
@@ -65,19 +68,19 @@ public:
     virtual void drawFillCoords(CoordsBuffer& coordsBuffer) = 0;
     virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture) = 0;
     virtual void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0,0), texture->getSize())); }
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(0, 0), texture->getSize())); }
     virtual void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawFilledRect(const Rect& dest) = 0;
     virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
     virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
-    virtual void setTexture(Texture *texture) = 0;
+    virtual void setTexture(Texture* texture) = 0;
     virtual void setClipRect(const Rect& clipRect) = 0;
     virtual void setColor(const Color& color) { m_color = color; }
     virtual void setAlphaWriting(bool enable) = 0;
     virtual void setBlendEquation(BlendEquation blendEquation) = 0;
-    virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
+    virtual void setShaderProgram(PainterShaderProgram* shaderProgram) { m_shaderProgram = shaderProgram; }
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram) { setShaderProgram(shaderProgram.get()); }
 
     virtual void scale(float x, float y) = 0;
@@ -111,7 +114,7 @@ public:
     virtual bool hasShaders() = 0;
 
 protected:
-    PainterShaderProgram *m_shaderProgram;
+    PainterShaderProgram* m_shaderProgram;
     CompositionMode m_compositionMode;
     Color m_color;
     Size m_resolution;
@@ -119,6 +122,6 @@ protected:
     Rect m_clipRect;
 };
 
-extern Painter *g_painter;
+extern Painter* g_painter;
 
 #endif

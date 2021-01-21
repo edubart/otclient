@@ -376,6 +376,7 @@ locale = {
 	["Enable Floor Shadowing"] = "Enable Floor Shadowing",
 	["Draw Viewport Edge"] = "Draw Viewport Edge",
 	["Draw Floating Effects"] = "Draw Floating Effects",
+	["Light Version"] = "Light Version",
   }
 }
 

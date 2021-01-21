@@ -29,21 +29,45 @@
 #include "declarations.h"
 #include "thingtype.h"
 
+struct DimensionConfig {
+    int min = 0, max = 0;
+    std::vector<Position> positions;
+    std::vector<Position> edges;
+
+    bool isEdge(const Position pos) const
+    {
+        return std::find(edges.begin(), edges.end(), pos) != edges.end();
+    }
+};
+
 struct LightSource {
-    Color color;
+    Color color = Color::alpha;
     Point center;
+    std::pair<Point, Point> extraOffset;
     int radius;
+    Position pos;
+    uint8_t intensity;
+    uint8_t originalIntensity;
+    bool canMove = true;
+    bool reverter = false;
+    DimensionConfig dimension;
+
+    void reset() { pos = Position(); color = Color::alpha; canMove = true; reverter = false; }
+    bool hasLight() const { return color != Color::alpha; }
+    bool isValid() const { return radius == -1; }
 };
 
 class LightView : public LuaObject
 {
 public:
-    LightView();
+
+
+    LightView(const MapViewPtr& mapView, const uint8 version);
 
     void reset();
     void setGlobalLight(const Light& light);
-    void addLightSource(const Point& center, float scaleFactor, const Light& light);
-    void resize(const Size& size);
+    void addLightSource(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing = nullptr);
+    void resize();
     void draw(const Rect& dest, const Rect& src);
 
     void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
@@ -52,13 +76,21 @@ public:
 
     bool isDark() const { return m_globalLight.intensity < 250; }
 
+    uint8 getVersion() const { return m_version; }
 private:
+
+
+    void addLightSourceV1(const Point& center, float scaleFactor, const Light& light);
+    void addLightSourceV2(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing);
     void drawGlobalLight(const Light& light);
-    void drawLightSource(const Point& center, const Color& color, int radius);
+    void drawLightSource(const LightSource& light);
+    bool canDraw(const Position& pos);
+
+    DimensionConfig getDimensionConfig(const uint8 intensity);
 
     Light m_globalLight;
 
-    TexturePtr generateLightBubble(float centerFactor);
+    TexturePtr generateLightBubble();
     TexturePtr m_lightTexture;
 
     Painter::BlendEquation m_blendEquation;
@@ -66,6 +98,12 @@ private:
     FrameBufferPtr m_lightbuffer;
 
     std::vector<LightSource> m_lightMap;
+    std::array<DimensionConfig, 255> m_dimensionCache;
+    MapViewPtr m_mapView;
+
+    int getLightSourceIndex(const Position& pos);
+
+    uint8 m_version;
 };
 
 #endif

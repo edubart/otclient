@@ -122,7 +122,7 @@ public:
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 
-    bool isCompletelyCovered(int firstFloor);
+    bool isCompletelyCovered(int firstFloor = -1);
 
     void remFlag(uint32 flag) { m_flags &= ~flag; }
     void setFlag(uint32 flag) { m_flags |= flag; }
@@ -155,6 +155,8 @@ public:
     const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
 
     const bool isCovered() { return m_covered; };
+    const bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
+    const bool hasGround() { return getGround() != nullptr; };
 
 private:
     struct CountFlag {
@@ -174,6 +176,7 @@ private:
         int hasHookEast = 0;
         int hasHookSouth = 0;
         int hasTopGround = 0;
+        int hasNoWalkableEdge = 0;
     };
 
     void checkForDetachableThing();
@@ -207,6 +210,9 @@ private:
     Color m_borderShadowColor;
 
     stdext::boolean<false> m_covered;
+    stdext::boolean<false> m_completelyCovered;
+
+
 };
 
 #endif

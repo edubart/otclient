@@ -73,6 +73,7 @@ protected:
 
     friend class Map;
     friend class Tile;
+    friend class LightView;
 
 public:
     // floor visibility related
@@ -107,7 +108,7 @@ public:
     Position getCameraPosition();
     void setCameraPosition(const Position& pos);
 
-    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; schedulePainting(Otc::FUpdateLight); }
+    void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; updateLight(); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
     // drawing related
@@ -132,6 +133,9 @@ public:
 
     void setDrawManaBar(bool enable) { m_drawManaBar = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
+
+    void setLightVersion(int version) { m_lightVersion = version; setDrawLights(false); setDrawLights(true); }
+    bool getLightVersion() { return m_lightVersion; }
 
     void move(int x, int y);
 
@@ -261,6 +265,10 @@ private:
     Position m_lastCameraPosition;
 
     AwareRange m_awareRange;
+
+    Rect m_srcRect;
+
+    int m_lightVersion;
 };
 
 #endif

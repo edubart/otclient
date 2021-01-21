@@ -20,6 +20,7 @@ local defaultOptions = {
   enableMusicSound = true,
   musicSoundVolume = 100,
   enableLights = true,
+  lightVersion = 2,
   enableFloorShadowing = true,
   drawViewportEdge = false,
   floatingEffect = false,
@@ -105,16 +106,6 @@ function init()
   generalPanel = g_ui.loadUI('game')
   optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')
 
-  crosshairCombobox = generalPanel:recursiveGetChildById('crosshairComboBox')
-
-  crosshairCombobox:addOption('Disabled', '')
-  crosshairCombobox:addOption('Default', 'default')
-  crosshairCombobox:addOption('Full', 'full')
-
-  crosshairCombobox.onOptionChange = function(comboBox, option)
-    setOption('crosshair', comboBox:getCurrentOption().data)
-  end
-
   consolePanel = g_ui.loadUI('console')
   optionsTabBar:addTab(tr('Console'), consolePanel, '/images/optionstab/console')
 
@@ -126,6 +117,24 @@ function init()
 
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
   audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
+
+  crosshairCombobox = generalPanel:recursiveGetChildById('crosshair')
+
+  crosshairCombobox:addOption('Disabled', 'disabled')
+  crosshairCombobox:addOption('Default', 'default')
+  crosshairCombobox:addOption('Full', 'full')
+
+  crosshairCombobox.onOptionChange = function(comboBox, option)
+    setOption('crosshair', comboBox:getCurrentOption().data)
+  end
+
+  lightVersionComboBox= graphicsPanel:recursiveGetChildById('lightVersion')
+  lightVersionComboBox.onOptionChange = function(comboBox, option)
+    setOption('lightVersion', lightVersionComboBox:getCurrentOption().data)
+  end
+
+  lightVersionComboBox:addOption('Version 1 (OLD)', 1)
+  lightVersionComboBox:addOption('Version 2 (Beta)', 2)
 
   addEvent(function() setup() end)
 end
@@ -256,8 +265,15 @@ function setOption(key, value, force)
     generalPanel:getChildById('hotkeyDelayLabel'):setText(tr('Hotkey delay: %sms', value))
   elseif key == 'crosshair' then
     local crossPath = '/images/game/crosshair/'
-    gameMapPanel:setCrosshairTexture(value and crossPath .. value or nil)
-    crosshairCombobox:setCurrentOptionByData(value, false)
+    local newValue = value
+    if  newValue == 'disabled' then
+      newValue = nil
+    end
+    gameMapPanel:setCrosshairTexture(newValue and crossPath .. newValue or nil)
+    crosshairCombobox:setCurrentOptionByData(newValue, false)
+  elseif key == 'lightVersion' then
+    gameMapPanel:setLightVersion(value)
+    lightVersionComboBox:setCurrentOptionByData(value, false)
   end
 
   -- change value for keybind updates

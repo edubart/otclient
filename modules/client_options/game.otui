@@ -51,7 +51,7 @@ Panel
     margin-top: 13
 
   ComboBox
-    id: crosshairComboBox
+    id: crosshair
     width: 120
     anchors.left: prev.right
     anchors.top: enableHighlightMouseTarget.bottom
