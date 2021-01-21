@@ -235,6 +235,7 @@ private:
     stdext::boolean<false> m_drawLights;
     stdext::boolean<false> m_autoViewMode;
     stdext::boolean<false> m_drawViewportEdge;
+    stdext::boolean<false> m_forceTileUpdateCache;
 
     std::vector<CreaturePtr> m_visibleCreatures;
 

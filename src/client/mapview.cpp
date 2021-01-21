@@ -334,10 +334,11 @@ void MapView::updateVisibleTilesCache()
     if(!cameraPosition.isValid())
         return;
 
-    if(cameraPosition.z == m_lastCameraPosition.z && m_timeUpdateVisibleTilesCache.ticksElapsed() <= FrameBuffer::MIN_TIME_UPDATE)
+    if(!m_forceTileUpdateCache && cameraPosition.z == m_lastCameraPosition.z && m_timeUpdateVisibleTilesCache.ticksElapsed() <= FrameBuffer::MIN_TIME_UPDATE)
         return;
 
     m_mustUpdateVisibleTilesCache = false;
+    m_forceTileUpdateCache = false;
 
     if(m_lastCameraPosition.z != cameraPosition.z) {
         onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
@@ -550,6 +551,7 @@ void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc
 {
     // Need Optimization (update only the specific Tile)
     if(Otc::OPERATION_CLEAN == operation) {
+        m_forceTileUpdateCache = true;
         requestVisibleTilesCacheUpdate();
         return;
     }
