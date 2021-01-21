@@ -233,6 +233,8 @@ function setOption(key, value, force)
     g_app.setBackgroundPaneMaxFps(v)
   elseif key == 'enableLights' then
     gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
+    graphicsPanel:getChildById('lightVersion'):setEnabled(value)
+    graphicsPanel:getChildById('lightVersionLabel'):setEnabled(value)
     graphicsPanel:getChildById('ambientLight'):setEnabled(value)
     graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
   elseif key == 'ambientLight' then

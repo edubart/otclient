@@ -32,6 +32,10 @@ Panel
     !text: tr('Show frame rate')
 
   OptionCheckBox
+    id: enableLights
+    !text: tr('Enable lights')
+
+  OptionCheckBox
     id: enableFloorShadowing
     !text: tr('Enable Floor Shadowing')
 
