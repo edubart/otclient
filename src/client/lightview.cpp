@@ -314,7 +314,7 @@ bool LightView::canDraw(const Position& pos)
 
     Position tilePos = pos;
     while(tilePos.coveredUp() && tilePos.z >= m_mapView->getCachedFirstVisibleFloor()) {
-        TilePtr tile = g_map.getTile(tilePos);
+        tile = g_map.getTile(tilePos);
         if(tile && (tile->blockLight() || tile->isTopGround())) return false;
     }
 
