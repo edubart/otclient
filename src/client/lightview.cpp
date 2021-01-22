@@ -72,7 +72,7 @@ TexturePtr LightView::generateLightBubble()
             float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
             // light intensity varies inversely with the square of the distance
             intensity *= intensity;
-            if(m_version > 1) intensity = std::min<float>(intensity, 0.5);
+            if(m_version > 1) intensity = std::min<float>(intensity, 0.4);
             const uint8_t colorByte = intensity * intensityVariant;
 
             uint8_t pixel[4] = { colorByte, colorByte, colorByte, 0xff };
@@ -172,14 +172,13 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
     const auto& dimension = getDimensionConfig(intensity);
     for each(const auto & position in dimension.positions)
     {
-        auto posLight = posTile.translated(position.x, position.y);
+        const auto posLight = posTile.translated(position.x, position.y);
+        auto& lightSource = getLightSource(posLight);
+
+        if(!lightSource.isValid() || lightSource.hasLight() && lightSource.intensity >= intensity) continue;
 
         float brightness = position.brightness;
-
         if(!canDraw(posLight, brightness)) continue;
-
-        auto& lightSource = getLightSource(posLight);;
-        if(!lightSource.isValid() || lightSource.hasLight() && lightSource.intensity > intensity) continue;
 
         Color color = Color::from8bit(light.color);
         color.setRed(color.rF() * brightness);
@@ -220,14 +219,14 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
             }
         }
     }
-    }
+}
 
 const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
 {
 #if DEBUG_BUBBLE == 1
     const float startBrightness = 3;
 #else
-    const float startBrightness = intensity == 1 ? .15 : .3;
+    const float startBrightness = intensity == 1 ? .15 : .35;
 #endif
 
     auto& dimension = m_dimensionCache[intensity];
@@ -247,8 +246,7 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
                     absY == absX || absX - middle == absY || absX == absY - middle || absX - middle == absY - middle
                     ) || absX == size && absY == 0 || absY == size && absX == 0) continue;
 
-                const float max = std::max<float>(absX, absY),
-                    brightness = startBrightness - ((max + std::min<float>(absX, absY)) / 100);
+                const float brightness = startBrightness - ((std::max<float>(absX, absY) * 1.5) / 50);
 
                 PositionLight posLight = PositionLight(x, y, brightness);
                 posLight.point = Point(x, y);
