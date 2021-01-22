@@ -185,17 +185,13 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
         color.setBlue(color.bF() * brightness);
         color.setGreen(color.gF() * brightness);
 
-        LightSource newLightSource;
-        newLightSource.pos = posLight;
-        newLightSource.color = color;
-        newLightSource.radius = radius;
-        newLightSource.canMove = lightSource.canMove;
-        newLightSource.intensity = intensity;
-        newLightSource.dimension = dimension;
-
-        newLightSource.center = center + ((position.point * Otc::TILE_PIXELS) * scaleFactor);
-        newLightSource.extraOffset = extraOffset;
-        lightSource = newLightSource;
+        lightSource.pos = posLight;
+        lightSource.color = color;
+        lightSource.radius = radius;
+        lightSource.center = center + ((position.point * Otc::TILE_PIXELS) * scaleFactor);
+        lightSource.intensity = intensity;
+        lightSource.dimension = dimension;
+        lightSource.extraOffset = extraOffset;
     }
 
     if(checkAround) {
