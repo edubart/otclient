@@ -29,10 +29,15 @@
 #include "declarations.h"
 #include "thingtype.h"
 
+struct PositionLight : Position {
+    PositionLight(int x, int y, float brightness) : brightness(brightness) { Position::x = x, Position::y = y, z = 255; }
+    float brightness;
+    Point point;
+};
+
 struct DimensionConfig {
-    int min = 0, max = 0;
-    std::vector<Position> positions;
-    std::vector<Position> edges;
+    std::vector<PositionLight> positions;
+    std::vector<PositionLight> edges;
 
     bool isEdge(const Position pos) const
     {
@@ -41,20 +46,21 @@ struct DimensionConfig {
 };
 
 struct LightSource {
+    LightSource() : radius(0) {}
+    LightSource(int radius) : radius(radius) {}
     Color color = Color::alpha;
     Point center;
     std::pair<Point, Point> extraOffset;
     int radius;
     Position pos;
     uint8_t intensity;
-    uint8_t originalIntensity;
     bool canMove = true;
     bool reverter = false;
     DimensionConfig dimension;
 
     void reset() { pos = Position(); color = Color::alpha; canMove = true; reverter = false; }
     bool hasLight() const { return color != Color::alpha; }
-    bool isValid() const { return radius == -1; }
+    bool isValid() const { return radius > -1; }
 };
 
 class LightView : public LuaObject
@@ -84,9 +90,9 @@ private:
     void addLightSourceV2(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing);
     void drawGlobalLight(const Light& light);
     void drawLightSource(const LightSource& light);
-    bool canDraw(const Position& pos);
+    bool canDraw(const Position& pos, float& brightness);
 
-    DimensionConfig getDimensionConfig(const uint8 intensity);
+    const DimensionConfig getDimensionConfig(const uint8 intensity);
 
     Light m_globalLight;
 
@@ -101,7 +107,7 @@ private:
     std::array<DimensionConfig, 255> m_dimensionCache;
     MapViewPtr m_mapView;
 
-    int getLightSourceIndex(const Position& pos);
+    LightSource& getLightSource(const Position& pos);
 
     uint8 m_version;
 };
