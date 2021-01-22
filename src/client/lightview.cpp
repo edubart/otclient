@@ -121,7 +121,7 @@ void LightView::addLightSourceV1(const Point& center, float scaleFactor, const L
 
     Color color = Color::from8bit(light.color);
 
-    const float brightnessLevel = intensity > 1 ? 0.7 : 0.2f,
+    const float brightnessLevel = intensity > 1 ? .7 : .2,
         brightness = brightnessLevel + (intensity / static_cast<float>(MAX_LIGHT_INTENSITY)) * brightnessLevel;
 
     color.setRed(color.rF() * brightness);
@@ -153,7 +153,7 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
 #if DEBUG_BUBBLE == 1
     const float extraRadius = 1;
 #else
-    const float extraRadius = intensity > 1 ? 1.8 + std::min<float>(static_cast<float>(intensity) / 10, MAX_LIGHT_INTENSITY) : 1.1;
+    const float extraRadius = intensity > 1 ? 1.8 + std::min<float>(intensity, MAX_LIGHT_INTENSITY) / 10 : 1.1;
 #endif
 
     const int radius = (Otc::TILE_PIXELS * scaleFactor) * extraRadius;
@@ -236,22 +236,33 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
             middle = (size / 2);
 
         // TODO: REFATORATION REQUIRED
-        for(int x = start; x <= size; ++x) {
-            const int absX = std::abs(x);
-            for(int y = start; y <= size; ++y) {
-                const int absY = std::abs(y);
-
-                if(absX == size && absY >= 1 || absY == size && absX >= 1) continue;
-                if(absY > middle && absX > middle && (
-                    absY == absX || absX - middle == absY || absX == absY - middle || absX - middle == absY - middle
-                    ) || absX == size && absY == 0 || absY == size && absX == 0) continue;
-
-                const float brightness = startBrightness - ((std::max<float>(absX, absY) * 1.5) / 50);
+        // Ugly algorithm
+        {
+            auto pushLight = [&](const int x, const int y) -> void {
+                const float brightness = startBrightness - ((std::max<float>(std::abs(x), std::abs(y)) * 1.5) / 50);
 
                 PositionLight posLight = PositionLight(x, y, brightness);
                 posLight.point = Point(x, y);
 
                 dimension.positions.push_back(posLight);
+            };
+
+            int i = 1;
+            for(int x = start; x < 0; ++x) {
+                for(int y = i * -1; y <= i; ++y) {
+                    if(x == start || y == start || y == size) continue;
+                    pushLight(x, y);
+                }
+                ++i;
+            }
+
+            i = 1;
+            for(int x = size; x >= 0; --x) {
+                for(int y = i * -1; y <= i; ++y) {
+                    if(y >= size || y <= start || x == size) continue;
+                    pushLight(x, y);
+                }
+                ++i;
             }
         }
 
