@@ -934,7 +934,12 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
             stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
         } else stepDuration /= m_speed;
 
-        if(g_game.getClientVersion() >= 900) {
+        bool checkTibiaVersion900Plus = true;
+#if FORCE_USE_FORMULA_WALK_900_PLUS == 1
+        checkTibiaVersion900Plus = false;
+#endif
+
+        if(!checkTibiaVersion900Plus || g_game.getClientVersion() >= 900) {
             const auto serverBeat = g_game.getServerBeat();
             stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
         }
