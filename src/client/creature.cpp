@@ -591,7 +591,7 @@ void Creature::nextWalkUpdate()
 void Creature::updateWalk()
 {
     int stepDuration = getStepDuration(true);
-    stepDuration += (12 - stepDuration * .01);
+    stepDuration += (20 - stepDuration * .05);
 
     const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
     const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
