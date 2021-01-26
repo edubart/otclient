@@ -36,5 +36,5 @@
 // thus avoiding CPU consumption, however there will be a delay in rendering.
 #define FLUSH_CONTROL_FOR_RENDERING 1
 
-// Define 1 to use the tibia 9+ formula, for some reason the servers below 9+ are using the 9+ formula
+// Define 1 to force use the tibia 9+ formula, for some reason the servers below 9 are using the 9+ formula
 #define FORCE_USE_FORMULA_WALK_900_PLUS 1
