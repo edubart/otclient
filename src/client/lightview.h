@@ -52,13 +52,12 @@ struct LightSource {
     Point center;
     std::pair<Point, Point> extraOffset;
     int radius;
-    Position pos;
     uint8_t intensity;
     bool canMove = true;
     bool reverter = false;
-    DimensionConfig dimension;
+    float brightness = 0;
 
-    void reset() { pos = Position(); color = Color::alpha; canMove = true; reverter = false; }
+    void reset() { color = Color::alpha; canMove = true; reverter = false; }
     bool hasLight() const { return color != Color::alpha; }
     bool isValid() const { return radius > -1; }
 };

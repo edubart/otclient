@@ -175,22 +175,22 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
         const auto posLight = posTile.translated(position.x, position.y);
         auto& lightSource = getLightSource(posLight);
 
-        if(!lightSource.isValid() || lightSource.hasLight() && lightSource.intensity >= intensity) continue;
-
         float brightness = position.brightness;
-        if(!canDraw(posLight, brightness)) continue;
+
+        if(!lightSource.isValid() ||
+           lightSource.hasLight() && lightSource.brightness >= brightness ||
+           !canDraw(posLight, brightness)) continue;
 
         Color color = Color::from8bit(light.color);
         color.setRed(color.rF() * brightness);
         color.setBlue(color.bF() * brightness);
         color.setGreen(color.gF() * brightness);
 
-        lightSource.pos = posLight;
         lightSource.color = color;
         lightSource.radius = radius;
         lightSource.center = center + ((position.point * Otc::TILE_PIXELS) * scaleFactor);
         lightSource.intensity = intensity;
-        lightSource.dimension = dimension;
+        lightSource.brightness = brightness;
         lightSource.extraOffset = extraOffset;
     }
 
@@ -363,12 +363,12 @@ void LightView::draw(const Rect& dest, const Rect& src)
             m_lightMap.clear();
         } else if(m_version == 2) {
             for(LightSource& source : m_lightMap) {
-                if(source.pos.isValid()) {
-                    source.center += (source.canMove ? source.extraOffset.second : source.extraOffset.first);
+                if(!source.hasLight()) continue;
 
-                    drawLightSource(source);
-                    source.reset();
-                }
+                source.center += (source.canMove ? source.extraOffset.second : source.extraOffset.first);
+
+                drawLightSource(source);
+                source.reset();
             }
         }
 
