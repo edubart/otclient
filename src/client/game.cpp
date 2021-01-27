@@ -586,10 +586,9 @@ bool Game::walk(const Otc::Direction direction)
         cancelFollow();
 
     // must cancel auto walking, and wait next try
-    if(m_localPlayer->isAutoWalking() || m_localPlayer->isServerWalking()) {
+    if(m_localPlayer->isAutoWalking()) {
         m_protocolGame->sendStop();
-        if(m_localPlayer->isAutoWalking())
-            m_localPlayer->stopAutoWalk();
+        m_localPlayer->stopAutoWalk();
         return false;
     }
 
