@@ -35,3 +35,35 @@ end
 function Position.manhattanDistance(pos1, pos2)
   return math.abs(pos2.x - pos1.x) + math.abs(pos2.y - pos1.y)
 end
+
+function Position.translatedToDirection(pos, direction)
+  local newPos = {x = pos.x, y= pos.y, z = pos.z}
+  if direction == Directions.North then
+    newPos.y = newPos.y - 1
+  elseif direction == Directions.East then
+    newPos.x = newPos.x + 1
+  elseif direction == Directions.South then
+    newPos.y = newPos.y + 1
+  elseif direction == Directions.West then
+    newPos.x = newPos.x - 1
+  elseif direction == Directions.NorthEast then
+    newPos.x = newPos.x + 1
+    newPos.y = newPos.y - 1
+  elseif direction == Directions.SouthEast then
+    newPos.x = newPos.x + 1
+    newPos.y = newPos.y + 1
+  elseif direction == Directions.SouthWest then
+    newPos.x = newPos.x - 1
+    newPos.y = newPos.y + 1
+  elseif direction == Directions.NorthWest then
+    newPos.x = newPos.x - 1
+    newPos.y = newPos.y - 1
+  end
+
+  return newPos
+end
+
+function Position.parse(pos)
+  if not pos then return nil end
+  return {x = pos.x, y = pos.y, z = pos.z}
+end

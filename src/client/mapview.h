@@ -161,6 +161,8 @@ public:
     void setCrosshairPosition(const Position& pos);
     void setCrosshairTexture(const std::string& texturePath);
 
+    Position getCrosshairPosition() { return m_crosshair.position; }
+
 private:
     struct ViewPort {
         int top, right, bottom, left;

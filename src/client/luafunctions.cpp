@@ -785,6 +785,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("getMinimumAmbientLight", &UIMap::getMinimumAmbientLight);
     g_lua.bindClassMemberFunction<UIMap>("getVisibleCreatures", &UIMap::getVisibleCreatures);
     g_lua.bindClassMemberFunction<UIMap>("getSpectators", &UIMap::getSpectators);
+    g_lua.bindClassMemberFunction<UIMap>("getCrosshairPosition", &UIMap::getCrosshairPosition);
     g_lua.bindClassMemberFunction<UIMap>("setCrosshairPosition", &UIMap::setCrosshairPosition);
     g_lua.bindClassMemberFunction<UIMap>("setCrosshairTexture", &UIMap::setCrosshairTexture);
     g_lua.bindClassMemberFunction<UIMap>("setLightVersion", &UIMap::setLightVersion);

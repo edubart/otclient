@@ -28,6 +28,10 @@ function init()
     onLoginAdvice = onLoginAdvice,
   }, true)
 
+  connect(LocalPlayer, {
+		onPositionChange = onPlayerPositionChange
+	})
+
   -- Call load AFTER game window has been created and
   -- resized to a stable state, otherwise the saved
   -- settings can get overridden by false onGeometryChange
@@ -143,6 +147,10 @@ function terminate()
   })
 
   disconnect(gameLeftPanel, { onVisibilityChange = onLeftPanelVisibilityChange })
+
+  disconnect(LocalPlayer, {
+		onPositionChange = onPlayerPositionChange
+	})
 
   logoutButton:destroy()
   gameRootPanel:destroy()
@@ -891,4 +899,37 @@ end
 
 function limitZoom()
   limitedZoom = true
+end
+
+local hightLightTile = nil
+function onPlayerPositionChange(creature, newPos, oldPos)
+  if hightLightTile then
+    local dir = getDirectionFromPos(Position.parse(oldPos), Position.parse(newPos))
+    local pos = Position.translatedToDirection(hightLightTile:getPosition(), dir)
+    pos.z = pos.z + (newPos.z - oldPos.z)
+    addEvent(function()
+      updateHighlightMouseTarget(pos)
+    end)
+  end
+end
+
+function updateHighlightMouseTarget(pos)
+  if hightLightTile then
+    if pos ~= nil and Position.equals(pos, hightLightTile:getPosition()) then
+      return
+    end
+
+    hightLightTile:unselect()
+  end
+
+  if not modules.client_options.getOption('enableHighlightMouseTarget') then
+    return
+  end
+
+  if pos then
+    hightLightTile = g_map.getTile(pos)
+    if hightLightTile then
+      hightLightTile:select()
+    end
+  end
 end

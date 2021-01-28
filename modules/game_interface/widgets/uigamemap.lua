@@ -139,21 +139,5 @@ function UIGameMap:onMouseMove(mousePos, mouseMoved)
 		self:setCrosshairPosition(pos or {})
   end
 
-  if modules.client_options.getOption('enableHighlightMouseTarget') then
-    if pos == nil then
-      if lastTile then
-        lastTile:unselect()
-        lastTile = nil
-      end
-    elseif lastTile == nil or not Position.equals(pos, lastTile:getPosition()) then
-      if lastTile then
-        lastTile:unselect()
-      end
-
-      lastTile = g_map.getTile(pos)
-      if lastTile then
-        lastTile:select()
-      end
-    end
-  end
+  modules.game_interface.updateHighlightMouseTarget(pos)
 end

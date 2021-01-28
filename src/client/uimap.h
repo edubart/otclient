@@ -100,6 +100,8 @@ public:
     void setCrosshairPosition(const Position& pos) { m_mapView->setCrosshairPosition(pos); }
     void setCrosshairTexture(const std::string& texturePath) { m_mapView->setCrosshairTexture(texturePath); }
 
+    Position getCrosshairPosition() { return m_mapView->getCrosshairPosition(); }
+
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
     void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
