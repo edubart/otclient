@@ -28,6 +28,11 @@
 #include "mapview.h"
 #include "map.h"
 
+enum {
+    MAX_LIGHT_INTENSITY = 8,
+    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
+};
+
 #define DEBUG_BUBBLE 0
 
 LightView::LightView(const MapViewPtr& mapView, const uint8 version)
@@ -143,7 +148,7 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
     if(intensity > MAX_LIGHT_INTENSITY) {
         const auto& awareRange = m_mapView->m_awareRange;
         intensity = std::max<int>(awareRange.right, awareRange.bottom) + 2;
-    }
+}
 
 #if DEBUG_BUBBLE == 1
     const float extraRadius = 1;
