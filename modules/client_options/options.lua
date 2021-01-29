@@ -316,7 +316,3 @@ end
 function addButton(name, func, icon)
   optionsTabBar:addButton(name, func, icon)
 end
-
-function crosshairEnabled()
-  return crosshairCombobox:getCurrentOption().data ~= ''
-end
