@@ -62,8 +62,8 @@ void Map::removeMapView(const MapViewPtr& mapView)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = 8;
-    range.top = 6;
+    range.left = 40;
+    range.top = 20;
     range.bottom = range.top + 1;
     range.right = range.left + 1;
     setAwareRange(range);
@@ -103,7 +103,7 @@ void Map::clean()
 {
     cleanDynamicThings();
 
-    for(int i = 0; i <= Otc::MAX_Z; ++i)
+    for(int_fast8_t i = -1; ++i <= Otc::MAX_Z;)
         m_tileBlocks[i].clear();
 
     m_waypoints.clear();
@@ -122,7 +122,7 @@ void Map::cleanDynamicThings()
     }
     m_knownCreatures.clear();
 
-    for(int i = 0; i <= Otc::MAX_Z; ++i)
+    for(int_fast8_t i = -1; ++i <= Otc::MAX_Z;)
         m_floorMissiles[i].clear();
 
     cleanTexts();
@@ -134,7 +134,7 @@ void Map::cleanTexts()
     m_staticTexts.clear();
 }
 
-void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
+void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
 {
     if(!thing)
         return;
@@ -170,10 +170,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                     Point offset = prevAnimatedText->getOffset();
                     const float t = prevAnimatedText->getTimer().ticksElapsed();
                     if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
-                        const int y = 12 - 48 * t / static_cast<float>(Otc::ANIMATED_TEXT_DURATION);
+                        const int32 y = 12 - 48 * t / static_cast<float>(Otc::ANIMATED_TEXT_DURATION);
                         offset += Point(0, y);
                     }
-                    offset.y = std::min<int>(offset.y, 12);
+                    offset.y = std::min<int32>(offset.y, 12);
                     animatedText->setOffset(offset);
                 }
                 m_animatedTexts.push_back(animatedText);
@@ -199,7 +199,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
     notificateTileUpdate(pos, thing, Otc::OPERATION_ADD);
 }
 
-ThingPtr Map::getThing(const Position& pos, int stackPos)
+ThingPtr Map::getThing(const Position& pos, int16 stackPos)
 {
     if(TilePtr tile = getTile(pos))
         return tile->getThing(stackPos);
@@ -232,7 +232,7 @@ bool Map::removeThing(const ThingPtr& thing)
     } else {
         if(thing->isMissile()) {
             MissilePtr missile = thing->static_self_cast<Missile>();
-            const int z = missile->getPosition().z;
+            const uint8 z = missile->getPosition().z;
             const auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
             if(it != m_floorMissiles[z].end()) {
                 m_floorMissiles[z].erase(it);
@@ -254,7 +254,7 @@ bool Map::removeThing(const ThingPtr& thing)
     return ret;
 }
 
-bool Map::removeThingByPos(const Position& pos, int stackPos)
+bool Map::removeThingByPos(const Position& pos, int16 stackPos)
 {
     if(TilePtr tile = getTile(pos))
         return removeThing(tile->getThing(stackPos));
@@ -377,14 +377,14 @@ const TilePtr& Map::getTile(const Position& pos)
     return m_nulltile;
 }
 
-const TileList Map::getTiles(int floor/* = -1*/)
+const TileList Map::getTiles(int8 floor/* = -1*/)
 {
     TileList tiles;
     if(floor > Otc::MAX_Z) return tiles;
 
     if(floor < 0) {
         // Search all floors
-        for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+        for(int_fast8_t z = -1; ++z <= Otc::MAX_Z;) {
             for(const auto& pair : m_tileBlocks[z]) {
                 const TileBlock& block = pair.second;
                 for(const TilePtr& tile : block.getTiles()) {
@@ -570,7 +570,7 @@ void Map::removeUnawareThings()
 
     if(!g_game.getFeature(Otc::GameKeepUnawareTiles)) {
         // remove tiles that we are not aware anymore
-        for(int z = 0; z <= Otc::MAX_Z; ++z) {
+        for(int_fast8_t z = -1; ++z <= Otc::MAX_Z;) {
             std::unordered_map<uint, TileBlock>& tileBlocks = m_tileBlocks[z];
             for(auto it = tileBlocks.begin(); it != tileBlocks.end();) {
                 TileBlock& block = (*it).second;
@@ -654,29 +654,22 @@ std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool mult
     return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
 }
 
-std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange)
+std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bool multiFloor, int32 xRange, int32 yRange)
 {
     return getSpectatorsInRangeEx(centerPos, multiFloor, xRange, xRange, yRange, yRange);
 }
 
-std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange)
+std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int32 minXRange, int32 maxXRange, int32 minYRange, int32 maxYRange)
 {
-    int minZRange = 0;
-    int maxZRange = 0;
     std::vector<CreaturePtr> creatures;
-
-    if(multiFloor) {
-        minZRange = 0;
-        maxZRange = Otc::MAX_Z;
-    }
+    uint8 maxZRange = multiFloor ? Otc::MAX_Z : 0;
 
     //TODO: optimize
     //TODO: get creatures from other floors corretly
     //TODO: delivery creatures in distance order
-
-    for(int iz = -minZRange; iz <= maxZRange; ++iz) {
-        for(int iy = -minYRange; iy <= maxYRange; ++iy) {
-            for(int ix = -minXRange; ix <= maxXRange; ++ix) {
+    for(int_fast8_t iz = -1; ++iz <= maxZRange;) {
+        for(int_fast32_t iy = -minYRange; iy <= maxYRange; ++iy) {
+            for(int_fast32_t ix = -minXRange; ix <= maxXRange; ++ix) {
                 TilePtr tile = getTile(centerPos.translated(ix, iy, iz));
                 if(!tile)
                     continue;
@@ -696,7 +689,7 @@ bool Map::isLookPossible(const Position& pos)
     return tile && tile->isLookPossible();
 }
 
-bool Map::isCovered(const Position& pos, int firstFloor)
+bool Map::isCovered(const Position& pos, uint8 firstFloor)
 {
     // check for tiles on top of the postion
     Position tilePos = pos;
@@ -713,7 +706,7 @@ bool Map::isCovered(const Position& pos, int firstFloor)
     return false;
 }
 
-bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
+bool Map::isCompletelyCovered(const Position& pos, uint8 firstFloor)
 {
     const TilePtr& checkTile = getTile(pos);
     Position tilePos = pos;
@@ -722,8 +715,8 @@ bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
         bool done = false;
 
         // Check is Top Ground
-        for(int x = 0; x < 2 && !done; ++x) {
-            for(int y = 0; y < 2 && !done; ++y) {
+        for(int_fast8_t x = -1; ++x < 2 && !done;) {
+            for(int_fast8_t y = -1; ++y < 2 && !done;) {
                 const TilePtr& tile = getTile(tilePos.translated(x, x));
                 if(!tile || !tile->isTopGround()) {
                     covered = false;
@@ -741,8 +734,8 @@ bool Map::isCompletelyCovered(const Position& pos, int firstFloor)
         done = false;
 
         // check in 2x2 range tiles that has no transparent pixels
-        for(int x = 0; x < 2 && !done; ++x) {
-            for(int y = 0; y < 2 && !done; ++y) {
+        for(int_fast8_t x = -1; ++x < 2 && !done;) {
+            for(int_fast8_t y = -1; ++y < 2 && !done;) {
                 const TilePtr& tile = getTile(tilePos.translated(-x, -y));
                 if(!tile || !tile->isFullyOpaque()) {
                     covered = false;
@@ -767,7 +760,7 @@ bool Map::isAwareOfPosition(const Position& pos)
     Position groundedPos = pos;
     while(groundedPos.z != m_centralPosition.z) {
         if(groundedPos.z > m_centralPosition.z) {
-            if(groundedPos.x == 65535 || groundedPos.y == 65535) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
+            if(groundedPos.x == _UI16_MAX || groundedPos.y == _UI16_MAX) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
                 break;
             groundedPos.coveredUp();
         } else {
@@ -789,7 +782,7 @@ void Map::setAwareRange(const AwareRange& range)
     removeUnawareThings();
 }
 
-int Map::getFirstAwareFloor()
+uint8 Map::getFirstAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
         return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
@@ -797,15 +790,15 @@ int Map::getFirstAwareFloor()
     return 0;
 }
 
-int Map::getLastAwareFloor()
+uint8 Map::getLastAwareFloor()
 {
     if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return std::min<int>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, static_cast<int>(Otc::MAX_Z));
+        return std::min<uint8>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::MAX_Z);
 
     return Otc::SEA_FLOOR;
 }
 
-std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxComplexity, int flags)
+std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, uint16 maxComplexity, uint32 flags)
 {
     // pathfinding using A* search algorithm
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
@@ -863,7 +856,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     nodes[startPos] = currentNode;
     Node* foundNode = nullptr;
     while(currentNode) {
-        if(static_cast<int>(nodes.size()) > maxComplexity) {
+        if(static_cast<uint16>(nodes.size()) > maxComplexity) {
             result = Otc::PathFindResultTooFar;
             break;
         }
@@ -876,8 +869,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         if(foundNode && currentNode->totalCost >= foundNode->cost)
             break;
 
-        for(int i = -1; i <= 1; ++i) {
-            for(int j = -1; j <= 1; ++j) {
+        for(int_fast32_t i = -1; i <= 1; ++i) {
+            for(int_fast32_t j = -1; j <= 1; ++j) {
                 if(i == 0 && j == 0)
                     continue;
 
@@ -885,7 +878,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 bool hasCreature = false;
                 bool isNotWalkable = true;
                 bool isNotPathable = true;
-                int speed = 100;
+                uint16 speed = 100;
 
                 Position neighborPos = currentNode->pos.translated(i, j);
                 if(g_map.isAwareOfPosition(neighborPos)) {

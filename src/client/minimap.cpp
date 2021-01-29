@@ -54,7 +54,7 @@ void MinimapBlock::update()
         for(int y = 0; y < MMBLOCK_SIZE; ++y) {
             const uint8 c = getTile(x, y).color;
             uint32 col;
-            if(c != 255) {
+            if(c != _UI8_MAX) {
                 col = Color::from8bit(c).rgba();
                 shouldDraw = true;
             } else
@@ -200,7 +200,7 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
             minimapTile.flags |= MinimapTileNotWalkable;
         if(!tile->isPathable())
             minimapTile.flags |= MinimapTileNotPathable;
-        minimapTile.speed = std::min<int>(static_cast<int>(std::ceil(tile->getGroundSpeed() / 10.0f)), 255);
+        minimapTile.speed = std::min<int>(static_cast<int>(std::ceil(tile->getGroundSpeed() / 10.0f)), _UI8_MAX);
     }
 
     if(minimapTile != MinimapTile()) {

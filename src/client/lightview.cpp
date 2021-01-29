@@ -30,7 +30,7 @@
 
 enum {
     MAX_LIGHT_INTENSITY = 8,
-    MAX_AMBIENT_LIGHT_INTENSITY = 255
+    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
 };
 
 #define DEBUG_BUBBLE 0
@@ -234,7 +234,7 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
         // TODO: REFATORATION REQUIRED
         // Ugly algorithm
         {
-            auto pushLight = [&](const int x, const int y) -> void {
+            auto pushLight = [&](const int8 x, const int8 y) -> void {
                 const float brightness = startBrightness - ((std::max<float>(std::abs(x), std::abs(y)) * 1.5) / 50);
 
                 PositionLight posLight = PositionLight(x, y, brightness);
@@ -244,8 +244,8 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
             };
 
             int i = 1;
-            for(int x = start; x < 0; ++x) {
-                for(int y = i * -1; y <= i; ++y) {
+            for(int_fast8_t x = start; x < 0; ++x) {
+                for(int_fast8_t y = i * -1; y <= i; ++y) {
                     if(x == start || y == start || y == size) continue;
                     pushLight(x, y);
                 }
@@ -253,8 +253,8 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
             }
 
             i = 1;
-            for(int x = size; x >= 0; --x) {
-                for(int y = i * -1; y <= i; ++y) {
+            for(int_fast8_t x = size; x >= 0; --x) {
+                for(int_fast8_t y = i * -1; y <= i; ++y) {
                     if(y >= size || y <= start || x == size) continue;
                     pushLight(x, y);
                 }
@@ -277,7 +277,7 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
     return dimension;
 }
 
-static auto INVALID_LIGHT_SOURCE = LightSource(-1);
+static LightSource INVALID_LIGHT_SOURCE(-1);
 LightSource& LightView::getLightSource(const Position& pos)
 {
     const auto& point = m_mapView->transformPositionTo2D(pos, m_mapView->getCameraPosition());

@@ -53,7 +53,7 @@ MapView::MapView()
 {
     m_viewMode = NEAR_VIEW;
     m_frameCache.flags = Otc::FUpdateAll;
-    m_lockedFirstVisibleFloor = -1;
+    m_lockedFirstVisibleFloor = _UI8_MAX;
     m_cachedFirstVisibleFloor = Otc::SEA_FLOOR;
     m_cachedLastVisibleFloor = Otc::SEA_FLOOR;
     m_minimumAmbientLight = 0;
@@ -344,8 +344,8 @@ void MapView::updateVisibleTilesCache()
         onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
     }
 
-    const int cachedFirstVisibleFloor = calcFirstVisibleFloor();
-    int cachedLastVisibleFloor = calcLastVisibleFloor();
+    const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
+    uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
 
     assert(cachedFirstVisibleFloor >= 0 && cachedLastVisibleFloor >= 0 &&
            cachedFirstVisibleFloor <= Otc::MAX_Z && cachedLastVisibleFloor <= Otc::MAX_Z);
@@ -367,15 +367,15 @@ void MapView::updateVisibleTilesCache()
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
-    const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
-    for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor; --iz) {
+    const uint32 numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
+    for(int_fast32_t iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor; --iz) {
         auto& floor = m_cachedVisibleTiles[iz];
 
         // loop through / diagonals beginning at top left and going to top right
-        for(int diagonal = 0; diagonal < numDiagonals; ++diagonal) {
+        for(uint_fast32_t diagonal = 0; diagonal < numDiagonals; ++diagonal) {
             // loop current diagonal tiles
-            const int advance = std::max<int>(diagonal - m_drawDimension.height(), 0);
-            for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
+            const uint32 advance = std::max<uint32>(diagonal - m_drawDimension.height(), 0);
+            for(int_fast32_t iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
 
                 // position on current floor
                 //TODO: check position limits
@@ -407,11 +407,11 @@ void MapView::updateVisibleTilesCache()
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
 {
-    int tileSize = 0;
+    uint8 tileSize = 0;
     Size bufferSize;
 
-    int possiblesTileSizes[] = { 1,2,4,8,16,32 };
-    for(int candidateTileSize : possiblesTileSizes) {
+    uint8 possiblesTileSizes[] = { 1,2,4,8,16,32 };
+    for(uint8 candidateTileSize : possiblesTileSizes) {
         bufferSize = (visibleDimension + Size(3, 3)) * candidateTileSize;
         if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
             break;
@@ -472,8 +472,8 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
     m_frameCache.creatureDynamicInformation->resize(g_graphics.getViewportSize());
 
-    m_awareRange.left = std::min<int>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
-    m_awareRange.top = std::min<int>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
+    m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
+    m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
     m_awareRange.bottom = m_awareRange.top + 1;
     m_awareRange.right = m_awareRange.left + 1;
 
@@ -498,13 +498,13 @@ void MapView::updateLight()
         ambientLight.color = 215;
         ambientLight.intensity = 0;
     } else ambientLight = g_map.getLight();
-    ambientLight.intensity = std::max<int>(m_minimumAmbientLight * 255, ambientLight.intensity);
+    ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * _UI8_MAX, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
     m_lightView->schedulePainting();
 }
 
-void MapView::onFloorChange(const short /*floor*/, const short /*previousFloor*/)
+void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/)
 {
     const auto cameraPosition = getCameraPosition();
 
@@ -513,7 +513,7 @@ void MapView::onFloorChange(const short /*floor*/, const short /*previousFloor*/
     updateLight();
 }
 
-void MapView::onFloorDrawingStart(const short floor)
+void MapView::onFloorDrawingStart(const uint8 floor)
 {
     const auto cameraPosition = getCameraPosition();
 
@@ -540,7 +540,7 @@ void MapView::onFloorDrawingStart(const short floor)
     }
 }
 
-void MapView::onFloorDrawingEnd(const short /*floor*/)
+void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
 {
     if(m_drawFloorShadowing) {
         g_painter->resetColor();
@@ -582,7 +582,7 @@ void MapView::onMapCenterChange(const Position&)
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::lockFirstVisibleFloor(int firstVisibleFloor)
+void MapView::lockFirstVisibleFloor(uint8 firstVisibleFloor)
 {
     m_lockedFirstVisibleFloor = firstVisibleFloor;
     requestVisibleTilesCacheUpdate();
@@ -590,7 +590,7 @@ void MapView::lockFirstVisibleFloor(int firstVisibleFloor)
 
 void MapView::unlockFirstVisibleFloor()
 {
-    m_lockedFirstVisibleFloor = -1;
+    m_lockedFirstVisibleFloor = _UI8_MAX;
     requestVisibleTilesCacheUpdate();
 }
 
@@ -676,7 +676,7 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     return position;
 }
 
-void MapView::move(int x, int y)
+void MapView::move(int32 x, int32 y)
 {
     m_moveOffset.x += x;
     m_moveOffset.y += y;
@@ -717,11 +717,11 @@ Rect MapView::calcFramebufferSource(const Size& destSize)
     return Rect(drawOffset, srcSize);
 }
 
-int MapView::calcFirstVisibleFloor()
+uint8 MapView::calcFirstVisibleFloor()
 {
-    int z = Otc::SEA_FLOOR;
+    uint8 z = Otc::SEA_FLOOR;
     // return forced first visible floor
-    if(m_lockedFirstVisibleFloor != -1) {
+    if(m_lockedFirstVisibleFloor != _UI8_MAX) {
         z = m_lockedFirstVisibleFloor;
     } else {
         const Position cameraPosition = getCameraPosition();
@@ -733,15 +733,15 @@ int MapView::calcFirstVisibleFloor()
                 z = cameraPosition.z;
             } else {
                 // if nothing is limiting the view, the first visible floor is 0
-                int firstFloor = 0;
+                uint8 firstFloor = 0;
 
                 // limits to underground floors while under sea level
                 if(cameraPosition.z > Otc::SEA_FLOOR)
-                    firstFloor = std::max<int>(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, static_cast<int>(Otc::UNDERGROUND_FLOOR));
+                    firstFloor = std::max<uint8>(cameraPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::UNDERGROUND_FLOOR);
 
                 // loop in 3x3 tiles around the camera
-                for(int ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
-                    for(int iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
+                for(int_fast32_t ix = -1; ix <= 1 && firstFloor < cameraPosition.z; ++ix) {
+                    for(int_fast32_t iy = -1; iy <= 1 && firstFloor < cameraPosition.z; ++iy) {
                         const Position pos = cameraPosition.translated(ix, iy);
 
                         // process tiles that we can look through, e.g. windows, doors
@@ -779,12 +779,12 @@ int MapView::calcFirstVisibleFloor()
     return z;
 }
 
-int MapView::calcLastVisibleFloor()
+uint8 MapView::calcLastVisibleFloor()
 {
     if(!m_multifloor)
         return calcFirstVisibleFloor();
 
-    int z = Otc::SEA_FLOOR;
+    uint8 z = Otc::SEA_FLOOR;
 
     const Position cameraPosition = getCameraPosition();
     // this could happens if the player is not known yet
@@ -796,7 +796,7 @@ int MapView::calcLastVisibleFloor()
             z = Otc::SEA_FLOOR;
     }
 
-    if(m_lockedFirstVisibleFloor != -1)
+    if(m_lockedFirstVisibleFloor != _UI8_MAX)
         z = std::max<int>(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
@@ -846,7 +846,7 @@ void MapView::setDrawLights(bool enable)
 
 void MapView::updateViewportDirectionCache()
 {
-    for(int dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
+    for(uint8 dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
         ViewPort& vp = m_viewPortDirection[dir];
         vp.top = m_awareRange.top;
         vp.right = m_awareRange.right;
@@ -894,7 +894,7 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
     const Position cameraPosition = getCameraPosition();
     const Position& tilePos = tile->getPosition();
 
-    const int dz = tilePos.z - cameraPosition.z;
+    const int8 dz = tilePos.z - cameraPosition.z;
     const Position checkPos = tilePos.translated(dz, dz);
 
     // Check for non-visible tiles on the screen and ignore them
@@ -978,9 +978,8 @@ void MapView::setCrosshairTexture(const std::string& texturePath)
 }
 
 #if DRAW_ALL_GROUND_FIRST == 1
-void MapView::drawSeparately(const int floor, const ViewPort& viewPort, LightView* lightView)
+void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightView* lightView)
 {
-
     const Position cameraPosition = getCameraPosition();
     const auto& tiles = m_cachedVisibleTiles[floor];
     const auto redrawThing = m_frameCache.flags & Otc::FUpdateThing;

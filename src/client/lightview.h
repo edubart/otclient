@@ -30,7 +30,7 @@
 #include "thingtype.h"
 
 struct PositionLight : Position {
-    PositionLight(int x, int y, float brightness) : brightness(brightness) { Position::x = x, Position::y = y, z = 255; }
+    PositionLight(int8 x, int8 y, float brightness) : brightness(brightness) { Position::x = x, Position::y = y, z = _UI8_MAX; }
     float brightness;
     Point point;
 };
@@ -65,8 +65,6 @@ struct LightSource {
 class LightView : public LuaObject
 {
 public:
-
-
     LightView(const MapViewPtr& mapView, const uint8 version);
 
     void reset();
@@ -103,7 +101,7 @@ private:
     FrameBufferPtr m_lightbuffer;
 
     std::vector<LightSource> m_lightMap;
-    std::array<DimensionConfig, 255> m_dimensionCache;
+    std::array<DimensionConfig, _UI8_MAX> m_dimensionCache;
     MapViewPtr m_mapView;
 
     LightSource& getLightSource(const Position& pos);

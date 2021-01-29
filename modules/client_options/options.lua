@@ -31,7 +31,7 @@ local defaultOptions = {
   displayText = true,
   dontStretchShrink = false,
   turnDelay = 50,
-  hotkeyDelay = 50,
+  hotkeyDelay = 70,
   crosshair = 'default',
   enableHighlightMouseTarget = true
 }

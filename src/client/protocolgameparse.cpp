@@ -2180,7 +2180,7 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg)
         pos.y = msg->getU16();
         pos.z = msg->getU8();
         const uint8 stackpos = msg->getU8();
-        assert(stackpos != 255);
+        assert(stackpos != _UI8_MAX);
         thing = g_map.getThing(pos, stackpos);
         if(!thing)
             g_logger.traceError(stdext::format("no thing at pos:%s, stackpos:%d", stdext::to_string(pos), stackpos));

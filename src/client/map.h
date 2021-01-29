@@ -167,10 +167,10 @@ public:
     void cleanTexts();
 
     // thing related
-    void addThing(const ThingPtr& thing, const Position& pos, int stackPos = -1);
-    ThingPtr getThing(const Position& pos, int stackPos);
+    void addThing(const ThingPtr& thing, const Position& pos, int16 stackPos = -1);
+    ThingPtr getThing(const Position& pos, int16 stackPos);
     bool removeThing(const ThingPtr& thing);
-    bool removeThingByPos(const Position& pos, int stackPos);
+    bool removeThingByPos(const Position& pos, int16 stackPos);
     void colorizeThing(const ThingPtr& thing, const Color& color);
     void removeThingColor(const ThingPtr& thing);
 
@@ -182,7 +182,7 @@ public:
     const TilePtr& createTileEx(const Position& pos, const Items&... items);
     const TilePtr& getOrCreateTile(const Position& pos);
     const TilePtr& getTile(const Position& pos);
-    const TileList getTiles(int floor = -1);
+    const TileList getTiles(int8 floor = -1);
     void cleanTile(const Position& pos);
 
     // tile zone related
@@ -213,16 +213,16 @@ public:
     void removeCreatureById(uint32 id);
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
-    std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int xRange, int yRange);
-    std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int minXRange, int maxXRange, int minYRange, int maxYRange);
+    std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int32 xRange, int32 yRange);
+    std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int32 minXRange, int32 maxXRange, int32 minYRange, int32 maxYRange);
 
     void setLight(const Light& light);
 
     void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);
-    bool isCovered(const Position& pos, int firstFloor = 0);
-    bool isCompletelyCovered(const Position& pos, int firstFloor = 0);
+    bool isCovered(const Position& pos, uint8 firstFloor = 0);
+    bool isCompletelyCovered(const Position& pos, uint8 firstFloor = 0);
     bool isAwareOfPosition(const Position& pos);
 
     void resetLastCamera();
@@ -233,14 +233,14 @@ public:
 
     Light getLight() { return m_light; }
     Position getCentralPosition() { return m_centralPosition; }
-    int getFirstAwareFloor();
-    int getLastAwareFloor();
-    const std::vector<MissilePtr>& getFloorMissiles(int z) { return m_floorMissiles[z]; }
+    uint8 getFirstAwareFloor();
+    uint8 getLastAwareFloor();
+    const std::vector<MissilePtr>& getFloorMissiles(uint8 z) { return m_floorMissiles[z]; }
 
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
 
-    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxComplexity, int flags = 0);
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, uint16 maxComplexity, uint32 flags = 0);
 
     void setFloatingEffect(bool enable) { m_floatingEffect = enable; }
     bool isDrawingFloatingEffects() { return m_floatingEffect; }
@@ -248,7 +248,7 @@ public:
 private:
     void removeUnawareThings();
 
-    uint getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
+    uint16 getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
     std::array<std::vector<MissilePtr>, Otc::MAX_Z + 1> m_floorMissiles;
 
@@ -260,16 +260,19 @@ private:
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
     std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
 
+    std::map<uint32, Color> m_zoneColors;
+
+    stdext::packed_storage<uint8> m_attribs;
+
     uint8 m_animationFlags;
     uint32 m_zoneFlags;
-    std::map<uint32, Color> m_zoneColors;
+
     float m_zoneOpacity;
 
     Light m_light;
     Position m_centralPosition;
     Rect m_tilesRect;
 
-    stdext::packed_storage<uint8> m_attribs;
     AwareRange m_awareRange;
     static TilePtr m_nulltile;
 
