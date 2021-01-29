@@ -31,14 +31,14 @@ class TSize
 {
 public:
     TSize() : wd(-1), ht(-1) {};
-    TSize(T width, T height) : wd(width), ht(height) { };
-    TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) { };
+    TSize(T width, T height) : wd(width), ht(height) {};
+    TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) {};
 
     TPoint<T> toPoint() const { return TPoint<T>(wd, ht); }
 
-    bool isNull() const { return wd==0 && ht==0; }
-    bool isEmpty() const { return wd<1 || ht<1; }
-    bool isValid() const { return wd>=0 && ht>=0; }
+    bool isNull() const { return wd == 0 && ht == 0; }
+    bool isEmpty() const { return wd < 1 || ht < 1; }
+    bool isValid() const { return wd >= 0 && ht >= 0; }
 
     int width() const { return wd; }
     int height() const { return ht; }
@@ -48,32 +48,33 @@ public:
     void setHeight(T h) { ht = h; }
 
     TSize<T> operator-() const { return TSize<T>(-wd, -ht); }
-    TSize<T> operator+(const TSize<T>& other) const { return TSize<T>(wd + other.wd, ht + other.ht);   }
-    TSize<T>& operator+=(const TSize<T>& other) { wd+=other.wd; ht+=other.ht; return *this; }
-    TSize<T> operator-(const TSize<T>& other) const { return TSize<T>(wd - other.wd, ht - other.ht);   }
-    TSize<T>& operator-=(const TSize<T>& other) { wd-=other.wd; ht-=other.ht; return *this; }
-    TSize<T> operator*(const TSize<T>& other) const { return TSize<T>(static_cast<T>(other.wd)*wd, static_cast<T>(ht)*other.ht);  }
-    TSize<T>& operator*=(const TSize<T>& other) { wd=static_cast<T>(other.wd)*wd; ht=static_cast<T>(ht)*other.ht; return *this; }
-    TSize<T> operator/(const TSize<T>& other) const { return TSize<T>(static_cast<T>(wd)/other.wd, static_cast<T>(ht)/other.ht);  }
-    TSize<T>& operator/=(const TSize<T>& other) { static_cast<T>(wd)/=other.wd; static_cast<T>(ht)/=other.ht; return *this; }
-    TSize<T> operator*(const float v) const { return TSize<T>(static_cast<T>(wd)*v, static_cast<T>(ht)*v);  }
-    TSize<T>& operator*=(const float v) { wd=static_cast<T>(wd)*v; ht=static_cast<T>(ht)*v; return *this; }
-    TSize<T> operator/(const float v) const { return TSize<T>(static_cast<T>(wd)/v, static_cast<T>(ht)/v);  }
-    TSize<T>& operator/=(const float v) { wd/=v; ht/=v; return *this; }
+    TSize<T> operator+(const TSize<T>& other) const { return TSize<T>(wd + other.wd, ht + other.ht); }
+    TSize<T>& operator+=(const TSize<T>& other) { wd += other.wd; ht += other.ht; return *this; }
+    TSize<T> operator-(const TSize<T>& other) const { return TSize<T>(wd - other.wd, ht - other.ht); }
+    TSize<T>& operator-=(const TSize<T>& other) { wd -= other.wd; ht -= other.ht; return *this; }
+    TSize<T> operator*(const TSize<T>& other) const { return TSize<T>(static_cast<T>(other.wd) * wd, static_cast<T>(ht) * other.ht); }
+    TSize<T>& operator*=(const TSize<T>& other) { wd = static_cast<T>(other.wd) * wd; ht = static_cast<T>(ht) * other.ht; return *this; }
+    TSize<T> operator/(const TSize<T>& other) const { return TSize<T>(static_cast<T>(wd) / other.wd, static_cast<T>(ht) / other.ht); }
+    TSize<T>& operator/=(const TSize<T>& other) { static_cast<T>(wd) /= other.wd; static_cast<T>(ht) /= other.ht; return *this; }
+    TSize<T> operator*(const float v) const { return TSize<T>(static_cast<T>(wd) * v, static_cast<T>(ht) * v); }
+    TSize<T>& operator*=(const float v) { wd = static_cast<T>(wd) * v; ht = static_cast<T>(ht) * v; return *this; }
+    TSize<T> operator/(const float v) const { return TSize<T>(static_cast<T>(wd) / v, static_cast<T>(ht) / v); }
+    TSize<T>& operator/=(const float v) { wd /= v; ht /= v; return *this; }
 
-    bool operator<=(const TSize<T>&other) const { return wd<=other.wd || ht<=other.ht; }
-    bool operator>=(const TSize<T>&other) const { return wd>=other.wd || ht>=other.ht; }
-    bool operator<(const TSize<T>&other) const { return wd<other.wd || ht<other.ht; }
-    bool operator>(const TSize<T>&other) const { return wd>other.wd || ht>other.ht; }
+    bool operator<=(const TSize<T>& other) const { return wd <= other.wd || ht <= other.ht; }
+    bool operator>=(const TSize<T>& other) const { return wd >= other.wd || ht >= other.ht; }
+    bool operator<(const TSize<T>& other) const { return wd < other.wd || ht < other.ht; }
+    bool operator>(const TSize<T>& other) const { return wd > other.wd || ht > other.ht; }
 
     TSize<T>& operator=(const TSize<T>& other) { wd = other.wd; ht = other.ht; return *this; }
-    bool operator==(const TSize<T>& other) const { return other.wd==wd && other.ht==ht; }
-    bool operator!=(const TSize<T>& other) const { return other.wd!=wd || other.ht!=ht; }
+    bool operator==(const TSize<T>& other) const { return other.wd == wd && other.ht == ht; }
+    bool operator!=(const TSize<T>& other) const { return other.wd != wd || other.ht != ht; }
 
     TSize<T> expandedTo(const TSize<T>& other) const { return TSize<T>(std::max<T>(wd, other.wd), std::max<T>(ht, other.ht)); }
     TSize<T> boundedTo(const TSize<T>& other) const { return TSize<T>(std::min<T>(wd, other.wd), std::min<T>(ht, other.ht)); }
 
-    void scale(const TSize<T>& s, Fw::AspectRatioMode mode) {
+    void scale(const TSize<T>& s, Fw::AspectRatioMode mode)
+    {
         if(mode == Fw::IgnoreAspectRatio || wd == 0 || ht == 0) {
             wd = s.wd;
             ht = s.ht;
@@ -90,15 +91,15 @@ public:
                 wd = rw;
                 ht = s.ht;
             } else {
-                ht = (s.wd * ht)/wd;
+                ht = (s.wd * ht) / wd;
                 wd = s.wd;
             }
         }
     }
     void scale(int w, int h, Fw::AspectRatioMode mode) { scale(TSize<T>(w, h), mode); }
 
-    float ratio() const { return static_cast<float>(wd)/ht; }
-    T area() const { return wd*ht; }
+    float ratio() const { return static_cast<float>(wd) / ht; }
+    T area() const { return wd * ht; }
 
 private:
     T wd, ht;

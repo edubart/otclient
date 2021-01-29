@@ -340,8 +340,22 @@ void MapView::updateVisibleTilesCache()
     m_mustUpdateVisibleTilesCache = false;
     m_forceTileUpdateCache = false;
 
-    if(m_lastCameraPosition.z != cameraPosition.z) {
-        onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
+    if(m_lastCameraPosition != cameraPosition) {
+        if(m_lastMousePosition.isValid()) {
+            if(cameraPosition.z == m_lastCameraPosition.z) {
+                m_lastMousePosition = m_lastMousePosition.translatedToDirection(m_lastCameraPosition.getDirectionFromPosition(cameraPosition));
+            } else {
+                m_lastMousePosition.z += cameraPosition.z - m_lastCameraPosition.z;
+            }
+
+            onMouseMove(m_lastMousePosition, true);
+        }
+
+        onPositionChange(cameraPosition, m_lastCameraPosition);
+
+        if(m_lastCameraPosition.z != cameraPosition.z) {
+            onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
+        }
     }
 
     const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
@@ -577,7 +591,31 @@ void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc
     }
 }
 
-void MapView::onMapCenterChange(const Position&)
+void MapView::onPositionChange(const Position& newPos, const Position& oldPos) {}
+
+// isVirtualMove is when the mouse is stopped, but the camera moves,
+// so the onMouseMove event is triggered by sending the new tile position that the mouse is in.
+void MapView::onMouseMove(const Position& mousePos, const bool isVirtualMove)
+{
+    if(!isVirtualMove) {
+        if(m_crosshair.texture && mousePos != m_crosshair.position) {
+            m_crosshair.position = mousePos;
+            m_crosshair.positionChanged = true;
+        }
+    }
+
+    { // Highlight Target System
+        if(m_lastHighlightTile)
+            m_lastHighlightTile->unselect();
+
+        if(m_drawHighlightTarget) {
+            if(m_lastHighlightTile = g_map.getTile(mousePos))
+                m_lastHighlightTile->select();
+        }
+    }
+}
+
+void MapView::onMapCenterChange(const Position& pos)
 {
     requestVisibleTilesCacheUpdate();
 }
@@ -964,14 +1002,6 @@ bool MapView::isInRange(const Position& pos, const bool ignoreZ)
     return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
-void MapView::setCrosshairPosition(const Position& pos)
-{
-    if(pos == m_crosshair.position) return;
-
-    m_crosshair.position = pos;
-    m_crosshair.positionChanged = true;
-}
-
 void MapView::setCrosshairTexture(const std::string& texturePath)
 {
     m_crosshair.texture = texturePath.empty() ? nullptr : g_textures.getTexture(texturePath);
@@ -1015,7 +1045,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-    }
+}
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

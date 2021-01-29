@@ -273,6 +273,8 @@ function setOption(key, value, force)
     end
     gameMapPanel:setCrosshairTexture(newValue and crossPath .. newValue or nil)
     crosshairCombobox:setCurrentOptionByData(newValue, false)
+  elseif key == 'enableHighlightMouseTarget' then
+    gameMapPanel:setDrawHighlightTarget(value)
   elseif key == 'lightVersion' then
     gameMapPanel:setLightVersion(value)
     lightVersionComboBox:setCurrentOptionByData(value, false)

@@ -151,11 +151,15 @@ public:
 
     bool isInRange(const Position& pos, const bool ignoreZ = false);
 
-    void setCrosshairPosition(const Position& pos);
     void setCrosshairTexture(const std::string& texturePath);
 
-    Position getCrosshairPosition() { return m_crosshair.position; }
+    void onPositionChange(const Position& newPos, const Position& oldPos);
+    void onMouseMove(const Position& mousePos, const bool isVirtualMove = false);
 
+    void setLastMousePosition(const Position& mousePos) { m_lastMousePosition = mousePos; }
+    const Position& getLastMousePosition() { return m_lastMousePosition; }
+
+    void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
 private:
     struct ViewPort {
         uint8 top, right, bottom, left;
@@ -224,7 +228,8 @@ private:
         m_moveOffset;
 
     Position m_customCameraPosition,
-        m_lastCameraPosition;
+        m_lastCameraPosition,
+        m_lastMousePosition;
 
     std::array<ViewPort, Otc::InvalidDirection + 1> m_viewPortDirection;
 
@@ -243,7 +248,8 @@ private:
     stdext::boolean<false> m_drawLights,
         m_autoViewMode,
         m_drawViewportEdge,
-        m_forceTileUpdateCache;
+        m_forceTileUpdateCache,
+        m_drawHighlightTarget;
 
     std::vector<CreaturePtr> m_visibleCreatures;
 
@@ -262,6 +268,8 @@ private:
     Timer m_fadeTimer, m_timeUpdateVisibleTilesCache;
 
     AwareRange m_awareRange;
+
+    TilePtr m_lastHighlightTile;
 };
 
 #endif

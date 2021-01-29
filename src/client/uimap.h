@@ -97,27 +97,28 @@ public:
 
     float getMinimumAmbientLight() { return m_mapView->getMinimumAmbientLight(); }
 
-    void setCrosshairPosition(const Position& pos) { m_mapView->setCrosshairPosition(pos); }
     void setCrosshairTexture(const std::string& texturePath) { m_mapView->setCrosshairTexture(texturePath); }
-
-    Position getCrosshairPosition() { return m_mapView->getCrosshairPosition(); }
+    void setDrawHighlightTarget(const bool enable) { m_mapView->setDrawHighlightTarget(enable); }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
     void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
+    bool onMouseMove(const Point& mousePos, const Point& mouseMoved) override;
 
 private:
     void updateVisibleDimension();
     void updateMapSize();
 
-    int m_zoom;
     MapViewPtr m_mapView;
     Rect m_mapRect;
     float m_aspectRatio;
-    bool m_keepAspectRatio;
-    bool m_limitVisibleRange;
-    int m_maxZoomIn;
-    int m_maxZoomOut;
+
+    bool m_keepAspectRatio,
+        m_limitVisibleRange;
+
+    int m_maxZoomIn,
+        m_maxZoomOut,
+        m_zoom;
 };
 
 #endif

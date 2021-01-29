@@ -130,14 +130,3 @@ function UIGameMap:canAcceptDrop(widget, mousePos)
   error('Widget ' .. self:getId() .. ' not in drop list.')
   return false
 end
-
-local lastTile
-function UIGameMap:onMouseMove(mousePos, mouseMoved)
-	local pos = self:getPosition(mousePos)
-
-	if modules.client_options.crosshairEnabled() then
-		self:setCrosshairPosition(pos or {})
-  end
-
-  modules.game_interface.updateHighlightMouseTarget(pos)
-end
