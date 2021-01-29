@@ -28,11 +28,6 @@
 #include "mapview.h"
 #include "map.h"
 
-enum {
-    MAX_LIGHT_INTENSITY = 8,
-    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
-};
-
 #define DEBUG_BUBBLE 0
 
 LightView::LightView(const MapViewPtr& mapView, const uint8 version)

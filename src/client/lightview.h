@@ -29,6 +29,11 @@
 #include "declarations.h"
 #include "thingtype.h"
 
+enum {
+    MAX_LIGHT_INTENSITY = 8,
+    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
+};
+
 struct PositionLight : Position {
     PositionLight(int8 x, int8 y, float brightness) : brightness(brightness) { Position::x = x, Position::y = y, z = _UI8_MAX; }
     float brightness;
@@ -101,7 +106,7 @@ private:
     FrameBufferPtr m_lightbuffer;
 
     std::vector<LightSource> m_lightMap;
-    std::array<DimensionConfig, _UI8_MAX> m_dimensionCache;
+    std::array<DimensionConfig, MAX_LIGHT_INTENSITY + 1> m_dimensionCache;
     MapViewPtr m_mapView;
 
     LightSource& getLightSource(const Position& pos);
