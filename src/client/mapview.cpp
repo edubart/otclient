@@ -605,8 +605,10 @@ void MapView::onMouseMove(const Position& mousePos, const bool isVirtualMove)
     }
 
     { // Highlight Target System
-        if(m_lastHighlightTile)
+        if(m_lastHighlightTile) {
             m_lastHighlightTile->unselect();
+            m_lastHighlightTile = nullptr;
+        }
 
         if(m_drawHighlightTarget) {
             if(m_lastHighlightTile = g_map.getTile(mousePos))
