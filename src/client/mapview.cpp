@@ -591,7 +591,7 @@ void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc
     }
 }
 
-void MapView::onPositionChange(const Position& newPos, const Position& oldPos) {}
+void MapView::onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
 
 // isVirtualMove is when the mouse is stopped, but the camera moves,
 // so the onMouseMove event is triggered by sending the new tile position that the mouse is in.
