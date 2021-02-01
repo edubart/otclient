@@ -133,7 +133,7 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 
     if(thing->isEffect()) {
-        thing->static_self_cast<Effect>()->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, frameFlag, lightView);
+        thing->static_self_cast<Effect>()->drawEffect(dest, scaleFactor, frameFlag, lightView);
     } else {
         thing->draw(dest, scaleFactor, animate, m_highlight, frameFlag, lightView);
 
