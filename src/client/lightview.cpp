@@ -28,11 +28,6 @@
 #include "mapview.h"
 #include "map.h"
 
-enum {
-    MAX_LIGHT_INTENSITY = 8,
-    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
-};
-
 #define DEBUG_BUBBLE 0
 
 LightView::LightView(const MapViewPtr& mapView, const uint8 version)
@@ -49,7 +44,7 @@ LightView::LightView(const MapViewPtr& mapView, const uint8 version)
 
 TexturePtr LightView::generateLightBubble()
 {
-    int intensityVariant;
+    uint8 intensityVariant;
     float centerFactor;
 
     if(m_version == 1) {
@@ -60,14 +55,14 @@ TexturePtr LightView::generateLightBubble()
         intensityVariant = 0xff;
     }
 
-    const int bubbleRadius = 256,
+    const uint16 bubbleRadius = 256,
         centerRadius = bubbleRadius * centerFactor,
         bubbleDiameter = bubbleRadius * 2;
 
     ImagePtr lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
 
-    for(int x = 0; x < bubbleDiameter; ++x) {
-        for(int y = 0; y < bubbleDiameter; ++y) {
+    for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
+        for(int_fast16_t y = -1; ++y < bubbleDiameter;) {
             const float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
             float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
             // light intensity varies inversely with the square of the distance
@@ -116,8 +111,8 @@ void LightView::addLightSource(const Position& pos, const Point& center, float s
 
 void LightView::addLightSourceV1(const Point& center, float scaleFactor, const Light& light)
 {
-    const int intensity = light.intensity,
-        radius = (intensity * Otc::TILE_PIXELS * scaleFactor) * 1.25;
+    const uint8 intensity = light.intensity;
+    const uint16 radius = (intensity * Otc::TILE_PIXELS * scaleFactor) * 1.25;
 
     Color color = Color::from8bit(light.color);
 
@@ -144,11 +139,7 @@ void LightView::addLightSourceV1(const Point& center, float scaleFactor, const L
 const static auto& POSITION_TRANSLATED_FNCS = { &Position::translatedToDirection, &Position::translatedToReverseDirection };
 void LightView::addLightSourceV2(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing)
 {
-    int intensity = light.intensity;
-    if(intensity > MAX_LIGHT_INTENSITY) {
-        const auto& awareRange = m_mapView->m_awareRange;
-        intensity = std::max<int>(awareRange.right, awareRange.bottom) + 2;
-}
+    uint8 intensity = std::min<uint8>(light.intensity, MAX_LIGHT_INTENSITY);
 
 #if DEBUG_BUBBLE == 1
     const float extraRadius = 1;
@@ -156,7 +147,7 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
     const float extraRadius = intensity > 1 ? 1.8 + std::min<float>(intensity, MAX_LIGHT_INTENSITY) / 10 : 1.1;
 #endif
 
-    const int radius = (Otc::TILE_PIXELS * scaleFactor) * extraRadius;
+    const uint16 radius = (Otc::TILE_PIXELS * scaleFactor) * extraRadius;
     const Position posTile = pos.isValid() ? pos : m_mapView->getPosition(center, m_mapView->m_srcRect.size());
 
     std::pair<Point, Point> extraOffset = std::make_pair(Point(), Point());
@@ -178,7 +169,7 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
         float brightness = position.brightness;
 
         if(!lightSource.isValid() ||
-           lightSource.hasLight() && lightSource.brightness >= brightness ||
+           lightSource.hasLight() && (lightSource.color8bit <= light.color || lightSource.brightness > brightness) ||
            !canDraw(posLight, brightness)) continue;
 
         Color color = Color::from8bit(light.color);
@@ -189,9 +180,10 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
         lightSource.color = color;
         lightSource.radius = radius;
         lightSource.center = center + ((position.point * Otc::TILE_PIXELS) * scaleFactor);
-        lightSource.intensity = intensity;
-        lightSource.brightness = brightness;
         lightSource.extraOffset = extraOffset;
+
+        lightSource.color8bit = light.color;
+        lightSource.brightness = brightness;
     }
 
     if(checkAround) {
@@ -217,7 +209,7 @@ void LightView::addLightSourceV2(const Position& pos, const Point& center, float
     }
 }
 
-const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
+const DimensionConfig& LightView::getDimensionConfig(const uint8 intensity)
 {
 #if DEBUG_BUBBLE == 1
     const float startBrightness = 3;
@@ -225,25 +217,21 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
     const float startBrightness = intensity == 1 ? .15 : .35;
 #endif
 
-    auto& dimension = m_dimensionCache[intensity];
+    auto& dimension = m_dimensionCache[intensity - 1];
     if(dimension.positions.empty()) {
-        const int size = std::max<int>(1, std::floor(static_cast<float>(intensity) / 1.1)),
-            start = size * -1,
+        const uint8 size = std::max<int>(1, std::floor(static_cast<float>(intensity) / 1.1)),
             middle = (size / 2);
+        const int8 start = size * -1;
 
         // TODO: REFATORATION REQUIRED
         // Ugly algorithm
         {
             auto pushLight = [&](const int8 x, const int8 y) -> void {
                 const float brightness = startBrightness - ((std::max<float>(std::abs(x), std::abs(y)) * 1.5) / 50);
-
-                PositionLight posLight = PositionLight(x, y, brightness);
-                posLight.point = Point(x, y);
-
-                dimension.positions.push_back(posLight);
+                dimension.positions.push_back(PositionLight(x, y, brightness));
             };
 
-            int i = 1;
+            uint8 i = 1;
             for(int_fast8_t x = start; x < 0; ++x) {
                 for(int_fast8_t y = i * -1; y <= i; ++y) {
                     if(x == start || y == start || y == size) continue;
@@ -262,12 +250,13 @@ const DimensionConfig LightView::getDimensionConfig(const uint8 intensity)
             }
         }
 
-        for each(auto & pos in dimension.positions)
+        for(auto& pos : dimension.positions)
         {
-            for each(auto & posAround in pos.getPositionsAround())
+            for(const auto& posAround : pos.getPositionsAround())
             {
                 if(std::find(dimension.positions.begin(), dimension.positions.end(), posAround) == dimension.positions.end()) {
                     dimension.edges.push_back(pos);
+                    pos.isEdge = true;
                     break;
                 }
             }

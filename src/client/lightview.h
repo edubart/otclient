@@ -29,10 +29,21 @@
 #include "declarations.h"
 #include "thingtype.h"
 
+enum : uint8 {
+    MAX_LIGHT_INTENSITY = 8,
+    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
+};
+
 struct PositionLight : Position {
-    PositionLight(int8 x, int8 y, float brightness) : brightness(brightness) { Position::x = x, Position::y = y, z = _UI8_MAX; }
-    float brightness;
-    Point point;
+    const float brightness;
+    const Point point;
+    bool isEdge = false;
+
+    PositionLight(int8 x, int8 y, float brightness) :
+        brightness(brightness), point(Point(x, y))
+    {
+        Position::x = x, Position::y = y, z = _UI8_MAX;
+    }
 };
 
 struct DimensionConfig {
@@ -48,18 +59,25 @@ struct DimensionConfig {
 struct LightSource {
     LightSource() : radius(0) {}
     LightSource(int radius) : radius(radius) {}
+
+    int8_t radius;
+
     Color color = Color::alpha;
     Point center;
     std::pair<Point, Point> extraOffset;
-    int radius;
-    uint8_t intensity;
-    bool canMove = true;
-    bool reverter = false;
+
+    bool canMove = true,
+        reverter = false,
+        isEdge = false;
+
+    // Comparison Var
+    uint8 color8bit = 215;
     float brightness = 0;
 
     void reset() { color = Color::alpha; canMove = true; reverter = false; }
     bool hasLight() const { return color != Color::alpha; }
     bool isValid() const { return radius > -1; }
+    bool isMoving() const { return extraOffset.first != extraOffset.second; }
 };
 
 class LightView : public LuaObject
@@ -89,7 +107,7 @@ private:
     void drawLightSource(const LightSource& light);
     bool canDraw(const Position& pos, float& brightness);
 
-    const DimensionConfig getDimensionConfig(const uint8 intensity);
+    const DimensionConfig& getDimensionConfig(const uint8 intensity);
 
     Light m_globalLight;
 
@@ -101,7 +119,7 @@ private:
     FrameBufferPtr m_lightbuffer;
 
     std::vector<LightSource> m_lightMap;
-    std::array<DimensionConfig, _UI8_MAX> m_dimensionCache;
+    std::array<DimensionConfig, MAX_LIGHT_INTENSITY> m_dimensionCache;
     MapViewPtr m_mapView;
 
     LightSource& getLightSource(const Position& pos);
