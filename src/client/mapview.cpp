@@ -512,7 +512,7 @@ void MapView::updateLight()
         ambientLight.color = 215;
         ambientLight.intensity = 0;
     } else ambientLight = g_map.getLight();
-    ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * _UI8_MAX, ambientLight.intensity);
+    ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * 255, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
     m_lightView->schedulePainting();
@@ -527,26 +527,37 @@ void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/
     updateLight();
 }
 
+const static Color STATIC_SHADOWING_COLOR(static_cast<uint8>(215), static_cast<uint8>(0), .6f);
 void MapView::onFloorDrawingStart(const uint8 floor)
 {
     const auto cameraPosition = getCameraPosition();
 
-    if(m_drawFloorShadowing) {
+    if(hasFloorShadowingFlag()) {
         Color shadowColor = Color::white;
-        if(floor > Otc::SEA_FLOOR && floor != cameraPosition.z) {
-            float brightnessLevelStart = .6f;
-            float brightnessLevel = cameraPosition.z - floor;
-            if(floor > cameraPosition.z)
-                brightnessLevel *= -1;
-            else brightnessLevelStart -= .1f;
 
-            brightnessLevel *= .12f;
+        if(floor > Otc::SEA_FLOOR) { // Cave
+            if(floor != cameraPosition.z && (
+                hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z ||
+                hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z)
+                ) {
+                float brightnessLevelStart = .6f;
+                float brightnessLevel = cameraPosition.z - floor;
+                if(floor > cameraPosition.z)
+                    brightnessLevel *= -1;
+                else brightnessLevelStart -= .1f;
 
-            shadowColor = Color(215, 0, brightnessLevelStart - brightnessLevel);
-        } else if(floor < cameraPosition.z) {
-            shadowColor = Color((int)g_map.getLight().color, (int)g_map.getLight().intensity / 100, .8f);
-        } else if(floor > cameraPosition.z) {
-            shadowColor = Color(215, 0, .6f);
+                brightnessLevel *= .12f;
+
+                shadowColor = Color(static_cast<uint8>(215), static_cast<uint8>(0), brightnessLevelStart - brightnessLevel);
+            }
+        } else {
+            if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z) {
+                shadowColor = STATIC_SHADOWING_COLOR;
+            } else if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z) {
+                shadowColor = m_drawLights ?
+                    Color(m_lightView->getGlobalLight().color, std::floor<uint8>(m_lightView->getGlobalLight().intensity / 100), .8f)
+                    : STATIC_SHADOWING_COLOR;
+            }
         }
 
         g_painter->setColor(shadowColor);
@@ -556,7 +567,7 @@ void MapView::onFloorDrawingStart(const uint8 floor)
 
 void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
 {
-    if(m_drawFloorShadowing) {
+    if(hasFloorShadowingFlag()) {
         g_painter->resetColor();
     }
 }

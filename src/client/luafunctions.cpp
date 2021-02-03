@@ -752,7 +752,7 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setDrawNames", &UIMap::setDrawNames);
     g_lua.bindClassMemberFunction<UIMap>("setDrawHealthBars", &UIMap::setDrawHealthBars);
     g_lua.bindClassMemberFunction<UIMap>("setDrawLights", &UIMap::setDrawLights);
-    g_lua.bindClassMemberFunction<UIMap>("setDrawFloorShadowing", &UIMap::setDrawFloorShadowing);
+    g_lua.bindClassMemberFunction<UIMap>("setFloorShadowingFlag", &UIMap::setFloorShadowingFlag);
     g_lua.bindClassMemberFunction<UIMap>("setDrawViewportEdge", &UIMap::setDrawViewportEdge);
     g_lua.bindClassMemberFunction<UIMap>("setDrawManaBar", &UIMap::setDrawManaBar);
     g_lua.bindClassMemberFunction<UIMap>("setKeepAspectRatio", &UIMap::setKeepAspectRatio);
@@ -766,12 +766,12 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("isDrawingNames", &UIMap::isDrawingNames);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingHealthBars", &UIMap::isDrawingHealthBars);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingLights", &UIMap::isDrawingLights);
-    g_lua.bindClassMemberFunction<UIMap>("isDrawingFloorShadowing", &UIMap::isDrawingFloorShadowing);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingViewportEdge", &UIMap::isDrawingViewportEdge);
     g_lua.bindClassMemberFunction<UIMap>("isDrawingManaBar", &UIMap::isDrawingManaBar);
     g_lua.bindClassMemberFunction<UIMap>("isLimitVisibleRangeEnabled", &UIMap::isLimitVisibleRangeEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isKeepAspectRatioEnabled", &UIMap::isKeepAspectRatioEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isInRange", &UIMap::isInRange);
+    g_lua.bindClassMemberFunction<UIMap>("hasFloorShadowingFlag", &UIMap::hasFloorShadowingFlag);
     g_lua.bindClassMemberFunction<UIMap>("getVisibleDimension", &UIMap::getVisibleDimension);
     g_lua.bindClassMemberFunction<UIMap>("getViewMode", &UIMap::getViewMode);
     g_lua.bindClassMemberFunction<UIMap>("getFollowingCreature", &UIMap::getFollowingCreature);

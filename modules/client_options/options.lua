@@ -21,7 +21,7 @@ local defaultOptions = {
   musicSoundVolume = 100,
   enableLights = true,
   lightVersion = 2,
-  enableFloorShadowing = true,
+  floorShadowing = ShadowFloor.Bottom,
   drawViewportEdge = false,
   floatingEffect = false,
   ambientLight = 0,
@@ -127,6 +127,16 @@ function init()
   crosshairCombobox.onOptionChange = function(comboBox, option)
     setOption('crosshair', comboBox:getCurrentOption().data)
   end
+
+  floorShadowingComboBox= graphicsPanel:recursiveGetChildById('floorShadowing')
+  floorShadowingComboBox.onOptionChange = function(comboBox, option)
+    setOption('floorShadowing', floorShadowingComboBox:getCurrentOption().data)
+  end
+
+  floorShadowingComboBox:addOption('Disabled', ShadowFloor.Disabled)
+  floorShadowingComboBox:addOption('Bottom', ShadowFloor.Bottom)
+  floorShadowingComboBox:addOption('Upside', ShadowFloor.Upside)
+  floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
 
   lightVersionComboBox= graphicsPanel:recursiveGetChildById('lightVersion')
   lightVersionComboBox.onOptionChange = function(comboBox, option)
@@ -241,8 +251,6 @@ function setOption(key, value, force)
     graphicsPanel:getChildById('ambientLightLabel'):setText(tr('Ambient light: %s%%', value))
     gameMapPanel:setMinimumAmbientLight(value/100)
     gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
-  elseif key == 'enableFloorShadowing' then
-    gameMapPanel:setDrawFloorShadowing(value)
   elseif key == 'drawViewportEdge' then
     gameMapPanel:setDrawViewportEdge(value)
   elseif key == 'floatingEffect' then
@@ -278,6 +286,9 @@ function setOption(key, value, force)
   elseif key == 'lightVersion' then
     gameMapPanel:setLightVersion(value)
     lightVersionComboBox:setCurrentOptionByData(value, false)
+  elseif key == 'floorShadowing' then
+    gameMapPanel:setFloorShadowingFlag(value)
+    floorShadowingComboBox:setCurrentOptionByData(value, false)
   end
 
   -- change value for keybind updates

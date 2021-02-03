@@ -25,10 +25,6 @@
 
 namespace Otc
 {
-    enum Operation : uint8 {
-        OPERATION_NEUTRAL = 0, OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
-    };
-
     enum : uint16 {
         TILE_PIXELS = 32,
         MAX_ELEVATION = 24,
@@ -50,6 +46,17 @@ namespace Otc
         MAX_STATIC_TEXT_WIDTH = 200,
         MAX_AUTOWALK_STEPS_RETRY = 10,
         MAX_AUTOWALK_DIST = 127,
+    };
+
+    enum Operation : uint8 {
+        OPERATION_NEUTRAL = 0, OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
+    };
+
+    enum ShadowFloor : uint8 {
+        SHADOWFLOOR_DISABLED = 0,
+        SHADOWFLOOR_BOTTOM = 1 << 0,
+        SHADOWFLOOR_UPSIDE = 1 << 1,
+        SHADOWFLOOR_BOTH = SHADOWFLOOR_BOTTOM | SHADOWFLOOR_UPSIDE,
     };
 
     enum FrameUpdate : uint32 {

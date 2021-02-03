@@ -340,4 +340,11 @@ ChannelEvent = {
   Exclude = 3,
 }
 
+ShadowFloor = {
+  Disabled = 0,
+  Bottom = 1,
+  Upside = 2,
+  Both = 3
+}
+
 -- @}

@@ -39,7 +39,7 @@ public:
     Color(const float r, const float g, const float b, const float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) {}
     Color(const std::string& coltext);
 
-    Color(const int byteColor, const int intensity, const float formule = 0.5f)
+    Color(const uint8 byteColor, const uint8 intensity, const float formule = 0.5f)
     {
         const float brightness = formule + (intensity / (float)8) * formule;
         Color colorMap = Color::from8bit(byteColor);

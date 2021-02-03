@@ -67,6 +67,8 @@ class LightView : public LuaObject
 public:
     LightView(const MapViewPtr& mapView, const uint8 version);
 
+    const Light& getGlobalLight() { return m_globalLight; }
+
     void reset();
     void setGlobalLight(const Light& light);
     void addLightSource(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing = nullptr);
@@ -81,8 +83,6 @@ public:
 
     uint8 getVersion() const { return m_version; }
 private:
-
-
     void addLightSourceV1(const Point& center, float scaleFactor, const Light& light);
     void addLightSourceV2(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing);
     void drawGlobalLight(const Light& light);

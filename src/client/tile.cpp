@@ -32,6 +32,8 @@
 #include "thingtypemanager.h"
 #include <framework/core/eventdispatcher.h>
 
+const static Color STATIC_SHADOWING_COLOR(static_cast<uint8>(215), static_cast<uint8>(1), 0.65f);
+
 Tile::Tile(const Position& position) :
     m_position(position),
     m_drawElevation(0),
@@ -45,13 +47,13 @@ Tile::Tile(const Position& position) :
 
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
-    m_borderShadowColor = Color::white;
+    if(mapView->hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && isWalkable(true) && m_position.z == mapView->getCameraPosition().z - 1) {
+        m_borderShadowColor = Color::white;
 
-    if(isWalkable(true) && m_position.z == g_map.getCentralPosition().z - 1) {
         for(const auto& position : m_positionsAround) {
             const TilePtr& tile = g_map.getTile(position);
             if(!tile || !tile->isFullyOpaque() && tile->isWalkable(true)) {
-                m_borderShadowColor = Color(215, 1, 0.65f);
+                m_borderShadowColor = STATIC_SHADOWING_COLOR;
                 break;
             }
         }
@@ -84,7 +86,6 @@ void Tile::drawStart(const MapViewPtr& mapView)
     if(m_completelyCovered) return;
 
     m_drawElevation = 0;
-    m_shadowColor = mapView->getLastFloorShadowingColor();
 
     if(m_highlight.update) {
         m_highlight.fadeLevel += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
@@ -96,17 +97,18 @@ void Tile::drawStart(const MapViewPtr& mapView)
         }
     }
 
-    if(mapView->isDrawingLights() && mapView->isDrawingFloorShadowing() && hasBorderShadowColor()) {
+    if(hasBorderShadowColor()) {
+        m_shadowColor = mapView->getLastFloorShadowingColor();
         g_painter->setColor(m_borderShadowColor);
     }
 }
 
-void Tile::drawEnd(const MapViewPtr& mapView)
+void Tile::drawEnd(const MapViewPtr& /*mapView*/)
 {
     if(m_completelyCovered) return;
 
     // Reset Border Shadow Color
-    if(mapView->isDrawingFloorShadowing() && hasBorderShadowColor()) {
+    if(hasBorderShadowColor()) {
         g_painter->setColor(m_shadowColor);
     }
 }
@@ -178,7 +180,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         const auto& creature = *it;
         if(creature->isWalking()) continue;
         drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-    }
+}
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;

@@ -116,8 +116,9 @@ public:
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights && m_lightView->isDark(); }
 
-    void setDrawFloorShadowing(bool enable) { m_lastFloorShadowingColor = Color::white; m_drawFloorShadowing = enable; schedulePainting(Otc::FUpdateThing); }
-    bool isDrawingFloorShadowing() { return m_drawFloorShadowing; }
+    void setFloorShadowingFlag(const Otc::ShadowFloor flag) { m_lastFloorShadowingColor = Color::white; m_floorShadowingFlag = flag; requestVisibleTilesCacheUpdate(); schedulePainting(Otc::FUpdateThing); }
+    bool hasFloorShadowingFlag(const Otc::ShadowFloor flag) { return m_floorShadowingFlag & flag; }
+    bool hasFloorShadowingFlag() { return m_floorShadowingFlag > 0; }
     const Color getLastFloorShadowingColor() { return m_lastFloorShadowingColor; }
 
     void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; schedulePainting(Otc::FUpdateThing); }
@@ -210,7 +211,8 @@ private:
         m_lightVersion,
         m_tileSize,
         m_floorMin,
-        m_floorMax;
+        m_floorMax,
+        m_floorShadowingFlag;
 
     float m_minimumAmbientLight,
         m_fadeInTime,
@@ -236,7 +238,6 @@ private:
     stdext::boolean<true>
         m_mustUpdateVisibleTilesCache,
         m_shaderSwitchDone,
-        m_drawFloorShadowing,
         m_drawHealthBars,
         m_drawManaBar,
         m_multifloor,
