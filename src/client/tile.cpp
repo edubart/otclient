@@ -163,9 +163,33 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 
+    uint8 redrawPreviousTopW = 0,
+        redrawPreviousTopH = 0;
+
     for(auto it = m_commonItems.rbegin(); it != m_commonItems.rend(); ++it) {
         const auto& item = *it;
         drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+
+        if(item->isLyingCorpse()) {
+            redrawPreviousTopW = std::max<int>(item->getWidth(), redrawPreviousTopW);
+            redrawPreviousTopH = std::max<int>(item->getHeight(), redrawPreviousTopH);
+        }
+    }
+
+    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them	
+    if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
+        // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them	
+        if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
+            for(int x = -redrawPreviousTopW; x <= 0; ++x) {
+                for(int y = -redrawPreviousTopH; y <= 0; ++y) {
+                    if(x == 0 && y == 0)
+                        continue;
+                    const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
+                    if(tile)
+                        tile->drawBottom(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS) * scaleFactor, scaleFactor, frameFlags);
+                }
+            }
+        }
     }
 
 #if RENDER_CREATURE_BEHIND == 1
@@ -180,7 +204,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         const auto& creature = *it;
         if(creature->isWalking()) continue;
         drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-}
+    }
 #else
     for(const auto& creature : m_creatures) {
         if(creature->isWalking()) continue;

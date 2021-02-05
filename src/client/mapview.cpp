@@ -577,18 +577,11 @@ void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc
     // Need Optimization (update only the specific Tile)
     if(Otc::OPERATION_CLEAN == operation) {
         m_forceTileUpdateCache = true;
-        requestVisibleTilesCacheUpdate();
-        return;
     }
 
-    if(!thing) return;
+    requestVisibleTilesCacheUpdate();
 
-    if(thing->isLocalPlayer()) {
-        if(Otc::OPERATION_ADD == operation)
-            requestVisibleTilesCacheUpdate();
-
-        return;
-    }
+    if(!thing || thing->isLocalPlayer()) return;
 
     if(thing->isCreature() && m_lastCameraPosition.z == getCameraPosition().z) {
         const CreaturePtr& creature = thing->static_self_cast<Creature>();
