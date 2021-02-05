@@ -68,7 +68,7 @@ public:
     void draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView);
+    void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);
 
     void clean();
@@ -179,6 +179,7 @@ private:
         int hasNoWalkableEdge = 0;
     };
 
+    void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void checkForDetachableThing();
     void checkTranslucentLight();
 

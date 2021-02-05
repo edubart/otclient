@@ -157,6 +157,37 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, Ligh
     }
 }
 
+void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+{
+#if RENDER_CREATURE_BEHIND == 1
+    for(const auto& creature : m_walkingCreatures) {
+        drawThing(creature, Point(
+            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
+            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
+        ), scaleFactor, true, frameFlags, lightView);
+    }
+
+    for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
+        const auto& creature = *it;
+        if(creature->isWalking()) continue;
+        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+    }
+#else
+    for(const auto& creature : m_creatures) {
+        if(creature->isWalking()) continue;
+        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+    }
+
+    for(const auto& creature : m_walkingCreatures) {
+        drawThing(creature, Point(
+            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
+            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
+        ), scaleFactor, true, frameFlags, lightView);
+    }
+#endif    
+}
+
+
 void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     for(const auto& item : m_bottomItems) {
@@ -185,39 +216,17 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
                     if(x == 0 && y == 0)
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
-                    if(tile)
-                        tile->drawBottom(dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS) * scaleFactor, scaleFactor, frameFlags);
+                    if(tile) {
+                        const auto& newDest = dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS) * scaleFactor;
+                        tile->drawCreature(newDest, scaleFactor, frameFlags);
+                        tile->drawTop(newDest, scaleFactor, frameFlags);
+                    }
                 }
             }
         }
     }
 
-#if RENDER_CREATURE_BEHIND == 1
-    for(const auto& creature : m_walkingCreatures) {
-        drawThing(creature, Point(
-            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, frameFlags, lightView);
-    }
-
-    for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
-        const auto& creature = *it;
-        if(creature->isWalking()) continue;
-        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-    }
-#else
-    for(const auto& creature : m_creatures) {
-        if(creature->isWalking()) continue;
-        drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-    }
-
-    for(const auto& creature : m_walkingCreatures) {
-        drawThing(creature, Point(
-            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, frameFlags, lightView);
-    }
-#endif    
+    drawCreature(dest, scaleFactor, frameFlags, lightView);
 }
 
 void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
