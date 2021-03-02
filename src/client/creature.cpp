@@ -242,9 +242,11 @@ void Creature::drawInformation(const Rect& parentRect, int drawFlags)
 
     // calculate main rects
     Rect backgroundRect = Rect(m_visualPoint.x - (13.5), m_visualPoint.y, 27, 4);
+    backgroundRect.bind(parentRect);
 
     const Size nameSize = m_nameCache.getTextSize();
     Rect textRect = Rect(m_visualPoint.x - nameSize.width() / 2.0, m_visualPoint.y - 12, nameSize);
+    textRect.bind(parentRect);
 
     // distance them
     uint32 offset = 12;
