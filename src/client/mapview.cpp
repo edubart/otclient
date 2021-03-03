@@ -536,10 +536,9 @@ void MapView::onFloorDrawingStart(const uint8 floor)
         Color shadowColor = Color::white;
 
         if(floor > Otc::SEA_FLOOR) { // Cave
-            if(floor != cameraPosition.z && (
-                hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z ||
-                hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z)
-                ) {
+            if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z ||
+               hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z
+               ) {
                 float brightnessLevelStart = .6f;
                 float brightnessLevel = cameraPosition.z - floor;
                 if(floor > cameraPosition.z)
