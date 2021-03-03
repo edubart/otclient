@@ -93,13 +93,14 @@ void LightView::setGlobalLight(const Light& light)
 void LightView::addLightSource(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing)
 {
     if(m_version == 1) {
-        Point walkOffset = Point();
+        Point centerPoint = center;
+
         if(thing && thing->isCreature()) {
             const CreaturePtr& c = thing->static_self_cast<Creature>();
-            walkOffset = c->getWalkOffset();
+            centerPoint = center + (c->getWalkOffset() + Point(16, 16)) * scaleFactor;
         }
 
-        addLightSourceV1(center + (walkOffset + Point(16, 16)) * scaleFactor, scaleFactor, light);
+        addLightSourceV1(centerPoint, scaleFactor, light);
         return;
     }
 

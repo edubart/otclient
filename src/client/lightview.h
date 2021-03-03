@@ -60,7 +60,7 @@ struct LightSource {
     LightSource() : radius(0) {}
     LightSource(int radius) : radius(radius) {}
 
-    int8_t radius;
+    int16_t radius;
 
     Color color = Color::alpha;
     Point center;
