@@ -122,8 +122,7 @@ void Logger::fireOldMessages()
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     if(m_onLog) {
-        auto backup = m_logMessages;
-        for(const LogMessage& logMessage : backup) {
+        for(const LogMessage& logMessage : m_logMessages) {
             m_onLog(logMessage.level, logMessage.message, logMessage.when);
         }
     }
