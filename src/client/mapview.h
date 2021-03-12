@@ -161,6 +161,10 @@ public:
     const Position& getLastMousePosition() { return m_lastMousePosition; }
 
     void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
+
+    void setAntiAliasing(const bool enable);
+    void setRenderScale(const uint8 scale);
+
 private:
     struct ViewPort {
         uint8 top, right, bottom, left;
@@ -209,6 +213,7 @@ private:
         m_cachedFirstVisibleFloor,
         m_cachedLastVisibleFloor,
         m_lightVersion,
+        m_renderScale,
         m_tileSize,
         m_floorMin,
         m_floorMax,
@@ -244,7 +249,8 @@ private:
         m_drawTexts,
         m_drawNames,
         m_smooth,
-        m_follow;
+        m_follow,
+        m_antiAliasing;
 
     stdext::boolean<false> m_drawLights,
         m_autoViewMode,

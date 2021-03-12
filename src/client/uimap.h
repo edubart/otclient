@@ -100,6 +100,8 @@ public:
 
     void setCrosshairTexture(const std::string& texturePath) { m_mapView->setCrosshairTexture(texturePath); }
     void setDrawHighlightTarget(const bool enable) { m_mapView->setDrawHighlightTarget(enable); }
+    void setAntiAliasing(const bool enable) { m_mapView->setAntiAliasing(enable); }
+    void setRenderScale(const uint8 scale) { m_mapView->setRenderScale(scale); }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;

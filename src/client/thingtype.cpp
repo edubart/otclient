@@ -570,8 +570,6 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
     }
 
     animationPhaseTexture = TexturePtr(new Texture(fullImage, true));
-    animationPhaseTexture->setSmooth(true);
-
     return animationPhaseTexture;
 }
 

@@ -418,6 +418,7 @@ locale = {
 	["Draw Viewport Edge"] = "Draw Viewport Edge",
 	["Draw Floating Effects"] = "Draw Floating Effects",
 	["Light Version"] = "Light Version",
+	["Render Scale"] = "Render Scale",
   }
 }
 

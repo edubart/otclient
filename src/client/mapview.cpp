@@ -74,6 +74,8 @@ MapView::MapView()
 
     m_lastFloorShadowingColor = Color::white;
 
+    m_renderScale = 100;
+
     setVisibleDimension(Size(15, 11));
 }
 
@@ -421,21 +423,10 @@ void MapView::updateVisibleTilesCache()
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
 {
-    uint8 tileSize = 0;
-    Size bufferSize;
+    uint8 tileSize = Otc::TILE_PIXELS * (static_cast<float>(m_renderScale) / 100);
+    Size bufferSize = (visibleDimension + Size(3, 3)) * tileSize;
 
-    uint8 possiblesTileSizes[] = { 1,2,4,8,16,32 };
-    for(uint8 candidateTileSize : possiblesTileSizes) {
-        bufferSize = (visibleDimension + Size(3, 3)) * candidateTileSize;
-        if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize())
-            break;
-
-        tileSize = candidateTileSize;
-        if(optimizedSize.width() < bufferSize.width() - 3 * candidateTileSize && optimizedSize.height() < bufferSize.height() - 3 * candidateTileSize)
-            break;
-    }
-
-    if(tileSize == 0) {
+    if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize()) {
         g_logger.traceError("reached max zoom out");
         return;
     }
@@ -446,7 +437,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
     ViewMode viewMode = m_viewMode;
     if(m_autoViewMode) {
-
         if(tileSize >= Otc::TILE_PIXELS && visibleDimension.area() <= NEAR_VIEW_AREA)
             viewMode = NEAR_VIEW;
         else if(tileSize >= 16 && visibleDimension.area() <= MID_VIEW_AREA)
@@ -671,6 +661,21 @@ void MapView::setAutoViewMode(bool enable)
 void MapView::optimizeForSize(const Size& visibleSize)
 {
     updateGeometry(m_visibleDimension, visibleSize);
+}
+
+void MapView::setAntiAliasing(const bool enable)
+{
+    m_frameCache.tile->cleanTexture();
+    m_frameCache.tile->setSmooth(enable);
+
+    updateGeometry(m_visibleDimension, m_optimizedSize);
+}
+
+void MapView::setRenderScale(const uint8 scale)
+{
+    m_renderScale = scale;
+    updateGeometry(m_visibleDimension, m_optimizedSize);
+    updateLight();
 }
 
 void MapView::followCreature(const CreaturePtr& creature)

@@ -68,6 +68,7 @@ public:
     void update();
     void schedulePainting(const uint16_t time);
     void removeRenderingTime(const uint16_t time);
+    void cleanTexture() { m_texture = nullptr; }
 
 private:
     void internalCreate();

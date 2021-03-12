@@ -789,6 +789,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setDrawHighlightTarget", &UIMap::setDrawHighlightTarget);
     g_lua.bindClassMemberFunction<UIMap>("setLightVersion", &UIMap::setLightVersion);
     g_lua.bindClassMemberFunction<UIMap>("getLightVersion", &UIMap::getLightVersion);
+    g_lua.bindClassMemberFunction<UIMap>("setAntiAliasing", &UIMap::setAntiAliasing);
+    g_lua.bindClassMemberFunction<UIMap>("setRenderScale", &UIMap::setRenderScale);
 
     g_lua.registerClass<UIMinimap, UIWidget>();
     g_lua.bindClassStaticFunction<UIMinimap>("create", [] { return UIMinimapPtr(new UIMinimap); });

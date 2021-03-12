@@ -271,7 +271,7 @@ static LightSource INVALID_LIGHT_SOURCE(-1);
 LightSource& LightView::getLightSource(const Position& pos)
 {
     const auto& point = m_mapView->transformPositionTo2D(pos, m_mapView->getCameraPosition());
-    size_t index = (m_mapView->m_drawDimension.width() * (point.y / Otc::TILE_PIXELS)) + (point.x / Otc::TILE_PIXELS);
+    size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
 
     if(index >= m_lightMap.size()) return INVALID_LIGHT_SOURCE;
 
