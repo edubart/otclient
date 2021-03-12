@@ -6,10 +6,12 @@
    - Tile/Light/Creature Render Optimized
    - Adaptive/Event-based Rendering (g_map.schedulePainting)   
    - New Light System
+   - Render Scale System
    - Idle Animation Support
    - Highlight Mouse Target
    - Crosshair
    - Floor Shadowing
+   - Anti-Aliasing Option
    - Floating Effects Option
    - Adjusted Path Finding
    - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
