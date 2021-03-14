@@ -369,7 +369,7 @@ void UITextEdit::setSelection(int start, int end)
 
 void UITextEdit::setTextHidden(bool hidden)
 {
-    m_textHidden = true;
+    m_textHidden = hidden;
     update(true);
 }
 
