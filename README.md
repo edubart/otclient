@@ -6,7 +6,7 @@
    - Tile/Light/Creature Render Optimized
    - Adaptive/Event-based Rendering (g_map.schedulePainting)   
    - New Light System
-   - Render Scale System
+   - Render Scale System (FAKE ONE)
    - Idle Animation Support
    - Highlight Mouse Target
    - Crosshair
