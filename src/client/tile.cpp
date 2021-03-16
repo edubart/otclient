@@ -902,6 +902,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->isGroundBorder() && thing->isNotWalkable())
         m_countFlag.hasNoWalkableEdge += value;
 
+#if CHECK_OPAQUE_ITEM == 1
     // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
     if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
         const int commonSize = m_commonItems.size();
@@ -943,6 +944,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
             }
         }
     }
+#endif
 }
 
 void Tile::select()
