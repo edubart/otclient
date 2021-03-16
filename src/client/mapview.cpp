@@ -514,6 +514,8 @@ void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/
 
     m_visibleCreatures = getSpectators(cameraPosition, false);
 
+    schedulePainting(Otc::FUpdateCreatureInformation, FrameBuffer::FORCE_UPDATE);
+
     updateLight();
 }
 
@@ -1055,7 +1057,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-    }
+}
 }
 #endif
 /* vim: set ts=4 sw=4 et: */
