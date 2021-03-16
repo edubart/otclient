@@ -355,7 +355,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         } else if(thing->isOnBottom()) {
             m_bottomItems.push_back(item);
         } else {
-            originalStack -= m_ground.size() + m_bottomItems.size() + m_creatures.size();
+            originalStack -= m_ground.size() + m_bottomItems.size() + m_topItems.size() + m_creatures.size();
 
             if(originalStack > m_commonItems.size()) {
                 m_commonItems.push_back(item);
