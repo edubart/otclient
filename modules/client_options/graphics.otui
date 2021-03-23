@@ -91,27 +91,10 @@ Panel
     mouse-scroll: false
 
   Label
-    id: lightVersionLabel
-    !text: tr('Light Version')..':'
-    phantom: false
-    anchors.left: floorShadowingLabel.left
-    anchors.top: floorShadowingLabel.bottom
-    margin-top: 13
-
-  ComboBox
-    id: lightVersion
-    width: 120
-    anchors.left: prev.right
-    anchors.top: prev.top
-    margin-top: -4
-    margin-left: 5
-    mouse-scroll: false
-
-  Label
     id: ambientLightLabel
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: lightVersionLabel.top
+    anchors.top: floorShadowingLabel.top
     margin-top: 25
     @onSetup: |
       local value = modules.client_options.getOption('ambientLight')

@@ -47,8 +47,9 @@ struct PositionLight : Position {
 };
 
 struct DimensionConfig {
-    std::vector<PositionLight> positions;
-    std::vector<PositionLight> edges;
+    std::vector<PositionLight>
+        positions,
+        edges;
 
     bool isEdge(const Position pos) const
     {
@@ -57,74 +58,73 @@ struct DimensionConfig {
 };
 
 struct LightSource {
-    LightSource() : radius(0) {}
-    LightSource(int radius) : radius(radius) {}
-
-    int16_t radius;
-
-    Color color = Color::alpha;
     Point center;
-    std::pair<Point, Point> extraOffset;
+    uint8 color;
+    float brightness;
+    uint16 radius;
+    bool isEdge;
+};
 
-    bool canMove = true,
-        reverter = false,
-        isEdge = false;
+struct TileBrightness {
+    int8 floor = -1;
+    Point pos;
+    bool isEdge;
+};
 
-    // Comparison Var
-    uint8 color8bit = 215;
-    float brightness = 0;
+struct LightPoint {
+    LightPoint(const bool valid = true) : isValid(valid) {}
 
-    void reset() { color = Color::alpha; canMove = true; reverter = false; }
-    bool hasLight() const { return color != Color::alpha; }
-    bool isValid() const { return radius > -1; }
-    bool isMoving() const { return extraOffset.first != extraOffset.second; }
+    bool isValid;
+    TileBrightness brightness;
+
+    std::array<std::vector<LightSource>, Otc::MAX_Z + 1 > floors;
+
+    bool isCovered(const uint8 floor)
+    {
+        return !brightness.isEdge && brightness.floor > -1 && floor > brightness.floor;
+    }
 };
 
 class LightView : public LuaObject
 {
 public:
-    LightView(const MapViewPtr& mapView, const uint8 version);
+    LightView(const MapViewPtr& mapView);
 
     const Light& getGlobalLight() { return m_globalLight; }
 
-    void reset();
-    void setGlobalLight(const Light& light);
-    void addLightSource(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing = nullptr);
     void resize();
+    void reset() { m_lightMap.clear(); }
     void draw(const Rect& dest, const Rect& src);
+    void addLightSource(const Point& mainCenter, const Light& light);
 
-    void setBlendEquation(Painter::BlendEquation blendEquation) { m_blendEquation = blendEquation; }
-    void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) { if(isDark()) m_lightbuffer->schedulePainting(delay); }
+    void setGlobalLight(const Light& light) { m_globalLight = light; }
+    void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) const { if(isDark()) m_lightbuffer->schedulePainting(delay); }
+
     bool canUpdate() const { return isDark() && m_lightbuffer->canUpdate(); }
-
     bool isDark() const { return m_globalLight.intensity < 250; }
+    void resetBrightness(const Point& point);
+    void setFloor(const uint8 floor) { m_currentFloor = floor; }
 
-    uint8 getVersion() const { return m_version; }
 private:
-    void addLightSourceV1(const Point& center, float scaleFactor, const Light& light);
-    void addLightSourceV2(const Position& pos, const Point& center, float scaleFactor, const Light& light, const ThingPtr& thing);
-    void drawGlobalLight(const Light& light);
-    void drawLightSource(const LightSource& light);
-    bool canDraw(const Position& pos, float& brightness);
-
     const DimensionConfig& getDimensionConfig(const uint8 intensity);
 
+    void generateLightTexture();
+    void generateBorderTexture();
+
+    void drawLights();
+
+    LightPoint& getLightPoint(const Point& point);
+
+    TexturePtr m_lightTexture;
+    TexturePtr m_borderTexture;
     Light m_globalLight;
 
-    TexturePtr generateLightBubble();
-    TexturePtr m_lightTexture;
-
-    Painter::BlendEquation m_blendEquation;
-
     FrameBufferPtr m_lightbuffer;
-
-    std::vector<LightSource> m_lightMap;
-    std::array<DimensionConfig, MAX_LIGHT_INTENSITY> m_dimensionCache;
     MapViewPtr m_mapView;
 
-    LightSource& getLightSource(const Position& pos);
-
-    uint8 m_version;
+    uint8 m_currentFloor;
+    std::array<DimensionConfig, MAX_LIGHT_INTENSITY> m_dimensionCache;
+    std::vector<LightPoint> m_lightMap;
 };
 
 #endif

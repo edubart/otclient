@@ -200,9 +200,9 @@ public:
     void translate(int32 dx, int32 dy, int8 dz = 0) { x += dx; y += dy; z += dz; }
     Position translated(int32 dx, int32 dy, int8 dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
-    std::array<Position, (uint)8> getPositionsAround() const
+    std::array<Position, (uint8)8> getPositionsAround() const
     {
-        std::array<Position, (uint)8> positions;
+        std::array<Position, (uint8)8> positions;
         int_fast8_t i = -1;
         for(int_fast32_t xi = -1; xi <= 1; ++xi) {
             for(int_fast32_t yi = -1; yi <= 1; ++yi) {

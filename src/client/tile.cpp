@@ -71,11 +71,13 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
     }
 }
 
-bool Tile::isCompletelyCovered(int firstFloor)
+bool Tile::isCompletelyCovered(int8 firstFloor)
 {
-    m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
-    if(!(m_covered = m_completelyCovered)) {
-        m_covered = g_map.isCovered(m_position, firstFloor);
+    if(firstFloor > -1) {
+        m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
+        if(!(m_covered = m_completelyCovered)) {
+            m_covered = g_map.isCovered(m_position, firstFloor);
+        }
     }
 
     return m_completelyCovered;
@@ -115,17 +117,10 @@ void Tile::drawEnd(const MapViewPtr& /*mapView*/)
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
 {
-    if(lightView) {
-        if(lightView->getVersion() >= 2) {
-            if(m_completelyCovered) {
-                frameFlag = Otc::FUpdateLight;
-            }
-        } else if(isCovered()) {
-            if(thing->isCreature() && !isWalkable(true)) {
-                const auto& tile = thing->getTile();
-                if(!tile || tile->isCovered()) lightView = nullptr;
-            } else lightView = nullptr;
-        }
+    if(m_completelyCovered) {
+        frameFlag = 0;
+        if(lightView && hasLight())
+            frameFlag = Otc::FUpdateLight;
     }
 
     const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall());

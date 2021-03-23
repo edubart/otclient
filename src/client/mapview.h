@@ -127,12 +127,7 @@ public:
     void setDrawManaBar(bool enable) { m_drawManaBar = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
-    void setLightVersion(uint8 version) { m_lightVersion = version; setDrawLights(false); setDrawLights(true); }
-    bool getLightVersion() { return m_lightVersion; }
-
     void move(int32 x, int32 y);
-
-    void setAddLightMethod(bool add) { m_lightView->setBlendEquation(add ? Painter::BlendEquation_Add : Painter::BlendEquation_Max); }
 
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }

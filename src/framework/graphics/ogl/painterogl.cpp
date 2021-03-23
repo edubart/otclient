@@ -268,7 +268,7 @@ void PainterOGL::updateGlCompositionMode()
         glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
         break;
     case CompositionMode_Add:
-        glBlendFunc(GL_ONE, GL_ONE);
+        glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
         break;
     case CompositionMode_Replace:
         glBlendFunc(GL_ONE, GL_ZERO);

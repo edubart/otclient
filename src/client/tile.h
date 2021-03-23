@@ -122,7 +122,7 @@ public:
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 
-    bool isCompletelyCovered(int firstFloor = -1);
+    bool isCompletelyCovered(int8 firstFloor = -1);
 
     void remFlag(uint32 flag) { m_flags &= ~flag; }
     void setFlag(uint32 flag) { m_flags |= flag; }
@@ -157,6 +157,7 @@ public:
     const bool isCovered() { return m_covered; };
     const bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
     const bool hasGround() { return getGround() != nullptr; };
+    const std::array<Position, 8> getPositionsAround() { return m_positionsAround; }
 
 private:
     struct CountFlag {

@@ -113,11 +113,29 @@ void MapView::draw(const Rect& rect)
 
         g_painter->resetColor();
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
+            if(lightView) {
+                const int8 nextFloor = z - 1;
+                if(nextFloor >= m_floorMin) {
+                    lightView->setFloor(nextFloor);
+                    for(const auto& tile : m_cachedVisibleTiles[nextFloor]) {
+                        const auto& ground = tile->getGround();
+                        if(ground && !ground->isTranslucent()) {
+                            auto pos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+                            if(ground->isTopGround())
+                                pos -= m_tileSize;
+
+                            lightView->resetBrightness(pos);
+                        }
+                    }
+                }
+            }
+
             onFloorDrawingStart(z);
 
 #if DRAW_ALL_GROUND_FIRST == 1
             drawSeparately(z, viewPort, lightView);
 #else
+            if(lightView) lightView->setFloor(z);
             for(const auto& tile : m_cachedVisibleTiles[z]) {
                 const auto hasLight = redrawLight && tile->hasLight();
 
@@ -133,11 +151,11 @@ void MapView::draw(const Rect& rect)
             }
 
             onFloorDrawingEnd(z);
-        }
+            }
 
         if(redrawThing)
             m_frameCache.tile->release();
-    }
+        }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
@@ -884,11 +902,7 @@ void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights) return;
 
-    if(enable) {
-        m_lightView = LightViewPtr(new LightView(this, m_lightVersion));
-        m_lightView->resize();
-    } else m_lightView = nullptr;
-
+    m_lightView = enable ? LightViewPtr(new LightView(this)) : nullptr;
     m_drawLights = enable;
 
     updateLight();
@@ -1057,7 +1071,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

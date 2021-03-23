@@ -59,8 +59,6 @@ public:
     void setMapShader(const PainterShaderProgramPtr& shader, float fadeout, float fadein) { m_mapView->setShader(shader, fadein, fadeout); }
     void setMinimumAmbientLight(float intensity) { m_mapView->setMinimumAmbientLight(intensity); }
     void setLimitVisibleRange(bool limitVisibleRange) { m_limitVisibleRange = limitVisibleRange; updateVisibleDimension(); }
-    void setAddLightMethod(bool add) { m_mapView->setAddLightMethod(add); }
-    void setLightVersion(int version) { m_mapView->setLightVersion(version); }
 
     bool zoomIn();
     bool zoomOut();
@@ -89,8 +87,6 @@ public:
     Position getPosition(const Point& mousePos);
     TilePtr getTile(const Point& mousePos);
     Size getVisibleDimension() { return m_mapView->getVisibleDimension(); }
-
-    int getLightVersion() { return m_mapView->getLightVersion(); }
 
     int getMaxZoomIn() { return m_maxZoomIn; }
     int getMaxZoomOut() { return m_maxZoomOut; }

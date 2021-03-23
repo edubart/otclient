@@ -20,7 +20,6 @@ local defaultOptions = {
   enableMusicSound = true,
   musicSoundVolume = 100,
   enableLights = true,
-  lightVersion = 2,
   floorShadowing = ShadowFloor.Bottom,
   drawViewportEdge = false,
   floatingEffect = false,
@@ -153,14 +152,6 @@ function init()
   floorShadowingComboBox:addOption('Upside', ShadowFloor.Upside)
   floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
 
-  lightVersionComboBox= graphicsPanel:recursiveGetChildById('lightVersion')
-  lightVersionComboBox.onOptionChange = function(comboBox, option)
-    setOption('lightVersion', lightVersionComboBox:getCurrentOption().data)
-  end
-
-  lightVersionComboBox:addOption('Version 1 (OLD)', 1)
-  lightVersionComboBox:addOption('Version 2 (Beta)', 2)
-
   addEvent(function() setup() end)
 end
 
@@ -258,8 +249,6 @@ function setOption(key, value, force)
     g_app.setBackgroundPaneMaxFps(v)
   elseif key == 'enableLights' then
     gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
-    graphicsPanel:getChildById('lightVersion'):setEnabled(value)
-    graphicsPanel:getChildById('lightVersionLabel'):setEnabled(value)
     graphicsPanel:getChildById('ambientLight'):setEnabled(value)
     graphicsPanel:getChildById('ambientLightLabel'):setEnabled(value)
   elseif key == 'ambientLight' then
@@ -298,9 +287,6 @@ function setOption(key, value, force)
     crosshairCombobox:setCurrentOptionByData(newValue, false)
   elseif key == 'enableHighlightMouseTarget' then
     gameMapPanel:setDrawHighlightTarget(value)
-  elseif key == 'lightVersion' then
-    gameMapPanel:setLightVersion(value)
-    lightVersionComboBox:setCurrentOptionByData(value, false)
   elseif key == 'floorShadowing' then
     gameMapPanel:setFloorShadowingFlag(value)
     floorShadowingComboBox:setCurrentOptionByData(value, false)

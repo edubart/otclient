@@ -72,6 +72,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
     if(!canBeSeen())
         return;
 
+
     if(frameFlags & Otc::FUpdateThing) {
         if(m_showTimedSquare) {
             g_painter->setColor(m_timedSquareColor);
@@ -105,7 +106,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         }
 
         if(light.intensity > 0) {
-            lightView->addLightSource(m_position, dest, scaleFactor, light, this);
+            lightView->addLightSource(dest + (m_walkOffset + (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) / 2)) * scaleFactor, light);
         }
     }
 }
@@ -135,7 +136,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             const auto& datType = rawGetMountThingType();
 
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(m_position, dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, useBlank);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, useBlank);
             dest += getDisplacement() * scaleFactor;
 
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
@@ -154,20 +155,20 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             auto* datType = rawGetThingType();
-            datType->draw(m_position, dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, useBlank);
+            datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, useBlank);
 
             if(!useBlank && getLayers() > 1) {
                 Color oldColor = g_painter->getColor();
                 const Painter::CompositionMode oldComposition = g_painter->getCompositionMode();
                 g_painter->setCompositionMode(Painter::CompositionMode_Multiply);
                 g_painter->setColor(m_outfit.getHeadColor());
-                datType->draw(m_position, dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, false);
+                datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, false);
                 g_painter->setColor(m_outfit.getBodyColor());
-                datType->draw(m_position, dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, false);
+                datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, false);
                 g_painter->setColor(m_outfit.getLegsColor());
-                datType->draw(m_position, dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase, false);
+                datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase, false);
                 g_painter->setColor(m_outfit.getFeetColor());
-                datType->draw(m_position, dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase, false);
+                datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase, false);
                 g_painter->setColor(oldColor);
                 g_painter->setCompositionMode(oldComposition);
             }
@@ -194,7 +195,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(m_outfit.getCategory() == ThingCategoryEffect)
             animationPhase = std::min<int>(animationPhase + 1, animationPhases);
 
-        type->draw(m_position, dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, useBlank);
+        type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, useBlank);
     }
 
     if(m_outfitColor != Color::white)
