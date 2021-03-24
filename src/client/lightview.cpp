@@ -171,7 +171,7 @@ const DimensionConfig& LightView::getDimensionConfig(const uint8 intensity)
 static LightPoint INVALID_LIGHT_POINT(false);
 LightPoint& LightView::getLightPoint(const Point& point)
 {
-    size_t index = ((m_mapView->m_drawDimension.width() + 2) * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
+    size_t index = ((m_mapView->m_drawDimension.width() + static_cast<uint8>(2)) * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
     if(index >= m_lightMap.size()) return INVALID_LIGHT_POINT;
     return m_lightMap[index];
 }
