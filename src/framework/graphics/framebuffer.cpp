@@ -190,7 +190,7 @@ void FrameBuffer::schedulePainting(const uint16_t time)
 {
     if(time == 0) return;
 
-    if(time == 1) {
+    if(time == FORCE_UPDATE) {
         m_forceUpdate = true;
         return;
     }

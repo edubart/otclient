@@ -151,11 +151,11 @@ void MapView::draw(const Rect& rect)
             }
 
             onFloorDrawingEnd(z);
-            }
+        }
 
         if(redrawThing)
             m_frameCache.tile->release();
-        }
+    }
 
     // generating mipmaps each frame can be slow in older cards
     //m_framebuffer->getTexture()->buildHardwareMipmaps();
