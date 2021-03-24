@@ -319,8 +319,9 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
             }
 
             words.push_back(newWord);
-        } else
+        } else {
             words.push_back(word);
+        }
     }
 
     // compose lines
@@ -329,16 +330,18 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
         int candidateWidth = calculateTextRectSize(candidate).width();
 
         if(candidateWidth > maxWidth) {
-            if(!line.empty())
-                outText += line.substr(0, line.length()-1) + '\n';
-            line.clear();
+            if(!line.empty()) {
+                line.back() = '\n';
+                outText += line;
+                line.clear();
+            }
         }
 
         line += word + ' ';
     }
 
+    line.pop_back();
     outText += line;
-    outText = outText.substr(0, outText.length()-1);
 
     return outText;
 }
