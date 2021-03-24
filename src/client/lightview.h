@@ -93,7 +93,6 @@ public:
     const Light& getGlobalLight() { return m_globalLight; }
 
     void resize();
-    void reset() { m_lightMap.clear(); }
     void draw(const Rect& dest, const Rect& src);
     void addLightSource(const Point& mainCenter, const Light& light);
 
@@ -109,14 +108,13 @@ private:
     const DimensionConfig& getDimensionConfig(const uint8 intensity);
 
     void generateLightTexture();
-    void generateBorderTexture();
-
+    void generateBrightnessTexture();
     void drawLights();
 
     LightPoint& getLightPoint(const Point& point);
 
     TexturePtr m_lightTexture;
-    TexturePtr m_borderTexture;
+    TexturePtr m_brightnessTexture;
     Light m_globalLight;
 
     FrameBufferPtr m_lightbuffer;
