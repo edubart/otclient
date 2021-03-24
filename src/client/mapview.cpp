@@ -354,7 +354,7 @@ void MapView::updateVisibleTilesCache()
     if(!cameraPosition.isValid())
         return;
 
-    if(!m_forceTileUpdateCache && cameraPosition.z == m_lastCameraPosition.z && m_timeUpdateVisibleTilesCache.ticksElapsed() <= 10)
+    if(!m_forceTileUpdateCache && cameraPosition.distance(m_lastCameraPosition) < m_drawDimension.width() && m_timeUpdateVisibleTilesCache.ticksElapsed() <= 10)
         return;
 
     m_mustUpdateVisibleTilesCache = false;
