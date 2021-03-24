@@ -80,7 +80,7 @@ void LightView::generateLightTexture()
     m_lightTexture->setSmooth(true);
 }
 
-void LightView::addLightSource(const Point& mainCenter, const Light& light)
+void LightView::addLightSource(const Point& mainCenter, const Light& light, const bool isStatic)
 {
     const uint8 intensity = std::min<uint8>(light.intensity, MAX_LIGHT_INTENSITY);
 
@@ -100,7 +100,7 @@ void LightView::addLightSource(const Point& mainCenter, const Light& light)
         bool gotoNextLight = false;
         for(auto& prevLight : lightList) {
             if(prevLight.color == light.color) {
-                if(prevLight.center == center) {
+                if(prevLight.isStatic == isStatic || prevLight.center == center) {
                     prevLight.brightness = std::min<float>(prevLight.brightness + brightness, 1);
                     gotoNextLight = true;
                 }
@@ -112,7 +112,7 @@ void LightView::addLightSource(const Point& mainCenter, const Light& light)
         }
         if(gotoNextLight) continue;
 
-        lightList.push_back({ center , light.color, brightness , radius, position.isEdge });
+        lightList.push_back({ center , light.color, brightness , radius, position.isEdge, isStatic });
     }
 }
 

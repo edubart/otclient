@@ -63,6 +63,7 @@ struct LightSource {
     float brightness;
     uint16 radius;
     bool isEdge;
+    bool isStatic;
 };
 
 struct TileBrightness {
@@ -94,7 +95,7 @@ public:
 
     void resize();
     void draw(const Rect& dest, const Rect& src);
-    void addLightSource(const Point& mainCenter, const Light& light);
+    void addLightSource(const Point& mainCenter, const Light& light, const bool isStatic = false);
 
     void setGlobalLight(const Light& light) { m_globalLight = light; }
     void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) const { if(isDark()) m_lightbuffer->schedulePainting(delay); }
