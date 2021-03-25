@@ -654,7 +654,7 @@ ThingPtr Tile::getTopMultiUseThing()
 
 bool Tile::isWalkable(bool ignoreCreatures)
 {
-    if(m_countFlag.notWalkable > 0 || m_ground.empty()) {
+    if(m_countFlag.notWalkable > 0 || !getGround()) {
         return false;
     }
 
