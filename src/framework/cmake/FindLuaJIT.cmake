@@ -4,7 +4,7 @@
 #  LUAJIT_LIBRARY - the lua library
 #  LUAJIT_LIBRARIES - the lua library and it's dependencies
 
-FIND_PATH(LUAJIT_INCLUDE_DIR NAMES lua.h PATH_SUFFIXES luajit-2.0)
+FIND_PATH(LUAJIT_INCLUDE_DIR NAMES lua.h PATH_SUFFIXES luajit-2.0 luajit-2.1)
 SET(_LUAJIT_STATIC_LIBS libluajit51.a libluajit5.1.a libluajit-5.1.a libluajit.a)
 SET(_LUAJIT_SHARED_LIBS libluajit51.dll.a libluajit5.1.dll.a libluajit-5.1.dll.a libluajit.dll.a luajit51 luajit5.1 luajit-5.1 luajit)
 IF(USE_STATIC_LIBS)
