@@ -82,7 +82,7 @@ public:
         return TPoint<T>(x - other.x, y - other.y).length();
     }
 
-    std::array<TPoint<T>, (uint8)8> getPointsAround(const uint8 pixel = Otc::TILE_PIXELS) const
+    std::array<TPoint<T>, (uint8)8> getPointsAround(const uint8 pixel) const
     {
         std::array<TPoint<T>, (uint8)8> positions;
         int_fast8_t i = -1;
