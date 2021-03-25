@@ -110,7 +110,7 @@ void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::
 
     // map glyphs positions
     Size textBoxSize;
-    const std::vector<Point>& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
+    auto glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)text[i];
