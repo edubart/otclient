@@ -89,6 +89,13 @@ public:
     bool operator==(const Color& other) const { return other.rgba() == rgba(); }
     bool operator!=(const Color& other) const { return other.rgba() != rgba(); }
 
+    void blend(const Color color)
+    {
+        m_r *= (1 - color.m_a) + color.m_r * color.m_a;
+        m_g *= (1 - color.m_a) + color.m_g * color.m_a;
+        m_b *= (1 - color.m_a) + color.m_b * color.m_a;
+    }
+
     static uint8 to8bit(const Color& color)
     {
         uint8 c = 0;

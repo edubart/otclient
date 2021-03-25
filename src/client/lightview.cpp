@@ -69,7 +69,7 @@ void LightView::generateLightTexture()
             const float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
 
             // light intensity varies inversely with the square of the distance
-            const uint8_t colorByte = std::min<float>(intensity * intensity, 0.4) * 0xFF;
+            const uint8_t colorByte = (std::min<float>(intensity * intensity, 0.5) * 0xFF) * 1.5;
 
             uint8_t pixel[4] = { 255, 255, 255, colorByte };
             lightImage->setPixel(x, y, pixel);
@@ -84,7 +84,7 @@ void LightView::addLightSource(const Point& mainCenter, const Light& light, cons
 {
     const uint8 intensity = std::min<uint8>(light.intensity, MAX_LIGHT_INTENSITY);
 
-    const uint16 radius = (Otc::TILE_PIXELS * m_mapView->m_scaleFactor) * (intensity > 1 ? 2.3 : 1.1);
+    const uint16 radius = (Otc::TILE_PIXELS * m_mapView->m_scaleFactor) * (intensity > 1 ? 1.75 : 1.1);
     const auto& dimension = getDimensionConfig(intensity);
     for(const auto& position : dimension.positions)
     {
@@ -100,14 +100,14 @@ void LightView::addLightSource(const Point& mainCenter, const Light& light, cons
         bool gotoNextLight = false;
         for(auto& prevLight : lightList) {
             if(prevLight.color == light.color) {
-                if(prevLight.isStatic == isStatic || prevLight.center == center) {
+                if(isStatic && prevLight.isStatic == isStatic || prevLight.center == center) {
                     prevLight.brightness = std::min<float>(prevLight.brightness + brightness, 1);
                     gotoNextLight = true;
                 }
             } else if(prevLight.color > light.color) {
-                brightness -= prevLight.brightness;
+                brightness -= prevLight.brightness * 0.5;
             } else if(prevLight.color < light.color) {
-                prevLight.brightness -= brightness;
+                prevLight.brightness -= brightness * 0.5;
             }
         }
         if(gotoNextLight) continue;
@@ -127,9 +127,9 @@ const DimensionConfig& LightView::getDimensionConfig(const uint8 intensity)
         // TODO: REFATORATION REQUIRED
         // Ugly algorithm
         {
-            const float startBrightness = intensity == 1 ? .15 : .5 + (static_cast<float>(intensity) / 16);
+            const float startBrightness = intensity == 1 ? .15 : .2 + (static_cast<float>(intensity) / 10);
             auto pushLight = [&](const int8 x, const int8 y) -> void {
-                const float brightness = startBrightness - ((std::max<float>(std::abs(x), std::abs(y))) / intensity);
+                const float brightness = startBrightness - (std::max<float>(std::abs(x), std::abs(y)) / intensity);
                 dimension.positions.push_back({ x, y, std::min<float>(brightness, 1) });
             };
 
@@ -171,7 +171,7 @@ const DimensionConfig& LightView::getDimensionConfig(const uint8 intensity)
 static LightPoint INVALID_LIGHT_POINT(false);
 LightPoint& LightView::getLightPoint(const Point& point)
 {
-    size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
+    size_t index = ((m_mapView->m_drawDimension.width() + 2) * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
     if(index >= m_lightMap.size()) return INVALID_LIGHT_POINT;
     return m_lightMap[index];
 }
@@ -196,8 +196,6 @@ void LightView::drawLights()
         g_painter->setColor(globalColor);
     }
     g_painter->drawFilledRect(Rect(0, 0, m_lightbuffer->getSize()));
-
-    const auto& compareLights = [](const LightSource& a, const LightSource& b) -> bool const { return a.color < b.color; };
 
     // Lights
     g_painter->setCompositionMode(Painter::CompositionMode_Normal);
@@ -230,10 +228,6 @@ void LightView::drawLights()
         for(auto& lightPoint : m_lightMap) {
             auto& lights = lightPoint.floors[z];
             if(!lightPoint.isCovered(z)) {
-                if(lights.size() > 1) {
-                    std::sort(lights.begin(), lights.end(), compareLights);
-                }
-
                 for(const auto& light : lights) {
                     if(light.brightness <= 0.1) {
                         continue;
@@ -254,7 +248,7 @@ void LightView::drawLights()
 void LightView::resize()
 {
     m_lightbuffer->resize(m_mapView->m_frameCache.tile->getSize());
-    m_lightMap.resize(m_mapView->m_drawDimension.area());
+    m_lightMap.resize((m_mapView->m_drawDimension + Size(2, 2)).area());
 }
 
 void LightView::draw(const Rect& dest, const Rect& src)
