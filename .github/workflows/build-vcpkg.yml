@@ -38,15 +38,15 @@ jobs:
             cc: cl.exe
             triplet: x64-windows
             packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
-              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
+              boost-filesystem boost-uuid physfs openal-soft libogg lua luajit libvorbis zlib opengl
           - name: ubuntu-gcc
             os: ubuntu
             cxx: g++
             cc: gcc
             triplet: x64-linux
             packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
               boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
           - name: ubuntu-clang
             os: ubuntu
@@ -54,7 +54,7 @@ jobs:
             cc: clang
             triplet: x64-linux
             packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
               boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
           - name: macos-clang
             os: macos
@@ -62,8 +62,8 @@ jobs:
             cc: clang
             triplet: x64-osx
             packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree luajit glew
-              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
+              boost-filesystem boost-uuid openal-soft libogg libvorbis zlib opengl
 
     steps:
       - uses: actions/checkout@v2
@@ -77,35 +77,35 @@ jobs:
         # Using 'latest' branch, the latest CMake is installed.
         uses: lukka/get-cmake@latest
 
-      - name: Ubuntu - install luajit
-        run: |
-          sudo apt-get install libluajit-5.1-dev
+      - name: Ubuntu - install opengl lua5.1 luajit
+        # vcpkg has lua 5.2
+        run: sudo apt-get install libglew-dev liblua5.1-0-dev libluajit-5.1-dev
         if: contains( matrix.os, 'ubuntu')
 
-      - name: MacOS - install luajit pkgconfig
-        run: brew install luajit pkgconfig
+      - name: MacOS - install physfs pkgconfig lua5.1 luajit xquartz
+        run: brew install physfs pkgconfig lua@5.1 luajit xquartz
         if: contains( matrix.os, 'macos')
 
-      - uses: lukka/set-shell-env@v1
-        with:
-          CXX: ${{ matrix.cxx }}
-          CC: ${{ matrix.cc }}
+      - name: Set Environment vars
+        run: |
+          echo "CXX=${{ matrix.cxx }}" >> $GITHUB_ENV
+          echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
 
       - name: Run vcpkg
-        uses: lukka/run-vcpkg@v2
+        uses: lukka/run-vcpkg@v7.1
         with:
           vcpkgArguments: ${{ matrix.packages }}
           vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
           vcpkgTriplet: ${{ matrix.triplet }}
-          vcpkgGitCommitId: 7db401cb1ef1fc559ec9f9ce814d064c328fd767
+          vcpkgGitCommitId: 9a49e3df7f729655318c59b9985c9c18ad0c99d6
 
       - name: Build with CMake
-        uses: lukka/run-cmake@v2
+        uses: lukka/run-cmake@v3
         with:
-          useVcpkgToolchainFile: true
           buildDirectory: ${{ runner.workspace }}/build
-          cmakeBuildType: ${{ matrix.buildtype }}
-          cmakeAppendedArgs: -DUSE_LUAJIT=${{ matrix.luajit }}
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+          cmakeAppendedArgs: '-G Ninja -DCMAKE_BUILD_TYPE="${{ matrix.buildtype }}" -DLUAJIT="${{ matrix.luajit }}"'
+          useVcpkgToolchainFile: true
 
       - name: dir
         run: find $RUNNER_WORKSPACE
