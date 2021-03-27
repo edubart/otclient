@@ -298,7 +298,6 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
 std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
 {
     std::string outText;
-    std::string line;
     std::vector<std::string> words;
     std::vector<std::string> wordsSplit = stdext::split(text);
 
@@ -329,23 +328,24 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     }
 
     // compose lines
-    for(const auto &word: words) {
-        std::string candidate = line + word;
-        int candidateWidth = calculateTextRectSize(candidate).width();
+    std::string line(words[0]);
+    for(ulong i = 1; i < words.size(); ++i)
+    {
+        std::string& word = words[i];
 
-        if(candidateWidth > maxWidth) {
-            if(!line.empty()) {
-                line.back() = '\n';
-                outText += line;
-                line.clear();
-            }
+        line.push_back(' ');
+        ulong lineSize = line.size();
+        line.append(word);
+
+        if(calculateTextRectSize(line).width() > maxWidth)
+        {
+            line.resize(lineSize);
+            line.back() = '\n';
+            outText.append(line);
+            line.assign(word);
         }
-
-        line += word + ' ';
     }
-
-    line.pop_back();
-    outText += line;
+    outText.append(line);
 
     return outText;
 }
