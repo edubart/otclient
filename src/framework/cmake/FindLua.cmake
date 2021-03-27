@@ -4,10 +4,10 @@
 #  LUA_LIBRARY - the lua library
 #  LUA_LIBRARIES - the lua library and it's dependencies
 
-FIND_PATH(LUA_INCLUDE_DIR NAMES lua.h PATH_SUFFIXES lua51 lua5.1 lua)
+FIND_PATH(LUA_INCLUDE_DIR NAMES lua.h PATH_SUFFIXES lua51 lua5-1 lua5.1 lua)
 FIND_LIBRARY(LUA_LIBRARY NAMES)
-SET(_LUA_STATIC_LIBS liblua51.a liblua5.1.a liblua-5.1.a liblua.a )
-SET(_LUA_SHARED_LIBS liblua51.dll.a liblua5.1.dll.a liblua-5.1.dll.a liblua.dll.a lua51.dll lua5.1 lua-5.1 lua)
+SET(_LUA_STATIC_LIBS lua51.a lua5.1.a lua-5.1.a lua.a)
+SET(_LUA_SHARED_LIBS lua51 lua5.1 lua-5.1 lua)
 IF(USE_STATIC_LIBS)
     FIND_LIBRARY(LUA_LIBRARY NAMES ${_LUA_STATIC_LIBS} ${_LUA_SHARED_LIBS})
 ELSE()

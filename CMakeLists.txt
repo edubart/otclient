@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1)
 project(otclient)
 
 set(VERSION "1.0.0")
@@ -28,8 +28,8 @@ if(WIN32)
     add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o
                        COMMAND ${CMAKE_RC_COMPILER}
                        -I${CMAKE_CURRENT_SOURCE_DIR}/src
-                       -i${CMAKE_CURRENT_SOURCE_DIR}/src/otcicon.rc
-                       -o ${CMAKE_CURRENT_BINARY_DIR}/otcicon.o)
+                       -fo${CMAKE_CURRENT_BINARY_DIR}/otcicon.o
+                       ${CMAKE_CURRENT_SOURCE_DIR}/src/otcicon.rc)
     set(executable_SOURCES ${executable_SOURCES} otcicon.o)
 endif()
 
@@ -37,6 +37,10 @@ add_definitions(-D"VERSION=\\"${VERSION}\\"")
 
 # add client executable
 add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
+
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
+
 target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
 if(USE_PCH)

@@ -5,11 +5,6 @@
 # FRAMEWORK_XML
 # FRAMEWORK_SQL
 
-# CMAKE_CURRENT_LIST_DIR cmake 2.6 compatibility
-if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-    get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-
 # add framework cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
 
@@ -156,18 +151,20 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RelWithDebInfo")
 endif()
 
-include(FindCXX11)
+set(COMPILER_CXX_EXTRA_FLAGS       "-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-unused-result -pipe")
+set(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O1 -g -fno-omit-frame-pointer")
+set(CMAKE_CXX_FLAGS_RELEASE        "-O2")
+if (WIN32 AND MSVC)
+    set(COMPILER_CXX_EXTRA_FLAGS       "/bigobj")
+    set(CMAKE_CXX_FLAGS_DEBUG          "/Od /DEBUG:FULL")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/O12 /DEBUG:FASTLINK")
+    set(CMAKE_CXX_FLAGS_RELEASE        "/Ot")
+endif()
 
-# gcc compile flags
-set(WARNS_FLAGS "-Wall -Wextra -Wno-unused -Wno-unused-parameter -Wno-unused-result")
-set(CMAKE_CXX_FLAGS                   "${CMAKE_CXX_FLAGS} ${WARNS_FLAGS} ${ARCH_FLAGS} ${CPP2011_FLAGS} -pipe")
-set(CMAKE_CXX_FLAGS_COMPILESPEED      "-O0")
-set(CMAKE_CXX_FLAGS_DEBUG             "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO    "-O1 -g -fno-omit-frame-pointer")
-set(CMAKE_CXX_FLAGS_RELEASE           "-O2")
-set(CMAKE_CXX_FLAGS_PERFORMANCE       "-Ofast -march=native")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILER_CXX_EXTRA_FLAGS} ${ARCH_FLAGS} ${CPP2011_FLAGS}")
 
-if(USE_LTO)
+if(USE_LTO AND NOT MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fwhole-program -flto")
     if(WIN32)
         set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,-O1,--gc-sections,--sort-common,--relax")
@@ -274,7 +271,10 @@ if(USE_LIBCPP)
 endif()
 
 if(WIN32)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
+    if(NOT MSVC)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads")
+    endif()
+
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -D_WIN32_WINNT=0x0501 -DWIN32)
     #set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -Wl,--large-address-aware") # strip all debug information
     set(SYSTEM_LIBRARIES "")

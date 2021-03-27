@@ -28,7 +28,7 @@ jobs:
       fail-fast: false
       max-parallel: 8
       matrix:
-        name: [ubuntu-gcc, ubuntu-clang, macos-clang, windows-msvc]
+        name: [ubuntu-gcc, macos-clang, windows-msvc]
         buildtype: [Debug, Release]
         luajit: [on, off]
         include:
@@ -38,20 +38,12 @@ jobs:
             cc: cl.exe
             triplet: x64-windows
             packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
-              boost-filesystem boost-uuid physfs openal-soft libogg lua luajit libvorbis zlib opengl
+              boost-iostreams boost-asio boost-system boost-variant boost-lockfree boost-filesystem boost-uuid
+              glew luajit libogg libvorbis openal-soft opengl openssl physfs zlib
           - name: ubuntu-gcc
             os: ubuntu
             cxx: g++
             cc: gcc
-            triplet: x64-linux
-            packages: >
-              boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
-              boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
-          - name: ubuntu-clang
-            os: ubuntu
-            cxx: clang++
-            cc: clang
             triplet: x64-linux
             packages: >
               boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew

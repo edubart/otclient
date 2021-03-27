@@ -1,8 +1,3 @@
-# CMAKE_CURRENT_LIST_DIR cmake 2.6 compatibility
-if(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-    get_filename_component(CMAKE_CURRENT_LIST_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
-endif(${CMAKE_MAJOR_VERSION} EQUAL 2 AND ${CMAKE_MINOR_VERSION} EQUAL 6)
-
 # client options
 add_definitions(-DCLIENT)
 option(BOT_PROTECTION "Enable bot protection" ON)
