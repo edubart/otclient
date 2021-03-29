@@ -56,6 +56,9 @@ jobs:
             packages: >
               boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
               boost-filesystem boost-uuid openal-soft libogg libvorbis zlib opengl
+        exclude:
+          - name: windows-msvc
+            luajit: off
 
     steps:
       - uses: actions/checkout@v2
