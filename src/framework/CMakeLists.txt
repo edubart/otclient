@@ -133,14 +133,13 @@ set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
 
 # some build options
 option(LUAJIT "Use lua jit" OFF)
+option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
 if(NOT APPLE)
     option(CRASH_HANDLER "Generate crash reports" ON)
-    option(USE_STATIC_LIBS "Don't use shared libraries (dlls)" ON)
     option(USE_LIBCPP "Use the new libc++ library instead of stdc++" OFF)
     option(USE_LTO "Use link time optimizations" OFF)
 else()
     set(CRASH_HANDLER OFF)
-    set(USE_STATIC_LIBS OFF)
     set(USE_LIBCPP ON)
 endif()
 set(BUILD_COMMIT "devel" CACHE STRING "Git commit string (intended for releases)")

@@ -55,7 +55,7 @@ jobs:
             triplet: x64-osx
             packages: >
               boost-iostreams boost-asio boost-system boost-variant boost-lockfree glew
-              boost-filesystem boost-uuid openal-soft libogg libvorbis zlib opengl
+              boost-filesystem boost-uuid libogg libvorbis zlib opengl
         exclude:
           - name: windows-msvc
             luajit: off

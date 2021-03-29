@@ -43,6 +43,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
 
+if(APPLE AND USE_STATIC_LIBS)
+    target_link_libraries(${PROJECT_NAME} "-framework Foundation" "-framework IOKit")
+endif()
+
 if(USE_PCH)
     include(cotire)
     cotire(${PROJECT_NAME})
