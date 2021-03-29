@@ -54,7 +54,7 @@ ConfigPtr ConfigManager::getSettings()
 
 ConfigPtr ConfigManager::get(const std::string& file)
 {
-    for(const ConfigPtr config : m_configs) {
+    for(const ConfigPtr& config : m_configs) {
         if(config->getFileName() == file) {
             return config;
         }
