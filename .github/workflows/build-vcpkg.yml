@@ -73,7 +73,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Ubuntu - install opengl lua5.1 luajit
-        # vcpkg has lua 5.2
+        # vcpkg has lua 5.3+
         run: sudo apt-get install libglew-dev liblua5.1-0-dev libluajit-5.1-dev
         if: contains( matrix.os, 'ubuntu')
 
