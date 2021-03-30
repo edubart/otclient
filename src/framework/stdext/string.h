@@ -63,11 +63,12 @@ std::string utf16_to_latin1(const std::wstring& src);
 std::wstring latin1_to_utf16(const std::string& src);
 #endif
 
+// always returns at least one element in vector
 std::vector<std::string> split(const std::string& str, const std::string& separators = " ");
 template<typename T> std::vector<T> split(const std::string& str, const std::string& separators = " ") {
     std::vector<std::string> splitted = split(str, separators);
     std::vector<T> results(splitted.size());
-    for(uint i=0;i<splitted.size();++i)
+    for(uint i = 0; i < splitted.size(); ++i)
         results[i] = safe_cast<T>(splitted[i]);
     return results;
 }

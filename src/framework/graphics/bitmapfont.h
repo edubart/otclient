@@ -55,7 +55,7 @@ public:
 
     std::string wrapText(const std::string& text, int maxWidth);
 
-    std::string getName() { return m_name; }
+    const std::string& getName() { return m_name; }
     int getGlyphHeight() { return m_glyphHeight; }
     const Rect* getGlyphsTextureCoords() { return m_glyphsTextureCoords; }
     const Size* getGlyphsSize() { return m_glyphsSize; }
@@ -79,4 +79,3 @@ private:
 
 
 #endif
-
