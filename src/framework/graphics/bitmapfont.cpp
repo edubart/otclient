@@ -110,7 +110,7 @@ void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::
 
     // map glyphs positions
     Size textBoxSize;
-    auto glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
+    const auto& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
     for(int i = 0; i < textLenght; ++i) {
         int glyph = (uchar)text[i];
@@ -271,7 +271,7 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
 
     Size imageSize = image->getSize();
     int numHorizontalGlyphs = imageSize.width() / glyphSize.width();
-    auto texturePixels = image->getPixels();
+    const auto& texturePixels = image->getPixels();
 
     // small AI to auto calculate pixels widths
     for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
@@ -302,7 +302,7 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     std::vector<std::string> wordsSplit = stdext::split(text);
 
     // break huge words into small ones
-    for(const auto &word: wordsSplit) {
+    for(const auto& word: wordsSplit) {
         int wordWidth = calculateTextRectSize(word).width();
         if(wordWidth > maxWidth) {
             std::string newWord;
@@ -331,7 +331,7 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     std::string line(words[0]);
     for(ulong i = 1; i < words.size(); ++i)
     {
-        std::string& word = words[i];
+        const auto& word = words[i];
 
         line.push_back(' ');
         ulong lineSize = line.size();
