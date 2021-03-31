@@ -154,21 +154,21 @@ public:
     {
         float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
-        if(angle >= 360 - 22.5 || angle < 0 + 22.5)
+        if(angle >= 360 - 22.5f || angle < 0 + 22.5f)
             return Otc::East;
-        else if(angle >= 45 - 22.5 && angle < 45 + 22.5)
+        else if(angle >= 45 - 22.5f && angle < 45 + 22.5f)
             return Otc::NorthEast;
-        else if(angle >= 90 - 22.5 && angle < 90 + 22.5)
+        else if(angle >= 90 - 22.5f && angle < 90 + 22.5f)
             return Otc::North;
-        else if(angle >= 135 - 22.5 && angle < 135 + 22.5)
+        else if(angle >= 135 - 22.5f && angle < 135 + 22.5f)
             return Otc::NorthWest;
-        else if(angle >= 180 - 22.5 && angle < 180 + 22.5)
+        else if(angle >= 180 - 22.5f && angle < 180 + 22.5f)
             return Otc::West;
-        else if(angle >= 225 - 22.5 && angle < 225 + 22.5)
+        else if(angle >= 225 - 22.5f && angle < 225 + 22.5f)
             return Otc::SouthWest;
-        else if(angle >= 270 - 22.5 && angle < 270 + 22.5)
+        else if(angle >= 270 - 22.5f && angle < 270 + 22.5f)
             return Otc::South;
-        else if(angle >= 315 - 22.5 && angle < 315 + 22.5)
+        else if(angle >= 315 - 22.5f && angle < 315 + 22.5f)
             return Otc::SouthEast;
         else
             return Otc::InvalidDirection;
