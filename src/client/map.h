@@ -253,7 +253,7 @@ private:
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
-    std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
+    std::unordered_map<Position, std::string, Position::Hasher> m_waypoints;
 
     uint8 m_animationFlags;
     uint32 m_zoneFlags;

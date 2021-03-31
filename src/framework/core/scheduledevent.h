@@ -40,17 +40,17 @@ public:
     int cyclesExecuted() { return m_cyclesExecuted; }
     int maxCycles() { return m_maxCycles; }
 
+    struct Compare {
+        bool operator() (const ScheduledEventPtr &a, const ScheduledEventPtr &b) const {
+            return b->ticks() < a->ticks();
+        }
+    };
+
 private:
     ticks_t m_ticks;
     int m_delay;
     int m_maxCycles;
     int m_cyclesExecuted;
-};
-
-struct lessScheduledEvent : std::binary_function<ScheduledEventPtr, ScheduledEventPtr&, bool> {
-    bool operator()(const ScheduledEventPtr& a, const ScheduledEventPtr& b) {
-        return  b->ticks() < a->ticks();
-    }
 };
 
 #endif

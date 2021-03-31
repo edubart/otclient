@@ -243,12 +243,14 @@ public:
     int x;
     int y;
     short z;
-};
 
-struct PositionHasher : std::unary_function<Position, std::size_t> {
-    std::size_t operator()(const Position& pos) const {
-        return (((pos.x * 8192) + pos.y) * 16) + pos.z;
-    }
+    // NOTE: This does not increase the size of the struct.
+    struct Hasher
+    {
+        std::size_t operator() (const Position& pos) const {
+            return (((pos.x * 8192) + pos.y) * 16) + pos.z;
+        }
+    };
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Position& pos)

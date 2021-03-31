@@ -718,18 +718,20 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
 
     struct Node {
+        using Pair = std::pair<Node *, float>;
+
         Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) { }
         float cost;
         float totalCost;
         Position pos;
         Node *prev;
         Otc::Direction dir;
-    };
 
-    struct LessNode : std::binary_function<std::pair<Node*, float>, std::pair<Node*, float>, bool> {
-        bool operator()(std::pair<Node*, float> a, std::pair<Node*, float> b) const {
-            return b.second < a.second;
-        }
+        struct Compare {
+            bool operator() (const Pair &a, const Pair &b) const {
+                return b.second < a.second;
+            }
+        };
     };
 
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> ret;
@@ -762,8 +764,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
     }
 
-    std::unordered_map<Position, Node*, PositionHasher> nodes;
-    std::priority_queue<std::pair<Node*, float>, std::deque<std::pair<Node*, float>>, LessNode> searchList;
+    std::unordered_map<Position, Node*, Position::Hasher> nodes;
+    std::priority_queue<Node::Pair, std::deque<Node::Pair>, Node::Compare> searchList;
 
     Node *currentNode = new Node(startPos);
     currentNode->pos = startPos;
@@ -856,7 +858,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
                 neighborNode->cost = cost;
                 neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
                 neighborNode->dir = walkDir;
-                searchList.push(std::make_pair(neighborNode, neighborNode->totalCost));
+                searchList.emplace(neighborNode, neighborNode->totalCost);
             }
         }
 
