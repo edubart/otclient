@@ -34,6 +34,12 @@
 
 Logger g_logger;
 
+namespace
+{
+    const std::string s_logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
+    bool s_ignoreLogs = false;
+}
+
 void Logger::log(Fw::LogLevel level, const std::string& message)
 {
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
@@ -43,13 +49,10 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
         return;
 #endif
 
-    static bool ignoreLogs = false;
-    if(ignoreLogs)
+    if(s_ignoreLogs)
         return;
 
-    const static std::string logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
-
-    std::string outmsg = logPrefixes[level] + message;
+    std::string outmsg = s_logPrefixes[level] + message;
 
     /*
 #if !defined(NDEBUG) && !defined(WIN32)
@@ -91,7 +94,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
 #ifdef FW_GRAPHICS
         g_window.displayFatalError(message);
 #endif
-        ignoreLogs = true;
+        s_ignoreLogs = true;
         exit(-1);
     }
 }
@@ -122,8 +125,7 @@ void Logger::fireOldMessages()
     std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
     if(m_onLog) {
-        auto backup = m_logMessages;
-        for(const LogMessage& logMessage : backup) {
+        for(const LogMessage& logMessage : m_logMessages) {
             m_onLog(logMessage.level, logMessage.message, logMessage.when);
         }
     }

@@ -59,7 +59,7 @@ public:
     void setOnLog(const OnLogCallback& onLog) { m_onLog = onLog; }
 
 private:
-    std::list<LogMessage> m_logMessages;
+    std::deque<LogMessage> m_logMessages;
     OnLogCallback m_onLog;
     std::ofstream m_outFile;
     std::recursive_mutex m_mutex;
