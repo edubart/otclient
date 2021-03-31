@@ -49,7 +49,7 @@ add_definitions(-D"VERSION=\\"${VERSION}\\"")
 # add client executable
 add_executable(${PROJECT_NAME} ${framework_SOURCES} ${client_SOURCES} ${executable_SOURCES})
 
-set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 14)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${PROJECT_NAME} ${framework_LIBRARIES})
