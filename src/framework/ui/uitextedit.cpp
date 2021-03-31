@@ -143,8 +143,8 @@ void UITextEdit::update(bool focusCursor)
     // map glyphs positions
     Size textBoxSize;
     const auto& glyphsPositions = m_font->calculateGlyphsPositions(text, m_textAlign, &textBoxSize);
-    const Rect* glyphsTextureCoords = m_font->getGlyphsTextureCoords();
-    const Size* glyphsSize = m_font->getGlyphsSize();
+    const auto& glyphsTextureCoords = m_font->getGlyphsTextureCoords();
+    const auto& glyphsSize = m_font->getGlyphsSize();
     int glyph;
 
     // update rect size
