@@ -25,8 +25,8 @@
 
 #include "stdext/compiler.h"
 
-#define DEG_TO_RAD (acos(-1)/180.0)
-#define RAD_TO_DEC (180.0/acos(-1))
+#define DEG_TO_RAD (std::acos(-1.f)/180.f)
+#define RAD_TO_DEC (180.f/std::acos(-1.f))
 
 #ifndef BUILD_COMMIT
 #define BUILD_COMMIT "devel"
@@ -52,7 +52,7 @@
 
 namespace Fw
 {
-    static const float pi = 3.14159265;
+    static const float pi = 3.14159265f;
     static const float MIN_ALPHA = 0.003f;
     enum Key : unsigned char {
         KeyUnknown = 0,
