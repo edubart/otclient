@@ -109,8 +109,8 @@ function init()
   graphicsPanel = g_ui.loadUI('graphics')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel, '/images/optionstab/graphics')
 
-  audioPanel = g_ui.loadUI('audio')
-  optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
+  soundPanel = g_ui.loadUI('audio')
+  optionsTabBar:addTab(tr('Audio'), soundPanel, '/images/optionstab/audio')
 
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
   audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
@@ -190,17 +190,23 @@ function setOption(key, value, force)
   elseif key == 'fullscreen' then
     g_window.setFullscreen(value)
   elseif key == 'enableAudio' then
-    g_sounds.setAudioEnabled(value)
+    if g_sounds then
+      g_sounds.setAudioEnabled(value)
+    end
     if value then
       audioButton:setIcon('/images/topbuttons/audio')
     else
       audioButton:setIcon('/images/topbuttons/audio_mute')
     end
   elseif key == 'enableMusicSound' then
-    g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
+    if g_sounds then
+      g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
+    end
   elseif key == 'musicSoundVolume' then
-    g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
-    audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
+    if g_sounds then
+      g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
+    end
+    soundPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
   elseif key == 'showLeftPanel' then
     modules.game_interface.getLeftPanel():setOn(value)
   elseif key == 'backgroundFrameRate' then
