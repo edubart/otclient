@@ -48,8 +48,8 @@ public:
     void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 
     void generateXteaKey();
-    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d);
-    std::vector<uint32> getXteaKey();
+    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d) { m_xteaKey = {a, b, c, d}; }
+    std::vector<uint32> getXteaKey() { return {m_xteaKey.begin(), m_xteaKey.end()}; }
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 
     void enableChecksum() { m_checksumEnabled = true; }
@@ -64,7 +64,7 @@ protected:
     virtual void onRecv(const InputMessagePtr& inputMessage);
     virtual void onError(const boost::system::error_code& err);
 
-    uint32 m_xteaKey[4];
+    std::array<uint32, 4> m_xteaKey;
 
 private:
     void internalRecvHeader(uint8* buffer, uint16 size);

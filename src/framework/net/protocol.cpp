@@ -144,29 +144,35 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 
 void Protocol::generateXteaKey()
 {
-    std::mt19937 eng(std::time(nullptr));
-    std::uniform_int_distribution<uint32> unif(0, 0xFFFFFFFF);
-    m_xteaKey[0] = unif(eng);
-    m_xteaKey[1] = unif(eng);
-    m_xteaKey[2] = unif(eng);
-    m_xteaKey[3] = unif(eng);
+    std::random_device rd;
+    std::uniform_int_distribution<uint32> unif;
+    std::generate(m_xteaKey.begin(), m_xteaKey.end(), [&]() { return unif(rd); });
 }
 
-void Protocol::setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d)
+namespace {
+
+constexpr uint32_t delta = 0x9E3779B9;
+
+template<typename Round>
+void apply_rounds(uint8_t* data, size_t length, Round round)
 {
-    m_xteaKey[0] = a;
-    m_xteaKey[1] = b;
-    m_xteaKey[2] = c;
-    m_xteaKey[3] = d;
+    for (auto j = 0u; j < length; j += 8) {
+        uint32_t left = data[j+0] | data[j+1] << 8u | data[j+2] << 16u | data[j+3] << 24u,
+                right = data[j+4] | data[j+5] << 8u | data[j+6] << 16u | data[j+7] << 24u;
+
+        round(left, right);
+
+        data[j] = static_cast<uint8_t>(left);
+        data[j+1] = static_cast<uint8_t>(left >> 8u);
+        data[j+2] = static_cast<uint8_t>(left >> 16u);
+        data[j+3] = static_cast<uint8_t>(left >> 24u);
+        data[j+4] = static_cast<uint8_t>(right);
+        data[j+5] = static_cast<uint8_t>(right >> 8u);
+        data[j+6] = static_cast<uint8_t>(right >> 16u);
+        data[j+7] = static_cast<uint8_t>(right >> 24u);
+    }
 }
 
-std::vector<uint32> Protocol::getXteaKey()
-{
-    std::vector<uint32> xteaKey;
-    xteaKey.resize(4);
-    for(int i = 0; i < 4; ++i)
-        xteaKey[i] = m_xteaKey[i];
-    return xteaKey;
 }
 
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
@@ -177,22 +183,12 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
         return false;
     }
 
-    uint32 *buffer = (uint32*)(inputMessage->getReadBuffer());
-    int readPos = 0;
-
-    while(readPos < encryptedSize/4) {
-        uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
-        uint32 delta = 0x61C88647;
-        uint32 sum = 0xC6EF3720;
-
-        for(int32 i = 0; i < 32; i++) {
-            v1 -= ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
-            sum += delta;
-            v0 -= ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
-        }
-        buffer[readPos] = v0; buffer[readPos + 1] = v1;
-        readPos = readPos + 2;
-    }
+    for (uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
+        apply_rounds(inputMessage->getReadBuffer(), encryptedSize, [&](uint32_t& left, uint32_t& right) {
+            right -= ((left << 4 ^ left >> 5) + left) ^ (sum + m_xteaKey[(sum >> 11) & 3]);
+            left -= ((right << 4 ^ right >> 5) + right) ^ (next_sum + m_xteaKey[next_sum & 3]);
+        });
+    };
 
     uint16 decryptedSize = inputMessage->getU16() + 2;
     int sizeDelta = decryptedSize - encryptedSize;
@@ -217,21 +213,12 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
         encryptedSize += n;
     }
 
-    int readPos = 0;
-    uint32 *buffer = (uint32*)(outputMessage->getDataBuffer() - 2);
-    while(readPos < encryptedSize / 4) {
-        uint32 v0 = buffer[readPos], v1 = buffer[readPos + 1];
-        uint32 delta = 0x61C88647;
-        uint32 sum = 0;
-
-        for(int32 i = 0; i < 32; i++) {
-            v0 += ((v1 << 4 ^ v1 >> 5) + v1) ^ (sum + m_xteaKey[sum & 3]);
-            sum -= delta;
-            v1 += ((v0 << 4 ^ v0 >> 5) + v0) ^ (sum + m_xteaKey[sum>>11 & 3]);
-        }
-        buffer[readPos] = v0; buffer[readPos + 1] = v1;
-        readPos = readPos + 2;
-    }
+    for (uint32_t i = 0, sum = 0, next_sum = sum + delta; i < 32; ++i, sum = next_sum, next_sum += delta) {
+        apply_rounds(outputMessage->getDataBuffer() - 2, encryptedSize, [&](uint32_t& left, uint32_t& right) {
+            left += ((right << 4 ^ right >> 5) + right) ^ (sum + m_xteaKey[sum & 3]);
+            right += ((left << 4 ^ left >> 5) + left) ^ (next_sum + m_xteaKey[(next_sum >> 11) & 3]);
+        });
+    };
 }
 
 void Protocol::onConnect()
