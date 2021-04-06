@@ -64,7 +64,7 @@ public:
     bool isSmooth() { return m_smooth; }
     bool isDrawable() { return m_drawable; }
 
-    const bool canUpdate();
+    bool canUpdate();
     void update();
     void schedulePainting(const uint16_t time);
     void removeRenderingTime(const uint16_t time);
@@ -75,7 +75,7 @@ private:
     void internalBind();
     void internalRelease();
 
-    const uint8_t flushTime();
+    uint8_t flushTime();
 
     TexturePtr m_texture;
     TexturePtr m_screenBackup;

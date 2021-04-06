@@ -100,7 +100,7 @@ void LightView::addLightSource(const Point& mainCenter, const Light& light, cons
         bool gotoNextLight = false;
         for(auto& prevLight : lightList) {
             if(prevLight.color == light.color) {
-                if(isStatic && prevLight.isStatic == isStatic || prevLight.center == center) {
+                if((isStatic && (prevLight.isStatic == isStatic)) || (prevLight.center == center)) {
                     prevLight.brightness = std::min<float>(prevLight.brightness + brightness, 1);
                     gotoNextLight = true;
                 }
@@ -180,7 +180,7 @@ void LightView::resetBrightness(const Point& point)
 {
     auto& lightPoint = getLightPoint(point);
     if(lightPoint.isValid)
-        lightPoint.brightness = { static_cast<int8>(m_currentFloor), point, false };
+        lightPoint.brightness = TileBrightness(static_cast<int8>(m_currentFloor), point, false);
 }
 
 void LightView::drawLights()

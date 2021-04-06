@@ -760,7 +760,7 @@ bool Map::isAwareOfPosition(const Position& pos)
     Position groundedPos = pos;
     while(groundedPos.z != m_centralPosition.z) {
         if(groundedPos.z > m_centralPosition.z) {
-            if(groundedPos.x == _UI16_MAX || groundedPos.y == _UI16_MAX) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
+            if(groundedPos.x == UINT16_MAX || groundedPos.y == UINT16_MAX) // When pos == 65535,65535,15 we cant go up to 65536,65536,14
                 break;
             groundedPos.coveredUp();
         } else {

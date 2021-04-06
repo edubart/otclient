@@ -486,7 +486,7 @@ void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::str
     if(message.empty())
         return;
 
-    if(message.length() > _UI8_MAX) {
+    if(message.length() > UINT8_MAX) {
         g_logger.traceError("message too large");
         return;
     }

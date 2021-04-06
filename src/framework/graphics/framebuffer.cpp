@@ -167,9 +167,9 @@ Size FrameBuffer::getSize()
     return m_texture->getSize();
 }
 
-const bool FrameBuffer::canUpdate()
+bool FrameBuffer::canUpdate()
 {
-    return m_forceUpdate || m_requestAmount > 0 && m_lastRenderedTime.ticksElapsed() >= flushTime();
+    return (m_forceUpdate || ((m_requestAmount > 0) && (m_lastRenderedTime.ticksElapsed() >= flushTime())));
 }
 
 void FrameBuffer::update()
@@ -177,7 +177,7 @@ void FrameBuffer::update()
     ++m_requestAmount;
 }
 
-const uint8_t FrameBuffer::flushTime()
+uint8_t FrameBuffer::flushTime()
 {
 #if FLUSH_CONTROL_FOR_RENDERING == 1
     return std::min<uint8_t>(MIN_TIME_UPDATE + std::floor<uint8_t>(m_requestAmount / FLUSH_AMOUNT), MAX_TIME_UPDATE);

@@ -31,7 +31,7 @@
 
 enum : uint8 {
     MAX_LIGHT_INTENSITY = 8,
-    MAX_AMBIENT_LIGHT_INTENSITY = _UI8_MAX
+    MAX_AMBIENT_LIGHT_INTENSITY = UINT8_MAX
 };
 
 struct PositionLight : Position {
@@ -42,7 +42,7 @@ struct PositionLight : Position {
     PositionLight(int8 x, int8 y, float brightness) :
         brightness(brightness), point(Point(x, y))
     {
-        Position::x = x, Position::y = y, z = _UI8_MAX;
+        Position::x = x, Position::y = y, z = UINT8_MAX;
     }
 };
 
@@ -67,6 +67,9 @@ struct LightSource {
 };
 
 struct TileBrightness {
+    TileBrightness(int8 floor, const Point& pos, const bool isEdge) : floor(floor), pos(pos), isEdge(isEdge) {}
+    TileBrightness() = default;
+
     int8 floor = -1;
     Point pos;
     bool isEdge;

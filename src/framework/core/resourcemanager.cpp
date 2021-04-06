@@ -346,7 +346,7 @@ std::string ResourceManager::getBaseDir()
 
 std::string ResourceManager::getUserDir()
 {
-    return PHYSFS_getUserDir();
+    return PHYSFS_getPrefDir("otclient", "otclient");
 }
 
 std::string ResourceManager::guessFilePath(const std::string& filename, const std::string& type)
