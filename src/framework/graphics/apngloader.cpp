@@ -80,8 +80,10 @@ unsigned int    palsize, trnssize;
 unsigned int    hasTRNS;
 unsigned short  trns1, trns2, trns3;
 
+#ifdef _MSC_VER
 #pragma warning( push )
 #pragma warning( disable : 4244)
+#endif
 unsigned int read32(std::istream& f1)
 {
     unsigned char a, b, c, d;
@@ -739,8 +741,7 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
                                     switch (coltype)
                                     {
                                         case 0:  memset(pDst2, 0, w0 * 4); if (hasTRNS) memset(pDst1, trns[1], w0); else keep_original = 0; break;
-                                        case 2:  memset(pDst2, 0, w0 * 4); if (hasTRNS) for (i = 0; i < w0; i++) { pDst1[i * 3] = trns[1]; pDst1[i * 3 + 1] = trns[3]; pDst1[i * 3 + 2] = trns[5]; }
-                                              else keep_original = 0; break;
+                                        case 2:  memset(pDst2, 0, w0 * 4); if (hasTRNS) for (i = 0; i < w0; i++) { pDst1[i * 3] = trns[1]; pDst1[i * 3 + 1] = trns[3]; pDst1[i * 3 + 2] = trns[5]; } else keep_original = 0; break;
                                         case 3:  memset(pDst2, 0, w0 * 4); if (trns_idx >= 0) memset(pDst1, trns_idx, w0); else keep_original = 0; break;
                                         case 4:  memset(pDst1, 0, w0 * 2); break;
                                         case 6:  memset(pDst2, 0, w0 * 4); break;
@@ -1158,4 +1159,7 @@ void free_apng(struct apng_data* apng)
     if (apng->frames_delay)
         free(apng->frames_delay);
 }
-#pragma warning( pop ) 
+
+#ifdef _MSC_VER
+#pragma warning( pop )
+#endif

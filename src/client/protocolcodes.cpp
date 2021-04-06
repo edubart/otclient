@@ -227,7 +227,7 @@ namespace Proto {
 
     uint8 translateMessageModeToServer(Otc::MessageMode mode)
     {
-        if(mode < 0 || mode >= Otc::LastMessage)
+        if(mode >= Otc::LastMessage)
             return Otc::MessageInvalid;
         const auto it = messageModesMap.find(mode);
         if(it != messageModesMap.end())

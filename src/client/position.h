@@ -33,7 +33,7 @@
 class Position
 {
 public:
-    Position() : x(_UI16_MAX), y(_UI16_MAX), z(_UI8_MAX) {}
+    Position() : x(UINT16_MAX), y(UINT16_MAX), z(UINT8_MAX) {}
     Position(int32 x, int32 y, uint8 z) : x(x), y(y), z(z) {}
 
     Position(const Position& position) = default;
@@ -192,8 +192,8 @@ public:
         return getDirectionFromPositions(*this, position);
     }
 
-    bool isMapPosition() const { return x >= 0 && y >= 0 && z >= 0 && x < _UI16_MAX&& y < _UI16_MAX&& z <= Otc::MAX_Z; }
-    bool isValid() const { return !(x == _UI16_MAX && y == _UI16_MAX && z == _UI8_MAX); }
+    bool isMapPosition() const { return ((x >= 0) && (y >= 0) && (x < UINT16_MAX) && (y < UINT16_MAX) && (z <= Otc::MAX_Z)); }
+    bool isValid() const { return !(x == UINT16_MAX && y == UINT16_MAX && z == UINT8_MAX); }
     float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
     uint16 manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
 
@@ -266,7 +266,7 @@ public:
     {
         const int32 nx = x + n, ny = y + n;
         const int8 nz = z - n;
-        if(nx >= 0 && nx <= _UI16_MAX && ny >= 0 && ny <= _UI16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }
@@ -278,7 +278,7 @@ public:
     {
         const int32 nx = x - n, ny = y - n;
         const int8 nz = z + n;
-        if(nx >= 0 && nx <= _UI16_MAX && ny >= 0 && ny <= _UI16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }

@@ -90,7 +90,7 @@ public:
     ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 
-    const int getDrawElevation() { return m_drawElevation; }
+    int getDrawElevation() { return m_drawElevation; }
     const Position& getPosition() { return m_position; }
     const std::vector<CreaturePtr>& getWalkingCreatures() { return m_walkingCreatures; }
     const std::vector<ThingPtr>& getThings() { return m_things; }
@@ -152,11 +152,11 @@ public:
 
     void cancelScheduledPainting();
 
-    const bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
+    bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
 
-    const bool isCovered() { return m_covered; };
-    const bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
-    const bool hasGround() { return getGround() != nullptr; };
+    bool isCovered() { return m_covered; };
+    bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
+    bool hasGround() { return getGround() != nullptr; };
     const std::array<Position, 8> getPositionsAround() { return m_positionsAround; }
 
 private:

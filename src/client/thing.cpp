@@ -115,7 +115,7 @@ ContainerPtr Thing::getParentContainer()
 
 int Thing::getStackPos()
 {
-    if(m_position.x == _UI16_MAX && isItem()) // is inside a container
+    if(m_position.x == UINT16_MAX && isItem()) // is inside a container
         return m_position.z;
 
     if(const TilePtr& tile = getTile())

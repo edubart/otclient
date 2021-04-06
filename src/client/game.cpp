@@ -354,7 +354,7 @@ void Game::processContainerRemoveItem(int containerId, int slot, const ItemPtr& 
 void Game::processInventoryChange(int slot, const ItemPtr& item)
 {
     if(item)
-        item->setPosition(Position(_UI16_MAX, slot, 0));
+        item->setPosition(Position(UINT16_MAX, slot, 0));
 
     m_localPlayer->setInventoryItem(static_cast<Otc::InventorySlot>(slot), item);
 }

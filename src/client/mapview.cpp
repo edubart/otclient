@@ -53,7 +53,7 @@ MapView::MapView()
 {
     m_viewMode = NEAR_VIEW;
     m_frameCache.flags = Otc::FUpdateAll;
-    m_lockedFirstVisibleFloor = _UI8_MAX;
+    m_lockedFirstVisibleFloor = UINT8_MAX;
     m_cachedFirstVisibleFloor = Otc::SEA_FLOOR;
     m_cachedLastVisibleFloor = Otc::SEA_FLOOR;
     m_minimumAmbientLight = 0;
@@ -139,7 +139,7 @@ void MapView::draw(const Rect& rect)
             for(const auto& tile : m_cachedVisibleTiles[z]) {
                 const auto hasLight = redrawLight && tile->hasLight();
 
-                if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
+                if((!redrawThing && !hasLight) || !canRenderTile(tile, viewPort, lightView)) continue;
 
                 tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
@@ -548,8 +548,8 @@ void MapView::onFloorDrawingStart(const uint8 floor)
         Color shadowColor = Color::white;
 
         if(floor > Otc::SEA_FLOOR) { // Cave
-            if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z ||
-               hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z
+            if((hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z) ||
+               (hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z)
                ) {
                 float brightnessLevelStart = .6f;
                 float brightnessLevel = cameraPosition.z - floor;
@@ -645,7 +645,7 @@ void MapView::lockFirstVisibleFloor(uint8 firstVisibleFloor)
 
 void MapView::unlockFirstVisibleFloor()
 {
-    m_lockedFirstVisibleFloor = _UI8_MAX;
+    m_lockedFirstVisibleFloor = UINT8_MAX;
     requestVisibleTilesCacheUpdate();
 }
 
@@ -791,7 +791,7 @@ uint8 MapView::calcFirstVisibleFloor()
 {
     uint8 z = Otc::SEA_FLOOR;
     // return forced first visible floor
-    if(m_lockedFirstVisibleFloor != _UI8_MAX) {
+    if(m_lockedFirstVisibleFloor != UINT8_MAX) {
         z = m_lockedFirstVisibleFloor;
     } else {
         const Position cameraPosition = getCameraPosition();
@@ -866,7 +866,7 @@ uint8 MapView::calcLastVisibleFloor()
             z = Otc::SEA_FLOOR;
     }
 
-    if(m_lockedFirstVisibleFloor != _UI8_MAX)
+    if(m_lockedFirstVisibleFloor != UINT8_MAX)
         z = std::max<int>(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
@@ -955,7 +955,7 @@ void MapView::updateViewportDirectionCache()
 
 bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
 {
-    if(m_drawViewportEdge || lightView && lightView->isDark() && tile->hasLight()) return true;
+    if(m_drawViewportEdge || (lightView && lightView->isDark() && tile->hasLight())) return true;
 
     const Position cameraPosition = getCameraPosition();
     const Position& tilePos = tile->getPosition();

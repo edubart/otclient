@@ -84,8 +84,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
-                if(opcode == Proto::GameServerPing && g_game.getFeature(Otc::GameClientPing) ||
-                   opcode == Proto::GameServerPingBack && !g_game.getFeature(Otc::GameClientPing))
+                if (((opcode == Proto::GameServerPing) && (g_game.getFeature(Otc::GameClientPing))) ||
+                    ((opcode == Proto::GameServerPingBack) && !g_game.getFeature(Otc::GameClientPing)))
                     parsePingBack(msg);
                 else
                     parsePing(msg);
@@ -2180,7 +2180,7 @@ ThingPtr ProtocolGame::getMappedThing(const InputMessagePtr& msg)
         pos.y = msg->getU16();
         pos.z = msg->getU8();
         const uint8 stackpos = msg->getU8();
-        assert(stackpos != _UI8_MAX);
+        assert(stackpos != UINT8_MAX);
         thing = g_map.getThing(pos, stackpos);
         if(!thing)
             g_logger.traceError(stdext::format("no thing at pos:%s, stackpos:%d", stdext::to_string(pos), stackpos));
