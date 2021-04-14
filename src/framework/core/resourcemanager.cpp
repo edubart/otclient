@@ -185,7 +185,15 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
 {
     std::string fullPath = resolvePath(fileName);
 
-    PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
+    PHYSFS_File* file;
+#ifdef ZIPENCRYPTION
+    if(fileName != "/config.otml")
+        file = PHYSFS_openRead(std::string(fullPath + "$" + m_zipPassword).c_str());
+    else
+        file = PHYSFS_openRead(fullPath.c_str());
+#else
+        file = PHYSFS_openRead(fullPath.c_str());
+#endif
     if(!file)
         stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
 
@@ -232,7 +240,12 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
 {
     std::string fullPath = resolvePath(fileName);
 
-    PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
+    PHYSFS_File* file;
+#ifdef ZIPENCRYPTION
+    file = PHYSFS_openRead(std::string(fullPath + "$" + m_zipPassword).c_str());
+#else
+    file = PHYSFS_openRead(fullPath.c_str());
+#endif
     if(!file)
         stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return FileStreamPtr(new FileStream(fullPath, file, false));

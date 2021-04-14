@@ -252,6 +252,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "getBackgroundPaneFps", &GraphicalApplication::getBackgroundPaneFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getForegroundPaneMaxFps", &GraphicalApplication::getForegroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBackgroundPaneMaxFps", &GraphicalApplication::getBackgroundPaneMaxFps, &g_app);
+    g_lua.bindSingletonFunction("g_app", "isZipEncrypted", &GraphicalApplication::isZipEncrypted, &g_app);
 
     // PlatformWindow
     g_lua.registerSingletonClass("g_window");

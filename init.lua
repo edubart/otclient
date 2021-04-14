@@ -8,14 +8,16 @@ g_logger.info(os.date("== application started at %b %d %Y %X"))
 -- print first terminal message
 g_logger.info(g_app.getName() .. ' ' .. g_app.getVersion() .. ' rev ' .. g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() .. ') built on ' .. g_app.getBuildDate() .. ' for arch ' .. g_app.getBuildArch())
 
--- add data directory to the search path
-if not g_resources.addSearchPath(g_resources.getWorkDir() .. "data", true) then
-  g_logger.fatal("Unable to add data directory to the search path.")
-end
+if not g_app.isZipEncrypted() then
+  -- add data directory to the search path
+  if not g_resources.addSearchPath(g_resources.getWorkDir() .. "data", true) then
+    g_logger.fatal("Unable to add data directory to the search path.")
+  end
 
--- add modules directory to the search path
-if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) then
-  g_logger.fatal("Unable to add modules directory to the search path.")
+  -- add modules directory to the search path
+  if not g_resources.addSearchPath(g_resources.getWorkDir() .. "modules", true) then
+    g_logger.fatal("Unable to add modules directory to the search path.")
+  end
 end
 
 -- try to add mods path too
@@ -50,6 +52,8 @@ g_modules.autoLoadModules(9999)
 
 local script = '/' .. g_app.getCompactName() .. 'rc.lua'
 
-if g_resources.fileExists(script) then
-  dofile(script)
+if not g_app.isZipEncrypted() then
+  if g_resources.fileExists(script) then
+    dofile(script)
+  end
 end

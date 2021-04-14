@@ -75,6 +75,7 @@ public:
     std::string getWriteDir() { return m_writeDir; }
     std::string getWorkDir() { return m_workDir; }
     std::deque<std::string> getSearchPaths() { return m_searchPaths; }
+    std::string m_zipPassword = "12345678";
 
     std::string guessFilePath(const std::string& filename, const std::string& type);
     bool isFileType(const std::string& filename, const std::string& type);

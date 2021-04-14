@@ -39,12 +39,27 @@ int main(int argc, const char* argv[])
     g_client.init(args);
 
     // find script init.lua and run it
-    if(!g_resources.discoverWorkDir("init.lua"))
+    if(!g_resources.discoverWorkDir(g_app.getCompactName() + ".exe"))
         g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
 
-    if(!g_lua.safeRunScript("init.lua"))
-        g_logger.fatal("Unable to run script init.lua!");
+#ifdef ZIPENCRYPTION
+    if (!g_resources.addSearchPath(g_resources.getWorkDir() + "data.zip", true))
+        g_logger.fatal("Unable to add data to the search path");
+    if (!g_resources.addSearchPath(g_resources.getWorkDir() + "modules.zip", true))
+        g_logger.fatal("Unable to add modules to the search path");
 
+    if (!g_lua.safeRunScript("init.lua"))
+        g_logger.fatal("Unable to run script init.lua!");
+#else
+    if (!g_lua.safeRunScript("init.lua"))
+    {
+        if (!g_resources.addSearchPath(g_resources.getWorkDir() + "data", true))
+            g_logger.fatal("Unable to add data to the search path");
+
+        if (!g_lua.safeRunScript("init.lua"))
+            g_logger.fatal("Unable to run script init.lua!");
+    }
+#endif
     // the run application main loop
     g_app.run();
 

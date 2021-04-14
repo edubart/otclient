@@ -52,6 +52,12 @@ public:
     int getBackgroundPaneFps() { return m_backgroundFrameCounter.getLastFps(); }
     int getForegroundPaneMaxFps() { return m_foregroundFrameCounter.getMaxFps(); }
     int getBackgroundPaneMaxFps() { return m_backgroundFrameCounter.getMaxFps(); }
+    bool isZipEncrypted() {
+#ifdef ZIPENCRYPTION
+        return true;
+#endif
+        return false;
+    }
 
     bool isOnInputEvent() { return m_onInputEvent; }
 
