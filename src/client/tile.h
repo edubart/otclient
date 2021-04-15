@@ -106,18 +106,20 @@ public:
     bool isFullGround();
     bool isFullyOpaque();
     bool isSingleDimension();
-    bool hasTallThings();
-    bool hasWideThings();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
+    bool isBorder() { return m_isBorder; };
+    bool hasCreature();
+    bool hasTallThings();
+    bool hasWideThings();
     bool hasTranslucentLight() { return m_flags & TILESTATE_TRANSLUECENT_LIGHT; }
     bool mustHookSouth();
     bool mustHookEast();
-    bool hasCreature();
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
+
     int getElevation() const;
     bool hasElevation(int elevation = 1);
     void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
@@ -194,7 +196,6 @@ private:
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
-
     std::vector<EffectPtr> m_effects;
     std::vector<ItemPtr> m_ground;
     std::vector<ItemPtr> m_topItems;
@@ -211,8 +212,9 @@ private:
 
     Color m_borderShadowColor;
 
-    stdext::boolean<false> m_covered;
-    stdext::boolean<false> m_completelyCovered;
+    stdext::boolean<false> m_covered,
+        m_completelyCovered,
+        m_isBorder;
 
 
 };

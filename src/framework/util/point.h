@@ -34,13 +34,13 @@ template<class T>
 class TPoint
 {
 public:
-    TPoint() : x(0), y(0), diffX(0), diffY(0) {}
-    TPoint(T x, T y) : x(x), y(y), diffX(0), diffY(0) {}
-    TPoint(const TPoint<T>& other) : x(other.x), y(other.y), diffX(other.diffX), diffY(other.diffY) {}
+    TPoint() : x(0), y(0) {}
+    TPoint(T x, T y) : x(x), y(y) {}
+    TPoint(const TPoint<T>& other) : x(other.x), y(other.y) {}
 
     bool isNull() const { return x == 0 && y == 0; }
     TSize<T> toSize() const { return TSize<T>(x, y); }
-    TPoint<T> translated(T dx, T dy, int8 dfX = 0, int8 dfY = 0) const { TPoint<T> point = *this; point.x += dx; point.y += dy; point.diffX = dfX; point.diffY = dfY; return point; }
+    TPoint<T> translated(T dx, T dy, int8 dfX = 0, int8 dfY = 0) const { TPoint<T> point = *this; point.x += dx; point.y += dy; return point; }
 
     TPoint<T> operator-() const { return TPoint<T>(-x, -y); }
 
@@ -70,7 +70,7 @@ public:
     bool operator<(const TPoint<T>& other) const { return x < other.x&& y < other.y; }
     bool operator>(const TPoint<T>& other) const { return x > other.x && y > other.y; }
 
-    TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; diffX = other.diffX; diffY = other.diffY; return *this; }
+    TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; return *this; }
     bool operator==(const TPoint<T>& other) const { return other.x == x && other.y == y; }
     bool operator!=(const TPoint<T>& other) const { return other.x != x || other.y != y; }
 
@@ -100,7 +100,6 @@ public:
     }
 
     T x, y;
-    int8 diffX, diffY;
 };
 
 typedef TPoint<int> Point;

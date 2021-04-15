@@ -476,7 +476,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
         const Light light = getLight();
         if(light.intensity > 0) {
-            lightView->addLightSource(screenRect.center(), light, m_category != ThingCategoryMissile);
+            lightView->addLightSource(screenRect.center(), light);
         }
     }
 }

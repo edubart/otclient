@@ -49,7 +49,7 @@ namespace Otc
     };
 
     enum Operation : uint8 {
-        OPERATION_NEUTRAL = 0, OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
+        OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
     };
 
     enum ShadowFloor : uint8 {

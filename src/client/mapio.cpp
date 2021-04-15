@@ -464,7 +464,7 @@ bool Map::loadOtcm(const std::string& fileName)
                     tile->addThing(item, ++stackPos);
             }
 
-            g_map.notificateTileUpdate(pos);
+            g_map.notificateTileUpdate(pos, nullptr, Otc::OPERATION_ADD);
         }
 
         fin->close();

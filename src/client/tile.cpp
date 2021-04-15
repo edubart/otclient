@@ -47,15 +47,18 @@ Tile::Tile(const Position& position) :
 
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
-    if(mapView->hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && isWalkable(true) && m_position.z == mapView->getCameraPosition().z - 1) {
-        m_borderShadowColor = Color::white;
+    m_isBorder = false;
+    m_borderShadowColor = Color::white;
 
-        for(const auto& position : m_positionsAround) {
-            const TilePtr& tile = g_map.getTile(position);
-            if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
+    const bool setShadowingColor = mapView->hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && isWalkable(true) && m_position.z == mapView->getCameraPosition().z - 1;
+    for(const auto& position : m_positionsAround) {
+        const TilePtr& tile = g_map.getTile(position);
+        if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
+            m_isBorder = true;
+            if(setShadowingColor) {
                 m_borderShadowColor = STATIC_SHADOWING_COLOR;
-                break;
             }
+            break;
         }
     }
 
@@ -119,6 +122,7 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
 {
     if(m_completelyCovered) {
         frameFlag = 0;
+
         if(lightView && hasLight())
             frameFlag = Otc::FUpdateLight;
     }
@@ -257,13 +261,16 @@ void Tile::clean()
 void Tile::addWalkingCreature(const CreaturePtr& creature)
 {
     m_walkingCreatures.push_back(creature);
+    analyzeThing(creature, true);
 }
 
 void Tile::removeWalkingCreature(const CreaturePtr& creature)
 {
     const auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
-    if(it != m_walkingCreatures.end())
+    if(it != m_walkingCreatures.end()) {
+        analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
+    }
 }
 
 // TODO: Need refactoring
@@ -845,7 +852,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->isEffect()) return;
 
     // Creatures and items
-
     if(thing->isOnBottom()) {
         if(thing->isHookSouth())
             m_countFlag.hasHookSouth += value;
@@ -865,9 +871,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->getWidth() > 1)
         m_countFlag.hasWideThings += value;
-
-    if(thing->hasLight())
-        m_countFlag.hasLight += value;
 
     if(!thing->isItem()) return;
 

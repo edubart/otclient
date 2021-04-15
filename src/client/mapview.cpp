@@ -121,10 +121,14 @@ void MapView::draw(const Rect& rect)
                         const auto& ground = tile->getGround();
                         if(ground && !ground->isTranslucent()) {
                             auto pos = transformPositionTo2D(tile->getPosition(), cameraPosition);
-                            if(ground->isTopGround())
+                            if(ground->isTopGround()) {
+                                if(!tile->isBorder()) {
+                                    lightView->setShade(pos);
+                                }
                                 pos -= m_tileSize;
+                            }
 
-                            lightView->resetBrightness(pos);
+                            lightView->setShade(pos);
                         }
                     }
                 }

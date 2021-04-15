@@ -29,64 +29,16 @@
 #include "declarations.h"
 #include "thingtype.h"
 
-enum : uint8 {
-    MAX_LIGHT_INTENSITY = 8,
-    MAX_AMBIENT_LIGHT_INTENSITY = UINT8_MAX
-};
-
-struct PositionLight : Position {
-    const float brightness;
-    const Point point;
-    bool isEdge = false;
-
-    PositionLight(int8 x, int8 y, float brightness) :
-        brightness(brightness), point(Point(x, y))
-    {
-        Position::x = x, Position::y = y, z = UINT8_MAX;
-    }
-};
-
-struct DimensionConfig {
-    std::vector<PositionLight>
-        positions,
-        edges;
-
-    bool isEdge(const Position pos) const
-    {
-        return std::find(edges.begin(), edges.end(), pos) != edges.end();
-    }
+struct ShadeBlock {
+    int8 floor = -1;
+    Point pos;
 };
 
 struct LightSource {
-    Point center;
-    uint8 color;
-    float brightness;
-    uint16 radius;
-    bool isEdge;
-    bool isStatic;
-};
-
-struct TileBrightness {
-    TileBrightness(int8 floor, const Point& pos, const bool isEdge) : floor(floor), pos(pos), isEdge(isEdge) {}
-    TileBrightness() = default;
-
-    int8 floor = -1;
     Point pos;
-    bool isEdge;
-};
-
-struct LightPoint {
-    LightPoint(const bool valid = true) : isValid(valid) {}
-
-    bool isValid;
-    TileBrightness brightness;
-
-    std::array<std::vector<LightSource>, Otc::MAX_Z + 1 > floors;
-
-    bool isCovered(const uint8 floor)
-    {
-        return !brightness.isEdge && brightness.floor > -1 && floor > brightness.floor;
-    }
+    uint8 color;
+    uint16 radius;
+    float brightness;
 };
 
 class LightView : public LuaObject
@@ -98,35 +50,33 @@ public:
 
     void resize();
     void draw(const Rect& dest, const Rect& src);
-    void addLightSource(const Point& mainCenter, const Light& light, const bool isStatic = false);
+    void addLightSource(const Point& mainCenter, const Light& light);
 
     void setGlobalLight(const Light& light) { m_globalLight = light; }
+    void setShade(const Point& point);
     void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) const { if(isDark()) m_lightbuffer->schedulePainting(delay); }
 
     bool canUpdate() const { return isDark() && m_lightbuffer->canUpdate(); }
     bool isDark() const { return m_globalLight.intensity < 250; }
-    void resetBrightness(const Point& point);
     void setFloor(const uint8 floor) { m_currentFloor = floor; }
 
 private:
-    const DimensionConfig& getDimensionConfig(const uint8 intensity);
+    void generateLightTexture(),
+        generateShadeTexture(),
+        drawLights();
 
-    void generateLightTexture();
-    void generateBrightnessTexture();
-    void drawLights();
+    TexturePtr m_lightTexture,
+        m_shadeTexture;
 
-    LightPoint& getLightPoint(const Point& point);
-
-    TexturePtr m_lightTexture;
-    TexturePtr m_brightnessTexture;
     Light m_globalLight;
 
     FrameBufferPtr m_lightbuffer;
     MapViewPtr m_mapView;
 
-    uint8 m_currentFloor;
-    std::array<DimensionConfig, MAX_LIGHT_INTENSITY> m_dimensionCache;
-    std::vector<LightPoint> m_lightMap;
+    int8 m_currentFloor;
+
+    std::vector<ShadeBlock> m_shades;
+    std::array<std::vector<LightSource>, Otc::MAX_Z + 1> m_lights;
 };
 
 #endif
