@@ -241,7 +241,7 @@ void MapView::draw(const Rect& rect)
     drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     m_frameCache.flags = 0;
-}
+    }
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
@@ -1077,7 +1077,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-    }
+}
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

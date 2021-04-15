@@ -54,7 +54,10 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
     for(const auto& position : m_positionsAround) {
         const TilePtr& tile = g_map.getTile(position);
         if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
+            const auto& diff = m_position - position;
+
             m_isBorder = true;
+
             if(setShadowingColor) {
                 m_borderShadowColor = STATIC_SHADOWING_COLOR;
             }
