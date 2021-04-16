@@ -35,7 +35,7 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     m_glyphHeight = fontNode->valueAt<int>("height");
     m_yOffset = fontNode->valueAt("y-offset", 0);
     m_firstGlyph = fontNode->valueAt("first-glyph", 32);
-    m_glyphSpacing = fontNode->valueAt("spacing", Size(0,0));
+    m_glyphSpacing = fontNode->valueAt("spacing", Size(0));
     int spaceWidth = fontNode->valueAt("space-width", glyphSize.width());
 
     // load font texture
@@ -71,9 +71,9 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     int numHorizontalGlyphs = m_texture->getSize().width() / glyphSize.width();
     for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
         m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
-                                                ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
-                                                m_glyphsSize[glyph].width(),
-                                                m_glyphHeight);
+                                             ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
+                                             m_glyphsSize[glyph].width(),
+                                             m_glyphHeight);
     }
 }
 
@@ -170,8 +170,8 @@ void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::
 }
 
 const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string& text,
-                                                         Fw::AlignmentFlag align,
-                                                         Size *textBoxSize)
+                                                               Fw::AlignmentFlag align,
+                                                               Size* textBoxSize)
 {
     // for performance reasons we use statics vectors that are allocated on demand
     static std::vector<Point> glyphsPositions(1);
@@ -186,7 +186,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
     // return if there is no text
     if(textLength == 0) {
         if(textBoxSize)
-            textBoxSize->resize(0,m_glyphHeight);
+            textBoxSize->resize(0, m_glyphHeight);
         return glyphsPositions;
     }
 
@@ -197,17 +197,17 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
     // calculate lines width
     if((align & Fw::AlignRight || align & Fw::AlignHorizontalCenter) || textBoxSize) {
         lineWidths[0] = 0;
-        for(i = 0; i< textLength; ++i) {
+        for(i = 0; i < textLength; ++i) {
             glyph = static_cast<uchar>(text[i]);
 
             if(glyph == static_cast<uchar>('\n')) {
                 lines++;
-                if(lines+1 > static_cast<int>(lineWidths.size()))
-                    lineWidths.resize(lines+1);
+                if(lines + 1 > static_cast<int>(lineWidths.size()))
+                    lineWidths.resize(lines + 1);
                 lineWidths[lines] = 0;
             } else if(glyph >= 32) {
-                lineWidths[lines] += m_glyphsSize[glyph].width() ;
-                if((i+1 != textLength && text[i+1] != '\n')) // only add space if letter is not the last or before a \n.
+                lineWidths[lines] += m_glyphsSize[glyph].width();
+                if((i + 1 != textLength && text[i + 1] != '\n')) // only add space if letter is not the last or before a \n.
                     lineWidths[lines] += m_glyphSpacing.width();
                 maxLineWidth = std::max<int>(maxLineWidth, lineWidths[lines]);
             }
@@ -269,17 +269,17 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
     auto texturePixels = image->getPixels();
 
     // small AI to auto calculate pixels widths
-    for(int glyph = m_firstGlyph; glyph< 256; ++glyph) {
+    for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
         Rect glyphCoords(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
                          ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
-                            glyphSize.width(),
-                            m_glyphHeight);
+                         glyphSize.width(),
+                         m_glyphHeight);
         int width = glyphSize.width();
         for(int x = glyphCoords.left(); x <= glyphCoords.right(); ++x) {
             int filledPixels = 0;
             // check if all vertical pixels are alpha
             for(int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
-                if(texturePixels[(y * image->getSize().width() * 4) + (x*4) + 3] != 0)
+                if(texturePixels[(y * image->getSize().width() * 4) + (x * 4) + 3] != 0)
                     filledPixels++;
             }
             if(filledPixels > 0)
@@ -298,11 +298,11 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     std::vector<std::string> wordsSplit = stdext::split(text);
 
     // break huge words into small ones
-    for(const auto &word: wordsSplit) {
+    for(const auto& word : wordsSplit) {
         int wordWidth = calculateTextRectSize(word).width();
         if(wordWidth > maxWidth) {
             std::string newWord;
-            for(uint j=0;j<word.length();++j) {
+            for(uint j = 0; j < word.length(); ++j) {
                 std::string candidate = newWord + word[j];
                 if(j != word.length() - 1)
                     candidate += "-";
@@ -323,13 +323,13 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     }
 
     // compose lines
-    for(const auto &word: words) {
+    for(const auto& word : words) {
         std::string candidate = line + word;
         int candidateWidth = calculateTextRectSize(candidate).width();
 
         if(candidateWidth > maxWidth) {
             if(!line.empty())
-                outText += line.substr(0, line.length()-1) + "\n";
+                outText += line.substr(0, line.length() - 1) + "\n";
             line = "";
         }
 
@@ -337,7 +337,7 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
     }
 
     outText += line;
-    outText = outText.substr(0, outText.length()-1);
+    outText = outText.substr(0, outText.length() - 1);
 
     return outText;
 }

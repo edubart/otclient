@@ -458,7 +458,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         textureRect = m_texturesFramesRects[animationPhase][frameIndex];
     }
 
-    const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1, 1)) * Otc::TILE_PIXELS) * scaleFactor,
+    const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1)) * Otc::TILE_PIXELS) * scaleFactor,
                           textureRect.size() * scaleFactor);
 
     if(frameFlags & Otc::FUpdateThing) {
@@ -544,7 +544,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
                         }
                     }
 
-                    Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * Otc::TILE_PIXELS - Point(1, 1), framePos);
+                    Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * Otc::TILE_PIXELS - Point(1), framePos);
                     for(int fx = framePos.x; fx < framePos.x + m_size.width() * Otc::TILE_PIXELS; ++fx) {
                         for(int fy = framePos.y; fy < framePos.y + m_size.height() * Otc::TILE_PIXELS; ++fy) {
                             uint8* p = fullImage->getPixel(fx, fy);

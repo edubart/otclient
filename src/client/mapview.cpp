@@ -241,7 +241,7 @@ void MapView::draw(const Rect& rect)
     drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
 
     m_frameCache.flags = 0;
-    }
+}
 
 void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
 {
@@ -447,17 +447,17 @@ void MapView::updateVisibleTilesCache()
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
 {
-    uint8 tileSize = Otc::TILE_PIXELS * (static_cast<float>(m_renderScale) / 100);
-    Size bufferSize = (visibleDimension + Size(3, 3)) * tileSize;
+    const uint8 tileSize = Otc::TILE_PIXELS * (static_cast<float>(m_renderScale) / 100);
+    const Size drawDimension = visibleDimension + Size(3),
+        bufferSize = drawDimension * tileSize;
 
     if(bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize()) {
         g_logger.traceError("reached max zoom out");
         return;
     }
 
-    Size drawDimension = visibleDimension + Size(3, 3);
-    Point virtualCenterOffset = (drawDimension / 2 - Size(1, 1)).toPoint();
-    const Point visibleCenterOffset = virtualCenterOffset;
+    const Point virtualCenterOffset = (drawDimension / 2 - Size(1)).toPoint(),
+        visibleCenterOffset = virtualCenterOffset;
 
     ViewMode viewMode = m_viewMode;
     if(m_autoViewMode) {
@@ -488,7 +488,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_visibleCenterOffset = visibleCenterOffset;
     m_optimizedSize = optimizedSize;
 
-    m_rectDimension = Rect(0, 0, m_drawDimension * m_tileSize);
+    m_rectDimension = Rect(0, 0, bufferSize);
 
     m_scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
 
@@ -496,9 +496,8 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.crosshair->resize(bufferSize);
     if(m_drawLights) m_lightView->resize();
 
-    m_frameCache.staticText->resize(g_graphics.getViewportSize());
-    m_frameCache.creatureInformation->resize(g_graphics.getViewportSize());
-    m_frameCache.creatureDynamicInformation->resize(g_graphics.getViewportSize());
+    for(const auto& frame : { m_frameCache.staticText, m_frameCache.creatureInformation, m_frameCache.creatureDynamicInformation })
+        frame->resize(g_graphics.getViewportSize());
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
     m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
@@ -521,11 +520,8 @@ void MapView::updateLight()
     if(!m_drawLights) return;
 
     const auto cameraPosition = getCameraPosition();
-    Light ambientLight;
-    if(cameraPosition.z > Otc::SEA_FLOOR) {
-        ambientLight.color = 215;
-        ambientLight.intensity = 0;
-    } else ambientLight = g_map.getLight();
+
+    Light ambientLight = cameraPosition.z > Otc::SEA_FLOOR ? Light() : g_map.getLight();
     ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * 255, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
@@ -534,7 +530,7 @@ void MapView::updateLight()
 
 void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/)
 {
-    const auto cameraPosition = getCameraPosition();
+    const auto& cameraPosition = getCameraPosition();
 
     m_visibleCreatures = getSpectators(cameraPosition, false);
 
@@ -663,7 +659,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         return;
     }
 
-    if(visibleDimension < Size(3, 3)) {
+    if(visibleDimension < Size(3)) {
         g_logger.traceError("reach max zoom in");
         return;
     }
@@ -738,7 +734,7 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     const Point framebufferPos = Point(point.x * sh, point.y * sv);
     const Point centerOffset = (framebufferPos + srcRect.topLeft()) / m_tileSize;
 
-    const Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2, 2);
+    const Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2);
     if(tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
         return Position();
 
@@ -776,7 +772,7 @@ void MapView::move(int32 x, int32 y)
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
 {
-    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1, 1)).toPoint() / 2) * m_tileSize;
+    Point drawOffset = ((m_drawDimension - m_visibleDimension - Size(1)).toPoint() / 2) * m_tileSize;
     if(isFollowingCreature())
         drawOffset += m_followingCreature->getWalkOffset() * m_scaleFactor;
     else if(!m_moveOffset.isNull())
@@ -1077,7 +1073,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
         tile->drawTop(pos2d, m_scaleFactor, m_frameCache.flags, lightView);
 
         if(!tile->hasGroundToDraw()) tile->drawEnd(this);
-}
+    }
 }
 #endif
 /* vim: set ts=4 sw=4 et: */

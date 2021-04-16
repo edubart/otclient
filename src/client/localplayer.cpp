@@ -245,7 +245,7 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
     }
 
     // pre walks offsets are calculated in the oposite direction
-    m_walkOffset = Point(0, 0);
+    m_walkOffset = Point();
     if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
         m_walkOffset.y = -totalPixelsWalked;
     else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)

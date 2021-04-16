@@ -87,8 +87,9 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     const uint16 radius = (light.intensity * 1.1) * Otc::TILE_PIXELS * m_mapView->m_scaleFactor;
 
     auto& lights = m_lights[m_currentFloor];
-    for(auto& prevLight : lights) {
-        if(prevLight.color == light.color && prevLight.pos == pos) {
+    if(!lights.empty()) {
+        auto& prevLight = lights.back();
+        if(prevLight.pos == pos && prevLight.color == light.color) {
             prevLight.radius = std::max<uint16>(prevLight.radius, radius);
             return;
         }
@@ -106,34 +107,26 @@ void LightView::setShade(const Point& point)
 
 void LightView::drawLights()
 {
-    // GlobalLight
-    const float brightness = m_globalLight.intensity / static_cast<float>(UINT8_MAX);
-    Color globalColor = Color::from8bit(m_globalLight.color, brightness);
-    g_painter->setCompositionMode(Painter::CompositionMode_Replace);
-    g_painter->setColor(globalColor);
-    g_painter->drawFilledRect(Rect(0, 0, m_lightbuffer->getSize()));
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->m_tileSize / 4.8), Size(m_mapView->m_tileSize * 1.4));
 
-    const auto& orderLight = [&](const LightSource& a, const LightSource& b) -> bool {
-        return a.brightness == b.brightness && a.color < b.color || a.brightness < b.brightness;
-    };
-
-    // Lights
-    g_painter->setCompositionMode(Painter::CompositionMode_Normal);
-    g_painter->setBlendEquation(Painter::BlendEquation_Add);
+    g_painter->setColor(m_globalLightColor);
+    g_painter->drawFilledRect(m_mapView->m_rectDimension);
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
-        g_painter->setColor(globalColor);
-        for(auto& shade : m_shades) {
-            if(shade.floor != z) continue;
-            shade.floor = -1;
+        if(z < m_mapView->m_floorMax) {
+            g_painter->setColor(m_globalLightColor);
+            for(auto& shade : m_shades) {
+                if(shade.floor != z) continue;
+                shade.floor = -1;
 
-            g_painter->drawTexturedRect(Rect(shade.pos - (Point(1, 1) * m_mapView->m_tileSize) / 4.8, (Size(1, 1) * m_mapView->m_tileSize) * 1.4), m_shadeTexture);
+                g_painter->drawTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture);
+            }
         }
 
         auto& lights = m_lights[z];
-        std::sort(lights.begin(), lights.end(), orderLight);
+        std::sort(lights.begin(), lights.end(), orderLightComparator);
         for(LightSource& light : lights) {
             g_painter->setColor(Color::from8bit(light.color, light.brightness));
-            g_painter->drawTexturedRect(Rect(light.pos - (Point(1, 1) * light.radius), Size(1, 1) * light.radius * 2), m_lightTexture);
+            g_painter->drawTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture);
         }
         lights.clear();
     }
@@ -150,14 +143,13 @@ void LightView::draw(const Rect& dest, const Rect& src)
     // draw light, only if there is darkness
     if(!isDark()) return;
 
-    g_painter->saveAndResetState();
     if(m_lightbuffer->canUpdate()) {
         m_lightbuffer->bind();
         drawLights();
         m_lightbuffer->release();
     }
-    g_painter->setCompositionMode(Painter::CompositionMode_Light);
 
+    g_painter->setCompositionMode(Painter::CompositionMode_Light);
     m_lightbuffer->draw(dest, src);
-    g_painter->restoreSavedState();
+    g_painter->resetCompositionMode();
 }

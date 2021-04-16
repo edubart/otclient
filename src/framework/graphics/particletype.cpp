@@ -30,8 +30,8 @@ ParticleType::ParticleType()
     pMaxPositionRadius = 3;
     pMinPositionAngle = 0;
     pMaxPositionAngle = 360;
-    pStartSize = Size(32, 32);
-    pFinalSize = Size(32, 32);
+    pStartSize = Size(32);
+    pFinalSize = Size(32);
     pMinDuration = 0;
     pMaxDuration = 10;
     pIgnorePhysicsAfter = -1;
@@ -53,16 +53,14 @@ void ParticleType::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "position-radius") {
             pMinPositionRadius = childNode->value<float>();
             pMaxPositionRadius = childNode->value<float>();
-        }
-        else if(childNode->tag() == "min-position-radius")
+        } else if(childNode->tag() == "min-position-radius")
             pMinPositionRadius = childNode->value<float>();
         else if(childNode->tag() == "max-position-radius")
             pMaxPositionRadius = childNode->value<float>();
         else if(childNode->tag() == "position-angle") {
             pMinPositionAngle = childNode->value<float>() * DEG_TO_RAD;
             pMaxPositionAngle = childNode->value<float>() * DEG_TO_RAD;
-        }
-        else if(childNode->tag() == "min-position-angle")
+        } else if(childNode->tag() == "min-position-angle")
             pMinPositionAngle = childNode->value<float>() * DEG_TO_RAD;
         else if(childNode->tag() == "max-position-angle")
             pMaxPositionAngle = childNode->value<float>() * DEG_TO_RAD;
@@ -71,16 +69,14 @@ void ParticleType::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "velocity") {
             pMinVelocity = childNode->value<float>();
             pMaxVelocity = childNode->value<float>();
-        }
-        else if(childNode->tag() == "min-velocity")
+        } else if(childNode->tag() == "min-velocity")
             pMinVelocity = childNode->value<float>();
         else if(childNode->tag() == "max-velocity")
             pMaxVelocity = childNode->value<float>();
         else if(childNode->tag() == "velocity-angle") {
             pMinVelocityAngle = childNode->value<float>() * DEG_TO_RAD;
             pMaxVelocityAngle = childNode->value<float>() * DEG_TO_RAD;
-        }
-        else if(childNode->tag() == "min-velocity-angle")
+        } else if(childNode->tag() == "min-velocity-angle")
             pMinVelocityAngle = childNode->value<float>() * DEG_TO_RAD;
         else if(childNode->tag() == "max-velocity-angle")
             pMaxVelocityAngle = childNode->value<float>() * DEG_TO_RAD;
@@ -97,8 +93,7 @@ void ParticleType::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "acceleration-angle") {
             pMinAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
             pMaxAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
-        }
-        else if(childNode->tag() == "min-acceleration-angle")
+        } else if(childNode->tag() == "min-acceleration-angle")
             pMinAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
         else if(childNode->tag() == "max-acceleration-angle")
             pMaxAccelerationAngle = childNode->value<float>() * DEG_TO_RAD;
@@ -107,8 +102,7 @@ void ParticleType::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "duration") {
             pMinDuration = childNode->value<float>();
             pMaxDuration = childNode->value<float>();
-        }
-        else if(childNode->tag() == "min-duration")
+        } else if(childNode->tag() == "min-duration")
             pMinDuration = childNode->value<float>();
         else if(childNode->tag() == "max-duration")
             pMaxDuration = childNode->value<float>();
@@ -119,8 +113,7 @@ void ParticleType::load(const OTMLNodePtr& node)
         else if(childNode->tag() == "size") {
             pStartSize = childNode->value<Size>();
             pFinalSize = childNode->value<Size>();
-        }
-        else if(childNode->tag() == "start-size")
+        } else if(childNode->tag() == "start-size")
             pStartSize = childNode->value<Size>();
         else if(childNode->tag() == "final-size")
             pFinalSize = childNode->value<Size>();

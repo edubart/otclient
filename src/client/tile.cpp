@@ -54,8 +54,6 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
     for(const auto& position : m_positionsAround) {
         const TilePtr& tile = g_map.getTile(position);
         if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
-            const auto& diff = m_position - position;
-
             m_isBorder = true;
 
             if(setShadowingColor) {
@@ -219,7 +217,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
                         continue;
                     const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
                     if(tile) {
-                        const auto& newDest = dest + Point(x * Otc::TILE_PIXELS, y * Otc::TILE_PIXELS) * scaleFactor;
+                        const auto& newDest = dest + (Point(x, y) * Otc::TILE_PIXELS) * scaleFactor;
                         tile->drawCreature(newDest, scaleFactor, frameFlags);
                         tile->drawTop(newDest, scaleFactor, frameFlags);
                     }

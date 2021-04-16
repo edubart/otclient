@@ -76,13 +76,13 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
     if(frameFlags & Otc::FUpdateThing) {
         if(m_showTimedSquare) {
             g_painter->setColor(m_timedSquareColor);
-            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28, 28) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
+            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement() + 2) * scaleFactor, Size(28 * scaleFactor)), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
             g_painter->resetColor();
         }
 
         if(m_showStaticSquare) {
             g_painter->setColor(m_staticSquareColor);
-            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS, Otc::TILE_PIXELS) * scaleFactor), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
+            g_painter->drawBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS * scaleFactor)), std::max<int>(static_cast<int>(2 * scaleFactor), 1));
             g_painter->resetColor();
         }
 
@@ -106,7 +106,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         }
 
         if(light.intensity > 0) {
-            lightView->addLightSource(dest + (m_walkOffset + (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) / 1.8)) * scaleFactor, light);
+            lightView->addLightSource(dest + (m_walkOffset + (Point(Otc::TILE_PIXELS / 1.8))) * scaleFactor, light);
         }
     }
 }
@@ -216,12 +216,12 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
         outfitBuffer->bind();
         g_painter->setAlphaWriting(true);
         g_painter->clear(Color::alpha);
-        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, true, false, Otc::South);
+        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, true, false, Otc::South);
         outfitBuffer->release();
         outfitBuffer->draw(destRect, Rect(0, 0, frameSize, frameSize));
     } else {
         const float scaleFactor = destRect.width() / static_cast<float>(frameSize);
-        const Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS, Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
+        const Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
         internalDrawOutfit(dest, scaleFactor, true, false, Otc::South);
     }
 }
@@ -522,7 +522,7 @@ void Creature::updateWalkAnimation()
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
 {
-    m_walkOffset = Point(0, 0);
+    m_walkOffset = Point();
     if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
         m_walkOffset.y = Otc::TILE_PIXELS - totalPixelsWalked;
     else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
@@ -640,7 +640,7 @@ void Creature::terminateWalk()
     }
 
     m_walkedPixels = 0;
-    m_walkOffset = Point(0, 0);
+    m_walkOffset = Point();
     m_walking = false;
 
     const auto self = static_self_cast<Creature>();
@@ -898,12 +898,12 @@ Point Creature::getDrawOffset()
     Point drawOffset;
     if(m_walking) {
         if(m_walkingTile)
-            drawOffset -= Point(1, 1) * m_walkingTile->getDrawElevation();
+            drawOffset -= Point(m_walkingTile->getDrawElevation());
         drawOffset += m_walkOffset;
     } else {
         const TilePtr& tile = getTile();
         if(tile)
-            drawOffset -= Point(1, 1) * tile->getDrawElevation();
+            drawOffset -= Point(tile->getDrawElevation());
     }
 
     return drawOffset;
@@ -961,10 +961,10 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 Point Creature::getDisplacement()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        return Point(8, 8);
+        return Point(8);
 
     if(m_outfit.getCategory() == ThingCategoryItem)
-        return Point(0, 0);
+        return Point();
 
     return Thing::getDisplacement();
 }

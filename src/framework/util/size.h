@@ -31,6 +31,7 @@ class TSize
 {
 public:
     TSize() : wd(-1), ht(-1) {};
+    TSize(T widthHeight) : wd(widthHeight), ht(widthHeight) {};
     TSize(T width, T height) : wd(width), ht(height) {};
     TSize(const TSize<T>& other) : wd(other.wd), ht(other.ht) {};
 

@@ -46,21 +46,23 @@ class LightView : public LuaObject
 public:
     LightView(const MapViewPtr& mapView);
 
-    const Light& getGlobalLight() { return m_globalLight; }
-
     void resize();
     void draw(const Rect& dest, const Rect& src);
     void addLightSource(const Point& mainCenter, const Light& light);
 
-    void setGlobalLight(const Light& light) { m_globalLight = light; }
+    void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
+    void setFloor(const uint8 floor) { m_currentFloor = floor; }
     void setShade(const Point& point);
     void schedulePainting(const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE) const { if(isDark()) m_lightbuffer->schedulePainting(delay); }
 
+    const Light& getGlobalLight() const { return m_globalLight; }
+
     bool canUpdate() const { return isDark() && m_lightbuffer->canUpdate(); }
     bool isDark() const { return m_globalLight.intensity < 250; }
-    void setFloor(const uint8 floor) { m_currentFloor = floor; }
 
 private:
+    static bool orderLightComparator(const LightSource& a, const LightSource& b) { return a.brightness == b.brightness && a.color < b.color || a.brightness < b.brightness; }
+
     void generateLightTexture(),
         generateShadeTexture(),
         drawLights();
@@ -69,6 +71,7 @@ private:
         m_shadeTexture;
 
     Light m_globalLight;
+    Color m_globalLightColor;
 
     FrameBufferPtr m_lightbuffer;
     MapViewPtr m_mapView;

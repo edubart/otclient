@@ -35,6 +35,7 @@ class TPoint
 {
 public:
     TPoint() : x(0), y(0) {}
+    TPoint(T xy) : x(xy), y(xy) {}
     TPoint(T x, T y) : x(x), y(y) {}
     TPoint(const TPoint<T>& other) : x(other.x), y(other.y) {}
 

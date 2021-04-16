@@ -52,14 +52,14 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
     // triangle from top right to bottom right (var y)
     if(m_percent < 37.5) {
         const Point var = Point(0, std::max<int>(m_percent - 12.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
-        g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomRight() + Point(1, 1), drawRect.topRight() + var + Point(1, 0));
+        g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomRight() + Point(1), drawRect.topRight() + var + Point(1, 0));
     }
 
     // 37.5% - 62.5% (25)
     // triangle from bottom right to bottom left (var x)
     if(m_percent < 62.5) {
         const Point var = Point(std::max<int>(m_percent - 37.5, 0.0) * (drawRect.right() - drawRect.left()) / 25.0, 0);
-        g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomLeft() + Point(0, 1), drawRect.bottomRight() - var + Point(1, 1));
+        g_painter->drawFilledTriangle(drawRect.center(), drawRect.bottomLeft() + Point(0, 1), drawRect.bottomRight() - var + Point(1));
     }
 
     // 62.5% - 87.5% (25)
