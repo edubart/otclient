@@ -48,7 +48,7 @@ void Thing::schedulePainting(uint16_t delay)
             } else frameFlag |= Otc::FUpdateCreatureInformation;
         }
 
-        if(isLocalPlayer() || hasLight()) frameFlag |= Otc::FUpdateLight;
+        if(isLocalPlayer() || hasLight() || isGround() && !isTranslucent()) frameFlag |= Otc::FUpdateLight;
     }
 
     g_map.schedulePainting(m_position, static_cast<Otc::FrameUpdate>(frameFlag), delay);

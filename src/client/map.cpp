@@ -244,7 +244,11 @@ bool Map::removeThing(const ThingPtr& thing)
 
         thing->cancelScheduledPainting();
         uint32_t frameFlag = Otc::FUpdateThing;
-        if(thing->hasLight()) frameFlag |= Otc::FUpdateLight;
+        if(thing->isGround() && !thing->isTranslucent()) {
+            frameFlag |= Otc::FUpdateLight;
+            notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_CLEAN);
+        } else if(thing->hasLight()) frameFlag |= Otc::FUpdateLight;
+
         if(thing->isCreature()) frameFlag |= Otc::FUpdateCreatureInformation;
         schedulePainting(thing->getPosition(), static_cast<Otc::FrameUpdate>(frameFlag));
     }
