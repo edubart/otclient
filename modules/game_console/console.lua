@@ -553,6 +553,8 @@ function addTabText(text, speaktype, tab, creatureName)
   label:setColor(speaktype.color)
   consoleTabBar:blinkTab(tab)
 
+  label.highlightInfo = {}
+
   -- Overlay for consoleBuffer which shows highlighted words only
 
   if speaktype.npcChat and (g_game.getCharacterName() ~= creatureName or g_game.getCharacterName() == 'Account Manager') then
@@ -582,6 +584,10 @@ function addTabText(text, speaktype, tab, creatureName)
         local dataBlock = { _start = highlightData[(i-1)*3+1], _end = highlightData[(i-1)*3+2], words = highlightData[(i-1)*3+3] }
         local lastBlockEnd = (highlightData[(i-2)*3+2] or 1)
 
+        for i = dataBlock._start, dataBlock._end do
+          label.highlightInfo[i] = dataBlock.words
+        end
+
         for letter = lastBlockEnd, dataBlock._start-1 do
           local tmpChar = string.byte(drawText:sub(letter, letter))
           local fillChar = (tmpChar == 10 or tmpChar == 32) and string.char(tmpChar) or string.char(127)
@@ -609,7 +615,14 @@ function addTabText(text, speaktype, tab, creatureName)
     processMessageMenu(mousePos, mouseButton, nil, nil, nil, tab)
   end
   label.onMouseRelease = function(self, mousePos, mouseButton)
-    processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
+    if mouseButton == MouseLeftButton then
+      local position = label:getTextPos(mousePos)
+      if position and label.highlightInfo[position] then
+        sendMessage(label.highlightInfo[position], npcTab)
+      end
+    elseif mouseButton == MouseRightButton then
+      processMessageMenu(mousePos, mouseButton, creatureName, text, self, tab)
+    end
   end
   label.onMousePress = function(self, mousePos, button)
     if button == MouseLeftButton then clearSelection(consoleBuffer) end
