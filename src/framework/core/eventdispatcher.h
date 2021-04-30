@@ -43,7 +43,7 @@ private:
     std::deque<EventPtr> m_eventList;
     int m_pollEventsSize;
     stdext::boolean<false> m_disabled;
-    std::priority_queue<ScheduledEventPtr, std::deque<ScheduledEventPtr>, lessScheduledEvent> m_scheduledEventList;
+    std::priority_queue<ScheduledEventPtr, std::deque<ScheduledEventPtr>, ScheduledEvent::Compare> m_scheduledEventList;
 };
 
 extern EventDispatcher g_dispatcher;

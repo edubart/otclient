@@ -258,7 +258,7 @@ private:
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
-    std::unordered_map<Position, std::string, PositionHasher> m_waypoints;
+    std::unordered_map<Position, std::string, Position::Hasher> m_waypoints;
 
     std::map<uint32, Color> m_zoneColors;
 

@@ -1,42 +1,46 @@
 # OTCLient "1.0"
-   ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
-   
-   ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.728
-   ### Features   
-   - Tile/Light/Creature Render Optimized
-   - Adaptive/Event-based Rendering (g_map.schedulePainting)   
-   - New Light System
-   - Render Scale System (FAKE ONE)
-   - Idle Animation Support
-   - Highlight Mouse Target
-   - Crosshair
-   - Floor Shadowing
-   - Anti-Aliasing Option
-   - Floating Effects Option
-   - Adjusted Path Finding
-   - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
-   - Optimized Terminal
-   - Refactored Walk System
-   - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
-   - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
-   - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))
-   - Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
-   - Custom Feature Definitions in [features.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/features.h)
-   
-   ### What I don't intend to do
-   - Floor Fading
-   - Optimize UI
-   - Compatibility with other protocols
-   
+
+![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
+
+### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.744
+
+### Features
+
+- Tile/Light/Creature Render Optimized
+- Adaptive/Event-based Rendering (g_map.schedulePainting)
+- New Light System
+- Render Scale System (FAKE ONE)
+- Idle Animation Support
+- Highlight Mouse Target
+- Crosshair
+- Floor Shadowing
+- Anti-Aliasing Option
+- Floating Effects Option
+- Adjusted Path Finding
+- Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
+- Optimized Terminal
+- Refactored Walk System
+- Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
+- Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
+- Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))
+- Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
+- Custom Feature Definitions in [features.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/features.h)
+
+### What I don't intend to do
+
+- Floor Fading
+- Optimize UI
+- Compatibility with other protocols
+
    <h2>
-   
-   ```diff
-   - Want to help? Just open a PR.
-   ```
-   
+
+```diff
+- Want to help? Just open a PR.
+```
+
    </h2>
 
-[![Build Status](https://secure.travis-ci.org/edubart/otclient.svg?branch=master)](http://travis-ci.org/edubart/otclient) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
+[![Build Status](https://github.com/edubart/otclient/actions/workflows/build-vcpkg.yml/badge.svg)](https://github.com/edubart/otclient/actions/workflows/build-vcpkg.yml) [![Join the chat at https://gitter.im/edubart/otclient](https://img.shields.io/badge/GITTER-join%20chat-green.svg)](https://gitter.im/edubart/otclient?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Open Source Helpers](https://www.codetriage.com/edubart/otclient/badges/users.svg)](https://www.codetriage.com/edubart/otclient)
 
 ### What is otclient?
 
@@ -53,7 +57,8 @@ or connect to one listed on [otservlist](https://otservlist.org/).#
 ### Where do I download?
 
 Compiled for Windows can be found here (but can be outdated):
-* [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
+
+- [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
 
 **NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1098/Tibia.spr`)
 
@@ -70,9 +75,10 @@ client, instead otclient was designed to be a combination of a framework and tib
 ### Compiling
 
 In short, if you need to compile OTClient, follow these tutorials:
-* [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
-* [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
-* [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
+
+- [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
+- [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
+- [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
 
 ### Build and run with Docker
 

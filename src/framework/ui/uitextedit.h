@@ -42,7 +42,7 @@ public:
     void setCursorVisible(bool enable) { m_cursorVisible = enable; }
     void setChangeCursorImage(bool enable) { m_changeCursorImage = enable; }
     void setTextHidden(bool hidden);
-    void setValidCharacters(const std::string validCharacters) { m_validCharacters = validCharacters; }
+    void setValidCharacters(const std::string& validCharacters) { m_validCharacters = validCharacters; }
     void setShiftNavigation(bool enable) { m_shiftNavigation = enable; }
     void setMultiline(bool enable) { m_multiline = enable; }
     void setMaxLength(uint maxLength) { m_maxLength = maxLength; }
