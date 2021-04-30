@@ -147,9 +147,6 @@ public:
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
 
-    void canDraw(bool canDraw) { m_canDraw = canDraw; }
-    bool canDraw()  const { return m_canDraw; }
-
 protected:
     int getAnimationInterval() override;
 
@@ -163,7 +160,6 @@ private:
     uint8 m_phase;
     ticks_t m_lastPhase;
 
-    stdext::boolean<true> m_canDraw;
     stdext::boolean<true> m_async;
 };
 

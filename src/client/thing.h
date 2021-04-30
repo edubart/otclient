@@ -105,6 +105,7 @@ public:
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
     bool isCommon() { return !isGround() && !isGroundBorder() && !isOnTop() && !isCreature() && !isOnBottom(); }
+    bool isGroundOrBorder() { return isGround() || isGroundBorder(); }
     virtual bool isContainer() { return rawGetThingType()->isContainer(); }
     bool isStackable() { return rawGetThingType()->isStackable(); }
     bool isForceUse() { return rawGetThingType()->isForceUse(); }
@@ -145,6 +146,9 @@ public:
     bool isTopGround() { return isGround() && !isFullGround() && blockProjectile() && getWidth() != 1 && getHeight() != 1; }
     bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
 
+    void canDraw(bool canDraw) { m_canDraw = canDraw; }
+    bool canDraw()  const { return m_canDraw; }
+
     MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
@@ -154,6 +158,10 @@ public:
 protected:
     Position m_position;
     uint16 m_datId;
+
+private:
+    stdext::boolean<true> m_canDraw;
+
 };
 #pragma pack(pop)
 

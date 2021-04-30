@@ -94,7 +94,7 @@ public:
     const Position& getPosition() { return m_position; }
     const std::vector<CreaturePtr>& getWalkingCreatures() { return m_walkingCreatures; }
     const std::vector<ThingPtr>& getThings() { return m_things; }
-    const std::vector<CreaturePtr>& getCreatures() { return m_creatures; }
+    std::vector<CreaturePtr> getCreatures();
 
     std::vector<ItemPtr> getItems();
     ItemPtr getGround();
@@ -146,9 +146,9 @@ public:
     bool hasLight();
     void analyzeThing(const ThingPtr& thing, bool add);
 
-    bool hasGroundToDraw() const { return !m_ground.empty(); }
-    bool hasBottomToDraw() const { return !m_bottomItems.empty() || !m_commonItems.empty() || !m_creatures.empty() || !m_walkingCreatures.empty(); }
-    bool hasTopToDraw() const { return !m_topItems.empty() || !m_effects.empty(); }
+    bool hasGroundToDraw() const { return m_countFlag.hasGroundOrBorder; }
+    bool hasBottomToDraw() const { return m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty(); }
+    bool hasTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty(); }
 
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
 
@@ -180,6 +180,11 @@ private:
         int hasHookSouth = 0;
         int hasTopGround = 0;
         int hasNoWalkableEdge = 0;
+        int hasCreature = 0;
+        int hasCommonItem = 0;
+        int hasTopItem = 0;
+        int hasBottomItem = 0;
+        int hasGroundOrBorder = 0;
     };
 
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
@@ -197,18 +202,11 @@ private:
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
     std::vector<EffectPtr> m_effects;
-    std::vector<ItemPtr> m_ground;
-    std::vector<ItemPtr> m_topItems;
-    std::vector<ItemPtr> m_commonItems;
-    std::vector<ItemPtr> m_bottomItems;
-    std::vector<CreaturePtr> m_creatures;
 
     std::vector<ItemPtr> m_animatedItems;
 
     CountFlag m_countFlag;
     Highlight m_highlight;
-
-    CreaturePtr m_localPlayer;
 
     Color m_borderShadowColor;
 
