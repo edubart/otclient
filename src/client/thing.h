@@ -104,6 +104,7 @@ public:
     bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
+    bool isCommon() { return !isGround() && !isGroundBorder() && !isOnTop() && !isCreature() && !isOnBottom(); }
     virtual bool isContainer() { return rawGetThingType()->isContainer(); }
     bool isStackable() { return rawGetThingType()->isStackable(); }
     bool isForceUse() { return rawGetThingType()->isForceUse(); }

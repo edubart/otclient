@@ -593,9 +593,9 @@ ThingPtr Tile::getTopUseThing()
         if(item->isForceUse()) return item;
     }
 
+    if(!m_topItems.empty()) return m_topItems.back();
     if(!m_commonItems.empty()) return m_commonItems.front();
     if(!m_bottomItems.empty()) return m_bottomItems.back();
-    if(!m_topItems.empty()) return m_topItems.back();
 
     return m_ground.front();
 }
