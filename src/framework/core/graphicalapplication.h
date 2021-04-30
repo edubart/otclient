@@ -45,7 +45,8 @@ public:
     bool willRepaint() { return m_mustRepaint; }
     void repaint() { m_mustRepaint = true; }
 
-    void setForegroundPaneMaxFps(int maxFps) { m_foregroundFrameCounter.setMaxFps(maxFps); }
+    /* Force Max FPS 20, it is unnecessary more than that. */
+    void setForegroundPaneMaxFps(int maxFps) { m_foregroundFrameCounter.setMaxFps(20); }
     void setBackgroundPaneMaxFps(int maxFps) { m_backgroundFrameCounter.setMaxFps(maxFps); }
 
     int getForegroundPaneFps() { return m_foregroundFrameCounter.getLastFps(); }
