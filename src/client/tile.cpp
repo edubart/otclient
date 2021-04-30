@@ -175,7 +175,7 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             if(creature->isWalking()) continue;
             drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
         }
-}
+    }
 #else
     if(hasCreature()) {
         for(const auto& thing : m_things) {
@@ -561,7 +561,8 @@ CreaturePtr Tile::getTopCreature(const bool checkAround)
 
     if(creature)
         return creature;
-    else if(!m_walkingCreatures.empty())
+
+    if(!m_walkingCreatures.empty())
         return m_walkingCreatures.back();
 
     // check for walking creatures in tiles around
@@ -706,6 +707,7 @@ bool Tile::isClickable()
         if((hasGround || hasOnBottom) && !hasIgnoreLook)
             return true;
     }
+
     return false;
 }
 
@@ -797,43 +799,51 @@ void Tile::checkForDetachableThing()
 {
     m_highlight.thing = nullptr;
 
-    for(const auto& item : m_things) {
-        if(!item->isCommon() || !item->canDraw()) continue;
+    if(m_countFlag.hasCommonItem) {
+        for(const auto& item : m_things) {
+            if(!item->isCommon() || !item->canDraw()) continue;
 
-        if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || !item->isNotMoveable() || item->isContainer()) {
-            m_highlight.thing = item;
-            return;
+            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || !item->isNotMoveable() || item->isContainer()) {
+                m_highlight.thing = item;
+                return;
+            }
         }
     }
 
-    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const auto& item = *it;
-        if(!item->isOnBottom() || !item->canDraw()) continue;
+    if(m_countFlag.hasBottomItem) {
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const auto& item = *it;
+            if(!item->isOnBottom() || !item->canDraw()) continue;
 
-        if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer()) {
-            m_highlight.thing = item;
-            return;
+            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer()) {
+                m_highlight.thing = item;
+                return;
+            }
         }
     }
 
-    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const auto& item = *it;
-        if(!item->isGroundOrBorder() || !item->canDraw()) continue;
+    if(m_countFlag.hasGroundOrBorder) {
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const auto& item = *it;
+            if(!item->isGroundOrBorder() || !item->canDraw()) continue;
 
-        if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer() || item->isTranslucent()) {
-            m_highlight.thing = item;
-            return;
+            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer() || item->isTranslucent()) {
+                m_highlight.thing = item;
+                return;
+            }
         }
     }
 
-    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const auto& item = *it;
-        if(!item->isOnTop()) break;
-        if(!item->canDraw()) continue;
+    if(m_countFlag.hasTopItem) {
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const auto& item = *it;
+            if(!item->isOnTop()) break;
+            if(!item->canDraw()) continue;
 
-        if(item->hasLensHelp()) {
-            m_highlight.thing = item;
-            return;
+            if(item->hasLensHelp()) {
+                m_highlight.thing = item;
+                return;
+            }
         }
     }
 
@@ -853,7 +863,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.hasDisplacement += value;
 
     if(thing->isEffect()) return;
-
 
     if(thing->isCommon())
         m_countFlag.hasCommonItem += value;
