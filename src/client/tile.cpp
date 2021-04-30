@@ -349,21 +349,25 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
         if(item->hasAnimationPhases()) m_animatedItems.push_back(item);
 
-        if(thing->isGround() && hasGroundToDraw()) {
-            m_ground.insert(m_ground.begin(), item);
-        } else if(thing->isGroundBorder() || thing->isGround()) {
-            m_ground.push_back(item);
+        if(thing->isGround() || thing->isGroundBorder()) {
+            {// Temp Solution
+                m_ground.clear();
+                for(const auto& _thing : m_things) {
+                    if(_thing->isGround() || _thing->isGroundBorder())
+                        m_ground.push_back(_thing->static_self_cast<Item>());
+                }
+            }
         } else if(thing->isOnTop()) {
             m_topItems.push_back(item);
         } else if(thing->isOnBottom()) {
             m_bottomItems.push_back(item);
         } else {
-            originalStack -= m_ground.size() + m_bottomItems.size() + m_topItems.size() + m_creatures.size();
-
-            if(originalStack > m_commonItems.size()) {
-                m_commonItems.push_back(item);
-            } else {
-                m_commonItems.insert(m_commonItems.begin() + originalStack, item);
+            {// Temp Solution 
+                m_commonItems.clear();
+                for(const auto& _thing : m_things) {
+                    if(!_thing->isGround() && !_thing->isGroundBorder() && !_thing->isOnTop() && !_thing->isCreature() && !_thing->isOnBottom())
+                        m_commonItems.push_back(_thing->static_self_cast<Item>());
+                }
             }
         }
     }

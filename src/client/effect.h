@@ -52,7 +52,6 @@ protected:
 
 private:
     Timer m_animationTimer;
-    Timer m_lastTimer;
 
     uint16 m_id;
 
