@@ -158,6 +158,9 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
         if(tile && (m_floatingEffect || !thing->isEffect() || tile->getGround())) {
             tile->addThing(thing, stackPos);
             thing->schedulePainting();
+            if(thing->isItem() && thing->hasElevation() && tile->hasCreature()) {
+                schedulePainting(thing->getPosition(), Otc::FUpdateCreatureInformation);
+            }
         }
     } else {
         if(thing->isMissile()) {
@@ -254,6 +257,10 @@ bool Map::removeThing(const ThingPtr& thing)
             }
         } else if(const TilePtr& tile = thing->getTile()) {
             ret = tile->removeThing(thing);
+
+            if(thing->isItem() && thing->hasElevation() && tile->hasCreature()) {
+                schedulePainting(thing->getPosition(), Otc::FUpdateCreatureInformation);
+            }
         }
 
         thing->cancelScheduledPainting();
