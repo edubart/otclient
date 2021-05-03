@@ -58,7 +58,9 @@ protected:
     void onFloorDrawingEnd(const uint8 floor);
     void onFloorChange(const uint8 floor, const uint8 previousFloor);
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
+    void onCreatureInformationUpdate(const CreaturePtr& creature);
     void onMapCenterChange(const Position& pos);
+    void onCameraMove(const Point& offset);
 
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
@@ -167,7 +169,7 @@ private:
 
     struct FrameCache {
         FrameBufferPtr tile, staticText,
-            crosshair, creatureInformation, creatureDynamicInformation;
+            crosshair, creatureInformation;
 
         uint32_t flags = 0;
     };
@@ -176,6 +178,12 @@ private:
         bool positionChanged = false;
         Position position;
         TexturePtr texture;
+    };
+
+    struct RectCache {
+        Rect rect, srcRect;
+        Point drawOffset;
+        float horizontalStretchFactor, verticalStretchFactor;
     };
 
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
@@ -187,8 +195,8 @@ private:
 
     void updateLight();
     void updateViewportDirectionCache();
-    void drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);
-    void drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor);
+    void drawCreatureInformation();
+    void drawText();
 
 #if DRAW_ALL_GROUND_FIRST == 1
     void drawSeparately(const uint8 floor, const ViewPort& viewPort, LightView* lightView);
@@ -219,7 +227,7 @@ private:
         m_fadeOutTime,
         m_scaleFactor;
 
-    Rect m_rectDimension, m_srcRect;
+    Rect m_rectDimension;
 
     Size m_drawDimension,
         m_visibleDimension,
@@ -262,6 +270,7 @@ private:
     CreaturePtr m_followingCreature;
 
     FrameCache m_frameCache;
+    RectCache m_rectCache;
     Crosshair m_crosshair;
     ViewMode m_viewMode;
 

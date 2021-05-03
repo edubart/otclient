@@ -68,7 +68,6 @@ MapView::MapView()
     m_frameCache.crosshair = g_framebuffers.createFrameBuffer();
     m_frameCache.staticText = g_framebuffers.createFrameBuffer();
     m_frameCache.creatureInformation = g_framebuffers.createFrameBuffer();
-    m_frameCache.creatureDynamicInformation = g_framebuffers.createFrameBuffer();
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -96,7 +95,13 @@ void MapView::draw(const Rect& rect)
     const auto redrawThing = m_frameCache.tile->canUpdate();
     const auto redrawLight = m_drawLights && m_lightView->canUpdate();
 
-    m_srcRect = calcFramebufferSource(rect.size());
+    if(m_rectCache.rect != rect) {
+        m_rectCache.rect = rect;
+        m_rectCache.srcRect = calcFramebufferSource(rect.size());
+        m_rectCache.drawOffset = m_rectCache.srcRect.topLeft();
+        m_rectCache.horizontalStretchFactor = rect.width() / static_cast<float>(m_rectCache.srcRect.width());
+        m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
+    }
 
     if(redrawThing || redrawLight) {
         if(redrawLight) m_frameCache.flags |= Otc::FUpdateLight;
@@ -178,11 +183,8 @@ void MapView::draw(const Rect& rect)
     if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
         fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
-    const Rect srcRect = m_srcRect;
-    const Point drawOffset = srcRect.topLeft();
-
     if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == NEAR_VIEW) {
-        const Point center = srcRect.center();
+        const Point center = m_rectCache.srcRect.center();
         const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
         m_shader->bind();
         m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
@@ -194,7 +196,7 @@ void MapView::draw(const Rect& rect)
     g_painter->resetColor();
     g_painter->setOpacity(fadeOpacity);
     glDisable(GL_BLEND);
-    m_frameCache.tile->draw(rect, srcRect);
+    m_frameCache.tile->draw(rect, m_rectCache.srcRect);
     g_painter->resetShaderProgram();
     g_painter->resetOpacity();
     glEnable(GL_BLEND);
@@ -218,39 +220,35 @@ void MapView::draw(const Rect& rect)
             m_crosshair.positionChanged = false;
         }
 
-        m_frameCache.crosshair->draw(rect, srcRect);
+        m_frameCache.crosshair->draw(rect, m_rectCache.srcRect);
     }
 
-    const float horizontalStretchFactor = rect.width() / static_cast<float>(srcRect.width());
-    const float verticalStretchFactor = rect.height() / static_cast<float>(srcRect.height());
+
 
     // avoid drawing texts on map in far zoom outs
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
-    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+    drawCreatureInformation();
 #endif
 
     // lights are drawn after names and before texts
     if(m_drawLights) {
-        m_lightView->draw(rect, srcRect);
+        m_lightView->draw(rect, m_rectCache.srcRect);
     }
 
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 1
-    drawCreatureInformation(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+    drawCreatureInformation();
 #endif
 
-    drawText(rect, drawOffset, horizontalStretchFactor, verticalStretchFactor);
+    drawText();
 
     m_frameCache.flags = 0;
 }
 
-void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
+void MapView::drawCreatureInformation()
 {
     if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
 
-    const bool drawStatic = m_frameCache.creatureInformation->canUpdate();
-    const bool drawDynamic = m_frameCache.creatureDynamicInformation->canUpdate();
-
-    if(drawStatic || drawDynamic) {
+    if(m_frameCache.creatureInformation->canUpdate()) {
         const Position cameraPosition = getCameraPosition();
 
         uint32_t flags = 0;
@@ -258,54 +256,21 @@ void MapView::drawCreatureInformation(const Rect& rect, Point drawOffset, const 
         if(m_drawHealthBars) { flags |= Otc::DrawBars; }
         if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
-        if(drawStatic) {
-            m_frameCache.creatureInformation->bind();
-            g_painter->setAlphaWriting(true);
-            g_painter->clear(Color::alpha);
+        m_frameCache.creatureInformation->bind();
+        g_painter->setAlphaWriting(true);
+        g_painter->clear(Color::alpha);
 
-            for(const auto& creature : m_visibleCreatures) {
-                if(!creature->canBeSeen())
-                    continue;
-
-                const PointF jumpOffset = creature->getJumpOffset() * m_scaleFactor;
-                Point creatureOffset = Point(16 - creature->getDisplacementX(), -creature->getDisplacementY() - 2);
-                Position pos = creature->getPosition();
-                Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-                p += (creature->getDrawOffset() + creatureOffset) * m_scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
-                p.x *= horizontalStretchFactor;
-                p.y *= verticalStretchFactor;
-                p += rect.topLeft();
-
-                creature->setVisualPoint(p);
-                creature->drawInformation(rect, flags);
-            }
-
-            m_frameCache.creatureInformation->release();
-            m_frameCache.creatureDynamicInformation->setDrawable(false);
-        } else { // Dynamic Information
-            m_frameCache.creatureDynamicInformation->bind();
-            g_painter->setAlphaWriting(true);
-            g_painter->clear(Color::alpha);
-
-            for(const auto& creature : m_visibleCreatures) {
-                if(!creature->canBeSeen())
-                    continue;
-
-                // This avoids redesigning the health of the monsters that were not asked for the drawing.
-                if(!creature->updateDynamicInformation()) continue;
-                creature->updateDynamicInformation(false);
-                creature->drawInformation(rect, flags);
-            }
-            m_frameCache.creatureDynamicInformation->release();
-            m_frameCache.creatureDynamicInformation->setDrawable(true);
+        for(const auto& creature : m_visibleCreatures) {
+            creature->drawInformation(m_rectCache.rect, transformPositionTo2D(creature->getPosition(), cameraPosition), m_scaleFactor, m_rectCache.drawOffset, m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
         }
+
+        m_frameCache.creatureInformation->release();
     }
 
     m_frameCache.creatureInformation->draw();
-    m_frameCache.creatureDynamicInformation->draw();
 }
 
-void MapView::drawText(const Rect& rect, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor)
+void MapView::drawText()
 {
     if(!m_drawTexts) return;
 
@@ -324,11 +289,11 @@ void MapView::drawText(const Rect& rect, Point drawOffset, const float horizonta
                 if(pos.z != cameraPosition.z && staticText->getMessageMode() == Otc::MessageNone)
                     continue;
 
-                Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-                p.x *= horizontalStretchFactor;
-                p.y *= verticalStretchFactor;
-                p += rect.topLeft();
-                staticText->drawText(p, rect);
+                Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
+                p.x *= m_rectCache.horizontalStretchFactor;
+                p.y *= m_rectCache.verticalStretchFactor;
+                p += m_rectCache.rect.topLeft();
+                staticText->drawText(p, m_rectCache.rect);
             }
             m_frameCache.staticText->release();
         }
@@ -342,12 +307,12 @@ void MapView::drawText(const Rect& rect, Point drawOffset, const float horizonta
         if(pos.z != cameraPosition.z)
             continue;
 
-        Point p = transformPositionTo2D(pos, cameraPosition) - drawOffset;
-        p.x *= horizontalStretchFactor;
-        p.y *= verticalStretchFactor;
-        p += rect.topLeft();
+        Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
+        p.x *= m_rectCache.horizontalStretchFactor;
+        p.y *= m_rectCache.verticalStretchFactor;
+        p += m_rectCache.rect.topLeft();
 
-        animatedText->drawText(p, rect);
+        animatedText->drawText(p, m_rectCache.rect);
     }
 }
 
@@ -496,7 +461,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.crosshair->resize(bufferSize);
     if(m_drawLights) m_lightView->resize();
 
-    for(const auto& frame : { m_frameCache.staticText, m_frameCache.creatureInformation, m_frameCache.creatureDynamicInformation })
+    for(const auto& frame : { m_frameCache.staticText, m_frameCache.creatureInformation })
         frame->resize(g_graphics.getViewportSize());
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
@@ -505,9 +470,15 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_awareRange.right = m_awareRange.left + 1;
 
     m_crosshair.positionChanged = true;
+    m_rectCache.rect = Rect();
 
     updateViewportDirectionCache();
     requestVisibleTilesCacheUpdate();
+}
+
+void MapView::onCameraMove(const Point& offset)
+{
+    m_rectCache.rect = Rect();
 }
 
 void MapView::onGlobalLightChange(const Light&)
@@ -581,6 +552,23 @@ void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
     if(hasFloorShadowingFlag()) {
         g_painter->resetColor();
     }
+}
+
+void MapView::onCreatureInformationUpdate(const CreaturePtr& creature)
+{
+    if(m_frameCache.creatureInformation->canUpdate()) return;
+
+    uint32_t flags = 0;
+    if(m_drawNames) { flags = Otc::DrawNames; }
+    if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+    if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
+
+    m_frameCache.creatureInformation->bind();
+    g_painter->setAlphaWriting(true);
+    creature->drawInformation(m_rectCache.rect, transformPositionTo2D(creature->getPosition(), getCameraPosition()), m_scaleFactor, m_rectCache.drawOffset, m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
+
+    m_frameCache.creatureInformation->release();
+    m_frameCache.creatureInformation->draw();
 }
 
 void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
@@ -766,8 +754,12 @@ void MapView::move(int32 x, int32 y)
         requestTilesUpdate = true;
     }
 
+    m_rectCache.rect = Rect();
+
     if(requestTilesUpdate)
         requestVisibleTilesCacheUpdate();
+
+    onCameraMove(m_moveOffset);
 }
 
 Rect MapView::calcFramebufferSource(const Size& destSize)
@@ -999,8 +991,6 @@ void MapView::schedulePainting(const Position& pos, const Otc::FrameUpdate frame
 
     if(frameFlags & Otc::FUpdateCreatureInformation) {
         m_frameCache.creatureInformation->schedulePainting(delay);
-    } else if(frameFlags & Otc::FUpdateDynamicCreatureInformation) {
-        m_frameCache.creatureDynamicInformation->schedulePainting(delay);
     }
 
     if(m_drawLights && frameFlags & Otc::FUpdateLight) {

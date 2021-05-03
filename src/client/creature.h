@@ -51,7 +51,7 @@ public:
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool useBlank, Otc::Direction direction);
 
     void drawOutfit(const Rect& destRect, bool resize);
-    void drawInformation(const Rect& parentRect, int drawFlags);
+    void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
     void setName(const std::string& name);
@@ -131,9 +131,6 @@ public:
     bool isCreature() override { return true; }
     bool isParalyzed() const { return m_speed < 10; }
 
-    void updateDynamicInformation(bool update) { m_updateDynamicInformation = update; }
-    bool updateDynamicInformation() const { return m_updateDynamicInformation; }
-
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
     ThingType* rawGetMountThingType();
@@ -142,9 +139,6 @@ public:
     void onAppear() override;
     void onDisappear() override;
     virtual void onDeath();
-
-    void setVisualPoint(const Point& point) { m_visualPoint = point; }
-    const Point getVisualPoint() { return m_visualPoint; }
 
     int getWalkedPixel() const { return m_walkedPixels; }
 
@@ -206,7 +200,6 @@ protected:
     TilePtr m_walkingTile;
     stdext::boolean<false> m_walking;
     stdext::boolean<false> m_allowAppearWalk;
-    stdext::boolean<false> m_updateDynamicInformation;
     ScheduledEventPtr m_walkUpdateEvent;
     ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;
@@ -239,8 +232,6 @@ private:
 
     StepCache m_stepCache;
     DrawCache m_drawCache;
-
-    Point m_visualPoint;
 };
 
 // @bindclass

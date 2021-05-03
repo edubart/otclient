@@ -69,6 +69,20 @@ void Map::resetAwareRange()
     setAwareRange(range);
 }
 
+void Map::notificateCreatureInformationUpdate(const CreaturePtr& creature)
+{
+    for(const MapViewPtr& mapView : m_mapViews) {
+        mapView->onCreatureInformationUpdate(creature);
+    }
+}
+
+void Map::notificateCameraMove(const Point& offset)
+{
+    for(const MapViewPtr& mapView : m_mapViews) {
+        mapView->onCameraMove(offset);
+    }
+}
+
 void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
 {
     if(!pos.isMapPosition())
@@ -808,9 +822,9 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
 
     struct Node {
-        using Pair = std::pair<Node *, float>;
+        using Pair = std::pair<Node*, float>;
 
-        Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) { }
+        Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) {}
         float cost;
         float totalCost;
         Position pos;
@@ -818,7 +832,8 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         Otc::Direction dir;
 
         struct Compare {
-            bool operator() (const Pair &a, const Pair &b) const {
+            bool operator() (const Pair& a, const Pair& b) const
+            {
                 return b.second < a.second;
             }
         };

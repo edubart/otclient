@@ -64,7 +64,6 @@ namespace Otc
         FUpdateLight = 1 << 1,
         FUpdateStaticText = 1 << 2,
         FUpdateCreatureInformation = 1 << 3,
-        FUpdateDynamicCreatureInformation = 1 << 4,
         FupdateCreature = FUpdateThing | FUpdateCreatureInformation,
         FUpdateTextInformation = FUpdateStaticText | FUpdateCreatureInformation,
 

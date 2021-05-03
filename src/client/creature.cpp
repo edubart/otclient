@@ -228,13 +228,25 @@ void Creature::drawOutfit(const Rect& destRect, bool resize)
     }
 }
 
-void Creature::drawInformation(const Rect& parentRect, int drawFlags)
+void Creature::drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags)
 {
     if(m_healthPercent < 1) // creature is dead
         return;
 
     const auto& tile = getTile();
     if(!tile) return;
+
+    if(!canBeSeen())
+        return;
+
+    const PointF jumpOffset = getJumpOffset() * scaleFactor;
+    Point creatureOffset = Point(16 - getDisplacementX(), -getDisplacementY() - 2);
+    Position pos = getPosition();
+    Point p = dest - drawOffset;
+    p += (getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
+    p.x *= horizontalStretchFactor;
+    p.y *= verticalStretchFactor;
+    p += parentRect.topLeft();
 
     bool useGray = tile->isCovered();
 
@@ -244,11 +256,11 @@ void Creature::drawInformation(const Rect& parentRect, int drawFlags)
         fillColor = m_informationColor;
 
     // calculate main rects
-    Rect backgroundRect = Rect(m_visualPoint.x - (13.5), m_visualPoint.y, 27, 4);
+    Rect backgroundRect = Rect(p.x - (13.5), p.y, 27, 4);
     backgroundRect.bind(parentRect);
 
     const Size nameSize = m_nameCache.getTextSize();
-    Rect textRect = Rect(m_visualPoint.x - nameSize.width() / 2.0, m_visualPoint.y - 12, nameSize);
+    Rect textRect = Rect(p.x - nameSize.width() / 2.0, p.y - 12, nameSize);
     textRect.bind(parentRect);
 
     // distance them
@@ -582,6 +594,7 @@ void Creature::nextWalkUpdate()
     // do the update
     updateWalk();
     schedulePainting();
+    g_map.notificateCameraMove(m_walkOffset);
 
     if(!m_walking) return;
 
@@ -649,7 +662,6 @@ void Creature::terminateWalk()
     m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
-
         self->schedulePainting();
     }, g_game.getServerBeat());
 
@@ -685,8 +697,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
     if(healthPercent <= 0)
         onDeath();
 
-    m_updateDynamicInformation = true;
-    g_map.schedulePainting(m_position, Otc::FUpdateDynamicCreatureInformation);
+    g_map.notificateCreatureInformationUpdate(this);
 }
 
 void Creature::setDirection(Otc::Direction direction)

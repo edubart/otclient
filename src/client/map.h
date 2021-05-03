@@ -137,6 +137,8 @@ public:
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
+    void notificateCreatureInformationUpdate(const CreaturePtr& creature);
+    void notificateCameraMove(const Point& offset);
 
     void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
     void schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
