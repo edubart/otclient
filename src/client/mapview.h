@@ -242,6 +242,7 @@ private:
         m_lastMousePosition;
 
     std::array<ViewPort, Otc::InvalidDirection + 1> m_viewPortDirection;
+    ViewPort m_viewport;
 
     stdext::boolean<true>
         m_mustUpdateVisibleTilesCache,

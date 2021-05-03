@@ -114,7 +114,7 @@ void MapView::draw(const Rect& rect)
         }
 
         const auto& lightView = redrawLight ? m_lightView.get() : nullptr;
-        const auto& viewPort = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
+
 
         g_painter->resetColor();
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
@@ -148,7 +148,7 @@ void MapView::draw(const Rect& rect)
             for(const auto& tile : m_cachedVisibleTiles[z]) {
                 const auto hasLight = redrawLight && tile->hasLight();
 
-                if((!redrawThing && !hasLight) || !canRenderTile(tile, viewPort, lightView)) continue;
+                if((!redrawThing && !hasLight) || !canRenderTile(tile, m_viewport, lightView)) continue;
 
                 tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
@@ -479,6 +479,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 void MapView::onCameraMove(const Point& offset)
 {
     m_rectCache.rect = Rect();
+    m_viewport = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
 }
 
 void MapView::onGlobalLightChange(const Light&)
