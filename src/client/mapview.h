@@ -188,7 +188,7 @@ private:
 
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache();
-    void requestVisibleTilesCacheUpdate() { m_timeUpdateVisibleTilesCache.restart();  m_mustUpdateVisibleTilesCache = true; }
+    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
     uint8 calcFirstVisibleFloor();
     uint8 calcLastVisibleFloor();
@@ -259,7 +259,6 @@ private:
     stdext::boolean<false> m_drawLights,
         m_autoViewMode,
         m_drawViewportEdge,
-        m_forceTileUpdateCache,
         m_drawHighlightTarget;
 
     std::vector<CreaturePtr> m_visibleCreatures;
@@ -277,7 +276,7 @@ private:
 
     Color m_lastFloorShadowingColor;
 
-    Timer m_fadeTimer, m_timeUpdateVisibleTilesCache;
+    Timer m_fadeTimer;
 
     AwareRange m_awareRange;
 

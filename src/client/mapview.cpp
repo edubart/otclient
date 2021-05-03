@@ -323,13 +323,7 @@ void MapView::updateVisibleTilesCache()
     if(!cameraPosition.isValid())
         return;
 
-    if(!m_forceTileUpdateCache &&
-       (cameraPosition.distance(m_lastCameraPosition) < m_drawDimension.width() && cameraPosition.z == m_lastCameraPosition.z) &&
-       m_timeUpdateVisibleTilesCache.ticksElapsed() <= 10)
-        return;
-
     m_mustUpdateVisibleTilesCache = false;
-    m_forceTileUpdateCache = false;
 
     if(m_lastCameraPosition != cameraPosition) {
         if(m_lastMousePosition.isValid()) {
@@ -476,7 +470,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     requestVisibleTilesCacheUpdate();
 }
 
-void MapView::onCameraMove(const Point& offset)
+void MapView::onCameraMove(const Point& /*offset*/)
 {
     m_rectCache.rect = Rect();
     m_viewport = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
@@ -574,11 +568,6 @@ void MapView::onCreatureInformationUpdate(const CreaturePtr& creature)
 
 void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
 {
-    // Need Optimization (update only the specific Tile)
-    if(Otc::OPERATION_CLEAN == operation) {
-        m_forceTileUpdateCache = true;
-    }
-
     requestVisibleTilesCacheUpdate();
 
     if(!thing || thing->isLocalPlayer()) return;
