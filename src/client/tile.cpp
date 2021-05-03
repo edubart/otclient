@@ -315,7 +315,6 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     }
 
     const uint8_t size = m_things.size();
-    uint8_t originalStack = stackPos;
 
     // priority                                    854
     // 0 - ground,                        -->      -->

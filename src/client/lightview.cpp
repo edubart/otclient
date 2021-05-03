@@ -84,7 +84,7 @@ void LightView::generateShadeTexture()
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
-    const uint16 radius = (light.intensity * 1.1) * Otc::TILE_PIXELS * m_mapView->m_scaleFactor;
+    const uint16 radius = light.intensity * Otc::TILE_PIXELS * m_mapView->m_scaleFactor;
 
     auto& lights = m_lights[m_currentFloor];
     if(!lights.empty()) {
@@ -95,7 +95,7 @@ void LightView::addLightSource(const Point& pos, const Light& light)
         }
     }
 
-    lights.push_back(LightSource{ pos , light.color, radius, (light.intensity > 1 ? 1.f : .1f) });
+    lights.push_back(LightSource{ pos , light.color, radius, light.brightness });
 }
 
 void LightView::setShade(const Point& point)

@@ -99,8 +99,10 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         auto light = getLight();
 
         if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
-            light.intensity = std::max<uint8>(light.intensity, 1);
-            if(light.color == 0 || light.color > 215) {
+            if(light.intensity == 0) {
+                light.intensity = 2;
+                light.brightness = .2f;
+            } else if(light.color == 0 || light.color > 215) {
                 light.color = 215;
             }
         }
