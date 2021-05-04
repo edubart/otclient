@@ -69,10 +69,10 @@ void Map::resetAwareRange()
     setAwareRange(range);
 }
 
-void Map::notificateCreatureInformationUpdate(const CreaturePtr& creature)
+void Map::notificateCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags)
 {
     for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->onCreatureInformationUpdate(creature);
+        mapView->onCreatureInformationUpdate(creature, flags);
     }
 }
 

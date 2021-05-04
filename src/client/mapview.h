@@ -58,7 +58,7 @@ protected:
     void onFloorDrawingEnd(const uint8 floor);
     void onFloorChange(const uint8 floor, const uint8 previousFloor);
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
-    void onCreatureInformationUpdate(const CreaturePtr& creature);
+    void onCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags);
     void onMapCenterChange(const Position& pos);
     void onCameraMove(const Point& offset);
 

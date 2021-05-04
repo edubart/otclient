@@ -710,7 +710,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
     if(healthPercent <= 0)
         onDeath();
 
-    g_map.notificateCreatureInformationUpdate(this);
+    g_map.notificateCreatureInformationUpdate(this, Otc::DrawBars);
 }
 
 void Creature::setDirection(Otc::Direction direction)

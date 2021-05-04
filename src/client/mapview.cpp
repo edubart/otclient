@@ -563,14 +563,9 @@ void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
     }
 }
 
-void MapView::onCreatureInformationUpdate(const CreaturePtr& creature)
+void MapView::onCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags)
 {
     if(m_frameCache.creatureInformation->canUpdate()) return;
-
-    uint32_t flags = 0;
-    if(m_drawNames) { flags = Otc::DrawNames; }
-    if(m_drawHealthBars) { flags |= Otc::DrawBars; }
-    if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
     m_frameCache.creatureInformation->bind();
     g_painter->setAlphaWriting(true);
