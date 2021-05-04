@@ -66,6 +66,8 @@ private:
     AdaptativeFrameCounter m_backgroundFrameCounter;
     AdaptativeFrameCounter m_foregroundFrameCounter;
     TexturePtr m_foreground;
+
+    FrameBufferPtr m_foregroundFrameCache;
 };
 
 extern GraphicalApplication g_app;

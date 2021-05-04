@@ -1,12 +1,11 @@
 # OTCLient "1.0"
-
 ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
 
 ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.744
 
 ### Features
 
-- Tile/Light/Creature Render Optimized
+- UI/Tile/Light/Creature Render Optimized
 - Adaptive/Event-based Rendering (g_map.schedulePainting)
 - New Light System
 - Render Scale System (FAKE ONE)
@@ -26,13 +25,7 @@
 - Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
 - Custom Feature Definitions in [features.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/features.h)
 
-### What I don't intend to do
-
-- Floor Fading
-- Optimize UI
-- Compatibility with other protocols
-
-   <h2>
+<h2>
 
 ```diff
 - Want to help? Just open a PR.

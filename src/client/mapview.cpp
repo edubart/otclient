@@ -70,6 +70,7 @@ MapView::MapView()
     m_frameCache.creatureInformation = g_framebuffers.createFrameBuffer();
     m_frameCache.dynamicText = g_framebuffers.createFrameBuffer();
     m_frameCache.dynamicText->useSchedulePainting(false);
+    m_frameCache.dynamicText->setMinTimeUpdate(50);
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -485,6 +486,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 void MapView::onCameraMove(const Point& /*offset*/)
 {
     m_rectCache.rect = Rect();
+    m_frameCache.dynamicText->schedulePainting(FrameBuffer::FORCE_UPDATE);
     m_viewport = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
 }
 

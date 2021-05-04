@@ -31,6 +31,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/painter.h>
 #include <framework/input/mouse.h>
+#include <framework/graphics/framebuffermanager.h>
 
 #ifdef FW_SOUND
 #include <framework/sound/soundmanager.h>
@@ -48,6 +49,10 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnResize(std::bind(&GraphicalApplication::resize, this, std::placeholders::_1));
     g_window.setOnInputEvent(std::bind(&GraphicalApplication::inputEvent, this, std::placeholders::_1));
     g_window.setOnClose(std::bind(&GraphicalApplication::close, this));
+
+    m_foregroundFrameCache = g_framebuffers.createFrameBuffer();
+    m_foregroundFrameCache->useSchedulePainting(false);
+    m_foregroundFrameCache->setMinTimeUpdate(40);
 
     g_mouse.init();
 
@@ -94,6 +99,7 @@ void GraphicalApplication::terminate()
 
     // terminate graphics
     m_foreground = nullptr;
+    m_foregroundFrameCache = nullptr;
     g_graphics.terminate();
     g_window.terminate();
 
@@ -152,15 +158,21 @@ void GraphicalApplication::run()
                         m_foregroundFrameCounter.processNextFrame();
 
                         // draw foreground
-                        g_painter->setAlphaWriting(true);
-                        g_painter->clear(Color::alpha);
-                        g_ui.render(Fw::ForegroundPane);
+                        if(m_foregroundFrameCache->canUpdate()) {
+                            m_foregroundFrameCache->bind();
+                            g_painter->setAlphaWriting(true);
+                            g_painter->clear(Color::alpha);
+                            g_ui.render(Fw::ForegroundPane);
 
-                        // copy the foreground to a texture
-                        m_foreground->copyFromScreen(viewportRect);
+                            // copy the foreground to a texture
+                            m_foreground->copyFromScreen(viewportRect);
 
-                        g_painter->clear(Color::black);
-                        g_painter->setAlphaWriting(false);
+                            g_painter->clear(Color::black);
+                            g_painter->setAlphaWriting(false);
+                            m_foregroundFrameCache->release();
+                        }
+
+                        m_foregroundFrameCache->draw();
                     }
 
                     // draw background (animated stuff)
@@ -194,7 +206,7 @@ void GraphicalApplication::run()
 
         } else {
             // sleeps until next poll to avoid massive cpu usage
-            stdext::millisleep(POLL_CYCLE_DELAY+1);
+            stdext::millisleep(POLL_CYCLE_DELAY + 1);
             g_clock.update();
         }
     }
@@ -235,6 +247,9 @@ void GraphicalApplication::resize(const Size& size)
         m_foreground = TexturePtr(new Texture(size));
         m_foreground->setUpsideDown(true);
     }
+
+    m_foregroundFrameCache->resize(size);
+
     m_mustRepaint = true;
 }
 

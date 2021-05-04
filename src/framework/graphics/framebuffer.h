@@ -41,7 +41,6 @@ protected:
 public:
     const static uint8_t
         MIN_TIME_UPDATE = 16,
-        MAX_TIME_UPDATE = MIN_TIME_UPDATE * 3,
         FORCE_UPDATE = 1,
         FLUSH_AMOUNT = 25;
 
@@ -71,13 +70,14 @@ public:
     void cleanTexture() { m_texture = nullptr; }
 
     void useSchedulePainting(const bool use) { m_schedulePaintingEnabled = use; }
+    void setMinTimeUpdate(const uint16 time) { m_minTimeUpdate = time; }
 
 private:
     void internalCreate();
     void internalBind();
     void internalRelease();
 
-    uint8_t flushTime();
+    uint16_t flushTime();
 
     TexturePtr m_texture;
     TexturePtr m_screenBackup;
@@ -95,7 +95,7 @@ private:
     std::unordered_map<uint16_t, std::pair<uint16_t, ScheduledEventPtr>> m_schedules;
     Timer m_lastRenderedTime;
     uint16_t m_requestAmount;
-
+    uint16 m_minTimeUpdate;
 };
 
 #endif

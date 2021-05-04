@@ -35,6 +35,7 @@ uint FrameBuffer::boundFbo = 0;
 FrameBuffer::FrameBuffer()
 {
     internalCreate();
+    m_minTimeUpdate = MIN_TIME_UPDATE;
 }
 
 void FrameBuffer::internalCreate()
@@ -185,19 +186,17 @@ void FrameBuffer::update()
         ++m_requestAmount;
 }
 
-uint8_t FrameBuffer::flushTime()
+uint16_t FrameBuffer::flushTime()
 {
 #if FLUSH_CONTROL_FOR_RENDERING == 1
-    return std::min<uint8_t>(MIN_TIME_UPDATE + std::floor<uint8_t>(m_requestAmount / FLUSH_AMOUNT), MAX_TIME_UPDATE);
+    return std::min<uint16_t>(m_minTimeUpdate + std::floor<uint16_t>(m_requestAmount / m_minTimeUpdate), m_minTimeUpdate * 3);
 #else
-    return MIN_TIME_UPDATE;
+    return m_minTimeUpdate;
 #endif
 }
 
 void FrameBuffer::schedulePainting(const uint16_t time)
 {
-    if(SCHEDULE_PAINTING == 0 || !m_schedulePaintingEnabled) return;
-
     if(time == 0) return;
 
     if(time == FORCE_UPDATE) {
@@ -205,7 +204,9 @@ void FrameBuffer::schedulePainting(const uint16_t time)
         return;
     }
 
-    if(time <= MIN_TIME_UPDATE) {
+    if(SCHEDULE_PAINTING == 0 || !m_schedulePaintingEnabled) return;
+
+    if(time <= m_minTimeUpdate) {
         update();
         return;
     }
