@@ -504,7 +504,9 @@ uint8 Tile::getMinimapColorByte()
     if(m_minimapColor != 0)
         return m_minimapColor;
 
-    for(const ThingPtr& thing : m_things) {
+
+    for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+        const auto& thing = *it;
         if(thing->isCreature() || thing->isCommon())
             continue;
 
