@@ -5,7 +5,7 @@
 
 ### Features
 
-- UI/Tile/Light/Creature Render Optimized
+- Render Optimized
 - Adaptive/Event-based Rendering (g_map.schedulePainting)
 - New Light System
 - Render Scale System (FAKE ONE)
