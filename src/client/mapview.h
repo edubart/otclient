@@ -168,7 +168,7 @@ private:
     };
 
     struct FrameCache {
-        FrameBufferPtr tile, staticText,
+        FrameBufferPtr tile, staticText, dynamicText,
             crosshair, creatureInformation;
 
         uint32_t flags = 0;

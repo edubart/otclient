@@ -68,6 +68,8 @@ MapView::MapView()
     m_frameCache.crosshair = g_framebuffers.createFrameBuffer();
     m_frameCache.staticText = g_framebuffers.createFrameBuffer();
     m_frameCache.creatureInformation = g_framebuffers.createFrameBuffer();
+    m_frameCache.dynamicText = g_framebuffers.createFrameBuffer();
+    m_frameCache.dynamicText->useSchedulePainting(false);
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -300,18 +302,29 @@ void MapView::drawText()
         m_frameCache.staticText->draw();
     }
 
-    for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
-        const Position pos = animatedText->getPosition();
+    if(!g_map.getAnimatedTexts().empty()) {
+        if(m_frameCache.dynamicText->canUpdate()) {
+            m_frameCache.dynamicText->bind();
 
-        if(pos.z != cameraPosition.z)
-            continue;
+            g_painter->setAlphaWriting(true);
+            g_painter->clear(Color::alpha);
 
-        Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
-        p.x *= m_rectCache.horizontalStretchFactor;
-        p.y *= m_rectCache.verticalStretchFactor;
-        p += m_rectCache.rect.topLeft();
+            for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
+                const Position pos = animatedText->getPosition();
 
-        animatedText->drawText(p, m_rectCache.rect);
+                if(pos.z != cameraPosition.z)
+                    continue;
+
+                Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
+                p.x *= m_rectCache.horizontalStretchFactor;
+                p.y *= m_rectCache.verticalStretchFactor;
+                p += m_rectCache.rect.topLeft();
+
+                animatedText->drawText(p, m_rectCache.rect);
+            }
+            m_frameCache.dynamicText->release();
+        }
+        m_frameCache.dynamicText->draw();
     }
 }
 
@@ -454,7 +467,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_frameCache.crosshair->resize(bufferSize);
     if(m_drawLights) m_lightView->resize();
 
-    for(const auto& frame : { m_frameCache.staticText, m_frameCache.creatureInformation })
+    for(const auto& frame : { m_frameCache.staticText, m_frameCache.creatureInformation, m_frameCache.dynamicText })
         frame->resize(g_graphics.getViewportSize());
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);

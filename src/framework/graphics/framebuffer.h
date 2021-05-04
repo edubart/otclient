@@ -70,7 +70,7 @@ public:
     void removeRenderingTime(const uint16_t time);
     void cleanTexture() { m_texture = nullptr; }
 
-    void useSchedulePaintingEnabled(const bool use) { m_schedulePaintingEnabled = use; }
+    void useSchedulePainting(const bool use) { m_schedulePaintingEnabled = use; }
 
 private:
     void internalCreate();
