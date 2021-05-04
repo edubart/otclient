@@ -422,6 +422,9 @@ void Creature::updateJump()
 
     m_jumpOffset = PointF(height, height);
 
+    if(isLocalPlayer()) {
+        g_map.notificateCameraMove(m_walkOffset);
+    }
     schedulePainting();
 
     int diff = 0;
@@ -461,6 +464,9 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
+    if(isLocalPlayer()) {
+        g_map.notificateCameraMove(m_walkOffset);
+    }
     g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
 
     // creature appeared the first time or wasn't seen for a long time
@@ -593,8 +599,10 @@ void Creature::nextWalkUpdate()
 
     // do the update
     updateWalk();
+    if(isLocalPlayer()) {
+        g_map.notificateCameraMove(m_walkOffset);
+    }
     schedulePainting();
-    g_map.notificateCameraMove(m_walkOffset);
 
     if(!m_walking) return;
 
@@ -662,6 +670,11 @@ void Creature::terminateWalk()
     m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
+
+        if(self->isLocalPlayer()) {
+            g_map.notificateCameraMove(self->m_walkOffset);
+        }
+
         self->schedulePainting();
     }, g_game.getServerBeat());
 
