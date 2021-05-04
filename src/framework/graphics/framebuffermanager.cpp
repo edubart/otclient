@@ -28,6 +28,7 @@ FrameBufferManager g_framebuffers;
 void FrameBufferManager::init()
 {
     m_temporaryFramebuffer = FrameBufferPtr(new FrameBuffer());
+    m_temporaryFramebuffer->setSmooth(true);
 }
 
 void FrameBufferManager::terminate()
