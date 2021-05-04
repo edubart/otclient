@@ -97,9 +97,13 @@ void FrameBuffer::release()
     internalRelease();
     g_painter->restoreSavedState();
 
-    m_requestAmount = 0;
+
     m_forceUpdate = false;
     m_lastRenderedTime.restart();
+
+#if SCHEDULE_PAINTING    
+    m_requestAmount = 0;
+#endif
 }
 
 void FrameBuffer::draw()
@@ -169,12 +173,16 @@ Size FrameBuffer::getSize()
 
 bool FrameBuffer::canUpdate()
 {
-    return (m_forceUpdate || ((m_requestAmount > 0) && (m_lastRenderedTime.ticksElapsed() >= flushTime())));
+    if(SCHEDULE_PAINTING && m_schedulePaintingEnabled)
+        return (m_forceUpdate || ((m_requestAmount > 0) && (m_lastRenderedTime.ticksElapsed() >= flushTime())));
+    else
+        return (m_forceUpdate || m_lastRenderedTime.ticksElapsed() >= flushTime());
 }
 
 void FrameBuffer::update()
 {
-    ++m_requestAmount;
+    if(SCHEDULE_PAINTING && m_schedulePaintingEnabled)
+        ++m_requestAmount;
 }
 
 uint8_t FrameBuffer::flushTime()
@@ -188,6 +196,8 @@ uint8_t FrameBuffer::flushTime()
 
 void FrameBuffer::schedulePainting(const uint16_t time)
 {
+    if(SCHEDULE_PAINTING == 0 || !m_schedulePaintingEnabled) return;
+
     if(time == 0) return;
 
     if(time == FORCE_UPDATE) {
@@ -216,6 +226,7 @@ void FrameBuffer::schedulePainting(const uint16_t time)
 
 void FrameBuffer::removeRenderingTime(const uint16_t time)
 {
+#if SCHEDULE_PAINTING
     auto& schedule = m_schedules[time];
     if(schedule.first == 0) return;
 
@@ -224,4 +235,7 @@ void FrameBuffer::removeRenderingTime(const uint16_t time)
         schedule.second->cancel();
         schedule.second = nullptr;
     }
+#else
+    time;
+#endif
 }

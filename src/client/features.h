@@ -41,3 +41,6 @@
 
 // Define 1 to check that the item is opaque, so that it does not draw anything that is less than or equal below it.
 #define CHECK_OPAQUE_ITEM 1
+
+// Define 1 to enable the paint scheduler, this will consume less CPU when there are not many interactions on the screen.
+#define SCHEDULE_PAINTING 1

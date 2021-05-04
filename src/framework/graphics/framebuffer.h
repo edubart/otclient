@@ -70,6 +70,8 @@ public:
     void removeRenderingTime(const uint16_t time);
     void cleanTexture() { m_texture = nullptr; }
 
+    void useSchedulePaintingEnabled(const bool use) { m_schedulePaintingEnabled = use; }
+
 private:
     void internalCreate();
     void internalBind();
@@ -86,6 +88,7 @@ private:
     stdext::boolean<true> m_backuping;
     stdext::boolean<true> m_smooth;
     stdext::boolean<true> m_drawable;
+    stdext::boolean<true> m_schedulePaintingEnabled;
 
     static uint boundFbo;
 
