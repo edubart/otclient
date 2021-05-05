@@ -127,15 +127,21 @@ void MapView::draw(const Rect& rect)
                     for(const auto& tile : m_cachedVisibleTiles[nextFloor]) {
                         const auto& ground = tile->getGround();
                         if(ground && !ground->isTranslucent()) {
-                            auto pos = transformPositionTo2D(tile->getPosition(), cameraPosition);
+                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
                             if(ground->isTopGround()) {
-                                if(!tile->isBorder()) {
-                                    lightView->setShade(pos);
+                                const auto currentPos = tile->getPosition();
+                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
+                                    const auto& nextDownTile = g_map.getTile(pos);
+                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
+                                        lightView->setShade(pos2D);
+                                        break;
+                                    }
                                 }
-                                pos -= m_tileSize;
+
+                                pos2D -= m_tileSize;
                             }
 
-                            lightView->setShade(pos);
+                            lightView->setShade(pos2D);
                         }
                     }
                 }
