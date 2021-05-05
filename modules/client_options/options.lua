@@ -89,6 +89,7 @@ local function setupGraphicsEngines()
 end
 
 function init()
+  local _init = false
   for k,v in pairs(defaultOptions) do
     g_settings.setDefault(k, v)
     options[k] = v
@@ -140,6 +141,9 @@ function init()
 
   renderScaleCombobox.onOptionChange = function(comboBox, option)
     setOption('renderScale', comboBox:getCurrentOption().data)
+    if _init and comboBox:getCurrentOption().data > 100 then
+      displayInfoBox(tr('Warning'), tr('Rendering scale above 100%% will drop performance and visual bugs may occur.'))
+    end
   end
 
   floorShadowingComboBox= graphicsPanel:recursiveGetChildById('floorShadowing')
@@ -152,7 +156,8 @@ function init()
   floorShadowingComboBox:addOption('Upside', ShadowFloor.Upside)
   floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
 
-  addEvent(function() setup() end)
+  addEvent(function() setup() _init = true end)
+
 end
 
 function terminate()

@@ -433,6 +433,8 @@ locale = {
 	["Draw Floating Effects"] = "Desenhar Efeitos Flutuantes",
 	["Light Version"] = "Versão da luz",
 	["Render Scale"] = "Escala de Renderização",
+	["Warning"] = "Alerta",
+	["Rendering scale above 100%% will drop performance and visual bugs may occur."] = "Escala de Renderização acima de 100%% fará cair a performance e poderá ocorrer bugs visuais."
   }
 }
 
