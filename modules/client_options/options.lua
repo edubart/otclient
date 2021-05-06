@@ -157,7 +157,6 @@ function init()
   floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
 
   addEvent(function() setup() _init = true end)
-
 end
 
 function terminate()

@@ -491,9 +491,17 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onCameraMove(const Point& /*offset*/)
 {
+    const auto& cameraPosition = getCameraPosition();
+
     m_rectCache.rect = Rect();
     m_frameCache.dynamicText->schedulePainting(FrameBuffer::FORCE_UPDATE);
-    m_viewport = isFollowingCreature() && m_followingCreature->isWalking() ? m_viewPortDirection[m_followingCreature->getDirection()] : m_viewPortDirection[Otc::InvalidDirection];
+
+    if(m_followingCreature->isWalking()) {
+        m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
+    } else {
+        m_viewport = m_viewPortDirection[Otc::InvalidDirection];
+        m_visibleCreatures = getSightSpectators(cameraPosition, false);
+    }
 }
 
 void MapView::onGlobalLightChange(const Light&)
@@ -516,12 +524,7 @@ void MapView::updateLight()
 
 void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/)
 {
-    const auto& cameraPosition = getCameraPosition();
-
-    m_visibleCreatures = getSpectators(cameraPosition, false);
-
     schedulePainting(Otc::FUpdateCreatureInformation, FrameBuffer::FORCE_UPDATE);
-
     updateLight();
 }
 
@@ -572,6 +575,10 @@ void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
 void MapView::onCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags)
 {
     if(m_frameCache.creatureInformation->canUpdate()) return;
+    if(creature->isDead()) {
+        m_frameCache.creatureInformation->update();
+        return;
+    }
 
     m_frameCache.creatureInformation->bind();
     g_painter->setAlphaWriting(true);
@@ -1022,7 +1029,7 @@ std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool 
 
 bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 {
-    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
+    return getCameraPosition().isInRange(pos, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2, ignoreZ);
 }
 
 void MapView::setCrosshairTexture(const std::string& texturePath)

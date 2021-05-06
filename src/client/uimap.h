@@ -78,6 +78,7 @@ public:
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_mapView->getVisibleCreatures(); }
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor) { return m_mapView->getSpectators(centerPos, multiFloor); }
+    std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor) { return m_mapView->getSightSpectators(centerPos, multiFloor); }
     bool isInRange(const Position& pos) { return m_mapView->isInRange(pos); }
 
     PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }

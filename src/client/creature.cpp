@@ -670,11 +670,6 @@ void Creature::terminateWalk()
     m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkAnimationPhase = 0;
         self->m_walkFinishAnimEvent = nullptr;
-
-        if(self->isLocalPlayer()) {
-            g_map.notificateCameraMove(self->m_walkOffset);
-        }
-
         self->schedulePainting();
     }, g_game.getServerBeat());
 

@@ -62,8 +62,6 @@ protected:
     void onMapCenterChange(const Position& pos);
     void onCameraMove(const Point& offset);
 
-    std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
-
     friend class Map;
     friend class Tile;
     friend class LightView;
@@ -146,6 +144,7 @@ public:
 
     std::vector<CreaturePtr>& getVisibleCreatures() { return m_visibleCreatures; }
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
+    std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
     bool isInRange(const Position& pos, const bool ignoreZ = false);
 

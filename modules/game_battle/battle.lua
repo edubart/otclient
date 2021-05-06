@@ -383,7 +383,7 @@ function checkCreatures() -- Function that initially populates our tree once the
 
 	removeAllCreatures() -- Remove all cache if there's any
 
-	local spectators = modules.game_interface.getMapPanel():getSpectators(player:getPosition(), false)
+	local spectators = modules.game_interface.getMapPanel():getSightSpectators(player:getPosition(), false)
 	local sortType = getSortType()
 
 	for _, creature in ipairs(spectators) do
@@ -692,7 +692,9 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 		local battleButton = battleButtons[creatureId]
 		local fit = doCreatureFitFilters(creature)
 
-		if battleButton ~= nil then
+		if battleButton == nil then
+			addCreature(creature, getSortType())
+		else
 			if not fit and newPos then -- if there's no newPos the creature is dead, let onCreatureDisappear handles that.
 				removeCreature(creature)
 			elseif fit then
