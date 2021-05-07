@@ -464,9 +464,10 @@ void Creature::onAppear()
         m_disappearEvent = nullptr;
     }
 
-    if(isLocalPlayer()) {
+    if(isLocalPlayer() && m_position != m_oldPosition) {
         g_map.notificateCameraMove(m_walkOffset);
     }
+
     g_map.schedulePainting(m_position, Otc::FUpdateThing, getAnimationInterval());
 
     // creature appeared the first time or wasn't seen for a long time

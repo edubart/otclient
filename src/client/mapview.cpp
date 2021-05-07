@@ -496,11 +496,13 @@ void MapView::onCameraMove(const Point& /*offset*/)
     m_rectCache.rect = Rect();
     m_frameCache.dynamicText->schedulePainting(FrameBuffer::FORCE_UPDATE);
 
-    if(m_followingCreature->isWalking()) {
-        m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
-    } else {
-        m_viewport = m_viewPortDirection[Otc::InvalidDirection];
-        m_visibleCreatures = getSightSpectators(cameraPosition, false);
+    if(isFollowingCreature()) {
+        if(m_followingCreature->isWalking()) {
+            m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
+        } else {
+            m_viewport = m_viewPortDirection[Otc::InvalidDirection];
+            m_visibleCreatures = getSightSpectators(cameraPosition, false);
+        }
     }
 }
 
@@ -524,7 +526,10 @@ void MapView::updateLight()
 
 void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/)
 {
-    schedulePainting(Otc::FUpdateCreatureInformation, FrameBuffer::FORCE_UPDATE);
+    const auto& cameraPosition = getCameraPosition();
+
+    m_visibleCreatures = getSightSpectators(cameraPosition, false);
+    m_frameCache.creatureInformation->update();
     updateLight();
 }
 
