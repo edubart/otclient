@@ -419,7 +419,7 @@ function doCreatureFitFilters(creature) -- Check if creature fit current applied
 end
 
 local function canBeSeen(creature)
-		return creature and creature:canBeSeen() and modules.game_interface.getMapPanel():isInRange(creature:getPosition())
+		return creature and creature:canBeSeen() and creature:getPosition() and modules.game_interface.getMapPanel():isInRange(creature:getPosition())
 end
 
 local function getDistanceBetween(p1, p2) -- Calculate distance
@@ -445,16 +445,17 @@ end
 
 local lastAge = 0
 function addCreature(creature, sortType) -- Insert a creature in our binary tree
-	if not modules.game_interface.getMapPanel():isInRange(creature:getPosition()) then
-		return
-	end
-
 	local creatureId = creature:getId()
 	local battleButton = battleButtons[creatureId]
 	if battleButton then
 		-- I don't think this situation will exist but let's keep it here.
 		battleButton:setLifeBarPercent(creature:getHealthPercent())
 	else
+		-- Creature Removed
+		if creature:getPosition() == nil then
+			return
+		end
+
 		local newCreature = {}
 		newCreature.id = creatureId
 		newCreature.name = creature:getName():lower()
@@ -693,7 +694,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 		local fit = doCreatureFitFilters(creature)
 
 		if battleButton == nil then
-			addCreature(creature, getSortType())
+			addCreature(creature, sortType)
 		else
 			if not fit and newPos then -- if there's no newPos the creature is dead, let onCreatureDisappear handles that.
 				removeCreature(creature)
