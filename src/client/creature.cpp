@@ -72,7 +72,6 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
     if(!canBeSeen())
         return;
 
-
     if(frameFlags & Otc::FUpdateThing) {
         if(m_showTimedSquare) {
             g_painter->setColor(m_timedSquareColor);
@@ -151,7 +150,6 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
         // yPattern => creature addon
         for(int yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
-
             // continue if we dont have this addon
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern - 1))))
                 continue;
@@ -475,13 +473,11 @@ void Creature::onAppear()
         stopWalk();
         m_removed = false;
         callLuaField("onAppear");
-
     } // walk
     else if(m_oldPosition != m_position && m_oldPosition.isInRange(m_position, 1, 1) && m_allowAppearWalk) {
         m_allowAppearWalk = false;
         walk(m_oldPosition, m_position);
         callLuaField("onWalk", m_oldPosition, m_position);
-
     } // teleport
     else if(m_oldPosition != m_position) {
         stopWalk();
@@ -620,28 +616,24 @@ void Creature::updateWalk(const bool isPreWalking)
     int stepDuration = getStepDuration(true);
     stepDuration += (20 - stepDuration * .05);
 
-    const float walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
-    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
-
-    // update walk animation
-    updateWalkAnimation();
-
-    // needed for paralyze effect
-    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
-
-    // update offsets
-    updateWalkOffset(m_walkedPixels);
-
-    updateWalkingTile();
-
-    // terminate walk only when client and server side walk are completed
     if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration) {
         if(!isPreWalking) {
             terminateWalk();
         } else {
             m_walkAnimationPhase = 0;
         }
+        return;
     }
+
+    const float walkTicksPerPixel = static_cast<float>(stepDuration) / Otc::TILE_PIXELS;
+    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
+
+    // needed for paralyze effect
+    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
+
+    updateWalkingTile();
+    updateWalkAnimation();
+    updateWalkOffset(m_walkedPixels);
 }
 
 void Creature::terminateWalk()
@@ -673,7 +665,6 @@ void Creature::terminateWalk()
         self->m_walkFinishAnimEvent = nullptr;
         self->schedulePainting();
     }, g_game.getServerBeat());
-
 }
 
 void Creature::setName(const std::string& name)
