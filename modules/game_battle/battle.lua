@@ -504,7 +504,6 @@ end
 
 function removeAllCreatures() -- Remove all creatures from our binary tree
 	removeCreature(false, true)
-return true
 end
 
 function removeCreature(creature, all) -- Remove a single creature or all
