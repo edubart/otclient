@@ -89,7 +89,6 @@ local function setupGraphicsEngines()
 end
 
 function init()
-  local _init = false
   for k,v in pairs(defaultOptions) do
     g_settings.setDefault(k, v)
     options[k] = v
@@ -121,6 +120,18 @@ function init()
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
   audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
 
+  addEvent(function() setup() end)
+end
+
+function terminate()
+  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
+  g_keyboard.unbindKeyDown('Ctrl+N')
+  optionsWindow:destroy()
+  optionsButton:destroy()
+  audioButton:destroy()
+end
+
+function setupComboBox()
   crosshairCombobox = generalPanel:recursiveGetChildById('crosshair')
 
   crosshairCombobox:addOption('Disabled', 'disabled')
@@ -141,9 +152,6 @@ function init()
 
   renderScaleCombobox.onOptionChange = function(comboBox, option)
     setOption('renderScale', comboBox:getCurrentOption().data)
-    if _init and comboBox:getCurrentOption().data > 100 then
-      displayInfoBox(tr('Warning'), tr('Rendering scale above 100%% will drop performance and visual bugs may occur.'))
-    end
   end
 
   floorShadowingComboBox= graphicsPanel:recursiveGetChildById('floorShadowing')
@@ -155,19 +163,10 @@ function init()
   floorShadowingComboBox:addOption('Bottom', ShadowFloor.Bottom)
   floorShadowingComboBox:addOption('Upside', ShadowFloor.Upside)
   floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
-
-  addEvent(function() setup() _init = true end)
-end
-
-function terminate()
-  g_keyboard.unbindKeyDown('Ctrl+Shift+F')
-  g_keyboard.unbindKeyDown('Ctrl+N')
-  optionsWindow:destroy()
-  optionsButton:destroy()
-  audioButton:destroy()
 end
 
 function setup()
+  setupComboBox()
   setupGraphicsEngines()
 
   -- load options
@@ -222,6 +221,7 @@ end
 
 function setOption(key, value, force)
   if not force and options[key] == value then return end
+
   local gameMapPanel = modules.game_interface.getMapPanel()
 
   if key == 'vsync' then
@@ -294,17 +294,20 @@ function setOption(key, value, force)
       newValue = nil
     end
     gameMapPanel:setCrosshairTexture(newValue and crossPath .. newValue or nil)
-    crosshairCombobox:setCurrentOptionByData(newValue, false)
+    crosshairCombobox:setCurrentOptionByData(newValue, true)
   elseif key == 'enableHighlightMouseTarget' then
     gameMapPanel:setDrawHighlightTarget(value)
   elseif key == 'floorShadowing' then
     gameMapPanel:setFloorShadowingFlag(value)
-    floorShadowingComboBox:setCurrentOptionByData(value, false)
+    floorShadowingComboBox:setCurrentOptionByData(value, true)
   elseif key == 'antiAliasing' then
     gameMapPanel:setAntiAliasing(value)
   elseif key == 'renderScale' then
     gameMapPanel:setRenderScale(value)
-    renderScaleCombobox:setCurrentOptionByData(value, false)
+    renderScaleCombobox:setCurrentOptionByData(value, true)
+    if not force and value > 100 then
+      displayInfoBox(tr('Warning'), tr('Rendering scale above 100%% will drop performance and visual bugs may occur.'))
+    end
   end
 
   -- change value for keybind updates
