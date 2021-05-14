@@ -631,9 +631,9 @@ void Creature::updateWalk(const bool isPreWalking)
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
-    updateWalkingTile();
     updateWalkAnimation();
     updateWalkOffset(m_walkedPixels);
+    updateWalkingTile();
 }
 
 void Creature::terminateWalk()
