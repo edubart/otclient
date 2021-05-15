@@ -502,6 +502,10 @@ function onBattleButtonMouseRelease(self, mousePosition, mouseButton)
     if self.isTarget then
       g_game.cancelAttack()
     else
+      if self.creature:isNpc() then
+        modules.game_interface.checkMaxDistanceToGreetingNpc(g_game.getLocalPlayer(), self.creature)
+        return false
+      end
       g_game.attack(self.creature)
     end
     return true
