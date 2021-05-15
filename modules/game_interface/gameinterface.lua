@@ -19,6 +19,8 @@ smartWalkDir = nil
 walkFunction = nil
 hookedMenuOptions = {}
 lastDirTime = g_clock.millis()
+maxDistanceToGreetingNpc = 3
+focusGreetWords = {"hi", "hello"}
 
 function init()
   g_ui.importStyle('styles/countwindow')
@@ -554,11 +556,17 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     else
       local localPosition = localPlayer:getPosition()
       if not classic then shortcut = '(Alt)' else shortcut = nil end
-      if creatureThing:getPosition().z == localPosition.z then
-        if g_game.getAttackingCreature() ~= creatureThing then
-          menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
+        if creatureThing:getPosition().z == localPosition.z then
+          if creatureThing:isNpc() then
+            menu:addOption(tr('Talk'), function()
+              checkMaxDistanceToGreetingNpc(localPlayer, creatureThing)
+            end, shortcut)
         else
-          menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
+          if g_game.getAttackingCreature() ~= creatureThing then
+            menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
+          else
+            menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
+          end
         end
 
         if g_game.getFollowingCreature() ~= creatureThing then
@@ -716,6 +724,13 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
 
 
   local player = g_game.getLocalPlayer()
+  if creatureThing then
+    if creatureThing:isNpc() then
+      checkMaxDistanceToGreetingNpc(player, creatureThing)
+      return true
+    end
+  end
+
   player:stopAutoWalk()
 
   if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
@@ -895,4 +910,12 @@ end
 
 function limitZoom()
   limitedZoom = true
+end
+
+function checkMaxDistanceToGreetingNpc(creaturePlayer, creatureNpc)
+  if math.floor(Position.distance(creaturePlayer:getPosition(), creatureNpc:getPosition())) <= maxDistanceToGreetingNpc then
+      g_game.talk(focusGreetWords[math.random(1, #focusGreetWords)])
+  else
+    modules.game_textmessage.displayFailureMessage('You are too far away.')
+  end
 end
