@@ -39,8 +39,7 @@ def generate_otc_bitmap_font(image, drawable, font, font_size, border, antialias
 		width += (int(border) * 2)
 		height += (int(border) * 2)
 
-	if not image:
-		image = gimp.Image(width, height, RGB)
+	image = gimp.Image(width, height, RGB)
 	image.disable_undo()
 
 	gimp.set_foreground(255, 255, 255)
