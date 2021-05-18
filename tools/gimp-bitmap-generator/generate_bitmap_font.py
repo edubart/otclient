@@ -5,8 +5,11 @@ import math
 import time
 from gimpfu import *
 
-def generate_bitmap_font(image, tdrawable, font, font_size, first_char, antialias, border, outputfolder):
-	if outputfolder.find('noneQbbi') != -1:
+# handy funcs
+# pdb.gimp_message(outputfolder)
+
+def generate_otc_bitmap_font(image, drawable, font, font_size, border, antialias, outputfolder):
+	if not outputfolder:
 		pdb.gimp_message('You need to select correct output folder.')
 		return
 
@@ -23,7 +26,7 @@ def generate_bitmap_font(image, tdrawable, font, font_size, first_char, antialia
 	#pdb.gimp_message(str(int(round(glyph_width))) + ' ' + str(int(round(glyph_height))))
 
 	# actual making glyph
-	char_begin = int(first_char)
+	char_begin = 32 # space is always first
 	char_end = 256
 	num_chars = char_end - char_begin
 	width = int(glyph_width) * 16
@@ -36,7 +39,8 @@ def generate_bitmap_font(image, tdrawable, font, font_size, first_char, antialia
 		width += (int(border) * 2)
 		height += (int(border) * 2)
 
-	image = gimp.Image(width, height, RGB)
+	if not image:
+		image = gimp.Image(width, height, RGB)
 	image.disable_undo()
 
 	gimp.set_foreground(255, 255, 255)
@@ -69,7 +73,7 @@ def generate_bitmap_font(image, tdrawable, font, font_size, first_char, antialia
 			#pdb.gimp_edit_fill(text_layer, BACKGROUND_FILL)
 			#pdb.gimp_drawable_edit_fill(text_layer, BACKGROUND_FILL)
 			#add_text_outline(image, text_layer)
-			gimp.progress_update(float(offset) / float(num_chars))
+		gimp.progress_update(float(offset) / float(num_chars))
 
 	image.merge_visible_layers(CLIP_TO_IMAGE)
 	image.enable_undo()
@@ -87,23 +91,22 @@ def generate_bitmap_font(image, tdrawable, font, font_size, first_char, antialia
 	pdb.gimp_file_save(image, image.layers[0], outputfolder + '/' + fontText + '.png', '?')
 
 register(
-	"generate_bitmap_font",
-	"Generate bitmap font",
-	"Generate bitmap font",
+	"generate_otc_bitmap_font",
+	"Generate OTC font - Eduardo Bart & Qbazzz\n\nYou can leave input image and drawable empty.",
+	"Generate OTC font",
 	"Eduardo Bart & Qbazzz",
 	"Eduardo Bart & Qbazzz",
 	"2021",
-	"<Image>/File/Create/_Generate Bitmap Font",
+	"<Image>/File/Create/_Generate OTC font",
 	"",
 	[
 		(PF_FONT, "Font", "Font", "Arial"),
-		(PF_SPINNER, "Font_Size", "Font Size", 13, (1, 128, 1)),
-		(PF_SPINNER, "First_Char", "First Char", 32, (0, 256, 1)),
+		(PF_SPINNER, "Font_Size", "Font size", 13, (1, 128, 1)),
+		(PF_SPINNER, "Border_Size", "Border size", 0, (0, 256, 1)),
 		(PF_BOOL, "Antialias", "Antialias", False),
-		(PF_SPINNER, "Border_Size", "Border Size", 0, (0, 256, 1)),
-		(PF_DIRNAME, "outputfolder", "Output directory", "noneQbbi")
+		(PF_DIRNAME, "Output_Folder", "Output directory", "")
 	],
 	[],
-	generate_bitmap_font)
+	generate_otc_bitmap_font)
 
 main()
