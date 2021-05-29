@@ -149,14 +149,14 @@ void MapView::draw(const Rect& rect)
 
             onFloorDrawingStart(z);
 
-#if DRAW_ALL_GROUND_FIRST == 1
-            drawSeparately(z, viewPort, lightView);
-#else
             if(lightView) lightView->setFloor(z);
+#if DRAW_ALL_GROUND_FIRST == 1
+            drawSeparately(z, lightView);
+#else
             for(const auto& tile : m_cachedVisibleTiles[z]) {
                 const auto hasLight = redrawLight && tile->hasLight();
 
-                if((!redrawThing && !hasLight) || !canRenderTile(tile, m_viewport, lightView)) continue;
+                if((!redrawThing && !hasLight) || !canRenderTile(tile, lightView)) continue;
 
                 tile->drawStart(this);
                 tile->draw(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, m_frameCache.flags, lightView);
@@ -230,8 +230,6 @@ void MapView::draw(const Rect& rect)
 
         m_frameCache.crosshair->draw(rect, m_rectCache.srcRect);
     }
-
-
 
     // avoid drawing texts on map in far zoom outs
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
@@ -394,7 +392,6 @@ void MapView::updateVisibleTilesCache()
             // loop current diagonal tiles
             const uint32 advance = std::max<uint32>(diagonal - m_drawDimension.height(), 0);
             for(int_fast32_t iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
-
                 // position on current floor
                 //TODO: check position limits
                 Position tilePos = cameraPosition.translated(ix - m_virtualCenterOffset.x, iy - m_virtualCenterOffset.y);
@@ -962,7 +959,7 @@ void MapView::updateViewportDirectionCache()
     }
 }
 
-bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView)
+bool MapView::canRenderTile(const TilePtr& tile, LightView* lightView)
 {
     if(m_drawViewportEdge || (lightView && lightView->isDark() && tile->hasLight())) return true;
 
@@ -974,13 +971,13 @@ bool MapView::canRenderTile(const TilePtr& tile, const ViewPort& viewPort, Light
 
     // Check for non-visible tiles on the screen and ignore them
     {
-        if((cameraPosition.x - checkPos.x >= viewPort.left) || (checkPos.x - cameraPosition.x == viewPort.right && !tile->hasWideThings() && !tile->hasDisplacement()))
+        if((cameraPosition.x - checkPos.x >= m_viewport.left) || (checkPos.x - cameraPosition.x == m_viewport.right && !tile->hasWideThings() && !tile->hasDisplacement()))
             return false;
 
-        if((cameraPosition.y - checkPos.y >= viewPort.top) || (checkPos.y - cameraPosition.y == viewPort.bottom && !tile->hasTallThings() && !tile->hasDisplacement()))
+        if((cameraPosition.y - checkPos.y >= m_viewport.top) || (checkPos.y - cameraPosition.y == m_viewport.bottom && !tile->hasTallThings() && !tile->hasDisplacement()))
             return false;
 
-        if((checkPos.x - cameraPosition.x > viewPort.right && (!tile->hasWideThings() || !tile->hasDisplacement())) || (checkPos.y - cameraPosition.y > viewPort.bottom))
+        if((checkPos.x - cameraPosition.x > m_viewport.right && (!tile->hasWideThings() || !tile->hasDisplacement())) || (checkPos.y - cameraPosition.y > m_viewport.bottom))
             return false;
     }
 
@@ -1043,7 +1040,7 @@ void MapView::setCrosshairTexture(const std::string& texturePath)
 }
 
 #if DRAW_ALL_GROUND_FIRST == 1
-void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightView* lightView)
+void MapView::drawSeparately(const uint8 floor, LightView* lightView)
 {
     const Position cameraPosition = getCameraPosition();
     const auto& tiles = m_cachedVisibleTiles[floor];
@@ -1055,7 +1052,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
 
         const auto hasLight = redrawLight && tile->hasLight();
 
-        if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
+        if(!redrawThing && !hasLight || !canRenderTile(tile, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
         tile->drawStart(this);
@@ -1068,7 +1065,7 @@ void MapView::drawSeparately(const uint8 floor, const ViewPort& viewPort, LightV
 
         const auto hasLight = redrawLight && tile->hasLight();
 
-        if(!redrawThing && !hasLight || !canRenderTile(tile, viewPort, lightView)) continue;
+        if(!redrawThing && !hasLight || !canRenderTile(tile, lightView)) continue;
 
         const Position& tilePos = tile->getPosition();
 

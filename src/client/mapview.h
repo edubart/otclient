@@ -198,7 +198,7 @@ private:
     void drawText();
 
 #if DRAW_ALL_GROUND_FIRST == 1
-    void drawSeparately(const uint8 floor, const ViewPort& viewPort, LightView* lightView);
+    void drawSeparately(const uint8 floor, LightView* lightView);
 #endif
 
     Rect calcFramebufferSource(const Size& destSize);
@@ -209,7 +209,7 @@ private:
                      (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
-    bool canRenderTile(const TilePtr& tile, const ViewPort& viewPort, LightView* lightView);
+    bool canRenderTile(const TilePtr& tile, LightView* lightView);
 
     uint8 m_lockedFirstVisibleFloor,
         m_cachedFirstVisibleFloor,
