@@ -126,23 +126,21 @@ private:
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
-    using namespace std;
-    out << "#" << hex << setfill('0')
-        << setw(2) << (int)color.r()
-        << setw(2) << (int)color.g()
-        << setw(2) << (int)color.b()
-        << setw(2) << (int)color.a();
-    out << dec << setfill(' ');
-    return out;
+    return out << '#'
+           << std::hex << std::setfill('0')
+           << std::setw(2) << (int)color.r()
+           << std::setw(2) << (int)color.g()
+           << std::setw(2) << (int)color.b()
+           << std::setw(2) << (int)color.a()
+           << std::dec << std::setfill(' ');
 }
 
 inline std::istream& operator>>(std::istream& in, Color& color)
 {
-    using namespace std;
     std::string tmp;
 
-    if(in.get() == '#') {
-        in >> tmp;
+    if(in.peek() == '#') {
+        in.ignore() >> tmp;
 
         if(tmp.length() == 6 || tmp.length() == 8) {
             color.setRed((uint8)stdext::hex_to_dec(tmp.substr(0, 2)));
@@ -152,10 +150,10 @@ inline std::istream& operator>>(std::istream& in, Color& color)
                 color.setAlpha((uint8)stdext::hex_to_dec(tmp.substr(6, 2)));
             else
                 color.setAlpha(255);
-        } else
-            in.seekg(-(std::istream::streampos)tmp.length()-1, ios_base::cur);
+        } else {
+            in.seekg(-tmp.length()-1, std::ios_base::cur);
+        }
     } else {
-        in.unget();
         in >> tmp;
 
         if(tmp == "alpha") {
@@ -197,7 +195,7 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         } else if(tmp == "orange") {
             color = Color::orange;
         } else {
-            in.seekg(-tmp.length(), ios_base::cur);
+            in.seekg(-tmp.length(), std::ios_base::cur);
         }
     }
     return in;
