@@ -323,7 +323,6 @@
     <ClInclude Include="..\src\client\spritemanager.h" />
     <ClInclude Include="..\src\client\statictext.h" />
     <ClInclude Include="..\src\client\thing.h" />
-    <ClInclude Include="..\src\client\thingstype.h" />
     <ClInclude Include="..\src\client\thingtype.h" />
     <ClInclude Include="..\src\client\thingtypemanager.h" />
     <ClInclude Include="..\src\client\tile.h" />
