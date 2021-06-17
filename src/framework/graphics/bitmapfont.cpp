@@ -49,9 +49,14 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     // load font texture
     m_texture = g_textures.getTexture(textureFile);
     Size textureSize = m_texture->getSize();
+    int numHorizontalGlyphs = textureSize.width() / glyphSize.width();
+    int numVerticalGlyphs = textureSize.height() / glyphSize.height();
+    int numGlyphs = numHorizontalGlyphs * numVerticalGlyphs;
+    m_glyphsTextureCoords.resize(numGlyphs);
+    m_glyphsSize.resize(numGlyphs);
 
     if(OTMLNodePtr node = fontNode->get("fixed-glyph-width")) {
-        for(int glyph = m_firstGlyph; glyph < 256; ++glyph)
+        for(int glyph = m_firstGlyph; glyph < numGlyphs; ++glyph)
             m_glyphsSize[glyph] = Size(node->value<int>(), m_glyphHeight);
     } else {
         calculateGlyphsWidthsAutomatically(Image::load(textureFile), glyphSize);
@@ -77,8 +82,7 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
 
 
     // calculate glyphs texture coords
-    int numHorizontalGlyphs = textureSize.width() / glyphSize.width();
-    for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
+    for(int glyph = m_firstGlyph; glyph < numGlyphs; ++glyph) {
         m_glyphsTextureCoords[glyph].setRect(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
                                                 ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
                                                 m_glyphsSize[glyph].width(),
@@ -271,10 +275,12 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
 
     Size imageSize = image->getSize();
     int numHorizontalGlyphs = imageSize.width() / glyphSize.width();
+    int numVerticalGlyphs = imageSize.height() / glyphSize.height();
+    int numGlyphs = numHorizontalGlyphs * numVerticalGlyphs;
     const auto& texturePixels = image->getPixels();
 
     // small AI to auto calculate pixels widths
-    for(int glyph = m_firstGlyph; glyph < 256; ++glyph) {
+    for(int glyph = m_firstGlyph; glyph < numGlyphs; ++glyph) {
         Rect glyphCoords(((glyph - m_firstGlyph) % numHorizontalGlyphs) * glyphSize.width(),
                          ((glyph - m_firstGlyph) / numHorizontalGlyphs) * glyphSize.height(),
                             glyphSize.width(),
