@@ -29,6 +29,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/core/declarations.h>
 #include "lightview.h"
+#include "mapviewcontrol.h"
 
 // @bindclass
 class MapView : public LuaObject
@@ -48,7 +49,6 @@ public:
 private:
     void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
     void updateVisibleTilesCache(int start = 0);
-    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
 protected:
     void onTileUpdate(const Position& pos);
@@ -57,6 +57,8 @@ protected:
     friend class Map;
 
 public:
+    void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
+
     // floor visibility related
     void lockFirstVisibleFloor(int firstVisibleFloor);
     void unlockFirstVisibleFloor();
@@ -162,6 +164,7 @@ private:
     stdext::boolean<true> m_follow;
     std::vector<TilePtr> m_cachedVisibleTiles;
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
+    std::array<MapViewControl, Otc::InvalidDirection + 1> m_mapViewControl;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;
     PainterShaderProgramPtr m_shader;

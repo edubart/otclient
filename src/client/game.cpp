@@ -653,6 +653,8 @@ bool Game::walk(Otc::Direction direction, bool dash)
     }
 
     m_localPlayer->stopAutoWalk();
+    for(const auto& mapView: g_map.getMapViews())
+        mapView->requestVisibleTilesCacheUpdate();
 
     if(getClientVersion() <= 740) {
         const TilePtr& fromTile = g_map.getTile(m_localPlayer->getPosition());
