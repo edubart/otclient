@@ -1,0 +1,62 @@
+StoreWindow < MainWindow
+  id: storeWindow
+  !text: 'Store'
+  size: 700 530
+
+  @onEscape: Store.close()
+
+  // Main Panel Window
+
+  MarketTabBar
+    id: mainTabBar
+    width: 164
+    height: 25
+    anchors.top: parent.top
+    anchors.left: parent.left
+
+  Panel
+    id: mainTabContentPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    padding: 3
+    border-width: 1
+    border-color: #000000
+    margin-bottom: 20
+
+  Label
+    id: balanceLabel
+    !text: 'Coin Balance' .. ':     '
+    font: verdana-11px-rounded
+    text-offset: 0 2
+    anchors.top: parent.top
+    anchors.right: parent.right
+
+  Button
+    id: closeButton
+    !text: tr('Close')
+    anchors.top: mainTabContentPanel.bottom
+    anchors.horizontalCenter: mainTabContentPanel.horizontalCenter
+    margin-top: 5
+    width: 110
+    @onClick: function() store = Store; store.close() end
+
+  Button
+    id: refreshOffersButton
+    !text: tr('Refresh Offers')
+    anchors.top: mainTabContentPanel.bottom
+    anchors.right: mainTabContentPanel.right
+    margin-top: 5
+    width: 110
+    @onClick: Store.refreshOffers()
+
+  Button
+    id: resetButton
+    !text: tr('Reset Store')
+    !tooltip: tr('Reset selection, filters & search')
+    anchors.top: mainTabContentPanel.bottom
+    anchors.left: mainTabContentPanel.left
+    margin-top: 5
+    width: 110
+    @onClick: Store.reset()

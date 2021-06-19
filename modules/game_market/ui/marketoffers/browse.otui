@@ -12,7 +12,7 @@ MarketItemBox < UICheckBox
     text-offset: 0 22
     text-align: right
     anchors.top: parent.top
-    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.left: parent.left
     margin: 1
 
   $checked:
@@ -105,9 +105,7 @@ Panel
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     margin-top: 10
-    margin-left: 3
     margin-bottom: 30
-    margin-right: 3
 
     VerticalScrollBar
       id: itemsPanelListScrollBar

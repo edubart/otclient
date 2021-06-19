@@ -1,0 +1,9 @@
+Module
+  name: game_store
+  description: In-game store
+  author: metabob
+  website: https://github.com/metabobb/otclient
+  sandboxed: true
+  scripts: [ storeprotocol, store ]
+  @onLoad: init()
+  @onUnload: terminate()
