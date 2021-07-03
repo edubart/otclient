@@ -1,5 +1,5 @@
-skillsWindow = nil
-skillsButton = nil
+local skillsWindow = nil
+local skillsButton = nil
 
 function init()
   connect(LocalPlayer, {
@@ -350,11 +350,11 @@ function onStaminaChange(localPlayer, stamina)
 		local text = tr("You have %s hours and %s minutes left", hours, minutes) .. '\n' ..
 		tr("You will not gain 50%% more experience because you aren't premium player, now you receive only 1x experience points")
 		setSkillPercent('stamina', percent, text, '#89F013')
-	elseif stamina > 2400 and g_game.getClientVersion() < 1038 then
+	elseif stamina >= 2400 and g_game.getClientVersion() < 1038 then
 		local text = tr("You have %s hours and %s minutes left", hours, minutes) .. '\n' ..
 		tr("If you are premium player, you will gain 50%% more experience")
 		setSkillPercent('stamina', percent, text, 'green')
-	elseif stamina <= 2400 and stamina > 840 then
+	elseif stamina < 2400 and stamina > 840 then
 		setSkillPercent('stamina', percent, tr("You have %s hours and %s minutes left", hours, minutes), 'orange')
 	elseif stamina <= 840 and stamina > 0 then
 		local text = tr("You have %s hours and %s minutes left", hours, minutes) .. "\n" ..
