@@ -62,7 +62,7 @@ void Map::removeMapView(const MapViewPtr& mapView)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = 24;
+    range.left = 40;
     range.top = 20;
     range.bottom = range.top + 1;
     range.right = range.left + 1;

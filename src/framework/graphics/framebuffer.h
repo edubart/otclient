@@ -138,7 +138,6 @@ private:
     Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
 
     std::vector<std::shared_ptr<DrawObject>> m_actions;
-    std::unordered_map<size_t, std::vector<std::shared_ptr<DrawObject>>> m_coordsActionObjects;
 
     std::pair<size_t, size_t> m_status{ 0,0 };
 

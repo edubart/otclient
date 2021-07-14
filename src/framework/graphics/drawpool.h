@@ -61,6 +61,8 @@ private:
     void addRepeated(const TexturePtr& texture, const FrameBuffer::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
     std::vector<std::shared_ptr<FrameBuffer::DrawObject>> m_repeatedActions, m_actions;
+    std::unordered_map<size_t, std::shared_ptr<FrameBuffer::DrawObject>> m_repeatedActionsRef;
+
     std::unordered_map<size_t, CoordsBuffer> m_coordsCache;
 
     CoordsBuffer m_tempCoordsBuffer;

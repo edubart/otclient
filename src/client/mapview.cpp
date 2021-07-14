@@ -527,7 +527,7 @@ void MapView::onPositionChange(const Position& /*newPos*/, const Position& /*old
 
 // isVirtualMove is when the mouse is stopped, but the camera moves,
 // so the onMouseMove event is triggered by sending the new tile position that the mouse is in.
-void MapView::onMouseMove(const Position& mousePos, const bool isVirtualMove)
+void MapView::onMouseMove(const Position& mousePos, const bool /*isVirtualMove*/)
 {
     { // Highlight Target System
         if(m_lastHighlightTile) {

@@ -85,55 +85,33 @@ void DrawPool::add(const TexturePtr& texture, const FrameBuffer::DrawMethod& met
     m_currentFrameBuffer->updateHash(texture, method);
 
     if(!m_currentFrameBuffer->m_actions.empty()) {
-        auto& prevDrawObject = m_currentFrameBuffer->m_actions.back();
+        const auto& prevObj = m_currentFrameBuffer->m_actions.back();
 
-        if(prevDrawObject->state == currentState) {
-            prevDrawObject->drawMode = Painter::DrawMode::Triangles;
+        const bool sameState = prevObj->state == currentState,
+            hasDest = !method.dest.isNull();
 
-            // Search for identical objects in the same position
-            bool push = false;
-            if(!method.dest.isNull()) {
-                const auto itFind = std::find_if(prevDrawObject->drawMethods.begin(), prevDrawObject->drawMethods.end(),
-                                                 [&](const FrameBuffer::DrawMethod& prevMethod) { return prevMethod.dest == method.dest; });
-                push = itFind != prevDrawObject->drawMethods.end();
-            }
-
-            if(!push) {
-                prevDrawObject->drawMethods.push_back(method);
-                auto& list = m_currentFrameBuffer->m_coordsActionObjects[method.dest.hash()];
-                list.push_back(prevDrawObject);
-            }
-
-            return;
-        }
-    }
-
-    const auto& actionObject = std::make_shared<FrameBuffer::DrawObject>(FrameBuffer::DrawObject{ currentState, nullptr, drawMode, {method} });
-
-    // Look for identical or opaque textures that are greater than or equal to the size of the previous texture and remove.
-    if(method.type == FrameBuffer::DrawMethodType::DRAW_TEXTURED_RECT && !method.dest.isNull() &&
-       currentState.compositionMode != Painter::CompositionMode_Multiply &&
-       texture && currentState.opacity >= 1.f && currentState.color.aF() >= 1.f) {
-        auto& list = m_currentFrameBuffer->m_coordsActionObjects[method.dest.hash()];
-        for(auto& prevAction : list) {
+        if(hasDest) {
+            // Look for identical or opaque textures that are greater than or equal to the size of the previous texture and remove.
             //when it's the same texture, check if the source is the same, because in the case of outfit, the addons use "the same texture"
-            const bool isSameTexture = prevAction->state.texture == texture;
-
-            if(isSameTexture || texture->isOpaque() && prevAction->state.texture->canSuperimposed()) {
-                for(auto itm = prevAction->drawMethods.begin(); itm != prevAction->drawMethods.end(); ++itm) {
-                    auto& prevMethod = *itm;
-                    if(prevMethod.dest == method.dest && (!isSameTexture || prevMethod.rects.second == method.rects.second)) {
-                        prevAction->drawMethods.erase(itm);
-                        break;
-                    }
+            for(auto itm = prevObj->drawMethods.begin(); itm != prevObj->drawMethods.end(); ++itm) {
+                auto& prevMtd = *itm;
+                if(prevMtd.dest == method.dest &&
+                   (sameState && prevMtd.rects.second == method.rects.second || texture->isOpaque() && prevObj->state.texture->canSuperimposed())) {
+                    prevObj->drawMethods.erase(itm);
+                    break;
                 }
             }
         }
 
-        list.push_back(actionObject);
+        if(sameState) {
+            prevObj->drawMode = Painter::DrawMode::Triangles;
+            prevObj->drawMethods.push_back(method);
+            return;
+        }
     }
 
-    m_currentFrameBuffer->m_actions.push_back(actionObject);
+    m_currentFrameBuffer->m_actions
+        .push_back(std::make_shared<FrameBuffer::DrawObject>(FrameBuffer::DrawObject{ currentState, nullptr, drawMode, {method} }));
 }
 
 void DrawPool::draw()
@@ -145,6 +123,7 @@ void DrawPool::draw()
 
     m_actions.clear();
     m_repeatedActions.clear();
+    m_repeatedActionsRef.clear();
 }
 
 void DrawPool::draw(const FrameBufferPtr& frameBuffer, const Rect& dest, const Rect& src)
@@ -162,7 +141,6 @@ void DrawPool::draw(const FrameBufferPtr& frameBuffer, const Rect& dest, const R
         frameBuffer->release();
     }
 
-    frameBuffer->m_coordsActionObjects.clear();
     frameBuffer->m_actions.clear();
 
     frameBuffer->draw(dest, src);
