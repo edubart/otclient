@@ -245,12 +245,9 @@ void Application::registerLuaFunctions()
 
 #ifdef FW_GRAPHICS
     // GraphicalApplication
-    g_lua.bindSingletonFunction("g_app", "setForegroundPaneMaxFps", &GraphicalApplication::setForegroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "setBackgroundPaneMaxFps", &GraphicalApplication::setBackgroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &GraphicalApplication::isOnInputEvent, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getForegroundPaneFps", &GraphicalApplication::getForegroundPaneFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBackgroundPaneFps", &GraphicalApplication::getBackgroundPaneFps, &g_app);
-    g_lua.bindSingletonFunction("g_app", "getForegroundPaneMaxFps", &GraphicalApplication::getForegroundPaneMaxFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getBackgroundPaneMaxFps", &GraphicalApplication::getBackgroundPaneMaxFps, &g_app);
 
     // PlatformWindow
@@ -354,7 +351,7 @@ void Application::registerLuaFunctions()
 
     // UIWidget
     g_lua.registerClass<UIWidget>();
-    g_lua.bindClassStaticFunction<UIWidget>("create", []{ return UIWidgetPtr(new UIWidget); });
+    g_lua.bindClassStaticFunction<UIWidget>("create", [] { return UIWidgetPtr(new UIWidget); });
     g_lua.bindClassMemberFunction<UIWidget>("addChild", &UIWidget::addChild);
     g_lua.bindClassMemberFunction<UIWidget>("insertChild", &UIWidget::insertChild);
     g_lua.bindClassMemberFunction<UIWidget>("removeChild", &UIWidget::removeChild);
@@ -651,18 +648,18 @@ void Application::registerLuaFunctions()
 
     // UIVerticalLayout
     g_lua.registerClass<UIVerticalLayout, UIBoxLayout>();
-    g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent){ return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); } );
+    g_lua.bindClassStaticFunction<UIVerticalLayout>("create", [](UIWidgetPtr parent) { return UIVerticalLayoutPtr(new UIVerticalLayout(parent)); });
     g_lua.bindClassMemberFunction<UIVerticalLayout>("setAlignBottom", &UIVerticalLayout::setAlignBottom);
     g_lua.bindClassMemberFunction<UIVerticalLayout>("isAlignBottom", &UIVerticalLayout::isAlignBottom);
 
     // UIHorizontalLayout
     g_lua.registerClass<UIHorizontalLayout, UIBoxLayout>();
-    g_lua.bindClassStaticFunction<UIHorizontalLayout>("create", [](UIWidgetPtr parent){ return UIHorizontalLayoutPtr(new UIHorizontalLayout(parent)); } );
+    g_lua.bindClassStaticFunction<UIHorizontalLayout>("create", [](UIWidgetPtr parent) { return UIHorizontalLayoutPtr(new UIHorizontalLayout(parent)); });
     g_lua.bindClassMemberFunction<UIHorizontalLayout>("setAlignRight", &UIHorizontalLayout::setAlignRight);
 
     // UIGridLayout
     g_lua.registerClass<UIGridLayout, UILayout>();
-    g_lua.bindClassStaticFunction<UIGridLayout>("create", [](UIWidgetPtr parent){ return UIGridLayoutPtr(new UIGridLayout(parent)); });
+    g_lua.bindClassStaticFunction<UIGridLayout>("create", [](UIWidgetPtr parent) { return UIGridLayoutPtr(new UIGridLayout(parent)); });
     g_lua.bindClassMemberFunction<UIGridLayout>("setCellSize", &UIGridLayout::setCellSize);
     g_lua.bindClassMemberFunction<UIGridLayout>("setCellWidth", &UIGridLayout::setCellWidth);
     g_lua.bindClassMemberFunction<UIGridLayout>("setCellHeight", &UIGridLayout::setCellHeight);
@@ -678,14 +675,14 @@ void Application::registerLuaFunctions()
 
     // UIAnchorLayout
     g_lua.registerClass<UIAnchorLayout, UILayout>();
-    g_lua.bindClassStaticFunction<UIAnchorLayout>("create", [](UIWidgetPtr parent){ return UIAnchorLayoutPtr(new UIAnchorLayout(parent)); } );
+    g_lua.bindClassStaticFunction<UIAnchorLayout>("create", [](UIWidgetPtr parent) { return UIAnchorLayoutPtr(new UIAnchorLayout(parent)); });
     g_lua.bindClassMemberFunction<UIAnchorLayout>("removeAnchors", &UIAnchorLayout::removeAnchors);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("centerIn", &UIAnchorLayout::centerIn);
     g_lua.bindClassMemberFunction<UIAnchorLayout>("fill", &UIAnchorLayout::fill);
 
     // UITextEdit
     g_lua.registerClass<UITextEdit, UIWidget>();
-    g_lua.bindClassStaticFunction<UITextEdit>("create", []{ return UITextEditPtr(new UITextEdit); } );
+    g_lua.bindClassStaticFunction<UITextEdit>("create", [] { return UITextEditPtr(new UITextEdit); });
     g_lua.bindClassMemberFunction<UITextEdit>("setCursorPos", &UITextEdit::setCursorPos);
     g_lua.bindClassMemberFunction<UITextEdit>("setSelection", &UITextEdit::setSelection);
     g_lua.bindClassMemberFunction<UITextEdit>("setCursorVisible", &UITextEdit::setCursorVisible);
@@ -739,13 +736,13 @@ void Application::registerLuaFunctions()
 
     // ParticleEffect
     g_lua.registerClass<ParticleEffectType>();
-    g_lua.bindClassStaticFunction<ParticleEffectType>("create", []{ return ParticleEffectTypePtr(new ParticleEffectType); });
+    g_lua.bindClassStaticFunction<ParticleEffectType>("create", [] { return ParticleEffectTypePtr(new ParticleEffectType); });
     g_lua.bindClassMemberFunction<ParticleEffectType>("getName", &ParticleEffectType::getName);
     g_lua.bindClassMemberFunction<ParticleEffectType>("getDescription", &ParticleEffectType::getDescription);
 
     // UIParticles
     g_lua.registerClass<UIParticles, UIWidget>();
-    g_lua.bindClassStaticFunction<UIParticles>("create", []{ return UIParticlesPtr(new UIParticles); } );
+    g_lua.bindClassStaticFunction<UIParticles>("create", [] { return UIParticlesPtr(new UIParticles); });
     g_lua.bindClassMemberFunction<UIParticles>("addEffect", &UIParticles::addEffect);
 #endif
 
@@ -763,7 +760,7 @@ void Application::registerLuaFunctions()
 
     // Protocol
     g_lua.registerClass<Protocol>();
-    g_lua.bindClassStaticFunction<Protocol>("create", []{ return ProtocolPtr(new Protocol); });
+    g_lua.bindClassStaticFunction<Protocol>("create", [] { return ProtocolPtr(new Protocol); });
     g_lua.bindClassMemberFunction<Protocol>("connect", &Protocol::connect);
     g_lua.bindClassMemberFunction<Protocol>("disconnect", &Protocol::disconnect);
     g_lua.bindClassMemberFunction<Protocol>("isConnected", &Protocol::isConnected);
@@ -780,7 +777,7 @@ void Application::registerLuaFunctions()
 
     // ProtocolHttp
     g_lua.registerClass<ProtocolHttp>();
-    g_lua.bindClassStaticFunction<ProtocolHttp>("create", []{ return ProtocolHttpPtr(new ProtocolHttp); });
+    g_lua.bindClassStaticFunction<ProtocolHttp>("create", [] { return ProtocolHttpPtr(new ProtocolHttp); });
     g_lua.bindClassMemberFunction<ProtocolHttp>("connect", &ProtocolHttp::connect);
     g_lua.bindClassMemberFunction<ProtocolHttp>("disconnect", &ProtocolHttp::disconnect);
     g_lua.bindClassMemberFunction<ProtocolHttp>("send", &ProtocolHttp::send);
@@ -788,7 +785,7 @@ void Application::registerLuaFunctions()
 
     // InputMessage
     g_lua.registerClass<InputMessage>();
-    g_lua.bindClassStaticFunction<InputMessage>("create", []{ return InputMessagePtr(new InputMessage); });
+    g_lua.bindClassStaticFunction<InputMessage>("create", [] { return InputMessagePtr(new InputMessage); });
     g_lua.bindClassMemberFunction<InputMessage>("setBuffer", &InputMessage::setBuffer);
     g_lua.bindClassMemberFunction<InputMessage>("getBuffer", &InputMessage::getBuffer);
     g_lua.bindClassMemberFunction<InputMessage>("skipBytes", &InputMessage::skipBytes);
@@ -809,7 +806,7 @@ void Application::registerLuaFunctions()
 
     // OutputMessage
     g_lua.registerClass<OutputMessage>();
-    g_lua.bindClassStaticFunction<OutputMessage>("create", []{ return OutputMessagePtr(new OutputMessage); });
+    g_lua.bindClassStaticFunction<OutputMessage>("create", [] { return OutputMessagePtr(new OutputMessage); });
     g_lua.bindClassMemberFunction<OutputMessage>("setBuffer", &OutputMessage::setBuffer);
     g_lua.bindClassMemberFunction<OutputMessage>("getBuffer", &OutputMessage::getBuffer);
     g_lua.bindClassMemberFunction<OutputMessage>("reset", &OutputMessage::reset);
@@ -886,7 +883,7 @@ void Application::registerLuaFunctions()
 
     // MySQL
     g_lua.registerClass<DatabaseMySQL, Database>();
-    g_lua.bindClassStaticFunction<DatabaseMySQL>("create", []{ return DatabaseMySQLPtr(new DatabaseMySQL); });
+    g_lua.bindClassStaticFunction<DatabaseMySQL>("create", [] { return DatabaseMySQLPtr(new DatabaseMySQL); });
     g_lua.bindClassMemberFunction<DatabaseMySQL>("connect", &DatabaseMySQL::connect);
     g_lua.bindClassMemberFunction<DatabaseMySQL>("beginTransaction", &DatabaseMySQL::beginTransaction);
     g_lua.bindClassMemberFunction<DatabaseMySQL>("rollback", &DatabaseMySQL::rollback);

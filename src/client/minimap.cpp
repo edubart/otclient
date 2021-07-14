@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "minimap.h"
 #include "tile.h"
 
@@ -32,6 +31,7 @@
 #include <framework/graphics/image.h>
 #include <framework/graphics/painter.h>
 #include <framework/graphics/texture.h>
+#include <framework/graphics/drawpool.h>
 
 Minimap g_minimap;
 
@@ -106,7 +106,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     g_painter->saveState();
     g_painter->setColor(color);
-    g_painter->drawFilledRect(screenRect);
+    g_drawPool.addFilledRect(screenRect);
     g_painter->resetColor();
     g_painter->setClipRect(screenRect);
 
@@ -140,9 +140,9 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
                 Rect dest(Point(xs, ys), src.size() * scale);
 
                 tex->setSmooth(scale < 1.0f);
-                g_painter->drawTexturedRect(dest, tex, src);
+                g_drawPool.addTexturedRect(dest, tex, src);
             }
-            //g_painter->drawBoundingRect(Rect(xs,ys, MMBLOCK_SIZE * scale, MMBLOCK_SIZE * scale));
+            //g_drawPool.addBoundingRect(Rect(xs,ys, MMBLOCK_SIZE * scale, MMBLOCK_SIZE * scale));
         }
     }
 

@@ -29,30 +29,31 @@
 class CachedText
 {
 public:
-    CachedText();
+	CachedText();
 
-    void draw(const Rect& rect);
+	void draw(const Rect& rect);
 
-    void wrapText(int maxWidth);
-    void setFont(const BitmapFontPtr& font) { m_font = font; update(); }
-    void setText(const std::string& text) { m_text = text; update(); }
-    void setAlign(Fw::AlignmentFlag align) { m_align = align; update(); }
+	void wrapText(int maxWidth);
+	void setFont(const BitmapFontPtr& font) { m_font = font; update(); }
+	void setText(const std::string& text) { m_text = text; update(); }
+	void setAlign(Fw::AlignmentFlag align) { m_align = align; update(); }
 
-    Size getTextSize() { return m_textSize; }
-    std::string getText() const { return m_text; }
-    BitmapFontPtr getFont() const { return m_font; }
-    Fw::AlignmentFlag getAlign() { return m_align; }
+	Size getTextSize() { return m_textSize; }
+	std::string getText() const { return m_text; }
+	BitmapFontPtr getFont() const { return m_font; }
+	Fw::AlignmentFlag getAlign() { return m_align; }
 
 private:
-    void update();
+	void update();
 
-    std::string m_text;
-    Size m_textSize;
-    stdext::boolean<true> m_textMustRecache;
-    CoordsBuffer m_textCoordsBuffer;
-    Rect m_textCachedScreenCoords;
-    BitmapFontPtr m_font;
-    Fw::AlignmentFlag m_align;
+	std::string m_text;
+	Size m_textSize;
+	CoordsBuffer m_textCoordsBuffer;
+	Rect m_textCachedScreenCoords;
+	BitmapFontPtr m_font;
+	Fw::AlignmentFlag m_align;
+
+	std::hash<size_t> HASH_INT;
 };
 
 #endif

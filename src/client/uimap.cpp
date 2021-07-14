@@ -22,6 +22,7 @@
 
 #include "uimap.h"
 #include <framework/graphics/graphics.h>
+#include <framework/graphics/drawpool.h>
 #include <framework/otml/otml.h>
 #include "game.h"
 #include "localplayer.h"
@@ -54,13 +55,13 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
     if(drawPane & Fw::ForegroundPane) {
         // draw map border
         g_painter->setColor(Color::black);
-        g_painter->drawBoundingRect(m_mapRect.expanded(1));
+        g_drawPool.addBoundingRect(m_mapRect.expanded(1));
 
         if(drawPane != Fw::BothPanes) {
-            glDisable(GL_BLEND);
             g_painter->setColor(Color::alpha);
-            g_painter->drawFilledRect(m_mapRect);
-            glEnable(GL_BLEND);
+            g_drawPool.addAction([]() {glDisable(GL_BLEND); });
+            g_drawPool.addFilledRect(m_mapRect);
+            g_drawPool.addAction([]() {glEnable(GL_BLEND); });
         }
     }
 
@@ -217,8 +218,6 @@ void UIMap::updateVisibleDimension()
 
     if(m_keepAspectRatio)
         updateMapSize();
-
-    g_map.schedulePainting(Otc::FUpdateAll, FrameBuffer::FORCE_UPDATE);
 }
 
 void UIMap::updateMapSize()
@@ -239,9 +238,6 @@ void UIMap::updateMapSize()
 
     if(!m_keepAspectRatio)
         updateVisibleDimension();
-    else {
-        g_map.schedulePainting(Otc::FUpdateAll, FrameBuffer::FORCE_UPDATE);
-    }
 }
 
 /* vim: set ts=4 sw=4 et: */

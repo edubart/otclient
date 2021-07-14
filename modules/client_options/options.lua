@@ -94,8 +94,6 @@ function init()
     options[k] = v
   end
 
-  g_app.setForegroundPaneMaxFps(20)
-
   optionsWindow = g_ui.displayUI('options')
   optionsWindow:hide()
 

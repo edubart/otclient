@@ -152,8 +152,6 @@ public:
 
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
 
-    void cancelScheduledPainting();
-
     bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
 
     bool isCovered() { return m_covered; };
@@ -213,8 +211,6 @@ private:
     stdext::boolean<false> m_covered,
         m_completelyCovered,
         m_isBorder;
-
-
 };
 
 #endif

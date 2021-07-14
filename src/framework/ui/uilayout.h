@@ -27,22 +27,24 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 
-// @bindclass
+#include <utility>
+
+ // @bindclass
 class UILayout : public LuaObject
 {
 public:
-    UILayout(UIWidgetPtr parentWidget) : m_parentWidget(parentWidget) { m_updateDisabled = 0; }
+    UILayout(UIWidgetPtr parentWidget) : m_parentWidget(std::move(parentWidget)) { m_updateDisabled = 0; }
 
     void update();
     void updateLater();
 
-    virtual void applyStyle(const OTMLNodePtr& /*styleNode*/) { }
-    virtual void addWidget(const UIWidgetPtr& /*widget*/) { }
-    virtual void removeWidget(const UIWidgetPtr& /*widget*/) { }
+    virtual void applyStyle(const OTMLNodePtr& /*styleNode*/) {}
+    virtual void addWidget(const UIWidgetPtr& /*widget*/) {}
+    virtual void removeWidget(const UIWidgetPtr& /*widget*/) {}
     void disableUpdates() { m_updateDisabled++; }
-    void enableUpdates() { m_updateDisabled = std::max<int>(m_updateDisabled-1,0); }
+    void enableUpdates() { m_updateDisabled = std::max<int>(m_updateDisabled - 1, 0); }
 
-    void setParent(UIWidgetPtr parentWidget) { m_parentWidget = parentWidget; }
+    void setParent(UIWidgetPtr parentWidget) { m_parentWidget = std::move(parentWidget); }
     UIWidgetPtr getParentWidget() { return m_parentWidget; }
 
     bool isUpdateDisabled() { return m_updateDisabled > 0; }
@@ -58,8 +60,8 @@ protected:
     virtual bool internalUpdate() { return false; }
 
     int m_updateDisabled;
-    stdext::boolean<false> m_updating;
-    stdext::boolean<false> m_updateScheduled;
+    bool m_updating{ false },
+        m_updateScheduled{ false };
     UIWidgetPtr m_parentWidget;
 };
 

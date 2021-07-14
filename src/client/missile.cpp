@@ -63,7 +63,7 @@ void Missile::draw(const Point& dest, float scaleFactor, int frameFlag, LightVie
     }
 
     const float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, false, frameFlag, lightView);
+    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, TextureType::NONE, frameFlag, lightView);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -87,8 +87,6 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     // schedule removal
     const auto self = asMissile();
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
-
-    schedulePainting(getAnimationInterval());
 }
 
 int Missile::getAnimationInterval()

@@ -23,6 +23,12 @@
 #ifndef THINGTYPE_H
 #define THINGTYPE_H
 
+enum class TextureType {
+    NONE,
+    SMOOTH,
+    ALL_BLANK
+};
+
 #include "animator.h"
 #include "declarations.h"
 
@@ -137,7 +143,7 @@ public:
     void serialize(const FileStreamPtr& fin);
     void exportImage(const std::string& fileName);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags = Otc::FUpdateThing, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, int frameFlags = Otc::FUpdateThing, LightView* lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -219,7 +225,7 @@ public:
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
     int getExactHeight();
-    const TexturePtr& getTexture(int animationPhase, bool allBlank = false);
+    const TexturePtr& getTexture(int animationPhase, const TextureType txtType = TextureType::NONE);
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }
@@ -248,8 +254,11 @@ private:
     std::string m_customImage;
 
     std::vector<int> m_spritesIndex;
-    std::vector<TexturePtr> m_textures;
-    std::vector<TexturePtr> m_blankTextures;
+
+    std::vector<TexturePtr> m_textures,
+        m_blankTextures,
+        m_smoothTextures;
+
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;

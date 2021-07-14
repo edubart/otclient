@@ -28,7 +28,7 @@
 #include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
 
-//@bindsingleton g_ui
+ //@bindsingleton g_ui
 class UIManager
 {
 public:
@@ -84,12 +84,11 @@ private:
     UIWidgetPtr m_draggingWidget;
     UIWidgetPtr m_hoveredWidget;
     UIWidgetPtr m_pressedWidget;
-    stdext::boolean<false> m_hoverUpdateScheduled;
-    stdext::boolean<false> m_drawDebugBoxes;
+    bool m_hoverUpdateScheduled{ false },
+        m_drawDebugBoxes{ false };
     std::unordered_map<std::string, OTMLNodePtr> m_styles;
     UIWidgetList m_destroyedWidgets;
     ScheduledEventPtr m_checkEvent;
-
 };
 
 extern UIManager g_ui;

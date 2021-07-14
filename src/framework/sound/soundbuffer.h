@@ -31,7 +31,7 @@ class SoundBuffer : public stdext::shared_object
 {
 public:
     SoundBuffer();
-    ~SoundBuffer();
+    ~SoundBuffer() override;
 
     bool fillBuffer(const SoundFilePtr& soundFile);
     bool fillBuffer(ALenum sampleFormat, const DataBuffer<char>& data, int size, int rate);

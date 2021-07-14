@@ -27,21 +27,19 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/core/application.h>
-
-#include <client/features.h>
+#include <framework/graphics/drawpool.h>
 
 uint FrameBuffer::boundFbo = 0;
 
-FrameBuffer::FrameBuffer()
+FrameBuffer::FrameBuffer(const bool useAlphaWriting)
 {
     internalCreate();
-    m_minTimeUpdate = MIN_TIME_UPDATE;
+    m_useAlphaWriting = useAlphaWriting;
 }
 
 void FrameBuffer::internalCreate()
 {
     m_prevBoundFbo = 0;
-    m_requestAmount = 0;
     m_fbo = 0;
     if(g_graphics.canUseFBO()) {
         glGenFramebuffers(1, &m_fbo);
@@ -59,6 +57,17 @@ FrameBuffer::~FrameBuffer()
         glDeleteFramebuffers(1, &m_fbo);
 }
 
+void FrameBuffer::clear(const Color color)
+{
+    if(m_useAlphaWriting) {
+        g_painter->clear(Color::alpha);
+    } else {
+        g_painter->setColor(color);
+        g_painter->drawFilledRect(Rect(0, 0, getSize()));
+        g_painter->resetColor();
+    }
+}
+
 void FrameBuffer::resize(const Size& size)
 {
     assert(size.isValid());
@@ -74,7 +83,7 @@ void FrameBuffer::resize(const Size& size)
         internalBind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
-        GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if(status != GL_FRAMEBUFFER_COMPLETE)
             g_logger.fatal("Unable to setup framebuffer object");
         internalRelease();
@@ -86,44 +95,33 @@ void FrameBuffer::resize(const Size& size)
     }
 }
 
-void FrameBuffer::bind()
+void FrameBuffer::bind(const bool autoClear)
 {
     g_painter->saveAndResetState();
     internalBind();
     g_painter->setResolution(m_texture->getSize());
+    g_painter->setAlphaWriting(m_useAlphaWriting);
+
+    if(autoClear) clear(m_colorClear);
 }
 
 void FrameBuffer::release()
 {
     internalRelease();
     g_painter->restoreSavedState();
-
-
-    m_forceUpdate = false;
-    m_lastRenderedTime.restart();
-
-#if SCHEDULE_PAINTING    
-    m_requestAmount = 0;
-#endif
-}
-
-void FrameBuffer::draw()
-{
-    if(!m_drawable) return;
-    Rect rect(0, 0, getSize());
-    g_painter->drawTexturedRect(rect, m_texture, rect);
 }
 
 void FrameBuffer::draw(const Rect& dest, const Rect& src)
 {
-    if(!m_drawable) return;
-    g_painter->drawTexturedRect(dest, m_texture, src);
-}
+    Rect _dest(0, 0, getSize()), _src = _dest;
+    if(dest.isValid()) _dest = dest;
+    if(src.isValid()) _src = src;
 
-void FrameBuffer::draw(const Rect& dest)
-{
-    if(!m_drawable) return;
-    g_painter->drawTexturedRect(dest, m_texture, Rect(0, 0, getSize()));
+    if(m_disableBlend) glDisable(GL_BLEND);
+    g_painter->setCompositionMode(m_compositeMode);
+    g_painter->drawTexturedRect(_dest, m_texture, _src);
+    g_painter->resetCompositionMode();
+    if(m_disableBlend) glEnable(GL_BLEND);
 }
 
 void FrameBuffer::internalBind()
@@ -172,71 +170,65 @@ Size FrameBuffer::getSize()
     return m_texture->getSize();
 }
 
-bool FrameBuffer::canUpdate()
+size_t FrameBuffer::updateHash(const TexturePtr& texture, const DrawMethod& method)
 {
-    if(SCHEDULE_PAINTING && m_schedulePaintingEnabled)
-        return (m_forceUpdate || ((m_requestAmount > 0) && (m_lastRenderedTime.ticksElapsed() >= flushTime())));
-    else
-        return (m_forceUpdate || m_lastRenderedTime.ticksElapsed() >= flushTime());
-}
+    const auto& currentState = g_painter->getCurrentState();
 
-void FrameBuffer::update()
-{
-    if(SCHEDULE_PAINTING && m_schedulePaintingEnabled)
-        ++m_requestAmount;
-}
+    size_t hash = 0;
 
-uint16_t FrameBuffer::flushTime()
-{
-#if FLUSH_CONTROL_FOR_RENDERING == 1
-    return std::min<uint16_t>(m_minTimeUpdate + std::floor<uint16_t>(m_requestAmount / m_minTimeUpdate), m_minTimeUpdate * 3);
-#else
-    return m_minTimeUpdate;
-#endif
-}
+    if(texture)
+        boost::hash_combine(hash, HASH_INT(texture->getId()));
 
-void FrameBuffer::schedulePainting(const uint16_t time)
-{
-    if(time == 0) return;
+    if(currentState.opacity < 1.f)
+        boost::hash_combine(hash, HASH_INT(currentState.opacity));
 
-    if(time == FORCE_UPDATE) {
-        m_forceUpdate = true;
-        return;
+    if(currentState.color != Color::white)
+        boost::hash_combine(hash, HASH_INT(currentState.color.rgba()));
+
+    if(currentState.compositionMode != Painter::CompositionMode_Normal)
+        boost::hash_combine(hash, HASH_INT(currentState.compositionMode));
+
+    if(currentState.shaderProgram)
+        boost::hash_combine(hash, HASH_INT(currentState.shaderProgram->getProgramId()));
+
+    if(currentState.clipRect.isValid()) {
+        boost::hash_combine(hash, HASH_INT(currentState.clipRect.x()));
+        boost::hash_combine(hash, HASH_INT(currentState.clipRect.y()));
     }
 
-    if(SCHEDULE_PAINTING == 0 || !m_schedulePaintingEnabled) return;
-
-    if(time <= m_minTimeUpdate) {
-        update();
-        return;
+    if(method.rects.first.isValid()) {
+        boost::hash_combine(hash, HASH_INT(method.rects.first.x()));
+        boost::hash_combine(hash, HASH_INT(method.rects.first.y()));
+    }
+    if(method.rects.second.isValid()) {
+        boost::hash_combine(hash, HASH_INT(method.rects.second.x()));
+        boost::hash_combine(hash, HASH_INT(method.rects.second.y()));
     }
 
-    auto& schedule = m_schedules[time];
-    if(schedule.first == 0) {
-        schedule.second = g_dispatcher.cycleEvent([=]() {
-#if FORCE_ANIMATED_RENDERING == 1
-            m_forceUpdate = true;
-#else
-            update();
-#endif
-        }, time);
+    const auto& a = std::get<0>(method.points),
+        b = std::get<1>(method.points),
+        c = std::get<2>(method.points);
+
+    if(!a.isNull()) {
+        boost::hash_combine(hash, HASH_INT(a.x));
+        boost::hash_combine(hash, HASH_INT(a.y));
+    }
+    if(!b.isNull()) {
+        boost::hash_combine(hash, HASH_INT(b.x));
+        boost::hash_combine(hash, HASH_INT(b.y));
+    }
+    if(!c.isNull()) {
+        boost::hash_combine(hash, HASH_INT(c.x));
+        boost::hash_combine(hash, HASH_INT(c.y));
     }
 
-    ++schedule.first;
-}
+    if(method.intValue != 0)
+        boost::hash_combine(hash, HASH_INT(method.intValue));
 
-void FrameBuffer::removeRenderingTime(const uint16_t time)
-{
-#if SCHEDULE_PAINTING
-    auto& schedule = m_schedules[time];
-    if(schedule.first == 0) return;
+    if(method.floatValue != 0)
+        boost::hash_combine(hash, HASH_FLOAT(method.floatValue));
 
-    --schedule.first;
-    if(schedule.first == 0 && schedule.second) {
-        schedule.second->cancel();
-        schedule.second = nullptr;
-    }
-#else
-    time;
-#endif
+    boost::hash_combine(m_status.second, hash);
+
+    return hash;
 }

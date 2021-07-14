@@ -31,11 +31,11 @@ class UIParticles : public UIWidget
 public:
     UIParticles();
 
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
     void addEffect(const std::string& name);
 
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     void setReferencePos(const PointF& point) { m_referencePos = point; }
     PointF getReferencePos() { return m_referencePos; }

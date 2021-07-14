@@ -25,77 +25,131 @@
 
 #include "declarations.h"
 #include "texture.h"
+#include "painter.h"
 #include <framework/core/scheduledevent.h>
 #include <framework/core/timer.h>
 #include <client/const.h>
 
-static constexpr int32_t MAX_NODES = 512;
+enum class DrawMethodType {
+    DRAW_FILL_COORDS,
+    DRAW_TEXTURE_COORDS,
+    DRAW_TEXTURED_RECT,
+    DRAW_UPSIDEDOWN_TEXTURED_RECT,
+    DRAW_REPEATED_TEXTURED_RECT,
+    DRAW_FILLED_RECT,
+    DRAW_FILLED_TRIANGLE,
+    DRAW_BOUNDING_RECT,
+    CLEAR_AREA,
+    GL_DISABLE,
+    GL_ENABLE
+};
 
 class FrameBuffer : public stdext::shared_object
 {
-protected:
-    FrameBuffer();
-
-    friend class FrameBufferManager;
-
 public:
-    const static uint8_t
-        MIN_TIME_UPDATE = 16,
-        FORCE_UPDATE = 1,
-        FLUSH_AMOUNT = 25;
+    struct CoordsBufferCache {
+        size_t currentHash{ 0 }, lastHash{ 0 };
+        std::vector<std::pair<Rect, Rect>> rects;
+        CoordsBuffer coordsBuffer;
+        TexturePtr texture;
+    };
 
-    virtual ~FrameBuffer();
+    ~FrameBuffer() override;
 
-    void resize(const Size& size);
-    void bind();
     void release();
-    void draw();
-    void draw(const Rect& dest);
+    void resize(const Size& size);
+    void bind(bool autoClear = true);
+    void clear(Color color = Color::black);
     void draw(const Rect& dest, const Rect& src);
 
+    void setSmooth(bool enabled) { m_smooth = enabled; m_texture = nullptr; }
     void setBackuping(bool enabled) { m_backuping = enabled; }
-    void setSmooth(bool enabled) { m_smooth = enabled; }
-    void setDrawable(bool enabled) { m_drawable = enabled; }
 
     TexturePtr getTexture() { return m_texture; }
     Size getSize();
+
     bool isBackuping() { return m_backuping; }
     bool isSmooth() { return m_smooth; }
-    bool isDrawable() { return m_drawable; }
 
-    bool canUpdate();
-    void update();
-    void schedulePainting(const uint16_t time);
-    void removeRenderingTime(const uint16_t time);
-    void cleanTexture() { m_texture = nullptr; }
+    void setColorClear(const Color color) { m_colorClear = color; }
+    void setCompositionMode(const Painter::CompositionMode mode) { m_compositeMode = mode; }
+    void disableBlend() { m_disableBlend = true; }
 
-    void useSchedulePainting(const bool use) { m_schedulePaintingEnabled = use; }
-    void setMinTimeUpdate(const uint16 time) { m_minTimeUpdate = time; }
+    void setDrawable(const bool v) { m_drawable = v; }
+    bool isDrawable() const { return m_drawable && m_texture != nullptr; }
+
+protected:
+    FrameBuffer(bool useAlphaWriting);
+
+    friend class FrameBufferManager;
+    friend class DrawPool;
 
 private:
+    enum class DrawMethodType {
+        DRAW_FILL_COORDS,
+        DRAW_TEXTURE_COORDS,
+        DRAW_TEXTURED_RECT,
+        DRAW_UPSIDEDOWN_TEXTURED_RECT,
+        DRAW_REPEATED_TEXTURED_RECT,
+        DRAW_REPEATED_FILLED_RECT,
+        DRAW_FILLED_RECT,
+        DRAW_FILLED_TRIANGLE,
+        DRAW_BOUNDING_RECT
+    };
+
+    struct DrawMethod {
+        DrawMethodType type;
+        std::pair<Rect, Rect> rects;
+        std::tuple<Point, Point, Point> points;
+        Point dest;
+        uint64 intValue{ 0 };
+        float floatValue{ .0f };
+    };
+
+    struct DrawObject {
+        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; }
+
+        Painter::PainterState state;
+        std::shared_ptr<CoordsBuffer> coordsBuffer;
+        Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
+        std::vector<DrawMethod> drawMethods;
+
+        std::function<void()> action;
+    };
+
     void internalCreate();
     void internalBind();
     void internalRelease();
+    void updateStatus() { m_status.first = m_status.second; }
+    void resetCurrentStatus() { m_status.second = 0; }
+    bool hasModification() const { return m_status.first != m_status.second; }
 
-    uint16_t flushTime();
-
-    TexturePtr m_texture;
-    TexturePtr m_screenBackup;
-    Size m_oldViewportSize;
-    uint m_fbo;
-    uint m_prevBoundFbo;
-    stdext::boolean<true> m_forceUpdate;
-    stdext::boolean<true> m_backuping;
-    stdext::boolean<true> m_smooth;
-    stdext::boolean<true> m_drawable;
-    stdext::boolean<true> m_schedulePaintingEnabled;
+    size_t updateHash(const TexturePtr& texture, const DrawMethod& method);
 
     static uint boundFbo;
 
-    std::unordered_map<uint16_t, std::pair<uint16_t, ScheduledEventPtr>> m_schedules;
-    Timer m_lastRenderedTime;
-    uint16_t m_requestAmount;
-    uint16 m_minTimeUpdate;
+    TexturePtr m_texture, m_screenBackup;
+
+    Size m_oldViewportSize;
+
+    uint32 m_fbo, m_prevBoundFbo;
+
+    Color m_colorClear = { Color::black };
+    Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
+
+    std::vector<std::shared_ptr<DrawObject>> m_actions;
+    std::unordered_map<size_t, std::vector<std::shared_ptr<DrawObject>>> m_coordsActionObjects;
+
+    std::pair<size_t, size_t> m_status{ 0,0 };
+
+    bool m_backuping{ true },
+        m_smooth{ true },
+        m_useAlphaWriting{ false },
+        m_disableBlend{ false },
+        m_drawable{ true };
+
+    std::hash<size_t> HASH_INT;
+    std::hash<float> HASH_FLOAT;
 };
 
 #endif

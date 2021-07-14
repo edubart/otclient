@@ -33,6 +33,8 @@
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/core/timer.h>
 
+#include "framework/stdext/math.h"
+
 template<typename T = int>
 struct EdgeGroup {
     EdgeGroup() { top = right = bottom = left = T(0); }
@@ -46,10 +48,10 @@ struct EdgeGroup {
 // @bindclass
 class UIWidget : public LuaObject
 {
-// widget core
+    // widget core
 public:
     UIWidget();
-    virtual ~UIWidget();
+    ~UIWidget() override;
 
 protected:
     virtual void draw(const Rect& visibleRect, Fw::DrawPane drawPane);
@@ -61,14 +63,14 @@ protected:
     std::string m_id;
     Rect m_rect;
     Point m_virtualOffset;
-    stdext::boolean<true> m_enabled;
-    stdext::boolean<true> m_visible;
-    stdext::boolean<true> m_focusable;
-    stdext::boolean<false> m_fixedSize;
-    stdext::boolean<false> m_phantom;
-    stdext::boolean<false> m_draggable;
-    stdext::boolean<false> m_destroyed;
-    stdext::boolean<false> m_clipping;
+    bool m_enabled{ true },
+        m_visible{ true },
+        m_focusable{ true },
+        m_fixedSize{ false },
+        m_phantom{ false },
+        m_draggable{ false },
+        m_destroyed{ false },
+        m_clipping{ false };
     UILayoutPtr m_layout;
     UIWidgetPtr m_parent;
     UIWidgetList m_children;
@@ -82,12 +84,12 @@ protected:
 public:
     void addChild(const UIWidgetPtr& child);
     void insertChild(int index, const UIWidgetPtr& child);
-    void removeChild(UIWidgetPtr child);
+    void removeChild(const UIWidgetPtr& child);
     void focusChild(const UIWidgetPtr& child, Fw::FocusReason reason);
     void focusNextChild(Fw::FocusReason reason, bool rotate = false);
     void focusPreviousChild(Fw::FocusReason reason, bool rotate = false);
-    void lowerChild(UIWidgetPtr child);
-    void raiseChild(UIWidgetPtr child);
+    void lowerChild(const UIWidgetPtr& child);
+    void raiseChild(const UIWidgetPtr& child);
     void moveChildToIndex(const UIWidgetPtr& child, int index);
     void lockChild(const UIWidgetPtr& child);
     void unlockChild(const UIWidgetPtr& child);
@@ -156,11 +158,10 @@ public:
     UIWidgetPtr backwardsGetWidgetById(const std::string& id);
 
 private:
-    stdext::boolean<false> m_updateEventScheduled;
-    stdext::boolean<false> m_loadingStyle;
+    bool m_updateEventScheduled{ false },
+        m_loadingStyle{ false };
 
-
-// state managment
+    // state managment
 protected:
     bool setState(Fw::WidgetState state, bool on);
     bool hasState(Fw::WidgetState state);
@@ -172,13 +173,12 @@ private:
     void updateChildrenIndexStates();
     void updateStyle();
 
-    stdext::boolean<false> m_updateStyleScheduled;
-    stdext::boolean<true> m_firstOnStyle;
+    bool m_updateStyleScheduled{ false };
+    bool m_firstOnStyle{ true };
     OTMLNodePtr m_stateStyle;
     int m_states;
 
-
-// event processing
+    // event processing
 protected:
     virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
@@ -211,8 +211,7 @@ protected:
     bool propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widgetList);
     bool propagateOnMouseMove(const Point& mousePos, const Point& mouseMoved, UIWidgetList& widgetList);
 
-
-// function shortcuts
+    // function shortcuts
 public:
     void resize(int width, int height) { setRect(Rect(getPosition(), Size(width, height))); }
     void move(int x, int y) { setRect(Rect(x, y, getSize())); }
@@ -267,8 +266,7 @@ public:
     std::string getStyleName() { return m_style->tag(); }
     Point getLastClickPosition() { return m_lastClickPosition; }
 
-
-// base style
+    // base style
 private:
     void initBaseStyle();
     void parseBaseStyle(const OTMLNodePtr& styleNode);
@@ -394,8 +392,7 @@ public:
     float getOpacity() { return m_opacity; }
     float getRotation() { return m_rotation; }
 
-
-// image
+    // image
 private:
     void initImage();
     void parseImageStyle(const OTMLNodePtr& styleNode);
@@ -405,8 +402,8 @@ private:
 
     CoordsBuffer m_imageCoordsBuffer;
     Rect m_imageCachedScreenCoords;
-    stdext::boolean<true> m_imageMustRecache;
-    stdext::boolean<false> m_imageBordered;
+    bool m_imageMustRecache{ true },
+        m_imageBordered{ false };
 
 protected:
     void drawImage(const Rect& screenCoords);
@@ -416,10 +413,10 @@ protected:
     Rect m_imageRect;
     Color m_imageColor;
     Point m_iconOffset;
-    stdext::boolean<false> m_imageFixedRatio;
-    stdext::boolean<false> m_imageRepeated;
-    stdext::boolean<false> m_imageSmooth;
-    stdext::boolean<false> m_imageAutoResize;
+    bool m_imageFixedRatio{ false },
+        m_imageRepeated{ false },
+        m_imageSmooth{ false },
+        m_imageAutoResize{ false };
     EdgeGroup<int> m_imageBorder;
 
 public:
@@ -462,12 +459,12 @@ public:
     int getImageTextureWidth() { return m_imageTexture ? m_imageTexture->getWidth() : 0; }
     int getImageTextureHeight() { return m_imageTexture ? m_imageTexture->getHeight() : 0; }
 
-// text related
+    // text related
 private:
     void initText();
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
-    stdext::boolean<true> m_textMustRecache;
+    bool m_textMustRecache{ true };
     CoordsBuffer m_textCoordsBuffer;
     Rect m_textCachedScreenCoords;
 
@@ -482,10 +479,10 @@ protected:
     std::string m_drawText;
     Fw::AlignmentFlag m_textAlign;
     Point m_textOffset;
-    stdext::boolean<false> m_textWrap;
-    stdext::boolean<false> m_textVerticalAutoResize;
-    stdext::boolean<false> m_textHorizontalAutoResize;
-    stdext::boolean<false> m_textOnlyUpperCase;
+    bool m_textWrap{ false },
+        m_textVerticalAutoResize{ false },
+        m_textHorizontalAutoResize{ false },
+        m_textOnlyUpperCase{ false };
     BitmapFontPtr m_font;
 
 public:

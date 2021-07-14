@@ -23,13 +23,17 @@
 #ifndef UIANCHORLAYOUT_H
 #define UIANCHORLAYOUT_H
 
+#include <utility>
+
 #include "uilayout.h"
 
 class UIAnchor : public stdext::shared_object
 {
 public:
-    UIAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge) :
-        m_anchoredEdge(anchoredEdge), m_hookedEdge(hookedEdge), m_hookedWidgetId(hookedWidgetId) { }
+    UIAnchor(Fw::AnchorEdge anchoredEdge, std::string hookedWidgetId, Fw::AnchorEdge hookedEdge) :
+        m_anchoredEdge(anchoredEdge), m_hookedEdge(hookedEdge), m_hookedWidgetId(std::move(hookedWidgetId))
+    {
+    }
 
     Fw::AnchorEdge getAnchoredEdge() const { return m_anchoredEdge; }
     Fw::AnchorEdge getHookedEdge() const { return m_hookedEdge; }
@@ -46,7 +50,7 @@ protected:
 class UIAnchorGroup : public stdext::shared_object
 {
 public:
-    UIAnchorGroup() : m_updated(true) { }
+    UIAnchorGroup() = default;
 
     void addAnchor(const UIAnchorPtr& anchor);
     const UIAnchorList& getAnchors() { return m_anchors; }
@@ -55,14 +59,14 @@ public:
 
 private:
     UIAnchorList m_anchors;
-    bool m_updated;
+    bool m_updated{ true };
 };
 
 // @bindclass
 class UIAnchorLayout : public UILayout
 {
 public:
-    UIAnchorLayout(UIWidgetPtr parentWidget) : UILayout(parentWidget) { }
+    UIAnchorLayout(UIWidgetPtr parentWidget) : UILayout(std::move(parentWidget)) {}
 
     void addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
                    const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
@@ -71,13 +75,13 @@ public:
     void centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
     void fill(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
 
-    void addWidget(const UIWidgetPtr& widget);
-    void removeWidget(const UIWidgetPtr& widget);
+    void addWidget(const UIWidgetPtr& widget) override;
+    void removeWidget(const UIWidgetPtr& widget) override;
 
-    bool isUIAnchorLayout() { return true; }
+    bool isUIAnchorLayout() override { return true; }
 
 protected:
-    virtual bool internalUpdate();
+    bool internalUpdate() override;
     virtual bool updateWidget(const UIWidgetPtr& widget, const UIAnchorGroupPtr& anchorGroup, UIWidgetPtr first = nullptr);
     std::unordered_map<UIWidgetPtr, UIAnchorGroupPtr> m_anchorsGroups;
 };

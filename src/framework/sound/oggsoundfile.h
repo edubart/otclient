@@ -31,12 +31,12 @@ class OggSoundFile : public SoundFile
 {
 public:
     OggSoundFile(const FileStreamPtr& fileStream);
-    virtual ~OggSoundFile();
+    ~OggSoundFile() override;
 
     bool prepareOgg();
 
-    int read(void *buffer, int bufferSize);
-    void reset();
+    int read(void* buffer, int bufferSize) override;
+    void reset() override;
 
 private:
     static size_t cb_read(void* ptr, size_t size, size_t nmemb, void* source);

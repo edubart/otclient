@@ -26,116 +26,116 @@
 #include <framework/graphics/painter.h>
 #include <framework/graphics/framebuffer.h>
 #include <framework/core/application.h>
+#include <framework/graphics/drawpool.h>
 
 void UIWidget::initText()
 {
-    m_font = g_fonts.getDefaultFont();
-    m_textAlign = Fw::AlignCenter;
-    m_textCoordsBuffer.enableHardwareCaching();
+	m_font = g_fonts.getDefaultFont();
+	m_textAlign = Fw::AlignCenter;
 }
 
 void UIWidget::updateText()
 {
-    if(m_textWrap && m_rect.isValid())
-        m_drawText = m_font->wrapText(m_text, getWidth() - m_textOffset.x);
-    else
-        m_drawText = m_text;
+	if(m_textWrap && m_rect.isValid())
+		m_drawText = m_font->wrapText(m_text, getWidth() - m_textOffset.x);
+	else
+		m_drawText = m_text;
 
-    // update rect size
-    if(!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
-        Size textBoxSize = getTextSize();
-        textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
-        Size size = getSize();
-        if(size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
-            size.setWidth(textBoxSize.width());
-        if(size.height() <= 0 || m_textVerticalAutoResize)
-            size.setHeight(textBoxSize.height());
-        setSize(size);
-    }
+	// update rect size
+	if(!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
+		Size textBoxSize = getTextSize();
+		textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
+		Size size = getSize();
+		if(size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
+			size.setWidth(textBoxSize.width());
+		if(size.height() <= 0 || m_textVerticalAutoResize)
+			size.setHeight(textBoxSize.height());
+		setSize(size);
+	}
 
-    m_textMustRecache = true;
+	m_textMustRecache = true;
 }
 
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 {
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "text")
-            setText(node->value());
-        else if(node->tag() == "text-align")
-            setTextAlign(Fw::translateAlignment(node->value()));
-        else if(node->tag() == "text-offset")
-            setTextOffset(node->value<Point>());
-        else if(node->tag() == "text-wrap")
-            setTextWrap(node->value<bool>());
-        else if(node->tag() == "text-auto-resize")
-            setTextAutoResize(node->value<bool>());
-        else if(node->tag() == "text-horizontal-auto-resize")
-            setTextHorizontalAutoResize(node->value<bool>());
-        else if(node->tag() == "text-vertical-auto-resize")
-            setTextVerticalAutoResize(node->value<bool>());
-        else if(node->tag() == "text-only-upper-case")
-            setTextOnlyUpperCase(node->value<bool>());
-        else if(node->tag() == "font")
-            setFont(node->value());
-    }
+	for(const OTMLNodePtr& node : styleNode->children()) {
+		if(node->tag() == "text")
+			setText(node->value());
+		else if(node->tag() == "text-align")
+			setTextAlign(Fw::translateAlignment(node->value()));
+		else if(node->tag() == "text-offset")
+			setTextOffset(node->value<Point>());
+		else if(node->tag() == "text-wrap")
+			setTextWrap(node->value<bool>());
+		else if(node->tag() == "text-auto-resize")
+			setTextAutoResize(node->value<bool>());
+		else if(node->tag() == "text-horizontal-auto-resize")
+			setTextHorizontalAutoResize(node->value<bool>());
+		else if(node->tag() == "text-vertical-auto-resize")
+			setTextVerticalAutoResize(node->value<bool>());
+		else if(node->tag() == "text-only-upper-case")
+			setTextOnlyUpperCase(node->value<bool>());
+		else if(node->tag() == "font")
+			setFont(node->value());
+	}
 }
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    if(m_drawText.length() == 0 || m_color.aF() == 0.0f)
-        return;
+	if(m_drawText.length() == 0 || m_color.aF() == 0.0f)
+		return;
 
-    if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
-        Rect coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
-        coords.translate(m_textOffset);
+	if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
+		auto coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
+		coords.translate(m_textOffset);
 
-        m_textMustRecache = false;
-        m_textCachedScreenCoords = coords;
+		m_textMustRecache = false;
+		m_textCachedScreenCoords = coords;
 
-        m_textCoordsBuffer.clear();
+		m_textCoordsBuffer.clear();
 
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, coords, m_textAlign);
-    }
+		m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, coords, m_textAlign);
+	}
 
-    g_painter->setColor(m_color);
+	g_painter->setColor(m_color);
 
-    if(m_font->getTexture())
-        g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
+	if(m_font->getTexture())
+		g_drawPool.addTextureCoords(m_textCoordsBuffer, m_font->getTexture());
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
 {
-    g_app.repaint();
-    callLuaField("onTextChange", text, oldText);
+	g_app.repaint();
+	callLuaField("onTextChange", text, oldText);
 }
 
 void UIWidget::onFontChange(const std::string& font)
 {
-    callLuaField("onFontChange", font);
+	callLuaField("onFontChange", font);
 }
 
 void UIWidget::setText(std::string text, bool dontFireLuaCall)
 {
-    if(m_textOnlyUpperCase)
-        stdext::toupper(text);
+	if(m_textOnlyUpperCase)
+		stdext::toupper(text);
 
-    if(m_text == text)
-        return;
+	if(m_text == text)
+		return;
 
-    std::string oldText = m_text;
-    m_text = text;
-    updateText();
+	const std::string oldText = m_text;
+	m_text = text;
+	updateText();
 
-    text = m_text;
+	text = m_text;
 
-    if(!dontFireLuaCall) {
-        onTextChange(text, oldText);
-    }
+	if(!dontFireLuaCall) {
+		onTextChange(text, oldText);
+	}
 }
 
 void UIWidget::setFont(const std::string& fontName)
 {
-    m_font = g_fonts.getFont(fontName);
-    updateText();
-    onFontChange(fontName);
+	m_font = g_fonts.getFont(fontName);
+	updateText();
+	onFontChange(fontName);
 }

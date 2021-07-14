@@ -25,7 +25,9 @@
 
 #include <framework/core/eventdispatcher.h>
 
-UIGridLayout::UIGridLayout(UIWidgetPtr parentWidget) : UILayout(parentWidget)
+#include <utility>
+
+UIGridLayout::UIGridLayout(UIWidgetPtr parentWidget) : UILayout(std::move(parentWidget))
 {
     m_cellSize = Size(16, 16);
     m_cellSpacing = 0;
@@ -37,24 +39,24 @@ void UIGridLayout::applyStyle(const OTMLNodePtr& styleNode)
 {
     UILayout::applyStyle(styleNode);
 
-    for (const OTMLNodePtr& node : styleNode->children()) {
-        if (node->tag() == "cell-size")
+    for(const OTMLNodePtr& node : styleNode->children()) {
+        if(node->tag() == "cell-size")
             setCellSize(node->value<Size>());
-        else if (node->tag() == "cell-width")
+        else if(node->tag() == "cell-width")
             setCellWidth(node->value<int>());
-        else if (node->tag() == "cell-height")
+        else if(node->tag() == "cell-height")
             setCellHeight(node->value<int>());
-        else if (node->tag() == "cell-spacing")
+        else if(node->tag() == "cell-spacing")
             setCellSpacing(node->value<int>());
-        else if (node->tag() == "num-columns")
+        else if(node->tag() == "num-columns")
             setNumColumns(node->value<int>());
-        else if (node->tag() == "num-lines")
+        else if(node->tag() == "num-lines")
             setNumLines(node->value<int>());
-        else if (node->tag() == "fit-children")
+        else if(node->tag() == "fit-children")
             setFitChildren(node->value<bool>());
-        else if (node->tag() == "auto-spacing")
+        else if(node->tag() == "auto-spacing")
             setAutoSpacing(node->value<bool>());
-        else if (node->tag() == "flow")
+        else if(node->tag() == "flow")
             setFlow(node->value<bool>());
     }
 }
@@ -73,55 +75,55 @@ bool UIGridLayout::internalUpdate()
 {
     bool changed = false;
     UIWidgetPtr parentWidget = getParentWidget();
-    if (!parentWidget)
+    if(!parentWidget)
         return false;
 
     UIWidgetList widgets = parentWidget->getChildren();
 
-    Rect clippingRect = parentWidget->getPaddingRect();
-    Point topLeft = clippingRect.topLeft();
+    const Rect clippingRect = parentWidget->getPaddingRect();
+    const Point topLeft = clippingRect.topLeft();
 
     int numColumns = m_numColumns;
-    if (m_flow && m_cellSize.width() > 0) {
+    if(m_flow && m_cellSize.width() > 0) {
         numColumns = (clippingRect.width() + m_cellSpacing) / (m_cellSize.width() + m_cellSpacing);
-        if (numColumns > 0) {
+        if(numColumns > 0) {
             m_numColumns = numColumns;
             m_numLines = std::ceil(widgets.size() / static_cast<float>(numColumns));
         }
     }
 
-    if (numColumns <= 0)
+    if(numColumns <= 0)
         numColumns = 1;
 
     int cellSpacing = m_cellSpacing;
-    if (m_autoSpacing && numColumns > 1)
+    if(m_autoSpacing && numColumns > 1)
         cellSpacing = (clippingRect.width() - numColumns * m_cellSize.width()) / (numColumns - 1);
 
     int index = 0;
     int preferredHeight = 0;
-    for (const UIWidgetPtr& widget : widgets) {
-        if (!widget->isExplicitlyVisible())
+    for(const UIWidgetPtr& widget : widgets) {
+        if(!widget->isExplicitlyVisible())
             continue;
 
-        int line = index / numColumns;
-        int column = index % numColumns;
-        Point virtualPos = Point(column * (m_cellSize.width() + cellSpacing), line * (m_cellSize.height() + cellSpacing));
+        const int line = index / numColumns;
+        const int column = index % numColumns;
+        auto virtualPos = Point(column * (m_cellSize.width() + cellSpacing), line * (m_cellSize.height() + cellSpacing));
         preferredHeight = virtualPos.y + m_cellSize.height();
         Point pos = topLeft + virtualPos - parentWidget->getVirtualOffset();
-        Rect dest = Rect(pos, m_cellSize);
+        auto dest = Rect(pos, m_cellSize);
         dest.expand(-widget->getMarginTop(), -widget->getMarginRight(), -widget->getMarginBottom(), -widget->getMarginLeft());
 
-        if (widget->setRect(dest))
+        if(widget->setRect(dest))
             changed = true;
 
         index++;
 
-        if (m_numLines > 0 && index >= m_numColumns * m_numLines)
+        if(m_numLines > 0 && index >= m_numColumns * m_numLines)
             break;
     }
     preferredHeight += parentWidget->getPaddingTop() + parentWidget->getPaddingBottom();
 
-    if (m_fitChildren && preferredHeight != parentWidget->getHeight()) {
+    if(m_fitChildren && preferredHeight != parentWidget->getHeight()) {
         // must set the preferred height later
         g_dispatcher.addEvent([=] {
             parentWidget->setHeight(preferredHeight);

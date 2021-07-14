@@ -22,20 +22,21 @@
 
 #include "uiparticles.h"
 #include <framework/graphics/particlemanager.h>
+#include <framework/graphics/drawpool.h>
 
 UIParticles::UIParticles()
 {
-    m_referencePos = PointF(-1,-1);
+    m_referencePos = PointF(-1, -1);
 }
 
 void UIParticles::drawSelf(Fw::DrawPane drawPane)
 {
     if(drawPane & Fw::ForegroundPane) {
         if(drawPane != Fw::BothPanes) {
-            glDisable(GL_BLEND);
+            g_drawPool.addAction([]() {glDisable(GL_BLEND); });
             g_painter->setColor(Color::alpha);
-            g_painter->drawFilledRect(m_rect);
-            glEnable(GL_BLEND);
+            g_drawPool.addFilledRect(m_rect);
+            g_drawPool.addAction([]() {glEnable(GL_BLEND); });
         }
     }
 
@@ -50,7 +51,7 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
         else
             g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
 
-        for(auto &effect: m_effects)
+        for(auto& effect : m_effects)
             effect->render();
         g_painter->restoreSavedState();
     }
@@ -70,7 +71,7 @@ void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& 
 
 void UIParticles::addEffect(const std::string& name)
 {
-    ParticleEffectPtr effect = g_particles.createEffect(name);
+    const ParticleEffectPtr effect = g_particles.createEffect(name);
     if(effect)
         m_effects.push_back(effect);
 }

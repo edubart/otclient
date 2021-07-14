@@ -191,9 +191,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
         ), scaleFactor, true, frameFlags, lightView);
     }
-#endif    
+#endif
 }
-
 
 void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
@@ -221,9 +220,9 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
         }
     }
 
-    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them	
+    // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
     if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
-        // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them	
+        // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
         if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
             for(int x = -redrawPreviousTopW; x <= 0; ++x) {
                 for(int y = -redrawPreviousTopH; y <= 0; ++y) {
@@ -267,7 +266,6 @@ void Tile::draw(const Point& dest, float scaleFactor, int frameFlags, LightView*
 void Tile::clean()
 {
     m_things.clear();
-    cancelScheduledPainting();
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)
@@ -503,7 +501,6 @@ uint8 Tile::getMinimapColorByte()
 {
     if(m_minimapColor != 0)
         return m_minimapColor;
-
 
     for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
         const auto& thing = *it;
@@ -786,16 +783,6 @@ void Tile::checkTranslucentLight()
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-void Tile::cancelScheduledPainting()
-{
-    if(m_animatedItems.empty()) return;
-
-    for(const ItemPtr& item : m_animatedItems)
-        item->cancelScheduledPainting();
-
-    m_animatedItems.clear();
-}
-
 void Tile::checkForDetachableThing()
 {
     m_highlight.thing = nullptr;
@@ -927,53 +914,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->isGroundBorder() && thing->isNotWalkable())
         m_countFlag.hasNoWalkableEdge += value;
-
-#if CHECK_OPAQUE_ITEM == 1
-    // Check that the item is opaque, so that it does not draw anything that is less than or equal below it.
-    // Commented for now, needs refactoring
-    /*
-    if(thing->isOpaque() && !thing->isOnTop() && !thing->isGround() && !thing->isGroundBorder()) {
-        const int commonSize = m_countFlag.hasBottomItem;
-
-        if(m_countFlag.elevation > (add ? 3 : 2) && commonSize > 2) {
-            const ItemPtr& subItem = m_commonItems[1];
-            subItem->canDraw(!add);
-        } else {
-            const ItemPtr& item = thing->static_self_cast<Item>();
-
-            if(!thing->isOnBottom()) {
-                for(const ItemPtr& subItem : m_commonItems) {
-                    if(subItem != item) {
-                        if(subItem->hasElevation() || subItem->isOpaque()) return;
-
-                        if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                            subItem->canDraw(!add);
-                        }
-                    }
-                }
-            }
-
-            for(auto it = m_bottomItems.rbegin(); it != m_bottomItems.rend(); ++it) {
-                const ItemPtr& subItem = *it;
-                if(subItem != item) {
-                    if(subItem->hasElevation() || subItem->isOpaque()) return;
-
-                    if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                        subItem->canDraw(!add);
-                    }
-                }
-            }
-
-            for(const ItemPtr& subItem : m_ground) {
-                if(subItem->hasElevation()) return;
-
-                if(subItem->getWidth() == 1 && subItem->getHeight() == 1) {
-                    subItem->canDraw(!add);
-                }
-            }
-        }
-    }*/
-#endif
 }
 
 void Tile::select()
@@ -986,7 +926,6 @@ void Tile::select()
 
     m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
         m_highlight.update = true;
-        g_map.schedulePainting(Otc::FUpdateThing);
     }, 30);
 }
 
@@ -997,6 +936,4 @@ void Tile::unselect()
     m_highlight.enabled = false;
     m_highlight.listeningEvent->cancel();
     m_highlight.listeningEvent = nullptr;
-
-    g_map.schedulePainting(Otc::FUpdateThing);
 }

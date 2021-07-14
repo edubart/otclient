@@ -28,92 +28,80 @@
 class PainterOGL : public Painter
 {
 public:
-    struct PainterState {
-        Size resolution;
-        Matrix3 transformMatrix;
-        Matrix3 projectionMatrix;
-        Matrix3 textureMatrix;
-        Color color;
-        float opacity;
-        Painter::CompositionMode compositionMode;
-        Painter::BlendEquation blendEquation;
-        Rect clipRect;
-        Texture *texture;
-        PainterShaderProgram *shaderProgram;
-        bool alphaWriting;
-    };
+	PainterOGL();
+	~PainterOGL() override = default;
 
-    PainterOGL();
-    virtual ~PainterOGL() { }
+	virtual void refreshState();
+	virtual void setTransformMatrix(const Matrix3& transformMatrix) { m_transformMatrix = transformMatrix; }
+	virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
+	virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
 
-    virtual void bind() { refreshState(); }
-    virtual void unbind() { }
+	void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
+	void resetTexture() { setTexture(nullptr); }
+	void resetAlphaWriting() { setAlphaWriting(false); }
+	void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
 
-    void resetState();
-    virtual void refreshState();
-    void saveState();
-    void saveAndResetState();
-    void restoreSavedState();
+	void resetState();
+	void saveState() override;
+	void saveAndResetState() override;
+	void restoreSavedState() override;
+	PainterState getCurrentState() override;
+	void executeState(const PainterState& state) override;
 
-    void clear(const Color& color);
-    void clearRect(const Color& color, const Rect& rect);
+	void bind() override { refreshState(); }
+	void unbind() override {}
 
-    virtual void setTransformMatrix(const Matrix3& transformMatrix) { m_transformMatrix = transformMatrix; }
-    virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
-    virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
-    virtual void setCompositionMode(CompositionMode compositionMode);
-    virtual void setBlendEquation(BlendEquation blendEquation);
-    virtual void setClipRect(const Rect& clipRect);
-    virtual void setShaderProgram(PainterShaderProgram *shaderProgram) { m_shaderProgram = shaderProgram; }
-    virtual void setTexture(Texture *texture);
-    virtual void setAlphaWriting(bool enable);
+	void clear(const Color& color) override;
+	void clearRect(const Color& color, const Rect& rect);
 
-    void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
-    void setResolution(const Size& resolution);
+	void setCompositionMode(CompositionMode compositionMode) override;
+	void setBlendEquation(BlendEquation blendEquation) override;
+	void setClipRect(const Rect& clipRect) override;
+	void setShaderProgram(PainterShaderProgram* shaderProgram) override { m_shaderProgram = shaderProgram; }
+	void setTexture(Texture* texture) override;
+	void setAlphaWriting(bool enable) override;
 
-    void scale(float x, float y);
-    void translate(float x, float y);
-    void rotate(float angle);
-    void rotate(float x, float y, float angle);
+	void setTexture(const TexturePtr& texture) { setTexture(texture.get()); }
+	void setResolution(const Size& resolution) override;
 
-    void pushTransformMatrix();
-    void popTransformMatrix();
+	void scale(float x, float y) override;
+	void translate(float x, float y) override;
+	void rotate(float angle) override;
+	void rotate(float x, float y, float angle) override;
 
-    Matrix3 getTransformMatrix() { return m_transformMatrix; }
-    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
-    Matrix3 getTextureMatrix() { return m_textureMatrix; }
-    BlendEquation getBlendEquation() { return m_blendEquation; }
-    PainterShaderProgram *getShaderProgram() { return m_shaderProgram; }
-    bool getAlphaWriting() { return m_alphaWriting; }
+	void pushTransformMatrix() override;
+	void popTransformMatrix() override;
 
-    void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
-    void resetTexture() { setTexture(nullptr); }
-    void resetAlphaWriting() { setAlphaWriting(false); }
-    void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
+	Matrix3 getTransformMatrix() { return m_transformMatrix; }
+	Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
+	Matrix3 getTextureMatrix() { return m_textureMatrix; }
+	BlendEquation getBlendEquation() { return m_blendEquation; }
+	PainterShaderProgram* getShaderProgram() { return m_shaderProgram; }
+	bool getAlphaWriting() { return m_alphaWriting; }
 
 protected:
-    void updateGlTexture();
-    void updateGlCompositionMode();
-    void updateGlBlendEquation();
-    void updateGlClipRect();
-    void updateGlAlphaWriting();
-    void updateGlViewport();
+	void updateGlTexture();
+	void updateGlCompositionMode();
+	void updateGlBlendEquation();
+	void updateGlClipRect();
+	void updateGlAlphaWriting();
+	void updateGlViewport();
 
-    CoordsBuffer m_coordsBuffer;
+	CoordsBuffer m_coordsBuffer;
 
-    std::vector<Matrix3> m_transformMatrixStack;
-    Matrix3 m_transformMatrix;
-    Matrix3 m_projectionMatrix;
-    Matrix3 m_textureMatrix;
+	std::vector<Matrix3> m_transformMatrixStack;
+	Matrix3 m_transformMatrix;
+	Matrix3 m_projectionMatrix;
+	Matrix3 m_textureMatrix;
 
-    BlendEquation m_blendEquation;
-    Texture *m_texture;
-    bool m_alphaWriting;
+	BlendEquation m_blendEquation;
+	Texture* m_texture;
+	bool m_alphaWriting;
 
-    PainterState m_olderStates[10];
-    int m_oldStateIndex;
+	PainterState m_olderStates[10];
+	int m_oldStateIndex;
 
-    uint m_glTextureId;
+	uint m_glTextureId;
 };
 
 #endif

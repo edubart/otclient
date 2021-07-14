@@ -20,26 +20,25 @@
  * THE SOFTWARE.
  */
 
-
 #include "framebuffermanager.h"
 
 FrameBufferManager g_framebuffers;
 
 void FrameBufferManager::init()
 {
-    m_temporaryFramebuffer = FrameBufferPtr(new FrameBuffer());
-    m_temporaryFramebuffer->setSmooth(true);
+	m_temporaryFramebuffer = FrameBufferPtr(new FrameBuffer(true));
+	m_temporaryFramebuffer->setSmooth(true);
 }
 
 void FrameBufferManager::terminate()
 {
-    m_framebuffers.clear();
-    m_temporaryFramebuffer = nullptr;
+	m_framebuffers.clear();
+	m_temporaryFramebuffer = nullptr;
 }
 
-FrameBufferPtr FrameBufferManager::createFrameBuffer()
+FrameBufferPtr FrameBufferManager::createFrameBuffer(const bool useAlphaWriting)
 {
-    FrameBufferPtr fbo = FrameBufferPtr(new FrameBuffer());
-    m_framebuffers.push_back(fbo);
-    return fbo;
+	auto fbo = FrameBufferPtr(new FrameBuffer(useAlphaWriting));
+	m_framebuffers.push_back(fbo);
+	return fbo;
 }

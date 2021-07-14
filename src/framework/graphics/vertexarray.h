@@ -29,57 +29,87 @@
 class VertexArray
 {
 public:
-    inline void addVertex(float x, float y) { m_buffer << x << y; }
-    inline void addTriangle(const Point& a, const Point& b, const Point& c) {
-        addVertex(a.x, a.y);
-        addVertex(b.x, b.y);
-        addVertex(c.x, c.y);
-    }
-    inline void addRect(const Rect& rect) {
-        float top = rect.top();
-        float right = rect.right()+1;
-        float bottom = rect.bottom()+1;
-        float left = rect.left();
+	void addVertex(float x, float y)
+	{
+		m_buffer << x << y;
+		boost::hash_combine(m_hash, HASH_FLOAT(x));
+		boost::hash_combine(m_hash, HASH_FLOAT(y));
+	}
 
-        addVertex(left, top);
-        addVertex(right, top);
-        addVertex(left, bottom);
-        addVertex(left, bottom);
-        addVertex(right, top);
-        addVertex(right, bottom);
-    }
+	void addTriangle(const Point& a, const Point& b, const Point& c)
+	{
+		addVertex(a.x, a.y);
+		addVertex(b.x, b.y);
+		addVertex(c.x, c.y);
+	}
 
-    inline void addQuad(const Rect& rect) {
-        float top = rect.top();
-        float right = rect.right()+1;
-        float bottom = rect.bottom()+1;
-        float left = rect.left();
+	void addRect(const Rect& rect)
+	{
+		const float top = rect.top();
+		const float right = rect.right() + 1;
+		const float bottom = rect.bottom() + 1;
+		const float left = rect.left();
 
-        addVertex(left, top);
-        addVertex(right, top);
-        addVertex(left, bottom);
-        addVertex(right, bottom);
-    }
+		addVertex(left, top);
+		addVertex(right, top);
+		addVertex(left, bottom);
+		addVertex(left, bottom);
+		addVertex(right, top);
+		addVertex(right, bottom);
+	}
 
-    inline void addUpsideDownQuad(const Rect& rect) {
-        float top = rect.top();
-        float right = rect.right()+1;
-        float bottom = rect.bottom()+1;
-        float left = rect.left();
+	void addQuad(const Rect& rect)
+	{
+		const float top = rect.top();
+		const float right = rect.right() + 1;
+		const float bottom = rect.bottom() + 1;
+		const float left = rect.left();
 
-        addVertex(left, bottom);
-        addVertex(right, bottom);
-        addVertex(left, top);
-        addVertex(right, top);
-    }
+		addVertex(left, top);
+		addVertex(right, top);
+		addVertex(left, bottom);
+		addVertex(right, bottom);
+	}
 
-    void clear() { m_buffer.reset(); }
-    float *vertices() const { return m_buffer.data(); }
-    int vertexCount() const { return m_buffer.size() / 2; }
-    int size() const { return m_buffer.size(); }
+	void addUpsideDownQuad(const Rect& rect)
+	{
+		const float top = rect.top();
+		const float right = rect.right() + 1;
+		const float bottom = rect.bottom() + 1;
+		const float left = rect.left();
+
+		addVertex(left, bottom);
+		addVertex(right, bottom);
+		addVertex(left, top);
+		addVertex(right, top);
+	}
+
+	void addUpsideDownRect(const Rect& rect)
+	{
+		const float top = rect.top();
+		const float right = rect.right() + 1;
+		const float bottom = rect.bottom() + 1;
+		const float left = rect.left();
+
+		addVertex(left, bottom);
+		addVertex(right, bottom);
+		addVertex(left, bottom);
+		addVertex(left, top);
+		addVertex(right, bottom);
+		addVertex(right, top);
+	}
+
+	void clear() { m_buffer.reset(); m_hash = 0; }
+	float* vertices() const { return m_buffer.data(); }
+	int vertexCount() const { return m_buffer.size() / 2; }
+	int size() const { return m_buffer.size(); }
+	size_t getHash() const { return m_hash; }
 
 private:
-    DataBuffer<float> m_buffer;
+	DataBuffer<float> m_buffer;
+	size_t m_hash{ 0 };
+
+	std::hash<float> HASH_FLOAT;
 };
 
 #endif
