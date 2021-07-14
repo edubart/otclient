@@ -230,6 +230,7 @@
     <ClCompile Include="..\src\framework\graphics\particlemanager.cpp" />
     <ClCompile Include="..\src\framework\graphics\particlesystem.cpp" />
     <ClCompile Include="..\src\framework\graphics\particletype.cpp" />
+    <ClCompile Include="..\src\framework\graphics\pool.cpp" />
     <ClCompile Include="..\src\framework\graphics\shader.cpp" />
     <ClCompile Include="..\src\framework\graphics\shaderprogram.cpp" />
     <ClCompile Include="..\src\framework\graphics\texture.cpp" />
@@ -387,6 +388,7 @@
     <ClInclude Include="..\src\framework\graphics\particlemanager.h" />
     <ClInclude Include="..\src\framework\graphics\particlesystem.h" />
     <ClInclude Include="..\src\framework\graphics\particletype.h" />
+    <ClInclude Include="..\src\framework\graphics\pool.h" />
     <ClInclude Include="..\src\framework\graphics\shader.h" />
     <ClInclude Include="..\src\framework\graphics\shaderprogram.h" />
     <ClInclude Include="..\src\framework\graphics\texture.h" />

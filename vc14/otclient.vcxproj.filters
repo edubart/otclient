@@ -534,6 +534,9 @@
     <ClCompile Include="..\src\framework\graphics\drawpool.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\framework\graphics\pool.cpp">
+      <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1059,6 +1062,9 @@
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\drawpool.h">
+      <Filter>Header Files\framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\graphics\pool.h">
       <Filter>Header Files\framework\graphics</Filter>
     </ClInclude>
   </ItemGroup>

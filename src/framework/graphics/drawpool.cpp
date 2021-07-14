@@ -69,8 +69,8 @@ void DrawPool::add(const TexturePtr& texture, const FrameBuffer::DrawMethod& met
             hasDest = !method.dest.isNull();
 
         if(hasDest) {
-            // Look for identical or opaque textures that are greater than or equal to the size of the previous texture and remove.
-            //when it's the same texture, check if the source is the same, because in the case of outfit, the addons use "the same texture"
+            // Look for identical or opaque textures that are greater than or
+            // equal to the size of the previous texture, if so, remove it from the list so they don't get drawn.
             for(auto itm = prevObj->drawMethods.begin(); itm != prevObj->drawMethods.end(); ++itm) {
                 auto& prevMtd = *itm;
                 if(prevMtd.dest == method.dest &&
