@@ -25,9 +25,6 @@
 
 #include <framework/platform/platformwindow.h>
 
-Painter *g_painter = nullptr;
+Painter* g_painter = nullptr;
 
-Painter::Painter()
-{
-
-}
+Painter::Painter() {}

@@ -28,36 +28,30 @@
 #include "painterogl.h"
 
  /**
-	* Painter using OpenGL 2.0 programmable rendering pipeline,
-	* compatible with OpenGL ES 2.0. Only recent cards support
-	* this painter engine.
-	*/
+    * Painter using OpenGL 2.0 programmable rendering pipeline,
+    * compatible with OpenGL ES 2.0. Only recent cards support
+    * this painter engine.
+    */
 class PainterOGL2 : public PainterOGL
 {
 public:
-	PainterOGL2();
+    PainterOGL2();
 
-	void bind() override;
-	void unbind() override;
+    void bind() override;
+    void unbind() override;
 
-	void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
-	void drawFillCoords(CoordsBuffer& coordsBuffer) override;
-	void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, DrawMode drawMode = DrawMode::Triangles) override;
-	void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawFilledRect(const Rect& dest) override;
-	void drawFilledTriangle(const Point& a, const Point& b, const Point& c) override;
-	void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) override;
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
+    void drawFilledRect(const Rect& dest) override;
 
-	void setDrawProgram(PainterShaderProgram* drawProgram) { m_drawProgram = drawProgram; }
+    void setDrawProgram(PainterShaderProgram* drawProgram) { m_drawProgram = drawProgram; }
 
-	bool hasShaders() override { return true; }
+    bool hasShaders() override { return true; }
 
 private:
-	PainterShaderProgram* m_drawProgram;
-	PainterShaderProgramPtr m_drawTexturedProgram;
-	PainterShaderProgramPtr m_drawSolidColorProgram;
+    PainterShaderProgram* m_drawProgram;
+    PainterShaderProgramPtr m_drawTexturedProgram;
+    PainterShaderProgramPtr m_drawSolidColorProgram;
 };
 
 extern PainterOGL2* g_painterOGL2;

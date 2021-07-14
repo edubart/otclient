@@ -29,289 +29,226 @@ PainterOGL1* g_painterOGL1 = nullptr;
 
 PainterOGL1::PainterOGL1()
 {
-	m_matrixMode = GL_PROJECTION;
-	resetState();
+    m_matrixMode = GL_PROJECTION;
+    resetState();
 }
 
 void PainterOGL1::refreshState()
 {
-	PainterOGL::refreshState();
-	updateGlColor();
-	updateGlMatrixMode();
-	updateGlTransformMatrix();
-	updateGlProjectionMatrix();
-	updateGlTextureMatrix();
-	updateGlTextureState();
+    PainterOGL::refreshState();
+    updateGlColor();
+    updateGlMatrixMode();
+    updateGlTransformMatrix();
+    updateGlProjectionMatrix();
+    updateGlTextureMatrix();
+    updateGlTextureState();
 }
 
 void PainterOGL1::bind()
 {
-	PainterOGL::bind();
+    PainterOGL::bind();
 
-	// vertex and texture coord arrays are always enabled
-	// to avoid massive enable/disables, thus improving frame rate
-	if(g_graphics.canUseDrawArrays())
-		glEnableClientState(GL_VERTEX_ARRAY);
+    // vertex and texture coord arrays are always enabled
+    // to avoid massive enable/disables, thus improving frame rate
+    if(g_graphics.canUseDrawArrays())
+        glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void PainterOGL1::unbind()
 {
-	if(g_graphics.canUseDrawArrays())
-		glDisableClientState(GL_VERTEX_ARRAY);
+    if(g_graphics.canUseDrawArrays())
+        glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
-	const int vertexCount = coordsBuffer.getVertexCount();
-	if(vertexCount == 0)
-		return;
+    const int vertexCount = coordsBuffer.getVertexCount();
+    if(vertexCount == 0)
+        return;
 
-	const bool textured = coordsBuffer.getTextureCoordCount() != 0 && m_texture;
+    const bool textured = coordsBuffer.getTextureCoordCount() != 0 && m_texture;
 
-	// skip drawing of empty textures
-	if(textured && m_texture->isEmpty())
-		return;
+    // skip drawing of empty textures
+    if(textured && m_texture->isEmpty())
+        return;
 
-	if(textured != m_textureEnabled) {
-		m_textureEnabled = textured;
-		updateGlTextureState();
-	}
+    if(textured != m_textureEnabled) {
+        m_textureEnabled = textured;
+        updateGlTextureState();
+    }
 
-	// GDI Generic driver has this bug
-	if(g_graphics.hasScissorBug())
-		updateGlClipRect();
+    // GDI Generic driver has this bug
+    if(g_graphics.hasScissorBug())
+        updateGlClipRect();
 
-	// use vertex arrays if possible, much faster
-	if(g_graphics.canUseDrawArrays()) {
-		// only set texture coords arrays when needed
-		if(textured) {
-			glTexCoordPointer(2, GL_FLOAT, 0, coordsBuffer.getTextureCoordArray());
-		}
+    // use vertex arrays if possible, much faster
+    if(g_graphics.canUseDrawArrays()) {
+        // only set texture coords arrays when needed
+        if(textured) {
+            glTexCoordPointer(2, GL_FLOAT, 0, coordsBuffer.getTextureCoordArray());
+        }
 
-		// set vertex array
-		glVertexPointer(2, GL_FLOAT, 0, coordsBuffer.getVertexArray());
+        // set vertex array
+        glVertexPointer(2, GL_FLOAT, 0, coordsBuffer.getVertexArray());
 
-		// draw the element in coords buffers
-		glDrawArrays(static_cast<GLenum>(drawMode), 0, vertexCount);
-	}
+        // draw the element in coords buffers
+        glDrawArrays(static_cast<GLenum>(drawMode), 0, vertexCount);
+    }
 #ifndef OPENGL_ES
-	else {
-		const int verticesSize = vertexCount * 2;
-		float* vertices = coordsBuffer.getVertexArray();
-		float* texCoords = coordsBuffer.getTextureCoordArray();
+    else {
+        const int verticesSize = vertexCount * 2;
+        float* vertices = coordsBuffer.getVertexArray();
+        float* texCoords = coordsBuffer.getTextureCoordArray();
 
-		// use glBegin/glEnd, this is not available in OpenGL ES
-		// and is considered much slower then glDrawArrays,
-		// but this code is executed in really old graphics cards
-		if(drawMode == DrawMode::Triangles)
-			glBegin(GL_TRIANGLES);
-		else if(drawMode == DrawMode::TriangleStrip)
-			glBegin(GL_TRIANGLE_STRIP);
-		for(int i = 0; i < verticesSize; i += 2) {
-			if(textured)
-				glTexCoord2f(texCoords[i], texCoords[i + 1]);
-			glVertex2f(vertices[i], vertices[i + 1]);
-		}
-		glEnd();
-	}
+        // use glBegin/glEnd, this is not available in OpenGL ES
+        // and is considered much slower then glDrawArrays,
+        // but this code is executed in really old graphics cards
+        if(drawMode == DrawMode::Triangles)
+            glBegin(GL_TRIANGLES);
+        else if(drawMode == DrawMode::TriangleStrip)
+            glBegin(GL_TRIANGLE_STRIP);
+        for(int i = 0; i < verticesSize; i += 2) {
+            if(textured)
+                glTexCoord2f(texCoords[i], texCoords[i + 1]);
+            glVertex2f(vertices[i], vertices[i + 1]);
+        }
+        glEnd();
+    }
 #endif
-}
-
-void PainterOGL1::drawFillCoords(CoordsBuffer& coordsBuffer)
-{
-	setTexture(nullptr);
-	drawCoords(coordsBuffer);
-}
-
-void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, DrawMode drawMode)
-{
-	if(texture->isEmpty())
-		return;
-
-	setTexture(texture.get());
-	drawCoords(coordsBuffer, drawMode);
 }
 
 void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
-	if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-		return;
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
+        return;
 
-	setTexture(texture.get());
+    setTexture(texture.get());
 
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addQuad(dest, src);
-	drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
-}
-
-void PainterOGL1::drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-	if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-		return;
-
-	setTexture(texture.get());
-
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addUpsideDownQuad(dest, src);
-	drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
-}
-
-void PainterOGL1::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-	if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-		return;
-
-	setTexture(texture.get());
-
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addRepeatedRects(dest, src);
-	drawCoords(m_coordsBuffer);
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addQuad(dest, src);
+    drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
 }
 
 void PainterOGL1::drawFilledRect(const Rect& dest)
 {
-	if(dest.isEmpty())
-		return;
+    if(dest.isEmpty())
+        return;
 
-	setTexture(nullptr);
+    setTexture(nullptr);
 
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addRect(dest);
-	drawCoords(m_coordsBuffer);
-}
-
-void PainterOGL1::drawFilledTriangle(const Point& a, const Point& b, const Point& c)
-{
-	if(a == b || a == c || b == c)
-		return;
-
-	setTexture(nullptr);
-
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addTriangle(a, b, c);
-	drawCoords(m_coordsBuffer);
-}
-
-void PainterOGL1::drawBoundingRect(const Rect& dest, int innerLineWidth)
-{
-	if(dest.isEmpty() || innerLineWidth == 0)
-		return;
-
-	setTexture(nullptr);
-
-	m_coordsBuffer.clear();
-	m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-	drawCoords(m_coordsBuffer);
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addRect(dest);
+    drawCoords(m_coordsBuffer);
 }
 
 void PainterOGL1::setMatrixMode(MatrixMode matrixMode)
 {
-	if(m_matrixMode == static_cast<GLenum>(matrixMode))
-		return;
+    if(m_matrixMode == static_cast<GLenum>(matrixMode))
+        return;
 
-	m_matrixMode = matrixMode;
-	updateGlMatrixMode();
+    m_matrixMode = matrixMode;
+    updateGlMatrixMode();
 }
 
 void PainterOGL1::setTransformMatrix(const Matrix3& transformMatrix)
 {
-	m_transformMatrix = transformMatrix;
-	if(g_painter == this)
-		updateGlTransformMatrix();
+    m_transformMatrix = transformMatrix;
+    if(g_painter == this)
+        updateGlTransformMatrix();
 }
 
 void PainterOGL1::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
-	m_projectionMatrix = projectionMatrix;
-	if(g_painter == this)
-		updateGlProjectionMatrix();
+    m_projectionMatrix = projectionMatrix;
+    if(g_painter == this)
+        updateGlProjectionMatrix();
 }
 
 void PainterOGL1::setTextureMatrix(const Matrix3& textureMatrix)
 {
-	// avoid re-updating texture matrix
-	if(m_textureMatrix == textureMatrix)
-		return;
-	m_textureMatrix = textureMatrix;
-	updateGlTextureMatrix();
+    // avoid re-updating texture matrix
+    if(m_textureMatrix == textureMatrix)
+        return;
+    m_textureMatrix = textureMatrix;
+    updateGlTextureMatrix();
 }
 
 void PainterOGL1::setColor(const Color& color)
 {
-	if(m_color == color)
-		return;
-	m_color = color;
-	updateGlColor();
+    if(m_color == color)
+        return;
+    m_color = color;
+    updateGlColor();
 }
 
 void PainterOGL1::setOpacity(float opacity)
 {
-	if(m_opacity == opacity)
-		return;
-	m_opacity = opacity;
-	updateGlColor();
+    if(m_opacity == opacity)
+        return;
+    m_opacity = opacity;
+    updateGlColor();
 }
 
 void PainterOGL1::updateGlColor()
 {
-	glColor4f(m_color.rF(), m_color.gF(), m_color.bF(), m_color.aF() * m_opacity);
+    glColor4f(m_color.rF(), m_color.gF(), m_color.bF(), m_color.aF() * m_opacity);
 }
 
 void PainterOGL1::updateGlMatrixMode()
 {
-	glMatrixMode(m_matrixMode);
+    glMatrixMode(m_matrixMode);
 }
 
 void PainterOGL1::updateGlTransformMatrix()
 {
-	float glTransformMatrix[] = {
-			m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
-			m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
-												0.0f,                   0.0f,                    1.0f,                   0.0f,
-			m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
-	};
+    float glTransformMatrix[] = {
+            m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
+            m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
+                                                0.0f,                   0.0f,                    1.0f,                   0.0f,
+            m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
+    };
 
-	setMatrixMode(MatrixTransform);
-	glLoadMatrixf(glTransformMatrix);
+    setMatrixMode(MatrixTransform);
+    glLoadMatrixf(glTransformMatrix);
 }
 
 void PainterOGL1::updateGlProjectionMatrix()
 {
-	float glProjectionMatrix[] = {
-			m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
-			m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
-												 0.0f,                    0.0f,                    1.0f,                    0.0f,
-			m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
-	};
+    float glProjectionMatrix[] = {
+            m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
+            m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
+                                                 0.0f,                    0.0f,                    1.0f,                    0.0f,
+            m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
+    };
 
-	setMatrixMode(MatrixProjection);
-	glLoadMatrixf(glProjectionMatrix);
+    setMatrixMode(MatrixProjection);
+    glLoadMatrixf(glProjectionMatrix);
 }
 
 void PainterOGL1::updateGlTextureMatrix()
 {
-	float glTextureMatrix[] = {
-			m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
-			m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
-											0.0f,                 0.0f,             1.0f,                 0.0f,
-			m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
-	};
+    float glTextureMatrix[] = {
+            m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
+            m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
+                                            0.0f,                 0.0f,             1.0f,                 0.0f,
+            m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
+    };
 
-	setMatrixMode(MatrixTexture);
-	glLoadMatrixf(glTextureMatrix);
+    setMatrixMode(MatrixTexture);
+    glLoadMatrixf(glTextureMatrix);
 }
 
 void PainterOGL1::updateGlTextureState()
 {
-	if(m_textureEnabled) {
-		glEnable(GL_TEXTURE_2D);
-		if(g_graphics.canUseDrawArrays())
-			glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	} else {
-		glDisable(GL_TEXTURE_2D);
-		if(g_graphics.canUseDrawArrays())
-			glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
+    if(m_textureEnabled) {
+        glEnable(GL_TEXTURE_2D);
+        if(g_graphics.canUseDrawArrays())
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    } else {
+        glDisable(GL_TEXTURE_2D);
+        if(g_graphics.canUseDrawArrays())
+            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
 }
 
 #endif

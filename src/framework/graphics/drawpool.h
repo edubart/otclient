@@ -26,7 +26,6 @@
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
-#include <unordered_set>
 
 class DrawPool
 {
@@ -61,9 +60,6 @@ private:
     void addRepeated(const TexturePtr& texture, const FrameBuffer::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
     std::vector<std::shared_ptr<FrameBuffer::DrawObject>> m_repeatedActions, m_actions;
-    std::unordered_map<size_t, std::shared_ptr<FrameBuffer::DrawObject>> m_repeatedActionsRef;
-
-    std::unordered_map<size_t, CoordsBuffer> m_coordsCache;
 
     CoordsBuffer m_tempCoordsBuffer;
     FrameBufferPtr m_currentFrameBuffer;

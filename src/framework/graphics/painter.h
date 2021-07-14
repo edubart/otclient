@@ -97,15 +97,8 @@ public:
     virtual void clear(const Color& color) = 0;
 
     virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) = 0;
-    virtual void drawFillCoords(CoordsBuffer& coordsBuffer) = 0;
-    virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, DrawMode drawMode = DrawMode::Triangles) = 0;
     virtual void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(), texture->getSize())); }
-    virtual void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawFilledRect(const Rect& dest) = 0;
-    virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
-    virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
     virtual void setTexture(Texture* texture) = 0;
     virtual void setClipRect(const Rect& clipRect) = 0;

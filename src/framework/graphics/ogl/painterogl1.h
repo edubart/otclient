@@ -28,56 +28,50 @@
 #include "painterogl.h"
 
  /**
-	* Painter using OpenGL 1.1 fixed-function rendering pipeline,
-	* compatible with OpenGL ES 1.0 and intended to be used on
-	* older graphics cards. Shaders are not available
-	* for this painter engine.
-	*/
+    * Painter using OpenGL 1.1 fixed-function rendering pipeline,
+    * compatible with OpenGL ES 1.0 and intended to be used on
+    * older graphics cards. Shaders are not available
+    * for this painter engine.
+    */
 class PainterOGL1 : public PainterOGL
 {
 public:
-	enum MatrixMode {
-		MatrixProjection = 0x1701, // GL_PROJECTION
-		MatrixTexture = 0x1702, // GL_TEXTURE
-		MatrixTransform = 0x1700 // GL_MODELVIEW
-	};
+    enum MatrixMode {
+        MatrixProjection = 0x1701, // GL_PROJECTION
+        MatrixTexture = 0x1702, // GL_TEXTURE
+        MatrixTransform = 0x1700 // GL_MODELVIEW
+    };
 
-	PainterOGL1();
+    PainterOGL1();
 
-	void bind() override;
-	void unbind() override;
+    void bind() override;
+    void unbind() override;
 
-	void refreshState() override;
+    void refreshState() override;
 
-	void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
-	void drawFillCoords(CoordsBuffer& coordsBuffer) override;
-	void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, DrawMode drawMode = DrawMode::Triangles) override;
-	void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-	void drawFilledRect(const Rect& dest) override;
-	void drawFilledTriangle(const Point& a, const Point& b, const Point& c) override;
-	void drawBoundingRect(const Rect& dest, int innerLineWidth) override;
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
+    void drawFilledRect(const Rect& dest) override;
 
-	void setMatrixMode(MatrixMode matrixMode);
-	void setTransformMatrix(const Matrix3& transformMatrix) override;
-	void setProjectionMatrix(const Matrix3& projectionMatrix) override;
-	void setTextureMatrix(const Matrix3& textureMatrix) override;
-	void setColor(const Color& color) override;
-	void setOpacity(float opacity) override;
+    void setMatrixMode(MatrixMode matrixMode);
+    void setTransformMatrix(const Matrix3& transformMatrix) override;
+    void setProjectionMatrix(const Matrix3& projectionMatrix) override;
+    void setTextureMatrix(const Matrix3& textureMatrix) override;
+    void setColor(const Color& color) override;
+    void setOpacity(float opacity) override;
 
-	bool hasShaders() override { return false; }
+    bool hasShaders() override { return false; }
 
 private:
-	void updateGlColor();
-	void updateGlMatrixMode();
-	void updateGlProjectionMatrix();
-	void updateGlTransformMatrix();
-	void updateGlTextureMatrix();
-	void updateGlTextureState();
+    void updateGlColor();
+    void updateGlMatrixMode();
+    void updateGlProjectionMatrix();
+    void updateGlTransformMatrix();
+    void updateGlTextureMatrix();
+    void updateGlTextureState();
 
-	GLenum m_matrixMode;
-	bool m_textureEnabled{ false };
+    GLenum m_matrixMode;
+    bool m_textureEnabled{ false };
 };
 
 extern PainterOGL1* g_painterOGL1;

@@ -30,11 +30,7 @@
 DrawPool g_drawPool;
 
 void DrawPool::init() {}
-void DrawPool::terminate()
-{
-    m_currentFrameBuffer = nullptr;
-    m_coordsCache.clear();
-}
+void DrawPool::terminate() { m_currentFrameBuffer = nullptr; }
 
 void DrawPool::setFrameBuffer(const FrameBufferPtr& frameBuffer)
 {
@@ -61,31 +57,13 @@ void DrawPool::add(const TexturePtr& texture, const FrameBuffer::DrawMethod& met
     auto currentState = g_painter->getCurrentState();
     currentState.texture = texture;
 
-    if(!m_currentFrameBuffer) {
-        if(!m_actions.empty()) {
-            auto& prevDrawObject = m_actions.back();
+    if(m_currentFrameBuffer)
+        m_currentFrameBuffer->updateHash(texture, method);
 
-            if(prevDrawObject->state == currentState) {
-                prevDrawObject->drawMode = Painter::DrawMode::Triangles;
-                prevDrawObject->drawMethods.push_back(method);
+    auto& list = m_currentFrameBuffer ? m_currentFrameBuffer->m_actions : m_actions;
 
-                return;
-            }
-        }
-
-        m_actions.push_back(
-            std::make_shared<FrameBuffer::DrawObject>(FrameBuffer::DrawObject{ currentState, nullptr, drawMode, {method} })
-        );
-
-        return;
-    }
-
-    if(!m_currentFrameBuffer->isDrawable()) return;
-
-    m_currentFrameBuffer->updateHash(texture, method);
-
-    if(!m_currentFrameBuffer->m_actions.empty()) {
-        const auto& prevObj = m_currentFrameBuffer->m_actions.back();
+    if(!list.empty()) {
+        const auto& prevObj = list.back();
 
         const bool sameState = prevObj->state == currentState,
             hasDest = !method.dest.isNull();
@@ -110,8 +88,7 @@ void DrawPool::add(const TexturePtr& texture, const FrameBuffer::DrawMethod& met
         }
     }
 
-    m_currentFrameBuffer->m_actions
-        .push_back(std::make_shared<FrameBuffer::DrawObject>(FrameBuffer::DrawObject{ currentState, nullptr, drawMode, {method} }));
+    list.push_back(std::make_shared<FrameBuffer::DrawObject>(FrameBuffer::DrawObject{ currentState, nullptr, drawMode, {method} }));
 }
 
 void DrawPool::draw()
@@ -123,7 +100,6 @@ void DrawPool::draw()
 
     m_actions.clear();
     m_repeatedActions.clear();
-    m_repeatedActionsRef.clear();
 }
 
 void DrawPool::draw(const FrameBufferPtr& frameBuffer, const Rect& dest, const Rect& src)
