@@ -242,11 +242,6 @@ void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& textu
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
-    const	std::hash<size_t> toHash;
-
-    size_t hash = toHash(g_painter->getColor().rgba());
-    boost::hash_combine(hash, toHash(texture->getId()));
-
     FrameBuffer::DrawMethod method{ FrameBuffer::DrawMethodType::DRAW_REPEATED_TEXTURED_RECT };
     method.rects = std::make_pair(dest, src);
 
