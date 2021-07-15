@@ -64,10 +64,11 @@ MapView::MapView()
 
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
-    m_pools.map = Pool::createFramed();
+    m_pools.map = g_drawPool.createFramedPool();
     m_pools.map->disableBlend();
-    m_pools.text = Pool::create();
-    m_pools.creatureInformation = Pool::create();
+
+    m_pools.text = g_drawPool.createPool();
+    m_pools.creatureInformation = g_drawPool.createPool();
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -181,7 +182,7 @@ void MapView::draw(const Rect& rect)
     if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
         fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
-    /*if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == MapView::NEAR_VIEW) {
+    if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == MapView::NEAR_VIEW) {
         const Point center = m_rectCache.srcRect.center();
         const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
         m_shader->bind();
@@ -189,7 +190,7 @@ void MapView::draw(const Rect& rect)
         m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
         m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
         g_painter->setShaderProgram(m_shader);
-    }*/
+    }
 
     g_painter->setOpacity(fadeOpacity);
     g_drawPool.draw(m_pools.map);
@@ -202,7 +203,7 @@ void MapView::draw(const Rect& rect)
 
     // avoid drawing texts on map in far zoom outs
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
-    //drawCreatureInformation();
+    drawCreatureInformation();
 #endif
 
     // lights are drawn after names and before texts
@@ -214,7 +215,7 @@ void MapView::draw(const Rect& rect)
     drawCreatureInformation();
 #endif
 
-    //drawText();
+    drawText();
 }
 
 void MapView::drawCreatureInformation()
@@ -244,7 +245,7 @@ void MapView::drawText()
 
     const Position cameraPosition = getCameraPosition();
 
-    g_drawPool.draw(m_pools.text);
+    g_drawPool.set(m_pools.text);
     for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
         if(staticText->getMessageMode() == Otc::MessageNone) continue;
 
@@ -274,7 +275,7 @@ void MapView::drawText()
         animatedText->drawText(p, m_rectCache.rect);
     }
 
-    g_drawPool.draw(m_pools.creatureInformation);
+    g_drawPool.draw(m_pools.text);
 }
 
 void MapView::updateVisibleTilesCache()

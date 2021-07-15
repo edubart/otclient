@@ -32,7 +32,7 @@
 LightView::LightView(const MapViewPtr& mapView)
 {
     m_mapView = mapView;
-    m_pool = Pool::createFramed(Painter::CompositionMode_Light);
+    m_pool = g_drawPool.createFramedPool(Painter::CompositionMode_Light);
 
     generateLightTexture();
     generateShadeTexture();

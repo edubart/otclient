@@ -32,6 +32,15 @@ DrawPool g_drawPool;
 void DrawPool::init() {}
 void DrawPool::terminate() { m_currentPool = nullptr; }
 
+PoolFramedPtr DrawPool::createFramedPool(const Painter::CompositionMode mode)
+{
+    auto pool = std::make_shared<PoolFramed>();
+    pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
+    pool->m_framebuffer->setCompositionMode(mode);
+
+    return pool;
+}
+
 void DrawPool::addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
     auto currentState = g_painter->getCurrentState();
@@ -51,9 +60,8 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
     auto currentState = g_painter->getCurrentState();
     currentState.texture = texture;
 
-    if(m_currentPool->isFramed()) {
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(texture, method);
-    }
 
     auto& list = m_currentPool->m_objects;
 
@@ -88,36 +96,33 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
 
 void DrawPool::draw(const PoolPtr& pool)
 {
-    if(!pool->isFramed()) {
+    if(pool->isFramed()) {
+        const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
+        const auto& frameBuffer = pf->m_framebuffer;
+        if(frameBuffer->isDrawable()) {
+            g_painter->saveAndResetState();
+            if(pf->hasModification()) {
+                pf->updateStatus();
+                frameBuffer->bind();
+
+                for(auto& obj : pool->m_objects)
+                    drawObject(*obj);
+
+                frameBuffer->release();
+            }
+
+            frameBuffer->draw(pf->m_dest, pf->m_src);
+            g_painter->restoreSavedState();
+        }
+    } else {
         for(auto& obj : pool->m_objects)
             drawObject(*obj);
 
         pool->m_objects.clear();
-        return;
-    }
-
-    auto& pf = std::dynamic_pointer_cast<PoolFramed>(pool);
-
-    const auto& frameBuffer = pf->m_framebuffer;
-    if(!frameBuffer->isDrawable()) return;
-
-    g_painter->saveAndResetState();
-    if(pool->isFramed()) {
-        pf->updateStatus();
-        frameBuffer->bind();
-
-        for(auto& obj : pool->m_objects)
-            drawObject(*obj);
-
-        frameBuffer->release();
     }
 
     pool->m_objects.clear();
-
-    frameBuffer->draw(pf->m_dest, pf->m_src);
     m_currentPool = nullptr;
-
-    g_painter->restoreSavedState();
 }
 
 void DrawPool::drawObject(const Pool::DrawObject& obj)
@@ -170,11 +175,10 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer)
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ g_painter->getCurrentState(), std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} });
 
-    if(m_currentPool->isFramed()) {
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(nullptr, method);
-        m_currentPool->m_objects.push_back(action);
-    } else
-        m_currentPool->m_objects.push_back(action);
+
+    m_currentPool->m_objects.push_back(action);
 }
 
 void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Painter::DrawMode drawMode)
@@ -191,12 +195,10 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ currentState, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} });
 
-    if(m_currentPool->isFramed()) {
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(texture, method);
-        m_currentPool->m_objects.push_back(action);
-    } else {
-        m_currentPool->m_objects.push_back(action);
-    }
+
+    m_currentPool->m_objects.push_back(action);
 }
 
 void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture)

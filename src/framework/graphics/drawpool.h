@@ -34,6 +34,9 @@ public:
     void init();
     void terminate();
 
+    PoolPtr createPool() { return std::make_shared<Pool>(); }
+    PoolFramedPtr createFramedPool(const Painter::CompositionMode mode = Painter::CompositionMode_Normal);
+
     void addFillCoords(CoordsBuffer& coordsBuffer);
     void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
@@ -48,7 +51,9 @@ public:
     void addBoundingRect(const Rect& dest, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
+    void set(const PoolFramedPtr& pool) { pool->resetCurrentStatus();  m_currentPool = pool; };
     void set(const PoolPtr& pool) { m_currentPool = pool; };
+
     void draw(const PoolPtr& pool);
 
 private:

@@ -31,9 +31,6 @@
 class Pool
 {
 public:
-    static PoolPtr create() { return std::make_shared<Pool>(); }
-    static PoolFramedPtr createFramed(const Painter::CompositionMode mode = Painter::CompositionMode_Normal);
-
 protected:
     enum class DrawMethodType {
         DRAW_FILL_COORDS,
