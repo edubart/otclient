@@ -68,6 +68,42 @@ MapView::MapView()
     m_pools.creatureInformation = g_drawPool.createPool(PoolType::CREATURE_INFORMATION);
     m_pools.text = g_drawPool.createPool(PoolType::TEXT);
 
+    m_pools.map->onBeforeDraw([&]() {
+        const Position cameraPosition = getCameraPosition();
+        float fadeOpacity = 1.0f;
+        if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
+            fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
+            if(fadeOpacity < 0.0f) {
+                m_shader = m_nextShader;
+                m_nextShader = nullptr;
+                m_shaderSwitchDone = true;
+                m_fadeTimer.restart();
+            }
+        }
+
+        if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
+            fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
+
+        if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == MapView::NEAR_VIEW) {
+            const Point center = m_rectCache.srcRect.center();
+            const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
+            m_shader->bind();
+            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
+            m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
+            m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
+            g_painter->setShaderProgram(m_shader);
+        }
+
+        g_painter->setOpacity(fadeOpacity);
+    });
+
+    m_pools.map->onAfterDraw([]() {
+        g_painter->resetShaderProgram();
+        g_painter->resetOpacity();
+    });
+
+    m_pools.map->onAfterDraw([&]() {});
+
     m_shader = g_shaders.getDefaultMapShader();
 
     m_lastFloorShadowingColor = Color::white;
@@ -165,34 +201,6 @@ void MapView::draw(const Rect& rect)
         g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
         g_painter->resetOpacity();
     }
-
-    float fadeOpacity = 1.0f;
-    if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
-        fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
-        if(fadeOpacity < 0.0f) {
-            m_shader = m_nextShader;
-            m_nextShader = nullptr;
-            m_shaderSwitchDone = true;
-            m_fadeTimer.restart();
-        }
-    }
-
-    if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
-        fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
-
-    if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == MapView::NEAR_VIEW) {
-        const Point center = m_rectCache.srcRect.center();
-        const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
-        m_shader->bind();
-        m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
-        m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
-        m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
-        g_painter->setShaderProgram(m_shader);
-    }
-
-    g_painter->setOpacity(fadeOpacity);
-    g_painter->resetShaderProgram();
-    g_painter->resetOpacity();
 
     // this could happen if the player position is not known yet
     if(!cameraPosition.isValid())

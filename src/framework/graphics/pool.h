@@ -30,7 +30,6 @@
 
 class Pool
 {
-public:
 protected:
     enum class DrawMethodType {
         DRAW_FILL_COORDS,
@@ -74,6 +73,8 @@ private:
 
 class PoolFramed : public Pool {
 public:
+    void onBeforeDraw(std::function<void()> f) { m_beforeDraw = f; }
+    void onAfterDraw(std::function<void()> f) { m_afterDraw = f; }
     void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->m_useAlphaWriting = false; }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
@@ -93,6 +94,7 @@ private:
     FrameBufferPtr m_framebuffer;
     Rect m_dest, m_src;
 
+    std::function<void()> m_beforeDraw, m_afterDraw;
     std::pair<size_t, size_t> m_status{ 0,0 };
     std::hash<size_t> HASH_INT;
     std::hash<float> HASH_FLOAT;

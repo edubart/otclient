@@ -33,7 +33,7 @@ void DrawPool::init() {}
 void DrawPool::terminate()
 {
     m_currentPool = nullptr;
-    for(uint8 i = -1; ++i < PoolType::LAST;)
+    for(int8 i = -1; ++i < PoolType::LAST;)
         m_pools[i] = nullptr;
 }
 
@@ -126,7 +126,10 @@ void DrawPool::draw()
                     frameBuffer->release();
                 }
 
+                if(pf->m_beforeDraw) pf->m_beforeDraw();
                 frameBuffer->draw(pf->m_dest, pf->m_src);
+                if(pf->m_afterDraw) pf->m_afterDraw();
+
                 g_painter->restoreSavedState();
             }
         } else {
