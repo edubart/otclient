@@ -64,8 +64,9 @@ MapView::MapView()
 
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
-    m_framebuffer = g_framebuffers.createFrameBuffer(false);
-    m_framebuffer->disableBlend();
+    m_pools.map = Pool::createFramed();
+    m_pools.text = Pool::create();
+    m_pools.creatureInformation = Pool::create();
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -97,9 +98,10 @@ void MapView::draw(const Rect& rect)
         m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
     }
 
+    m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
+
     const Position cameraPosition = getCameraPosition();
 
-    g_drawPool.setFrameBuffer(m_framebuffer);
     const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
     for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
         if(lightView) {
@@ -189,7 +191,7 @@ void MapView::draw(const Rect& rect)
     }*/
 
     g_painter->setOpacity(fadeOpacity);
-    g_drawPool.draw(m_framebuffer, m_rectCache.rect, m_rectCache.srcRect);
+    //g_drawPool.draw(m_framebuffer, m_rectCache.rect, m_rectCache.srcRect);
     g_painter->resetShaderProgram();
     g_painter->resetOpacity();
 
@@ -232,7 +234,7 @@ void MapView::drawCreatureInformation()
                                   m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
     }
 
-    g_drawPool.draw();
+    //g_drawPool.draw();
 }
 
 void MapView::drawText()
@@ -270,7 +272,7 @@ void MapView::drawText()
         animatedText->drawText(p, m_rectCache.rect);
     }
 
-    g_drawPool.draw();
+    //g_drawPool.draw();
 }
 
 void MapView::updateVisibleTilesCache()
@@ -407,7 +409,7 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
     m_scaleFactor = m_tileSize / static_cast<float>(Otc::TILE_PIXELS);
 
-    m_framebuffer->resize(bufferSize);
+    m_pools.map->resize(bufferSize);
     if(m_drawLights) m_lightView->resize();
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
@@ -597,7 +599,7 @@ void MapView::optimizeForSize(const Size& visibleSize)
 
 void MapView::setAntiAliasing(const bool enable)
 {
-    m_framebuffer->setSmooth(enable);
+    m_pools.map->setSmooth(enable);
 
     updateGeometry(m_visibleDimension, m_optimizedSize);
 }

@@ -26,14 +26,13 @@
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
+#include <framework/graphics/pool.h>
 
 class DrawPool
 {
 public:
     void init();
     void terminate();
-
-    void setFrameBuffer(const FrameBufferPtr& frameBuffer);
 
     void addFillCoords(CoordsBuffer& coordsBuffer);
     void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
@@ -49,20 +48,15 @@ public:
     void addBoundingRect(const Rect& dest, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
-    void draw(const FrameBufferPtr& frameBuffer) { draw(frameBuffer, Rect(), Rect()); }
-    void draw(const FrameBufferPtr& frameBuffer, const Rect& dest, const Rect& src);
-    void draw();
+    void draw(const PoolPtr& pool);
 
 private:
-    void drawObject(const FrameBuffer::DrawObject& obj);
+    void drawObject(const Pool::DrawObject& obj);
+    void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
-    void add(const TexturePtr& texture, const FrameBuffer::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-    void addRepeated(const TexturePtr& texture, const FrameBuffer::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-
-    std::vector<std::shared_ptr<FrameBuffer::DrawObject>> m_repeatedActions, m_actions;
-
-    CoordsBuffer m_tempCoordsBuffer;
-    FrameBufferPtr m_currentFrameBuffer;
+    CoordsBuffer m_coordsbuffer;
+    PoolPtr m_currentPool;
 };
 
 extern DrawPool g_drawPool;

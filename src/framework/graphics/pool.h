@@ -20,13 +20,84 @@
  * THE SOFTWARE.
  */
 
-#ifndef DRAWPOOL_H
-#define DRAWPOOL_H
+#ifndef POOL_H
+#define POOL_H
 
+#include "declarations.h"
+#include "framebuffer.h"
+#include "texture.h"
+#include "framebuffermanager.h"
 
-class DrawPool
+class Pool
 {
 public:
+    static PoolPtr create() { return std::make_shared<Pool>(); }
+    static PoolFramedPtr createFramed(const Painter::CompositionMode mode = Painter::CompositionMode_Normal);
+
+protected:
+    enum class DrawMethodType {
+        DRAW_FILL_COORDS,
+        DRAW_TEXTURE_COORDS,
+        DRAW_TEXTURED_RECT,
+        DRAW_UPSIDEDOWN_TEXTURED_RECT,
+        DRAW_REPEATED_TEXTURED_RECT,
+        DRAW_REPEATED_FILLED_RECT,
+        DRAW_FILLED_RECT,
+        DRAW_FILLED_TRIANGLE,
+        DRAW_BOUNDING_RECT
+    };
+
+    struct DrawMethod {
+        DrawMethodType type;
+        std::pair<Rect, Rect> rects;
+        std::tuple<Point, Point, Point> points;
+        Point dest;
+        uint64 intValue{ 0 };
+        float floatValue{ .0f };
+    };
+
+    struct DrawObject {
+        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; }
+
+        Painter::PainterState state;
+        std::shared_ptr<CoordsBuffer> coordsBuffer;
+        Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
+        std::vector<DrawMethod> drawMethods;
+
+        std::function<void()> action;
+    };
+
+private:
+    virtual bool isFramed() const { return false; };
+
+    std::vector<std::shared_ptr<DrawObject>> m_objects;
+
+    friend class DrawPool;
+};
+
+class PoolFramed : public Pool {
+public:
+    void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->disableBlend(); }
+    void resize(const Size& size) { m_framebuffer->resize(size); }
+    void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
+
+protected:
+    friend class Pool;
+    friend class DrawPool;
+
+private:
+    size_t updateHash(const TexturePtr& texture, const DrawMethod& method);
+    void updateStatus() { m_status.first = m_status.second; }
+    void resetCurrentStatus() { m_status.second = 0; }
+    bool hasModification() const { return m_status.first != m_status.second; }
+    bool isFramed() const override { return m_framebuffer != nullptr; }
+
+    FrameBufferPtr m_framebuffer;
+    Rect m_dest, m_src;
+
+    std::pair<size_t, size_t> m_status{ 0,0 };
+    std::hash<size_t> HASH_INT;
+    std::hash<float> HASH_FLOAT;
 };
 
 #endif

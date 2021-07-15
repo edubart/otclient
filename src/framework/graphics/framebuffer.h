@@ -47,13 +47,6 @@ enum class DrawMethodType {
 class FrameBuffer : public stdext::shared_object
 {
 public:
-    struct CoordsBufferCache {
-        size_t currentHash{ 0 }, lastHash{ 0 };
-        std::vector<std::pair<Rect, Rect>> rects;
-        CoordsBuffer coordsBuffer;
-        TexturePtr texture;
-    };
-
     ~FrameBuffer() override;
 
     void release();
@@ -82,49 +75,12 @@ protected:
     FrameBuffer(bool useAlphaWriting);
 
     friend class FrameBufferManager;
-    friend class DrawPool;
+    friend class Pool;
 
 private:
-    enum class DrawMethodType {
-        DRAW_FILL_COORDS,
-        DRAW_TEXTURE_COORDS,
-        DRAW_TEXTURED_RECT,
-        DRAW_UPSIDEDOWN_TEXTURED_RECT,
-        DRAW_REPEATED_TEXTURED_RECT,
-        DRAW_REPEATED_FILLED_RECT,
-        DRAW_FILLED_RECT,
-        DRAW_FILLED_TRIANGLE,
-        DRAW_BOUNDING_RECT
-    };
-
-    struct DrawMethod {
-        DrawMethodType type;
-        std::pair<Rect, Rect> rects;
-        std::tuple<Point, Point, Point> points;
-        Point dest;
-        uint64 intValue{ 0 };
-        float floatValue{ .0f };
-    };
-
-    struct DrawObject {
-        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; }
-
-        Painter::PainterState state;
-        std::shared_ptr<CoordsBuffer> coordsBuffer;
-        Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
-        std::vector<DrawMethod> drawMethods;
-
-        std::function<void()> action;
-    };
-
     void internalCreate();
     void internalBind();
     void internalRelease();
-    void updateStatus() { m_status.first = m_status.second; }
-    void resetCurrentStatus() { m_status.second = 0; }
-    bool hasModification() const { return m_status.first != m_status.second; }
-
-    size_t updateHash(const TexturePtr& texture, const DrawMethod& method);
 
     static uint boundFbo;
 
@@ -137,18 +93,11 @@ private:
     Color m_colorClear = { Color::black };
     Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
 
-    std::vector<std::shared_ptr<DrawObject>> m_actions;
-
-    std::pair<size_t, size_t> m_status{ 0,0 };
-
     bool m_backuping{ true },
         m_smooth{ true },
         m_useAlphaWriting{ false },
         m_disableBlend{ false },
         m_drawable{ true };
-
-    std::hash<size_t> HASH_INT;
-    std::hash<float> HASH_FLOAT;
 };
 
 #endif

@@ -111,7 +111,7 @@ void LightView::setShade(const Point& point)
 
 void LightView::resize()
 {
-    m_lightbuffer->resize(m_mapView->m_framebuffer->getSize());
+    m_lightbuffer->resize(m_mapView->m_rectDimension.size());
     m_shades.resize(m_mapView->m_drawDimension.area());
 }
 
@@ -120,7 +120,6 @@ void LightView::draw(const Rect& dest, const Rect& src)
     // draw light, only if there is darkness
     if(!isDark()) return;
 
-    g_drawPool.setFrameBuffer(m_lightbuffer);
     m_lightbuffer->setColorClear(m_globalLightColor);
 
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
@@ -144,5 +143,5 @@ void LightView::draw(const Rect& dest, const Rect& src)
         lights.clear();
     }
 
-    g_drawPool.draw(m_lightbuffer, dest, src);
+    //g_drawPool.draw(m_lightbuffer, dest, src);
 }

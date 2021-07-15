@@ -141,7 +141,7 @@ void GraphicalApplication::run()
 
                 if(m_mustRepaint && foregroundCanUpdate()) {
                     // prepare the foreground to be drawn
-                    g_drawPool.setFrameBuffer(m_foregroundFrameCache);
+                    //g_drawPool.setFrameBuffer(m_foregroundFrameCache);
                     g_ui.render(Fw::ForegroundPane);
                 }
 
@@ -149,7 +149,7 @@ void GraphicalApplication::run()
                 g_ui.render(Fw::BackgroundPane);
 
                 // draw the foreground (steady stuff)
-                g_drawPool.draw(m_foregroundFrameCache);
+                //g_drawPool.draw(m_foregroundFrameCache);
 
                 //m_lastRenderedTime.restart();
 

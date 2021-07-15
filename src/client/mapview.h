@@ -157,6 +157,11 @@ public:
     void setRenderScale(const uint8 scale);
 
 private:
+    struct Pools {
+        PoolFramedPtr map;
+        PoolPtr creatureInformation, text;
+    };
+
     struct ViewPort {
         uint8 top, right, bottom, left;
     };
@@ -250,7 +255,7 @@ private:
     PainterShaderProgramPtr m_shader, m_nextShader;
     LightViewPtr m_lightView;
     CreaturePtr m_followingCreature;
-    FrameBufferPtr m_framebuffer;
+    Pools m_pools;
 
     RectCache m_rectCache;
     ViewMode m_viewMode;
