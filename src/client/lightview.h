@@ -69,7 +69,7 @@ private:
     Light m_globalLight;
     Color m_globalLightColor;
 
-    FrameBufferPtr m_lightbuffer;
+    PoolFramedPtr m_pool;
     MapViewPtr m_mapView;
 
     int8 m_currentFloor;

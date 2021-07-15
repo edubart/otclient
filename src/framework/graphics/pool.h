@@ -77,9 +77,11 @@ private:
 
 class PoolFramed : public Pool {
 public:
-    void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->disableBlend(); }
+    void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->m_useAlphaWriting = false; }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
+    void setColorClear(const Color color) { m_framebuffer->setColorClear(color); }
+    void disableBlend() { m_framebuffer->disableBlend(); }
 
 protected:
     friend class Pool;

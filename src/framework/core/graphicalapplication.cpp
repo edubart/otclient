@@ -52,7 +52,7 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnInputEvent([this](auto&& PH1) { inputEvent(std::forward<decltype(PH1)>(PH1)); });
     g_window.setOnClose([this] { close(); });
 
-    m_foregroundFrameCache = g_framebuffers.createFrameBuffer(true);
+    m_foregroundFramed = Pool::createFramed();
 
     g_mouse.init();
 
@@ -100,7 +100,7 @@ void GraphicalApplication::terminate()
     g_mouse.terminate();
 
     // terminate graphics
-    m_foregroundFrameCache = nullptr;
+    m_foregroundFramed = nullptr;
     g_drawPool.terminate();
     g_graphics.terminate();
     g_window.terminate();
@@ -141,17 +141,16 @@ void GraphicalApplication::run()
 
                 if(m_mustRepaint && foregroundCanUpdate()) {
                     // prepare the foreground to be drawn
-                    //g_drawPool.setFrameBuffer(m_foregroundFrameCache);
+                    g_drawPool.set(m_foregroundFramed);
                     g_ui.render(Fw::ForegroundPane);
+                    m_refreshTime.restart();
                 }
 
                 // draw background (animated stuff)
                 g_ui.render(Fw::BackgroundPane);
 
                 // draw the foreground (steady stuff)
-                //g_drawPool.draw(m_foregroundFrameCache);
-
-                //m_lastRenderedTime.restart();
+                g_drawPool.draw(m_foregroundFramed);
 
                 // update screen pixels
                 g_window.swapBuffers();
@@ -205,7 +204,7 @@ void GraphicalApplication::resize(const Size& size)
     g_ui.resize(size);
     m_onInputEvent = false;
 
-    m_foregroundFrameCache->resize(size);
+    m_foregroundFramed->resize(size);
 
     m_mustRepaint = true;
 }

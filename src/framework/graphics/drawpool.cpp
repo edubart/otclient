@@ -52,7 +52,7 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
     currentState.texture = texture;
 
     if(m_currentPool->isFramed()) {
-        //std::dynamic_pointer_cast<PoolFramed*>(m_currentPool)->updateHash(texture, method);
+        poolFramed()->updateHash(texture, method);
     }
 
     auto& list = m_currentPool->m_objects;
@@ -96,14 +96,14 @@ void DrawPool::draw(const PoolPtr& pool)
         return;
     }
 
-    /*auto& poolFramed = *std::dynamic_pointer_cast<PoolFramed*>(m_currentPool);
+    auto& pf = std::dynamic_pointer_cast<PoolFramed>(pool);
 
-    const auto& frameBuffer = poolFramed->m_framebuffer;
+    const auto& frameBuffer = pf->m_framebuffer;
     if(!frameBuffer->isDrawable()) return;
 
     g_painter->saveAndResetState();
     if(pool->isFramed()) {
-        poolFramed->updateStatus();
+        pf->updateStatus();
         frameBuffer->bind();
 
         for(auto& obj : pool->m_objects)
@@ -114,10 +114,10 @@ void DrawPool::draw(const PoolPtr& pool)
 
     pool->m_objects.clear();
 
-    frameBuffer->draw(poolFramed->m_src, poolFramed->m_dest);
+    frameBuffer->draw(pf->m_dest, pf->m_src);
     m_currentPool = nullptr;
 
-    g_painter->restoreSavedState();*/
+    g_painter->restoreSavedState();
 }
 
 void DrawPool::drawObject(const Pool::DrawObject& obj)
@@ -171,7 +171,7 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer)
         Pool::DrawObject{ g_painter->getCurrentState(), std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} });
 
     if(m_currentPool->isFramed()) {
-        //poolFramed()->updateHash(nullptr, method);
+        poolFramed()->updateHash(nullptr, method);
         m_currentPool->m_objects.push_back(action);
     } else
         m_currentPool->m_objects.push_back(action);
@@ -192,7 +192,7 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
         Pool::DrawObject{ currentState, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} });
 
     if(m_currentPool->isFramed()) {
-        //std::dynamic_pointer_cast<PoolFramed*>(m_currentPool)->updateHash(texture, method);
+        poolFramed()->updateHash(texture, method);
         m_currentPool->m_objects.push_back(action);
     } else {
         m_currentPool->m_objects.push_back(action);

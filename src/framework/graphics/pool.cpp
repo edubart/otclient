@@ -26,6 +26,7 @@ PoolFramedPtr Pool::createFramed(const Painter::CompositionMode mode)
     auto& pool = std::make_shared<PoolFramed>();
     pool->m_framebuffer = g_framebuffers.createFrameBuffer();
     pool->m_framebuffer->setCompositionMode(mode);
+    pool->m_framebuffer->m_useAlphaWriting = true;
 
     return pool;
 }

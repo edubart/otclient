@@ -65,6 +65,7 @@ MapView::MapView()
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_pools.map = Pool::createFramed();
+    m_pools.map->disableBlend();
     m_pools.text = Pool::create();
     m_pools.creatureInformation = Pool::create();
 
@@ -96,12 +97,12 @@ void MapView::draw(const Rect& rect)
         m_rectCache.drawOffset = m_rectCache.srcRect.topLeft();
         m_rectCache.horizontalStretchFactor = rect.width() / static_cast<float>(m_rectCache.srcRect.width());
         m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
+
+        m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
 
-    m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
-
+    g_drawPool.set(m_pools.map);
     const Position cameraPosition = getCameraPosition();
-
     const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
     for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
         if(lightView) {
@@ -191,7 +192,7 @@ void MapView::draw(const Rect& rect)
     }*/
 
     g_painter->setOpacity(fadeOpacity);
-    //g_drawPool.draw(m_framebuffer, m_rectCache.rect, m_rectCache.srcRect);
+    g_drawPool.draw(m_pools.map);
     g_painter->resetShaderProgram();
     g_painter->resetOpacity();
 
@@ -201,7 +202,7 @@ void MapView::draw(const Rect& rect)
 
     // avoid drawing texts on map in far zoom outs
 #if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
-    drawCreatureInformation();
+    //drawCreatureInformation();
 #endif
 
     // lights are drawn after names and before texts
@@ -213,7 +214,7 @@ void MapView::draw(const Rect& rect)
     drawCreatureInformation();
 #endif
 
-    drawText();
+    //drawText();
 }
 
 void MapView::drawCreatureInformation()
@@ -227,14 +228,14 @@ void MapView::drawCreatureInformation()
     if(m_drawHealthBars) { flags |= Otc::DrawBars; }
     if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
+    g_drawPool.set(m_pools.creatureInformation);
     for(const auto& creature : m_visibleCreatures) {
         creature->drawInformation(m_rectCache.rect,
                                   transformPositionTo2D(creature->getPosition(), cameraPosition),
                                   m_scaleFactor, m_rectCache.drawOffset,
                                   m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
     }
-
-    //g_drawPool.draw();
+    g_drawPool.draw(m_pools.creatureInformation);
 }
 
 void MapView::drawText()
@@ -243,6 +244,7 @@ void MapView::drawText()
 
     const Position cameraPosition = getCameraPosition();
 
+    g_drawPool.draw(m_pools.text);
     for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
         if(staticText->getMessageMode() == Otc::MessageNone) continue;
 
@@ -272,7 +274,7 @@ void MapView::drawText()
         animatedText->drawText(p, m_rectCache.rect);
     }
 
-    //g_drawPool.draw();
+    g_drawPool.draw(m_pools.creatureInformation);
 }
 
 void MapView::updateVisibleTilesCache()

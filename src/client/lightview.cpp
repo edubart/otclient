@@ -32,8 +32,7 @@
 LightView::LightView(const MapViewPtr& mapView)
 {
     m_mapView = mapView;
-    m_lightbuffer = g_framebuffers.createFrameBuffer();
-    m_lightbuffer->setCompositionMode(Painter::CompositionMode_Light);
+    m_pool = Pool::createFramed(Painter::CompositionMode_Light);
 
     generateLightTexture();
     generateShadeTexture();
@@ -111,7 +110,7 @@ void LightView::setShade(const Point& point)
 
 void LightView::resize()
 {
-    m_lightbuffer->resize(m_mapView->m_rectDimension.size());
+    m_pool->resize(m_mapView->m_rectDimension.size());
     m_shades.resize(m_mapView->m_drawDimension.area());
 }
 
@@ -120,8 +119,10 @@ void LightView::draw(const Rect& dest, const Rect& src)
     // draw light, only if there is darkness
     if(!isDark()) return;
 
-    m_lightbuffer->setColorClear(m_globalLightColor);
+    m_pool->setColorClear(m_globalLightColor);
 
+    m_pool->setCoords(dest, src);
+    g_drawPool.set(m_pool);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         if(z < m_mapView->m_floorMax) {
@@ -143,5 +144,5 @@ void LightView::draw(const Rect& dest, const Rect& src)
         lights.clear();
     }
 
-    //g_drawPool.draw(m_lightbuffer, dest, src);
+    g_drawPool.draw(m_pool);
 }

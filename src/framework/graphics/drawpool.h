@@ -48,9 +48,12 @@ public:
     void addBoundingRect(const Rect& dest, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
+    void set(const PoolPtr& pool) { m_currentPool = pool; };
     void draw(const PoolPtr& pool);
 
 private:
+    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
+
     void drawObject(const Pool::DrawObject& obj);
     void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;

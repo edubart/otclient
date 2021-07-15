@@ -65,7 +65,7 @@ private:
 
     AdaptativeFrameCounter m_backgroundFrameCounter;
 
-    FrameBufferPtr m_foregroundFrameCache;
+    PoolFramedPtr m_foregroundFramed;
 };
 
 extern GraphicalApplication g_app;
