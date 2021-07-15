@@ -78,7 +78,6 @@ public:
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
     void setColorClear(const Color color) { m_framebuffer->setColorClear(color); }
-    void disableBlend() { m_framebuffer->disableBlend(); }
 
 protected:
     friend class Pool;

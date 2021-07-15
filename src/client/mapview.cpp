@@ -64,11 +64,9 @@ MapView::MapView()
 
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
-    m_pools.map = g_drawPool.createFramedPool();
-    m_pools.map->disableBlend();
-
-    m_pools.text = g_drawPool.createPool();
-    m_pools.creatureInformation = g_drawPool.createPool();
+    m_pools.map = g_drawPool.createPoolF(PoolType::MAP);
+    m_pools.creatureInformation = g_drawPool.createPool(PoolType::CREATURE_INFORMATION);
+    m_pools.text = g_drawPool.createPool(PoolType::TEXT);
 
     m_shader = g_shaders.getDefaultMapShader();
 
@@ -193,7 +191,6 @@ void MapView::draw(const Rect& rect)
     }
 
     g_painter->setOpacity(fadeOpacity);
-    g_drawPool.draw(m_pools.map);
     g_painter->resetShaderProgram();
     g_painter->resetOpacity();
 
@@ -201,19 +198,12 @@ void MapView::draw(const Rect& rect)
     if(!cameraPosition.isValid())
         return;
 
-    // avoid drawing texts on map in far zoom outs
-#if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 0
     drawCreatureInformation();
-#endif
 
     // lights are drawn after names and before texts
     if(m_drawLights) {
         m_lightView->draw(rect, m_rectCache.srcRect);
     }
-
-#if DRAW_CREATURE_INFORMATION_AFTER_LIGHT == 1
-    drawCreatureInformation();
-#endif
 
     drawText();
 }
@@ -236,7 +226,6 @@ void MapView::drawCreatureInformation()
                                   m_scaleFactor, m_rectCache.drawOffset,
                                   m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
     }
-    g_drawPool.draw(m_pools.creatureInformation);
 }
 
 void MapView::drawText()
@@ -274,8 +263,6 @@ void MapView::drawText()
 
         animatedText->drawText(p, m_rectCache.rect);
     }
-
-    g_drawPool.draw(m_pools.text);
 }
 
 void MapView::updateVisibleTilesCache()

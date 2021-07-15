@@ -28,14 +28,23 @@
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/pool.h>
 
+enum PoolType : uint8 {
+    MAP,
+    CREATURE_INFORMATION,
+    LIGHT,
+    TEXT,
+    FOREGROUND,
+    LAST
+};
+
 class DrawPool
 {
 public:
     void init();
     void terminate();
 
-    PoolPtr createPool() { return std::make_shared<Pool>(); }
-    PoolFramedPtr createFramedPool(const Painter::CompositionMode mode = Painter::CompositionMode_Normal);
+    PoolPtr createPool(const PoolType type);
+    PoolFramedPtr createPoolF(const PoolType type);
 
     void addFillCoords(CoordsBuffer& coordsBuffer);
     void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
@@ -53,8 +62,7 @@ public:
 
     void set(const PoolFramedPtr& pool) { pool->resetCurrentStatus();  m_currentPool = pool; };
     void set(const PoolPtr& pool) { m_currentPool = pool; };
-
-    void draw(const PoolPtr& pool);
+    void draw();
 
 private:
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
@@ -65,6 +73,8 @@ private:
 
     CoordsBuffer m_coordsbuffer;
     PoolPtr m_currentPool;
+
+    std::array<PoolPtr, PoolType::LAST> m_pools;
 };
 
 extern DrawPool g_drawPool;

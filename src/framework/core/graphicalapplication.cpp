@@ -52,7 +52,7 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnInputEvent([this](auto&& PH1) { inputEvent(std::forward<decltype(PH1)>(PH1)); });
     g_window.setOnClose([this] { close(); });
 
-    m_foregroundFramed = g_drawPool.createFramedPool();
+    m_foregroundFramed = g_drawPool.createPoolF(PoolType::FOREGROUND);
 
     g_mouse.init();
 
@@ -143,14 +143,14 @@ void GraphicalApplication::run()
                     // prepare the foreground to be drawn
                     g_drawPool.set(m_foregroundFramed);
                     g_ui.render(Fw::ForegroundPane);
-                    //m_refreshTime.restart();
+                    m_refreshTime.restart();
                 }
 
                 // draw background (animated stuff)
                 g_ui.render(Fw::BackgroundPane);
 
-                // draw the foreground (steady stuff)
-                g_drawPool.draw(m_foregroundFramed);
+                // Draw All Pools
+                g_drawPool.draw();
 
                 // update screen pixels
                 g_window.swapBuffers();

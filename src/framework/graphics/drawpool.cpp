@@ -30,13 +30,27 @@
 DrawPool g_drawPool;
 
 void DrawPool::init() {}
-void DrawPool::terminate() { m_currentPool = nullptr; }
+void DrawPool::terminate()
+{
+    m_currentPool = nullptr;
+    for(uint8 i = -1; ++i < PoolType::LAST;)
+        m_pools[i] = nullptr;
+}
 
-PoolFramedPtr DrawPool::createFramedPool(const Painter::CompositionMode mode)
+PoolPtr DrawPool::createPool(const PoolType type)
+{
+    return m_pools[type] = std::make_shared<Pool>();
+}
+
+PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 {
     auto pool = std::make_shared<PoolFramed>();
     pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
-    pool->m_framebuffer->setCompositionMode(mode);
+
+    if(type == PoolType::MAP) pool->m_framebuffer->disableBlend();
+    else if(type == PoolType::MAP) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+
+    m_pools[type] = pool;
 
     return pool;
 }
@@ -94,35 +108,36 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
     list.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ currentState, nullptr, drawMode, {method} }));
 }
 
-void DrawPool::draw(const PoolPtr& pool)
+void DrawPool::draw()
 {
-    if(pool->isFramed()) {
-        const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
-        const auto& frameBuffer = pf->m_framebuffer;
-        if(frameBuffer->isDrawable()) {
-            g_painter->saveAndResetState();
-            if(pf->hasModification()) {
-                pf->updateStatus();
-                frameBuffer->bind();
+    for(const auto& pool : m_pools) {
+        if(pool->isFramed()) {
+            const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
+            const auto& frameBuffer = pf->m_framebuffer;
+            if(frameBuffer->isDrawable()) {
+                g_painter->saveAndResetState();
+                if(pf->hasModification()) {
+                    pf->updateStatus();
+                    frameBuffer->bind();
 
-                for(auto& obj : pool->m_objects)
-                    drawObject(*obj);
+                    for(auto& obj : pool->m_objects)
+                        drawObject(*obj);
 
-                frameBuffer->release();
+                    frameBuffer->release();
+                }
+
+                frameBuffer->draw(pf->m_dest, pf->m_src);
+                g_painter->restoreSavedState();
             }
+        } else {
+            for(auto& obj : pool->m_objects)
+                drawObject(*obj);
 
-            frameBuffer->draw(pf->m_dest, pf->m_src);
-            g_painter->restoreSavedState();
+            pool->m_objects.clear();
         }
-    } else {
-        for(auto& obj : pool->m_objects)
-            drawObject(*obj);
 
         pool->m_objects.clear();
     }
-
-    pool->m_objects.clear();
-    m_currentPool = nullptr;
 }
 
 void DrawPool::drawObject(const Pool::DrawObject& obj)
