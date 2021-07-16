@@ -69,14 +69,12 @@ public:
 private:
     PoolFramedPtr poolFramed();
 
-    PoolPtr getCurrentPool();
     void drawObject(Pool::DrawObject& obj);
     void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
     CoordsBuffer m_coordsbuffer;
     std::array<PoolPtr, PoolType::LAST> m_pools;
-    PoolPtr m_currentPool;
 
     bool m_multiThread;
 };

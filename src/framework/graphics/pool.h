@@ -33,7 +33,6 @@ class Pool
 public:
     void join();
     void init(const bool openThread = false);
-    bool joinable() { return m_thread.joinable(); }
 
 protected:
     enum class DrawMethodType {
@@ -75,6 +74,9 @@ private:
 
     std::function<void()> m_action;
     std::thread m_thread;
+
+    bool m_usingThread{ false };
+
     friend class DrawPool;
 };
 

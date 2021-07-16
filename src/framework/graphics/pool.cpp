@@ -24,12 +24,14 @@
 
 void Pool::join()
 {
-    if(m_thread.joinable())
+    if(m_usingThread && m_thread.joinable())
         m_thread.join();
 }
 
 void Pool::init(const bool openThread)
 {
+    m_usingThread = openThread;
+
     if(openThread)
         m_thread = std::thread(m_action);
     else  m_action();
