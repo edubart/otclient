@@ -33,8 +33,7 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
 
     if(m_creature) {
         const Rect drawRect = getPaddingRect();
-        g_painter->setColor(m_imageColor);
-        m_creature->drawOutfit(drawRect, !m_fixedCreatureSize);
+        m_creature->drawOutfit(drawRect, !m_fixedCreatureSize, m_imageColor);
     }
 }
 

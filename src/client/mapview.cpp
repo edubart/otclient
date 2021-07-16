@@ -112,7 +112,7 @@ MapView::MapView()
 
     setVisibleDimension(Size(15, 11));
 
-    g_drawPool.link(m_pools.map, [&]() {
+    g_drawPool.registerThread(m_pools.map, [&]() {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
@@ -168,11 +168,10 @@ MapView::MapView()
             const Point& point = transformPositionTo2D(m_lastMousePosition, cameraPosition);
             const auto crosshairRect = Rect(point, m_tileSize, m_tileSize);
             g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
-            g_painter->resetOpacity();
         }
     });
 
-    g_drawPool.link(m_pools.creatureInformation, [&]() {
+    g_drawPool.registerThread(m_pools.creatureInformation, [&]() {
         const Position cameraPosition = getCameraPosition();
 
         uint32_t flags = 0;
@@ -188,7 +187,7 @@ MapView::MapView()
         }
     });
 
-    g_drawPool.link(m_pools.text, [&]() {
+    g_drawPool.registerThread(m_pools.text, [&]() {
         const Position cameraPosition = getCameraPosition();
         for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
             if(staticText->getMessageMode() == Otc::MessageNone) continue;
@@ -518,17 +517,11 @@ void MapView::onFloorDrawingStart(const uint8 floor)
             }
         }
 
-        g_painter->setColor(shadowColor);
         m_lastFloorShadowingColor = shadowColor;
     }
 }
 
-void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
-{
-    if(hasFloorShadowingFlag()) {
-        g_painter->resetColor();
-    }
-}
+void MapView::onFloorDrawingEnd(const uint8 /*floor*/) {}
 
 void MapView::onTileUpdate(const Position&, const ThingPtr&, const Otc::Operation)
 {

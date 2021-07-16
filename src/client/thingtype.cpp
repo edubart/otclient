@@ -434,7 +434,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, int frameFlags, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color, int frameFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -467,12 +467,9 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         const bool useOpacity = m_opacity < 1.0f;
 
         if(useOpacity)
-            g_painter->setColor(Color(1.0f, 1.0f, 1.0f, m_opacity));
+            color = Color(1.0f, 1.0f, 1.0f, m_opacity);
 
-        g_drawPool.addTexturedRect(screenRect, texture, textureRect, dest);
-
-        if(useOpacity)
-            g_painter->resetColor();
+        g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
     }
 
     if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {

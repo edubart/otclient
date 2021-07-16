@@ -47,8 +47,7 @@ void UISprite::drawSelf(Fw::DrawPane drawPane)
     drawImage(m_rect);
 
     if(m_spriteVisible && m_sprite) {
-        g_painter->setColor(m_spriteColor);
-       g_drawPool.addTexturedRect(getPaddingRect(), m_sprite);
+       g_drawPool.addTexturedRect(getPaddingRect(), m_sprite, m_spriteColor);
     }
 
     drawBorder(m_rect);

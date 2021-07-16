@@ -34,8 +34,7 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
     if(drawPane & Fw::ForegroundPane) {
         if(drawPane != Fw::BothPanes) {
             g_drawPool.addAction([]() {glDisable(GL_BLEND); });
-            g_painter->setColor(Color::alpha);
-            g_drawPool.addFilledRect(m_rect);
+            g_drawPool.addFilledRect(m_rect, Color::alpha);
             g_drawPool.addAction([]() {glEnable(GL_BLEND); });
         }
     }

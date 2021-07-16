@@ -54,19 +54,16 @@ void UIMap::drawSelf(Fw::DrawPane drawPane)
 
     if(drawPane & Fw::ForegroundPane) {
         // draw map border
-        g_painter->setColor(Color::black);
-        g_drawPool.addBoundingRect(m_mapRect.expanded(1));
+        g_drawPool.addBoundingRect(m_mapRect.expanded(1), Color::black);
 
         if(drawPane != Fw::BothPanes) {
-            g_painter->setColor(Color::alpha);
             g_drawPool.addAction([]() {glDisable(GL_BLEND); });
-            g_drawPool.addFilledRect(m_mapRect);
+            g_drawPool.addFilledRect(m_mapRect, Color::alpha);
             g_drawPool.addAction([]() {glEnable(GL_BLEND); });
         }
     }
 
     if(drawPane & Fw::BackgroundPane) {
-        g_painter->resetColor();
         m_mapView->draw(m_mapRect);
     }
 }

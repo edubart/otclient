@@ -125,7 +125,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         if(z < m_mapView->m_floorMax) {
-            g_painter->setColor(m_globalLightColor);
+            (m_globalLightColor);
             for(auto& shade : m_shades) {
                 if(shade.floor != z) continue;
                 shade.floor = -1;
@@ -137,7 +137,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
         auto& lights = m_lights[z];
         std::sort(lights.begin(), lights.end(), orderLightComparator);
         for(LightSource& light : lights) {
-            g_painter->setColor(Color::from8bit(light.color, light.brightness));
+            (Color::from8bit(light.color, light.brightness));
             g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture);
         }
         lights.clear();

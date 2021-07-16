@@ -90,22 +90,9 @@ void Tile::drawStart(const MapViewPtr& mapView)
             m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
         }
     }
-
-    if(hasBorderShadowColor()) {
-        m_shadowColor = mapView->getLastFloorShadowingColor();
-        g_painter->setColor(m_borderShadowColor);
-    }
 }
 
-void Tile::drawEnd(const MapViewPtr& /*mapView*/)
-{
-    if(m_completelyCovered) return;
-
-    // Reset Border Shadow Color
-    if(hasBorderShadowColor()) {
-        g_painter->setColor(m_shadowColor);
-    }
-}
+void Tile::drawEnd(const MapViewPtr& /*mapView*/) {}
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
 {
@@ -116,25 +103,14 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
             frameFlag = Otc::FUpdateLight;
     }
 
-    const auto putShadowColor = g_painter->getColor() == m_borderShadowColor && (!thing->isGroundBorder() && !thing->isTall());
-
-    if(putShadowColor) {
-        g_painter->setColor(m_shadowColor);
-    }
-
     if(thing->isEffect()) {
         thing->static_self_cast<Effect>()->drawEffect(dest, scaleFactor, frameFlag, lightView);
     } else {
-        thing->draw(dest, scaleFactor, animate, m_highlight, frameFlag, lightView);
+        thing->draw(dest, scaleFactor, animate, m_highlight, Color::white, frameFlag, lightView);
 
         m_drawElevation += thing->getElevation();
         if(m_drawElevation > Otc::MAX_ELEVATION)
             m_drawElevation = Otc::MAX_ELEVATION;
-    }
-
-    // Reset Border Shadow Color
-    if(putShadowColor) {
-        g_painter->setColor(m_borderShadowColor);
     }
 }
 
@@ -189,9 +165,9 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
         ), scaleFactor, true, frameFlags, lightView);
-        }
-#endif
     }
+#endif
+}
 
 void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {

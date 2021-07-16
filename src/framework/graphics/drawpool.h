@@ -46,22 +46,30 @@ public:
     PoolPtr createPool(const PoolType type);
     PoolFramedPtr createPoolF(const PoolType type);
 
-    void addFillCoords(CoordsBuffer& coordsBuffer);
-    void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void addFillCoords(CoordsBuffer& coordsBuffer, const Color color = Color::white);
+    void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color = Color::white, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture);
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Point& originalDest = Point());
-    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
-    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture);
-    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
-    void addRepeatedFilledRect(const Rect& dest);
-    void addFilledRect(const Rect& dest);
-    void addFilledTriangle(const Point& a, const Point& b, const Point& c);
-    void addBoundingRect(const Rect& dest, int innerLineWidth = 1);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white, const Point& originalDest = Point());
+    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
+    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
+    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
+    void addRepeatedFilledRect(const Rect& dest, const Color color = Color::white);
+    void addFilledRect(const Rect& dest, const Color color = Color::white);
+    void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color = Color::white);
+    void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
+    size_t getSize();
+
+    // -1 = LAST POSITION
+    void setColor(const Color color, const int pos = -1);
+    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);
+    void setClipRect(const Rect& clipRect, const int pos = -1);
+    void setOpacity(const float opacity, const int pos = -1);
+
     void draw();
-    void link(const PoolPtr& pool, const std::function<void()> f);
+    void registerThread(const PoolPtr& pool, const std::function<void()> f);
     bool isOnThread();
     bool multiThreadEnabled() const { return m_multiThread; }
     void setMultiThread(const bool v) { m_multiThread = v; }
@@ -70,8 +78,8 @@ private:
     PoolFramedPtr poolFramed();
 
     void drawObject(Pool::DrawObject& obj);
-    void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-    void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
+    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
     CoordsBuffer m_coordsbuffer;
     std::array<PoolPtr, PoolType::LAST> m_pools;

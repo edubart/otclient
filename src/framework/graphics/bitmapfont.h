@@ -34,50 +34,50 @@
 class BitmapFont : public stdext::shared_object
 {
 public:
-	BitmapFont(std::string name) : m_name(std::move(name)) {}
+    BitmapFont(std::string name) : m_name(std::move(name)) {}
 
-	/// Load font from otml node
-	void load(const OTMLNodePtr& fontNode);
+    /// Load font from otml node
+    void load(const OTMLNodePtr& fontNode);
 
-	/// Simple text render starting at startPos
-	void drawText(const std::string& text, const Point& startPos);
+    /// Simple text render starting at startPos
+    void drawText(const std::string& text, const Point& startPos, const Color color = Color::white);
 
-	/// Advanced text render delimited by a screen region and alignment
-	void drawText(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
+    /// Advanced text render delimited by a screen region and alignment
+    void drawText(const std::string& text, const Rect& screenCoords, const Color color = Color::white, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
-	std::vector<std::pair<Rect, Rect>> getDrawTextCoords(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
-	void calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
+    std::vector<std::pair<Rect, Rect>> getDrawTextCoords(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
+    void calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
-	/// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
-	const std::vector<Point>& calculateGlyphsPositions(const std::string& text,
-																										 Fw::AlignmentFlag align = Fw::AlignTopLeft,
-																										 Size* textBoxSize = nullptr);
+    /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
+    const std::vector<Point>& calculateGlyphsPositions(const std::string& text,
+                                                       Fw::AlignmentFlag align = Fw::AlignTopLeft,
+                                                       Size* textBoxSize = nullptr);
 
-	/// Simulate render and calculate text size
-	Size calculateTextRectSize(const std::string& text);
+    /// Simulate render and calculate text size
+    Size calculateTextRectSize(const std::string& text);
 
-	std::string wrapText(const std::string& text, int maxWidth);
+    std::string wrapText(const std::string& text, int maxWidth);
 
-	const std::string& getName() { return m_name; }
-	int getGlyphHeight() { return m_glyphHeight; }
-	const Rect* getGlyphsTextureCoords() { return m_glyphsTextureCoords; }
-	const Size* getGlyphsSize() { return m_glyphsSize; }
-	const TexturePtr& getTexture() { return m_texture; }
-	int getYOffset() { return m_yOffset; }
-	Size getGlyphSpacing() { return m_glyphSpacing; }
+    const std::string& getName() { return m_name; }
+    int getGlyphHeight() { return m_glyphHeight; }
+    const Rect* getGlyphsTextureCoords() { return m_glyphsTextureCoords; }
+    const Size* getGlyphsSize() { return m_glyphsSize; }
+    const TexturePtr& getTexture() { return m_texture; }
+    int getYOffset() { return m_yOffset; }
+    Size getGlyphSpacing() { return m_glyphSpacing; }
 
 private:
-	/// Calculates each font character by inspecting font bitmap
-	void calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize);
+    /// Calculates each font character by inspecting font bitmap
+    void calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize);
 
-	std::string m_name;
-	int m_glyphHeight;
-	int m_firstGlyph;
-	int m_yOffset;
-	Size m_glyphSpacing;
-	TexturePtr m_texture;
-	Rect m_glyphsTextureCoords[256];
-	Size m_glyphsSize[256];
+    std::string m_name;
+    int m_glyphHeight;
+    int m_firstGlyph;
+    int m_yOffset;
+    Size m_glyphSpacing;
+    TexturePtr m_texture;
+    Rect m_glyphsTextureCoords[256];
+    Size m_glyphsSize[256];
 };
 
 #endif

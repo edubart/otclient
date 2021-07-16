@@ -104,14 +104,9 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
         return;
 
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
-    g_painter->saveState();
-    g_painter->setColor(color);
-    g_drawPool.addFilledRect(screenRect);
-    g_painter->resetColor();
-    g_painter->setClipRect(screenRect);
+    g_drawPool.addFilledRect(screenRect, color);
 
     if(MMBLOCK_SIZE * scale <= 1 || !mapCenter.isMapPosition()) {
-        g_painter->restoreSavedState();
         return;
     }
 
@@ -141,12 +136,10 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 
                 tex->setSmooth(scale < 1.0f);
                 g_drawPool.addTexturedRect(dest, tex, src);
+                g_drawPool.setClipRect(screenRect);
             }
-            //g_drawPool.addBoundingRect(Rect(xs,ys, MMBLOCK_SIZE * scale, MMBLOCK_SIZE * scale));
         }
     }
-
-    g_painter->restoreSavedState();
 }
 
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
