@@ -68,6 +68,18 @@ Creature::Creature() : Thing()
     m_outfitColor = Color::white;
 }
 
+void Creature::preDraw()
+{
+    if(m_outfit.getCategory() == ThingCategoryCreature) {
+        if(m_outfit.hasMount()) {
+            rawGetMountThingType()->generateTextureCache();
+        }
+        rawGetThingType()->generateTextureCache();
+    } else {
+        g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->generateTextureCache();
+    }
+}
+
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlags, LightView* lightView)
 {
     if(!canBeSeen())
@@ -149,13 +161,14 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         const PointF jumpOffset = m_jumpOffset * scaleFactor;
         dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
 
+        auto* datType = rawGetThingType();
+
         // yPattern => creature addon
         for(int yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
             // continue if we dont have this addon
             if(yPattern > 0 && !(m_outfit.getAddons() & (1 << (yPattern - 1))))
                 continue;
 
-            auto* datType = rawGetThingType();
             datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType);
 
             if(textureType != TextureType::ALL_BLANK && getLayers() > 1) {

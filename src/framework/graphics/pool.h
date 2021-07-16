@@ -30,6 +30,10 @@
 
 class Pool
 {
+public:
+    void join() { if(m_thread.joinable()) m_thread.join(); }
+    void init(const bool openThread = true) { if(openThread) m_thread = std::thread(m_action); else m_action(); }
+
 protected:
     enum class DrawMethodType {
         DRAW_FILL_COORDS,
@@ -68,6 +72,9 @@ private:
 
     std::vector<std::shared_ptr<DrawObject>> m_objects;
 
+    std::function<void()> m_action;
+    std::thread m_thread;
+
     friend class DrawPool;
 };
 
@@ -83,6 +90,7 @@ public:
 protected:
     friend class Pool;
     friend class DrawPool;
+    friend std::function<void()> f();
 
 private:
     size_t updateHash(const TexturePtr& texture, const DrawMethod& method);
@@ -99,5 +107,7 @@ private:
     std::hash<size_t> HASH_INT;
     std::hash<float> HASH_FLOAT;
 };
+
+extern DrawPool g_drawPool;
 
 #endif

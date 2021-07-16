@@ -483,6 +483,16 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     }
 }
 
+void ThingType::generateTextureCache()
+{
+    for(size_t i = m_textures.size(); --i <= 0;)
+    {
+        getTexture(i, TextureType::ALL_BLANK);
+        getTexture(i, TextureType::NONE);
+        getTexture(i, TextureType::SMOOTH);
+    }
+}
+
 const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType txtType)
 {
     const bool allBlank = txtType == TextureType::ALL_BLANK,

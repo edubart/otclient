@@ -149,14 +149,24 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 }
 
-void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     if(!hasGroundToDraw()) return;
 
+    drawStart(mapView);
     for(const auto& ground : m_things) {
         if(!ground->isGroundOrBorder()) break;
         drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
+    drawEnd(mapView);
+}
+
+void Tile::draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+{
+    drawStart(mapView);
+    drawBottom(dest, scaleFactor, frameFlags, lightView);
+    drawTop(dest, scaleFactor, frameFlags, lightView);
+    drawEnd(mapView);
 }
 
 void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
@@ -174,7 +184,7 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             const auto& creature = *it;
             if(creature->isWalking()) continue;
             drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-        }
+}
     }
 #else
     if(hasCreature()) {
@@ -254,13 +264,6 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightVi
             drawThing(item, dest, scaleFactor, true, frameFlags, lightView);
         }
     }
-}
-
-void Tile::draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
-{
-    drawGround(dest, scaleFactor, frameFlags, lightView);
-    drawBottom(dest, scaleFactor, frameFlags, lightView);
-    drawTop(dest, scaleFactor, frameFlags, lightView);
 }
 
 void Tile::clean()

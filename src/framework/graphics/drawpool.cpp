@@ -29,13 +29,27 @@
 
 DrawPool g_drawPool;
 
+static thread_local PoolPtr T_CURRENT_POOL;
+
 void DrawPool::init() {}
 void DrawPool::terminate()
 {
-    m_currentPool = nullptr;
+    T_CURRENT_POOL = nullptr;
     for(int8 i = -1; ++i < PoolType::LAST;)
         m_pools[i] = nullptr;
 }
+
+bool DrawPool::isOnThread() { return T_CURRENT_POOL != nullptr; }
+void DrawPool::link(const PoolPtr& pool, const std::function<void()> f)
+{
+    pool->m_action = [&, pool = pool, f = f]() {
+        T_CURRENT_POOL = pool;
+        if(pool && pool->isFramed()) poolFramed()->resetCurrentStatus();
+        f();
+        T_CURRENT_POOL = nullptr;
+    };
+}
+PoolFramedPtr DrawPool::poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(T_CURRENT_POOL); }
 
 PoolPtr DrawPool::createPool(const PoolType type)
 {
@@ -60,13 +74,13 @@ void DrawPool::addRepeated(const TexturePtr& texture, const Pool::DrawMethod& me
     auto currentState = g_painter->getCurrentState();
     currentState.texture = texture;
 
-    const auto itFind = std::find_if(m_currentPool->m_objects.begin(), m_currentPool->m_objects.end(), [currentState]
+    const auto itFind = std::find_if(T_CURRENT_POOL->m_objects.begin(), T_CURRENT_POOL->m_objects.end(), [currentState]
     (const std::shared_ptr<Pool::DrawObject>& action) { return action->state == currentState; });
 
-    if(itFind != m_currentPool->m_objects.end()) {
+    if(itFind != T_CURRENT_POOL->m_objects.end()) {
         (*itFind)->drawMethods.push_back(method);
     } else
-        m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ currentState, nullptr, drawMode, {method} }));
+        T_CURRENT_POOL->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ currentState, nullptr, drawMode, {method} }));
 }
 
 void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
@@ -74,10 +88,10 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
     auto currentState = g_painter->getCurrentState();
     currentState.texture = texture;
 
-    if(m_currentPool->isFramed())
+    if(T_CURRENT_POOL->isFramed())
         poolFramed()->updateHash(texture, method);
 
-    auto& list = m_currentPool->m_objects;
+    auto& list = T_CURRENT_POOL->m_objects;
 
     if(!list.empty()) {
         const auto& prevObj = list.back();
@@ -110,6 +124,10 @@ void DrawPool::add(const TexturePtr& texture, const Pool::DrawMethod& method, co
 
 void DrawPool::draw()
 {
+    for(const auto& pool : m_pools) {
+        pool->join();
+    }
+
     for(const auto& pool : m_pools) {
         if(pool->isFramed()) {
             const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
@@ -179,13 +197,14 @@ void DrawPool::drawObject(const Pool::DrawObject& obj)
         }
     }
 
-    g_painter->executeState(obj.state);
     g_painter->drawCoords(m_coordsbuffer, obj.drawMode);
     m_coordsbuffer.clear();
 }
 
 void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer)
 {
+    if(!isOnThread()) return;
+
     Pool::DrawMethod method;
     method.type = Pool::DrawMethodType::DRAW_FILL_COORDS;
     method.intValue = coordsBuffer.getVertexHash();
@@ -193,14 +212,16 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer)
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ g_painter->getCurrentState(), std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} });
 
-    if(m_currentPool->isFramed())
+    if(T_CURRENT_POOL->isFramed())
         poolFramed()->updateHash(nullptr, method);
 
-    m_currentPool->m_objects.push_back(action);
+    T_CURRENT_POOL->m_objects.push_back(action);
 }
 
 void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Painter::DrawMode drawMode)
 {
+    if(!isOnThread()) return;
+
     if(texture && texture->isEmpty())
         return;
 
@@ -213,10 +234,10 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ currentState, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} });
 
-    if(m_currentPool->isFramed())
+    if(T_CURRENT_POOL->isFramed())
         poolFramed()->updateHash(texture, method);
 
-    m_currentPool->m_objects.push_back(action);
+    T_CURRENT_POOL->m_objects.push_back(action);
 }
 
 void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture)
@@ -226,6 +247,8 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture)
 
 void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Point& originalDest)
 {
+    if(!isOnThread()) return;
+
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
@@ -238,6 +261,8 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
 
 void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
+    if(!isOnThread()) return;
+
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
@@ -249,11 +274,13 @@ void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& tex
 
 void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture)
 {
+    if(!isOnThread()) return;
     addRepeatedTexturedRect(dest, texture, Rect(Point(), texture->getSize()));
 }
 
 void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
+    if(!isOnThread()) return;
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
@@ -265,6 +292,7 @@ void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& textu
 
 void DrawPool::addRepeatedFilledRect(const Rect& dest)
 {
+    if(!isOnThread()) return;
     if(dest.isEmpty())
         return;
 
@@ -276,6 +304,7 @@ void DrawPool::addRepeatedFilledRect(const Rect& dest)
 
 void DrawPool::addFilledRect(const Rect& dest)
 {
+    if(!isOnThread()) return;
     if(dest.isEmpty())
         return;
 
@@ -287,6 +316,7 @@ void DrawPool::addFilledRect(const Rect& dest)
 
 void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c)
 {
+    if(!isOnThread()) return;
     if(a == b || a == c || b == c)
         return;
 
@@ -298,6 +328,7 @@ void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c)
 
 void DrawPool::addBoundingRect(const Rect& dest, int innerLineWidth)
 {
+    if(!isOnThread()) return;
     if(dest.isEmpty() || innerLineWidth == 0)
         return;
 
@@ -310,5 +341,6 @@ void DrawPool::addBoundingRect(const Rect& dest, int innerLineWidth)
 
 void DrawPool::addAction(std::function<void()> action)
 {
-    m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action }));
+    if(!isOnThread()) return;
+    T_CURRENT_POOL->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action }));
 }

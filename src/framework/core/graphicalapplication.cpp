@@ -53,6 +53,7 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnClose([this] { close(); });
 
     m_foregroundFramed = g_drawPool.createPoolF(PoolType::FOREGROUND);
+    g_drawPool.link(m_foregroundFramed, [&]() {  g_ui.render(Fw::ForegroundPane); });
 
     g_mouse.init();
 
@@ -141,9 +142,7 @@ void GraphicalApplication::run()
 
                 if(m_mustRepaint && foregroundCanUpdate()) {
                     // prepare the foreground to be drawn
-                    g_drawPool.set(m_foregroundFramed);
-                    g_ui.render(Fw::ForegroundPane);
-                    m_refreshTime.restart();
+                    m_foregroundFramed->init(false);
                 }
 
                 // draw background (animated stuff)

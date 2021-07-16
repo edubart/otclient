@@ -29,7 +29,7 @@ size_t PoolFramed::updateHash(const TexturePtr& texture, const DrawMethod& metho
     size_t hash = 0;
 
     if(texture)
-        boost::hash_combine(hash, HASH_INT(texture->getId()));
+        boost::hash_combine(hash, HASH_INT(texture->getUniqueId()));
 
     if(currentState.opacity < 1.f)
         boost::hash_combine(hash, HASH_INT(currentState.opacity));

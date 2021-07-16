@@ -227,6 +227,8 @@ public:
     int getExactHeight();
     const TexturePtr& getTexture(int animationPhase, const TextureType txtType = TextureType::NONE);
 
+    void generateTextureCache();
+
 private:
     bool hasTexture() const { return !m_textures.empty(); }
 

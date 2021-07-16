@@ -65,8 +65,8 @@ public:
     void drawStart(const MapViewPtr& mapView);
     void drawEnd(const MapViewPtr& mapView);
     void onAddVisibleTileList(const MapViewPtr& mapView);
-    void draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);

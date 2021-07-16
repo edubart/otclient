@@ -60,23 +60,21 @@ public:
     void addBoundingRect(const Rect& dest, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
-    void set(const PoolFramedPtr& pool) { pool->resetCurrentStatus();  m_currentPool = pool; };
-    void set(const PoolPtr& pool) { m_currentPool = pool; };
     void draw();
+    void link(const PoolPtr& pool, const std::function<void()> f);
+
+    bool isOnThread();
 
 private:
-    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
+    PoolFramedPtr poolFramed();
 
     void drawObject(const Pool::DrawObject& obj);
     void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
     CoordsBuffer m_coordsbuffer;
-    PoolPtr m_currentPool;
 
     std::array<PoolPtr, PoolType::LAST> m_pools;
 };
-
-extern DrawPool g_drawPool;
 
 #endif
