@@ -153,14 +153,16 @@ protected:
 private:
     uint16 m_clientId{ 0 };
     uint16 m_serverId{ 0 };
-    uint8 m_countOrSubType{ 0 };
+    uint8 m_countOrSubType{ 1 };
+    Color m_color{ Color::alpha };
+
     stdext::packed_storage<uint8> m_attribs;
     ItemVector m_containerItems;
-    Color m_color{ Color::alpha };
+
     uint8 m_phase{ 0 };
     ticks_t m_lastPhase{ 0 };
 
-    stdext::boolean<true> m_async;
+    bool m_async{ true };
 };
 
 #pragma pack(pop)

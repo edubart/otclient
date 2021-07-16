@@ -75,7 +75,7 @@ bool Tile::isCompletelyCovered(int8 firstFloor)
     return m_completelyCovered;
 }
 
-void Tile::drawStart(const MapViewPtr& mapView)
+void Tile::drawStart(const MapViewPtr&)
 {
     if(m_completelyCovered) return;
 
