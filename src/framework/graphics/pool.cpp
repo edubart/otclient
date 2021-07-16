@@ -22,6 +22,19 @@
 
 #include "pool.h"
 
+void Pool::join()
+{
+    if(m_thread.joinable())
+        m_thread.join();
+}
+
+void Pool::init(const bool openThread)
+{
+    if(openThread)
+        m_thread = std::thread(m_action);
+    else  m_action();
+}
+
 size_t PoolFramed::updateHash(const TexturePtr& texture, const DrawMethod& method)
 {
     const auto& currentState = g_painter->getCurrentState();

@@ -244,7 +244,8 @@ void MapView::draw(const Rect& rect)
         m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
 
-    { // Pre Draw
+    // Pre Draw
+    if(g_drawPool.multiThreadEnabled()) {
         const Position cameraPosition = getCameraPosition();
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             for(const auto& tile : m_cachedVisibleTiles[z]) {
@@ -257,7 +258,7 @@ void MapView::draw(const Rect& rect)
         }
     }
 
-    m_pools.map->init();
+    m_pools.map->init(g_drawPool.multiThreadEnabled());
 
     // this could happen if the player position is not known yet
     if(!getCameraPosition().isValid())
@@ -277,14 +278,14 @@ void MapView::drawCreatureInformation()
 {
     if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
 
-    m_pools.creatureInformation->init();
+    m_pools.creatureInformation->init(g_drawPool.multiThreadEnabled());
 }
 
 void MapView::drawText()
 {
     if(!m_drawTexts || g_map.getStaticTexts().empty() && g_map.getStaticTexts().empty()) return;
 
-    m_pools.text->init();
+    m_pools.text->init(g_drawPool.multiThreadEnabled());
 }
 
 void MapView::updateVisibleTilesCache()
@@ -335,6 +336,10 @@ void MapView::updateVisibleTilesCache()
     m_floorMin = cameraPosition.z;
     m_floorMax = cameraPosition.z;
 
+    if(m_mustUpdateVisibleCreaturesCache) {
+        m_visibleCreatures.clear();
+    }
+
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     const uint32 numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
@@ -356,6 +361,13 @@ void MapView::updateVisibleTilesCache()
                     if(!tile->isDrawable())
                         continue;
 
+                    if(m_mustUpdateVisibleCreaturesCache) {
+                        const auto& tileCreatures = tile->getCreatures();
+                        if(isInRange(tilePos) && !tileCreatures.empty()) {
+                            m_visibleCreatures.insert(m_visibleCreatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
+                        }
+                    }
+
                     // skip tiles that are completely behind another tile
                     if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
                         continue;
@@ -372,6 +384,9 @@ void MapView::updateVisibleTilesCache()
             }
         }
     }
+
+    m_mustUpdateVisibleCreaturesCache = false;
+    m_mustUpdateVisibleTilesCache = false;
 }
 
 void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
@@ -436,16 +451,14 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
 
 void MapView::onCameraMove(const Point& /*offset*/)
 {
-    const auto& cameraPosition = getCameraPosition();
-
     m_rectCache.rect = Rect();
 
     if(isFollowingCreature()) {
         if(m_followingCreature->isWalking()) {
             m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
+            m_mustUpdateVisibleCreaturesCache = true;
         } else {
             m_viewport = m_viewPortDirection[Otc::InvalidDirection];
-            m_visibleCreatures = getSightSpectators(cameraPosition, false);
         }
     }
 }
@@ -469,9 +482,7 @@ void MapView::updateLight()
 
 void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/)
 {
-    const auto& cameraPosition = getCameraPosition();
-
-    m_visibleCreatures = getSightSpectators(cameraPosition, false);
+    m_mustUpdateVisibleCreaturesCache = true;
     updateLight();
 }
 
@@ -519,22 +530,9 @@ void MapView::onFloorDrawingEnd(const uint8 /*floor*/)
     }
 }
 
-void MapView::onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation)
+void MapView::onTileUpdate(const Position&, const ThingPtr&, const Otc::Operation)
 {
     requestVisibleTilesCacheUpdate();
-
-    if(!thing || thing->isLocalPlayer()) return;
-
-    if(thing->isCreature() && m_lastCameraPosition.z == getCameraPosition().z) {
-        const CreaturePtr& creature = thing->static_self_cast<Creature>();
-        if(Otc::OPERATION_ADD == operation && isInRange(pos)) {
-            m_visibleCreatures.push_back(creature);
-        } else if(Otc::OPERATION_REMOVE == operation) {
-            const auto it = std::find(m_visibleCreatures.begin(), m_visibleCreatures.end(), creature);
-            if(it != m_visibleCreatures.end())
-                m_visibleCreatures.erase(it);
-        }
-    }
 }
 
 void MapView::onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
@@ -628,9 +626,6 @@ void MapView::followCreature(const CreaturePtr& creature)
     m_follow = true;
     m_followingCreature = creature;
     m_lastCameraPosition = Position();
-
-    m_visibleCreatures.clear();
-    m_visibleCreatures.push_back(creature);
 
     requestVisibleTilesCacheUpdate();
 }

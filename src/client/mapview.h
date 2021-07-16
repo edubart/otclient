@@ -233,6 +233,7 @@ private:
 
     stdext::boolean<true>
         m_mustUpdateVisibleTilesCache,
+        m_mustUpdateVisibleCreaturesCache,
         m_shaderSwitchDone,
         m_drawHealthBars,
         m_drawManaBar,

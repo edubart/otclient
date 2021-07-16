@@ -61,17 +61,6 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
             break;
         }
     }
-
-    if(hasCreature()) {
-        auto& visibleCreatures = mapView->getVisibleCreatures();
-        for(const auto& thing : m_things) {
-            if(!thing->isCreature() || thing->isLocalPlayer()) continue;
-
-            const auto it = std::find(visibleCreatures.begin(), visibleCreatures.end(), thing);
-            if(it == visibleCreatures.end())
-                mapView->onTileUpdate(m_position, thing, Otc::OPERATION_ADD);
-        }
-    }
 }
 
 bool Tile::isCompletelyCovered(int8 firstFloor)
@@ -184,7 +173,7 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             const auto& creature = *it;
             if(creature->isWalking()) continue;
             drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-}
+        }
     }
 #else
     if(hasCreature()) {
@@ -200,9 +189,9 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
         ), scaleFactor, true, frameFlags, lightView);
-    }
+        }
 #endif
-}
+    }
 
 void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {

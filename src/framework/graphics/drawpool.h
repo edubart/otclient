@@ -62,19 +62,23 @@ public:
 
     void draw();
     void link(const PoolPtr& pool, const std::function<void()> f);
-
     bool isOnThread();
+    bool multiThreadEnabled() const { return m_multiThread; }
+    void setMultiThread(const bool v) { m_multiThread = v; }
 
 private:
     PoolFramedPtr poolFramed();
 
-    void drawObject(const Pool::DrawObject& obj);
+    PoolPtr getCurrentPool();
+    void drawObject(Pool::DrawObject& obj);
     void add(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
     CoordsBuffer m_coordsbuffer;
-
     std::array<PoolPtr, PoolType::LAST> m_pools;
+    PoolPtr m_currentPool;
+
+    bool m_multiThread;
 };
 
 #endif

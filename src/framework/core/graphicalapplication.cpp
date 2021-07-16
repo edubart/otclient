@@ -72,6 +72,7 @@ void GraphicalApplication::init(std::vector<std::string>& args)
 #endif
 
     g_drawPool.init();
+    g_drawPool.setMultiThread(true);
 }
 
 void GraphicalApplication::deinit()
