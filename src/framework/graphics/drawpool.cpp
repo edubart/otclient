@@ -357,7 +357,6 @@ void DrawPool::use(const PoolPtr& pool)
     m_currentPool = pool;
     m_currentPool->resetState();
     if(m_currentPool->isFramed()) {
-        auto& f = poolFramed();
-        f->resetCurrentStatus();
+        poolFramed()->resetCurrentStatus();
     }
 }
