@@ -243,20 +243,6 @@ void MapView::draw(const Rect& rect)
         m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
 
-    // Pre Draw
-    if(g_drawPool.multiThreadEnabled()) {
-        const Position cameraPosition = getCameraPosition();
-        for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
-            for(const auto& tile : m_cachedVisibleTiles[z]) {
-                tile->drawGround(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll);
-                tile->draw(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll);
-            }
-            for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll);
-            }
-        }
-    }
-
     m_pools.map->init(g_drawPool.multiThreadEnabled());
 
     // this could happen if the player position is not known yet

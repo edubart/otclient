@@ -30,7 +30,7 @@ class Texture : public stdext::shared_object
 public:
     Texture();
     Texture(const Size& size);
-    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false, bool canSuperimposed = false);
+    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false, bool canSuperimposed = false, bool load = true);
     ~Texture() override;
 
     void uploadPixels(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
@@ -44,7 +44,7 @@ public:
     void setTime(ticks_t time) { m_time = time; }
 
     uint getId() { return m_id; }
-    uint getUniqueId() { return m_uniqueId; }
+    uint getUniqueId() const { return m_uniqueId; }
     ticks_t getTime() { return m_time; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
@@ -57,6 +57,8 @@ public:
     virtual bool isAnimatedTexture() { return false; }
     bool isOpaque() const { return m_opaque; }
     bool canSuperimposed() const { return m_canSuperimposed; }
+
+    void create();
 
 protected:
     void createTexture();
@@ -74,12 +76,16 @@ protected:
 
     Matrix3 m_transformMatrix;
 
+    ImagePtr m_image;
+
     bool m_hasMipmaps{ false },
         m_smooth{ false },
         m_upsideDown{ false },
         m_repeat{ false },
         m_opaque{ false },
-        m_canSuperimposed{ false };
+        m_canSuperimposed{ false },
+        m_compress{ false },
+        m_buildMipmaps{ false };
 };
 
 #endif

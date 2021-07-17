@@ -576,7 +576,9 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
         }
     }
 
-    animationPhaseTexture = TexturePtr(new Texture(fullImage, true, false, m_size.area() == 1));
+    m_opaque = !fullImage->hasTransparentPixel();
+
+    animationPhaseTexture = TexturePtr(new Texture(fullImage, true, false, m_size.area() == 1, false));
     if(smoth)
         animationPhaseTexture->setSmooth(true);
 

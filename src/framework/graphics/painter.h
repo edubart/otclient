@@ -88,6 +88,7 @@ public:
     virtual void bind() {}
     virtual void unbind() {}
 
+    virtual void resetState() = 0;
     virtual void saveState() = 0;
     virtual void saveAndResetState() = 0;
     virtual void restoreSavedState() = 0;

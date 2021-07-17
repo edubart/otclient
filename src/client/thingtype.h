@@ -215,7 +215,7 @@ public:
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
-    bool isOpaque() { return (isFullGround() || (hasTexture() && getTexture(0)->isOpaque())); }
+    bool isOpaque() { return (isFullGround() || m_opaque); }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
@@ -238,7 +238,7 @@ private:
 
     ThingCategory m_category;
     uint16 m_id;
-    bool m_null;
+    bool m_null, m_opaque;
     stdext::dynamic_storage<uint8> m_attribs;
 
     Size m_size;

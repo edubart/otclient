@@ -41,7 +41,7 @@ public:
     void resetAlphaWriting() { setAlphaWriting(false); }
     void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
 
-    void resetState();
+    void resetState() override;
     void saveState() override;
     void saveAndResetState() override;
     void restoreSavedState() override;

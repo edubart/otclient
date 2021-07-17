@@ -52,14 +52,19 @@ Texture::Texture(const Size& size) : m_uniqueId(++LAST_ID)
     setupFilters();
 }
 
-Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress, bool canSuperimposed) : m_uniqueId(++LAST_ID)
+Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress, bool canSuperimposed, bool load) : m_uniqueId(++LAST_ID)
 {
     m_id = 0;
     m_time = 0;
     m_canSuperimposed = canSuperimposed;
-
-    createTexture();
-    uploadPixels(image, buildMipmaps, compress);
+    m_compress = compress;
+    m_buildMipmaps = buildMipmaps;
+    if(load) {
+        createTexture();
+        uploadPixels(image, m_buildMipmaps, m_compress);
+    } else {
+        m_image = image;
+    }
 }
 
 Texture::~Texture()
@@ -70,6 +75,15 @@ Texture::~Texture()
     // free texture from gl memory
     if(g_graphics.ok() && m_id != 0)
         glDeleteTextures(1, &m_id);
+}
+
+void Texture::create()
+{
+    if(m_image) {
+        createTexture();
+        uploadPixels(m_image, m_buildMipmaps, m_compress);
+        m_image = nullptr;
+    }
 }
 
 void Texture::uploadPixels(const ImagePtr& image, bool buildMipmaps, bool compress)
