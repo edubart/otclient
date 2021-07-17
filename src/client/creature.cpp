@@ -166,17 +166,12 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType, color);
 
             if(textureType != TextureType::ALL_BLANK && getLayers() > 1) {
+                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
                 datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getHeadColor());
-                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
-
                 datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getBodyColor());
-                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
-
                 datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getLegsColor());
-                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
-
                 datType->draw(dest, scaleFactor, SpriteMaskBlue, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getFeetColor());
-                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
+                g_drawPool.resetCompositionMode();
             }
         }
         // outfit is a creature imitating an item or the invisible effect

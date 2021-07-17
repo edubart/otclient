@@ -68,6 +68,11 @@ public:
     void setClipRect(const Rect& clipRect, const int pos = -1);
     void setOpacity(const float opacity, const int pos = -1);
 
+    void resetClipRect() { m_state.clipRect = Rect(); }
+    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
+    void resetOpacity() { m_state.opacity = 1.f; }
+    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
+
     void draw();
     void registerThread(const PoolPtr& pool, const std::function<void()> f);
     bool isOnThread();
@@ -75,14 +80,24 @@ public:
     void setMultiThread(const bool v) { m_multiThread = v; }
 
 private:
+    struct State {
+        Painter::CompositionMode compositionMode;
+        Rect clipRect;
+        float opacity;
+    };
+
     PoolFramedPtr poolFramed();
 
     void drawObject(Pool::DrawObject& obj);
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
+    Painter::PainterState generateState();
+
     CoordsBuffer m_coordsbuffer;
     std::array<PoolPtr, PoolType::LAST> m_pools;
+
+    State m_state;
 
     bool m_multiThread;
 };

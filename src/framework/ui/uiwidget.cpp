@@ -60,7 +60,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
     Rect oldClipRect;
     if(m_clipping) {
         oldClipRect = g_painter->getClipRect();
-        g_painter->setClipRect(visibleRect);
+        g_drawPool.setClipRect(visibleRect);
     }
 
     if(m_rotation != 0.0f) {
@@ -72,7 +72,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 
     if(!m_children.empty()) {
         if(m_clipping)
-            g_painter->setClipRect(visibleRect.intersection(getPaddingRect()));
+            g_drawPool.setClipRect(visibleRect.intersection(getPaddingRect()));
 
         drawChildren(visibleRect, drawPane);
     }
@@ -81,7 +81,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
         g_painter->popTransformMatrix();
 
     if(m_clipping) {
-        g_painter->setClipRect(oldClipRect);
+        g_drawPool.setClipRect(oldClipRect);
     }
 }
 
@@ -120,7 +120,7 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
 
         // decrease to self opacity
         if(child->getOpacity() < oldOpacity)
-            g_painter->setOpacity(child->getOpacity());
+            g_drawPool.setOpacity(child->getOpacity());
 
         child->draw(childVisibleRect, drawPane);
 
@@ -129,7 +129,7 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
             g_drawPool.addBoundingRect(child->getRect(), Color::green);
         }
 
-        g_painter->setOpacity(oldOpacity);
+        g_drawPool.setOpacity(oldOpacity);
     }
 }
 

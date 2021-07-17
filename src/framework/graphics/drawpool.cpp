@@ -31,7 +31,7 @@ DrawPool g_drawPool;
 
 static thread_local PoolPtr T_CURRENT_POOL;
 
-void DrawPool::init() {}
+void DrawPool::init() { resetState(); }
 void DrawPool::terminate()
 {
     T_CURRENT_POOL = nullptr;
@@ -42,7 +42,6 @@ void DrawPool::terminate()
 bool DrawPool::isOnThread() { return T_CURRENT_POOL != nullptr && T_CURRENT_POOL->m_usingThread; }
 void DrawPool::registerThread(const PoolPtr& pool, const std::function<void()> f)
 {
-    const auto& list = pool->m_objects;
     pool->m_action = [&, pool = pool, f = f]() {
         T_CURRENT_POOL = pool;
 
@@ -50,10 +49,6 @@ void DrawPool::registerThread(const PoolPtr& pool, const std::function<void()> f
         if(pool->isFramed()) poolFramed()->resetCurrentStatus();
 
         f();
-
-        // Cache CoordsBuffer
-        /*for(auto& obj : list)
-            drawObject(*obj);*/
 
         T_CURRENT_POOL = nullptr;
     };
@@ -140,10 +135,6 @@ void DrawPool::draw()
                     pf->updateStatus();
                     frameBuffer->bind();
 
-                    if(pool == m_pools[PoolType::MAP]) {
-                        if(true);
-                    }
-
                     for(auto& obj : pool->m_objects)
                         drawObject(*obj);
 
@@ -191,15 +182,6 @@ void DrawPool::drawObject(Pool::DrawObject& obj)
         return &coords;
     };
 
-    // Cache CoordsBuffer on Thread
-    /*if(isOnThread()) {
-        if(!obj.coordsBuffer) {
-            obj.coordsBuffer = std::make_shared<CoordsBuffer>();
-            addCoords(*obj.coordsBuffer);
-        }
-        return;
-    }*/
-
     if(obj.action) {
         obj.action();
         return;
@@ -229,7 +211,7 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
     method.type = Pool::DrawMethodType::DRAW_FILL_COORDS;
     method.intValue = coordsBuffer.getVertexHash();
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
 
     const auto& action = std::make_shared<Pool::DrawObject>(
@@ -246,7 +228,7 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_TEXTURE_COORDS };
     method.intValue = coordsBuffer.getVertexHash();
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.texture = texture;
     state.color = color;
 
@@ -273,7 +255,7 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
     method.rects = std::make_pair(dest, src);
     method.dest = originalDest;
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color == Color::white && state.alphaWriting ? Color::alpha : color;
     state.texture = texture;
 
@@ -288,7 +270,7 @@ void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& tex
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_UPSIDEDOWN_TEXTURED_RECT };
     method.rects = std::make_pair(dest, src);
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
     state.texture = texture;
 
@@ -308,7 +290,7 @@ void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& textu
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_REPEATED_TEXTURED_RECT };
     method.rects = std::make_pair(dest, src);
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
     state.texture = texture;
 
@@ -323,7 +305,7 @@ void DrawPool::addRepeatedFilledRect(const Rect& dest, const Color color)
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_REPEATED_FILLED_RECT };
     method.rects = std::make_pair(dest, Rect());
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
 
     addRepeated(state, method);
@@ -337,7 +319,7 @@ void DrawPool::addFilledRect(const Rect& dest, const Color color)
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_FILLED_RECT };
     method.rects = std::make_pair(dest, Rect());
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
 
     add(state, method);
@@ -351,7 +333,7 @@ void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c,
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_FILLED_TRIANGLE };
     method.points = std::make_tuple(a, b, c);
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
 
     add(state, method);
@@ -366,7 +348,7 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
     method.rects = std::make_pair(dest, Rect());
     method.intValue = innerLineWidth;
 
-    auto state = g_painter->getCurrentState();
+    auto state = generateState();
     state.color = color;
 
     add(state, method);
@@ -379,26 +361,48 @@ void DrawPool::addAction(std::function<void()> action)
 
 size_t DrawPool::getSize() { return T_CURRENT_POOL ? T_CURRENT_POOL->m_objects.size() : 0; }
 
-void DrawPool::setColor(const Color color, const int pos)
-{
-    if(T_CURRENT_POOL->m_objects.empty()) return;
-    T_CURRENT_POOL->m_objects[pos == -1 ? getSize() - 1 : pos]->state.color = color;
-}
-
 void DrawPool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
-    if(T_CURRENT_POOL->m_objects.empty()) return;
-    T_CURRENT_POOL->m_objects[pos == -1 ? getSize() - 1 : pos]->state.compositionMode = mode;
+    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
+
+    if(pos == -1) {
+        m_state.compositionMode = mode;
+        return;
+    }
+
+    T_CURRENT_POOL->m_objects[pos - 1]->state.compositionMode = mode;
 }
 
 void DrawPool::setClipRect(const Rect& clipRect, const int pos)
 {
-    if(T_CURRENT_POOL->m_objects.empty()) return;
-    T_CURRENT_POOL->m_objects[pos == -1 ? getSize() - 1 : pos]->state.clipRect = clipRect;
+    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
+
+    if(pos == -1) {
+        m_state.clipRect = clipRect;
+        return;
+    }
+
+    T_CURRENT_POOL->m_objects[pos - 1]->state.clipRect = clipRect;
 }
 
 void DrawPool::setOpacity(const float opacity, const int pos)
 {
-    if(T_CURRENT_POOL->m_objects.empty()) return;
-    T_CURRENT_POOL->m_objects[pos == -1 ? getSize() - 1 : pos]->state.opacity = opacity;
+    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
+
+    if(pos == -1) {
+        m_state.opacity = opacity;
+        return;
+    }
+
+    T_CURRENT_POOL->m_objects[pos - 1]->state.opacity = opacity;
+}
+
+Painter::PainterState DrawPool::generateState()
+{
+    Painter::PainterState state = g_painter->getCurrentState();
+    state.clipRect = m_state.clipRect;
+    state.compositionMode = m_state.compositionMode;
+    state.opacity = m_state.opacity;
+
+    return state;
 }

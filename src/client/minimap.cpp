@@ -114,6 +114,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
     const Point start = screenRect.topLeft() - (mapRect.topLeft() - blockOff) * scale - off;
 
+    g_drawPool.setClipRect(screenRect);
     for(int y = blockOff.y, ys = start.y; ys < screenRect.bottom(); y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE * scale) {
         if(y < 0 || y >= 65536)
             continue;
@@ -136,10 +137,10 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 
                 tex->setSmooth(scale < 1.0f);
                 g_drawPool.addTexturedRect(dest, tex, src);
-                g_drawPool.setClipRect(screenRect);
             }
         }
     }
+    g_drawPool.resetClipRect();
 }
 
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)

@@ -41,9 +41,7 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
 
     if(drawPane & Fw::BackgroundPane) {
         UIWidget::drawSelf(Fw::ForegroundPane);
-        g_painter->saveAndResetState();
-        g_painter->resetColor();
-        g_painter->setClipRect(getPaddingRect());
+        g_drawPool.setClipRect(getPaddingRect());
 
         if(m_referencePos.x < 0 && m_referencePos.y < 0)
             g_painter->translate(m_rect.center());
@@ -52,7 +50,8 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
 
         for(auto& effect : m_effects)
             effect->render();
-        g_painter->restoreSavedState();
+
+        g_drawPool.resetClipRect();
     }
 }
 
