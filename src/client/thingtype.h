@@ -238,7 +238,7 @@ private:
 
     ThingCategory m_category;
     uint16 m_id;
-    bool m_null, m_opaque;
+    bool m_null, m_opaque{ false };
     stdext::dynamic_storage<uint8> m_attribs;
 
     Size m_size;

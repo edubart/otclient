@@ -68,6 +68,7 @@ private:
         Painter::CompositionMode compositionMode;
         Rect clipRect;
         float opacity;
+        bool alphaWriting{ true };
     };
 
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);

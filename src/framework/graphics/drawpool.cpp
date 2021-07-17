@@ -32,7 +32,6 @@ DrawPool g_drawPool;
 void DrawPool::init()
 {
     n_unknowPool = g_drawPool.createPool(PoolType::UNKNOW);
-
     use(n_unknowPool);
 }
 void DrawPool::terminate()
@@ -45,10 +44,12 @@ void DrawPool::terminate()
 PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 {
     auto pool = std::make_shared<PoolFramed>();
+
     pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
+    pool->m_state.alphaWriting = false;
 
     if(type == PoolType::MAP) pool->m_framebuffer->disableBlend();
-    else if(type == PoolType::MAP) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+    else if(type == PoolType::LIGHT) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
 
     m_pools[type] = pool;
 
@@ -105,6 +106,8 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 void DrawPool::draw()
 {
     for(const auto& pool : m_pools) {
+        if(pool->m_objects.empty()) continue;
+
         if(pool->isFramed()) {
             const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
             const auto& frameBuffer = pf->m_framebuffer;
@@ -344,6 +347,7 @@ Painter::PainterState DrawPool::generateState()
     state.clipRect = m_currentPool->m_state.clipRect;
     state.compositionMode = m_currentPool->m_state.compositionMode;
     state.opacity = m_currentPool->m_state.opacity;
+    state.alphaWriting = m_currentPool->m_state.alphaWriting;
 
     return state;
 }
