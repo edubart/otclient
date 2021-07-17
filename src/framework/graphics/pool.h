@@ -86,7 +86,7 @@ private:
 
     virtual bool isFramed() const { return false; };
 
-    std::vector<std::shared_ptr<DrawObject>> m_objects;
+    std::vector<DrawObject> m_objects;
 
     bool m_enabled{ true };
     State m_state;

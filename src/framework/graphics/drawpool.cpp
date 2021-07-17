@@ -59,12 +59,12 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
     const auto itFind = std::find_if(m_currentPool->m_objects.begin(), m_currentPool->m_objects.end(), [state]
-    (const std::shared_ptr<Pool::DrawObject>& action) { return action->state == state; });
+    (const Pool::DrawObject& action) { return action.state == state; });
 
     if(itFind != m_currentPool->m_objects.end()) {
-        (*itFind)->drawMethods.push_back(method);
+        (*itFind).drawMethods.push_back(method);
     } else
-        m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ state, nullptr, drawMode, {method} }));
+        m_currentPool->m_objects.push_back(Pool::DrawObject{ state, nullptr, drawMode, {method} });
 }
 
 void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
@@ -75,32 +75,32 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
     auto& list = m_currentPool->m_objects;
 
     if(!list.empty()) {
-        const auto& prevObj = list.back();
+        auto& prevObj = list.back();
 
-        const bool sameState = prevObj->state == state,
+        const bool sameState = prevObj.state == state,
             hasDest = !method.dest.isNull();
 
         if(hasDest) {
             // Look for identical or opaque textures that are greater than or
             // equal to the size of the previous texture, if so, remove it from the list so they don't get drawn.
-            for(auto itm = prevObj->drawMethods.begin(); itm != prevObj->drawMethods.end(); ++itm) {
+            for(auto itm = prevObj.drawMethods.begin(); itm != prevObj.drawMethods.end(); ++itm) {
                 auto& prevMtd = *itm;
                 if(prevMtd.dest == method.dest &&
-                   (sameState && prevMtd.rects.second == method.rects.second || state.texture->isOpaque() && prevObj->state.texture->canSuperimposed())) {
-                    prevObj->drawMethods.erase(itm);
+                   (sameState && prevMtd.rects.second == method.rects.second || state.texture->isOpaque() && prevObj.state.texture->canSuperimposed())) {
+                    prevObj.drawMethods.erase(itm);
                     break;
                 }
             }
         }
 
         if(sameState) {
-            prevObj->drawMode = Painter::DrawMode::Triangles;
-            prevObj->drawMethods.push_back(method);
+            prevObj.drawMode = Painter::DrawMode::Triangles;
+            prevObj.drawMethods.push_back(method);
             return;
         }
     }
 
-    list.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ state, nullptr, drawMode, {method} }));
+    list.push_back(Pool::DrawObject{ state, nullptr, drawMode, {method} });
 }
 
 void DrawPool::draw()
@@ -118,7 +118,7 @@ void DrawPool::draw()
                     frameBuffer->bind();
 
                     for(auto& obj : pool->m_objects)
-                        drawObject(*obj);
+                        drawObject(obj);
 
                     frameBuffer->release();
                 }
@@ -131,7 +131,7 @@ void DrawPool::draw()
             }
         } else {
             for(auto& obj : pool->m_objects)
-                drawObject(*obj);
+                drawObject(obj);
         }
 
         pool->m_objects.clear();
@@ -196,8 +196,7 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
     auto state = generateState();
     state.color = color;
 
-    const auto& action = std::make_shared<Pool::DrawObject>(
-        Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} });
+    const auto& action = Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} };
 
     if(m_currentPool->isFramed())
         poolFramed()->updateHash(nullptr, method);
@@ -214,8 +213,7 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     state.texture = texture;
     state.color = color;
 
-    const auto& action = std::make_shared<Pool::DrawObject>(
-        Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} });
+    const auto& action = Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} };
 
     if(m_currentPool->isFramed())
         poolFramed()->updateHash(texture, method);
@@ -338,7 +336,7 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
 
 void DrawPool::addAction(std::function<void()> action)
 {
-    m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action }));
+    m_currentPool->m_objects.push_back(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action });
 }
 
 Painter::PainterState DrawPool::generateState()

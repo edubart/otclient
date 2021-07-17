@@ -117,6 +117,7 @@ void LightView::resize()
 void LightView::draw(const Rect& dest, const Rect& src)
 {
     // draw light, only if there is darkness
+    m_pool->setEnable(isDark());
     if(!isDark()) return;
 
     m_pool->setColorClear(m_globalLightColor);
@@ -126,20 +127,18 @@ void LightView::draw(const Rect& dest, const Rect& src)
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         if(z < m_mapView->m_floorMax) {
-            (m_globalLightColor);
             for(auto& shade : m_shades) {
                 if(shade.floor != z) continue;
                 shade.floor = -1;
 
-                g_drawPool.addTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture);
+                g_drawPool.addTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
             }
         }
 
         auto& lights = m_lights[z];
         std::sort(lights.begin(), lights.end(), orderLightComparator);
         for(LightSource& light : lights) {
-            (Color::from8bit(light.color, light.brightness));
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture);
+            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture, Color::from8bit(light.color, light.brightness));
         }
         lights.clear();
     }

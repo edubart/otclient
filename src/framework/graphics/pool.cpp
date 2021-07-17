@@ -29,7 +29,7 @@ void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos
         return;
     }
 
-    m_objects[pos - 1]->state.compositionMode = mode;
+    m_objects[pos - 1].state.compositionMode = mode;
 }
 
 void Pool::setClipRect(const Rect& clipRect, const int pos)
@@ -39,7 +39,7 @@ void Pool::setClipRect(const Rect& clipRect, const int pos)
         return;
     }
 
-    m_objects[pos - 1]->state.clipRect = clipRect;
+    m_objects[pos - 1].state.clipRect = clipRect;
 }
 
 void Pool::setOpacity(const float opacity, const int pos)
@@ -49,7 +49,7 @@ void Pool::setOpacity(const float opacity, const int pos)
         return;
     }
 
-    m_objects[pos - 1]->state.opacity = opacity;
+    m_objects[pos - 1].state.opacity = opacity;
 }
 
 size_t PoolFramed::updateHash(const TexturePtr& texture, const DrawMethod& method)
