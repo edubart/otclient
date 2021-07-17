@@ -30,10 +30,6 @@
 
 class Pool
 {
-public:
-    void join();
-    void init(const bool openThread = false);
-
 protected:
     enum class DrawMethodType {
         DRAW_FILL_COORDS,
@@ -68,14 +64,26 @@ protected:
     };
 
 private:
+    struct State {
+        Painter::CompositionMode compositionMode;
+        Rect clipRect;
+        float opacity;
+    };
+
+    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);
+    void setClipRect(const Rect& clipRect, const int pos = -1);
+    void setOpacity(const float opacity, const int pos = -1);
+
+    void resetClipRect() { m_state.clipRect = Rect(); }
+    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
+    void resetOpacity() { m_state.opacity = 1.f; }
+    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
+
     virtual bool isFramed() const { return false; };
 
     std::vector<std::shared_ptr<DrawObject>> m_objects;
 
-    std::function<void()> m_action;
-    std::thread m_thread;
-
-    bool m_usingThread{ false };
+    State m_state;
 
     friend class DrawPool;
 };

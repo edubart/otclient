@@ -29,33 +29,18 @@
 
 DrawPool g_drawPool;
 
-static thread_local PoolPtr T_CURRENT_POOL;
+void DrawPool::init()
+{
+    n_unknowPool = g_drawPool.createPool(PoolType::UNKNOW);
 
-void DrawPool::init() { resetState(); }
+    use(n_unknowPool);
+}
 void DrawPool::terminate()
 {
-    T_CURRENT_POOL = nullptr;
-    for(int8 i = -1; ++i < PoolType::LAST;)
+    m_currentPool = nullptr;
+    for(int8 i = -1; ++i <= PoolType::UNKNOW;)
         m_pools[i] = nullptr;
 }
-
-bool DrawPool::isOnThread() { return T_CURRENT_POOL != nullptr && T_CURRENT_POOL->m_usingThread; }
-void DrawPool::registerThread(const PoolPtr& pool, const std::function<void()> f)
-{
-    pool->m_action = [&, pool = pool, f = f]() {
-        T_CURRENT_POOL = pool;
-
-        if(!pool) return;
-        if(pool->isFramed()) poolFramed()->resetCurrentStatus();
-
-        f();
-
-        T_CURRENT_POOL = nullptr;
-    };
-}
-PoolFramedPtr DrawPool::poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(T_CURRENT_POOL); }
-
-PoolPtr DrawPool::createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
 
 PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 {
@@ -72,21 +57,21 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 
 void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
-    const auto itFind = std::find_if(T_CURRENT_POOL->m_objects.begin(), T_CURRENT_POOL->m_objects.end(), [state]
+    const auto itFind = std::find_if(m_currentPool->m_objects.begin(), m_currentPool->m_objects.end(), [state]
     (const std::shared_ptr<Pool::DrawObject>& action) { return action->state == state; });
 
-    if(itFind != T_CURRENT_POOL->m_objects.end()) {
+    if(itFind != m_currentPool->m_objects.end()) {
         (*itFind)->drawMethods.push_back(method);
     } else
-        T_CURRENT_POOL->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ state, nullptr, drawMode, {method} }));
+        m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ state, nullptr, drawMode, {method} }));
 }
 
 void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
-    if(T_CURRENT_POOL->isFramed())
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(state.texture, method);
 
-    auto& list = T_CURRENT_POOL->m_objects;
+    auto& list = m_currentPool->m_objects;
 
     if(!list.empty()) {
         const auto& prevObj = list.back();
@@ -119,12 +104,6 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 
 void DrawPool::draw()
 {
-    if(multiThreadEnabled()) {
-        for(const auto& pool : m_pools) {
-            pool->join();
-        }
-    }
-
     for(const auto& pool : m_pools) {
         if(pool->isFramed()) {
             const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
@@ -217,10 +196,10 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} });
 
-    if(T_CURRENT_POOL->isFramed())
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(nullptr, method);
 
-    T_CURRENT_POOL->m_objects.push_back(action);
+    m_currentPool->m_objects.push_back(action);
 }
 
 void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color, const Painter::DrawMode drawMode)
@@ -235,10 +214,10 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     const auto& action = std::make_shared<Pool::DrawObject>(
         Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} });
 
-    if(T_CURRENT_POOL->isFramed())
+    if(m_currentPool->isFramed())
         poolFramed()->updateHash(texture, method);
 
-    T_CURRENT_POOL->m_objects.push_back(action);
+    m_currentPool->m_objects.push_back(action);
 }
 
 void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color)
@@ -356,53 +335,25 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
 
 void DrawPool::addAction(std::function<void()> action)
 {
-    T_CURRENT_POOL->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action }));
-}
-
-size_t DrawPool::getSize() { return T_CURRENT_POOL ? T_CURRENT_POOL->m_objects.size() : 0; }
-
-void DrawPool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
-{
-    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
-
-    if(pos == -1) {
-        m_state.compositionMode = mode;
-        return;
-    }
-
-    T_CURRENT_POOL->m_objects[pos - 1]->state.compositionMode = mode;
-}
-
-void DrawPool::setClipRect(const Rect& clipRect, const int pos)
-{
-    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
-
-    if(pos == -1) {
-        m_state.clipRect = clipRect;
-        return;
-    }
-
-    T_CURRENT_POOL->m_objects[pos - 1]->state.clipRect = clipRect;
-}
-
-void DrawPool::setOpacity(const float opacity, const int pos)
-{
-    if(!T_CURRENT_POOL || T_CURRENT_POOL->m_objects.empty()) return;
-
-    if(pos == -1) {
-        m_state.opacity = opacity;
-        return;
-    }
-
-    T_CURRENT_POOL->m_objects[pos - 1]->state.opacity = opacity;
+    m_currentPool->m_objects.push_back(std::make_shared<Pool::DrawObject>(Pool::DrawObject{ {}, nullptr, Painter::DrawMode::None, {}, action }));
 }
 
 Painter::PainterState DrawPool::generateState()
 {
     Painter::PainterState state = g_painter->getCurrentState();
-    state.clipRect = m_state.clipRect;
-    state.compositionMode = m_state.compositionMode;
-    state.opacity = m_state.opacity;
+    state.clipRect = m_currentPool->m_state.clipRect;
+    state.compositionMode = m_currentPool->m_state.compositionMode;
+    state.opacity = m_currentPool->m_state.opacity;
 
     return state;
+}
+
+void DrawPool::use(const PoolPtr& pool)
+{
+    m_currentPool = pool;
+    m_currentPool->resetState();
+    if(m_currentPool->isFramed()) {
+        auto& f = poolFramed();
+        f->resetCurrentStatus();
+    }
 }

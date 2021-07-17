@@ -22,19 +22,34 @@
 
 #include "pool.h"
 
-void Pool::join()
+void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
-    if(m_usingThread && m_thread.joinable())
-        m_thread.join();
+    if(pos == -1) {
+        m_state.compositionMode = mode;
+        return;
+    }
+
+    m_objects[pos - 1]->state.compositionMode = mode;
 }
 
-void Pool::init(const bool openThread)
+void Pool::setClipRect(const Rect& clipRect, const int pos)
 {
-    m_usingThread = openThread;
+    if(pos == -1) {
+        m_state.clipRect = clipRect;
+        return;
+    }
 
-    if(openThread)
-        m_thread = std::thread(m_action);
-    else  m_action();
+    m_objects[pos - 1]->state.clipRect = clipRect;
+}
+
+void Pool::setOpacity(const float opacity, const int pos)
+{
+    if(pos == -1) {
+        m_state.opacity = opacity;
+        return;
+    }
+
+    m_objects[pos - 1]->state.opacity = opacity;
 }
 
 size_t PoolFramed::updateHash(const TexturePtr& texture, const DrawMethod& method)

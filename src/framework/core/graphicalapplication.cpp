@@ -53,7 +53,6 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_window.setOnClose([this] { close(); });
 
     m_foregroundFramed = g_drawPool.createPoolF(PoolType::FOREGROUND);
-    g_drawPool.registerThread(m_foregroundFramed, [&]() {  g_ui.render(Fw::ForegroundPane); });
 
     g_mouse.init();
 
@@ -72,7 +71,6 @@ void GraphicalApplication::init(std::vector<std::string>& args)
 #endif
 
     g_drawPool.init();
-    g_drawPool.setMultiThread(true);
 }
 
 void GraphicalApplication::deinit()
@@ -142,7 +140,9 @@ void GraphicalApplication::run()
                 m_backgroundFrameCounter.processNextFrame();
 
                 if(m_mustRepaint && foregroundCanUpdate()) {
-                    m_foregroundFramed->init();
+                    g_drawPool.use(m_foregroundFramed);
+                    g_ui.render(Fw::ForegroundPane);
+                    m_refreshTime.restart();
                 }
 
                 g_ui.render(Fw::BackgroundPane);

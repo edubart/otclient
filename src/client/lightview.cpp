@@ -119,9 +119,10 @@ void LightView::draw(const Rect& dest, const Rect& src)
     // draw light, only if there is darkness
     if(!isDark()) return;
 
-    /*m_pool->setColorClear(m_globalLightColor);
-
+    m_pool->setColorClear(m_globalLightColor);
     m_pool->setCoords(dest, src);
+
+    g_drawPool.use(m_pool);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         if(z < m_mapView->m_floorMax) {
@@ -141,5 +142,5 @@ void LightView::draw(const Rect& dest, const Rect& src)
             g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture);
         }
         lights.clear();
-    }*/
+    }
 }

@@ -269,16 +269,12 @@ void PainterOGL::popTransformMatrix()
 
 void PainterOGL::updateGlTexture()
 {
-    if(g_drawPool.isOnThread()) return;
-
     if(m_glTextureId != 0)
         glBindTexture(GL_TEXTURE_2D, m_glTextureId);
 }
 
 void PainterOGL::updateGlCompositionMode()
 {
-    if(g_drawPool.isOnThread()) return;
-
     switch(m_compositionMode) {
     case CompositionMode_Normal:
         if(g_graphics.canUseBlendFuncSeparate())
@@ -306,8 +302,6 @@ void PainterOGL::updateGlCompositionMode()
 
 void PainterOGL::updateGlBlendEquation()
 {
-    if(g_drawPool.isOnThread()) return;
-
     if(!g_graphics.canUseBlendEquation())
         return;
     if(m_blendEquation == BlendEquation_Add)
@@ -324,8 +318,6 @@ void PainterOGL::updateGlBlendEquation()
 
 void PainterOGL::updateGlClipRect()
 {
-    if(g_drawPool.isOnThread()) return;
-
     if(m_clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(m_clipRect.left(), m_resolution.height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());

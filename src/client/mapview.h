@@ -200,18 +200,18 @@ private:
 
     bool canRenderTile(const TilePtr& tile, LightView* lightView);
 
-    uint8 m_lockedFirstVisibleFloor,
-        m_cachedFirstVisibleFloor,
-        m_cachedLastVisibleFloor,
-        m_renderScale,
+    uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },
+        m_cachedFirstVisibleFloor{ Otc::SEA_FLOOR },
+        m_cachedLastVisibleFloor{ Otc::SEA_FLOOR },
+        m_renderScale{ 100 },
         m_tileSize,
-        m_floorMin,
-        m_floorMax,
+        m_floorMin{ 0 },
+        m_floorMax{ 0 },
         m_floorShadowingFlag;
 
-    float m_minimumAmbientLight,
-        m_fadeInTime,
-        m_fadeOutTime,
+    float m_minimumAmbientLight{ 0 },
+        m_fadeInTime{ 0 },
+        m_fadeOutTime{ 0 },
         m_scaleFactor;
 
     Rect m_rectDimension;
@@ -259,7 +259,7 @@ private:
     Pools m_pools;
 
     RectCache m_rectCache;
-    ViewMode m_viewMode;
+    ViewMode m_viewMode{ NEAR_VIEW };
 
     Color m_lastFloorShadowingColor;
 

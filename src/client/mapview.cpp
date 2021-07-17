@@ -52,16 +52,6 @@ enum {
 
 MapView::MapView()
 {
-    m_viewMode = NEAR_VIEW;
-    m_lockedFirstVisibleFloor = UINT8_MAX;
-    m_cachedFirstVisibleFloor = Otc::SEA_FLOOR;
-    m_cachedLastVisibleFloor = Otc::SEA_FLOOR;
-    m_minimumAmbientLight = 0;
-    m_fadeOutTime = 0;
-    m_fadeInTime = 0;
-    m_floorMax = 0;
-    m_floorMin = 0;
-
     m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * Otc::TILE_PIXELS;
 
     m_pools.map = g_drawPool.createPoolF(PoolType::MAP);
@@ -70,6 +60,7 @@ MapView::MapView()
 
     m_pools.map->onBeforeDraw([&]() {
         const Position cameraPosition = getCameraPosition();
+
         float fadeOpacity = 1.0f;
         if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
             fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
@@ -97,24 +88,45 @@ MapView::MapView()
         g_painter->setOpacity(fadeOpacity);
     });
 
-    m_pools.map->onAfterDraw([]() {
+    m_pools.map->onAfterDraw([&]() {
         g_painter->resetShaderProgram();
         g_painter->resetOpacity();
     });
-
-    m_pools.map->onAfterDraw([&]() {});
 
     m_shader = g_shaders.getDefaultMapShader();
 
     m_lastFloorShadowingColor = Color::white;
 
-    m_renderScale = 100;
-
     setVisibleDimension(Size(15, 11));
+}
 
-    g_drawPool.registerThread(m_pools.map, [&]() {
+MapView::~MapView()
+{
+#ifndef NDEBUG
+    assert(!g_app.isTerminated());
+#endif
+}
+
+void MapView::draw(const Rect& rect)
+{
+    // update visible tiles cache when needed
+    if(m_mustUpdateVisibleTilesCache)
+        updateVisibleTilesCache();
+
+    if(m_rectCache.rect != rect) {
+        m_rectCache.rect = rect;
+        m_rectCache.srcRect = calcFramebufferSource(rect.size());
+        m_rectCache.drawOffset = m_rectCache.srcRect.topLeft();
+        m_rectCache.horizontalStretchFactor = rect.width() / static_cast<float>(m_rectCache.srcRect.width());
+        m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
+        m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
+    }
+
+    g_drawPool.use(m_pools.map);
+    {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
+
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             if(lightView) {
                 const int8 nextFloor = z - 1;
@@ -169,81 +181,7 @@ MapView::MapView()
             const auto crosshairRect = Rect(point, m_tileSize, m_tileSize);
             g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
         }
-    });
-
-    g_drawPool.registerThread(m_pools.creatureInformation, [&]() {
-        const Position cameraPosition = getCameraPosition();
-
-        uint32_t flags = 0;
-        if(m_drawNames) { flags = Otc::DrawNames; }
-        if(m_drawHealthBars) { flags |= Otc::DrawBars; }
-        if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
-
-        for(const auto& creature : m_visibleCreatures) {
-            creature->drawInformation(m_rectCache.rect,
-                                      transformPositionTo2D(creature->getPosition(), cameraPosition),
-                                      m_scaleFactor, m_rectCache.drawOffset,
-                                      m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
-        }
-    });
-
-    g_drawPool.registerThread(m_pools.text, [&]() {
-        const Position cameraPosition = getCameraPosition();
-        for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
-            if(staticText->getMessageMode() == Otc::MessageNone) continue;
-
-            const Position pos = staticText->getPosition();
-
-            if(pos.z != cameraPosition.z)
-                continue;
-
-            Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
-            p.x *= m_rectCache.horizontalStretchFactor;
-            p.y *= m_rectCache.verticalStretchFactor;
-            p += m_rectCache.rect.topLeft();
-            staticText->drawText(p, m_rectCache.rect);
-        }
-
-        for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
-            const Position pos = animatedText->getPosition();
-
-            if(pos.z != cameraPosition.z)
-                continue;
-
-            Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
-            p.x *= m_rectCache.horizontalStretchFactor;
-            p.y *= m_rectCache.verticalStretchFactor;
-            p += m_rectCache.rect.topLeft();
-
-            animatedText->drawText(p, m_rectCache.rect);
-        }
-    });
-}
-
-MapView::~MapView()
-{
-#ifndef NDEBUG
-    assert(!g_app.isTerminated());
-#endif
-}
-
-void MapView::draw(const Rect& rect)
-{
-    // update visible tiles cache when needed
-    if(m_mustUpdateVisibleTilesCache)
-        updateVisibleTilesCache();
-
-    if(m_rectCache.rect != rect) {
-        m_rectCache.rect = rect;
-        m_rectCache.srcRect = calcFramebufferSource(rect.size());
-        m_rectCache.drawOffset = m_rectCache.srcRect.topLeft();
-        m_rectCache.horizontalStretchFactor = rect.width() / static_cast<float>(m_rectCache.srcRect.width());
-        m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
-
-        m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
-
-    m_pools.map->init(g_drawPool.multiThreadEnabled());
 
     // this could happen if the player position is not known yet
     if(!getCameraPosition().isValid())
@@ -263,14 +201,56 @@ void MapView::drawCreatureInformation()
 {
     if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
 
-    m_pools.creatureInformation->init(g_drawPool.multiThreadEnabled());
+    g_drawPool.use(m_pools.creatureInformation);
+    const Position cameraPosition = getCameraPosition();
+
+    uint32_t flags = 0;
+    if(m_drawNames) { flags = Otc::DrawNames; }
+    if(m_drawHealthBars) { flags |= Otc::DrawBars; }
+    if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
+
+    for(const auto& creature : m_visibleCreatures) {
+        creature->drawInformation(m_rectCache.rect,
+                                  transformPositionTo2D(creature->getPosition(), cameraPosition),
+                                  m_scaleFactor, m_rectCache.drawOffset,
+                                  m_rectCache.horizontalStretchFactor, m_rectCache.verticalStretchFactor, flags);
+    }
 }
 
 void MapView::drawText()
 {
     if(!m_drawTexts || g_map.getStaticTexts().empty() && g_map.getStaticTexts().empty()) return;
 
-    m_pools.text->init(g_drawPool.multiThreadEnabled());
+    g_drawPool.use(m_pools.text);
+    const Position cameraPosition = getCameraPosition();
+    for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
+        if(staticText->getMessageMode() == Otc::MessageNone) continue;
+
+        const Position pos = staticText->getPosition();
+
+        if(pos.z != cameraPosition.z)
+            continue;
+
+        Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
+        p.x *= m_rectCache.horizontalStretchFactor;
+        p.y *= m_rectCache.verticalStretchFactor;
+        p += m_rectCache.rect.topLeft();
+        staticText->drawText(p, m_rectCache.rect);
+    }
+
+    for(const AnimatedTextPtr& animatedText : g_map.getAnimatedTexts()) {
+        const Position pos = animatedText->getPosition();
+
+        if(pos.z != cameraPosition.z)
+            continue;
+
+        Point p = transformPositionTo2D(pos, cameraPosition) - m_rectCache.drawOffset;
+        p.x *= m_rectCache.horizontalStretchFactor;
+        p.y *= m_rectCache.verticalStretchFactor;
+        p += m_rectCache.rect.topLeft();
+
+        animatedText->drawText(p, m_rectCache.rect);
+    }
 }
 
 void MapView::updateVisibleTilesCache()

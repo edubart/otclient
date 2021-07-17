@@ -46,6 +46,7 @@ class ParticleEffect;
 class ParticleEffectType;
 class Pool;
 class PoolFramed;
+class DrawPool;
 
 typedef stdext::shared_object_ptr<Image> ImagePtr;
 typedef stdext::shared_object_ptr<Texture> TexturePtr;

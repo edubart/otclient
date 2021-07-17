@@ -27,24 +27,29 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/framebuffer.h>
 #include <framework/graphics/pool.h>
+#include <framework/core/graphicalapplication.h>
 
-enum PoolType : uint8 {
+enum  PoolType : uint8 {
     MAP,
     CREATURE_INFORMATION,
     LIGHT,
     TEXT,
     FOREGROUND,
-    LAST
+    UNKNOW
+};
+
+enum class PoolEventType : uint8 {
+    ON_BEFORE_DRAW,
+    ON_AFTER_DRAW
 };
 
 class DrawPool
 {
 public:
-    void init();
-    void terminate();
-
-    PoolPtr createPool(const PoolType type);
+    PoolPtr createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
     PoolFramedPtr createPoolF(const PoolType type);
+
+    void use(const PoolPtr& pool);
 
     void addFillCoords(CoordsBuffer& coordsBuffer, const Color color = Color::white);
     void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color = Color::white, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
@@ -60,33 +65,23 @@ public:
     void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
-    size_t getSize();
+    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
+    void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
+    void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
 
-    // -1 = LAST POSITION
-    void setColor(const Color color, const int pos = -1);
-    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);
-    void setClipRect(const Rect& clipRect, const int pos = -1);
-    void setOpacity(const float opacity, const int pos = -1);
+    void resetClipRect() { m_currentPool->resetClipRect(); }
+    void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
+    void resetOpacity() { m_currentPool->resetOpacity(); }
+    void resetState() { m_currentPool->resetState(); }
 
-    void resetClipRect() { m_state.clipRect = Rect(); }
-    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
-    void resetOpacity() { m_state.opacity = 1.f; }
-    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
-
-    void draw();
-    void registerThread(const PoolPtr& pool, const std::function<void()> f);
-    bool isOnThread();
-    bool multiThreadEnabled() const { return m_multiThread; }
-    void setMultiThread(const bool v) { m_multiThread = v; }
+    size_t getSize() { return m_currentPool->m_objects.size(); }
 
 private:
-    struct State {
-        Painter::CompositionMode compositionMode;
-        Rect clipRect;
-        float opacity;
-    };
+    void draw();
+    void init();
+    void terminate();
 
-    PoolFramedPtr poolFramed();
+    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
 
     void drawObject(Pool::DrawObject& obj);
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
@@ -95,11 +90,13 @@ private:
     Painter::PainterState generateState();
 
     CoordsBuffer m_coordsbuffer;
-    std::array<PoolPtr, PoolType::LAST> m_pools;
+    std::array<PoolPtr, PoolType::UNKNOW + 1> m_pools;
 
-    State m_state;
+    PoolPtr m_currentPool, n_unknowPool;
 
     bool m_multiThread;
+
+    friend class GraphicalApplication;
 };
 
 #endif
