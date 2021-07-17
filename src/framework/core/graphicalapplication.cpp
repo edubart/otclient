@@ -141,7 +141,6 @@ void GraphicalApplication::run()
 
                 if(m_mustRepaint && foregroundCanUpdate()) {
                     g_drawPool.use(m_foregroundFramed);
-
                     g_ui.render(Fw::ForegroundPane);
                     m_refreshTime.restart();
                 }

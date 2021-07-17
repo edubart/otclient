@@ -106,7 +106,7 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 void DrawPool::draw()
 {
     for(const auto& pool : m_pools) {
-        if(pool->m_objects.empty()) continue;
+        if(!pool->isEnabled()) continue;
 
         if(pool->isFramed()) {
             const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);

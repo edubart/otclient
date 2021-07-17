@@ -267,7 +267,6 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
 
     if(drawFlags & Otc::DrawBars) {
         g_drawPool.addRepeatedFilledRect(backgroundRect, Color::black);
-
         g_drawPool.addRepeatedFilledRect(healthRect, fillColor);
 
         if(drawFlags & Otc::DrawManaBar && isLocalPlayer()) {

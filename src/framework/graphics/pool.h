@@ -30,6 +30,10 @@
 
 class Pool
 {
+public:
+    void setEnable(const bool v) { m_enabled = v; }
+    bool isEnabled() const { return m_enabled; }
+
 protected:
     enum class DrawMethodType {
         DRAW_FILL_COORDS,
@@ -84,6 +88,7 @@ private:
 
     std::vector<std::shared_ptr<DrawObject>> m_objects;
 
+    bool m_enabled{ true };
     State m_state;
 
     friend class DrawPool;
