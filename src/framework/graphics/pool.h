@@ -104,12 +104,10 @@ public:
     void setColorClear(const Color color) { m_framebuffer->setColorClear(color); }
 
 protected:
-    friend class Pool;
     friend class DrawPool;
-    friend std::function<void()> f();
 
 private:
-    size_t updateHash(const TexturePtr& texture, const DrawMethod& method);
+
     void updateStatus() { m_status.first = m_status.second; }
     void resetCurrentStatus() { m_status.second = 0; }
     bool hasModification() const { return m_status.first != m_status.second; }
@@ -120,8 +118,6 @@ private:
 
     std::function<void()> m_beforeDraw, m_afterDraw;
     std::pair<size_t, size_t> m_status{ 0,0 };
-    std::hash<size_t> HASH_INT;
-    std::hash<float> HASH_FLOAT;
 };
 
 extern DrawPool g_drawPool;

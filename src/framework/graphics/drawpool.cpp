@@ -69,8 +69,7 @@ void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawM
 
 void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
-    if(m_currentPool->isFramed())
-        poolFramed()->updateHash(state.texture, method);
+    updateHash(state, method);
 
     auto& list = m_currentPool->m_objects;
 
@@ -196,11 +195,9 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
     auto state = generateState();
     state.color = color;
 
+    updateHash(state, method);
+
     const auto& action = Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), Painter::DrawMode::Triangles, {method} };
-
-    if(m_currentPool->isFramed())
-        poolFramed()->updateHash(nullptr, method);
-
     m_currentPool->m_objects.push_back(action);
 }
 
@@ -213,11 +210,9 @@ void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& te
     state.texture = texture;
     state.color = color;
 
+    updateHash(state, method);
+
     const auto& action = Pool::DrawObject{ state, std::shared_ptr<CoordsBuffer>(&coordsBuffer, [](CoordsBuffer*) {}), drawMode, {method} };
-
-    if(m_currentPool->isFramed())
-        poolFramed()->updateHash(texture, method);
-
     m_currentPool->m_objects.push_back(action);
 }
 
@@ -357,4 +352,65 @@ void DrawPool::use(const PoolPtr& pool)
     if(m_currentPool->isFramed()) {
         poolFramed()->resetCurrentStatus();
     }
+}
+
+void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)
+{
+    if(!m_currentPool->isFramed()) return;
+
+    size_t hash = 0;
+
+    if(state.texture)
+        boost::hash_combine(hash, HASH_INT(state.texture->getUniqueId()));
+
+    if(state.opacity < 1.f)
+        boost::hash_combine(hash, HASH_INT(state.opacity));
+
+    if(state.color != Color::white)
+        boost::hash_combine(hash, HASH_INT(state.color.rgba()));
+
+    if(state.compositionMode != Painter::CompositionMode_Normal)
+        boost::hash_combine(hash, HASH_INT(state.compositionMode));
+
+    if(state.shaderProgram)
+        boost::hash_combine(hash, HASH_INT(state.shaderProgram->getProgramId()));
+
+    if(state.clipRect.isValid()) {
+        boost::hash_combine(hash, HASH_INT(state.clipRect.x()));
+        boost::hash_combine(hash, HASH_INT(state.clipRect.y()));
+    }
+
+    if(method.rects.first.isValid()) {
+        boost::hash_combine(hash, HASH_INT(method.rects.first.x()));
+        boost::hash_combine(hash, HASH_INT(method.rects.first.y()));
+    }
+    if(method.rects.second.isValid()) {
+        boost::hash_combine(hash, HASH_INT(method.rects.second.x()));
+        boost::hash_combine(hash, HASH_INT(method.rects.second.y()));
+    }
+
+    const auto& a = std::get<0>(method.points),
+        b = std::get<1>(method.points),
+        c = std::get<2>(method.points);
+
+    if(!a.isNull()) {
+        boost::hash_combine(hash, HASH_INT(a.x));
+        boost::hash_combine(hash, HASH_INT(a.y));
+    }
+    if(!b.isNull()) {
+        boost::hash_combine(hash, HASH_INT(b.x));
+        boost::hash_combine(hash, HASH_INT(b.y));
+    }
+    if(!c.isNull()) {
+        boost::hash_combine(hash, HASH_INT(c.x));
+        boost::hash_combine(hash, HASH_INT(c.y));
+    }
+
+    if(method.intValue != 0)
+        boost::hash_combine(hash, HASH_INT(method.intValue));
+
+    if(method.floatValue != 0)
+        boost::hash_combine(hash, HASH_FLOAT(method.floatValue));
+
+    boost::hash_combine(poolFramed()->m_status.second, hash);
 }

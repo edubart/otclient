@@ -80,12 +80,12 @@ private:
     void draw();
     void init();
     void terminate();
+    void drawObject(Pool::DrawObject& obj);
+    void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
+    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
-
-    void drawObject(Pool::DrawObject& obj);
-    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-    void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);;
 
     Painter::PainterState generateState();
 
@@ -95,6 +95,9 @@ private:
     PoolPtr m_currentPool, n_unknowPool;
 
     bool m_multiThread;
+
+    std::hash<size_t> HASH_INT;
+    std::hash<float> HASH_FLOAT;
 
     friend class GraphicalApplication;
 };
