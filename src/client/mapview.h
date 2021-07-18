@@ -157,13 +157,14 @@ public:
     void setRenderScale(const uint8 scale);
 
 private:
+    struct MapList {
+        std::vector<TilePtr> grounds, borders, bottomTops;
+        void clear() { grounds.clear(); borders.clear(); bottomTops.clear(); }
+    };
+
     struct Pools {
         PoolFramedPtr map;
         PoolPtr creatureInformation, text;
-    };
-
-    struct ViewPort {
-        uint8 top, right, bottom, left;
     };
 
     struct Crosshair {
@@ -228,8 +229,8 @@ private:
         m_lastCameraPosition,
         m_lastMousePosition;
 
-    std::array<ViewPort, Otc::InvalidDirection + 1> m_viewPortDirection;
-    ViewPort m_viewport;
+    std::array<AwareRange, Otc::InvalidDirection + 1> m_viewPortDirection;
+    AwareRange m_viewport;
 
     stdext::boolean<true>
         m_mustUpdateVisibleTilesCache,
@@ -251,7 +252,7 @@ private:
 
     std::vector<CreaturePtr> m_visibleCreatures;
 
-    std::array<std::vector<TilePtr>, Otc::MAX_Z + 1> m_cachedVisibleTiles;
+    std::array<MapList, Otc::MAX_Z + 1> m_cachedVisibleTiles;
 
     PainterShaderProgramPtr m_shader, m_nextShader;
     LightViewPtr m_lightView;

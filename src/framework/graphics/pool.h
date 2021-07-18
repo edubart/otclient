@@ -83,6 +83,7 @@ private:
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
     void resetOpacity() { m_state.opacity = 1.f; }
     void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
+    void beginningIsHere() { m_indexToStartSearching = m_objects.size(); }
 
     virtual bool isFramed() const { return false; };
 
@@ -90,6 +91,8 @@ private:
 
     bool m_enabled{ true };
     State m_state;
+
+    uint16_t m_indexToStartSearching{ 0 };
 
     friend class DrawPool;
 };

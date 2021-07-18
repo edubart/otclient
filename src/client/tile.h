@@ -67,6 +67,7 @@ public:
     void onAddVisibleTileList(const MapViewPtr& mapView);
     void draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawGroundBorder(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);
@@ -77,7 +78,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     void addThing(const ThingPtr& thing, int stackPos);
-    bool removeThing(const ThingPtr& thing);
+    bool removeThing(const ThingPtr thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);
@@ -97,7 +98,7 @@ public:
     std::vector<CreaturePtr> getCreatures();
 
     std::vector<ItemPtr> getItems();
-    ItemPtr getGround();
+    ItemPtr Tile::getGround() { return m_ground; }
     int getGroundSpeed();
     uint8 getMinimapColorByte();
     int getThingCount() { return m_things.size() + m_effects.size(); }
@@ -119,6 +120,9 @@ public:
     bool mustHookEast();
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
+
+    bool hasGroundBorderToDraw() const { return m_countFlag.hasGroundBorder; }
+    bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty(); }
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -145,10 +149,6 @@ public:
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
     void analyzeThing(const ThingPtr& thing, bool add);
-
-    bool hasGroundToDraw() const { return m_countFlag.hasGroundOrBorder; }
-    bool hasBottomToDraw() const { return m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty(); }
-    bool hasTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty(); }
 
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
 
@@ -182,9 +182,10 @@ private:
         int hasCommonItem = 0;
         int hasTopItem = 0;
         int hasBottomItem = 0;
-        int hasGroundOrBorder = 0;
+        int hasGroundBorder = 0;
     };
 
+    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void checkForDetachableThing();
     void checkTranslucentLight();
@@ -200,8 +201,7 @@ private:
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
     std::vector<EffectPtr> m_effects;
-
-    std::vector<ItemPtr> m_animatedItems;
+    ItemPtr m_ground;
 
     CountFlag m_countFlag;
     Highlight m_highlight;

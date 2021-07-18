@@ -116,11 +116,20 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
 
 void Tile::drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-    if(!hasGroundToDraw()) return;
+    if(!m_ground) return;
+
+    drawStart(mapView);
+    drawThing(m_ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+    drawEnd(mapView);
+}
+
+void Tile::drawGroundBorder(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+{
+    if(!m_countFlag.hasGroundBorder) return;
 
     drawStart(mapView);
     for(const auto& ground : m_things) {
-        if(!ground->isGroundOrBorder()) break;
+        if(!ground->isGroundBorder()) continue;
         drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
     drawEnd(mapView);
@@ -316,9 +325,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
     m_things.insert(m_things.begin() + stackPos, thing);
 
-    if(!thing->isCreature() && thing->hasAnimationPhases()) {
-        m_animatedItems.push_back(thing->static_self_cast<Item>());
-    }
+    if(thing->isGround()) m_ground = thing->static_self_cast<Item>();
 
     analyzeThing(thing, true);
     checkForDetachableThing();
@@ -334,11 +341,9 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 }
 
 // TODO: Need refactoring
-bool Tile::removeThing(const ThingPtr& thing)
+bool Tile::removeThing(const ThingPtr thing)
 {
     if(!thing) return false;
-
-    ThingPtr temporaryReference = thing;
 
     if(thing->isEffect()) {
         const EffectPtr& effect = thing->static_self_cast<Effect>();
@@ -356,14 +361,9 @@ bool Tile::removeThing(const ThingPtr& thing)
     if(it == m_things.end())
         return false;
 
-    analyzeThing(thing, false);
+    if(thing->isGround()) m_ground = nullptr;
 
-    if(!thing->isCreature() && thing->hasAnimationPhases()) {
-        const auto& subIt = std::find(m_animatedItems.begin(), m_animatedItems.end(), thing->static_self_cast<Item>());
-        if(subIt != m_animatedItems.end()) {
-            m_animatedItems.erase(subIt);
-        }
-    }
+    analyzeThing(thing, false);
 
     m_things.erase(it);
 
@@ -374,7 +374,6 @@ bool Tile::removeThing(const ThingPtr& thing)
     if(thing->isTranslucent())
         checkTranslucentLight();
 
-    temporaryReference = nullptr;
     return true;
 }
 
@@ -435,17 +434,6 @@ std::vector<ItemPtr> Tile::getItems()
         items.push_back(thing->static_self_cast<Item>());
     }
     return items;
-}
-
-ItemPtr Tile::getGround()
-{
-    const ThingPtr& firstObject = getThing(0);
-    if(!firstObject) return nullptr;
-
-    if(firstObject->isGround() && firstObject->isItem())
-        return firstObject->static_self_cast<Item>();
-
-    return nullptr;
 }
 
 EffectPtr Tile::getEffect(uint16 id)
@@ -778,16 +766,21 @@ void Tile::checkForDetachableThing()
         }
     }
 
-    if(m_countFlag.hasGroundOrBorder) {
+    if(m_countFlag.hasGroundBorder) {
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const auto& item = *it;
-            if(!item->isGroundOrBorder() || !item->canDraw()) continue;
+            if(!item->isGroundBorder() || !item->canDraw()) continue;
 
             if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer() || item->isTranslucent()) {
                 m_highlight.thing = item;
                 return;
             }
         }
+    }
+
+    if(m_ground && (m_ground->hasAction() || m_ground->hasLensHelp() || m_ground->isUsable() || m_ground->isForceUse() || m_ground->isContainer() || m_ground->isTranslucent())) {
+        m_highlight.thing = m_ground;
+        return;
     }
 
     if(m_countFlag.hasTopItem) {
@@ -829,8 +822,8 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->isCreature())
         m_countFlag.hasCreature += value;
 
-    if(thing->isGroundOrBorder())
-        m_countFlag.hasGroundOrBorder += value;
+    if(thing->isGroundBorder())
+        m_countFlag.hasGroundBorder += value;
 
     // Creatures and items
     if(thing->isOnBottom()) {
@@ -904,4 +897,26 @@ void Tile::unselect()
     m_highlight.enabled = false;
     m_highlight.listeningEvent->cancel();
     m_highlight.listeningEvent = nullptr;
+}
+
+bool Tile::canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView)
+{
+    if(drawViewportEdge || (lightView && lightView->isDark() && hasLight())) return true;
+
+    const int8 dz = m_position.z - cameraPosition.z;
+    const Position checkPos = m_position.translated(dz, dz);
+
+    // Check for non-visible tiles on the screen and ignore them
+    {
+        if((cameraPosition.x - checkPos.x >= viewPort.left) || (checkPos.x - cameraPosition.x == viewPort.right && !hasWideThings() && !hasDisplacement()))
+            return false;
+
+        if((cameraPosition.y - checkPos.y >= viewPort.top) || (checkPos.y - cameraPosition.y == viewPort.bottom && !hasTallThings() && !hasDisplacement()))
+            return false;
+
+        if((checkPos.x - cameraPosition.x > viewPort.right && (!hasWideThings() || !hasDisplacement())) || (checkPos.y - cameraPosition.y > viewPort.bottom))
+            return false;
+    }
+
+    return true;
 }

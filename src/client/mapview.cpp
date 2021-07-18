@@ -132,7 +132,7 @@ void MapView::draw(const Rect& rect)
                 const int8 nextFloor = z - 1;
                 if(nextFloor >= m_floorMin) {
                     lightView->setFloor(nextFloor);
-                    for(const auto& tile : m_cachedVisibleTiles[nextFloor]) {
+                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].grounds) {
                         const auto& ground = tile->getGround();
                         if(ground && !ground->isTranslucent()) {
                             auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
@@ -159,18 +159,24 @@ void MapView::draw(const Rect& rect)
 
             if(lightView) lightView->setFloor(z);
 
-            for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!canRenderTile(tile, lightView)) continue;
-                tile->drawGround(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+            const auto& map = m_cachedVisibleTiles[z];
+
+            g_drawPool.beginningIsHere();
+            {
+                for(const auto& tile : map.grounds)
+                    tile->drawGround(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+
+                for(const auto& tile : map.borders)
+                    tile->drawGroundBorder(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+
+                for(const auto& tile : map.bottomTops)
+                    tile->draw(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
             }
 
-            for(const auto& tile : m_cachedVisibleTiles[z]) {
-                if(!canRenderTile(tile, lightView)) continue;
-                tile->draw(this, transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
-            }
-
-            for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
-                missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+            g_drawPool.beginningIsHere();
+            {
+                for(const MissilePtr& missile : g_map.getFloorMissiles(z))
+                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
             }
 
             onFloorDrawingEnd(z);
@@ -337,7 +343,14 @@ void MapView::updateVisibleTilesCache()
                     if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
                         continue;
 
-                    floor.push_back(tile);
+                    if(tile->hasGround())
+                        floor.grounds.push_back(tile);
+
+                    if(tile->hasGroundBorderToDraw())
+                        floor.borders.push_back(tile);
+
+                    if(tile->hasBottomOrTopToDraw())
+                        floor.bottomTops.push_back(tile);
 
                     tile->onAddVisibleTileList(this);
 
@@ -794,7 +807,7 @@ void MapView::setDrawLights(bool enable)
 void MapView::updateViewportDirectionCache()
 {
     for(uint8 dir = Otc::North; dir <= Otc::InvalidDirection; ++dir) {
-        ViewPort& vp = m_viewPortDirection[dir];
+        AwareRange& vp = m_viewPortDirection[dir];
         vp.top = m_awareRange.top;
         vp.right = m_awareRange.right;
         vp.bottom = vp.top;
@@ -832,31 +845,6 @@ void MapView::updateViewportDirectionCache()
             break;
         }
     }
-}
-
-bool MapView::canRenderTile(const TilePtr& tile, LightView* lightView)
-{
-    if(m_drawViewportEdge || (lightView && lightView->isDark() && tile->hasLight())) return true;
-
-    const Position cameraPosition = getCameraPosition();
-    const Position& tilePos = tile->getPosition();
-
-    const int8 dz = tilePos.z - cameraPosition.z;
-    const Position checkPos = tilePos.translated(dz, dz);
-
-    // Check for non-visible tiles on the screen and ignore them
-    {
-        if((cameraPosition.x - checkPos.x >= m_viewport.left) || (checkPos.x - cameraPosition.x == m_viewport.right && !tile->hasWideThings() && !tile->hasDisplacement()))
-            return false;
-
-        if((cameraPosition.y - checkPos.y >= m_viewport.top) || (checkPos.y - cameraPosition.y == m_viewport.bottom && !tile->hasTallThings() && !tile->hasDisplacement()))
-            return false;
-
-        if((checkPos.x - cameraPosition.x > m_viewport.right && (!tile->hasWideThings() || !tile->hasDisplacement())) || (checkPos.y - cameraPosition.y > m_viewport.bottom))
-            return false;
-    }
-
-    return true;
 }
 
 std::vector<CreaturePtr> MapView::getSightSpectators(const Position& centerPos, bool multiFloor)

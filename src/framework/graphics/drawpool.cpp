@@ -34,6 +34,7 @@ void DrawPool::init()
     n_unknowPool = g_drawPool.createPool(PoolType::UNKNOW);
     use(n_unknowPool);
 }
+
 void DrawPool::terminate()
 {
     m_currentPool = nullptr;
@@ -58,7 +59,9 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 
 void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
-    const auto itFind = std::find_if(m_currentPool->m_objects.begin(), m_currentPool->m_objects.end(), [state]
+    const uint16 startIndex = m_currentPool->m_indexToStartSearching ? m_currentPool->m_indexToStartSearching - 1 : 0;
+
+    const auto itFind = std::find_if(m_currentPool->m_objects.begin() + startIndex, m_currentPool->m_objects.end(), [state]
     (const Pool::DrawObject& action) { return action.state == state; });
 
     if(itFind != m_currentPool->m_objects.end()) {
