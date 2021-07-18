@@ -188,6 +188,7 @@ private:
 
     void updateLight();
     void updateViewportDirectionCache();
+    void drawFloor();
     void drawCreatureInformation();
     void drawText();
 

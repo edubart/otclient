@@ -122,6 +122,20 @@ void MapView::draw(const Rect& rect)
         m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
 
+    drawFloor();
+
+    // this could happen if the player position is not known yet
+    if(!getCameraPosition().isValid()) {
+        return;
+    }
+
+    drawCreatureInformation();
+    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect);
+    drawText();
+}
+
+void MapView::drawFloor()
+{
     g_drawPool.use(m_pools.map);
     {
         const Position cameraPosition = getCameraPosition();
@@ -188,19 +202,6 @@ void MapView::draw(const Rect& rect)
             g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
         }
     }
-
-    // this could happen if the player position is not known yet
-    if(!getCameraPosition().isValid())
-        return;
-
-    drawCreatureInformation();
-
-    // lights are drawn after names and before texts
-    if(m_drawLights) {
-        m_lightView->draw(rect, m_rectCache.srcRect);
-    }
-
-    drawText();
 }
 
 void MapView::drawCreatureInformation()
