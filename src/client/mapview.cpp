@@ -304,8 +304,7 @@ void MapView::updateVisibleTilesCache()
         m_cachedVisibleTiles[m_floorMin].clear();
     } while(++m_floorMin <= m_floorMax);
 
-    m_floorMin = cameraPosition.z;
-    m_floorMax = cameraPosition.z;
+    m_floorMin = m_floorMax = cameraPosition.z;
 
     if(m_mustUpdateVisibleCreaturesCache) {
         m_visibleCreatures.clear();

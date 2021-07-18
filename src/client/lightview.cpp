@@ -126,12 +126,15 @@ void LightView::draw(const Rect& dest, const Rect& src)
     g_drawPool.use(m_pool);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
-        if(z < m_mapView->m_floorMax) {
-            for(auto& shade : m_shades) {
-                if(shade.floor != z) continue;
-                shade.floor = -1;
+        g_drawPool.beginningIsHere();
+        {
+            if(z < m_mapView->m_floorMax) {
+                for(auto& shade : m_shades) {
+                    if(shade.floor != z) continue;
+                    shade.floor = -1;
 
-                g_drawPool.addTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
+                    g_drawPool.addRepeatedTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
+                }
             }
         }
 

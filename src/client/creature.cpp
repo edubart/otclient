@@ -548,11 +548,7 @@ void Creature::updateWalkingTile()
 
     if(newWalkingTile) {
         newWalkingTile->addWalkingCreature(static_self_cast<Creature>());
-
-        // recache visible tiles in map views
-        if(newWalkingTile->isEmpty()) {
-            g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
-        }
+        g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
     }
 
     m_walkingTile = newWalkingTile;
@@ -591,6 +587,7 @@ void Creature::updateWalk(const bool isPreWalking)
         } else {
             m_walkAnimationPhase = 0;
         }
+
         return;
     }
 
