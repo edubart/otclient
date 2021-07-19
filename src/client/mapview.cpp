@@ -338,7 +338,7 @@ void MapView::updateVisibleTilesCache()
         for(uint_fast32_t diagonal = 0; diagonal < numDiagonals; ++diagonal) {
             // loop current diagonal tiles
             const uint32 advance = std::max<uint32>(diagonal - m_drawDimension.height(), 0);
-            for(int_fast32_t iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
+            for(int iy = diagonal - advance, ix = advance; iy >= 0 && ix < m_drawDimension.width(); --iy, ++ix) {
                 // position on current floor
                 //TODO: check position limits
                 Position tilePos = cameraPosition.translated(ix - m_virtualCenterOffset.x, iy - m_virtualCenterOffset.y);
