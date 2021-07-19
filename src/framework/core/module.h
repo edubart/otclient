@@ -28,7 +28,7 @@
 #include <framework/otml/declarations.h>
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 class Module : public LuaObject
 {
 public:
@@ -45,7 +45,7 @@ public:
     bool isDependent();
     bool isSandboxed() { return m_sandboxed; }
     bool hasDependency(const std::string& name, bool recursive = false);
-    int getSandbox(LuaInterface *lua);
+    int getSandbox(LuaInterface* lua);
 
     std::string getDescription() { return m_description; }
     std::string getName() { return m_name; }

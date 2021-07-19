@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #ifndef ITEMTYPE_H
 #define ITEMTYPE_H
 

@@ -29,89 +29,100 @@
 #include <typeinfo>
 
 namespace stdext {
-
-// disable memory alignment
+    // disable memory alignment
 #pragma pack(push,1)
 
-template<typename T>
-struct can_pack_in_any : std::integral_constant<bool,
-    (sizeof(T) <= sizeof(void*) && std::is_trivial<T>::value)> {};
+    template<typename T>
+    struct can_pack_in_any : std::integral_constant<bool,
+        (sizeof(T) <= sizeof(void*) && std::is_trivial<T>::value)> {};
 
-// improved to use less memory
-class packed_any {
-public:
-    struct placeholder {
-        virtual ~placeholder()  { }
-        virtual const std::type_info& type() const = 0;
-        virtual placeholder* clone() const = 0;
+    // improved to use less memory
+    class packed_any {
+    public:
+        struct placeholder {
+            virtual ~placeholder() {}
+            virtual const std::type_info& type() const = 0;
+            virtual placeholder* clone() const = 0;
+        };
+
+        template<typename T>
+        struct holder : public placeholder {
+            holder(const T& value) : held(value) {}
+            const std::type_info& type() const { return typeid(T); }
+            placeholder* clone() const { return new holder(held); }
+            T held;
+        private:
+            holder& operator=(const holder&);
+        };
+
+        placeholder* content;
+        bool scalar;
+
+        packed_any() :
+            content(nullptr), scalar(false)
+        {
+        }
+        packed_any(const packed_any& other) :
+            content(!other.scalar&& other.content ? other.content->clone() : other.content),
+            scalar(other.scalar)
+        {
+        }
+        template<typename T>
+        packed_any(const T& value, typename std::enable_if<(can_pack_in_any<T>::value)>::type* = nullptr) :
+            content(reinterpret_cast<placeholder*>(static_cast<std::size_t>(value))), scalar(true)
+        {
+        }
+        template<typename T>
+        packed_any(const T& value, typename std::enable_if<!(can_pack_in_any<T>::value)>::type* = nullptr) :
+            content(new holder<T>(value)), scalar(false)
+        {
+        }
+        ~packed_any()
+        {
+            if(!scalar && content) delete content;
+        }
+
+        packed_any& swap(packed_any& rhs) { std::swap(content, rhs.content); std::swap(scalar, rhs.scalar); return *this; }
+
+        template<typename T> packed_any& operator=(const T& rhs) { packed_any(rhs).swap(*this); return *this; }
+        packed_any& operator=(packed_any rhs) { rhs.swap(*this); return *this; }
+
+        bool empty() const { return !scalar && !content; }
+        template<typename T> T cast() const;
+        const std::type_info& type() const
+        {
+            if(!scalar)
+                return content ? content->type() : typeid(void);
+            else
+                return typeid(std::size_t);
+        }
     };
 
     template<typename T>
-    struct holder : public placeholder {
-        holder(const T& value) : held(value) { }
-        const std::type_info& type() const { return typeid(T); }
-        placeholder* clone() const { return new holder(held); }
-        T held;
-    private:
-        holder& operator=(const holder &);
-    };
-
-    placeholder* content;
-    bool scalar;
-
-    packed_any() :
-        content(nullptr), scalar(false) { }
-    packed_any(const packed_any& other) :
-        content(!other.scalar && other.content ? other.content->clone() : other.content),
-        scalar(other.scalar) { }
-    template<typename T>
-    packed_any(const T& value, typename std::enable_if<(can_pack_in_any<T>::value)>::type* = nullptr) :
-        content(reinterpret_cast<placeholder*>(static_cast<std::size_t>(value))), scalar(true) { }
-    template<typename T>
-    packed_any(const T& value, typename std::enable_if<!(can_pack_in_any<T>::value)>::type* = nullptr) :
-        content(new holder<T>(value)), scalar(false) { }
-    ~packed_any()
-        { if(!scalar && content) delete content; }
-
-    packed_any& swap(packed_any& rhs) { std::swap(content, rhs.content); std::swap(scalar, rhs.scalar); return *this; }
-
-    template<typename T> packed_any& operator=(const T& rhs) { packed_any(rhs).swap(*this); return *this; }
-    packed_any& operator=(packed_any rhs) { rhs.swap(*this); return *this; }
-
-    bool empty() const { return !scalar && !content; }
-    template<typename T> T cast() const;
-    const std::type_info& type() const {
-        if(!scalar)
-            return content ? content->type() : typeid(void);
-        else
-            return typeid(std::size_t);
+    typename std::enable_if<can_pack_in_any<T>::value, T>::type
+        packed_any_cast(const packed_any& operand)
+    {
+        assert(operand.scalar);
+        union {
+            T v;
+            packed_any::placeholder* content;
+        };
+        content = operand.content;
+        return v;
     }
-};
 
-template<typename T>
-typename std::enable_if<can_pack_in_any<T>::value, T>::type
-packed_any_cast(const packed_any& operand) {
-    assert(operand.scalar);
-    union {
-        T v;
-        packed_any::placeholder* content;
-    };
-    content = operand.content;
-    return v;
-}
+    template<typename T>
+    typename std::enable_if<!can_pack_in_any<T>::value, T>::type
+        packed_any_cast(const packed_any& operand)
+    {
+        assert(operand.type() == typeid(T));
+        return static_cast<packed_any::holder<T>*>(operand.content)->held;
+    }
 
-template<typename T>
-typename std::enable_if<!can_pack_in_any<T>::value, T>::type
-packed_any_cast(const packed_any& operand) {
-    assert(operand.type() == typeid(T));
-    return static_cast<packed_any::holder<T>*>(operand.content)->held;
-}
+    template<typename T> T packed_any::cast() const { return packed_any_cast<T>(*this); }
 
-template<typename T> T packed_any::cast() const { return packed_any_cast<T>(*this); }
-
-// restore memory alignment
+    // restore memory alignment
 #pragma pack(pop)
-
 }
 
 #endif

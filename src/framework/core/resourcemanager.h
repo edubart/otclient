@@ -34,7 +34,7 @@ class ResourceManager
 {
 public:
     // @dontbind
-    void init(const char *argv0);
+    void init(const char* argv0);
     // @dontbind
     void terminate();
 

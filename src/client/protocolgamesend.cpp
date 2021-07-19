@@ -935,7 +935,6 @@ void ProtocolGame::sendOpenTransactionHistory(int entriesPerPage)
     send(msg);
 }
 
-
 void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
 {
     if(!g_game.getFeature(Otc::GameChangeMapAwareRange))

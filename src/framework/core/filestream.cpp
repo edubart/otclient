@@ -458,4 +458,3 @@ void FileStream::throwError(const std::string& message, bool physfsError)
         completeMessage += std::string(": ") + PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
     stdext::throw_exception(completeMessage);
 }
-

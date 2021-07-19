@@ -26,7 +26,7 @@
 #include "event.h"
 #include "clock.h"
 
-// @bindclass
+ // @bindclass
 class ScheduledEvent : public Event
 {
 public:
@@ -41,7 +41,8 @@ public:
     int maxCycles() { return m_maxCycles; }
 
     struct Compare {
-        bool operator() (const ScheduledEventPtr &a, const ScheduledEventPtr &b) const {
+        bool operator() (const ScheduledEventPtr& a, const ScheduledEventPtr& b) const
+        {
             return b->ticks() < a->ticks();
         }
     };

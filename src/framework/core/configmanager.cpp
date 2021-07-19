@@ -66,8 +66,7 @@ ConfigPtr ConfigManager::loadSettings(const std::string file)
 {
     if(file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
-    }
-    else {
+    } else {
         if(m_settings->load(file)) {
             return m_settings;
         }
@@ -94,16 +93,14 @@ ConfigPtr ConfigManager::load(const std::string& file)
     if(file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
         return nullptr;
-    }
-    else {
+    } else {
         ConfigPtr config = get(file);
         if(!config) {
             config = ConfigPtr(new Config());
 
             if(config->load(file)) {
                 m_configs.push_back(config);
-            }
-            else {
+            } else {
                 // cannot load config
                 config = nullptr;
             }

@@ -68,13 +68,13 @@ void EventDispatcher::poll()
             break;
         }
 
-        for(int i=0;i<m_pollEventsSize;++i) {
+        for(int i = 0; i < m_pollEventsSize; ++i) {
             EventPtr event = m_eventList.front();
             m_eventList.pop_front();
             event->execute();
         }
         m_pollEventsSize = m_eventList.size();
-        
+
         loops++;
     }
 }
@@ -116,4 +116,3 @@ EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool p
         m_eventList.push_back(event);
     return event;
 }
-

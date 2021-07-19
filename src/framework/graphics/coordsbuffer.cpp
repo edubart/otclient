@@ -25,44 +25,44 @@
 
 void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
 {
-	const int left = dest.left();
-	const int right = dest.right();
-	const int top = dest.top();
-	const int bottom = dest.bottom();
-	const int width = dest.width();
-	const int height = dest.height();
-	const int w = innerLineWidth;
+    const int left = dest.left();
+    const int right = dest.right();
+    const int top = dest.top();
+    const int bottom = dest.bottom();
+    const int width = dest.width();
+    const int height = dest.height();
+    const int w = innerLineWidth;
 
-	addRect(Rect(left, top, width - w, w)); // top
-	addRect(Rect(right - w + 1, top, w, height - w)); // right
-	addRect(Rect(left + w, bottom - w + 1, width - w, w)); // bottom
-	addRect(Rect(left, top + w, w, height - w)); // left
+    addRect(Rect(left, top, width - w, w)); // top
+    addRect(Rect(right - w + 1, top, w, height - w)); // right
+    addRect(Rect(left + w, bottom - w + 1, width - w, w)); // bottom
+    addRect(Rect(left, top + w, w, height - w)); // left
 }
 
 void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
 {
-	if(dest.isEmpty() || src.isEmpty())
-		return;
+    if(dest.isEmpty() || src.isEmpty())
+        return;
 
-	const Rect virtualDest(0, 0, dest.size());
-	for(int y = 0; y <= virtualDest.height(); y += src.height()) {
-		for(int x = 0; x <= virtualDest.width(); x += src.width()) {
-			Rect partialDest(x, y, src.size());
-			Rect partialSrc(src);
+    const Rect virtualDest(0, 0, dest.size());
+    for(int y = 0; y <= virtualDest.height(); y += src.height()) {
+        for(int x = 0; x <= virtualDest.width(); x += src.width()) {
+            Rect partialDest(x, y, src.size());
+            Rect partialSrc(src);
 
-			// partialCoords to screenCoords bottomRight
-			if(partialDest.bottom() > virtualDest.bottom()) {
-				partialSrc.setBottom(partialSrc.bottom() + (virtualDest.bottom() - partialDest.bottom()));
-				partialDest.setBottom(virtualDest.bottom());
-			}
-			if(partialDest.right() > virtualDest.right()) {
-				partialSrc.setRight(partialSrc.right() + (virtualDest.right() - partialDest.right()));
-				partialDest.setRight(virtualDest.right());
-			}
+            // partialCoords to screenCoords bottomRight
+            if(partialDest.bottom() > virtualDest.bottom()) {
+                partialSrc.setBottom(partialSrc.bottom() + (virtualDest.bottom() - partialDest.bottom()));
+                partialDest.setBottom(virtualDest.bottom());
+            }
+            if(partialDest.right() > virtualDest.right()) {
+                partialSrc.setRight(partialSrc.right() + (virtualDest.right() - partialDest.right()));
+                partialDest.setRight(virtualDest.right());
+            }
 
-			partialDest.translate(dest.topLeft());
-			m_vertexArray.addRect(partialDest);
-			m_textureCoordArray.addRect(partialSrc);
-		}
-	}
+            partialDest.translate(dest.topLeft());
+            m_vertexArray.addRect(partialDest);
+            m_textureCoordArray.addRect(partialSrc);
+        }
+    }
 }

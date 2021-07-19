@@ -33,10 +33,9 @@ Server::Server(int port)
 ServerPtr Server::create(int port)
 {
     try {
-        Server *server = new Server(port);
+        Server* server = new Server(port);
         return ServerPtr(server);
-    }
-    catch(const std::exception& e) {
+    } catch(const std::exception& e) {
         g_logger.error(stdext::format("Failed to initialize server: %s", e.what()));
         return ServerPtr();
     }

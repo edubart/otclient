@@ -181,4 +181,3 @@ void PlatformWindow::fireKeysPress()
         }
     }
 }
-

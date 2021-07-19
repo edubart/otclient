@@ -77,4 +77,3 @@ void TownManager::sort()
 {
     m_towns.sort([](const TownPtr& lhs, const TownPtr& rhs) { return lhs->getName() < rhs->getName(); });
 }
-

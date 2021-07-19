@@ -143,4 +143,3 @@ PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)
         return it->second;
     return nullptr;
 }
-

@@ -108,7 +108,7 @@ void ModuleManager::reloadModules()
     std::deque<ModulePtr> toLoadList;
 
     // unload in the reverse direction, try to unload upto 10 times (because of dependencies)
-    for(int i=0;i<10;++i) {
+    for(int i = 0; i < 10; ++i) {
         auto modulesBackup = m_modules;
         for(const ModulePtr& module : modulesBackup) {
             if(module->isLoaded() && module->canUnload()) {

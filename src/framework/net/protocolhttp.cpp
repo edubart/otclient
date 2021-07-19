@@ -60,7 +60,7 @@ void ProtocolHttp::send(const std::string& message)
 void ProtocolHttp::recv()
 {
     if(m_connection)
-        m_connection->read_until("\r\n\r\n", std::bind(&ProtocolHttp::onRecv, asProtocolHttp(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read_until("\r\n\r\n", std::bind(&ProtocolHttp::onRecv, asProtocolHttp(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void ProtocolHttp::onConnect()

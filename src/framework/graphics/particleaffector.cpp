@@ -132,5 +132,5 @@ void AttractionAffector::updateParticle(const ParticlePtr& particle, float elaps
         direction = PointF(-1, -1);
 
     PointF pVelocity = particle->getVelocity() + (d / d.length() * m_acceleration * elapsedTime) * direction;
-    particle->setVelocity(pVelocity - pVelocity * m_reduction/100.f * elapsedTime);
+    particle->setVelocity(pVelocity - pVelocity * m_reduction / 100.f * elapsedTime);
 }

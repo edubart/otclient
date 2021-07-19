@@ -100,7 +100,7 @@ bool InputMessage::decryptRsa(int size)
     return (getU8() == 0x00);
 }
 
-void InputMessage::fillBuffer(uint8 *buffer, uint16 size)
+void InputMessage::fillBuffer(uint8* buffer, uint16 size)
 {
     checkWrite(m_readPos + size);
     memcpy(m_buffer + m_readPos, buffer, size);

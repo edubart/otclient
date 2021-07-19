@@ -293,7 +293,8 @@ public:
     // NOTE: This does not increase the size of the struct.
     struct Hasher
     {
-        std::size_t operator() (const Position& pos) const {
+        std::size_t operator() (const Position& pos) const
+        {
             return (((pos.x * 8192) + pos.y) * 16) + pos.z;
         }
     };

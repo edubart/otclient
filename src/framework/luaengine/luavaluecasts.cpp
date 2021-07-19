@@ -24,7 +24,7 @@
 #include "luainterface.h"
 #include <framework/otml/otmlnode.h>
 
-// bool
+ // bool
 int push_luavalue(bool b)
 {
     g_lua.pushBoolean(b);
@@ -287,7 +287,7 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
     node->setUnique(true);
     if(g_lua.isTable(index)) {
         g_lua.pushNil();
-        while(g_lua.next(index < 0 ? index-1 : index)) {
+        while(g_lua.next(index < 0 ? index - 1 : index)) {
             std::string cnodeName;
             if(g_lua.isString(-2)) {
                 g_lua.pushValue(-2);
@@ -323,7 +323,8 @@ bool luavalue_cast(int index, OTMLNodePtr& node)
 }
 
 // object ptr
-bool luavalue_cast(int index, LuaObjectPtr& obj) {
+bool luavalue_cast(int index, LuaObjectPtr& obj)
+{
     if(g_lua.isUserdata(index)) {
         obj = g_lua.toObject(index);
         return true;

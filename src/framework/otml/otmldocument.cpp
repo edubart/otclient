@@ -60,4 +60,3 @@ bool OTMLDocument::save(const std::string& fileName)
     m_source = fileName;
     return g_resources.writeFileContents(fileName, emit());
 }
-

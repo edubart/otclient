@@ -41,29 +41,27 @@
 #endif
 
 namespace stdext {
-
-const char* demangle_name(const char* name)
-{
-    static const unsigned BufferSize = 1024;
-    static char Buffer[BufferSize] = {};
+    const char* demangle_name(const char* name)
+    {
+        static const unsigned BufferSize = 1024;
+        static char Buffer[BufferSize] = {};
 
 #ifdef _MSC_VER
-    int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
-    Buffer[written] = '\0';
+        int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
+        Buffer[written] = '\0';
 #else
-    size_t len;
-    int status;
-    char* demangled = abi::__cxa_demangle(name, nullptr, &len, &status);
-    if(demangled) {
-        strncpy(Buffer, demangled, BufferSize - 1);
-        Buffer[BufferSize - 1] = '\0';
-        free(demangled);
-    } else {
-        Buffer[0] = '\0';
-    }
+        size_t len;
+        int status;
+        char* demangled = abi::__cxa_demangle(name, nullptr, &len, &status);
+        if(demangled) {
+            strncpy(Buffer, demangled, BufferSize - 1);
+            Buffer[BufferSize - 1] = '\0';
+            free(demangled);
+        } else {
+            Buffer[0] = '\0';
+        }
 #endif
 
-    return Buffer;
-}
-
+        return Buffer;
+    }
 }

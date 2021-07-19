@@ -30,7 +30,7 @@ AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames,
     if(!setupSize(size, buildMipmaps))
         return;
 
-    for(const auto &frame: frames) {
+    for(const auto& frame : frames) {
         m_frames.push_back(new Texture(frame, buildMipmaps, compress));
     }
 
@@ -43,7 +43,6 @@ AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames,
 
 AnimatedTexture::~AnimatedTexture()
 {
-
 }
 
 bool AnimatedTexture::buildHardwareMipmaps()

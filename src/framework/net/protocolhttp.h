@@ -28,7 +28,7 @@
 
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 class ProtocolHttp : public LuaObject
 {
 public:
@@ -38,7 +38,7 @@ public:
     void connect(const std::string& host, uint16 port);
     void disconnect();
 
-    void send(const std::string &message);
+    void send(const std::string& message);
     void recv();
 
     ProtocolHttpPtr asProtocolHttp() { return static_self_cast<ProtocolHttp>(); }

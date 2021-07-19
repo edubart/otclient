@@ -24,7 +24,6 @@
 
 ParticleEffectType::ParticleEffectType()
 {
-
 }
 
 void ParticleEffectType::load(const OTMLNodePtr& node)
@@ -54,7 +53,7 @@ void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 
 void ParticleEffect::render()
 {
-    for(auto &system: m_systems)
+    for(auto& system : m_systems)
         system->render();
 }
 

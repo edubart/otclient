@@ -123,7 +123,6 @@ void Container::onRemoveItem(int slot, const ItemPtr& lastItem)
     const ItemPtr item = m_items[slot];
     m_items.erase(m_items.begin() + slot);
 
-
     if(lastItem) {
         onAddItem(lastItem, m_firstIndex + m_capacity - 1);
         --m_size;

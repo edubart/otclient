@@ -126,7 +126,7 @@ void LuaInterface::registerClass(const std::string& className, const std::string
     setField("fieldmethods", klass_mt);
 
     // redirect methods and fieldmethods to the base class ones
-    if (!className.empty() && className != "LuaObject") {
+    if(!className.empty() && className != "LuaObject") {
         // the following code is what create classes hierarchy for lua, by reproducing:
         // DerivedClass = { __index = BaseClass }
         // DerivedClass_fieldmethods = { __index = BaseClass_methods }
@@ -153,15 +153,15 @@ void LuaInterface::registerClass(const std::string& className, const std::string
 }
 
 void LuaInterface::registerClassStaticFunction(const std::string& className,
-    const std::string& functionName,
-    const LuaCppFunction& function)
+                                               const std::string& functionName,
+                                               const LuaCppFunction& function)
 {
     registerClassMemberFunction(className, functionName, function);
 }
 
 void LuaInterface::registerClassMemberFunction(const std::string& className,
-    const std::string& functionName,
-    const LuaCppFunction& function)
+                                               const std::string& functionName,
+                                               const LuaCppFunction& function)
 {
     getGlobal(className);
     pushCppFunction(function);
@@ -170,18 +170,18 @@ void LuaInterface::registerClassMemberFunction(const std::string& className,
 }
 
 void LuaInterface::registerClassMemberField(const std::string& className,
-    const std::string& field,
-    const LuaCppFunction& getFunction,
-    const LuaCppFunction& setFunction)
+                                            const std::string& field,
+                                            const LuaCppFunction& getFunction,
+                                            const LuaCppFunction& setFunction)
 {
     getGlobal(className + "_fieldmethods");
 
-    if (getFunction) {
+    if(getFunction) {
         pushCppFunction(getFunction);
         setField(stdext::format("get_%s", field));
     }
 
-    if (setFunction) {
+    if(setFunction) {
         pushCppFunction(setFunction);
         setField(stdext::format("set_%s", field));
     }
@@ -210,7 +210,7 @@ int LuaInterface::luaObjectGetEvent(LuaInterface* lua)
     lua->remove(-2); // removes obj metatable
     lua->getField("get_" + key); // pushes get method
     lua->remove(-2); // remove obj fieldmethods
-    if (!lua->isNil()) { // is the get method not nil?
+    if(!lua->isNil()) { // is the get method not nil?
         lua->insert(-2); // moves obj to the top
         lua->signalCall(1, 1); // calls get method, arguments: obj
         return 1;
@@ -219,7 +219,7 @@ int LuaInterface::luaObjectGetEvent(LuaInterface* lua)
 
     // if the field for this key exists, returns it
     obj->luaGetField(key);
-    if (!lua->isNil()) {
+    if(!lua->isNil()) {
         lua->remove(-2); // removes the obj
         // field value is on the stack
         return 1;
@@ -254,7 +254,7 @@ int LuaInterface::luaObjectSetEvent(LuaInterface* lua)
     lua->remove(-2); // removes obj metatable
     lua->getField("set_" + key); // pushes set method
     lua->remove(-2); // remove obj fieldmethods
-    if (!lua->isNil()) { // is the set method not nil?
+    if(!lua->isNil()) { // is the set method not nil?
         lua->insert(-3); // moves func to -3
         lua->insert(-2); // moves obj to -2, and value to -1
         lua->signalCall(2, 0); // calls set method, arguments: obj, value
@@ -274,14 +274,13 @@ int LuaInterface::luaObjectEqualEvent(LuaInterface* lua)
     bool ret = false;
 
     // check if obj1 == obj2
-    if (lua->isUserdata(-1) && lua->isUserdata(-2)) {
+    if(lua->isUserdata(-1) && lua->isUserdata(-2)) {
         LuaObjectPtr* objPtr2 = static_cast<LuaObjectPtr*>(lua->popUserdata());
         LuaObjectPtr* objPtr1 = static_cast<LuaObjectPtr*>(lua->popUserdata());
         assert(objPtr1 && objPtr2);
-        if (*objPtr1 == *objPtr2)
+        if(*objPtr1 == *objPtr2)
             ret = true;
-    }
-    else
+    } else
         lua->pop(2);
 
     lua->pushBoolean(ret);
@@ -300,17 +299,14 @@ int LuaInterface::luaObjectCollectEvent(LuaInterface* lua)
     return 0;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
-
 
 bool LuaInterface::safeRunScript(const std::string& fileName)
 {
     try {
         runScript(fileName);
         return true;
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to load script '%s': %s", fileName, e.what()));
         return false;
     }
@@ -332,7 +328,7 @@ void LuaInterface::loadScript(const std::string& fileName)
 {
     // resolve file full path
     std::string filePath = fileName;
-    if (!stdext::starts_with(fileName, "/"))
+    if(!stdext::starts_with(fileName, "/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
     filePath = g_resources.guessFilePath(filePath, "lua");
@@ -344,13 +340,13 @@ void LuaInterface::loadScript(const std::string& fileName)
 
 void LuaInterface::loadFunction(const std::string& buffer, const std::string& source)
 {
-    if (buffer.empty()) {
+    if(buffer.empty()) {
         pushNil();
         return;
     }
 
     std::string buf;
-    if (stdext::starts_with(buffer, "function"))
+    if(stdext::starts_with(buffer, "function"))
         buf = stdext::format("__func = %s", buffer);
     else
         buf = stdext::format("__func = function(self)\n%s\nend", buffer);
@@ -369,7 +365,7 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
 void LuaInterface::evaluateExpression(const std::string& expression, const std::string& source)
 {
     // evaluates the expression
-    if (!expression.empty()) {
+    if(!expression.empty()) {
         std::string buffer = stdext::format("__exp = (%s)", expression);
         loadBuffer(buffer, source);
         safeCall();
@@ -380,8 +376,7 @@ void LuaInterface::evaluateExpression(const std::string& expression, const std::
         // resets global __exp
         pushNil();
         setGlobal("__exp");
-    }
-    else
+    } else
         pushNil();
 }
 
@@ -403,34 +398,31 @@ std::string LuaInterface::traceback(const std::string& errorMessage, int level)
 
 void LuaInterface::throwError(const std::string& message)
 {
-    if (isInCppCallback()) {
+    if(isInCppCallback()) {
         pushString(message);
         error();
-    }
-    else
+    } else
         throw stdext::exception(message);
 }
 
 std::string LuaInterface::getCurrentSourcePath(int level)
 {
     std::string path;
-    if (!L)
+    if(!L)
         return path;
 
     // check all stack functions for script source path
-    while (true) {
+    while(true) {
         getStackFunction(level); // pushes stack function
 
         // only lua functions is wanted, because only them have a working directory
-        if (isLuaFunction()) {
+        if(isLuaFunction()) {
             path = functionSourcePath();
             break;
-        }
-        else if (isNil()) {
+        } else if(isNil()) {
             pop();
             break;
-        }
-        else
+        } else
             pop();
 
         // next level
@@ -458,16 +450,15 @@ int LuaInterface::safeCall(int numArgs, int numRets)
     remove(errorFuncIndex); // remove error func
 
      // if there was an error throw an exception
-    if (ret != 0)
+    if(ret != 0)
         throw LuaException(popString());
 
     int rets = (stackSize() + numArgs + 1) - previousStackSize;
-    while (numRets != -1 && rets != numRets) {
-        if (rets < numRets) {
+    while(numRets != -1 && rets != numRets) {
+        if(rets < numRets) {
             pushNil();
             rets++;
-        }
-        else {
+        } else {
             pop();
             rets--;
         }
@@ -484,62 +475,59 @@ int LuaInterface::signalCall(int numArgs, int numRets)
 
     try {
         // must be a function
-        if (isFunction(funcIndex)) {
+        if(isFunction(funcIndex)) {
             rets = safeCall(numArgs);
 
-            if (numRets != -1) {
-                if (rets != numRets)
+            if(numRets != -1) {
+                if(rets != numRets)
                     throw LuaException("function call didn't return the expected number of results", 0);
             }
         }
         // can also calls table of functions
-        else if (isTable(funcIndex)) {
+        else if(isTable(funcIndex)) {
             // loop through table values
             pushNil();
             bool done = false;
-            while (next(funcIndex - 1)) {
-                if (isFunction()) {
+            while(next(funcIndex - 1)) {
+                if(isFunction()) {
                     // repush arguments
-                    for (int i = 0; i < numArgs; ++i)
+                    for(int i = 0; i < numArgs; ++i)
                         pushValue(-numArgs - 2);
 
                     rets = safeCall(numArgs);
-                    if (rets == 1) {
+                    if(rets == 1) {
                         done = popBoolean();
-                        if (done) {
+                        if(done) {
                             pop();
                             break;
                         }
-                    }
-                    else if (rets != 0)
+                    } else if(rets != 0)
                         throw LuaException("function call didn't return the expected number of results", 0);
-                }
-                else {
+                } else {
                     throw LuaException("attempt to call a non function", 0);
                 }
             }
             pop(numArgs + 1); // pops the table of function and arguments
 
-            if (numRets == 1 || numRets == -1) {
+            if(numRets == 1 || numRets == -1) {
                 rets = 1;
                 pushBoolean(done);
             }
         }
         // nil values are ignored
-        else if (isNil(funcIndex)) {
+        else if(isNil(funcIndex)) {
             pop(numArgs + 1); // pops the function and arguments
         }
         // if not nil, warn
         else {
             throw LuaException("attempt to call a non function value", 0);
         }
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_logger.error(stdext::format("protected lua call failed: %s", e.what()));
     }
 
     // pushes nil values if needed
-    while (numRets != -1 && rets < numRets) {
+    while(numRets != -1 && rets < numRets) {
         pushNil();
         rets++;
     }
@@ -569,8 +557,7 @@ int LuaInterface::luaScriptLoader(lua_State*)
     try {
         g_lua.loadScript(fileName);
         return 1;
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_lua.pushString(std::string("\n\t") + e.what());
         return 1;
     }
@@ -584,8 +571,7 @@ int LuaInterface::lua_dofile(lua_State*)
         g_lua.loadScript(file);
         g_lua.call(0, LUA_MULTRET);
         return g_lua.stackSize();
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_lua.pushString(e.what());
         g_lua.error();
         return 0;
@@ -595,12 +581,12 @@ int LuaInterface::lua_dofile(lua_State*)
 int LuaInterface::lua_dofiles(lua_State*)
 {
     std::string contains = "";
-    if (g_lua.getTop() > 2) {
+    if(g_lua.getTop() > 2) {
         contains = g_lua.popString();
     }
 
     bool recursive = false;
-    if (g_lua.getTop() > 1) {
+    if(g_lua.getTop() > 1) {
         recursive = g_lua.popBoolean();
     }
 
@@ -617,8 +603,7 @@ int LuaInterface::lua_loadfile(lua_State*)
     try {
         g_lua.loadScript(fileName);
         return 1;
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         g_lua.pushNil();
         g_lua.pushString(e.what());
         g_lua.error();
@@ -632,7 +617,7 @@ int LuaInterface::luaErrorHandler(lua_State*)
     auto error = g_lua.popString();
 
     // prevents repeated tracebacks
-    if (error.find("stack traceback:") == std::string::npos)
+    if(error.find("stack traceback:") == std::string::npos)
         error = g_lua.traceback(error, 1);
 
     // pushes the new error message with traceback information
@@ -654,10 +639,9 @@ int LuaInterface::luaCppFunctionCallback(lua_State*)
         numRets = (*(funcPtr->get()))(&g_lua);
         g_lua.m_cppCallbackDepth--;
         assert(numRets == g_lua.stackSize());
-    }
-    catch (stdext::exception& e) {
+    } catch(stdext::exception& e) {
         // cleanup stack
-        while (g_lua.stackSize() > 0)
+        while(g_lua.stackSize() > 0)
             g_lua.pop();
         numRets = 0;
         g_lua.pushString(stdext::format("C++ call failed: %s", g_lua.traceback(e.what())));
@@ -676,7 +660,6 @@ int LuaInterface::luaCollectCppFunction(lua_State*)
     return 0;
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // from here all next functions are interfaces for the Lua API
 
@@ -684,7 +667,7 @@ void LuaInterface::createLuaState()
 {
     // creates lua state
     L = luaL_newstate();
-    if (!L)
+    if(!L)
         g_logger.fatal("Unable to create lua state");
 
     // load lua standard libraries
@@ -723,7 +706,7 @@ void LuaInterface::createLuaState()
 
 void LuaInterface::closeLuaState()
 {
-    if (L) {
+    if(L) {
         // close lua, it also collects
         lua_close(L);
         L = nullptr;
@@ -734,12 +717,12 @@ void LuaInterface::collectGarbage()
 {
     // prevents recursive collects
     static bool collecting = false;
-    if (!collecting) {
+    if(!collecting) {
         collecting = true;
 
         // we must collect two times because __gc metamethod
         // is called on uservalues only the second time
-        for (int i = 0; i < 2; ++i)
+        for(int i = 0; i < 2; ++i)
             lua_gc(L, LUA_GCCOLLECT, 0);
 
         collecting = false;
@@ -750,7 +733,7 @@ void LuaInterface::loadBuffer(const std::string& buffer, const std::string& sour
 {
     // loads lua buffer
     int ret = luaL_loadbuffer(L, buffer.c_str(), buffer.length(), source.c_str());
-    if (ret != 0)
+    if(ret != 0)
         throw LuaException(popString(), 0);
 }
 
@@ -786,7 +769,7 @@ int LuaInterface::weakRef()
 
     // generates a new id
     ++id;
-    if (id == 2147483647)
+    if(id == 2147483647)
         id = 0;
 
     // gets weak table
@@ -804,7 +787,7 @@ int LuaInterface::weakRef()
 
 void LuaInterface::unref(int ref)
 {
-    if (ref >= 0 && L != nullptr)
+    if(ref >= 0 && L != nullptr)
         luaL_unref(L, LUA_REGISTRYINDEX, ref);
 }
 
@@ -823,9 +806,9 @@ std::string LuaInterface::functionSourcePath()
     lua_Debug ar;
     memset(&ar, 0, sizeof(ar));
     lua_getinfo(L, ">Sn", &ar);
-    if (ar.source) {
+    if(ar.source) {
         // scripts coming from files has source beginning with '@'
-        if (ar.source[0] == '@') {
+        if(ar.source[0] == '@') {
             path = ar.source;
             path = path.substr(1, path.find_last_of("/") - 1);
             path = path.substr(0, path.find_last_of(":"));
@@ -856,7 +839,7 @@ bool LuaInterface::next(int index)
 void LuaInterface::getStackFunction(int level)
 {
     lua_Debug ar;
-    if (lua_getstack(L, level, &ar) == 1)
+    if(lua_getstack(L, level, &ar) == 1)
         lua_getinfo(L, "f", &ar);
     else
         pushNil();
@@ -940,16 +923,15 @@ void LuaInterface::clearTable(int index)
 
     pushNil(); // table, nil
 
-    while (next(index - 1)) { // table, key, value
+    while(next(index - 1)) { // table, key, value
         pop(); // table, key
         pushValue(); // table, key, key
-        if (next(index - 2)) { // table, key, nextkey, value
+        if(next(index - 2)) { // table, key, nextkey, value
             pop(); // table, key, nextkey
             insert(-2); // table, nextkey, key
             pushNil(); // table, nextkey, key, nil
             rawSet(index - 3); // table, nextkey
-        }
-        else { // table, key
+        } else { // table, key
             pushNil(); // table, key, nil
             rawSet(index - 2); // table
             break;
@@ -965,7 +947,7 @@ void LuaInterface::getGlobal(const std::string& key)
 void LuaInterface::getGlobalField(const std::string& globalKey, const std::string& fieldKey)
 {
     getGlobal(globalKey);
-    if (!isNil()) {
+    if(!isNil()) {
         assert(isTable() || isUserdata());
         getField(fieldKey);
         remove(-2);
@@ -1019,7 +1001,7 @@ void* LuaInterface::newUserdata(int size)
 
 void LuaInterface::pop(int n)
 {
-    if (n > 0) {
+    if(n > 0) {
         assert(hasIndex(-n));
         lua_pop(L, n);
     }
@@ -1134,7 +1116,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
     m_totalObjRefs++;
 
     obj->luaGetMetatable();
-    if (isNil())
+    if(isNil())
         g_logger.fatal(stdext::format("metatable for class '%s' not found, did you bind the C++ class?", obj->getClassName()));
     setMetatable();
 }
@@ -1246,7 +1228,7 @@ std::string LuaInterface::toString(int index)
     std::string str;
     size_t len;
     const char* c_str = lua_tolstring(L, index, &len);
-    if (c_str && len > 0)
+    if(c_str && len > 0)
         str.assign(c_str, len);
     return str;
 }
@@ -1260,9 +1242,9 @@ void* LuaInterface::toUserdata(int index)
 LuaObjectPtr LuaInterface::toObject(int index)
 {
     assert(hasIndex(index));
-    if (isUserdata(index)) {
+    if(isUserdata(index)) {
         LuaObjectPtr* objRef = static_cast<LuaObjectPtr*>(toUserdata(index));
-        if (objRef && *objRef)
+        if(objRef && *objRef)
             return *objRef;
     }
     return nullptr;
@@ -1275,25 +1257,24 @@ int LuaInterface::getTop()
 
 void LuaInterface::loadFiles(std::string directory, bool recursive, std::string contains)
 {
-    for (const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
+    for(const std::string& fileName : g_resources.listDirectoryFiles(directory)) {
         std::string fullPath = directory + "/" + fileName;
 
-        if (recursive && g_resources.directoryExists(fullPath)) {
+        if(recursive && g_resources.directoryExists(fullPath)) {
             loadFiles(fullPath, true, contains);
             continue;
         }
 
-        if (!g_resources.isFileType(fileName, "lua"))
+        if(!g_resources.isFileType(fileName, "lua"))
             continue;
 
-        if (!contains.empty() && fileName.find(contains) == std::string::npos)
+        if(!contains.empty() && fileName.find(contains) == std::string::npos)
             continue;
 
         try {
             g_lua.loadScript(fullPath);
             g_lua.call(0, 0);
-        }
-        catch (stdext::exception& e) {
+        } catch(stdext::exception& e) {
             g_lua.pushString(e.what());
             g_lua.error();
         }

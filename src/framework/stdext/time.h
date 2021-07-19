@@ -26,7 +26,6 @@
 #include "types.h"
 
 namespace stdext {
-
     ticks_t time();
     ticks_t millis();
     ticks_t micros();
@@ -46,4 +45,3 @@ namespace stdext {
 }
 
 #endif
-

@@ -43,31 +43,31 @@
 
 #endif
 
-const char *getExceptionName(DWORD exceptionCode)
+const char* getExceptionName(DWORD exceptionCode)
 {
-    switch (exceptionCode) {
-        case EXCEPTION_ACCESS_VIOLATION:         return "Access violation";
-        case EXCEPTION_DATATYPE_MISALIGNMENT:    return "Datatype misalignment";
-        case EXCEPTION_BREAKPOINT:               return "Breakpoint";
-        case EXCEPTION_SINGLE_STEP:              return "Single step";
-        case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:    return "Array bounds exceeded";
-        case EXCEPTION_FLT_DENORMAL_OPERAND:     return "Float denormal operand";
-        case EXCEPTION_FLT_DIVIDE_BY_ZERO:       return "Float divide by zero";
-        case EXCEPTION_FLT_INEXACT_RESULT:       return "Float inexact result";
-        case EXCEPTION_FLT_INVALID_OPERATION:    return "Float invalid operation";
-        case EXCEPTION_FLT_OVERFLOW:             return "Float overflow";
-        case EXCEPTION_FLT_STACK_CHECK:          return "Float stack check";
-        case EXCEPTION_FLT_UNDERFLOW:            return "Float underflow";
-        case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "Integer divide by zero";
-        case EXCEPTION_INT_OVERFLOW:             return "Integer overflow";
-        case EXCEPTION_PRIV_INSTRUCTION:         return "Privileged instruction";
-        case EXCEPTION_IN_PAGE_ERROR:            return "In page error";
-        case EXCEPTION_ILLEGAL_INSTRUCTION:      return "Illegal instruction";
-        case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable exception";
-        case EXCEPTION_STACK_OVERFLOW:           return "Stack overflow";
-        case EXCEPTION_INVALID_DISPOSITION:      return "Invalid disposition";
-        case EXCEPTION_GUARD_PAGE:               return "Guard page";
-        case EXCEPTION_INVALID_HANDLE:           return "Invalid handle";
+    switch(exceptionCode) {
+    case EXCEPTION_ACCESS_VIOLATION:         return "Access violation";
+    case EXCEPTION_DATATYPE_MISALIGNMENT:    return "Datatype misalignment";
+    case EXCEPTION_BREAKPOINT:               return "Breakpoint";
+    case EXCEPTION_SINGLE_STEP:              return "Single step";
+    case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:    return "Array bounds exceeded";
+    case EXCEPTION_FLT_DENORMAL_OPERAND:     return "Float denormal operand";
+    case EXCEPTION_FLT_DIVIDE_BY_ZERO:       return "Float divide by zero";
+    case EXCEPTION_FLT_INEXACT_RESULT:       return "Float inexact result";
+    case EXCEPTION_FLT_INVALID_OPERATION:    return "Float invalid operation";
+    case EXCEPTION_FLT_OVERFLOW:             return "Float overflow";
+    case EXCEPTION_FLT_STACK_CHECK:          return "Float stack check";
+    case EXCEPTION_FLT_UNDERFLOW:            return "Float underflow";
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:       return "Integer divide by zero";
+    case EXCEPTION_INT_OVERFLOW:             return "Integer overflow";
+    case EXCEPTION_PRIV_INSTRUCTION:         return "Privileged instruction";
+    case EXCEPTION_IN_PAGE_ERROR:            return "In page error";
+    case EXCEPTION_ILLEGAL_INSTRUCTION:      return "Illegal instruction";
+    case EXCEPTION_NONCONTINUABLE_EXCEPTION: return "Noncontinuable exception";
+    case EXCEPTION_STACK_OVERFLOW:           return "Stack overflow";
+    case EXCEPTION_INVALID_DISPOSITION:      return "Invalid disposition";
+    case EXCEPTION_GUARD_PAGE:               return "Guard page";
+    case EXCEPTION_INVALID_HANDLE:           return "Invalid handle";
     }
     return "Unknown exception";
 }
@@ -107,7 +107,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     thread = GetCurrentThread();
 
     while(1) {
-        more = StackWalk(machineType,  process, thread, &sf, e->ContextRecord, NULL, SymFunctionTableAccess, SymGetModuleBase, NULL);
+        more = StackWalk(machineType, process, thread, &sf, e->ContextRecord, NULL, SymFunctionTableAccess, SymGetModuleBase, NULL);
         if(!more || sf.AddrFrame.Offset == 0)
             break;
 

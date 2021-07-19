@@ -168,7 +168,7 @@ void PainterShaderProgram::bindMultiTextures()
     if(m_multiTextures.empty())
         return;
 
-    int i=1;
+    int i = 1;
     for(const TexturePtr& tex : m_multiTextures) {
         glActiveTexture(GL_TEXTURE0 + i++);
         glBindTexture(GL_TEXTURE_2D, tex->getId());

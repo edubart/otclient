@@ -26,7 +26,7 @@
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 class InputMessage : public LuaObject
 {
 public:
@@ -49,10 +49,10 @@ public:
     std::string getString();
     double getDouble();
 
-    uint8 peekU8() { uint8 v = getU8(); m_readPos-=1; return v; }
-    uint16 peekU16() { uint16 v = getU16(); m_readPos-=2; return v; }
-    uint32 peekU32() { uint32 v = getU32(); m_readPos-=4; return v; }
-    uint64 peekU64() { uint64 v = getU64(); m_readPos-=8; return v; }
+    uint8 peekU8() { uint8 v = getU8(); m_readPos -= 1; return v; }
+    uint16 peekU16() { uint16 v = getU16(); m_readPos -= 2; return v; }
+    uint32 peekU32() { uint32 v = getU32(); m_readPos -= 4; return v; }
+    uint64 peekU64() { uint64 v = getU64(); m_readPos -= 8; return v; }
 
     bool decryptRsa(int size);
 
@@ -65,7 +65,7 @@ public:
 
 protected:
     void reset();
-    void fillBuffer(uint8 *buffer, uint16 size);
+    void fillBuffer(uint8* buffer, uint16 size);
 
     void setHeaderSize(uint16 size);
     void setMessageSize(uint16 size) { m_messageSize = size; }

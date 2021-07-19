@@ -45,14 +45,16 @@ ShaderProgram::~ShaderProgram()
         glDeleteProgram(m_programId);
 }
 
-bool ShaderProgram::addShader(const ShaderPtr& shader) {
+bool ShaderProgram::addShader(const ShaderPtr& shader)
+{
     glAttachShader(m_programId, shader->getShaderId());
     m_linked = false;
     m_shaders.push_back(shader);
     return true;
 }
 
-bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode) {
+bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode)
+{
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceCode(sourceCode)) {
         g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
@@ -61,7 +63,8 @@ bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const
     return addShader(shader);
 }
 
-bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile) {
+bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile)
+{
     ShaderPtr shader(new Shader(shaderType));
     if(!shader->compileSourceFile(sourceFile)) {
         g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
@@ -129,7 +132,7 @@ std::string ShaderProgram::log()
     glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
-        glGetShaderInfoLog(m_programId, infoLogLength-1, nullptr, &buf[0]);
+        glGetShaderInfoLog(m_programId, infoLogLength - 1, nullptr, &buf[0]);
         infoLog = &buf[0];
     }
     return infoLog;

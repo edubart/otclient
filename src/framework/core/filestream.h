@@ -34,15 +34,15 @@ struct PHYSFS_File;
 class FileStream : public LuaObject
 {
 public:
-    FileStream(const std::string& name, PHYSFS_File *fileHandle, bool writeable);
+    FileStream(const std::string& name, PHYSFS_File* fileHandle, bool writeable);
     FileStream(const std::string& name, const std::string& buffer);
     ~FileStream();
 
     void cache();
     void close();
     void flush();
-    void write(const void *buffer, uint count);
-    int read(void *buffer, uint size, uint nmemb = 1);
+    void write(const void* buffer, uint count);
+    int read(void* buffer, uint size, uint nmemb = 1);
     void seek(uint pos);
     void skip(uint len);
     uint size();
@@ -82,7 +82,7 @@ private:
     void throwError(const std::string& message, bool physfsError = false);
 
     std::string m_name;
-    PHYSFS_File *m_fileHandle;
+    PHYSFS_File* m_fileHandle;
     uint m_pos;
     bool m_writeable;
     bool m_caching;

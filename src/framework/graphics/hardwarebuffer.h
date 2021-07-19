@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #ifndef HARDWAREBUFFER_H
 #define HARDWAREBUFFER_H
 
@@ -31,13 +30,13 @@ class HardwareBuffer
 public:
     enum Type {
         VertexBuffer = GL_ARRAY_BUFFER,
-        IndexBuffer  = GL_ELEMENT_ARRAY_BUFFER
+        IndexBuffer = GL_ELEMENT_ARRAY_BUFFER
     };
 
     enum UsagePattern {
-        StreamDraw          = GL_STREAM_DRAW,
-        StaticDraw          = GL_STATIC_DRAW,
-        DynamicDraw         = GL_DYNAMIC_DRAW
+        StreamDraw = GL_STREAM_DRAW,
+        StaticDraw = GL_STATIC_DRAW,
+        DynamicDraw = GL_DYNAMIC_DRAW
     };
 
     HardwareBuffer(Type type);
@@ -45,7 +44,7 @@ public:
 
     void bind() { glBindBuffer(m_type, m_id); }
     static void unbind(Type type) { glBindBuffer(type, 0); }
-    void write(void *data, int count, UsagePattern usage) { glBufferData(m_type, count, data, usage); }
+    void write(void* data, int count, UsagePattern usage) { glBufferData(m_type, count, data, usage); }
 
 private:
     Type m_type;

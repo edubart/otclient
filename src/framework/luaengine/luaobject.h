@@ -25,8 +25,8 @@
 
 #include "declarations.h"
 
-/// LuaObject, all script-able classes have it as base
-// @bindclass
+ /// LuaObject, all script-able classes have it as base
+ // @bindclass
 class LuaObject : public stdext::shared_object
 {
 public:
@@ -82,7 +82,7 @@ public:
 
     LuaObjectPtr asLuaObject() { return static_self_cast<LuaObject>(); }
 
-    void operator=(const LuaObject&) { }
+    void operator=(const LuaObject&) {}
 
 private:
     int m_fieldsTableRef;
@@ -105,7 +105,7 @@ void LuaObject::connectLuaField(const std::string& field, const std::function<T>
         if(pushFront)
             g_lua.pushInteger(1);
         push_luavalue(f);
-        g_lua.callGlobalField("table","insert");
+        g_lua.callGlobalField("table", "insert");
     } else {
         if(g_lua.isNil()) {
             push_luavalue(f);
@@ -124,7 +124,8 @@ void LuaObject::connectLuaField(const std::string& field, const std::function<T>
 
 // connect for std::function
 template<typename F>
-void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront) {
+void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront)
+{
     obj->connectLuaField<F>(field, f, pushFront);
 }
 
@@ -134,7 +135,8 @@ namespace luabinder {
 
     template<typename Lambda, typename Ret, typename... Args>
     struct connect_lambda<Ret(Lambda::*)(Args...) const> {
-        static void call(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront) {
+        static void call(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront)
+        {
             connect(obj, field, std::function<Ret(Args...)>(f), pushFront);
         }
     };
@@ -143,13 +145,15 @@ namespace luabinder {
 // connect for lambdas
 template<typename Lambda>
 typename std::enable_if<std::is_constructible<decltype(&Lambda::operator())>::value, void>::type
-connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront) {
+connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront)
+{
     typedef decltype(&Lambda::operator()) F;
     luabinder::connect_lambda<F>::call(obj, field, f, pushFront);
 }
 
 template<typename... T>
-int LuaObject::luaCallLuaField(const std::string& field, const T&... args) {
+int LuaObject::luaCallLuaField(const std::string& field, const T&... args)
+{
     // note that the field must be retrieved from this object lua value
     // to force using the __index metamethod of it's metatable
     // so cannot use LuaObject::getField here
@@ -169,7 +173,8 @@ int LuaObject::luaCallLuaField(const std::string& field, const T&... args) {
 }
 
 template<typename R, typename... T>
-R LuaObject::callLuaField(const std::string& field, const T&... args) {
+R LuaObject::callLuaField(const std::string& field, const T&... args)
+{
     R result;
     int rets = luaCallLuaField(field, args...);
     if(rets > 0) {
@@ -181,20 +186,23 @@ R LuaObject::callLuaField(const std::string& field, const T&... args) {
 }
 
 template<typename... T>
-void LuaObject::callLuaField(const std::string& field, const T&... args) {
+void LuaObject::callLuaField(const std::string& field, const T&... args)
+{
     int rets = luaCallLuaField(field, args...);
     if(rets > 0)
         g_lua.pop(rets);
 }
 
 template<typename T>
-void LuaObject::setLuaField(const std::string& key, const T& value) {
+void LuaObject::setLuaField(const std::string& key, const T& value)
+{
     g_lua.polymorphicPush(value);
     luaSetField(key);
 }
 
 template<typename T>
-T LuaObject::getLuaField(const std::string& key) {
+T LuaObject::getLuaField(const std::string& key)
+{
     luaGetField(key);
     return g_lua.polymorphicPop<T>();
 }

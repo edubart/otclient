@@ -26,7 +26,7 @@
 #include <framework/global.h>
 #include <framework/core/adaptativeframecounter.h>
 
-//@bindsingleton g_app
+ //@bindsingleton g_app
 class Application
 {
 public:

@@ -997,7 +997,6 @@ std::string WIN32Window::getClipboardText()
     return text;
 }
 
-
 std::string WIN32Window::getPlatformType()
 {
 #ifndef OPENGL_ES

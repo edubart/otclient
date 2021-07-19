@@ -26,7 +26,7 @@
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 class OutputMessage : public LuaObject
 {
 public:

@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "game.h"
 #include "thingtype.h"
 #include "thingtypemanager.h"

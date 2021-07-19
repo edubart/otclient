@@ -91,13 +91,13 @@ void OTMLParser::parseLine(std::string line)
         return;
 
     // a depth above, change current parent to the previous added node
-    if(depth == currentDepth+1) {
+    if(depth == currentDepth + 1) {
         currentParent = previousNode;
-    // a depth below, change parent to previous parent
+        // a depth below, change parent to previous parent
     } else if(depth < currentDepth) {
-        for(int i=0;i<currentDepth-depth;++i)
+        for(int i = 0; i < currentDepth - depth; ++i)
             currentParent = parentMap[currentParent];
-    // if it isn't the current depth, it's a syntax error
+        // if it isn't the current depth, it's a syntax error
     } else if(depth != currentDepth)
         throw OTMLException(doc, "invalid indentation depth, are you indenting correctly?", currentLine);
 
@@ -120,12 +120,12 @@ void OTMLParser::parseNode(const std::string& data)
     if(!data.empty() && data[0] == '-') {
         value = data.substr(1);
         stdext::trim(value);
-    // node that has tag and possible a value
+        // node that has tag and possible a value
     } else if(dotsPos != std::string::npos) {
         tag = data.substr(0, dotsPos);
-        if(data.size() > dotsPos+1)
-            value = data.substr(dotsPos+1);
-    // node that has only a tag
+        if(data.size() > dotsPos + 1)
+            value = data.substr(dotsPos + 1);
+        // node that has only a tag
     } else {
         tag = data;
     }
@@ -144,8 +144,8 @@ void OTMLParser::parseNode(const std::string& data)
 
             // depth above current depth, add the text to the multiline
             if(depth > currentDepth) {
-                multiLineData += line.substr((currentDepth+1)*2);
-            // it has contents below the current depth
+                multiLineData += line.substr((currentDepth + 1) * 2);
+                // it has contents below the current depth
             } else {
                 // if not empty, its a node
                 stdext::trim(line);
@@ -189,7 +189,7 @@ void OTMLParser::parseNode(const std::string& data)
         node->setNull(true);
     else {
         if(stdext::starts_with(value, "[") && stdext::ends_with(value, "]")) {
-            std::string tmp = value.substr(1, value.length()-2);
+            std::string tmp = value.substr(1, value.length() - 2);
             boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
             for(std::string v : tokens) {
                 stdext::trim(v);

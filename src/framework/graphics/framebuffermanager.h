@@ -28,15 +28,15 @@
 class FrameBufferManager
 {
 public:
-	void init();
-	void terminate();
+    void init();
+    void terminate();
 
-	FrameBufferPtr createFrameBuffer(bool useAlphaWriting = false);
-	const FrameBufferPtr& getTemporaryFrameBuffer() { return m_temporaryFramebuffer; }
+    FrameBufferPtr createFrameBuffer(bool useAlphaWriting = false);
+    const FrameBufferPtr& getTemporaryFrameBuffer() { return m_temporaryFramebuffer; }
 
 protected:
-	FrameBufferPtr m_temporaryFramebuffer;
-	std::vector<FrameBufferPtr> m_framebuffers;
+    FrameBufferPtr m_temporaryFramebuffer;
+    std::vector<FrameBufferPtr> m_framebuffers;
 };
 
 extern FrameBufferManager g_framebuffers;

@@ -23,7 +23,7 @@
 #ifndef PCH_H
 #define PCH_H
 
-// common C headers
+ // common C headers
 #include <cstdio>
 #include <cstdlib>
 #include <cstddef>

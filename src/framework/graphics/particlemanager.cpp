@@ -37,8 +37,7 @@ bool ParticleManager::importParticle(std::string file)
                 ParticleEffectTypePtr particleEffectType = ParticleEffectTypePtr(new ParticleEffectType);
                 particleEffectType->load(node);
                 m_effectsTypes[particleEffectType->getName()] = particleEffectType;
-            }
-            else if(node->tag() == "Particle") {
+            } else if(node->tag() == "Particle") {
                 ParticleTypePtr particleType = ParticleTypePtr(new ParticleType);
                 particleType->load(node);
                 m_particleTypes[particleType->getName()] = particleType;

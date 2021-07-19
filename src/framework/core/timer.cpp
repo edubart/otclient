@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #include "timer.h"
 #include "clock.h"
 

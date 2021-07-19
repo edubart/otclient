@@ -30,12 +30,12 @@ Shader::Shader(Shader::ShaderType shaderType)
 {
     m_shaderType = shaderType;
     switch(shaderType) {
-        case Vertex:
-            m_shaderId = glCreateShader(GL_VERTEX_SHADER);
-            break;
-        case Fragment:
-            m_shaderId = glCreateShader(GL_FRAGMENT_SHADER);
-            break;
+    case Vertex:
+        m_shaderId = glCreateShader(GL_VERTEX_SHADER);
+        break;
+    case Fragment:
+        m_shaderId = glCreateShader(GL_FRAGMENT_SHADER);
+        break;
     }
 
     if(!m_shaderId)
@@ -54,12 +54,12 @@ Shader::~Shader()
 bool Shader::compileSourceCode(const std::string& sourceCode)
 {
 #ifndef OPENGL_ES
-    static const char *qualifierDefines =
+    static const char* qualifierDefines =
         "#define lowp\n"
         "#define mediump\n"
         "#define highp\n";
 #else
-    static const char *qualifierDefines =
+    static const char* qualifierDefines =
         "#ifndef GL_FRAGMENT_PRECISION_HIGH\n"
         "#define highp mediump\n"
         "#endif\n"
@@ -68,7 +68,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
 
     std::string code = qualifierDefines;
     code.append(sourceCode);
-    const char *c_source = code.c_str();
+    const char* c_source = code.c_str();
     glShaderSource(m_shaderId, 1, &c_source, nullptr);
     glCompileShader(m_shaderId);
 
@@ -95,7 +95,7 @@ std::string Shader::log()
     glGetShaderiv(m_shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
     if(infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
-        glGetShaderInfoLog(m_shaderId, infoLogLength-1, nullptr, &buf[0]);
+        glGetShaderInfoLog(m_shaderId, infoLogLength - 1, nullptr, &buf[0]);
         infoLog = &buf[0];
     }
     return infoLog;

@@ -27,21 +27,19 @@
 #include <string>
 
 namespace stdext {
+    class exception : public std::exception
+    {
+    public:
+        exception() {}
+        exception(const std::string& what) : m_what(what) {}
+        virtual ~exception() throw() {};
+        virtual const char* what() const throw() { return m_what.c_str(); }
+    protected:
+        std::string m_what;
+    };
 
-class exception : public std::exception
-{
-public:
-    exception() { }
-    exception(const std::string& what) : m_what(what) { }
-    virtual ~exception() throw() { };
-    virtual const char* what() const throw() { return m_what.c_str(); }
-protected:
-    std::string m_what;
-};
-
-/// Throws a generic exception
-inline void throw_exception(const std::string& what) { throw exception(what); }
-
+    /// Throws a generic exception
+    inline void throw_exception(const std::string& what) { throw exception(what); }
 }
 
 #endif

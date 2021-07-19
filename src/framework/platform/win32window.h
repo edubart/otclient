@@ -45,8 +45,8 @@ class WIN32Window : public PlatformWindow
     void internalDestroyGLContext();
     void internalRestoreGLContext();
 
-    void *getExtensionProcAddress(const char *ext);
-    bool isExtensionSupported(const char *ext);
+    void* getExtensionProcAddress(const char* ext);
+    bool isExtensionSupported(const char* ext);
 
     LRESULT windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     friend struct WindowProcProxy;

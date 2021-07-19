@@ -27,84 +27,84 @@ template<class T>
 class DataBuffer
 {
 public:
-	DataBuffer(uint res = 64) :
-		m_size(0),
-		m_capacity(res),
-		m_buffer(new T[m_capacity])
-	{
-	}
-	~DataBuffer()
-	{
-		delete[] m_buffer;
-	}
+    DataBuffer(uint res = 64) :
+        m_size(0),
+        m_capacity(res),
+        m_buffer(new T[m_capacity])
+    {
+    }
+    ~DataBuffer()
+    {
+        delete[] m_buffer;
+    }
 
-	void reset() { m_size = 0; }
+    void reset() { m_size = 0; }
 
-	void clear()
-	{
-		m_size = 0;
-		m_capacity = 0;
-		delete[] m_buffer;
-		m_buffer = nullptr;
-	}
+    void clear()
+    {
+        m_size = 0;
+        m_capacity = 0;
+        delete[] m_buffer;
+        m_buffer = nullptr;
+    }
 
-	bool empty() const { return m_size == 0; }
-	uint size() const { return m_size; }
-	T* data() const { return m_buffer; }
+    bool empty() const { return m_size == 0; }
+    uint size() const { return m_size; }
+    T* data() const { return m_buffer; }
 
-	const T& at(uint i) const { return m_buffer[i]; }
-	const T& last() const { return m_buffer[m_size - 1]; }
-	const T& first() const { return m_buffer[0]; }
-	const T& operator[](uint i) const { return m_buffer[i]; }
-	T& operator[](uint i) { return m_buffer[i]; }
+    const T& at(uint i) const { return m_buffer[i]; }
+    const T& last() const { return m_buffer[m_size - 1]; }
+    const T& first() const { return m_buffer[0]; }
+    const T& operator[](uint i) const { return m_buffer[i]; }
+    T& operator[](uint i) { return m_buffer[i]; }
 
-	void reserve(uint n)
-	{
-		if(n > m_capacity) {
-			T* buffer = new T[n];
-			for(uint i = 0; i < m_size; ++i)
-				buffer[i] = m_buffer[i];
+    void reserve(uint n)
+    {
+        if(n > m_capacity) {
+            T* buffer = new T[n];
+            for(uint i = 0; i < m_size; ++i)
+                buffer[i] = m_buffer[i];
 
-			delete[] m_buffer;
-			m_buffer = buffer;
-			m_capacity = n;
-		}
-	}
+            delete[] m_buffer;
+            m_buffer = buffer;
+            m_capacity = n;
+        }
+    }
 
-	void resize(uint n, T def = T())
-	{
-		if(n == m_size)
-			return;
-		reserve(n);
-		for(uint i = m_size; i < n; ++i)
-			m_buffer[i] = def;
-		m_size = n;
-	}
+    void resize(uint n, T def = T())
+    {
+        if(n == m_size)
+            return;
+        reserve(n);
+        for(uint i = m_size; i < n; ++i)
+            m_buffer[i] = def;
+        m_size = n;
+    }
 
-	void grow(uint n)
-	{
-		if(n <= m_size)
-			return;
-		if(n > m_capacity) {
-			uint newcapacity = m_capacity;
-			do { newcapacity *= 2; } while(newcapacity < n);
-			reserve(newcapacity);
-		}
-		m_size = n;
-	}
+    void grow(uint n)
+    {
+        if(n <= m_size)
+            return;
+        if(n > m_capacity) {
+            uint newcapacity = m_capacity;
+            do { newcapacity *= 2; } while(newcapacity < n);
+            reserve(newcapacity);
+        }
+        m_size = n;
+    }
 
-	void add(const T& v)
-	{
-		grow(m_size + 1);
-		m_buffer[m_size - 1] = v;
-	}
+    void add(const T& v)
+    {
+        grow(m_size + 1);
+        m_buffer[m_size - 1] = v;
+    }
 
-	DataBuffer& operator<<(const T& t) { add(t); return *this; }
+    DataBuffer& operator<<(const T& t) { add(t); return *this; }
 
 private:
-	uint m_size;
-	uint m_capacity;
-	T* m_buffer;
+    uint m_size;
+    uint m_capacity;
+    T* m_buffer;
 };
 
 #endif

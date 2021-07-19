@@ -25,7 +25,7 @@
 
 #include "module.h"
 
-// @bindsingleton g_modules
+ // @bindsingleton g_modules
 class ModuleManager
 {
 public:

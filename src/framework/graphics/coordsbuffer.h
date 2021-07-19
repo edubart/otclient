@@ -29,55 +29,55 @@
 class CoordsBuffer
 {
 public:
-	void clear()
-	{
-		m_textureCoordArray.clear();
-		m_vertexArray.clear();
-	}
+    void clear()
+    {
+        m_textureCoordArray.clear();
+        m_vertexArray.clear();
+    }
 
-	void addTriangle(const Point& a, const Point& b, const Point& c)
-	{
-		m_vertexArray.addTriangle(a, b, c);
-	}
-	void addRect(const Rect& dest)
-	{
-		m_vertexArray.addRect(dest);
-	}
-	void addRect(const Rect& dest, const Rect& src)
-	{
-		m_vertexArray.addRect(dest);
-		m_textureCoordArray.addRect(src);
-	}
-	void addQuad(const Rect& dest, const Rect& src)
-	{
-		m_vertexArray.addQuad(dest);
-		m_textureCoordArray.addQuad(src);
-	}
-	void addUpsideDownQuad(const Rect& dest, const Rect& src)
-	{
-		m_vertexArray.addUpsideDownQuad(dest);
-		m_textureCoordArray.addQuad(src);
-	}
+    void addTriangle(const Point& a, const Point& b, const Point& c)
+    {
+        m_vertexArray.addTriangle(a, b, c);
+    }
+    void addRect(const Rect& dest)
+    {
+        m_vertexArray.addRect(dest);
+    }
+    void addRect(const Rect& dest, const Rect& src)
+    {
+        m_vertexArray.addRect(dest);
+        m_textureCoordArray.addRect(src);
+    }
+    void addQuad(const Rect& dest, const Rect& src)
+    {
+        m_vertexArray.addQuad(dest);
+        m_textureCoordArray.addQuad(src);
+    }
+    void addUpsideDownQuad(const Rect& dest, const Rect& src)
+    {
+        m_vertexArray.addUpsideDownQuad(dest);
+        m_textureCoordArray.addQuad(src);
+    }
 
-	void addUpsideDownRect(const Rect& dest, const Rect& src)
-	{
-		m_vertexArray.addUpsideDownRect(dest);
-		m_textureCoordArray.addRect(src);
-	}
+    void addUpsideDownRect(const Rect& dest, const Rect& src)
+    {
+        m_vertexArray.addUpsideDownRect(dest);
+        m_textureCoordArray.addRect(src);
+    }
 
-	void addBoudingRect(const Rect& dest, int innerLineWidth);
-	void addRepeatedRects(const Rect& dest, const Rect& src);
+    void addBoudingRect(const Rect& dest, int innerLineWidth);
+    void addRepeatedRects(const Rect& dest, const Rect& src);
 
-	float* getVertexArray() { return m_vertexArray.vertices(); }
-	float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
-	int getVertexCount() const { return m_vertexArray.vertexCount(); }
-	int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
-	size_t getVertexHash() const { return m_vertexArray.getHash(); }
-	size_t getTextureCoordHash() const { return m_textureCoordArray.getHash(); }
+    float* getVertexArray() { return m_vertexArray.vertices(); }
+    float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
+    int getVertexCount() const { return m_vertexArray.vertexCount(); }
+    int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
+    size_t getVertexHash() const { return m_vertexArray.getHash(); }
+    size_t getTextureCoordHash() const { return m_textureCoordArray.getHash(); }
 
 private:
-	VertexArray m_vertexArray;
-	VertexArray m_textureCoordArray;
+    VertexArray m_vertexArray;
+    VertexArray m_textureCoordArray;
 };
 
 #endif

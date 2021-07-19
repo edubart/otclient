@@ -134,8 +134,8 @@ TexturePtr TextureManager::loadTexture(std::stringstream& file)
         if(apng.num_frames > 1) { // animated texture
             std::vector<ImagePtr> frames;
             std::vector<int> framesDelay;
-            for(uint i=0;i<apng.num_frames;++i) {
-                uchar *frameData = apng.pdata + ((apng.first_frame+i) * imageSize.area() * apng.bpp);
+            for(uint i = 0; i < apng.num_frames; ++i) {
+                uchar* frameData = apng.pdata + ((apng.first_frame + i) * imageSize.area() * apng.bpp);
                 int frameDelay = apng.frames_delay[i];
 
                 framesDelay.push_back(frameDelay);

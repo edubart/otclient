@@ -61,8 +61,6 @@ private:
     std::unordered_map<std::string, PainterShaderProgramPtr> m_shaders;
 };
 
-
 extern ShaderManager g_shaders;
 
 #endif
-

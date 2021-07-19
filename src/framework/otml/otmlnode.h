@@ -28,7 +28,7 @@
 class OTMLNode : public stdext::shared_object
 {
 public:
-    virtual ~OTMLNode() { }
+    virtual ~OTMLNode() {}
 
     static OTMLNodePtr create(std::string tag = "", bool unique = false);
     static OTMLNodePtr create(std::string tag, std::string value);
@@ -92,7 +92,7 @@ public:
     OTMLNodePtr asOTMLNode() { return static_self_cast<OTMLNode>(); }
 
 protected:
-    OTMLNode() : m_unique(false), m_null(false) { }
+    OTMLNode() : m_unique(false), m_null(false) {}
 
     OTMLNodeList m_children;
     std::string m_tag;
@@ -105,21 +105,23 @@ protected:
 #include "otmlexception.h"
 
 template<>
-inline std::string OTMLNode::value<std::string>() {
+inline std::string OTMLNode::value<std::string>()
+{
     std::string value = m_value;
     if(stdext::starts_with(value, "\"") && stdext::ends_with(value, "\"")) {
-        value = value.substr(1, value.length()-2);
+        value = value.substr(1, value.length() - 2);
         stdext::replace_all(value, "\\\\", "\\");
         stdext::replace_all(value, "\\\"", "\"");
-        stdext::replace_all(value, "\\t",  "\t");
-        stdext::replace_all(value, "\\n",  "\n");
-        stdext::replace_all(value, "\\'",  "\'");
+        stdext::replace_all(value, "\\t", "\t");
+        stdext::replace_all(value, "\\n", "\n");
+        stdext::replace_all(value, "\\'", "\'");
     }
     return value;
 }
 
 template<typename T>
-T OTMLNode::value() {
+T OTMLNode::value()
+{
     T ret;
     if(!stdext::cast(m_value, ret))
         throw OTMLException(asOTMLNode(), stdext::format("failed to cast node value '%s' to type '%s'", m_value, stdext::demangle_type<T>()));
@@ -127,19 +129,22 @@ T OTMLNode::value() {
 }
 
 template<typename T>
-T OTMLNode::valueAt(const std::string& childTag) {
+T OTMLNode::valueAt(const std::string& childTag)
+{
     OTMLNodePtr node = at(childTag);
     return node->value<T>();
 }
 
 template<typename T>
-T OTMLNode::valueAtIndex(int childIndex) {
+T OTMLNode::valueAtIndex(int childIndex)
+{
     OTMLNodePtr node = atIndex(childIndex);
     return node->value<T>();
 }
 
 template<typename T>
-T OTMLNode::valueAt(const std::string& childTag, const T& def) {
+T OTMLNode::valueAt(const std::string& childTag, const T& def)
+{
     if(OTMLNodePtr node = get(childTag))
         if(!node->isNull())
             return node->value<T>();
@@ -147,19 +152,22 @@ T OTMLNode::valueAt(const std::string& childTag, const T& def) {
 }
 
 template<typename T>
-T OTMLNode::valueAtIndex(int childIndex, const T& def) {
+T OTMLNode::valueAtIndex(int childIndex, const T& def)
+{
     if(OTMLNodePtr node = getIndex(childIndex))
         return node->value<T>();
     return def;
 }
 
 template<typename T>
-void OTMLNode::write(const T& v) {
+void OTMLNode::write(const T& v)
+{
     m_value = stdext::safe_cast<std::string>(v);
 }
 
 template<typename T>
-void OTMLNode::writeAt(const std::string& childTag, const T& v) {
+void OTMLNode::writeAt(const std::string& childTag, const T& v)
+{
     OTMLNodePtr child = OTMLNode::create(childTag);
     child->setUnique(true);
     child->write<T>(v);
@@ -167,11 +175,11 @@ void OTMLNode::writeAt(const std::string& childTag, const T& v) {
 }
 
 template<typename T>
-void OTMLNode::writeIn(const T& v) {
+void OTMLNode::writeIn(const T& v)
+{
     OTMLNodePtr child = OTMLNode::create();
     child->write<T>(v);
     addChild(child);
 }
 
 #endif
-

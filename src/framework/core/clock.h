@@ -25,7 +25,7 @@
 
 #include "declarations.h"
 
-// @bindsingleton g_clock
+ // @bindsingleton g_clock
 class Clock
 {
 public:
@@ -46,4 +46,3 @@ private:
 extern Clock g_clock;
 
 #endif
-

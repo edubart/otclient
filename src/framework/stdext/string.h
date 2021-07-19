@@ -31,48 +31,47 @@
 #include "cast.h"
 
 namespace stdext {
+    template<typename T> std::string to_string(const T& t) { return unsafe_cast<std::string, T>(t); }
+    template<typename T> T from_string(const std::string& str, T def = T()) { return unsafe_cast<T, std::string>(str, def); }
 
-template<typename T> std::string to_string(const T& t) { return unsafe_cast<std::string, T>(t); }
-template<typename T> T from_string(const std::string& str, T def = T()) { return unsafe_cast<T, std::string>(str, def); }
+    /// Resolve a file path by combining sourcePath with filePath
+    std::string resolve_path(const std::string& filePath, std::string sourcePath);
+    /// Get current date and time in a std::string
+    std::string date_time_string(const char* format = "%b %d %Y %H:%M:%S");
 
-/// Resolve a file path by combining sourcePath with filePath
-std::string resolve_path(const std::string& filePath, std::string sourcePath);
-/// Get current date and time in a std::string
-std::string date_time_string(const char* format = "%b %d %Y %H:%M:%S");
+    std::string dec_to_hex(uint64_t num);
+    uint64_t hex_to_dec(const std::string& str);
+    void tolower(std::string& str);
+    void toupper(std::string& str);
+    void trim(std::string& str);
+    void ucwords(std::string& str);
+    char upchar(char c);
+    char lochar(char c);
+    bool ends_with(const std::string& str, const std::string& test);
+    bool starts_with(const std::string& str, const std::string& test);
+    void replace_all(std::string& str, const std::string& search, const std::string& replacement);
 
-std::string dec_to_hex(uint64_t num);
-uint64_t hex_to_dec(const std::string& str);
-void tolower(std::string& str);
-void toupper(std::string& str);
-void trim(std::string& str);
-void ucwords(std::string& str);
-char upchar(char c);
-char lochar(char c);
-bool ends_with(const std::string& str, const std::string& test);
-bool starts_with(const std::string& str, const std::string& test);
-void replace_all(std::string& str, const std::string& search, const std::string& replacement);
-
-bool is_valid_utf8(const std::string& src);
-std::string utf8_to_latin1(const std::string& src);
-std::string latin1_to_utf8(const std::string& src);
+    bool is_valid_utf8(const std::string& src);
+    std::string utf8_to_latin1(const std::string& src);
+    std::string latin1_to_utf8(const std::string& src);
 
 #ifdef WIN32
-std::wstring utf8_to_utf16(const std::string& src);
-std::string utf16_to_utf8(const std::wstring& src);
-std::string utf16_to_latin1(const std::wstring& src);
-std::wstring latin1_to_utf16(const std::string& src);
+    std::wstring utf8_to_utf16(const std::string& src);
+    std::string utf16_to_utf8(const std::wstring& src);
+    std::string utf16_to_latin1(const std::wstring& src);
+    std::wstring latin1_to_utf16(const std::string& src);
 #endif
 
-// always returns at least one element in vector
-std::vector<std::string> split(const std::string& str, const std::string& separators = " ");
-template<typename T> std::vector<T> split(const std::string& str, const std::string& separators = " ") {
-    std::vector<std::string> splitted = split(str, separators);
-    std::vector<T> results(splitted.size());
-    for(uint i = 0; i < splitted.size(); ++i)
-        results[i] = safe_cast<T>(splitted[i]);
-    return results;
-}
-
+    // always returns at least one element in vector
+    std::vector<std::string> split(const std::string& str, const std::string& separators = " ");
+    template<typename T> std::vector<T> split(const std::string& str, const std::string& separators = " ")
+    {
+        std::vector<std::string> splitted = split(str, separators);
+        std::vector<T> results(splitted.size());
+        for(uint i = 0; i < splitted.size(); ++i)
+            results[i] = safe_cast<T>(splitted[i]);
+        return results;
+    }
 }
 
 #endif

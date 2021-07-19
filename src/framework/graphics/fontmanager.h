@@ -25,7 +25,7 @@
 
 #include "bitmapfont.h"
 
-//@bindsingleton g_fonts
+ //@bindsingleton g_fonts
 class FontManager
 {
 public:

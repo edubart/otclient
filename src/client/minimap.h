@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
@@ -77,7 +76,6 @@ private:
 
 class Minimap
 {
-
 public:
     void init();
     void terminate();

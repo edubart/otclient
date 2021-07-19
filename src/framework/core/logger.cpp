@@ -23,7 +23,7 @@
 #include "logger.h"
 #include "eventdispatcher.h"
 
-//#include <boost/regex.hpp>
+ //#include <boost/regex.hpp>
 #include <framework/core/resourcemanager.h>
 
 #ifdef FW_GRAPHICS
@@ -106,7 +106,6 @@ void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string
     prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));
     if(prettyFunction.find_last_of(' ') != std::string::npos)
         prettyFunction = prettyFunction.substr(prettyFunction.find_last_of(' ') + 1);
-
 
     std::stringstream ss;
     ss << message;

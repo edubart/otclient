@@ -30,7 +30,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
     // emit nodes
     if(currentDepth >= 0) {
         // fill spaces for current depth
-        for(int i=0;i<currentDepth;++i)
+        for(int i = 0; i < currentDepth; ++i)
             ss << "  ";
 
         // emit node tag
@@ -53,9 +53,9 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
 
             // emit multiline values
             if(value.find("\n") != std::string::npos) {
-                if(value[value.length()-1] == '\n' && value[value.length()-2] == '\n')
+                if(value[value.length() - 1] == '\n' && value[value.length() - 2] == '\n')
                     ss << "|+";
-                else if(value[value.length()-1] == '\n')
+                else if(value[value.length() - 1] == '\n')
                     ss << "|";
                 else
                     ss << "|-";
@@ -65,7 +65,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
                     ss << "\n";
 
                     // fill spaces for multiline depth
-                    for(int i=0;i<currentDepth+1;++i)
+                    for(int i = 0; i < currentDepth + 1; ++i)
                         ss << "  ";
 
                     // fill until a new line
@@ -75,17 +75,17 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
                         ss << value[pos++];
                     }
                 }
-            // emit inline values
+                // emit inline values
             } else
                 ss << value;
         }
     }
 
     // emit children
-    for(int i=0;i<node->size();++i) {
+    for(int i = 0; i < node->size(); ++i) {
         if(currentDepth >= 0 || i != 0)
             ss << "\n";
-        ss << emitNode(node->atIndex(i), currentDepth+1);
+        ss << emitNode(node->atIndex(i), currentDepth + 1);
     }
 
     return ss.str();

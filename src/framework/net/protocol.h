@@ -30,7 +30,7 @@
 
 #include <framework/luaengine/luaobject.h>
 
-// @bindclass
+ // @bindclass
 class Protocol : public LuaObject
 {
 public:
@@ -48,8 +48,8 @@ public:
     void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 
     void generateXteaKey();
-    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d) { m_xteaKey = {a, b, c, d}; }
-    std::vector<uint32> getXteaKey() { return {m_xteaKey.begin(), m_xteaKey.end()}; }
+    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d) { m_xteaKey = { a, b, c, d }; }
+    std::vector<uint32> getXteaKey() { return { m_xteaKey.begin(), m_xteaKey.end() }; }
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 
     void enableChecksum() { m_checksumEnabled = true; }

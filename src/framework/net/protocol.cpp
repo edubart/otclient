@@ -104,7 +104,7 @@ void Protocol::recv()
 
     // read the first 2 bytes which contain the message size
     if(m_connection)
-        m_connection->read(2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read(2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
@@ -115,7 +115,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 
     // read remaining message data
     if(m_connection)
-        m_connection->read(remainingSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read(remainingSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1, std::placeholders::_2));
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
@@ -150,29 +150,27 @@ void Protocol::generateXteaKey()
 }
 
 namespace {
+    constexpr uint32_t delta = 0x9E3779B9;
 
-constexpr uint32_t delta = 0x9E3779B9;
+    template<typename Round>
+    void apply_rounds(uint8_t* data, size_t length, Round round)
+    {
+        for(auto j = 0u; j < length; j += 8) {
+            uint32_t left = data[j + 0] | data[j + 1] << 8u | data[j + 2] << 16u | data[j + 3] << 24u,
+                right = data[j + 4] | data[j + 5] << 8u | data[j + 6] << 16u | data[j + 7] << 24u;
 
-template<typename Round>
-void apply_rounds(uint8_t* data, size_t length, Round round)
-{
-    for (auto j = 0u; j < length; j += 8) {
-        uint32_t left = data[j+0] | data[j+1] << 8u | data[j+2] << 16u | data[j+3] << 24u,
-                right = data[j+4] | data[j+5] << 8u | data[j+6] << 16u | data[j+7] << 24u;
+            round(left, right);
 
-        round(left, right);
-
-        data[j] = static_cast<uint8_t>(left);
-        data[j+1] = static_cast<uint8_t>(left >> 8u);
-        data[j+2] = static_cast<uint8_t>(left >> 16u);
-        data[j+3] = static_cast<uint8_t>(left >> 24u);
-        data[j+4] = static_cast<uint8_t>(right);
-        data[j+5] = static_cast<uint8_t>(right >> 8u);
-        data[j+6] = static_cast<uint8_t>(right >> 16u);
-        data[j+7] = static_cast<uint8_t>(right >> 24u);
+            data[j] = static_cast<uint8_t>(left);
+            data[j + 1] = static_cast<uint8_t>(left >> 8u);
+            data[j + 2] = static_cast<uint8_t>(left >> 16u);
+            data[j + 3] = static_cast<uint8_t>(left >> 24u);
+            data[j + 4] = static_cast<uint8_t>(right);
+            data[j + 5] = static_cast<uint8_t>(right >> 8u);
+            data[j + 6] = static_cast<uint8_t>(right >> 16u);
+            data[j + 7] = static_cast<uint8_t>(right >> 24u);
+        }
     }
-}
-
 }
 
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
@@ -183,7 +181,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
         return false;
     }
 
-    for (uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
+    for(uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
         apply_rounds(inputMessage->getReadBuffer(), encryptedSize, [&](uint32_t& left, uint32_t& right) {
             right -= ((left << 4 ^ left >> 5) + left) ^ (sum + m_xteaKey[(sum >> 11) & 3]);
             left -= ((right << 4 ^ right >> 5) + right) ^ (next_sum + m_xteaKey[next_sum & 3]);
@@ -213,7 +211,7 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
         encryptedSize += n;
     }
 
-    for (uint32_t i = 0, sum = 0, next_sum = sum + delta; i < 32; ++i, sum = next_sum, next_sum += delta) {
+    for(uint32_t i = 0, sum = 0, next_sum = sum + delta; i < 32; ++i, sum = next_sum, next_sum += delta) {
         apply_rounds(outputMessage->getDataBuffer() - 2, encryptedSize, [&](uint32_t& left, uint32_t& right) {
             left += ((right << 4 ^ right >> 5) + right) ^ (sum + m_xteaKey[sum & 3]);
             right += ((left << 4 ^ left >> 5) + left) ^ (next_sum + m_xteaKey[(next_sum >> 11) & 3]);

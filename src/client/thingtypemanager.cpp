@@ -89,7 +89,6 @@ void ThingTypeManager::saveDat(const std::string& fileName)
                 m_thingTypes[category][id]->serialize(fin);
         }
 
-
         fin->flush();
         fin->close();
     } catch(std::exception& e) {

@@ -25,7 +25,7 @@
 
 #include <boost/thread/future.hpp>
 
-// hack to enable std::thread on mingw32 4.6
+ // hack to enable std::thread on mingw32 4.6
 #if !defined(_GLIBCXX_HAS_GTHREADS) && defined(__GNUG__) && !defined(__clang__)
 
 #include <boost/thread/thread.hpp>
@@ -52,4 +52,3 @@ namespace std {
 #endif
 
 #endif
-

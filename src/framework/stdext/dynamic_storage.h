@@ -28,40 +28,41 @@
 #include <unordered_map>
 
 namespace stdext {
+    template<typename Key>
+    class dynamic_storage {
+    public:
+        template<typename T> void set(const Key& k, const T& value)
+        {
+            if(m_data.size() <= k)
+                m_data.resize(k + 1);
+            m_data[k] = value;
+        }
+        bool remove(const Key& k)
+        {
+            if(m_data.size() < k)
+                return false;
+            if(m_data[k].empty())
+                return false;
+            m_data[k] = any();
+            return true;
+        }
+        template<typename T> T get(const Key& k) const { return has(k) ? any_cast<T>(m_data[k]) : T(); }
+        bool has(const Key& k) const { return k < m_data.size() && !m_data[k].empty(); }
 
-template<typename Key>
-class dynamic_storage {
-public:
-    template<typename T> void set(const Key& k, const T& value) {
-        if(m_data.size() <= k)
-            m_data.resize(k+1);
-        m_data[k] = value;
-    }
-    bool remove(const Key& k) {
-        if(m_data.size() < k)
-            return false;
-        if(m_data[k].empty())
-            return false;
-        m_data[k] = any();
-        return true;
-    }
-    template<typename T> T get(const Key& k) const { return has(k) ? any_cast<T>(m_data[k]) : T(); }
-    bool has(const Key& k) const { return k < m_data.size() && !m_data[k].empty(); }
+        std::size_t size() const
+        {
+            std::size_t count = 0;
+            for(std::size_t i = 0; i < m_data.size(); ++i)
+                if(!m_data[i].empty())
+                    count++;
+            return count;
+        }
 
-    std::size_t size() const {
-        std::size_t count = 0;
-        for(std::size_t i=0;i<m_data.size();++i)
-            if(!m_data[i].empty())
-                count++;
-        return count;
-    }
+        void clear() { m_data.clear(); }
 
-    void clear() { m_data.clear(); }
-
-private:
-    std::vector<any> m_data;
-};
-
+    private:
+        std::vector<any> m_data;
+    };
 }
 
 #endif

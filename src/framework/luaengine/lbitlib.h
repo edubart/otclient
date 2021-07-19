@@ -25,6 +25,6 @@
 
 struct lua_State;
 
-int luaopen_bit32 (lua_State *L);
+int luaopen_bit32(lua_State* L);
 
 #endif
