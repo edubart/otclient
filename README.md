@@ -1,12 +1,12 @@
 # OTCLient "1.0"
 ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
 
-### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.744
+### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.747
 
 ### Features
 
-- Render Optimized
-- Adaptive/Event-based Rendering (g_map.schedulePainting)
+- C++17
+- Refactored/Optimized Rendering System
 - New Light System
 - Render Scale System (FAKE ONE)
 - Idle Animation Support

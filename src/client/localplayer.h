@@ -85,7 +85,7 @@ public:
     double getStamina() { return m_stamina; }
     double getRegenerationTime() { return m_regenerationTime; }
     double getOfflineTrainingTime() { return m_offlineTrainingTime; }
-    std::vector<int> getSpells() { return m_spells; }
+    const std::vector<int>& getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
     int getBlessings() { return m_blessings; }
 
