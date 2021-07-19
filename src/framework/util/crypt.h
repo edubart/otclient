@@ -30,7 +30,7 @@
 #ifdef USE_GMP
 #include <gmp.h>
 #else
-typedef struct rsa_st RSA;
+using RSA = struct rsa_st;
 #endif
 
 class Crypt
@@ -49,9 +49,9 @@ public:
     std::string getMachineUUID();
 
     void rsaSetPublicKey(const std::string& n, const std::string& e);
-    void rsaSetPrivateKey(const std::string &p, const std::string &q, const std::string &d);
-    bool rsaEncrypt(unsigned char *msg, int size);
-    bool rsaDecrypt(unsigned char *msg, int size);
+    void rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d);
+    bool rsaEncrypt(unsigned char* msg, int size);
+    bool rsaDecrypt(unsigned char* msg, int size);
     int rsaGetSize();
 
 private:
@@ -62,7 +62,7 @@ private:
 #ifdef USE_GMP
     mpz_t m_p, m_q, m_n, m_e, m_d;
 #else
-    RSA *m_rsa;
+    RSA* m_rsa;
 #endif
 };
 

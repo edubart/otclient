@@ -30,6 +30,7 @@
 #include <framework/graphics/painter.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/graphics/drawpool.h>
 
 void UIWidget::initBaseStyle()
 {
@@ -59,7 +60,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 g_lua.loadFunction(node->value(), funcOrigin);
                 luaSetField(funcName);
             }
-        // lua fields value
+            // lua fields value
         } else if(stdext::starts_with(node->tag(), "&")) {
             std::string fieldName = node->tag().substr(1);
             std::string fieldOrigin = "@" + node->source() + ": [" + node->tag() + "]";
@@ -159,8 +160,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 setBorderColor(stdext::safe_cast<Color>(split[1]));
             } else
                 throw OTMLException(node, "border param must have its width followed by its color");
-        }
-        else if(node->tag() == "border-width")
+        } else if(node->tag() == "border-width")
             setBorderWidth(node->value<int>());
         else if(node->tag() == "border-width-top")
             setBorderWidthTop(node->value<int>());
@@ -218,8 +218,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 setMarginBottom(margin);
                 setMarginLeft(margin);
             }
-        }
-        else if(node->tag() == "padding-top")
+        } else if(node->tag() == "padding-top")
             setPaddingTop(node->value<int>());
         else if(node->tag() == "padding-right")
             setPaddingRight(node->value<int>());
@@ -290,8 +289,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
             if(!parent) {
                 if(m_firstOnStyle)
                     throw OTMLException(node, "cannot create anchor, there is no parent widget!");
-                else
-                    continue;
+                continue;
             }
 
             UILayoutPtr layout = parent->getLayout();
@@ -340,8 +338,7 @@ void UIWidget::drawBackground(const Rect& screenCoords)
         drawRect.translate(m_backgroundRect.topLeft());
         if(m_backgroundRect.isValid())
             drawRect.resize(m_backgroundRect.size());
-        g_painter->setColor(m_backgroundColor);
-        g_painter->drawFilledRect(drawRect);
+        g_drawPool.addFilledRect(drawRect, m_backgroundColor);
     }
 }
 
@@ -349,31 +346,23 @@ void UIWidget::drawBorder(const Rect& screenCoords)
 {
     // top
     if(m_borderWidth.top > 0) {
-        g_painter->setColor(m_borderColor.top);
-
-        Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
-        g_painter->drawFilledRect(borderRect);
+        const Rect borderRect(screenCoords.topLeft(), screenCoords.width(), m_borderWidth.top);
+        g_drawPool.addFilledRect(borderRect, m_borderColor.top);
     }
     // right
     if(m_borderWidth.right > 0) {
-        g_painter->setColor(m_borderColor.right);
-
-        Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
-        g_painter->drawFilledRect(borderRect);
+        const Rect borderRect(screenCoords.topRight() - Point(m_borderWidth.right - 1, 0), m_borderWidth.right, screenCoords.height());
+        g_drawPool.addFilledRect(borderRect, m_borderColor.right);
     }
     // bottom
     if(m_borderWidth.bottom > 0) {
-        g_painter->setColor(m_borderColor.bottom);
-
-        Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
-        g_painter->drawFilledRect(borderRect);
+        const Rect borderRect(screenCoords.bottomLeft() - Point(0, m_borderWidth.bottom - 1), screenCoords.width(), m_borderWidth.bottom);
+        g_drawPool.addFilledRect(borderRect, m_borderColor.bottom);
     }
     // left
     if(m_borderWidth.left > 0) {
-        g_painter->setColor(m_borderColor.left);
-
-        Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
-        g_painter->drawFilledRect(borderRect);
+        const Rect borderRect(screenCoords.topLeft(), m_borderWidth.left, screenCoords.height());
+        g_drawPool.addFilledRect(borderRect, m_borderColor.left);
     }
 }
 
@@ -394,8 +383,7 @@ void UIWidget::drawIcon(const Rect& screenCoords)
                 drawRect.alignIn(screenCoords, m_iconAlign);
         }
         drawRect.translate(m_iconOffset);
-        g_painter->setColor(m_iconColor);
-        g_painter->drawTexturedRect(drawRect, m_icon, m_iconClipRect);
+        g_drawPool.addTexturedRect(drawRect, m_icon, m_iconClipRect, m_iconColor);
     }
 }
 

@@ -69,13 +69,6 @@ void Map::resetAwareRange()
     setAwareRange(range);
 }
 
-void Map::notificateCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags)
-{
-    for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->onCreatureInformationUpdate(creature, flags);
-    }
-}
-
 void Map::notificateCameraMove(const Point& offset)
 {
     for(const MapViewPtr& mapView : m_mapViews) {
@@ -93,24 +86,6 @@ void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const
     }
 
     g_minimap.updateTile(pos, getTile(pos));
-}
-
-void Map::cancelScheduledPainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
-{
-    for(const MapViewPtr& mapView : m_mapViews)
-        mapView->cancelScheduledPainting(frameFlags, delay);
-}
-
-void Map::schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay)
-{
-    for(const MapViewPtr& mapView : m_mapViews)
-        mapView->schedulePainting(pos, frameFlags, delay);
-}
-
-void Map::schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay)
-{
-    for(const MapViewPtr& mapView : m_mapViews)
-        mapView->schedulePainting(frameFlags, delay);
 }
 
 void Map::clean()
@@ -157,15 +132,10 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
         const TilePtr& tile = getOrCreateTile(pos);
         if(tile && (m_floatingEffect || !thing->isEffect() || tile->getGround())) {
             tile->addThing(thing, stackPos);
-            thing->schedulePainting();
-            if(thing->isItem() && thing->hasElevation() && tile->hasCreature()) {
-                schedulePainting(thing->getPosition(), Otc::FUpdateCreatureInformation);
-            }
         }
     } else {
         if(thing->isMissile()) {
             m_floorMissiles[pos.z].push_back(thing->static_self_cast<Missile>());
-            thing->schedulePainting();
         } else if(thing->isAnimatedText()) {
             // this code will stack animated texts of the same color
             const AnimatedTextPtr animatedText = thing->static_self_cast<AnimatedText>();
@@ -200,13 +170,11 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
             for(const auto& other : m_staticTexts) {
                 // try to combine messages
                 if(other->getPosition() == pos && other->addMessage(staticText->getName(), staticText->getMessageMode(), staticText->getFirstMessage())) {
-                    thing->schedulePainting();
                     return;
                 }
             }
 
             m_staticTexts.push_back(staticText);
-            thing->schedulePainting();
         }
 
         thing->setPosition(pos);
@@ -243,8 +211,6 @@ bool Map::removeThing(const ThingPtr& thing)
         if(it != m_staticTexts.end()) {
             m_staticTexts.erase(it);
             ret = true;
-
-            thing->schedulePainting();
         }
     } else {
         if(thing->isMissile()) {
@@ -257,21 +223,7 @@ bool Map::removeThing(const ThingPtr& thing)
             }
         } else if(const TilePtr& tile = thing->getTile()) {
             ret = tile->removeThing(thing);
-
-            if(thing->isItem() && thing->hasElevation() && tile->hasCreature()) {
-                schedulePainting(thing->getPosition(), Otc::FUpdateCreatureInformation);
-            }
         }
-
-        thing->cancelScheduledPainting();
-        uint32_t frameFlag = Otc::FUpdateThing;
-        if(thing->isGround() && !thing->isTranslucent()) {
-            frameFlag |= Otc::FUpdateLight;
-            notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_CLEAN);
-        } else if(thing->hasLight()) frameFlag |= Otc::FUpdateLight;
-
-        if(thing->isCreature()) frameFlag |= Otc::FUpdateCreatureInformation;
-        schedulePainting(thing->getPosition(), static_cast<Otc::FrameUpdate>(frameFlag));
     }
 
     notificateTileUpdate(thing->getPosition(), thing, Otc::OPERATION_REMOVE);
@@ -609,12 +561,6 @@ void Map::removeUnawareThings()
                         continue;
                     }
 
-                    //TODO: review
-                    /*for(const auto& creature : tile->getCreatures()) {
-                        notificateTileUpdate(tile->getPosition(), creature, Otc::OPERATION_REMOVE);
-                    }*/
-
-                    tile->cancelScheduledPainting();
                     block.remove(pos);
                 }
 

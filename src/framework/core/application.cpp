@@ -42,13 +42,13 @@ void exitSignalHandler(int sig)
 {
     static bool signaled = false;
     switch(sig) {
-        case SIGTERM:
-        case SIGINT:
-            if(!signaled && !g_app.isStopping() && !g_app.isTerminated()) {
-                signaled = true;
-                g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
-            }
-            break;
+    case SIGTERM:
+    case SIGINT:
+        if(!signaled && !g_app.isStopping() && !g_app.isTerminated()) {
+            signaled = true;
+            g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
+        }
+        break;
     }
 }
 
@@ -80,7 +80,7 @@ void Application::init(std::vector<std::string>& args)
     g_asyncDispatcher.init();
 
     std::string startupOptions;
-    for(uint i=1;i<args.size();++i) {
+    for(uint i = 1; i < args.size(); ++i) {
         const std::string& arg = args[i];
         startupOptions += " ";
         startupOptions += arg;
@@ -181,4 +181,3 @@ std::string Application::getOs()
     return "unknown";
 #endif
 }
-

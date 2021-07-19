@@ -37,18 +37,18 @@ public:
     enum DownMix { NoDownMix, DownMixLeft, DownMixRight };
 
     StreamSoundSource();
-    virtual ~StreamSoundSource();
+    ~StreamSoundSource() override;
 
-    void play();
-    void stop();
+    void play() override;
+    void stop() override;
 
-    bool isPlaying() { return m_playing; }
+    bool isPlaying() override { return m_playing; }
 
     void setSoundFile(const SoundFilePtr& soundFile);
 
     void downMix(DownMix downMix);
 
-    void update();
+    void update() override;
 
 private:
     void queueBuffers();
@@ -56,12 +56,12 @@ private:
     bool fillBufferAndQueue(uint buffer);
 
     SoundFilePtr m_soundFile;
-    std::array<SoundBufferPtr,STREAM_FRAGMENTS> m_buffers;
+    std::array<SoundBufferPtr, STREAM_FRAGMENTS> m_buffers;
     DownMix m_downMix;
-    stdext::boolean<false> m_looping;
-    stdext::boolean<false> m_playing;
-    stdext::boolean<false> m_eof;
-    stdext::boolean<false> m_waitingFile;
+    bool m_looping{ false },
+        m_playing{ false },
+        m_eof{ false },
+        m_waitingFile{ false };
 };
 
 #endif

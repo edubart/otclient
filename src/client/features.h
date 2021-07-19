@@ -20,27 +20,8 @@
  * THE SOFTWARE.
  */
 
- // Define 1, to draw all ground first. (Ground first => remainder after)
-#define DRAW_ALL_GROUND_FIRST 0
-
- // Define 1, to draw creature information after light.
-#define DRAW_CREATURE_INFORMATION_AFTER_LIGHT 0
-
  // Define 1 so that a last creature that entered SQM is rendered behind the previous one.
 #define RENDER_CREATURE_BEHIND 0
 
-// Define 1 to force the rendering of animated things without waiting for the minimum mandatory interval.
-#define FORCE_ANIMATED_RENDERING 0
-
-// Define 1 to increase "flush time" when there are many rendering requests,
-// thus avoiding CPU consumption, however there will be a delay in rendering.
-#define FLUSH_CONTROL_FOR_RENDERING 1
-
 // Define 1 to force use the tibia 9+ formula, for some reason the servers below 9 are using the 9+ formula
 #define FORCE_USE_FORMULA_WALK_900_PLUS 1
-
-// Define 1 to check that the item is opaque, so that it does not draw anything that is less than or equal below it.
-#define CHECK_OPAQUE_ITEM 1
-
-// Define 1 to enable the paint scheduler, this will consume less CPU when there are not many interactions on the screen.
-#define SCHEDULE_PAINTING 1

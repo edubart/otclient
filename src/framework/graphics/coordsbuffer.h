@@ -28,66 +28,56 @@
 
 class CoordsBuffer
 {
-    enum {
-        CACHE_MIN_VERTICES_COUNT = 48
-    };
 public:
-    CoordsBuffer();
-    ~CoordsBuffer();
+	void clear()
+	{
+		m_textureCoordArray.clear();
+		m_vertexArray.clear();
+	}
 
-    void clear() {
-        m_textureCoordArray.clear();
-        m_vertexArray.clear();
-        m_hardwareCached = false;
-    }
+	void addTriangle(const Point& a, const Point& b, const Point& c)
+	{
+		m_vertexArray.addTriangle(a, b, c);
+	}
+	void addRect(const Rect& dest)
+	{
+		m_vertexArray.addRect(dest);
+	}
+	void addRect(const Rect& dest, const Rect& src)
+	{
+		m_vertexArray.addRect(dest);
+		m_textureCoordArray.addRect(src);
+	}
+	void addQuad(const Rect& dest, const Rect& src)
+	{
+		m_vertexArray.addQuad(dest);
+		m_textureCoordArray.addQuad(src);
+	}
+	void addUpsideDownQuad(const Rect& dest, const Rect& src)
+	{
+		m_vertexArray.addUpsideDownQuad(dest);
+		m_textureCoordArray.addQuad(src);
+	}
 
-    void addTriangle(const Point& a, const Point& b, const Point& c) {
-        m_vertexArray.addTriangle(a, b, c);
-        m_hardwareCached = false;
-    }
-    void addRect(const Rect& dest) {
-        m_vertexArray.addRect(dest);
-        m_hardwareCached = false;
-    }
-    void addRect(const Rect& dest, const Rect& src) {
-        m_vertexArray.addRect(dest);
-        m_textureCoordArray.addRect(src);
-        m_hardwareCached = false;
-    }
-    void addQuad(const Rect& dest, const Rect& src) {
-        m_vertexArray.addQuad(dest);
-        m_textureCoordArray.addQuad(src);
-        m_hardwareCached = false;
-    }
-    void addUpsideDownQuad(const Rect& dest, const Rect& src) {
-        m_vertexArray.addUpsideDownQuad(dest);
-        m_textureCoordArray.addQuad(src);
-        m_hardwareCached = false;
-    }
+	void addUpsideDownRect(const Rect& dest, const Rect& src)
+	{
+		m_vertexArray.addUpsideDownRect(dest);
+		m_textureCoordArray.addRect(src);
+	}
 
-    void addBoudingRect(const Rect& dest, int innerLineWidth);
-    void addRepeatedRects(const Rect& dest, const Rect& src);
+	void addBoudingRect(const Rect& dest, int innerLineWidth);
+	void addRepeatedRects(const Rect& dest, const Rect& src);
 
-    void enableHardwareCaching(HardwareBuffer::UsagePattern usagePattern = HardwareBuffer::DynamicDraw);
-    void updateCaches();
-    bool isHardwareCached() { return m_hardwareCached; }
-
-    float *getVertexArray() { return m_vertexArray.vertices(); }
-    float *getTextureCoordArray() { return m_textureCoordArray.vertices(); }
-    int getVertexCount() { return m_vertexArray.vertexCount(); }
-    int getTextureCoordCount() { return m_textureCoordArray.vertexCount(); }
-
-    HardwareBuffer *getHardwareVertexArray() { return m_hardwareVertexArray; }
-    HardwareBuffer *getHardwareTextureCoordArray() { return m_hardwareTextureCoordArray; }
+	float* getVertexArray() { return m_vertexArray.vertices(); }
+	float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
+	int getVertexCount() const { return m_vertexArray.vertexCount(); }
+	int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
+	size_t getVertexHash() const { return m_vertexArray.getHash(); }
+	size_t getTextureCoordHash() const { return m_textureCoordArray.getHash(); }
 
 private:
-    HardwareBuffer *m_hardwareVertexArray;
-    HardwareBuffer *m_hardwareTextureCoordArray;
-    HardwareBuffer::UsagePattern m_hardwareCacheMode;
-    VertexArray m_vertexArray;
-    VertexArray m_textureCoordArray;
-    bool m_hardwareCached;
-    bool m_hardwareCaching;
+	VertexArray m_vertexArray;
+	VertexArray m_textureCoordArray;
 };
 
 #endif

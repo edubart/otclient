@@ -30,13 +30,13 @@
 class SoundSource : public LuaObject
 {
 protected:
-    SoundSource(uint sourceId) : m_sourceId(sourceId) { }
+    SoundSource(uint sourceId) : m_sourceId(sourceId) {}
 
 public:
     enum FadeState { NoFading, FadingOn, FadingOff };
 
     SoundSource();
-    virtual ~SoundSource();
+    ~SoundSource() override;
 
     virtual void play();
     virtual void stop();

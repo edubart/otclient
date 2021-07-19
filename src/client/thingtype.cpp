@@ -32,6 +32,7 @@
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
+#include <framework/graphics/drawpool.h>
 #include <framework/otml/otml.h>
 
 ThingType::ThingType()
@@ -379,6 +380,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
 
     m_textures.resize(m_animationPhases);
     m_blankTextures.resize(m_animationPhases);
+    m_smoothTextures.resize(m_animationPhases);
     m_texturesFramesRects.resize(m_animationPhases);
     m_texturesFramesOriginRects.resize(m_animationPhases);
     m_texturesFramesOffsets.resize(m_animationPhases);
@@ -432,7 +434,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color, int frameFlags, LightView* lightView)
 {
     if(m_null)
         return;
@@ -440,7 +442,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if(animationPhase >= m_animationPhases)
         return;
 
-    const TexturePtr& texture = getTexture(animationPhase, useBlankTexture); // texture might not exists, neither its rects.
+    const TexturePtr& texture = getTexture(animationPhase, textureType); // texture might not exists, neither its rects.
     if(!texture)
         return;
 
@@ -465,12 +467,12 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         const bool useOpacity = m_opacity < 1.0f;
 
         if(useOpacity)
-            g_painter->setColor(Color(1.0f, 1.0f, 1.0f, m_opacity));
+            color = Color(1.0f, 1.0f, 1.0f, m_opacity);
 
-        g_painter->drawTexturedRect(screenRect, texture, textureRect);
-
-        if(useOpacity)
-            g_painter->resetColor();
+        if(getCategory() == ThingCategoryMissile || isGround())
+            g_drawPool.addRepeatedTexturedRect(screenRect, texture, textureRect, color);
+        else
+            g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
     }
 
     if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
@@ -481,14 +483,26 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     }
 }
 
-const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
+void ThingType::generateTextureCache()
 {
-    TexturePtr& animationPhaseTexture = (allBlank ? m_blankTextures : m_textures)[animationPhase];
-    if(animationPhaseTexture) return animationPhaseTexture;
+    for(size_t i = m_textures.size(); --i <= 0;)
+    {
+        getTexture(i, TextureType::ALL_BLANK);
+        getTexture(i, TextureType::NONE);
+        getTexture(i, TextureType::SMOOTH);
+    }
+}
 
-    bool useCustomImage = false;
-    if(animationPhase == 0 && !m_customImage.empty())
-        useCustomImage = true;
+const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType txtType)
+{
+    const bool allBlank = txtType == TextureType::ALL_BLANK,
+        smoth = txtType == TextureType::SMOOTH;
+
+    TexturePtr& animationPhaseTexture = (
+        allBlank ? m_blankTextures :
+        smoth ? m_smoothTextures : m_textures)[animationPhase];
+
+    if(animationPhaseTexture) return animationPhaseTexture;
 
     // we don't need layers in common items, they will be pre-drawn
     int textureLayers = 1;
@@ -499,6 +513,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
         numLayers = 5;
     }
 
+    const bool useCustomImage = animationPhase == 0 && !m_customImage.empty();
     const int indexSize = textureLayers * m_numPatternX * m_numPatternY * m_numPatternZ;
     const Size textureSize = getBestTextureDimension(m_size.width(), m_size.height(), indexSize);
     const ImagePtr fullImage = useCustomImage ? Image::load(m_customImage) : ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
@@ -521,14 +536,13 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
                             for(int w = 0; w < m_size.width(); ++w) {
                                 const uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
                                 ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
-                                if(!spriteImage) fullImage->setTransparentPixel(true);
-                                else {
-                                    if(spriteIndex == 0) {
-                                        if(spriteImage->hasTransparentPixel() || hasDisplacement()) {
-                                            fullImage->setTransparentPixel(true);
-                                        }
-                                    }
 
+                                // verifies that the first block in the lower right corner is transparent.
+                                if(h == 0 && w == 0 && (!spriteImage || spriteImage->hasTransparentPixel())) {
+                                    fullImage->setTransparentPixel(true);
+                                }
+
+                                if(spriteImage) {
                                     if(allBlank) {
                                         spriteImage->overwrite(Color::white);
                                     } else if(spriteMask) {
@@ -549,10 +563,10 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
                         for(int fy = framePos.y; fy < framePos.y + m_size.height() * Otc::TILE_PIXELS; ++fy) {
                             uint8* p = fullImage->getPixel(fx, fy);
                             if(p[3] != 0x00) {
-                                drawRect.setTop(std::min<int>(fy, static_cast<int>(drawRect.top())));
-                                drawRect.setLeft(std::min<int>(fx, static_cast<int>(drawRect.left())));
-                                drawRect.setBottom(std::max<int>(fy, static_cast<int>(drawRect.bottom())));
-                                drawRect.setRight(std::max<int>(fx, static_cast<int>(drawRect.right())));
+                                drawRect.setTop(std::min<int>(fy, drawRect.top()));
+                                drawRect.setLeft(std::min<int>(fx, drawRect.left()));
+                                drawRect.setBottom(std::max<int>(fy, drawRect.bottom()));
+                                drawRect.setRight(std::max<int>(fx, drawRect.right()));
                             }
                         }
                     }
@@ -565,7 +579,12 @@ const TexturePtr& ThingType::getTexture(int animationPhase, bool allBlank)
         }
     }
 
-    animationPhaseTexture = TexturePtr(new Texture(fullImage, true));
+    m_opaque = !fullImage->hasTransparentPixel();
+
+    animationPhaseTexture = TexturePtr(new Texture(fullImage, true, false, m_size.area() == 1, false));
+    if(smoth)
+        animationPhaseTexture->setSmooth(true);
+
     return animationPhaseTexture;
 }
 

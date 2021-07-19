@@ -30,8 +30,8 @@ class Texture : public stdext::shared_object
 public:
     Texture();
     Texture(const Size& size);
-    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
-    virtual ~Texture();
+    Texture(const ImagePtr& image, bool buildMipmaps = false, bool compress = false, bool canSuperimposed = false, bool load = true);
+    ~Texture() override;
 
     void uploadPixels(const ImagePtr& image, bool buildMipmaps = false, bool compress = false);
     void bind();
@@ -44,6 +44,7 @@ public:
     void setTime(ticks_t time) { m_time = time; }
 
     uint getId() { return m_id; }
+    uint getUniqueId() const { return m_uniqueId; }
     ticks_t getTime() { return m_time; }
     int getWidth() { return m_size.width(); }
     int getHeight() { return m_size.height(); }
@@ -55,6 +56,9 @@ public:
     bool hasMipmaps() { return m_hasMipmaps; }
     virtual bool isAnimatedTexture() { return false; }
     bool isOpaque() const { return m_opaque; }
+    bool canSuperimposed() const { return m_canSuperimposed; }
+
+    void create();
 
 protected:
     void createTexture();
@@ -64,16 +68,24 @@ protected:
     void setupTranformMatrix();
     void setupPixels(int level, const Size& size, uchar* pixels, int channels = 4, bool compress = false);
 
+    const uint m_uniqueId;
+
     uint m_id;
     ticks_t m_time;
-    Size m_size;
-    Size m_glSize;
+    Size m_size, m_glSize;
+
     Matrix3 m_transformMatrix;
-    stdext::boolean<false> m_hasMipmaps;
-    stdext::boolean<false> m_smooth;
-    stdext::boolean<false> m_upsideDown;
-    stdext::boolean<false> m_repeat;
-    stdext::boolean<false> m_opaque;
+
+    ImagePtr m_image;
+
+    bool m_hasMipmaps{ false },
+        m_smooth{ false },
+        m_upsideDown{ false },
+        m_repeat{ false },
+        m_opaque{ false },
+        m_canSuperimposed{ false },
+        m_compress{ false },
+        m_buildMipmaps{ false };
 };
 
 #endif

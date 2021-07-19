@@ -20,31 +20,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef OGGSOUNDFILE_H
-#define OGGSOUNDFILE_H
+#include "pool.h"
 
-#include "soundfile.h"
-
-#include <vorbis/vorbisfile.h>
-
-class OggSoundFile : public SoundFile
+void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
-public:
-    OggSoundFile(const FileStreamPtr& fileStream);
-    ~OggSoundFile() override;
+    if(pos == -1) {
+        m_state.compositionMode = mode;
+        return;
+    }
 
-    bool prepareOgg();
+    m_objects[pos - 1].state.compositionMode = mode;
+}
 
-    int read(void* buffer, int bufferSize) override;
-    void reset() override;
+void Pool::setClipRect(const Rect& clipRect, const int pos)
+{
+    if(pos == -1) {
+        m_state.clipRect = clipRect;
+        return;
+    }
 
-private:
-    static size_t cb_read(void* ptr, size_t size, size_t nmemb, void* source);
-    static int cb_seek(void* source, ogg_int64_t offset, int whence);
-    static int cb_close(void* source);
-    static long cb_tell(void* source);
+    m_objects[pos - 1].state.clipRect = clipRect;
+}
 
-    OggVorbis_File m_vorbisFile;
-};
+void Pool::setOpacity(const float opacity, const int pos)
+{
+    if(pos == -1) {
+        m_state.opacity = opacity;
+        return;
+    }
 
-#endif
+    m_objects[pos - 1].state.opacity = opacity;
+}

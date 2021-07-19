@@ -26,12 +26,12 @@
 #include <framework/graphics/painter.h>
 #include <framework/graphics/framebuffer.h>
 #include <framework/core/application.h>
+#include <framework/graphics/drawpool.h>
 
 void UIWidget::initText()
 {
     m_font = g_fonts.getDefaultFont();
     m_textAlign = Fw::AlignCenter;
-    m_textCoordsBuffer.enableHardwareCaching();
 }
 
 void UIWidget::updateText()
@@ -86,7 +86,7 @@ void UIWidget::drawText(const Rect& screenCoords)
         return;
 
     if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
-        Rect coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
+        auto coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
         coords.translate(m_textOffset);
 
         m_textMustRecache = false;
@@ -97,10 +97,8 @@ void UIWidget::drawText(const Rect& screenCoords)
         m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, coords, m_textAlign);
     }
 
-    g_painter->setColor(m_color);
-
     if(m_font->getTexture())
-        g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
+        g_drawPool.addTextureCoords(m_textCoordsBuffer, m_font->getTexture(), m_color);
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
@@ -122,7 +120,7 @@ void UIWidget::setText(std::string text, bool dontFireLuaCall)
     if(m_text == text)
         return;
 
-    std::string oldText = m_text;
+    const std::string oldText = m_text;
     m_text = text;
     updateText();
 

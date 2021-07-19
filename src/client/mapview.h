@@ -58,7 +58,6 @@ protected:
     void onFloorDrawingEnd(const uint8 floor);
     void onFloorChange(const uint8 floor, const uint8 previousFloor);
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
-    void onCreatureInformationUpdate(const CreaturePtr& creature, const Otc::DrawFlags flags);
     void onMapCenterChange(const Position& pos);
     void onCameraMove(const Point& offset);
 
@@ -107,24 +106,24 @@ public:
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
 
-    void setDrawNames(bool enable) { m_drawNames = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
+    void setDrawNames(bool enable) { m_drawNames = enable; }
     bool isDrawingNames() { return m_drawNames; }
 
-    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
+    void setDrawHealthBars(bool enable) { m_drawHealthBars = enable; }
     bool isDrawingHealthBars() { return m_drawHealthBars; }
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights && m_lightView->isDark(); }
 
-    void setFloorShadowingFlag(const Otc::ShadowFloor flag) { m_lastFloorShadowingColor = Color::white; m_floorShadowingFlag = flag; requestVisibleTilesCacheUpdate(); schedulePainting(Otc::FUpdateThing); }
+    void setFloorShadowingFlag(const Otc::ShadowFloor flag) { m_lastFloorShadowingColor = Color::white; m_floorShadowingFlag = flag; requestVisibleTilesCacheUpdate(); }
     bool hasFloorShadowingFlag(const Otc::ShadowFloor flag) { return m_floorShadowingFlag & flag; }
     bool hasFloorShadowingFlag() { return m_floorShadowingFlag > 0; }
     const Color getLastFloorShadowingColor() { return m_lastFloorShadowingColor; }
 
-    void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; schedulePainting(Otc::FUpdateThing); }
+    void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; }
     bool isDrawingViewportEdge() { return m_drawViewportEdge; }
 
-    void setDrawManaBar(bool enable) { m_drawManaBar = enable; schedulePainting(Otc::FUpdateCreatureInformation); }
+    void setDrawManaBar(bool enable) { m_drawManaBar = enable; }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
     void move(int32 x, int32 y);
@@ -135,10 +134,6 @@ public:
     Position getPosition(const Point& point, const Size& mapSize);
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
-
-    void schedulePainting(const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
-    void schedulePainting(const Position& pos, const Otc::FrameUpdate frameFlags, const uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
-    void cancelScheduledPainting(const Otc::FrameUpdate frameFlags, uint16_t delay);
 
     void resetLastCamera() { m_lastCameraPosition = Position(); }
 
@@ -162,15 +157,14 @@ public:
     void setRenderScale(const uint8 scale);
 
 private:
-    struct ViewPort {
-        uint8 top, right, bottom, left;
+    struct MapList {
+        std::vector<TilePtr> grounds, borders, bottomTops;
+        void clear() { grounds.clear(); borders.clear(); bottomTops.clear(); }
     };
 
-    struct FrameCache {
-        FrameBufferPtr tile, staticText, dynamicText,
-            crosshair, creatureInformation;
-
-        uint32_t flags = 0;
+    struct Pools {
+        PoolFramedPtr map;
+        PoolPtr creatureInformation, text;
     };
 
     struct Crosshair {
@@ -194,12 +188,9 @@ private:
 
     void updateLight();
     void updateViewportDirectionCache();
+    void drawFloor();
     void drawCreatureInformation();
     void drawText();
-
-#if DRAW_ALL_GROUND_FIRST == 1
-    void drawSeparately(const uint8 floor, LightView* lightView);
-#endif
 
     Rect calcFramebufferSource(const Size& destSize);
 
@@ -211,19 +202,18 @@ private:
 
     bool canRenderTile(const TilePtr& tile, LightView* lightView);
 
-    uint8 m_lockedFirstVisibleFloor,
-        m_cachedFirstVisibleFloor,
-        m_cachedLastVisibleFloor,
-        m_lightVersion,
-        m_renderScale,
+    uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },
+        m_cachedFirstVisibleFloor{ Otc::SEA_FLOOR },
+        m_cachedLastVisibleFloor{ Otc::SEA_FLOOR },
+        m_renderScale{ 100 },
         m_tileSize,
-        m_floorMin,
-        m_floorMax,
+        m_floorMin{ 0 },
+        m_floorMax{ 0 },
         m_floorShadowingFlag;
 
-    float m_minimumAmbientLight,
-        m_fadeInTime,
-        m_fadeOutTime,
+    float m_minimumAmbientLight{ 0 },
+        m_fadeInTime{ 0 },
+        m_fadeOutTime{ 0 },
         m_scaleFactor;
 
     Rect m_rectDimension;
@@ -240,11 +230,12 @@ private:
         m_lastCameraPosition,
         m_lastMousePosition;
 
-    std::array<ViewPort, Otc::InvalidDirection + 1> m_viewPortDirection;
-    ViewPort m_viewport;
+    std::array<AwareRange, Otc::InvalidDirection + 1> m_viewPortDirection;
+    AwareRange m_viewport;
 
     stdext::boolean<true>
         m_mustUpdateVisibleTilesCache,
+        m_mustUpdateVisibleCreaturesCache,
         m_shaderSwitchDone,
         m_drawHealthBars,
         m_drawManaBar,
@@ -262,16 +253,15 @@ private:
 
     std::vector<CreaturePtr> m_visibleCreatures;
 
-    std::array<std::vector<TilePtr>, Otc::MAX_Z + 1> m_cachedVisibleTiles;
+    std::array<MapList, Otc::MAX_Z + 1> m_cachedVisibleTiles;
 
     PainterShaderProgramPtr m_shader, m_nextShader;
     LightViewPtr m_lightView;
     CreaturePtr m_followingCreature;
+    Pools m_pools;
 
-    FrameCache m_frameCache;
     RectCache m_rectCache;
-    Crosshair m_crosshair;
-    ViewMode m_viewMode;
+    ViewMode m_viewMode{ NEAR_VIEW };
 
     Color m_lastFloorShadowingColor;
 
@@ -280,6 +270,8 @@ private:
     AwareRange m_awareRange;
 
     TilePtr m_lastHighlightTile;
+    TexturePtr m_crosshairTexture;
+    EffectPtr m_crosshairEffect;
 };
 
 #endif

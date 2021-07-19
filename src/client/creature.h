@@ -46,11 +46,12 @@ public:
 
     Creature();
 
-    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlags, LightView* lightView = nullptr) override;
+    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView = nullptr) override;
 
-    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool useBlank, Otc::Direction direction);
+    void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
+    void preDraw();
 
-    void drawOutfit(const Rect& destRect, bool resize);
+    void drawOutfit(const Rect& destRect, bool resize, const Color color = Color::white);
     void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
@@ -108,7 +109,6 @@ public:
     int getDisplacementX() override;
     int getDisplacementY() override;
     int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0) override;
-
 
     int getTotalAnimationPhase();
     int getCurrentAnimationPhase(bool mount = false);

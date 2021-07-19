@@ -23,6 +23,12 @@
 #ifndef THINGTYPE_H
 #define THINGTYPE_H
 
+enum class TextureType {
+    NONE,
+    SMOOTH,
+    ALL_BLANK
+};
+
 #include "animator.h"
 #include "declarations.h"
 
@@ -137,7 +143,7 @@ public:
     void serialize(const FileStreamPtr& fin);
     void exportImage(const std::string& fileName);
 
-    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, bool useBlankTexture, int frameFlags = Otc::FUpdateThing, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color = Color::white, int frameFlags = Otc::FUpdateThing, LightView* lightView = nullptr);
 
     uint16 getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
@@ -209,7 +215,7 @@ public:
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
-    bool isOpaque() { return (isFullGround() || (hasTexture() && getTexture(0)->isOpaque())); }
+    bool isOpaque() { return (isFullGround() || m_opaque); }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
 
     std::vector<int> getSprites() { return m_spritesIndex; }
@@ -219,7 +225,9 @@ public:
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
     int getExactHeight();
-    const TexturePtr& getTexture(int animationPhase, bool allBlank = false);
+    const TexturePtr& getTexture(int animationPhase, const TextureType txtType = TextureType::NONE);
+
+    void generateTextureCache();
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }
@@ -230,7 +238,7 @@ private:
 
     ThingCategory m_category;
     uint16 m_id;
-    bool m_null;
+    bool m_null, m_opaque{ false };
     stdext::dynamic_storage<uint8> m_attribs;
 
     Size m_size;
@@ -248,8 +256,11 @@ private:
     std::string m_customImage;
 
     std::vector<int> m_spritesIndex;
-    std::vector<TexturePtr> m_textures;
-    std::vector<TexturePtr> m_blankTextures;
+
+    std::vector<TexturePtr> m_textures,
+        m_blankTextures,
+        m_smoothTextures;
+
     std::vector<std::vector<Rect>> m_texturesFramesRects;
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;

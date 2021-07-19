@@ -103,6 +103,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(VcpkgRoot)include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -210,6 +211,7 @@
     <ClCompile Include="..\src\framework\graphics\bitmapfont.cpp" />
     <ClCompile Include="..\src\framework\graphics\cachedtext.cpp" />
     <ClCompile Include="..\src\framework\graphics\coordsbuffer.cpp" />
+    <ClCompile Include="..\src\framework\graphics\drawpool.cpp" />
     <ClCompile Include="..\src\framework\graphics\fontmanager.cpp" />
     <ClCompile Include="..\src\framework\graphics\framebuffer.cpp" />
     <ClCompile Include="..\src\framework\graphics\framebuffermanager.cpp" />
@@ -228,6 +230,7 @@
     <ClCompile Include="..\src\framework\graphics\particlemanager.cpp" />
     <ClCompile Include="..\src\framework\graphics\particlesystem.cpp" />
     <ClCompile Include="..\src\framework\graphics\particletype.cpp" />
+    <ClCompile Include="..\src\framework\graphics\pool.cpp" />
     <ClCompile Include="..\src\framework\graphics\shader.cpp" />
     <ClCompile Include="..\src\framework\graphics\shaderprogram.cpp" />
     <ClCompile Include="..\src\framework\graphics\texture.cpp" />
@@ -336,7 +339,7 @@
     <ClInclude Include="..\src\client\uiminimap.h" />
     <ClInclude Include="..\src\client\uiprogressrect.h" />
     <ClInclude Include="..\src\client\uisprite.h" />
-	<ClInclude Include="..\src\client\features.h" />
+    <ClInclude Include="..\src\client\features.h" />
     <ClInclude Include="..\src\framework\const.h" />
     <ClInclude Include="..\src\framework\core\adaptativeframecounter.h" />
     <ClInclude Include="..\src\framework\core\application.h" />
@@ -364,6 +367,7 @@
     <ClInclude Include="..\src\framework\graphics\cachedtext.h" />
     <ClInclude Include="..\src\framework\graphics\coordsbuffer.h" />
     <ClInclude Include="..\src\framework\graphics\declarations.h" />
+    <ClInclude Include="..\src\framework\graphics\drawpool.h" />
     <ClInclude Include="..\src\framework\graphics\fontmanager.h" />
     <ClInclude Include="..\src\framework\graphics\framebuffer.h" />
     <ClInclude Include="..\src\framework\graphics\framebuffermanager.h" />
@@ -384,6 +388,7 @@
     <ClInclude Include="..\src\framework\graphics\particlemanager.h" />
     <ClInclude Include="..\src\framework\graphics\particlesystem.h" />
     <ClInclude Include="..\src\framework\graphics\particletype.h" />
+    <ClInclude Include="..\src\framework\graphics\pool.h" />
     <ClInclude Include="..\src\framework\graphics\shader.h" />
     <ClInclude Include="..\src\framework\graphics\shaderprogram.h" />
     <ClInclude Include="..\src\framework\graphics\texture.h" />

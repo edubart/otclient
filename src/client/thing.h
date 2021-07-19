@@ -46,11 +46,8 @@ class Thing : public LuaObject
 public:
     Thing();
     virtual ~Thing() {}
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, int /*frameFlag*/ = Otc::FUpdateThing, LightView* /*lightView*/ = nullptr) {}
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, Color /* color */ = Color::white, int /*frameFlag*/ = Otc::FUpdateThing, LightView* /*lightView*/ = nullptr) {}
     virtual void setId(uint32 /*id*/) {}
-
-    void schedulePainting(uint16_t delay = FrameBuffer::MIN_TIME_UPDATE);
-    void cancelScheduledPainting();
 
     void setPosition(const Position& position);
 
@@ -105,7 +102,6 @@ public:
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
     bool isCommon() { return !isGround() && !isGroundBorder() && !isOnTop() && !isCreature() && !isOnBottom(); }
-    bool isGroundOrBorder() { return isGround() || isGroundBorder(); }
     virtual bool isContainer() { return rawGetThingType()->isContainer(); }
     bool isStackable() { return rawGetThingType()->isStackable(); }
     bool isForceUse() { return rawGetThingType()->isForceUse(); }
@@ -161,9 +157,7 @@ protected:
 
 private:
     stdext::boolean<true> m_canDraw;
-
 };
 #pragma pack(pop)
 
 #endif
-

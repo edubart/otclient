@@ -20,13 +20,13 @@
  * THE SOFTWARE.
  */
 
-
 #ifndef GRAPHICALAPPLICATION_H
 #define GRAPHICALAPPLICATION_H
 
 #include "application.h"
 #include <framework/graphics/declarations.h>
 #include <framework/core/inputevent.h>
+#include <framework/core/timer.h>
 
 class GraphicalApplication : public Application
 {
@@ -35,23 +35,18 @@ class GraphicalApplication : public Application
     };
 
 public:
-    void init(std::vector<std::string>& args);
-    void deinit();
-    void terminate();
-    void run();
-    void poll();
-    void close();
+    void init(std::vector<std::string>& args) override;
+    void deinit() override;
+    void terminate() override;
+    void run() override;
+    void poll() override;
+    void close() override;
 
-    bool willRepaint() { return m_mustRepaint; }
     void repaint() { m_mustRepaint = true; }
 
-    /* Force Max FPS 20, it is unnecessary more than that. */
-    void setForegroundPaneMaxFps(int /*maxFps*/) { m_foregroundFrameCounter.setMaxFps(20); }
     void setBackgroundPaneMaxFps(int maxFps) { m_backgroundFrameCounter.setMaxFps(maxFps); }
 
-    int getForegroundPaneFps() { return m_foregroundFrameCounter.getLastFps(); }
     int getBackgroundPaneFps() { return m_backgroundFrameCounter.getLastFps(); }
-    int getForegroundPaneMaxFps() { return m_foregroundFrameCounter.getMaxFps(); }
     int getBackgroundPaneMaxFps() { return m_backgroundFrameCounter.getMaxFps(); }
 
     bool isOnInputEvent() { return m_onInputEvent; }
@@ -61,13 +56,16 @@ protected:
     void inputEvent(const InputEvent& event);
 
 private:
-    stdext::boolean<false> m_onInputEvent;
-    stdext::boolean<false> m_mustRepaint;
-    AdaptativeFrameCounter m_backgroundFrameCounter;
-    AdaptativeFrameCounter m_foregroundFrameCounter;
-    TexturePtr m_foreground;
+    bool foregroundCanUpdate() { return m_mustRepaint && m_refreshTime.ticksElapsed() >= 16; }
 
-    FrameBufferPtr m_foregroundFrameCache;
+    bool m_onInputEvent{ false },
+        m_mustRepaint{ false };
+
+    Timer m_refreshTime;
+
+    AdaptativeFrameCounter m_backgroundFrameCounter;
+
+    PoolFramedPtr m_foregroundFramed;
 };
 
 extern GraphicalApplication g_app;

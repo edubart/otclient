@@ -24,6 +24,7 @@
 #include "painter.h"
 #include "fontmanager.h"
 #include "bitmapfont.h"
+#include <framework/graphics/drawpool.h>
 
 CachedText::CachedText()
 {
@@ -31,33 +32,24 @@ CachedText::CachedText()
     m_align = Fw::AlignCenter;
 }
 
-void CachedText::draw(const Rect& rect)
+void CachedText::draw(const Rect& rect, const Color color)
 {
-    if (!m_font)
+    if(!m_font)
         return;
 
-    if (m_textMustRecache || m_textCachedScreenCoords != rect) {
-        m_textMustRecache = false;
-        m_textCachedScreenCoords = rect;
-
-        m_textCoordsBuffer.clear();
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_text, rect, Fw::AlignCenter);
-    }
-
-    if (m_font->getTexture())
-        g_painter->drawTextureCoords(m_textCoordsBuffer, m_font->getTexture());
+    for(const auto& fontRect : m_font->getDrawTextCoords(m_text, rect, Fw::AlignCenter))
+        g_drawPool.addRepeatedTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
 }
 
 void CachedText::update()
 {
-    if (m_font)
+    if(m_font)
         m_textSize = m_font->calculateTextRectSize(m_text);
-    m_textMustRecache = true;
 }
 
 void CachedText::wrapText(int maxWidth)
 {
-    if (m_font) {
+    if(m_font) {
         m_text = m_font->wrapText(m_text, maxWidth);
         update();
     }

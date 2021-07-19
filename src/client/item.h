@@ -75,13 +75,13 @@ enum ItemAttr : uint8
 class Item : public Thing
 {
 public:
-    Item();
+    Item() = default;
     virtual ~Item() {}
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlag = Otc::FUpdateThing, LightView* lightView = nullptr) override;
+    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color = Color::white, int frameFlag = Otc::FUpdateThing, LightView* lightView = nullptr) override;
 
     void setId(uint32 id) override;
     void setOtbId(uint16 id);
@@ -151,16 +151,18 @@ protected:
     int getAnimationInterval() override;
 
 private:
-    uint16 m_clientId;
-    uint16 m_serverId;
-    uint8 m_countOrSubType;
+    uint16 m_clientId{ 0 };
+    uint16 m_serverId{ 0 };
+    uint8 m_countOrSubType{ 1 };
+    Color m_color{ Color::alpha };
+
     stdext::packed_storage<uint8> m_attribs;
     ItemVector m_containerItems;
-    Color m_color;
-    uint8 m_phase;
-    ticks_t m_lastPhase;
 
-    stdext::boolean<true> m_async;
+    uint8 m_phase{ 0 };
+    ticks_t m_lastPhase{ 0 };
+
+    bool m_async{ true };
 };
 
 #pragma pack(pop)

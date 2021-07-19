@@ -49,8 +49,6 @@ UITextEdit::UITextEdit()
     m_updatesEnabled = true;
     m_selectionColor = Color::white;
     m_selectionBackgroundColor = Color::black;
-    m_glyphsTextCoordsBuffer.enableHardwareCaching();
-    m_glyphsSelectCoordsBuffer.enableHardwareCaching();
     m_glyphsMustRecache = true;
     blinkCursor();
 }
@@ -65,12 +63,12 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
     drawImage(m_rect);
     drawIcon(m_rect);
 
-    int textLength = m_text.length();
+    const int textLength = m_text.length();
     const TexturePtr& texture = m_font->getTexture();
     if(!texture)
         return;
 
-    bool glyphsMustRecache = m_glyphsMustRecache;
+    const bool glyphsMustRecache = m_glyphsMustRecache;
     if(glyphsMustRecache)
         m_glyphsMustRecache = false;
 
@@ -80,8 +78,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             for(int i = 0; i < textLength; ++i)
                 m_glyphsTextCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
         }
-        g_painter->setColor(m_color);
-        g_painter->drawTextureCoords(m_glyphsTextCoordsBuffer, texture);
+        g_drawPool.addTextureCoords(m_glyphsTextCoordsBuffer, texture, m_color);
     }
 
     if(hasSelection()) {
@@ -90,10 +87,8 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             for(int i = m_selectionStart; i < m_selectionEnd; ++i)
                 m_glyphsSelectCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
         }
-        g_painter->setColor(m_selectionBackgroundColor);
-        g_painter->drawFillCoords(m_glyphsSelectCoordsBuffer);
-        g_painter->setColor(m_selectionColor);
-        g_painter->drawTextureCoords(m_glyphsSelectCoordsBuffer, texture);
+        g_drawPool.addFillCoords(m_glyphsSelectCoordsBuffer, m_selectionBackgroundColor);
+        g_drawPool.addTextureCoords(m_glyphsSelectCoordsBuffer, texture, m_selectionColor);
     }
 
     // render cursor
@@ -101,7 +96,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
         assert(m_cursorPos <= textLength);
         // draw every 333ms
         const int delay = 333;
-        int elapsed = g_clock.millis() - m_cursorTicks;
+        const int elapsed = g_clock.millis() - m_cursorTicks;
         if(elapsed <= delay) {
             Rect cursorRect;
             // when cursor is at 0
@@ -110,12 +105,11 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             else
                 cursorRect = Rect(m_glyphsCoords[m_cursorPos - 1].right(), m_glyphsCoords[m_cursorPos - 1].top(), 1, m_font->getGlyphHeight());
 
+            Color color = m_color;
             if(hasSelection() && m_cursorPos >= m_selectionStart && m_cursorPos <= m_selectionEnd)
-                g_painter->setColor(m_selectionColor);
-            else
-                g_painter->setColor(m_color);
+                color = m_selectionColor;
 
-            g_painter->drawFilledRect(cursorRect);
+            g_drawPool.addFilledRect(cursorRect, color);
         } else if(elapsed >= 2 * delay) {
             m_cursorTicks = g_clock.millis();
         }
@@ -131,7 +125,7 @@ void UITextEdit::update(bool focusCursor)
 
     std::string text = getDisplayedText();
     m_drawText = text;
-    int textLength = text.length();
+    const int textLength = text.length();
 
     // prevent glitches
     if(m_rect.isEmpty())
@@ -164,7 +158,7 @@ void UITextEdit::update(bool focusCursor)
         m_glyphsTexCoords.resize(textLength);
     }
 
-    Point oldTextAreaOffset = m_textVirtualOffset;
+    const Point oldTextAreaOffset = m_textVirtualOffset;
 
     if(textBoxSize.width() <= getPaddingRect().width())
         m_textVirtualOffset.x = 0;
@@ -176,7 +170,7 @@ void UITextEdit::update(bool focusCursor)
     if(focusCursor && m_autoScroll) {
         if(m_cursorPos > 0 && textLength > 0) {
             assert(m_cursorPos <= textLength);
-            Rect virtualRect(m_textVirtualOffset, m_rect.size() - Size(m_padding.left + m_padding.right, 0)); // previous rendered virtual rect
+            const Rect virtualRect(m_textVirtualOffset, m_rect.size() - Size(m_padding.left + m_padding.right, 0)); // previous rendered virtual rect
             int pos = m_cursorPos - 1; // element before cursor
             glyph = static_cast<uchar>(text[pos]); // glyph of the element before cursor
             Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
@@ -209,10 +203,10 @@ void UITextEdit::update(bool focusCursor)
         m_cursorInRange = true;
     } else {
         if(m_cursorPos > 0 && textLength > 0) {
-            Rect virtualRect(m_textVirtualOffset, m_rect.size() - Size(2 * m_padding.left + m_padding.right, 0)); // previous rendered virtual rect
-            int pos = m_cursorPos - 1; // element before cursor
+            const Rect virtualRect(m_textVirtualOffset, m_rect.size() - Size(2 * m_padding.left + m_padding.right, 0)); // previous rendered virtual rect
+            const int pos = m_cursorPos - 1; // element before cursor
             glyph = static_cast<uchar>(text[pos]); // glyph of the element before cursor
-            Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
+            const Rect glyphRect(glyphsPositions[pos], glyphsSize[glyph]);
             if(virtualRect.contains(glyphRect.topLeft()) && virtualRect.contains(glyphRect.bottomRight()))
                 m_cursorInRange = true;
         } else {
@@ -258,7 +252,6 @@ void UITextEdit::update(bool focusCursor)
     } else if(m_textAlign & Fw::AlignHorizontalCenter) {
         m_drawArea.translate((textScreenCoords.width() - textBoxSize.width()) / 2, 0);
     } else { // AlignLeft
-
     }
 
     for(int i = 0; i < textLength; ++i) {
@@ -523,9 +516,9 @@ void UITextEdit::moveCursorVertically(bool)
     //TODO
 }
 
-int UITextEdit::getTextPos(Point pos)
+int UITextEdit::getTextPos(const Point& pos)
 {
-    int textLength = m_text.length();
+    const int textLength = m_text.length();
 
     // find any glyph that is actually on the
     int candidatePos = -1;
@@ -542,11 +535,13 @@ int UITextEdit::getTextPos(Point pos)
         if(clickGlyphRect.contains(pos)) {
             candidatePos = i;
             break;
-        } else if(pos.y >= clickGlyphRect.top() && pos.y <= clickGlyphRect.bottom()) {
+        }
+        if(pos.y >= clickGlyphRect.top() && pos.y <= clickGlyphRect.bottom()) {
             if(pos.x <= clickGlyphRect.left()) {
                 candidatePos = i;
                 break;
-            } else if(pos.x >= clickGlyphRect.right())
+            }
+            if(pos.x >= clickGlyphRect.right())
                 candidatePos = i + 1;
         }
     }
@@ -554,7 +549,7 @@ int UITextEdit::getTextPos(Point pos)
     if(textLength > 0) {
         if(pos.y < firstGlyphRect.top())
             return 0;
-        else if(pos.y > lastGlyphRect.bottom())
+        if(pos.y > lastGlyphRect.bottom())
             return textLength;
     }
 
@@ -632,7 +627,7 @@ void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
         else if(node->tag() == "selection-background-color")
             setSelectionBackgroundColor(node->value<Color>());
         else if(node->tag() == "selection") {
-            Point selectionRange = node->value<Point>();
+            const auto selectionRange = node->value<Point>();
             setSelection(selectionRange.x, selectionRange.y);
         } else if(node->tag() == "cursor-visible")
             setCursorVisible(node->value<bool>());
@@ -717,7 +712,8 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
         if(keyCode == Fw::KeyV && m_editable) {
             paste(g_window.getClipboardText());
             return true;
-        } else if(keyCode == Fw::KeyX && m_editable && m_selectable) {
+        }
+        if(keyCode == Fw::KeyX && m_editable && m_selectable) {
             if(hasSelection()) {
                 cut();
                 return true;
@@ -738,9 +734,9 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
             if(UIWidgetPtr parent = getParent())
                 parent->focusPreviousChild(Fw::KeyboardFocusReason, true);
             return true;
-        } else if(keyCode == Fw::KeyRight || keyCode == Fw::KeyLeft) {
-
-            int oldCursorPos = m_cursorPos;
+        }
+        if(keyCode == Fw::KeyRight || keyCode == Fw::KeyLeft) {
+            const int oldCursorPos = m_cursorPos;
 
             if(keyCode == Fw::KeyRight) // move cursor right
                 moveCursorHorizontally(true);
@@ -755,7 +751,8 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
                 setSelection(m_selectionReference, m_cursorPos);
             }
             return true;
-        } else if(keyCode == Fw::KeyHome) { // move cursor to first character
+        }
+        if(keyCode == Fw::KeyHome) { // move cursor to first character
             if(m_cursorPos != 0) {
                 setSelection(m_cursorPos, 0);
                 setCursorPos(0);
@@ -788,7 +785,7 @@ bool UITextEdit::onMousePress(const Point& mousePos, Fw::MouseButton button)
         return true;
 
     if(button == Fw::MouseLeftButton) {
-        int pos = getTextPos(mousePos);
+        const int pos = getTextPos(mousePos);
         if(pos >= 0) {
             setCursorPos(pos);
 
@@ -813,7 +810,7 @@ bool UITextEdit::onMouseMove(const Point& mousePos, const Point& mouseMoved)
         return true;
 
     if(m_selectable && isPressed()) {
-        int pos = getTextPos(mousePos);
+        const int pos = getTextPos(mousePos);
         if(pos >= 0) {
             setSelection(m_selectionReference, pos);
             setCursorPos(pos);

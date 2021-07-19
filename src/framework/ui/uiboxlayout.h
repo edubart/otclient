@@ -31,17 +31,17 @@ class UIBoxLayout : public UILayout
 public:
     UIBoxLayout(UIWidgetPtr parentWidget);
 
-    void applyStyle(const OTMLNodePtr& styleNode);
-    void addWidget(const UIWidgetPtr& /*widget*/) { update(); }
-    void removeWidget(const UIWidgetPtr& /*widget*/) { update(); }
+    void applyStyle(const OTMLNodePtr& styleNode) override;
+    void addWidget(const UIWidgetPtr& /*widget*/) override { update(); }
+    void removeWidget(const UIWidgetPtr& /*widget*/) override { update(); }
 
     void setSpacing(int spacing) { m_spacing = spacing; update(); }
     void setFitChildren(bool fitParent) { m_fitChildren = fitParent; update(); }
 
-    bool isUIBoxLayout() { return true; }
+    bool isUIBoxLayout() override { return true; }
 
 protected:
-    stdext::boolean<false> m_fitChildren;
+    bool m_fitChildren{ false };
     int m_spacing;
 };
 

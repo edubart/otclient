@@ -1,0 +1,107 @@
+/*
+ * Copyright (c) 2010-2020 OTClient <https://github.com/edubart/otclient>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#ifndef DRAWPOOL_H
+#define DRAWPOOL_H
+
+#include <framework/graphics/declarations.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/framebuffer.h>
+#include <framework/graphics/pool.h>
+#include <framework/core/graphicalapplication.h>
+
+enum  PoolType : uint8 {
+    MAP,
+    CREATURE_INFORMATION,
+    LIGHT,
+    TEXT,
+    FOREGROUND,
+    UNKNOW
+};
+
+enum class PoolEventType : uint8 {
+    ON_BEFORE_DRAW,
+    ON_AFTER_DRAW
+};
+
+class DrawPool
+{
+public:
+    PoolPtr createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
+    PoolFramedPtr createPoolF(const PoolType type);
+
+    void use(const PoolPtr& pool);
+
+    void addFillCoords(CoordsBuffer& coordsBuffer, const Color color = Color::white);
+    void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color = Color::white, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white, const Point& originalDest = Point());
+    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
+    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
+    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
+    void addRepeatedFilledRect(const Rect& dest, const Color color = Color::white);
+    void addFilledRect(const Rect& dest, const Color color = Color::white);
+    void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color = Color::white);
+    void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
+    void addAction(std::function<void()> action);
+
+    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
+    void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
+    void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
+
+    void resetClipRect() { m_currentPool->resetClipRect(); }
+    void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
+    void resetOpacity() { m_currentPool->resetOpacity(); }
+    void resetState() { m_currentPool->resetState(); }
+
+    void beginningIsHere() { m_currentPool->beginningIsHere(); }
+
+    size_t getSize() { return m_currentPool->m_objects.size(); }
+
+private:
+    void draw();
+    void init();
+    void terminate();
+    void drawObject(Pool::DrawObject& obj);
+    void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
+    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+
+    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
+
+    Painter::PainterState generateState();
+
+    CoordsBuffer m_coordsbuffer;
+    std::array<PoolPtr, PoolType::UNKNOW + 1> m_pools;
+
+    PoolPtr m_currentPool, n_unknowPool;
+
+    bool m_multiThread;
+
+    std::hash<size_t> HASH_INT;
+    std::hash<float> HASH_FLOAT;
+
+    friend class GraphicalApplication;
+};
+
+#endif

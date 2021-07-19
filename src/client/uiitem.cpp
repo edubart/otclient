@@ -55,13 +55,11 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
         const float scaleFactor = std::min<float>(drawRect.width() / static_cast<float>(exactSize), drawRect.height() / static_cast<float>(exactSize));
         dest += (m_item->getDisplacement() - Point(Otc::TILE_PIXELS)) * scaleFactor;
 
-        g_painter->setColor(m_color);
-        m_item->draw(dest, scaleFactor, true, Highlight());
+        m_item->draw(dest, scaleFactor, true, Highlight(), m_color);
 
         if(m_font && (m_item->isStackable() || m_item->isChargeable()) && m_item->getCountOrSubType() > 1) {
             const std::string count = stdext::to_string(m_item->getCountOrSubType());
-            g_painter->setColor(Color(231, 231, 231));
-            m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Fw::AlignBottomRight);
+            m_font->drawText(count, Rect(m_rect.topLeft(), m_rect.bottomRight() - Point(3, 0)), Color(231, 231, 231), Fw::AlignBottomRight);
         }
 
         if(m_showId)

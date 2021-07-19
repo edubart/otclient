@@ -31,42 +31,6 @@
 
 Thing::Thing() : m_datId(0) {}
 
-void Thing::schedulePainting(uint16_t delay)
-{
-    uint32_t frameFlag;
-
-    if(isStaticText()) frameFlag = Otc::FUpdateStaticText;
-    else {
-        frameFlag = Otc::FUpdateThing;
-
-        if(isItem() || isEffect()) {
-            g_map.schedulePainting(static_cast<Otc::FrameUpdate>(frameFlag), getAnimationInterval());
-        } else if(isCreature()) {
-            if(isLocalPlayer()) {
-                frameFlag |= Otc::FUpdateTextInformation;
-                delay = FrameBuffer::FORCE_UPDATE;
-            } else frameFlag |= Otc::FUpdateCreatureInformation;
-        }
-
-        if(isLocalPlayer() || hasLight() || isGround() && !isTranslucent()) frameFlag |= Otc::FUpdateLight;
-    }
-
-    g_map.schedulePainting(m_position, static_cast<Otc::FrameUpdate>(frameFlag), delay);
-}
-
-void Thing::cancelScheduledPainting()
-{
-    const int delay = getAnimationInterval();
-    if(delay == 0) return;
-
-    uint32_t frameFlag = Otc::FUpdateThing;
-
-    if(isLocalPlayer() || hasLight()) frameFlag |= Otc::FUpdateLight;
-    if(isCreature()) frameFlag |= Otc::FUpdateCreatureInformation;
-
-    g_map.cancelScheduledPainting(static_cast<Otc::FrameUpdate>(frameFlag), delay);
-}
-
 void Thing::setPosition(const Position& position)
 {
     if(m_position == position)

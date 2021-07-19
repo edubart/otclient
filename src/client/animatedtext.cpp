@@ -54,13 +54,13 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
         const float t0 = tf / 1.2;
+
+        Color color = m_color;
         if(t > t0) {
-            Color color = m_color;
             color.setAlpha(static_cast<float>(1 - (t - t0) / (tf - t0)));
-            g_painter->setColor(color);
-        } else
-            g_painter->setColor(m_color);
-        m_cachedText.draw(rect);
+        }
+
+        m_cachedText.draw(rect, color);
     }
 }
 

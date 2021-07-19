@@ -33,23 +33,23 @@ public:
     void addSource(const SoundSourcePtr& source);
     std::vector<SoundSourcePtr> getSources() { return m_sources; }
 
-    void play();
-    void stop();
+    void play() override;
+    void stop() override;
 
-    bool isBuffering();
-    bool isPlaying();
+    bool isBuffering() override;
+    bool isPlaying() override;
 
-    void setLooping(bool looping);
-    void setRelative(bool relative);
-    void setReferenceDistance(float distance);
-    void setGain(float gain);
-    void setPitch(float pitch);
-    void setPosition(const Point& pos);
-    void setVelocity(const Point& velocity);
-    void setFading(FadeState state, float fadetime);
+    void setLooping(bool looping) override;
+    void setRelative(bool relative) override;
+    void setReferenceDistance(float distance) override;
+    void setGain(float gain) override;
+    void setPitch(float pitch) override;
+    void setPosition(const Point& pos) override;
+    void setVelocity(const Point& velocity) override;
+    void setFading(FadeState state, float fadetime) override;
 
 protected:
-    virtual void update();
+    void update() override;
 
 private:
     std::vector<SoundSourcePtr> m_sources;

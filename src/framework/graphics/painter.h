@@ -46,34 +46,60 @@ public:
         CompositionMode_DestBlending,
         CompositionMode_Light
     };
-    enum DrawMode {
+
+    enum class DrawMode {
+        None = GL_NONE,
         Triangles = GL_TRIANGLES,
         TriangleStrip = GL_TRIANGLE_STRIP
     };
 
+    struct PainterState {
+        Size resolution;
+        Matrix3 transformMatrix;
+        Matrix3 projectionMatrix;
+        Matrix3 textureMatrix;
+        Color color;
+        float opacity;
+        CompositionMode compositionMode;
+        BlendEquation blendEquation;
+        Rect clipRect;
+        TexturePtr texture;
+        PainterShaderProgram* shaderProgram;
+        bool alphaWriting;
+
+        bool operator==(const PainterState& s2) const
+        {
+            return resolution == s2.resolution &&
+                transformMatrix == s2.transformMatrix &&
+                color == s2.color &&
+                opacity == s2.opacity &&
+                compositionMode == s2.compositionMode &&
+                blendEquation == s2.blendEquation &&
+                clipRect == s2.clipRect &&
+                texture == s2.texture &&
+                shaderProgram == s2.shaderProgram &&
+                alphaWriting == s2.alphaWriting;
+        }
+    };
 
     Painter();
-    virtual ~Painter() {}
+    virtual ~Painter() = default;
 
     virtual void bind() {}
     virtual void unbind() {}
 
+    virtual void resetState() = 0;
     virtual void saveState() = 0;
     virtual void saveAndResetState() = 0;
     virtual void restoreSavedState() = 0;
+    virtual PainterState getCurrentState() = 0;
+    virtual void executeState(const PainterState& state) = 0;
 
     virtual void clear(const Color& color) = 0;
 
-    virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = Triangles) = 0;
-    virtual void drawFillCoords(CoordsBuffer& coordsBuffer) = 0;
-    virtual void drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture) = 0;
+    virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) = 0;
     virtual void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture) { drawTexturedRect(dest, texture, Rect(Point(), texture->getSize())); }
-    virtual void drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
-    virtual void drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) = 0;
     virtual void drawFilledRect(const Rect& dest) = 0;
-    virtual void drawFilledTriangle(const Point& a, const Point& b, const Point& c) = 0;
-    virtual void drawBoundingRect(const Rect& dest, int innerLineWidth = 1) = 0;
 
     virtual void setTexture(Texture* texture) = 0;
     virtual void setClipRect(const Rect& clipRect) = 0;

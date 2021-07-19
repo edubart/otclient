@@ -127,7 +127,6 @@ void SpriteManager::unload()
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
     try {
-
         if(id == 0 || !m_spritesFile)
             return nullptr;
 
@@ -159,8 +158,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         while(read < pixelDataSize && writePos < SPRITE_DATA_SIZE) {
             const uint16 transparentPixels = m_spritesFile->getU16();
             const uint16 coloredPixels = m_spritesFile->getU16();
-            if(!image->hasTransparentPixel())
-                image->setTransparentPixel(transparentPixels > 0);
+
             for(int i = 0; i < transparentPixels && writePos < SPRITE_DATA_SIZE; ++i) {
                 pixels[writePos + 0] = 0x00;
                 pixels[writePos + 1] = 0x00;
@@ -181,7 +179,7 @@ ImagePtr SpriteManager::getSpriteImage(int id)
         }
 
         // Error margin for 4 pixel transparent
-        if(writePos + 4 < SPRITE_DATA_SIZE && !image->hasTransparentPixel())
+        if(!image->hasTransparentPixel() && writePos + 4 < SPRITE_DATA_SIZE)
             image->setTransparentPixel(true);
 
         // fill remaining pixels with alpha
@@ -193,10 +191,18 @@ ImagePtr SpriteManager::getSpriteImage(int id)
             writePos += 4;
         }
 
+        // The image must be more than 4 pixels transparent to be considered transparent.
+        uint8 cntTrans = 0;
+        for(uint8 pixel : image->getPixels()) {
+            if(pixel == 0x00 && ++cntTrans > 4) {
+                image->setTransparentPixel(true);
+                break;
+            }
+        }
+
         return image;
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("Failed to get sprite id %d: %s", id, e.what()));
         return nullptr;
     }
 }
-

@@ -31,7 +31,7 @@ class UITextEdit : public UIWidget
 public:
     UITextEdit();
 
-    void drawSelf(Fw::DrawPane drawPane);
+    void drawSelf(Fw::DrawPane drawPane) override;
 
 private:
     void update(bool focusCursor = false);
@@ -70,7 +70,7 @@ public:
     void wrapText();
     std::string getDisplayedText();
     std::string getSelection();
-    int getTextPos(Point pos);
+    int getTextPos(const Point& pos);
     int getCursorPos() { return m_cursorPos; }
     Point getTextVirtualOffset() { return m_textVirtualOffset; }
     Size getTextVirtualSize() { return m_textVirtualSize; }
@@ -91,18 +91,18 @@ public:
     bool isAutoScrolling() { return m_autoScroll; }
 
 protected:
-    void updateText();
+    void updateText() override;
 
-    virtual void onHoverChange(bool hovered);
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
-    virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
-    virtual void onFocusChange(bool focused, Fw::FocusReason reason);
-    virtual bool onKeyText(const std::string& keyText);
-    virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
-    virtual bool onMousePress(const Point& mousePos, Fw::MouseButton button);
-    virtual bool onMouseRelease(const Point& mousePos, Fw::MouseButton button);
-    virtual bool onMouseMove(const Point& mousePos, const Point& mouseMoved);
-    virtual bool onDoubleClick(const Point& mousePos);
+    void onHoverChange(bool hovered) override;
+    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
+    void onGeometryChange(const Rect& oldRect, const Rect& newRect) override;
+    void onFocusChange(bool focused, Fw::FocusReason reason) override;
+    bool onKeyText(const std::string& keyText) override;
+    bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks) override;
+    bool onMousePress(const Point& mousePos, Fw::MouseButton button) override;
+    bool onMouseRelease(const Point& mousePos, Fw::MouseButton button) override;
+    bool onMouseMove(const Point& mousePos, const Point& mouseMoved) override;
+    bool onDoubleClick(const Point& mousePos) override;
     virtual void onTextAreaUpdate(const Point& vitualOffset, const Size& visibleSize, const Size& totalSize);
 
 private:

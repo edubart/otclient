@@ -32,6 +32,7 @@ public:
 
     void restart();
     void stop() { m_stopped = true; }
+    void update(const ticks_t tick) { m_startTicks += tick; }
 
     ticks_t startTicks() { return m_startTicks; }
     ticks_t ticksElapsed();

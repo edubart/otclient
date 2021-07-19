@@ -24,6 +24,7 @@
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/painter.h>
+#include <framework/graphics/drawpool.h>
 #include "lightview.h"
 #include "mapview.h"
 #include "map.h"
@@ -31,7 +32,7 @@
 LightView::LightView(const MapViewPtr& mapView)
 {
     m_mapView = mapView;
-    m_lightbuffer = g_framebuffers.createFrameBuffer();
+    m_pool = g_drawPool.createPoolF(PoolType::LIGHT);
 
     generateLightTexture();
     generateShadeTexture();
@@ -84,6 +85,8 @@ void LightView::generateShadeTexture()
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
+    if(!isDark()) return;
+
     const uint16 radius = light.intensity * Otc::TILE_PIXELS * m_mapView->m_scaleFactor;
 
     auto& lights = m_lights[m_currentFloor];
@@ -105,51 +108,41 @@ void LightView::setShade(const Point& point)
     m_shades[index] = ShadeBlock{ m_currentFloor, point };
 }
 
-void LightView::drawLights()
-{
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->m_tileSize / 4.8), Size(m_mapView->m_tileSize * 1.4));
-
-    g_painter->setColor(m_globalLightColor);
-    g_painter->drawFilledRect(m_mapView->m_rectDimension);
-    for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
-        if(z < m_mapView->m_floorMax) {
-            g_painter->setColor(m_globalLightColor);
-            for(auto& shade : m_shades) {
-                if(shade.floor != z) continue;
-                shade.floor = -1;
-
-                g_painter->drawTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture);
-            }
-        }
-
-        auto& lights = m_lights[z];
-        std::sort(lights.begin(), lights.end(), orderLightComparator);
-        for(LightSource& light : lights) {
-            g_painter->setColor(Color::from8bit(light.color, light.brightness));
-            g_painter->drawTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture);
-        }
-        lights.clear();
-    }
-}
-
 void LightView::resize()
 {
-    m_lightbuffer->resize(m_mapView->m_frameCache.tile->getSize());
+    m_pool->resize(m_mapView->m_rectDimension.size());
     m_shades.resize(m_mapView->m_drawDimension.area());
 }
 
 void LightView::draw(const Rect& dest, const Rect& src)
 {
     // draw light, only if there is darkness
+    m_pool->setEnable(isDark());
     if(!isDark()) return;
 
-    if(m_lightbuffer->canUpdate()) {
-        m_lightbuffer->bind();
-        drawLights();
-        m_lightbuffer->release();
-    }
+    m_pool->setColorClear(m_globalLightColor);
+    m_pool->setCoords(dest, src);
 
-    g_painter->setCompositionMode(Painter::CompositionMode_Light);
-    m_lightbuffer->draw(dest, src);
-    g_painter->resetCompositionMode();
+    g_drawPool.use(m_pool);
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
+    for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
+        g_drawPool.beginningIsHere();
+        {
+            if(z < m_mapView->m_floorMax) {
+                for(auto& shade : m_shades) {
+                    if(shade.floor != z) continue;
+                    shade.floor = -1;
+
+                    g_drawPool.addRepeatedTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
+                }
+            }
+        }
+
+        auto& lights = m_lights[z];
+        std::sort(lights.begin(), lights.end(), orderLightComparator);
+        for(LightSource& light : lights) {
+            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture, Color::from8bit(light.color, light.brightness));
+        }
+        lights.clear();
+    }
 }

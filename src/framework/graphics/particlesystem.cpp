@@ -37,8 +37,7 @@ void ParticleSystem::load(const OTMLNodePtr& node)
             ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter());
             emitter->load(childNode);
             m_emitters.push_back(emitter);
-        }
-        else if(childNode->tag().find("Affector") != std::string::npos) {
+        } else if(childNode->tag().find("Affector") != std::string::npos) {
             ParticleAffectorPtr affector;
 
             if(childNode->tag() == "GravityAffector")
@@ -61,9 +60,8 @@ void ParticleSystem::addParticle(const ParticlePtr& particle)
 
 void ParticleSystem::render()
 {
-    for(auto &particle: m_particles)
+    for(auto& particle : m_particles)
         particle->render();
-    g_painter->resetCompositionMode();
 }
 
 void ParticleSystem::update()
@@ -85,7 +83,6 @@ void ParticleSystem::update()
 
     auto self = static_self_cast<ParticleSystem>();
     for(int i = 0; i < std::floor(elapsedTime / delay); ++i) {
-
         // update emitters
         for(auto it = m_emitters.begin(); it != m_emitters.end();) {
             const ParticleEmitterPtr& emitter = *it;

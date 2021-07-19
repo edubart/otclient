@@ -23,24 +23,26 @@
 #ifndef UIHORIZONTALLAYOUT_H
 #define UIHORIZONTALLAYOUT_H
 
+#include <utility>
+
 #include "uiboxlayout.h"
 
 class UIHorizontalLayout : public UIBoxLayout
 {
 public:
-    UIHorizontalLayout(UIWidgetPtr parentWidget) : UIBoxLayout(parentWidget) { }
+    UIHorizontalLayout(UIWidgetPtr parentWidget) : UIBoxLayout(std::move(parentWidget)) {}
 
-    void applyStyle(const OTMLNodePtr& styleNode);
+    void applyStyle(const OTMLNodePtr& styleNode) override;
 
     void setAlignRight(bool aliginRight) { m_alignRight = aliginRight; update(); }
 
-    bool isUIHorizontalLayout() { return true; }
+    bool isUIHorizontalLayout() override { return true; }
 
 protected:
-    bool internalUpdate();
+    bool internalUpdate() override;
 
     Fw::AlignmentFlag m_alignChidren;
-    stdext::boolean<false> m_alignRight;
+    bool m_alignRight{ false };
 };
 
 #endif

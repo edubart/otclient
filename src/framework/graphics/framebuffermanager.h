@@ -20,7 +20,6 @@
  * THE SOFTWARE.
  */
 
-
 #ifndef FRAMEBUFFERMANAGER_H
 #define FRAMEBUFFERMANAGER_H
 
@@ -29,16 +28,15 @@
 class FrameBufferManager
 {
 public:
-    void init();
-    void terminate();
-    void clear();
+	void init();
+	void terminate();
 
-    FrameBufferPtr createFrameBuffer();
-    const FrameBufferPtr& getTemporaryFrameBuffer() { return m_temporaryFramebuffer; }
+	FrameBufferPtr createFrameBuffer(bool useAlphaWriting = false);
+	const FrameBufferPtr& getTemporaryFrameBuffer() { return m_temporaryFramebuffer; }
 
 protected:
-    FrameBufferPtr m_temporaryFramebuffer;
-    std::vector<FrameBufferPtr> m_framebuffers;
+	FrameBufferPtr m_temporaryFramebuffer;
+	std::vector<FrameBufferPtr> m_framebuffers;
 };
 
 extern FrameBufferManager g_framebuffers;

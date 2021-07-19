@@ -37,16 +37,6 @@
 #include <framework/core/filestream.h>
 #include <framework/graphics/graphics.h>
 
-Item::Item() :
-    m_clientId(0),
-    m_serverId(0),
-    m_countOrSubType(1),
-    m_color(Color::alpha),
-    m_phase(0),
-    m_lastPhase(0)
-{
-}
-
 ItemPtr Item::create(int id)
 {
     ItemPtr item(new Item);
@@ -67,7 +57,7 @@ std::string Item::getName()
     return g_things.findItemTypeByClientId(m_clientId)->getName();
 }
 
-void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, int frameFlag, LightView* lightView)
+void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlag, LightView* lightView)
 {
     if(m_clientId == 0 || !canDraw())
         return;
@@ -80,20 +70,12 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highli
     calculatePatterns(xPattern, yPattern, zPattern);
 
     if(m_color != Color::alpha)
-        g_painter->setColor(m_color);
+        color = m_color;
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, false, frameFlag, lightView);
-
-    /// Sanity check
-    /// This is just to ensure that we don't overwrite some color and
-    /// screw up the whole rendering.
-    if(m_color != Color::alpha)
-        g_painter->resetColor();
+    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, TextureType::NONE, color, frameFlag, lightView);
 
     if(highLight.enabled && this == highLight.thing) {
-        g_painter->setColor(highLight.rgbColor);
-        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, true, frameFlag);
-        g_painter->resetColor();
+        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, TextureType::ALL_BLANK, highLight.rgbColor, frameFlag);
     }
 }
 

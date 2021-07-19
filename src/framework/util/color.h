@@ -32,7 +32,7 @@
 class Color
 {
 public:
-    Color() : m_r(1.0f), m_g(1.0f), m_b(1.0f), m_a(1.0f) {}
+    Color() = default;
     Color(const uint32 rgba) { setRGBA(rgba); }
     Color(const uint8 r, const uint8 g, const uint8 b, const uint8 a = 0xFF) : m_r(r / 255.0f), m_g(g / 255.0f), m_b(b / 255.0f), m_a(a / 255.0f) {}
     Color(const int r, const int g, const int b, const int a = 0xFF) : m_r(r / 255.0f), m_g(g / 255.0f), m_b(b / 255.0f), m_a(a / 255.0f) {}
@@ -41,8 +41,8 @@ public:
 
     Color(const uint8 byteColor, const uint8 intensity, const float formule = 0.5f)
     {
-        const float brightness = formule + (intensity / (float)8) * formule;
-        Color colorMap = Color::from8bit(byteColor);
+        const float brightness = formule + (intensity / static_cast<float>(8)) * formule;
+        const Color colorMap = from8bit(byteColor);
         m_a = colorMap.aF();
         m_b = colorMap.bF() * brightness;
         m_g = colorMap.gF() * brightness;
@@ -61,12 +61,12 @@ public:
     float gF() const { return m_g; }
     float rF() const { return m_r; }
 
-    uint32 rgba() const { return uint32(a() | b() << 8 | g() << 16 | r() << 24); }
+    uint32 rgba() const { return static_cast<uint32>(a() | b() << 8 | g() << 16 | r() << 24); }
 
-    void setRed(const int r) { m_r = uint8(r) / 255.0f; }
-    void setGreen(const int g) { m_g = uint8(g) / 255.0f; }
-    void setBlue(const int b) { m_b = uint8(b) / 255.0f; }
-    void setAlpha(const int a) { m_a = uint8(a) / 255.0f; }
+    void setRed(const int r) { m_r = static_cast<uint8>(r) / 255.0f; }
+    void setGreen(const int g) { m_g = static_cast<uint8>(g) / 255.0f; }
+    void setBlue(const int b) { m_b = static_cast<uint8>(b) / 255.0f; }
+    void setAlpha(const int a) { m_a = static_cast<uint8>(a) / 255.0f; }
 
     void setRed(const float r) { m_r = r; }
     void setGreen(const float g) { m_g = g; }
@@ -85,7 +85,7 @@ public:
     Color& operator=(uint32_t rgba) { setRGBA(rgba); return *this; }
     bool operator==(uint32_t rgba) const { return this->rgba() == rgba; }
 
-    Color& operator=(const Color& other) { m_r = other.m_r; m_g = other.m_g; m_b = other.m_b; m_a = other.m_a; return *this; }
+    Color& operator=(const Color& other) = default;
     bool operator==(const Color& other) const { return other.rgba() == rgba(); }
     bool operator!=(const Color& other) const { return other.rgba() != rgba(); }
 
@@ -110,8 +110,8 @@ public:
         if(color >= 216 || color <= 0)
             return Color(0, 0, 0);
 
-        const int r = (static_cast<int>(color / 36) % 6 * 51) * brightness;
-        const int g = (static_cast<int>(color / 6) % 6 * 51) * brightness;
+        const int r = (color / 36 % 6 * 51) * brightness;
+        const int g = (color / 6 % 6 * 51) * brightness;
         const int b = (color % 6 * 51) * brightness;
         return Color(r, g, b);
     }
@@ -137,10 +137,10 @@ public:
     static const Color orange;
 
 private:
-    float m_r;
-    float m_g;
-    float m_b;
-    float m_a;
+    float m_r{ 1.0f };
+    float m_g{ 1.0f };
+    float m_b{ 1.0f };
+    float m_a{ 1.0f };
 };
 
 inline std::ostream& operator<<(std::ostream& out, const Color& color)
@@ -172,7 +172,7 @@ inline std::istream& operator>>(std::istream& in, Color& color)
             else
                 color.setAlpha(255);
         } else
-            in.seekg(-static_cast<std::istream::streampos>(tmp.length()) - 1, ios_base::cur);
+            in.seekg(-static_cast<std::streampos>(tmp.length()) - 1, ios_base::cur);
     } else {
         in.unget();
         in >> tmp;

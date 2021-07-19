@@ -26,10 +26,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/graphics.h>
 
-void UIWidget::initImage()
-{
-    m_imageCoordsBuffer.enableHardwareCaching();
-}
+void UIWidget::initImage() {}
 
 void UIWidget::parseImageStyle(const OTMLNodePtr& styleNode)
 {
@@ -102,9 +99,9 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
                 Point texCoordsOffset;
                 if(textureSize.height() > textureClipSize.height())
-                    texCoordsOffset.y = (textureSize.height() - textureClipSize.height())/2;
+                    texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
                 else if(textureSize.width() > textureClipSize.width())
-                    texCoordsOffset.x = (textureSize.width() - textureClipSize.width())/2;
+                    texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
 
                 Rect textureClipRect(texCoordsOffset, textureClipSize);
 
@@ -118,8 +115,8 @@ void UIWidget::drawImage(const Rect& screenCoords)
         } else {
             int top = m_imageBorder.top;
             int bottom = m_imageBorder.bottom;
-            int left =  m_imageBorder.left;
-            int right  = m_imageBorder.right;
+            int left = m_imageBorder.left;
+            int right = m_imageBorder.right;
 
             // calculates border coords
             const Rect clip = clipRect;
@@ -170,9 +167,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
     // smooth is now enabled by default for all textures
     //m_imageTexture->setSmooth(m_imageSmooth);
-
-    g_painter->setColor(m_imageColor);
-    g_painter->drawTextureCoords(m_imageCoordsBuffer, m_imageTexture);
+    g_drawPool.addTextureCoords(m_imageCoordsBuffer, m_imageTexture, m_imageColor);
 }
 
 void UIWidget::setImageSource(const std::string& source)
@@ -184,7 +179,7 @@ void UIWidget::setImageSource(const std::string& source)
 
     if(m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
         Size size = getSize();
-        Size imageSize = m_imageTexture->getSize();
+        const Size imageSize = m_imageTexture->getSize();
         if(size.width() <= 0 || m_imageAutoResize)
             size.setWidth(imageSize.width());
         if(size.height() <= 0 || m_imageAutoResize)

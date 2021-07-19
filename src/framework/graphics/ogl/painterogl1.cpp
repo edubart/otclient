@@ -62,7 +62,7 @@ void PainterOGL1::unbind()
 
 void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
-    int vertexCount = coordsBuffer.getVertexCount();
+    const int vertexCount = coordsBuffer.getVertexCount();
     if(vertexCount == 0)
         return;
 
@@ -83,47 +83,29 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 
     // use vertex arrays if possible, much faster
     if(g_graphics.canUseDrawArrays()) {
-        // update coords buffer hardware caches if enabled
-        coordsBuffer.updateCaches();
-        bool hardwareCached = coordsBuffer.isHardwareCached();
-
         // only set texture coords arrays when needed
         if(textured) {
-            if(hardwareCached) {
-                coordsBuffer.getHardwareTextureCoordArray()->bind();
-                glTexCoordPointer(2, GL_FLOAT, 0, nullptr);
-            } else
-                glTexCoordPointer(2, GL_FLOAT, 0, coordsBuffer.getTextureCoordArray());
+            glTexCoordPointer(2, GL_FLOAT, 0, coordsBuffer.getTextureCoordArray());
         }
 
         // set vertex array
-        if(hardwareCached) {
-            coordsBuffer.getHardwareVertexArray()->bind();
-            glVertexPointer(2, GL_FLOAT, 0, nullptr);
-        } else
-            glVertexPointer(2, GL_FLOAT, 0, coordsBuffer.getVertexArray());
-
-        if(hardwareCached)
-            HardwareBuffer::unbind(HardwareBuffer::VertexBuffer);
+        glVertexPointer(2, GL_FLOAT, 0, coordsBuffer.getVertexArray());
 
         // draw the element in coords buffers
-        if(drawMode == Triangles)
-            glDrawArrays(GL_TRIANGLES, 0, vertexCount);
-        else if(drawMode == TriangleStrip)
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
+        glDrawArrays(static_cast<GLenum>(drawMode), 0, vertexCount);
     }
 #ifndef OPENGL_ES
     else {
-        int verticesSize = vertexCount * 2;
+        const int verticesSize = vertexCount * 2;
         float* vertices = coordsBuffer.getVertexArray();
         float* texCoords = coordsBuffer.getTextureCoordArray();
 
         // use glBegin/glEnd, this is not available in OpenGL ES
         // and is considered much slower then glDrawArrays,
         // but this code is executed in really old graphics cards
-        if(drawMode == Triangles)
+        if(drawMode == DrawMode::Triangles)
             glBegin(GL_TRIANGLES);
-        else if(drawMode == TriangleStrip)
+        else if(drawMode == DrawMode::TriangleStrip)
             glBegin(GL_TRIANGLE_STRIP);
         for(int i = 0; i < verticesSize; i += 2) {
             if(textured)
@@ -135,21 +117,6 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 #endif
 }
 
-void PainterOGL1::drawFillCoords(CoordsBuffer& coordsBuffer)
-{
-    setTexture(nullptr);
-    drawCoords(coordsBuffer);
-}
-
-void PainterOGL1::drawTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture)
-{
-    if(texture->isEmpty())
-        return;
-
-    setTexture(texture.get());
-    drawCoords(coordsBuffer);
-}
-
 void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
 {
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
@@ -159,31 +126,7 @@ void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addQuad(dest, src);
-    drawCoords(m_coordsBuffer, TriangleStrip);
-}
-
-void PainterOGL1::drawUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-        return;
-
-    setTexture(texture.get());
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addUpsideDownQuad(dest, src);
-    drawCoords(m_coordsBuffer, TriangleStrip);
-}
-
-void PainterOGL1::drawRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-        return;
-
-    setTexture(texture.get());
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRepeatedRects(dest, src);
-    drawCoords(m_coordsBuffer);
+    drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
 }
 
 void PainterOGL1::drawFilledRect(const Rect& dest)
@@ -198,31 +141,7 @@ void PainterOGL1::drawFilledRect(const Rect& dest)
     drawCoords(m_coordsBuffer);
 }
 
-void PainterOGL1::drawFilledTriangle(const Point& a, const Point& b, const Point& c)
-{
-    if(a == b || a == c || b == c)
-        return;
-
-    setTexture(nullptr);
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addTriangle(a, b, c);
-    drawCoords(m_coordsBuffer);
-}
-
-void PainterOGL1::drawBoundingRect(const Rect& dest, int innerLineWidth)
-{
-    if(dest.isEmpty() || innerLineWidth == 0)
-        return;
-
-    setTexture(nullptr);
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addBoudingRect(dest, innerLineWidth);
-    drawCoords(m_coordsBuffer);
-}
-
-void PainterOGL1::setMatrixMode(PainterOGL1::MatrixMode matrixMode)
+void PainterOGL1::setMatrixMode(MatrixMode matrixMode)
 {
     if(m_matrixMode == static_cast<GLenum>(matrixMode))
         return;
@@ -283,10 +202,10 @@ void PainterOGL1::updateGlMatrixMode()
 void PainterOGL1::updateGlTransformMatrix()
 {
     float glTransformMatrix[] = {
-        m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
-        m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
-                          0.0f,                   0.0f,                    1.0f,                   0.0f,
-        m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
+            m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
+            m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
+                                                0.0f,                   0.0f,                    1.0f,                   0.0f,
+            m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
     };
 
     setMatrixMode(MatrixTransform);
@@ -296,10 +215,10 @@ void PainterOGL1::updateGlTransformMatrix()
 void PainterOGL1::updateGlProjectionMatrix()
 {
     float glProjectionMatrix[] = {
-        m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
-        m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
-                           0.0f,                    0.0f,                    1.0f,                    0.0f,
-        m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
+            m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
+            m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
+                                                 0.0f,                    0.0f,                    1.0f,                    0.0f,
+            m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
     };
 
     setMatrixMode(MatrixProjection);
@@ -309,10 +228,10 @@ void PainterOGL1::updateGlProjectionMatrix()
 void PainterOGL1::updateGlTextureMatrix()
 {
     float glTextureMatrix[] = {
-        m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
-        m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
-                        0.0f,                 0.0f,             1.0f,                 0.0f,
-        m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
+            m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
+            m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
+                                            0.0f,                 0.0f,             1.0f,                 0.0f,
+            m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
     };
 
     setMatrixMode(MatrixTexture);

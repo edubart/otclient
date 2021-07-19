@@ -51,7 +51,6 @@ void SoundManager::init()
 
     if(alcMakeContextCurrent(m_context) != ALC_TRUE) {
         g_logger.error(stdext::format("unable to make context current: %s", alcGetString(m_device, alcGetError(m_device))));
-        return;
     }
 }
 
@@ -59,7 +58,7 @@ void SoundManager::terminate()
 {
     ensureContext();
 
-    for(auto &streamFile: m_streamFiles) {
+    for(auto& streamFile : m_streamFiles) {
         auto& future = streamFile.second;
         future.wait();
     }
@@ -87,7 +86,7 @@ void SoundManager::terminate()
 void SoundManager::poll()
 {
     static ticks_t lastUpdate = 0;
-    ticks_t now = g_clock.millis();
+    const ticks_t now = g_clock.millis();
 
     if(now - lastUpdate < POLL_DELAY)
         return;
@@ -123,7 +122,7 @@ void SoundManager::poll()
             ++it;
     }
 
-    for(auto it : m_channels) {
+    for(const auto& it : m_channels) {
         it.second->update();
     }
 
@@ -150,7 +149,7 @@ void SoundManager::preload(std::string filename)
 {
     filename = resolveSoundFile(filename);
 
-    auto it = m_buffers.find(filename);
+    const auto it = m_buffers.find(filename);
     if(it != m_buffers.end())
         return;
 
@@ -161,7 +160,7 @@ void SoundManager::preload(std::string filename)
     if(!soundFile || soundFile->getSize() > MAX_CACHE_SIZE)
         return;
 
-    SoundBufferPtr buffer = SoundBufferPtr(new SoundBuffer);
+    auto buffer = SoundBufferPtr(new SoundBuffer);
     if(buffer->fillBuffer(soundFile))
         m_buffers[filename] = buffer;
 }
@@ -212,7 +211,7 @@ void SoundManager::stopAll()
         source->stop();
     }
 
-    for(auto it : m_channels) {
+    for(const auto& it : m_channels) {
         it.second->stop();
     }
 }
@@ -222,7 +221,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
     SoundSourcePtr source;
 
     try {
-        auto it = m_buffers.find(filename);
+        const auto it = m_buffers.find(filename);
         if(it != m_buffers.end()) {
             source = SoundSourcePtr(new SoundSource);
             source->setBuffer(it->second);
@@ -252,7 +251,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
             streamSource = StreamSoundSourcePtr(new StreamSoundSource);
             streamSource->downMix(StreamSoundSource::DownMixRight);
             streamSource->setRelative(true);
-            streamSource->setPosition(Point(128,0));
+            streamSource->setPosition(Point(128, 0));
             combinedSource->addSource(streamSource);
             m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
                 try {
@@ -265,7 +264,7 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
 
             source = combinedSource;
 #else
-            StreamSoundSourcePtr streamSource(new StreamSoundSource);
+            const StreamSoundSourcePtr streamSource(new StreamSoundSource);
             m_streamFiles[streamSource] = g_asyncDispatcher.schedule([=]() -> SoundFilePtr {
                 try {
                     return SoundFile::loadSoundFile(filename);

@@ -84,8 +84,8 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 break;
             case Proto::GameServerPing:
             case Proto::GameServerPingBack:
-                if (((opcode == Proto::GameServerPing) && (g_game.getFeature(Otc::GameClientPing))) ||
-                    ((opcode == Proto::GameServerPingBack) && !g_game.getFeature(Otc::GameClientPing)))
+                if(((opcode == Proto::GameServerPing) && (g_game.getFeature(Otc::GameClientPing))) ||
+                   ((opcode == Proto::GameServerPingBack) && !g_game.getFeature(Otc::GameClientPing)))
                     parsePingBack(msg);
                 else
                     parsePing(msg);
@@ -1176,7 +1176,6 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     }
 
     creature->setLight(light);
-    g_map.schedulePainting(creature->getPosition(), Otc::FUpdateLight);
 }
 
 void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
@@ -1469,7 +1468,6 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 
     g_game.processAttackCancel(seq);
 }
-
 
 void ProtocolGame::parsePlayerModes(const InputMessagePtr& msg)
 {
@@ -2336,7 +2334,6 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
             if(creature)
                 creature->setPassable(!unpass);
         }
-
     } else {
         stdext::throw_exception("invalid creature opcode");
     }
