@@ -79,7 +79,7 @@ PainterShaderProgramPtr ShaderManager::createFragmentShader(const std::string& n
         return nullptr;
     }
 
-    m_shaders[name] = shader;
+    registerShader(name, shader);
     return shader;
 }
 
@@ -133,7 +133,13 @@ void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)
         return;
     shader->bindUniformLocation(MAP_CENTER_COORD, "u_MapCenterCoord");
     shader->bindUniformLocation(MAP_GLOBAL_COORD, "u_MapGlobalCoord");
+    shader->bindUniformLocation(MAP_WALKOFFSET, "u_WalkOffset");
     shader->bindUniformLocation(MAP_ZOOM, "u_MapZoom");
+}
+
+void ShaderManager::registerShader(const std::string& name, const PainterShaderProgramPtr& shader)
+{
+    m_shaders[name] = shader;
 }
 
 PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)

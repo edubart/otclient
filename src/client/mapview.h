@@ -272,6 +272,8 @@ private:
     TilePtr m_lastHighlightTile;
     TexturePtr m_crosshairTexture;
     EffectPtr m_crosshairEffect;
+
+    std::array<PointF, Otc::InvalidDirection> m_walkDirs;
 };
 
 #endif

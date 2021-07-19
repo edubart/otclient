@@ -75,13 +75,21 @@ MapView::MapView()
         if(m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
             fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
-        if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders() && m_viewMode == MapView::NEAR_VIEW) {
+        if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders()) {
+            Rect framebufferRect = Rect(0, 0, m_drawDimension * m_tileSize);
             const Point center = m_rectCache.srcRect.center();
             const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
             m_shader->bind();
-            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
-            m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
+            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / (float)m_rectDimension.width(), 1.0f - center.y / (float)m_rectDimension.height());
+            m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / (float)m_rectDimension.height(), globalCoord.y / (float)m_rectDimension.height());
             m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
+
+            Point last = transformPositionTo2D(cameraPosition, m_shader->getPosition());
+            //Reverse vertical axis.
+            last.y = -last.y;
+
+            m_shader->setUniformValue(ShaderManager::MAP_WALKOFFSET, last.x / (float)m_rectDimension.width(), last.y / (float)m_rectDimension.height());
+
             g_painter->setShaderProgram(m_shader);
         }
 
@@ -98,6 +106,15 @@ MapView::MapView()
     m_lastFloorShadowingColor = Color::white;
 
     setVisibleDimension(Size(15, 11));
+
+    m_walkDirs[Otc::North] = PointF(0, 1);
+    m_walkDirs[Otc::East] = PointF(1, 0);
+    m_walkDirs[Otc::South] = PointF(0, -1);
+    m_walkDirs[Otc::West] = PointF(1, 0);
+    m_walkDirs[Otc::NorthEast] = PointF(1, 1);
+    m_walkDirs[Otc::SouthEast] = PointF(1, -1);
+    m_walkDirs[Otc::SouthWest] = PointF(-1, -1);
+    m_walkDirs[Otc::NorthWest] = PointF(-1, 1);
 }
 
 MapView::~MapView()
@@ -778,7 +795,7 @@ Position MapView::getCameraPosition()
 
 void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout)
 {
-    if((m_shader == shader && m_shaderSwitchDone) || (m_nextShader == shader && !m_shaderSwitchDone))
+    if((m_shader == shader))
         return;
 
     if(fadeout > 0.0f && m_shader) {
@@ -792,6 +809,8 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
     m_fadeTimer.restart();
     m_fadeInTime = fadein;
     m_fadeOutTime = fadeout;
+
+    if(shader) shader->setPosition(getCameraPosition());
 }
 
 void MapView::setDrawLights(bool enable)

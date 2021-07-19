@@ -318,6 +318,8 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_shaders", "getDefaultItemShader", &ShaderManager::getDefaultItemShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getDefaultMapShader", &ShaderManager::getDefaultMapShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getShader", &ShaderManager::getShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "setupMapShader", &ShaderManager::setupMapShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "registerShader", &ShaderManager::registerShader, &g_shaders);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
     g_lua.bindGlobalFunction("getAngleFromPos", Position::getAngleFromPositions);

@@ -16,6 +16,7 @@
 - Anti-Aliasing Option
 - Floating Effects Option
 - Adjusted Path Finding
+- Shader System Fix (CTRL + Y) by [@FreshyPeshy](https://github.com/FreshyPeshy)
 - Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
 - Optimized Terminal
 - Refactored Walk System

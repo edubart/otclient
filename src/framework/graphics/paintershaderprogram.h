@@ -26,6 +26,7 @@
 #include "shaderprogram.h"
 #include "coordsbuffer.h"
 #include <framework/core/timer.h>
+#include <client/position.h>
 
 class PainterShaderProgram : public ShaderProgram
 {
@@ -55,6 +56,9 @@ public:
 
     bool link();
 
+    void setPosition(const Position& position) { m_startPos = position; };
+    Position getPosition() { return m_startPos; };
+
     void setTransformMatrix(const Matrix3& transformMatrix);
     void setProjectionMatrix(const Matrix3& projectionMatrix);
     void setTextureMatrix(const Matrix3& textureMatrix);
@@ -77,6 +81,8 @@ private:
     Size m_resolution;
     float m_time;
     std::vector<TexturePtr> m_multiTextures;
+
+    Position m_startPos;
 };
 
 #endif
