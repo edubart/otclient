@@ -1,5 +1,4 @@
 -- @docconsts @{
-
 FloorHigher = 0
 FloorLower = 15
 
@@ -35,30 +34,30 @@ VipIconFirst = 0
 VipIconLast = 10
 
 Directions = {
-  North = 0,
-  East = 1,
-  South = 2,
-  West = 3,
-  NorthEast = 4,
-  SouthEast = 5,
-  SouthWest = 6,
-  NorthWest = 7
+    North = 0,
+    East = 1,
+    South = 2,
+    West = 3,
+    NorthEast = 4,
+    SouthEast = 5,
+    SouthWest = 6,
+    NorthWest = 7
 }
 
 Skill = {
-  Fist = 0,
-  Club = 1,
-  Sword = 2,
-  Axe = 3,
-  Distance = 4,
-  Shielding = 5,
-  Fishing = 6,
-  CriticalChance = 7,
-  CriticalDamage = 8,
-  LifeLeechChance = 9,
-  LifeLeechAmount = 10,
-  ManaLeechChance = 11,
-  ManaLeechAmount = 12
+    Fist = 0,
+    Club = 1,
+    Sword = 2,
+    Axe = 3,
+    Distance = 4,
+    Shielding = 5,
+    Fishing = 6,
+    CriticalChance = 7,
+    CriticalDamage = 8,
+    LifeLeechChance = 9,
+    LifeLeechAmount = 10,
+    ManaLeechChance = 11,
+    ManaLeechAmount = 12
 }
 
 North = Directions.North
@@ -155,196 +154,156 @@ GameIngameStoreServiceType = 75
 GameAdditionalSkills = 76
 
 TextColors = {
-  red       = '#f55e5e', --'#c83200'
-  orange    = '#f36500', --'#c87832'
-  yellow    = '#ffff00', --'#e6c832'
-  green     = '#00EB00', --'#3fbe32'
-  lightblue = '#5ff7f7',
-  blue      = '#9f9dfd',
-  --blue1     = '#6e50dc',
-  --blue2     = '#3264c8',
-  --blue3     = '#0096c8',
-  white     = '#ffffff', --'#bebebe'
+    red = '#f55e5e', -- '#c83200'
+    orange = '#f36500', -- '#c87832'
+    yellow = '#ffff00', -- '#e6c832'
+    green = '#00EB00', -- '#3fbe32'
+    lightblue = '#5ff7f7',
+    blue = '#9f9dfd',
+    -- blue1     = '#6e50dc',
+    -- blue2     = '#3264c8',
+    -- blue3     = '#0096c8',
+    white = '#ffffff' -- '#bebebe'
 }
 
 MessageModes = {
-  None                    = 0,
-  Say                     = 1,
-  Whisper                 = 2,
-  Yell                    = 3,
-  PrivateFrom             = 4,
-  PrivateTo               = 5,
-  ChannelManagement       = 6,
-  Channel                 = 7,
-  ChannelHighlight        = 8,
-  Spell                   = 9,
-  NpcFrom                 = 10,
-  NpcTo                   = 11,
-  GamemasterBroadcast     = 12,
-  GamemasterChannel       = 13,
-  GamemasterPrivateFrom   = 14,
-  GamemasterPrivateTo     = 15,
-  Login                   = 16,
-  Warning                 = 17,
-  Game                    = 18,
-  Failure                 = 19,
-  Look                    = 20,
-  DamageDealed            = 21,
-  DamageReceived          = 22,
-  Heal                    = 23,
-  Exp                     = 24,
-  DamageOthers            = 25,
-  HealOthers              = 26,
-  ExpOthers               = 27,
-  Status                  = 28,
-  Loot                    = 29,
-  TradeNpc                = 30,
-  Guild                   = 31,
-  PartyManagement         = 32,
-  Party                   = 33,
-  BarkLow                 = 34,
-  BarkLoud                = 35,
-  Report                  = 36,
-  HotkeyUse               = 37,
-  TutorialHint            = 38,
-  Thankyou                = 39,
-  Market                  = 40,
-  Mana                    = 41,
-  BeyondLast              = 42,
-  MonsterYell             = 43,
-  MonsterSay              = 44,
-  Red                     = 45,
-  Blue                    = 46,
-  RVRChannel              = 47,
-  RVRAnswer               = 48,
-  RVRContinue             = 49,
-  GameHighlight           = 50,
-  NpcFromStartBlock       = 51,
-  Last                    = 52,
-  Invalid                 = 255,
+    None = 0,
+    Say = 1,
+    Whisper = 2,
+    Yell = 3,
+    PrivateFrom = 4,
+    PrivateTo = 5,
+    ChannelManagement = 6,
+    Channel = 7,
+    ChannelHighlight = 8,
+    Spell = 9,
+    NpcFrom = 10,
+    NpcTo = 11,
+    GamemasterBroadcast = 12,
+    GamemasterChannel = 13,
+    GamemasterPrivateFrom = 14,
+    GamemasterPrivateTo = 15,
+    Login = 16,
+    Warning = 17,
+    Game = 18,
+    Failure = 19,
+    Look = 20,
+    DamageDealed = 21,
+    DamageReceived = 22,
+    Heal = 23,
+    Exp = 24,
+    DamageOthers = 25,
+    HealOthers = 26,
+    ExpOthers = 27,
+    Status = 28,
+    Loot = 29,
+    TradeNpc = 30,
+    Guild = 31,
+    PartyManagement = 32,
+    Party = 33,
+    BarkLow = 34,
+    BarkLoud = 35,
+    Report = 36,
+    HotkeyUse = 37,
+    TutorialHint = 38,
+    Thankyou = 39,
+    Market = 40,
+    Mana = 41,
+    BeyondLast = 42,
+    MonsterYell = 43,
+    MonsterSay = 44,
+    Red = 45,
+    Blue = 46,
+    RVRChannel = 47,
+    RVRAnswer = 48,
+    RVRContinue = 49,
+    GameHighlight = 50,
+    NpcFromStartBlock = 51,
+    Last = 52,
+    Invalid = 255
 }
 
-OTSERV_RSA  = "1091201329673994292788609605089955415282375029027981291234687579" ..
-              "3726629149257644633073969600111060390723088861007265581882535850" ..
-              "3429057592827629436413108566029093628212635953836686562675849720" ..
-              "6207862794310902180176810615217550567108238764764442605581471797" ..
-              "07119674283982419152118103759076030616683978566631413"
+OTSERV_RSA =
+    "1091201329673994292788609605089955415282375029027981291234687579" ..
+        "3726629149257644633073969600111060390723088861007265581882535850" ..
+        "3429057592827629436413108566029093628212635953836686562675849720" ..
+        "6207862794310902180176810615217550567108238764764442605581471797" ..
+        "07119674283982419152118103759076030616683978566631413"
 
-CIPSOFT_RSA = "1321277432058722840622950990822933849527763264961655079678763618" ..
-              "4334395343554449668205332383339435179772895415509701210392836078" ..
-              "6959821132214473291575712138800495033169914814069637740318278150" ..
-              "2907336840325241747827401343576296990629870233111328210165697754" ..
-              "88792221429527047321331896351555606801473202394175817"
+CIPSOFT_RSA =
+    "1321277432058722840622950990822933849527763264961655079678763618" ..
+        "4334395343554449668205332383339435179772895415509701210392836078" ..
+        "6959821132214473291575712138800495033169914814069637740318278150" ..
+        "2907336840325241747827401343576296990629870233111328210165697754" ..
+        "88792221429527047321331896351555606801473202394175817"
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
 PIC_SIGNATURE = 0x56C5DDE7
 
 OsTypes = {
-  Linux = 1,
-  Windows = 2,
-  Flash = 3,
-  OtclientLinux = 10,
-  OtclientWindows = 11,
-  OtclientMac = 12,
+    Linux = 1,
+    Windows = 2,
+    Flash = 3,
+    OtclientLinux = 10,
+    OtclientWindows = 11,
+    OtclientMac = 12
 }
 
-PathFindResults = {
-  Ok = 0,
-  Position = 1,
-  Impossible = 2,
-  TooFar = 3,
-  NoWay = 4,
-}
+PathFindResults = {Ok = 0, Position = 1, Impossible = 2, TooFar = 3, NoWay = 4}
 
 PathFindFlags = {
-  AllowNullTiles = 1,
-  AllowCreatures = 2,
-  AllowNonPathable = 4,
-  AllowNonWalkable = 8,
+    AllowNullTiles = 1,
+    AllowCreatures = 2,
+    AllowNonPathable = 4,
+    AllowNonWalkable = 8
 }
 
-VipState = {
-  Offline = 0,
-  Online = 1,
-  Pending = 2,
-}
+VipState = {Offline = 0, Online = 1, Pending = 2}
 
 ExtendedIds = {
-  Activate = 0,
-  Locale = 1,
-  Ping = 2,
-  Sound = 3,
-  Game = 4,
-  Particles = 5,
-  MapShader = 6,
-  NeedsUpdate = 7
+    Activate = 0,
+    Locale = 1,
+    Ping = 2,
+    Sound = 3,
+    Game = 4,
+    Particles = 5,
+    MapShader = 6,
+    NeedsUpdate = 7
 }
 
-PreviewState = {
-  Default = 0,
-  Inactive = 1,
-  Active = 2
-}
+PreviewState = {Default = 0, Inactive = 1, Active = 2}
 
 Blessings = {
-  None = 0,
-  Adventurer = 1,
-  SpiritualShielding = 2,
-  EmbraceOfTibia = 4,
-  FireOfSuns = 8,
-  WisdomOfSolitude = 16,
-  SparkOfPhoenix = 32
+    None = 0,
+    Adventurer = 1,
+    SpiritualShielding = 2,
+    EmbraceOfTibia = 4,
+    FireOfSuns = 8,
+    WisdomOfSolitude = 16,
+    SparkOfPhoenix = 32
 }
 
-DeathType = {
-  Regular = 0,
-  Blessed = 1
-}
+DeathType = {Regular = 0, Blessed = 1}
 
-ProductType = {
-  Other = 0,
-  NameChange = 1
-}
+ProductType = {Other = 0, NameChange = 1}
 
 StoreErrorType = {
-  NoError = -1,
-  PurchaseError = 0,
-  NetworkError = 1,
-  HistoryError = 2,
-  TransferError = 3,
-  Information = 4
+    NoError = -1,
+    PurchaseError = 0,
+    NetworkError = 1,
+    HistoryError = 2,
+    TransferError = 3,
+    Information = 4
 }
 
-StoreState = {
-  None = 0,
-  New = 1,
-  Sale = 2,
-  Timed = 3
-}
+StoreState = {None = 0, New = 1, Sale = 2, Timed = 3}
 
-AccountStatus = {
-  Ok = 0,
-  Frozen = 1,
-  Suspended = 2,
-}
+AccountStatus = {Ok = 0, Frozen = 1, Suspended = 2}
 
-SubscriptionStatus = {
-  Free = 0,
-  Premium = 1,
-}
+SubscriptionStatus = {Free = 0, Premium = 1}
 
-ChannelEvent = {
-  Join = 0,
-  Leave = 1,
-  Invite = 2,
-  Exclude = 3,
-}
+ChannelEvent = {Join = 0, Leave = 1, Invite = 2, Exclude = 3}
 
-ShadowFloor = {
-  Disabled = 0,
-  Bottom = 1,
-  Upside = 2,
-  Both = 3
-}
+ShadowFloor = {Disabled = 0, Bottom = 1, Upside = 2, Both = 3}
 
 -- @}

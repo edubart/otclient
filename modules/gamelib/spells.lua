@@ -434,8 +434,8 @@ function Spells.getGroupIds(spell)
 end
 
 function Spells.getImageClip(id, profile)
-  return (((id-1)%12)*SpelllistSettings[profile].iconSize.width) .. ' ' 
-    .. ((math.ceil(id/12)-1)*SpelllistSettings[profile].iconSize.height) .. ' ' 
-    .. SpelllistSettings[profile].iconSize.width .. ' ' 
+  return (((id-1)%12)*SpelllistSettings[profile].iconSize.width) .. ' '
+    .. ((math.ceil(id/12)-1)*SpelllistSettings[profile].iconSize.height) .. ' '
+    .. SpelllistSettings[profile].iconSize.width .. ' '
     .. SpelllistSettings[profile].iconSize.height
 end
