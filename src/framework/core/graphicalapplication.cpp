@@ -132,42 +132,43 @@ void GraphicalApplication::run()
         // poll all events before rendering
         poll();
 
-        if(g_window.isVisible()) {
-            // the screen consists of two panes
-            // background pane - high updated and animated pane (where the game are stuff happens)
-            // foreground pane - steady pane with few animated stuff (UI)
-            if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
-                m_backgroundFrameCounter.processNextFrame();
-
-                if(m_mustRepaint && foregroundCanUpdate()) {
-                    g_drawPool.use(m_foregroundFramed);
-                    g_ui.render(Fw::ForegroundPane);
-                    m_refreshTime.restart();
-                }
-
-                g_ui.render(Fw::BackgroundPane);
-
-                // Draw All Pools
-                g_drawPool.draw();
-
-                // update screen pixels
-                g_window.swapBuffers();
-            }
-
-            // only update the current time once per frame to gain performance
-            g_clock.update();
-
-            if(m_backgroundFrameCounter.update())
-                g_lua.callGlobalField("g_app", "onFps", m_backgroundFrameCounter.getLastFps());
-
-            const int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();
-            if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP)
-                stdext::microsleep(sleepMicros);
-        } else {
+        if(!g_window.isVisible()) {
             // sleeps until next poll to avoid massive cpu usage
             stdext::millisleep(POLL_CYCLE_DELAY + 1);
             g_clock.update();
+            return;
         }
+
+        // the screen consists of two panes
+        // background pane - high updated and animated pane (where the game are stuff happens)
+        // foreground pane - steady pane with few animated stuff (UI)
+        if(m_backgroundFrameCounter.shouldProcessNextFrame()) {
+            m_backgroundFrameCounter.processNextFrame();
+
+            if(m_mustRepaint && foregroundCanUpdate()) {
+                g_drawPool.use(m_foregroundFramed);
+                g_ui.render(Fw::ForegroundPane);
+                m_refreshTime.restart();
+            }
+
+            g_ui.render(Fw::BackgroundPane);
+
+            // Draw All Pools
+            g_drawPool.draw();
+
+            // update screen pixels
+            g_window.swapBuffers();
+        }
+
+        // only update the current time once per frame to gain performance
+        g_clock.update();
+
+        if(m_backgroundFrameCounter.update())
+            g_lua.callGlobalField("g_app", "onFps", m_backgroundFrameCounter.getLastFps());
+
+        const int sleepMicros = m_backgroundFrameCounter.getMaximumSleepMicros();
+        if(sleepMicros >= AdaptativeFrameCounter::MINIMUM_MICROS_SLEEP)
+            stdext::microsleep(sleepMicros);
     }
 
     m_stopping = false;
