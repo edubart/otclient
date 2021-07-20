@@ -23,6 +23,7 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+#include <framework/core/inputevent.h>
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/texturemanager.h>
@@ -143,13 +144,16 @@ public:
 
     bool isInRange(const Position& pos, const bool ignoreZ = false);
 
+    TilePtr getTopTile(Position tilePos);
+
     void setCrosshairTexture(const std::string& texturePath);
 
     void onPositionChange(const Position& newPos, const Position& oldPos);
     void onMouseMove(const Position& mousePos, const bool isVirtualMove = false);
+    void onKeyRelease(const InputEvent& inputEvent);
 
-    void setLastMousePosition(const Position& mousePos) { m_lastMousePosition = mousePos; }
-    const Position& getLastMousePosition() { return m_lastMousePosition; }
+    void setLastMousePosition(const Position& mousePos) { m_mousePosition = mousePos; }
+    const Position& getLastMousePosition() { return m_mousePosition; }
 
     void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
 
@@ -228,7 +232,7 @@ private:
 
     Position m_customCameraPosition,
         m_lastCameraPosition,
-        m_lastMousePosition;
+        m_mousePosition;
 
     std::array<AwareRange, Otc::InvalidDirection + 1> m_viewPortDirection;
     AwareRange m_viewport;
@@ -250,6 +254,8 @@ private:
         m_autoViewMode,
         m_drawViewportEdge,
         m_drawHighlightTarget;
+
+    bool m_shiftPressed{ false };
 
     std::vector<CreaturePtr> m_visibleCreatures;
 

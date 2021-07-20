@@ -25,3 +25,7 @@
 
 // Define 1 to force use the tibia 9+ formula, for some reason the servers below 9 are using the 9+ formula
 #define FORCE_USE_FORMULA_WALK_900_PLUS 1
+
+// Highlight
+#define HIGHTLIGHT_FADE_START 60
+#define HIGHTLIGHT_FADE_END 120

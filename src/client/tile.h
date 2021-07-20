@@ -140,7 +140,7 @@ public:
     uint32 getHouseId() { return m_houseId; }
     bool isHouseTile() { return m_houseId != 0 && (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
-    void select();
+    void select(const bool noFilter = false);
     void unselect();
     bool isSelected() { return m_highlight.enabled; }
 
@@ -187,7 +187,7 @@ private:
 
     bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void checkForDetachableThing();
+    bool checkForDetachableThing();
     void checkTranslucentLight();
 
     Color m_shadowColor;
@@ -211,6 +211,8 @@ private:
     stdext::boolean<false> m_covered,
         m_completelyCovered,
         m_isBorder;
+
+    bool m_highlightWithoutFilter{ false };
 };
 
 #endif

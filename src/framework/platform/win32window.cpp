@@ -22,6 +22,7 @@
 
 #ifdef WIN32
 
+#include <client/map.h>
 #include "win32window.h"
 #include <framework/graphics/image.h>
 #include <framework/core/application.h>
@@ -580,6 +581,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     if(IsKeyDown(VK_MENU))
         m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
 
+    bool notificateMapKeyEvent = false;
     switch(uMsg)
     {
     case WM_SETCURSOR:
@@ -619,16 +621,19 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     case WM_KEYDOWN:
     {
+        notificateMapKeyEvent = true;
         processKeyDown(retranslateVirtualKey(wParam, lParam));
         break;
     }
     case WM_KEYUP:
     {
+        notificateMapKeyEvent = true;
         processKeyUp(retranslateVirtualKey(wParam, lParam));
         break;
     }
     case WM_SYSKEYUP:
     {
+        notificateMapKeyEvent = true;
         processKeyUp(retranslateVirtualKey(wParam, lParam));
         break;
     }
@@ -637,6 +642,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         if(wParam == VK_F4 && m_inputEvent.keyboardModifiers & Fw::KeyboardAltModifier)
             return DefWindowProc(hWnd, uMsg, wParam, lParam);
 
+        notificateMapKeyEvent = true;
         processKeyDown(retranslateVirtualKey(wParam, lParam));
         break;
     }
@@ -652,7 +658,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     case WM_LBUTTONUP:
     {
-        SetCapture(NULL);
+        SetCapture(nullptr);
         m_inputEvent.reset(Fw::MouseReleaseInputEvent);
         m_inputEvent.mouseButton = Fw::MouseLeftButton;
         m_mouseButtonStates[Fw::MouseLeftButton] = false;
@@ -672,7 +678,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     case WM_MBUTTONUP:
     {
-        SetCapture(NULL);
+        SetCapture(nullptr);
         m_inputEvent.reset(Fw::MouseReleaseInputEvent);
         m_inputEvent.mouseButton = Fw::MouseMidButton;
         m_mouseButtonStates[Fw::MouseMidButton] = false;
@@ -692,7 +698,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     case WM_RBUTTONUP:
     {
-        SetCapture(NULL);
+        SetCapture(nullptr);
         m_inputEvent.reset(Fw::MouseReleaseInputEvent);
         m_inputEvent.mouseButton = Fw::MouseRightButton;
         m_mouseButtonStates[Fw::MouseRightButton] = false;
@@ -738,8 +744,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     case WM_GETMINMAXINFO:
     {
-        LPMINMAXINFO pMMI = (LPMINMAXINFO)lParam;
-        Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
+        const auto pMMI = (LPMINMAXINFO)lParam;
+        const Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
         pMMI->ptMinTrackSize.x = adjustedRect.width();
         pMMI->ptMinTrackSize.y = adjustedRect.height();
         break;
@@ -766,7 +772,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         if(m_visible && m_deviceContext)
             internalRestoreGLContext();
 
-        Size size = Size(LOWORD(lParam), HIWORD(lParam));
+        auto size = Size(LOWORD(lParam), HIWORD(lParam));
         size.setWidth(std::max<int32>(std::min<int32>(size.width(), 7680), 32));
         size.setHeight(std::max<int32>(std::min<int32>(size.height(), 4320), 32));
 
@@ -779,6 +785,10 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     }
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
+
+    if(m_inputEvent.keyboardModifiers || notificateMapKeyEvent) {
+        g_map.notificateKeyRelease(m_inputEvent);
     }
 
     return 0;

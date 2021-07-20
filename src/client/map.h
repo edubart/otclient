@@ -138,6 +138,7 @@ public:
     void removeMapView(const MapViewPtr& mapView);
     void notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
     void notificateCameraMove(const Point& offset);
+    void notificateKeyRelease(const InputEvent& inputEvent);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);

@@ -213,8 +213,8 @@ void MapView::drawFloor()
             onFloorDrawingEnd(z);
         }
 
-        if(m_crosshairTexture && m_lastMousePosition.isValid()) {
-            const Point& point = transformPositionTo2D(m_lastMousePosition, cameraPosition);
+        if(m_crosshairTexture && m_mousePosition.isValid()) {
+            const Point& point = transformPositionTo2D(m_mousePosition, cameraPosition);
             const auto crosshairRect = Rect(point, m_tileSize, m_tileSize);
             g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
         }
@@ -287,14 +287,14 @@ void MapView::updateVisibleTilesCache()
     m_mustUpdateVisibleTilesCache = false;
 
     if(m_lastCameraPosition != cameraPosition) {
-        if(m_lastMousePosition.isValid()) {
+        if(m_mousePosition.isValid()) {
             if(cameraPosition.z == m_lastCameraPosition.z) {
-                m_lastMousePosition = m_lastMousePosition.translatedToDirection(m_lastCameraPosition.getDirectionFromPosition(cameraPosition));
+                m_mousePosition = m_mousePosition.translatedToDirection(m_lastCameraPosition.getDirectionFromPosition(cameraPosition));
             } else {
-                m_lastMousePosition.z += cameraPosition.z - m_lastCameraPosition.z;
+                m_mousePosition.z += cameraPosition.z - m_lastCameraPosition.z;
             }
 
-            onMouseMove(m_lastMousePosition, true);
+            onMouseMove(m_mousePosition, true);
         }
 
         onPositionChange(cameraPosition, m_lastCameraPosition);
@@ -537,9 +537,18 @@ void MapView::onMouseMove(const Position& mousePos, const bool /*isVirtualMove*/
         }
 
         if(m_drawHighlightTarget) {
-            if(m_lastHighlightTile = g_map.getTile(mousePos))
-                m_lastHighlightTile->select();
+            if(m_lastHighlightTile = m_shiftPressed ? getTopTile(mousePos) : g_map.getTile(mousePos))
+                m_lastHighlightTile->select(m_shiftPressed);
         }
+    }
+}
+
+void MapView::onKeyRelease(const InputEvent& inputEvent)
+{
+    const bool shiftPressed = inputEvent.keyboardModifiers == Fw::KeyboardShiftModifier;
+    if(shiftPressed != m_shiftPressed) {
+        m_shiftPressed = shiftPressed;
+        onMouseMove(m_mousePosition);
     }
 }
 
@@ -783,6 +792,24 @@ uint8 MapView::calcLastVisibleFloor()
     // just ensure the that the floor is in the valid range
     z = stdext::clamp<int>(z, 0, static_cast<int>(Otc::MAX_Z));
     return z;
+}
+
+TilePtr MapView::getTopTile(Position tilePos)
+{
+    // we must check every floor, from top to bottom to check for a clickable tile
+    TilePtr tile;
+    tilePos.coveredUp(tilePos.z - m_floorMin);
+    for(uint8 i = m_floorMin; i <= m_floorMax; ++i) {
+        tile = g_map.getTile(tilePos);
+        if(tile && tile->isClickable())
+            break;
+        tilePos.coveredDown();
+    }
+
+    if(!tile || !tile->isClickable())
+        return nullptr;
+
+    return tile;
 }
 
 Position MapView::getCameraPosition()

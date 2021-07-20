@@ -80,16 +80,6 @@ void Tile::drawStart(const MapViewPtr&)
     if(m_completelyCovered) return;
 
     m_drawElevation = 0;
-
-    if(m_highlight.update) {
-        m_highlight.fadeLevel += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
-        m_highlight.update = false;
-        m_highlight.rgbColor = Color(255, 255, 0, m_highlight.fadeLevel);
-
-        if(m_highlight.invertedColorSelection ? m_highlight.fadeLevel > 120 : m_highlight.fadeLevel < 0) {
-            m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
-        }
-    }
 }
 
 void Tile::drawEnd(const MapViewPtr& /*mapView*/) {}
@@ -328,7 +318,9 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
     if(thing->isGround()) m_ground = thing->static_self_cast<Item>();
 
     analyzeThing(thing, true);
-    checkForDetachableThing();
+    if(checkForDetachableThing() && m_highlight.enabled) {
+        select();
+    }
 
     if(m_things.size() > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
@@ -739,66 +731,57 @@ void Tile::checkTranslucentLight()
     tile->m_flags &= ~TILESTATE_TRANSLUECENT_LIGHT;
 }
 
-void Tile::checkForDetachableThing()
+bool Tile::checkForDetachableThing()
 {
-    m_highlight.thing = nullptr;
+    if(m_highlight.thing = getTopCreature())
+        return true;
+
+    if(m_highlightWithoutFilter) {
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const auto& item = *it;
+            if(!item->canDraw()) continue;
+
+            m_highlight.thing = item;
+            return true;
+        }
+
+        return false;
+    }
 
     if(m_countFlag.hasCommonItem) {
         for(const auto& item : m_things) {
-            if(!item->isCommon() || !item->canDraw()) continue;
-
-            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || !item->isNotMoveable() || item->isContainer()) {
-                m_highlight.thing = item;
-                return;
+            if((!item->isCommon() || !item->canDraw() || item->isIgnoreLook() || item->isCloth()) && (!item->isUsable()) && (!item->hasLight())) {
+                continue;
             }
+
+            m_highlight.thing = item;
+            return true;
         }
     }
 
     if(m_countFlag.hasBottomItem) {
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const auto& item = *it;
-            if(!item->isOnBottom() || !item->canDraw()) continue;
-
-            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer()) {
-                m_highlight.thing = item;
-                return;
-            }
+            if(!item->isOnBottom() || !item->canDraw() || item->isIgnoreLook() || item->isFluidContainer()) continue;
+            m_highlight.thing = item;
+            return true;
         }
-    }
-
-    if(m_countFlag.hasGroundBorder) {
-        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            const auto& item = *it;
-            if(!item->isGroundBorder() || !item->canDraw()) continue;
-
-            if(item->hasAction() || item->hasLensHelp() || item->isUsable() || item->isForceUse() || item->isContainer() || item->isTranslucent()) {
-                m_highlight.thing = item;
-                return;
-            }
-        }
-    }
-
-    if(m_ground && (m_ground->hasAction() || m_ground->hasLensHelp() || m_ground->isUsable() || m_ground->isForceUse() || m_ground->isContainer() || m_ground->isTranslucent())) {
-        m_highlight.thing = m_ground;
-        return;
     }
 
     if(m_countFlag.hasTopItem) {
         for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
             const auto& item = *it;
             if(!item->isOnTop()) break;
-            if(!item->canDraw()) continue;
+            if(!item->canDraw() || item->isIgnoreLook()) continue;
 
             if(item->hasLensHelp()) {
                 m_highlight.thing = item;
-                return;
+                return true;
             }
         }
     }
 
-    m_highlight.thing = getTopCreature();
-
-    if(!m_highlight.thing) unselect();
+    return false;
 }
 
 void Tile::analyzeThing(const ThingPtr& thing, bool add)
@@ -877,26 +860,36 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.hasNoWalkableEdge += value;
 }
 
-void Tile::select()
+void Tile::select(const bool noFilter)
 {
+    m_highlight.enabled = true;
+
+    if(noFilter != m_highlightWithoutFilter) {
+        m_highlightWithoutFilter = noFilter;
+        checkForDetachableThing();
+    }
+
     if(!m_highlight.thing) return;
 
-    m_highlight.enabled = true;
     m_highlight.invertedColorSelection = false;
-    m_highlight.fadeLevel = 0;
-
+    m_highlight.fadeLevel = HIGHTLIGHT_FADE_START;
     m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
-        m_highlight.update = true;
-    }, 30);
+        m_highlight.fadeLevel += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
+        m_highlight.rgbColor = Color(static_cast<uint8>(255), static_cast<uint8>(255), static_cast<uint8>(0), static_cast<uint8>(m_highlight.fadeLevel));
+
+        if(m_highlight.invertedColorSelection ? m_highlight.fadeLevel > HIGHTLIGHT_FADE_END : m_highlight.fadeLevel < HIGHTLIGHT_FADE_START) {
+            m_highlight.invertedColorSelection = !m_highlight.invertedColorSelection;
+        }
+    }, 40);
 }
 
 void Tile::unselect()
 {
-    if(!m_highlight.listeningEvent) return;
-
     m_highlight.enabled = false;
-    m_highlight.listeningEvent->cancel();
-    m_highlight.listeningEvent = nullptr;
+    if(m_highlight.listeningEvent) {
+        m_highlight.listeningEvent->cancel();
+        m_highlight.listeningEvent = nullptr;
+    }
 }
 
 bool Tile::canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView)

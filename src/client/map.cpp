@@ -69,6 +69,13 @@ void Map::resetAwareRange()
     setAwareRange(range);
 }
 
+void Map::notificateKeyRelease(const InputEvent& inputEvent)
+{
+    for(const MapViewPtr& mapView : m_mapViews) {
+        mapView->onKeyRelease(inputEvent);
+    }
+}
+
 void Map::notificateCameraMove(const Point& offset)
 {
     for(const MapViewPtr& mapView : m_mapViews) {

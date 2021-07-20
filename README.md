@@ -10,7 +10,7 @@
 - New Light System
 - Render Scale System (FAKE ONE)
 - Idle Animation Support
-- Highlight Mouse Target
+- Highlight Mouse Target (press shift to select any object)
 - Crosshair
 - Floor Shadowing
 - Anti-Aliasing Option
