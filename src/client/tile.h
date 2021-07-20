@@ -208,6 +208,8 @@ private:
         m_isBorder;
 
     bool m_highlightWithoutFilter{ false };
+
+    std::array<byte, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
 };
 
 #endif

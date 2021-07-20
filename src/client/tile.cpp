@@ -42,9 +42,11 @@ Tile::Tile(const Position& position) :
     m_houseId(0)
 {
     m_positionsAround = position.getPositionsAround();
+    m_completelyCoveredCache.fill(0);
+    m_coveredCache.fill(0);
 }
 
-void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
+void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 {
     m_isBorder = false;
 
@@ -60,10 +62,17 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 bool Tile::isCompletelyCovered(int8 firstFloor)
 {
     if(firstFloor > -1) {
-        m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
-        if(!(m_covered = m_completelyCovered)) {
+        auto completelyCoveredN = m_completelyCoveredCache[firstFloor];
+        if(completelyCoveredN == 0) {
+            m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
+            m_completelyCoveredCache[firstFloor] = m_completelyCovered ? 1 : 2;
+        } else m_completelyCovered = completelyCoveredN == 1;
+
+        auto coveredN = m_coveredCache[firstFloor];
+        if(coveredN == 0) {
             m_covered = g_map.isCovered(m_position, firstFloor);
-        }
+            m_coveredCache[firstFloor] = m_covered ? 1 : 2;
+        } else m_covered = coveredN == 1;
     }
 
     return m_completelyCovered;
@@ -150,8 +159,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             if(!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
 
             drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+        }
     }
-}
 
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(

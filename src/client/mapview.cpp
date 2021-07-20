@@ -454,7 +454,6 @@ void MapView::onCameraMove(const Point& /*offset*/)
     if(isFollowingCreature()) {
         if(m_followingCreature->isWalking()) {
             m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
-            m_mustUpdateVisibleCreaturesCache = true;
         } else {
             m_viewport = m_viewPortDirection[Otc::InvalidDirection];
         }
@@ -487,8 +486,9 @@ void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/
 void MapView::onFloorDrawingStart(const uint8 /*floor*/) {}
 void MapView::onFloorDrawingEnd(const uint8 /*floor*/) {}
 
-void MapView::onTileUpdate(const Position&, const ThingPtr&, const Otc::Operation)
+void MapView::onTileUpdate(const Position&, const ThingPtr& thing, const Otc::Operation)
 {
+    m_mustUpdateVisibleCreaturesCache = thing && thing->isCreature();
     requestVisibleTilesCacheUpdate();
 }
 
