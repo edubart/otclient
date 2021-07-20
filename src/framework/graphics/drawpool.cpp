@@ -50,7 +50,7 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
     pool->m_state.alphaWriting = false;
 
     if(type == PoolType::MAP) pool->m_framebuffer->disableBlend();
-    else if(type == PoolType::LIGHT) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+    else if(type == PoolType::LIGHT)       pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
 
     m_pools[type] = pool;
 
@@ -350,9 +350,14 @@ void DrawPool::use(const PoolPtr& pool)
 {
     m_currentPool = pool;
     m_currentPool->resetState();
-    if(m_currentPool->isFramed()) {
-        poolFramed()->resetCurrentStatus();
-    }
+}
+
+void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
+{
+    pool->m_dest = dest;
+    pool->m_src = src;
+    pool->resetCurrentStatus();
+    use(pool);
 }
 
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)

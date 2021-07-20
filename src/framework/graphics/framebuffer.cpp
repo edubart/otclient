@@ -57,17 +57,6 @@ FrameBuffer::~FrameBuffer()
         glDeleteFramebuffers(1, &m_fbo);
 }
 
-void FrameBuffer::clear(const Color color)
-{
-    if(m_useAlphaWriting) {
-        g_painter->clear(Color::alpha);
-    } else {
-        g_painter->setColor(color);
-        g_painter->drawFilledRect(Rect(0, 0, getSize()));
-        g_painter->resetColor();
-    }
-}
-
 void FrameBuffer::resize(const Size& size)
 {
     assert(size.isValid());
@@ -95,14 +84,14 @@ void FrameBuffer::resize(const Size& size)
     }
 }
 
-void FrameBuffer::bind(const bool autoClear)
+void FrameBuffer::bind()
 {
     g_painter->saveAndResetState();
     internalBind();
     g_painter->setResolution(m_texture->getSize());
     g_painter->setAlphaWriting(m_useAlphaWriting);
 
-    if(autoClear) clear(m_colorClear);
+    if(m_useAlphaWriting) g_painter->clear(Color::alpha);
 }
 
 void FrameBuffer::release()

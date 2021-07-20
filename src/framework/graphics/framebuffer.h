@@ -51,8 +51,7 @@ public:
 
     void release();
     void resize(const Size& size);
-    void bind(bool autoClear = true);
-    void clear(Color color = Color::black);
+    void bind();
     void draw(const Rect& dest, const Rect& src);
 
     void setSmooth(bool enabled) { m_smooth = enabled; m_texture = nullptr; }
@@ -64,7 +63,6 @@ public:
     bool isBackuping() { return m_backuping; }
     bool isSmooth() { return m_smooth; }
 
-    void setColorClear(const Color color) { m_colorClear = color; }
     void setCompositionMode(const Painter::CompositionMode mode) { m_compositeMode = mode; }
     void disableBlend() { m_disableBlend = true; }
 
@@ -91,7 +89,6 @@ private:
 
     uint32 m_fbo, m_prevBoundFbo;
 
-    Color m_colorClear = { Color::black };
     Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
 
     bool m_backuping{ true },

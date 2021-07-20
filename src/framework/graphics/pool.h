@@ -101,16 +101,13 @@ class PoolFramed : public Pool {
 public:
     void onBeforeDraw(std::function<void()> f) { m_beforeDraw = f; }
     void onAfterDraw(std::function<void()> f) { m_afterDraw = f; }
-    void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->m_useAlphaWriting = false; }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
-    void setColorClear(const Color color) { m_framebuffer->setColorClear(color); }
 
 protected:
     friend class DrawPool;
 
 private:
-
     void updateStatus() { m_status.first = m_status.second; }
     void resetCurrentStatus() { m_status.second = 0; }
     bool hasModification() const { return m_status.first != m_status.second; }
