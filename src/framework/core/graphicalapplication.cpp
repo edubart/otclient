@@ -136,7 +136,7 @@ void GraphicalApplication::run()
             // sleeps until next poll to avoid massive cpu usage
             stdext::millisleep(POLL_CYCLE_DELAY + 1);
             g_clock.update();
-            return;
+            continue;
         }
 
         // the screen consists of two panes
