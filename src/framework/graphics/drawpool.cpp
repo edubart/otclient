@@ -113,8 +113,11 @@ void DrawPool::draw()
         if(pool->isFramed()) {
             const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
             const auto& frameBuffer = pf->m_framebuffer;
-            if(frameBuffer->isDrawable()) {
-                g_painter->saveAndResetState();
+            if(!frameBuffer->isDrawable())
+                continue;
+
+            g_painter->saveAndResetState();
+            {
                 if(pf->hasModification()) {
                     pf->updateStatus();
                     frameBuffer->bind();
@@ -128,9 +131,8 @@ void DrawPool::draw()
                 if(pf->m_beforeDraw) pf->m_beforeDraw();
                 frameBuffer->draw(pf->m_dest, pf->m_src);
                 if(pf->m_afterDraw) pf->m_afterDraw();
-
-                g_painter->restoreSavedState();
             }
+            g_painter->restoreSavedState();
         } else {
             for(auto& obj : pool->m_objects)
                 drawObject(obj);
@@ -142,30 +144,6 @@ void DrawPool::draw()
 
 void DrawPool::drawObject(Pool::DrawObject& obj)
 {
-    const auto& addCoords = [&](CoordsBuffer& coords) {
-        for(const auto& method : obj.drawMethods) {
-            if(method.type == Pool::DrawMethodType::DRAW_BOUNDING_RECT) {
-                coords.addBoudingRect(method.rects.first, method.intValue);
-            } else if(method.type == Pool::DrawMethodType::DRAW_FILLED_RECT || method.type == Pool::DrawMethodType::DRAW_REPEATED_FILLED_RECT) {
-                coords.addRect(method.rects.first);
-            } else if(method.type == Pool::DrawMethodType::DRAW_FILLED_TRIANGLE) {
-                coords.addTriangle(std::get<0>(method.points), std::get<1>(method.points), std::get<2>(method.points));
-            } else if(method.type == Pool::DrawMethodType::DRAW_TEXTURED_RECT || method.type == Pool::DrawMethodType::DRAW_REPEATED_TEXTURED_RECT) {
-                if(obj.drawMode == Painter::DrawMode::Triangles)
-                    coords.addRect(method.rects.first, method.rects.second);
-                else
-                    coords.addQuad(method.rects.first, method.rects.second);
-            } else if(method.type == Pool::DrawMethodType::DRAW_UPSIDEDOWN_TEXTURED_RECT) {
-                if(obj.drawMode == Painter::DrawMode::Triangles)
-                    coords.addUpsideDownRect(method.rects.first, method.rects.second);
-                else
-                    coords.addUpsideDownQuad(method.rects.first, method.rects.second);
-            }
-        }
-
-        return &coords;
-    };
-
     if(obj.action) {
         obj.action();
         return;
@@ -185,7 +163,27 @@ void DrawPool::drawObject(Pool::DrawObject& obj)
         return;
     }
 
-    g_painter->drawCoords(*addCoords(m_coordsbuffer), obj.drawMode);
+    for(const auto& method : obj.drawMethods) {
+        if(method.type == Pool::DrawMethodType::DRAW_BOUNDING_RECT) {
+            m_coordsbuffer.addBoudingRect(method.rects.first, method.intValue);
+        } else if(method.type == Pool::DrawMethodType::DRAW_FILLED_RECT || method.type == Pool::DrawMethodType::DRAW_REPEATED_FILLED_RECT) {
+            m_coordsbuffer.addRect(method.rects.first);
+        } else if(method.type == Pool::DrawMethodType::DRAW_FILLED_TRIANGLE) {
+            m_coordsbuffer.addTriangle(std::get<0>(method.points), std::get<1>(method.points), std::get<2>(method.points));
+        } else if(method.type == Pool::DrawMethodType::DRAW_TEXTURED_RECT || method.type == Pool::DrawMethodType::DRAW_REPEATED_TEXTURED_RECT) {
+            if(obj.drawMode == Painter::DrawMode::Triangles)
+                m_coordsbuffer.addRect(method.rects.first, method.rects.second);
+            else
+                m_coordsbuffer.addQuad(method.rects.first, method.rects.second);
+        } else if(method.type == Pool::DrawMethodType::DRAW_UPSIDEDOWN_TEXTURED_RECT) {
+            if(obj.drawMode == Painter::DrawMode::Triangles)
+                m_coordsbuffer.addUpsideDownRect(method.rects.first, method.rects.second);
+            else
+                m_coordsbuffer.addUpsideDownQuad(method.rects.first, method.rects.second);
+        }
+    }
+
+    g_painter->drawCoords(m_coordsbuffer, obj.drawMode);
     m_coordsbuffer.clear();
 }
 
@@ -363,8 +361,10 @@ void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMe
 
     size_t hash = 0;
 
-    if(state.texture)
+    if(state.texture) {
+        //is using uniqueId instead of id, as I will implement multithreading in the future.
         boost::hash_combine(hash, HASH_INT(state.texture->getUniqueId()));
+    }
 
     if(state.opacity < 1.f)
         boost::hash_combine(hash, HASH_INT(state.opacity));
