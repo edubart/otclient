@@ -640,20 +640,22 @@ std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bo
 std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int32 minXRange, int32 maxXRange, int32 minYRange, int32 maxYRange)
 {
     std::vector<CreaturePtr> creatures;
-    uint8 maxZRange = multiFloor ? Otc::MAX_Z : 0;
+    uint8 minZRange = 0, maxZRange = 0;
+
+    if(multiFloor) {
+        minZRange = centerPos.z - getFirstAwareFloor();
+        maxZRange = getLastAwareFloor() - centerPos.z;
+    }
 
     //TODO: optimize
-    //TODO: get creatures from other floors corretly
     //TODO: delivery creatures in distance order
-    for(int_fast8_t iz = -1; ++iz <= maxZRange;) {
+    for(int_fast8_t iz = -minZRange; ++iz <= maxZRange;) {
         for(int_fast32_t iy = -minYRange; iy <= maxYRange; ++iy) {
             for(int_fast32_t ix = -minXRange; ix <= maxXRange; ++ix) {
-                TilePtr tile = getTile(centerPos.translated(ix, iy, iz));
-                if(!tile)
-                    continue;
-
-                auto tileCreatures = tile->getCreatures();
-                creatures.insert(creatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
+                if(const TilePtr& tile = getTile(centerPos.translated(ix, iy, iz))) {
+                    auto tileCreatures = tile->getCreatures();
+                    creatures.insert(creatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
+                }
             }
         }
     }
