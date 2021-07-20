@@ -70,20 +70,11 @@ void PainterOGL::saveState()
 
 PainterOGL::PainterState PainterOGL::getCurrentState()
 {
-    PainterOGL::PainterState state;
-    state.resolution = m_resolution;
-    state.transformMatrix = m_transformMatrix;
-    state.projectionMatrix = m_projectionMatrix;
-    state.textureMatrix = m_textureMatrix;
-    state.color = m_color;
-    state.opacity = m_opacity;
-    state.compositionMode = m_compositionMode;
-    state.blendEquation = m_blendEquation;
-    state.clipRect = m_clipRect;
-    state.shaderProgram = m_shaderProgram;
-    state.alphaWriting = m_alphaWriting;
-
-    return state;
+    return PainterOGL::PainterState{
+        m_resolution , m_transformMatrix, m_projectionMatrix, m_textureMatrix,
+        m_color, m_opacity, m_compositionMode, m_blendEquation, m_clipRect,
+        nullptr, m_shaderProgram, m_alphaWriting
+    };
 }
 
 void PainterOGL::executeState(const PainterState& state)

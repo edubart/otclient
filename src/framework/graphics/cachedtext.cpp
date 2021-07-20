@@ -37,7 +37,15 @@ void CachedText::draw(const Rect& rect, const Color color)
     if(!m_font)
         return;
 
-    for(const auto& fontRect : m_font->getDrawTextCoords(m_text, rect, Fw::AlignCenter))
+    if(m_textMustRecache || m_textCachedScreenCoords != rect) {
+        m_textMustRecache = false;
+        m_textCachedScreenCoords = rect;
+
+        m_textCoordsCache.clear();
+        m_textCoordsCache = m_font->getDrawTextCoords(m_text, rect, m_align);
+    }
+
+    for(const auto& fontRect : m_textCoordsCache)
         g_drawPool.addRepeatedTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
 }
 
@@ -45,6 +53,8 @@ void CachedText::update()
 {
     if(m_font)
         m_textSize = m_font->calculateTextRectSize(m_text);
+
+    m_textMustRecache = true;
 }
 
 void CachedText::wrapText(int maxWidth)
