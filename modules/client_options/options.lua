@@ -268,7 +268,7 @@ function setOption(key, value, force)
                                                                     'Ambient light: %s%%',
                                                                     value))
         gameMapPanel:setMinimumAmbientLight(value / 100)
-        gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
+        gameMapPanel:setDrawLights(options['enableLights'])
     elseif key == 'shadowFloorIntensity' then
         graphicsPanel:getChildById('shadowFloorIntensityLevel'):setText(tr(
                                                                             'Shadow floor Intensity: %s%%',

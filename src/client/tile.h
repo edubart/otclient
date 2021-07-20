@@ -122,7 +122,8 @@ public:
     bool canErase();
 
     bool hasGroundBorderToDraw() const { return m_countFlag.hasGroundBorder; }
-    bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty(); }
+    bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || m_ground && m_ground->isTopGround(); }
+    bool hasGround() { return m_ground && !m_ground->isTopGround(); };
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -154,7 +155,6 @@ public:
 
     bool isCovered() { return m_covered; };
     bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
-    bool hasGround() { return getGround() != nullptr; };
     const std::array<Position, 8> getPositionsAround() { return m_positionsAround; }
 
 private:

@@ -217,7 +217,8 @@ public:
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { return (isFullGround() || m_opaque); }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
-
+    bool isTopGround() { return isGround() && !isFullGround() && blockProjectile() && !isSingleDimension(); }
+    bool isSingleDimension() { return m_size.area() == 1; }
     std::vector<int> getSprites() { return m_spritesIndex; }
 
     // additional

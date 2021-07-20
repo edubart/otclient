@@ -131,6 +131,10 @@ void Tile::drawGroundBorder(const MapViewPtr& mapView, const Point& dest, float 
 void Tile::draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     drawStart(mapView);
+
+    if(m_ground && m_ground->isTopGround())
+        drawGround(mapView, dest, scaleFactor, frameFlags, lightView);
+
     drawBottom(dest, scaleFactor, frameFlags, lightView);
     drawTop(dest, scaleFactor, frameFlags, lightView);
     drawEnd(mapView);
@@ -825,7 +829,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     // best option to have something more real, but in some cases as a custom project,
     // the developers are not defining crop size
     //if(thing->getRealSize() > Otc::TILE_PIXELS)
-    if(thing->getHeight() != 1 || thing->getWidth() != 1)
+    if(!thing->isSingleDimension())
         m_countFlag.notSingleDimension += value;
 
     if(thing->getHeight() > 1)

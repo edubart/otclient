@@ -139,7 +139,8 @@ public:
     bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
     bool hasAction() { return rawGetThingType()->hasAction(); }
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
-    bool isTopGround() { return isGround() && !isFullGround() && blockProjectile() && getWidth() != 1 && getHeight() != 1; }
+    bool isTopGround() { return rawGetThingType()->isTopGround(); }
+    bool isSingleDimension() { return rawGetThingType()->isSingleDimension(); }
     bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
 
     void canDraw(bool canDraw) { m_canDraw = canDraw; }

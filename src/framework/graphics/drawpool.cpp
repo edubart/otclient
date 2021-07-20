@@ -79,10 +79,8 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
     if(!list.empty()) {
         auto& prevObj = list.back();
 
-        const bool sameState = prevObj.state == state,
-            hasDest = !method.dest.isNull();
-
-        if(hasDest) {
+        const bool sameState = prevObj.state == state;
+        if(!method.dest.isNull()) {
             // Look for identical or opaque textures that are greater than or
             // equal to the size of the previous texture, if so, remove it from the list so they don't get drawn.
             for(auto itm = prevObj.drawMethods.begin(); itm != prevObj.drawMethods.end(); ++itm) {
