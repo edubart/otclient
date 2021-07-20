@@ -755,12 +755,12 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("setDrawNames", &UIMap::setDrawNames);
     g_lua.bindClassMemberFunction<UIMap>("setDrawHealthBars", &UIMap::setDrawHealthBars);
     g_lua.bindClassMemberFunction<UIMap>("setDrawLights", &UIMap::setDrawLights);
-    g_lua.bindClassMemberFunction<UIMap>("setFloorShadowingFlag", &UIMap::setFloorShadowingFlag);
     g_lua.bindClassMemberFunction<UIMap>("setDrawViewportEdge", &UIMap::setDrawViewportEdge);
     g_lua.bindClassMemberFunction<UIMap>("setDrawManaBar", &UIMap::setDrawManaBar);
     g_lua.bindClassMemberFunction<UIMap>("setKeepAspectRatio", &UIMap::setKeepAspectRatio);
     g_lua.bindClassMemberFunction<UIMap>("setMapShader", &UIMap::setMapShader);
     g_lua.bindClassMemberFunction<UIMap>("setMinimumAmbientLight", &UIMap::setMinimumAmbientLight);
+    g_lua.bindClassMemberFunction<UIMap>("setShadowFloorIntensity", &UIMap::setShadowFloorIntensity);
     g_lua.bindClassMemberFunction<UIMap>("setLimitVisibleRange", &UIMap::setLimitVisibleRange);
     g_lua.bindClassMemberFunction<UIMap>("isMultifloor", &UIMap::isMultifloor);
     g_lua.bindClassMemberFunction<UIMap>("isAutoViewModeEnabled", &UIMap::isAutoViewModeEnabled);
@@ -773,7 +773,6 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<UIMap>("isLimitVisibleRangeEnabled", &UIMap::isLimitVisibleRangeEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isKeepAspectRatioEnabled", &UIMap::isKeepAspectRatioEnabled);
     g_lua.bindClassMemberFunction<UIMap>("isInRange", &UIMap::isInRange);
-    g_lua.bindClassMemberFunction<UIMap>("hasFloorShadowingFlag", &UIMap::hasFloorShadowingFlag);
     g_lua.bindClassMemberFunction<UIMap>("getVisibleDimension", &UIMap::getVisibleDimension);
     g_lua.bindClassMemberFunction<UIMap>("getViewMode", &UIMap::getViewMode);
     g_lua.bindClassMemberFunction<UIMap>("getFollowingCreature", &UIMap::getFollowingCreature);

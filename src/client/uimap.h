@@ -52,7 +52,6 @@ public:
     void setDrawNames(bool enable) { m_mapView->setDrawNames(enable); }
     void setDrawHealthBars(bool enable) { m_mapView->setDrawHealthBars(enable); }
     void setDrawLights(bool enable) { m_mapView->setDrawLights(enable); }
-    void setFloorShadowingFlag(const Otc::ShadowFloor flag) { m_mapView->setFloorShadowingFlag(flag); }
     void setDrawViewportEdge(bool enable) { m_mapView->setDrawViewportEdge(enable); }
     void setDrawManaBar(bool enable) { m_mapView->setDrawManaBar(enable); }
     void setKeepAspectRatio(bool enable);
@@ -74,7 +73,7 @@ public:
     bool isKeepAspectRatioEnabled() { return m_keepAspectRatio; }
     bool isLimitVisibleRangeEnabled() { return m_limitVisibleRange; }
 
-    bool hasFloorShadowingFlag(const Otc::ShadowFloor flag) { return m_mapView->hasFloorShadowingFlag(flag); }
+    void setShadowFloorIntensity(float intensity) { m_mapView->setShadowFloorIntensity(intensity); }
 
     std::vector<CreaturePtr> getVisibleCreatures() { return m_mapView->getVisibleCreatures(); }
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor) { return m_mapView->getSpectators(centerPos, multiFloor); }

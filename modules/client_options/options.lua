@@ -20,7 +20,6 @@ local defaultOptions = {
     enableMusicSound = true,
     musicSoundVolume = 100,
     enableLights = true,
-    floorShadowing = ShadowFloor.Bottom,
     drawViewportEdge = false,
     floatingEffect = false,
     ambientLight = 0,
@@ -34,7 +33,8 @@ local defaultOptions = {
     crosshair = 'default',
     enableHighlightMouseTarget = true,
     antiAliasing = true,
-    renderScale = 100
+    renderScale = 100,
+    shadowFloorIntensity = 15
 }
 
 local optionsWindow
@@ -163,19 +163,6 @@ function setupComboBox()
         function(comboBox, option)
             setOption('renderScale', comboBox:getCurrentOption().data)
         end
-
-    floorShadowingComboBox = graphicsPanel:recursiveGetChildById(
-                                 'floorShadowing')
-    floorShadowingComboBox.onOptionChange =
-        function(comboBox, option)
-            setOption('floorShadowing',
-                      floorShadowingComboBox:getCurrentOption().data)
-        end
-
-    floorShadowingComboBox:addOption('Disabled', ShadowFloor.Disabled)
-    floorShadowingComboBox:addOption('Bottom', ShadowFloor.Bottom)
-    floorShadowingComboBox:addOption('Upside', ShadowFloor.Upside)
-    floorShadowingComboBox:addOption('Both', ShadowFloor.Both)
 end
 
 function setup()
@@ -282,6 +269,11 @@ function setOption(key, value, force)
                                                                     value))
         gameMapPanel:setMinimumAmbientLight(value / 100)
         gameMapPanel:setDrawLights(options['enableLights'] and value < 100)
+    elseif key == 'shadowFloorIntensity' then
+        graphicsPanel:getChildById('shadowFloorIntensityLevel'):setText(tr(
+                                                                            'Shadow floor Intensity: %s%%',
+                                                                            value))
+        gameMapPanel:setShadowFloorIntensity(1 - (value / 100))
     elseif key == 'drawViewportEdge' then
         gameMapPanel:setDrawViewportEdge(value)
     elseif key == 'floatingEffect' then

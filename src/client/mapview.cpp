@@ -103,8 +103,6 @@ MapView::MapView()
 
     m_shader = g_shaders.getDefaultMapShader();
 
-    m_lastFloorShadowingColor = Color::white;
-
     setVisibleDimension(Size(15, 11));
 
     m_walkDirs[Otc::North] = PointF(0, 1);
@@ -208,6 +206,11 @@ void MapView::drawFloor()
             {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z))
                     missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+            }
+
+            if(m_shadowFloorIntensity > 0 && z == cameraPosition.z + 1) {
+                g_drawPool.addFilledRect(m_rectDimension, Color::black);
+                g_drawPool.setOpacity(m_shadowFloorIntensity, g_drawPool.getSize());
             }
 
             onFloorDrawingEnd(z);
@@ -481,42 +484,7 @@ void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/
     updateLight();
 }
 
-const static Color STATIC_SHADOWING_COLOR(static_cast<uint8>(215), static_cast<uint8>(0), .6f);
-void MapView::onFloorDrawingStart(const uint8 floor)
-{
-    const auto cameraPosition = getCameraPosition();
-
-    if(hasFloorShadowingFlag()) {
-        Color shadowColor = Color::white;
-
-        if(floor > Otc::SEA_FLOOR) { // Cave
-            if((hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z) ||
-               (hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z)
-               ) {
-                float brightnessLevelStart = .6f;
-                float brightnessLevel = cameraPosition.z - floor;
-                if(floor > cameraPosition.z)
-                    brightnessLevel *= -1;
-                else brightnessLevelStart -= .1f;
-
-                brightnessLevel *= .12f;
-
-                shadowColor = Color(static_cast<uint8>(215), static_cast<uint8>(0), brightnessLevelStart - brightnessLevel);
-            }
-        } else {
-            if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_BOTTOM) && floor > cameraPosition.z) {
-                shadowColor = STATIC_SHADOWING_COLOR;
-            } else if(hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && floor < cameraPosition.z) {
-                shadowColor = m_drawLights ?
-                    Color(m_lightView->getGlobalLight().color, std::floor<uint8>(m_lightView->getGlobalLight().intensity / 100), .8f)
-                    : STATIC_SHADOWING_COLOR;
-            }
-        }
-
-        m_lastFloorShadowingColor = shadowColor;
-    }
-}
-
+void MapView::onFloorDrawingStart(const uint8 /*floor*/) {}
 void MapView::onFloorDrawingEnd(const uint8 /*floor*/) {}
 
 void MapView::onTileUpdate(const Position&, const ThingPtr&, const Otc::Operation)

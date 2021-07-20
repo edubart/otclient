@@ -52,13 +52,6 @@ namespace Otc
         OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
     };
 
-    enum ShadowFloor : uint8 {
-        SHADOWFLOOR_DISABLED = 0,
-        SHADOWFLOOR_BOTTOM = 1 << 0,
-        SHADOWFLOOR_UPSIDE = 1 << 1,
-        SHADOWFLOOR_BOTH = SHADOWFLOOR_BOTTOM | SHADOWFLOOR_UPSIDE,
-    };
-
     enum FrameUpdate : uint32 {
         FUpdateThing = 1 << 0,
         FUpdateLight = 1 << 1,

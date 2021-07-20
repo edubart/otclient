@@ -47,17 +47,11 @@ Tile::Tile(const Position& position) :
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
     m_isBorder = false;
-    m_borderShadowColor = Color::white;
 
-    const bool setShadowingColor = mapView->hasFloorShadowingFlag(Otc::SHADOWFLOOR_UPSIDE) && isWalkable(true) && m_position.z == mapView->getCameraPosition().z - 1;
     for(const auto& position : m_positionsAround) {
         const TilePtr& tile = g_map.getTile(position);
         if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
             m_isBorder = true;
-
-            if(setShadowingColor) {
-                m_borderShadowColor = STATIC_SHADOWING_COLOR;
-            }
             break;
         }
     }
@@ -156,8 +150,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
             if(!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
 
             drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-        }
     }
+}
 
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(

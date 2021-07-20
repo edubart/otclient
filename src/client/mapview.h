@@ -103,6 +103,9 @@ public:
     void setMinimumAmbientLight(float intensity) { m_minimumAmbientLight = intensity; updateLight(); }
     float getMinimumAmbientLight() { return m_minimumAmbientLight; }
 
+    void setShadowFloorIntensity(float intensity) { m_shadowFloorIntensity = intensity; updateLight(); }
+    float getShadowFloorIntensity() { return m_shadowFloorIntensity; }
+
     // drawing related
     void setDrawTexts(bool enable) { m_drawTexts = enable; }
     bool isDrawingTexts() { return m_drawTexts; }
@@ -115,11 +118,6 @@ public:
 
     void setDrawLights(bool enable);
     bool isDrawingLights() { return m_drawLights && m_lightView->isDark(); }
-
-    void setFloorShadowingFlag(const Otc::ShadowFloor flag) { m_lastFloorShadowingColor = Color::white; m_floorShadowingFlag = flag; requestVisibleTilesCacheUpdate(); }
-    bool hasFloorShadowingFlag(const Otc::ShadowFloor flag) { return m_floorShadowingFlag & flag; }
-    bool hasFloorShadowingFlag() { return m_floorShadowingFlag > 0; }
-    const Color getLastFloorShadowingColor() { return m_lastFloorShadowingColor; }
 
     void setDrawViewportEdge(bool enable) { m_drawViewportEdge = enable; }
     bool isDrawingViewportEdge() { return m_drawViewportEdge; }
@@ -212,12 +210,12 @@ private:
         m_renderScale{ 100 },
         m_tileSize,
         m_floorMin{ 0 },
-        m_floorMax{ 0 },
-        m_floorShadowingFlag;
+        m_floorMax{ 0 };
 
     float m_minimumAmbientLight{ 0 },
         m_fadeInTime{ 0 },
         m_fadeOutTime{ 0 },
+        m_shadowFloorIntensity{ 0 },
         m_scaleFactor;
 
     Rect m_rectDimension;
@@ -268,8 +266,6 @@ private:
 
     RectCache m_rectCache;
     ViewMode m_viewMode{ NEAR_VIEW };
-
-    Color m_lastFloorShadowingColor;
 
     Timer m_fadeTimer;
 

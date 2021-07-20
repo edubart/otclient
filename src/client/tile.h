@@ -152,8 +152,6 @@ public:
 
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
 
-    bool hasBorderShadowColor() { return m_borderShadowColor != Color::white; }
-
     bool isCovered() { return m_covered; };
     bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
     bool hasGround() { return getGround() != nullptr; };
@@ -190,7 +188,6 @@ private:
     bool checkForDetachableThing();
     void checkTranslucentLight();
 
-    Color m_shadowColor;
     Position m_position;
     uint8 m_drawElevation;
     uint8 m_minimapColor;
@@ -205,8 +202,6 @@ private:
 
     CountFlag m_countFlag;
     Highlight m_highlight;
-
-    Color m_borderShadowColor;
 
     stdext::boolean<false> m_covered,
         m_completelyCovered,

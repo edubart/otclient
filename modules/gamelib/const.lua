@@ -304,6 +304,4 @@ SubscriptionStatus = {Free = 0, Premium = 1}
 
 ChannelEvent = {Join = 0, Leave = 1, Invite = 2, Exclude = 3}
 
-ShadowFloor = {Disabled = 0, Bottom = 1, Upside = 2, Both = 3}
-
 -- @}
