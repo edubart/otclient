@@ -50,7 +50,7 @@ public:
     PoolFramedPtr createPoolF(const PoolType type);
 
     void use(const PoolPtr& pool);
-    void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);
+    //void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);
 
     void addFillCoords(CoordsBuffer& coordsBuffer, const Color color = Color::white);
     void addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color = Color::white, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);

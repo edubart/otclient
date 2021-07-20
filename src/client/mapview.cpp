@@ -125,6 +125,7 @@ void MapView::draw(const Rect& rect)
         m_rectCache.drawOffset = m_rectCache.srcRect.topLeft();
         m_rectCache.horizontalStretchFactor = rect.width() / static_cast<float>(m_rectCache.srcRect.width());
         m_rectCache.verticalStretchFactor = rect.height() / static_cast<float>(m_rectCache.srcRect.height());
+        m_pools.map->setCoords(m_rectCache.rect, m_rectCache.srcRect);
     }
 
     drawFloor();
@@ -141,7 +142,7 @@ void MapView::draw(const Rect& rect)
 
 void MapView::drawFloor()
 {
-    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect);
+    g_drawPool.use(m_pools.map);
     {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;

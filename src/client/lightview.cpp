@@ -122,7 +122,8 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
     const float intensity = m_globalLight.intensity / static_cast<float>(UINT8_MAX);
 
-    g_drawPool.use(m_pool, dest, src);
+    m_pool->setCoords(dest, src);
+    g_drawPool.use(m_pool);
     g_drawPool.addFilledRect(m_mapView->m_rectDimension, m_globalLightColor);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
