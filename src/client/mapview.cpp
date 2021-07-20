@@ -104,15 +104,6 @@ MapView::MapView()
     m_shader = g_shaders.getDefaultMapShader();
 
     setVisibleDimension(Size(15, 11));
-
-    m_walkDirs[Otc::North] = PointF(0, 1);
-    m_walkDirs[Otc::East] = PointF(1, 0);
-    m_walkDirs[Otc::South] = PointF(0, -1);
-    m_walkDirs[Otc::West] = PointF(1, 0);
-    m_walkDirs[Otc::NorthEast] = PointF(1, 1);
-    m_walkDirs[Otc::SouthEast] = PointF(1, -1);
-    m_walkDirs[Otc::SouthWest] = PointF(-1, -1);
-    m_walkDirs[Otc::NorthWest] = PointF(-1, 1);
 }
 
 MapView::~MapView()
