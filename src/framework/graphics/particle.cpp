@@ -49,7 +49,7 @@ void Particle::render()
         g_drawPool.addFilledRect(m_rect, m_color);
     else {
         g_drawPool.addTexturedRect(m_rect, m_texture, m_color);
-        g_drawPool.setCompositionMode(m_compositionMode, g_drawPool.getSize());
+        g_drawPool.setCompositionMode(m_compositionMode, g_drawPool.size());
     }
 }
 

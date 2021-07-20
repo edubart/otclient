@@ -74,9 +74,9 @@ public:
     void resetOpacity() { m_currentPool->resetOpacity(); }
     void resetState() { m_currentPool->resetState(); }
 
-    void beginningIsHere() { m_currentPool->beginningIsHere(); }
+    void startPosition() { m_currentPool->startPosition(); }
 
-    size_t getSize() { return m_currentPool->m_objects.size(); }
+    size_t size() { return m_currentPool->m_objects.size(); }
 
 private:
     void draw();

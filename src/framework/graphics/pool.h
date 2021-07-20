@@ -83,7 +83,7 @@ private:
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
     void resetOpacity() { m_state.opacity = 1.f; }
     void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
-    void beginningIsHere() { m_indexToStartSearching = m_objects.size(); }
+    void startPosition() { m_indexToStartSearching = m_objects.size(); }
 
     virtual bool isFramed() const { return false; };
 

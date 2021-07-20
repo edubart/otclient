@@ -548,7 +548,10 @@ void Creature::updateWalkingTile()
 
     if(newWalkingTile) {
         newWalkingTile->addWalkingCreature(static_self_cast<Creature>());
-        g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
+
+        if(isLocalPlayer() || newWalkingTile->isEmpty()) {
+            g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
+        }
     }
 
     m_walkingTile = newWalkingTile;

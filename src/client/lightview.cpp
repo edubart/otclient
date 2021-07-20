@@ -126,7 +126,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
     g_drawPool.use(m_pool);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
-        g_drawPool.beginningIsHere();
+        g_drawPool.startPosition();
         {
             if(z < m_mapView->m_floorMax) {
                 for(auto& shade : m_shades) {
