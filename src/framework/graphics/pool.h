@@ -103,7 +103,6 @@ public:
     void onAfterDraw(std::function<void()> f) { m_afterDraw = f; }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
-    void setCoords(const Rect& dest, const Rect& src) { m_dest = dest; m_src = src; m_framebuffer->m_useAlphaWriting = false; }
 
 protected:
     friend class DrawPool;

@@ -353,13 +353,12 @@ void DrawPool::use(const PoolPtr& pool)
     }
 }
 
-/*void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
+void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
 {
+    use(pool);
     pool->m_dest = dest;
     pool->m_src = src;
-    pool->resetCurrentStatus();
-    use(pool);
-}*/
+}
 
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)
 {
