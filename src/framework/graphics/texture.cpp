@@ -29,7 +29,7 @@
 
 #include "framework/stdext/math.h"
 
-std::atomic<uint> LAST_ID = 0;
+std::atomic<uint> LAST_ID(0);
 
 Texture::Texture() : m_uniqueId(++LAST_ID)
 {

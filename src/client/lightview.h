@@ -58,7 +58,7 @@ public:
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
-    static bool orderLightComparator(const LightSource& a, const LightSource& b) { return a.brightness == b.brightness && a.color < b.color || a.brightness < b.brightness; }
+    static bool orderLightComparator(const LightSource& a, const LightSource& b) { return (a.brightness == b.brightness && a.color < b.color) || a.brightness < b.brightness; }
 
     void generateLightTexture(),
         generateShadeTexture();

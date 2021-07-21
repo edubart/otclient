@@ -237,7 +237,7 @@ void MapView::drawCreatureInformation()
 
 void MapView::drawText()
 {
-    if(!m_drawTexts || g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty()) return;
+    if(!m_drawTexts || (g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty())) return;
 
     g_drawPool.use(m_pools.text);
     const Position cameraPosition = getCameraPosition();
@@ -301,8 +301,7 @@ void MapView::updateVisibleTilesCache()
     const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
     uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
 
-    assert(cachedFirstVisibleFloor >= 0 && cachedLastVisibleFloor >= 0 &&
-           cachedFirstVisibleFloor <= Otc::MAX_Z && cachedLastVisibleFloor <= Otc::MAX_Z);
+    assert(cachedFirstVisibleFloor <= Otc::MAX_Z && cachedLastVisibleFloor <= Otc::MAX_Z);
 
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;

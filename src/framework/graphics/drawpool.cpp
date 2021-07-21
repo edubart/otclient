@@ -86,7 +86,7 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
             for(auto itm = prevObj.drawMethods.begin(); itm != prevObj.drawMethods.end(); ++itm) {
                 auto& prevMtd = *itm;
                 if(prevMtd.dest == method.dest &&
-                   (sameState && prevMtd.rects.second == method.rects.second || state.texture->isOpaque() && prevObj.state.texture->canSuperimposed())) {
+                   ((sameState && prevMtd.rects.second == method.rects.second) || (state.texture->isOpaque() && prevObj.state.texture->canSuperimposed()))) {
                     prevObj.drawMethods.erase(itm);
                     break;
                 }
