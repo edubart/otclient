@@ -105,4 +105,6 @@ private:
     friend class GraphicalApplication;
 };
 
+extern DrawPool g_drawPool;
+
 #endif

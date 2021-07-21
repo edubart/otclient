@@ -301,8 +301,7 @@ void MapView::updateVisibleTilesCache()
     const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
     uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
 
-    assert(cachedFirstVisibleFloor >= 0 && cachedLastVisibleFloor >= 0 &&
-           cachedFirstVisibleFloor <= Otc::MAX_Z && cachedLastVisibleFloor <= Otc::MAX_Z);
+    assert(cachedFirstVisibleFloor <= Otc::MAX_Z && cachedLastVisibleFloor <= Otc::MAX_Z);
 
     if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
         cachedLastVisibleFloor = cachedFirstVisibleFloor;

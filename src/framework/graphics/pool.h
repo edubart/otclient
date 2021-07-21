@@ -49,22 +49,22 @@ protected:
 
     struct DrawMethod {
         DrawMethodType type;
-        std::pair<Rect, Rect> rects;
-        std::tuple<Point, Point, Point> points;
-        Point dest;
+        std::pair<Rect, Rect> rects{};
+        std::tuple<Point, Point, Point> points{};
+        Point dest{};
         uint64 intValue{ 0 };
         float floatValue{ .0f };
     };
 
     struct DrawObject {
-        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; }
+        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; action = nullptr; }
 
         Painter::PainterState state;
         std::shared_ptr<CoordsBuffer> coordsBuffer;
         Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
         std::vector<DrawMethod> drawMethods;
 
-        std::function<void()> action;
+        std::function<void()> action{ nullptr };
     };
 
 private:
