@@ -361,6 +361,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/declarations.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/bitmapfont.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/drawpool.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/drawpool.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/fontmanager.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/framebuffer.cpp
@@ -399,6 +401,8 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlemanager.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/particlesystem.h
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/pool.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/graphics/pool.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/shader.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/shaderprogram.cpp
