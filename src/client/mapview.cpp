@@ -479,7 +479,9 @@ void MapView::onFloorDrawingEnd(const uint8 /*floor*/) {}
 
 void MapView::onTileUpdate(const Position&, const ThingPtr& thing, const Otc::Operation)
 {
-    m_mustUpdateVisibleCreaturesCache = thing && thing->isCreature();
+    if(thing && thing->isCreature())
+        m_mustUpdateVisibleCreaturesCache = true;
+
     requestVisibleTilesCacheUpdate();
 }
 
