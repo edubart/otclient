@@ -869,8 +869,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
 void Tile::select(const bool noFilter)
 {
-    m_highlight.enabled = true;
-
+    unselect();
     if(noFilter != m_highlightWithoutFilter) {
         m_highlightWithoutFilter = noFilter;
         checkForDetachableThing();
@@ -878,6 +877,7 @@ void Tile::select(const bool noFilter)
 
     if(!m_highlight.thing) return;
 
+    m_highlight.enabled = true;
     m_highlight.invertedColorSelection = false;
     m_highlight.fadeLevel = HIGHTLIGHT_FADE_START;
     m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
