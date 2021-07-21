@@ -25,6 +25,7 @@
 
 #include "declarations.h"
 #include "soundchannel.h"
+#include <future>
 
  //@bindsingleton g_sounds
 class SoundManager
@@ -57,7 +58,7 @@ private:
     ALCdevice* m_device;
     ALCcontext* m_context;
 
-    std::map<StreamSoundSourcePtr, boost::shared_future<SoundFilePtr>> m_streamFiles;
+    std::map<StreamSoundSourcePtr, std::shared_future<SoundFilePtr>> m_streamFiles;
     std::unordered_map<std::string, SoundBufferPtr> m_buffers;
     std::vector<SoundSourcePtr> m_sources;
     bool m_audioEnabled{ true };
