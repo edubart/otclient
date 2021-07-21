@@ -98,7 +98,7 @@ public:
     std::vector<CreaturePtr> getCreatures();
 
     std::vector<ItemPtr> getItems();
-    ItemPtr Tile::getGround() { return m_ground; }
+    ItemPtr getGround() { return m_ground; }
     int getGroundSpeed();
     uint8 getMinimapColorByte();
     int getThingCount() { return m_things.size() + m_effects.size(); }
@@ -209,7 +209,7 @@ private:
 
     bool m_highlightWithoutFilter{ false };
 
-    std::array<byte, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
+    std::array<uint8_t, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
 };
 
 #endif
