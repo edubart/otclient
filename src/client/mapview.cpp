@@ -148,11 +148,11 @@ void MapView::drawFloor()
 
         g_drawPool.addFilledRect(m_rectDimension, Color::black);
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
-            if(lightView) {
+            if(isDrawingLights()) {
                 const int8 nextFloor = z - 1;
                 if(nextFloor >= m_floorMin) {
                     lightView->setFloor(nextFloor);
-                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].grounds) {
+                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].allGrounds) {
                         const auto& ground = tile->getGround();
                         if(ground && !ground->isTranslucent()) {
                             auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
@@ -355,6 +355,9 @@ void MapView::updateVisibleTilesCache()
 
                     if(tile->hasGround())
                         floor.grounds.push_back(tile);
+
+                    if(isDrawingLights() && tile->hasAnyGround())
+                        floor.allGrounds.push_back(tile);
 
                     if(tile->hasGroundBorderToDraw())
                         floor.borders.push_back(tile);
