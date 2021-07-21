@@ -90,8 +90,6 @@ void FrameBuffer::bind()
     internalBind();
     g_painter->setResolution(m_texture->getSize());
     g_painter->setAlphaWriting(m_useAlphaWriting);
-
-    if(m_useAlphaWriting) g_painter->clear(Color::alpha);
 }
 
 void FrameBuffer::release()

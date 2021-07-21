@@ -47,10 +47,9 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
     auto pool = std::make_shared<PoolFramed>();
 
     pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
-    pool->m_state.alphaWriting = false;
 
     if(type == PoolType::MAP) pool->m_framebuffer->disableBlend();
-    else if(type == PoolType::LIGHT)       pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+    else if(type == PoolType::LIGHT) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
 
     m_pools[type] = pool;
 
@@ -230,7 +229,7 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
     method.dest = originalDest;
 
     auto state = generateState();
-    state.color = color == Color::white && state.alphaWriting ? Color::alpha : color;
+    state.color = color;
     state.texture = texture;
 
     add(state, method, Painter::DrawMode::TriangleStrip);
@@ -358,6 +357,7 @@ void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
     use(pool);
     pool->m_dest = dest;
     pool->m_src = src;
+    pool->m_state.alphaWriting = false;
 }
 
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)
