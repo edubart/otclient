@@ -237,7 +237,7 @@ void MapView::drawCreatureInformation()
 
 void MapView::drawText()
 {
-    if(!m_drawTexts || g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty()) return;
+    if(!m_drawTexts || (g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty())) return;
 
     g_drawPool.use(m_pools.text);
     const Position cameraPosition = getCameraPosition();
