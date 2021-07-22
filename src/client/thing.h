@@ -58,7 +58,6 @@ public:
     ContainerPtr getParentContainer();
     int getStackPos();
 
-    virtual int getAnimationInterval() { return 0; }
     virtual bool isItem() { return false; }
     virtual bool isEffect() { return false; }
     virtual bool isMissile() { return false; }

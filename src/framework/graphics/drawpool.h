@@ -88,7 +88,7 @@ private:
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
     void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
-    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
+    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<FramedPool>(m_currentPool); }
 
     Painter::PainterState generateState();
 

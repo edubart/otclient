@@ -68,18 +68,6 @@ Creature::Creature() : Thing()
     m_outfitColor = Color::white;
 }
 
-void Creature::preDraw()
-{
-    if(m_outfit.getCategory() == ThingCategoryCreature) {
-        if(m_outfit.hasMount()) {
-            rawGetMountThingType()->generateTextureCache();
-        }
-        rawGetThingType()->generateTextureCache();
-    } else {
-        g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->generateTextureCache();
-    }
-}
-
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView)
 {
     if(!canBeSeen())
@@ -995,17 +983,6 @@ int Creature::getCurrentAnimationPhase(const bool mount)
     }
 
     return m_walkAnimationPhase;
-}
-
-int Creature::getAnimationInterval()
-{
-    const auto& datType = m_outfit.hasMount() ? rawGetMountThingType() : rawGetThingType();
-
-    const auto idleAnimator = datType->getIdleAnimator();
-    if(idleAnimator) return idleAnimator->getAverageDuration();
-    if(datType->isAnimateAlways()) return 1000 / datType->getAnimationPhases();
-
-    return 0;
 }
 
 int Creature::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase)

@@ -44,7 +44,7 @@ void DrawPool::terminate()
 
 PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 {
-    auto pool = std::make_shared<PoolFramed>();
+    auto pool = std::make_shared<FramedPool>();
 
     pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
 
@@ -104,40 +104,34 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 
 void DrawPool::draw()
 {
+    // Pre Draw
     for(const auto& pool : m_pools) {
-        if(!pool->isEnabled() || !pool->isFramed()) continue;
-        const auto& pf = std::dynamic_pointer_cast<PoolFramed>(pool);
-        const auto& frameBuffer = pf->m_framebuffer;
-        if(!frameBuffer->isDrawable())
-            continue;
-
+        if(!pool->isEnabled() || !pool->hasFrameBuffer()) continue;
+        const auto& pf = pool->toFramedPool();
         if(pf->hasModification()) {
             pf->updateStatus();
-            frameBuffer->bind();
-            for(auto& obj : pool->m_objects)
-                drawObject(obj);
-            frameBuffer->release();
+            if(!pool->m_objects.empty()) {
+                pf->m_framebuffer->bind();
+                for(auto& obj : pool->m_objects)
+                    drawObject(obj);
+                pf->m_framebuffer->release();
+            }
         }
     }
 
+    // Draw
     for(const auto& pool : m_pools) {
         if(!pool->isEnabled()) continue;
-
-        if(pool->isFramed()) {
-            const auto pf = std::dynamic_pointer_cast<PoolFramed>(pool);
-            const auto& frameBuffer = pf->m_framebuffer;
-            if(!frameBuffer->isDrawable())
-                continue;
+        if(pool->hasFrameBuffer()) {
+            const auto pf = pool->toFramedPool();
 
             g_painter->saveAndResetState();
             if(pf->m_beforeDraw) pf->m_beforeDraw();
-            frameBuffer->draw(pf->m_dest, pf->m_src);
+            pf->m_framebuffer->draw(pf->m_dest, pf->m_src);
             if(pf->m_afterDraw) pf->m_afterDraw();
             g_painter->restoreSavedState();
-        } else {
-            for(auto& obj : pool->m_objects)
-                drawObject(obj);
-        }
+        } else             for(auto& obj : pool->m_objects)
+            drawObject(obj);
 
         pool->m_objects.clear();
     }
@@ -351,7 +345,7 @@ void DrawPool::use(const PoolPtr& pool)
 {
     m_currentPool = pool;
     m_currentPool->resetState();
-    if(m_currentPool->isFramed()) {
+    if(m_currentPool->hasFrameBuffer()) {
         poolFramed()->resetCurrentStatus();
     }
 }
@@ -366,7 +360,7 @@ void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
 
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)
 {
-    if(!m_currentPool->isFramed()) return;
+    if(!m_currentPool->hasFrameBuffer()) return;
 
     size_t hash = 0;
 

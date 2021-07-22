@@ -45,7 +45,7 @@ class ParticleSystem;
 class ParticleEffect;
 class ParticleEffectType;
 class Pool;
-class PoolFramed;
+class FramedPool;
 class DrawPool;
 
 typedef stdext::shared_object_ptr<Image> ImagePtr;
@@ -67,6 +67,6 @@ typedef stdext::shared_object_ptr<ParticleEffectType> ParticleEffectTypePtr;
 typedef std::vector<ShaderPtr> ShaderList;
 
 typedef std::shared_ptr<Pool> PoolPtr;
-typedef std::shared_ptr<PoolFramed> PoolFramedPtr;
+typedef std::shared_ptr<FramedPool> PoolFramedPtr;
 
 #endif

@@ -385,14 +385,6 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
     return Thing::getExactSize(layer, xPattern, yPattern, zPattern, animationPhase);
 }
 
-int Item::getAnimationInterval()
-{
-    if(!hasAnimationPhases()) return 0;
-
-    const AnimatorPtr& animator = getAnimator();
-    return animator ? animator->getAverageDuration() : Otc::ITEM_TICKS_PER_FRAME;
-}
-
 const ThingTypePtr& Item::getThingType()
 {
     return g_things.getThingType(m_clientId, ThingCategoryItem);

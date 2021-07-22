@@ -48,7 +48,6 @@ public:
 
 protected:
     void onAppear() override;
-    int getAnimationInterval() override;
 
 private:
     Timer m_animationTimer;

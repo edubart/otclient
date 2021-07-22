@@ -100,7 +100,6 @@ public:
     LocalPlayerPtr asLocalPlayer() { return static_self_cast<LocalPlayer>(); }
     bool isLocalPlayer() override { return true; }
 
-    void onAppear() override;
     void onPositionChange(const Position& newPos, const Position& oldPos) override;
 
 protected:

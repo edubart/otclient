@@ -59,21 +59,8 @@ void Effect::onAppear()
 {
     m_animationTimer.restart();
 
-    // Cache m_duration
-    getAnimationInterval();
-
-    // schedule removal
-    const auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
-}
-
-int Effect::getAnimationInterval()
-{
-    int ticksPerFrame;
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
         m_duration = getThingType()->getAnimator()->getTotalDuration();
-
-        ticksPerFrame = getThingType()->getAnimator()->getAverageDuration();
     } else {
         m_duration = Otc::EFFECT_TICKS_PER_FRAME;
 
@@ -82,12 +69,12 @@ int Effect::getAnimationInterval()
             m_duration <<= 2;
         }
 
-        ticksPerFrame = m_duration;
-
         m_duration *= getAnimationPhases();
     }
 
-    return ticksPerFrame;
+    // schedule removal
+    const auto self = asEffect();
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
 }
 
 void Effect::waitFor(const EffectPtr& firstEffect)

@@ -114,8 +114,6 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             m_cursorTicks = g_clock.millis();
         }
     }
-
-    g_painter->resetColor();
 }
 
 void UITextEdit::update(bool focusCursor)

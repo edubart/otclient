@@ -147,9 +147,6 @@ public:
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
 
-protected:
-    int getAnimationInterval() override;
-
 private:
     uint16 m_clientId{ 0 };
     uint16 m_serverId{ 0 };

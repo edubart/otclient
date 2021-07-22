@@ -85,7 +85,8 @@ private:
     void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
     void startPosition() { m_indexToStartSearching = m_objects.size(); }
 
-    virtual bool isFramed() const { return false; };
+    virtual bool hasFrameBuffer() const { return false; };
+    virtual FramedPool* toFramedPool() { return nullptr; }
 
     std::vector<DrawObject> m_objects;
 
@@ -97,7 +98,7 @@ private:
     friend class DrawPool;
 };
 
-class PoolFramed : public Pool {
+class FramedPool : public Pool {
 public:
     void onBeforeDraw(std::function<void()> f) { m_beforeDraw = f; }
     void onAfterDraw(std::function<void()> f) { m_afterDraw = f; }
@@ -111,7 +112,9 @@ private:
     void updateStatus() { m_status.first = m_status.second; }
     void resetCurrentStatus() { m_status.second = 0; }
     bool hasModification() const { return m_status.first != m_status.second; }
-    bool isFramed() const override { return m_framebuffer != nullptr; }
+    bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
+
+    FramedPool* toFramedPool() override { return static_cast<FramedPool*>(this); }
 
     FrameBufferPtr m_framebuffer;
     Rect m_dest, m_src;

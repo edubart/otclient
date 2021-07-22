@@ -66,15 +66,12 @@ public:
     void setCompositionMode(const Painter::CompositionMode mode) { m_compositeMode = mode; }
     void disableBlend() { m_disableBlend = true; }
 
-    void setDrawable(const bool v) { m_drawable = v; }
-    bool isDrawable() const { return m_drawable && m_texture != nullptr; }
-
 protected:
     FrameBuffer(bool useAlphaWriting);
 
     friend class FrameBufferManager;
     friend class Pool;
-    friend class PoolFramed;
+    friend class FramedPool;
 
 private:
     void internalCreate();
@@ -94,8 +91,7 @@ private:
     bool m_backuping{ true },
         m_smooth{ true },
         m_useAlphaWriting{ false },
-        m_disableBlend{ false },
-        m_drawable{ true };
+        m_disableBlend{ false };
 };
 
 #endif

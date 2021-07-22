@@ -49,7 +49,6 @@ public:
     virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView = nullptr) override;
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
-    void preDraw();
 
     void drawOutfit(const Rect& destRect, bool resize, const Color color = Color::white);
     void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags);
@@ -122,7 +121,6 @@ public:
     virtual void walk(const Position& oldPos, const Position& newPos);
     virtual void stopWalk();
 
-    int getAnimationInterval() override;
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }

@@ -44,9 +44,6 @@ public:
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
 
-protected:
-    int getAnimationInterval() override;
-
 private:
     Timer m_animationTimer;
     Point m_delta;
