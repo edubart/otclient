@@ -27,7 +27,7 @@ UIWidget
   GameMapPanel
     id: gameMapPanel
     anchors.left: gameLeftPanel.right
-    anchors.right: gameRightPanel.left
+    anchors.right: gameRightExtraPanel.left
     anchors.top: parent.top
     anchors.bottom: gameBottomPanel.top
     focusable: false
@@ -43,7 +43,7 @@ UIWidget
   GameBottomPanel
     id: gameBottomPanel
     anchors.left: gameLeftPanel.right
-    anchors.right: gameRightPanel.left
+    anchors.right: gameRightExtraPanel.left
     anchors.top: bottomSplitter.top
     anchors.bottom: parent.bottom
 
@@ -67,10 +67,23 @@ UIWidget
     focusable: false
     on: true
 
+  GameSidePanel
+    id: gameRightExtraPanel
+    anchors.right: prev.left
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    margin-right: 1
+    focusable: false
+    visible: true
+    on: true
+    $!on:
+      width: 0
+      visible: false
+
   Splitter
     id: bottomSplitter
     anchors.left: gameLeftPanel.right
-    anchors.right: gameRightPanel.left
+    anchors.right: gameRightExtraPanel.left
     anchors.bottom: parent.bottom
     relative-margin: bottom
     margin-bottom: 172

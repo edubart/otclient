@@ -288,6 +288,7 @@ locale = {
     ["Show frame rate"] = "Visa FPS",
     ["Show info messages in console"] = "Visa info meddelanden i konsol",
     ["Show left panel"] = "Visa vänster panel",
+    ["Show an extra right panel"] = "Visa en extra höger panel",
     ["Show levels in console"] = "Visa nivåer i konsol",
     ["Show Offline"] = false,
     ["Show private messages in console"] = "Visa privata meddelanden i konsol",

@@ -3,6 +3,7 @@ WALK_STEPS_RETRY = 10
 gameRootPanel = nil
 gameMapPanel = nil
 gameRightPanel = nil
+gameRightExtraPanel = nil
 gameLeftPanel = nil
 gameBottomPanel = nil
 showTopMenuButton = nil
@@ -46,9 +47,11 @@ function init()
     bottomSplitter = gameRootPanel:getChildById('bottomSplitter')
     gameMapPanel = gameRootPanel:getChildById('gameMapPanel')
     gameRightPanel = gameRootPanel:getChildById('gameRightPanel')
+    gameRightExtraPanel = gameRootPanel:getChildById('gameRightExtraPanel')
     gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
     gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
-    connect(gameLeftPanel, {onVisibilityChange = onLeftPanelVisibilityChange})
+    connect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
+    connect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
 
     logoutButton = modules.client_topmenu.addLeftButton('logoutButton',
                                                         tr('Exit'),
@@ -149,7 +152,8 @@ function terminate()
         onLoginAdvice = onLoginAdvice
     })
 
-    disconnect(gameLeftPanel, {onVisibilityChange = onLeftPanelVisibilityChange})
+    disconnect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
+    disconnect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
 
     logoutButton:destroy()
     gameRootPanel:destroy()
@@ -953,13 +957,15 @@ function getRightPanel() return gameRightPanel end
 
 function getLeftPanel() return gameLeftPanel end
 
+function getRightExtraPanel() return gameRightExtraPanel end
+
 function getBottomPanel() return gameBottomPanel end
 
 function getShowTopMenuButton() return showTopMenuButton end
 
-function onLeftPanelVisibilityChange(leftPanel, visible)
+function onExtraPanelVisibilityChange(extraPanel, visible)
     if not visible and g_game.isOnline() then
-        local children = leftPanel:getChildren()
+        local children = extraPanel:getChildren()
         for i = 1, #children do children[i]:setParent(gameRightPanel) end
     end
 end
@@ -972,13 +978,17 @@ function setupViewMode(mode)
     if currentViewMode == 2 then
         gameMapPanel:addAnchor(AnchorLeft, 'gameLeftPanel', AnchorRight)
         gameMapPanel:addAnchor(AnchorRight, 'gameRightPanel', AnchorLeft)
+        gameMapPanel:addAnchor(AnchorRight, 'gameRightExtraPanel', AnchorLeft)
         gameMapPanel:addAnchor(AnchorBottom, 'gameBottomPanel', AnchorTop)
         gameRootPanel:addAnchor(AnchorTop, 'topMenu', AnchorBottom)
         gameLeftPanel:setOn(modules.client_options.getOption('showLeftPanel'))
+        gameRightExtraPanel:setOn(modules.client_options.getOption('showRightExtraPanel'))
         gameLeftPanel:setImageColor('white')
         gameRightPanel:setImageColor('white')
+        gameRightExtraPanel:setImageColor('white')
         gameLeftPanel:setMarginTop(0)
         gameRightPanel:setMarginTop(0)
+        gameRightExtraPanel:setMarginTop(0)
         gameBottomPanel:setImageColor('white')
         modules.client_topmenu.getTopMenu():setImageColor('white')
         g_game.changeMapAwareRange(18, 14)
@@ -1005,15 +1015,15 @@ function setupViewMode(mode)
         gameRootPanel:fill('parent')
         gameLeftPanel:setImageColor('alpha')
         gameRightPanel:setImageColor('alpha')
-        gameLeftPanel:setMarginTop(
-            modules.client_topmenu.getTopMenu():getHeight() -
-                gameLeftPanel:getPaddingTop())
-        gameRightPanel:setMarginTop(
-            modules.client_topmenu.getTopMenu():getHeight() -
-                gameRightPanel:getPaddingTop())
+        gameRightExtraPanel:setImageColor('alpha')
+        gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameLeftPanel:getPaddingTop())
+        gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightPanel:getPaddingTop())
+        gameRightExtraPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightExtraPanel:getPaddingTop())
         gameLeftPanel:setOn(true)
         gameLeftPanel:setVisible(true)
         gameRightPanel:setOn(true)
+        gameRightExtraPanel:setOn(true)
+        gameRightExtraPanel:setVisible(true)
         gameMapPanel:setOn(true)
         gameBottomPanel:setImageColor('#ffffff88')
         modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
