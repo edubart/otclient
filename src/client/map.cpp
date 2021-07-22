@@ -649,7 +649,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
 
     //TODO: optimize
     //TODO: delivery creatures in distance order
-    for(int_fast8_t iz = -minZRange; ++iz <= maxZRange;) {
+    for(int_fast8_t iz = -minZRange; iz <= maxZRange; ++iz) {
         for(int_fast32_t iy = -minYRange; iy <= maxYRange; ++iy) {
             for(int_fast32_t ix = -minXRange; ix <= maxXRange; ++ix) {
                 if(const TilePtr& tile = getTile(centerPos.translated(ix, iy, iz))) {
