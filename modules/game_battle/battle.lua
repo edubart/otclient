@@ -306,7 +306,7 @@ end
 -- Sort Type Methods
 function getSortType() -- Return the current sort type (distance, age, name, health)
 	local settings = g_settings.getNode('BattleList')
-	if not settings then
+	if not settings or not settings['sortType'] then
 		return 'name'
 	end
 	return settings['sortType']
@@ -738,6 +738,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 						end
 					end
 				end
+				addCreature(creature) -- should check if creature visibility has changed
 			end
 		end
 	end
