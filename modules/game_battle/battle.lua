@@ -738,6 +738,7 @@ function onCreaturePositionChange(creature, newPos, oldPos) -- Update battleButt
 						end
 					end
 				end
+				addCreature(creature) -- should check if creature visibility has changed
 			end
 		end
 	end
