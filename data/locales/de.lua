@@ -287,6 +287,7 @@ locale = {
     ["Show frame rate"] = "FPS Rate anzeigen",
     ["Show info messages in console"] = "Informations Nachrichten in der Konsole anzeigen",
     ["Show left panel"] = false,
+    ["Show an extra right panel"] = false,
     ["Show levels in console"] = "Level in der Konsole anzeigen",
     ["Show Offline"] = false,
     ["Show private messages in console"] = "Privatnachrichten in der Konsole anzeigen",

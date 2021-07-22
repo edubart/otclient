@@ -339,6 +339,7 @@ locale = {
     ["Show frame rate"] = "Exibir FPS",
     ["Show info messages in console"] = "Exibir mensagens informativas no console",
     ["Show left panel"] = "Mostrar barra lateral esquerda",
+    ["Show an extra right panel"] = "Mostrar uma barra lateral direita extra",
     ["Show levels in console"] = "Exibir níveis no console",
     ["Show Offline"] = "Mostrar Offline",
     ["Show private messages in console"] = "Exibir mensagens privadas no console",

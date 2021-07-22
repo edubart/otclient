@@ -290,6 +290,7 @@ locale = {
     ["Show frame rate"] = "Mostrar información de cuadros por secundo",
     ["Show info messages in console"] = "Mostrar mensajes de información en consola",
     ["Show left panel"] = "Mostrar panel izquierdo",
+    ["Show an extra right panel"] = "Mostrar un panel derecho extra",
     ["Show levels in console"] = "Mostrar niveles en consola",
     ["Show Offline"] = "Mostrar Desconectados",
     ["Show private messages in console"] = "Mostrar mensajes privados en consola",

@@ -284,6 +284,7 @@ locale = {
     ["Show frame rate"] = "Pokaz FPS",
     ["Show info messages in console"] = "Pokaz informacje w konsoli",
     ["Show left panel"] = "Pokaz lewy panel",
+    ["Show an extra right panel"] = "Pokaz dodatkowy prawy panel",
     ["Show levels in console"] = "Pokaz poziomy w konsoli",
     ["Show Offline"] = "Pokaz Niedostepnych",
     ["Show private messages in console"] = "Pokaz prywatne wiadomosci w konsoli",
