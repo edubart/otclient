@@ -99,7 +99,7 @@ void SoundManager::poll()
         StreamSoundSourcePtr source = it->first;
         auto& future = it->second;
 
-        if(future._Is_ready()) {
+        if(future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
             SoundFilePtr sound = future.get();
             if(sound)
                 source->setSoundFile(sound);
