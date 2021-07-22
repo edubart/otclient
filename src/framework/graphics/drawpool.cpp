@@ -105,6 +105,22 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 void DrawPool::draw()
 {
     for(const auto& pool : m_pools) {
+        if(!pool->isEnabled() || !pool->isFramed()) continue;
+        const auto& pf = std::dynamic_pointer_cast<PoolFramed>(pool);
+        const auto& frameBuffer = pf->m_framebuffer;
+        if(!frameBuffer->isDrawable())
+            continue;
+
+        if(pf->hasModification()) {
+            pf->updateStatus();
+            frameBuffer->bind();
+            for(auto& obj : pool->m_objects)
+                drawObject(obj);
+            frameBuffer->release();
+        }
+    }
+
+    for(const auto& pool : m_pools) {
         if(!pool->isEnabled()) continue;
 
         if(pool->isFramed()) {
@@ -114,21 +130,9 @@ void DrawPool::draw()
                 continue;
 
             g_painter->saveAndResetState();
-            {
-                if(pf->hasModification()) {
-                    pf->updateStatus();
-                    frameBuffer->bind();
-
-                    for(auto& obj : pool->m_objects)
-                        drawObject(obj);
-
-                    frameBuffer->release();
-                }
-
-                if(pf->m_beforeDraw) pf->m_beforeDraw();
-                frameBuffer->draw(pf->m_dest, pf->m_src);
-                if(pf->m_afterDraw) pf->m_afterDraw();
-            }
+            if(pf->m_beforeDraw) pf->m_beforeDraw();
+            frameBuffer->draw(pf->m_dest, pf->m_src);
+            if(pf->m_afterDraw) pf->m_afterDraw();
             g_painter->restoreSavedState();
         } else {
             for(auto& obj : pool->m_objects)
