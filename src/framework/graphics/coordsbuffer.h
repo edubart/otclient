@@ -40,55 +40,62 @@ public:
     {
         m_vertexArray.addTriangle(a, b, c);
 
-        boost::hash_combine(m_hash, a.hash());
-        boost::hash_combine(m_hash, b.hash());
-        boost::hash_combine(m_hash, c.hash());
+        if(m_generateHash) {
+            boost::hash_combine(m_hash, a.hash());
+            boost::hash_combine(m_hash, b.hash());
+            boost::hash_combine(m_hash, c.hash());
+        }
     }
     void addRect(const Rect& dest)
     {
         m_vertexArray.addRect(dest);
-        boost::hash_combine(m_hash, dest.hash());
+        generateHash(dest);
     }
     void addRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addRect(dest);
         m_textureCoordArray.addRect(src);
-        boost::hash_combine(m_hash, dest.hash());
+        generateHash(dest);
     }
     void addQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addQuad(dest);
         m_textureCoordArray.addQuad(src);
-        boost::hash_combine(m_hash, dest.hash());
+        generateHash(dest);
     }
     void addUpsideDownQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownQuad(dest);
         m_textureCoordArray.addQuad(src);
-        boost::hash_combine(m_hash, dest.hash());
+        generateHash(dest);
     }
 
     void addUpsideDownRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownRect(dest);
         m_textureCoordArray.addRect(src);
-        boost::hash_combine(m_hash, dest.hash());
+        generateHash(dest);
     }
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
     void addRepeatedRects(const Rect& dest, const Rect& src);
+    void disableHashGeneration() { m_generateHash = false; }
 
     float* getVertexArray() { return m_vertexArray.vertices(); }
     float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
     int getVertexCount() const { return m_vertexArray.vertexCount(); }
     int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
+
     size_t hashCode() const { return m_hash; }
 
 private:
+    void generateHash(const Rect& dest) { if(m_generateHash) boost::hash_combine(m_hash, dest.hash()); }
+
     VertexArray m_vertexArray;
     VertexArray m_textureCoordArray;
 
     size_t m_hash{ 0 };
+    bool m_generateHash{ true };
 };
 
 #endif

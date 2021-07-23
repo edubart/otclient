@@ -31,6 +31,7 @@ DrawPool g_drawPool;
 
 void DrawPool::init()
 {
+    m_coordsbuffer.disableHashGeneration();
     n_unknowPool = g_drawPool.createPool(PoolType::UNKNOW);
     use(n_unknowPool);
 }
