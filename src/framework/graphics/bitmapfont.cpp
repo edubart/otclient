@@ -29,8 +29,6 @@
 
 namespace
 {
-    // for performance reasons we use statics vectors that are allocated on demand
-    CoordsBuffer s_coordsBuffer;
     std::vector<Point> s_glyphsPositions(1);
     std::vector<int> s_lineWidths(1);
 }
@@ -94,9 +92,9 @@ void BitmapFont::drawText(const std::string& text, const Point& startPos, const 
 
 void BitmapFont::drawText(const std::string& text, const Rect& screenCoords, const Color color, Fw::AlignmentFlag align)
 {
-    s_coordsBuffer.clear();
-    calculateDrawTextCoords(s_coordsBuffer, text, screenCoords, align);
-    g_drawPool.addTextureCoords(s_coordsBuffer, m_texture, color);
+    for(const auto& rects : getDrawTextCoords(text, screenCoords, align)) {
+        g_drawPool.addTexturedRect(rects.first, m_texture, rects.second, color);
+    }
 }
 
 std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)

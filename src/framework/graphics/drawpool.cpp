@@ -59,6 +59,8 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 
 void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
+    updateHash(state, method);
+
     const uint16 startIndex = m_currentPool->m_indexToStartSearching ? m_currentPool->m_indexToStartSearching - 1 : 0;
 
     const auto itFind = std::find_if(m_currentPool->m_objects.begin() + startIndex, m_currentPool->m_objects.end(), [state]
