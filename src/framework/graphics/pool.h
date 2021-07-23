@@ -52,8 +52,8 @@ protected:
         std::pair<Rect, Rect> rects{};
         std::tuple<Point, Point, Point> points{};
         Point dest{};
-        uint64 intValue{ 0 };
-        float floatValue{ .0f };
+        uint16 intValue{ 0 };
+        size_t hash{ 0 };
     };
 
     struct DrawObject {

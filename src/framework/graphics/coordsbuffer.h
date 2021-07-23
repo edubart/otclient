@@ -33,36 +33,46 @@ public:
     {
         m_textureCoordArray.clear();
         m_vertexArray.clear();
+        m_hash = 0;
     }
 
     void addTriangle(const Point& a, const Point& b, const Point& c)
     {
         m_vertexArray.addTriangle(a, b, c);
+
+        boost::hash_combine(m_hash, a.hash());
+        boost::hash_combine(m_hash, b.hash());
+        boost::hash_combine(m_hash, c.hash());
     }
     void addRect(const Rect& dest)
     {
         m_vertexArray.addRect(dest);
+        boost::hash_combine(m_hash, dest.hash());
     }
     void addRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addRect(dest);
         m_textureCoordArray.addRect(src);
+        boost::hash_combine(m_hash, dest.hash());
     }
     void addQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addQuad(dest);
         m_textureCoordArray.addQuad(src);
+        boost::hash_combine(m_hash, dest.hash());
     }
     void addUpsideDownQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownQuad(dest);
         m_textureCoordArray.addQuad(src);
+        boost::hash_combine(m_hash, dest.hash());
     }
 
     void addUpsideDownRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownRect(dest);
         m_textureCoordArray.addRect(src);
+        boost::hash_combine(m_hash, dest.hash());
     }
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
@@ -72,12 +82,13 @@ public:
     float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
     int getVertexCount() const { return m_vertexArray.vertexCount(); }
     int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
-    size_t getVertexHash() const { return m_vertexArray.getHash(); }
-    size_t getTextureCoordHash() const { return m_textureCoordArray.getHash(); }
+    size_t hashCode() const { return m_hash; }
 
 private:
     VertexArray m_vertexArray;
     VertexArray m_textureCoordArray;
+
+    size_t m_hash{ 0 };
 };
 
 #endif

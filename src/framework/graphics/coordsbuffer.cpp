@@ -37,6 +37,8 @@ void CoordsBuffer::addBoudingRect(const Rect& dest, int innerLineWidth)
     addRect(Rect(right - w + 1, top, w, height - w)); // right
     addRect(Rect(left + w, bottom - w + 1, width - w, w)); // bottom
     addRect(Rect(left, top + w, w, height - w)); // left
+
+    boost::hash_combine(m_hash, dest.hash());
 }
 
 void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
@@ -65,4 +67,6 @@ void CoordsBuffer::addRepeatedRects(const Rect& dest, const Rect& src)
             m_textureCoordArray.addRect(partialSrc);
         }
     }
+
+    boost::hash_combine(m_hash, dest.hash());
 }

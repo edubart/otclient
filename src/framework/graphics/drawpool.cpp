@@ -186,7 +186,7 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
 {
     Pool::DrawMethod method;
     method.type = Pool::DrawMethodType::DRAW_FILL_COORDS;
-    method.intValue = coordsBuffer.getVertexHash();
+    method.hash = coordsBuffer.hashCode();
 
     auto state = generateState();
     state.color = color;
@@ -200,7 +200,7 @@ void DrawPool::addFillCoords(CoordsBuffer& coordsBuffer, const Color color)
 void DrawPool::addTextureCoords(CoordsBuffer& coordsBuffer, const TexturePtr& texture, const Color color, const Painter::DrawMode drawMode)
 {
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_TEXTURE_COORDS };
-    method.intValue = coordsBuffer.getVertexHash();
+    method.hash = coordsBuffer.hashCode();
 
     auto state = generateState();
     state.texture = texture;
@@ -343,7 +343,7 @@ Painter::PainterState DrawPool::generateState()
 
 void DrawPool::use(const PoolPtr& pool)
 {
-    m_currentPool = pool;
+    m_currentPool = pool ? pool : n_unknowPool;
     m_currentPool->resetState();
     if(m_currentPool->hasFrameBuffer()) {
         poolFramed()->resetCurrentStatus();
@@ -381,42 +381,20 @@ void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMe
     if(state.shaderProgram)
         boost::hash_combine(hash, HASH_INT(state.shaderProgram->getProgramId()));
 
-    if(state.clipRect.isValid()) {
-        boost::hash_combine(hash, HASH_INT(state.clipRect.x()));
-        boost::hash_combine(hash, HASH_INT(state.clipRect.y()));
-    }
-
-    if(method.rects.first.isValid()) {
-        boost::hash_combine(hash, HASH_INT(method.rects.first.x()));
-        boost::hash_combine(hash, HASH_INT(method.rects.first.y()));
-    }
-    if(method.rects.second.isValid()) {
-        boost::hash_combine(hash, HASH_INT(method.rects.second.x()));
-        boost::hash_combine(hash, HASH_INT(method.rects.second.y()));
-    }
+    if(state.clipRect.isValid()) boost::hash_combine(hash, state.clipRect.hash());
+    if(method.rects.first.isValid()) boost::hash_combine(hash, method.rects.first.hash());
+    if(method.rects.second.isValid()) boost::hash_combine(hash, method.rects.second.hash());
 
     const auto& a = std::get<0>(method.points),
         b = std::get<1>(method.points),
         c = std::get<2>(method.points);
 
-    if(!a.isNull()) {
-        boost::hash_combine(hash, HASH_INT(a.x));
-        boost::hash_combine(hash, HASH_INT(a.y));
-    }
-    if(!b.isNull()) {
-        boost::hash_combine(hash, HASH_INT(b.x));
-        boost::hash_combine(hash, HASH_INT(b.y));
-    }
-    if(!c.isNull()) {
-        boost::hash_combine(hash, HASH_INT(c.x));
-        boost::hash_combine(hash, HASH_INT(c.y));
-    }
+    if(!a.isNull()) boost::hash_combine(hash, a.hash());
+    if(!b.isNull()) boost::hash_combine(hash, b.hash());
+    if(!c.isNull()) boost::hash_combine(hash, c.hash());
 
-    if(method.intValue != 0)
-        boost::hash_combine(hash, HASH_INT(method.intValue));
-
-    if(method.floatValue != 0)
-        boost::hash_combine(hash, HASH_FLOAT(method.floatValue));
+    if(method.intValue) boost::hash_combine(hash, HASH_INT(method.intValue));
+    if(method.hash) boost::hash_combine(hash, method.hash);
 
     boost::hash_combine(poolFramed()->m_status.second, hash);
 }

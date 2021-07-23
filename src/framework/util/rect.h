@@ -119,6 +119,8 @@ public:
 
     TRect<T> expanded(T add) const { return TRect<T>(TPoint<T>(x1 - add, y1 - add), TPoint<T>(x2 + add, y2 + add)); }
 
+    std::size_t hash() const { return static_cast<int>(x()) << 16 | static_cast<int>(y()); }
+
     void moveCenter(const TPoint<T>& p)
     {
         T w = x2 - x1;
