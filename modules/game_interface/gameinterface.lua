@@ -1004,6 +1004,20 @@ function getBottomPanel() return gameBottomPanel end
 
 function getShowTopMenuButton() return showTopMenuButton end
 
+function findContentPanelAvailable(child, minContentHeight)
+    if gameSelectedPanel:isVisible() and gameSelectedPanel:fits(child, minContentHeight, 0) >= 0 then
+        return gameSelectedPanel
+    end
+
+    for k,v in pairs(panelsList) do
+        if v.panel ~= gameSelectedPanel and v.panel:isVisible() and v.panel:fits(child, minContentHeight, 0) >= 0 then
+            return v.panel
+        end
+    end
+
+    return gameSelectedPanel
+end
+
 function onExtraPanelVisibilityChange(extraPanel, visible)
     if not visible then
         if g_game.isOnline() then
