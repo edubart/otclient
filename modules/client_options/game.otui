@@ -26,6 +26,10 @@ Panel
     !text: tr('Show an extra right panel')
 
   OptionCheckBox
+    id: openMaximized
+    !text: tr('Open containers maximized')
+
+  OptionCheckBox
     id: displayNames
     !text: tr('Display creature names')
 
