@@ -145,7 +145,13 @@ function init()
   g_keyboard.bindKeyDown('Ctrl+E', removeCurrentTab)
   g_keyboard.bindKeyDown('Ctrl+H', openHelp)
 
+  -- toggle ASDW
   consoleToggleChat = consolePanel:getChildById('toggleChat')
+
+  g_keyboard.bindKeyPress('Shift+Enter', function()
+    consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
+  end, consolePanel)
+
   load()
 
   if g_game.isOnline() then
@@ -188,9 +194,7 @@ function enableChat()
   consoleTextEdit:setVisible(true)
   consoleTextEdit:setText("")
 
-  g_keyboard.unbindKeyUp("Space")
-  g_keyboard.unbindKeyUp("Enter")
-  g_keyboard.unbindKeyUp("Escape")
+  g_keyboard.unbindKeyDown("Enter")
 
   gameInterface.unbindWalkKey("W")
   gameInterface.unbindWalkKey("D")
@@ -202,6 +206,11 @@ function enableChat()
   gameInterface.unbindWalkKey("C")
   gameInterface.unbindWalkKey("Z")
 
+  gameInterface.unbindTurnKey("Ctrl+W")
+  gameInterface.unbindTurnKey("Ctrl+D")
+  gameInterface.unbindTurnKey("Ctrl+S")
+  gameInterface.unbindTurnKey("Ctrl+A")
+
   consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
 end
 
@@ -211,15 +220,12 @@ function disableChat()
   consoleTextEdit:setVisible(false)
   consoleTextEdit:setText("")
 
-  local quickFunc = function()
-    if consoleToggleChat:isChecked() then
+  local disableAsdw = function()
+    if g_game.isOnline() and consoleToggleChat:isChecked() then
       consoleToggleChat:setChecked(false)
     end
-    enableChat()
   end
-  g_keyboard.bindKeyUp("Space", quickFunc)
-  g_keyboard.bindKeyUp("Enter", quickFunc)
-  g_keyboard.bindKeyUp("Escape", quickFunc)
+  g_keyboard.bindKeyDown("Enter", disableAsdw)
 
   gameInterface.bindWalkKey("W", North)
   gameInterface.bindWalkKey("D", East)
@@ -230,6 +236,11 @@ function disableChat()
   gameInterface.bindWalkKey("Q", NorthWest)
   gameInterface.bindWalkKey("C", SouthEast)
   gameInterface.bindWalkKey("Z", SouthWest)
+
+  gameInterface.bindTurnKey("Ctrl+W", North)
+  gameInterface.bindTurnKey("Ctrl+D", East)
+  gameInterface.bindTurnKey("Ctrl+S", South)
+  gameInterface.bindTurnKey("Ctrl+A", West)
 
   consoleToggleChat:setTooltip(tr("Enable chat mode"))
 end
@@ -257,6 +268,7 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+O')
   g_keyboard.unbindKeyDown('Ctrl+E')
   g_keyboard.unbindKeyDown('Ctrl+H')
+  g_keyboard.unbindKeyDown('Shift+Enter')
 
   saveCommunicationSettings()
 
@@ -287,6 +299,7 @@ end
 function save()
   local settings = {}
   settings.messageHistory = messageHistory
+  settings.asdwMode = consoleToggleChat:isChecked()
   g_settings.setNode('game_console', settings)
 end
 
@@ -294,6 +307,7 @@ function load()
   local settings = g_settings.getNode('game_console')
   if settings then
     messageHistory = settings.messageHistory or {}
+    consoleToggleChat:setChecked(settings.asdwMode or false)
   end
   loadCommunicationSettings()
 end

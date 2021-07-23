@@ -139,7 +139,7 @@ function bindKeys()
                            gameRootPanel)
     g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end,
                            gameRootPanel)
-    g_keyboard.bindKeyDown('Ctrl+W', function()
+    g_keyboard.bindKeyDown('Alt+W', function()
         g_map.cleanTexts()
         modules.game_textmessage.clearMessages()
     end, gameRootPanel)
@@ -172,6 +172,10 @@ function bindTurnKey(key, dir)
     end
 
     g_keyboard.bindKeyPress(key, callback, gameRootPanel)
+end
+
+function unbindTurnKey(key)
+  g_keyboard.unbindKeyPress(key, gameRootPanel)
 end
 
 function terminate()
