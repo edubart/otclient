@@ -111,7 +111,7 @@ function onContainerOpen(container, previousContainer)
     else
         containerWindow = g_ui.createWidget('ContainerWindow',
                                             modules.game_interface
-                                                .getRightPanel())
+                                                .getSelectedPanel())
     end
     containerWindow:setId('container' .. container:getId())
     local containerPanel = containerWindow:getChildById('contentsPanel')
