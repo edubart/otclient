@@ -205,7 +205,7 @@ function randomize()
 end
 
 function accept()
-    outfit.mount = mount.type
+    if mount then outfit.mount = mount.type end
     g_game.changeOutfit(outfit)
     destroy()
 end
