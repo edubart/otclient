@@ -566,20 +566,18 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    const float stepDuration = getStepDuration(true) + 10.f,
-        walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
+    int stepDuration = getStepDuration(true) + 10.f;
 
-    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
+    const float walkTicksPerPixel = static_cast<float>(stepDuration) / Otc::TILE_PIXELS;
+    const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), Otc::TILE_PIXELS);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
     if(m_walkedPixels == Otc::TILE_PIXELS) {
-        if(!isPreWalking) {
+        if(!isPreWalking)
             terminateWalk();
-        } else {
-            m_walkAnimationPhase = 0;
-        }
+        else m_walkAnimationPhase = 0;
         return;
     }
 
