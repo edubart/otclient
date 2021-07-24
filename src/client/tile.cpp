@@ -132,8 +132,10 @@ void Tile::draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor,
 {
     drawStart(mapView);
 
-    if(m_ground && m_ground->isTopGround())
+    if(m_ground && m_ground->isTopGround()) {
         drawGround(mapView, dest, scaleFactor, frameFlags, lightView);
+        drawGroundBorder(mapView, dest, scaleFactor, frameFlags, lightView);
+    }
 
     drawBottom(dest, scaleFactor, frameFlags, lightView);
     drawTop(dest, scaleFactor, frameFlags, lightView);

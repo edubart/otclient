@@ -121,7 +121,7 @@ public:
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
 
-    bool hasGroundBorderToDraw() const { return m_countFlag.hasGroundBorder; }
+    bool hasGroundBorderToDraw() const { return m_countFlag.hasGroundBorder && (!m_ground || !m_ground->isTopGround()); }
     bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || (m_ground && m_ground->isTopGround()); }
     bool hasGround() { return m_ground && !m_ground->isTopGround(); };
     bool hasAnyGround() { return m_ground != nullptr; };
