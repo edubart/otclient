@@ -36,6 +36,7 @@ useRadioGroup = nil
 currentHotkeys = nil
 boundCombosCallback = {}
 hotkeysList = {}
+disableHotkeysCount = 0
 lastHotkeyTime = g_clock.millis()
 
 -- public functions
@@ -385,6 +386,7 @@ end
 
 function doKeyCombo(keyCombo)
     if not g_game.isOnline() then return end
+    if not canPerformKeyCombo(keyCombo) then return end
     local hotKey = hotkeyList[keyCombo]
     if not hotKey then return end
 
@@ -609,4 +611,26 @@ end
 function hotkeyCaptureOk(assignWindow, keyCombo)
     addKeyCombo(keyCombo, nil, true)
     assignWindow:destroy()
+end
+
+
+function enableHotkeys(value)
+    disableHotkeysCount = disableHotkeysCount + (value and -1 or 1)
+
+    if disableHotkeysCount < 0 then
+        disableHotkeysCount = 0;
+    end
+end
+
+function areHotkeysDisabled()
+    return disableHotkeysCount > 0
+end
+
+-- Even if hotkeys are enabled, only the hotkeys containing Ctrl or Alt or F1-F12 will be enabled when
+-- chat is opened (no ASDW mode). This is made to prevent executing hotkeys while typing...
+function canPerformKeyCombo(keyCombo)
+    return disableHotkeysCount == 0 and (modules.game_console.consoleToggleChat:isChecked() or
+        string.match(keyCombo, "F%d%d?") or
+        string.match(keyCombo, "Ctrl%+") or
+        string.match(keyCombo, "Alt%+"))
 end

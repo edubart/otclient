@@ -35,9 +35,9 @@ local function toggleFullMap()
     if fullmapView then
         minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
         minimapWidget:fill('parent')
-        minimapWindow:show()
+        minimapWindow:show(true)
     else
-        minimapWindow:hide()
+        minimapWindow:hide(true)
         minimapWidget:setParent(modules.game_interface.getRootPanel())
         minimapWidget:fill('parent')
     end
