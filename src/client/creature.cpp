@@ -566,8 +566,7 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    int stepDuration = getStepDuration(true) + 10.f;
-
+    const int stepDuration = getStepDuration(true) + 10.f;
     const float walkTicksPerPixel = static_cast<float>(stepDuration) / Otc::TILE_PIXELS;
     const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), Otc::TILE_PIXELS);
 
@@ -577,7 +576,6 @@ void Creature::updateWalk(const bool isPreWalking)
     if(m_walkedPixels == Otc::TILE_PIXELS) {
         if(!isPreWalking)
             terminateWalk();
-        else m_walkAnimationPhase = 0;
         return;
     }
 
