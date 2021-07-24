@@ -8,6 +8,10 @@ Panel
     !text: tr('Allow auto chase override')
 
   OptionCheckBox
+    id: moveStack
+    !text: tr('Move stacks directly')
+
+  OptionCheckBox
     id: smartWalk
     !text: tr('Enable smart walking')
     !tooltip: tr('Will detect when to use diagonal step based on the\nkeys you are pressing')

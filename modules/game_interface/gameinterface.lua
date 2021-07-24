@@ -903,11 +903,11 @@ end
 
 function moveStackableItem(item, toPos)
     if countWindow then return end
-    if g_keyboard.isCtrlPressed() then
-        g_game.move(item, toPos, item:getCount())
-        return
-    elseif g_keyboard.isShiftPressed() then
+    if g_keyboard.isShiftPressed() then
         g_game.move(item, toPos, 1)
+        return
+    elseif g_keyboard.isCtrlPressed() ~= modules.client_options.getOption('moveStack') then
+        g_game.move(item, toPos, item:getCount())
         return
     end
     local count = item:getCount()
