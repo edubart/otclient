@@ -17,6 +17,7 @@ monthSkullWidget = nil
 function init()
     connect(g_game, {
         onGameStart = online,
+        onGameEnd = offline,
         onUnjustifiedPointsChange = onUnjustifiedPointsChange,
         onOpenPvpSituationsChange = onOpenPvpSituationsChange
     })
@@ -29,8 +30,7 @@ function init()
     unjustifiedPointsButton:setOn(true)
     unjustifiedPointsButton:hide()
 
-    unjustifiedPointsWindow = g_ui.loadUI('unjustifiedpoints',
-                                          modules.game_interface.getRightPanel())
+    unjustifiedPointsWindow = g_ui.loadUI('unjustifiedpoints')
     unjustifiedPointsWindow:disableResize()
     unjustifiedPointsWindow:setup()
 
@@ -54,6 +54,7 @@ end
 function terminate()
     disconnect(g_game, {
         onGameStart = online,
+        onGameEnd = offline,
         onUnjustifiedPointsChange = onUnjustifiedPointsChange,
         onOpenPvpSituationsChange = onOpenPvpSituationsChange
     })
@@ -77,6 +78,7 @@ end
 
 function online()
     if g_game.getFeature(GameUnjustifiedPoints) then
+        unjustifiedPointsWindow:setupOnStart() -- load character window configuration
         unjustifiedPointsButton:show()
     else
         unjustifiedPointsButton:hide()
@@ -84,6 +86,12 @@ function online()
     end
 
     refresh()
+end
+
+function offline()
+    if g_game.getFeature(GameUnjustifiedPoints) then
+        unjustifiedPointsWindow:setParent(nil, true)
+    end
 end
 
 function refresh()

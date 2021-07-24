@@ -11,6 +11,7 @@ groupCooldown = {}
 
 function init()
     connect(g_game, {
+        onGameEnd = offline,
         onGameStart = online,
         onSpellGroupCooldown = onSpellGroupCooldown,
         onSpellCooldown = onSpellCooldown
@@ -22,8 +23,7 @@ function init()
     cooldownButton:setOn(true)
     cooldownButton:hide()
 
-    cooldownWindow = g_ui.loadUI('cooldown',
-                                 modules.game_interface.getRightPanel())
+    cooldownWindow = g_ui.loadUI('cooldown')
     cooldownWindow:disableResize()
     cooldownWindow:setup()
 
@@ -38,6 +38,7 @@ end
 
 function terminate()
     disconnect(g_game, {
+        onGameEnd = offline,
         onGameStart = online,
         onSpellGroupCooldown = onSpellGroupCooldown,
         onSpellCooldown = onSpellCooldown
@@ -85,6 +86,7 @@ end
 
 function online()
     if g_game.getFeature(GameSpellList) then
+        cooldownWindow:setupOnStart() -- load character window configuration
         cooldownButton:show()
     else
         cooldownButton:hide()
@@ -94,6 +96,12 @@ function online()
     if not lastPlayer or lastPlayer ~= g_game.getCharacterName() then
         refresh()
         lastPlayer = g_game.getCharacterName()
+    end
+end
+
+function offline()
+    if g_game.getFeature(GameSpellList) then
+        cooldownWindow:setParent(nil, true)
     end
 end
 

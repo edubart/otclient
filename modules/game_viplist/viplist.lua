@@ -6,8 +6,8 @@ vipInfo = {}
 
 function init()
     connect(g_game, {
-        onGameStart = refresh,
-        onGameEnd = clear,
+        onGameStart = online,
+        onGameEnd = offline,
         onAddVip = onAddVip,
         onVipStateChange = onVipStateChange
     })
@@ -20,7 +20,7 @@ function init()
                                                                 '/images/topbuttons/viplist',
                                                                 toggle)
     vipButton:setOn(true)
-    vipWindow = g_ui.loadUI('viplist', modules.game_interface.getRightPanel())
+    vipWindow = g_ui.loadUI('viplist')
 
     if not g_game.getFeature(GameAdditionalVipInfo) then loadVipInfo() end
     refresh()
@@ -30,8 +30,8 @@ end
 function terminate()
     g_keyboard.unbindKeyDown('Ctrl+P')
     disconnect(g_game, {
-        onGameStart = refresh,
-        onGameEnd = clear,
+        onGameStart = online,
+        onGameEnd = offline,
         onAddVip = onAddVip,
         onVipStateChange = onVipStateChange
     })
@@ -62,6 +62,16 @@ function saveVipInfo()
     settings = {}
     settings['VipInfo'] = vipInfo
     g_settings.mergeNode('VipList', settings)
+end
+
+function online()
+    vipWindow:setupOnStart() -- load character window configuration
+    refresh()
+end
+
+function offline()
+    vipWindow:setParent(nil, true)
+    clear()
 end
 
 function refresh()

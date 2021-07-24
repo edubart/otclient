@@ -21,7 +21,10 @@ function init()
         onInventoryChange = onInventoryChange,
         onBlessingsChange = onBlessingsChange
     })
-    connect(g_game, {onGameStart = refresh})
+    connect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     g_keyboard.bindKeyDown('Ctrl+I', toggle)
 
@@ -30,8 +33,7 @@ function init()
                           '/images/topbuttons/inventory', toggle)
     inventoryButton:setOn(true)
 
-    inventoryWindow = g_ui.loadUI('inventory',
-                                  modules.game_interface.getRightPanel())
+    inventoryWindow = g_ui.loadUI('inventory')
     inventoryWindow:disableResize()
     inventoryPanel = inventoryWindow:getChildById('contentsPanel')
 
@@ -52,7 +54,10 @@ function terminate()
         onInventoryChange = onInventoryChange,
         onBlessingsChange = onBlessingsChange
     })
-    disconnect(g_game, {onGameStart = refresh})
+    disconnect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     g_keyboard.unbindKeyDown('Ctrl+I')
 
@@ -70,6 +75,15 @@ function toggleAdventurerStyle(hasBlessing)
         local itemWidget = inventoryPanel:getChildById('slot' .. slot)
         if itemWidget then itemWidget:setOn(hasBlessing) end
     end
+end
+
+function online()
+    inventoryWindow:setupOnStart() -- load character window configuration
+    refresh()
+end
+
+function offline()
+    inventoryWindow:setParent(nil, true)
 end
 
 function refresh()

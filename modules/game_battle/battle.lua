@@ -15,7 +15,7 @@ local function connecting(gameEvent)
 		connect(g_game, {
 			onAttackingCreatureChange = onAttack,
 			onFollowingCreatureChange = onFollow,
-			onGameEnd = removeAllCreatures,
+			onGameEnd = onGameEnd,
 			onGameStart = onGameStart
 		})
 	end
@@ -49,7 +49,7 @@ local function disconnecting(gameEvent)
 		disconnect(g_game, {
 			onAttackingCreatureChange = onAttack,
 			onFollowingCreatureChange = onFollow,
-			onGameEnd = removeAllCreatures,
+			onGameEnd = onGameEnd,
 			onGameStart = onGameStart
 		})
 	end
@@ -77,7 +77,7 @@ function init() -- Initiating the module (load)
 	g_ui.importStyle('battlebutton')
 	battleButton = modules.client_topmenu.addRightGameToggleButton('battleButton', tr('Battle') .. ' (Ctrl+B)', '/images/topbuttons/battle', toggle)
 	battleButton:setOn(true)
-	battleWindow = g_ui.loadUI('battle', modules.game_interface.getRightPanel())
+	battleWindow = g_ui.loadUI('battle')
 
 	-- Binding Ctrl + B shortcut
 	g_keyboard.bindKeyDown('Ctrl+B', toggle)
@@ -299,8 +299,15 @@ return true
 end
 
 function onGameStart()
+	battleWindow:setupOnStart() -- load character window configuration
+
 	-- Temp fix
 	scheduleEvent(checkCreatures, 200)
+end
+
+function onGameEnd()
+	battleWindow:setParent(nil, true)
+	removeAllCreatures()
 end
 
 -- Sort Type Methods
@@ -381,9 +388,14 @@ function checkCreatures() -- Function that initially populates our tree once the
 		return false
 	end
 
+	local position = player:getPosition()
+	if not position then
+		return false
+	end
+
 	removeAllCreatures() -- Remove all cache if there's any
 
-	local spectators = modules.game_interface.getMapPanel():getSightSpectators(player:getPosition(), false)
+	local spectators = modules.game_interface.getMapPanel():getSightSpectators(position, false)
 	local sortType = getSortType()
 
 	for _, creature in ipairs(spectators) do
@@ -861,13 +873,13 @@ function onBattleButtonHoverChange(battleButton, hovered) -- Interaction with mo
 end
 
 function onOpen()
-		battleButton:setOn(true)
-		connecting()
+	battleButton:setOn(true)
+	connecting()
 end
 
 function onClose()
-		battleButton:setOn(false)
-		disconnecting()
+	battleButton:setOn(false)
+	disconnecting()
 end
 
 function toggle() -- Close/Open the battle window or Pressing Ctrl + B

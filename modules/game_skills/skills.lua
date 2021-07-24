@@ -20,13 +20,16 @@ function init()
         onSkillChange = onSkillChange,
         onBaseSkillChange = onBaseSkillChange
     })
-    connect(g_game, {onGameStart = refresh, onGameEnd = offline})
+    connect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     skillsButton = modules.client_topmenu.addRightGameToggleButton(
                        'skillsButton', tr('Skills') .. ' (Alt+S)',
                        '/images/topbuttons/skills', toggle)
     skillsButton:setOn(true)
-    skillsWindow = g_ui.loadUI('skills', modules.game_interface.getRightPanel())
+    skillsWindow = g_ui.loadUI('skills')
 
     g_keyboard.bindKeyDown('Alt+S', toggle)
 
@@ -53,7 +56,10 @@ function terminate()
         onSkillChange = onSkillChange,
         onBaseSkillChange = onBaseSkillChange
     })
-    disconnect(g_game, {onGameStart = refresh, onGameEnd = offline})
+    disconnect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     g_keyboard.unbindKeyDown('Alt+S')
     skillsWindow:destroy()
@@ -180,6 +186,11 @@ function update()
     end
 end
 
+function online()
+    skillsWindow:setupOnStart() -- load character window configuration
+    refresh()
+end
+
 function refresh()
     local player = g_game.getLocalPlayer()
     if not player then return end
@@ -223,6 +234,7 @@ function refresh()
 end
 
 function offline()
+    skillsWindow:setParent(nil, true)
     if expSpeedEvent then
         expSpeedEvent:cancel()
         expSpeedEvent = nil

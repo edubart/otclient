@@ -66,8 +66,8 @@ function controller:onInit()
                               '/images/topbuttons/minimap', toggle)
     minimapButton:setOn(true)
 
-    local minimapWindow = g_ui.loadUI('minimap',
-                                      modules.game_interface.getRightPanel())
+    local minimapWindow = g_ui.loadUI('minimap')
+
     minimapWindow:setContentMinimumHeight(80)
 
     local minimapWidget = minimapWindow:recursiveGetChildById('minimap')
@@ -94,6 +94,8 @@ function controller:onInit()
 end
 
 controller:onGameStart(function()
+    controller.widgets.minimapWindow:setupOnStart() -- load character window configuration
+
     -- Load Map
     g_minimap.clean()
 
@@ -115,6 +117,8 @@ controller:onGameStart(function()
 end)
 
 controller:onGameEnd(function()
+    controller.widgets.minimapWindow:setParent(nil, true)
+
     -- Save Map
     if otmm then
         g_minimap.saveOtmm('/minimap.otmm')

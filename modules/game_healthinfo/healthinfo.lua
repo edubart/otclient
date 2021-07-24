@@ -105,15 +105,17 @@ function init()
         onFreeCapacityChange = onFreeCapacityChange
     })
 
-    connect(g_game, {onGameEnd = offline})
+    connect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     healthInfoButton = modules.client_topmenu.addRightGameToggleButton(
                            'healthInfoButton', tr('Health Information'),
                            '/images/topbuttons/healthinfo', toggle)
     healthInfoButton:setOn(true)
 
-    healthInfoWindow = g_ui.loadUI('healthinfo',
-                                   modules.game_interface.getRightPanel())
+    healthInfoWindow = g_ui.loadUI('healthinfo')
     healthInfoWindow:disableResize()
     healthBar = healthInfoWindow:recursiveGetChildById('healthBar')
     manaBar = healthInfoWindow:recursiveGetChildById('manaBar')
@@ -150,7 +152,10 @@ function terminate()
         onFreeCapacityChange = onFreeCapacityChange
     })
 
-    disconnect(g_game, {onGameEnd = offline})
+    disconnect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     healthInfoWindow:destroy()
     healthInfoButton:destroy()
@@ -193,7 +198,12 @@ function loadIcon(bitChanged)
     return icon
 end
 
+function online()
+    healthInfoWindow:setupOnStart() -- load character window configuration
+end
+
 function offline()
+    healthInfoWindow:setParent(nil, true)
     healthInfoWindow:recursiveGetChildById('conditionPanel'):destroyChildren()
 end
 

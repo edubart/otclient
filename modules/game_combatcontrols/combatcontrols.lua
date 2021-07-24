@@ -19,8 +19,7 @@ function init()
                                'combatControlsButton', tr('Combat Controls'),
                                '/images/topbuttons/combatcontrols', toggle)
     combatControlsButton:setOn(true)
-    combatControlsWindow = g_ui.loadUI('combatcontrols',
-                                       modules.game_interface.getRightPanel())
+    combatControlsWindow = g_ui.loadUI('combatcontrols')
     combatControlsWindow:disableResize()
 
     fightOffensiveBox = combatControlsWindow:recursiveGetChildById(
@@ -146,6 +145,7 @@ function check()
 end
 
 function online()
+    combatControlsWindow:setupOnStart() -- load character window configuration
     local player = g_game.getLocalPlayer()
     if player then
         local char = g_game.getCharacterName()
@@ -185,6 +185,7 @@ function online()
 end
 
 function offline()
+    combatControlsWindow:setParent(nil, true)
     local lastCombatControls = g_settings.getNode('LastCombatControls')
     if not lastCombatControls then lastCombatControls = {} end
 
