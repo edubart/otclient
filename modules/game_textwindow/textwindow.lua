@@ -71,6 +71,8 @@ function onGameEditText(id, itemId, maxLength, text, writer, time)
         okButton:setMarginRight(0)
     else
         textWindow:setText(tr('Edit Text'))
+        textEdit:focus()
+        textEdit:setCursorPos(#text)
     end
 
     if description:getHeight() < 64 then description:setHeight(64) end
@@ -109,6 +111,8 @@ function onGameEditList(id, doorId, text)
     textEdit:setMaxLength(8192)
     textEdit:setText(text)
     textEdit:setEditable(true)
+    textEdit:focus()
+    textEdit:setCursorPos(#text)
     description:setText(tr('Enter one name per line.'))
     textWindow:setText(tr('Edit List'))
 
