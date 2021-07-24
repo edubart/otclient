@@ -15,6 +15,7 @@ local defaultOptions = {
     showPrivateMessagesOnScreen = true,
     showLeftPanel = false,
     showRightExtraPanel = false,
+    openMaximized = false,
     backgroundFrameRate = 201,
     painterEngine = 0,
     enableAudio = true,

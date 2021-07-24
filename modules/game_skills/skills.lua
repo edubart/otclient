@@ -23,12 +23,12 @@ function init()
     connect(g_game, {onGameStart = refresh, onGameEnd = offline})
 
     skillsButton = modules.client_topmenu.addRightGameToggleButton(
-                       'skillsButton', tr('Skills') .. ' (Ctrl+S)',
+                       'skillsButton', tr('Skills') .. ' (Alt+S)',
                        '/images/topbuttons/skills', toggle)
     skillsButton:setOn(true)
     skillsWindow = g_ui.loadUI('skills', modules.game_interface.getRightPanel())
 
-    g_keyboard.bindKeyDown('Ctrl+S', toggle)
+    g_keyboard.bindKeyDown('Alt+S', toggle)
 
     refresh()
     skillsWindow:setup()
@@ -55,7 +55,7 @@ function terminate()
     })
     disconnect(g_game, {onGameStart = refresh, onGameEnd = offline})
 
-    g_keyboard.unbindKeyDown('Ctrl+S')
+    g_keyboard.unbindKeyDown('Alt+S')
     skillsWindow:destroy()
     skillsButton:destroy()
 

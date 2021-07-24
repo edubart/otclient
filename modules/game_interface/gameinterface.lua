@@ -5,6 +5,9 @@ gameMapPanel = nil
 gameRightPanel = nil
 gameRightExtraPanel = nil
 gameLeftPanel = nil
+gameSelectedPanel = nil
+panelsList = {}
+panelsRadioGroup = nil
 gameBottomPanel = nil
 showTopMenuButton = nil
 logoutButton = nil
@@ -50,6 +53,27 @@ function init()
     gameRightExtraPanel = gameRootPanel:getChildById('gameRightExtraPanel')
     gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
     gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
+
+    panelsList = {
+        {
+            panel = gameRightPanel,
+            checkbox = gameRootPanel:getChildById('gameSelectRightColumn'),
+        },{
+            panel = gameRightExtraPanel,
+            checkbox = gameRootPanel:getChildById('gameSelectRightExtraColumn'),
+        },{
+            panel = gameLeftPanel,
+            checkbox = gameRootPanel:getChildById('gameSelectLeftColumn'),
+        },
+    }
+
+    panelsRadioGroup = UIRadioGroup.create()
+    for k,v in pairs(panelsList) do
+        panelsRadioGroup:addWidget(v.checkbox)
+        connect(v.checkbox, { onCheckChange = onSelectPanel })
+    end
+    panelsRadioGroup:selectWidget(panelsList[1].checkbox)
+
     connect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
     connect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
 
@@ -66,6 +90,17 @@ function init()
     bindKeys()
 
     if g_game.isOnline() then show() end
+end
+
+function onSelectPanel(self, checked)
+    if checked then
+        for k,v in pairs(panelsList) do
+            if v.checkbox == self then
+                gameSelectedPanel = v.panel
+                break
+            end
+        end
+    end
 end
 
 function bindKeys()
@@ -104,7 +139,7 @@ function bindKeys()
                            gameRootPanel)
     g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end,
                            gameRootPanel)
-    g_keyboard.bindKeyDown('Ctrl+W', function()
+    g_keyboard.bindKeyDown('Alt+W', function()
         g_map.cleanTexts()
         modules.game_textmessage.clearMessages()
     end, gameRootPanel)
@@ -139,6 +174,10 @@ function bindTurnKey(key, dir)
     g_keyboard.bindKeyPress(key, callback, gameRootPanel)
 end
 
+function unbindTurnKey(key)
+  g_keyboard.unbindKeyPress(key, gameRootPanel)
+end
+
 function terminate()
     hide()
 
@@ -154,6 +193,10 @@ function terminate()
 
     disconnect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
     disconnect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
+
+    for k,v in pairs(panelsList) do
+        disconnect(v.checkbox, { onCheckChange = onSelectPanel })
+    end
 
     logoutButton:destroy()
     gameRootPanel:destroy()
@@ -959,14 +1002,46 @@ function getLeftPanel() return gameLeftPanel end
 
 function getRightExtraPanel() return gameRightExtraPanel end
 
+function getSelectedPanel() return gameSelectedPanel end
+
 function getBottomPanel() return gameBottomPanel end
 
 function getShowTopMenuButton() return showTopMenuButton end
 
+function findContentPanelAvailable(child, minContentHeight)
+    if gameSelectedPanel:isVisible() and gameSelectedPanel:fits(child, minContentHeight, 0) >= 0 then
+        return gameSelectedPanel
+    end
+
+    for k,v in pairs(panelsList) do
+        if v.panel ~= gameSelectedPanel and v.panel:isVisible() and v.panel:fits(child, minContentHeight, 0) >= 0 then
+            return v.panel
+        end
+    end
+
+    return gameSelectedPanel
+end
+
 function onExtraPanelVisibilityChange(extraPanel, visible)
-    if not visible and g_game.isOnline() then
-        local children = extraPanel:getChildren()
-        for i = 1, #children do children[i]:setParent(gameRightPanel) end
+    if not visible then
+        if g_game.isOnline() then
+            local children = extraPanel:getChildren()
+            for i = 1, #children do children[i]:setParent(gameRightPanel) end
+        end
+
+        if extraPanel == getSelectedPanel() then
+            panelsRadioGroup:selectWidget(panelsList[1].checkbox)
+        end
+
+        if not gameRightExtraPanel:isVisible() and not gameLeftPanel:isVisible() then
+            for k,v in pairs(panelsList) do
+                v.checkbox:setVisible(false)
+            end
+        end
+    else
+        for k,v in pairs(panelsList) do
+            v.checkbox:setVisible(true)
+        end
     end
 end
 

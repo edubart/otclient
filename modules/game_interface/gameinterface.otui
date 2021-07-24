@@ -7,6 +7,12 @@ GameSidePanel < UIMiniWindowContainer
     type: verticalBox
     //spacing: 1
 
+SelectColumnButton < CheckBox
+  visible: false
+  opacity: 0.3
+  $hover:
+    opacity: 1
+
 GameBottomPanel < Panel
   image-source: /images/ui/panel_bottom
   image-border: 4
@@ -79,6 +85,21 @@ UIWidget
     $!on:
       width: 0
       visible: false
+
+  SelectColumnButton
+    id: gameSelectLeftColumn
+    anchors.right: gameLeftPanel.right
+    anchors.bottom: gameLeftPanel.bottom
+
+  SelectColumnButton
+    id: gameSelectRightColumn
+    anchors.right: gameRightPanel.right
+    anchors.bottom: gameRightPanel.bottom
+
+  SelectColumnButton
+    id: gameSelectRightExtraColumn
+    anchors.right: gameRightExtraPanel.right
+    anchors.bottom: gameRightExtraPanel.bottom
 
   Splitter
     id: bottomSplitter
