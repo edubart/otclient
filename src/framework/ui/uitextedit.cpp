@@ -78,7 +78,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
             for(int i = 0; i < textLength; ++i)
                 m_glyphsTextRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
         }
-        for(const auto& rect : m_glyphsSelectRectCache)
+        for(const auto& rect : m_glyphsTextRectCache)
             g_drawPool.addRepeatedTexturedRect(rect.first, texture, rect.second, m_color);
     }
 
@@ -89,7 +89,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
                 m_glyphsSelectRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
         }
         for(const auto& rect : m_glyphsSelectRectCache) {
-            g_drawPool.addRepeatedFilledRect(rect.first/*, rect.second*/, m_selectionBackgroundColor);
+            g_drawPool.addRepeatedFilledRect(rect.first, rect.second, m_selectionBackgroundColor);
             g_drawPool.addRepeatedTexturedRect(rect.first, texture, rect.second, m_selectionColor);
         }
     }

@@ -42,32 +42,27 @@ public:
     void addRect(const Rect& dest)
     {
         m_vertexArray.addRect(dest);
-        generateHash(dest);
     }
     void addRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addRect(dest);
         m_textureCoordArray.addRect(src);
-        generateHash(dest);
     }
     void addQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addQuad(dest);
         m_textureCoordArray.addQuad(src);
-        generateHash(dest);
     }
     void addUpsideDownQuad(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownQuad(dest);
         m_textureCoordArray.addQuad(src);
-        generateHash(dest);
     }
 
     void addUpsideDownRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addUpsideDownRect(dest);
         m_textureCoordArray.addRect(src);
-        generateHash(dest);
     }
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);

@@ -254,11 +254,16 @@ void DrawPool::addRepeatedTexturedRepeatedRect(const Rect& dest, const TexturePt
 
 void DrawPool::addRepeatedFilledRect(const Rect& dest, const Color color)
 {
+    addRepeatedFilledRect(dest, Rect(), color);
+}
+
+void DrawPool::addRepeatedFilledRect(const Rect& dest, const Rect& src, const Color color)
+{
     if(dest.isEmpty())
         return;
 
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_REPEATED_FILLED_RECT };
-    method.rects = std::make_pair(dest, Rect());
+    method.rects = std::make_pair(dest, src);
 
     auto state = generateState();
     state.color = color;
