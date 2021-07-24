@@ -1024,24 +1024,37 @@ end
 
 function onExtraPanelVisibilityChange(extraPanel, visible)
     if not visible then
+        -- move children to right panel
         if g_game.isOnline() then
             local children = extraPanel:getChildren()
             for i = 1, #children do children[i]:setParent(gameRightPanel) end
         end
 
+        -- unselect hiding panel
         if extraPanel == getSelectedPanel() then
             panelsRadioGroup:selectWidget(panelsList[1].checkbox)
         end
 
-        if not gameRightExtraPanel:isVisible() and not gameLeftPanel:isVisible() then
-            for k,v in pairs(panelsList) do
+        -- hide checkbox of hidden panel
+        for k,v in pairs(panelsList) do
+            if v.panel == extraPanel then
                 v.checkbox:setVisible(false)
             end
         end
-    else
-        for k,v in pairs(panelsList) do
-            v.checkbox:setVisible(true)
+
+        -- if there is only the right panel visible, hide its checkbox too
+        if not gameRightExtraPanel:isVisible() and not gameLeftPanel:isVisible() then
+            panelsList[1].checkbox:setVisible(false)
         end
+    else
+        -- this means that, besided the right panel, there is another panel visible
+        -- so we'll enable the checkboxes from the one at right, and the one being shown
+        for k,v in pairs(panelsList) do
+            if v.panel == extraPanel then
+                v.checkbox:setVisible(true)
+            end
+        end
+        panelsList[1].checkbox:setVisible(true)
     end
 end
 
