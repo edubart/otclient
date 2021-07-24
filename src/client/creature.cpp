@@ -536,10 +536,7 @@ void Creature::updateWalkingTile()
 
     if(newWalkingTile) {
         newWalkingTile->addWalkingCreature(static_self_cast<Creature>());
-
-        if(isLocalPlayer() || newWalkingTile->isEmpty()) {
-            g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
-        }
+        g_map.notificateTileUpdate(newWalkingTile->getPosition(), this, Otc::OPERATION_CLEAN);
     }
 
     m_walkingTile = newWalkingTile;
@@ -569,24 +566,22 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    int stepDuration = getStepDuration(true);
-    stepDuration += (20 - stepDuration * .05);
+    const float stepDuration = getStepDuration(true) + 10.f,
+        walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
 
-    if(m_walking && m_walkTimer.ticksElapsed() >= stepDuration) {
+    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
+
+    // needed for paralyze effect
+    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
+
+    if(m_walkedPixels == Otc::TILE_PIXELS) {
         if(!isPreWalking) {
             terminateWalk();
         } else {
             m_walkAnimationPhase = 0;
         }
-
         return;
     }
-
-    const float walkTicksPerPixel = static_cast<float>(stepDuration) / Otc::TILE_PIXELS;
-    const int totalPixelsWalked = std::min<int>(m_walkTimer.ticksElapsed() / walkTicksPerPixel, Otc::TILE_PIXELS);
-
-    // needed for paralyze effect
-    m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
 
     updateWalkAnimation();
     updateWalkOffset(m_walkedPixels);
