@@ -57,6 +57,8 @@ UIWidget::~UIWidget()
 
 void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
+    g_drawPool.startPosition();
+
     Rect oldClipRect;
     if(m_clipping) {
         oldClipRect = g_painter->getClipRect();
@@ -114,8 +116,6 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
         Rect childVisibleRect = visibleRect.intersection(child->getRect());
         if(!childVisibleRect.isValid())
             continue;
-
-        g_drawPool.startPosition();
 
         // store current graphics opacity
         float oldOpacity = g_painter->getOpacity();
