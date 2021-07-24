@@ -36,15 +36,14 @@ public:
 
 protected:
     enum class DrawMethodType {
-        DRAW_FILL_COORDS,
-        DRAW_TEXTURE_COORDS,
-        DRAW_TEXTURED_RECT,
-        DRAW_UPSIDEDOWN_TEXTURED_RECT,
-        DRAW_REPEATED_TEXTURED_RECT,
-        DRAW_REPEATED_FILLED_RECT,
         DRAW_FILLED_RECT,
+        DRAW_BOUNDING_RECT,
+        DRAW_TEXTURED_RECT,
         DRAW_FILLED_TRIANGLE,
-        DRAW_BOUNDING_RECT
+        DRAW_REPEATED_FILLED_RECT,
+        DRAW_REPEATED_TEXTURED_RECT,
+        DRAW_UPSIDEDOWN_TEXTURED_RECT,
+        DRAW_REPEATED_TEXTURED_REPEATED_RECT
     };
 
     struct DrawMethod {
@@ -57,10 +56,9 @@ protected:
     };
 
     struct DrawObject {
-        ~DrawObject() { drawMethods.clear(); coordsBuffer = nullptr; state.texture = nullptr; action = nullptr; }
+        ~DrawObject() { drawMethods.clear(); state.texture = nullptr; action = nullptr; }
 
         Painter::PainterState state;
-        std::shared_ptr<CoordsBuffer> coordsBuffer;
         Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
         std::vector<DrawMethod> drawMethods;
 
@@ -82,7 +80,7 @@ private:
     void resetClipRect() { m_state.clipRect = Rect(); }
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
     void resetOpacity() { m_state.opacity = 1.f; }
-    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); }
+    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); m_indexToStartSearching = 0;}
     void startPosition() { m_indexToStartSearching = m_objects.size(); }
 
     virtual bool hasFrameBuffer() const { return false; };

@@ -27,7 +27,6 @@
 #include "texture.h"
 
 #include <framework/otml/declarations.h>
-#include <framework/graphics/coordsbuffer.h>
 
 #include <utility>
 
@@ -46,7 +45,6 @@ public:
     void drawText(const std::string& text, const Rect& screenCoords, const Color color = Color::white, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
     std::vector<std::pair<Rect, Rect>> getDrawTextCoords(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
-    void calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string& text,

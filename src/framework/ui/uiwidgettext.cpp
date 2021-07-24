@@ -92,13 +92,12 @@ void UIWidget::drawText(const Rect& screenCoords)
         m_textMustRecache = false;
         m_textCachedScreenCoords = coords;
 
-        m_textCoordsBuffer.clear();
-
-        m_font->calculateDrawTextCoords(m_textCoordsBuffer, m_drawText, coords, m_textAlign);
+        m_textCoordsCache.clear();
+        m_textCoordsCache = m_font->getDrawTextCoords(m_drawText, coords, m_textAlign);
     }
 
-    if(m_font->getTexture())
-        g_drawPool.addTextureCoords(m_textCoordsBuffer, m_font->getTexture(), m_color);
+    for(const auto& fontRect : m_textCoordsCache)
+        g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, m_color);
 }
 
 void UIWidget::onTextChange(const std::string& text, const std::string& oldText)

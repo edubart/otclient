@@ -139,8 +139,8 @@ private:
     std::vector<Rect> m_glyphsCoords;
     std::vector<Rect> m_glyphsTexCoords;
 
-    CoordsBuffer m_glyphsTextCoordsBuffer;
-    CoordsBuffer m_glyphsSelectCoordsBuffer;
+    std::vector<std::pair<Rect, Rect>> m_glyphsTextRectCache, m_glyphsSelectRectCache;
+
     bool m_glyphsMustRecache;
 };
 

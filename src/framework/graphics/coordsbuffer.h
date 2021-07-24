@@ -33,18 +33,11 @@ public:
     {
         m_textureCoordArray.clear();
         m_vertexArray.clear();
-        m_hash = 0;
     }
 
     void addTriangle(const Point& a, const Point& b, const Point& c)
     {
         m_vertexArray.addTriangle(a, b, c);
-
-        if(m_generateHash) {
-            boost::hash_combine(m_hash, a.hash());
-            boost::hash_combine(m_hash, b.hash());
-            boost::hash_combine(m_hash, c.hash());
-        }
     }
     void addRect(const Rect& dest)
     {
@@ -79,23 +72,15 @@ public:
 
     void addBoudingRect(const Rect& dest, int innerLineWidth);
     void addRepeatedRects(const Rect& dest, const Rect& src);
-    void disableHashGeneration() { m_generateHash = false; }
 
     float* getVertexArray() { return m_vertexArray.vertices(); }
     float* getTextureCoordArray() { return m_textureCoordArray.vertices(); }
     int getVertexCount() const { return m_vertexArray.vertexCount(); }
     int getTextureCoordCount() const { return m_textureCoordArray.vertexCount(); }
 
-    size_t hashCode() const { return m_hash; }
-
 private:
-    void generateHash(const Rect& dest) { if(m_generateHash) boost::hash_combine(m_hash, dest.hash()); }
-
     VertexArray m_vertexArray;
     VertexArray m_textureCoordArray;
-
-    size_t m_hash{ 0 };
-    bool m_generateHash{ true };
 };
 
 #endif

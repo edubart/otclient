@@ -79,7 +79,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
     // cache vertex buffers
     if(m_imageCachedScreenCoords != screenCoords || m_imageMustRecache) {
-        m_imageCoordsBuffer.clear();
+        m_imageCoordsCache.clear();
         m_imageCachedScreenCoords = screenCoords;
         m_imageMustRecache = false;
 
@@ -90,29 +90,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
         Rect clipRect = m_imageClipRect.isValid() ? m_imageClipRect : Rect(0, 0, m_imageTexture->getSize());
 
-        if(!m_imageBordered) {
-            if(m_imageFixedRatio) {
-                Size textureSize = m_imageTexture->getSize();
-
-                Size textureClipSize = drawRect.size();
-                textureClipSize.scale(textureSize, Fw::KeepAspectRatio);
-
-                Point texCoordsOffset;
-                if(textureSize.height() > textureClipSize.height())
-                    texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
-                else if(textureSize.width() > textureClipSize.width())
-                    texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
-
-                Rect textureClipRect(texCoordsOffset, textureClipSize);
-
-                m_imageCoordsBuffer.addRect(drawRect, textureClipRect);
-            } else {
-                if(m_imageRepeated)
-                    m_imageCoordsBuffer.addRepeatedRects(drawRect, clipRect);
-                else
-                    m_imageCoordsBuffer.addRect(drawRect, clipRect);
-            }
-        } else {
+        if(m_imageBordered) {
             int top = m_imageBorder.top;
             int bottom = m_imageBorder.bottom;
             int left = m_imageBorder.left;
@@ -136,38 +114,64 @@ void UIWidget::drawImage(const Rect& screenCoords)
             // first the center
             if(centerSize.area() > 0) {
                 rectCoords = Rect(drawRect.left() + leftBorder.width(), drawRect.top() + topBorder.height(), centerSize);
-                m_imageCoordsBuffer.addRepeatedRects(rectCoords, center);
+                m_imageCoordsCache.push_back(std::make_pair(rectCoords, center));
             }
             // top left corner
             rectCoords = Rect(drawRect.topLeft(), topLeftCorner.size());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, topLeftCorner);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topLeftCorner));
             // top
             rectCoords = Rect(drawRect.left() + topLeftCorner.width(), drawRect.topLeft().y, centerSize.width(), topBorder.height());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, topBorder);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topBorder));
             // top right corner
             rectCoords = Rect(drawRect.left() + topLeftCorner.width() + centerSize.width(), drawRect.top(), topRightCorner.size());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, topRightCorner);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topRightCorner));
             // left
             rectCoords = Rect(drawRect.left(), drawRect.top() + topLeftCorner.height(), leftBorder.width(), centerSize.height());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, leftBorder);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, leftBorder));
             // right
             rectCoords = Rect(drawRect.left() + leftBorder.width() + centerSize.width(), drawRect.top() + topRightCorner.height(), rightBorder.width(), centerSize.height());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, rightBorder);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, rightBorder));
             // bottom left corner
             rectCoords = Rect(drawRect.left(), drawRect.top() + topLeftCorner.height() + centerSize.height(), bottomLeftCorner.size());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, bottomLeftCorner);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomLeftCorner));
             // bottom
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width(), drawRect.top() + topBorder.height() + centerSize.height(), centerSize.width(), bottomBorder.height());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, bottomBorder);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomBorder));
             // bottom right corner
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width() + centerSize.width(), drawRect.top() + topRightCorner.height() + centerSize.height(), bottomRightCorner.size());
-            m_imageCoordsBuffer.addRepeatedRects(rectCoords, bottomRightCorner);
+            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomRightCorner));
+        } else if(m_imageFixedRatio) {
+            Size textureSize = m_imageTexture->getSize();
+
+            Size textureClipSize = drawRect.size();
+            textureClipSize.scale(textureSize, Fw::KeepAspectRatio);
+
+            Point texCoordsOffset;
+            if(textureSize.height() > textureClipSize.height())
+                texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
+            else if(textureSize.width() > textureClipSize.width())
+                texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
+
+            Rect textureClipRect(texCoordsOffset, textureClipSize);
+
+            m_imageCoordsCache.push_back(std::make_pair(drawRect, textureClipRect));
+        } else {
+            if(m_imageRepeated)
+                m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
+            else
+                m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
         }
     }
 
     // smooth is now enabled by default for all textures
     //m_imageTexture->setSmooth(m_imageSmooth);
-    g_drawPool.addTextureCoords(m_imageCoordsBuffer, m_imageTexture, m_imageColor);
+    const bool useRepeated = m_imageBordered || m_imageRepeated;
+    for(const auto& rect : m_imageCoordsCache) {
+        if(useRepeated)
+            g_drawPool.addRepeatedTexturedRepeatedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
+        else
+            g_drawPool.addRepeatedTexturedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
+    }
 }
 
 void UIWidget::setImageSource(const std::string& source)

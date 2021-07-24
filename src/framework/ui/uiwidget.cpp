@@ -115,6 +115,8 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
         if(!childVisibleRect.isValid())
             continue;
 
+        g_drawPool.startPosition();
+
         // store current graphics opacity
         float oldOpacity = g_painter->getOpacity();
 

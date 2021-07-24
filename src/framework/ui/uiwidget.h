@@ -30,7 +30,6 @@
 #include <framework/graphics/declarations.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/graphics/bitmapfont.h>
-#include <framework/graphics/coordsbuffer.h>
 #include <framework/core/timer.h>
 
 #include "framework/stdext/math.h"
@@ -400,7 +399,7 @@ private:
     void updateImageCache() { m_imageMustRecache = true; }
     void configureBorderImage() { m_imageBordered = true; updateImageCache(); }
 
-    CoordsBuffer m_imageCoordsBuffer;
+    std::vector<std::pair<Rect, Rect>> m_imageCoordsCache;
     Rect m_imageCachedScreenCoords;
     bool m_imageMustRecache{ true },
         m_imageBordered{ false };
@@ -465,8 +464,9 @@ private:
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
     bool m_textMustRecache{ true };
-    CoordsBuffer m_textCoordsBuffer;
     Rect m_textCachedScreenCoords;
+
+    std::vector<std::pair<Rect, Rect>> m_textCoordsCache;
 
 protected:
     virtual void updateText();

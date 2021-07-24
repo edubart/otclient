@@ -176,13 +176,6 @@ std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::stri
     return list;
 }
 
-void BitmapFont::calculateDrawTextCoords(CoordsBuffer& coordsBuffer, const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
-{
-    for(const auto& rects : getDrawTextCoords(text, screenCoords, align)) {
-        coordsBuffer.addRect(rects.first, rects.second);
-    }
-}
-
 const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string& text,
                                                                Fw::AlignmentFlag align,
                                                                Size* textBoxSize)

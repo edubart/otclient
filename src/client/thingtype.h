@@ -33,7 +33,6 @@ enum class TextureType {
 #include "declarations.h"
 
 #include <framework/core/declarations.h>
-#include <framework/graphics/coordsbuffer.h>
 #include <framework/graphics/texture.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/net/server.h>

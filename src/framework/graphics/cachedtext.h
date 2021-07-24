@@ -24,7 +24,6 @@
 #define CACHEDTEXT_H
 
 #include "declarations.h"
-#include "coordsbuffer.h"
 
 class CachedText
 {

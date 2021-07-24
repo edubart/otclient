@@ -74,21 +74,24 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
 
     if(m_color != Color::alpha) {
         if(glyphsMustRecache) {
-            m_glyphsTextCoordsBuffer.clear();
+            m_glyphsTextRectCache.clear();
             for(int i = 0; i < textLength; ++i)
-                m_glyphsTextCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
+                m_glyphsTextRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
         }
-        g_drawPool.addTextureCoords(m_glyphsTextCoordsBuffer, texture, m_color);
+        for(const auto& rect : m_glyphsSelectRectCache)
+            g_drawPool.addRepeatedTexturedRect(rect.first, texture, rect.second, m_color);
     }
 
     if(hasSelection()) {
         if(glyphsMustRecache) {
-            m_glyphsSelectCoordsBuffer.clear();
+            m_glyphsSelectRectCache.clear();
             for(int i = m_selectionStart; i < m_selectionEnd; ++i)
-                m_glyphsSelectCoordsBuffer.addRect(m_glyphsCoords[i], m_glyphsTexCoords[i]);
+                m_glyphsSelectRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
         }
-        g_drawPool.addFillCoords(m_glyphsSelectCoordsBuffer, m_selectionBackgroundColor);
-        g_drawPool.addTextureCoords(m_glyphsSelectCoordsBuffer, texture, m_selectionColor);
+        for(const auto& rect : m_glyphsSelectRectCache) {
+            g_drawPool.addRepeatedFilledRect(rect.first/*, rect.second*/, m_selectionBackgroundColor);
+            g_drawPool.addRepeatedTexturedRect(rect.first, texture, rect.second, m_selectionColor);
+        }
     }
 
     // render cursor
