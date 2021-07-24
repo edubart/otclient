@@ -99,7 +99,7 @@ Panel
     anchors.top: prev.bottom
     margin-top: 12
     @onSetup: |
-      local value = modules.client_options.getOption('shadowIntensity')
+      local value = modules.client_options.getOption('shadowFloorIntensity')
       self:setText(tr('Floor Shadowing Intensity: %s%%', value))
 
   OptionScrollbar
