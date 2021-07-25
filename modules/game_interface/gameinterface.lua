@@ -148,12 +148,10 @@ function bindKeys()
 end
 
 function bindWalkKey(key, dir)
-    g_keyboard.bindKeyDown(key, function()
-        firstStep = true
-        changeWalkDir(dir)
+    g_keyboard.bindKeyDown(key, function() onWalkKeyDown(dir)
     end, gameRootPanel, true)
-    g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true) end,
-                         gameRootPanel, true)
+    g_keyboard.bindKeyUp(key, function() onWalkKeyUp(dir)
+    end, gameRootPanel, true)
     g_keyboard.bindKeyPress(key, function() smartWalk(dir) end, gameRootPanel)
 end
 
@@ -368,6 +366,18 @@ end
 function stopSmartWalk()
     smartWalkDirs = {}
     smartWalkDir = nil
+end
+
+function onWalkKeyDown(dir)
+    firstStep = true
+    changeWalkDir(dir)
+end
+
+function onWalkKeyUp(dir)
+    changeWalkDir(dir, true)
+    if not modules.client_options.getOption('preciseControl') and #smartWalkDirs == 0 then
+        g_game.scheduleLastWalk(dir);
+    end
 end
 
 function changeWalkDir(dir, pop)

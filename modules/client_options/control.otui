@@ -6,7 +6,7 @@ Panel
   OptionCheckBox
     id: autoChaseOverride
     !text: tr('Allow auto chase override')
-
+    
   OptionCheckBox
     id: moveStack
     !text: tr('Move stacks directly')
@@ -17,59 +17,9 @@ Panel
     !tooltip: tr('Will detect when to use diagonal step based on the\nkeys you are pressing')
 
   OptionCheckBox
-    id: showPing
-    !text: tr('Show connection ping')
-    !tooltip: tr('Display connection speed to the server (milliseconds)')
-
-  OptionCheckBox
-    id: showLeftPanel
-    !text: tr('Show left panel')
-
-  OptionCheckBox
-    id: showRightExtraPanel
-    !text: tr('Show an extra right panel')
-
-  OptionCheckBox
-    id: openMaximized
-    !text: tr('Open containers maximized')
-
-  OptionCheckBox
-    id: displayNames
-    !text: tr('Display creature names')
-
-  OptionCheckBox
-    id: displayHealth
-    !text: tr('Display creature health bars')
-
-  OptionCheckBox
-    id: displayMana
-    !text: tr('Display player mana bar')
-
-  OptionCheckBox
-    id: displayText
-    !text: tr('Display text messages')
-
-  OptionCheckBox
-    id: enableHighlightMouseTarget
-    !text: tr('Highlight mouse target')
-
-  Label
-    id: chooseCrosshairLabel
-    width: 60
-    !text: tr('Crosshair:')
-    phantom: false
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 13
-
-  ComboBox
-    id: crosshair
-    width: 120
-    anchors.left: prev.right
-    anchors.top: enableHighlightMouseTarget.bottom
-    margin-top: 10
-    margin-left: 5
-    mouse-scroll: false
+    id: preciseControl
+    !text: tr('Enable precise control')
+    !tooltip: tr('You will have more precision over the character walking,\nbut it can feel more abrupt or unnatural')
 
   Label
     id: turnDelayLabel
@@ -112,10 +62,10 @@ Panel
     maximum: 250
 
   Button
-    id: changeLocale
-    !text: tr('Change language')
-    @onClick: modules.client_locales.createWindow()
+    id: hotkeysButton
+    !text: tr('Set hotkeys')
+    @onClick: modules.game_hotkeys.show()
     anchors.top: prev.bottom
-    anchors.left: prev.left
+    anchors.left: parent.left
     margin-top: 12
     width: 120

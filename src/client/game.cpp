@@ -595,14 +595,14 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
 
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
-        const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
-        if(m_nextScheduledDir != direction && (isKeyDown || ticks < std::min<int>(250, m_localPlayer->getStepDuration()/4))) {
+        if(m_nextScheduledDir != direction && isKeyDown) {
             // must add a new walk event
             if(m_walkEvent) {
                 m_walkEvent->cancel();
                 m_walkEvent = nullptr;
             }
 
+            const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
             m_nextScheduledDir = direction;
         }
@@ -669,6 +669,30 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
     m_lastWalkDir = direction;
 
     return true;
+}
+
+bool Game::scheduleLastWalk(Otc::Direction direction)
+{
+    if(!canPerformGameAction())
+        return false;
+
+    // we will only schedule if player can't walk on this moment
+    if(!m_localPlayer->canWalk(direction)) {
+        const float ticks = std::max<float>(m_localPlayer->getStepTicksLeft(), 1);
+
+        if(m_nextScheduledDir != direction && ticks < std::min<int>(m_localPlayer->getStepDuration()/2, 250)) {
+            // must add a new walk event
+            if(m_walkEvent) {
+                m_walkEvent->cancel();
+                m_walkEvent = nullptr;
+            }
+
+            m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+            m_nextScheduledDir = direction;
+            return true;
+        }
+    }
+    return false;
 }
 
 void Game::autoWalk(std::vector<Otc::Direction> dirs)
