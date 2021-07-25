@@ -282,7 +282,7 @@ void DrawPool::addFilledRect(const Rect& dest, const Rect& src, const Color colo
         return;
 
     Pool::DrawMethod method{ Pool::DrawMethodType::DRAW_FILLED_RECT };
-    method.rects = std::make_pair(dest, Rect());
+    method.rects = std::make_pair(dest, src);
 
     auto state = generateState();
     state.color = color;
