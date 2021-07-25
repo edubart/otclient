@@ -858,8 +858,6 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         return 0;
 
     Position tilePos;
-    int groundSpeed;
-
     if(dir == Otc::InvalidDirection)
         tilePos = m_lastStepToPosition;
     else
@@ -869,24 +867,27 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         tilePos = m_position;
 
     const TilePtr& tile = g_map.getTile(tilePos);
-    if(tile) {
-        groundSpeed = tile->getGroundSpeed();
-        if(groundSpeed == 0)
-            groundSpeed = 150;
-    } else groundSpeed = 150;
+    int groundSpeed = 0;
+    if(tile) groundSpeed = tile->getGroundSpeed();
+    if(groundSpeed == 0)
+        groundSpeed = 150;
 
     if(m_speed != m_stepCache.speed || groundSpeed != m_stepCache.groundSpeed) {
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
+        const bool hasGameNewSpeedLaw = g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula();
         double stepDuration = 1000. * groundSpeed;
-        if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
+        if(hasGameNewSpeedLaw) {
             stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
         } else stepDuration /= m_speed;
 
         if(FORCE_NEW_WALKING_FORMULA || g_game.getClientVersion() >= 860) {
             const auto serverBeat = g_game.getServerBeat();
             stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
+
+            if(hasGameNewSpeedLaw)
+                stepDuration += 15;
         }
 
         m_stepCache.duration = stepDuration;
