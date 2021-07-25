@@ -25,23 +25,20 @@ local colorBoxes = {}
 
 localPlayerEvent = EventController:new(LocalPlayer, {
     onOutfitChange = function(creature)
-        local availableAddons
-        if creature then
-            outfit = creature:getOutfit()
-            availableAddons = outfit.addons
+        creature = creature or g_game.getLocalPlayer()
+        local selectedOutfit = outfits[currentOutfit]
 
-            for i, obj in pairs(outfits) do obj[3] = availableAddons end
-        else
-            availableAddons = outfits[currentOutfit][3]
-        end
+        local selectedAddons
+        local availableAddons
+
+        outfit = creature:getOutfit()
+        selectedAddons = outfit.addons
+        availableAddons = selectedOutfit[3]
 
         if table.empty(outfits) or not outfit then return end
 
         local nameWidget = outfitWindow:getChildById('outfitName')
-        nameWidget:setText(outfits[currentOutfit][2])
-
-        local availableAllAddon = availableAddons == 3
-        local _addons = outfit.addons
+        nameWidget:setText(selectedOutfit[2])
 
         for k, addon in pairs(addons) do
             addon.widget:setChecked(false)
@@ -51,12 +48,15 @@ localPlayerEvent = EventController:new(LocalPlayer, {
         outfit.addons = 0
 
         for k, addon in pairs(addons) do
-            addon.widget:setEnabled(availableAddons == 3 or addon.value ==
-                                        availableAddons)
-            addon.widget:setChecked(_addons == 3 or addon.value == _addons)
+            local isEnabled = availableAddons == 3 or addon.value ==
+                                  availableAddons
+            addon.widget:setEnabled(isEnabled)
+            addon.widget:setChecked(isEnabled and
+                                        (selectedAddons == 3 or addon.value ==
+                                            selectedAddons))
         end
 
-        outfit.type = outfits[currentOutfit][1]
+        outfit.type = selectedOutfit[1]
         outfitCreature:setOutfit(outfit)
 
         if table.empty(mounts) or not mount then return end
