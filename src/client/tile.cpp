@@ -241,7 +241,8 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightVi
 
 void Tile::clean()
 {
-    m_things.clear();
+    while(!m_things.empty())
+        removeThing(m_things.front());
 }
 
 void Tile::addWalkingCreature(const CreaturePtr& creature)
