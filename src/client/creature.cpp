@@ -132,7 +132,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             const auto& datType = rawGetMountThingType();
 
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, textureType);
+            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, textureType, color);
             dest += getDisplacement() * scaleFactor;
 
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
