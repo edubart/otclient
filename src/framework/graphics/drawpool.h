@@ -48,6 +48,7 @@ class DrawPool
 public:
     PoolPtr createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
     PoolFramedPtr createPoolF(const PoolType type);
+    PoolPtr get(const PoolType type) const { return m_pools[type]; }
 
     void use(const PoolPtr& pool);
     void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);

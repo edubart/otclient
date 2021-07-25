@@ -807,6 +807,9 @@ void MapView::setDrawLights(bool enable)
 {
     if(enable == m_drawLights) return;
 
+    const auto& pool = g_drawPool.get(PoolType::LIGHT);
+    if(pool) pool->setEnable(enable);
+
     m_lightView = enable ? LightViewPtr(new LightView(this)) : nullptr;
     m_drawLights = enable;
 
