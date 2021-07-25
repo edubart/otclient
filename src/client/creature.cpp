@@ -561,13 +561,19 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, std::max<uint64>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
+    }, m_stepCache.duration / Otc::TILE_PIXELS);
 }
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    const float stepDuration = getStepDuration(true) + 10.f,
-        walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
+    float extraSpeed = 0;
+    if(isLocalPlayer()) {
+        extraSpeed = 10.f;
+        if(hasSpeedFormula())
+            extraSpeed *= 2;
+    }
+
+    const float walkTicksPerPixel = (getStepDuration(true) + extraSpeed) / Otc::TILE_PIXELS;
     const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), Otc::TILE_PIXELS);
 
     // needed for paralyze effect
@@ -886,8 +892,8 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
             const auto serverBeat = g_game.getServerBeat();
             stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
 
-            if(hasGameNewSpeedLaw)
-                stepDuration += 15;
+            if(hasGameNewSpeedLaw && isLocalPlayer())
+                stepDuration += 2;
         }
 
         m_stepCache.duration = stepDuration;
