@@ -85,6 +85,7 @@ void Game::resetGameStates()
     m_pingSent = 0;
     m_pingReceived = 0;
     m_unjustifiedPoints = UnjustifiedPoints();
+    m_nextScheduledDir = Otc::InvalidDirection;
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -576,7 +577,7 @@ void Game::safeLogout()
     m_protocolGame->sendLogout();
 }
 
-bool Game::walk(const Otc::Direction direction)
+bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
 {
     if(!canPerformGameAction())
         return false;
@@ -594,7 +595,7 @@ bool Game::walk(const Otc::Direction direction)
 
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
-        if(m_lastWalkDir != direction) {
+        if(m_nextScheduledDir != direction && isKeyDown) {
             // must add a new walk event
             if(m_walkEvent) {
                 m_walkEvent->cancel();
@@ -603,8 +604,16 @@ bool Game::walk(const Otc::Direction direction)
 
             const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+            m_nextScheduledDir = direction;
         }
         return false;
+    } else {
+        m_nextScheduledDir = Otc::InvalidDirection;
+        // if it's going to walk, but there is another scheduled event, cancel it
+        if(m_walkEvent && !m_walkEvent->isExecuted()) {
+            m_walkEvent->cancel();
+            m_walkEvent = nullptr;
+        }
     }
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
