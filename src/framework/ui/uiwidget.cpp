@@ -429,7 +429,7 @@ void UIWidget::moveChildToIndex(const UIWidgetPtr& child, int index)
         return;
     }
     m_children.erase(it);
-    m_children.insert(m_children.begin() + index - 1, child);
+    m_children.insert(m_children.begin() + (index - 1), child);
     updateChildrenIndexStates();
     updateLayout();
 }
