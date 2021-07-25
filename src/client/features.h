@@ -23,9 +23,11 @@
  // Define 1 so that a last creature that entered SQM is rendered behind the previous one.
 #define RENDER_CREATURE_BEHIND 0
 
-// Define 1 to force use the tibia 9+ formula, for some reason the servers below 9 are using the 9+ formula
-#define FORCE_USE_FORMULA_WALK_900_PLUS 1
-
 // Highlight
 #define HIGHTLIGHT_FADE_START 60
 #define HIGHTLIGHT_FADE_END 120
+
+// Define
+// 1 - Nostalrius 7.2
+// 0 - Nekiro TFS1.4-Downgrades and 7.72-downgrade, YurOTS 7.76, OTServ 0.6.4 (8.6), Evolutions (7.6), OTHire 7.2
+#define FORCE_NEW_WALKING_FORMULA 0

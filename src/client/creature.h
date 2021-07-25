@@ -46,6 +46,8 @@ public:
 
     Creature();
 
+    static bool hasSpeedFormula() { return speedA != 0 && speedB != 0 && speedC != 0; }
+
     virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView = nullptr) override;
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
@@ -94,7 +96,7 @@ public:
     uint8 getType() { return m_type; }
     uint8 getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
-    int getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    uint64 getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getDrawOffset();
     Point getWalkOffset() { return m_walkOffset; }
     PointF getJumpOffset() { return m_jumpOffset; }
@@ -220,12 +222,12 @@ private:
     };
 
     struct StepCache {
-        int speed = 0;
-        int groundSpeed = 0;
-        int duration = 0;
-        int diagonalDuration = 0;
+        uint16 speed = 0;
+        uint16 groundSpeed = 0;
+        uint64 duration = 0;
+        uint64 diagonalDuration = 0;
 
-        int getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
+        uint64 getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
     };
 
     StepCache m_stepCache;

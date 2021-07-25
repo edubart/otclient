@@ -73,7 +73,7 @@ bool LocalPlayer::canWalk(Otc::Direction)
         return false;
 
     if(!isAutoWalking()) {
-        if(isPreWalking()) return false;
+        if(isPreWalking() && g_game.getClientVersion() >= 860) return false;
 
         if(m_forceWalk) m_forceWalk = false;
         else {
@@ -111,8 +111,6 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
-    const Position newPos = m_position.translatedToDirection(direction);
-
     // avoid reanimating prewalks
     if(m_preWalking) {
         return;
@@ -124,6 +122,7 @@ void LocalPlayer::preWalk(Otc::Direction direction)
         m_serverWalkEndEvent->cancel();
 
     // start walking to direction
+    const Position newPos = m_position.translatedToDirection(direction);
     m_lastPrewalkDestination = newPos;
     Creature::walk(m_position, newPos);
 }

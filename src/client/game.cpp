@@ -601,7 +601,7 @@ bool Game::walk(const Otc::Direction direction)
                 m_walkEvent = nullptr;
             }
 
-            const float ticks = std::max<float>(m_localPlayer->getStepTicksLeft(), 1);
+            const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
         }
         return false;

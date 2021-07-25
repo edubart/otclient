@@ -561,13 +561,13 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, std::max<>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
+    }, std::max<uint64>(m_stepCache.duration / Otc::TILE_PIXELS, 16));
 }
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    const int stepDuration = getStepDuration(true) + 10.f;
-    const float walkTicksPerPixel = static_cast<float>(stepDuration) / Otc::TILE_PIXELS;
+    const float stepDuration = getStepDuration(true) + 10.f,
+        walkTicksPerPixel = stepDuration / Otc::TILE_PIXELS;
     const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), Otc::TILE_PIXELS);
 
     // needed for paralyze effect
@@ -720,7 +720,7 @@ void Creature::setSpeed(uint16 speed)
     m_speed = speed;
 
     // Cache for stepSpeed Law
-    if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
+    if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
         speed *= 2;
 
         if(speed > -speedB) {
@@ -852,7 +852,7 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
+uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
     if(isParalyzed())
         return 0;
@@ -880,22 +880,17 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         m_stepCache.groundSpeed = groundSpeed;
 
         double stepDuration = 1000. * groundSpeed;
-        if(g_game.getFeature(Otc::GameNewSpeedLaw)) {
+        if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
             stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
         } else stepDuration /= m_speed;
 
-        bool checkTibiaVersion900Plus = true;
-#if FORCE_USE_FORMULA_WALK_900_PLUS == 1
-        checkTibiaVersion900Plus = false;
-#endif
-
-        if(!checkTibiaVersion900Plus || g_game.getClientVersion() >= 900) {
+        if(FORCE_NEW_WALKING_FORMULA || g_game.getClientVersion() >= 860) {
             const auto serverBeat = g_game.getServerBeat();
             stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
         }
 
         m_stepCache.duration = stepDuration;
-        m_stepCache.diagonalDuration = stepDuration * (g_game.getClientVersion() <= 810 ? 2 : 3);
+        m_stepCache.diagonalDuration = stepDuration * (g_game.getClientVersion() > 810 || FORCE_NEW_WALKING_FORMULA ? 3 : 2);
     }
 
     return ignoreDiagonal ? m_stepCache.duration : m_stepCache.getDuration(m_lastStepDirection);
