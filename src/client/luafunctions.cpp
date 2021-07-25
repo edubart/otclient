@@ -314,11 +314,18 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_shaders", "createFragmentShader", &ShaderManager::createFragmentShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "createFragmentShaderFromCode", &ShaderManager::createFragmentShaderFromCode, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "createItemShader", &ShaderManager::createItemShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "createOutfitShader", &ShaderManager::createOutfitShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "createMountShader", &ShaderManager::createMountShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "createMapShader", &ShaderManager::createMapShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getDefaultItemShader", &ShaderManager::getDefaultItemShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "getDefaultOutfitShader", &ShaderManager::getDefaultOutfitShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "getDefaultMountShader", &ShaderManager::getDefaultMountShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getDefaultMapShader", &ShaderManager::getDefaultMapShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "getShader", &ShaderManager::getShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "setupMapShader", &ShaderManager::setupMapShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "setupItemShader", &ShaderManager::setupItemShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "setupOutfitShader", &ShaderManager::setupOutfitShader, &g_shaders);
+    g_lua.bindSingletonFunction("g_shaders", "setupMountShader", &ShaderManager::setupMountShader, &g_shaders);
     g_lua.bindSingletonFunction("g_shaders", "registerShader", &ShaderManager::registerShader, &g_shaders);
 
     g_lua.bindGlobalFunction("getOutfitColor", Outfit::getColor);
@@ -483,6 +490,9 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Creature>("isRemoved", &Creature::isRemoved);
     g_lua.bindClassMemberFunction<Creature>("canBeSeen", &Creature::canBeSeen);
     g_lua.bindClassMemberFunction<Creature>("jump", &Creature::jump);
+    g_lua.bindClassMemberFunction<Creature>("setOutfitShader", &Creature::setOutfitShader);
+    g_lua.bindClassMemberFunction<Creature>("setMountShader", &Creature::setMountShader);
+    g_lua.bindClassMemberFunction<Creature>("setDrawOutfitColor", &Creature::setDrawOutfitColor);
 
     g_lua.registerClass<ItemType>();
     g_lua.bindClassMemberFunction<ItemType>("getServerId", &ItemType::getServerId);

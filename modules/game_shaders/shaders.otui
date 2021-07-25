@@ -5,11 +5,23 @@ ShadersPanel < UIWidget
   anchors.left: parent.left
   border-color: red
   border-width: 1
+  margin-top: 30
+  margin-left: 5
 
-  width: 100
+  width: 200
   layout:
     type: verticalBox
     fit-children: true
 
+  Label
+    text: Shaders Map/Outfit/Mount
+    text-align: center
+
   ComboBox
     id: mapComboBox
+
+  ComboBox
+    id: outfitComboBox
+
+  ComboBox
+    id: mountComboBox

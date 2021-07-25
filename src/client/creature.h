@@ -75,11 +75,16 @@ public:
     void setTypeTexture(const std::string& filename);
     void setIconTexture(const std::string& filename);
     void setPassable(bool passable) { m_passable = passable; }
+    void setOutfitShader(const PainterShaderProgramPtr& shader) { m_outfitShader = shader; }
+    void setMountShader(const PainterShaderProgramPtr& shader) { m_mountShader = shader; }
 
     void addTimedSquare(uint8 color);
     void removeTimedSquare() { m_showTimedSquare = false; }
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
+
+    bool isDrawingOutfitColor() { return m_drawOutfitColor; }
+    void setDrawOutfitColor(const bool draw) { m_drawOutfitColor = draw; }
 
     uint32 getId() override { return m_id; }
     std::string getName() { return m_name; }
@@ -232,6 +237,9 @@ private:
 
     StepCache m_stepCache;
     DrawCache m_drawCache;
+
+    bool m_drawOutfitColor{ true };
+    PainterShaderProgramPtr m_outfitShader, m_mountShader;
 };
 
 // @bindclass

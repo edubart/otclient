@@ -111,7 +111,6 @@ void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, 
     if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
         return;
 
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawTexturedProgram.get());
     setTexture(texture);
 
     m_coordsBuffer.clear();
@@ -123,8 +122,6 @@ void PainterOGL2::drawFilledRect(const Rect& dest)
 {
     if(dest.isEmpty())
         return;
-
-    setDrawProgram(m_shaderProgram ? m_shaderProgram : m_drawSolidColorProgram.get());
 
     m_coordsBuffer.clear();
     m_coordsBuffer.addRect(dest);

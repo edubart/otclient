@@ -70,11 +70,13 @@ public:
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
     void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
     void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
+    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1) { m_currentPool->setShaderProgram(shaderProgram, pos); }
 
     void resetClipRect() { m_currentPool->resetClipRect(); }
     void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
     void resetOpacity() { m_currentPool->resetOpacity(); }
     void resetState() { m_currentPool->resetState(); }
+    void resetShaderProgram() { m_currentPool->resetShaderProgram(); }
 
     void startPosition() { m_currentPool->startPosition(); }
 
@@ -99,10 +101,6 @@ private:
     PoolPtr m_currentPool, n_unknowPool;
 
     bool m_multiThread;
-
-    std::hash<size_t> HASH_INT;
-    std::hash<float> HASH_FLOAT;
-
     friend class GraphicalApplication;
 };
 

@@ -32,11 +32,13 @@ class ShaderManager
 public:
     enum {
         ITEM_ID_UNIFORM = 10,
-        SHADER_ID_UNIFORM = 11,
-        MAP_CENTER_COORD = 12,
-        MAP_GLOBAL_COORD = 13,
+        OUTFIT_ID_UNIFORM = 11,
+        MOUNT_ID_UNIFORM = 12,
+        SHADER_ID_UNIFORM = 13,
         MAP_ZOOM = 14,
         MAP_WALKOFFSET = 15,
+        MAP_CENTER_COORD = 16,
+        MAP_GLOBAL_COORD = 17,
     };
 
     void init();
@@ -44,24 +46,29 @@ public:
 
     void registerShader(const std::string& name, const PainterShaderProgramPtr& shader);
     void setupMapShader(const PainterShaderProgramPtr& shader);
+    void setupItemShader(const PainterShaderProgramPtr& shader);
+    void setupOutfitShader(const PainterShaderProgramPtr& shader);
+    void setupMountShader(const PainterShaderProgramPtr& shader);
 
     PainterShaderProgramPtr createShader(const std::string& name);
     PainterShaderProgramPtr createFragmentShader(const std::string& name, std::string file);
     PainterShaderProgramPtr createFragmentShaderFromCode(const std::string& name, const std::string& code);
 
     PainterShaderProgramPtr createItemShader(const std::string& name, const std::string& file);
+    PainterShaderProgramPtr createOutfitShader(const std::string& name, const std::string& file);
+    PainterShaderProgramPtr createMountShader(const std::string& name, const std::string& file);
     PainterShaderProgramPtr createMapShader(const std::string& name, const std::string& file);
 
     const PainterShaderProgramPtr& getDefaultItemShader() { return m_defaultItemShader; }
+    const PainterShaderProgramPtr& getDefaultOutfitShader() { return m_defaultOutfitShader; }
+    const PainterShaderProgramPtr& getDefaultMountShader() { return m_defaultMountShader; }
     const PainterShaderProgramPtr& getDefaultMapShader() { return m_defaultMapShader; }
 
     PainterShaderProgramPtr getShader(const std::string& name);
 
 private:
-    static void setupItemShader(const PainterShaderProgramPtr& shader);
 
-    PainterShaderProgramPtr m_defaultItemShader;
-    PainterShaderProgramPtr m_defaultMapShader;
+    PainterShaderProgramPtr m_defaultItemShader, m_defaultOutfitShader, m_defaultMountShader, m_defaultMapShader;
     std::unordered_map<std::string, PainterShaderProgramPtr> m_shaders;
 };
 

@@ -71,16 +71,19 @@ private:
         Rect clipRect;
         float opacity;
         bool alphaWriting{ true };
+        PainterShaderProgram* shaderProgram;
     };
 
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);
     void setClipRect(const Rect& clipRect, const int pos = -1);
     void setOpacity(const float opacity, const int pos = -1);
+    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1);
 
     void resetClipRect() { m_state.clipRect = Rect(); }
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
     void resetOpacity() { m_state.opacity = 1.f; }
-    void resetState() { resetClipRect(); resetCompositionMode(); resetOpacity(); m_indexToStartSearching = 0;}
+    void resetShaderProgram() { m_state.shaderProgram = nullptr; }
+    void resetState();
     void startPosition() { m_indexToStartSearching = m_objects.size(); }
 
     virtual bool hasFrameBuffer() const { return false; };
@@ -104,12 +107,15 @@ public:
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
 
 protected:
+    bool m_autoUpdate{ false };
+
     friend class DrawPool;
+    friend class Pool;
 
 private:
-    void updateStatus() { m_status.first = m_status.second; }
+    void updateStatus() { m_status.first = m_status.second; m_refreshTime.restart(); }
     void resetCurrentStatus() { m_status.second = 0; }
-    bool hasModification() const { return m_status.first != m_status.second; }
+    bool hasModification();
     bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
 
     FramedPool* toFramedPool() override { return static_cast<FramedPool*>(this); }
@@ -119,6 +125,7 @@ private:
 
     std::function<void()> m_beforeDraw, m_afterDraw;
     std::pair<size_t, size_t> m_status{ 0,0 };
+    Timer m_refreshTime;
 };
 
 extern DrawPool g_drawPool;

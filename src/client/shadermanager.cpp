@@ -36,6 +36,12 @@ void ShaderManager::init()
     m_defaultItemShader = createFragmentShaderFromCode("Item", glslMainFragmentShader + glslTextureSrcFragmentShader);
     setupItemShader(m_defaultItemShader);
 
+    m_defaultOutfitShader = createFragmentShaderFromCode("Outfit", glslMainFragmentShader + glslTextureSrcFragmentShader);
+    setupItemShader(m_defaultOutfitShader);
+
+    m_defaultMountShader = createFragmentShaderFromCode("Mount", glslMainFragmentShader + glslTextureSrcFragmentShader);
+    setupItemShader(m_defaultMountShader);
+
     m_defaultMapShader = createFragmentShaderFromCode("Map", glslMainFragmentShader + glslTextureSrcFragmentShader);
 
     PainterShaderProgram::release();
@@ -44,6 +50,8 @@ void ShaderManager::init()
 void ShaderManager::terminate()
 {
     m_defaultItemShader = nullptr;
+    m_defaultOutfitShader = nullptr;
+    m_defaultMountShader = nullptr;
     m_defaultMapShader = nullptr;
     m_shaders.clear();
 }
@@ -112,6 +120,22 @@ PainterShaderProgramPtr ShaderManager::createItemShader(const std::string& name,
     return shader;
 }
 
+PainterShaderProgramPtr ShaderManager::createOutfitShader(const std::string& name, const std::string& file)
+{
+    PainterShaderProgramPtr shader = createFragmentShader(name, file);
+    if(shader)
+        setupOutfitShader(shader);
+    return shader;
+}
+
+PainterShaderProgramPtr ShaderManager::createMountShader(const std::string& name, const std::string& file)
+{
+    PainterShaderProgramPtr shader = createFragmentShader(name, file);
+    if(shader)
+        setupMountShader(shader);
+    return shader;
+}
+
 PainterShaderProgramPtr ShaderManager::createMapShader(const std::string& name, const std::string& file)
 {
     PainterShaderProgramPtr shader = createFragmentShader(name, file);
@@ -125,6 +149,20 @@ void ShaderManager::setupItemShader(const PainterShaderProgramPtr& shader)
     if(!shader)
         return;
     shader->bindUniformLocation(ITEM_ID_UNIFORM, "u_ItemId");
+}
+
+void ShaderManager::setupOutfitShader(const PainterShaderProgramPtr& shader)
+{
+    if(!shader)
+        return;
+    shader->bindUniformLocation(OUTFIT_ID_UNIFORM, "u_OutfitId");
+}
+
+void ShaderManager::setupMountShader(const PainterShaderProgramPtr& shader)
+{
+    if(!shader)
+        return;
+    shader->bindUniformLocation(MOUNT_ID_UNIFORM, "u_MountId");
 }
 
 void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)

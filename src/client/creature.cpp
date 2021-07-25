@@ -41,6 +41,7 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/ogl/painterogl2_shadersources.h>
 #include "spritemanager.h"
+#include "shadermanager.h"
 
 double Creature::speedA = 0;
 double Creature::speedB = 0;
@@ -66,6 +67,8 @@ Creature::Creature() : Thing()
     m_footStep = 0;
     m_speedFormula.fill(-1);
     m_outfitColor = Color::white;
+    m_outfitShader = g_shaders.getDefaultOutfitShader();
+    m_mountShader = g_shaders.getDefaultMountShader();
 }
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView)
@@ -112,6 +115,9 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     if(m_outfitColor != Color::white)
         color = m_outfitColor;
 
+    const bool isNotBlank = textureType != TextureType::ALL_BLANK;
+
+    const auto& canDrawShader = isNotBlank && g_painter->hasShaders() && g_graphics.shouldUseShaders();
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = 0;
@@ -136,6 +142,12 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             dest += getDisplacement() * scaleFactor;
 
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
+
+            if(canDrawShader && m_mountShader) {
+                m_mountShader->bind();
+                m_mountShader->setUniformValue(ShaderManager::MOUNT_ID_UNIFORM, m_outfit.getMount());
+                g_drawPool.setShaderProgram(m_mountShader, g_drawPool.size());
+            }
         }
 
         if(animateWalk) animationPhase = getCurrentAnimationPhase();
@@ -152,8 +164,13 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 continue;
 
             datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType, color);
+            if(canDrawShader && m_outfitShader) {
+                m_outfitShader->bind();
+                m_outfitShader->setUniformValue(ShaderManager::OUTFIT_ID_UNIFORM, m_outfit.getId());
+                g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size());
+            }
 
-            if(textureType != TextureType::ALL_BLANK && getLayers() > 1) {
+            if(m_drawOutfitColor && isNotBlank && getLayers() > 1) {
                 g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
                 datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getHeadColor());
                 datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getBodyColor());
@@ -162,6 +179,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
                 g_drawPool.resetCompositionMode();
             }
         }
+
         // outfit is a creature imitating an item or the invisible effect
     } else {
         ThingType* type = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory());
@@ -185,6 +203,12 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             animationPhase = std::min<int>(animationPhase + 1, animationPhases);
 
         type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, textureType, color);
+
+        if(canDrawShader && m_outfitShader) {
+            m_outfitShader->bind();
+            m_outfitShader->setUniformValue(ShaderManager::OUTFIT_ID_UNIFORM, m_outfit.getAuxId());
+            g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size());
+        }
     }
 }
 

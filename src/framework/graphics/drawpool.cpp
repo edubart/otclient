@@ -27,6 +27,9 @@
 #include <framework/graphics/graphics.h>
 #include "painter.h"
 
+const static std::hash<size_t> HASH_INT;
+const static std::hash<float> HASH_FLOAT;
+
 DrawPool g_drawPool;
 
 void DrawPool::init()
@@ -331,6 +334,7 @@ Painter::PainterState DrawPool::generateState()
     state.compositionMode = m_currentPool->m_state.compositionMode;
     state.opacity = m_currentPool->m_state.opacity;
     state.alphaWriting = m_currentPool->m_state.alphaWriting;
+    state.shaderProgram = m_currentPool->m_state.shaderProgram;
 
     return state;
 }
@@ -364,7 +368,7 @@ void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMe
     }
 
     if(state.opacity < 1.f)
-        boost::hash_combine(hash, HASH_INT(state.opacity));
+        boost::hash_combine(hash, HASH_FLOAT(state.opacity));
 
     if(state.color != Color::white)
         boost::hash_combine(hash, HASH_INT(state.color.rgba()));
@@ -373,7 +377,7 @@ void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMe
         boost::hash_combine(hash, HASH_INT(state.compositionMode));
 
     if(state.shaderProgram)
-        boost::hash_combine(hash, HASH_INT(state.shaderProgram->getProgramId()));
+        poolFramed()->m_autoUpdate = true;
 
     if(state.clipRect.isValid()) boost::hash_combine(hash, state.clipRect.hash());
     if(method.rects.first.isValid()) boost::hash_combine(hash, method.rects.first.hash());

@@ -1,9 +1,9 @@
 Module
-  name: game_mapshaders
+  name: game_shaders
   description: Manage map (on game screen) shaders
   author:
   website:
-  scripts: [ mapshaders.lua ]
+  scripts: [ shaders.lua ]
   sandboxed: true
   @onLoad: init()
   @onUnload: terminate()

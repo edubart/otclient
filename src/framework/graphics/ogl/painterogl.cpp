@@ -46,7 +46,6 @@ void PainterOGL::resetState()
     resetBlendEquation();
     resetClipRect();
     resetShaderProgram();
-    resetTexture();
     resetAlphaWriting();
     resetTransformMatrix();
 }
