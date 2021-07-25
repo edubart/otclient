@@ -823,6 +823,9 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
                 return true
             end
             return true
+        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+            g_game.open(useThing)
+            return true
         elseif attackCreature and g_keyboard.isAltPressed() and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.attack(attackCreature)
@@ -861,6 +864,9 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
                 g_game.use(useThing)
                 return true
             end
+            return true
+        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+            g_game.open(useThing)
             return true
         elseif lookThing and keyboardModifiers == KeyboardShiftModifier and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
@@ -903,11 +909,11 @@ end
 
 function moveStackableItem(item, toPos)
     if countWindow then return end
-    if g_keyboard.isCtrlPressed() then
-        g_game.move(item, toPos, item:getCount())
-        return
-    elseif g_keyboard.isShiftPressed() then
+    if g_keyboard.isShiftPressed() then
         g_game.move(item, toPos, 1)
+        return
+    elseif g_keyboard.isCtrlPressed() ~= modules.client_options.getOption('moveStack') then
+        g_game.move(item, toPos, item:getCount())
         return
     end
     local count = item:getCount()

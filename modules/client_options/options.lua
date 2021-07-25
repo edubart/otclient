@@ -6,6 +6,7 @@ local defaultOptions = {
     classicControl = false,
     smartWalk = false,
     autoChaseOverride = true,
+    moveStack = false,
     showStatusMessagesInConsole = true,
     showEventMessagesInConsole = true,
     showInfoMessagesInConsole = true,
