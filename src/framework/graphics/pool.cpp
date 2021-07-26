@@ -98,5 +98,5 @@ void Pool::resetState()
 
 bool FramedPool::hasModification()
 {
-    return m_status.first != m_status.second || m_autoUpdate && m_refreshTime.ticksElapsed() > 50;
+    return m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
 }
