@@ -4,9 +4,13 @@ HOTKEY_MANAGER_USEONTARGET = 2
 HOTKEY_MANAGER_USEWITH = 3
 
 HOTKEY_ACTION_TOGGLE_ASDW = 1
+HOTKEY_ACTION_ATTACK_NEXT = 2
+HOTKEY_ACTION_ATTACK_PREV = 3
 
 HotkeyActions = {
-    [HOTKEY_ACTION_TOGGLE_ASDW] = tr("Toggle ASDW chat mode")
+    [HOTKEY_ACTION_TOGGLE_ASDW] = tr("Toggle ASDW chat mode"),
+    [HOTKEY_ACTION_ATTACK_NEXT] = tr("Attack next creature in battle list"),
+    [HOTKEY_ACTION_ATTACK_PREV] = tr("Attack previous creature in battle list")
 }
 
 HotkeyColors = {
@@ -435,6 +439,10 @@ function doKeyCombo(keyCombo)
     if hotKey.action then
         if hotKey.action == HOTKEY_ACTION_TOGGLE_ASDW then
             modules.game_console.toggleChat()
+        elseif hotKey.action == HOTKEY_ACTION_ATTACK_NEXT then
+            modules.game_battle.attackNext()
+        elseif hotKey.action == HOTKEY_ACTION_ATTACK_PREV then
+            modules.game_battle.attackNext(true)
         end
 
     elseif hotKey.itemId == nil then
@@ -598,6 +606,8 @@ function updateHotkeyForm(reset, dontUpdateCombo)
             currentItemPreview:clearItem()
         end
     else
+        if not dontUpdateCombo then hotkeyActionCombo:setCurrentIndex(1) end
+        hotkeyActionCombo:disable()
         removeHotkeyButton:disable()
         hotkeyText:disable()
         sendAutomatically:disable()
