@@ -1,5 +1,6 @@
-local skillsWindow = nil
-local skillsButton = nil
+skillsWindow = nil
+skillsButton = nil
+skillsSettings = nil
 
 function init()
     connect(LocalPlayer, {
@@ -32,6 +33,11 @@ function init()
     skillsWindow = g_ui.loadUI('skills')
 
     g_keyboard.bindKeyDown('Alt+S', toggle)
+
+    skillSettings = g_settings.getNode('skills-hide')
+    if not skillSettings then
+        skillSettings = {}
+    end
 
     refresh()
     skillsWindow:setup()
@@ -224,6 +230,26 @@ function refresh()
 
     update()
 
+    if g_game.isOnline() then
+        local char = g_game.getCharacterName()
+
+        if not skillSettings[char] then
+            skillSettings[char] = {}
+        end
+
+        local skillsButtons = skillsWindow:recursiveGetChildById('experience'):getParent():getChildren()
+
+        for _, skillButton in pairs(skillsButtons) do
+            local percentBar = skillButton:getChildById('percent')
+
+            if percentBar then
+                showPercentBar(skillButton, skillSettings[char][skillButton:getId()] ~= 1)
+            end
+        end
+
+        skillsWindow:setupOnStart()
+    end
+
     local contentsPanel = skillsWindow:getChildById('contentsPanel')
     skillsWindow:setContentMinimumHeight(44)
     if hasAdditionalSkills then
@@ -239,6 +265,7 @@ function offline()
         expSpeedEvent:cancel()
         expSpeedEvent = nil
     end
+    g_settings.setNode('skills-hide', skillSettings)
 end
 
 function toggle()
@@ -272,9 +299,17 @@ function onMiniWindowClose() skillsButton:setOn(false) end
 
 function onSkillButtonClick(button)
     local percentBar = button:getChildById('percent')
+    showPercentBar(button, not percentBar:isVisible())
+
+    local char = g_game.getCharacterName()
+    skillSettings[char][button:getId()] = percentBar:isVisible() and 0 or 1
+end
+
+function showPercentBar(button, show)
+    local percentBar = button:getChildById('percent')
     if percentBar then
-        percentBar:setVisible(not percentBar:isVisible())
-        if percentBar:isVisible() then
+        percentBar:setVisible(show)
+        if show then
             button:setHeight(21)
         else
             button:setHeight(21 - 6)
