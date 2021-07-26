@@ -42,8 +42,10 @@ LightView::LightView(const MapViewPtr& mapView)
 
 void LightView::generateLightTexture()
 {
-    float brightnessIntensity = 1.3f,
+    const float brightnessIntensity = 1.3f,
         centerFactor = .0f;
+
+    const byte maxBrightness = 0xff;
 
     const uint16 bubbleRadius = 256,
         centerRadius = bubbleRadius * centerFactor,
@@ -56,7 +58,7 @@ void LightView::generateLightTexture()
             float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
 
             // light intensity varies inversely with the square of the distance
-            const uint8_t colorByte = std::min<int16>((intensity * intensity * brightnessIntensity) * 0xff, 0xff);
+            const uint8_t colorByte = std::min<int16>((intensity * intensity * brightnessIntensity) * 0xff, maxBrightness);
 
             uint8_t pixel[4] = { 0xff, 0xff, 0xff, colorByte };
             lightImage->setPixel(x, y, pixel);
@@ -69,7 +71,7 @@ void LightView::generateLightTexture()
 
 void LightView::generateShadeTexture()
 {
-    const uint16 diameter = 10;
+    const uint16 diameter = 8;
     const ImagePtr image = ImagePtr(new Image(Size(diameter, diameter)));
     for(int_fast16_t x = -1; ++x < diameter;) {
         for(int_fast16_t y = -1; ++y < diameter;) {
@@ -101,11 +103,22 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     lights.push_back(LightSource{ pos , light.color, radius, light.brightness });
 }
 
-void LightView::setShade(const Point& point)
+void LightView::setShade(const Point& point, const std::vector<Otc::Direction> dirs)
 {
     size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
     if(index >= m_shades.size()) return;
-    m_shades[index] = ShadeBlock{ m_currentFloor, point };
+    auto& shade = m_shades[index];
+    shade.floor = m_currentFloor;
+    shade.pos = point;
+    shade.dirs = dirs;
+}
+
+void LightView::clearShade(const Point& point)
+{
+    size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
+    if(index >= m_shades.size()) return;
+
+    m_shades[index].floor = -1;
 }
 
 void LightView::resize()
@@ -124,7 +137,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
     g_drawPool.use(m_pool, dest, src);
     g_drawPool.addFilledRect(m_mapView->m_rectDimension, m_globalLightColor);
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 4.8), Size(m_mapView->getTileSize() * 1.4));
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 2.8), Size(m_mapView->getTileSize() * 1.6));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         g_drawPool.startPosition();
         {
@@ -133,7 +146,16 @@ void LightView::draw(const Rect& dest, const Rect& src)
                     if(shade.floor != z) continue;
                     shade.floor = -1;
 
-                    g_drawPool.addRepeatedTexturedRect(Rect(shade.pos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
+                    auto newPos = shade.pos;
+
+                    for(auto dir : shade.dirs) {
+                        if(dir == Otc::South)
+                            newPos.y -= Otc::TILE_PIXELS / 1.6;
+                        else if(dir == Otc::East)
+                            newPos.x -= Otc::TILE_PIXELS / 1.6;
+                    }
+
+                    g_drawPool.addRepeatedTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
                 }
             }
         }

@@ -111,10 +111,13 @@ public:
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
-    bool isBorder() { return m_isBorder; };
+    bool isBorder() { return !m_borderDirections.empty(); };
     bool hasCreature();
-    bool hasTallThings();
-    bool hasWideThings();
+    bool hasTallThings() { return m_countFlag.hasTallThings; }
+    bool hasWideThings() { return m_countFlag.hasWideThings; }
+    bool hasTallItems() { return m_countFlag.hasTallItems; }
+    bool hasWideItems() { return m_countFlag.hasWideItems; }
+    bool hasWall() { return m_countFlag.hasWall; }
     bool hasTranslucentLight() { return m_flags & TILESTATE_TRANSLUECENT_LIGHT; }
     bool mustHookSouth();
     bool mustHookEast();
@@ -125,6 +128,8 @@ public:
     bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || (m_ground && m_ground->isTopGround()); }
     bool hasGround() { return m_ground && !m_ground->isTopGround(); };
     bool hasAnyGround() { return m_ground != nullptr; };
+
+    std::vector<Otc::Direction> getBorderDirections() { return m_borderDirections; };
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -150,13 +155,10 @@ public:
 
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
-    void analyzeThing(const ThingPtr& thing, bool add);
-
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
-
     bool isCovered() { return m_covered; };
-    bool blockLight() { return m_countFlag.hasNoWalkableEdge && !hasGround(); };
-    const std::array<Position, 8> getPositionsAround() { return m_positionsAround; }
+
+    void analyzeThing(const ThingPtr& thing, bool add);
 
 private:
     struct CountFlag {
@@ -173,6 +175,9 @@ private:
         int hasLight = 0;
         int hasTallThings = 0;
         int hasWideThings = 0;
+        int hasTallItems = 0;
+        int hasWideItems = 0;
+        int hasWall = 0;
         int hasHookEast = 0;
         int hasHookSouth = 0;
         int hasTopGround = 0;
@@ -195,6 +200,8 @@ private:
     uint32 m_flags, m_houseId;
 
     std::array<Position, 8> m_positionsAround;
+    std::vector<std::pair<Otc::Direction, Position>> m_positionsBorder;
+    std::vector<Otc::Direction> m_borderDirections;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
@@ -205,8 +212,7 @@ private:
     Highlight m_highlight;
 
     stdext::boolean<false> m_covered,
-        m_completelyCovered,
-        m_isBorder;
+        m_completelyCovered;
 
     bool m_highlightWithoutFilter{ false };
 

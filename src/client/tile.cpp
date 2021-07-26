@@ -41,6 +41,11 @@ Tile::Tile(const Position& position) :
     m_flags(0),
     m_houseId(0)
 {
+    for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
+        auto pos = position;
+        m_positionsBorder.push_back(std::make_pair(dir, pos.translatedToDirection(dir)));
+    }
+
     m_positionsAround = position.getPositionsAround();
     m_completelyCoveredCache.fill(0);
     m_coveredCache.fill(0);
@@ -48,13 +53,13 @@ Tile::Tile(const Position& position) :
 
 void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 {
-    m_isBorder = false;
-
-    for(const auto& position : m_positionsAround) {
-        const TilePtr& tile = g_map.getTile(position);
+    uint8 cntBorder = 0;
+    m_borderDirections.clear();
+    for(const auto& pos : m_positionsBorder) {
+        const TilePtr& tile = g_map.getTile(pos.second);
         if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
-            m_isBorder = true;
-            break;
+            m_borderDirections.push_back(pos.first);
+            ++cntBorder;
         }
     }
 }
@@ -631,16 +636,6 @@ bool Tile::isSingleDimension()
     return m_countFlag.notSingleDimension == 0 && m_walkingCreatures.empty();
 }
 
-bool Tile::hasTallThings()
-{
-    return m_countFlag.hasTallThings > 0;
-}
-
-bool Tile::hasWideThings()
-{
-    return m_countFlag.hasWideThings > 0;
-}
-
 bool Tile::isLookPossible()
 {
     return m_countFlag.blockProjectile == 0;
@@ -842,6 +837,15 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
         m_countFlag.hasWideThings += value;
 
     if(!thing->isItem()) return;
+
+    if(thing->getHeight() > 1)
+        m_countFlag.hasTallItems += value;
+
+    if(thing->getWidth() > 1)
+        m_countFlag.hasWideItems += value;
+
+    if(thing->getWidth() > 1 && thing->getHeight() > 1)
+        m_countFlag.hasWall += value;
 
     if(thing->isNotWalkable())
         m_countFlag.notWalkable += value;

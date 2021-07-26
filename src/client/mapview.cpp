@@ -167,9 +167,14 @@ void MapView::drawFloor()
                                 }
 
                                 pos2D -= m_tileSize;
+                                lightView->setShade(pos2D);
+                                continue;
+                            } else if(tile->isBorder() && tile->hasWall()) {
+                                lightView->clearShade(pos2D);
+                                continue;
                             }
 
-                            lightView->setShade(pos2D);
+                            lightView->setShade(pos2D, tile->hasTallItems() || tile->hasWideItems() ? tile->getBorderDirections() : std::vector<Otc::Direction>());
                         }
                     }
                 }
@@ -356,8 +361,9 @@ void MapView::updateVisibleTilesCache()
                     if(tile->hasGround())
                         floor.grounds.push_back(tile);
 
-                    if(isDrawingLights() && tile->hasAnyGround())
+                    if(isDrawingLights() && tile->hasAnyGround()) {
                         floor.allGrounds.push_back(tile);
+                    }
 
                     if(tile->hasGroundBorderToDraw())
                         floor.borders.push_back(tile);
