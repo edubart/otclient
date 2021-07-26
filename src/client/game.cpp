@@ -598,7 +598,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
     if(!m_localPlayer->canWalk(direction)) {
         const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
         if(m_nextScheduledDir != direction) {
-            if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration()/2, 250))) {
+            if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration()/3, 250))) {
                 // must add a new walk event
                 if(m_walkEvent) {
                     m_walkEvent->cancel();
