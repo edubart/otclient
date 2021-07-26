@@ -110,4 +110,43 @@ function init()
 
         if fragmentShaderPath ~= nil then
             --  local shader = g_shaders.createShader()
-            local shader = g_shaders.createFragmentSha
+            local shader = g_shaders.createFragmentShader(opts.name, opts.frag)
+
+            if opts.tex1 then shader:addMultiTexture(opts.tex1) end
+            if opts.tex2 then shader:addMultiTexture(opts.tex2) end
+
+            -- Setup proper uniforms
+            g_shaders[method](shader)
+            g_shaders.registerShader(opts.name, shader)
+        end
+    end
+
+    for _, opts in pairs(MAP_SHADERS) do
+        registerShader(opts, 'setupMapShader')
+        mapComboBox:addOption(opts.name, opts)
+    end
+
+    for _, opts in pairs(OUTFIT_SHADERS) do
+        registerShader(opts, 'setupOutfitShader')
+        outfitComboBox:addOption(opts.name, opts)
+    end
+
+    for _, opts in pairs(MOUNT_SHADERS) do
+        registerShader(opts, 'setupMountShader')
+        mountComboBox:addOption(opts.name, opts)
+    end
+end
+
+function terminate()
+    if g_game.getLocalPlayer() then
+        disconnect(g_game.getLocalPlayer(),
+                   {onWalkEnd = onWalkEvent, onAutoWalk = onAutoWalkEvent})
+    end
+    disconnect(g_game, {onGameStart = attachShaders})
+
+    g_keyboard.unbindKeyDown(HOTKEY)
+    shadersPanel:destroy()
+    shadersPanel = nil
+end
+
+function toggle() shadersPanel:setVisible(not shadersPanel:isVisible()) end
