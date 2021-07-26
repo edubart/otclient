@@ -396,6 +396,16 @@ function UIMiniWindow:getMaximumHeight()
     return resizeBorder:getMaximum()
 end
 
+function UIMiniWindow:modifyMaximumHeight(height)
+    local resizeBorder = self:getChildById('bottomResizeBorder')
+    local newHeight = resizeBorder:getMaximum()+height
+    local curHeight = self:getHeight()
+    resizeBorder:setMaximum(newHeight)
+    if newHeight < curHeight or newHeight-height == curHeight then
+        self:setHeight(newHeight)
+    end
+end
+
 function UIMiniWindow:isResizeable()
     local resizeBorder = self:getChildById('bottomResizeBorder')
     return resizeBorder:isExplicitlyVisible() and resizeBorder:isEnabled()

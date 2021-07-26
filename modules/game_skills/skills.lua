@@ -230,6 +230,8 @@ function refresh()
 
     update()
 
+    local maximumHeight = 25
+
     if g_game.isOnline() then
         local char = g_game.getCharacterName()
 
@@ -242,21 +244,25 @@ function refresh()
         for _, skillButton in pairs(skillsButtons) do
             local percentBar = skillButton:getChildById('percent')
 
-            if percentBar then
-                showPercentBar(skillButton, skillSettings[char][skillButton:getId()] ~= 1)
+            if skillButton:isVisible() then
+                maximumHeight = maximumHeight + 16
+                if percentBar then
+                    showPercentBar(skillButton, skillSettings[char][skillButton:getId()] ~= 1)
+                    if percentBar:isVisible() then
+                        maximumHeight = maximumHeight + 6
+                    end
+                end
             end
         end
 
         skillsWindow:setupOnStart()
+    else
+        maximumHeight = 390
     end
 
     local contentsPanel = skillsWindow:getChildById('contentsPanel')
     skillsWindow:setContentMinimumHeight(44)
-    if hasAdditionalSkills then
-        skillsWindow:setContentMaximumHeight(480)
-    else
-        skillsWindow:setContentMaximumHeight(390)
-    end
+    skillsWindow:setContentMaximumHeight(maximumHeight)
 end
 
 function offline()
@@ -299,10 +305,18 @@ function onMiniWindowClose() skillsButton:setOn(false) end
 
 function onSkillButtonClick(button)
     local percentBar = button:getChildById('percent')
-    showPercentBar(button, not percentBar:isVisible())
+    if percentBar then
+        showPercentBar(button, not percentBar:isVisible())
 
-    local char = g_game.getCharacterName()
-    skillSettings[char][button:getId()] = percentBar:isVisible() and 0 or 1
+        local char = g_game.getCharacterName()
+        if percentBar:isVisible() then
+            skillsWindow:modifyMaximumHeight(6)
+            skillSettings[char][button:getId()] = 0
+        else
+            skillsWindow:modifyMaximumHeight(-6)
+            skillSettings[char][button:getId()] = 1
+        end
+    end
 end
 
 function showPercentBar(button, show)
