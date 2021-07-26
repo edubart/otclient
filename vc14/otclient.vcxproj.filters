@@ -1015,7 +1015,7 @@
     </ClInclude>
     <ClInclude Include="..\src\client\thing.h">
       <Filter>Header Files\client</Filter>
-    </ClInclude> 
+    </ClInclude>
     <ClInclude Include="..\src\client\thingtype.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
