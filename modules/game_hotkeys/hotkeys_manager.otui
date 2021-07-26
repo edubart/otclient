@@ -11,7 +11,7 @@ HotkeyListLabel < UILabel
 MainWindow
   id: hotkeysWindow
   !text: tr('Hotkeys')
-  size: 340 410
+  size: 340 470
 
   @onEnter: modules.game_hotkeys.ok()
   @onEscape: modules.game_hotkeys.cancel()
@@ -67,6 +67,24 @@ MainWindow
     anchors.top: currentHotkeys.bottom
     margin-top: 8
     @onClick: modules.game_hotkeys.removeHotkey()
+
+  Label
+    id: hotKeyActionLabel
+    !text: tr('Hotkey Action') .. ':'
+    enable: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 10
+
+  ComboBox
+    id: hotkeyActionCombo
+    enabled: false
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 2
+    mouse-scroll: false
 
   Label
     id: hotKeyTextLabel

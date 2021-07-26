@@ -148,10 +148,6 @@ function init()
   -- toggle ASDW
   consoleToggleChat = consolePanel:getChildById('toggleChat')
 
-  g_keyboard.bindKeyPress('Shift+Enter', function()
-    consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
-  end, consolePanel)
-
   load()
 
   if g_game.isOnline() then
@@ -181,6 +177,10 @@ function selectAll(consoleBuffer)
 end
 
 function toggleChat()
+  consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
+end
+
+function updateChatMode()
   if consoleToggleChat:isChecked() then
     disableChat()
   else
@@ -268,7 +268,6 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+O')
   g_keyboard.unbindKeyDown('Ctrl+E')
   g_keyboard.unbindKeyDown('Ctrl+H')
-  g_keyboard.unbindKeyDown('Shift+Enter')
 
   saveCommunicationSettings()
 

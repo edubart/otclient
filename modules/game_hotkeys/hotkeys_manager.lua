@@ -3,13 +3,20 @@ HOTKEY_MANAGER_USEONSELF = 1
 HOTKEY_MANAGER_USEONTARGET = 2
 HOTKEY_MANAGER_USEWITH = 3
 
+HOTKEY_ACTION_TOGGLE_ASDW = 1
+
+HotkeyActions = {
+    [HOTKEY_ACTION_TOGGLE_ASDW] = tr("Toggle ASDW chat mode")
+}
+
 HotkeyColors = {
     text = '#888888',
     textAutoSend = '#FFFFFF',
     itemUse = '#8888FF',
     itemUseSelf = '#00FF00',
     itemUseTarget = '#FF0000',
-    itemUseWith = '#F5B325'
+    itemUseWith = '#F5B325',
+    action = '#F97ACD',
 }
 
 hotkeysManagerLoaded = false
@@ -20,6 +27,7 @@ currentItemPreview = nil
 itemWidget = nil
 addHotkeyButton = nil
 removeHotkeyButton = nil
+hotkeyActionCombo = nil
 hotkeyText = nil
 hotKeyTextLabel = nil
 sendAutomatically = nil
@@ -71,6 +79,15 @@ function init()
         onChangeUseType(selected)
     end
 
+    hotkeyActionCombo = hotkeysWindow:getChildById('hotkeyActionCombo')
+
+    hotkeyActionCombo:addOption('None', 0)
+    for actionId, text in pairs(HotkeyActions) do
+        hotkeyActionCombo:addOption(text, actionId)
+    end
+
+    hotkeyActionCombo.onOptionChange = onActionChange
+
     mouseGrabberWidget = g_ui.createWidget('UIWidget')
     mouseGrabberWidget:setVisible(false)
     mouseGrabberWidget:setFocusable(false)
@@ -103,6 +120,7 @@ function terminate()
     mouseGrabberWidget:destroy()
     hotkeysWindow = nil
     hotkeysButton = nil
+    hotkeyActionCombo = nil
     hotKeyTextLabel = nil
     hotkeyText = nil
     sendAutomatically = nil
@@ -233,7 +251,8 @@ function save()
             itemId = child.itemId,
             subType = child.subType,
             useType = child.useType,
-            value = child.value
+            value = child.value,
+            action = child.action,
         }
     end
 
@@ -254,6 +273,22 @@ function loadDefautComboKeys()
 end
 
 function setDefaultComboKeys(combo) defaultComboKeys = combo end
+
+function onActionChange(comboBox, option)
+    local action = comboBox:getCurrentOption().data
+    if currentHotkeyLabel then
+        if action > 0 then
+            currentHotkeyLabel.action = action
+            currentHotkeyLabel.itemId = nil
+            currentHotkeyLabel.value = nil
+            currentHotkeyLabel.autoSend = nil
+        else
+            currentHotkeyLabel.action = nil
+        end
+        updateHotkeyLabel(currentHotkeyLabel)
+        updateHotkeyForm(true, true)
+    end
+end
 
 function onChooseItemMouseRelease(self, mousePosition, mouseButton)
     local item = nil
@@ -313,6 +348,7 @@ function clearObject()
     currentHotkeyLabel.useType = nil
     currentHotkeyLabel.autoSend = nil
     currentHotkeyLabel.value = nil
+    currentHotkeyLabel.action = nil
     updateHotkeyLabel(currentHotkeyLabel)
     updateHotkeyForm(true)
 end
@@ -359,6 +395,7 @@ function addKeyCombo(keyCombo, keySettings, focus)
             hotkeyLabel.itemId = tonumber(keySettings.itemId)
             hotkeyLabel.subType = tonumber(keySettings.subType)
             hotkeyLabel.useType = tonumber(keySettings.useType)
+            hotkeyLabel.action = tonumber(keySettings.action)
             if keySettings.value then
                 hotkeyLabel.value = tostring(keySettings.value)
             end
@@ -368,6 +405,7 @@ function addKeyCombo(keyCombo, keySettings, focus)
             hotkeyLabel.itemId = nil
             hotkeyLabel.subType = nil
             hotkeyLabel.useType = nil
+            hotkeyLabel.action = nil
             hotkeyLabel.value = ''
         end
 
@@ -394,7 +432,12 @@ function doKeyCombo(keyCombo)
         modules.client_options.getOption('hotkeyDelay') then return end
     lastHotkeyTime = g_clock.millis()
 
-    if hotKey.itemId == nil then
+    if hotKey.action then
+        if hotKey.action == HOTKEY_ACTION_TOGGLE_ASDW then
+            modules.game_console.toggleChat()
+        end
+
+    elseif hotKey.itemId == nil then
         if not hotKey.value or #hotKey.value == 0 then return end
         if hotKey.autoSend then
             modules.game_console.sendMessage(hotKey.value)
@@ -471,6 +514,9 @@ function updateHotkeyLabel(hotkeyLabel)
     elseif hotkeyLabel.itemId ~= nil then
         hotkeyLabel:setText(tr('%s: (use object)', hotkeyLabel.keyCombo))
         hotkeyLabel:setColor(HotkeyColors.itemUse)
+    elseif hotkeyLabel.action then
+        hotkeyLabel:setText(tr('%s: ' .. HotkeyActions[hotkeyLabel.action], hotkeyLabel.keyCombo))
+        hotkeyLabel:setColor(HotkeyColors.action)
     else
         local text = hotkeyLabel.keyCombo .. ': '
         if hotkeyLabel.value then text = text .. hotkeyLabel.value end
@@ -483,10 +529,12 @@ function updateHotkeyLabel(hotkeyLabel)
     end
 end
 
-function updateHotkeyForm(reset)
+function updateHotkeyForm(reset, dontUpdateCombo)
     if currentHotkeyLabel then
         removeHotkeyButton:enable()
         if currentHotkeyLabel.itemId ~= nil then
+            if not dontUpdateCombo then hotkeyActionCombo:setCurrentIndex(1) end
+            hotkeyActionCombo:disable()
             hotkeyText:clearText()
             hotkeyText:disable()
             hotKeyTextLabel:disable()
@@ -515,7 +563,24 @@ function updateHotkeyForm(reset)
                 useWith:disable()
                 useRadioGroup:clearSelected()
             end
+        elseif currentHotkeyLabel.action then
+            if not dontUpdateCombo then hotkeyActionCombo:setCurrentOptionByData(currentHotkeyLabel.action) end
+            hotkeyActionCombo:enable()
+            hotkeyText:clearText()
+            hotkeyText:disable()
+            hotKeyTextLabel:disable()
+            sendAutomatically:setChecked(false)
+            sendAutomatically:disable()
+            selectObjectButton:disable()
+            useOnSelf:disable()
+            useOnTarget:disable()
+            useWith:disable()
+            useRadioGroup:clearSelected()
+            selectObjectButton:disable()
+            clearObjectButton:disable()
         else
+            if not dontUpdateCombo then hotkeyActionCombo:setCurrentIndex(1) end
+            hotkeyActionCombo:enable()
             useOnSelf:disable()
             useOnTarget:disable()
             useWith:disable()
@@ -632,5 +697,6 @@ function canPerformKeyCombo(keyCombo)
     return disableHotkeysCount == 0 and (modules.game_console.consoleToggleChat:isChecked() or
         string.match(keyCombo, "F%d%d?") or
         string.match(keyCombo, "Ctrl%+") or
+        string.match(keyCombo, "Shift%+..+") or
         string.match(keyCombo, "Alt%+"))
 end
