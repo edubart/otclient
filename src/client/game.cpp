@@ -53,6 +53,7 @@ Game::Game()
     m_chaseMode = Otc::DontChase;
     m_pvpMode = Otc::WhiteDove;
     m_safeFight = true;
+    m_scheduleLastWalk = false;
 }
 
 void Game::init()
@@ -85,6 +86,7 @@ void Game::resetGameStates()
     m_pingSent = 0;
     m_pingReceived = 0;
     m_unjustifiedPoints = UnjustifiedPoints();
+    m_nextScheduledDir = Otc::InvalidDirection;
 
     for(auto& it : m_containers) {
         const ContainerPtr& container = it.second;
@@ -576,7 +578,7 @@ void Game::safeLogout()
     m_protocolGame->sendLogout();
 }
 
-bool Game::walk(const Otc::Direction direction)
+bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
 {
     if(!canPerformGameAction())
         return false;
@@ -594,17 +596,27 @@ bool Game::walk(const Otc::Direction direction)
 
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
-        if(m_lastWalkDir != direction) {
-            // must add a new walk event
-            if(m_walkEvent) {
-                m_walkEvent->cancel();
-                m_walkEvent = nullptr;
-            }
+        const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
+        if(m_nextScheduledDir != direction) {
+            if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration()/2, 250))) {
+                // must add a new walk event
+                if(m_walkEvent) {
+                    m_walkEvent->cancel();
+                    m_walkEvent = nullptr;
+                }
 
-            const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
-            m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+                m_walkEvent = g_dispatcher.scheduleEvent([=] { walk(direction); }, ticks);
+                m_nextScheduledDir = direction;
+            }
         }
         return false;
+    } else {
+        m_nextScheduledDir = Otc::InvalidDirection;
+        // if it's going to walk, but there is another scheduled event, cancel it
+        if(m_walkEvent && !m_walkEvent->isExecuted()) {
+            m_walkEvent->cancel();
+            m_walkEvent = nullptr;
+        }
     }
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);

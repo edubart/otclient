@@ -20,6 +20,7 @@ limitedZoom = false
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
+firstStep = false
 hookedMenuOptions = {}
 lastDirTime = g_clock.millis()
 
@@ -147,10 +148,10 @@ function bindKeys()
 end
 
 function bindWalkKey(key, dir)
-    g_keyboard.bindKeyDown(key, function() changeWalkDir(dir) end,
-                           gameRootPanel, true)
-    g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true) end,
-                         gameRootPanel, true)
+    g_keyboard.bindKeyDown(key, function() onWalkKeyDown(dir)
+    end, gameRootPanel, true)
+    g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true)
+    end, gameRootPanel, true)
     g_keyboard.bindKeyPress(key, function() smartWalk(dir) end, gameRootPanel)
 end
 
@@ -367,6 +368,11 @@ function stopSmartWalk()
     smartWalkDir = nil
 end
 
+function onWalkKeyDown(dir)
+    firstStep = true
+    changeWalkDir(dir)
+end
+
 function changeWalkDir(dir, pop)
     while table.removevalue(smartWalkDirs, dir) do end
     if pop then
@@ -406,7 +412,8 @@ function smartWalk(dir)
     if g_keyboard.getModifiers() ~= KeyboardNoModifier then return false end
 
     local dire = smartWalkDir or dir
-    g_game.walk(dire)
+    g_game.walk(dire, firstStep)
+    firstStep = false
     return true
 end
 

@@ -5,6 +5,7 @@ local defaultOptions = {
     fullscreen = false,
     classicControl = false,
     smartWalk = false,
+    preciseControl = false,
     autoChaseOverride = true,
     moveStack = false,
     showStatusMessagesInConsole = true,
@@ -45,6 +46,7 @@ local optionsButton
 local optionsTabBar
 local options = {}
 local generalPanel
+local controlPanel
 local consolePanel
 local graphicsPanel
 local soundPanel
@@ -107,8 +109,11 @@ function init()
                            function() toggleOption('fullscreen') end)
     g_keyboard.bindKeyDown('Ctrl+N', toggleDisplays)
 
-    generalPanel = g_ui.loadUI('game')
-    optionsTabBar:addTab(tr('Game'), generalPanel, '/images/optionstab/game')
+    generalPanel = g_ui.loadUI('general')
+    optionsTabBar:addTab(tr('General'), generalPanel, '/images/optionstab/game')
+
+    controlPanel = g_ui.loadUI('control')
+    optionsTabBar:addTab(tr('Control'), controlPanel, '/images/optionstab/controls')
 
     consolePanel = g_ui.loadUI('console')
     optionsTabBar:addTab(tr('Console'), consolePanel,
@@ -295,12 +300,14 @@ function setOption(key, value, force)
         gameMapPanel:setDrawTexts(value)
     elseif key == 'dontStretchShrink' then
         addEvent(function() modules.game_interface.updateStretchShrink() end)
+    elseif key == 'preciseControl' then
+        g_game.setScheduleLastWalk(not value)
     elseif key == 'turnDelay' then
-        generalPanel:getChildById('turnDelayLabel'):setText(tr(
+        controlPanel:getChildById('turnDelayLabel'):setText(tr(
                                                                 'Turn delay: %sms',
                                                                 value))
     elseif key == 'hotkeyDelay' then
-        generalPanel:getChildById('hotkeyDelayLabel'):setText(tr(
+        controlPanel:getChildById('hotkeyDelayLabel'):setText(tr(
                                                                   'Hotkey delay: %sms',
                                                                   value))
     elseif key == 'crosshair' then
