@@ -193,6 +193,7 @@ private:
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     bool checkForDetachableThing();
     void checkTranslucentLight();
+    void clearCompletelyCoveredListCache() { m_completelyCoveredCache.fill(0);  }
 
     Position m_position;
     uint8 m_drawElevation;

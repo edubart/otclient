@@ -332,6 +332,11 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
     if(thing->isGround()) m_ground = thing->static_self_cast<Item>();
 
+    //verifies that the new item being added is not one - dimensional, if so,
+    // clear the cache that verifies that the tile is completely covered.
+    if(isSingleDimension() && !thing->isSingleDimension())
+        clearCompletelyCoveredListCache();
+
     analyzeThing(thing, true);
     if(checkForDetachableThing() && m_highlight.enabled) {
         select();
@@ -371,6 +376,11 @@ bool Tile::removeThing(const ThingPtr thing)
     if(thing->isGround()) m_ground = nullptr;
 
     analyzeThing(thing, false);
+
+    //verifies that the new item being added is not one - dimensional, if so,
+    // clear the cache that verifies that the tile is completely covered.
+    if(isSingleDimension() && !thing->isSingleDimension())
+        clearCompletelyCoveredListCache();
 
     m_things.erase(it);
 
