@@ -697,8 +697,6 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit = outfit;
     }
 
-    m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
-
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
     // Cache
