@@ -985,6 +985,12 @@ void Game::cancelAttackAndFollow()
     if(isAttacking())
         setAttackingCreature(nullptr);
 
+    if(m_walkEvent) {
+        m_walkEvent->cancel();
+        m_walkEvent = nullptr;
+    }
+    m_nextScheduledDir = Otc::InvalidDirection;
+
     m_localPlayer->stopAutoWalk();
 
     m_protocolGame->sendCancelAttackAndFollow();
