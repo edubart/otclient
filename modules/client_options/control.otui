@@ -20,6 +20,7 @@ Panel
     id: preciseControl
     !text: tr('Enable precise control')
     !tooltip: tr('You will have more precision over the character walking,\nbut it can feel more abrupt or unnatural')
+    @onCheckChange: g_game.setScheduleLastWalk(not self:isChecked())
 
   Label
     id: turnDelayLabel

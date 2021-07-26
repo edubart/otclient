@@ -300,6 +300,8 @@ function setOption(key, value, force)
         gameMapPanel:setDrawTexts(value)
     elseif key == 'dontStretchShrink' then
         addEvent(function() modules.game_interface.updateStretchShrink() end)
+    elseif key == 'preciseControl' then
+        g_game.setScheduleLastWalk(not value)
     elseif key == 'turnDelay' then
         controlPanel:getChildById('turnDelayLabel'):setText(tr(
                                                                 'Turn delay: %sms',
