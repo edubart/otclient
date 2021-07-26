@@ -45,7 +45,7 @@ void LightView::generateLightTexture()
     const float brightnessIntensity = 1.3f,
         centerFactor = .0f;
 
-    const byte maxBrightness = 0xff;
+    const uint8 maxBrightness = 0xff;
 
     const uint16 bubbleRadius = 256,
         centerRadius = bubbleRadius * centerFactor,
