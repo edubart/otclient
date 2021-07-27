@@ -156,7 +156,7 @@ public:
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
-    bool isCovered() { return m_covered; };
+    bool isCovered() { return m_coveredCache[m_currentFirstVisibleFloor] == 1; };
 
     void analyzeThing(const ThingPtr& thing, bool add);
 
@@ -193,11 +193,12 @@ private:
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     bool checkForDetachableThing();
     void checkTranslucentLight();
-    void clearCompletelyCoveredListCache() { m_completelyCoveredCache.fill(0);  }
+
+    void clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing);
 
     Position m_position;
-    uint8 m_drawElevation;
-    uint8 m_minimapColor;
+    uint8 m_drawElevation, m_minimapColor,
+        m_currentFirstVisibleFloor{ UINT8_MAX };
     uint32 m_flags, m_houseId;
 
     std::array<Position, 8> m_positionsAround;
@@ -211,9 +212,6 @@ private:
 
     CountFlag m_countFlag;
     Highlight m_highlight;
-
-    stdext::boolean<false> m_covered,
-        m_completelyCovered;
 
     bool m_highlightWithoutFilter{ false };
 
