@@ -1,7 +1,8 @@
 local otmm = true
 local fullmapView = false
-local oldZoom = nil
 local oldPos = nil
+local zoomMinimap = 1
+local zoomFullMap = 1
 
 local function updateCameraPosition()
     local player = g_game.getLocalPlayer()
@@ -31,26 +32,37 @@ end
 local function toggleFullMap()
     local minimapWindow = controller.widgets.minimapWindow
     local minimapWidget = controller.widgets.minimapWidget
+    local zoom;
 
     if fullmapView then
         minimapWidget:setParent(minimapWindow:getChildById('contentsPanel'))
         minimapWidget:fill('parent')
         minimapWindow:show(true)
+        zoom = zoomMinimap
     else
         minimapWindow:hide(true)
         minimapWidget:setParent(modules.game_interface.getRootPanel())
         minimapWidget:fill('parent')
+        zoom = zoomFullMap
     end
 
     fullmapView = not fullmapView
     minimapWidget:setAlternativeWidgetsVisible(fullmapView)
 
-    local zoom = oldZoom or 0
     local pos = oldPos or minimapWidget:getCameraPosition()
-    oldZoom = minimapWidget:getZoom()
     oldPos = minimapWidget:getCameraPosition()
     minimapWidget:setZoom(zoom)
     minimapWidget:setCameraPosition(pos)
+end
+
+function onZoomChange(self, zoom, oldZoom)
+    if fullmapView then
+        zoomFullMap = zoom
+        g_settings.set('zoom-fullmap', zoom)
+    else
+        zoomMinimap = zoom
+        g_settings.set('zoom-minimap', zoom)
+    end
 end
 
 local localPlayerEvent = EventController:new(LocalPlayer, {
@@ -85,12 +97,25 @@ function controller:onInit()
     self:bindKeyDown('Ctrl+M', toggle)
     self:bindKeyDown('Ctrl+Shift+M', toggleFullMap)
 
+    zoomMinimap = g_settings.get('zoom-minimap')
+    zoomFullMap = g_settings.get('zoom-fullmap')
+
     self:registerWidget('minimapButton', minimapButton)
     self:registerWidget('minimapWindow', minimapWindow)
     self:registerWidget('minimapWidget', minimapWidget)
 
+    connect(minimapWidget, {
+        onZoomChange = onZoomChange
+    })
+
     minimapWindow:setup()
     localPlayerEvent:connect()
+end
+
+function controller:onTerminate()
+    disconnect(controller.widgets.minimapWidget, {
+        onZoomChange = onZoomChange
+    })
 end
 
 controller:onGameStart(function()
