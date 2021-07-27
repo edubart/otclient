@@ -254,9 +254,8 @@ void Tile::addWalkingCreature(const CreaturePtr& creature)
     m_walkingCreatures.push_back(creature);
     analyzeThing(creature, true);
 
-    if(!creature->isSingleDimension()) {
-        m_completelyCoveredCache[m_currentFirstVisibleFloor] = 2;
-    }
+    if(!creature->isSingleDimension())
+        setCompletelyCoveredCache(2);
 }
 
 void Tile::removeWalkingCreature(const CreaturePtr& creature)
@@ -266,9 +265,8 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
         analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
 
-        if(!creature->isSingleDimension()) {
-            m_completelyCoveredCache[m_currentFirstVisibleFloor] = 0;
-        }
+        if(!creature->isSingleDimension())
+            setCompletelyCoveredCache(0);
     }
 }
 
@@ -889,9 +887,8 @@ void Tile::clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing)
 {
     // Verifies that the new item being added is not single dimensional, if so,
     // clear the cache that verifies that the tile is completely covered.
-    if(m_currentFirstVisibleFloor != UINT8_MAX && isSingleDimension() && !thing->isSingleDimension()) {
-        m_completelyCoveredCache[m_currentFirstVisibleFloor] = 0;
-    }
+    if(isSingleDimension() && !thing->isSingleDimension())
+        setCompletelyCoveredCache(0);
 }
 
 void Tile::select(const bool noFilter)
