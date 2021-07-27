@@ -3,12 +3,12 @@ HOTKEY_MANAGER_USEONSELF = 1
 HOTKEY_MANAGER_USEONTARGET = 2
 HOTKEY_MANAGER_USEWITH = 3
 
-HOTKEY_ACTION_TOGGLE_ASDW = 1
+HOTKEY_ACTION_TOGGLE_WASD = 1
 HOTKEY_ACTION_ATTACK_NEXT = 2
 HOTKEY_ACTION_ATTACK_PREV = 3
 
 HotkeyActions = {
-    [HOTKEY_ACTION_TOGGLE_ASDW] = tr("Toggle ASDW chat mode"),
+    [HOTKEY_ACTION_TOGGLE_WASD] = tr("Toggle WASD chat mode"),
     [HOTKEY_ACTION_ATTACK_NEXT] = tr("Attack next creature in battle list"),
     [HOTKEY_ACTION_ATTACK_PREV] = tr("Attack previous creature in battle list")
 }
@@ -437,7 +437,7 @@ function doKeyCombo(keyCombo)
     lastHotkeyTime = g_clock.millis()
 
     if hotKey.action then
-        if hotKey.action == HOTKEY_ACTION_TOGGLE_ASDW then
+        if hotKey.action == HOTKEY_ACTION_TOGGLE_WASD then
             modules.game_console.toggleChat()
         elseif hotKey.action == HOTKEY_ACTION_ATTACK_NEXT then
             modules.game_battle.attackNext()
@@ -702,7 +702,7 @@ function areHotkeysDisabled()
 end
 
 -- Even if hotkeys are enabled, only the hotkeys containing Ctrl or Alt or F1-F12 will be enabled when
--- chat is opened (no ASDW mode). This is made to prevent executing hotkeys while typing...
+-- chat is opened (no WASD mode). This is made to prevent executing hotkeys while typing...
 function canPerformKeyCombo(keyCombo)
     return disableHotkeysCount == 0 and (modules.game_console.consoleToggleChat:isChecked() or
         string.match(keyCombo, "F%d%d?") or

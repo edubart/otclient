@@ -61,7 +61,7 @@ Panel
 
   CheckBox
     id: toggleChat
-    !tooltip: tr('Disable chat mode, allow to walk using ASDW')
+    !tooltip: tr('Disable chat mode, allow to walk using WASD')
     anchors.left: parent.left
     anchors.top: parent.top
     margin-left: 13
