@@ -7,6 +7,9 @@ function UIMinimap:onSetup()
     self.zoomInWidget = self:getChildById('zoomIn')
     self.zoomOutWidget = self:getChildById('zoomOut')
     self.flags = {}
+    self.fullMapView = false
+    self.zoomMinimap = 0
+    self.zoomFullmap = 0
     self.alternatives = {}
     self.onAddAutomapFlag = function(pos, icon, description)
         self:addFlag(pos, icon, description)
@@ -59,7 +62,10 @@ function UIMinimap:load()
                 self:addFlag(flag.position, flag.icon, flag.description)
             end
         end
-        self:setZoom(settings.zoom)
+        self.zoomMinimap = settings.zoom
+        self.zoomFullmap = settings.zoomFull or settings.zoom
+        self:setZoom(self.zoomMinimap)
+
     end
 end
 
@@ -74,7 +80,8 @@ function UIMinimap:save()
             })
         end
     end
-    settings.zoom = self:getZoom()
+    settings.zoom = self.zoomMinimap
+    settings.zoomFull = self.zoomFullmap
     g_settings.setNode('Minimap', settings)
 end
 
@@ -153,6 +160,12 @@ function UIMinimap:setAlternativeWidgetsVisible(show)
 end
 
 function UIMinimap:onZoomChange(zoom)
+    if self.fullMapView then
+        self.zoomFullmap = zoom
+    else
+        self.zoomMinimap = zoom
+    end
+
     for _, widget in pairs(self.alternatives) do
         if (not widget.minZoom or widget.minZoom >= zoom) and widget.maxZoom <=
             zoom then
@@ -178,8 +191,10 @@ function UIMinimap:removeFlag(pos, icon, description)
 end
 
 function UIMinimap:reset()
-    self:setZoom(0)
-    if self.cross then self:setCameraPosition(self.cross.pos) end
+    local player = g_game.getLocalPlayer()
+    if player then
+        self:setCameraPosition(player:getPosition())
+    end
 end
 
 function UIMinimap:move(x, y)
