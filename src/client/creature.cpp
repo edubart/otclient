@@ -71,7 +71,7 @@ Creature::Creature() : Thing()
     m_mountShader = g_shaders.getDefaultMountShader();
 }
 
-void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, Color color, int frameFlags, LightView* lightView)
+void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType, Color color, int frameFlags, LightView* lightView)
 {
     if(!canBeSeen())
         return;
@@ -85,7 +85,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
             g_drawPool.addBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS * scaleFactor)), m_staticSquareColor, std::max<int>(static_cast<int>(2 * scaleFactor), 1));
         }
 
-        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, TextureType::NONE, m_direction, color);
+        internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, textureType, m_direction, color);
 
         if(highLight.enabled && this == highLight.thing) {
             internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, TextureType::ALL_BLANK, m_direction, highLight.rgbColor);
