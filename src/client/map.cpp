@@ -786,11 +786,10 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     // as described in http://en.wikipedia.org/wiki/A*_search_algorithm
 
     struct Node {
-        using Pair = std::pair<Node*, float>;
+        using Pair = std::pair<Node*, float>; // node, totalCost
 
-        Node(const Position& pos) : cost(0), totalCost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) {}
+        Node(const Position& pos) : cost(0), pos(pos), prev(nullptr), dir(Otc::InvalidDirection) {}
         float cost;
-        float totalCost;
         Position pos;
         Node* prev;
         Otc::Direction dir;
@@ -836,102 +835,106 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     std::priority_queue<Node::Pair, std::deque<Node::Pair>, Node::Compare> searchList;
 
     Node* currentNode = new Node(startPos);
-    currentNode->pos = startPos;
     nodes[startPos] = currentNode;
     Node* foundNode = nullptr;
+    float totalCost = 0;
     while(currentNode) {
         if(static_cast<uint16>(nodes.size()) > maxComplexity) {
+            foundNode = nullptr;
             result = Otc::PathFindResultTooFar;
             break;
         }
 
         // path found
-        if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost))
+        if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost)) {
             foundNode = currentNode;
 
-        // cost too high
-        if(foundNode && currentNode->totalCost >= foundNode->cost)
+        // cost too high, and the priority_queue is sorted by "totalCost", so the rest of nodes won't be better
+        } else if(foundNode && totalCost >= foundNode->cost) {
             break;
 
-        for(int_fast32_t i = -1; i <= 1; ++i) {
-            for(int_fast32_t j = -1; j <= 1; ++j) {
-                if(i == 0 && j == 0)
-                    continue;
+        } else {
+            for(int_fast32_t i = -1; i <= 1; ++i) {
+                for(int_fast32_t j = -1; j <= 1; ++j) {
+                    if(i == 0 && j == 0)
+                        continue;
 
-                bool wasSeen = false;
-                bool hasCreature = false;
-                bool isNotWalkable = true;
-                bool isNotPathable = true;
-                uint16 speed = 100;
+                    bool wasSeen = false;
+                    bool hasCreature = false;
+                    bool isNotWalkable = true;
+                    bool isNotPathable = true;
+                    uint16 speed = 100;
 
-                Position neighborPos = currentNode->pos.translated(i, j);
-                if(g_map.isAwareOfPosition(neighborPos)) {
-                    wasSeen = true;
-                    if(const TilePtr& tile = getTile(neighborPos)) {
-                        hasCreature = tile->hasCreature();
-                        isNotWalkable = !tile->isWalkable(flags & Otc::PathFindAllowCreatures);
-                        isNotPathable = !tile->isPathable();
-                        speed = tile->getGroundSpeed();
-                    }
-                } else {
-                    const MinimapTile& mtile = g_minimap.getTile(neighborPos);
-                    wasSeen = mtile.hasFlag(MinimapTileWasSeen);
-                    isNotWalkable = mtile.hasFlag(MinimapTileNotWalkable);
-                    isNotPathable = mtile.hasFlag(MinimapTileNotPathable);
-                    if(isNotWalkable || isNotPathable)
+                    Position neighborPos = currentNode->pos.translated(i, j);
+                    if(g_map.isAwareOfPosition(neighborPos)) {
                         wasSeen = true;
-                    speed = mtile.getSpeed();
-                }
+                        if(const TilePtr& tile = getTile(neighborPos)) {
+                            hasCreature = tile->hasCreature();
+                            isNotWalkable = !tile->isWalkable(flags & Otc::PathFindAllowCreatures);
+                            isNotPathable = !tile->isPathable();
+                            speed = tile->getGroundSpeed();
+                        }
+                    } else {
+                        const MinimapTile& mtile = g_minimap.getTile(neighborPos);
+                        wasSeen = mtile.hasFlag(MinimapTileWasSeen);
+                        isNotWalkable = mtile.hasFlag(MinimapTileNotWalkable);
+                        isNotPathable = mtile.hasFlag(MinimapTileNotPathable);
+                        if(isNotWalkable || isNotPathable)
+                            wasSeen = true;
+                        speed = mtile.getSpeed();
+                    }
 
-                float walkFactor = 0;
-                if(neighborPos != goalPos) {
-                    if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
-                        continue;
-                    if(wasSeen) {
-                        if(!(flags & Otc::PathFindAllowCreatures) && hasCreature)
+                    if(neighborPos != goalPos) {
+                        if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
                             continue;
-                        if(!(flags & Otc::PathFindAllowNonPathable) && isNotPathable)
+                        if(wasSeen) {
+                            if(!(flags & Otc::PathFindAllowCreatures) && hasCreature)
+                                continue;
+                            if(!(flags & Otc::PathFindAllowNonPathable) && isNotPathable)
+                                continue;
+                            if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
+                                continue;
+                        }
+                    } else {
+                        if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
                             continue;
-                        if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
+                        if(wasSeen) {
+                            if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
+                                continue;
+                        }
+                    }
+
+                    float walkFactor;
+                    const Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
+                    if(walkDir >= Otc::NorthEast)
+                        walkFactor = 3.0f;
+                    else
+                        walkFactor = 1.0f;
+
+                    const float cost = currentNode->cost + (speed * walkFactor) / 100.0f;
+
+                    Node* neighborNode;
+                    if(nodes.find(neighborPos) == nodes.end()) {
+                        neighborNode = new Node(neighborPos);
+                        nodes[neighborPos] = neighborNode;
+                    } else {
+                        neighborNode = nodes[neighborPos];
+                        if(neighborNode->cost <= cost)
                             continue;
                     }
-                } else {
-                    if(!(flags & Otc::PathFindAllowNotSeenTiles) && !wasSeen)
-                        continue;
-                    if(wasSeen) {
-                        if(!(flags & Otc::PathFindAllowNonWalkable) && isNotWalkable)
-                            continue;
-                    }
+
+                    neighborNode->prev = currentNode;
+                    neighborNode->cost = cost;
+                    neighborNode->dir = walkDir;
+                    searchList.emplace(neighborNode, neighborNode->cost + neighborPos.distance(goalPos));
                 }
-
-                const Otc::Direction walkDir = currentNode->pos.getDirectionFromPosition(neighborPos);
-                if(walkDir >= Otc::NorthEast)
-                    walkFactor += 3.0f;
-                else
-                    walkFactor += 1.0f;
-
-                const float cost = currentNode->cost + (speed * walkFactor) / 100.0f;
-
-                Node* neighborNode;
-                if(nodes.find(neighborPos) == nodes.end()) {
-                    neighborNode = new Node(neighborPos);
-                    nodes[neighborPos] = neighborNode;
-                } else {
-                    neighborNode = nodes[neighborPos];
-                    if(neighborNode->cost <= cost)
-                        continue;
-                }
-
-                neighborNode->prev = currentNode;
-                neighborNode->cost = cost;
-                neighborNode->totalCost = neighborNode->cost + neighborPos.distance(goalPos);
-                neighborNode->dir = walkDir;
-                searchList.emplace(neighborNode, neighborNode->totalCost);
             }
         }
 
         if(!searchList.empty()) {
-            currentNode = searchList.top().first;
+            const auto &top = searchList.top();
+            currentNode = top.first;
+            totalCost = top.second;
             searchList.pop();
         } else
             currentNode = nullptr;
