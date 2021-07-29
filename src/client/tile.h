@@ -195,7 +195,12 @@ private:
     void checkTranslucentLight();
 
     void clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing);
-    void setCompletelyCoveredCache(const uint8_t state) { if(m_currentFirstVisibleFloor != UINT8_MAX) m_completelyCoveredCache[m_currentFirstVisibleFloor] = state; }
+    void setCompletelyCoveredCache(const uint8_t state)
+    {
+        if(state == 0) m_completelyCoveredCache.fill(0);
+        else if(m_currentFirstVisibleFloor != UINT8_MAX)
+            m_completelyCoveredCache[m_currentFirstVisibleFloor] = state;
+    }
 
     Position m_position;
     uint8 m_drawElevation, m_minimapColor,
