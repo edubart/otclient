@@ -88,9 +88,8 @@ end
 local function onFlagMouseRelease(widget, pos, button)
     if button == MouseLeftButton then
         local player = g_game.getLocalPlayer()
-        if Position.distance(player:getPosition(), widget.pos) > 100 then
-            modules.game_textmessage.displayStatusMessage(tr(
-                                                              "Destination is out of range."))
+        if Position.distance(player:getPosition(), widget.pos) > 250 then
+            modules.game_textmessage.displayStatusMessage(tr("Destination is out of range."))
             return false
         end
 
@@ -247,9 +246,8 @@ function UIMinimap:onMouseRelease(pos, button)
 
     if button == MouseLeftButton then
         local player = g_game.getLocalPlayer()
-        if Position.distance(player:getPosition(), mapPos) > 100 then
-            modules.game_textmessage.displayStatusMessage(tr(
-                                                              "Destination is out of range."))
+        if Position.distance(player:getPosition(), mapPos) > 250 then
+            modules.game_textmessage.displayStatusMessage(tr("Destination is out of range."))
             return false
         end
 

@@ -179,7 +179,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
 
     // try to find a path that we know
     if(tryKnownPath || m_knownCompletePath) {
-        result = g_map.findPath(m_position, destination, 10000, 0);
+        result = g_map.findPath(m_position, destination, 25000, 0);
         if(std::get<1>(result) == Otc::PathFindResultOk) {
             limitedPath = std::get<0>(result);
             // limit to 127 steps
@@ -191,7 +191,7 @@ bool LocalPlayer::autoWalk(const Position& destination)
 
     // no known path found, try to discover one
     if(limitedPath.empty()) {
-        result = g_map.findPath(m_position, destination, 10000, Otc::PathFindAllowNotSeenTiles);
+        result = g_map.findPath(m_position, destination, 25000, Otc::PathFindAllowNotSeenTiles);
         if(std::get<1>(result) != Otc::PathFindResultOk) {
             callLuaField("onAutoWalkFail", std::get<1>(result));
             stopAutoWalk();
