@@ -86,7 +86,18 @@ function UIMinimap:save()
 end
 
 local function onFlagMouseRelease(widget, pos, button)
-    if button == MouseRightButton then
+    if button == MouseLeftButton then
+        local player = g_game.getLocalPlayer()
+        if Position.distance(player:getPosition(), widget.pos) > 100 then
+            modules.game_textmessage.displayStatusMessage(tr(
+                                                              "Destination is out of range."))
+            return false
+        end
+
+        if widget:getParent().autowalk then player:autoWalk(widget.pos) end
+        return true
+
+    elseif button == MouseRightButton then
         local menu = g_ui.createWidget('PopupMenu')
         menu:setGameMenu(true)
         menu:addOption(tr('Delete mark'), function() widget:destroy() end)
