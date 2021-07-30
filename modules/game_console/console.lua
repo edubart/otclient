@@ -221,7 +221,7 @@ function disableChat()
   consoleTextEdit:setText("")
 
   local disableWasd = function()
-    if g_game.isOnline() and consoleToggleChat:isChecked() then
+    if g_game.isOnline() and consoleToggleChat:isChecked() and not modules.game_hotkeys.areHotkeysDisabled() then
       consoleToggleChat:setChecked(false)
     end
   end
