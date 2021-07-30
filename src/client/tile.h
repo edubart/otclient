@@ -62,8 +62,6 @@ public:
 
     Tile(const Position& position);
 
-    void drawStart(const MapViewPtr& mapView);
-    void drawEnd(const MapViewPtr& mapView);
     void onAddVisibleTileList(const MapViewPtr& mapView);
     void draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
@@ -219,7 +217,7 @@ private:
     CountFlag m_countFlag;
     Highlight m_highlight;
 
-    bool m_highlightWithoutFilter{ false };
+    bool m_highlightWithoutFilter{ false }, m_firstDraw{ true };
 
     std::array<uint8_t, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
 };
