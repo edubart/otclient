@@ -97,7 +97,6 @@ void Application::registerLuaFunctions()
     g_lua.registerSingletonClass("g_app");
     g_lua.bindSingletonFunction("g_app", "setName", &Application::setName, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "setCompactName", &Application::setCompactName, static_cast<Application*>(&g_app));
-    g_lua.bindSingletonFunction("g_app", "setVersion", &Application::setVersion, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "isRunning", &Application::isRunning, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "isStopping", &Application::isStopping, static_cast<Application*>(&g_app));
     g_lua.bindSingletonFunction("g_app", "getName", &Application::getName, static_cast<Application*>(&g_app));

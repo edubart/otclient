@@ -146,6 +146,18 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PreBuildEvent>
+      <Command>
+echo | set /p dummyName=#define GIT_BRANCH &gt;  ../src/gitinfo.h
+git rev-parse --abbrev-ref HEAD &gt;&gt;  ../src/gitinfo.h
+
+echo | set /p dummyName=#define GIT_VERSION &gt;&gt; ../src/gitinfo.h
+git describe --abbrev=0 --tag &gt;&gt;  ../src/gitinfo.h
+
+echo | set /p dummyName=#define GIT_COMMITS &gt;&gt;  ../src/gitinfo.h
+git rev-list --count head &gt;&gt;  ../src/gitinfo.h
+		</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\client\animatedtext.cpp" />
@@ -475,6 +487,7 @@
     <ClInclude Include="..\src\framework\util\size.h" />
     <ClInclude Include="..\src\framework\xml\tinystr.h" />
     <ClInclude Include="..\src\framework\xml\tinyxml.h" />
+    <ClInclude Include="..\src\gitinfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\otcicon.rc" />

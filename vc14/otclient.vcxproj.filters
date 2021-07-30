@@ -1064,6 +1064,9 @@
     <ClInclude Include="..\src\framework\graphics\pool.h">
       <Filter>Header Files\framework\graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\gitinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\otcicon.rc">

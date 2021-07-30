@@ -32,6 +32,11 @@
 #include <framework/platform/crashhandler.h>
 #include <framework/platform/platform.h>
 
+#include <gitinfo.h>
+
+#define ADD_QUOTES_HELPER(s) #s
+#define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)
+
 #include <locale>
 
 #ifdef FW_NET
@@ -56,7 +61,6 @@ Application::Application()
 {
     m_appName = "application";
     m_appCompactName = "app";
-    m_appVersion = "none";
     m_charset = "cp1252";
     m_stopping = false;
 }
@@ -181,3 +185,13 @@ std::string Application::getOs()
     return "unknown";
 #endif
 }
+
+// https://stackoverflow.com/a/46448040
+std::string Application::getBuildRevision()
+{
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(3) << (static_cast<float>(GIT_COMMITS) / 1000);
+    return ss.str();
+}
+std::string Application::getVersion() { return ADD_QUOTES(GIT_VERSION); }
+std::string Application::getBuildCommit() { return ADD_QUOTES(GIT_BRANCH); }

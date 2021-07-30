@@ -102,7 +102,7 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 }
 
-void Tile::drawGround(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     if(!m_ground) return;
 
@@ -110,7 +110,7 @@ void Tile::drawGround(const MapViewPtr& mapView, const Point& dest, float scaleF
     drawThing(m_ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
 }
 
-void Tile::drawGroundBorder(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawGroundBorder(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     if(!m_countFlag.hasGroundBorder) return;
 
@@ -123,11 +123,11 @@ void Tile::drawGroundBorder(const MapViewPtr& mapView, const Point& dest, float 
     }
 }
 
-void Tile::draw(const MapViewPtr& mapView, const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
     if(m_ground && m_ground->isTopGround()) {
-        drawGround(mapView, dest, scaleFactor, frameFlags, lightView);
-        drawGroundBorder(mapView, dest, scaleFactor, frameFlags, lightView);
+        drawGround(dest, scaleFactor, frameFlags, lightView);
+        drawGroundBorder(dest, scaleFactor, frameFlags, lightView);
     }
 
     if(!hasGround() && !hasGroundBorderToDraw())

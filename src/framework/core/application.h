@@ -43,22 +43,21 @@ public:
 
     void setName(const std::string& name) { m_appName = name; }
     void setCompactName(const std::string& compactName) { m_appCompactName = compactName; }
-    void setVersion(const std::string& version) { m_appVersion = version; }
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
     bool isTerminated() { return m_terminated; }
     const std::string& getName() { return m_appName; }
     const std::string& getCompactName() { return m_appCompactName; }
-    const std::string& getVersion() { return m_appVersion; }
+    std::string getVersion();
 
     std::string getCharset() { return m_charset; }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
     std::string getBuildDate() { return std::string(__DATE__); }
-    std::string getBuildRevision() { return BUILD_REVISION; }
-    std::string getBuildCommit() { return BUILD_COMMIT; }
     std::string getBuildType() { return BUILD_TYPE; }
     std::string getBuildArch() { return BUILD_ARCH; }
+    std::string getBuildRevision();
+    std::string getBuildCommit();
     std::string getOs();
     std::string getStartupOptions() { return m_startupOptions; }
 
@@ -68,7 +67,6 @@ protected:
     std::string m_charset;
     std::string m_appName;
     std::string m_appCompactName;
-    std::string m_appVersion;
     std::string m_startupOptions;
     stdext::boolean<false> m_running;
     stdext::boolean<false> m_stopping;
