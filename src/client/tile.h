@@ -217,7 +217,7 @@ private:
     CountFlag m_countFlag;
     Highlight m_highlight;
 
-    bool m_highlightWithoutFilter{ false }, m_firstDraw{ true };
+    bool m_highlightWithoutFilter{ false };
 
     std::array<uint8_t, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
 };
