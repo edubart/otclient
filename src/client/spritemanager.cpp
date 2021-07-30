@@ -171,7 +171,13 @@ ImagePtr SpriteManager::getSpriteImage(int id)
                 pixels[writePos + 0] = m_spritesFile->getU8();
                 pixels[writePos + 1] = m_spritesFile->getU8();
                 pixels[writePos + 2] = m_spritesFile->getU8();
-                pixels[writePos + 3] = useAlpha ? m_spritesFile->getU8() : 0xFF;
+
+                const uint8 alphaColor = useAlpha ? m_spritesFile->getU8() : 0xFF;
+                if(alphaColor != 0xFF)
+                    image->setTransparentPixel(true);
+
+                pixels[writePos + 3] = alphaColor;
+
                 writePos += 4;
             }
 
@@ -191,12 +197,15 @@ ImagePtr SpriteManager::getSpriteImage(int id)
             writePos += 4;
         }
 
-        // The image must be more than 4 pixels transparent to be considered transparent.
-        uint8 cntTrans = 0;
-        for(uint8 pixel : image->getPixels()) {
-            if(pixel == 0x00 && ++cntTrans > 4) {
-                image->setTransparentPixel(true);
-                break;
+        if(!image->hasTransparentPixel())
+        {
+            // The image must be more than 4 pixels transparent to be considered transparent.
+            uint8 cntTrans = 0;
+            for(uint8 pixel : image->getPixels()) {
+                if(pixel == 0x00 && ++cntTrans > 4) {
+                    image->setTransparentPixel(true);
+                    break;
+                }
             }
         }
 

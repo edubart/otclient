@@ -628,7 +628,7 @@ bool Tile::isFullGround()
 
 bool Tile::isFullyOpaque()
 {
-    return isFullGround() || m_countFlag.opaque > 0;
+    return m_countFlag.opaque > 0;
 }
 
 bool Tile::isSingleDimension()
