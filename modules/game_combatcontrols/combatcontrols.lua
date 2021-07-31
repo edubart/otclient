@@ -231,6 +231,10 @@ function onSetFightMode(self, selectedFightButton)
     g_game.setFightMode(fightMode)
 end
 
+function toggleChaseMode()
+    chaseModeButton:setChecked(not chaseModeButton:isChecked())
+end
+
 function onSetChaseMode(self, checked)
     local chaseMode
     if checked then

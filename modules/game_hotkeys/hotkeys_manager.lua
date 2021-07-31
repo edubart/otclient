@@ -6,11 +6,13 @@ HOTKEY_MANAGER_USEWITH = 3
 HOTKEY_ACTION_TOGGLE_WASD = 1
 HOTKEY_ACTION_ATTACK_NEXT = 2
 HOTKEY_ACTION_ATTACK_PREV = 3
+HOTKEY_ACTION_TOGGLE_CHASE = 4
 
 HotkeyActions = {
-    [HOTKEY_ACTION_TOGGLE_WASD] = tr("Toggle WASD chat mode"),
-    [HOTKEY_ACTION_ATTACK_NEXT] = tr("Attack next creature in battle list"),
-    [HOTKEY_ACTION_ATTACK_PREV] = tr("Attack previous creature in battle list")
+    { id = HOTKEY_ACTION_TOGGLE_WASD,  text = tr("Toggle WASD chat mode") },
+    { id = HOTKEY_ACTION_ATTACK_NEXT,  text = tr("Attack next creature in battle list") },
+    { id = HOTKEY_ACTION_ATTACK_PREV,  text = tr("Attack previous creature in battle list") },
+    { id = HOTKEY_ACTION_TOGGLE_CHASE, text = tr("Toggle chase mode") },
 }
 
 HotkeyColors = {
@@ -86,8 +88,8 @@ function init()
     hotkeyActionCombo = hotkeysWindow:getChildById('hotkeyActionCombo')
 
     hotkeyActionCombo:addOption('None', 0)
-    for actionId, text in pairs(HotkeyActions) do
-        hotkeyActionCombo:addOption(text, actionId)
+    for _, action in pairs(HotkeyActions) do
+        hotkeyActionCombo:addOption(action.text, action.id)
     end
 
     hotkeyActionCombo.onOptionChange = onActionChange
@@ -443,6 +445,8 @@ function doKeyCombo(keyCombo)
             modules.game_battle.attackNext()
         elseif hotKey.action == HOTKEY_ACTION_ATTACK_PREV then
             modules.game_battle.attackNext(true)
+        elseif hotKey.action == HOTKEY_ACTION_TOGGLE_CHASE then
+            modules.game_combatcontrols.toggleChaseMode()
         end
 
     elseif hotKey.itemId == nil then
@@ -523,7 +527,7 @@ function updateHotkeyLabel(hotkeyLabel)
         hotkeyLabel:setText(tr('%s: (use object)', hotkeyLabel.keyCombo))
         hotkeyLabel:setColor(HotkeyColors.itemUse)
     elseif hotkeyLabel.action then
-        hotkeyLabel:setText(tr('%s: ' .. HotkeyActions[hotkeyLabel.action], hotkeyLabel.keyCombo))
+        hotkeyLabel:setText(tr('%s: ' .. HotkeyActions[hotkeyLabel.action].text, hotkeyLabel.keyCombo))
         hotkeyLabel:setColor(HotkeyColors.action)
     else
         local text = hotkeyLabel.keyCombo .. ': '
