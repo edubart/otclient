@@ -254,8 +254,6 @@ function refresh()
                 end
             end
         end
-
-        skillsWindow:setupOnStart()
     else
         maximumHeight = 390
     end
