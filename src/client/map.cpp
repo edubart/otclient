@@ -404,6 +404,8 @@ void Map::cleanTile(const Position& pos)
                 block.remove(pos);
 
             notificateTileUpdate(pos, nullptr, Otc::OPERATION_CLEAN);
+        } else {
+            g_minimap.updateTile(pos, nullptr);
         }
     }
 

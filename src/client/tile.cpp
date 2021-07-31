@@ -243,7 +243,6 @@ void Tile::clean()
 void Tile::addWalkingCreature(const CreaturePtr& creature)
 {
     m_walkingCreatures.push_back(creature);
-    analyzeThing(creature, true);
 
     if(!creature->isSingleDimension())
         setCompletelyCoveredCache(2);
@@ -253,7 +252,6 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
 {
     const auto it = std::find(m_walkingCreatures.begin(), m_walkingCreatures.end(), creature);
     if(it != m_walkingCreatures.end()) {
-        analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
 
         if(!creature->isSingleDimension())
