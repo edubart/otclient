@@ -563,8 +563,13 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
         key = m_keyMap[wParam];
 
     // actually ignore alt/ctrl/shift keys, they is states are already stored in m_inputEvent.keyboardModifiers
+#if defined(__APPLE__)
+    if(key == Fw::KeyMeta || key == Fw::KeyCtrl || key == Fw::KeyShift)
+        key = Fw::KeyUnknown;
+#else
     if(key == Fw::KeyAlt || key == Fw::KeyCtrl || key == Fw::KeyShift)
         key = Fw::KeyUnknown;
+#endif
 
     return key;
 }
@@ -578,8 +583,13 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
     if(IsKeyDown(VK_SHIFT))
         m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
+#if defined(__APPLE__)
+    if(IsKeyDown(VK_LWIN))
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+#else
     if(IsKeyDown(VK_MENU))
         m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+#endif
 
     bool notificateMapKeyEvent = false;
     switch(uMsg)

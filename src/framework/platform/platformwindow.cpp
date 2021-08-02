@@ -71,12 +71,18 @@ void PlatformWindow::processKeyDown(Fw::Key keyCode)
     if(keyCode == Fw::KeyUnknown)
         return;
 
-    if(keyCode == Fw::KeyCtrl) {
+    if (keyCode == Fw::KeyCtrl) {
         m_inputEvent.keyboardModifiers |= Fw::KeyboardCtrlModifier;
         return;
-    } else if(keyCode == Fw::KeyAlt) {
+#if defined(__APPLE__)
+    } else if (keyCode == Fw::KeyMeta) {
         m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
         return;
+#else
+    } else if (keyCode == Fw::KeyAlt) {
+        m_inputEvent.keyboardModifiers |= Fw::KeyboardAltModifier;
+        return;
+#endif
     } else if(keyCode == Fw::KeyShift) {
         m_inputEvent.keyboardModifiers |= Fw::KeyboardShiftModifier;
         return;
@@ -111,9 +117,15 @@ void PlatformWindow::processKeyUp(Fw::Key keyCode)
     if(keyCode == Fw::KeyCtrl) {
         m_inputEvent.keyboardModifiers &= ~Fw::KeyboardCtrlModifier;
         return;
-    } else if(keyCode == Fw::KeyAlt) {
+#if defined(__APPLE__)
+    } else if(keyCode == Fw::KeyMeta) {
         m_inputEvent.keyboardModifiers &= ~Fw::KeyboardAltModifier;
         return;
+#else
+    } else if (keyCode == Fw::KeyAlt) {
+        m_inputEvent.keyboardModifiers &= ~Fw::KeyboardAltModifier;
+        return;
+#endif
     } else if(keyCode == Fw::KeyShift) {
         m_inputEvent.keyboardModifiers &= ~Fw::KeyboardShiftModifier;
         return;
