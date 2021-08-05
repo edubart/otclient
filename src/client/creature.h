@@ -108,7 +108,7 @@ public:
     Position getLastStepFromPosition() { return m_lastStepFromPosition; }
     Position getLastStepToPosition() { return m_lastStepToPosition; }
     float getStepProgress() { return m_walkTimer.ticksElapsed() / getStepDuration(); }
-    float getStepTicksLeft() { return getStepDuration() - m_walkTimer.ticksElapsed(); }
+    float getStepTicksLeft() { return (float) getStepDuration() - m_walkTimer.ticksElapsed(); }
     ticks_t getWalkTicksElapsed() { return m_walkTimer.ticksElapsed(); }
     std::array<double, Otc::LastSpeedFormula> getSpeedFormulaArray() { return m_speedFormula; }
     Point getDisplacement() override;
