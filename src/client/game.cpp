@@ -657,7 +657,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
             return true;
         };
 
-        if(!(canChangeFloorDown() || canChangeFloorUp() || (toTile && toTile->isEmpty())))
+        if(!(canChangeFloorDown() || canChangeFloorUp() || !toTile || toTile->isEmpty()))
             return false;
 
         m_localPlayer->lockWalk();
