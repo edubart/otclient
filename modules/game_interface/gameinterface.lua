@@ -369,6 +369,11 @@ function stopSmartWalk()
 end
 
 function onWalkKeyDown(dir)
+    if modules.client_options.getOption('autoChaseOverride') then
+        if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
+            g_game.setChaseMode(DontChase)
+        end
+    end
     firstStep = true
     changeWalkDir(dir)
 end
