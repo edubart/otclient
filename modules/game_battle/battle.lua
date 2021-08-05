@@ -438,7 +438,7 @@ local function canBeSeen(creature)
 end
 
 local function getDistanceBetween(p1, p2) -- Calculate distance
-    return math.max(math.abs(p1.x - p2.x), math.abs(p1.y - p2.y))
+	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
 -- Adding and Removing creatures
