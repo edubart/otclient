@@ -41,6 +41,9 @@ function init()
 
     refresh()
     skillsWindow:setup()
+    if g_game.isOnline() then
+        skillsWindow:setupOnStart()
+    end
 end
 
 function terminate()

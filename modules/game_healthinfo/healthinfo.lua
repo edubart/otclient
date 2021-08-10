@@ -140,6 +140,9 @@ function init()
     end
 
     healthInfoWindow:setup()
+    if g_game.isOnline() then
+        healthInfoWindow:setupOnStart()
+    end
 end
 
 function terminate()

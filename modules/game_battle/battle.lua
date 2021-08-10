@@ -127,6 +127,9 @@ function init() -- Initiating the module (load)
 	-- Determining Height and Setting up!
 	battleWindow:setContentMinimumHeight(80)
 	battleWindow:setup()
+	if g_game.isOnline() then
+		battleWindow:setupOnStart()
+	end
 end
 
 -- Binary Search, Insertion and Resort functions

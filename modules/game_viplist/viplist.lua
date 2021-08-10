@@ -25,6 +25,9 @@ function init()
     if not g_game.getFeature(GameAdditionalVipInfo) then loadVipInfo() end
     refresh()
     vipWindow:setup()
+    if g_game.isOnline() then
+        vipWindow:setupOnStart()
+    end
 end
 
 function terminate()

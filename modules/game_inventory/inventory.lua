@@ -47,6 +47,9 @@ function init()
 
     refresh()
     inventoryWindow:setup()
+    if g_game.isOnline() then
+        inventoryWindow:setupOnStart()
+    end
 end
 
 function terminate()
