@@ -527,7 +527,12 @@ function updateHotkeyLabel(hotkeyLabel)
         hotkeyLabel:setText(tr('%s: (use object)', hotkeyLabel.keyCombo))
         hotkeyLabel:setColor(HotkeyColors.itemUse)
     elseif hotkeyLabel.action then
-        hotkeyLabel:setText(tr('%s: ' .. HotkeyActions[hotkeyLabel.action].text, hotkeyLabel.keyCombo))
+        for _, action in pairs(HotkeyActions) do
+            if action.id == hotkeyLabel.action then
+                hotkeyLabel:setText(tr('%s: ' .. action.text, hotkeyLabel.keyCombo))
+                break
+            end
+        end
         hotkeyLabel:setColor(HotkeyColors.action)
     else
         local text = hotkeyLabel.keyCombo .. ': '
