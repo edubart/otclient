@@ -88,6 +88,11 @@ X11Window::X11Window()
     m_keyMap[XK_Meta_R] = Fw::KeyMeta;
     m_keyMap[XK_Menu] = Fw::KeyMenu;
 
+#if defined(__APPLE__)
+    m_keyMap[65406] = Fw::KeyAlt;// Option
+    m_keyMap[65511] = Fw::KeyMeta;// Command
+#endif
+
     // ascii characters
     m_keyMap[XK_space] = Fw::KeySpace;
     m_keyMap[XK_exclam] = Fw::KeyExclamation;
