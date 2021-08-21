@@ -119,9 +119,14 @@ ticks_t Platform::getFileModificationTime(std::string file)
 
 void Platform::openUrl(std::string url)
 {
-    if(url.find("http://") == std::string::npos)
+    if(url.find("http://") == std::string::npos && url.find("https://") == std::string::npos)
         url.insert(0, "http://");
+
+#if defined(__APPLE__)
+    system(stdext::format("open %s", url).c_str());
+#else
     system(stdext::format("xdg-open %s", url).c_str());
+#endif
 }
 
 std::string Platform::getCPUName()
