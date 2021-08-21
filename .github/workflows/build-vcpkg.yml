@@ -23,7 +23,7 @@ on:
 jobs:
   job:
     name: ${{ matrix.os }}-${{ matrix.cxx }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}-${{ matrix.os-version }}
     strategy:
       fail-fast: false
       max-parallel: 8
@@ -34,6 +34,7 @@ jobs:
         include:
           - name: windows-msvc
             os: windows
+            os-version: latest
             cxx: cl.exe
             cc: cl.exe
             triplet: x64-windows
@@ -42,6 +43,7 @@ jobs:
               glew luajit libogg libvorbis openal-soft opengl openssl physfs zlib
           - name: ubuntu-gcc
             os: ubuntu
+            os-version: 18.04
             cxx: g++
             cc: gcc
             triplet: x64-linux
@@ -50,6 +52,7 @@ jobs:
               boost-filesystem boost-uuid physfs openal-soft libogg libvorbis zlib opengl
           - name: macos-clang
             os: macos
+            os-version: latest
             cxx: clang++
             cc: clang
             triplet: x64-osx
@@ -92,7 +95,7 @@ jobs:
           vcpkgArguments: ${{ matrix.packages }}
           vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
           vcpkgTriplet: ${{ matrix.triplet }}
-          vcpkgGitCommitId: 9a49e3df7f729655318c59b9985c9c18ad0c99d6
+          vcpkgGitCommitId: 5568f110b509a9fd90711978a7cb76bae75bb092
 
       - name: Build with CMake
         uses: lukka/run-cmake@v3
