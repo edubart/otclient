@@ -68,6 +68,20 @@ public:
     Color getLegsColor() const { return m_legsColor; }
     Color getFeetColor() const { return m_feetColor; }
 
+    bool operator==(const Outfit& other) const
+    {
+        return m_category == other.m_category &&
+            m_id == other.m_id &&
+            m_auxId == other.m_auxId &&
+            m_head == other.m_head &&
+            m_body == other.m_body &&
+            m_legs == other.m_legs &&
+            m_feet == other.m_feet &&
+            m_addons == other.m_addons &&
+            m_mount == other.m_mount;
+    }
+    bool operator!=(const Outfit& other) const { return !(*this == other); }
+
 private:
     ThingCategory m_category;
     int m_id, m_auxId, m_head, m_body, m_legs, m_feet, m_addons, m_mount;
