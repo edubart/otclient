@@ -697,7 +697,7 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit = outfit;
     }
 
-    if (m_outfit != oldOutfit)
+    if(m_outfit != oldOutfit)
         m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
 
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
@@ -710,6 +710,9 @@ void Creature::setOutfit(const Outfit& outfit)
             m_drawCache.exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
 
         m_drawCache.frameSizeNotResized = std::max<int>(m_drawCache.exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f);
+
+        const auto& tile = getTile();
+        if(tile) tile->clearCompletelyCoveredCacheListIfPossible(this);
     }
 }
 

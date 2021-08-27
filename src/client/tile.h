@@ -158,6 +158,8 @@ public:
 
     void analyzeThing(const ThingPtr& thing, bool add);
 
+    void clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing);
+
 private:
     struct CountFlag {
         int fullGround = 0;
@@ -192,11 +194,12 @@ private:
     bool checkForDetachableThing();
     void checkTranslucentLight();
 
-    void clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing);
     void setCompletelyCoveredCache(const uint8_t state)
     {
-        if(state == 0) m_completelyCoveredCache.fill(0);
-        else if(m_currentFirstVisibleFloor != UINT8_MAX)
+        if(state == 0) {
+            m_completelyCoveredCache.fill(0);
+            m_coveredCache.fill(0);
+        } else if(m_currentFirstVisibleFloor != UINT8_MAX)
             m_completelyCoveredCache[m_currentFirstVisibleFloor] = state;
     }
 
