@@ -351,6 +351,8 @@ bool Tile::removeThing(const ThingPtr thing)
 
     if(thing->isGround()) m_ground = nullptr;
 
+    analyzeThing(thing, false);
+
     m_things.erase(it);
 
     checkForDetachableThing();
