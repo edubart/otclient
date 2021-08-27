@@ -154,11 +154,9 @@ public:
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
     bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
-    bool isCovered() { return m_coveredCache[m_currentFirstVisibleFloor] == 1; };
+    bool isCovered() { return m_covered; };
 
     void analyzeThing(const ThingPtr& thing, bool add);
-
-    void clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing);
 
 private:
     struct CountFlag {
@@ -194,18 +192,10 @@ private:
     bool checkForDetachableThing();
     void checkTranslucentLight();
 
-    void setCompletelyCoveredCache(const uint8_t state)
-    {
-        if(state == 0) {
-            m_completelyCoveredCache.fill(0);
-            m_coveredCache.fill(0);
-        } else if(m_currentFirstVisibleFloor != UINT8_MAX)
-            m_completelyCoveredCache[m_currentFirstVisibleFloor] = state;
-    }
-
     Position m_position;
     uint8 m_drawElevation, m_minimapColor,
         m_currentFirstVisibleFloor{ UINT8_MAX };
+
     uint32 m_flags, m_houseId;
 
     std::array<Position, 8> m_positionsAround;
@@ -220,9 +210,9 @@ private:
     CountFlag m_countFlag;
     Highlight m_highlight;
 
-    bool m_highlightWithoutFilter{ false };
-
-    std::array<uint8_t, Otc::MAX_Z + 1> m_coveredCache, m_completelyCoveredCache;
+    bool m_highlightWithoutFilter{ false },
+        m_covered{ false },
+        m_completelyCovered{ false };
 };
 
 #endif

@@ -47,19 +47,15 @@ Tile::Tile(const Position& position) :
     }
 
     m_positionsAround = position.getPositionsAround();
-    m_completelyCoveredCache.fill(0);
-    m_coveredCache.fill(0);
 }
 
 void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 {
-    uint8 cntBorder = 0;
     m_borderDirections.clear();
     for(const auto& pos : m_positionsBorder) {
         const TilePtr& tile = g_map.getTile(pos.second);
         if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
             m_borderDirections.push_back(pos.first);
-            ++cntBorder;
         }
     }
 }
@@ -67,19 +63,13 @@ void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 bool Tile::isCompletelyCovered(int8 firstFloor)
 {
     if(firstFloor > -1) {
-        m_currentFirstVisibleFloor = firstFloor;
-        auto completelyCoveredN = m_completelyCoveredCache[firstFloor];
-        if(completelyCoveredN == 0) {
-            m_completelyCoveredCache[firstFloor] = g_map.isCompletelyCovered(m_position, firstFloor) ? 1 : 2;
-        }
-
-        auto coveredN = m_coveredCache[firstFloor];
-        if(coveredN == 0) {
-            m_coveredCache[firstFloor] = g_map.isCovered(m_position, firstFloor) ? 1 : 2;
+        m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
+        if(!(m_covered = m_completelyCovered)) {
+            m_covered = g_map.isCovered(m_position, firstFloor);
         }
     }
 
-    return m_completelyCoveredCache[m_currentFirstVisibleFloor] == 1;
+    return m_completelyCovered;
 }
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
@@ -245,9 +235,6 @@ void Tile::addWalkingCreature(const CreaturePtr& creature)
 {
     m_walkingCreatures.push_back(creature);
     analyzeThing(creature, true);
-
-    if(!creature->isSingleDimension())
-        setCompletelyCoveredCache(2);
 }
 
 void Tile::removeWalkingCreature(const CreaturePtr& creature)
@@ -256,9 +243,6 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
     if(it != m_walkingCreatures.end()) {
         analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
-
-        if(!creature->isSingleDimension())
-            setCompletelyCoveredCache(0);
     }
 }
 
@@ -329,8 +313,6 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
     if(thing->isGround()) m_ground = thing->static_self_cast<Item>();
 
-    clearCompletelyCoveredCacheListIfPossible(thing);
-
     analyzeThing(thing, true);
     if(checkForDetachableThing() && m_highlight.enabled) {
         select();
@@ -368,21 +350,6 @@ bool Tile::removeThing(const ThingPtr thing)
         return false;
 
     if(thing->isGround()) m_ground = nullptr;
-
-    const bool _isFullyOpaque = isFullyOpaque();
-
-    analyzeThing(thing, false);
-
-    // Check if the tile is still completely opaque, if not, clear the coveredCache of the tile below.
-    if(_isFullyOpaque && !isFullyOpaque()) {
-        auto& pos = m_position;
-        if(pos.coveredDown()) {
-            auto& downTile = g_map.getTile(pos);
-            if(downTile) downTile->setCompletelyCoveredCache(0);
-        }
-    }
-
-    clearCompletelyCoveredCacheListIfPossible(thing);
 
     m_things.erase(it);
 
@@ -884,14 +851,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->isGroundBorder() && thing->isNotWalkable())
         m_countFlag.hasNoWalkableEdge += value;
-}
-
-void Tile::clearCompletelyCoveredCacheListIfPossible(const ThingPtr& thing)
-{
-    // Verifies that the new item being added is not single dimensional, if so,
-    // clear the cache that verifies that the tile is completely covered.
-    if(isSingleDimension() && !thing->isSingleDimension())
-        setCompletelyCoveredCache(0);
 }
 
 void Tile::select(const bool noFilter)
