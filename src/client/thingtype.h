@@ -214,7 +214,7 @@ public:
     bool isUnwrapable() { return m_attribs.has(ThingAttrUnwrapable); }
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
-    bool isOpaque() { return m_opaque; }
+    bool isOpaque() { getTexture(0); return m_opaque; }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
     bool isTopGround() { return isGround() && !isFullGround() && blockProjectile() && !isSingleDimension(); }
     bool isSingleDimension() { return m_size.area() == 1; }
