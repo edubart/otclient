@@ -683,6 +683,9 @@ void Creature::setDirection(Otc::Direction direction)
 
 void Creature::setOutfit(const Outfit& outfit)
 {
+    if(m_outfit == outfit)
+        return;
+
     const Outfit oldOutfit = m_outfit;
     if(outfit.getCategory() != ThingCategoryCreature) {
         if(!g_things.isValidDatId(outfit.getAuxId(), outfit.getCategory()))
@@ -697,8 +700,7 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit = outfit;
     }
 
-    if(m_outfit != oldOutfit)
-        m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
+    m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
 
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
 
