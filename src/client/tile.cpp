@@ -368,7 +368,18 @@ bool Tile::removeThing(const ThingPtr thing)
 
     if(thing->isGround()) m_ground = nullptr;
 
+    const bool _isFullyOpaque = isFullyOpaque();
+
     analyzeThing(thing, false);
+
+    // Check if the tile is still completely opaque, if not, clear the coveredCache of the tile below.
+    if(_isFullyOpaque && !isFullyOpaque()) {
+        auto& pos = m_position;
+        if(pos.coveredDown()) {
+            auto& downTile = g_map.getTile(pos);
+            if(downTile) downTile->setCompletelyCoveredCache(0);
+        }
+    }
 
     clearCompletelyCoveredCacheListIfPossible(thing);
 
