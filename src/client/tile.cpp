@@ -236,6 +236,7 @@ void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightVi
 
 void Tile::clean()
 {
+    m_countFlag.opaque = 0;
     while(!m_things.empty())
         removeThing(m_things.front());
 }
