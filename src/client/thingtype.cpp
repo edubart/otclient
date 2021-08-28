@@ -325,9 +325,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             AnimatorPtr animator = AnimatorPtr(new Animator);
             animator->unserialize(groupAnimationsPhases, fin);
 
-            if(groupCount == 1 || frameGroupType == FrameGroupMoving)
+            if(frameGroupType == FrameGroupMoving)
                 m_animator = animator;
-            else m_idleAnimator = animator;
+            else if(frameGroupType == FrameGroupIdle)
+                m_idleAnimator = animator;
         }
 
         const int totalSprites = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * groupAnimationsPhases;
