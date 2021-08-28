@@ -148,6 +148,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
 
 void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
+    if(!hasGround()) m_drawElevation = 0;
+
     if(m_countFlag.hasBottomItem) {
         for(const auto& item : m_things) {
             if(!item->isOnBottom()) continue;
