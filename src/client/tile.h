@@ -118,9 +118,9 @@ public:
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
 
-    bool hasTopGround() const { return m_ground && m_ground->isTopGround(); }
-    bool hasGround() const { return hasTopGround() ? false : m_ground || m_countFlag.hasGroundBorder; };
-    bool hasSurface() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
+    bool hasGround() { return m_ground && m_ground->isSingleGround() || m_countFlag.hasGroundBorder; };
+    bool hasTopGround() { return m_ground && m_ground->isTopGround() || m_countFlag.hasTopGroundBorder; }
+    bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
 
     std::vector<Otc::Direction> getBorderDirections() { return m_borderDirections; };
 
@@ -148,7 +148,7 @@ public:
 
     bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
     bool hasLight();
-    bool isTopGround() const { return m_countFlag.hasTopGround > 0; }
+    bool isTopGround() const { return m_ground && m_ground->isTopGround(); }
     bool isCovered() { return m_covered; };
 
     void analyzeThing(const ThingPtr& thing, bool add);
@@ -173,13 +173,13 @@ private:
         int hasWall = 0;
         int hasHookEast = 0;
         int hasHookSouth = 0;
-        int hasTopGround = 0;
         int hasNoWalkableEdge = 0;
         int hasCreature = 0;
         int hasCommonItem = 0;
         int hasTopItem = 0;
         int hasBottomItem = 0;
         int hasGroundBorder = 0;
+        int hasTopGroundBorder = 0;
     };
 
     void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);

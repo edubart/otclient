@@ -98,6 +98,10 @@ public:
     int getElevation() { return rawGetThingType()->getElevation(); }
     bool isGround() { return rawGetThingType()->isGround(); }
     bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
+    bool isTopGround() { return rawGetThingType()->isTopGround(); }
+    bool isTopGroundBorder() { return rawGetThingType()->isTopGroundBorder(); }
+    bool isSingleGround() { return rawGetThingType()->isSingleGround(); }
+    bool isSingleGroundBorder() { return rawGetThingType()->isSingleGroundBorder(); }
     bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
     bool isOnTop() { return rawGetThingType()->isOnTop(); }
     bool isCommon() { return !isGround() && !isGroundBorder() && !isOnTop() && !isCreature() && !isOnBottom(); }
@@ -138,7 +142,6 @@ public:
     bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
     bool hasAction() { return rawGetThingType()->hasAction(); }
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
-    bool isTopGround() { return rawGetThingType()->isTopGround(); }
     bool isSingleDimension() { return rawGetThingType()->isSingleDimension(); }
     bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
 

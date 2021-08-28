@@ -176,6 +176,11 @@ public:
     MarketData getMarketData() { return m_attribs.get<MarketData>(ThingAttrMarket); }
     bool isGround() { return m_attribs.has(ThingAttrGround); }
     bool isGroundBorder() { return m_attribs.has(ThingAttrGroundBorder); }
+    bool isTopGround() { return isGround() && !isSingleDimension(); }
+    bool isTopGroundBorder() { return isGroundBorder() && !isSingleDimension(); }
+    bool isSingleGround() { return isGround() && isSingleDimension(); }
+    bool isSingleGroundBorder() { return isGroundBorder() && isSingleDimension(); }
+
     bool isOnBottom() { return m_attribs.has(ThingAttrOnBottom); }
     bool isOnTop() { return m_attribs.has(ThingAttrOnTop); }
     bool isContainer() { return m_attribs.has(ThingAttrContainer); }
@@ -216,7 +221,6 @@ public:
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { getTexture(0); return m_opaque; }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
-    bool isTopGround() { return isGround() && !isFullGround() && blockProjectile() && !isSingleDimension(); }
     bool isSingleDimension() { return m_size.area() == 1; }
     std::vector<int> getSprites() { return m_spritesIndex; }
 

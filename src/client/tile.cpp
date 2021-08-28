@@ -94,14 +94,11 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
 
 void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-    if(!hasGround()) return;
-
     m_drawElevation = 0;
 
     for(const auto& ground : m_things) {
-        if(!ground->isGround() && !ground->isGroundBorder()) break;
-
-        drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+        if(ground->isSingleGround() || ground->isSingleGroundBorder())
+            drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 }
 
@@ -152,8 +149,8 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
 
     if(hasTopGround()) {
         for(const auto& ground : m_things) {
-            if(!ground->isGround() && !ground->isGroundBorder()) break;
-            drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            if(ground->isTopGround() || ground->isTopGroundBorder())
+                drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
         }
     }
 
@@ -781,8 +778,11 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->isCreature())
         m_countFlag.hasCreature += value;
 
-    if(thing->isGroundBorder())
+    if(thing->isSingleGroundBorder())
         m_countFlag.hasGroundBorder += value;
+
+    if(thing->isTopGroundBorder())
+        m_countFlag.hasTopGroundBorder += value;
 
     // Creatures and items
     if(thing->isOnBottom()) {
@@ -837,9 +837,6 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     if(thing->isOpaque())
         m_countFlag.opaque += value;
-
-    if(thing->isTopGround())
-        m_countFlag.hasTopGround += value;
 
     if(thing->isGroundBorder() && thing->isNotWalkable())
         m_countFlag.hasNoWalkableEdge += value;
