@@ -182,6 +182,8 @@ void MapView::drawFloor()
             if(lightView) lightView->setFloor(z);
 
             const auto& map = m_cachedVisibleTiles[z];
+
+            g_drawPool.startPosition();
             {
                 for(const auto& tile : map.grounds)
                     tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);

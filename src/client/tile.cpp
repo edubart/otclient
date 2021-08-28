@@ -150,6 +150,13 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
 {
     if(!hasGround()) m_drawElevation = 0;
 
+    if(hasTopGround()) {
+        for(const auto& ground : m_things) {
+            if(!ground->isGround() && !ground->isGroundBorder()) break;
+            drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+        }
+    }
+
     if(m_countFlag.hasBottomItem) {
         for(const auto& item : m_things) {
             if(!item->isOnBottom()) continue;
