@@ -152,7 +152,7 @@ void MapView::drawFloor()
                 const int8 nextFloor = z - 1;
                 if(nextFloor >= m_floorMin) {
                     lightView->setFloor(nextFloor);
-                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].allGrounds) {
+                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
                         const auto& ground = tile->getGround();
                         if(ground && !ground->isTranslucent()) {
                             auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
@@ -169,10 +169,7 @@ void MapView::drawFloor()
                                 pos2D -= m_tileSize;
                                 lightView->setShade(pos2D);
                                 continue;
-                            }/* else if(tile->isBorder() && tile->hasWall()) {
-                                lightView->clearShade(pos2D);
-                                continue;
-                            }*/
+                            }
 
                             lightView->setShade(pos2D, std::vector<Otc::Direction>() /*tile->hasTallItems() || tile->hasWideItems() ? tile->getBorderDirections() : std::vector<Otc::Direction>()*/);
                         }
@@ -185,17 +182,12 @@ void MapView::drawFloor()
             if(lightView) lightView->setFloor(z);
 
             const auto& map = m_cachedVisibleTiles[z];
-
-            g_drawPool.startPosition();
             {
                 for(const auto& tile : map.grounds)
                     tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
 
-                for(const auto& tile : map.borders)
-                    tile->drawGroundBorder(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
-
-                for(const auto& tile : map.bottomTops)
-                    tile->draw(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+                for(const auto& tile : map.surfaces)
+                    tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
             }
 
             g_drawPool.startPosition();
@@ -358,18 +350,14 @@ void MapView::updateVisibleTilesCache()
                     if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
                         continue;
 
+                    if(isDrawingLights() && (tile->isFullyOpaque() || tile->getGround() && tile->getGround()->isTopGround()))
+                        floor.shades.push_back(tile);
+
                     if(tile->hasGround())
                         floor.grounds.push_back(tile);
 
-                    if(isDrawingLights() && tile->hasAnyGround()) {
-                        floor.allGrounds.push_back(tile);
-                    }
-
-                    if(tile->hasGroundBorderToDraw())
-                        floor.borders.push_back(tile);
-
-                    if(tile->hasBottomOrTopToDraw())
-                        floor.bottomTops.push_back(tile);
+                    if(tile->hasSurface())
+                        floor.surfaces.push_back(tile);
 
                     tile->onAddVisibleTileList(this);
 

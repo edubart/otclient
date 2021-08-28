@@ -63,12 +63,8 @@ public:
     Tile(const Position& position);
 
     void onAddVisibleTileList(const MapViewPtr& mapView);
-    void draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawSurface(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawGroundBorder(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);
 
     void clean();
 
@@ -122,10 +118,8 @@ public:
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
 
-    bool hasGroundBorderToDraw() const { return m_countFlag.hasGroundBorder && (!m_ground || !m_ground->isTopGround()); }
-    bool hasBottomOrTopToDraw() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || (m_ground && m_ground->isTopGround()); }
-    bool hasGround() { return m_ground && !m_ground->isTopGround(); };
-    bool hasAnyGround() { return m_ground != nullptr; };
+    bool hasSurface() const { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty(); }
+    bool hasGround() { return m_ground || m_countFlag.hasGroundBorder; };
 
     std::vector<Otc::Direction> getBorderDirections() { return m_borderDirections; };
 
@@ -187,12 +181,18 @@ private:
         int hasGroundBorder = 0;
     };
 
-    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
+    void drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
+    void drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
     void drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView = nullptr);
-    bool checkForDetachableThing();
+    void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView);
+
     void checkTranslucentLight();
 
+    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
+    bool checkForDetachableThing();
+
     Position m_position;
+
     uint8 m_drawElevation, m_minimapColor,
         m_currentFirstVisibleFloor{ UINT8_MAX };
 

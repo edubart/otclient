@@ -94,35 +94,19 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
 
 void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-    if(!m_ground) return;
+    if(!hasGround()) return;
 
     m_drawElevation = 0;
-    drawThing(m_ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
-}
-
-void Tile::drawGroundBorder(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
-{
-    if(!m_countFlag.hasGroundBorder) return;
-
-    if(!hasGround())
-        m_drawElevation = 0;
 
     for(const auto& ground : m_things) {
-        if(!ground->isGroundBorder()) continue;
+        if(!ground->isGround() && !ground->isGroundBorder()) break;
+
         drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
     }
 }
 
-void Tile::draw(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawSurface(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-    if(m_ground && m_ground->isTopGround()) {
-        drawGround(dest, scaleFactor, frameFlags, lightView);
-        drawGroundBorder(dest, scaleFactor, frameFlags, lightView);
-    }
-
-    if(!hasGround() && !hasGroundBorderToDraw())
-        m_drawElevation = 0;
-
     drawBottom(dest, scaleFactor, frameFlags, lightView);
     drawTop(dest, scaleFactor, frameFlags, lightView);
 }
@@ -190,18 +174,15 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
 
     // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
     if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
-        // after we render 2x2 lying corpses, we must redraw previous creatures/ontop above them
-        if(redrawPreviousTopH > 0 || redrawPreviousTopW > 0) {
-            for(int x = -redrawPreviousTopW; x <= 0; ++x) {
-                for(int y = -redrawPreviousTopH; y <= 0; ++y) {
-                    if(x == 0 && y == 0)
-                        continue;
-                    const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
-                    if(tile) {
-                        const auto& newDest = dest + (Point(x, y) * Otc::TILE_PIXELS) * scaleFactor;
-                        tile->drawCreature(newDest, scaleFactor, frameFlags);
-                        tile->drawTop(newDest, scaleFactor, frameFlags);
-                    }
+        for(int x = -redrawPreviousTopW; x <= 0; ++x) {
+            for(int y = -redrawPreviousTopH; y <= 0; ++y) {
+                if(x == 0 && y == 0)
+                    continue;
+                const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
+                if(tile) {
+                    const auto& newDest = dest + (Point(x, y) * Otc::TILE_PIXELS) * scaleFactor;
+                    tile->drawCreature(newDest, scaleFactor, frameFlags);
+                    tile->drawTop(newDest, scaleFactor, frameFlags);
                 }
             }
         }
