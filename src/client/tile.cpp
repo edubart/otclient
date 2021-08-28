@@ -64,7 +64,7 @@ bool Tile::isCompletelyCovered(int8 firstFloor)
 {
     if(firstFloor > -1) {
         m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
-        if(!(m_covered = m_completelyCovered)) {
+        if((m_covered = m_completelyCovered) == false) {
             m_covered = g_map.isCovered(m_position, firstFloor);
         }
     }
