@@ -148,7 +148,7 @@ ticks_t Platform::getFileModificationTime(std::string file)
 
 void Platform::openUrl(std::string url)
 {
-    if(url.find("http://") == std::string::npos)
+    if(url.find("http://") == std::string::npos && url.find("https://") == std::string::npos)
         url.insert(0, "http://");
     ShellExecuteW(NULL, L"open", stdext::utf8_to_utf16(url).c_str(), NULL, NULL, SW_SHOWNORMAL);
 }
