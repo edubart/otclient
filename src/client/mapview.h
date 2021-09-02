@@ -55,11 +55,9 @@ public:
 
 protected:
     void onGlobalLightChange(const Light& light);
-    void onFloorDrawingStart(const uint8 floor);
-    void onFloorDrawingEnd(const uint8 floor);
     void onFloorChange(const uint8 floor, const uint8 previousFloor);
     void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
-    void onMapCenterChange(const Position& pos);
+    void onMapCenterChange(const Position& newPos, const Position& oldPos);
     void onCameraMove(const Point& offset);
 
     friend class Map;
@@ -146,7 +144,6 @@ public:
 
     void setCrosshairTexture(const std::string& texturePath);
 
-    void onPositionChange(const Position& newPos, const Position& oldPos);
     void onMouseMove(const Position& mousePos, const bool isVirtualMove = false);
     void onKeyRelease(const InputEvent& inputEvent);
 

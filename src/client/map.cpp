@@ -614,7 +614,7 @@ void Map::setCentralPosition(const Position& centralPosition)
     });
 
     for(const MapViewPtr& mapView : m_mapViews)
-        mapView->onMapCenterChange(centralPosition);
+        mapView->onMapCenterChange(centralPosition, mapView->m_lastCameraPosition);
 }
 
 void Map::setLight(const Light& light)
@@ -849,10 +849,9 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         if(currentNode->pos == goalPos && (!foundNode || currentNode->cost < foundNode->cost)) {
             foundNode = currentNode;
 
-        // cost too high, and the priority_queue is sorted by "totalCost", so the rest of nodes won't be better
+            // cost too high, and the priority_queue is sorted by "totalCost", so the rest of nodes won't be better
         } else if(foundNode && totalCost >= foundNode->cost) {
             break;
-
         } else {
             for(int_fast32_t i = -1; i <= 1; ++i) {
                 for(int_fast32_t j = -1; j <= 1; ++j) {
@@ -932,7 +931,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         }
 
         if(!searchList.empty()) {
-            const auto &top = searchList.top();
+            const auto& top = searchList.top();
             currentNode = top.first;
             totalCost = top.second;
             searchList.pop();

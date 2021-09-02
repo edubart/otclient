@@ -78,10 +78,7 @@ bool Tile::isCompletelyCovered(int8 firstFloor)
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
 {
     if(isCompletelyCovered()) {
-        frameFlag = 0;
-
-        if(lightView && hasLight())
-            frameFlag = Otc::FUpdateLight;
+        frameFlag = lightView && hasLight() ? frameFlag = Otc::FUpdateLight : 0;
     }
 
     if(thing->isEffect()) {

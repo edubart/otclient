@@ -177,8 +177,6 @@ void MapView::drawFloor()
                 }
             }
 
-            onFloorDrawingStart(z);
-
             if(lightView) lightView->setFloor(z);
 
             const auto& map = m_cachedVisibleTiles[z];
@@ -202,8 +200,6 @@ void MapView::drawFloor()
                 g_drawPool.addFilledRect(m_rectDimension, Color::black);
                 g_drawPool.setOpacity(m_shadowFloorIntensity, g_drawPool.size());
             }
-
-            onFloorDrawingEnd(z);
         }
 
         if(m_crosshairTexture && m_mousePosition.isValid()) {
@@ -289,8 +285,6 @@ void MapView::updateVisibleTilesCache()
 
             onMouseMove(m_mousePosition, true);
         }
-
-        onPositionChange(cameraPosition, m_lastCameraPosition);
 
         if(m_lastCameraPosition.z != cameraPosition.z) {
             onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
@@ -472,9 +466,6 @@ void MapView::onFloorChange(const uint8 /*floor*/, const uint8 /*previousFloor*/
     updateLight();
 }
 
-void MapView::onFloorDrawingStart(const uint8 /*floor*/) {}
-void MapView::onFloorDrawingEnd(const uint8 /*floor*/) {}
-
 void MapView::onTileUpdate(const Position&, const ThingPtr& thing, const Otc::Operation)
 {
     if(thing && thing->isCreature())
@@ -482,8 +473,6 @@ void MapView::onTileUpdate(const Position&, const ThingPtr& thing, const Otc::Op
 
     requestVisibleTilesCacheUpdate();
 }
-
-void MapView::onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
 
 // isVirtualMove is when the mouse is stopped, but the camera moves,
 // so the onMouseMove event is triggered by sending the new tile position that the mouse is in.
@@ -511,7 +500,7 @@ void MapView::onKeyRelease(const InputEvent& inputEvent)
     }
 }
 
-void MapView::onMapCenterChange(const Position&)
+void MapView::onMapCenterChange(const Position& /*newPos*/, const Position& /*oldPos*/)
 {
     requestVisibleTilesCacheUpdate();
 }
