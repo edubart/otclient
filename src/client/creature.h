@@ -48,7 +48,7 @@ public:
 
     static bool hasSpeedFormula() { return speedA != 0 && speedB != 0 && speedC != 0; }
 
-    virtual void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType, Color color, int frameFlags, LightView* lightView = nullptr) override;
+    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType, Color color, int frameFlags, LightView* lightView = nullptr) override;
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
 
@@ -114,7 +114,7 @@ public:
     Point getDisplacement() override;
     int getDisplacementX() override;
     int getDisplacementY() override;
-    int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0) override;
+    int getExactSize() override;
 
     int getTotalAnimationPhase();
     int getCurrentAnimationPhase(bool mount = false);
@@ -132,6 +132,7 @@ public:
     bool isRemoved() { return m_removed; }
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }
     bool isDead() { return m_healthPercent <= 0; }
+    bool isFullHealth() { return m_healthPercent == 100; }
     bool canBeSeen() { return !isInvisible() || isPlayer(); }
     bool isCreature() override { return true; }
     bool isParalyzed() const { return m_speed < 10; }
