@@ -62,6 +62,9 @@ void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 
 bool Tile::isCompletelyCovered(int8 firstFloor)
 {
+    if(m_ignoreCompletelyCoveredCheck)
+        return false;
+
     if(firstFloor > -1) {
         m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
         if((m_covered = m_completelyCovered) == false) {
@@ -221,6 +224,7 @@ void Tile::clean()
 void Tile::addWalkingCreature(const CreaturePtr& creature)
 {
     m_walkingCreatures.push_back(creature);
+    m_ignoreCompletelyCoveredCheck = true;
     analyzeThing(creature, true);
 }
 
@@ -230,6 +234,7 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
     if(it != m_walkingCreatures.end()) {
         analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
+        m_ignoreCompletelyCoveredCheck = false;
     }
 }
 

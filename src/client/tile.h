@@ -213,7 +213,8 @@ private:
 
     bool m_highlightWithoutFilter{ false },
         m_covered{ false },
-        m_completelyCovered{ false };
+        m_completelyCovered{ false },
+        m_ignoreCompletelyCoveredCheck{ false };
 };
 
 #endif
