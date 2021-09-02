@@ -88,6 +88,8 @@ bool LocalPlayer::canWalk(Otc::Direction)
 
 void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 {
+    m_autoWalkRetries = 0;
+
     // a prewalk was going on
     if(m_preWalking) {
         // switch to normal walking
@@ -128,6 +130,30 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     Creature::walk(m_position, newPos);
 }
 
+bool LocalPlayer::retryAutoWalk()
+{
+    if(m_autoWalkDestination.isValid()) {
+        g_game.stop();
+
+        if(++m_autoWalkRetries <= 3) {
+            if(m_autoWalkContinueEvent) {
+                m_autoWalkContinueEvent->cancel();
+            }
+
+            auto self = asLocalPlayer();
+            m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([self]() {
+                if(self->m_autoWalkDestination.isValid()) {
+                    self->autoWalk(self->m_autoWalkDestination, true);
+                }
+            }, 350);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 void LocalPlayer::cancelWalk(Otc::Direction direction)
 {
     // only cancel client side walks
@@ -135,21 +161,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
         stopWalk();
 
     lockWalk();
-
-    if(m_autoWalkDestination.isValid()) {
-        g_game.stop();
-
-        if(m_autoWalkContinueEvent) {
-            m_autoWalkContinueEvent->cancel();
-        }
-
-        auto self = asLocalPlayer();
-        m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([self]() {
-            if(self->m_autoWalkDestination.isValid()) {
-                self->autoWalk(self->m_autoWalkDestination);
-            }
-        }, 1000);
-    }
+    retryAutoWalk();
 
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
@@ -158,8 +170,11 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     callLuaField("onCancelWalk", direction);
 }
 
-bool LocalPlayer::autoWalk(const Position& destination)
+bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 {
+    if(!retry)
+        m_autoWalkRetries = 0;
+
     if(m_position == destination) return false;
 
     if(m_position.isInRange(destination, 1, 1))
@@ -193,8 +208,11 @@ bool LocalPlayer::autoWalk(const Position& destination)
     if(limitedPath.empty()) {
         result = g_map.findPath(m_position, destination, 25000, Otc::PathFindAllowNotSeenTiles);
         if(std::get<1>(result) != Otc::PathFindResultOk) {
-            callLuaField("onAutoWalkFail", std::get<1>(result));
-            stopAutoWalk();
+            if(!retry || !retryAutoWalk()) {
+                callLuaField("onAutoWalkFail", std::get<1>(result));
+                stopAutoWalk();
+            }
+
             return false;
         }
 

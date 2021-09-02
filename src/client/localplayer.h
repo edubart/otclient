@@ -38,7 +38,7 @@ public:
     void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
     void stopAutoWalk();
-    bool autoWalk(const Position& destination);
+    bool autoWalk(const Position& destination, const bool retry = false);
     bool canWalk(Otc::Direction direction);
 
     void setStates(int states);
@@ -116,6 +116,8 @@ protected:
     void terminateWalk() override;
 
 private:
+    bool retryAutoWalk();
+
     // walk related
     Position m_lastPrewalkDestination;
     Position m_autoWalkDestination;
@@ -137,6 +139,8 @@ private:
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
     std::vector<int> m_spells;
+
+    uint8 m_autoWalkRetries{ 0 };
 
     int m_states;
     int m_vocation;
