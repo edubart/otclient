@@ -166,6 +166,14 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // update new child states
     child->updateStates();
+    
+    // add access to child via widget.childId
+    std::string widgetId = child->getId();
+    if (!widgetId.empty()) {
+        if (!hasLuaField(widgetId)) {
+            setLuaField(widgetId, child);
+        }
+    }
 
     // update old child index states
     if(oldLastChild) {
