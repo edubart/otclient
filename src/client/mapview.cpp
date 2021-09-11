@@ -346,7 +346,7 @@ void MapView::updateVisibleTilesCache()
                     if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
                         continue;
 
-                    if(isDrawingLights() && (tile->isFullyOpaque() || tile->getGround() && tile->getGround()->isTopGround()))
+                    if(isDrawingLights() && (tile->isFullyOpaque() || (tile->getGround() && tile->getGround()->isTopGround())))
                         floor.shades.push_back(tile);
 
                     if(tile->hasGround())
