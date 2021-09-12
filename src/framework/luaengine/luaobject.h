@@ -196,7 +196,11 @@ void LuaObject::callLuaField(const std::string& field, const T&... args)
 template<typename T>
 void LuaObject::setLuaField(const std::string& key, const T& value)
 {
-    g_lua.polymorphicPush(value);
+    if (value == nullptr) {
+        g_lua.pushNil();
+    } else {
+        g_lua.polymorphicPush(value);
+    }
     luaSetField(key);
 }
 

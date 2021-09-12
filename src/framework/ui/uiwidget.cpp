@@ -245,6 +245,12 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
         m_layout->removeWidget(child);
 
+        // remove access to child via widget.childId
+        std::string widgetId = child->getId();
+        if (hasLuaField(widgetId)) {
+            setLuaField(widgetId, nullptr);
+        }
+
         // update child states
         child->updateStates();
         updateChildrenIndexStates();
