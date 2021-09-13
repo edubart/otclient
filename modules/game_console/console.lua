@@ -12,9 +12,9 @@ SpeakTypesSettings = {
   channelYellow = { speakType = MessageModes.Channel, color = '#FFFF00' },
   channelWhite = { speakType = MessageModes.ChannelManagement, color = '#FFFFFF' },
   channelRed = { speakType = MessageModes.GamemasterChannel, color = '#F55E5E' },
-  channelOrange = { speakType = MessageModes.ChannelHighlight, color = '#FE6500' },
-  monsterSay = { speakType = MessageModes.MonsterSay, color = '#FE6500', hideInConsole = true},
-  monsterYell = { speakType = MessageModes.MonsterYell, color = '#FE6500', hideInConsole = true},
+  channelOrange = { speakType = MessageModes.ChannelHighlight, color = '#F6A731' },
+  monsterSay = { speakType = MessageModes.MonsterSay, color = '#FF9A57', hideInConsole = true},
+  monsterYell = { speakType = MessageModes.MonsterYell, color = '#FF9A57', hideInConsole = true},
   rvrAnswerFrom = { speakType = MessageModes.RVRAnswer, color = '#FE6500' },
   rvrAnswerTo = { speakType = MessageModes.RVRAnswer, color = '#FE6500' },
   rvrContinue = { speakType = MessageModes.RVRContinue, color = '#FFFF00' },
@@ -67,6 +67,7 @@ consolePanel = nil
 consoleContentPanel = nil
 consoleTabBar = nil
 consoleTextEdit = nil
+consoleToggleChat = nil
 channels = nil
 channelsWindow = nil
 communicationWindow = nil
@@ -81,7 +82,10 @@ violationWindow = nil
 violationReportTab = nil
 ignoredChannels = {}
 filters = {}
+temporarily = false
+useAutoHideChat = false
 
+floatingMode = false
 local communicationSettings = {
   useIgnoreList = true,
   useWhiteList = true,
@@ -116,6 +120,12 @@ function init()
   consoleTabBar:setContentWidget(consoleContentPanel)
   channels = {}
 
+  consolePanel.onDragEnter = onDragEnter
+  consolePanel.onDragLeave = onDragLeave
+  consolePanel.onDragMove = onDragMove
+  consoleTabBar.onDragEnter = onDragEnter
+  consoleTabBar.onDragLeave = onDragLeave
+  consoleTabBar.onDragMove = onDragMove
   consolePanel.onKeyPress = function(self, keyCode, keyboardModifiers)
     if not (keyboardModifiers == KeyboardCtrlModifier and keyCode == KeyC) then return false end
 
@@ -147,7 +157,29 @@ function init()
 
   -- toggle WASD
   consoleToggleChat = consolePanel:getChildById('toggleChat')
+  local switchChatOnCall = function()
+    if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
+    if (isChatEnabled() and useAutoHideChat) or (not consoleTextEdit:isVisible()) then
+      if temporarily then
+        temporarily = false
+      else
+        temporarily = true
+      end
+      
+      consoleTextEdit:setChecked(not temporarily)
+      switchChat(temporarily)
+    end
+  end
+  local disableChatOnCall = function()
+    if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
 
+    if useAutoHideChat then
+      temporarily = false
+      switchChat(false)
+    end
+  end
+  g_keyboard.bindKeyDown("Enter", switchChatOnCall)
+  g_keyboard.bindKeyDown("Escape", disableChatOnCall)
   load()
 
   if g_game.isOnline() then
@@ -176,26 +208,18 @@ function selectAll(consoleBuffer)
   end
 end
 
-function toggleChat()
-  consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
-end
-
-function updateChatMode()
-  if consoleToggleChat:isChecked() then
-    disableChat()
+-- id of object first and then action
+function toggleChat_onCheckChange()
+  useAutoHideChat = consoleToggleChat:isChecked()
+  if not useAutoHideChat then
+    switchChat(true)
   else
-    enableChat()
+    switchChat(false)
   end
 end
 
-function enableChat()
+local function UnbindMovingKeys() 
   local gameInterface = modules.game_interface
-
-  consoleTextEdit:setVisible(true)
-  consoleTextEdit:setText("")
-
-  g_keyboard.unbindKeyDown("Enter")
-
   gameInterface.unbindWalkKey("W")
   gameInterface.unbindWalkKey("D")
   gameInterface.unbindWalkKey("S")
@@ -210,23 +234,10 @@ function enableChat()
   gameInterface.unbindTurnKey("Ctrl+D")
   gameInterface.unbindTurnKey("Ctrl+S")
   gameInterface.unbindTurnKey("Ctrl+A")
-
-  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
 end
 
-function disableChat()
+local function BindMovingKeys() 
   local gameInterface = modules.game_interface
-
-  consoleTextEdit:setVisible(false)
-  consoleTextEdit:setText("")
-
-  local disableWasd = function()
-    if g_game.isOnline() and consoleToggleChat:isChecked() and not modules.game_hotkeys.areHotkeysDisabled() then
-      consoleToggleChat:setChecked(false)
-    end
-  end
-  g_keyboard.bindKeyDown("Enter", disableWasd)
-
   gameInterface.bindWalkKey("W", North)
   gameInterface.bindWalkKey("D", East)
   gameInterface.bindWalkKey("S", South)
@@ -241,8 +252,25 @@ function disableChat()
   gameInterface.bindTurnKey("Ctrl+D", East)
   gameInterface.bindTurnKey("Ctrl+S", South)
   gameInterface.bindTurnKey("Ctrl+A", West)
+end
 
-  consoleToggleChat:setTooltip(tr("Enable chat mode"))
+function switchChat(enabled)
+-- enabled should be true if we enabling the chat and false if disabling it
+  -- consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
+  consoleTextEdit:setVisible(enabled)
+  consoleTextEdit:setText("")
+
+  if enabled then
+    UnbindMovingKeys()
+    consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
+  else
+    BindMovingKeys()
+    consoleToggleChat:setTooltip(tr("Enable chat mode"))
+  end
+end
+
+function isChatEnabled()
+  return consoleTextEdit:isVisible()
 end
 
 function terminate()
@@ -374,6 +402,16 @@ function clear()
   end
 end
 
+function switchMode(newView)
+  if newView then
+    consolePanel:setImageColor('#ffffff88')  
+  else
+    consolePanel:setImageColor('white')  
+  end
+  --consolePanel:setDraggable(floating)
+  --consoleTabBar:setDraggable(floating)
+  --floatingMode = floating
+end
 function clearChannel(consoleTabBar)
   consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
 end
@@ -447,6 +485,9 @@ function removeTab(tab)
     g_game.closeNpcChannel()
   end
 
+  if getCurrentTab() == tab then
+    consoleTabBar:selectTab(defaultTab)
+  end
   consoleTabBar:removeTab(tab)
 end
 
@@ -487,7 +528,7 @@ end
 
 function addPrivateChannel(receiver)
   channels[receiver] = receiver
-  return addTab(receiver, false)
+  return addTab(receiver, true)
 end
 
 function addPrivateText(text, speaktype, name, isPrivateCommand, creatureName)
@@ -551,6 +592,28 @@ function getHighlightedText(text)
   return tmpData
 end
 
+function getNewHighlightedText(text, color, highlightColor)
+  local tmpData = {}
+  
+  for i, part in ipairs(text:split("{")) do
+    if i == 1 then
+      table.insert(tmpData, part)
+      table.insert(tmpData, color)
+    else
+      for j, part2 in ipairs(part:split("}")) do
+        if j == 1 then
+          table.insert(tmpData, part2)
+          table.insert(tmpData, highlightColor)
+        else
+          table.insert(tmpData, part2)
+          table.insert(tmpData, color)
+        end
+      end
+    end
+  end
+
+  return tmpData
+end
 function addTabText(text, speaktype, tab, creatureName)
   if not tab or tab.locked or not text or #text == 0 then return end
 
@@ -830,6 +893,7 @@ end
 function sendCurrentMessage()
   local message = consoleTextEdit:getText()
   if #message == 0 then return end
+  if not isChatEnabled() then return end
   consoleTextEdit:clearText()
 
   -- send message
@@ -947,6 +1011,7 @@ function sendMessage(message, tab)
     local isPrivateCommand = false
     local priv = true
     local tabname = name
+    local dontAdd = false
     if chatCommandPrivateReady then
       speaktypedesc = 'privatePlayerToPlayer'
       name = chatCommandPrivate
@@ -956,10 +1021,11 @@ function sendMessage(message, tab)
     elseif tab == violationReportTab then
       if violationReportTab.locked then
         modules.game_textmessage.displayFailureMessage('Wait for a gamemaster reply.')
-        return
+        dontAdd = true
+      else
+        speaktypedesc = 'rvrContinue'
+        tabname = tr('Report Rule') .. '...'
       end
-      speaktypedesc = 'rvrContinue'
-      tabname = tr('Report Rule') .. '...'
     elseif tab.violationChatName then
       speaktypedesc = 'rvrAnswerTo'
       name = tab.violationChatName
@@ -972,9 +1038,10 @@ function sendMessage(message, tab)
     local speaktype = SpeakTypesSettings[speaktypedesc]
     local player = g_game.getLocalPlayer()
     g_game.talkPrivate(speaktype.speakType, name, message)
-
-    message = applyMessagePrefixies(g_game.getCharacterName(), player:getLevel(), message)
-    addPrivateText(message, speaktype, tabname, isPrivateCommand, g_game.getCharacterName())
+    if not dontAdd then
+      message = applyMessagePrefixies(g_game.getCharacterName(), player:getLevel(), message)
+      addPrivateText(message, speaktype, tabname, isPrivateCommand, g_game.getCharacterName())
+    end
   end
 end
 
@@ -1000,6 +1067,7 @@ function setIgnoreNpcMessages(ignore)
 end
 
 function navigateMessageHistory(step)
+  if not isChatEnabled() then return end
   local numCommands = #messageHistory
   if numCommands > 0 then
     currentMessageIndex = math.min(math.max(currentMessageIndex + step, 0), numCommands)
@@ -1009,6 +1077,10 @@ function navigateMessageHistory(step)
     else
       consoleTextEdit:clearText()
     end
+  end
+  local player = g_game.getLocalPlayer()
+  if player then
+    player:lockWalk(200) -- lock walk for 200 ms to avoid walk during release of shift
   end
 end
 
@@ -1191,6 +1263,7 @@ function doChannelListSubmit()
     if selectedChannelLabel.channelId == 0xFFFF then
       g_game.openOwnChannel()
     else
+      g_game.leaveChannel(selectedChannelLabel.channelId)
       g_game.joinChannel(selectedChannelLabel.channelId)
     end
   end
@@ -1290,6 +1363,7 @@ end
 function addIgnoredPlayer(name)
   if isIgnored(name) then return end
   table.insert(communicationSettings.ignoredPlayers, name)
+  communicationSettings.useIgnoreList = true
 end
 
 function removeIgnoredPlayer(name)
@@ -1444,6 +1518,10 @@ function online()
   defaultTab = addTab(tr('Default'), true)
   serverTab = addTab(tr('Server Log'), false)
 
+  if g_game.getClientVersion() >= 820 then
+    local tab = addTab("NPCs", false)
+    tab.npcChat = true
+  end
   if g_game.getClientVersion() < 862 then
     g_keyboard.bindKeyDown('Ctrl+R', openPlayerReportRuleViolationWindow)
   end

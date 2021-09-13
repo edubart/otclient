@@ -66,7 +66,7 @@ Panel
     anchors.top: parent.top
     margin-left: 13
     margin-top: 8
-    @onCheckChange: updateChatMode()
+    @onCheckChange: toggleChat_onCheckChange()
 
   TabButton
     id: prevChannelButton

@@ -257,3 +257,5 @@ GitHub.sublime-settings
 
 # Header Files
 src/gitinfo.h
+
+x32-bin/*
