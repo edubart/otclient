@@ -82,10 +82,7 @@ violationWindow = nil
 violationReportTab = nil
 ignoredChannels = {}
 filters = {}
-temporarily = false
-useAutoHideChat = false
 
-floatingMode = false
 local communicationSettings = {
   useIgnoreList = true,
   useWhiteList = true,
@@ -144,6 +141,8 @@ function init()
   g_keyboard.bindKeyPress('Tab', function() consoleTabBar:selectNextTab() end, consolePanel)
   g_keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   g_keyboard.bindKeyDown('Enter', sendCurrentMessage, consolePanel)
+  g_keyboard.bindKeyDown('Enter', switchChatOnCall)
+  g_keyboard.bindKeyDown('Escape', disableChatOnCall)
   g_keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
 
   -- apply buttom functions after loaded
@@ -157,29 +156,6 @@ function init()
 
   -- toggle WASD
   consoleToggleChat = consolePanel:getChildById('toggleChat')
-  local switchChatOnCall = function()
-    if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
-    if (isChatEnabled() and useAutoHideChat) or (not consoleTextEdit:isVisible()) then
-      if temporarily then
-        temporarily = false
-      else
-        temporarily = true
-      end
-      
-      consoleTextEdit:setChecked(not temporarily)
-      switchChat(temporarily)
-    end
-  end
-  local disableChatOnCall = function()
-    if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
-
-    if useAutoHideChat then
-      temporarily = false
-      switchChat(false)
-    end
-  end
-  g_keyboard.bindKeyDown("Enter", switchChatOnCall)
-  g_keyboard.bindKeyDown("Escape", disableChatOnCall)
   load()
 
   if g_game.isOnline() then
@@ -208,17 +184,16 @@ function selectAll(consoleBuffer)
   end
 end
 
--- id of object first and then action
-function toggleChat_onCheckChange()
-  useAutoHideChat = consoleToggleChat:isChecked()
-  if not useAutoHideChat then
-    switchChat(true)
-  else
-    switchChat(false)
-  end
+function toggleChat()
+  consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
 end
 
-local function UnbindMovingKeys() 
+-- id of object first and then action
+function updateChatMode()
+  switchChat(not consoleToggleChat:isChecked())
+end
+
+local function unbindMovingKeys()
   local gameInterface = modules.game_interface
   gameInterface.unbindWalkKey("W")
   gameInterface.unbindWalkKey("D")
@@ -236,7 +211,7 @@ local function UnbindMovingKeys()
   gameInterface.unbindTurnKey("Ctrl+A")
 end
 
-local function BindMovingKeys() 
+local function bindMovingKeys()
   local gameInterface = modules.game_interface
   gameInterface.bindWalkKey("W", North)
   gameInterface.bindWalkKey("D", East)
@@ -257,15 +232,33 @@ end
 function switchChat(enabled)
 -- enabled should be true if we enabling the chat and false if disabling it
   -- consoleToggleChat:setChecked(not consoleToggleChat:isChecked())
-  consoleTextEdit:setVisible(enabled)
-  consoleTextEdit:setText("")
+  if not (enabled and consoleTextEdit:isVisible()) then
+    consoleTextEdit:setVisible(enabled)
+    consoleTextEdit:setText("")
+  end
 
   if enabled then
-    UnbindMovingKeys()
+    unbindMovingKeys()
     consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
   else
-    BindMovingKeys()
+    bindMovingKeys()
     consoleToggleChat:setTooltip(tr("Enable chat mode"))
+  end
+end
+
+function switchChatOnCall()
+  if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
+
+  if isChatEnabled() and consoleToggleChat:isChecked() or not consoleTextEdit:isVisible() then
+    switchChat(not consoleTextEdit:isVisible())
+  end
+end
+
+function disableChatOnCall()
+  if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
+
+  if consoleToggleChat:isChecked() then
+    switchChat(false)
   end
 end
 
@@ -402,16 +395,6 @@ function clear()
   end
 end
 
-function switchMode(newView)
-  if newView then
-    consolePanel:setImageColor('#ffffff88')  
-  else
-    consolePanel:setImageColor('white')  
-  end
-  --consolePanel:setDraggable(floating)
-  --consoleTabBar:setDraggable(floating)
-  --floatingMode = floating
-end
 function clearChannel(consoleTabBar)
   consoleTabBar:getCurrentTab().tabPanel:getChildById('consoleBuffer'):destroyChildren()
 end
@@ -592,28 +575,6 @@ function getHighlightedText(text)
   return tmpData
 end
 
-function getNewHighlightedText(text, color, highlightColor)
-  local tmpData = {}
-  
-  for i, part in ipairs(text:split("{")) do
-    if i == 1 then
-      table.insert(tmpData, part)
-      table.insert(tmpData, color)
-    else
-      for j, part2 in ipairs(part:split("}")) do
-        if j == 1 then
-          table.insert(tmpData, part2)
-          table.insert(tmpData, highlightColor)
-        else
-          table.insert(tmpData, part2)
-          table.insert(tmpData, color)
-        end
-      end
-    end
-  end
-
-  return tmpData
-end
 function addTabText(text, speaktype, tab, creatureName)
   if not tab or tab.locked or not text or #text == 0 then return end
 
