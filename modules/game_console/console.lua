@@ -247,7 +247,7 @@ function switchChat(enabled)
 end
 
 function switchChatOnCall()
-  if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
+  if not g_game.isOnline() or modules.game_hotkeys.areHotkeysDisabled() then return end
 
   if isChatEnabled() and consoleToggleChat:isChecked() or not consoleTextEdit:isVisible() then
     switchChat(not consoleTextEdit:isVisible())
@@ -255,7 +255,7 @@ function switchChatOnCall()
 end
 
 function disableChatOnCall()
-  if not g_game.isOnline() and modules.game_hotkeys.areHotkeysDisabled() then return end
+  if not g_game.isOnline() or modules.game_hotkeys.areHotkeysDisabled() then return end
 
   if consoleToggleChat:isChecked() then
     switchChat(false)
