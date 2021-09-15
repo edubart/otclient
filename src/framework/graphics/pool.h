@@ -36,21 +36,19 @@ public:
 
 protected:
     enum class DrawMethodType {
-        DRAW_FILLED_RECT,
-        DRAW_BOUNDING_RECT,
-        DRAW_TEXTURED_RECT,
-        DRAW_FILLED_TRIANGLE,
-        DRAW_REPEATED_FILLED_RECT,
-        DRAW_REPEATED_TEXTURED_RECT,
-        DRAW_UPSIDEDOWN_TEXTURED_RECT,
-        DRAW_REPEATED_TEXTURED_REPEATED_RECT
+        RECT,
+        TRIANGLE,
+        REPEATED_RECT,
+        BOUNDING_RECT,
+        UPSIDEDOWN_RECT,
     };
 
     struct DrawMethod {
         DrawMethodType type;
-        std::pair<Rect, Rect> rects{};
-        std::tuple<Point, Point, Point> points{};
-        Point dest{};
+        std::pair<Rect, Rect> rects;
+        std::tuple<Point, Point, Point> points;
+        Point dest;
+
         uint16 intValue{ 0 };
         size_t hash{ 0 };
     };
@@ -115,7 +113,7 @@ protected:
 private:
     void updateStatus() { m_status.first = m_status.second; m_refreshTime.restart(); }
     void resetCurrentStatus() { m_status.second = 0; }
-    bool hasModification();
+    bool hasModification(const bool autoUpdateStatus = false);
     bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
 
     FramedPool* toFramedPool() override { return static_cast<FramedPool*>(this); }

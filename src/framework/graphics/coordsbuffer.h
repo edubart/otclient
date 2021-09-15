@@ -29,6 +29,7 @@
 class CoordsBuffer
 {
 public:
+
     void clear()
     {
         m_textureCoordArray.clear();
@@ -46,7 +47,8 @@ public:
     void addRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addRect(dest);
-        m_textureCoordArray.addRect(src);
+        if(src.isValid())
+            m_textureCoordArray.addRect(src);
     }
     void addQuad(const Rect& dest, const Rect& src)
     {

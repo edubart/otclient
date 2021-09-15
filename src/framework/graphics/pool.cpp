@@ -96,7 +96,11 @@ void Pool::resetState()
     }
 }
 
-bool FramedPool::hasModification()
+bool FramedPool::hasModification(const bool autoUpdateStatus)
 {
-    return m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
+    const bool hasModification = m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
+
+    if(autoUpdateStatus) updateStatus();
+
+    return hasModification;
 }

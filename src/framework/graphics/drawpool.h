@@ -58,11 +58,9 @@ public:
     void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
     void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
     void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
-    void addRepeatedTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
+    void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
     void addRepeatedFilledRect(const Rect& dest, const Color color = Color::white);
-    void addRepeatedFilledRect(const Rect& dest, const Rect& src, const Color color = Color::white);
     void addFilledRect(const Rect& dest, const Color color = Color::white);
-    void addFilledRect(const Rect& dest, const Rect& src, const Color color = Color::white);
     void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color = Color::white);
     void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);

@@ -89,7 +89,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
                 m_glyphsSelectRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
         }
         for(const auto& rect : m_glyphsSelectRectCache)
-            g_drawPool.addFilledRect(rect.first, rect.second, m_selectionBackgroundColor);
+            g_drawPool.addFilledRect(rect.first, m_selectionBackgroundColor);
 
         for(const auto& rect : m_glyphsSelectRectCache)
             g_drawPool.addTexturedRect(rect.first, texture, rect.second, m_selectionColor);

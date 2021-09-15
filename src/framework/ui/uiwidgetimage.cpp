@@ -140,26 +140,23 @@ void UIWidget::drawImage(const Rect& screenCoords)
             // bottom right corner
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width() + centerSize.width(), drawRect.top() + topRightCorner.height() + centerSize.height(), bottomRightCorner.size());
             m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomRightCorner));
-        } else if(m_imageFixedRatio) {
-            Size textureSize = m_imageTexture->getSize();
-
-            Size textureClipSize = drawRect.size();
-            textureClipSize.scale(textureSize, Fw::KeepAspectRatio);
-
-            Point texCoordsOffset;
-            if(textureSize.height() > textureClipSize.height())
-                texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
-            else if(textureSize.width() > textureClipSize.width())
-                texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
-
-            Rect textureClipRect(texCoordsOffset, textureClipSize);
-
-            m_imageCoordsCache.push_back(std::make_pair(drawRect, textureClipRect));
         } else {
-            if(m_imageRepeated)
-                m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
-            else
-                m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
+            if(m_imageFixedRatio) {
+                Size textureSize = m_imageTexture->getSize(),
+                    textureClipSize = drawRect.size();
+
+                textureClipSize.scale(textureSize, Fw::KeepAspectRatio);
+
+                Point texCoordsOffset;
+                if(textureSize.height() > textureClipSize.height())
+                    texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
+                else if(textureSize.width() > textureClipSize.width())
+                    texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
+
+                clipRect = Rect(texCoordsOffset, textureClipSize);
+            }
+
+            m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
         }
     }
 
@@ -168,9 +165,9 @@ void UIWidget::drawImage(const Rect& screenCoords)
     const bool useRepeated = m_imageBordered || m_imageRepeated;
     for(const auto& rect : m_imageCoordsCache) {
         if(useRepeated)
-            g_drawPool.addRepeatedTexturedRepeatedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
+            g_drawPool.addTexturedRepeatedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
         else
-            g_drawPool.addRepeatedTexturedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
+            g_drawPool.addTexturedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
     }
 }
 
