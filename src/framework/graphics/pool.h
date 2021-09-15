@@ -45,9 +45,9 @@ protected:
 
     struct DrawMethod {
         DrawMethodType type;
-        std::pair<Rect, Rect> rects;
-        std::tuple<Point, Point, Point> points;
-        Point dest;
+        std::pair<Rect, Rect> rects{};
+        std::tuple<Point, Point, Point> points{};
+        Point dest{};
 
         uint16 intValue{ 0 };
         size_t hash{ 0 };
