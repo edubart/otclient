@@ -166,13 +166,11 @@ void UIWidget::addChild(const UIWidgetPtr& child)
 
     // update new child states
     child->updateStates();
-    
+
     // add access to child via widget.childId
     std::string widgetId = child->getId();
-    if (!widgetId.empty()) {
-        if (!hasLuaField(widgetId)) {
-            setLuaField(widgetId, child);
-        }
+    if(!widgetId.empty() && !hasLuaField(widgetId)) {
+        setLuaField(widgetId, child);
     }
 
     // update old child index states
@@ -247,7 +245,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
         // remove access to child via widget.childId
         std::string widgetId = child->getId();
-        if (hasLuaField(widgetId)) {
+        if(hasLuaField(widgetId)) {
             setLuaField(widgetId, nullptr);
         }
 
@@ -822,6 +820,11 @@ void UIWidget::destroyChildren()
 void UIWidget::setId(const std::string& id)
 {
     if(id != m_id) {
+        if(m_parent && m_parent->hasLuaField(m_id)) {
+            m_parent->setLuaField(m_id, nullptr);
+            m_parent->setLuaField(id, this);
+        }
+
         m_id = id;
         callLuaField("onIdChange", id);
     }
