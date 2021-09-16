@@ -96,7 +96,7 @@ void Minimap::terminate()
 
 void Minimap::clean()
 {
-    for(int i = 0; i <= Otc::MAX_Z; ++i)
+    for(int i = 0; i <= MAX_Z; ++i)
         m_tileBlocks[i].clear();
 }
 
@@ -172,7 +172,7 @@ Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Pos
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
         return Rect();
 
-    const int tileSize = Otc::TILE_PIXELS * scale;
+    const int tileSize = SPRITE_SIZE * scale;
     Rect tileRect(0, 0, tileSize, tileSize);
     tileRect.moveCenter(getTilePoint(pos, screenRect, mapCenter, scale));
     return tileRect;
@@ -212,7 +212,7 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
 const MinimapTile& Minimap::getTile(const Position& pos)
 {
     static MinimapTile nulltile;
-    if(pos.z <= Otc::MAX_Z && hasBlock(pos)) {
+    if(pos.z <= MAX_Z && hasBlock(pos)) {
         MinimapBlock& block = getBlock(pos);
         const Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
         return block.getTile(pos.x - offsetPos.x, pos.y - offsetPos.y);
@@ -341,7 +341,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
             pos.z = fin->getU8();
 
             // end of file or file is corrupted
-            if(!pos.isValid() || pos.z >= Otc::MAX_Z + 1)
+            if(!pos.isValid() || pos.z >= MAX_Z + 1)
                 break;
 
             MinimapBlock& block = getBlock(pos);
@@ -395,7 +395,7 @@ void Minimap::saveOtmm(const std::string& fileName)
         std::vector<uchar> compressBuffer(compressBound(blockSize));
         const int COMPRESS_LEVEL = 3;
 
-        for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+        for(uint8_t z = 0; z <= MAX_Z; ++z) {
             for(auto& it : m_tileBlocks[z]) {
                 const int index = it.first;
                 MinimapBlock& block = it.second;

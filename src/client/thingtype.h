@@ -220,7 +220,7 @@ public:
     bool isTopEffect() { return m_attribs.has(ThingAttrTopEffect); }
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { getTexture(0); return m_opaque; }
-    bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > Otc::TILE_PIXELS : getHeight() > 1; }
+    bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > SPRITE_SIZE : getHeight() > 1; }
     bool isSingleDimension() { return m_size.area() == 1; }
     std::vector<int> getSprites() { return m_spritesIndex; }
 

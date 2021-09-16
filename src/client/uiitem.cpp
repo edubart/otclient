@@ -53,7 +53,7 @@ void UIItem::drawSelf(Fw::DrawPane drawPane)
             return;
 
         const float scaleFactor = std::min<float>(drawRect.width() / static_cast<float>(exactSize), drawRect.height() / static_cast<float>(exactSize));
-        dest += (m_item->getDisplacement() - Point(Otc::TILE_PIXELS)) * scaleFactor;
+        dest += (m_item->getDisplacement() - Point(SPRITE_SIZE)) * scaleFactor;
 
         m_item->draw(dest, scaleFactor, true, Highlight(), TextureType::SMOOTH, m_color);
 

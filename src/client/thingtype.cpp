@@ -306,9 +306,9 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         sizes.push_back(m_size);
         if(width > 1 || height > 1) {
             m_realSize = fin->getU8();
-            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * Otc::TILE_PIXELS, height * Otc::TILE_PIXELS));
+            m_exactSize = std::min<int>(m_realSize, std::max<int>(width * SPRITE_SIZE, height * SPRITE_SIZE));
         } else
-            m_exactSize = Otc::TILE_PIXELS;
+            m_exactSize = SPRITE_SIZE;
 
         m_layers = fin->getU8();
         m_numPatternX = fin->getU8();
@@ -395,7 +395,7 @@ void ThingType::exportImage(const std::string& fileName)
     if(m_spritesIndex.empty())
         stdext::throw_exception("cannot export thingtype without sprites");
 
-    ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, Otc::TILE_PIXELS * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
+    ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
     for(int z = 0; z < m_numPatternZ; ++z) {
         for(int y = 0; y < m_numPatternY; ++y) {
             for(int x = 0; x < m_numPatternX; ++x) {
@@ -403,8 +403,8 @@ void ThingType::exportImage(const std::string& fileName)
                     for(int a = 0; a < m_animationPhases; ++a) {
                         for(int w = 0; w < m_size.width(); ++w) {
                             for(int h = 0; h < m_size.height(); ++h) {
-                                image->blit(Point(Otc::TILE_PIXELS * (m_size.width() - w - 1 + m_size.width() * x + m_size.width() * m_numPatternX * l),
-                                                  Otc::TILE_PIXELS * (m_size.height() - h - 1 + m_size.height() * y + m_size.height() * m_numPatternY * a + m_size.height() * m_numPatternY * m_animationPhases * z)),
+                                image->blit(Point(SPRITE_SIZE * (m_size.width() - w - 1 + m_size.width() * x + m_size.width() * m_numPatternX * l),
+                                                  SPRITE_SIZE * (m_size.height() - h - 1 + m_size.height() * y + m_size.height() * m_numPatternY * a + m_size.height() * m_numPatternY * m_animationPhases * z)),
                                             g_sprites.getSpriteImage(m_spritesIndex[getSpriteIndex(w, h, l, x, y, z, a)]));
                             }
                         }
@@ -461,7 +461,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         textureRect = m_texturesFramesRects[animationPhase][frameIndex];
     }
 
-    const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1)) * Otc::TILE_PIXELS) * scaleFactor,
+    const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1)) * SPRITE_SIZE) * scaleFactor,
                           textureRect.size() * scaleFactor);
 
     if(frameFlags & Otc::FUpdateThing) {
@@ -517,7 +517,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
     const bool useCustomImage = animationPhase == 0 && !m_customImage.empty();
     const int indexSize = textureLayers * m_numPatternX * m_numPatternY * m_numPatternZ;
     const Size textureSize = getBestTextureDimension(m_size.width(), m_size.height(), indexSize);
-    const ImagePtr fullImage = useCustomImage ? Image::load(m_customImage) : ImagePtr(new Image(textureSize * Otc::TILE_PIXELS));
+    const ImagePtr fullImage = useCustomImage ? Image::load(m_customImage) : ImagePtr(new Image(textureSize * SPRITE_SIZE));
 
     m_texturesFramesRects[animationPhase].resize(indexSize);
     m_texturesFramesOriginRects[animationPhase].resize(indexSize);
@@ -530,7 +530,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                     const int frameIndex = getTextureIndex(l % textureLayers, x, y, z);
 
                     Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
-                                           frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * Otc::TILE_PIXELS;
+                                           frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * SPRITE_SIZE;
 
                     if(!useCustomImage) {
                         for(int h = 0; h < m_size.height(); ++h) {
@@ -551,7 +551,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                                         spriteImage->overwriteMask(maskColors[l - 1]);
                                     }
                                     Point spritePos = Point(m_size.width() - w - 1,
-                                                            m_size.height() - h - 1) * Otc::TILE_PIXELS;
+                                                            m_size.height() - h - 1) * SPRITE_SIZE;
 
                                     fullImage->blit(framePos + spritePos, spriteImage);
                                 }
@@ -559,9 +559,9 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                         }
                     }
 
-                    Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * Otc::TILE_PIXELS - Point(1), framePos);
-                    for(int fx = framePos.x; fx < framePos.x + m_size.width() * Otc::TILE_PIXELS; ++fx) {
-                        for(int fy = framePos.y; fy < framePos.y + m_size.height() * Otc::TILE_PIXELS; ++fy) {
+                    Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * SPRITE_SIZE - Point(1), framePos);
+                    for(int fx = framePos.x; fx < framePos.x + m_size.width() * SPRITE_SIZE; ++fx) {
+                        for(int fy = framePos.y; fy < framePos.y + m_size.height() * SPRITE_SIZE; ++fy) {
                             uint8* p = fullImage->getPixel(fx, fy);
                             if(p[3] != 0x00) {
                                 drawRect.setTop(std::min<int>(fy, drawRect.top()));
@@ -573,7 +573,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                     }
 
                     m_texturesFramesRects[animationPhase][frameIndex] = drawRect;
-                    m_texturesFramesOriginRects[animationPhase][frameIndex] = Rect(framePos, Size(m_size.width(), m_size.height()) * Otc::TILE_PIXELS);
+                    m_texturesFramesOriginRects[animationPhase][frameIndex] = Rect(framePos, Size(m_size.width(), m_size.height()) * SPRITE_SIZE);
                     m_texturesFramesOffsets[animationPhase][frameIndex] = drawRect.topLeft() - framePos;
                 }
             }

@@ -202,8 +202,8 @@ private:
     bool canRenderTile(const TilePtr& tile, LightView* lightView);
 
     uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },
-        m_cachedFirstVisibleFloor{ Otc::SEA_FLOOR },
-        m_cachedLastVisibleFloor{ Otc::SEA_FLOOR },
+        m_cachedFirstVisibleFloor{ SEA_FLOOR },
+        m_cachedLastVisibleFloor{ SEA_FLOOR },
         m_renderScale{ 100 },
         m_tileSize,
         m_floorMin{ 0 },
@@ -254,7 +254,7 @@ private:
 
     std::vector<CreaturePtr> m_visibleCreatures;
 
-    std::array<MapList, Otc::MAX_Z + 1> m_cachedVisibleTiles;
+    std::array<MapList, MAX_Z + 1> m_cachedVisibleTiles;
 
     PainterShaderProgramPtr m_shader, m_nextShader;
     LightViewPtr m_lightView;

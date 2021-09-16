@@ -89,7 +89,7 @@ void LightView::addLightSource(const Point& pos, const Light& light)
 {
     if(!isDark()) return;
 
-    const uint16 radius = light.intensity * Otc::TILE_PIXELS * m_mapView->m_scaleFactor;
+    const uint16 radius = light.intensity * SPRITE_SIZE * m_mapView->m_scaleFactor;
 
     auto& lights = m_lights[m_currentFloor];
     if(!lights.empty()) {
@@ -150,9 +150,9 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
                     for(auto dir : shade.dirs) {
                         if(dir == Otc::South)
-                            newPos.y -= Otc::TILE_PIXELS / 1.6;
+                            newPos.y -= SPRITE_SIZE / 1.6;
                         else if(dir == Otc::East)
-                            newPos.x -= Otc::TILE_PIXELS / 1.6;
+                            newPos.x -= SPRITE_SIZE / 1.6;
                     }
 
                     g_drawPool.addRepeatedTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);

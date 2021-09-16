@@ -179,7 +179,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
-	<PreBuildEvent>
+    <PreBuildEvent>
       <Command>
 echo | set /p dummyName=#define GIT_BRANCH &gt;  ../src/gitinfo.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  ../src/gitinfo.h
@@ -209,7 +209,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-    </Link>    
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - GIT Version|x64'">
     <ClCompile>
@@ -438,7 +438,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\client\uiminimap.h" />
     <ClInclude Include="..\src\client\uiprogressrect.h" />
     <ClInclude Include="..\src\client\uisprite.h" />
-    <ClInclude Include="..\src\client\features.h" />
+    <ClInclude Include="..\src\client\config.h" />
     <ClInclude Include="..\src\framework\const.h" />
     <ClInclude Include="..\src\framework\core\adaptativeframecounter.h" />
     <ClInclude Include="..\src\framework\core\application.h" />

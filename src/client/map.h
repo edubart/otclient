@@ -248,13 +248,13 @@ private:
 
     uint16 getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
-    std::array<std::vector<MissilePtr>, Otc::MAX_Z + 1> m_floorMissiles;
+    std::array<std::vector<MissilePtr>, MAX_Z + 1> m_floorMissiles;
 
     std::vector<AnimatedTextPtr> m_animatedTexts;
     std::vector<StaticTextPtr> m_staticTexts;
     std::vector<MapViewPtr> m_mapViews;
 
-    std::unordered_map<uint, TileBlock> m_tileBlocks[Otc::MAX_Z + 1];
+    std::unordered_map<uint, TileBlock> m_tileBlocks[MAX_Z + 1];
     std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
     std::unordered_map<Position, std::string, Position::Hasher> m_waypoints;
 

@@ -79,8 +79,8 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
 
     m_direction = fromPosition.getDirectionFromPosition(toPosition);
 
-    m_duration = (Otc::MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(deltaLength);
-    m_delta *= Otc::TILE_PIXELS;
+    m_duration = (MISSILE_TICKS_PER_FRAME * 2) * std::sqrt(deltaLength);
+    m_delta *= SPRITE_SIZE;
     m_animationTimer.restart();
     m_distance = fromPosition.distance(toPosition);
 

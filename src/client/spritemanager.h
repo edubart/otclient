@@ -23,6 +23,7 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
+#include <client/config.h>
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 
@@ -30,7 +31,6 @@
 class SpriteManager
 {
     enum {
-        SPRITE_SIZE = 32,
         SPRITE_DATA_SIZE = SPRITE_SIZE * SPRITE_SIZE * 4
     };
 

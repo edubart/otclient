@@ -35,8 +35,8 @@ AnimatedText::AnimatedText()
 
 void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
 {
-    const static float tf = Otc::ANIMATED_TEXT_DURATION;
-    const static float tftf = Otc::ANIMATED_TEXT_DURATION * Otc::ANIMATED_TEXT_DURATION;
+    const static float tf = ANIMATED_TEXT_DURATION;
+    const static float tftf = ANIMATED_TEXT_DURATION * ANIMATED_TEXT_DURATION;
 
     Point p = dest;
     const Size textSize = m_cachedText.getTextSize();
@@ -70,7 +70,7 @@ void AnimatedText::onAppear()
 
     // schedule removal
     auto self = asAnimatedText();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, Otc::ANIMATED_TEXT_DURATION);
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, ANIMATED_TEXT_DURATION);
 }
 
 void AnimatedText::setColor(int color)
@@ -91,7 +91,7 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
     if(other->getCachedText().getFont() != m_cachedText.getFont())
         return false;
 
-    if(m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5)
+    if(m_animationTimer.ticksElapsed() > ANIMATED_TEXT_DURATION / 2.5)
         return false;
 
     try {

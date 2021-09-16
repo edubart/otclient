@@ -56,10 +56,6 @@ enum tileflags_t : uint32
 class Tile : public LuaObject
 {
 public:
-    enum {
-        MAX_THINGS = 10
-    };
-
     Tile(const Position& position);
 
     void onAddVisibleTileList(const MapViewPtr& mapView);

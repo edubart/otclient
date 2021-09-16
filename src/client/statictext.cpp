@@ -77,7 +77,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
         m_updateEvent = nullptr;
     }
 
-    int delay = std::max<int>(Otc::STATIC_DURATION_PER_CHARACTER * text.length(), Otc::MIN_STATIC_TEXT_DURATION);
+    int delay = std::max<int>(STATIC_DURATION_PER_CHARACTER * text.length(), MIN_STATIC_TEXT_DURATION);
     if(isYell())
         delay *= 2;
 

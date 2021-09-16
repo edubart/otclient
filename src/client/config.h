@@ -20,14 +20,40 @@
  * THE SOFTWARE.
  */
 
- // Define 1 so that a last creature that entered SQM is rendered behind the previous one.
-#define RENDER_CREATURE_BEHIND 0
+ // GENERAL
+#define SPRITE_SIZE 32
 
-// Highlight
+// TILE
+#define MAX_ELEVATION 24
+#define MAX_THINGS 10
+#define RENDER_WALKING_CREATURES_BEHIND 0
+
+// CREATURE
+#define SHIELD_BLINK_TICKS 500
+#define VOLATILE_SQUARE_DURATION 1000
+
+// HIGHLIGHT
 #define HIGHTLIGHT_FADE_START 60
 #define HIGHTLIGHT_FADE_END 120
 
-// Define
+// WALK SYSTEM
 // 1 - Nostalrius 7.2
 // 0 - Nekiro TFS1.4-Downgrades and 7.72-downgrade, YurOTS 7.76, OTServ 0.6.4 (8.6), Evolutions (7.6), OTHire 7.2
 #define FORCE_NEW_WALKING_FORMULA 0
+
+// FLOOR
+#define SEA_FLOOR 7
+#define MAX_Z 15
+#define UNDERGROUND_FLOOR SEA_FLOOR + 1
+#define AWARE_UNDEGROUND_FLOOR_RANGE 2
+
+// TICKS
+#define INVISIBLE_TICKS_PER_FRAME 500
+#define ITEM_TICKS_PER_FRAME 500
+#define EFFECT_TICKS_PER_FRAME 75
+#define MISSILE_TICKS_PER_FRAME 75
+
+// TEXT
+#define ANIMATED_TEXT_DURATION 1000
+#define STATIC_DURATION_PER_CHARACTER 60
+#define MIN_STATIC_TEXT_DURATION 3000

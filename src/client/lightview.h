@@ -77,7 +77,7 @@ private:
     int8 m_currentFloor;
 
     std::vector<ShadeBlock> m_shades;
-    std::array<std::vector<LightSource>, Otc::MAX_Z + 1> m_lights;
+    std::array<std::vector<LightSource>, MAX_Z + 1> m_lights;
 };
 
 #endif

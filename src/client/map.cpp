@@ -99,7 +99,7 @@ void Map::clean()
 {
     cleanDynamicThings();
 
-    for(int_fast8_t i = -1; ++i <= Otc::MAX_Z;)
+    for(int_fast8_t i = -1; ++i <= MAX_Z;)
         m_tileBlocks[i].clear();
 
     m_waypoints.clear();
@@ -118,7 +118,7 @@ void Map::cleanDynamicThings()
     }
     m_knownCreatures.clear();
 
-    for(int_fast8_t i = -1; ++i <= Otc::MAX_Z;)
+    for(int_fast8_t i = -1; ++i <= MAX_Z;)
         m_floorMissiles[i].clear();
 
     cleanTexts();
@@ -163,8 +163,8 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();
                     const float t = prevAnimatedText->getTimer().ticksElapsed();
-                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
-                        const int32 y = 12 - 48 * t / static_cast<float>(Otc::ANIMATED_TEXT_DURATION);
+                    if(t < ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
+                        const int32 y = 12 - 48 * t / static_cast<float>(ANIMATED_TEXT_DURATION);
                         offset += Point(0, y);
                     }
                     offset.y = std::min<int32>(offset.y, 12);
@@ -364,11 +364,11 @@ const TilePtr& Map::getTile(const Position& pos)
 const TileList Map::getTiles(int8 floor/* = -1*/)
 {
     TileList tiles;
-    if(floor > Otc::MAX_Z) return tiles;
+    if(floor > MAX_Z) return tiles;
 
     if(floor < 0) {
         // Search all floors
-        for(int_fast8_t z = -1; ++z <= Otc::MAX_Z;) {
+        for(int_fast8_t z = -1; ++z <= MAX_Z;) {
             for(const auto& pair : m_tileBlocks[z]) {
                 const TileBlock& block = pair.second;
                 for(const TilePtr& tile : block.getTiles()) {
@@ -493,7 +493,7 @@ std::map<Position, ItemPtr> Map::findItemsById(uint16 clientId, uint32 max)
 {
     std::map<Position, ItemPtr> ret;
     uint32 count = 0;
-    for(uint8_t z = 0; z <= Otc::MAX_Z; ++z) {
+    for(uint8_t z = 0; z <= MAX_Z; ++z) {
         for(const auto& pair : m_tileBlocks[z]) {
             const TileBlock& block = pair.second;
             for(const TilePtr& tile : block.getTiles()) {
@@ -556,7 +556,7 @@ void Map::removeUnawareThings()
 
     if(!g_game.getFeature(Otc::GameKeepUnawareTiles)) {
         // remove tiles that we are not aware anymore
-        for(int_fast8_t z = -1; ++z <= Otc::MAX_Z;) {
+        for(int_fast8_t z = -1; ++z <= MAX_Z;) {
             std::unordered_map<uint, TileBlock>& tileBlocks = m_tileBlocks[z];
             for(auto it = tileBlocks.begin(); it != tileBlocks.end();) {
                 TileBlock& block = (*it).second;
@@ -766,18 +766,18 @@ void Map::setAwareRange(const AwareRange& range)
 
 uint8 Map::getFirstAwareFloor()
 {
-    if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return m_centralPosition.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
+    if(m_centralPosition.z > SEA_FLOOR)
+        return m_centralPosition.z - AWARE_UNDEGROUND_FLOOR_RANGE;
 
     return 0;
 }
 
 uint8 Map::getLastAwareFloor()
 {
-    if(m_centralPosition.z > Otc::SEA_FLOOR)
-        return std::min<uint8>(m_centralPosition.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, Otc::MAX_Z);
+    if(m_centralPosition.z > SEA_FLOOR)
+        return std::min<uint8>(m_centralPosition.z + AWARE_UNDEGROUND_FLOOR_RANGE, MAX_Z);
 
-    return Otc::SEA_FLOOR;
+    return SEA_FLOOR;
 }
 
 std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, uint16 maxComplexity, uint32 flags)

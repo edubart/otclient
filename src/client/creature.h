@@ -37,10 +37,6 @@
 class Creature : public Thing
 {
 public:
-    enum {
-        SHIELD_BLINK_TICKS = 500,
-        VOLATILE_SQUARE_DURATION = 1000
-    };
 
     static double speedA, speedB, speedC;
 

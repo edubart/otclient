@@ -87,8 +87,8 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
         thing->draw(dest, scaleFactor, animate, m_highlight, TextureType::NONE, Color::white, frameFlag, lightView);
 
         m_drawElevation += thing->getElevation();
-        if(m_drawElevation > Otc::MAX_ELEVATION)
-            m_drawElevation = Otc::MAX_ELEVATION;
+        if(m_drawElevation > MAX_ELEVATION)
+            m_drawElevation = MAX_ELEVATION;
     }
 }
 
@@ -110,11 +110,11 @@ void Tile::drawSurface(const Point& dest, float scaleFactor, int frameFlags, Lig
 
 void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
 {
-#if RENDER_CREATURE_BEHIND == 1
+#if RENDER_WALKING_CREATURES_BEHIND == 1
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
-            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
+            dest.x + ((creature->getPosition().x - m_position.x) * SPRITE_SIZE - m_drawElevation) * scaleFactor,
+            dest.y + ((creature->getPosition().y - m_position.y) * SPRITE_SIZE - m_drawElevation) * scaleFactor
         ), scaleFactor, true, frameFlags, lightView);
     }
 
@@ -136,8 +136,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
 
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
-            dest.x + ((creature->getPosition().x - m_position.x) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor,
-            dest.y + ((creature->getPosition().y - m_position.y) * Otc::TILE_PIXELS - m_drawElevation) * scaleFactor
+            dest.x + ((creature->getPosition().x - m_position.x) * SPRITE_SIZE - m_drawElevation) * scaleFactor,
+            dest.y + ((creature->getPosition().y - m_position.y) * SPRITE_SIZE - m_drawElevation) * scaleFactor
         ), scaleFactor, true, frameFlags, lightView);
     }
 #endif
@@ -186,7 +186,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
                     continue;
                 const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
                 if(tile) {
-                    const auto& newDest = dest + (Point(x, y) * Otc::TILE_PIXELS) * scaleFactor;
+                    const auto& newDest = dest + (Point(x, y) * SPRITE_SIZE) * scaleFactor;
                     tile->drawCreature(newDest, scaleFactor, frameFlags);
                     tile->drawTop(newDest, scaleFactor, frameFlags);
                 }
@@ -686,7 +686,7 @@ bool Tile::hasLight()
 
 void Tile::checkTranslucentLight()
 {
-    if(m_position.z != Otc::SEA_FLOOR)
+    if(m_position.z != SEA_FLOOR)
         return;
 
     Position downPos = m_position;
@@ -799,7 +799,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
 
     // best option to have something more real, but in some cases as a custom project,
     // the developers are not defining crop size
-    //if(thing->getRealSize() > Otc::TILE_PIXELS)
+    //if(thing->getRealSize() > SPRITE_SIZE)
     if(!thing->isSingleDimension())
         m_countFlag.notSingleDimension += value;
 

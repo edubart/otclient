@@ -1736,11 +1736,11 @@ void ProtocolGame::parseFloorChangeUp(const InputMessagePtr& msg)
     --pos.z;
 
     int skip = 0;
-    if(pos.z == Otc::SEA_FLOOR)
-        for(int i = Otc::SEA_FLOOR - Otc::AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; --i)
+    if(pos.z == SEA_FLOOR)
+        for(int i = SEA_FLOOR - AWARE_UNDEGROUND_FLOOR_RANGE; i >= 0; --i)
             skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, i, range.horizontal(), range.vertical(), 8 - i, skip);
-    else if(pos.z > Otc::SEA_FLOOR)
-        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), 3, skip);
+    else if(pos.z > SEA_FLOOR)
+        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z - AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), 3, skip);
 
     ++pos.x;
     ++pos.y;
@@ -1758,12 +1758,12 @@ void ProtocolGame::parseFloorChangeDown(const InputMessagePtr& msg)
     ++pos.z;
 
     int skip = 0;
-    if(pos.z == Otc::UNDERGROUND_FLOOR) {
+    if(pos.z == UNDERGROUND_FLOOR) {
         int j, i;
-        for(i = pos.z, j = -1; i <= pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
+        for(i = pos.z, j = -1; i <= pos.z + AWARE_UNDEGROUND_FLOOR_RANGE; ++i, --j)
             skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, i, range.horizontal(), range.vertical(), j, skip);
-    } else if(pos.z > Otc::UNDERGROUND_FLOOR && pos.z < Otc::MAX_Z - 1)
-        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), -3, skip);
+    } else if(pos.z > UNDERGROUND_FLOOR && pos.z < MAX_Z - 1)
+        skip = setFloorDescription(msg, pos.x - range.left, pos.y - range.top, pos.z + AWARE_UNDEGROUND_FLOOR_RANGE, range.horizontal(), range.vertical(), -3, skip);
 
     --pos.x;
     --pos.y;
@@ -2040,12 +2040,12 @@ void ProtocolGame::setMapDescription(const InputMessagePtr& msg, int x, int y, i
 {
     int startz, endz, zstep;
 
-    if(z > Otc::SEA_FLOOR) {
-        startz = z - Otc::AWARE_UNDEGROUND_FLOOR_RANGE;
-        endz = std::min<int>(z + Otc::AWARE_UNDEGROUND_FLOOR_RANGE, static_cast<int>(Otc::MAX_Z));
+    if(z > SEA_FLOOR) {
+        startz = z - AWARE_UNDEGROUND_FLOOR_RANGE;
+        endz = std::min<int>(z + AWARE_UNDEGROUND_FLOOR_RANGE, static_cast<int>(MAX_Z));
         zstep = 1;
     } else {
-        startz = Otc::SEA_FLOOR;
+        startz = SEA_FLOOR;
         endz = 0;
         zstep = -1;
     }

@@ -1055,7 +1055,7 @@
     <ClInclude Include="..\src\client\animator.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\client\features.h">
+    <ClInclude Include="..\src\client\config.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\drawpool.h">

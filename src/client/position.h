@@ -24,6 +24,7 @@
 #define POSITION_H
 
 #include "const.h"
+#include "config.h"
 #include <framework/stdext/types.h>
 #include <framework/const.h>
 #include <framework/util/point.h>
@@ -192,7 +193,7 @@ public:
         return getDirectionFromPositions(*this, position);
     }
 
-    bool isMapPosition() const { return ((x >= 0) && (y >= 0) && (x < UINT16_MAX) && (y < UINT16_MAX) && (z <= Otc::MAX_Z)); }
+    bool isMapPosition() const { return ((x >= 0) && (y >= 0) && (x < UINT16_MAX) && (y < UINT16_MAX) && (z <= MAX_Z)); }
     bool isValid() const { return !(x == UINT16_MAX && y == UINT16_MAX && z == UINT8_MAX); }
     float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
     uint16 manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
@@ -244,7 +245,7 @@ public:
     bool up(int8 n = 1)
     {
         const int8 nz = z - n;
-        if(nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
         }
@@ -254,7 +255,7 @@ public:
     bool down(int8 n = 1)
     {
         const int8 nz = z + n;
-        if(nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
         }
@@ -266,7 +267,7 @@ public:
     {
         const int32 nx = x + n, ny = y + n;
         const int8 nz = z - n;
-        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }
@@ -278,7 +279,7 @@ public:
     {
         const int32 nx = x - n, ny = y - n;
         const int8 nz = z + n;
-        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= Otc::MAX_Z) {
+        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }

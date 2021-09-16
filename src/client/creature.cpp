@@ -82,7 +82,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         }
 
         if(m_showStaticSquare) {
-            g_drawPool.addBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(Otc::TILE_PIXELS * scaleFactor)), m_staticSquareColor, std::max<int>(static_cast<int>(2 * scaleFactor), 1));
+            g_drawPool.addBoundingRect(Rect(dest + (m_walkOffset - getDisplacement()) * scaleFactor, Size(SPRITE_SIZE * scaleFactor)), m_staticSquareColor, std::max<int>(static_cast<int>(2 * scaleFactor), 1));
         }
 
         internalDrawOutfit(dest + m_walkOffset * scaleFactor, scaleFactor, animate, textureType, m_direction, color);
@@ -95,7 +95,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
     if(lightView && frameFlags & Otc::FUpdateLight) {
         auto light = getLight();
 
-        if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > Otc::SEA_FLOOR)) {
+        if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > SEA_FLOOR)) {
             if(light.intensity == 0) {
                 light.intensity = 2;
                 light.brightness = .2f;
@@ -105,7 +105,7 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         }
 
         if(light.intensity > 0) {
-            lightView->addLightSource(dest + (m_walkOffset + (Point(Otc::TILE_PIXELS / 1.8))) * scaleFactor, light);
+            lightView->addLightSource(dest + (m_walkOffset + (Point(SPRITE_SIZE / 1.8))) * scaleFactor, light);
         }
     }
 }
@@ -185,13 +185,13 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         ThingType* type = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory());
 
         int animationPhases = type->getAnimationPhases(),
-            animateTicks = Otc::ITEM_TICKS_PER_FRAME;
+            animateTicks = ITEM_TICKS_PER_FRAME;
 
         // when creature is an effect we cant render the first and last animation phase,
         // instead we should loop in the phases between
         if(m_outfit.getCategory() == ThingCategoryEffect) {
             animationPhases = std::max<int>(1, animationPhases - 2);
-            animateTicks = Otc::INVISIBLE_TICKS_PER_FRAME;
+            animateTicks = INVISIBLE_TICKS_PER_FRAME;
         }
 
         if(animationPhases > 1) {
@@ -220,7 +220,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize, const Color color)
         return;
 
     const float scaleFactor = destRect.width() / static_cast<float>(frameSize);
-    const Point dest = destRect.bottomRight() - (Point(Otc::TILE_PIXELS) - getDisplacement()) * scaleFactor;
+    const Point dest = destRect.bottomRight() - (Point(SPRITE_SIZE) - getDisplacement()) * scaleFactor;
 
     internalDrawOutfit(dest, scaleFactor, true, TextureType::SMOOTH, Otc::South, color);
 }
@@ -517,14 +517,14 @@ void Creature::updateWalkOffset(int totalPixelsWalked)
 {
     m_walkOffset = Point();
     if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
-        m_walkOffset.y = Otc::TILE_PIXELS - totalPixelsWalked;
+        m_walkOffset.y = SPRITE_SIZE - totalPixelsWalked;
     else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
-        m_walkOffset.y = totalPixelsWalked - Otc::TILE_PIXELS;
+        m_walkOffset.y = totalPixelsWalked - SPRITE_SIZE;
 
     if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
-        m_walkOffset.x = totalPixelsWalked - Otc::TILE_PIXELS;
+        m_walkOffset.x = totalPixelsWalked - SPRITE_SIZE;
     else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
-        m_walkOffset.x = Otc::TILE_PIXELS - totalPixelsWalked;
+        m_walkOffset.x = SPRITE_SIZE - totalPixelsWalked;
 }
 
 void Creature::updateWalkingTile()
@@ -532,13 +532,13 @@ void Creature::updateWalkingTile()
     // determine new walking tile
     TilePtr newWalkingTile;
 
-    const Rect virtualCreatureRect(Otc::TILE_PIXELS + (m_walkOffset.x - getDisplacementX()),
-                                   Otc::TILE_PIXELS + (m_walkOffset.y - getDisplacementY()),
-                                   Otc::TILE_PIXELS, Otc::TILE_PIXELS);
+    const Rect virtualCreatureRect(SPRITE_SIZE + (m_walkOffset.x - getDisplacementX()),
+                                   SPRITE_SIZE + (m_walkOffset.y - getDisplacementY()),
+                                   SPRITE_SIZE, SPRITE_SIZE);
 
     for(int xi = -1; xi <= 1 && !newWalkingTile; ++xi) {
         for(int yi = -1; yi <= 1 && !newWalkingTile; ++yi) {
-            Rect virtualTileRect((xi + 1) * Otc::TILE_PIXELS, (yi + 1) * Otc::TILE_PIXELS, Otc::TILE_PIXELS, Otc::TILE_PIXELS);
+            Rect virtualTileRect((xi + 1) * SPRITE_SIZE, (yi + 1) * SPRITE_SIZE, SPRITE_SIZE, SPRITE_SIZE);
 
             // only render creatures where bottom right is inside tile rect
             if(virtualTileRect.contains(virtualCreatureRect.bottomRight())) {
@@ -579,7 +579,7 @@ void Creature::nextWalkUpdate()
     m_walkUpdateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_walkUpdateEvent = nullptr;
         self->nextWalkUpdate();
-    }, m_stepCache.duration / Otc::TILE_PIXELS);
+    }, m_stepCache.duration / SPRITE_SIZE);
 }
 
 void Creature::updateWalk(const bool isPreWalking)
@@ -591,8 +591,8 @@ void Creature::updateWalk(const bool isPreWalking)
             extraSpeed *= 2;
     }
 
-    const float walkTicksPerPixel = (getStepDuration(true) + extraSpeed) / Otc::TILE_PIXELS;
-    const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), Otc::TILE_PIXELS);
+    const float walkTicksPerPixel = (getStepDuration(true) + extraSpeed) / SPRITE_SIZE;
+    const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), SPRITE_SIZE);
 
     // needed for paralyze effect
     m_walkedPixels = std::max<int>(m_walkedPixels, totalPixelsWalked);
@@ -601,7 +601,7 @@ void Creature::updateWalk(const bool isPreWalking)
     updateWalkOffset(m_walkedPixels);
     updateWalkingTile();
 
-    if(!isPreWalking && m_walkedPixels == Otc::TILE_PIXELS) {
+    if(!isPreWalking && m_walkedPixels == SPRITE_SIZE) {
         terminateWalk();
     }
 }
@@ -704,7 +704,7 @@ void Creature::setOutfit(const Outfit& outfit)
         else
             m_drawCache.exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
 
-        m_drawCache.frameSizeNotResized = std::max<int>(m_drawCache.exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f);
+        m_drawCache.frameSizeNotResized = std::max<int>(m_drawCache.exactSize * 0.75f, 2 * SPRITE_SIZE * 0.75f);
     }
 }
 
