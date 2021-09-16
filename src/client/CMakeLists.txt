@@ -12,7 +12,7 @@ set(client_SOURCES ${client_SOURCES}
     # client
     ${CMAKE_CURRENT_LIST_DIR}/const.h
     ${CMAKE_CURRENT_LIST_DIR}/global.h
-	${CMAKE_CURRENT_LIST_DIR}/features.h
+    ${CMAKE_CURRENT_LIST_DIR}/config.h
     ${CMAKE_CURRENT_LIST_DIR}/luafunctions.cpp
     ${CMAKE_CURRENT_LIST_DIR}/client.cpp
     ${CMAKE_CURRENT_LIST_DIR}/client.h
