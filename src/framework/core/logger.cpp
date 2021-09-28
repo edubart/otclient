@@ -25,6 +25,7 @@
 
 //#include <boost/regex.hpp>
 #include <framework/core/resourcemanager.h>
+#include <framework/core/asyncdispatcher.h>
 
 #ifdef FW_GRAPHICS
 #include <framework/platform/platformwindow.h>
@@ -95,6 +96,10 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
         g_window.displayFatalError(message);
 #endif
         s_ignoreLogs = true;
+
+        // NOTE: Threads must finish before the process can exit.
+        g_asyncDispatcher.terminate();
+
         exit(-1);
     }
 }
