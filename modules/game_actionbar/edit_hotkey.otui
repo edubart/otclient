@@ -1,0 +1,65 @@
+MainWindow
+  !text: tr('Edit Hotkey')
+  size: 360 160
+  @onEscape: self:destroy()
+
+  FlatPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    height: 25
+    Label
+      id: comboPreview
+      !text: tr('Current hotkey to change: %s', 'none')
+      anchors.horizontalCenter: parent.horizontalCenter
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      text-auto-resize: true
+      text-align: left
+
+  Label
+    !text: tr('Click "Apply" to assign the hotkey.\nClick "Clear" to remove the hotkey.')
+    anchors.top: prev.bottom
+    margin-top: 10
+    text-auto-resize: true
+
+  Label
+    id: errorLabel
+    text: "This hotkey is already in use and will be overwritten."
+    color: red
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 10
+    visible: false
+
+  HorizontalSeparator
+    id: separator
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: next.top
+    margin-bottom: 10
+
+  Button
+    id: applyButton
+    !text: tr('Apply')
+    anchors.left: parent.left
+    width: 80
+    anchors.bottom: parent.bottom
+    enabled: false
+    @onClick: modules.game_actionbar.hotkeyCaptureOk(self:getParent(), self:getParent():recursiveGetChildById('comboPreview').keyCombo)
+
+  Button
+    id: clearButton
+    !text: tr('Clear')
+    width: 80
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.bottom: parent.bottom
+    @onClick: modules.game_actionbar.hotkeyClear(self:getParent())
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    width: 80
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    @onClick: self:getParent():destroy() modules.game_actionbar.editHotkeyWindow = nil

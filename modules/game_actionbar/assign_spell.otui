@@ -1,0 +1,119 @@
+PreviewSpell < UIItem
+  size: 40 40
+  background-color: gray
+  image-clip: 0 0 32 32
+  image-size: 40 40
+  image-source: /images/game/spells/defaultspells
+
+Spell < UIItem
+  size: 32 32
+  background-color: gray
+
+SpellListLabel < Label
+  font: verdana-11px-monochrome
+  background-color: alpha
+  text-offset: 42 3
+  focusable: true
+  height: 36
+  image-clip: 0 0 32 32
+  image-size: 32 32
+  image-offset: 2 2
+  image-source: /images/game/spells/defaultspells
+  
+  $focus:
+    background-color: #585858
+    color: #ffffff
+
+MainWindow
+  text: Assign Spell
+  size: 280 480
+  @onEscape: self:hide()
+  @onEnter: modules.game_actionbar.spellAssignAccept()
+  PreviewSpell
+    id: previewSpell
+    anchors.left: parent.left
+    anchors.top: parent.top
+  Label
+    id: previewSpellName
+    anchors.left: previewSpell.right
+    anchors.top: parent.top
+    margin-top: 6
+    margin-left: 5
+    text: name
+    text-auto-resize: true
+  Label
+    id: previewSpellWords
+    anchors.left: previewSpell.right
+    anchors.top: previewSpellName.bottom
+    text: words
+    margin-left: 5
+    text-auto-resize: true
+  HorizontalSeparator
+    id: splitter
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: previewSpell.bottom
+    margin-top: 10
+    height: 2
+
+  Label
+    id: filterLabel
+    text: Filter
+    anchors.left: parent.left
+    anchors.top: splitter.bottom
+    margin-top: 8
+  TextEdit
+    id: filterTextEdit
+    anchors.top: splitter.bottom
+    anchors.right: parent.right
+    anchors.left: prev.right
+    margin-left: 5
+    margin-top: 5
+    @onTextChange: modules.game_actionbar.filterSpells(self:getText())
+
+  TextList
+    id: spellsPanel
+    layout:
+      type: verticalBox
+    vertical-scrollbar: spellsPanelScrollbar
+    anchors.top: filterTextEdit.bottom
+    anchors.bottom: parameterTextEdit.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 10
+    margin-bottom: 5
+  VerticalScrollBar
+    id: spellsPanelScrollbar
+    anchors.top: spellsPanel.top
+    anchors.bottom: parameterTextEdit.top
+    anchors.right: parent.right
+    step: 48
+    pixels-scroll: true
+    margin-bottom: 5
+
+  Label
+    id: parameterLabel
+    text: Parameter
+    anchors.left: parent.left
+    anchors.bottom: applyButton.top
+    margin-bottom: 8
+  TextEdit
+    id: parameterTextEdit
+    anchors.bottom: applyButton.top
+    anchors.right: parent.right
+    anchors.left: prev.right
+    margin-left: 5
+    margin-bottom: 5
+
+  Button
+    id: applyButton
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    text: Apply
+    @onClick: modules.game_actionbar.spellAssignAccept()
+  Button
+    id: cancelButton
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    text: Cancel
+    @onClick: self:getParent():hide()

@@ -1,0 +1,8 @@
+Module
+  name: game_actionbar
+  sandboxed: true
+  scripts: [ game_actionbar ]
+  autoload: true
+  autoload-priority: 1001
+  @onLoad: init()
+  @onUnload: terminate()

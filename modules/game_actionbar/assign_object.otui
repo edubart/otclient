@@ -1,0 +1,92 @@
+PreviewItem < UIItem
+  size: 85 85
+  //background-color: gray
+  padding: 10
+  image-source: /images/game/actionbar/1pixel-down-frame
+
+MainWindow
+  id: assignWindow
+  size: 260 208
+  text: Assign Object
+  @onEnter: modules.game_actionbar.objectAssignAccept()
+  PreviewItem
+    id: previewItem
+    anchors.left: parent.left
+    anchors.top: parent.top
+
+  CheckBox
+    id: useOnYourselfCheckbox
+    anchors.left: prev.right
+    anchors.top: prev.top
+    text: Use on yourself
+    text-auto-resize: true
+    margin-left: 5
+    enabled: false
+
+  CheckBox
+    id: useOnTargetCheckbox
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    text: Use on target
+    text-auto-resize: true
+    margin-top: 5
+    enabled: false
+
+  CheckBox
+    id: useWithCrosshairCheckbox
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    text: Use with crosshair
+    text-auto-resize: true
+    margin-top: 5
+    enabled: false
+
+  CheckBox
+    id: equipCheckbox
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    text: Equip/unequip
+    text-auto-resize: true
+    margin-top: 5
+    enabled: false
+
+  CheckBox
+    id: useCheckbox
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    text: Use
+    text-auto-resize: true
+    margin-top: 5
+    enabled: false
+
+  Button
+    id: selectObjectButton
+    anchors.left: parent.left
+    anchors.top: previewItem.bottom
+    anchors.right: previewItem.right
+    text: Select Object
+    margin-top: 5
+    @onClick: |
+      modules.game_actionbar.startChooseItem()
+
+  HorizontalSeparator
+    anchors.top: prev.bottom
+    anchors.right: parent.right
+    anchors.left: parent.left
+    height: 2
+    margin-top: 7
+
+  Button
+    id: applyButton
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    text: Apply
+    @onClick: | 
+      modules.game_actionbar.objectAssignAccept()
+
+  Button
+    id: cencelButton
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    text: Cancel
+    @onClick: self:getParent():hide()

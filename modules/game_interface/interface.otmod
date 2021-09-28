@@ -10,6 +10,7 @@ Module
     - game_questlog
     - game_textmessage
     - game_console
+    - game_actionbar
     - game_outfit
     - game_healthinfo
     - game_skills

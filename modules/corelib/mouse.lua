@@ -37,3 +37,4 @@ function g_mouse.bindPress(widget, callback, button)
         end
     })
 end
+

@@ -1,0 +1,117 @@
+SpellProgressRect < UIProgressRect
+  background: #585858AA
+  percent: 100
+  focusable: false
+  size: 34 34
+  phantom: false
+
+ActionSlot < UIActionSlot
+  size: 34 34
+  image-source: /data/images/game/actionbar/slot-actionbar
+  anchors.left: prev.right
+  anchors.top: parent.top
+  margin-left: 3
+  image-size: 34 34
+  visible: false
+  $pressed:
+    opacity: 0.7
+  $!pressed:
+    opacity: 1.0
+  Label
+    id: key
+    anchors.top: parent.top
+    anchors.right: parent.right
+    text-auto-resize: true
+    margin-right: 2
+    margin-top: -1
+    font: verdana-10px
+  Label
+    id: text
+    anchors.fill: parent
+    text-auto-resize: true
+    text-wrap: true
+    text-align: center
+    margin-left: 1
+    margin-right: 1
+    margin-top: 6
+    font: verdana-10px
+
+UIWindow
+  visible: true
+  height: 42
+  anchors.top: parent.top
+  anchors.left: parent.left
+  anchors.right: parent.right
+  image-source: /images/ui/panel_side
+  image-border: 4
+  padding: 3
+  text-align: center
+  //background-color: gray
+  auto-focus: first
+  draggable: false
+  phantom: false
+  focusable: false
+  Button
+    id: prevButton
+    image-source: /images/game/actionbar/1pixel-up-frame-background
+    icon: /images/game/actionbar/icon-arrow
+    anchors.left: parent.left
+    anchors.top: parent.top
+    size: 17 17
+    margin-left: 2
+    @onClick: |
+      modules.game_actionbar.actionBar:getChildById('horizontalScroll'):decrement(36)
+  Button
+    id: prevSkipButton
+    image-source: /images/game/actionbar/1pixel-up-frame-background
+    icon: /images/game/actionbar/icon-arrowskip
+    anchors.left: parent.left
+    anchors.top: prevButton.bottom
+    size: 17 17
+    margin-left: 2
+    margin-top: 2
+    @onClick: |
+      modules.game_actionbar.actionBar:getChildById('horizontalScroll'):decrement(999)
+  ScrollablePanel
+    id: actionBarPanel
+    anchors.top: parent.top
+    anchors.left: prevButton.right
+    anchors.right: nextButton.left
+    //anchors.left: parent.left
+    //anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    horizontal-scrollbar: horizontalScroll
+    inverted-scroll: false
+    margin-left: 1
+    margin-right: 4
+    margin-top: 1
+    height: 40
+  HorizontalScrollBar
+    id: horizontalScroll
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    step: 38
+    pixels-scroll: true
+    visible: false
+  Button
+    id: nextButton
+    image-source: /images/game/actionbar/1pixel-up-frame-background
+    icon: /images/game/actionbar/icon-arrow-right
+    anchors.right: parent.right
+    anchors.top: parent.top
+    size: 17 17
+    margin-right: 2
+    @onClick: |
+      modules.game_actionbar.actionBar:getChildById('horizontalScroll'):increment(36)
+  Button
+    id: nextSkipButton
+    image-source: /images/game/actionbar/1pixel-up-frame-background
+    icon: /images/game/actionbar/icon-arrowskip-right
+    anchors.right: parent.right
+    anchors.top: nextButton.bottom
+    size: 17 17
+    margin-right: 2
+    margin-top: 2
+    @onClick: |
+      modules.game_actionbar.actionBar:getChildById('horizontalScroll'):increment(999)

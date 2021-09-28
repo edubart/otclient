@@ -1,0 +1,51 @@
+MainWindow
+  text: Assign Text
+  size: 250 165
+  @onEscape: self:hide()
+  @onEnter: modules.game_actionbar.textAssignAccept()
+  Label
+    id: textLabel
+    text: Text:
+    text-auto-resize: true
+    height: 20
+    anchors.top: parent.top
+    anchors.left: parent.left
+  TextEdit
+    id: textToSendTextEdit
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    width: 218
+  FlatPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    size: 200 28
+    margin-top: 5
+    padding: 2
+    CheckBox
+      margin-top: 2
+      margin-left: 2
+      id: sendAutomaticallyCheckBox
+      text: Send automatically
+      anchors.fill: parent
+      text-auto-resize: true
+      @onSetup: self:setChecked(true)
+  HorizontalSeparator
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 2
+    margin-top: 10
+  Button
+    id: applyButton
+    text: Apply
+    anchors.bottom: parent.bottom
+    anchors.left: parent.left
+    @onClick: modules.game_actionbar.textAssignAccept()
+  Button
+    id: cancelButton
+    text: Cancel
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    @onClick: self:getParent():hide()
