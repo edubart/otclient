@@ -20,6 +20,7 @@ function UIItem:onDragLeave(droppedWidget, mousePos)
 end
 
 function UIItem:onDrop(widget, mousePos)
+  self:setBorderWidth(0)
 
   if not self:canAcceptDrop(widget, mousePos) then
     return false
@@ -47,7 +48,6 @@ function UIItem:onDrop(widget, mousePos)
     g_game.move(item, toPos, 1)
   end
 
-  self:setBorderWidth(0)
   return true
 end
 
