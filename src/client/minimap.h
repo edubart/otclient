@@ -26,11 +26,9 @@
 #include <framework/graphics/declarations.h>
 #include "declarations.h"
 
-enum {
-    MMBLOCK_SIZE = 64,
-    OTMM_SIGNATURE = 0x4D4d544F,
-    OTMM_VERSION = 1
-};
+constexpr uint8 MMBLOCK_SIZE = 64;
+constexpr uint8 OTMM_VERSION = 1;
+constexpr uint32 OTMM_SIGNATURE = 0x4D4d544F;
 
 enum MinimapTileFlags {
     MinimapTileWasSeen = 1,
