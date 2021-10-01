@@ -74,7 +74,7 @@ Color Outfit::getColor(int color)
     } else {
         loc1 = 0;
         loc2 = 0;
-        loc3 = 1 - static_cast<float>(color) / HSI_H_STEPS / static_cast<float>(HSI_SI_VALUES);
+        loc3 = 1 - static_cast<float>(color) / static_cast<float>(HSI_H_STEPS) / static_cast<float>(HSI_SI_VALUES);
     }
 
     if(loc3 == 0)
