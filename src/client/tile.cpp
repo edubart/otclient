@@ -800,7 +800,7 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     // best option to have something more real, but in some cases as a custom project,
     // the developers are not defining crop size
     //if(thing->getRealSize() > SPRITE_SIZE)
-    if(!thing->isSingleDimension())
+    if(!thing->isSingleDimension() || thing->hasElevation() || thing->hasDisplacement())
         m_countFlag.notSingleDimension += value;
 
     if(thing->getHeight() > 1)
