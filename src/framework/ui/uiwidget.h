@@ -69,7 +69,9 @@ protected:
         m_phantom{ false },
         m_draggable{ false },
         m_destroyed{ false },
-        m_clipping{ false };
+        m_clipping{ false },
+        m_customId{ false };
+
     UILayoutPtr m_layout;
     UIWidgetPtr m_parent;
     UIWidgetList m_children;
