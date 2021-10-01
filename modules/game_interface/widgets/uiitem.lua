@@ -29,6 +29,7 @@ function UIItem:onDrop(widget, mousePos)
 
     local itemPos = item:getPosition()
     local itemTile = item:getTile()
+
     if itemPos.x ~= 65535 and not itemTile then return false end
 
     local toPos = self.position
