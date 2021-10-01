@@ -113,7 +113,8 @@ function init()
     optionsTabBar:addTab(tr('General'), generalPanel, '/images/optionstab/game')
 
     controlPanel = g_ui.loadUI('control')
-    optionsTabBar:addTab(tr('Control'), controlPanel, '/images/optionstab/controls')
+    optionsTabBar:addTab(tr('Control'), controlPanel,
+                         '/images/optionstab/controls')
 
     consolePanel = g_ui.loadUI('console')
     optionsTabBar:addTab(tr('Console'), consolePanel,
@@ -268,7 +269,7 @@ function setOption(key, value, force)
         graphicsPanel:getChildById('backgroundFrameRateLabel'):setText(tr(
                                                                            'Game framerate limit: %s',
                                                                            text))
-        g_app.setBackgroundPaneMaxFps(v)
+        g_app.setMaxFps(v)
     elseif key == 'enableLights' then
         gameMapPanel:setDrawLights(value and options['ambientLight'] < 100)
         graphicsPanel:getChildById('ambientLight'):setEnabled(value)

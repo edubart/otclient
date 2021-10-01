@@ -44,10 +44,10 @@ public:
 
     void repaint() { m_mustRepaint = true; }
 
-    void setBackgroundPaneMaxFps(int maxFps) { m_backgroundFrameCounter.setMaxFps(maxFps); }
+    void setMaxFps(int maxFps) { m_frameCounter.setMaxFps(maxFps); }
 
-    int getBackgroundPaneFps() { return m_backgroundFrameCounter.getLastFps(); }
-    int getBackgroundPaneMaxFps() { return m_backgroundFrameCounter.getMaxFps(); }
+    int getFps() { return m_frameCounter.getFps(); }
+    int getMaxFps() { return m_frameCounter.getMaxFps(); }
 
     bool isOnInputEvent() { return m_onInputEvent; }
 
@@ -63,7 +63,7 @@ private:
 
     Timer m_refreshTime;
 
-    AdaptativeFrameCounter m_backgroundFrameCounter;
+    AdaptativeFrameCounter m_frameCounter;
 
     PoolFramedPtr m_foregroundFramed;
 };

@@ -39,36 +39,34 @@ public:
         MINIMUM_MICROS_SLEEP = 4000
     };
 
-    AdaptativeFrameCounter();
+    inline AdaptativeFrameCounter() : m_interval(GetTickCount()) {}
 
-    bool shouldProcessNextFrame();
-    void processNextFrame();
     bool update();
-    void setMaxFps(int maxFps);
-    bool isFpsLimitActive() { return m_maxFps != 0; }
+    bool canRefresh();
 
-    int getMaximumSleepMicros();
-    float getFrameDelayHit();
-    int getLastFps() { return m_lastFps; }
-    int getPartialFps() { return static_cast<int>(m_partialFps); }
-    int getMaxFps() { return m_maxFps; }
-    int getFrames() { return m_frames; }
-    float getMediumFrameDelay() { return m_mediumFrameDelay; }
+    void sleep() { stdext::millisleep(static_cast<long>(getMaxPeriod()) * 1000.0); }
+
+    double getTime()
+    {
+        return std::chrono::duration_cast<std::chrono::duration<double>>(
+            std::chrono::high_resolution_clock::now().time_since_epoch()
+            ).count();
+    }
+
+    // Get fps
+    uint getFps() const { return m_fps; }
+    uint getMaxFps() const { return m_maxFps; }
+    void setMaxFps(const uint max) { m_maxFps = max; }
 
 private:
-    int m_frames;
-    int m_partialFrames;
-    float m_partialFps;
-    float m_maxPartialFps;
-    ticks_t m_frameDelaySum;
-    ticks_t m_mediumFrameDelay;
-    ticks_t m_lastFrame;
-    int m_lastFps;
-    int m_maxFps;
-    ticks_t m_bestFrameDelay;
-    ticks_t m_lastFpsUpdate;
-    ticks_t m_lastPartialFpsUpdate;
-    float m_sleepMicros;
+    double getMaxPeriod() { return 1.0 / m_maxFps; }
+
+    uint m_fps{ 0 },
+        m_maxFps{ 0 },
+        m_fpsCount{ 0 },
+        m_interval{ 0 };
+
+    double m_currentTime = 0.f, m_lastTime = 0.f;
 };
 
 #endif

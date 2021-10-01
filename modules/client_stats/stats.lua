@@ -71,8 +71,8 @@ function onConnect(protocol)
     post = post .. '&graphics_version=' .. urlencode(g_graphics.getVersion())
     post = post .. '&painter_engine=' ..
                urlencode(g_graphics.getPainterEngine())
-    post = post .. '&fps=' .. urlencode(g_app.getBackgroundPaneFps())
-    post = post .. '&max_fps=' .. urlencode(g_app.getBackgroundPaneMaxFps())
+    post = post .. '&fps=' .. urlencode(g_app.getFps())
+    post = post .. '&max_fps=' .. urlencode(g_app.getMaxFps())
     post = post .. '&fullscreen=' ..
                urlencode(tostring(g_window.isFullscreen()))
     post = post .. '&window_width=' .. urlencode(g_window.getWidth())
