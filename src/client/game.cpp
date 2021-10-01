@@ -605,7 +605,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
                     m_walkEvent = nullptr;
                 }
 
-                m_walkEvent = g_dispatcher.scheduleEvent([=, this] { walk(direction); }, ticks);
+                m_walkEvent = g_dispatcher.scheduleEvent([this, direction] { walk(direction); }, ticks);
                 m_nextScheduledDir = direction;
             }
         }
