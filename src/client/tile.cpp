@@ -857,7 +857,7 @@ void Tile::select(const bool noFilter)
     m_highlight.enabled = true;
     m_highlight.invertedColorSelection = false;
     m_highlight.fadeLevel = HIGHTLIGHT_FADE_START;
-    m_highlight.listeningEvent = g_dispatcher.cycleEvent([=]() {
+    m_highlight.listeningEvent = g_dispatcher.cycleEvent([=, this]() {
         m_highlight.fadeLevel += 10 * (m_highlight.invertedColorSelection ? 1 : -1);
         m_highlight.rgbColor = Color(static_cast<uint8>(255), static_cast<uint8>(255), static_cast<uint8>(0), static_cast<uint8>(m_highlight.fadeLevel));
 
