@@ -713,7 +713,7 @@ end
 -- Even if hotkeys are enabled, only the hotkeys containing Ctrl or Alt or F1-F12 will be enabled when
 -- chat is opened (no WASD mode). This is made to prevent executing hotkeys while typing...
 function canPerformKeyCombo(keyCombo)
-    return disableHotkeysCount == 0 and (modules.game_console.consoleToggleChat:isChecked() or
+    return disableHotkeysCount == 0 and (not modules.game_console:isChatEnabled() or
         string.match(keyCombo, "F%d%d?") or
         string.match(keyCombo, "Ctrl%+") or
         string.match(keyCombo, "Shift%+..+") or
