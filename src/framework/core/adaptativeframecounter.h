@@ -27,18 +27,10 @@
 
  /**
   * Class that help counting and limiting frames per second in a application,
-  * to make fps limit work as desired, this class requires 2 platforms prerequisites:
-  *  - the platform must have timer with a precision of at least 1ms
-  *  - the platform sleep must have a precision of at least 4ms
   */
 class AdaptativeFrameCounter
 {
 public:
-    enum {
-        // 4ms because most platforms has kernel timer of 250Hz
-        MINIMUM_MICROS_SLEEP = 4000
-    };
-
     inline AdaptativeFrameCounter() : m_interval(GetTickCount()) {}
 
     bool update();
@@ -46,6 +38,13 @@ public:
 
     size_t getMaximumSleepMicros() { return static_cast<long>(getMaxPeriod()) * 1000.0; }
 
+    uint getFps() const { return m_fps; }
+    uint getMaxFps() const { return m_maxFps; }
+
+    void setMaxFps(const uint max) { m_maxFps = max; }
+
+private:
+    double getMaxPeriod() { return 1.0 / m_maxFps; }
     double getTime()
     {
         return std::chrono::duration_cast<std::chrono::duration<double>>(
@@ -53,20 +52,12 @@ public:
             ).count();
     }
 
-    // Get fps
-    uint getFps() const { return m_fps; }
-    uint getMaxFps() const { return m_maxFps; }
-    void setMaxFps(const uint max) { m_maxFps = max; }
-
-private:
-    double getMaxPeriod() { return 1.0 / m_maxFps; }
-
     uint m_fps{ 0 },
         m_maxFps{ 0 },
         m_fpsCount{ 0 },
         m_interval{ 0 };
 
-    double m_currentTime = 0.f, m_lastTime = 0.f;
+    double m_currentTime{ 0.f }, m_lastTime{ 0.f };
 };
 
 #endif
