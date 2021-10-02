@@ -44,7 +44,7 @@ public:
     bool update();
     bool canRefresh();
 
-    void sleep() { stdext::millisleep(static_cast<long>(getMaxPeriod()) * 1000.0); }
+    size_t getMaximumSleepMicros() { return static_cast<long>(getMaxPeriod()) * 1000.0; }
 
     double getTime()
     {

@@ -140,7 +140,7 @@ void GraphicalApplication::run()
         }
 
         if(!m_frameCounter.canRefresh()) {
-            m_frameCounter.sleep();
+            stdext::millisleep(m_frameCounter.getMaximumSleepMicros());
             continue;
         }
 
