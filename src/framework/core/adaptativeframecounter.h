@@ -31,7 +31,7 @@
 class AdaptativeFrameCounter
 {
 public:
-    inline AdaptativeFrameCounter() : m_interval(GetTickCount()) {}
+    inline AdaptativeFrameCounter() : m_interval(stdext::millis()) {}
 
     bool update();
     bool canRefresh();
@@ -45,12 +45,6 @@ public:
 
 private:
     double getMaxPeriod() { return 1.0 / m_maxFps; }
-    double getTime()
-    {
-        return std::chrono::duration_cast<std::chrono::duration<double>>(
-            std::chrono::high_resolution_clock::now().time_since_epoch()
-            ).count();
-    }
 
     uint m_fps{ 0 },
         m_maxFps{ 0 },

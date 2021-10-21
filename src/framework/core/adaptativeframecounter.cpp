@@ -27,7 +27,7 @@ bool AdaptativeFrameCounter::canRefresh()
 {
     if(m_maxFps == 0) return true;
 
-    m_currentTime = getTime();
+    m_currentTime = stdext::millis();
     return m_currentTime - m_lastTime >= getMaxPeriod();
 }
 
