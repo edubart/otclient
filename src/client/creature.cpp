@@ -503,7 +503,7 @@ void Creature::updateWalkAnimation()
     if(footAnimPhases == 0)
         return;
 
-    const int footDelay = std::max<int>(m_stepCache.getDuration(m_lastStepDirection) / footAnimPhases, 20);
+    const int footDelay = std::max<int>(m_stepCache.getDuration(m_lastStepDirection) / (footAnimPhases / 1.5), 30);
 
     if(m_footTimer.ticksElapsed() >= footDelay) {
         if(m_walkAnimationPhase == footAnimPhases) m_walkAnimationPhase = 1;
