@@ -28,7 +28,7 @@ bool AdaptativeFrameCounter::canRefresh()
     if(m_maxFps == 0) return true;
 
     m_currentTime = stdext::micros();
-    return m_currentTime - m_lastTime >= 1000000 / (m_maxFps - 1);
+    return m_currentTime - m_lastTime >= 1000000 / m_maxFps;
 }
 
 bool AdaptativeFrameCounter::update()
