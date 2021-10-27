@@ -68,9 +68,13 @@ void AnimatedText::onAppear()
 {
     m_animationTimer.restart();
 
+    uint16 textDuration = ANIMATED_TEXT_DURATION;
+    if(g_app.canOptimize())
+        textDuration /= 2;
+
     // schedule removal
     auto self = asAnimatedText();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, ANIMATED_TEXT_DURATION);
+    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, textDuration);
 }
 
 void AnimatedText::setColor(int color)

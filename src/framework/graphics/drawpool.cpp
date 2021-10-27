@@ -59,26 +59,28 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
     return pool;
 }
 
-void DrawPool::addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
-{
-    updateHash(state, method);
-
-    const uint16 startIndex = m_currentPool->m_indexToStartSearching ? m_currentPool->m_indexToStartSearching - 1 : 0;
-
-    const auto itFind = std::find_if(m_currentPool->m_objects.begin() + startIndex, m_currentPool->m_objects.end(), [state]
-    (const Pool::DrawObject& action) { return action.state == state; });
-
-    if(itFind != m_currentPool->m_objects.end()) {
-        (*itFind).drawMethods.push_back(method);
-    } else
-        m_currentPool->m_objects.push_back(Pool::DrawObject{ state, drawMode, {method} });
-}
-
 void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
 {
     updateHash(state, method);
 
     auto& list = m_currentPool->m_objects;
+
+    if(m_forceGrouping) {
+        auto& groupList = m_currentPool->m_objects;
+
+        const uint16 startIndex = m_currentPool->m_indexToStartSearching ? m_currentPool->m_indexToStartSearching - 1 : 0;
+
+        const auto itFind = std::find_if(m_currentPool->m_objects.begin() + startIndex, m_currentPool->m_objects.end(), [state]
+        (const Pool::DrawObject& action) { return action.state == state; });
+
+        if(itFind != groupList.end()) {
+            (*itFind).drawMethods.push_back(method);
+        } else {
+            list.push_back(Pool::DrawObject{ state, Painter::DrawMode::Triangles, {method} });
+        }
+
+        return;
+    }
 
     if(!list.empty()) {
         auto& prevObj = list.back();
@@ -218,25 +220,6 @@ void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& tex
     add(state, method, Painter::DrawMode::TriangleStrip);
 }
 
-void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color)
-{
-    addRepeatedTexturedRect(dest, texture, Rect(Point(), texture->getSize()), color);
-}
-
-void DrawPool::addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
-{
-    if(dest.isEmpty() || src.isEmpty())
-        return;
-
-    Pool::DrawMethod method{ Pool::DrawMethodType::RECT,std::make_pair(dest, src) };
-
-    auto state = generateState();
-    state.color = color;
-    state.texture = texture;
-
-    addRepeated(state, method);
-}
-
 void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
 {
     if(dest.isEmpty() || src.isEmpty())
@@ -249,19 +232,6 @@ void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& textu
     state.texture = texture;
 
     add(state, method);
-}
-
-void DrawPool::addRepeatedFilledRect(const Rect& dest, const Color color)
-{
-    if(dest.isEmpty())
-        return;
-
-    Pool::DrawMethod method{ Pool::DrawMethodType::RECT,std::make_pair(dest, Rect()) };
-
-    auto state = generateState();
-    state.color = color;
-
-    addRepeated(state, method);
 }
 
 void DrawPool::addFilledRect(const Rect& dest, const Color color)
@@ -327,6 +297,8 @@ Painter::PainterState DrawPool::generateState()
 
 void DrawPool::use(const PoolPtr& pool)
 {
+    m_forceGrouping = false;
+
     m_currentPool = pool ? pool : n_unknowPool;
     m_currentPool->resetState();
     if(m_currentPool->hasFrameBuffer()) {

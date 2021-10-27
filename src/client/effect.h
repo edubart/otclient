@@ -44,7 +44,7 @@ public:
     const ThingTypePtr& getThingType() override;
     ThingType* rawGetThingType() override;
 
-    void waitFor(const EffectPtr& firstEffect);
+    void waitFor(const EffectPtr&);
 
 protected:
     void onAppear() override;

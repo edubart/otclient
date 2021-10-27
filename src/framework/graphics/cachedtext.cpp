@@ -46,7 +46,7 @@ void CachedText::draw(const Rect& rect, const Color color)
     }
 
     for(const auto& fontRect : m_textCoordsCache)
-        g_drawPool.addRepeatedTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
+        g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
 }
 
 void CachedText::update()

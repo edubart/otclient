@@ -38,10 +38,7 @@ enum class DrawMethodType {
     DRAW_REPEATED_TEXTURED_RECT,
     DRAW_FILLED_RECT,
     DRAW_FILLED_TRIANGLE,
-    DRAW_BOUNDING_RECT,
-    CLEAR_AREA,
-    GL_DISABLE,
-    GL_ENABLE
+    DRAW_BOUNDING_RECT
 };
 
 class FrameBuffer : public stdext::shared_object

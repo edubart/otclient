@@ -56,10 +56,7 @@ public:
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white, const Point& originalDest = Point());
     void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
-    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
-    void addRepeatedTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
     void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
-    void addRepeatedFilledRect(const Rect& dest, const Color color = Color::white);
     void addFilledRect(const Rect& dest, const Color color = Color::white);
     void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color = Color::white);
     void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
@@ -76,6 +73,9 @@ public:
     void resetState() { m_currentPool->resetState(); }
     void resetShaderProgram() { m_currentPool->resetShaderProgram(); }
 
+    void forceGrouping(const bool force) { m_forceGrouping = force; }
+    bool isForcingGrouping() const { return m_forceGrouping; }
+
     void startPosition() { m_currentPool->startPosition(); }
 
     size_t size() { return m_currentPool->m_objects.size(); }
@@ -87,7 +87,6 @@ private:
     void drawObject(Pool::DrawObject& obj);
     void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-    void addRepeated(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<FramedPool>(m_currentPool); }
 
@@ -98,7 +97,8 @@ private:
 
     PoolPtr m_currentPool, n_unknowPool;
 
-    bool m_multiThread;
+    bool m_multiThread, m_forceGrouping;
+
     friend class GraphicalApplication;
 };
 

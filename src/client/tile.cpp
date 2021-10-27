@@ -22,6 +22,7 @@
 
 #include "tile.h"
 #include <framework/graphics/fontmanager.h>
+#include <framework/graphics/drawpool.h>
 #include "effect.h"
 #include "game.h"
 #include "item.h"
@@ -97,8 +98,9 @@ void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, Ligh
     m_drawElevation = 0;
 
     for(const auto& ground : m_things) {
-        if(ground->isSingleGround() || ground->isSingleGroundBorder())
+        if(ground->isSingleGround() || ground->isSingleGroundBorder()) {
             drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+        }
     }
 }
 
@@ -246,10 +248,11 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         const EffectPtr& effect = thing->static_self_cast<Effect>();
 
         // find the first effect equal and wait for it to finish.
-        for(const EffectPtr& firstEffect : m_effects) {
-            if(effect->getId() == firstEffect->getId()) {
-                effect->waitFor(firstEffect);
-            }
+        const auto& itFind = std::find_if(m_effects.begin(), m_effects.end(), [&effect]
+        (const EffectPtr& currentEffect) { return effect->getId() == currentEffect->getId() || g_app.canOptimize() && effect->getSize() >= currentEffect->getSize(); });
+
+        if(itFind != m_effects.end()) {
+            effect->waitFor(*itFind);
         }
 
         if(effect->isTopEffect())

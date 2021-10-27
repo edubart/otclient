@@ -57,8 +57,6 @@ UIWidget::~UIWidget()
 
 void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
-    g_drawPool.startPosition();
-
     Rect oldClipRect;
     if(m_clipping) {
         oldClipRect = g_painter->getClipRect();

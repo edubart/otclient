@@ -470,10 +470,12 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         if(useOpacity)
             color = Color(1.0f, 1.0f, 1.0f, m_opacity);
 
-        if(getCategory() == ThingCategoryMissile || isSingleGround())
-            g_drawPool.addRepeatedTexturedRect(screenRect, texture, textureRect, color);
-        else
-            g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
+        if(getCategory() == ThingCategoryMissile || isSingleGround()) {
+            g_drawPool.forceGrouping(true);
+        }
+
+        g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
+        g_drawPool.forceGrouping(false);
     }
 
     if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
@@ -481,16 +483,6 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
         if(light.intensity > 0) {
             lightView->addLightSource(screenRect.center(), light);
         }
-    }
-}
-
-void ThingType::generateTextureCache()
-{
-    for(size_t i = m_textures.size(); --i <= 0;)
-    {
-        getTexture(i, TextureType::ALL_BLANK);
-        getTexture(i, TextureType::NONE);
-        getTexture(i, TextureType::SMOOTH);
     }
 }
 
@@ -594,8 +586,6 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
 
 Size ThingType::getBestTextureDimension(int w, int h, int count)
 {
-    const int MAX = 32;
-
     int k = 1;
     while(k < w)
         k <<= 1;
@@ -607,13 +597,13 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
     h = k;
 
     const int numSprites = w * h * count;
-    assert(numSprites <= MAX * MAX);
-    assert(w <= MAX);
-    assert(h <= MAX);
+    assert(numSprites <= SPRITE_SIZE * SPRITE_SIZE);
+    assert(w <= SPRITE_SIZE);
+    assert(h <= SPRITE_SIZE);
 
-    Size bestDimension = Size(MAX, MAX);
-    for(int i = w; i <= MAX; i <<= 1) {
-        for(int j = h; j <= MAX; j <<= 1) {
+    Size bestDimension = Size(SPRITE_SIZE);
+    for(int i = w; i <= SPRITE_SIZE; i <<= 1) {
+        for(int j = h; j <= SPRITE_SIZE; j <<= 1) {
             Size candidateDimension = Size(i, j);
             if(candidateDimension.area() < numSprites)
                 continue;

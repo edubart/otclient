@@ -81,6 +81,9 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
     if(isYell())
         delay *= 2;
 
+    if(g_app.canOptimize())
+        delay /= 2;
+
     m_messages.emplace_back(text, g_clock.millis() + delay);
     compose();
 

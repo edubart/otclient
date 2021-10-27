@@ -185,10 +185,10 @@ void MapView::drawFloor()
             {
                 for(const auto& tile : map.grounds)
                     tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
-
-                for(const auto& tile : map.surfaces)
-                    tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
             }
+
+            for(const auto& tile : map.surfaces)
+                tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
 
             g_drawPool.startPosition();
             {
@@ -215,6 +215,8 @@ void MapView::drawCreatureInformation()
     if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
 
     g_drawPool.use(m_pools.creatureInformation);
+    g_drawPool.forceGrouping(true);
+
     const Position cameraPosition = getCameraPosition();
 
     uint32_t flags = 0;
@@ -235,6 +237,8 @@ void MapView::drawText()
     if(!m_drawTexts || (g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty())) return;
 
     g_drawPool.use(m_pools.text);
+    g_drawPool.forceGrouping(true);
+
     const Position cameraPosition = getCameraPosition();
     for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
         if(staticText->getMessageMode() == Otc::MessageNone) continue;

@@ -32,6 +32,11 @@ Panel
     !text: tr('Show frame rate')
 
   OptionCheckBox
+    id: optimizeFps
+    !text: tr('Optimize FPS')
+    !tooltip: tr('try to optimize when the frame rate is below 60. VISUAL PROBLEMS MAY OCCUR')
+
+  OptionCheckBox
     id: enableLights
     !text: tr('Enable lights')
 

@@ -38,7 +38,8 @@ local defaultOptions = {
     enableHighlightMouseTarget = true,
     antiAliasing = true,
     renderScale = 100,
-    shadowFloorIntensity = 15
+    shadowFloorIntensity = 15,
+    optimizeFps = true
 }
 
 local optionsWindow
@@ -234,6 +235,8 @@ function setOption(key, value, force)
         g_window.setVerticalSync(value)
     elseif key == 'showFps' then
         modules.client_topmenu.setFpsVisible(value)
+    elseif key == 'optimizeFps' then
+        g_app.optimize(value)
     elseif key == 'showPing' then
         modules.client_topmenu.setPingVisible(value)
     elseif key == 'fullscreen' then

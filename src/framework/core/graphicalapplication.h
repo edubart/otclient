@@ -50,6 +50,9 @@ public:
     int getMaxFps() { return m_frameCounter.getMaxFps(); }
 
     bool isOnInputEvent() { return m_onInputEvent; }
+    bool canOptimize() { return m_optimize && getFps() < 60; }
+
+    void optimize(const bool optimize) { m_optimize = optimize; }
 
 protected:
     void resize(const Size& size);
@@ -59,7 +62,8 @@ private:
     bool foregroundCanUpdate() { return m_mustRepaint && m_refreshTime.ticksElapsed() >= 16; }
 
     bool m_onInputEvent{ false },
-        m_mustRepaint{ false };
+        m_mustRepaint{ false },
+        m_optimize{ false };
 
     Timer m_refreshTime;
 
