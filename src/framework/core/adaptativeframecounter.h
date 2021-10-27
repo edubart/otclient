@@ -36,8 +36,6 @@ public:
     bool update();
     bool canRefresh();
 
-    size_t getMaximumSleepMicros() { return static_cast<long>(getMaxPeriod()) * 1000.0; }
-
     uint getFps() const { return m_fps; }
     uint getMaxFps() const { return m_maxFps; }
 
@@ -51,7 +49,7 @@ private:
         m_fpsCount{ 0 },
         m_interval{ 0 };
 
-    double m_currentTime{ 0.f }, m_lastTime{ 0.f };
+    ticks_t m_currentTime{ 0 }, m_lastTime{ 0 };
 };
 
 #endif
