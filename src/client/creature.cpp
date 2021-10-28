@@ -195,7 +195,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         }
 
         if(animationPhases > 1) {
-            animationPhase = (g_clock.millis() % (animateTicks * animationPhases)) / animateTicks;
+            animationPhase = (g_clock.millis() % (static_cast<long long>(animateTicks) * animationPhases)) / animateTicks;
         }
 
         if(m_outfit.getCategory() == ThingCategoryEffect)
@@ -404,7 +404,7 @@ void Creature::updateJump()
         g_map.notificateCameraMove(m_walkOffset);
     }
 
-    int nextT, diff = 0, i = 1;
+    int nextT = 0, diff = 0, i = 1;
     if(m_jumpTimer.ticksElapsed() < halfJumpDuration)
         diff = 1;
     else if(m_jumpTimer.ticksElapsed() > halfJumpDuration)
@@ -584,8 +584,10 @@ void Creature::nextWalkUpdate()
 
 void Creature::updateWalk(const bool isPreWalking)
 {
-    const float extraSpeed = isLocalPlayer() ? 10.f : 0,
-        walkTicksPerPixel = (getStepDuration(true) + extraSpeed) / SPRITE_SIZE;
+    const uint stepDuration = getStepDuration(true);
+
+    const float extraSpeed = isLocalPlayer() && !hasSpeedFormula() ? 800.f / static_cast<float>(stepDuration) : 0.f,
+        walkTicksPerPixel = (stepDuration + extraSpeed) / SPRITE_SIZE;
 
     const int totalPixelsWalked = std::min<int>((m_walkTimer.ticksElapsed() / walkTicksPerPixel), SPRITE_SIZE);
 
@@ -738,15 +740,18 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
 
 void Creature::setSpeed(uint16 speed)
 {
+    if(speed == m_speed)
+        return;
+
     const uint16 oldSpeed = m_speed;
     m_speed = speed;
 
     // Cache for stepSpeed Law
-    if(g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula()) {
+    if(hasSpeedFormula()) {
         speed *= 2;
 
         if(speed > -speedB) {
-            m_calculatedStepSpeed = floor((Creature::speedA * log((speed / 2) + Creature::speedB) + Creature::speedC) + 0.5);
+            m_calculatedStepSpeed = floor((Creature::speedA * log((speed / 2.) + Creature::speedB) + Creature::speedC) + 0.5);
             if(m_calculatedStepSpeed == 0) m_calculatedStepSpeed = 1;
         } else m_calculatedStepSpeed = 1;
     }
@@ -892,10 +897,8 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         m_stepCache.speed = m_speed;
         m_stepCache.groundSpeed = groundSpeed;
 
-        const bool hasGameNewSpeedLaw = g_game.getFeature(Otc::GameNewSpeedLaw) && hasSpeedFormula();
-
         double stepDuration = 1000. * groundSpeed;
-        if(hasGameNewSpeedLaw) {
+        if(hasSpeedFormula()) {
             stepDuration = std::floor(stepDuration / m_calculatedStepSpeed);
         } else stepDuration /= m_speed;
 
@@ -980,7 +983,7 @@ int Creature::getCurrentAnimationPhase(const bool mount)
 
     if(thingType->isAnimateAlways()) {
         const int ticksPerFrame = std::round(1000 / thingType->getAnimationPhases());
-        return (g_clock.millis() % (ticksPerFrame * thingType->getAnimationPhases())) / ticksPerFrame;
+        return (g_clock.millis() % (static_cast<long long>(ticksPerFrame) * thingType->getAnimationPhases())) / ticksPerFrame;
     }
 
     return m_walkAnimationPhase;

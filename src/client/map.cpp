@@ -61,12 +61,8 @@ void Map::removeMapView(const MapViewPtr& mapView)
 
 void Map::resetAwareRange()
 {
-    AwareRange range;
-    range.left = 8;
-    range.top = 6;
-    range.bottom = range.top + 1;
-    range.right = range.left + 1;
-    setAwareRange(range);
+    const uint8 left = 8, top = 6;
+    setAwareRange({ left , top, left + 1, top + 1 });
 }
 
 void Map::notificateKeyRelease(const InputEvent& inputEvent)
@@ -284,7 +280,7 @@ void Map::removeThingColor(const ThingPtr& thing)
 
 StaticTextPtr Map::getStaticText(const Position& pos)
 {
-    for(auto staticText : m_staticTexts) {
+    for(const auto& staticText : m_staticTexts) {
         // try to combine messages
         if(staticText->getPosition() == pos)
             return staticText;
@@ -950,7 +946,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
         result = Otc::PathFindResultOk;
     }
 
-    for(auto it : nodes)
+    for(const auto& it : nodes)
         delete it.second;
 
     return ret;

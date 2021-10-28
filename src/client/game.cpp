@@ -596,8 +596,8 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
 
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
-        const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
         if(m_nextScheduledDir != direction) {
+            const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration() / 3, 250))) {
                 // must add a new walk event
                 if(m_walkEvent) {
@@ -610,13 +610,13 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
             }
         }
         return false;
-    } else {
-        m_nextScheduledDir = Otc::InvalidDirection;
-        // if it's going to walk, but there is another scheduled event, cancel it
-        if(m_walkEvent && !m_walkEvent->isExecuted()) {
-            m_walkEvent->cancel();
-            m_walkEvent = nullptr;
-        }
+    }
+
+    m_nextScheduledDir = Otc::InvalidDirection;
+    // if it's going to walk, but there is another scheduled event, cancel it
+    if(m_walkEvent && !m_walkEvent->isExecuted()) {
+        m_walkEvent->cancel();
+        m_walkEvent = nullptr;
     }
 
     Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
@@ -679,14 +679,14 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
     if(!canPerformGameAction())
         return;
 
-    // protocol limits walk path up to 255 directions
+    if(dirs.empty())
+        return;
+
+    // protocol limits walk path up to 127 directions
     if(dirs.size() > 127) {
         g_logger.error("Auto walk path too great, the maximum number of directions is 127");
         return;
     }
-
-    if(dirs.empty())
-        return;
 
     // must cancel follow before any new walk
     if(isFollowing())
@@ -697,13 +697,15 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
     if(!m_localPlayer->canWalk(direction))
         return;
 
-    TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-    if(toTile && toTile->isWalkable() && !m_localPlayer->isServerWalking()) {
-        m_localPlayer->preWalk(direction);
+    if(!m_localPlayer->isWalking()) {
+        TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
+        if(toTile && toTile->isWalkable()) {
+            m_localPlayer->preWalk(direction);
 
-        if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
-            forceWalk(direction);
-            dirs.erase(it);
+            if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
+                forceWalk(direction);
+                dirs.erase(it);
+            }
         }
     }
 

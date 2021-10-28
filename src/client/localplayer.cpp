@@ -72,44 +72,31 @@ bool LocalPlayer::canWalk(Otc::Direction)
     if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
         return false;
 
-    if(!isAutoWalking()) {
-        if(isPreWalking() && g_game.getClientVersion() >= 860) return false;
+    if(isAutoWalking())
+        return true;
 
-        if(m_forceWalk) m_forceWalk = false;
-        else {
-            const int stepDuration = std::max<int>(getStepDuration(), g_game.getPing());
-            if(m_walkTimer.ticksElapsed() < stepDuration)
-                return false;
-        }
+    if(m_forceWalk) {
+        m_forceWalk = false;
+        return true;
     }
 
-    return true;
+    const int stepDuration = std::max<int>(getStepDuration(), g_game.getPing());
+    return m_walkTimer.ticksElapsed() >= stepDuration;
 }
 
 void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 {
     m_autoWalkRetries = 0;
 
-    // a prewalk was going on
     if(m_preWalking) {
-        // switch to normal walking
         m_preWalking = false;
-        // if is to the last prewalk destination, updates the walk preserving the animation
         if(newPos == m_lastPrewalkDestination) {
             updateWalk();
-            // was to another direction, replace the walk
-        } else {
-            Creature::walk(oldPos, newPos);
+            return;
         }
     }
-    // no prewalk was going on, this must be an server side automated walk
-    else {
-        m_serverWalking = true;
-        if(m_serverWalkEndEvent)
-            m_serverWalkEndEvent->cancel();
 
-        Creature::walk(oldPos, newPos);
-    }
+    Creature::walk(oldPos, newPos);
 }
 
 void LocalPlayer::preWalk(Otc::Direction direction)
@@ -120,9 +107,6 @@ void LocalPlayer::preWalk(Otc::Direction direction)
     }
 
     m_preWalking = true;
-
-    if(m_serverWalkEndEvent)
-        m_serverWalkEndEvent->cancel();
 
     // start walking to direction
     const Position newPos = m_position.translatedToDirection(direction);
@@ -272,18 +256,7 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 void LocalPlayer::terminateWalk()
 {
     Creature::terminateWalk();
-
     m_preWalking = false;
-
-    if(m_serverWalking) {
-        if(m_serverWalkEndEvent)
-            m_serverWalkEndEvent->cancel();
-
-        const auto self = asLocalPlayer();
-        m_serverWalkEndEvent = g_dispatcher.scheduleEvent([self] {
-            self->m_serverWalking = false;
-        }, 100);
-    }
 }
 
 void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPos)

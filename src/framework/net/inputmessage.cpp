@@ -90,7 +90,7 @@ double InputMessage::getDouble()
 {
     uint8 precision = getU8();
     int32 v = getU32() - INT_MAX;
-    return (v / std::pow(static_cast<float>(10), precision));
+    return (v / std::pow(10.f, precision));
 }
 
 bool InputMessage::decryptRsa(int size)

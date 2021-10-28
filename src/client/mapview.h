@@ -33,7 +33,7 @@
 
 struct AwareRange
 {
-    uint8 top, right, bottom, left;
+    uint8 left, top, right, bottom;
     uint8 horizontal() { return left + right + 1; }
     uint8 vertical() { return top + bottom + 1; }
 };

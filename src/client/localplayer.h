@@ -93,7 +93,6 @@ public:
     bool isKnown() { return m_known; }
     bool isPreWalking() { return m_preWalking; }
     bool isAutoWalking() { return m_autoWalkDestination.isValid(); }
-    bool isServerWalking() { return m_serverWalking; }
     bool isPremium() { return m_premium; }
     bool isPendingGame() { return m_pending; }
 
@@ -119,14 +118,13 @@ private:
     bool retryAutoWalk();
 
     // walk related
-    Position m_lastPrewalkDestination;
-    Position m_autoWalkDestination;
-    Position m_lastAutoWalkPosition;
-    ScheduledEventPtr m_serverWalkEndEvent;
+    Position m_lastPrewalkDestination,
+        m_lastAutoWalkPosition,
+        m_autoWalkDestination;
+
     ScheduledEventPtr m_autoWalkContinueEvent;
     ticks_t m_walkLockExpiration;
     stdext::boolean<false> m_preWalking;
-    stdext::boolean<false> m_serverWalking;
     stdext::boolean<false> m_knownCompletePath;
 
     stdext::boolean<false> m_premium;
