@@ -249,7 +249,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 
         // find the first effect equal and wait for it to finish.
         const auto& itFind = std::find_if(m_effects.begin(), m_effects.end(), [&effect]
-        (const EffectPtr& currentEffect) { return effect->getId() == currentEffect->getId() || g_app.canOptimize() && effect->getSize() >= currentEffect->getSize(); });
+        (const EffectPtr& currentEffect) { return effect->getId() == currentEffect->getId() || (g_app.canOptimize() && effect->getSize() >= currentEffect->getSize()); });
 
         if(itFind != m_effects.end()) {
             effect->waitFor(*itFind);
