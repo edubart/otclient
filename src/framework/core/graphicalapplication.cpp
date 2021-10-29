@@ -146,10 +146,9 @@ void GraphicalApplication::run()
         // the screen consists of two panes
         {
             // foreground pane - steady pane with few animated stuff (UI)
-            if(m_mustRepaint && foregroundCanUpdate()) {
+            if(foregroundCanUpdate()) {
                 g_drawPool.use(m_foregroundFramed);
                 g_ui.render(Fw::ForegroundPane);
-                m_refreshTime.restart();
             }
 
             // background pane - high updated and animated pane (where the game are stuff happens)

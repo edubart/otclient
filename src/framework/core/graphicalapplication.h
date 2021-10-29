@@ -59,13 +59,21 @@ protected:
     void inputEvent(const InputEvent& event);
 
 private:
-    bool foregroundCanUpdate() { return m_mustRepaint && m_refreshTime.ticksElapsed() >= 16; }
+    bool foregroundCanUpdate()
+    {
+        if(m_mustRepaint && m_foregroundRefreshTime.ticksElapsed() >= 16) {
+            m_foregroundRefreshTime.restart();
+            return true;
+        }
+
+        return false;
+    }
 
     bool m_onInputEvent{ false },
         m_mustRepaint{ false },
         m_optimize{ false };
 
-    Timer m_refreshTime;
+    Timer m_foregroundRefreshTime;
 
     AdaptativeFrameCounter m_frameCounter;
 
