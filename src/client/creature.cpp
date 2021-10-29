@@ -905,7 +905,11 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         if(FORCE_NEW_WALKING_FORMULA || g_game.getClientVersion() >= 860) {
             const auto serverBeat = g_game.getServerBeat();
             stepDuration = std::ceil(stepDuration / serverBeat) * serverBeat;
-        }
+
+            if(isLocalPlayer() && hasSpeedFormula())
+                stepDuration = std::max<double>(stepDuration, 110.f);
+        } else if(isLocalPlayer())
+            stepDuration += 8.f;
 
         m_stepCache.duration = stepDuration;
         m_stepCache.diagonalDuration = stepDuration * (g_game.getClientVersion() > 810 || FORCE_NEW_WALKING_FORMULA ? 3 : 2);
