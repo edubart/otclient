@@ -810,9 +810,18 @@ void UIWidget::destroyChildren()
     while(!m_children.empty()) {
         UIWidgetPtr child = m_children.front();
         m_children.pop_front();
+
         child->setParent(nullptr);
         m_layout->removeWidget(child);
         child->destroy();
+
+        // remove access to child via widget.childId
+        if(child->m_customId) {
+            std::string widgetId = child->getId();
+            if(hasLuaField(widgetId)) {
+                setLuaField(widgetId, nullptr);
+            }
+        }
     }
 
     if(layout)
