@@ -620,10 +620,12 @@ function loadActionBar()
             slot.parameter = setting.parameter
             if slot.hotkey then
                 local text = slot.hotkey
-                text = text:gsub("Shift", "S")
-                text = text:gsub("Alt", "A")
-                text = text:gsub("Ctrl", "C")
-                text = text:gsub("+","")
+                if type(text) == "string" then
+                    text = text:gsub("Shift", "S")
+                    text = text:gsub("Alt", "A")
+                    text = text:gsub("Ctrl", "C")
+                    text = text:gsub("+","")
+                end
                 slot:getChildById('key'):setText(text)
             end
             if slot.words then
