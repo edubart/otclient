@@ -1,7 +1,7 @@
 MainWindow
   text: Assign Text
   size: 250 165
-  @onEscape: self:hide()
+  @onEscape: modules.game_actionbar.closeTextAssignWindow()
   @onEnter: modules.game_actionbar.textAssignAccept()
   Label
     id: textLabel
@@ -48,4 +48,4 @@ MainWindow
     text: Cancel
     anchors.bottom: parent.bottom
     anchors.right: parent.right
-    @onClick: self:getParent():hide()
+    @onClick: modules.game_actionbar.closeTextAssignWindow()

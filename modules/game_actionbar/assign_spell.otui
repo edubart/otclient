@@ -27,7 +27,7 @@ SpellListLabel < Label
 MainWindow
   text: Assign Spell
   size: 280 480
-  @onEscape: self:hide()
+  @onEscape: modules.game_actionbar.closeSpellAssignWindow()
   @onEnter: modules.game_actionbar.spellAssignAccept()
   PreviewSpell
     id: previewSpell
@@ -116,4 +116,4 @@ MainWindow
     anchors.bottom: parent.bottom
     anchors.right: parent.right
     text: Cancel
-    @onClick: self:getParent():hide()
+    @onClick: modules.game_actionbar.closeSpellAssignWindow()

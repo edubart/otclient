@@ -1,7 +1,7 @@
 MainWindow
   !text: tr('Edit Hotkey')
   size: 360 160
-  @onEscape: self:destroy()
+  @onEscape: modules.game_actionbar.closeEditHotkeyWindow()
 
   FlatPanel
     anchors.left: parent.left
@@ -62,4 +62,4 @@ MainWindow
     width: 80
     anchors.right: parent.right
     anchors.bottom: parent.bottom
-    @onClick: self:getParent():destroy() modules.game_actionbar.editHotkeyWindow = nil
+    @onClick: modules.game_actionbar.closeEditHotkeyWindow()

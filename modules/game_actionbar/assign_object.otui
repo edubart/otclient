@@ -66,8 +66,7 @@ MainWindow
     anchors.right: previewItem.right
     text: Select Object
     margin-top: 5
-    @onClick: |
-      modules.game_actionbar.startChooseItem()
+    @onClick: modules.game_actionbar.startChooseItem()
 
   HorizontalSeparator
     anchors.top: prev.bottom
@@ -81,12 +80,11 @@ MainWindow
     anchors.left: parent.left
     anchors.bottom: parent.bottom
     text: Apply
-    @onClick: | 
-      modules.game_actionbar.objectAssignAccept()
+    @onClick: modules.game_actionbar.objectAssignAccept()
 
   Button
-    id: cencelButton
+    id: cancelButton
     anchors.right: parent.right
     anchors.bottom: parent.bottom
     text: Cancel
-    @onClick: self:getParent():hide()
+    @onClick: modules.game_actionbar.closeObjectAssignWindow()

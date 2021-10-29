@@ -65,16 +65,16 @@ function terminate()
         onSpellCooldown = onSpellCooldown
     })
     if spellAssignWindow then
-        spellAssignWindow:destroy()
+        closeSpellAssignWindow()
     end
     if objectAssignWindow then
-        objectAssignWindow:destroy()
+        closeObjectAssignWindow()
     end
     if textAssignWindow then
-        textAssignWindow:destroy()
+        closeTextAssignWindow()
     end
     if editHotkeyWindow then
-        editHotkeyWindow:destroy()
+        closeEditHotkeyWindow()
     end
     if spellsPanel then
         disconnect(spellsPanel, { onChildFocusChange = 
@@ -142,6 +142,14 @@ function openSpellAssignWindow()
     spellAssignWindow:raise()
     spellAssignWindow:focus()
     spellAssignWindow:getChildById('filterTextEdit'):focus()
+    modules.game_hotkeys.enableHotkeys(false)
+end
+
+function closeSpellAssignWindow()
+    spellAssignWindow:destroy()
+    spellAssignWindow = nil
+    spellsPanel = nil
+    modules.game_hotkeys.enableHotkeys(true)
 end
 
 function initializeSpelllist()
@@ -218,7 +226,7 @@ function spellAssignAccept()
     else
         slot.parameter = nil
     end
-    spellAssignWindow:hide()
+    closeSpellAssignWindow()
     setupHotkeys()
 end
 
@@ -247,6 +255,13 @@ function openTextAssignWindow()
     textAssignWindow = g_ui.loadUI('assign_text', g_ui.getRootWidget())
     textAssignWindow:raise()
     textAssignWindow:focus()
+    modules.game_hotkeys.enableHotkeys(false)
+end
+
+function closeTextAssignWindow()
+    textAssignWindow:destroy()
+    textAssignWindow = nil
+    modules.game_hotkeys.enableHotkeys(true)
 end
 
 function textAssignAccept()
@@ -289,18 +304,25 @@ function textAssignAccept()
         slot:setTooltip(slot.text)
         setupHotkeys()
     end
-    textAssignWindow:hide()
+    closeTextAssignWindow()
 end
 
 function openObjectAssignWindow()
     objectAssignWindow = g_ui.loadUI('assign_object', g_ui.getRootWidget())
-    objectAssignWindow:setVisible(false)
     actionRadioGroup = UIRadioGroup.create()
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('useOnYourselfCheckbox'))
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('useOnTargetCheckbox'))
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('useWithCrosshairCheckbox'))
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('equipCheckbox'))
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('useCheckbox'))
+    objectAssignWindow:setVisible(false)
+end
+
+function closeObjectAssignWindow()
+    objectAssignWindow:destroy()
+    objectAssignWindow = nil
+    actionRadioGroup = nil
+    modules.game_hotkeys.enableHotkeys(true)
 end
 
 function startChooseItem()
@@ -333,7 +355,7 @@ function objectAssignAccept()
         slot.useType = "useWith"
     end
     setupHotkeys()
-    objectAssignWindow:hide()
+    closeObjectAssignWindow()
 end
 
 function onChooseItemMouseRelease(self, mousePosition, mouseButton)
@@ -368,6 +390,9 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
             objectAssignWindow:getChildById('useCheckbox'):setEnabled(true)
             actionRadioGroup:selectWidget(objectAssignWindow:getChildById('useCheckbox'))
         end
+        if not objectAssignWindow:isVisible() then
+            modules.game_hotkeys.enableHotkeys(false)
+        end
         objectAssignWindow:show()
         objectAssignWindow:raise()
         objectAssignWindow:focus()
@@ -386,6 +411,13 @@ function openEditHotkeyWindow()
     editHotkeyWindow.onKeyDown = hotkeyCapture
     editHotkeyWindow:raise()
     editHotkeyWindow:focus()
+    modules.game_hotkeys.enableHotkeys(false)
+end
+
+function closeEditHotkeyWindow()
+    editHotkeyWindow:destroy()
+    editHotkeyWindow = nil
+    modules.game_hotkeys.enableHotkeys(true)
 end
 
 function unbindHotkeys()
@@ -531,8 +563,7 @@ function hotkeyCaptureOk(assignWindow, keyCombo)
     slot:getChildById('key'):setText(text)
     setupHotkeys()
     if assignWindow == editHotkeyWindow then
-        editHotkeyWindow:destroy()
-        editHotkeyWindow = nil
+        closeEditHotkeyWindow()
         return
     end
     assignWindow:destroy()
