@@ -1,3 +1,8 @@
+HOTKEY_USE = nil
+HOTKEY_USEONSELF = 1
+HOTKEY_USEONTARGET = 2
+HOTKEY_USEWITH = 3
+
 actionBar = nil
 actionBarPanel = nil
 bottomPanel = nil
@@ -105,6 +110,7 @@ function setupActionBar()
         slot:setId("slot" .. i)
         slot:setVisible(true)
         slot.itemId = nil
+        slot.subType = nil
         slot.words = nil
         slot.text = nil
         slot.useType = nil
@@ -223,6 +229,7 @@ function clearSlot()
     slot:clearItem()
     slot:setText("")
     slot.itemId = nil
+    slot.subType = nil
     slot.words = nil
     slot.text = nil
     slot.useType = nil
@@ -311,6 +318,9 @@ function objectAssignAccept()
     slot:setImageSource("/images/game/actionbar/item-background")
     slot:setBorderWidth(0)
     slot.itemId = item:getId()
+    if item:isFluidContainer() then
+        slot.subType = item:getSubType()
+    end
     if objectAssignWindow:getChildById('equipCheckbox'):isChecked() then
         slot.useType = "equip"
     elseif objectAssignWindow:getChildById('useCheckbox'):isChecked() then
@@ -396,17 +406,14 @@ function setupHotkeys()
             end
             lastHotkeyTime = g_clock.millis()
             if slot.itemId and slot.useType then
-                local item = Item.create(slot.itemId)
                 if slot.useType == "use" then
-                    if item then
-                        g_game.use(item)
-                    end
+                    modules.game_hotkeys.executeHotkeyItem(HOTKEY_USE, slot.itemId, slot.subType)
                 elseif slot.useType == "useOnTarget" then
-                    g_game.useInventoryItemWith(slot.itemId, g_game.getAttackingCreature())
+                    modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEONTARGET, slot.itemId, slot.subType)
                 elseif slot.useType == "useWith" then
-                    modules.game_interface.startUseWith(item)
+                    modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEWITH, slot.itemId, slot.subType)
                 elseif slot.useType == "useOnSelf" then
-                    g_game.useInventoryItemWith(slot.itemId, g_game.getLocalPlayer())
+                    modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEONSELF, slot.itemId, slot.subType)
                 elseif slot.useType == "equip" then
                     local item = g_game.findPlayerItem(slot.itemId, -1)
                     if item then
@@ -435,17 +442,14 @@ function setupHotkeys()
                 end
                 lastHotkeyTime = g_clock.millis()
                 if slot.itemId and slot.useType then
-                    local item = Item.create(slot.itemId)
                     if slot.useType == "use" then
-                        if item then
-                            g_game.use(item)
-                        end
+                        modules.game_hotkeys.executeHotkeyItem(HOTKEY_USE, slot.itemId, slot.subType)
                     elseif slot.useType == "useOnTarget" then
-                        g_game.useInventoryItemWith(slot.itemId, g_game.getAttackingCreature())
+                        modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEONTARGET, slot.itemId, slot.subType)
                     elseif slot.useType == "useWith" then
-                        modules.game_interface.startUseWith(item)
+                        modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEWITH, slot.itemId, slot.subType)
                     elseif slot.useType == "useOnSelf" then
-                        g_game.useInventoryItemWith(slot.itemId, g_game.getLocalPlayer())
+                        modules.game_hotkeys.executeHotkeyItem(HOTKEY_USEONSELF, slot.itemId, slot.subType)
                     elseif slot.useType == "equip" then
                         local item = g_game.findPlayerItem(slot.itemId, -1)
                         if item then
@@ -551,6 +555,7 @@ function saveActionBar()
             hotkey = slot.hotkey,
             autoSend = slot.autoSend,
             itemId = slot.itemId,
+            subType = slot.subType,
             useType = slot.useType,
             text = slot.text,
             words = slot.words,
@@ -606,6 +611,7 @@ function loadActionBar()
         for slot, setting in pairs(hotkeys) do
             slot = actionBarPanel:getChildById(slot)
             slot.itemId = setting.itemId
+            slot.subType = setting.subType
             slot.words = setting.words
             slot.text = setting.text
             slot.hotkey = setting.hotkey
