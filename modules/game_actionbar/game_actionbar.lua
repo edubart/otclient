@@ -431,11 +431,11 @@ end
 function setupHotkeys()
     unbindHotkeys()
     for v, slot in pairs(actionBarPanel:getChildren()) do
-        g_mouse.bindPress(slot,
-        function()
+        g_mouse.bindPress(slot, function()
             if g_clock.millis() - lastHotkeyTime < modules.client_options.getOption('hotkeyDelay') then
                 return
             end
+
             lastHotkeyTime = g_clock.millis()
             if slot.itemId and slot.useType then
                 if slot.useType == "use" then
@@ -462,16 +462,21 @@ function setupHotkeys()
                 if slot.autoSend then
                     g_game.talk(slot.text)
                 else
+                    if not modules.game_console.isChatEnabled() then
+                        modules.game_console.switchChatOnCall()
+                    end
                     modules.game_console.setTextEditText(slot.text)
                 end
             end
         end)
+
         if slot.hotkey and slot.hotkey ~= '' then
-            g_keyboard.bindKeyPress(slot.hotkey,  
-            function()
+            g_keyboard.bindKeyPress(slot.hotkey, function()
+                if not modules.game_hotkeys.canPerformKeyCombo(slot.hotkey) then return end
                 if g_clock.millis() - lastHotkeyTime < modules.client_options.getOption('hotkeyDelay') then
                     return
                 end
+
                 lastHotkeyTime = g_clock.millis()
                 if slot.itemId and slot.useType then
                     if slot.useType == "use" then
@@ -498,7 +503,12 @@ function setupHotkeys()
                     if slot.autoSend then
                         g_game.talk(slot.text)
                     else
-                        modules.game_console.setTextEditText(slot.text)
+                        scheduleEvent(function()
+                            if not modules.game_console.isChatEnabled() then
+                                modules.game_console.switchChatOnCall()
+                            end
+                            modules.game_console.setTextEditText(slot.text)
+                        end,1)
                     end
                 end
             end)

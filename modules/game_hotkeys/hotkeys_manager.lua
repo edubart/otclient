@@ -454,7 +454,12 @@ function doKeyCombo(keyCombo)
         if hotKey.autoSend then
             modules.game_console.sendMessage(hotKey.value)
         else
-            modules.game_console.setTextEditText(hotKey.value)
+            scheduleEvent(function()
+                if not modules.game_console.isChatEnabled() then
+                    modules.game_console.switchChatOnCall()
+                end
+                modules.game_console.setTextEditText(hotKey.value)
+            end,1)
         end
     else
         executeHotkeyItem(hotKey.useType, hotKey.itemId, hotKey.subType)
