@@ -17,12 +17,11 @@ RUN apt-get update; \
     libopenal-dev \
     libssl-dev \
     libvorbis-dev \
-    mercurial \
     zlib1g-dev; \
   apt-get clean && apt-get autoclean
 
 WORKDIR /
-RUN hg clone -r stable-3.0 http://hg.icculus.org/icculus/physfs/
+RUN git clone --branch release-3.0.2 --depth 1 https://github.com/icculus/physfs.git
 WORKDIR /physfs/build/
 RUN cmake ..
 RUN make -j$(nproc)
