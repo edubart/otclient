@@ -34,6 +34,9 @@
 - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
 - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))
 
+##### [Active Developers]
+[@mehah](https://github.com/mehah) [@scopz](https://github.com/scopz)
+
 <h2>
 
 ```diff
