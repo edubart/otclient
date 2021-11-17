@@ -1,7 +1,12 @@
 # OTCLient - Redemption 
 ![#6ff791](https://via.placeholder.com/15/6ff791/000000?text=+) `Tested on Tibia 10.98`
 
+#### ![#7862FF](https://via.placeholder.com/15/7862FF/000000?text=+) [Discord Link](https://discord.gg/HZN8yJJSyC)
+
+#### ![#FF4848](https://via.placeholder.com/15/FF4848/000000?text=+) If you are interested in supporting the project, go to this [link](https://www.paypal.com/donate/?business=CV9D5JF8E46LY&no_recurring=0&item_name=Thank+you+very+much+for+your+donation.&currency_code=BRL), any value is great help, thank you.
+
 ### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.755
+
 
 ### Features
 
@@ -16,15 +21,18 @@
 - Anti-Aliasing Option
 - Floating Effects Option
 - Adjusted Path Finding
-- Shader System Fix (CTRL + Y) by [@FreshyPeshy](https://github.com/FreshyPeshy)
-- Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
 - Optimized Terminal
 - Refactored Walk System
+- Module Controller System ([Code example](https://github.com/mehah/otclient/blob/cache-for-all/modules/game_minimap/minimap.lua))
+- Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
+- Client Config in [config.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/config.h)
+
+##### Community (Features)
+- Access to widget children via widget.childId by [@Hugo0x1337](https://github.com/Hugo0x1337)
+- Shader System Fix (CTRL + Y) by [@FreshyPeshy](https://github.com/FreshyPeshy)
 - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
 - Health&Mana Circle by [@EgzoT](https://github.com/EgzoT), [@GustavoBlaze](https://github.com/GustavoBlaze), [@Tekadon58](https://github.com/Tekadon58) ([GITHUB Project](https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle))
 - Tibia Theme 1.2 by Zews ([Forum Thread](https://otland.net/threads/otc-tibia-theme-v1-2.230988/))
-- Some bugs fixed contained in [edubart/otclient](https://github.com/edubart/otclient)
-- Client Config in [config.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/config.h)
 
 <h2>
 
