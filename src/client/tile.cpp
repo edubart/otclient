@@ -117,10 +117,11 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, LightView* lightVi
     }
 
     if(hasCreature()) {
-        for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
-            const auto& creature = *it;
-            if(creature->isWalking()) continue;
-            drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        for(auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
+            const auto& thing = *it;
+            if(!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
+
+            drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 #else
