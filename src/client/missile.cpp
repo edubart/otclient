@@ -27,7 +27,7 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-void Missile::draw(const Point& dest, float scaleFactor, int frameFlag, LightView* lightView)
+void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if(m_id == 0)
         return;
@@ -63,7 +63,7 @@ void Missile::draw(const Point& dest, float scaleFactor, int frameFlag, LightVie
     }
 
     const float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, TextureType::NONE, Color::white, frameFlag, lightView);
+    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, TextureType::NONE, Color::white, lightView);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)

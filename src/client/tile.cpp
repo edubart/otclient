@@ -63,7 +63,7 @@ void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
 
 bool Tile::isCompletelyCovered(int8 firstFloor)
 {
-    if(m_ignoreCompletelyCoveredCheck)
+    if(m_ignoreCompletelyCoveredCheck || hasLight())
         return false;
 
     if(firstFloor > -1) {
@@ -76,16 +76,12 @@ bool Tile::isCompletelyCovered(int8 firstFloor)
     return m_completelyCovered;
 }
 
-void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, int frameFlag, LightView* lightView)
+void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
-    if(isCompletelyCovered()) {
-        frameFlag = lightView && hasLight() ? (int)Otc::FUpdateLight : 0;
-    }
-
     if(thing->isEffect()) {
-        thing->static_self_cast<Effect>()->drawEffect(dest, scaleFactor, frameFlag, lightView);
+        thing->static_self_cast<Effect>()->drawEffect(dest, scaleFactor, lightView);
     } else {
-        thing->draw(dest, scaleFactor, animate, m_highlight, TextureType::NONE, Color::white, frameFlag, lightView);
+        thing->draw(dest, scaleFactor, animate, m_highlight, TextureType::NONE, Color::white, lightView);
 
         m_drawElevation += thing->getElevation();
         if(m_drawElevation > MAX_ELEVATION)
@@ -93,38 +89,38 @@ void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor
     }
 }
 
-void Tile::drawGround(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawGround(const Point& dest, float scaleFactor, LightView* lightView)
 {
     m_drawElevation = 0;
 
     for(const auto& ground : m_things) {
         if(ground->isSingleGround() || ground->isSingleGroundBorder()) {
-            drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 }
 
-void Tile::drawSurface(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawSurface(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    drawBottom(dest, scaleFactor, frameFlags, lightView);
-    drawTop(dest, scaleFactor, frameFlags, lightView);
+    drawBottom(dest, scaleFactor, lightView);
+    drawTop(dest, scaleFactor, lightView);
 }
 
-void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawCreature(const Point& dest, float scaleFactor, LightView* lightView)
 {
 #if RENDER_WALKING_CREATURES_BEHIND == 1
     for(const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
             dest.x + ((creature->getPosition().x - m_position.x) * SPRITE_SIZE - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * SPRITE_SIZE - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, frameFlags, lightView);
+        ), scaleFactor, true, lightView);
     }
 
     if(hasCreature()) {
         for(auto it = m_creatures.rbegin(); it != m_creatures.rend(); ++it) {
             const auto& creature = *it;
             if(creature->isWalking()) continue;
-            drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            drawThing(creature, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 #else
@@ -132,7 +128,7 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
         for(const auto& thing : m_things) {
             if(!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
 
-            drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 
@@ -140,26 +136,26 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, int frameFlags, Li
         drawThing(creature, Point(
             dest.x + ((creature->getPosition().x - m_position.x) * SPRITE_SIZE - m_drawElevation) * scaleFactor,
             dest.y + ((creature->getPosition().y - m_position.y) * SPRITE_SIZE - m_drawElevation) * scaleFactor
-        ), scaleFactor, true, frameFlags, lightView);
+        ), scaleFactor, true, lightView);
     }
 #endif
 }
 
-void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if(!hasGround()) m_drawElevation = 0;
 
     if(hasTopGround()) {
         for(const auto& ground : m_things) {
             if(ground->isTopGround() || ground->isTopGroundBorder())
-                drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+                drawThing(ground, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 
     if(m_countFlag.hasBottomItem) {
         for(const auto& item : m_things) {
             if(!item->isOnBottom()) continue;
-            drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
         }
     }
 
@@ -171,7 +167,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
             const auto& item = *it;
             if(!item->isCommon()) continue;
 
-            drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+            drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
 
             if(item->isLyingCorpse()) {
                 redrawPreviousTopW = std::max<int>(item->getWidth(), redrawPreviousTopW);
@@ -189,26 +185,26 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, int frameFlags, Ligh
                 const TilePtr& tile = g_map.getTile(m_position.translated(x, y));
                 if(tile) {
                     const auto& newDest = dest + (Point(x, y) * SPRITE_SIZE) * scaleFactor;
-                    tile->drawCreature(newDest, scaleFactor, frameFlags);
-                    tile->drawTop(newDest, scaleFactor, frameFlags);
+                    tile->drawCreature(newDest, scaleFactor);
+                    tile->drawTop(newDest, scaleFactor);
                 }
             }
         }
     }
 
-    drawCreature(dest, scaleFactor, frameFlags, lightView);
+    drawCreature(dest, scaleFactor, lightView);
 }
 
-void Tile::drawTop(const Point& dest, float scaleFactor, int frameFlags, LightView* lightView)
+void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
 {
     for(const auto& effect : m_effects) {
-        drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, frameFlags, lightView);
+        drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
     }
 
     if(m_countFlag.hasTopItem) {
         for(const auto& item : m_things) {
             if(!item->isOnTop()) continue;
-            drawThing(item, dest, scaleFactor, true, frameFlags, lightView);
+            drawThing(item, dest, scaleFactor, true, lightView);
         }
     }
 }

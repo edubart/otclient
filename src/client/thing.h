@@ -46,7 +46,7 @@ class Thing : public LuaObject
 public:
     Thing();
     virtual ~Thing() {}
-    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, TextureType /*textureType*/ = TextureType::NONE, Color /* color */ = Color::white, int /*frameFlag*/ = Otc::FUpdateThing, LightView* /*lightView*/ = nullptr) {}
+    virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, TextureType /*textureType*/ = TextureType::NONE, Color /* color */ = Color::white, LightView* /*lightView*/ = nullptr) {}
     virtual void setId(uint32 /*id*/) {}
 
     void setPosition(const Position& position);

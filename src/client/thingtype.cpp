@@ -435,7 +435,7 @@ void ThingType::unserializeOtml(const OTMLNodePtr& node)
     }
 }
 
-void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color, int frameFlags, LightView* lightView)
+void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color, LightView* lightView)
 {
     if(m_null)
         return;
@@ -464,21 +464,17 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     const Rect screenRect(dest + (textureOffset - m_displacement - (m_size.toPoint() - Point(1)) * SPRITE_SIZE) * scaleFactor,
                           textureRect.size() * scaleFactor);
 
-    if(frameFlags & Otc::FUpdateThing) {
-        const bool useOpacity = m_opacity < 1.0f;
+    if(m_opacity < 1.0f)
+        color = Color(1.0f, 1.0f, 1.0f, m_opacity);
 
-        if(useOpacity)
-            color = Color(1.0f, 1.0f, 1.0f, m_opacity);
-
-        if(getCategory() == ThingCategoryMissile || isSingleGround()) {
-            g_drawPool.forceGrouping(true);
-        }
-
-        g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
-        g_drawPool.forceGrouping(false);
+    if(getCategory() == ThingCategoryMissile || isSingleGround()) {
+        g_drawPool.forceGrouping(true);
     }
 
-    if(lightView && hasLight() && frameFlags & Otc::FUpdateLight) {
+    g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
+    g_drawPool.forceGrouping(false);
+
+    if(lightView && hasLight()) {
         const Light light = getLight();
         if(light.intensity > 0) {
             lightView->addLightSource(screenRect.center(), light);

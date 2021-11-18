@@ -33,7 +33,7 @@ class Effect : public Thing
 public:
     Effect();
 
-    void drawEffect(const Point& dest, float scaleFactor, int frameFlag, LightView* lightView = nullptr);
+    void drawEffect(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
     void setId(uint32 id) override;
     uint32 getId() override { return m_id; }

@@ -81,7 +81,7 @@ public:
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);
 
-    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType = TextureType::NONE, Color color = Color::white, int frameFlag = Otc::FUpdateThing, LightView* lightView = nullptr) override;
+    void draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType = TextureType::NONE, Color color = Color::white, LightView* lightView = nullptr) override;
 
     void setId(uint32 id) override;
     void setOtbId(uint16 id);

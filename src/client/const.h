@@ -29,39 +29,10 @@ namespace Otc
         OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
     };
 
-    enum FrameUpdate : uint32 {
-        FUpdateThing = 1 << 0,
-        FUpdateLight = 1 << 1,
-        FUpdateStaticText = 1 << 2,
-        FUpdateCreatureInformation = 1 << 3,
-        FupdateCreature = FUpdateThing | FUpdateCreatureInformation,
-        FUpdateTextInformation = FUpdateStaticText | FUpdateCreatureInformation,
-
-        FUpdateAll = FUpdateThing | FUpdateLight | FUpdateStaticText | FUpdateCreatureInformation
-    };
-
     enum DrawFlags : uint32 {
-        DrawGround = 1,
-        DrawGroundBorders = 2,
-        DrawOnBottom = 4,
-        DrawOnTop = 8,
-        DrawItems = 16,
-        DrawCreatures = 32,
-        DrawEffects = 64,
-        DrawMissiles = 128,
-        DrawCreaturesInformation = 256,
-        DrawStaticTexts = 512,
-        DrawAnimatedTexts = 1024,
-        DrawAnimations = 2048,
-        DrawBars = 4096,
-        DrawNames = 8192,
-        DrawLights = 16384,
-        DrawManaBar = 32768,
-        DrawWalls = DrawOnBottom | DrawOnTop,
-        DrawEverything = DrawGround | DrawGroundBorders | DrawWalls | DrawItems |
-        DrawCreatures | DrawEffects | DrawMissiles | DrawCreaturesInformation |
-        DrawStaticTexts | DrawAnimatedTexts | DrawAnimations | DrawBars | DrawNames |
-        DrawLights | DrawManaBar
+        DrawBars = 1 << 0,
+        DrawNames = 1 << 1,
+        DrawManaBar = 1 << 2
     };
 
     enum DatOpts : uint8 {

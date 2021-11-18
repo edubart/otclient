@@ -31,7 +31,7 @@
 class Missile : public Thing
 {
 public:
-    void draw(const Point& dest, float scaleFactor, int frameFlag, LightView* lightView = nullptr);
+    void draw(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
     void setId(uint32 id) override;
     void setPath(const Position& fromPosition, const Position& toPosition);

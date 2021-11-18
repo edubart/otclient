@@ -184,16 +184,16 @@ void MapView::drawFloor()
             g_drawPool.startPosition();
             {
                 for(const auto& tile : map.grounds)
-                    tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+                    tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
             }
 
             for(const auto& tile : map.surfaces)
-                tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+                tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
 
             g_drawPool.startPosition();
             {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z))
-                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, Otc::FUpdateAll, lightView);
+                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
             }
 
             if(m_shadowFloorIntensity > 0 && z == cameraPosition.z + 1) {
@@ -347,7 +347,7 @@ void MapView::updateVisibleTilesCache()
                     }
 
                     // skip tiles that are completely behind another tile
-                    if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor) && !tile->hasLight())
+                    if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor))
                         continue;
 
                     if(isDrawingLights() && (tile->isFullyOpaque() || (tile->getGround() && tile->getGround()->isTopGround())))
