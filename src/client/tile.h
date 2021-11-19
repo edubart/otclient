@@ -149,6 +149,8 @@ public:
 
     void analyzeThing(const ThingPtr& thing, bool add);
 
+    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
+
 private:
     struct CountFlag {
         int fullGround = 0;
@@ -184,8 +186,6 @@ private:
     void drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, LightView* lightView);
 
     void checkTranslucentLight();
-
-    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
     bool checkForDetachableThing();
 
     Position m_position;

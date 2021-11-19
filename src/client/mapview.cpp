@@ -183,12 +183,20 @@ void MapView::drawFloor()
 
             g_drawPool.startPosition();
             {
-                for(const auto& tile : map.grounds)
+                for(const auto& tile : map.grounds) {
+                    if(!tile->canRender(m_drawViewportEdge, cameraPosition, m_viewport, lightView))
+                        continue;
+
                     tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
+                }
             }
 
-            for(const auto& tile : map.surfaces)
+            for(const auto& tile : map.surfaces) {
+                if(!tile->canRender(m_drawViewportEdge, cameraPosition, m_viewport, lightView))
+                    continue;
+
                 tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
+            }
 
             g_drawPool.startPosition();
             {
