@@ -106,6 +106,11 @@ bool ThingTypeManager::loadDat(std::string file)
 
         FileStreamPtr fin = g_resources.openFile(file);
 
+#if ENABLE_ENCRYPTION == 1
+        fin->cache();
+        ResourceManager::decrypt(fin->m_data.data(), fin->m_data.size());
+#endif
+
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
 

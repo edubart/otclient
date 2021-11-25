@@ -23,6 +23,8 @@
 #ifndef FRAMEWORK_GLOBAL_H
 #define FRAMEWORK_GLOBAL_H
 
+#include <client/config.h>
+
 #include "stdext/compiler.h"
 
  // common C/C++ headers

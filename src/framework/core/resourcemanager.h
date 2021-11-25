@@ -24,7 +24,6 @@
 #define RESOURCES_H
 
 #include "declarations.h"
-
 #include <boost/filesystem.hpp>
 
 namespace fs = boost::filesystem;
@@ -79,6 +78,12 @@ public:
     std::string guessFilePath(const std::string& filename, const std::string& type);
     bool isFileType(const std::string& filename, const std::string& type);
     ticks_t getFileTime(const std::string& filename);
+
+    std::string encrypt(const std::string& data, const std::string& password);
+    std::string decrypt(const std::string& data);
+    static uint8_t* decrypt(uint8_t* data, int32_t size);
+    void runEncryption(const std::string& password);
+    void save_string_into_file(const std::string& contents, const std::string& name);
 
 protected:
     std::vector<std::string> discoverPath(const fs::path& path, bool filenameOnly, bool recursive);

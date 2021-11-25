@@ -51,6 +51,10 @@ bool SpriteManager::loadSpr(std::string file)
         // cache file buffer to avoid lags from hard drive
         m_spritesFile->cache();
 
+#if ENABLE_ENCRYPTION == 1
+        ResourceManager::decrypt(m_spritesFile->m_data.data(), m_spritesFile->m_data.size());
+#endif
+
         m_signature = m_spritesFile->getU32();
         m_spritesCount = g_game.getFeature(Otc::GameSpritesU32) ? m_spritesFile->getU32() : m_spritesFile->getU16();
         m_spritesOffset = m_spritesFile->tell();

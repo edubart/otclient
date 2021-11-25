@@ -23,7 +23,6 @@
 #ifndef SPRITEMANAGER_H
 #define SPRITEMANAGER_H
 
-#include <client/config.h>
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
 
