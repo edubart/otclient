@@ -56,6 +56,15 @@ void UIWidget::updateText()
     m_textMustRecache = true;
 }
 
+void UIWidget::resizeToText()
+{
+    auto textSize = getTextSize();
+    textSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom);
+    textSize += m_textOffset.toSize();
+
+    setSize(textSize);
+}
+
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 {
     for(const OTMLNodePtr& node : styleNode->children()) {

@@ -488,7 +488,7 @@ protected:
     BitmapFontPtr m_font;
 
 public:
-    void resizeToText() { setSize(getTextSize()); }
+    void resizeToText();
     void clearText() { setText(""); }
 
     void setText(std::string text, bool dontFireLuaCall = false);
