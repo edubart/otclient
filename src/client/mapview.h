@@ -85,7 +85,6 @@ public:
     // view mode related
     ViewMode getViewMode() { return m_viewMode; }
     void setViewMode(ViewMode viewMode);
-    void optimizeForSize(const Size& visibleSize);
 
     void setAutoViewMode(bool enable);
     bool isAutoViewModeEnabled() { return m_autoViewMode; }
@@ -178,7 +177,7 @@ private:
         float horizontalStretchFactor, verticalStretchFactor;
     };
 
-    void updateGeometry(const Size& visibleDimension, const Size& optimizedSize);
+    void updateGeometry(const Size& visibleDimension);
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
@@ -216,8 +215,7 @@ private:
     Rect m_rectDimension;
 
     Size m_drawDimension,
-        m_visibleDimension,
-        m_optimizedSize;
+        m_visibleDimension;
 
     Point m_virtualCenterOffset,
         m_visibleCenterOffset,

@@ -214,7 +214,6 @@ void UIMap::updateMapSize()
 
     m_mapRect.resize(mapSize);
     m_mapRect.moveCenter(clippingRect.center());
-    m_mapView->optimizeForSize(mapSize);
 
     if(!m_keepAspectRatio)
         updateVisibleDimension();

@@ -52,8 +52,6 @@ enum {
 
 MapView::MapView()
 {
-    m_optimizedSize = Size(g_map.getAwareRange().horizontal(), g_map.getAwareRange().vertical()) * SPRITE_SIZE;
-
     m_pools.map = g_drawPool.createPoolF(PoolType::MAP);
     m_pools.creatureInformation = g_drawPool.createPool(PoolType::CREATURE_INFORMATION);
     m_pools.text = g_drawPool.createPool(PoolType::TEXT);
@@ -382,7 +380,7 @@ void MapView::updateVisibleTilesCache()
     m_mustUpdateVisibleTilesCache = false;
 }
 
-void MapView::updateGeometry(const Size& visibleDimension, const Size& optimizedSize)
+void MapView::updateGeometry(const Size& visibleDimension)
 {
     const uint8 tileSize = SPRITE_SIZE * (static_cast<float>(m_renderScale) / 100);
     const Size drawDimension = visibleDimension + Size(3),
@@ -423,7 +421,6 @@ void MapView::updateGeometry(const Size& visibleDimension, const Size& optimized
     m_tileSize = tileSize;
     m_virtualCenterOffset = virtualCenterOffset;
     m_visibleCenterOffset = visibleCenterOffset;
-    m_optimizedSize = optimizedSize;
 
     m_rectDimension = Rect(0, 0, bufferSize);
 
@@ -544,7 +541,7 @@ void MapView::setVisibleDimension(const Size& visibleDimension)
         return;
     }
 
-    updateGeometry(visibleDimension, m_optimizedSize);
+    updateGeometry(visibleDimension);
 }
 
 void MapView::setViewMode(ViewMode viewMode)
@@ -557,25 +554,20 @@ void MapView::setAutoViewMode(bool enable)
 {
     m_autoViewMode = enable;
     if(enable)
-        updateGeometry(m_visibleDimension, m_optimizedSize);
-}
-
-void MapView::optimizeForSize(const Size& visibleSize)
-{
-    updateGeometry(m_visibleDimension, visibleSize);
+        updateGeometry(m_visibleDimension);
 }
 
 void MapView::setAntiAliasing(const bool enable)
 {
     m_pools.map->setSmooth(enable);
 
-    updateGeometry(m_visibleDimension, m_optimizedSize);
+    updateGeometry(m_visibleDimension);
 }
 
 void MapView::setRenderScale(const uint8 scale)
 {
     m_renderScale = scale;
-    updateGeometry(m_visibleDimension, m_optimizedSize);
+    updateGeometry(m_visibleDimension);
     updateLight();
 }
 
