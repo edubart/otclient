@@ -22,7 +22,6 @@
 
 #include "uitranslator.h"
 #include <framework/stdext/string.h>
-#include <boost/algorithm/string.hpp>
 
 Fw::AlignmentFlag Fw::translateAlignment(std::string aligment)
 {

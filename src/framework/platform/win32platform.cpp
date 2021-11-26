@@ -26,7 +26,6 @@
 #include <winsock2.h>
 #include <windows.h>
 #include <framework/stdext/stdext.h>
-#include <boost/algorithm/string.hpp>
 #include <tchar.h>
 
 void Platform::processArgs(std::vector<std::string>& args)

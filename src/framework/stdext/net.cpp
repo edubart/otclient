@@ -21,8 +21,6 @@
  */
 
 #include "net.h"
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 
 namespace stdext {

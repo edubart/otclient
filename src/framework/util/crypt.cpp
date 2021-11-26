@@ -30,8 +30,6 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include <boost/functional/hash.hpp>
-
 #ifndef USE_GMP
 #include <openssl/rsa.h>
 #include <openssl/bn.h>

@@ -25,7 +25,6 @@
 #include "soundfile.h"
 
 #include <framework/util/databuffer.h>
-#include <boost/concept_check.hpp>
 
 StreamSoundSource::StreamSoundSource()
 {
