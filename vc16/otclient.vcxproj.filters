@@ -183,9 +183,6 @@
     <ClCompile Include="..\src\framework\graphics\graphics.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\framework\graphics\hardwarebuffer.cpp">
-      <Filter>Source Files\framework\graphics</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\framework\graphics\image.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
@@ -633,9 +630,6 @@
       <Filter>Header Files\framework\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\graphics.h">
-      <Filter>Header Files\framework\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\framework\graphics\hardwarebuffer.h">
       <Filter>Header Files\framework\graphics</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\image.h">

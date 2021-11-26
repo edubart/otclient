@@ -24,7 +24,6 @@
 #define COORDSBUFFER_H
 
 #include "vertexarray.h"
-#include "hardwarebuffer.h"
 
 class CoordsBuffer
 {

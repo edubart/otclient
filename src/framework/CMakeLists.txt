@@ -372,8 +372,6 @@ if(FRAMEWORK_GRAPHICS)
         ${CMAKE_CURRENT_LIST_DIR}/graphics/glutil.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/graphics.h
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/graphics/hardwarebuffer.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/image.cpp
         ${CMAKE_CURRENT_LIST_DIR}/graphics/image.h
         ${CMAKE_CURRENT_LIST_DIR}/graphics/painter.cpp
