@@ -151,7 +151,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if(animateWalk) animationPhase = getCurrentAnimationPhase();
 
         const PointF jumpOffset = m_jumpOffset * scaleFactor;
-        dest -= Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
+        dest -= Point(std::round(jumpOffset.x), std::round(jumpOffset.y));
 
         auto* datType = rawGetThingType();
 
@@ -235,7 +235,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     const Point creatureOffset = Point(16 - getDisplacementX(), -getDisplacementY() - 2);
 
     Point p = dest - drawOffset;
-    p += (getDrawOffset() + creatureOffset) * scaleFactor - Point(stdext::round(jumpOffset.x), stdext::round(jumpOffset.y));
+    p += (getDrawOffset() + creatureOffset) * scaleFactor - Point(std::round(jumpOffset.x), std::round(jumpOffset.y));
     p.x *= horizontalStretchFactor;
     p.y *= verticalStretchFactor;
     p += parentRect.topLeft();
@@ -397,7 +397,7 @@ void Creature::updateJump()
         b = +4 * m_jumpHeight / m_jumpDuration,
         height = a * t * t + b * t;
 
-    const int roundHeight = stdext::round(height),
+    const int roundHeight = std::round(height),
         halfJumpDuration = m_jumpDuration / 2;
 
     m_jumpOffset = PointF(height, height);
@@ -413,7 +413,7 @@ void Creature::updateJump()
         diff = -1;
 
     do {
-        nextT = stdext::round((-b + std::sqrt(std::max<double>(b * b + 4 * a * (roundHeight + diff * i), 0.0)) * diff) / (2 * a));
+        nextT = std::round((-b + std::sqrt(std::max<double>(b * b + 4 * a * (roundHeight + diff * i), 0.0)) * diff) / (2 * a));
         ++i;
 
         if(nextT < halfJumpDuration)

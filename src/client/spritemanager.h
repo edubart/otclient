@@ -50,7 +50,7 @@ public:
     bool isLoaded() { return m_loaded; }
 
 private:
-    stdext::boolean<false> m_loaded;
+    bool m_loaded{ false };
     uint32 m_signature;
     int m_spritesCount;
     int m_spritesOffset;

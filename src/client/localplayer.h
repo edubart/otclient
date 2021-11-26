@@ -124,12 +124,12 @@ private:
 
     ScheduledEventPtr m_autoWalkContinueEvent;
     ticks_t m_walkLockExpiration;
-    stdext::boolean<false> m_preWalking;
-    stdext::boolean<false> m_knownCompletePath;
 
-    stdext::boolean<false> m_premium;
-    stdext::boolean<false> m_known;
-    stdext::boolean<false> m_pending;
+    bool m_preWalking{ false },
+        m_knownCompletePath{ false },
+        m_premium{ false },
+        m_known{ false },
+        m_pending{ false };
 
     ItemPtr m_inventoryItems[Otc::LastInventorySlot];
 

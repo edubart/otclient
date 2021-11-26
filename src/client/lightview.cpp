@@ -55,7 +55,7 @@ void LightView::generateLightTexture()
     for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
         for(int_fast16_t y = -1; ++y < bubbleDiameter;) {
             const float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
-            float intensity = stdext::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
+            float intensity = std::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
 
             // light intensity varies inversely with the square of the distance
             const uint8_t colorByte = std::min<int16>((intensity * intensity * brightnessIntensity) * 0xff, maxBrightness);

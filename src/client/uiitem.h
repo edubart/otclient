@@ -52,9 +52,9 @@ protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     ItemPtr m_item;
-    stdext::boolean<false> m_virtual;
-    stdext::boolean<true> m_itemVisible;
-    stdext::boolean<false> m_showId;
+    bool m_virtual{ false },
+        m_showId{ false },
+        m_itemVisible{ true };
 };
 
 #endif

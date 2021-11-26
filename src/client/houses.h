@@ -79,7 +79,7 @@ private:
     TileMap m_tiles;
     ItemVector m_doors;
     uint32 m_lastDoorId;
-    stdext::boolean<false> m_isGuildHall;
+    bool m_isGuildHall{ false };
 
     friend class HouseManager;
 };

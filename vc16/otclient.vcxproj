@@ -532,7 +532,6 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\sound\soundsource.h" />
     <ClInclude Include="..\src\framework\sound\streamsoundsource.h" />
     <ClInclude Include="..\src\framework\stdext\any.h" />
-    <ClInclude Include="..\src\framework\stdext\boolean.h" />
     <ClInclude Include="..\src\framework\stdext\cast.h" />
     <ClInclude Include="..\src\framework\stdext\compiler.h" />
     <ClInclude Include="..\src\framework\stdext\demangle.h" />
@@ -540,6 +539,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\stdext\dynamic_storage.h" />
     <ClInclude Include="..\src\framework\stdext\exception.h" />
     <ClInclude Include="..\src\framework\stdext\format.h" />
+    <ClInclude Include="..\src\framework\stdext\hash.h" />
     <ClInclude Include="..\src\framework\stdext\math.h" />
     <ClInclude Include="..\src\framework\stdext\net.h" />
     <ClInclude Include="..\src\framework\stdext\packed_any.h" />

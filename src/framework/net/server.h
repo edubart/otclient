@@ -37,7 +37,7 @@ public:
     void acceptNext();
 
 private:
-    stdext::boolean<true> m_isOpen;
+    bool m_isOpen{ true };
     asio::ip::tcp::acceptor m_acceptor;
 };
 

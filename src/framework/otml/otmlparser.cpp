@@ -87,7 +87,7 @@ void OTMLParser::parseLine(std::string line)
         return;
 
     // skip comments
-    if(stdext::starts_with(line, "//"))
+    if(line.starts_with("//"))
         return;
 
     // a depth above, change current parent to the previous added node
@@ -188,7 +188,7 @@ void OTMLParser::parseNode(const std::string& data)
     if(value == "~")
         node->setNull(true);
     else {
-        if(stdext::starts_with(value, "[") && stdext::ends_with(value, "]")) {
+        if(value.starts_with("[") && value.ends_with("]")) {
             std::string tmp = value.substr(1, value.length() - 2);
             boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
             for(std::string v : tokens) {

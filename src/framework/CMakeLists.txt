@@ -29,7 +29,6 @@ set(framework_SOURCES ${framework_SOURCES}
 
     # stdext
     ${CMAKE_CURRENT_LIST_DIR}/stdext/any.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/boolean.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.cpp
@@ -38,6 +37,7 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/stdext/dynamic_storage.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/format.h
+    ${CMAKE_CURRENT_LIST_DIR}/stdext/hash.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/math.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/math.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/net.cpp

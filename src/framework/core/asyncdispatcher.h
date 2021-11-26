@@ -53,7 +53,7 @@ private:
     std::list<std::thread> m_threads;
     std::mutex m_mutex;
     std::condition_variable m_condition;
-    stdext::boolean<false> m_running;
+    bool m_running{ false };
 };
 
 extern AsyncDispatcher g_asyncDispatcher;

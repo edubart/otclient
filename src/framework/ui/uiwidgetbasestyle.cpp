@@ -52,7 +52,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
     // parse lua variables and callbacks first
     for(const OTMLNodePtr& node : styleNode->children()) {
         // lua functions
-        if(stdext::starts_with(node->tag(), "@")) {
+        if(node->tag().starts_with("@")) {
             // load once
             if(m_firstOnStyle) {
                 std::string funcName = node->tag().substr(1);
@@ -61,7 +61,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 luaSetField(funcName);
             }
             // lua fields value
-        } else if(stdext::starts_with(node->tag(), "&")) {
+        } else if(node->tag().starts_with("&")) {
             std::string fieldName = node->tag().substr(1);
             std::string fieldOrigin = "@" + node->source() + ": [" + node->tag() + "]";
 
@@ -284,7 +284,7 @@ void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)
                 m_layout->applyStyle(node);
         }
         // anchors
-        else if(stdext::starts_with(node->tag(), "anchors.")) {
+        else if(node->tag().starts_with("anchors.")) {
             UIWidgetPtr parent = getParent();
             if(!parent) {
                 if(m_firstOnStyle)

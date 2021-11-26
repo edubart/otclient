@@ -138,7 +138,7 @@ protected:
 private:
     std::vector<CreatureTypePtr> m_creatures;
     std::unordered_map<Position, SpawnPtr, Position::Hasher> m_spawns;
-    stdext::boolean<false> m_loaded, m_spawnLoaded;
+    bool m_loaded{ false }, m_spawnLoaded{ false };
     CreatureTypePtr m_nullCreature;
 };
 

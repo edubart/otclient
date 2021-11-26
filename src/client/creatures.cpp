@@ -210,7 +210,7 @@ void CreatureManager::loadSingleCreature(const std::string& file)
 void CreatureManager::loadNpcs(const std::string& folder)
 {
     std::string tmp = folder;
-    if(!stdext::ends_with(tmp, "/"))
+    if(!tmp.ends_with("/"))
         tmp += "/";
 
     if(!g_resources.directoryExists(tmp))

@@ -65,9 +65,11 @@ public:
     bool wasSeen() { return m_wasSeen; }
 private:
     TexturePtr m_texture;
+
     std::array<MinimapTile, MMBLOCK_SIZE* MMBLOCK_SIZE> m_tiles;
-    stdext::boolean<true> m_mustUpdate;
-    stdext::boolean<false> m_wasSeen;
+
+    bool m_mustUpdate{ true },
+        m_wasSeen{ false };
 };
 
 #pragma pack(pop)

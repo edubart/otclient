@@ -50,7 +50,7 @@ protected:
     uint16 m_spriteId;
     Color m_spriteColor;
 
-    stdext::boolean<true> m_spriteVisible;
+    bool m_spriteVisible{ true };
 };
 
 #endif

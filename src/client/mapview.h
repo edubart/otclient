@@ -199,13 +199,11 @@ private:
                      (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
     }
 
-    bool canRenderTile(const TilePtr& tile, LightView* lightView);
-
     uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },
         m_cachedFirstVisibleFloor{ SEA_FLOOR },
         m_cachedLastVisibleFloor{ SEA_FLOOR },
         m_renderScale{ 100 },
-        m_tileSize,
+        m_tileSize{ SPRITE_SIZE },
         m_floorMin{ 0 },
         m_floorMax{ 0 };
 
@@ -213,7 +211,7 @@ private:
         m_fadeInTime{ 0 },
         m_fadeOutTime{ 0 },
         m_shadowFloorIntensity{ 0 },
-        m_scaleFactor;
+        m_scaleFactor{ 1.f };
 
     Rect m_rectDimension;
 
@@ -232,25 +230,24 @@ private:
     std::array<AwareRange, Otc::InvalidDirection + 1> m_viewPortDirection;
     AwareRange m_viewport;
 
-    stdext::boolean<true>
-        m_mustUpdateVisibleTilesCache,
-        m_mustUpdateVisibleCreaturesCache,
-        m_shaderSwitchDone,
-        m_drawHealthBars,
-        m_drawManaBar,
-        m_multifloor,
-        m_drawTexts,
-        m_drawNames,
-        m_smooth,
-        m_follow,
-        m_antiAliasing;
+    bool
+        m_mustUpdateVisibleTilesCache{ true },
+        m_mustUpdateVisibleCreaturesCache{ true },
+        m_shaderSwitchDone{ true },
+        m_drawHealthBars{ true },
+        m_drawManaBar{ true },
+        m_multifloor{ true },
+        m_drawTexts{ true },
+        m_drawNames{ true },
+        m_smooth{ true },
+        m_follow{ true },
+        m_antiAliasing{ true };
 
-    stdext::boolean<false> m_drawLights,
-        m_autoViewMode,
-        m_drawViewportEdge,
-        m_drawHighlightTarget;
-
-    bool m_shiftPressed{ false };
+    bool m_drawLights{ false },
+        m_autoViewMode{ false },
+        m_drawViewportEdge{ false },
+        m_drawHighlightTarget{ false },
+        m_shiftPressed{ false };
 
     std::vector<CreaturePtr> m_visibleCreatures;
 

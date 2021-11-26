@@ -24,7 +24,6 @@
 #define STDEXT_H
 
 #include "any.h"
-#include "boolean.h"
 #include "cast.h"
 #include "compiler.h"
 #include "demangle.h"
@@ -39,5 +38,6 @@
 #include "string.h"
 #include "time.h"
 #include "types.h"
+#include "hash.h"
 
 #endif

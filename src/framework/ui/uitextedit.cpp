@@ -357,8 +357,8 @@ void UITextEdit::setSelection(int start, int end)
     if(end == -1)
         end = m_text.length();
 
-    m_selectionStart = stdext::clamp<int>(start, 0, static_cast<int>(m_text.length()));
-    m_selectionEnd = stdext::clamp<int>(end, 0, static_cast<int>(m_text.length()));
+    m_selectionStart = std::clamp<int>(start, 0, static_cast<int>(m_text.length()));
+    m_selectionEnd = std::clamp<int>(end, 0, static_cast<int>(m_text.length()));
     recacheGlyphs();
 }
 

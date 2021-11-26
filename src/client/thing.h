@@ -34,9 +34,10 @@ struct Highlight {
     Color rgbColor = Color::alpha;
     ThingPtr thing;
     ScheduledEventPtr listeningEvent;
-    stdext::boolean<false> enabled;
-    stdext::boolean<false> update;
-    stdext::boolean<false> invertedColorSelection;
+
+    bool enabled{ false },
+        update{ false },
+        invertedColorSelection{ false };
 };
 
 // @bindclass
@@ -161,7 +162,7 @@ protected:
     uint16 m_datId;
 
 private:
-    stdext::boolean<true> m_canDraw;
+    bool m_canDraw{ true };
 };
 #pragma pack(pop)
 

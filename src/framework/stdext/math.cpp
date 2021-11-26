@@ -60,9 +60,4 @@ namespace stdext {
         static std::uniform_real_distribution<float> dis(0.0, 1.0);
         return min + (max - min) * dis(gen);
     }
-
-    double round(double r)
-    {
-        return (r > 0.0) ? floor(r + 0.5) : ceil(r - 0.5);
-    }
 }

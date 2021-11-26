@@ -153,7 +153,7 @@ public:
 
 private:
     ItemCategory m_category;
-    stdext::boolean<true> m_null;
+    bool m_null{ true };
 
     stdext::dynamic_storage<uint8> m_attribs;
 };

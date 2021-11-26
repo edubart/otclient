@@ -43,7 +43,7 @@ protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     CreaturePtr m_creature;
-    stdext::boolean<false> m_fixedCreatureSize;
+    bool m_fixedCreatureSize{ false };
 };
 
 #endif

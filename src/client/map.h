@@ -274,7 +274,7 @@ private:
     AwareRange m_awareRange;
     static TilePtr m_nulltile;
 
-    stdext::boolean<true> m_floatingEffect;
+    bool m_floatingEffect{ true };
 };
 
 extern Map g_map;

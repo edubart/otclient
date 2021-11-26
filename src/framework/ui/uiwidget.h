@@ -345,7 +345,7 @@ public:
     void setPaddingRight(int padding) { m_padding.right = padding; updateLayout(); }
     void setPaddingBottom(int padding) { m_padding.bottom = padding; updateLayout(); }
     void setPaddingLeft(int padding) { m_padding.left = padding; updateLayout(); }
-    void setOpacity(float opacity) { m_opacity = stdext::clamp<float>(opacity, 0.0f, 1.0f); }
+    void setOpacity(float opacity) { m_opacity = std::clamp<float>(opacity, 0.0f, 1.0f); }
     void setRotation(float degrees) { m_rotation = degrees; }
 
     int getX() { return m_rect.x(); }

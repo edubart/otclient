@@ -23,7 +23,6 @@
 #include "logger.h"
 #include "eventdispatcher.h"
 
- //#include <boost/regex.hpp>
 #include <framework/core/resourcemanager.h>
 #include <framework/core/asyncdispatcher.h>
 
@@ -58,22 +57,6 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
         return;
 
     std::string outmsg = s_logPrefixes[level] + message;
-
-    /*
-#if !defined(NDEBUG) && !defined(WIN32)
-    // replace paths for improved debug with vim
-    std::stringstream tmp;
-    boost::smatch m;
-    boost::regex e ("/[^ :]+");
-    while(boost::regex_search(outmsg,m,e)) {
-        tmp << m.prefix().str();
-        tmp << g_resources.getRealDir(m.str()) << m.str();
-        outmsg = m.suffix().str();
-    }
-    if(!tmp.str().empty())
-        outmsg = tmp.str();
-#endif
-    */
 
     std::cout << outmsg << std::endl;
 

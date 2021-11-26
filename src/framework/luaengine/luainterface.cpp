@@ -328,7 +328,7 @@ void LuaInterface::loadScript(const std::string& fileName)
 {
     // resolve file full path
     std::string filePath = fileName;
-    if(!stdext::starts_with(fileName, "/"))
+    if(!fileName.starts_with("/"))
         filePath = getCurrentSourcePath() + "/" + filePath;
 
     filePath = g_resources.guessFilePath(filePath, "lua");
@@ -346,7 +346,7 @@ void LuaInterface::loadFunction(const std::string& buffer, const std::string& so
     }
 
     std::string buf;
-    if(stdext::starts_with(buffer, "function"))
+    if(buffer.starts_with("function"))
         buf = stdext::format("__func = %s", buffer);
     else
         buf = stdext::format("__func = function(self)\n%s\nend", buffer);

@@ -176,13 +176,15 @@ protected:
     TexturePtr m_emblemTexture;
     TexturePtr m_typeTexture;
     TexturePtr m_iconTexture;
-    stdext::boolean<true> m_showShieldTexture;
-    stdext::boolean<false> m_shieldBlink;
-    stdext::boolean<false> m_passable;
-    stdext::boolean<false> m_showTimedSquare;
-    stdext::boolean<false> m_showStaticSquare;
-    stdext::boolean<false> m_forceWalk;
-    stdext::boolean<true> m_removed;
+
+    bool m_showShieldTexture{ true },
+        m_shieldBlink{ false },
+        m_passable{ false },
+        m_showTimedSquare{ false },
+        m_showStaticSquare{ false },
+        m_forceWalk{ false },
+        m_removed{ true };
+
     Color m_timedSquareColor;
     Color m_staticSquareColor;
     Color m_informationColor;
@@ -200,8 +202,8 @@ protected:
     Timer m_walkTimer;
     Timer m_footTimer;
     TilePtr m_walkingTile;
-    stdext::boolean<false> m_walking;
-    stdext::boolean<false> m_allowAppearWalk;
+    bool m_walking{ false },
+        m_allowAppearWalk{ false };
     ScheduledEventPtr m_walkUpdateEvent;
     ScheduledEventPtr m_walkFinishAnimEvent;
     EventPtr m_disappearEvent;

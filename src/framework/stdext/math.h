@@ -50,11 +50,6 @@ namespace stdext {
 
     long random_range(long min, long max);
     float random_range(float min, float max);
-
-    double round(double r);
-
-    template<typename T>
-    T clamp(T x, T min, T max) { return std::max<T>(min, std::min<T>(x, max)); }
 }
 
 #endif

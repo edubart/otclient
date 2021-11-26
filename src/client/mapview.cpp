@@ -725,7 +725,7 @@ uint8 MapView::calcFirstVisibleFloor()
     }
 
     // just ensure the that the floor is in the valid range
-    z = stdext::clamp<int>(z, 0, static_cast<int>(MAX_Z));
+    z = std::clamp<int>(z, 0, static_cast<int>(MAX_Z));
     return z;
 }
 
@@ -750,7 +750,7 @@ uint8 MapView::calcLastVisibleFloor()
         z = std::max<int>(m_lockedFirstVisibleFloor, z);
 
     // just ensure the that the floor is in the valid range
-    z = stdext::clamp<int>(z, 0, static_cast<int>(MAX_Z));
+    z = std::clamp<int>(z, 0, static_cast<int>(MAX_Z));
     return z;
 }
 

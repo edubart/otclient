@@ -994,7 +994,7 @@ public:
     std::string Attribute(const std::string& name, double* d) const;
 
     void SetAttribute(const std::string& name, const std::string& _value);
-    void SetAttribute(const std::string& name, int _value) { SetAttribute(name, stdext::to_string(_value)); }
+    void SetAttribute(const std::string& name, int _value) { SetAttribute(name, std::to_string(_value)); }
 
     void RemoveAttribute(const std::string& name);
 

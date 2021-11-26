@@ -803,9 +803,6 @@
     <ClInclude Include="..\src\framework\stdext\any.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\boolean.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\framework\stdext\cast.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
@@ -1066,6 +1063,9 @@
     </ClInclude>
     <ClInclude Include="..\src\gitinfo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\stdext\hash.h">
+      <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,13 +22,10 @@
 
 #include "pool.h"
 
-const static std::hash<size_t> HASH_INT;
-const static std::hash<float> HASH_FLOAT;
-
 void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
     if(hasFrameBuffer()) {
-        boost::hash_combine(toFramedPool()->m_status.second, HASH_INT(mode));
+        stdext::hash_combine(toFramedPool()->m_status.second, mode);
     }
 
     if(pos == -1) {
@@ -42,7 +39,7 @@ void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos
 void Pool::setClipRect(const Rect& clipRect, const int pos)
 {
     if(hasFrameBuffer()) {
-        boost::hash_combine(toFramedPool()->m_status.second, clipRect.hash());
+        stdext::hash_combine(toFramedPool()->m_status.second, clipRect.hash());
     }
 
     if(pos == -1) {
@@ -56,7 +53,7 @@ void Pool::setClipRect(const Rect& clipRect, const int pos)
 void Pool::setOpacity(const float opacity, const int pos)
 {
     if(hasFrameBuffer()) {
-        boost::hash_combine(toFramedPool()->m_status.second, HASH_FLOAT(opacity));
+        stdext::hash_combine(toFramedPool()->m_status.second, opacity);
     }
 
     if(pos == -1) {

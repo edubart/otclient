@@ -198,7 +198,7 @@ void UIWidget::insertChild(int index, const UIWidgetPtr& child)
 
     if(!(index >= 0 && static_cast<uint>(index) <= m_children.size())) {
         //g_logger.traceWarning("attempt to insert a child UIWidget into an invalid index, using nearest index...");
-        index = stdext::clamp<int>(index, 0, static_cast<int>(m_children.size()));
+        index = std::clamp<int>(index, 0, static_cast<int>(m_children.size()));
     }
 
     // retrieve child by index
@@ -1467,7 +1467,7 @@ void UIWidget::updateStyle()
 
     // checks for states combination
     for(const OTMLNodePtr& style : m_style->children()) {
-        if(stdext::starts_with(style->tag(), "$")) {
+        if(style->tag().starts_with("$")) {
             std::string statesStr = style->tag().substr(1);
             std::vector<std::string> statesSplit = stdext::split(statesStr, " ");
 

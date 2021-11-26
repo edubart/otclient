@@ -20,19 +20,18 @@
  * THE SOFTWARE.
  */
 
-#ifndef BOOLEAN_H
-#define BOOLEAN_H
+#ifndef STDEXT_HASH_H
+#define STDEXT_HASH_H
+
+#include <string>
 
 namespace stdext {
-    template<bool def>
-    struct boolean {
-        boolean() : v(def) {}
-        operator bool& () { return v; }
-        operator bool const& () const { return v; }
-        bool& operator=(const bool& o) { v = o; return v; }
-    private:
-        bool v;
-    };
+    template <class T>
+    inline void hash_combine(std::size_t& seed, const T& v)
+    {
+        std::hash<T> hasher;
+        seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
 }
 
 #endif

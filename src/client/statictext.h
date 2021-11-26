@@ -56,7 +56,7 @@ private:
     void scheduleUpdate();
     void compose();
 
-    stdext::boolean<false> m_yell;
+    bool m_yell{ false };
     std::deque<std::pair<std::string, ticks_t>> m_messages;
     std::string m_name;
     Otc::MessageMode m_mode;

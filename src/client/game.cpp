@@ -597,7 +597,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
     // check we can walk and add new walk event if false
     if(!m_localPlayer->canWalk(direction)) {
         if(m_nextScheduledDir != direction) {
-            const float ticks = stdext::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
+            const float ticks = std::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration() / 3, 250))) {
                 // must add a new walk event
                 if(m_walkEvent) {
@@ -1720,7 +1720,7 @@ std::string Game::formatCreatureName(const std::string& name)
         for(char& i : formatedName) {
             const char ch = i;
             if(upnext) {
-                i = stdext::upchar(ch);
+                i = std::toupper(ch);
                 upnext = false;
             }
             if(ch == ' ')

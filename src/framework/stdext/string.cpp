@@ -33,9 +33,9 @@
 namespace stdext {
     std::string resolve_path(const std::string& filePath, std::string sourcePath)
     {
-        if(stdext::starts_with(filePath, "/"))
+        if(filePath.starts_with("/"))
             return filePath;
-        if(!stdext::ends_with(sourcePath, "/")) {
+        if(!sourcePath.ends_with("/")) {
             std::size_t slashPos = sourcePath.find_last_of("/");
             if(slashPos == std::string::npos)
                 throw_exception(format("invalid source path '%s', for file '%s'", sourcePath, filePath));
@@ -212,31 +212,17 @@ namespace stdext {
 
     void tolower(std::string& str)
     {
-        std::transform(str.begin(), str.end(), str.begin(), lochar);
+        std::transform(str.begin(), str.end(), str.begin(), [](int c) -> char { return static_cast<char>(::tolower(c)); });
     }
 
     void toupper(std::string& str)
     {
-        std::transform(str.begin(), str.end(), str.begin(), upchar);
+        std::transform(str.begin(), str.end(), str.begin(), [](int c) -> char { return static_cast<char>(::toupper(c)); });
     }
 
     void trim(std::string& str)
     {
         boost::trim(str);
-    }
-
-    char upchar(char c)
-    {
-        if((c >= 97 && c <= 122) || static_cast<uchar>(c) >= 224)
-            c -= 32;
-        return c;
-    }
-
-    char lochar(char c)
-    {
-        if((c >= 65 && c <= 90) || (static_cast<uchar>(c) >= 192 && static_cast<uchar>(c) <= 223))
-            c += 32;
-        return c;
     }
 
     void ucwords(std::string& str)
@@ -245,26 +231,25 @@ namespace stdext {
         if(strLen == 0)
             return;
 
-        str[0] = upchar(str[0]);
+        str[0] = static_cast<char>(std::toupper(str[0]));
         for(uint32 i = 1; i < strLen; ++i) {
             if(str[i - 1] == ' ')
-                str[i] = upchar(str[i]);
+                str[i] = static_cast<char>(std::toupper(str[i]));
         }
-    }
-
-    bool ends_with(const std::string& str, const std::string& test)
-    {
-        return boost::ends_with(str, test);
-    }
-
-    bool starts_with(const std::string& str, const std::string& test)
-    {
-        return boost::starts_with(str, test);
     }
 
     void replace_all(std::string& str, const std::string& search, const std::string& replacement)
     {
-        return boost::replace_all(str, search, replacement);
+        size_t pos = 0;
+        while((pos = str.find(search, pos)) != std::string::npos) {
+            str.replace(pos, search.length(), replacement);
+            pos += replacement.length();
+        }
+    }
+
+    void eraseWhiteSpace(std::string& str)
+    {
+        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
     }
 
     std::vector<std::string> split(const std::string& str, const std::string& separators)

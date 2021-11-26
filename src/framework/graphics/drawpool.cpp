@@ -27,9 +27,6 @@
 #include <framework/graphics/graphics.h>
 #include "painter.h"
 
-const static std::hash<size_t> HASH_INT;
-const static std::hash<float> HASH_FLOAT;
-
 DrawPool g_drawPool;
 
 void DrawPool::init()
@@ -322,35 +319,35 @@ void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMe
 
     if(state.texture) {
         // TODO: use uniqueID id when applying multithreading, not forgetting that in the APNG texture, the id changes every frame.
-        boost::hash_combine(hash, HASH_INT(state.texture->getId()));
+        stdext::hash_combine(hash, state.texture->getId());
     }
 
     if(state.opacity < 1.f)
-        boost::hash_combine(hash, HASH_FLOAT(state.opacity));
+        stdext::hash_combine(hash, state.opacity);
 
     if(state.color != Color::white)
-        boost::hash_combine(hash, HASH_INT(state.color.rgba()));
+        stdext::hash_combine(hash, state.color.rgba());
 
     if(state.compositionMode != Painter::CompositionMode_Normal)
-        boost::hash_combine(hash, HASH_INT(state.compositionMode));
+        stdext::hash_combine(hash, state.compositionMode);
 
     if(state.shaderProgram)
         poolFramed()->m_autoUpdate = true;
 
-    if(state.clipRect.isValid()) boost::hash_combine(hash, state.clipRect.hash());
-    if(method.rects.first.isValid()) boost::hash_combine(hash, method.rects.first.hash());
-    if(method.rects.second.isValid()) boost::hash_combine(hash, method.rects.second.hash());
+    if(state.clipRect.isValid()) stdext::hash_combine(hash, state.clipRect.hash());
+    if(method.rects.first.isValid()) stdext::hash_combine(hash, method.rects.first.hash());
+    if(method.rects.second.isValid()) stdext::hash_combine(hash, method.rects.second.hash());
 
     const auto& a = std::get<0>(method.points),
         b = std::get<1>(method.points),
         c = std::get<2>(method.points);
 
-    if(!a.isNull()) boost::hash_combine(hash, a.hash());
-    if(!b.isNull()) boost::hash_combine(hash, b.hash());
-    if(!c.isNull()) boost::hash_combine(hash, c.hash());
+    if(!a.isNull()) stdext::hash_combine(hash, a.hash());
+    if(!b.isNull()) stdext::hash_combine(hash, b.hash());
+    if(!c.isNull()) stdext::hash_combine(hash, c.hash());
 
-    if(method.intValue) boost::hash_combine(hash, HASH_INT(method.intValue));
-    if(method.hash) boost::hash_combine(hash, method.hash);
+    if(method.intValue) stdext::hash_combine(hash, method.intValue);
+    if(method.hash) stdext::hash_combine(hash, method.hash);
 
-    boost::hash_combine(poolFramed()->m_status.second, hash);
+    stdext::hash_combine(poolFramed()->m_status.second, hash);
 }

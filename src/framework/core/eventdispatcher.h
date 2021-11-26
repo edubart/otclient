@@ -42,7 +42,7 @@ public:
 private:
     std::deque<EventPtr> m_eventList;
     int m_pollEventsSize;
-    stdext::boolean<false> m_disabled;
+    bool m_disabled{ false };
     std::priority_queue<ScheduledEventPtr, std::deque<ScheduledEventPtr>, ScheduledEvent::Compare> m_scheduledEventList;
 };
 

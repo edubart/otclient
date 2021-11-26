@@ -26,52 +26,69 @@
 
 Fw::AlignmentFlag Fw::translateAlignment(std::string aligment)
 {
-    boost::to_lower(aligment);
-    boost::erase_all(aligment, " ");
+    stdext::tolower(aligment);
+    stdext::eraseWhiteSpace(aligment);
+
     if(aligment == "topleft")
         return AlignTopLeft;
+
     if(aligment == "topright")
         return AlignTopRight;
+
     if(aligment == "bottomleft")
         return AlignBottomLeft;
+
     if(aligment == "bottomright")
         return AlignBottomRight;
+
     if(aligment == "left")
         return AlignLeftCenter;
+
     if(aligment == "right")
         return AlignRightCenter;
+
     if(aligment == "top")
         return AlignTopCenter;
+
     if(aligment == "bottom")
         return AlignBottomCenter;
+
     if(aligment == "center")
         return AlignCenter;
+
     return AlignNone;
 }
 
 Fw::AnchorEdge Fw::translateAnchorEdge(std::string anchorEdge)
 {
-    boost::to_lower(anchorEdge);
-    boost::erase_all(anchorEdge, " ");
+    stdext::tolower(anchorEdge);
+    stdext::eraseWhiteSpace(anchorEdge);
+
     if(anchorEdge == "left")
         return AnchorLeft;
+
     if(anchorEdge == "right")
         return AnchorRight;
+
     if(anchorEdge == "top")
         return AnchorTop;
+
     if(anchorEdge == "bottom")
         return AnchorBottom;
+
     if(anchorEdge == "horizontalcenter")
         return AnchorHorizontalCenter;
+
     if(anchorEdge == "verticalcenter")
         return AnchorVerticalCenter;
+
     return AnchorNone;
 }
 
 Fw::WidgetState Fw::translateState(std::string state)
 {
-    boost::to_lower(state);
-    boost::trim(state);
+    stdext::tolower(state);
+    stdext::trim(state);
     if(state == "active")
         return ActiveState;
     if(state == "focus")
@@ -103,8 +120,8 @@ Fw::WidgetState Fw::translateState(std::string state)
 
 Fw::AutoFocusPolicy Fw::translateAutoFocusPolicy(std::string policy)
 {
-    boost::to_lower(policy);
-    boost::trim(policy);
+    stdext::tolower(policy);
+    stdext::trim(policy);
     if(policy == "first")
         return AutoFocusFirst;
     if(policy == "last")

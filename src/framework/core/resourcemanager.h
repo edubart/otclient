@@ -24,11 +24,8 @@
 #define RESOURCES_H
 
 #include "declarations.h"
-#include <boost/filesystem.hpp>
 
-namespace fs = boost::filesystem;
-
-// @bindsingleton g_resources
+ // @bindsingleton g_resources
 class ResourceManager
 {
 public:
@@ -86,7 +83,7 @@ public:
     void save_string_into_file(const std::string& contents, const std::string& name);
 
 protected:
-    std::vector<std::string> discoverPath(const fs::path& path, bool filenameOnly, bool recursive);
+    std::vector<std::string> discoverPath(const std::filesystem::path& path, bool filenameOnly, bool recursive);
 
 private:
     std::string m_workDir;

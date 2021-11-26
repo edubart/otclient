@@ -1679,7 +1679,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
                 continue;
             AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
             animatedText->setColor(color[i]);
-            animatedText->setText(stdext::to_string(value[i]));
+            animatedText->setText(std::to_string(value[i]));
             g_map.addThing(animatedText, pos);
         }
         break;
@@ -1697,7 +1697,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
 
         AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
         animatedText->setColor(color);
-        animatedText->setText(stdext::to_string(value));
+        animatedText->setText(std::to_string(value));
         g_map.addThing(animatedText, pos);
         break;
     }

@@ -45,10 +45,7 @@ namespace stdext {
     void toupper(std::string& str);
     void trim(std::string& str);
     void ucwords(std::string& str);
-    char upchar(char c);
-    char lochar(char c);
-    bool ends_with(const std::string& str, const std::string& test);
-    bool starts_with(const std::string& str, const std::string& test);
+    void eraseWhiteSpace(std::string& str);
     void replace_all(std::string& str, const std::string& search, const std::string& replacement);
 
     bool is_valid_utf8(const std::string& src);
