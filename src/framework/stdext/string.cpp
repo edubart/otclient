@@ -23,8 +23,6 @@
 #include "string.h"
 #include "format.h"
 #include <boost/algorithm/string.hpp>
-#include <cctype>
-#include <physfs.h>
 
 #ifdef _MSC_VER
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
