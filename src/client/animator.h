@@ -26,6 +26,7 @@
 #include "declarations.h"
 
 #include <framework/core/declarations.h>
+#include <framework/core/timer.h>
 
 enum AnimationPhase : int16
 {
@@ -51,7 +52,7 @@ public:
     void resetAnimation();
 
     int getPhase();
-    int getPhaseAt(ticks_t time);
+    int getPhaseAt(Timer& time);
     int getStartPhase() const;
     int getAnimationPhases() { return m_animationPhases; }
     int getAverageDuration() { return getTotalDuration() / getAnimationPhases(); }
@@ -78,7 +79,7 @@ private:
     bool m_isComplete;
     bool m_async;
 
-    std::vector<std::tuple<int, int>> m_phaseDurations;
+    std::vector<std::pair<int, int>> m_phaseDurations;
     AnimationDirection m_currentDirection;
     ticks_t m_lastPhaseTicks;
 };
