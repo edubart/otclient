@@ -37,7 +37,7 @@ local defaultOptions = {
     crosshair = 'default',
     enableHighlightMouseTarget = true,
     antialiasingMode = 1,
-    shadowFloorIntensity = 15,
+    shadowFloorIntensity = 30,
     optimizeFps = true
 }
 
