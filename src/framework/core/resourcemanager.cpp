@@ -380,7 +380,7 @@ ticks_t ResourceManager::getFileTime(const std::string& filename)
 
 std::string ResourceManager::encrypt(const std::string& data, const std::string& password)
 {
-    const size_t len = data.length(),
+    const int len = data.length(),
         plen = password.length();
 
     std::ostringstream ss;
@@ -406,7 +406,7 @@ std::string ResourceManager::decrypt(const std::string& data)
 {
     const std::string& password = std::string(ENCRYPTION_PASSWORD);
 
-    const size_t len = data.length(),
+    const int len = data.length(),
         plen = password.length();
 
     std::ostringstream ss;
@@ -432,7 +432,7 @@ std::string ResourceManager::decrypt(const std::string& data)
 uint8_t* ResourceManager::decrypt(uint8_t* data, int32_t size)
 {
     const std::string& password = std::string(ENCRYPTION_PASSWORD);
-    const size_t plen = password.length();
+    const int plen = password.length();
 
     uint8_t* new_Data = new uint8_t[size];
 
