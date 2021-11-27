@@ -57,20 +57,16 @@ Panel
     id: dontStretchShrink
     !text: tr('Don\'t stretch/shrink Game Window')
 
-  OptionCheckBox
-    id: antiAliasing
-    !text: tr('Anti-Aliasing')
-
   Label
-    id: renderScaleLabel
-    !text: tr('Render Scale')..':'
+    id: antialiasingModeLabel
+    !text: tr('Antialiasing Mode')..':'
     phantom: false
     anchors.left: prev.left
     anchors.top: prev.bottom
     margin-top: 13
 
   ComboBox
-    id: renderScale
+    id: antialiasingMode
     width: 120
     anchors.left: prev.right
     anchors.top: prev.top
@@ -82,7 +78,7 @@ Panel
     id: ambientLightLabel
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: renderScaleLabel.top
+    anchors.top: antialiasingModeLabel.top
     margin-top: 25
     @onSetup: |
       local value = modules.client_options.getOption('ambientLight')

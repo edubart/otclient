@@ -17,7 +17,7 @@
 - Highlight Mouse Target (press shift to select any object)
 - Crosshair
 - Floor Shadowing
-- Anti-Aliasing Option
+- Anti-Aliasing Mode Options (Note: Smooth Retro will consume a little more GPU)
 - Floating Effects Option
 - Adjusted Path Finding
 - Optimized Terminal

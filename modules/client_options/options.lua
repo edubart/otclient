@@ -36,8 +36,7 @@ local defaultOptions = {
     hotkeyDelay = 70,
     crosshair = 'default',
     enableHighlightMouseTarget = true,
-    antiAliasing = true,
-    renderScale = 100,
+    antialiasingMode = 1,
     shadowFloorIntensity = 15,
     optimizeFps = true
 }
@@ -54,7 +53,7 @@ local soundPanel
 local audioButton
 
 local crosshairCombobox
-local renderScaleCombobox
+local antialiasingModeCombobox
 
 local function setupGraphicsEngines()
     local enginesRadioGroup = UIRadioGroup.create()
@@ -161,17 +160,16 @@ function setupComboBox()
         setOption('crosshair', comboBox:getCurrentOption().data)
     end
 
-    renderScaleCombobox = graphicsPanel:recursiveGetChildById('renderScale')
+    antialiasingModeCombobox = graphicsPanel:recursiveGetChildById(
+                                   'antialiasingMode')
 
-    renderScaleCombobox:addOption('50%', 50)
-    renderScaleCombobox:addOption('75%', 75)
-    renderScaleCombobox:addOption('100%', 100)
-    renderScaleCombobox:addOption('150%', 150)
-    renderScaleCombobox:addOption('200%', 200)
+    antialiasingModeCombobox:addOption('None', 0)
+    antialiasingModeCombobox:addOption('Antialiasing', 1)
+    antialiasingModeCombobox:addOption('Smooth Retro', 2)
 
-    renderScaleCombobox.onOptionChange =
+    antialiasingModeCombobox.onOptionChange =
         function(comboBox, option)
-            setOption('renderScale', comboBox:getCurrentOption().data)
+            setOption('antialiasingMode', comboBox:getCurrentOption().data)
         end
 end
 
@@ -326,15 +324,9 @@ function setOption(key, value, force)
     elseif key == 'floorShadowing' then
         gameMapPanel:setFloorShadowingFlag(value)
         floorShadowingComboBox:setCurrentOptionByData(value, true)
-    elseif key == 'antiAliasing' then
-        gameMapPanel:setAntiAliasing(value)
-    elseif key == 'renderScale' then
-        gameMapPanel:setRenderScale(value)
-        renderScaleCombobox:setCurrentOptionByData(value, true)
-        if not force and value > 100 then
-            displayInfoBox(tr('Warning'), tr(
-                               'Rendering scale above 100%% will drop performance and visual bugs may occur.'))
-        end
+    elseif key == 'antialiasingMode' then
+        gameMapPanel:setAntiAliasingMode(value)
+        antialiasingModeCombobox:setCurrentOptionByData(value, true)
     end
 
     -- change value for keybind updates

@@ -382,7 +382,7 @@ void MapView::updateVisibleTilesCache()
 
 void MapView::updateGeometry(const Size& visibleDimension)
 {
-    const uint8 tileSize = SPRITE_SIZE * (static_cast<float>(m_renderScale) / 100);
+    const uint8 tileSize = SPRITE_SIZE * m_scaleFactor;
     const Size drawDimension = visibleDimension + Size(3),
         bufferSize = drawDimension * tileSize;
 
@@ -408,13 +408,6 @@ void MapView::updateGeometry(const Size& visibleDimension)
         m_multifloor = viewMode < FAR_VIEW;
     }
 
-    // draw actually more than what is needed to avoid massive recalculations on huge views
-    /* if(viewMode >= HUGE_VIEW) {
-        Size oldDimension = drawDimension;
-        drawDimension = (m_framebuffer->getSize() / tileSize);
-        virtualCenterOffset += (drawDimension - oldDimension).toPoint() / 2;
-    }*/
-
     m_viewMode = viewMode;
     m_visibleDimension = visibleDimension;
     m_drawDimension = drawDimension;
@@ -423,8 +416,6 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_visibleCenterOffset = visibleCenterOffset;
 
     m_rectDimension = Rect(0, 0, bufferSize);
-
-    m_scaleFactor = m_tileSize / static_cast<float>(SPRITE_SIZE);
 
     m_pools.map->resize(bufferSize);
     if(m_drawLights) m_lightView->resize();
@@ -557,18 +548,11 @@ void MapView::setAutoViewMode(bool enable)
         updateGeometry(m_visibleDimension);
 }
 
-void MapView::setAntiAliasing(const bool enable)
+void MapView::setAntiAliasingMode(const AntialiasingMode mode)
 {
-    m_pools.map->setSmooth(enable);
-
+    m_pools.map->setSmooth(mode != ANTIALIASING_DISABLED);
+    m_scaleFactor = mode == ANTIALIASING_SMOOTH_RETRO ? 2.f : 1.f;
     updateGeometry(m_visibleDimension);
-}
-
-void MapView::setRenderScale(const uint8 scale)
-{
-    m_renderScale = scale;
-    updateGeometry(m_visibleDimension);
-    updateLight();
 }
 
 void MapView::followCreature(const CreaturePtr& creature)

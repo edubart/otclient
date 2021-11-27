@@ -49,6 +49,12 @@ public:
         HUGE_VIEW
     };
 
+    enum AntialiasingMode :uint8 {
+        ANTIALIASING_DISABLED,
+        ANTIALIASING_ENABLED,
+        ANTIALIASING_SMOOTH_RETRO
+    };
+
     MapView();
     ~MapView();
     void draw(const Rect& rect);
@@ -142,6 +148,7 @@ public:
     TilePtr getTopTile(Position tilePos);
 
     void setCrosshairTexture(const std::string& texturePath);
+    void setAntiAliasingMode(const AntialiasingMode mode);
 
     void onMouseMove(const Position& mousePos, const bool isVirtualMove = false);
     void onKeyRelease(const InputEvent& inputEvent);
@@ -150,9 +157,6 @@ public:
     const Position& getLastMousePosition() { return m_mousePosition; }
 
     void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
-
-    void setAntiAliasing(const bool enable);
-    void setRenderScale(const uint8 scale);
 
 private:
     struct MapList {
@@ -201,10 +205,10 @@ private:
     uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },
         m_cachedFirstVisibleFloor{ SEA_FLOOR },
         m_cachedLastVisibleFloor{ SEA_FLOOR },
-        m_renderScale{ 100 },
         m_tileSize{ SPRITE_SIZE },
         m_floorMin{ 0 },
-        m_floorMax{ 0 };
+        m_floorMax{ 0 },
+        m_antiAliasingMode;
 
     float m_minimumAmbientLight{ 0 },
         m_fadeInTime{ 0 },
@@ -238,8 +242,7 @@ private:
         m_drawTexts{ true },
         m_drawNames{ true },
         m_smooth{ true },
-        m_follow{ true },
-        m_antiAliasing{ true };
+        m_follow{ true };
 
     bool m_drawLights{ false },
         m_autoViewMode{ false },
