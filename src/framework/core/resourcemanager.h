@@ -24,6 +24,7 @@
 #define RESOURCES_H
 
 #include "declarations.h"
+#include <filesystem>
 
  // @bindsingleton g_resources
 class ResourceManager
