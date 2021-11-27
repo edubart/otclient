@@ -38,7 +38,8 @@ local defaultOptions = {
     enableHighlightMouseTarget = true,
     antialiasingMode = 1,
     shadowFloorIntensity = 30,
-    optimizeFps = true
+    optimizeFps = true,
+    forceEffectOptimization = true
 }
 
 local optionsWindow
@@ -235,6 +236,8 @@ function setOption(key, value, force)
         modules.client_topmenu.setFpsVisible(value)
     elseif key == 'optimizeFps' then
         g_app.optimize(value)
+    elseif key == 'forceEffectOptimization' then
+        g_app.forceEffectOptimization(value)
     elseif key == 'showPing' then
         modules.client_topmenu.setPingVisible(value)
     elseif key == 'fullscreen' then

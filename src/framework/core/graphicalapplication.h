@@ -51,8 +51,10 @@ public:
 
     bool isOnInputEvent() { return m_onInputEvent; }
     bool canOptimize() { return m_optimize && getFps() < 60; }
+    bool isForcedEffectOptimization() { return m_forceEffectOptimization; }
 
     void optimize(const bool optimize) { m_optimize = optimize; }
+    void forceEffectOptimization(const bool optimize) { m_forceEffectOptimization = optimize; }
 
 protected:
     void resize(const Size& size);
@@ -71,7 +73,8 @@ private:
 
     bool m_onInputEvent{ false },
         m_mustRepaint{ false },
-        m_optimize{ false };
+        m_optimize{ true },
+        m_forceEffectOptimization{ true };
 
     Timer m_foregroundRefreshTime;
 

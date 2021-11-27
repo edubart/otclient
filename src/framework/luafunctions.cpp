@@ -247,6 +247,7 @@ void Application::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &GraphicalApplication::isOnInputEvent, &g_app);
 
     g_lua.bindSingletonFunction("g_app", "optimize", &GraphicalApplication::optimize, &g_app);
+    g_lua.bindSingletonFunction("g_app", "forceEffectOptimization", &GraphicalApplication::forceEffectOptimization, &g_app);
 
     g_lua.bindSingletonFunction("g_app", "getFps", &GraphicalApplication::getFps, &g_app);
     g_lua.bindSingletonFunction("g_app", "getMaxFps", &GraphicalApplication::getMaxFps, &g_app);

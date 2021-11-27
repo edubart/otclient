@@ -30,7 +30,7 @@ Effect::Effect() : m_timeToStartDrawing(0) {}
 
 void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    if(m_id == 0) return;
+    if(m_id == 0 || !canDraw()) return;
 
     // It only starts to draw when the first effect as it is about to end.
     if(m_animationTimer.ticksElapsed() < m_timeToStartDrawing)
@@ -81,9 +81,7 @@ void Effect::onAppear()
 
 void Effect::waitFor(const EffectPtr& effect)
 {
-    const float duration = g_app.canOptimize() ? .3 : .6;
-
-    m_timeToStartDrawing = effect->m_animationTimer.ticksElapsed() - (effect->m_duration * duration);
+    m_timeToStartDrawing = effect->m_duration * (g_app.canOptimize() || g_app.isForcedEffectOptimization() ? .7 : .5);
 }
 
 void Effect::setId(uint32 id)

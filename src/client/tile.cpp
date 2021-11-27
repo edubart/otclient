@@ -242,20 +242,25 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         return;
 
     if(thing->isEffect()) {
-        const EffectPtr& effect = thing->static_self_cast<Effect>();
+        const EffectPtr& newEffect = thing->static_self_cast<Effect>();
 
-        // find the first effect equal and wait for it to finish.
-        const auto& itFind = std::find_if(m_effects.begin(), m_effects.end(), [&effect]
-        (const EffectPtr& currentEffect) { return effect->getId() == currentEffect->getId() || (g_app.canOptimize() && effect->getSize() >= currentEffect->getSize()); });
+        const bool canOptimize = g_app.canOptimize() || g_app.isForcedEffectOptimization();
 
-        if(itFind != m_effects.end()) {
-            effect->waitFor(*itFind);
+        for(const EffectPtr& prevEffect : m_effects) {
+            if(!prevEffect->canDraw())
+                continue;
+
+            if(canOptimize && newEffect->getSize() > prevEffect->getSize()) {
+                prevEffect->canDraw(false);
+            } else if(canOptimize || newEffect->getId() == prevEffect->getId()) {
+                newEffect->waitFor(prevEffect);
+            }
         }
 
-        if(effect->isTopEffect())
-            m_effects.insert(m_effects.begin(), effect);
+        if(newEffect->isTopEffect())
+            m_effects.insert(m_effects.begin(), newEffect);
         else
-            m_effects.push_back(effect);
+            m_effects.push_back(newEffect);
 
         analyzeThing(thing, true);
 

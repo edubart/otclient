@@ -37,6 +37,11 @@ Panel
     !tooltip: tr('try to optimize when the frame rate is below 60. VISUAL PROBLEMS MAY OCCUR')
 
   OptionCheckBox
+    id: forceEffectOptimization
+    !text: tr('Force Effect Optimization')
+    !tooltip: tr('will avoid drawing effects on certain occasions.')
+
+  OptionCheckBox
     id: enableLights
     !text: tr('Enable lights')
 
