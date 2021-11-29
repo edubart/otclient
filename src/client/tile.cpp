@@ -231,6 +231,7 @@ void Tile::removeWalkingCreature(const CreaturePtr& creature)
         analyzeThing(creature, false);
         m_walkingCreatures.erase(it);
         m_ignoreCompletelyCoveredCheck = false;
+        checkForDetachableThing();
     }
 }
 
