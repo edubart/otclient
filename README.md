@@ -12,7 +12,6 @@
 - C++20
 - Refactored/Optimized Rendering System
 - New Light System
-- Render Scale System (FAKE ONE)
 - Idle Animation Support
 - Highlight Mouse Target (press shift to select any object)
 - Crosshair
