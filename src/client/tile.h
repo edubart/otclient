@@ -190,10 +190,8 @@ private:
 
     Position m_position;
 
-    uint8 m_drawElevation, m_minimapColor,
-        m_currentFirstVisibleFloor{ UINT8_MAX };
-
-    uint32 m_flags, m_houseId;
+    uint8 m_drawElevation{ 0 }, m_minimapColor{ 0 };
+    uint32 m_flags{ 0 }, m_houseId{ 0 };
 
     std::array<Position, 8> m_positionsAround;
     std::vector<std::pair<Otc::Direction, Position>> m_positionsBorder;

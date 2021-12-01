@@ -34,8 +34,6 @@ class Outfit
     };
 
 public:
-    Outfit();
-
     static Color getColor(int color);
 
     void setId(int id) { m_id = id; }
@@ -83,8 +81,8 @@ public:
     bool operator!=(const Outfit& other) const { return !(*this == other); }
 
 private:
-    ThingCategory m_category;
-    int m_id, m_auxId, m_head, m_body, m_legs, m_feet, m_addons, m_mount;
+    ThingCategory m_category{ ThingCategoryCreature };
+    int m_id{ 128 }, m_auxId{ 0 }, m_head{ 0 }, m_body{ 0 }, m_legs{ 0 }, m_feet{ 0 }, m_addons{ 0 }, m_mount{ 0 };
     Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
 

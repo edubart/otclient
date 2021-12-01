@@ -26,7 +26,8 @@
 #include "localplayer.h"
 #include "player.h"
 
-void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
+void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port,
+                         const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
 {
     m_accountName = accountName;
     m_accountPassword = accountPassword;

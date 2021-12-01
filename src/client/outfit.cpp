@@ -22,14 +22,6 @@
 
 #include "outfit.h"
 
-Outfit::Outfit()
-{
-    m_category = ThingCategoryCreature;
-    m_id = 128;
-    m_auxId = 0;
-    resetClothes();
-}
-
 Color Outfit::getColor(int color)
 {
     if(color >= HSI_H_STEPS * HSI_SI_VALUES)

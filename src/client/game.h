@@ -62,8 +62,6 @@ typedef std::tuple<std::string, uint, std::string, int, bool> Vip;
 class Game
 {
 public:
-    Game();
-
     void init();
     void terminate();
 
@@ -369,28 +367,28 @@ private:
     std::map<int, ContainerPtr> m_containers;
     std::map<int, Vip> m_vips;
 
-    bool m_online;
-    bool m_denyBotCall;
-    bool m_dead;
+    bool m_online{ false };
+    bool m_denyBotCall{ false };
+    bool m_dead{ false };
     bool m_expertPvpMode;
-    int m_serverBeat;
-    ticks_t m_ping;
+    int m_serverBeat{ 50 };
+    ticks_t m_ping{ -1 };
     uint m_pingSent;
     uint m_pingReceived;
     stdext::timer m_pingTimer;
     Timer m_dashTimer;
-    uint m_seq;
-    int m_pingDelay;
-    Otc::FightModes m_fightMode;
-    Otc::ChaseModes m_chaseMode;
-    Otc::PVPModes m_pvpMode;
+    uint m_seq{ 0 };
+    int m_pingDelay{ 1000 };
+    Otc::FightModes m_fightMode{ Otc::FightBalanced };
+    Otc::ChaseModes m_chaseMode{ Otc::DontChase };
+    Otc::PVPModes m_pvpMode{ Otc::WhiteDove };
     Otc::Direction m_lastWalkDir;
     Otc::Direction m_nextScheduledDir;
-    bool m_scheduleLastWalk;
+    bool m_scheduleLastWalk{ false };
     UnjustifiedPoints m_unjustifiedPoints;
     int m_openPvpSituations;
-    bool m_safeFight;
-    bool m_canReportBugs;
+    bool m_safeFight{ true };
+    bool m_canReportBugs{ false };
     std::vector<uint8> m_gmActions;
     std::string m_characterName;
     std::string m_worldName;
@@ -399,10 +397,10 @@ private:
     ScheduledEventPtr m_walkEvent;
     ScheduledEventPtr m_checkConnectionEvent;
     bool m_connectionFailWarned;
-    int m_protocolVersion;
-    int m_clientVersion;
+    int m_protocolVersion{ 0 };
+    int m_clientVersion{ 0 };
     std::string m_clientSignature;
-    int m_clientCustomOs;
+    int m_clientCustomOs{ -1 };
 };
 
 extern Game g_game;

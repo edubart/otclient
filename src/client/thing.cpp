@@ -29,8 +29,6 @@
 #include "thingtypemanager.h"
 #include "tile.h"
 
-Thing::Thing() : m_datId(0) {}
-
 void Thing::setPosition(const Position& position)
 {
     if(m_position == position)

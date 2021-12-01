@@ -29,11 +29,8 @@
 #include "mapview.h"
 #include "map.h"
 
-LightView::LightView(const MapViewPtr& mapView)
+LightView::LightView(const MapViewPtr& mapView) : m_mapView(mapView), m_pool(g_drawPool.createPoolF(PoolType::LIGHT))
 {
-    m_mapView = mapView;
-    m_pool = g_drawPool.createPoolF(PoolType::LIGHT);
-
     generateLightTexture();
     generateShadeTexture();
 

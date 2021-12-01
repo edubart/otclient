@@ -26,10 +26,6 @@
 
 HouseManager g_houses;
 
-House::House()
-{
-}
-
 House::House(uint32 hId, const std::string& name, const Position& pos)
 {
     setId(hId);

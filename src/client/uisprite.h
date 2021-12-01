@@ -29,7 +29,6 @@
 class UISprite : public UIWidget
 {
 public:
-    UISprite();
     void drawSelf(Fw::DrawPane drawPane) override;
 
     void setSpriteId(int id);
@@ -47,8 +46,8 @@ protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
     TexturePtr m_sprite;
-    uint16 m_spriteId;
-    Color m_spriteColor;
+    uint16 m_spriteId{ 0 };
+    Color m_spriteColor{ Color::white };
 
     bool m_spriteVisible{ true };
 };

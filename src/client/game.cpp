@@ -36,26 +36,6 @@
 
 Game g_game;
 
-Game::Game()
-{
-    m_protocolVersion = 0;
-    m_clientCustomOs = -1;
-    m_clientVersion = 0;
-    m_online = false;
-    m_denyBotCall = false;
-    m_dead = false;
-    m_serverBeat = 50;
-    m_seq = 0;
-    m_ping = -1;
-    m_pingDelay = 1000;
-    m_canReportBugs = false;
-    m_fightMode = Otc::FightBalanced;
-    m_chaseMode = Otc::DontChase;
-    m_pvpMode = Otc::WhiteDove;
-    m_safeFight = true;
-    m_scheduleLastWalk = false;
-}
-
 void Game::init()
 {
     resetGameStates();

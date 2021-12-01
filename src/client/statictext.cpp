@@ -29,8 +29,6 @@
 
 StaticText::StaticText()
 {
-    m_mode = Otc::MessageNone;
-    m_color = Color::white;
     m_cachedText.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_cachedText.setAlign(Fw::AlignCenter);
 }

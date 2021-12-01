@@ -33,21 +33,12 @@
 #include "thingtypemanager.h"
 #include <framework/core/eventdispatcher.h>
 
-const static Color STATIC_SHADOWING_COLOR(static_cast<uint8>(215), static_cast<uint8>(1), 0.65f);
-
-Tile::Tile(const Position& position) :
-    m_position(position),
-    m_drawElevation(0),
-    m_minimapColor(0),
-    m_flags(0),
-    m_houseId(0)
+Tile::Tile(const Position& position) : m_position(position), m_positionsAround(position.getPositionsAround())
 {
     for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
-        auto pos = position;
+        Position pos = position;
         m_positionsBorder.push_back(std::make_pair(dir, pos.translatedToDirection(dir)));
     }
-
-    m_positionsAround = position.getPositionsAround();
 }
 
 void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
@@ -313,7 +304,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
         select();
     }
 
-    if(m_things.size() > MAX_THINGS)
+    if(size > MAX_THINGS)
         removeThing(m_things[MAX_THINGS]);
 
     thing->setPosition(m_position);
@@ -458,7 +449,7 @@ ThingPtr Tile::getTopLookThing()
     if(isEmpty())
         return nullptr;
 
-    for(auto thing : m_things) {
+    for(const auto& thing : m_things) {
         if(!thing->isIgnoreLook() && (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()))
             return thing;
     }
@@ -471,12 +462,12 @@ ThingPtr Tile::getTopUseThing()
     if(isEmpty())
         return nullptr;
 
-    for(auto thing : m_things) {
+    for(const auto& thing : m_things) {
         if(thing->isForceUse() || (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop() && !thing->isCreature() && !thing->isSplash()))
             return thing;
     }
 
-    for(auto thing : m_things) {
+    for(const auto& thing : m_things) {
         if(!thing->isGround() && !thing->isGroundBorder() && !thing->isCreature() && !thing->isSplash())
             return thing;
     }
@@ -489,7 +480,7 @@ CreaturePtr Tile::getTopCreature(const bool checkAround)
     if(!hasCreature()) return nullptr;
 
     CreaturePtr creature;
-    for(auto thing : m_things) {
+    for(const auto& thing : m_things) {
         if(thing->isLocalPlayer()) // return local player if there is no other creature
             creature = thing->static_self_cast<Creature>();
         else if(thing->isCreature())
@@ -524,7 +515,7 @@ ThingPtr Tile::getTopMoveThing()
     if(isEmpty())
         return nullptr;
 
-    for(uint i = 0; i < m_things.size(); ++i) {
+    for(int8 i = -1, s = m_things.size(); ++i < s;) {
         const ThingPtr& thing = m_things[i];
         if(thing->isCommon()) {
             if(i > 0 && thing->isNotMoveable())

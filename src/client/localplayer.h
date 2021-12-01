@@ -123,7 +123,7 @@ private:
         m_autoWalkDestination;
 
     ScheduledEventPtr m_autoWalkContinueEvent;
-    ticks_t m_walkLockExpiration;
+    ticks_t m_walkLockExpiration{ 0 };
 
     bool m_preWalking{ false },
         m_knownCompletePath{ false },
@@ -140,26 +140,26 @@ private:
 
     uint8 m_autoWalkRetries{ 0 };
 
-    int m_states;
-    int m_vocation;
-    int m_blessings;
+    int m_states{ 0 };
+    int m_vocation{ 0 };
+    int m_blessings{ Otc::BlessingNone };
 
-    double m_health;
-    double m_maxHealth;
-    double m_freeCapacity;
-    double m_totalCapacity;
-    double m_experience;
-    double m_level;
-    double m_levelPercent;
-    double m_mana;
-    double m_maxMana;
-    double m_magicLevel;
-    double m_magicLevelPercent;
-    double m_baseMagicLevel;
-    double m_soul;
-    double m_stamina;
-    double m_regenerationTime;
-    double m_offlineTrainingTime;
+    double m_health{ -1 };
+    double m_maxHealth{ -1 };
+    double m_freeCapacity{ -1 };
+    double m_totalCapacity{ -1 };
+    double m_experience{ -1 };
+    double m_level{ -1 };
+    double m_levelPercent{ -1 };
+    double m_mana{ -1 };
+    double m_maxMana{ -1 };
+    double m_magicLevel{ -1 };
+    double m_magicLevelPercent{ -1 };
+    double m_baseMagicLevel{ -1 };
+    double m_soul{ -1 };
+    double m_stamina{ -1 };
+    double m_regenerationTime{ -1 };
+    double m_offlineTrainingTime{ -1 };
 };
 
 #endif

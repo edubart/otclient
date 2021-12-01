@@ -31,8 +31,6 @@
 class Effect : public Thing
 {
 public:
-    Effect();
-
     void drawEffect(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
     void setId(uint32 id) override;
@@ -55,7 +53,7 @@ private:
     uint16 m_id;
 
     int m_duration;
-    int m_timeToStartDrawing;
+    int m_timeToStartDrawing{ 0 };
 };
 
 #endif

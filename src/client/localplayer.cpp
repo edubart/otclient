@@ -29,32 +29,9 @@
 
 LocalPlayer::LocalPlayer()
 {
-    m_states = 0;
-    m_vocation = 0;
-    m_blessings = Otc::BlessingNone;
-    m_walkLockExpiration = 0;
-
     m_skillsLevel.fill(-1);
     m_skillsBaseLevel.fill(-1);
     m_skillsLevelPercent.fill(-1);
-
-    m_health = -1;
-    m_maxHealth = -1;
-    m_freeCapacity = -1;
-    m_experience = -1;
-    m_level = -1;
-    m_levelPercent = -1;
-    m_mana = -1;
-    m_maxMana = -1;
-    m_magicLevel = -1;
-    m_magicLevelPercent = -1;
-    m_baseMagicLevel = -1;
-    m_soul = -1;
-    m_stamina = -1;
-    m_baseSpeed = -1;
-    m_regenerationTime = -1;
-    m_offlineTrainingTime = -1;
-    m_totalCapacity = -1;
 }
 
 void LocalPlayer::lockWalk(int millis)

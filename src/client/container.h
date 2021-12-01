@@ -69,7 +69,7 @@ private:
     ItemPtr m_containerItem;
     std::string m_name;
     bool m_hasParent;
-    bool m_closed;
+    bool m_closed{ false };
     bool m_unlocked;
     bool m_hasPages;
     int m_size;

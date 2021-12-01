@@ -30,7 +30,6 @@
 class UIProgressRect : public UIWidget
 {
 public:
-    UIProgressRect();
     void drawSelf(Fw::DrawPane drawPane) override;
 
     void setPercent(float percent);
@@ -39,7 +38,7 @@ public:
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
 
-    float m_percent;
+    float m_percent{ 0 };
 };
 
 #endif

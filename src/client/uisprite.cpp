@@ -26,12 +26,6 @@
 #include <framework/graphics/texturemanager.h>
 #include <framework/otml/otml.h>
 
-UISprite::UISprite() :
-    m_spriteId(0),
-    m_spriteColor(Color::white)
-{
-}
-
 void UISprite::drawSelf(Fw::DrawPane drawPane)
 {
     if((drawPane & Fw::ForegroundPane) == 0)

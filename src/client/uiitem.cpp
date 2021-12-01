@@ -25,10 +25,7 @@
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 
-UIItem::UIItem()
-{
-    m_draggable = true;
-}
+UIItem::UIItem() { m_draggable = true; }
 
 void UIItem::drawSelf(Fw::DrawPane drawPane)
 {

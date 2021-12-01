@@ -47,28 +47,11 @@ double Creature::speedA = 0;
 double Creature::speedB = 0;
 double Creature::speedC = 0;
 
-Creature::Creature() : Thing()
+Creature::Creature() :m_type(Proto::CreatureTypeUnknown)
 {
-    m_id = 0;
-    m_healthPercent = 101;
-    m_speed = 200;
-    m_direction = Otc::South;
-    m_walkAnimationPhase = 0;
-    m_walkedPixels = 0;
-    m_walkTurnDirection = Otc::InvalidDirection;
-    m_skull = Otc::SkullNone;
-    m_shield = Otc::ShieldNone;
-    m_emblem = Otc::EmblemNone;
-    m_type = Proto::CreatureTypeUnknown;
-    m_icon = Otc::NpcIconNone;
-    m_lastStepDirection = Otc::InvalidDirection;
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_nameCache.setAlign(Fw::AlignTopCenter);
-    m_footStep = 0;
     m_speedFormula.fill(-1);
-    m_outfitColor = Color::white;
-    m_outfitShader = g_shaders.getDefaultOutfitShader();
-    m_mountShader = g_shaders.getDefaultMountShader();
 }
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType, Color color, LightView* lightView)

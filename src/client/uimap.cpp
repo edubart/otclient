@@ -32,13 +32,14 @@
 UIMap::UIMap()
 {
     m_draggable = true;
-    m_mapView = MapViewPtr(new MapView);
-    m_zoom = m_mapView->getVisibleDimension().height();
     m_keepAspectRatio = true;
     m_limitVisibleRange = false;
-    m_aspectRatio = m_mapView->getVisibleDimension().ratio();
     m_maxZoomIn = 3;
     m_maxZoomOut = 513;
+    m_mapView = MapViewPtr(new MapView);
+    m_zoom = m_mapView->getVisibleDimension().height();
+    m_aspectRatio = m_mapView->getVisibleDimension().ratio();
+
     m_mapRect.resize(1, 1);
     g_map.addMapView(m_mapView);
 }

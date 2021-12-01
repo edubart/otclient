@@ -27,11 +27,6 @@
 #include <framework/core/binarytree.h>
 #include <framework/core/filestream.h>
 
-ItemType::ItemType()
-{
-    m_category = ItemCategoryInvalid;
-}
-
 void ItemType::unserialize(const BinaryTreePtr& node)
 {
     m_null = false;

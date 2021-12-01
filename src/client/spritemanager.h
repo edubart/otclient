@@ -34,8 +34,6 @@ class SpriteManager
     };
 
 public:
-    SpriteManager();
-
     void terminate();
 
     bool loadSpr(std::string file);
@@ -51,8 +49,8 @@ public:
 
 private:
     bool m_loaded{ false };
-    uint32 m_signature;
-    int m_spritesCount;
+    uint32 m_signature{ 0 };
+    int m_spritesCount{ 0 };
     int m_spritesOffset;
     FileStreamPtr m_spritesFile;
 };

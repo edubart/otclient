@@ -26,8 +26,6 @@
 #include "game.h"
 #include "map.h"
 
-Effect::Effect() : m_timeToStartDrawing(0) {}
-
 void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if(m_id == 0 || !canDraw()) return;

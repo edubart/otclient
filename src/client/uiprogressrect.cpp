@@ -25,11 +25,6 @@
 #include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 
-UIProgressRect::UIProgressRect()
-{
-    m_percent = 0;
-}
-
 void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
 {
     if((drawPane & Fw::ForegroundPane) == 0)
