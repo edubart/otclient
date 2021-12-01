@@ -178,6 +178,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(file);
+        fin->cache();
 
         uint signature = fin->getU32();
         if(signature != 0)
