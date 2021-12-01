@@ -105,26 +105,25 @@ bool ThingTypeManager::loadDat(std::string file)
         file = g_resources.guessFilePath(file, "dat");
 
         FileStreamPtr fin = g_resources.openFile(file);
+        fin->cache();
 
 #if ENABLE_ENCRYPTION == 1
-        fin->cache();
         ResourceManager::decrypt(fin->m_data.data(), fin->m_data.size());
 #endif
 
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
-        for(auto& m_thingType : m_thingTypes) {
+        for(auto& thingType : m_thingTypes) {
             const int count = fin->getU16() + 1;
-            m_thingType.clear();
-            m_thingType.resize(count, m_nullThingType);
+            thingType.clear();
+            thingType.resize(count, m_nullThingType);
         }
 
-        for(int category = 0; category < ThingLastCategory; ++category) {
-            uint16 firstId = 1;
-            if(category == ThingCategoryItem)
-                firstId = 100;
-            for(uint16 id = firstId; id < m_thingTypes[category].size(); ++id) {
+        for(int category = -1; ++category < ThingLastCategory;) {
+            uint16 firstId = category == ThingCategoryItem ? 100 : 1;
+
+            for(uint16 id = firstId - 1, s = m_thingTypes[category].size(); ++id < s;) {
                 ThingTypePtr type(new ThingType);
                 type->unserialize(id, static_cast<ThingCategory>(category), fin);
                 m_thingTypes[category][id] = type;
