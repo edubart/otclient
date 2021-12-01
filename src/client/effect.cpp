@@ -35,8 +35,11 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
         return;
 
     int animationPhase;
-
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+        const auto& animator = rawGetThingType()->getIdleAnimator();
+        if(!animator)
+            return;
+
         // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
         animationPhase = rawGetThingType()->getIdleAnimator()->getPhaseAt(m_animationTimer);
     } else {
@@ -57,10 +60,12 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
 
 void Effect::onAppear()
 {
-    m_animationTimer.restart();
-
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
-        m_duration = getThingType()->getIdleAnimator()->getTotalDuration();
+        const auto& animator = getThingType()->getIdleAnimator();
+        if(!animator)
+            return;
+
+        m_duration = animator->getTotalDuration();
     } else {
         m_duration = EFFECT_TICKS_PER_FRAME;
 
@@ -71,6 +76,8 @@ void Effect::onAppear()
 
         m_duration *= getAnimationPhases();
     }
+
+    m_animationTimer.restart();
 
     // schedule removal
     const auto self = asEffect();
