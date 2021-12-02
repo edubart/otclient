@@ -23,12 +23,6 @@
 #ifndef THINGTYPE_H
 #define THINGTYPE_H
 
-enum class TextureType {
-    NONE,
-    SMOOTH,
-    ALL_BLANK
-};
-
 #include "animator.h"
 #include "declarations.h"
 
@@ -40,6 +34,12 @@ enum class TextureType {
 
 #include <framework/core/declarations.h>
 #include <framework/core/scheduledevent.h>
+
+enum class TextureType {
+    NONE,
+    SMOOTH,
+    ALL_BLANK
+};
 
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,

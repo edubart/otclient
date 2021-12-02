@@ -59,17 +59,6 @@ public:
     ~MapView();
     void draw(const Rect& rect);
 
-protected:
-    void onGlobalLightChange(const Light& light);
-    void onFloorChange(const uint8 floor, const uint8 previousFloor);
-    void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
-    void onMapCenterChange(const Position& newPos, const Position& oldPos);
-    void onCameraMove(const Point& offset);
-
-    friend class Map;
-    friend class Tile;
-    friend class LightView;
-
 public:
     // floor visibility related
     uint8 getLockedFirstVisibleFloor() { return m_lockedFirstVisibleFloor; }
@@ -158,9 +147,25 @@ public:
 
     void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
 
+protected:
+    void onGlobalLightChange(const Light& light);
+    void onFloorChange(const uint8 floor, const uint8 previousFloor);
+    void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
+    void onMapCenterChange(const Position& newPos, const Position& oldPos);
+    void onCameraMove(const Point& offset);
+
+    void addEffect(const EffectPtr& effect);
+    bool removeEffect(const EffectPtr& effect);
+
+    friend class Map;
+    friend class Tile;
+    friend class LightView;
+
 private:
     struct MapList {
         std::vector<TilePtr> shades, grounds, surfaces;
+        std::vector<EffectPtr> effects;
+
         void clear() { shades.clear(); grounds.clear(); surfaces.clear(); }
     };
 

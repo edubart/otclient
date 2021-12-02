@@ -34,16 +34,21 @@ Panel
   OptionCheckBox
     id: optimizeFps
     !text: tr('Optimize FPS')
-    !tooltip: tr('try to optimize when the frame rate is below 60. VISUAL PROBLEMS MAY OCCUR')
+    !tooltip: tr('Try to optimize when the frame rate is below 60. VISUAL PROBLEMS MAY OCCUR')
 
   OptionCheckBox
     id: forceEffectOptimization
     !text: tr('Force Effect Optimization')
-    !tooltip: tr('will avoid drawing effects on certain occasions.')
+    !tooltip: tr('Will avoid drawing effects on certain occasions.')
 
   OptionCheckBox
     id: enableLights
     !text: tr('Enable lights')
+
+  OptionCheckBox
+    id: drawEffectOnTop
+    !text: tr('Draw Effect On Top')
+    !tooltip: tr('Draw effect after drawing the entire floor.')
 
   OptionCheckBox
     id: drawViewportEdge

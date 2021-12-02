@@ -136,9 +136,13 @@ public:
 
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
+
     void notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
     void notificateCameraMove(const Point& offset);
     void notificateKeyRelease(const InputEvent& inputEvent);
+
+    void addEffectOnMap(const EffectPtr& effect);
+    void removeEffectOnMap(const EffectPtr& effect);
 
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);

@@ -60,6 +60,8 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
 
 void Effect::onAppear()
 {
+    m_drawOnTop = g_app.isDrawingEffectsOnTop();
+
     if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
         const auto& animator = getThingType()->getIdleAnimator();
         if(!animator)

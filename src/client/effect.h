@@ -44,6 +44,8 @@ public:
 
     void waitFor(const EffectPtr&);
 
+    bool isDrawingOnTop() { return m_drawOnTop; }
+
 protected:
     void onAppear() override;
 
@@ -54,6 +56,8 @@ private:
 
     int m_duration;
     int m_timeToStartDrawing{ 0 };
+
+    bool m_drawOnTop{ false };
 };
 
 #endif

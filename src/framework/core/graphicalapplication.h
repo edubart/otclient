@@ -54,7 +54,10 @@ public:
     bool isForcedEffectOptimization() { return m_forceEffectOptimization; }
 
     void optimize(const bool optimize) { m_optimize = optimize; }
+
     void forceEffectOptimization(const bool optimize) { m_forceEffectOptimization = optimize; }
+    void setDrawEffectOnTop(const bool draw) { m_drawEffectOnTop = draw; }
+    bool isDrawingEffectsOnTop() { return m_drawEffectOnTop || canOptimize(); }
 
 protected:
     void resize(const Size& size);
@@ -74,7 +77,8 @@ private:
     bool m_onInputEvent{ false },
         m_mustRepaint{ false },
         m_optimize{ true },
-        m_forceEffectOptimization{ true };
+        m_forceEffectOptimization{ true },
+        m_drawEffectOnTop{ false };
 
     Timer m_foregroundRefreshTime;
 

@@ -39,7 +39,8 @@ local defaultOptions = {
     antialiasingMode = 1,
     shadowFloorIntensity = 30,
     optimizeFps = true,
-    forceEffectOptimization = true
+    forceEffectOptimization = true,
+    drawEffectOnTop = false
 }
 
 local optionsWindow
@@ -238,6 +239,8 @@ function setOption(key, value, force)
         g_app.optimize(value)
     elseif key == 'forceEffectOptimization' then
         g_app.forceEffectOptimization(value)
+    elseif key == 'drawEffectOnTop' then
+        g_app.setDrawEffectOnTop(value)
     elseif key == 'showPing' then
         modules.client_topmenu.setPingVisible(value)
     elseif key == 'fullscreen' then
