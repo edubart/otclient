@@ -42,6 +42,7 @@ void Client::init(std::vector<std::string>& /*args*/)
     g_minimap.init();
     g_game.init();
     g_shaders.init();
+    g_sprites.init();
     g_things.init();
 
     //TODO: restore options

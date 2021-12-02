@@ -61,12 +61,6 @@ public:
 private:
     static bool orderLightComparator(const LightSource& a, const LightSource& b) { return (a.brightness == b.brightness && a.color < b.color) || a.brightness < b.brightness; }
 
-    void generateLightTexture(),
-        generateShadeTexture();
-
-    TexturePtr m_lightTexture,
-        m_shadeTexture;
-
     Light m_globalLight;
     Color m_globalLightColor;
 

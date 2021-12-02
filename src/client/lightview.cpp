@@ -28,59 +28,9 @@
 #include "lightview.h"
 #include "mapview.h"
 #include "map.h"
+#include "spritemanager.h"
 
-LightView::LightView(const MapViewPtr& mapView) : m_mapView(mapView), m_pool(g_drawPool.createPoolF(PoolType::LIGHT))
-{
-    generateLightTexture();
-    generateShadeTexture();
-
-    resize();
-}
-
-void LightView::generateLightTexture()
-{
-    const float brightnessIntensity = 1.3f,
-        centerFactor = .0f;
-
-    const uint8 maxBrightness = 0xff;
-
-    const uint16 bubbleRadius = 256,
-        centerRadius = bubbleRadius * centerFactor,
-        bubbleDiameter = bubbleRadius * 2;
-
-    ImagePtr lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
-    for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
-        for(int_fast16_t y = -1; ++y < bubbleDiameter;) {
-            const float radius = std::sqrt((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y));
-            float intensity = std::clamp<float>((bubbleRadius - radius) / static_cast<float>(bubbleRadius - centerRadius), .0f, 1.0f);
-
-            // light intensity varies inversely with the square of the distance
-            const uint8_t colorByte = std::min<int16>((intensity * intensity * brightnessIntensity) * 0xff, maxBrightness);
-
-            uint8_t pixel[4] = { 0xff, 0xff, 0xff, colorByte };
-            lightImage->setPixel(x, y, pixel);
-        }
-    }
-
-    m_lightTexture = TexturePtr(new Texture(lightImage));
-    m_lightTexture->setSmooth(true);
-}
-
-void LightView::generateShadeTexture()
-{
-    const uint16 diameter = 8;
-    const ImagePtr image = ImagePtr(new Image(Size(diameter, diameter)));
-    for(int_fast16_t x = -1; ++x < diameter;) {
-        for(int_fast16_t y = -1; ++y < diameter;) {
-            const uint8 alpha = x == 0 || y == 0 || x == diameter - 1 || y == diameter - 1 ? 0 : 0xff;
-            uint8_t pixel[4] = { 0xff, 0xff, 0xff, alpha };
-            image->setPixel(x, y, pixel);
-        }
-    }
-
-    m_shadeTexture = TexturePtr(new Texture(image));
-    m_shadeTexture->setSmooth(true);
-}
+LightView::LightView(const MapViewPtr& mapView) : m_mapView(mapView), m_pool(g_drawPool.createPoolF(PoolType::LIGHT)) { resize(); }
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
@@ -141,7 +91,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
                         newPos.x -= SPRITE_SIZE / 1.6;
                 }
 
-                g_drawPool.addTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), m_shadeTexture, m_globalLightColor);
+                g_drawPool.addTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
             }
         }
 
@@ -149,7 +99,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
         std::sort(lights.begin(), lights.end(), orderLightComparator);
         for(LightSource& light : lights) {
             if(light.brightness < 1.f) light.brightness = std::min<float>(light.brightness + intensity, 1.f);
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), m_lightTexture, Color::from8bit(light.color, light.brightness));
+            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), Color::from8bit(light.color, light.brightness));
         }
         lights.clear();
     }
