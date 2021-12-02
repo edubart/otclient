@@ -196,8 +196,10 @@ void MapView::drawFloor()
                 tile->drawSurface(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
             }
 
-            for(const auto& effect : map.effects) {
-                effect->drawEffect(transformPositionTo2D(effect->getPosition(), cameraPosition), m_scaleFactor, lightView);
+            for(const auto& tile : map.effects) {
+                for(const auto& effect : tile->getEffects()) {
+                    effect->drawEffect(transformPositionTo2D(effect->getPosition(), cameraPosition), m_scaleFactor, lightView);
+                }
             }
 
             g_drawPool.startPosition();
@@ -368,6 +370,9 @@ void MapView::updateVisibleTilesCache()
 
                     if(tile->hasSurface())
                         floor.surfaces.push_back(tile);
+
+                    if(g_app.isDrawingEffectsOnTop() && tile->hasEffect())
+                        floor.effects.push_back(tile);
 
                     tile->onAddVisibleTileList(this);
 
@@ -854,18 +859,4 @@ bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 void MapView::setCrosshairTexture(const std::string& texturePath)
 {
     m_crosshairTexture = texturePath.empty() ? nullptr : g_textures.getTexture(texturePath);
-}
-
-void MapView::addEffect(const EffectPtr& effect) { m_cachedVisibleTiles[effect->getPosition().z].effects.push_back(effect); }
-bool MapView::removeEffect(const EffectPtr& effect)
-{
-    MapList& floor = m_cachedVisibleTiles[effect->getPosition().z];
-    const auto it = std::find(floor.effects.begin(), floor.effects.end(), effect->static_self_cast<Effect>());
-
-    if(it == floor.effects.end())
-        return false;
-
-    floor.effects.erase(it);
-
-    return true;
 }

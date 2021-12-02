@@ -85,6 +85,7 @@ public:
     const Position& getPosition() { return m_position; }
     const std::vector<CreaturePtr>& getWalkingCreatures() { return m_walkingCreatures; }
     const std::vector<ThingPtr>& getThings() { return m_things; }
+    const std::vector<EffectPtr>& getEffects() { return m_effects; }
     std::vector<CreaturePtr> getCreatures();
 
     std::vector<ItemPtr> getItems();
@@ -114,6 +115,7 @@ public:
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
 
+    bool hasEffect() { return !m_effects.empty(); }
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
     bool hasTopGround() { return (m_ground && m_ground->isTopGround()) || m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }

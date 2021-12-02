@@ -91,20 +91,6 @@ void Map::notificateTileUpdate(const Position& pos, const ThingPtr& thing, const
     g_minimap.updateTile(pos, getTile(pos));
 }
 
-void Map::addEffectOnMap(const EffectPtr& effect)
-{
-    for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->addEffect(effect);
-    }
-}
-
-void Map::removeEffectOnMap(const EffectPtr& effect)
-{
-    for(const MapViewPtr& mapView : m_mapViews) {
-        mapView->removeEffect(effect);
-    }
-}
-
 void Map::clean()
 {
     cleanDynamicThings();
@@ -146,13 +132,6 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
         return;
 
     if(thing->isItem() || thing->isCreature() || thing->isEffect()) {
-        if(g_app.isDrawingEffectsOnTop() && thing->isEffect()) {
-            thing->setPosition(pos);
-            thing->onAppear();
-            addEffectOnMap(thing->static_self_cast<Effect>());
-            return;
-        }
-
         const TilePtr& tile = getOrCreateTile(pos);
         if(tile && (m_floatingEffect || !thing->isEffect() || tile->getGround())) {
             tile->addThing(thing, stackPos);
@@ -245,9 +224,6 @@ bool Map::removeThing(const ThingPtr& thing)
                 m_floorMissiles[z].erase(it);
                 ret = true;
             }
-        } else if(thing->isEffect() && thing->static_self_cast<Effect>()->isDrawingOnTop()) {
-            removeEffectOnMap(thing->static_self_cast<Effect>());
-            ret = true;
         } else if(const TilePtr& tile = thing->getTile()) {
             ret = tile->removeThing(thing);
         }

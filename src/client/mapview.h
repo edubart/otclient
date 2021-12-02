@@ -154,19 +154,14 @@ protected:
     void onMapCenterChange(const Position& newPos, const Position& oldPos);
     void onCameraMove(const Point& offset);
 
-    void addEffect(const EffectPtr& effect);
-    bool removeEffect(const EffectPtr& effect);
-
     friend class Map;
     friend class Tile;
     friend class LightView;
 
 private:
     struct MapList {
-        std::vector<TilePtr> shades, grounds, surfaces;
-        std::vector<EffectPtr> effects;
-
-        void clear() { shades.clear(); grounds.clear(); surfaces.clear(); }
+        std::vector<TilePtr> shades, grounds, surfaces, effects;
+        void clear() { shades.clear(); grounds.clear(); surfaces.clear(); effects.clear(); }
     };
 
     struct Pools {

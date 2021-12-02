@@ -189,8 +189,10 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
 
 void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    for(const auto& effect : m_effects) {
-        drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+    if(!g_app.isDrawingEffectsOnTop()) {
+        for(const auto& effect : m_effects) {
+            drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        }
     }
 
     if(m_countFlag.hasTopItem) {

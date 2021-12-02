@@ -141,9 +141,6 @@ public:
     void notificateCameraMove(const Point& offset);
     void notificateKeyRelease(const InputEvent& inputEvent);
 
-    void addEffectOnMap(const EffectPtr& effect);
-    void removeEffectOnMap(const EffectPtr& effect);
-
     bool loadOtcm(const std::string& fileName);
     void saveOtcm(const std::string& fileName);
 
