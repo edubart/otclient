@@ -147,7 +147,7 @@ public:
         if(dx == 0 && dy == 0)
             return -1;
 
-        float angle = std::atan2(dy * -1, dx);
+        double angle = std::atan2<int32_t>(dy * -1, dx);
         if(angle < 0)
             angle += 2 * Fw::pi;
 
@@ -161,7 +161,7 @@ public:
 
     static Otc::Direction getDirectionFromPositions(const Position& fromPos, const Position& toPos)
     {
-        const float angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
+        const double angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
         if(angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
@@ -197,7 +197,7 @@ public:
 
     bool isMapPosition() const { return ((x >= 0) && (y >= 0) && (x < UINT16_MAX) && (y < UINT16_MAX) && (z <= MAX_Z)); }
     bool isValid() const { return !(x == UINT16_MAX && y == UINT16_MAX && z == UINT8_MAX); }
-    float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
+    double distance(const Position& pos) const { return sqrt(pow<int32_t>(pos.x - x, 2) + pow<int32_t>(pos.y - y, 2)); }
     uint16 manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
 
     void translate(int32_t dx, int32_t dy, int8_t dz = 0) { x += dx; y += dy; z += dz; }
