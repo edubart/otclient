@@ -901,7 +901,7 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 Point Creature::getDisplacement()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        return {8};
+        return { 8 };
 
     if(m_outfit.getCategory() == ThingCategoryItem)
         return {};

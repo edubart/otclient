@@ -24,7 +24,7 @@
 #include <framework/otml/otmlnode.h>
 #include "luainterface.h"
 
-// bool
+ // bool
 int push_luavalue(bool b)
 {
     g_lua.pushBoolean(b);

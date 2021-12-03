@@ -26,7 +26,7 @@
 #include "clock.h"
 #include "event.h"
 
-// @bindclass
+ // @bindclass
 class ScheduledEvent : public Event
 {
 public:

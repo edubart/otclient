@@ -206,7 +206,7 @@ void OutputBinaryTree::addU32(uint32 v)
     write(data, 4);
 }
 
-void OutputBinaryTree::addString(const std::string& v)
+void OutputBinaryTree::addString(const std::string & v)
 {
     if(v.size() > 0xFFFF)
         stdext::throw_exception("too long string");
@@ -222,7 +222,7 @@ void OutputBinaryTree::addPos(uint16 x, uint16 y, uint8 z)
     addU8(z);
 }
 
-void OutputBinaryTree::addPoint(const Point& point)
+void OutputBinaryTree::addPoint(const Point & point)
 {
     addU8(point.x);
     addU8(point.y);
@@ -239,7 +239,7 @@ void OutputBinaryTree::endNode()
     m_fin->addU8(BINARYTREE_NODE_END);
 }
 
-void OutputBinaryTree::write(const uint8* data, size_t size)
+void OutputBinaryTree::write(const uint8 * data, size_t size)
 {
     for(size_t i = 0; i < size; ++i) {
         if(data[i] == BINARYTREE_NODE_START || data[i] == BINARYTREE_NODE_END || data[i] == BINARYTREE_ESCAPE_CHAR)

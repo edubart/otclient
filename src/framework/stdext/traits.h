@@ -27,13 +27,17 @@
 
 namespace stdext {
     template<class T> struct replace_extent {
-        using type = T; };
+        using type = T;
+    };
     template<class T> struct replace_extent<T[]> {
-        using type = const T*; };
+        using type = const T*;
+    };
     template<class T, unsigned long N> struct replace_extent<T[N]> {
-        using type = const T*; };
+        using type = const T*;
+    };
     template<typename T> struct remove_const_ref {
-        using type = typename std::remove_const<typename std::remove_reference<T>::type>::type; };
+        using type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
+    };
 };
 
 #endif

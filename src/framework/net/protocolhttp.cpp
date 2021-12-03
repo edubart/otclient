@@ -35,14 +35,14 @@ ProtocolHttp::~ProtocolHttp()
     disconnect();
 }
 
-void ProtocolHttp::connect(const std::string& host, uint16 port)
+void ProtocolHttp::connect(const std::string & host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
     m_connection->setErrorCallback([capture0 = asProtocolHttp()](auto&& PH1)
     {
         capture0->onError(std::forward<decltype(PH1)>(PH1));
     });
-    m_connection->connect(host, port, [capture0 = asProtocolHttp()] { capture0->onConnect(); });
+    m_connection->connect(host, port, [capture0 = asProtocolHttp()]{ capture0->onConnect(); });
 }
 
 void ProtocolHttp::disconnect()
@@ -63,10 +63,10 @@ void ProtocolHttp::recv()
 {
     if(m_connection)
         m_connection->read_until("\r\n\r\n", [capture0 = asProtocolHttp()](auto&& PH1, auto&& PH2)
-        {
-            capture0->onRecv(std::forward<decltype(PH1)>(PH1),
-                             std::forward<decltype(PH2)>(PH2));
-        });
+    {
+        capture0->onRecv(std::forward<decltype(PH1)>(PH1),
+                         std::forward<decltype(PH2)>(PH2));
+    });
 }
 
 void ProtocolHttp::onConnect()

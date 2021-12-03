@@ -131,7 +131,9 @@ namespace stdext {
         // std::move support
         shared_ptr(shared_ptr&& rhs) noexcept : base(rhs.base) { rhs.base = nullptr; }
         shared_ptr& operator=(shared_ptr&& rhs) noexcept
-        { shared_ptr(static_cast<shared_ptr&&>(rhs)).swap(*this); return *this; }
+        {
+            shared_ptr(static_cast<shared_ptr&&>(rhs)).swap(*this); return *this;
+        }
 
     private:
         shared_ptr(shared_base<T>* base)
@@ -184,7 +186,9 @@ namespace stdext {
         // std::move support
         weak_ptr(weak_ptr&& rhs) noexcept : base(rhs.base) { rhs.base = nullptr; }
         weak_ptr& operator=(weak_ptr&& rhs) noexcept
-        { weak_ptr(static_cast<weak_ptr&&>(rhs)).swap(*this); return *this; }
+        {
+            weak_ptr(static_cast<weak_ptr&&>(rhs)).swap(*this); return *this;
+        }
 
     private:
         shared_base<T>* base;

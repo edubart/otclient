@@ -98,8 +98,8 @@ protected:
     std::string m_tag;
     std::string m_value;
     std::string m_source;
-    bool m_unique{false};
-    bool m_null{false};
+    bool m_unique{ false };
+    bool m_null{ false };
 };
 
 #include "otmlexception.h"

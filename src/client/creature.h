@@ -30,7 +30,7 @@
 #include "outfit.h"
 #include "thing.h"
 
-// @bindclass
+ // @bindclass
 class Creature : public Thing
 {
 public:

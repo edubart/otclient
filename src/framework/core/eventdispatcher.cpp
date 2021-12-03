@@ -81,7 +81,7 @@ void EventDispatcher::poll()
 ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
 {
     if(m_disabled)
-        return {new ScheduledEvent(nullptr, delay, 1)};
+        return { new ScheduledEvent(nullptr, delay, 1) };
 
     assert(delay >= 0);
     ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 1));
@@ -92,7 +92,7 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& ca
 ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callback, int delay)
 {
     if(m_disabled)
-        return {new ScheduledEvent(nullptr, delay, 0)};
+        return { new ScheduledEvent(nullptr, delay, 0) };
 
     assert(delay > 0);
     ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 0));
@@ -103,7 +103,7 @@ ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callb
 EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool pushFront)
 {
     if(m_disabled)
-        return {new Event(nullptr)};
+        return { new Event(nullptr) };
 
     EventPtr event(new Event(callback));
     // front pushing is a way to execute an event before others

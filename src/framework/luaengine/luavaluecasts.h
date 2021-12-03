@@ -45,37 +45,61 @@ bool luavalue_cast(int index, double& d);
 
 // float
 inline int push_luavalue(float f) { push_luavalue(static_cast<double>(f)); return 1; }
-inline bool luavalue_cast(int index, float& f) { double d;
-    const bool r = luavalue_cast(index, d); f = d; return r; }
+inline bool luavalue_cast(int index, float& f)
+{
+    double d;
+    const bool r = luavalue_cast(index, d); f = d; return r;
+}
 
 // int8
 inline int push_luavalue(int8 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, int8& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline bool luavalue_cast(int index, int8& v)
+{
+    int i;
+    const bool r = luavalue_cast(index, i); v = i; return r;
+}
 // uint8
 inline int push_luavalue(uint8 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, uint8& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline bool luavalue_cast(int index, uint8& v)
+{
+    int i;
+    const bool r = luavalue_cast(index, i); v = i; return r;
+}
 // int16
 inline int push_luavalue(int16 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, int16& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline bool luavalue_cast(int index, int16& v)
+{
+    int i;
+    const bool r = luavalue_cast(index, i); v = i; return r;
+}
 // uint16
 inline int push_luavalue(uint16 v) { push_luavalue(static_cast<int>(v)); return 1; }
-inline bool luavalue_cast(int index, uint16& v) { int i;
-    const bool r = luavalue_cast(index, i); v = i; return r; }
+inline bool luavalue_cast(int index, uint16& v)
+{
+    int i;
+    const bool r = luavalue_cast(index, i); v = i; return r;
+}
 // uint32
 inline int push_luavalue(uint32 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, uint32& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline bool luavalue_cast(int index, uint32& v)
+{
+    double d;
+    const bool r = luavalue_cast(index, d); v = d; return r;
+}
 // int64
 inline int push_luavalue(int64 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, int64& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline bool luavalue_cast(int index, int64& v)
+{
+    double d;
+    const bool r = luavalue_cast(index, d); v = d; return r;
+}
 // uint64
 inline int push_luavalue(uint64 v) { push_luavalue(static_cast<double>(v)); return 1; }
-inline bool luavalue_cast(int index, uint64& v) { double d;
-    const bool r = luavalue_cast(index, d); v = d; return r; }
+inline bool luavalue_cast(int index, uint64& v)
+{
+    double d;
+    const bool r = luavalue_cast(index, d); v = d; return r;
+}
 
 // string
 int push_luavalue(const char* cstr);

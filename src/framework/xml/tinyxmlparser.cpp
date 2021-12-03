@@ -332,15 +332,15 @@ const char* TiXmlBase::SkipWhiteSpace(const char* p, TiXmlEncoding encoding)
                 continue;
             }
             if(*(pU + 0) == TIXML_UTF_LEAD_0
-                && *(pU + 1) == 0xbfU
-                && *(pU + 2) == 0xbeU)
+               && *(pU + 1) == 0xbfU
+               && *(pU + 2) == 0xbeU)
             {
                 p += 3;
                 continue;
             }
             if(*(pU + 0) == TIXML_UTF_LEAD_0
-                && *(pU + 1) == 0xbfU
-                && *(pU + 2) == 0xbfU)
+               && *(pU + 1) == 0xbfU
+               && *(pU + 2) == 0xbfU)
             {
                 p += 3;
                 continue;
@@ -508,7 +508,7 @@ const char* TiXmlBase::GetEntity(const char* p, char* value, int* length, TiXmlE
     }
 
     // Now try to match it.
-    for (auto& i : entity)
+    for(auto& i : entity)
     {
         if(strncmp(i.str, p, i.strLength) == 0)
         {
@@ -1134,7 +1134,7 @@ const char* TiXmlElement::Parse(const char* p, TiXmlParsingData* data, TiXmlEnco
 #ifdef TIXML_USE_STL
         TiXmlAttribute* node = attributeSet.Find(attrib->NameTStr());
 #else
-            TiXmlAttribute* node = attributeSet.Find(attrib->Name());
+        TiXmlAttribute* node = attributeSet.Find(attrib->Name());
 #endif
         if(node)
         {
@@ -1584,7 +1584,7 @@ const char* TiXmlDeclaration::Parse(const char* p, TiXmlParsingData* data, TiXml
 
 bool TiXmlText::Blank() const
 {
-    for (char i : value)
+    for(char i : value)
         if(!IsWhiteSpace(i))
             return false;
     return true;

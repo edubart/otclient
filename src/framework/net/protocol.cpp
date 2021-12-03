@@ -47,7 +47,7 @@ void Protocol::connect(const std::string& host, uint16 port)
     {
         capture0->onError(std::forward<decltype(PH1)>(PH1));
     });
-    m_connection->connect(host, port, [capture0 = asProtocol()] { capture0->onConnect(); });
+    m_connection->connect(host, port, [capture0 = asProtocol()]{ capture0->onConnect(); });
 }
 
 void Protocol::disconnect()
@@ -108,10 +108,10 @@ void Protocol::recv()
     // read the first 2 bytes which contain the message size
     if(m_connection)
         m_connection->read(2, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
-        {
-            capture0->internalRecvHeader(std::forward<decltype(PH1)>(PH1),
-                                         std::forward<decltype(PH2)>(PH2));
-        });
+    {
+        capture0->internalRecvHeader(std::forward<decltype(PH1)>(PH1),
+                                     std::forward<decltype(PH2)>(PH2));
+    });
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
@@ -123,10 +123,10 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
     // read remaining message data
     if(m_connection)
         m_connection->read(remainingSize, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
-        {
-            capture0->internalRecvData(std::forward<decltype(PH1)>(PH1),
-                                       std::forward<decltype(PH2)>(PH2));
-        });
+    {
+        capture0->internalRecvData(std::forward<decltype(PH1)>(PH1),
+                                   std::forward<decltype(PH2)>(PH2));
+    });
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)

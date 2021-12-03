@@ -308,7 +308,7 @@ void WIN32Window::internalCreateWindow()
                                nullptr,
                                nullptr,
                                m_instance,
-    nullptr);
+                               nullptr);
 
     if(!m_window)
         g_logger.fatal("Unable to create window");
@@ -444,7 +444,7 @@ bool WIN32Window::isExtensionSupported(const char* ext)
     //TODO
     return false;
 #else
-    using wglGetExtensionsStringProc = const char* (WINAPI* )();
+    using wglGetExtensionsStringProc = const char* (WINAPI*)();
     const auto wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
     if(!wglGetExtensionsString)
         return false;
@@ -920,7 +920,7 @@ void WIN32Window::setVerticalSync(bool enable)
     if(!isExtensionSupported("WGL_EXT_swap_control"))
         return;
 
-    using wglSwapIntervalProc = BOOL(WINAPI* )(int);
+    using wglSwapIntervalProc = BOOL(WINAPI*)(int);
     const auto wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
     if(!wglSwapInterval)
         return;
@@ -994,7 +994,7 @@ void WIN32Window::setClipboardText(const std::string& text)
 
 Size WIN32Window::getDisplaySize()
 {
-    return {GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN)};
+    return { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
 }
 
 std::string WIN32Window::getClipboardText()

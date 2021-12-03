@@ -145,7 +145,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
-        return {-1, -1};
+        return { -1, -1 };
 
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
@@ -161,7 +161,7 @@ Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, co
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
     const Point pos2d = (point - screenRect.topLeft() + off) / scale + mapRect.topLeft();
-    return {pos2d.x, pos2d.y, mapCenter.z};
+    return { pos2d.x, pos2d.y, mapCenter.z };
 }
 
 Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)

@@ -27,7 +27,7 @@
 #include "declarations.h"
 #include "soundchannel.h"
 
-//@bindsingleton g_sounds
+ //@bindsingleton g_sounds
 class SoundManager
 {
     enum {

@@ -165,9 +165,9 @@ void Connection::internal_write()
     async_write(m_socket,
                 *outputStream,
                 [capture0 = asConnection(), outputStream](auto&& PH1, auto&& PH2)
-                {
-                    capture0->onWrite(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2), outputStream);
-                });
+    {
+        capture0->onWrite(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2), outputStream);
+    });
 
     m_writeTimer.cancel();
     m_writeTimer.expires_from_now(boost::posix_time::seconds(static_cast<uint32>(WRITE_TIMEOUT)));
@@ -187,9 +187,9 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
     async_read(m_socket,
                buffer(m_inputStream.prepare(bytes)),
                [capture0 = asConnection()](auto&& PH1, auto&& PH2)
-               {
-                   capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
-               });
+    {
+        capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+    });
 
     m_readTimer.cancel();
     m_readTimer.expires_from_now(boost::posix_time::seconds(static_cast<uint32>(READ_TIMEOUT)));
@@ -210,9 +210,9 @@ void Connection::read_until(const std::string& what, const RecvCallback& callbac
                      m_inputStream,
                      what,
                      [capture0 = asConnection()](auto&& PH1, auto&& PH2)
-                     {
-                         capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
-                     });
+    {
+        capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+    });
 
     m_readTimer.cancel();
     m_readTimer.expires_from_now(boost::posix_time::seconds(static_cast<uint32>(READ_TIMEOUT)));
@@ -231,9 +231,9 @@ void Connection::read_some(const RecvCallback& callback)
 
     m_socket.async_read_some(buffer(m_inputStream.prepare(RECV_BUFFER_SIZE)),
                              [capture0 = asConnection()](auto&& PH1, auto&& PH2)
-                             {
-                                 capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
-                             });
+    {
+        capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+    });
 
     m_readTimer.cancel();
     m_readTimer.expires_from_now(boost::posix_time::seconds(static_cast<uint32>(READ_TIMEOUT)));

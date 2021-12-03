@@ -26,7 +26,7 @@
 #include <filesystem>
 #include "declarations.h"
 
-// @bindsingleton g_resources
+ // @bindsingleton g_resources
 class ResourceManager
 {
 public:
