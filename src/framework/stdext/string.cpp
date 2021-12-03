@@ -249,7 +249,7 @@ namespace stdext {
 
     void eraseWhiteSpace(std::string& str)
     {
-        str.erase(std::remove_if(str.begin(), str.end(), isspace), str.end());
+        std::erase_if(str, isspace);
     }
 
     std::vector<std::string> split(const std::string& str, const std::string& separators)
