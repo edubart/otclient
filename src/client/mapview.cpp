@@ -293,10 +293,12 @@ void MapView::updateVisibleTilesCache()
 
     if(m_lastCameraPosition != cameraPosition) {
         if(m_mousePosition.isValid()) {
-            if(cameraPosition.z == m_lastCameraPosition.z) {
-                m_mousePosition = m_mousePosition.translatedToDirection(m_lastCameraPosition.getDirectionFromPosition(cameraPosition));
-            } else {
+            const Otc::Direction direction = m_lastCameraPosition.getDirectionFromPosition(cameraPosition);
+            m_mousePosition = m_mousePosition.translatedToDirection(direction);
+
+            if(cameraPosition.z != m_lastCameraPosition.z) {
                 m_mousePosition.z += cameraPosition.z - m_lastCameraPosition.z;
+                m_mousePosition = m_mousePosition.translatedToDirection(direction); // Two steps
             }
 
             onMouseMove(m_mousePosition, true);
@@ -305,26 +307,26 @@ void MapView::updateVisibleTilesCache()
         if(m_lastCameraPosition.z != cameraPosition.z) {
             onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
         }
+
+        const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
+        uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
+
+        assert(cachedFirstVisibleFloor <= MAX_Z && cachedLastVisibleFloor <= MAX_Z);
+
+        if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
+            cachedLastVisibleFloor = cachedFirstVisibleFloor;
+
+        m_lastCameraPosition = cameraPosition;
+        m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
+        m_cachedLastVisibleFloor = cachedLastVisibleFloor;
+
+        m_floorMin = m_floorMax = cameraPosition.z;
     }
-
-    const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor();
-    uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
-
-    assert(cachedFirstVisibleFloor <= MAX_Z && cachedLastVisibleFloor <= MAX_Z);
-
-    if(cachedLastVisibleFloor < cachedFirstVisibleFloor)
-        cachedLastVisibleFloor = cachedFirstVisibleFloor;
-
-    m_lastCameraPosition = cameraPosition;
-    m_cachedFirstVisibleFloor = cachedFirstVisibleFloor;
-    m_cachedLastVisibleFloor = cachedLastVisibleFloor;
 
     // clear current visible tiles cache
     do {
         m_cachedVisibleTiles[m_floorMin].clear();
     } while(++m_floorMin <= m_floorMax);
-
-    m_floorMin = m_floorMax = cameraPosition.z;
 
     if(m_mustUpdateVisibleCreaturesCache) {
         m_visibleCreatures.clear();
@@ -386,7 +388,6 @@ void MapView::updateVisibleTilesCache()
     }
 
     m_mustUpdateVisibleCreaturesCache = false;
-    m_mustUpdateVisibleTilesCache = false;
 }
 
 void MapView::updateGeometry(const Size& visibleDimension)
