@@ -160,7 +160,7 @@ inline std::istream& operator>>(std::istream& in, Color& color)
             else
                 color.setAlpha(255);
         } else {
-            in.seekg(-tmp.length() - 1, std::ios_base::cur);
+            in.seekg(0 - tmp.length() - 1, std::ios_base::cur);
         }
     } else {
         in >> tmp;
@@ -204,7 +204,7 @@ inline std::istream& operator>>(std::istream& in, Color& color)
         } else if(tmp == "orange") {
             color = Color::orange;
         } else {
-            in.seekg(-tmp.length(), std::ios_base::cur);
+            in.seekg(0 - tmp.length(), std::ios_base::cur);
         }
     }
 
