@@ -289,7 +289,14 @@ void MapView::updateVisibleTilesCache()
     if(!cameraPosition.isValid())
         return;
 
-    m_mustUpdateVisibleTilesCache = false;
+    // clear current visible tiles cache
+    do {
+        m_cachedVisibleTiles[m_floorMin].clear();
+    } while(++m_floorMin <= m_floorMax);
+
+    if(m_mustUpdateVisibleCreaturesCache) {
+        m_visibleCreatures.clear();
+    }
 
     if(m_lastCameraPosition != cameraPosition) {
         if(m_mousePosition.isValid()) {
@@ -321,15 +328,6 @@ void MapView::updateVisibleTilesCache()
         m_cachedLastVisibleFloor = cachedLastVisibleFloor;
 
         m_floorMin = m_floorMax = cameraPosition.z;
-    }
-
-    // clear current visible tiles cache
-    do {
-        m_cachedVisibleTiles[m_floorMin].clear();
-    } while(++m_floorMin <= m_floorMax);
-
-    if(m_mustUpdateVisibleCreaturesCache) {
-        m_visibleCreatures.clear();
     }
 
     // cache visible tiles in draw order
@@ -388,6 +386,7 @@ void MapView::updateVisibleTilesCache()
     }
 
     m_mustUpdateVisibleCreaturesCache = false;
+    m_mustUpdateVisibleTilesCache = false;
 }
 
 void MapView::updateGeometry(const Size& visibleDimension)
