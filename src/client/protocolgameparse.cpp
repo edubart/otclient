@@ -499,7 +499,7 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
         std::string description = msg->getString();
 
         if(g_game.getFeature(Otc::GameIngameStoreHighlights))
-            int highlightState = msg->getU8();
+            msg->getU8(); // highlightState
 
         std::vector<std::string> icons;
         const int iconCount = msg->getU8();
@@ -520,11 +520,11 @@ void ProtocolGame::parseCoinBalance(const InputMessagePtr& msg)
     if(update) {
         // amount of coins that can be used to buy prodcuts
         // in the ingame store
-        int coins = msg->getU32();
+        msg->getU32(); // coins
 
         // amount of coins that can be sold in market
         // or be transfered to another player
-        int transferableCoins = msg->getU32();
+        msg->getU32(); // transferableCoins
     }
 }
 
@@ -2386,5 +2386,5 @@ Position ProtocolGame::getPosition(const InputMessagePtr& msg)
     const uint16 y = msg->getU16();
     const uint8 z = msg->getU8();
 
-    return {x, y, z};
+    return { x, y, z };
 }

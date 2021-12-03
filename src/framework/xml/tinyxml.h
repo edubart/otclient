@@ -202,7 +202,7 @@ public:
     TiXmlBase(const TiXmlBase&) = delete;
     void operator=(const TiXmlBase& base) = delete;
 
-    TiXmlBase() : {}
+    TiXmlBase() = default;
     virtual ~TiXmlBase() = default;
 
     /**    All TinyXml classes can print themselves to a filestream
@@ -374,7 +374,7 @@ protected:
     TiXmlCursor location;
 
     /// Field containing a generic user pointer
-    void* userData{nullptr};
+    void* userData{ nullptr };
 
     // None of these methods are reliable for any language except English.
     // Good for approximation, not great for accuracy.
@@ -1650,11 +1650,7 @@ private:
 class TiXmlPrinter : public TiXmlVisitor
 {
 public:
-    TiXmlPrinter() : 
-    ,
-    , indent("    "), lineBreak("\n")
-    {
-    }
+    TiXmlPrinter() : indent("    "), lineBreak("\n") {}
 
     bool VisitEnter(const TiXmlDocument& doc) override;
     bool VisitExit(const TiXmlDocument& doc) override;
@@ -1710,8 +1706,8 @@ private:
         buffer += lineBreak;
     }
 
-    int depth{0};
-    bool simpleTextPrint{false};
+    int depth{ 0 };
+    bool simpleTextPrint{ false };
     TIXML_STRING buffer;
     TIXML_STRING indent;
     TIXML_STRING lineBreak;

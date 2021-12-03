@@ -26,7 +26,6 @@
 #include "platformwindow.h"
 
 #include <windows.h>
-#include <winsock2.h>
 
 #ifdef OPENGL_ES
 #include <EGL/egl.h>

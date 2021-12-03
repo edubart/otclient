@@ -29,13 +29,14 @@
 #include "config.h"
 #include "const.h"
 
+#include <array>
 #include <vector>
 
 class Position
 {
 public:
     Position() = default;
-    Position(int32 x, int32 y, uint8 z) : x(x), y(y), z(z) {}
+    Position(int32_t x, int32_t y, uint8_t z) : x(x), y(y), z(z) {}
     Position(const Position& position) = default;
 
     Position translatedToDirection(Otc::Direction direction)
@@ -139,8 +140,8 @@ public:
     static double getAngleFromPositions(const Position& fromPos, const Position& toPos)
     {
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
-        const int32 dx = toPos.x - fromPos.x;
-        const int32 dy = toPos.y - fromPos.y;
+        const int32_t dx = toPos.x - fromPos.x;
+        const int32_t dy = toPos.y - fromPos.y;
         if(dx == 0 && dy == 0)
             return -1;
 
@@ -197,12 +198,12 @@ public:
     float distance(const Position& pos) const { return sqrt(pow(pos.x - x, 2) + pow(pos.y - y, 2)); }
     uint16 manhattanDistance(const Position& pos) const { return std::abs(pos.x - x) + std::abs(pos.y - y); }
 
-    void translate(int32 dx, int32 dy, int8 dz = 0) { x += dx; y += dy; z += dz; }
-    Position translated(int32 dx, int32 dy, int8 dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
+    void translate(int32_t dx, int32_t dy, int8_t dz = 0) { x += dx; y += dy; z += dz; }
+    Position translated(int32_t dx, int32_t dy, int8_t dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
-    std::array<Position, static_cast<uint8>(8)> getPositionsAround() const
+    std::array<Position, 8> getPositionsAround() const
     {
-        std::array<Position, static_cast<uint8>(8)> positions;
+        std::array<Position, 8> positions;
         int_fast8_t i = -1;
         for(int_fast32_t xi = -1; xi <= 1; ++xi) {
             for(int_fast32_t yi = -1; yi <= 1; ++yi) {
@@ -217,12 +218,12 @@ public:
         return positions;
     }
 
-    Position operator+(const Position& other) const { return {x + other.x, y + other.y, z + other.z}; }
+    Position operator+(const Position& other) const { return { x + other.x, y + other.y, static_cast<uint8_t>(z + other.z) }; }
     Position& operator+=(const Position& other) { x += other.x; y += other.y; z += other.z; return *this; }
-    Position operator-(const Position& other) const { return {x - other.x, y - other.y, z - other.z}; }
+    Position operator-(const Position& other) const { return { x - other.x, y - other.y, static_cast<uint8_t>(z - other.z) }; }
     Position& operator-=(const Position& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
     // Point conversion(s)
-    Position operator+(const Point& other) const { return {x + other.x, y + other.y, z}; }
+    Position operator+(const Point& other) const { return { x + other.x, y + other.y, z }; }
     Position& operator+=(const Point& other) { x += other.x; y += other.y; return *this; }
 
     Position& operator=(const Position& other) = default;
@@ -241,9 +242,9 @@ public:
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }
 
-    bool up(int8 n = 1)
+    bool up(int8_t n = 1)
     {
-        const int8 nz = z - n;
+        const int8_t nz = z - n;
         if(nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
@@ -251,9 +252,9 @@ public:
         return false;
     }
 
-    bool down(int8 n = 1)
+    bool down(int8_t n = 1)
     {
-        const int8 nz = z + n;
+        const int8_t nz = z + n;
         if(nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
@@ -262,10 +263,10 @@ public:
         return false;
     }
 
-    bool coveredUp(int8 n = 1)
+    bool coveredUp(int8_t n = 1)
     {
-        const int32 nx = x + n, ny = y + n;
-        const int8 nz = z - n;
+        const int32_t nx = x + n, ny = y + n;
+        const int8_t nz = z - n;
         if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -274,10 +275,10 @@ public:
         return false;
     }
 
-    bool coveredDown(int8 n = 1)
+    bool coveredDown(int8_t n = 1)
     {
-        const int32 nx = x - n, ny = y - n;
-        const int8 nz = z + n;
+        const int32_t nx = x - n, ny = y - n;
+        const int8_t nz = z + n;
         if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
@@ -286,9 +287,9 @@ public:
         return false;
     }
 
-    int32 x{UINT16_MAX};
-    int32 y{UINT16_MAX};
-    uint8 z{UINT8_MAX};
+    int32_t x{ UINT16_MAX };
+    int32_t y{ UINT16_MAX };
+    uint8_t z{ UINT8_MAX };
 
     // NOTE: This does not increase the size of the struct.
     struct Hasher
@@ -308,8 +309,8 @@ inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 
 inline std::istream& operator>>(std::istream& in, Position& pos)
 {
-    int32 x, y;
-    uint8 z;
+    int32_t x, y;
+    uint8_t z;
     in >> x >> y >> z;
     pos.x = x;
     pos.y = y;

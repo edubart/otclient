@@ -20,9 +20,11 @@
  * THE SOFTWARE.
  */
 
-#include <cstring>
 #include <boost/algorithm/string.hpp>
+
+#include "exception.h"
 #include "format.h"
+#include "types.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data

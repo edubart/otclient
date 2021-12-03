@@ -40,7 +40,7 @@ namespace stdext {
     class shared_object
     {
     public:
-        shared_object() : {}
+        shared_object() = default;
         virtual ~shared_object() = default;
         void add_ref() { ++refs; }
         void dec_ref() { if(--refs == 0) delete this; }
@@ -55,9 +55,9 @@ namespace stdext {
 
     private:
 #ifdef THREAD_SAFE
-        std::atomic<refcount_t> refs;
+        std::atomic<refcount_t> refs{ 0 };
 #else
-        refcount_t refs{0};
+        refcount_t refs{ 0 };
 #endif
     };
 
@@ -96,18 +96,20 @@ namespace stdext {
         shared_object_ptr& operator=(T* rhs) { shared_object_ptr(rhs).swap(*this); return *this; }
 
         // implicit conversion to bool
-        using unspecified_bool_type = T* shared_object_ptr::*;
+        using unspecified_bool_type = T * shared_object_ptr::*;
         operator unspecified_bool_type() const { return px == nullptr ? nullptr : &shared_object_ptr::px; }
         bool operator!() const { return px == nullptr; }
 
         // std::move support
         shared_object_ptr(shared_object_ptr&& rhs) noexcept : px(rhs.px) { rhs.px = nullptr; }
         shared_object_ptr& operator=(shared_object_ptr&& rhs) noexcept
-        { shared_object_ptr(static_cast<shared_object_ptr&&>(rhs)).swap(*this); return *this; }
+        {
+            shared_object_ptr(static_cast<shared_object_ptr&&>(rhs)).swap(*this); return *this;
+        }
 
     private:
-        void add_ref() { static_cast<shared_object*>(px)->add_ref(); }
-        void dec_ref() { static_cast<shared_object*>(px)->dec_ref(); }
+        void add_ref() { ((shared_object*)px)->add_ref(); }
+        void dec_ref() { ((shared_object*)px)->dec_ref(); }
 
         T* px;
     };

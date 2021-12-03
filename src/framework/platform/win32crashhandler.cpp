@@ -26,7 +26,6 @@
 #include <framework/core/application.h>
 #include "crashhandler.h"
 
-#include <process.h>
 #include <windows.h>
 #include <winsock2.h>
 

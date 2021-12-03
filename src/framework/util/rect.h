@@ -157,7 +157,7 @@ public:
             if(p.x <= l || p.x >= r)
                 return false;
         } else {
-            if(p.template x < l || p.x > r)
+            if(p.x < l || p.x > r)
                 return false;
         }
         T t, b;
@@ -172,7 +172,7 @@ public:
             if(p.y <= t || p.y >= b)
                 return false;
         } else {
-            if(p.template y < t || p.y > b)
+            if(p.y < t || p.y > b)
                 return false;
         }
         return true;

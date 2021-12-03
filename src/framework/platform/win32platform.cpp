@@ -23,9 +23,8 @@
 #ifdef WIN32
 
 #include <tchar.h>
-#include <windows.h>
-#include <winsock2.h>
 #include <framework/stdext/stdext.h>
+
 #include "platform.h"
 
 void Platform::processArgs(std::vector<std::string>& args)
@@ -45,7 +44,7 @@ void Platform::processArgs(std::vector<std::string>& args)
 bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     std::string commandLine;
-    for (const auto& arg : args)
+    for(const auto& arg : args)
         commandLine += stdext::format(" \"%s\"", arg);
 
     stdext::replace_all(process, "/", "\\");
@@ -231,8 +230,8 @@ double Platform::getTotalSystemMemory()
 
 std::string Platform::getOSName()
 {
-    using PGNSI = void(WINAPI* )(LPSYSTEM_INFO);
-    using PGPI = BOOL(WINAPI* )(DWORD, DWORD, DWORD, DWORD, PDWORD);
+    using PGNSI = void(WINAPI*)(LPSYSTEM_INFO);
+    using PGPI = BOOL(WINAPI*)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 
     std::string ret;
     OSVERSIONINFOEX osvi;

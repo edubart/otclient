@@ -39,13 +39,9 @@ enum MinimapTileFlags {
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : 
-    ,
-    ,
- {}
-    uint8 flags{0};
-    uint8 color{255};
-    uint8 speed{10};
+    uint8 flags{ 0 };
+    uint8 color{ 255 };
+    uint8 speed{ 10 };
     bool hasFlag(MinimapTileFlags flag) const { return flags & flag; }
     int getSpeed() const { return speed * 10; }
     bool operator==(const MinimapTile& other) const { return color == other.color && flags == other.flags && speed == other.speed; }
@@ -113,7 +109,7 @@ private:
     {
         return {
             (index % (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE,
-                        (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, z
+                        (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, static_cast<uint8_t>(z)
         };
     }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
