@@ -314,7 +314,7 @@ void Tile::addThing(const ThingPtr& thing, int stackPos)
 }
 
 // TODO: Need refactoring
-bool Tile::removeThing(const ThingPtr& thing)
+bool Tile::removeThing(const ThingPtr thing)
 {
     if(!thing) return false;
 
