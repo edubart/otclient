@@ -24,6 +24,8 @@
 #include <framework/graphics/drawpool.h>
 #include <framework/graphics/particlemanager.h>
 
+#include "framework/graphics/particleeffect.h"
+
 UIParticles::UIParticles()
 {
     m_referencePos = PointF(-1, -1);

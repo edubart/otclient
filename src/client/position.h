@@ -31,6 +31,8 @@
 
 #include <array>
 #include <vector>
+#include <istream>
+#include <ostream>
 
 class Position
 {

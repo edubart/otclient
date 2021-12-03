@@ -24,7 +24,6 @@
 #include <framework/graphics/drawpool.h>
 #include "bitmapfont.h"
 #include "fontmanager.h"
-#include "painter.h"
 
 CachedText::CachedText()
 {

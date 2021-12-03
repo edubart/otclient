@@ -24,7 +24,6 @@
 #define CRYPT_H
 
 #include <string>
-#include "../stdext/types.h"
 
 #include <boost/uuid/uuid.hpp>
 #ifdef USE_GMP

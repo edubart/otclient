@@ -24,7 +24,6 @@
 #define BITMAPFONT_H
 
 #include "declarations.h"
-#include "texture.h"
 
 #include <framework/otml/declarations.h>
 

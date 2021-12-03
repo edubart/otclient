@@ -24,9 +24,7 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/drawpool.h>
-#include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/painter.h>
 #include <framework/graphics/particlemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/input/mouse.h>

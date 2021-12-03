@@ -26,6 +26,7 @@
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/graphics.h>
 #include "map.h"
+#include "framework/core/graphicalapplication.h"
 
 StaticText::StaticText()
 {

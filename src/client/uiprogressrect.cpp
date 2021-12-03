@@ -22,8 +22,9 @@
 
 #include "uiprogressrect.h"
 #include <framework/graphics/fontmanager.h>
-#include <framework/graphics/graphics.h>
-#include <framework/otml/otml.h>
+
+#include "framework/graphics/drawpool.h"
+#include "framework/graphics/pool.h"
 
 void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
 {

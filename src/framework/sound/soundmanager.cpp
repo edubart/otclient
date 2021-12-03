@@ -21,13 +21,11 @@
  */
 
 #include "soundmanager.h"
-#include "combinedsoundsource.h"
 #include "soundbuffer.h"
 #include "soundfile.h"
 #include "soundsource.h"
 #include "streamsoundsource.h"
 
-#include <thread>
 #include <framework/core/asyncdispatcher.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>

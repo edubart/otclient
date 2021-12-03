@@ -29,10 +29,8 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
 #include <framework/graphics/drawpool.h>
-#include <framework/graphics/graphics.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/otml/otml.h>
 
 void ThingType::serialize(const FileStreamPtr& fin)

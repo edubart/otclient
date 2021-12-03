@@ -21,7 +21,8 @@
  */
 
 #include "particle.h"
-#include <framework/core/clock.h>
+
+#include "drawpool.h"
 #include "graphics.h"
 
 Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode, TexturePtr texture)

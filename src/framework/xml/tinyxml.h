@@ -36,11 +36,8 @@ distribution.
 #include <cassert>
 #include <cctype>
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 
 #include <framework/const.h>
-#include <framework/stdext/cast.h>
 #include <framework/stdext/string.h>
 
 // Help out windows:
@@ -49,7 +46,6 @@ distribution.
 #endif
 
 #ifdef TIXML_USE_STL
-#include <iostream>
 #include <sstream>
 #include <string>
 #define TIXML_STRING        std::string

@@ -23,7 +23,6 @@
 #ifndef IMAGE_H
 #define IMAGE_H
 
-#include <framework/util/databuffer.h>
 #include "declarations.h"
 
 class Image : public stdext::shared_object

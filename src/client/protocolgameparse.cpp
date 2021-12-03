@@ -30,8 +30,10 @@
 #include "luavaluecasts.h"
 #include "map.h"
 #include "missile.h"
+#include "statictext.h"
 #include "thingtypemanager.h"
 #include "tile.h"
+#include "framework/net/inputmessage.h"
 
 void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 {

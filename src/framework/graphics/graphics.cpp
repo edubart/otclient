@@ -37,7 +37,6 @@
 
 #include <framework/graphics/drawpool.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/texture.h>
 #include <framework/platform/platformwindow.h>
 #include "framebuffermanager.h"
 #include "texturemanager.h"

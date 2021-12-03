@@ -26,7 +26,6 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
 #include "declarations.h"
-#include "particlesystem.h"
 
 class ParticleEffectType : public LuaObject
 {

@@ -24,7 +24,6 @@
 #define PARTICLEMANAGER_H
 
 #include "declarations.h"
-#include "particleeffect.h"
 #include "particletype.h"
 
 class ParticleManager

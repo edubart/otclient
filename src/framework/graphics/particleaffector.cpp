@@ -21,7 +21,6 @@
  */
 
 #include "particleaffector.h"
-#include <framework/core/clock.h>
 #include "particle.h"
 
 ParticleAffector::ParticleAffector()

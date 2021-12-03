@@ -27,11 +27,12 @@
 
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/luaengine/luainterface.h>
 #include <framework/otml/otmlnode.h>
 #include <framework/platform/platformwindow.h>
+
+#include "framework/graphics/drawpool.h"
+#include "framework/graphics/painter.h"
 
 UIWidget::UIWidget()
 {

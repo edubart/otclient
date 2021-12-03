@@ -29,6 +29,8 @@
 #include <framework/otml/otmlnode.h>
 #include <framework/platform/platformwindow.h>
 
+#include "framework/graphics/drawpool.h"
+
 UITextEdit::UITextEdit()
 {
     m_cursorPos = 0;

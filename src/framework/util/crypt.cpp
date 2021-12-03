@@ -21,7 +21,6 @@
  */
 
 #include "crypt.h"
-#include <framework/core/application.h>
 #include <framework/core/logger.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/platform/platform.h>
@@ -29,6 +28,8 @@
 
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+
+#include "framework/core/graphicalapplication.h"
 
 #ifndef USE_GMP
 #include <openssl/bn.h>

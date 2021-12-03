@@ -27,6 +27,9 @@
 
 #include <framework/otml/otml.h>
 
+#include "drawpool.h"
+#include "painter.h"
+
 namespace
 {
     std::vector<Point> s_glyphsPositions(1);

@@ -24,11 +24,9 @@
  */
 
 #include "apngloader.h"
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <iostream>
 #include <memory>
 #include <sstream>
 

@@ -23,7 +23,6 @@
 #include "uiitem.h"
 #include <framework/graphics/fontmanager.h>
 #include <framework/graphics/graphics.h>
-#include <framework/otml/otml.h>
 
 UIItem::UIItem() { m_draggable = true; }
 

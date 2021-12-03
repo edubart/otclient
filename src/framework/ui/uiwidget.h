@@ -32,7 +32,7 @@
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otmlnode.h>
 
-#include "framework/stdext/math.h"
+#include "framework/graphics/texture.h"
 
 template<typename T = int>
 struct EdgeGroup {

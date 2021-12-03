@@ -25,7 +25,6 @@
 #include "creatures.h"
 #include "game.h"
 #include "itemtype.h"
-#include "spritemanager.h"
 #include "thing.h"
 #include "thingtype.h"
 

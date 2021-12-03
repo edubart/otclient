@@ -24,6 +24,8 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/otml/otml.h>
 
+#include "particleeffect.h"
+
 ParticleManager g_particles;
 
 bool ParticleManager::importParticle(std::string file)

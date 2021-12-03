@@ -24,7 +24,6 @@
 #define FRAMEWORK_GRAPHICS_DECLARATIONS_H
 
 #include <framework/global.h>
-#include "glutil.h"
 
 class Texture;
 class TextureManager;

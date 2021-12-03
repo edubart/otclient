@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include "framework/graphics/texture.h"
 #if !defined(OPENGL_ES) || OPENGL_ES==1
 
 #include "painterogl1.h"

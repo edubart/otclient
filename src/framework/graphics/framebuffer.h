@@ -23,9 +23,6 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include <client/const.h>
-#include <framework/core/scheduledevent.h>
-#include <framework/core/timer.h>
 #include "declarations.h"
 #include "painter.h"
 #include "texture.h"

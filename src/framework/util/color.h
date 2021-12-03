@@ -24,7 +24,6 @@
 #define COLOR_H
 
 #include <iomanip>
-#include "../const.h"
 #include "../stdext/cast.h"
 #include "../stdext/string.h"
 #include "../stdext/types.h"

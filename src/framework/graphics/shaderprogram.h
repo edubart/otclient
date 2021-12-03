@@ -24,9 +24,11 @@
 #define SHADERPROGRAM_H
 
 #include <framework/luaengine/luaobject.h>
+#include <GL/glew.h>
+
 #include "shader.h"
 
-// @bindclass
+ // @bindclass
 class ShaderProgram : public LuaObject
 {
     enum {

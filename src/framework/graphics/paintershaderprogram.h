@@ -24,8 +24,6 @@
 #define PAINTERSHADERPROGRAM_H
 
 #include <client/position.h>
-#include <framework/core/timer.h>
-#include "coordsbuffer.h"
 #include "shaderprogram.h"
 
 class PainterShaderProgram : public ShaderProgram

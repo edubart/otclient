@@ -23,9 +23,9 @@
 #include <framework/core/application.h>
 #include <framework/platform/platform.h>
 #include <framework/util/crypt.h>
-#include "client.h"
 #include "game.h"
 #include "protocolgame.h"
+#include "framework/net/outputmessage.h"
 
 void ProtocolGame::send(const OutputMessagePtr& outputMessage)
 {

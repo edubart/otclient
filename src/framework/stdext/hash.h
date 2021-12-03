@@ -23,8 +23,6 @@
 #ifndef STDEXT_HASH_H
 #define STDEXT_HASH_H
 
-#include <string>
-
 namespace stdext {
     template <class T>
     void hash_combine(std::size_t& seed, const T& v)

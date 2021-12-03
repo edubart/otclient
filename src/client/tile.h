@@ -24,7 +24,6 @@
 #define TILE_H
 
 #include <framework/luaengine/luaobject.h>
-#include "creature.h"
 #include "declarations.h"
 #include "effect.h"
 #include "item.h"

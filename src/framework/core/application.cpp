@@ -22,7 +22,6 @@
 
 #include "application.h"
 #include <csignal>
-#include <framework/core/clock.h>
 #include <framework/core/configmanager.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/modulemanager.h>

@@ -26,7 +26,6 @@
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
-#include <framework/graphics/graphics.h>
 #include <framework/otml/otml.h>
 #include <framework/platform/platformwindow.h>
 

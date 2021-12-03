@@ -23,8 +23,6 @@
 #include "paintershaderprogram.h"
 #include <framework/core/clock.h>
 #include <framework/platform/platformwindow.h>
-#include "graphics.h"
-#include "painter.h"
 #include "texture.h"
 #include "texturemanager.h"
 

@@ -23,7 +23,6 @@
 #ifndef STDEXT_STRING_H
 #define STDEXT_STRING_H
 
-#include <cstring>
 #include <string>
 #include <vector>
 

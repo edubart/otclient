@@ -24,10 +24,8 @@
 #define PARTICLEEMITTER_H
 
 #include <framework/global.h>
-#include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
 #include "declarations.h"
-#include "painter.h"
 
 class ParticleEmitter : public stdext::shared_object
 {

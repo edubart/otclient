@@ -24,6 +24,8 @@
 #include <framework/graphics/graphics.h>
 #include <framework/platform/platformwindow.h>
 
+#include "framework/graphics/texture.h"
+
 PainterOGL::PainterOGL()
 {
     m_glTextureId = 0;

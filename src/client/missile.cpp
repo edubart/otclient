@@ -21,7 +21,6 @@
  */
 
 #include "missile.h"
-#include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include "map.h"
 #include "thingtypemanager.h"

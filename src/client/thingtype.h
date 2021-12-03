@@ -32,9 +32,6 @@
 #include <framework/net/server.h>
 #include <framework/otml/declarations.h>
 
-#include <framework/core/declarations.h>
-#include <framework/core/scheduledevent.h>
-
 enum class TextureType {
     NONE,
     SMOOTH,

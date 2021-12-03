@@ -25,7 +25,6 @@
 
 #include <future>
 #include <framework/stdext/thread.h>
-#include "declarations.h"
 
 class AsyncDispatcher {
 public:

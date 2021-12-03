@@ -25,7 +25,6 @@
 
 #include <framework/luaengine/luaobject.h>
 #include "declarations.h"
-#include "soundbuffer.h"
 
 class SoundSource : public LuaObject
 {

@@ -21,7 +21,6 @@
  */
 
 #include "config.h"
-#include "configmanager.h"
 #include "resourcemanager.h"
 
 #include <framework/otml/otml.h>

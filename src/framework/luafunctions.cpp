@@ -29,10 +29,11 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/luaengine/luainterface.h>
-#include <framework/otml/otml.h>
 #include <framework/platform/platform.h>
 #include <framework/stdext/net.h>
 #include <framework/util/crypt.h>
+
+#include "graphics/particleeffect.h"
 
 #ifdef FW_SOUND
 #include <framework/sound/combinedsoundsource.h>
