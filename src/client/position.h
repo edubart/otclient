@@ -30,9 +30,9 @@
 #include "const.h"
 
 #include <array>
-#include <vector>
 #include <istream>
 #include <ostream>
+#include <vector>
 
 class Position
 {

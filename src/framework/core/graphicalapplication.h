@@ -23,10 +23,10 @@
 #ifndef GRAPHICALAPPLICATION_H
 #define GRAPHICALAPPLICATION_H
 
+#include <framework/core/adaptativeframecounter.h>
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/declarations.h>
-#include <framework/core/adaptativeframecounter.h>
 
 #include "application.h"
 

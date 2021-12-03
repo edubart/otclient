@@ -26,8 +26,8 @@
 #include <framework/core/eventdispatcher.h>
 
 #include <memory>
-#include <boost/asio.hpp>
 #include <utility>
+#include <boost/asio.hpp>
 
 asio::io_service g_ioService;
 std::list<std::shared_ptr<asio::streambuf>> Connection::m_outputStreams;

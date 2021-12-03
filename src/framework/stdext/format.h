@@ -27,12 +27,12 @@
 
 #include <cassert>
 #include <cstdio>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <tuple>
-#include <cstring>
 
 namespace stdext {
     template<class T> void print_ostream(std::ostringstream& stream, const T& last) { stream << last; }

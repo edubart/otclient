@@ -25,12 +25,12 @@
 
 #include <framework/core/timer.h>
 #include "animatedtext.h"
+#include "container.h"
 #include "creature.h"
 #include "declarations.h"
 #include "item.h"
 #include "outfit.h"
 #include "protocolgame.h"
-#include "container.h"
 
 #include <bitset>
 
