@@ -27,12 +27,7 @@ template<class T>
 class DataBuffer
 {
 public:
-    DataBuffer(uint res = 64) :
-        m_size(0),
-        m_capacity(res),
-        m_buffer(new T[m_capacity])
-    {
-    }
+    DataBuffer(uint res = 64) : m_capacity(res), m_buffer(new T[m_capacity]){ }
     ~DataBuffer()
     {
         delete[] m_buffer;
@@ -102,7 +97,7 @@ public:
     DataBuffer& operator<<(const T& t) { add(t); return *this; }
 
 private:
-    uint m_size;
+    uint m_size{0};
     uint m_capacity;
     T* m_buffer;
 };

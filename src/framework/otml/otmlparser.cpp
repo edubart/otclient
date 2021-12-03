@@ -21,11 +21,11 @@
  */
 
 #include "otmlparser.h"
+#include <boost/tokenizer.hpp>
 #include "otmldocument.h"
 #include "otmlexception.h"
-#include <boost/tokenizer.hpp>
 
-OTMLParser::OTMLParser(OTMLDocumentPtr doc, std::istream& in) :
+OTMLParser::OTMLParser(const OTMLDocumentPtr& doc, std::istream& in) :
     currentDepth(0), currentLine(0),
     doc(doc), currentParent(doc), previousNode(nullptr),
     in(in)
@@ -57,7 +57,7 @@ int OTMLParser::getLineDepth(const std::string& line, bool multilining)
         spaces++;
 
     // pre calculate depth
-    int depth = spaces / 2;
+    const int depth = spaces / 2;
 
     if(!multilining || depth <= currentDepth) {
         // check the next character is a tab
@@ -74,7 +74,7 @@ int OTMLParser::getLineDepth(const std::string& line, bool multilining)
 
 void OTMLParser::parseLine(std::string line)
 {
-    int depth = getLineDepth(line);
+    const int depth = getLineDepth(line);
 
     if(depth == -1)
         return;

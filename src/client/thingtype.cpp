@@ -28,11 +28,11 @@
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
+#include <framework/graphics/drawpool.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/graphics/drawpool.h>
 #include <framework/otml/otml.h>
 
 void ThingType::serialize(const FileStreamPtr& fin)
@@ -71,7 +71,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
         }
         case ThingAttrMarket:
         {
-            MarketData market = m_attribs.get<MarketData>(attr);
+            auto market = m_attribs.get<MarketData>(attr);
             fin->addU16(market.category);
             fin->addU16(market.tradeAs);
             fin->addU16(market.showAs);
@@ -114,7 +114,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
         }
     }
 
-    for(int i : m_spritesIndex) {
+    for(const int i : m_spritesIndex) {
         if(g_game.getFeature(Otc::GameSpritesU32))
             fin->addU32(i);
         else
@@ -306,7 +306,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         m_animationPhases += groupAnimationsPhases;
 
         if(groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
-            AnimatorPtr animator = AnimatorPtr(new Animator);
+            auto animator = AnimatorPtr(new Animator);
             animator->unserialize(groupAnimationsPhases, fin);
 
             if(frameGroupType == FrameGroupMoving)
@@ -379,7 +379,7 @@ void ThingType::exportImage(const std::string& fileName)
     if(m_spritesIndex.empty())
         stdext::throw_exception("cannot export thingtype without sprites");
 
-    ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
+    const ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
     for(int z = 0; z < m_numPatternZ; ++z) {
         for(int y = 0; y < m_numPatternY; ++y) {
             for(int x = 0; x < m_numPatternX; ++x) {
@@ -526,7 +526,7 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                     Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * SPRITE_SIZE - Point(1), framePos);
                     for(int fx = framePos.x; fx < framePos.x + m_size.width() * SPRITE_SIZE; ++fx) {
                         for(int fy = framePos.y; fy < framePos.y + m_size.height() * SPRITE_SIZE; ++fy) {
-                            uint8* p = fullImage->getPixel(fx, fy);
+                            const uint8* p = fullImage->getPixel(fx, fy);
                             if(p[3] != 0x00) {
                                 drawRect.setTop(std::min<int>(fy, drawRect.top()));
                                 drawRect.setLeft(std::min<int>(fx, drawRect.left()));
@@ -573,10 +573,10 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
     assert(w <= SPRITE_SIZE);
     assert(h <= SPRITE_SIZE);
 
-    Size bestDimension = Size(SPRITE_SIZE);
+    auto bestDimension = Size(SPRITE_SIZE);
     for(int i = w; i <= SPRITE_SIZE; i <<= 1) {
         for(int j = h; j <= SPRITE_SIZE; j <<= 1) {
-            Size candidateDimension = Size(i, j);
+            auto candidateDimension = Size(i, j);
             if(candidateDimension.area() < numSprites)
                 continue;
             if((candidateDimension.area() < bestDimension.area()) ||

@@ -28,7 +28,7 @@
 class OTMLParser
 {
 public:
-    OTMLParser(OTMLDocumentPtr doc, std::istream& in);
+    OTMLParser(const OTMLDocumentPtr& doc, std::istream& in);
 
     /// Parse the entire document
     void parse();

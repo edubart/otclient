@@ -358,7 +358,7 @@ void LocalPlayer::setMana(double mana, double maxMana)
 {
     if(m_mana != mana || m_maxMana != maxMana) {
         const double oldMana = m_mana;
-        double oldMaxMana = m_maxMana;
+        const double oldMaxMana = m_maxMana;
         m_mana = mana;
         m_maxMana = maxMana;
 

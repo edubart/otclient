@@ -23,8 +23,7 @@
 #include "particleeffect.h"
 
 ParticleEffectType::ParticleEffectType()
-{
-}
+= default;
 
 void ParticleEffectType::load(const OTMLNodePtr& node)
 {
@@ -44,7 +43,7 @@ void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 
     for(const OTMLNodePtr& childNode : effectType->getNode()->children()) {
         if(childNode->tag() == "System") {
-            ParticleSystemPtr system = ParticleSystemPtr(new ParticleSystem);
+            auto system = ParticleSystemPtr(new ParticleSystem);
             system->load(childNode);
             m_systems.push_back(system);
         }
@@ -53,7 +52,7 @@ void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 
 void ParticleEffect::render()
 {
-    for(auto& system : m_systems)
+    for(const auto& system : m_systems)
         system->render();
 }
 

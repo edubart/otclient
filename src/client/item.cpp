@@ -91,7 +91,7 @@ void Item::setOtbId(uint16 id)
 {
     if(!g_things.isValidOtbId(id))
         id = 0;
-    auto itemType = g_things.getItemType(id);
+    const auto itemType = g_things.getItemType(id);
     m_serverId = id;
 
     id = itemType->getClientId();
@@ -245,7 +245,7 @@ int Item::getCount()
 
 ItemPtr Item::clone()
 {
-    ItemPtr item = ItemPtr(new Item);
+    auto item = ItemPtr(new Item);
     *(item.get()) = *this;
     return item;
 }

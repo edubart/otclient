@@ -23,12 +23,12 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 
-#include "declarations.h"
-#include "texture.h"
-#include "painter.h"
+#include <client/const.h>
 #include <framework/core/scheduledevent.h>
 #include <framework/core/timer.h>
-#include <client/const.h>
+#include "declarations.h"
+#include "painter.h"
+#include "texture.h"
 
 enum class DrawMethodType {
     DRAW_FILL_COORDS,

@@ -23,9 +23,9 @@
 #ifndef STDEXT_DYNAMICSTORAGE_H
 #define STDEXT_DYNAMICSTORAGE_H
 
-#include "types.h"
-#include "any.h"
 #include <unordered_map>
+#include "any.h"
+#include "types.h"
 
 namespace stdext {
     template<typename Key>

@@ -21,8 +21,8 @@
  */
 
 #include "soundfile.h"
-#include "oggsoundfile.h"
 #include <framework/core/resourcemanager.h>
+#include "oggsoundfile.h"
 
 #include "framework/stdext/time.h"
 
@@ -34,7 +34,7 @@ SoundFile::SoundFile(const FileStreamPtr& fileStream)
 SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 {
     stdext::timer t;
-    FileStreamPtr file = g_resources.openFile(filename);
+    const FileStreamPtr file = g_resources.openFile(filename);
     if(!file)
         stdext::throw_exception(stdext::format("unable to open %s", filename));
 
@@ -47,7 +47,7 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 
     SoundFilePtr soundFile;
     if(strncmp(magic, "OggS", 4) == 0) {
-        auto oggSoundFile = OggSoundFilePtr(new OggSoundFile(file));
+        const auto oggSoundFile = OggSoundFilePtr(new OggSoundFile(file));
         if(oggSoundFile->prepareOgg())
             soundFile = oggSoundFile;
     } else

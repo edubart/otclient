@@ -35,8 +35,8 @@ class PlatformWindow
         KEY_PRESS_REPEAT_INTERVAL = 30,
     };
 
-    typedef std::function<void(const Size&)> OnResizeCallback;
-    typedef std::function<void(const InputEvent&)> OnInputEventCallback;
+    using OnResizeCallback = std::function<void(const Size&)>;
+    using OnInputEventCallback = std::function<void(const InputEvent&)>;
 
 public:
     virtual void init() = 0;

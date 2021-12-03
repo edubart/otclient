@@ -31,13 +31,13 @@
 #include "dynamic_storage.h"
 #include "exception.h"
 #include "format.h"
+#include <cmath>
 #include "math.h"
 #include "packed_any.h"
 #include "packed_storage.h"
-#include "shared_object.h"
-#include "string.h"
+#include <cstring>
+#include <ctime>
 #include "time.h"
 #include "types.h"
-#include "hash.h"
 
 #endif

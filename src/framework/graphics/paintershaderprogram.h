@@ -23,10 +23,10 @@
 #ifndef PAINTERSHADERPROGRAM_H
 #define PAINTERSHADERPROGRAM_H
 
-#include "shaderprogram.h"
-#include "coordsbuffer.h"
-#include <framework/core/timer.h>
 #include <client/position.h>
+#include <framework/core/timer.h>
+#include "coordsbuffer.h"
+#include "shaderprogram.h"
 
 class PainterShaderProgram : public ShaderProgram
 {
@@ -54,7 +54,7 @@ protected:
 public:
     PainterShaderProgram();
 
-    bool link();
+    bool link() override;
 
     void setPosition(const Position& position) { m_startPos = position; };
     Position getPosition() { return m_startPos; };

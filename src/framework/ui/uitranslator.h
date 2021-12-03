@@ -23,8 +23,8 @@
 #ifndef TRANSLATOR_H
 #define TRANSLATOR_H
 
-#include "../const.h"
 #include <string>
+#include "../const.h"
 
 namespace Fw {
     AlignmentFlag translateAlignment(std::string aligment);

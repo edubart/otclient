@@ -23,10 +23,10 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include "connection.h"
 #include "declarations.h"
 #include "inputmessage.h"
 #include "outputmessage.h"
-#include "connection.h"
 
 #include <framework/luaengine/luaobject.h>
 
@@ -35,7 +35,7 @@ class Protocol : public LuaObject
 {
 public:
     Protocol();
-    virtual ~Protocol();
+    ~Protocol() override;
 
     void connect(const std::string& host, uint16 port);
     void disconnect();

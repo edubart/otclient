@@ -25,8 +25,8 @@
 
 #include <algorithm>
 #include <cassert>
-#include <type_traits>
 #include <typeinfo>
+#include <type_traits>
 
 namespace stdext {
     // disable memory alignment
@@ -40,7 +40,7 @@ namespace stdext {
     class packed_any {
     public:
         struct placeholder {
-            virtual ~placeholder() {}
+            virtual ~placeholder() = default;
             virtual const std::type_info& type() const = 0;
             virtual placeholder* clone() const = 0;
         };
@@ -48,20 +48,17 @@ namespace stdext {
         template<typename T>
         struct holder : public placeholder {
             holder(const T& value) : held(value) {}
-            const std::type_info& type() const { return typeid(T); }
-            placeholder* clone() const { return new holder(held); }
+            const std::type_info& type() const override { return typeid(T); }
+            placeholder* clone() const override { return new holder(held); }
             T held;
         private:
             holder& operator=(const holder&);
         };
 
-        placeholder* content;
-        bool scalar;
+        placeholder* content{ nullptr };
+        bool scalar{ false };
 
-        packed_any() :
-            content(nullptr), scalar(false)
-        {
-        }
+        packed_any() = default;
         packed_any(const packed_any& other) :
             content(!other.scalar&& other.content ? other.content->clone() : other.content),
             scalar(other.scalar)
@@ -93,8 +90,7 @@ namespace stdext {
         {
             if(!scalar)
                 return content ? content->type() : typeid(void);
-            else
-                return typeid(std::size_t);
+            return typeid(std::size_t);
         }
     };
 

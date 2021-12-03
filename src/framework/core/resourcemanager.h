@@ -23,10 +23,10 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "declarations.h"
 #include <filesystem>
+#include "declarations.h"
 
- // @bindsingleton g_resources
+// @bindsingleton g_resources
 class ResourceManager
 {
 public:
@@ -60,7 +60,7 @@ public:
     FileStreamPtr createFile(const std::string& fileName);
     bool deleteFile(const std::string& fileName);
 
-    bool makeDir(const std::string directory);
+    bool makeDir(const std::string& directory);
     std::list<std::string> listDirectoryFiles(const std::string& directoryPath = "");
     std::vector<std::string> getDirectoryFiles(const std::string& path, bool filenameOnly, bool recursive);
 

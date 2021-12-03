@@ -26,7 +26,7 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 
-Shader::Shader(Shader::ShaderType shaderType)
+Shader::Shader(ShaderType shaderType)
 {
     m_shaderType = shaderType;
     switch(shaderType) {
@@ -54,7 +54,7 @@ Shader::~Shader()
 bool Shader::compileSourceCode(const std::string& sourceCode)
 {
 #ifndef OPENGL_ES
-    static const char* qualifierDefines =
+    static auto qualifierDefines =
         "#define lowp\n"
         "#define mediump\n"
         "#define highp\n";
@@ -80,7 +80,7 @@ bool Shader::compileSourceCode(const std::string& sourceCode)
 bool Shader::compileSourceFile(const std::string& sourceFile)
 {
     try {
-        std::string sourceCode = g_resources.readFileContents(sourceFile);
+        const std::string sourceCode = g_resources.readFileContents(sourceFile);
         return compileSourceCode(sourceCode);
     } catch(stdext::exception& e) {
         g_logger.error(stdext::format("unable to load shader source form file '%s': %s", sourceFile, e.what()));

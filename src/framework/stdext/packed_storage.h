@@ -23,8 +23,8 @@
 #ifndef STDEXT_PACKEDSTORAGE_H
 #define STDEXT_PACKEDSTORAGE_H
 
-#include "types.h"
 #include "packed_any.h"
+#include "types.h"
 
 namespace stdext {
     // disable memory alignment

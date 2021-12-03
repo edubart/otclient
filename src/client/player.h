@@ -29,8 +29,8 @@
 class Player : public Creature
 {
 public:
-    Player() {}
-    virtual ~Player() {}
+    Player() = default;
+    ~Player() override = default;
 
     PlayerPtr asPlayer() { return static_self_cast<Player>(); }
     bool isPlayer() override { return true; }

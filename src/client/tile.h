@@ -68,7 +68,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     void addThing(const ThingPtr& thing, int stackPos);
-    bool removeThing(const ThingPtr thing);
+    bool removeThing(const ThingPtr& thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);
@@ -77,7 +77,7 @@ public:
 
     ThingPtr getTopLookThing();
     ThingPtr getTopUseThing();
-    CreaturePtr getTopCreature(const bool checkAround = false);
+    CreaturePtr getTopCreature(bool checkAround = false);
     ThingPtr getTopMoveThing();
     ThingPtr getTopMultiUseThing();
 
@@ -138,7 +138,7 @@ public:
     uint32 getHouseId() { return m_houseId; }
     bool isHouseTile() { return m_houseId != 0 && (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
-    void select(const bool noFilter = false);
+    void select(bool noFilter = false);
     void unselect();
     bool isSelected() { return m_highlight.enabled; }
 
@@ -151,7 +151,7 @@ public:
 
     void analyzeThing(const ThingPtr& thing, bool add);
 
-    bool canRender(const bool drawViewportEdge, const Position& cameraPosition, const AwareRange viewPort, LightView* lightView);
+    bool canRender(bool drawViewportEdge, const Position& cameraPosition, AwareRange viewPort, LightView* lightView);
 
 private:
     struct CountFlag {

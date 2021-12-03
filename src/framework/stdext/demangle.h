@@ -23,8 +23,8 @@
 #ifndef STDEXT_DEMANGLE_H
 #define STDEXT_DEMANGLE_H
 
-#include <typeinfo>
 #include <string>
+#include <typeinfo>
 
 namespace stdext {
     /// Demangle names for GNU g++ compiler

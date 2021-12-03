@@ -23,8 +23,8 @@
 #ifndef TEXTUREMANAGER_H
 #define TEXTUREMANAGER_H
 
-#include "texture.h"
 #include <framework/core/declarations.h>
+#include "texture.h"
 
 class TextureManager
 {

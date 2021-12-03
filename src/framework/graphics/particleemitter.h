@@ -23,11 +23,11 @@
 #ifndef PARTICLEEMITTER_H
 #define PARTICLEEMITTER_H
 
-#include "declarations.h"
-#include "painter.h"
 #include <framework/global.h>
 #include <framework/graphics/texture.h>
 #include <framework/otml/otml.h>
+#include "declarations.h"
+#include "painter.h"
 
 class ParticleEmitter : public stdext::shared_object
 {

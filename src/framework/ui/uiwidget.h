@@ -26,11 +26,11 @@
 #include "declarations.h"
 #include "uilayout.h"
 
-#include <framework/luaengine/luaobject.h>
-#include <framework/graphics/declarations.h>
-#include <framework/otml/otmlnode.h>
-#include <framework/graphics/bitmapfont.h>
 #include <framework/core/timer.h>
+#include <framework/graphics/bitmapfont.h>
+#include <framework/graphics/declarations.h>
+#include <framework/luaengine/luaobject.h>
+#include <framework/otml/otmlnode.h>
 
 #include "framework/stdext/math.h"
 

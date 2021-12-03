@@ -36,8 +36,8 @@ public:
 
     void poll();
 
-    ParticleTypePtr getParticleType(std::string name) { return m_particleTypes[name]; }
-    ParticleEffectTypePtr getParticleEffectType(std::string name) { return m_effectsTypes[name]; }
+    ParticleTypePtr getParticleType(const std::string& name) { return m_particleTypes[name]; }
+    ParticleEffectTypePtr getParticleEffectType(const std::string& name) { return m_effectsTypes[name]; }
 
     const std::map<std::string, ParticleTypePtr>& getParticleTypes() { return m_particleTypes; }
     const std::map<std::string, ParticleEffectTypePtr>& getEffectsTypes() { return m_effectsTypes; }

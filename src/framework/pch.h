@@ -24,27 +24,27 @@
 #define PCH_H
 
  // common C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstddef>
-#include <cstring>
 #include <cassert>
 #include <cmath>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 // common STL headers
+#include <algorithm>
+#include <array>
+#include <deque>
+#include <functional>
+#include <iomanip>
 #include <iostream>
+#include <list>
+#include <map>
 #include <sstream>
 #include <string>
-#include <vector>
-#include <list>
-#include <deque>
-#include <map>
-#include <algorithm>
-#include <functional>
-#include <array>
-#include <unordered_map>
 #include <tuple>
-#include <iomanip>
 #include <typeinfo>
+#include <unordered_map>
+#include <vector>
 
 #endif

@@ -21,9 +21,9 @@
  */
 
 #include "mouse.h"
-#include <framework/ui/uiwidget.h>
-#include <framework/platform/platformwindow.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/platform/platformwindow.h>
+#include <framework/ui/uiwidget.h>
 
 Mouse g_mouse;
 
@@ -40,8 +40,8 @@ void Mouse::loadCursors(std::string filename)
 {
     filename = g_resources.guessFilePath(filename, "otml");
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(filename);
-        OTMLNodePtr cursorsNode = doc->at("Cursors");
+        const OTMLDocumentPtr doc = OTMLDocument::parse(filename);
+        const OTMLNodePtr cursorsNode = doc->at("Cursors");
 
         for(const OTMLNodePtr& cursorNode : cursorsNode->children())
             addCursor(cursorNode->tag(),
@@ -54,7 +54,7 @@ void Mouse::loadCursors(std::string filename)
 
 void Mouse::addCursor(const std::string& name, const std::string& file, const Point& hotSpot)
 {
-    int cursorId = g_window.loadMouseCursor(file, hotSpot);
+    const int cursorId = g_window.loadMouseCursor(file, hotSpot);
     if(cursorId >= 0) {
         m_cursors[name] = cursorId;
     } else
@@ -63,11 +63,11 @@ void Mouse::addCursor(const std::string& name, const std::string& file, const Po
 
 bool Mouse::pushCursor(const std::string& name)
 {
-    auto it = m_cursors.find(name);
+    const auto it = m_cursors.find(name);
     if(it == m_cursors.end())
         return false;
 
-    int cursorId = it->second;
+    const int cursorId = it->second;
     g_window.setMouseCursor(cursorId);
     m_cursorStack.push_back(cursorId);
     return true;
@@ -81,7 +81,7 @@ void Mouse::popCursor(const std::string& name)
     if(name.empty() || m_cursors.find(name) == m_cursors.end())
         m_cursorStack.pop_back();
     else {
-        int cursorId = m_cursors[name];
+        const int cursorId = m_cursors[name];
         int index = -1;
         for(uint i = 0; i < m_cursorStack.size(); ++i) {
             if(m_cursorStack[i] == cursorId)

@@ -278,8 +278,8 @@ void Game::processTalk(const std::string& name, int level, Otc::MessageMode mode
 
 void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, const std::string& name, int capacity, bool hasParent, const std::vector<ItemPtr>& items, bool isUnlocked, bool hasPages, int containerSize, int firstIndex)
 {
-    ContainerPtr previousContainer = getContainer(containerId);
-    ContainerPtr container = ContainerPtr(new Container(containerId, capacity, name, containerItem, hasParent, isUnlocked, hasPages, containerSize, firstIndex));
+    const ContainerPtr previousContainer = getContainer(containerId);
+    const auto container = ContainerPtr(new Container(containerId, capacity, name, containerItem, hasParent, isUnlocked, hasPages, containerSize, firstIndex));
     m_containers[containerId] = container;
     container->onAddItems(items);
 
@@ -294,7 +294,7 @@ void Game::processOpenContainer(int containerId, const ItemPtr& containerItem, c
 
 void Game::processCloseContainer(int containerId)
 {
-    ContainerPtr container = getContainer(containerId);
+    const ContainerPtr container = getContainer(containerId);
     if(!container) {
         return;
     }
@@ -305,7 +305,7 @@ void Game::processCloseContainer(int containerId)
 
 void Game::processContainerAddItem(int containerId, const ItemPtr& item, int slot)
 {
-    ContainerPtr container = getContainer(containerId);
+    const ContainerPtr container = getContainer(containerId);
     if(!container) {
         return;
     }
@@ -315,7 +315,7 @@ void Game::processContainerAddItem(int containerId, const ItemPtr& item, int slo
 
 void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& item)
 {
-    ContainerPtr container = getContainer(containerId);
+    const ContainerPtr container = getContainer(containerId);
     if(!container) {
         return;
     }
@@ -325,7 +325,7 @@ void Game::processContainerUpdateItem(int containerId, int slot, const ItemPtr& 
 
 void Game::processContainerRemoveItem(int containerId, int slot, const ItemPtr& lastItem)
 {
-    ContainerPtr container = getContainer(containerId);
+    const ContainerPtr container = getContainer(containerId);
     if(!container) {
         return;
     }
@@ -417,7 +417,7 @@ void Game::processOpenOutfitWindow(const Outfit& currentOutfit, const std::vecto
                                    const std::vector<std::tuple<int, std::string> >& mountList)
 {
     // create virtual creature outfit
-    CreaturePtr virtualOutfitCreature = CreaturePtr(new Creature);
+    const auto virtualOutfitCreature = CreaturePtr(new Creature);
     virtualOutfitCreature->setDirection(Otc::South);
 
     Outfit outfit = currentOutfit;
@@ -599,8 +599,8 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
         m_walkEvent = nullptr;
     }
 
-    Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
-    TilePtr toTile = g_map.getTile(toPos);
+    const Position toPos = m_localPlayer->getPosition().translatedToDirection(direction);
+    const TilePtr toTile = g_map.getTile(toPos);
 
     // only do prewalks to walkable tiles (like grounds and not walls)
     if(toTile && toTile->isWalkable()) {
@@ -613,7 +613,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
                 return false;
 
             // check walk to another floor (e.g: when above 3 parcels)
-            TilePtr toTile = g_map.getTile(pos);
+            const TilePtr toTile = g_map.getTile(pos);
             if(toTile && toTile->hasElevation(3))
                 return true;
 
@@ -622,7 +622,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
 
         // check if can walk to a higher floor
         auto canChangeFloorUp = [&]() -> bool {
-            TilePtr fromTile = m_localPlayer->getTile();
+            const TilePtr fromTile = m_localPlayer->getTile();
             if(!fromTile || !fromTile->hasElevation(3))
                 return false;
 
@@ -630,7 +630,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
             if(!pos.up())
 
                 return false;
-            TilePtr toTile = g_map.getTile(pos);
+            const TilePtr toTile = g_map.getTile(pos);
             if(!toTile || !toTile->isWalkable())
                 return false;
 
@@ -678,7 +678,7 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs)
         return;
 
     if(!m_localPlayer->isWalking()) {
-        TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
+        const TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
         if(toTile && toTile->isWalkable()) {
             m_localPlayer->preWalk(direction);
 
@@ -829,7 +829,7 @@ void Game::useInventoryItem(int itemId)
     if(!canPerformGameAction() || !g_things.isValidDatId(itemId, ThingCategoryItem))
         return;
 
-    const Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+    const auto pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     m_protocolGame->sendUseItem(pos, itemId, 0, 0);
 }
@@ -854,7 +854,7 @@ void Game::useInventoryItemWith(int itemId, const ThingPtr& toThing)
     if(!canPerformGameAction() || !toThing)
         return;
 
-    const Position pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
+    const auto pos = Position(0xFFFF, 0, 0); // means that is a item in inventory
 
     if(toThing->isCreature())
         m_protocolGame->sendUseOnCreature(pos, itemId, 0, toThing->getId());

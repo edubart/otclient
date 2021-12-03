@@ -28,7 +28,7 @@
 class OTMLDocument : public OTMLNode
 {
 public:
-    virtual ~OTMLDocument() {}
+    ~OTMLDocument() override = default;
 
     /// Create a new OTML document for filling it with nodes
     static OTMLDocumentPtr create();
@@ -41,13 +41,13 @@ public:
     static OTMLDocumentPtr parse(std::istream& in, const std::string& source);
 
     /// Emits this document and all it's children to a std::string
-    std::string emit();
+    std::string emit() override;
 
     /// Save this document to a file
     bool save(const std::string& fileName);
 
 private:
-    OTMLDocument() {}
+    OTMLDocument() = default;
 };
 
 #endif

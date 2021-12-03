@@ -23,25 +23,25 @@
 #ifndef STDEXT_TYPES_H
 #define STDEXT_TYPES_H
 
-#include <cstdint>
 #include <cstddef>
+#include <cstdint>
 
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned int uint;
-typedef unsigned long ulong;
+using uchar = unsigned char;
+using ushort = unsigned short;
+using uint = unsigned int;
+using ulong = unsigned long;
 
-typedef uint64_t uint64;
-typedef uint32_t uint32;
-typedef uint16_t uint16;
-typedef uint8_t uint8;
-typedef int64_t int64;
-typedef int32_t int32;
-typedef int16_t int16;
-typedef int8_t int8;
+using uint64 = uint64_t;
+using uint32 = uint32_t;
+using uint16 = uint16_t;
+using uint8 = uint8_t;
+using int64 = int64_t;
+using int32 = int32_t;
+using int16 = int16_t;
+using int8 = int8_t;
 
-typedef int64 ticks_t;
-typedef uint_fast32_t refcount_t;
+using ticks_t = int64;
+using refcount_t = uint_fast32_t;
 
 using std::size_t;
 using std::ptrdiff_t;

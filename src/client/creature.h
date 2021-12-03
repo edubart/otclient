@@ -48,8 +48,8 @@ public:
 
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
 
-    void drawOutfit(const Rect& destRect, bool resize, const Color color = Color::white);
-    void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags);
+    void drawOutfit(const Rect& destRect, bool resize, Color color = Color::white);
+    void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, float horizontalStretchFactor, float verticalStretchFactor, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
     void setName(const std::string& name);
@@ -148,7 +148,7 @@ protected:
     void updateWalkingTile();
     virtual void updateWalkAnimation();
     virtual void updateWalkOffset(int totalPixelsWalked);
-    virtual void updateWalk(const bool isPreWalking = false);
+    virtual void updateWalk(bool isPreWalking = false);
     virtual void nextWalkUpdate();
     virtual void terminateWalk();
 

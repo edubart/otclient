@@ -23,12 +23,12 @@
 #ifndef STDEXT_CAST_H
 #define STDEXT_CAST_H
 
-#include "exception.h"
 #include "demangle.h"
+#include "exception.h"
 
-#include <sstream>
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
+#include <sstream>
 
 namespace stdext {
     // cast a type to another type
@@ -88,7 +88,7 @@ namespace stdext {
     {
         if(in.find_first_not_of("-0123456789") != std::string::npos)
             return false;
-        std::size_t t = in.find_last_of('-');
+        const std::size_t t = in.find_last_of('-');
         if(t != std::string::npos && t != 0)
             return false;
         l = atol(in.c_str());
@@ -146,7 +146,8 @@ namespace stdext {
     // used by safe_cast
     class cast_exception : public exception {
     public:
-        virtual ~cast_exception() throw() {}
+        ~cast_exception() throw() override = default;
+
         template<class T, class R>
         void update_what()
         {
@@ -154,7 +155,8 @@ namespace stdext {
             ss << "failed to cast value of type '" << demangle_type<T>() << "' to type '" << demangle_type<R>() << "'";
             m_what = ss.str();
         }
-        virtual const char* what() const throw() { return m_what.c_str(); }
+
+        const char* what() const throw() override { return m_what.c_str(); }
     private:
         std::string m_what;
     };

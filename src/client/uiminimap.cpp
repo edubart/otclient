@@ -114,21 +114,21 @@ Position UIMinimap::getTilePosition(const Point& mousePos)
 
 void UIMinimap::anchorPosition(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge)
 {
-    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    const UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
     assert(layout);
     layout->addPositionAnchor(anchoredWidget, anchoredEdge, hookedPosition, hookedEdge);
 }
 
 void UIMinimap::fillPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition)
 {
-    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    const UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
     assert(layout);
     layout->fillPosition(anchoredWidget, hookedPosition);
 }
 
 void UIMinimap::centerInPosition(const UIWidgetPtr& anchoredWidget, const Position& hookedPosition)
 {
-    UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
+    const UIMapAnchorLayoutPtr layout = m_layout->static_self_cast<UIMapAnchorLayout>();
     assert(layout);
     layout->centerInPosition(anchoredWidget, hookedPosition);
 }

@@ -23,11 +23,11 @@
 #ifndef COLOR_H
 #define COLOR_H
 
-#include "../stdext/types.h"
+#include <iomanip>
+#include "../const.h"
 #include "../stdext/cast.h"
 #include "../stdext/string.h"
-#include "../const.h"
-#include <iomanip>
+#include "../stdext/types.h"
 
 class Color
 {
@@ -138,10 +138,10 @@ inline std::ostream& operator<<(std::ostream& out, const Color& color)
 {
     return out << '#'
         << std::hex << std::setfill('0')
-        << std::setw(2) << (int)color.r()
-        << std::setw(2) << (int)color.g()
-        << std::setw(2) << (int)color.b()
-        << std::setw(2) << (int)color.a()
+        << std::setw(2) << static_cast<int>(color.r())
+        << std::setw(2) << static_cast<int>(color.g())
+        << std::setw(2) << static_cast<int>(color.b())
+        << std::setw(2) << static_cast<int>(color.a())
         << std::dec << std::setfill(' ');
 }
 

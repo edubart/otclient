@@ -35,10 +35,10 @@ namespace stdext {
     struct timer {
     public:
         timer() { restart(); }
-        float elapsed_seconds() { return (stdext::micros() - m_start) / 1000000.f; }
-        ticks_t elapsed_millis() { return (stdext::micros() - m_start) / 1000; }
-        ticks_t elapsed_micros() { return stdext::micros() - m_start; }
-        void restart() { m_start = stdext::micros(); }
+        float elapsed_seconds() { return (micros() - m_start) / 1000000.f; }
+        ticks_t elapsed_millis() { return (micros() - m_start) / 1000; }
+        ticks_t elapsed_micros() { return micros() - m_start; }
+        void restart() { m_start = micros(); }
     private:
         ticks_t m_start;
     };

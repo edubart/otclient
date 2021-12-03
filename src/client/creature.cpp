@@ -33,15 +33,15 @@
 
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
 #include <framework/graphics/drawpool.h>
+#include <framework/graphics/graphics.h>
 
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/texturemanager.h>
 #include <framework/graphics/ogl/painterogl2_shadersources.h>
-#include "spritemanager.h"
 #include "shadermanager.h"
+#include "spritemanager.h"
 
 double Creature::speedA = 0;
 double Creature::speedB = 0;
@@ -206,7 +206,7 @@ void Creature::drawOutfit(const Rect& destRect, bool resize, const Color color)
     internalDrawOutfit(dest, scaleFactor, true, TextureType::SMOOTH, Otc::South, color);
 }
 
-void Creature::drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, Point drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags)
+void Creature::drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags)
 {
     if(isDead() || !canBeSeen())
         return;
@@ -215,7 +215,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     if(!tile) return;
 
     const PointF jumpOffset = getJumpOffset() * scaleFactor;
-    const Point creatureOffset = Point(16 - getDisplacementX(), -getDisplacementY() - 2);
+    const auto creatureOffset = Point(16 - getDisplacementX(), -getDisplacementY() - 2);
 
     Point p = dest - drawOffset;
     p += (getDrawOffset() + creatureOffset) * scaleFactor - Point(std::round(jumpOffset.x), std::round(jumpOffset.y));
@@ -264,7 +264,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
         g_drawPool.addFilledRect(healthRect, fillColor);
 
         if(drawFlags & Otc::DrawManaBar && isLocalPlayer()) {
-            LocalPlayerPtr player = g_game.getLocalPlayer();
+            const LocalPlayerPtr player = g_game.getLocalPlayer();
             if(player) {
                 backgroundRect.moveTop(backgroundRect.bottom());
 
@@ -736,7 +736,7 @@ void Creature::setSpeed(uint16 speed)
         speed *= 2;
 
         if(speed > -speedB) {
-            m_calculatedStepSpeed = floor((Creature::speedA * log((speed / 2.) + Creature::speedB) + Creature::speedC) + 0.5);
+            m_calculatedStepSpeed = floor((speedA * log((speed / 2.) + speedB) + speedC) + 0.5);
             if(m_calculatedStepSpeed == 0) m_calculatedStepSpeed = 1;
         } else m_calculatedStepSpeed = 1;
     }
@@ -906,10 +906,10 @@ uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 Point Creature::getDisplacement()
 {
     if(m_outfit.getCategory() == ThingCategoryEffect)
-        return Point(8);
+        return {8};
 
     if(m_outfit.getCategory() == ThingCategoryItem)
-        return Point();
+        return {};
 
     return Thing::getDisplacement();
 }

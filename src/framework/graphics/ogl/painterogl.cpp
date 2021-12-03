@@ -69,7 +69,7 @@ void PainterOGL::saveState()
 
 PainterOGL::PainterState PainterOGL::getCurrentState()
 {
-    return PainterOGL::PainterState{
+    return PainterState{
         m_resolution , m_transformMatrix, m_projectionMatrix, m_textureMatrix,
         m_color, m_opacity, m_compositionMode, m_blendEquation, m_clipRect,
         nullptr, m_shaderProgram, m_alphaWriting

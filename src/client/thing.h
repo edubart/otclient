@@ -45,7 +45,7 @@ struct Highlight {
 class Thing : public LuaObject
 {
 public:
-    virtual ~Thing() {}
+    ~Thing() override = default;
     virtual void draw(const Point& /*dest*/, float /*scaleFactor*/, bool /*animate*/, const Highlight& /*highLight*/, TextureType /*textureType*/ = TextureType::NONE, Color /* color */ = Color::white, LightView* /*lightView*/ = nullptr) {}
     virtual void setId(uint32 /*id*/) {}
 

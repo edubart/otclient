@@ -23,8 +23,8 @@
 #ifndef CRYPT_H
 #define CRYPT_H
 
-#include "../stdext/types.h"
 #include <string>
+#include "../stdext/types.h"
 
 #include <boost/uuid/uuid.hpp>
 #ifdef USE_GMP

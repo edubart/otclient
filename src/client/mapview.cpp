@@ -35,10 +35,10 @@
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/graphics/drawpool.h>
 #include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/image.h>
-#include <framework/graphics/drawpool.h>
 
 enum {
     // 3840x2160 => 1080p optimized
@@ -52,9 +52,9 @@ enum {
 
 MapView::MapView()
 {
-    m_pools.map = g_drawPool.createPoolF(PoolType::MAP);
-    m_pools.creatureInformation = g_drawPool.createPool(PoolType::CREATURE_INFORMATION);
-    m_pools.text = g_drawPool.createPool(PoolType::TEXT);
+    m_pools.map = g_drawPool.createPoolF(MAP);
+    m_pools.creatureInformation = g_drawPool.createPool(CREATURE_INFORMATION);
+    m_pools.text = g_drawPool.createPool(TEXT);
 
     m_pools.map->onBeforeDraw([&]() {
         const Position cameraPosition = getCameraPosition();
@@ -74,19 +74,19 @@ MapView::MapView()
             fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
 
         if(m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders()) {
-            Rect framebufferRect = Rect(0, 0, m_drawDimension * m_tileSize);
+            auto framebufferRect = Rect(0, 0, m_drawDimension * m_tileSize);
             const Point center = m_rectCache.srcRect.center();
             const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
             m_shader->bind();
-            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / (float)m_rectDimension.width(), 1.0f - center.y / (float)m_rectDimension.height());
-            m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / (float)m_rectDimension.height(), globalCoord.y / (float)m_rectDimension.height());
+            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
+            m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
             m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
 
             Point last = transformPositionTo2D(cameraPosition, m_shader->getPosition());
             //Reverse vertical axis.
             last.y = -last.y;
 
-            m_shader->setUniformValue(ShaderManager::MAP_WALKOFFSET, last.x / (float)m_rectDimension.width(), last.y / (float)m_rectDimension.height());
+            m_shader->setUniformValue(ShaderManager::MAP_WALKOFFSET, last.x / static_cast<float>(m_rectDimension.width()), last.y / static_cast<float>(m_rectDimension.height()));
 
             g_painter->setShaderProgram(m_shader);
         }
@@ -586,23 +586,23 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
 
     // if we have no camera, its impossible to get the tile
     if(!cameraPosition.isValid())
-        return Position();
+        return {};
 
     const Rect srcRect = calcFramebufferSource(mapSize);
     const float sh = srcRect.width() / static_cast<float>(mapSize.width());
     const float sv = srcRect.height() / static_cast<float>(mapSize.height());
 
-    const Point framebufferPos = Point(point.x * sh, point.y * sv);
+    const auto framebufferPos = Point(point.x * sh, point.y * sv);
     const Point centerOffset = (framebufferPos + srcRect.topLeft()) / m_tileSize;
 
     const Point tilePos2D = getVisibleCenterOffset() - m_drawDimension.toPoint() + centerOffset + Point(2);
     if(tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
-        return Position();
+        return {};
 
     Position position = Position(tilePos2D.x, tilePos2D.y, 0) + cameraPosition;
 
     if(!position.isValid())
-        return Position();
+        return {};
 
     return position;
 }
@@ -787,7 +787,7 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
 
 void MapView::setDrawLights(bool enable)
 {
-    const auto& pool = g_drawPool.get(PoolType::LIGHT);
+    const auto& pool = g_drawPool.get(LIGHT);
     if(pool) pool->setEnable(enable);
 
     if(enable == m_drawLights) return;

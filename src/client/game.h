@@ -56,7 +56,7 @@ struct UnjustifiedPoints {
     uint8 skullTime;
 };
 
-typedef std::tuple<std::string, uint, std::string, int, bool> Vip;
+using Vip = std::tuple<std::string, uint, std::string, int, bool>;
 
 //@bindsingleton g_game
 class Game

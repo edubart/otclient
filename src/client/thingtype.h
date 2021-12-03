@@ -227,7 +227,7 @@ public:
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
     int getExactHeight();
-    const TexturePtr& getTexture(int animationPhase, const TextureType txtType = TextureType::NONE);
+    const TexturePtr& getTexture(int animationPhase, TextureType txtType = TextureType::NONE);
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }

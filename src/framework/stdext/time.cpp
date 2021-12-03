@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "time.h"
+#include <ctime>
 
 #include <chrono>
 #include <ctime>

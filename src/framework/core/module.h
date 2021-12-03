@@ -25,10 +25,10 @@
 
 #include "declarations.h"
 
-#include <framework/otml/declarations.h>
 #include <framework/luaengine/luaobject.h>
+#include <framework/otml/declarations.h>
 
- // @bindclass
+// @bindclass
 class Module : public LuaObject
 {
 public:

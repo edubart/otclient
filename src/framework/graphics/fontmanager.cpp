@@ -50,10 +50,10 @@ bool FontManager::importFont(std::string file)
     try {
         file = g_resources.guessFilePath(file, "otfont");
 
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
-        OTMLNodePtr fontNode = doc->at("Font");
+        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLNodePtr fontNode = doc->at("Font");
 
-        std::string name = fontNode->valueAt("name");
+        const std::string name = fontNode->valueAt("name");
 
         // remove any font with the same name
         for(auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
@@ -63,7 +63,7 @@ bool FontManager::importFont(std::string file)
             }
         }
 
-        BitmapFontPtr font(new BitmapFont(name));
+        const BitmapFontPtr font(new BitmapFont(name));
         font->load(fontNode);
         m_fonts.push_back(font);
 

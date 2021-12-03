@@ -78,13 +78,13 @@ void OggSoundFile::reset()
 
 size_t OggSoundFile::cb_read(void* ptr, size_t size, size_t nmemb, void* source)
 {
-    auto file = static_cast<FileStream*>(source);
+    const auto file = static_cast<FileStream*>(source);
     return file->read(ptr, size, nmemb);
 }
 
 int OggSoundFile::cb_seek(void* source, ogg_int64_t offset, int whence)
 {
-    auto file = static_cast<FileStream*>(source);
+    const auto file = static_cast<FileStream*>(source);
     switch(whence) {
     case SEEK_SET:
         file->seek(offset);
@@ -101,13 +101,13 @@ int OggSoundFile::cb_seek(void* source, ogg_int64_t offset, int whence)
 
 int OggSoundFile::cb_close(void* source)
 {
-    auto file = static_cast<FileStream*>(source);
+    const auto file = static_cast<FileStream*>(source);
     file->close();
     return 0;
 }
 
 long OggSoundFile::cb_tell(void* source)
 {
-    auto file = static_cast<FileStream*>(source);
+    const auto file = static_cast<FileStream*>(source);
     return file->tell();
 }

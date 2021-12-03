@@ -23,9 +23,9 @@
 #ifndef ASYNCDISPATCHER_H
 #define ASYNCDISPATCHER_H
 
-#include "declarations.h"
-#include <framework/stdext/thread.h>
 #include <future>
+#include <framework/stdext/thread.h>
+#include "declarations.h"
 
 class AsyncDispatcher {
 public:

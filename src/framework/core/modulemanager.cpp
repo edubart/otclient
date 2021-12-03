@@ -23,8 +23,8 @@
 #include "modulemanager.h"
 #include "resourcemanager.h"
 
-#include <framework/otml/otml.h>
 #include <framework/core/application.h>
+#include <framework/otml/otml.h>
 
 ModuleManager g_modules;
 
@@ -39,7 +39,7 @@ void ModuleManager::discoverModules()
     // remove modules that are not loaded
     m_autoLoadModules.clear();
 
-    auto moduleDirs = g_resources.listDirectoryFiles("/");
+    const auto moduleDirs = g_resources.listDirectoryFiles("/");
     for(const std::string& moduleDir : moduleDirs) {
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
         for(const std::string& moduleFile : moduleFiles) {
@@ -54,11 +54,11 @@ void ModuleManager::discoverModules()
 
 void ModuleManager::autoLoadModules(int maxPriority)
 {
-    for(auto& pair : m_autoLoadModules) {
-        int priority = pair.first;
+    for(const auto& pair : m_autoLoadModules) {
+        const int priority = pair.first;
         if(priority > maxPriority)
             break;
-        ModulePtr module = pair.second;
+        const ModulePtr module = pair.second;
         module->load();
     }
 }
@@ -67,10 +67,10 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
 {
     ModulePtr module;
     try {
-        OTMLDocumentPtr doc = OTMLDocument::parse(moduleFile);
-        OTMLNodePtr moduleNode = doc->at("Module");
+        const OTMLDocumentPtr doc = OTMLDocument::parse(moduleFile);
+        const OTMLNodePtr moduleNode = doc->at("Module");
 
-        std::string name = moduleNode->valueAt("name");
+        const std::string name = moduleNode->valueAt("name");
 
         bool push = false;
         module = getModule(name);
@@ -91,14 +91,14 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
 
 void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
 {
-    ModulePtr module = g_modules.getModule(moduleName);
+    const ModulePtr module = g_modules.getModule(moduleName);
     if(!module || !module->load())
         g_logger.fatal(stdext::format("Unable to load '%s' module", moduleName));
 }
 
 void ModuleManager::unloadModules()
 {
-    auto modulesBackup = m_modules;
+    const auto modulesBackup = m_modules;
     for(const ModulePtr& module : modulesBackup)
         module->unload();
 }
@@ -130,9 +130,9 @@ ModulePtr ModuleManager::getModule(const std::string& moduleName)
     return nullptr;
 }
 
-void ModuleManager::updateModuleLoadOrder(ModulePtr module)
+void ModuleManager::updateModuleLoadOrder(const ModulePtr& module)
 {
-    auto it = std::find(m_modules.begin(), m_modules.end(), module);
+    const auto it = std::find(m_modules.begin(), m_modules.end(), module);
     if(it != m_modules.end())
         m_modules.erase(it);
     if(module->isLoaded())

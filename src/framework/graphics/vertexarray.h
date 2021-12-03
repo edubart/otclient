@@ -23,8 +23,8 @@
 #ifndef VERTEXARRAY_H
 #define VERTEXARRAY_H
 
-#include "declarations.h"
 #include <framework/util/databuffer.h>
+#include "declarations.h"
 
 class VertexArray
 {

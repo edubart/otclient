@@ -33,7 +33,7 @@ class UIMap : public UIWidget
 {
 public:
     UIMap();
-    ~UIMap();
+    ~UIMap() override;
 
     void drawSelf(Fw::DrawPane drawPane) override;
 

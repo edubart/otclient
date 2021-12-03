@@ -23,9 +23,9 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "../stdext/types.h"
-#include "../const.h"
 #include <sstream>
+#include "../const.h"
+#include "../stdext/types.h"
 
 template<class T>
 class TPoint;
@@ -157,7 +157,7 @@ public:
             if(p.x <= l || p.x >= r)
                 return false;
         } else {
-            if(p.x < l || p.x > r)
+            if(p.template x < l || p.x > r)
                 return false;
         }
         T t, b;
@@ -172,7 +172,7 @@ public:
             if(p.y <= t || p.y >= b)
                 return false;
         } else {
-            if(p.y < t || p.y > b)
+            if(p.template y < t || p.y > b)
                 return false;
         }
         return true;

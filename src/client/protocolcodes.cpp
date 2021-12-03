@@ -218,7 +218,7 @@ namespace Proto {
 
     Otc::MessageMode translateMessageModeFromServer(uint8 mode)
     {
-        auto it = std::find_if(messageModesMap.begin(), messageModesMap.end(), [=](const std::pair<uint8, uint8>& p) { return p.second == mode; });
+        const auto it = std::find_if(messageModesMap.begin(), messageModesMap.end(), [=](const std::pair<uint8, uint8>& p) { return p.second == mode; });
         if(it != messageModesMap.end())
             return static_cast<Otc::MessageMode>(it->first);
         return Otc::MessageInvalid;

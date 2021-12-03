@@ -21,9 +21,9 @@
  */
 
 #include "protocol.h"
-#include "connection.h"
-#include <framework/core/application.h>
 #include <random>
+#include <framework/core/application.h>
+#include "connection.h"
 
 Protocol::Protocol()
 {
@@ -43,8 +43,11 @@ Protocol::~Protocol()
 void Protocol::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
-    m_connection->setErrorCallback(std::bind(&Protocol::onError, asProtocol(), std::placeholders::_1));
-    m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
+    m_connection->setErrorCallback([capture0 = asProtocol()](auto&& PH1)
+    {
+        capture0->onError(std::forward<decltype(PH1)>(PH1));
+    });
+    m_connection->connect(host, port, [capture0 = asProtocol()] { capture0->onConnect(); });
 }
 
 void Protocol::disconnect()
@@ -104,18 +107,26 @@ void Protocol::recv()
 
     // read the first 2 bytes which contain the message size
     if(m_connection)
-        m_connection->read(2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+        m_connection->read(2, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
+        {
+            capture0->internalRecvHeader(std::forward<decltype(PH1)>(PH1),
+                                         std::forward<decltype(PH2)>(PH2));
+        });
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 {
     // read message size
     m_inputMessage->fillBuffer(buffer, size);
-    uint16 remainingSize = m_inputMessage->readSize();
+    const uint16 remainingSize = m_inputMessage->readSize();
 
     // read remaining message data
     if(m_connection)
-        m_connection->read(remainingSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1, std::placeholders::_2));
+        m_connection->read(remainingSize, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
+        {
+            capture0->internalRecvData(std::forward<decltype(PH1)>(PH1),
+                                       std::forward<decltype(PH2)>(PH2));
+        });
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
@@ -145,7 +156,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 void Protocol::generateXteaKey()
 {
     std::random_device rd;
-    std::uniform_int_distribution<uint32> unif;
+    const std::uniform_int_distribution<uint32> unif;
     std::generate(m_xteaKey.begin(), m_xteaKey.end(), [&]() { return unif(rd); });
 }
 
@@ -175,7 +186,7 @@ namespace {
 
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
-    uint16 encryptedSize = inputMessage->getUnreadSize();
+    const uint16 encryptedSize = inputMessage->getUnreadSize();
     if(encryptedSize % 8 != 0) {
         g_logger.traceError("invalid encrypted network message");
         return false;
@@ -186,10 +197,10 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
             right -= ((left << 4 ^ left >> 5) + left) ^ (sum + m_xteaKey[(sum >> 11) & 3]);
             left -= ((right << 4 ^ right >> 5) + right) ^ (next_sum + m_xteaKey[next_sum & 3]);
         });
-    };
+    }
 
-    uint16 decryptedSize = inputMessage->getU16() + 2;
-    int sizeDelta = decryptedSize - encryptedSize;
+    const uint16 decryptedSize = inputMessage->getU16() + 2;
+    const int sizeDelta = decryptedSize - encryptedSize;
     if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
         g_logger.traceError("invalid decrypted network message");
         return false;
@@ -206,7 +217,7 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
 
     //add bytes until reach 8 multiple
     if((encryptedSize % 8) != 0) {
-        uint16 n = 8 - (encryptedSize % 8);
+        const uint16 n = 8 - (encryptedSize % 8);
         outputMessage->addPaddingBytes(n);
         encryptedSize += n;
     }
@@ -216,7 +227,7 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
             left += ((right << 4 ^ right >> 5) + right) ^ (sum + m_xteaKey[sum & 3]);
             right += ((left << 4 ^ left >> 5) + left) ^ (next_sum + m_xteaKey[(next_sum >> 11) & 3]);
         });
-    };
+    }
 }
 
 void Protocol::onConnect()

@@ -76,7 +76,7 @@ class Item : public Thing
 {
 public:
     Item() = default;
-    virtual ~Item() {}
+    ~Item() override = default;
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);

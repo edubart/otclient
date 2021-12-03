@@ -26,7 +26,7 @@
 #include "declarations.h"
 
 struct lua_State;
-typedef int (*LuaCFunction) (lua_State* L);
+using LuaCFunction = int(*) (lua_State* L);
 
 /// Class that manages LUA stuff
 class LuaInterface
@@ -326,7 +326,7 @@ public:
     void clearStack() { pop(stackSize()); }
     bool hasIndex(int index) { return (stackSize() >= (index < 0 ? -index : index) && index != 0); }
 
-    void loadFiles(std::string directory, bool recursive = false, std::string contains = "");
+    void loadFiles(const std::string& directory, bool recursive = false, const std::string& contains = "");
 
     /// Pushes any type onto the stack
     template<typename T, typename... Args>
@@ -354,8 +354,8 @@ private:
 extern LuaInterface g_lua;
 
 // must be included after, because they need LuaInterface fully declared
-#include "luaexception.h"
 #include "luabinder.h"
+#include "luaexception.h"
 #include "luavaluecasts.h"
 
 template<typename T, typename... Args>
@@ -454,17 +454,17 @@ int LuaInterface::luaCallGlobalField(const std::string& global, const std::strin
 {
     g_lua.getGlobalField(global, field);
     if(!g_lua.isNil()) {
-        int numArgs = g_lua.polymorphicPush(args...);
+        const int numArgs = g_lua.polymorphicPush(args...);
         return g_lua.signalCall(numArgs);
-    } else
-        g_lua.pop(1);
+    }
+    g_lua.pop(1);
     return 0;
 }
 
 template<typename... T>
 void LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args)
 {
-    int rets = luaCallGlobalField(global, field, args...);
+    const int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0)
         pop(rets);
 }
@@ -473,7 +473,7 @@ template<typename R, typename... T>
 R LuaInterface::callGlobalField(const std::string& global, const std::string& field, const T&... args)
 {
     R result;
-    int rets = luaCallGlobalField(global, field, args...);
+    const int rets = luaCallGlobalField(global, field, args...);
     if(rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();

@@ -23,20 +23,19 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include "const.h"
-#include "config.h"
-#include <framework/stdext/types.h>
 #include <framework/const.h>
+#include <framework/stdext/types.h>
 #include <framework/util/point.h>
+#include "config.h"
+#include "const.h"
 
 #include <vector>
 
 class Position
 {
 public:
-    Position() : x(UINT16_MAX), y(UINT16_MAX), z(UINT8_MAX) {}
+    Position() = default;
     Position(int32 x, int32 y, uint8 z) : x(x), y(y), z(z) {}
-
     Position(const Position& position) = default;
 
     Position translatedToDirection(Otc::Direction direction)
@@ -125,7 +124,7 @@ public:
 
         positions.push_back(lastPos);
 
-        for(auto dir : dirs) {
+        for(const auto dir : dirs) {
             lastPos = lastPos.translatedToDirection(dir);
             if(!lastPos.isValid())
                 break;
@@ -201,9 +200,9 @@ public:
     void translate(int32 dx, int32 dy, int8 dz = 0) { x += dx; y += dy; z += dz; }
     Position translated(int32 dx, int32 dy, int8 dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
 
-    std::array<Position, (uint8)8> getPositionsAround() const
+    std::array<Position, static_cast<uint8>(8)> getPositionsAround() const
     {
-        std::array<Position, (uint8)8> positions;
+        std::array<Position, static_cast<uint8>(8)> positions;
         int_fast8_t i = -1;
         for(int_fast32_t xi = -1; xi <= 1; ++xi) {
             for(int_fast32_t yi = -1; yi <= 1; ++yi) {
@@ -218,15 +217,15 @@ public:
         return positions;
     }
 
-    Position operator+(const Position& other) const { return Position(x + other.x, y + other.y, z + other.z); }
+    Position operator+(const Position& other) const { return {x + other.x, y + other.y, z + other.z}; }
     Position& operator+=(const Position& other) { x += other.x; y += other.y; z += other.z; return *this; }
-    Position operator-(const Position& other) const { return Position(x - other.x, y - other.y, z - other.z); }
+    Position operator-(const Position& other) const { return {x - other.x, y - other.y, z - other.z}; }
     Position& operator-=(const Position& other) { x -= other.x; y -= other.y; z -= other.z; return *this; }
     // Point conversion(s)
-    Position operator+(const Point& other) const { return Position(x + other.x, y + other.y, z); }
+    Position operator+(const Point& other) const { return {x + other.x, y + other.y, z}; }
     Position& operator+=(const Point& other) { x += other.x; y += other.y; return *this; }
 
-    Position& operator=(const Position& other) { x = other.x; y = other.y; z = other.z; return *this; }
+    Position& operator=(const Position& other) = default;
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
     bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
@@ -287,9 +286,9 @@ public:
         return false;
     }
 
-    int32 x;
-    int32 y;
-    uint8 z;
+    int32 x{UINT16_MAX};
+    int32 y{UINT16_MAX};
+    uint8 z{UINT8_MAX};
 
     // NOTE: This does not increase the size of the struct.
     struct Hasher
