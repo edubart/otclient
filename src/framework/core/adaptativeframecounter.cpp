@@ -40,9 +40,12 @@ bool AdaptativeFrameCounter::update()
     if(tickCount - m_interval <= 1000)
         return false;
 
-    m_fps = m_fpsCount;
-    m_fpsCount = 0;
-    m_interval = tickCount;
+    const bool fpsChanged = m_fps != m_fpsCount;
+    if(fpsChanged) {
+        m_fps = m_fpsCount;
+        m_fpsCount = 0;
+        m_interval = tickCount;
+    }
 
-    return true;
+    return fpsChanged;
 }
