@@ -24,7 +24,6 @@
 #define APPLICATION_H
 
 #include <framework/global.h>
-#include <framework/core/adaptativeframecounter.h>
 
  //@bindsingleton g_app
 class Application

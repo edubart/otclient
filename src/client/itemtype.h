@@ -25,7 +25,6 @@
 
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
-#include <framework/xml/tinyxml.h>
 
 enum ItemCategory : uint8 {
     ItemCategoryInvalid = 0,

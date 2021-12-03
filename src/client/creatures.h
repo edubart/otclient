@@ -24,6 +24,8 @@
 #define CREATURES_H
 
 #include <framework/luaengine/luaobject.h>
+#include <framework/xml/tinyxml.h>
+
 #include "declarations.h"
 #include "outfit.h"
 

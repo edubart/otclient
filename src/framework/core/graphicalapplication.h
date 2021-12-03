@@ -26,6 +26,8 @@
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/declarations.h>
+#include <framework/core/adaptativeframecounter.h>
+
 #include "application.h"
 
 class GraphicalApplication : public Application

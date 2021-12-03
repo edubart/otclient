@@ -102,7 +102,7 @@ void House::save(TiXmlElement* elem)
 HouseManager::HouseManager()
 = default;
 
-void HouseManager::addHouse(const HousePtr& house)
+void HouseManager::addHouse(const HousePtr & house)
 {
     if(findHouse(house->getId()) == m_houses.end())
         m_houses.push_back(house);
@@ -121,14 +121,14 @@ HousePtr HouseManager::getHouse(uint32 houseId)
     return it != m_houses.end() ? *it : nullptr;
 }
 
-HousePtr HouseManager::getHouseByName(const std::string& name)
+HousePtr HouseManager::getHouseByName(const std::string & name)
 {
     const auto it = std::find_if(m_houses.begin(), m_houses.end(),
                                  [=](const HousePtr& house) -> bool { return house->getName() == name; });
     return it != m_houses.end() ? *it : nullptr;
 }
 
-void HouseManager::load(const std::string& fileName)
+void HouseManager::load(const std::string & fileName)
 {
     try {
         TiXmlDocument doc;
@@ -157,7 +157,7 @@ void HouseManager::load(const std::string& fileName)
     sort();
 }
 
-void HouseManager::save(const std::string& fileName)
+void HouseManager::save(const std::string & fileName)
 {
     try {
         TiXmlDocument doc;
