@@ -30,6 +30,7 @@
 #include "item.h"
 #include "outfit.h"
 #include "protocolgame.h"
+#include "container.h"
 
 #include <bitset>
 

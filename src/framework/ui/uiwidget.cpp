@@ -32,7 +32,6 @@
 #include <framework/platform/platformwindow.h>
 
 #include "framework/graphics/drawpool.h"
-#include "framework/graphics/painter.h"
 
 UIWidget::UIWidget()
 {

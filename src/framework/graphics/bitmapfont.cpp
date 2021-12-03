@@ -28,7 +28,6 @@
 #include <framework/otml/otml.h>
 
 #include "drawpool.h"
-#include "painter.h"
 
 namespace
 {
