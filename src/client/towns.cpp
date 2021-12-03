@@ -22,9 +22,11 @@
 
 #include "towns.h"
 
+#include <utility>
+
 TownManager g_towns;
 
-Town::Town(uint32 tid, std::string name, const Position& pos) : m_id(tid), m_name(name)
+Town::Town(uint32 tid, std::string name, const Position& pos) : m_id(tid), m_name(std::move(name))
 {
     if(pos.isValid())
         m_pos = pos;
