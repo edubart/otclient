@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include "combinedsoundsource.h"
 #include "soundmanager.h"
 #include "soundbuffer.h"
 #include "soundfile.h"

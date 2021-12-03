@@ -23,6 +23,7 @@
 #ifndef POINT_H
 #define POINT_H
 
+#include <array>
 #include <cmath>
 #include <ostream>
 #include "../stdext/types.h"

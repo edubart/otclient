@@ -36,6 +36,7 @@ distribution.
 #include <cassert>
 #include <cctype>
 #include <cstdio>
+#include <cstring>
 
 #include <framework/stdext/string.h>
 

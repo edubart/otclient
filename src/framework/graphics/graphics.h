@@ -23,7 +23,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <gl/glew.h>
+#include <GL/glew.h>
 #include "declarations.h"
 
  // @bindsingleton g_graphics
