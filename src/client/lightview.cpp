@@ -22,10 +22,6 @@
 
 #include "lightview.h"
 #include <framework/graphics/drawpool.h>
-#include <framework/graphics/framebuffer.h>
-#include <framework/graphics/framebuffermanager.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/painter.h>
 #include "map.h"
 #include "mapview.h"
 #include "spritemanager.h"

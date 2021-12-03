@@ -23,11 +23,9 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-#include <framework/core/declarations.h>
 #include <framework/core/inputevent.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/luaengine/luaobject.h>
 #include "lightview.h"
 

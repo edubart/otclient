@@ -25,7 +25,6 @@
 
 #include <framework/global.h>
 #include "effect.h"
-#include "itemtype.h"
 #include "thing.h"
 
 enum ItemAttr : uint8

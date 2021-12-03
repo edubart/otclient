@@ -24,15 +24,8 @@
 #define MAP_H
 
 #include "animatedtext.h"
-#include "creature.h"
 #include "creatures.h"
-#include "houses.h"
-#include "statictext.h"
 #include "tile.h"
-#include "towns.h"
-
-#include <framework/core/clock.h>
-#include <framework/graphics/framebuffer.h>
 
 enum OTBM_ItemAttr
 {

@@ -23,9 +23,7 @@
 #include "item.h"
 #include "container.h"
 #include "game.h"
-#include "houses.h"
 #include "map.h"
-#include "shadermanager.h"
 #include "spritemanager.h"
 #include "thing.h"
 #include "thingtypemanager.h"
@@ -35,7 +33,6 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
-#include <framework/graphics/graphics.h>
 
 ItemPtr Item::create(int id)
 {

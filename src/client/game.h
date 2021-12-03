@@ -25,12 +25,9 @@
 
 #include <framework/core/timer.h>
 #include "animatedtext.h"
-#include "container.h"
 #include "creature.h"
 #include "declarations.h"
-#include "effect.h"
 #include "item.h"
-#include "localplayer.h"
 #include "outfit.h"
 #include "protocolgame.h"
 

@@ -31,8 +31,8 @@
 #include "map.h"
 #include "protocolcodes.h"
 #include "protocolgame.h"
-#include "statictext.h"
 #include "tile.h"
+#include "framework/core/graphicalapplication.h"
 
 Game g_game;
 

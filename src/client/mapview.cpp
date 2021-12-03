@@ -36,9 +36,9 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/drawpool.h>
-#include <framework/graphics/framebuffermanager.h>
 #include <framework/graphics/graphics.h>
-#include <framework/graphics/image.h>
+
+#include "framework/graphics/texturemanager.h"
 
 enum {
     // 3840x2160 => 1080p optimized

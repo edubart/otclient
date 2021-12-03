@@ -24,16 +24,13 @@
 #define CREATURE_H
 
 #include <framework/core/declarations.h>
-#include <framework/core/scheduledevent.h>
 #include <framework/core/timer.h>
 #include <framework/graphics/cachedtext.h>
-#include <framework/graphics/fontmanager.h>
 #include "mapview.h"
 #include "outfit.h"
 #include "thing.h"
-#include "tile.h"
 
- // @bindclass
+// @bindclass
 class Creature : public Thing
 {
 public:

@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#include "houses.h"
+
 #include "map.h"
 
 #include <framework/core/resourcemanager.h>

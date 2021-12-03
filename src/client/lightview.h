@@ -25,7 +25,6 @@
 
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/framebuffer.h>
-#include <framework/graphics/painter.h>
 #include "declarations.h"
 #include "thingtype.h"
 

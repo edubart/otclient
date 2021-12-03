@@ -32,6 +32,9 @@
 #include <framework/ui/uiwidget.h>
 #include <framework/xml/tinyxml.h>
 
+#include "houses.h"
+#include "towns.h"
+
 void Map::loadOtbm(const std::string& fileName)
 {
     try {
