@@ -25,7 +25,6 @@
 
  // this file is and must be included only from luainterface.h
 #include "luaexception.h"
-#include "luainterface.h"
 
 #include <tuple>
 #include <framework/stdext/traits.h>
