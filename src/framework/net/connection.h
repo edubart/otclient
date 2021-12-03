@@ -23,7 +23,6 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <framework/core/timer.h>
 #include <framework/luaengine/luaobject.h>
 #include "declarations.h"
 

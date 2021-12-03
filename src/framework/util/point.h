@@ -24,7 +24,7 @@
 #define POINT_H
 
 #include <cmath>
-#include <sstream>
+#include <ostream>
 #include "../stdext/types.h"
 
 template<class T>

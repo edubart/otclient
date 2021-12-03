@@ -22,7 +22,6 @@
 
 #include "uiitem.h"
 #include <framework/graphics/fontmanager.h>
-#include <framework/graphics/graphics.h>
 
 UIItem::UIItem() { m_draggable = true; }
 

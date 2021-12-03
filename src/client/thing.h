@@ -23,7 +23,6 @@
 #ifndef THING_H
 #define THING_H
 
-#include <framework/graphics/framebuffer.h>
 #include <framework/luaengine/luaobject.h>
 #include "declarations.h"
 #include "thingtype.h"

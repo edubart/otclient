@@ -37,7 +37,6 @@ distribution.
 #include <cctype>
 #include <cstdio>
 
-#include <framework/const.h>
 #include <framework/stdext/string.h>
 
 // Help out windows:

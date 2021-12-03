@@ -23,7 +23,6 @@
 #ifndef PROTOCOLHTTP_H
 #define PROTOCOLHTTP_H
 
-#include "connection.h"
 #include "declarations.h"
 
 #include <framework/luaengine/luaobject.h>

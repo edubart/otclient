@@ -21,7 +21,6 @@
  */
 
 #include "particleemitter.h"
-#include <framework/graphics/texturemanager.h>
 #include "particle.h"
 #include "particlemanager.h"
 #include "particlesystem.h"

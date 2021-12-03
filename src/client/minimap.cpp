@@ -28,7 +28,6 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/drawpool.h>
 #include <framework/graphics/image.h>
-#include <framework/graphics/painter.h>
 #include <framework/graphics/texture.h>
 
 Minimap g_minimap;

@@ -24,7 +24,6 @@
 #define FRAMEWORK_NET_DECLARATIONS_H
 
 #include <boost/asio.hpp>
-#include <boost/system/error_code.hpp>
 #include <framework/global.h>
 
 namespace asio = boost::asio;

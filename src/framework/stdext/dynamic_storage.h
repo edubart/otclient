@@ -25,7 +25,6 @@
 
 #include <unordered_map>
 #include "any.h"
-#include "types.h"
 
 namespace stdext {
     template<typename Key>

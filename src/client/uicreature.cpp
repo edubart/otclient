@@ -21,7 +21,6 @@
  */
 
 #include "uicreature.h"
-#include <framework/graphics/graphics.h>
 
 void UICreature::drawSelf(Fw::DrawPane drawPane)
 {
