@@ -38,7 +38,7 @@ public:
     void unlockWalk() { m_walkLockExpiration = 0; }
     void lockWalk(int millis = 250);
     void stopAutoWalk();
-    bool autoWalk(const Position& destination, const bool retry = false);
+    bool autoWalk(const Position& destination, bool retry = false);
     bool canWalk(Otc::Direction direction);
 
     void setStates(int states);

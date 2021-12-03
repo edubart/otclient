@@ -21,19 +21,20 @@
  */
 
 #include "crypt.h"
-#include <framework/stdext/math.h>
 #include <framework/core/logger.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/platform/platform.h>
-#include <framework/core/application.h>
+#include <framework/stdext/math.h>
 
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
+#include "framework/core/graphicalapplication.h"
+
 #ifndef USE_GMP
-#include <openssl/rsa.h>
 #include <openssl/bn.h>
 #include <openssl/err.h>
+#include <openssl/rsa.h>
 #endif
 
 static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -203,9 +204,9 @@ std::string Crypt::getCryptKey(bool useMachineUUID)
         const boost::uuids::nil_generator nilgen;
         uuid = nilgen();
     }
-    boost::uuids::name_generator namegen(uuid);
+    const boost::uuids::name_generator namegen(uuid);
     const boost::uuids::uuid u = namegen(g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());
-    std::size_t hash = uuid_hasher(u);
+    const std::size_t hash = uuid_hasher(u);
     std::string key;
     key.assign((const char*)&hash, sizeof(hash));
     return key;
@@ -231,7 +232,7 @@ std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachine
         if(readsum == sum)
             return decrypted_string;
     }
-    return std::string();
+    return {};
 }
 
 void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)

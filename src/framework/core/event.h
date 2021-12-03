@@ -29,8 +29,8 @@
 class Event : public LuaObject
 {
 public:
-    Event(const std::function<void()>& callback);
-    virtual ~Event();
+    Event(std::function<void()> callback);
+    ~Event() override;
 
     virtual void execute();
     void cancel();

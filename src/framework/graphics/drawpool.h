@@ -23,11 +23,11 @@
 #ifndef DRAWPOOL_H
 #define DRAWPOOL_H
 
-#include <framework/graphics/declarations.h>
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/framebuffer.h>
-#include <framework/graphics/pool.h>
 #include <framework/core/graphicalapplication.h>
+#include <framework/graphics/declarations.h>
+#include <framework/graphics/framebuffer.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/pool.h>
 
 enum  PoolType : uint8 {
     MAP,
@@ -47,19 +47,19 @@ class DrawPool
 {
 public:
     PoolPtr createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
-    PoolFramedPtr createPoolF(const PoolType type);
+    PoolFramedPtr createPoolF(PoolType type);
     PoolPtr get(const PoolType type) const { return m_pools[type]; }
 
     void use(const PoolPtr& pool);
     void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);
 
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color = Color::white);
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white, const Point& originalDest = Point());
-    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
-    void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color = Color::white);
-    void addFilledRect(const Rect& dest, const Color color = Color::white);
-    void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color = Color::white);
-    void addBoundingRect(const Rect& dest, const Color color = Color::white, int innerLineWidth = 1);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = Point());
+    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
+    void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
+    void addFilledRect(const Rect& dest, Color color = Color::white);
+    void addFilledTriangle(const Point& a, const Point& b, const Point& c, Color color = Color::white);
+    void addBoundingRect(const Rect& dest, Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
@@ -86,14 +86,14 @@ private:
     void terminate();
     void drawObject(Pool::DrawObject& obj);
     void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
-    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<FramedPool>(m_currentPool); }
 
     Painter::PainterState generateState();
 
     CoordsBuffer m_coordsbuffer;
-    std::array<PoolPtr, PoolType::UNKNOW + 1> m_pools;
+    std::array<PoolPtr, UNKNOW + 1> m_pools;
 
     PoolPtr m_currentPool, n_unknowPool;
 

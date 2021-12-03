@@ -23,23 +23,23 @@
 #ifndef ANIMATEDTEXTURE_H
 #define ANIMATEDTEXTURE_H
 
-#include "texture.h"
 #include <framework/core/timer.h>
+#include "texture.h"
 
 class AnimatedTexture : public Texture
 {
 public:
-    AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps = false, bool compress = false);
-    virtual ~AnimatedTexture();
+    AnimatedTexture(const Size& size, const std::vector<ImagePtr>& frames, std::vector<int> framesDelay, bool buildMipmaps = false, bool compress = false);
+    ~AnimatedTexture() override;
 
-    virtual bool buildHardwareMipmaps();
+    bool buildHardwareMipmaps() override;
 
-    virtual void setSmooth(bool smooth);
-    virtual void setRepeat(bool repeat);
+    void setSmooth(bool smooth) override;
+    void setRepeat(bool repeat) override;
 
     void updateAnimation();
 
-    virtual bool isAnimatedTexture() { return true; }
+    bool isAnimatedTexture() override { return true; }
 
 private:
     std::vector<TexturePtr> m_frames;

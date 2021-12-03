@@ -32,13 +32,16 @@
 #include <framework/ui/uiwidget.h>
 #include <framework/xml/tinyxml.h>
 
+#include "houses.h"
+#include "towns.h"
+
 void Map::loadOtbm(const std::string& fileName)
 {
     try {
         if(!g_things.isOtbLoaded())
             stdext::throw_exception("OTB isn't loaded yet to load a map.");
 
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        const FileStreamPtr fin = g_resources.openFile(fileName);
         if(!fin)
             stdext::throw_exception(stdext::format("Unable to load map '%s'", fileName));
 
@@ -51,7 +54,7 @@ void Map::loadOtbm(const std::string& fileName)
         if(memcmp(identifier, "OTBM", 4) != 0 && memcmp(identifier, "\0\0\0\0", 4) != 0)
             stdext::throw_exception(stdext::format("Invalid file identifier detected: %s", identifier));
 
-        BinaryTreePtr root = fin->getBinaryTree();
+        const BinaryTreePtr root = fin->getBinaryTree();
         if(root->getU8())
             stdext::throw_exception("could not read root property!");
 
@@ -75,7 +78,7 @@ void Map::loadOtbm(const std::string& fileName)
                                             headerMinorItems, g_things.getOtbMinorVersion()));
         }
 
-        BinaryTreePtr node = root->getChildren()[0];
+        const BinaryTreePtr node = root->getChildren()[0];
         if(node->getU8() != OTBM_MAP_DATA)
             stdext::throw_exception("Could not read root data node");
 
@@ -235,7 +238,7 @@ void Map::loadOtbm(const std::string& fileName)
 void Map::saveOtbm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.createFile(fileName);
+        const FileStreamPtr fin = g_resources.createFile(fileName);
         if(!fin)
             stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
@@ -276,7 +279,7 @@ void Map::saveOtbm(const std::string& fileName)
             houseFile = houseFile.substr(sep_pos + 1);
 
         fin->addU32(0); // file version
-        OutputBinaryTreePtr root(new OutputBinaryTree(fin));
+        const OutputBinaryTreePtr root(new OutputBinaryTree(fin));
         {
             root->addU32(version);
 
@@ -401,7 +404,7 @@ void Map::saveOtbm(const std::string& fileName)
 bool Map::loadOtcm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        const FileStreamPtr fin = g_resources.openFile(fileName);
         if(!fin)
             stdext::throw_exception("unable to open file");
 
@@ -481,7 +484,7 @@ void Map::saveOtcm(const std::string& fileName)
     try {
         stdext::timer saveTimer;
 
-        FileStreamPtr fin = g_resources.createFile(fileName);
+        const FileStreamPtr fin = g_resources.createFile(fileName);
         fin->cache();
 
         //TODO: compression flag with zlib
@@ -519,7 +522,7 @@ void Map::saveOtcm(const std::string& fileName)
 
                     for(const ThingPtr& thing : tile->getThings()) {
                         if(thing->isItem()) {
-                            ItemPtr item = thing->static_self_cast<Item>();
+                            const ItemPtr item = thing->static_self_cast<Item>();
                             fin->addU16(item->getId());
                             fin->addU8(item->getCountOrSubType());
                         }

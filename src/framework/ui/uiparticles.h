@@ -23,7 +23,6 @@
 #ifndef UIPARTICLES_H
 #define UIPARTICLES_H
 
-#include <framework/graphics/particleeffect.h>
 #include <framework/ui/uiwidget.h>
 
 class UIParticles : public UIWidget

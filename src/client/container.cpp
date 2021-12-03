@@ -24,7 +24,7 @@
 #include "item.h"
 
 Container::Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent, bool isUnlocked, bool hasPages, int containerSize, int firstIndex)
-    :m_id(id), m_capacity(capacity), m_name(name), m_containerItem(containerItem), m_hasParent(hasParent), m_unlocked(isUnlocked), m_hasPages(hasPages), m_size(containerSize), m_firstIndex(firstIndex)
+    :m_id(id), m_capacity(capacity), m_containerItem(containerItem), m_name(name), m_hasParent(hasParent), m_unlocked(isUnlocked), m_hasPages(hasPages), m_size(containerSize), m_firstIndex(firstIndex)
 {
 }
 

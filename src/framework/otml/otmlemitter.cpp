@@ -52,7 +52,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
             std::string value = node->value();
 
             // emit multiline values
-            if(value.find("\n") != std::string::npos) {
+            if(value.find('\n') != std::string::npos) {
                 if(value[value.length() - 1] == '\n' && value[value.length() - 2] == '\n')
                     ss << "|+";
                 else if(value[value.length() - 1] == '\n')

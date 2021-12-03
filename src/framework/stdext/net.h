@@ -23,9 +23,9 @@
 #ifndef STDEXT_NET_H
 #define STDEXT_NET_H
 
-#include "types.h"
 #include <string>
 #include <vector>
+#include "types.h"
 
 namespace stdext {
     std::string ip_to_string(uint32 ip);

@@ -21,13 +21,13 @@
  */
 
 #include "filestream.h"
-#include "binarytree.h"
 #include <framework/core/application.h>
+#include "binarytree.h"
 
 #include <physfs.h>
 
-FileStream::FileStream(const std::string& name, PHYSFS_File* fileHandle, bool writeable) :
-    m_name(name),
+FileStream::FileStream(std::string name, PHYSFS_File* fileHandle, bool writeable) :
+    m_name(std::move(name)),
     m_fileHandle(fileHandle),
     m_pos(0),
     m_writeable(writeable),
@@ -35,8 +35,8 @@ FileStream::FileStream(const std::string& name, PHYSFS_File* fileHandle, bool wr
 {
 }
 
-FileStream::FileStream(const std::string& name, const std::string& buffer) :
-    m_name(name),
+FileStream::FileStream(std::string name, const std::string& buffer) :
+    m_name(std::move(name)),
     m_fileHandle(nullptr),
     m_pos(0),
     m_writeable(false),
@@ -66,7 +66,7 @@ void FileStream::cache()
         // cache entire file into data buffer
         m_pos = PHYSFS_tell(m_fileHandle);
         PHYSFS_seek(m_fileHandle, 0);
-        int size = PHYSFS_fileLength(m_fileHandle);
+        const int size = PHYSFS_fileLength(m_fileHandle);
         m_data.resize(size);
         if(PHYSFS_readBytes(m_fileHandle, m_data.data(), size) == -1)
             throwError("unable to read file data", true);
@@ -96,7 +96,7 @@ void FileStream::flush()
         if(m_caching) {
             if(!PHYSFS_seek(m_fileHandle, 0))
                 throwError("flush seek failed", true);
-            uint len = m_data.size();
+            const uint len = m_data.size();
             if(PHYSFS_writeBytes(m_fileHandle, m_data.data(), len) != len)
                 throwError("flush write failed", true);
         }
@@ -109,22 +109,21 @@ void FileStream::flush()
 int FileStream::read(void* buffer, uint32 size, uint32 nmemb)
 {
     if(!m_caching) {
-        int res = PHYSFS_readBytes(m_fileHandle, buffer, size * nmemb);
+        const int res = PHYSFS_readBytes(m_fileHandle, buffer, size * nmemb);
         if(res == -1)
             throwError("read failed", true);
         return res;
-    } else {
-        int writePos = 0;
-        uint8* outBuffer = static_cast<uint8*>(buffer);
-        for(uint i = 0; i < nmemb; ++i) {
-            if(m_pos + size > m_data.size())
-                return i;
-
-            for(uint j = 0; j < size; ++j)
-                outBuffer[writePos++] = m_data[m_pos++];
-        }
-        return nmemb;
     }
+    int writePos = 0;
+    auto outBuffer = static_cast<uint8*>(buffer);
+    for(uint i = 0; i < nmemb; ++i) {
+        if(m_pos + size > m_data.size())
+            return i;
+
+        for(uint j = 0; j < size; ++j)
+            outBuffer[writePos++] = m_data[m_pos++];
+    }
+    return nmemb;
 }
 
 void FileStream::write(const void* buffer, uint32 count)
@@ -160,24 +159,21 @@ uint FileStream::size()
 {
     if(!m_caching)
         return PHYSFS_fileLength(m_fileHandle);
-    else
-        return m_data.size();
+    return m_data.size();
 }
 
 uint FileStream::tell()
 {
     if(!m_caching)
         return PHYSFS_tell(m_fileHandle);
-    else
-        return m_pos;
+    return m_pos;
 }
 
 bool FileStream::eof()
 {
     if(!m_caching)
         return PHYSFS_eof(m_fileHandle);
-    else
-        return m_pos >= m_data.size();
+    return m_pos >= m_data.size();
 }
 
 uint8 FileStream::getU8()
@@ -309,7 +305,7 @@ int64 FileStream::get64()
 std::string FileStream::getString()
 {
     std::string str;
-    uint16 len = getU16();
+    const uint16 len = getU16();
     if(len > 0 && len < 8192) {
         char buffer[8192];
         if(m_fileHandle) {
@@ -333,11 +329,11 @@ std::string FileStream::getString()
 
 BinaryTreePtr FileStream::getBinaryTree()
 {
-    uint8 byte = getU8();
+    const uint8 byte = getU8();
     if(byte != BINARYTREE_NODE_START)
         stdext::throw_exception(stdext::format("failed to read node start (getBinaryTree): %d", byte));
 
-    return BinaryTreePtr(new BinaryTree(asFileStream()));
+    return { new BinaryTree(asFileStream()) };
 }
 
 void FileStream::startNode(uint8 n)

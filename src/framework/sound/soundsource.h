@@ -23,9 +23,8 @@
 #ifndef SOUNDSOURCE_H
 #define SOUNDSOURCE_H
 
-#include "declarations.h"
-#include "soundbuffer.h"
 #include <framework/luaengine/luaobject.h>
+#include "declarations.h"
 
 class SoundSource : public LuaObject
 {

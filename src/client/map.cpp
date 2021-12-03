@@ -30,8 +30,10 @@
 #include "statictext.h"
 #include "tile.h"
 
-#include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
+
+#include "houses.h"
+#include "towns.h"
 
 Map g_map;
 TilePtr Map::m_nulltile;
@@ -189,7 +191,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int16 stackPos)
 
 ThingPtr Map::getThing(const Position& pos, int16 stackPos)
 {
-    if(TilePtr tile = getTile(pos))
+    if(const TilePtr tile = getTile(pos))
         return tile->getThing(stackPos);
 
     return nullptr;
@@ -217,7 +219,7 @@ bool Map::removeThing(const ThingPtr& thing)
         }
     } else {
         if(thing->isMissile()) {
-            MissilePtr missile = thing->static_self_cast<Missile>();
+            const MissilePtr missile = thing->static_self_cast<Missile>();
             const uint8 z = missile->getPosition().z;
             const auto it = std::find(m_floorMissiles[z].begin(), m_floorMissiles[z].end(), missile);
             if(it != m_floorMissiles[z].end()) {
@@ -236,7 +238,7 @@ bool Map::removeThing(const ThingPtr& thing)
 
 bool Map::removeThingByPos(const Position& pos, int16 stackPos)
 {
-    if(TilePtr tile = getTile(pos))
+    if(const TilePtr tile = getTile(pos))
         return removeThing(tile->getThing(stackPos));
 
     return false;
@@ -350,7 +352,7 @@ const TilePtr& Map::getTile(const Position& pos)
     if(!pos.isMapPosition())
         return m_nulltile;
 
-    auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
+    const auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if(it != m_tileBlocks[pos.z].end())
         return it->second.get(pos);
 
@@ -391,7 +393,7 @@ void Map::cleanTile(const Position& pos)
     if(!pos.isMapPosition())
         return;
 
-    auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
+    const auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
     if(it != m_tileBlocks[pos.z].end()) {
         TileBlock& block = it->second;
         if(const TilePtr& tile = block.get(pos)) {
@@ -591,10 +593,10 @@ void Map::setCentralPosition(const Position& centralPosition)
     // the local player is removed from the map when there are too many creatures on his tile,
     // so there is no enough stackpos to the server send him
     g_dispatcher.addEvent([this] {
-        LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
+        const LocalPlayerPtr localPlayer = g_game.getLocalPlayer();
         if(!localPlayer || localPlayer->getPosition() == m_centralPosition)
             return;
-        TilePtr tile = localPlayer->getTile();
+        const TilePtr tile = localPlayer->getTile();
         if(tile && tile->hasThing(localPlayer))
             return;
 
@@ -663,7 +665,7 @@ std::vector<CreaturePtr> Map::getSpectatorsInRangeEx(const Position& centerPos, 
 
 bool Map::isLookPossible(const Position& pos)
 {
-    TilePtr tile = getTile(pos);
+    const TilePtr tile = getTile(pos);
     return tile && tile->isLookPossible();
 }
 
@@ -830,7 +832,7 @@ std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const
     std::unordered_map<Position, Node*, Position::Hasher> nodes;
     std::priority_queue<Node::Pair, std::deque<Node::Pair>, Node::Compare> searchList;
 
-    Node* currentNode = new Node(startPos);
+    auto currentNode = new Node(startPos);
     nodes[startPos] = currentNode;
     Node* foundNode = nullptr;
     float totalCost = 0;

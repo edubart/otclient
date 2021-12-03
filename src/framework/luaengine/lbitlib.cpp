@@ -91,7 +91,7 @@ extern "C" {
 /* ----- from lua-5.2.0 lua.h: ----- */
 
 /* unsigned integer type */
-typedef LUA_UNSIGNED lua_Unsigned;
+using lua_Unsigned = LUA_UNSIGNED;
 
 /* ----- adapted from lua-5.2.0 llimits.h: ----- */
 
@@ -149,8 +149,7 @@ union luai_Cast2 { double l_d; LUAI_INT32 l_p[2]; };
 
 static void lua_pushunsigned(lua_State* L, lua_Unsigned u)
 {
-    lua_Number n;
-    n = lua_unsigned2number(u);
+    lua_Number n = lua_unsigned2number(u);
     lua_pushnumber(L, n);
 }
 
@@ -159,7 +158,7 @@ static void lua_pushunsigned(lua_State* L, lua_Unsigned u)
 static lua_Unsigned luaL_checkunsigned(lua_State* L, int arg)
 {
     lua_Unsigned r;
-    lua_Number x = lua_tonumber(L, arg);
+    const lua_Number x = lua_tonumber(L, arg);
     if(x == 0) luaL_checktype(L, arg, LUA_TNUMBER);
     lua_number2unsigned(r, x);
     return r;
@@ -217,36 +216,36 @@ static lua_Unsigned luaL_checkunsigned(lua_State* L, int arg)
 /* builds a number with 'n' ones (1 <= n <= LUA_NBITS) */
 #define mask(n)         (~((ALLONES << 1) << ((n) - 1)))
 
-typedef lua_Unsigned b_uint;
+using b_uint = lua_Unsigned;
 
 static b_uint andaux(lua_State* L)
 {
-    int i, n = lua_gettop(L);
+    int n = lua_gettop(L);
     b_uint r = ~static_cast<b_uint>(0);
-    for(i = 1; i <= n; i++)
+    for(int i = 1; i <= n; i++)
         r &= luaL_checkunsigned(L, i);
     return trim(r);
 }
 
 static int b_and(lua_State* L)
 {
-    b_uint r = andaux(L);
+    const b_uint r = andaux(L);
     lua_pushunsigned(L, r);
     return 1;
 }
 
 static int b_test(lua_State* L)
 {
-    b_uint r = andaux(L);
+    const b_uint r = andaux(L);
     lua_pushboolean(L, r != 0);
     return 1;
 }
 
 static int b_or(lua_State* L)
 {
-    int i, n = lua_gettop(L);
+    int n = lua_gettop(L);
     b_uint r = 0;
-    for(i = 1; i <= n; i++)
+    for(int i = 1; i <= n; i++)
         r |= luaL_checkunsigned(L, i);
     lua_pushunsigned(L, trim(r));
     return 1;
@@ -254,9 +253,9 @@ static int b_or(lua_State* L)
 
 static int b_xor(lua_State* L)
 {
-    int i, n = lua_gettop(L);
+    int n = lua_gettop(L);
     b_uint r = 0;
-    for(i = 1; i <= n; i++)
+    for(int i = 1; i <= n; i++)
         r ^= luaL_checkunsigned(L, i);
     lua_pushunsigned(L, trim(r));
     return 1;
@@ -298,16 +297,15 @@ static int b_rshift(lua_State* L)
 static int b_arshift(lua_State* L)
 {
     b_uint r = luaL_checkunsigned(L, 1);
-    int i = luaL_checkint(L, 2);
+    const int i = luaL_checkint(L, 2);
     if(i < 0 || !(r & (static_cast<b_uint>(1) << (LUA_NBITS - 1))))
         return b_shift(L, r, -i);
-    else {  /* arithmetic shift for 'negative' number */
-        if(i >= LUA_NBITS) r = ALLONES;
-        else
-            r = trim((r >> i) | ~(~static_cast<b_uint>(0) >> i));  /* add signal bit */
-        lua_pushunsigned(L, r);
-        return 1;
-    }
+    /* arithmetic shift for 'negative' number */
+    if(i >= LUA_NBITS) r = ALLONES;
+    else
+        r = trim((r >> i) | ~(~static_cast<b_uint>(0) >> i));  /* add signal bit */
+    lua_pushunsigned(L, r);
+    return 1;
 }
 
 static int b_rot(lua_State* L, int i)
@@ -336,8 +334,8 @@ static int b_rrot(lua_State* L)
 */
 static int fieldargs(lua_State* L, int farg, int* width)
 {
-    int f = luaL_checkint(L, farg);
-    int w = luaL_optint(L, farg + 1, 1);
+    const int f = luaL_checkint(L, farg);
+    const int w = luaL_optint(L, farg + 1, 1);
     luaL_argcheck(L, 0 <= f, farg, "field cannot be negative");
     luaL_argcheck(L, 0 < w, farg + 1, "width must be positive");
     if(f + w > LUA_NBITS)
@@ -350,7 +348,7 @@ static int b_extract(lua_State* L)
 {
     int w;
     b_uint r = luaL_checkunsigned(L, 1);
-    int f = fieldargs(L, 2, &w);
+    const int f = fieldargs(L, 2, &w);
     r = (r >> f) & mask(w);
     lua_pushunsigned(L, r);
     return 1;
@@ -361,8 +359,8 @@ static int b_replace(lua_State* L)
     int w;
     b_uint r = luaL_checkunsigned(L, 1);
     b_uint v = luaL_checkunsigned(L, 2);
-    int f = fieldargs(L, 3, &w);
-    int m = mask(w);
+    const int f = fieldargs(L, 3, &w);
+    const int m = mask(w);
     v &= m;  /* erase bits outside given width */
     r = (r & ~(m << f)) | (v << f);
     lua_pushunsigned(L, r);

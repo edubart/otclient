@@ -23,9 +23,9 @@
 #ifndef SOUNDMANAGER_H
 #define SOUNDMANAGER_H
 
+#include <future>
 #include "declarations.h"
 #include "soundchannel.h"
-#include <future>
 
  //@bindsingleton g_sounds
 class SoundManager

@@ -22,11 +22,12 @@
 
 #include "particleeffect.h"
 
-ParticleEffectType::ParticleEffectType()
-{
-}
+#include "particlesystem.h"
 
-void ParticleEffectType::load(const OTMLNodePtr& node)
+ParticleEffectType::ParticleEffectType()
+= default;
+
+void ParticleEffectType::load(const OTMLNodePtr & node)
 {
     m_node = node->clone();
     for(const OTMLNodePtr& childNode : node->children()) {
@@ -37,14 +38,14 @@ void ParticleEffectType::load(const OTMLNodePtr& node)
     }
 }
 
-void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
+void ParticleEffect::load(const ParticleEffectTypePtr & effectType)
 {
     if(!effectType)
         stdext::throw_exception("effect type not found");
 
     for(const OTMLNodePtr& childNode : effectType->getNode()->children()) {
         if(childNode->tag() == "System") {
-            ParticleSystemPtr system = ParticleSystemPtr(new ParticleSystem);
+            auto system = ParticleSystemPtr(new ParticleSystem);
             system->load(childNode);
             m_systems.push_back(system);
         }
@@ -53,7 +54,7 @@ void ParticleEffect::load(const ParticleEffectTypePtr& effectType)
 
 void ParticleEffect::render()
 {
-    for(auto& system : m_systems)
+    for(const auto& system : m_systems)
         system->render();
 }
 

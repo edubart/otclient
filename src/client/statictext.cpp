@@ -24,8 +24,8 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/fontmanager.h>
-#include <framework/graphics/graphics.h>
 #include "map.h"
+#include "framework/core/graphicalapplication.h"
 
 StaticText::StaticText()
 {
@@ -36,7 +36,7 @@ StaticText::StaticText()
 void StaticText::drawText(const Point& dest, const Rect& parentRect)
 {
     const Size textSize = m_cachedText.getTextSize();
-    const Rect rect = Rect(dest - Point(textSize.width() / 2, textSize.height()) + Point(20, 5), textSize);
+    const auto rect = Rect(dest - Point(textSize.width() / 2, textSize.height()) + Point(20, 5), textSize);
     Rect boundRect = rect;
     boundRect.bind(parentRect);
 

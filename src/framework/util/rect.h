@@ -23,9 +23,7 @@
 #ifndef RECT_H
 #define RECT_H
 
-#include "../stdext/types.h"
 #include "../const.h"
-#include <sstream>
 
 template<class T>
 class TPoint;

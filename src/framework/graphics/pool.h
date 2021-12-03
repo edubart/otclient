@@ -23,10 +23,12 @@
 #ifndef POOL_H
 #define POOL_H
 
+#include <utility>
+
 #include "declarations.h"
 #include "framebuffer.h"
 #include "texture.h"
-#include "framebuffermanager.h"
+#include "framework/core/timer.h"
 
 class Pool
 {
@@ -72,10 +74,10 @@ private:
         PainterShaderProgram* shaderProgram;
     };
 
-    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1);
-    void setClipRect(const Rect& clipRect, const int pos = -1);
-    void setOpacity(const float opacity, const int pos = -1);
-    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1);
+    void setCompositionMode(Painter::CompositionMode mode, int pos = -1);
+    void setClipRect(const Rect& clipRect, int pos = -1);
+    void setOpacity(float opacity, int pos = -1);
+    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1);
 
     void resetClipRect() { m_state.clipRect = Rect(); }
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
@@ -99,8 +101,8 @@ private:
 
 class FramedPool : public Pool {
 public:
-    void onBeforeDraw(std::function<void()> f) { m_beforeDraw = f; }
-    void onAfterDraw(std::function<void()> f) { m_afterDraw = f; }
+    void onBeforeDraw(std::function<void()> f) { m_beforeDraw = std::move(f); }
+    void onAfterDraw(std::function<void()> f) { m_afterDraw = std::move(f); }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
 
@@ -113,7 +115,7 @@ protected:
 private:
     void updateStatus() { m_status.first = m_status.second; m_refreshTime.restart(); }
     void resetCurrentStatus() { m_status.second = 0; }
-    bool hasModification(const bool autoUpdateStatus = false);
+    bool hasModification(bool autoUpdateStatus = false);
     bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
 
     FramedPool* toFramedPool() override { return static_cast<FramedPool*>(this); }

@@ -23,7 +23,6 @@
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
-#include <framework/core/timer.h>
 #include <framework/graphics/cachedtext.h>
 #include "thing.h"
 

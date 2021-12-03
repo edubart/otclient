@@ -21,12 +21,10 @@
  */
 
 #include "paintershaderprogram.h"
-#include "painter.h"
-#include "texture.h"
-#include "texturemanager.h"
-#include "graphics.h"
 #include <framework/core/clock.h>
 #include <framework/platform/platformwindow.h>
+#include "texture.h"
+#include "texturemanager.h"
 
 PainterShaderProgram::PainterShaderProgram()
 {
@@ -139,7 +137,7 @@ void PainterShaderProgram::setResolution(const Size& resolution)
 
 void PainterShaderProgram::updateTime()
 {
-    float time = g_clock.seconds() - m_startTime;
+    const float time = g_clock.seconds() - m_startTime;
     if(m_time == time)
         return;
 
@@ -153,7 +151,7 @@ void PainterShaderProgram::addMultiTexture(const std::string& file)
     if(m_multiTextures.size() > 3)
         g_logger.error("cannot add more multi textures to shader, the max is 3");
 
-    TexturePtr texture = g_textures.getTexture(file);
+    const TexturePtr texture = g_textures.getTexture(file);
     if(!texture)
         return;
 

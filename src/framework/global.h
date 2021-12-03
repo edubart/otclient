@@ -37,11 +37,11 @@
 #include "stdext/stdext.h"
 
 // additional utilities
-#include "util/point.h"
 #include "util/color.h"
+#include "util/matrix.h"
+#include "util/point.h"
 #include "util/rect.h"
 #include "util/size.h"
-#include "util/matrix.h"
 
 // logger
 #include "core/logger.h"

@@ -23,15 +23,15 @@
 #ifndef SCHEDULEDEVENT_H
 #define SCHEDULEDEVENT_H
 
-#include "event.h"
 #include "clock.h"
+#include "event.h"
 
  // @bindclass
 class ScheduledEvent : public Event
 {
 public:
     ScheduledEvent(const std::function<void()>& callback, int delay, int maxCycles);
-    void execute();
+    void execute() override;
     bool nextCycle();
 
     int ticks() { return m_ticks; }

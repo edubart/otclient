@@ -37,7 +37,7 @@ void InputMessage::reset()
 
 void InputMessage::setBuffer(const std::string& buffer)
 {
-    int len = buffer.size();
+    const int len = buffer.size();
     reset();
     checkWrite(len);
     memcpy((char*)(m_buffer + m_readPos), buffer.c_str(), len);
@@ -48,7 +48,7 @@ void InputMessage::setBuffer(const std::string& buffer)
 uint8 InputMessage::getU8()
 {
     checkRead(1);
-    uint8 v = m_buffer[m_readPos];
+    const uint8 v = m_buffer[m_readPos];
     m_readPos += 1;
     return v;
 }
@@ -56,7 +56,7 @@ uint8 InputMessage::getU8()
 uint16 InputMessage::getU16()
 {
     checkRead(2);
-    uint16 v = stdext::readULE16(m_buffer + m_readPos);
+    const uint16 v = stdext::readULE16(m_buffer + m_readPos);
     m_readPos += 2;
     return v;
 }
@@ -64,7 +64,7 @@ uint16 InputMessage::getU16()
 uint32 InputMessage::getU32()
 {
     checkRead(4);
-    uint32 v = stdext::readULE32(m_buffer + m_readPos);
+    const uint32 v = stdext::readULE32(m_buffer + m_readPos);
     m_readPos += 4;
     return v;
 }
@@ -72,24 +72,24 @@ uint32 InputMessage::getU32()
 uint64 InputMessage::getU64()
 {
     checkRead(8);
-    uint64 v = stdext::readULE64(m_buffer + m_readPos);
+    const uint64 v = stdext::readULE64(m_buffer + m_readPos);
     m_readPos += 8;
     return v;
 }
 
 std::string InputMessage::getString()
 {
-    uint16 stringLength = getU16();
+    const uint16 stringLength = getU16();
     checkRead(stringLength);
-    char* v = (char*)(m_buffer + m_readPos);
+    const auto v = (char*)(m_buffer + m_readPos);
     m_readPos += stringLength;
     return std::string(v, stringLength);
 }
 
 double InputMessage::getDouble()
 {
-    uint8 precision = getU8();
-    int32 v = getU32() - INT_MAX;
+    const uint8 precision = getU8();
+    const int32 v = getU32() - INT_MAX;
     return (v / std::pow(10.f, precision));
 }
 
@@ -116,8 +116,8 @@ void InputMessage::setHeaderSize(uint16 size)
 
 bool InputMessage::readChecksum()
 {
-    uint32 receivedCheck = getU32();
-    uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
+    const uint32 receivedCheck = getU32();
+    const uint32 checksum = stdext::adler32(m_buffer + m_readPos, getUnreadSize());
     return receivedCheck == checksum;
 }
 

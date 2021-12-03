@@ -21,8 +21,8 @@
  */
 
 #include "texture.h"
-#include "graphics.h"
 #include "framebuffer.h"
+#include "graphics.h"
 #include "image.h"
 
 #include <framework/core/application.h>

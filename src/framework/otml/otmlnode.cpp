@@ -22,9 +22,8 @@
 
 #include "otmlnode.h"
 #include "otmlemitter.h"
-#include "otmldocument.h"
 
-OTMLNodePtr OTMLNode::create(std::string tag, bool unique)
+OTMLNodePtr OTMLNode::create(const std::string& tag, bool unique)
 {
     OTMLNodePtr node(new OTMLNode);
     node->setTag(tag);
@@ -32,7 +31,7 @@ OTMLNodePtr OTMLNode::create(std::string tag, bool unique)
     return node;
 }
 
-OTMLNodePtr OTMLNode::create(std::string tag, std::string value)
+OTMLNodePtr OTMLNode::create(const std::string& tag, const std::string& value)
 {
     OTMLNodePtr node(new OTMLNode);
     node->setTag(tag);
@@ -97,7 +96,7 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
                 newChild->setUnique(true);
 
                 if(node->hasChildren() && newChild->hasChildren()) {
-                    OTMLNodePtr tmpNode = node->clone();
+                    const OTMLNodePtr tmpNode = node->clone();
                     tmpNode->merge(newChild);
                     newChild->copy(tmpNode);
                 }
@@ -123,7 +122,7 @@ void OTMLNode::addChild(const OTMLNodePtr& newChild)
 
 bool OTMLNode::removeChild(const OTMLNodePtr& oldChild)
 {
-    auto it = std::find(m_children.begin(), m_children.end(), oldChild);
+    const auto it = std::find(m_children.begin(), m_children.end(), oldChild);
     if(it != m_children.end()) {
         m_children.erase(it);
         return true;

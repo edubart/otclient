@@ -22,8 +22,8 @@
 
 #include "image.h"
 
-#include <framework/core/resourcemanager.h>
 #include <framework/core/filestream.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/graphics/apngloader.h>
 
 #include "framework/stdext/math.h"
@@ -76,7 +76,7 @@ ImagePtr Image::loadPNG(const std::string& file)
 
 void Image::savePNG(const std::string& fileName)
 {
-    FileStreamPtr fin = g_resources.createFile(fileName);
+    const FileStreamPtr fin = g_resources.createFile(fileName);
     if(!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
@@ -137,7 +137,7 @@ void Image::blit(const Point& dest, const ImagePtr& other)
 
     int coloredPixelSize = 0;
 
-    uint8* otherPixels = other->getPixelData();
+    const uint8* otherPixels = other->getPixelData();
     for(int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();
@@ -160,7 +160,7 @@ void Image::paste(const ImagePtr& other)
     if(!other)
         return;
 
-    uint8* otherPixels = other->getPixelData();
+    const uint8* otherPixels = other->getPixelData();
     for(int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();

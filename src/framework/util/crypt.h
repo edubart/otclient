@@ -23,7 +23,6 @@
 #ifndef CRYPT_H
 #define CRYPT_H
 
-#include "../stdext/types.h"
 #include <string>
 
 #include <boost/uuid/uuid.hpp>

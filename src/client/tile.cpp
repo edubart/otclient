@@ -21,23 +21,20 @@
  */
 
 #include "tile.h"
-#include <framework/graphics/fontmanager.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/graphics/drawpool.h>
 #include "effect.h"
 #include "game.h"
 #include "item.h"
 #include "lightview.h"
-#include "localplayer.h"
-#include "protocolgame.h"
 #include "map.h"
-#include "thingtypemanager.h"
-#include <framework/core/eventdispatcher.h>
+#include "protocolgame.h"
 
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(position.getPositionsAround())
 {
     for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
         Position pos = position;
-        m_positionsBorder.push_back(std::make_pair(dir, pos.translatedToDirection(dir)));
+        m_positionsBorder.emplace_back(dir, pos.translatedToDirection(dir));
     }
 }
 
@@ -691,7 +688,7 @@ void Tile::checkTranslucentLight()
     Position downPos = m_position;
     if(!downPos.down()) return;
 
-    TilePtr tile = g_map.getOrCreateTile(downPos);
+    const TilePtr tile = g_map.getOrCreateTile(downPos);
     if(!tile)
         return;
 

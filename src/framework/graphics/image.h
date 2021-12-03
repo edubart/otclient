@@ -24,7 +24,6 @@
 #define IMAGE_H
 
 #include "declarations.h"
-#include <framework/util/databuffer.h>
 
 class Image : public stdext::shared_object
 {

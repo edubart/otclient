@@ -20,17 +20,17 @@
  * THE SOFTWARE.
  */
 
-#include "uiwidget.h"
-#include "uihorizontallayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
 #include "uianchorlayout.h"
+#include "uigridlayout.h"
+#include "uihorizontallayout.h"
 #include "uitranslator.h"
+#include "uiverticallayout.h"
+#include "uiwidget.h"
 
+#include <framework/graphics/drawpool.h>
 #include <framework/graphics/painter.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/graphics/drawpool.h>
 
 void UIWidget::initBaseStyle()
 {

@@ -39,10 +39,9 @@ enum MinimapTileFlags {
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    MinimapTile() : flags(0), color(255), speed(10) {}
-    uint8 flags;
-    uint8 color;
-    uint8 speed;
+    uint8 flags{ 0 };
+    uint8 color{ 255 };
+    uint8 speed{ 10 };
     bool hasFlag(MinimapTileFlags flag) const { return flags & flag; }
     int getSpeed() const { return speed * 10; }
     bool operator==(const MinimapTile& other) const { return color == other.color && flags == other.flags && speed == other.speed; }
@@ -101,13 +100,17 @@ private:
     MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
     Point getBlockOffset(const Point& pos)
     {
-        return Point(pos.x - pos.x % MMBLOCK_SIZE,
-                     pos.y - pos.y % MMBLOCK_SIZE);
+        return {
+            pos.x - pos.x % MMBLOCK_SIZE,
+                     pos.y - pos.y % MMBLOCK_SIZE
+        };
     }
     Position getIndexPosition(int index, int z)
     {
-        return Position((index % (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE,
-                        (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, z);
+        return {
+            (index % (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE,
+                        (index / (65536 / MMBLOCK_SIZE)) * MMBLOCK_SIZE, static_cast<uint8_t>(z)
+        };
     }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
     std::unordered_map<uint, MinimapBlock> m_tileBlocks[MAX_Z + 1];

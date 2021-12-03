@@ -23,10 +23,9 @@
 #ifndef PARTICLEEFFECT_H
 #define PARTICLEEFFECT_H
 
-#include "declarations.h"
-#include "particlesystem.h"
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
+#include "declarations.h"
 
 class ParticleEffectType : public LuaObject
 {
@@ -48,7 +47,7 @@ private:
 class ParticleEffect : public LuaObject
 {
 public:
-    ParticleEffect() {}
+    ParticleEffect() = default;
 
     void load(const ParticleEffectTypePtr& effectType);
     bool hasFinished() { return m_systems.empty(); }

@@ -23,9 +23,8 @@
 #ifndef FRAMEWORK_NET_DECLARATIONS_H
 #define FRAMEWORK_NET_DECLARATIONS_H
 
-#include <framework/global.h>
 #include <boost/asio.hpp>
-#include <boost/system/error_code.hpp>
+#include <framework/global.h>
 
 namespace asio = boost::asio;
 
@@ -36,11 +35,11 @@ class Protocol;
 class ProtocolHttp;
 class Server;
 
-typedef stdext::shared_object_ptr<InputMessage> InputMessagePtr;
-typedef stdext::shared_object_ptr<OutputMessage> OutputMessagePtr;
-typedef stdext::shared_object_ptr<Connection> ConnectionPtr;
-typedef stdext::shared_object_ptr<Protocol> ProtocolPtr;
-typedef stdext::shared_object_ptr<ProtocolHttp> ProtocolHttpPtr;
-typedef stdext::shared_object_ptr<Server> ServerPtr;
+using InputMessagePtr = stdext::shared_object_ptr<InputMessage>;
+using OutputMessagePtr = stdext::shared_object_ptr<OutputMessage>;
+using ConnectionPtr = stdext::shared_object_ptr<Connection>;
+using ProtocolPtr = stdext::shared_object_ptr<Protocol>;
+using ProtocolHttpPtr = stdext::shared_object_ptr<ProtocolHttp>;
+using ServerPtr = stdext::shared_object_ptr<Server>;
 
 #endif

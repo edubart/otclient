@@ -20,10 +20,10 @@
  * THE SOFTWARE.
  */
 
+#include <client/client.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
-#include <client/client.h>
 
 int main(int argc, const char* argv[])
 {

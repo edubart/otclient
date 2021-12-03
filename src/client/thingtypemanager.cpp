@@ -25,8 +25,6 @@
 #include "creatures.h"
 #include "game.h"
 #include "itemtype.h"
-#include "spritemanager.h"
-#include "thing.h"
 #include "thingtype.h"
 
 #include <framework/core/binarytree.h>
@@ -69,7 +67,7 @@ void ThingTypeManager::saveDat(const std::string& fileName)
         stdext::throw_exception("failed to save, dat is not loaded");
 
     try {
-        FileStreamPtr fin = g_resources.createFile(fileName);
+        const FileStreamPtr fin = g_resources.createFile(fileName);
         if(!fin)
             stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
@@ -104,7 +102,7 @@ bool ThingTypeManager::loadDat(std::string file)
     try {
         file = g_resources.guessFilePath(file, "dat");
 
-        FileStreamPtr fin = g_resources.openFile(file);
+        const FileStreamPtr fin = g_resources.openFile(file);
         fin->cache();
 
 #if ENABLE_ENCRYPTION == 1
@@ -121,10 +119,10 @@ bool ThingTypeManager::loadDat(std::string file)
         }
 
         for(int category = -1; ++category < ThingLastCategory;) {
-            uint16 firstId = category == ThingCategoryItem ? 100 : 1;
+            const uint16 firstId = category == ThingCategoryItem ? 100 : 1;
 
             for(uint16 id = firstId - 1, s = m_thingTypes[category].size(); ++id < s;) {
-                ThingTypePtr type(new ThingType);
+                const ThingTypePtr type(new ThingType);
                 type->unserialize(id, static_cast<ThingCategory>(category), fin);
                 m_thingTypes[category][id] = type;
             }
@@ -144,7 +142,7 @@ bool ThingTypeManager::loadOtml(std::string file)
     try {
         file = g_resources.guessFilePath(file, "otml");
 
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
         for(const OTMLNodePtr& node : doc->children()) {
             ThingCategory category;
             if(node->tag() == "creatures")
@@ -177,14 +175,14 @@ bool ThingTypeManager::loadOtml(std::string file)
 void ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(file);
+        const FileStreamPtr fin = g_resources.openFile(file);
         fin->cache();
 
         uint signature = fin->getU32();
         if(signature != 0)
             stdext::throw_exception("invalid otb file");
 
-        BinaryTreePtr root = fin->getBinaryTree();
+        const BinaryTreePtr root = fin->getBinaryTree();
         root->skip(1); // otb first byte is always 0
 
         signature = root->getU32();
@@ -203,7 +201,7 @@ void ThingTypeManager::loadOtb(const std::string& file)
             root->skip(128); // description
         }
 
-        BinaryTreeVec children = root->getChildren();
+        const BinaryTreeVec children = root->getChildren();
         m_reverseItemTypes.clear();
         m_itemTypes.resize(children.size() + 1, m_nullItemType);
         m_reverseItemTypes.resize(children.size() + 1, m_nullItemType);

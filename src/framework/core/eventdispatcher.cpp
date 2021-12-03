@@ -33,7 +33,7 @@ void EventDispatcher::shutdown()
         poll();
 
     while(!m_scheduledEventList.empty()) {
-        ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
+        const ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
         scheduledEvent->cancel();
         m_scheduledEventList.pop();
     }
@@ -42,7 +42,6 @@ void EventDispatcher::shutdown()
 
 void EventDispatcher::poll()
 {
-    int loops = 0;
     for(int count = 0, max = m_scheduledEventList.size(); count < max && !m_scheduledEventList.empty(); ++count) {
         ScheduledEventPtr scheduledEvent = m_scheduledEventList.top();
         if(scheduledEvent->remainingTicks() > 0)
@@ -57,7 +56,7 @@ void EventDispatcher::poll()
     // execute events list until all events are out, this is needed because some events can schedule new events that would
     // change the UIWidgets layout, in this case we must execute these new events before we continue rendering,
     m_pollEventsSize = m_eventList.size();
-    loops = 0;
+    int loops = 0;
     while(m_pollEventsSize > 0) {
         if(loops > 50) {
             static Timer reportTimer;
@@ -69,7 +68,7 @@ void EventDispatcher::poll()
         }
 
         for(int i = 0; i < m_pollEventsSize; ++i) {
-            EventPtr event = m_eventList.front();
+            const EventPtr event = m_eventList.front();
             m_eventList.pop_front();
             event->execute();
         }
@@ -82,7 +81,7 @@ void EventDispatcher::poll()
 ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& callback, int delay)
 {
     if(m_disabled)
-        return ScheduledEventPtr(new ScheduledEvent(nullptr, delay, 1));
+        return { new ScheduledEvent(nullptr, delay, 1) };
 
     assert(delay >= 0);
     ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 1));
@@ -93,7 +92,7 @@ ScheduledEventPtr EventDispatcher::scheduleEvent(const std::function<void()>& ca
 ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callback, int delay)
 {
     if(m_disabled)
-        return ScheduledEventPtr(new ScheduledEvent(nullptr, delay, 0));
+        return { new ScheduledEvent(nullptr, delay, 0) };
 
     assert(delay > 0);
     ScheduledEventPtr scheduledEvent(new ScheduledEvent(callback, delay, 0));
@@ -104,7 +103,7 @@ ScheduledEventPtr EventDispatcher::cycleEvent(const std::function<void()>& callb
 EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool pushFront)
 {
     if(m_disabled)
-        return EventPtr(new Event(nullptr));
+        return { new Event(nullptr) };
 
     EventPtr event(new Event(callback));
     // front pushing is a way to execute an event before others

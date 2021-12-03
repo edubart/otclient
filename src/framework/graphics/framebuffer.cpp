@@ -24,10 +24,10 @@
 #include "graphics.h"
 #include "texture.h"
 
-#include <framework/core/eventdispatcher.h>
-#include <framework/platform/platformwindow.h>
 #include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/graphics/drawpool.h>
+#include <framework/platform/platformwindow.h>
 
 uint FrameBuffer::boundFbo = 0;
 
@@ -131,7 +131,7 @@ void FrameBuffer::internalRelease()
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
         boundFbo = m_prevBoundFbo;
     } else {
-        Rect screenRect(0, 0, getSize());
+        const Rect screenRect(0, 0, getSize());
 
         // copy the drawn color buffer into the framebuffer texture
         m_texture->copyFromScreen(screenRect);
@@ -150,8 +150,10 @@ Size FrameBuffer::getSize()
 {
     if(m_fbo == 0) {
         // the buffer size is limited by the window size
-        return Size(std::min<int>(m_texture->getWidth(), g_window.getWidth()),
-                    std::min<int>(m_texture->getHeight(), g_window.getHeight()));
+        return {
+            std::min<int>(m_texture->getWidth(), g_window.getWidth()),
+                    std::min<int>(m_texture->getHeight(), g_window.getHeight())
+        };
     }
 
     return m_texture->getSize();

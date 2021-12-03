@@ -23,19 +23,21 @@
 #ifndef CLIENT_CONST_H
 #define CLIENT_CONST_H
 
+#include <stdint.h>
+
 namespace Otc
 {
-    enum Operation : uint8 {
+    enum Operation : uint8_t {
         OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
     };
 
-    enum DrawFlags : uint32 {
+    enum DrawFlags : uint32_t {
         DrawBars = 1 << 0,
         DrawNames = 1 << 1,
         DrawManaBar = 1 << 2
     };
 
-    enum DatOpts : uint8 {
+    enum DatOpts : uint8_t {
         DatGround = 0,
         DatGroundClip,
         DatOnBottom,
@@ -73,7 +75,7 @@ namespace Otc
         DatLastOpt = 255
     };
 
-    enum InventorySlot : uint8 {
+    enum InventorySlot : uint8_t {
         InventorySlotHead = 1,
         InventorySlotNecklace,
         InventorySlotBackpack,
@@ -92,7 +94,7 @@ namespace Otc
         LastInventorySlot
     };
 
-    enum Statistic : uint8 {
+    enum Statistic : uint8_t {
         Health = 0,
         MaxHealth,
         FreeCapacity,
@@ -108,7 +110,7 @@ namespace Otc
         LastStatistic
     };
 
-    enum Skill : uint8 {
+    enum Skill : uint8_t {
         Fist = 0,
         Club,
         Sword,
@@ -125,7 +127,7 @@ namespace Otc
         LastSkill
     };
 
-    enum Direction : uint8 {
+    enum Direction : uint8_t {
         North = 0,
         East,
         South,
@@ -137,7 +139,7 @@ namespace Otc
         InvalidDirection
     };
 
-    enum FluidsColor : uint8 {
+    enum FluidsColor : uint8_t {
         FluidTransparent = 0,
         FluidBlue,
         FluidRed,
@@ -148,7 +150,7 @@ namespace Otc
         FluidPurple
     };
 
-    enum FluidsType : uint8 {
+    enum FluidsType : uint8_t {
         FluidNone = 0,
         FluidWater,
         FluidMana,
@@ -169,25 +171,25 @@ namespace Otc
         FluidMead
     };
 
-    enum FightModes : uint8 {
+    enum FightModes : uint8_t {
         FightOffensive = 1,
         FightBalanced = 2,
         FightDefensive = 3
     };
 
-    enum ChaseModes : uint8 {
+    enum ChaseModes : uint8_t {
         DontChase = 0,
         ChaseOpponent = 1
     };
 
-    enum PVPModes : uint8 {
+    enum PVPModes : uint8_t {
         WhiteDove = 0,
         WhiteHand = 1,
         YellowHand = 2,
         RedFist = 3
     };
 
-    enum PlayerSkulls : uint8 {
+    enum PlayerSkulls : uint8_t {
         SkullNone = 0,
         SkullYellow,
         SkullGreen,
@@ -197,7 +199,7 @@ namespace Otc
         SkullOrange
     };
 
-    enum PlayerShields : uint8 {
+    enum PlayerShields : uint8_t {
         ShieldNone = 0,
         ShieldWhiteYellow, // 1 party leader
         ShieldWhiteBlue, // 2 party member
@@ -212,7 +214,7 @@ namespace Otc
         ShieldGray // 11 member of another party
     };
 
-    enum PlayerEmblems : uint8 {
+    enum PlayerEmblems : uint8_t {
         EmblemNone = 0,
         EmblemGreen,
         EmblemRed,
@@ -221,7 +223,7 @@ namespace Otc
         EmblemOther
     };
 
-    enum CreatureIcons : uint8 {
+    enum CreatureIcons : uint8_t {
         NpcIconNone = 0,
         NpcIconChat,
         NpcIconTrade,
@@ -229,7 +231,7 @@ namespace Otc
         NpcIconTradeQuest
     };
 
-    enum PlayerStates : uint32 {
+    enum PlayerStates : uint32_t {
         IconNone = 0,
         IconPoison = 1,
         IconBurn = 2,
@@ -250,7 +252,7 @@ namespace Otc
         IconHungry = 65536
     };
 
-    enum MessageMode : uint8 {
+    enum MessageMode : uint8_t {
         MessageNone = 0,
         MessageSay = 1,
         MessageWhisper = 2,
@@ -309,7 +311,7 @@ namespace Otc
         MessageInvalid = 255
     };
 
-    enum GameFeature : uint8 {
+    enum GameFeature : uint8_t {
         GameProtocolChecksum = 1,
         GameAccountNames = 2,
         GameChallengeOnLogin = 3,
@@ -388,7 +390,7 @@ namespace Otc
         LastGameFeature = 101
     };
 
-    enum PathFindResult : uint8 {
+    enum PathFindResult : uint8_t {
         PathFindResultOk = 0,
         PathFindResultSamePosition,
         PathFindResultImpossible,
@@ -396,14 +398,14 @@ namespace Otc
         PathFindResultNoWay
     };
 
-    enum PathFindFlags : uint8 {
+    enum PathFindFlags : uint8_t {
         PathFindAllowNotSeenTiles = 1,
         PathFindAllowCreatures = 2,
         PathFindAllowNonPathable = 4,
         PathFindAllowNonWalkable = 8
     };
 
-    enum AutomapFlags : uint8 {
+    enum AutomapFlags : uint8_t {
         MapMarkTick = 0,
         MapMarkQuestion,
         MapMarkExclamation,
@@ -426,20 +428,20 @@ namespace Otc
         MapMarkGreenSouth
     };
 
-    enum VipState : uint8 {
+    enum VipState : uint8_t {
         VipStateOffline = 0,
         VipStateOnline = 1,
         VipStatePending = 2
     };
 
-    enum SpeedFormula : uint8 {
+    enum SpeedFormula : uint8_t {
         SpeedFormulaA = 0,
         SpeedFormulaB,
         SpeedFormulaC,
         LastSpeedFormula
     };
 
-    enum Blessings : uint32 {
+    enum Blessings : uint32_t {
         BlessingNone = 0,
         BlessingAdventurer = 1,
         BlessingSpiritualShielding = 1 << 1,
@@ -449,17 +451,17 @@ namespace Otc
         BlessingSparkOfPhoenix = 1 << 5
     };
 
-    enum DeathType : uint8 {
+    enum DeathType : uint8_t {
         DeathRegular = 0,
         DeathBlessed = 1
     };
 
-    enum StoreProductTypes : uint8 {
+    enum StoreProductTypes : uint8_t {
         ProductTypeOther = 0,
         ProductTypeNameChange = 1
     };
 
-    enum StoreErrorTypes : int8 {
+    enum StoreErrorTypes : int8_t {
         StoreNoError = -1,
         StorePurchaseError = 0,
         StoreNetworkError = 1,
@@ -468,7 +470,7 @@ namespace Otc
         StoreInformation = 4
     };
 
-    enum StoreStates : uint8 {
+    enum StoreStates : uint8_t {
         StateNone = 0,
         StateNew = 1,
         StateSale = 2,

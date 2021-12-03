@@ -23,14 +23,19 @@
 #ifndef STDEXT_H
 #define STDEXT_H
 
+#include <cmath>
+#include <cstring>
+#include <ctime>
+#include <ctime>
+
 #include "any.h"
 #include "cast.h"
 #include "compiler.h"
 #include "demangle.h"
 #include "dumper.h"
 #include "dynamic_storage.h"
-#include "exception.h"
 #include "format.h"
+#include "hash.h"
 #include "math.h"
 #include "packed_any.h"
 #include "packed_storage.h"
@@ -38,6 +43,5 @@
 #include "string.h"
 #include "time.h"
 #include "types.h"
-#include "hash.h"
 
 #endif

@@ -36,7 +36,7 @@ void Animator::unserialize(int animationPhases, const FileStreamPtr& fin)
     for(int i = 0; i < m_animationPhases; ++i) {
         int minimum = fin->getU32();
         int maximum = fin->getU32();
-        m_phaseDurations.push_back(std::make_pair(minimum, maximum));
+        m_phaseDurations.emplace_back(minimum, maximum);
     }
 
     m_phase = getStartPhase();

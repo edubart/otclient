@@ -28,10 +28,10 @@
 class OTMLNode : public stdext::shared_object
 {
 public:
-    virtual ~OTMLNode() {}
+    ~OTMLNode() override = default;
 
-    static OTMLNodePtr create(std::string tag = "", bool unique = false);
-    static OTMLNodePtr create(std::string tag, std::string value);
+    static OTMLNodePtr create(const std::string& tag = "", bool unique = false);
+    static OTMLNodePtr create(const std::string& tag, const std::string& value);
 
     std::string tag() { return m_tag; }
     int size() { return m_children.size(); }
@@ -92,14 +92,14 @@ public:
     OTMLNodePtr asOTMLNode() { return static_self_cast<OTMLNode>(); }
 
 protected:
-    OTMLNode() : m_unique(false), m_null(false) {}
+    OTMLNode() = default;
 
     OTMLNodeList m_children;
     std::string m_tag;
     std::string m_value;
     std::string m_source;
-    bool m_unique;
-    bool m_null;
+    bool m_unique{ false };
+    bool m_null{ false };
 };
 
 #include "otmlexception.h"
@@ -131,21 +131,21 @@ T OTMLNode::value()
 template<typename T>
 T OTMLNode::valueAt(const std::string& childTag)
 {
-    OTMLNodePtr node = at(childTag);
+    const OTMLNodePtr node = at(childTag);
     return node->value<T>();
 }
 
 template<typename T>
 T OTMLNode::valueAtIndex(int childIndex)
 {
-    OTMLNodePtr node = atIndex(childIndex);
+    const OTMLNodePtr node = atIndex(childIndex);
     return node->value<T>();
 }
 
 template<typename T>
 T OTMLNode::valueAt(const std::string& childTag, const T& def)
 {
-    if(OTMLNodePtr node = get(childTag))
+    if(const OTMLNodePtr node = get(childTag))
         if(!node->isNull())
             return node->value<T>();
     return def;
@@ -154,7 +154,7 @@ T OTMLNode::valueAt(const std::string& childTag, const T& def)
 template<typename T>
 T OTMLNode::valueAtIndex(int childIndex, const T& def)
 {
-    if(OTMLNodePtr node = getIndex(childIndex))
+    if(const OTMLNodePtr node = getIndex(childIndex))
         return node->value<T>();
     return def;
 }
@@ -168,7 +168,7 @@ void OTMLNode::write(const T& v)
 template<typename T>
 void OTMLNode::writeAt(const std::string& childTag, const T& v)
 {
-    OTMLNodePtr child = OTMLNode::create(childTag);
+    const OTMLNodePtr child = create(childTag);
     child->setUnique(true);
     child->write<T>(v);
     addChild(child);
@@ -177,7 +177,7 @@ void OTMLNode::writeAt(const std::string& childTag, const T& v)
 template<typename T>
 void OTMLNode::writeIn(const T& v)
 {
-    OTMLNodePtr child = OTMLNode::create();
+    const OTMLNodePtr child = create();
     child->write<T>(v);
     addChild(child);
 }

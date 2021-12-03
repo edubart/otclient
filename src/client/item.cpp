@@ -23,9 +23,7 @@
 #include "item.h"
 #include "container.h"
 #include "game.h"
-#include "houses.h"
 #include "map.h"
-#include "shadermanager.h"
 #include "spritemanager.h"
 #include "thing.h"
 #include "thingtypemanager.h"
@@ -35,7 +33,6 @@
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
-#include <framework/graphics/graphics.h>
 
 ItemPtr Item::create(int id)
 {
@@ -91,7 +88,7 @@ void Item::setOtbId(uint16 id)
 {
     if(!g_things.isValidOtbId(id))
         id = 0;
-    auto itemType = g_things.getItemType(id);
+    const auto itemType = g_things.getItemType(id);
     m_serverId = id;
 
     id = itemType->getClientId();
@@ -245,7 +242,7 @@ int Item::getCount()
 
 ItemPtr Item::clone()
 {
-    ItemPtr item = ItemPtr(new Item);
+    auto item = ItemPtr(new Item);
     *(item.get()) = *this;
     return item;
 }

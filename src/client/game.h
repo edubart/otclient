@@ -28,9 +28,7 @@
 #include "container.h"
 #include "creature.h"
 #include "declarations.h"
-#include "effect.h"
 #include "item.h"
-#include "localplayer.h"
 #include "outfit.h"
 #include "protocolgame.h"
 
@@ -56,7 +54,7 @@ struct UnjustifiedPoints {
     uint8 skullTime;
 };
 
-typedef std::tuple<std::string, uint, std::string, int, bool> Vip;
+using Vip = std::tuple<std::string, uint, std::string, int, bool>;
 
 //@bindsingleton g_game
 class Game

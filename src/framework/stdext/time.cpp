@@ -20,11 +20,12 @@
  * THE SOFTWARE.
  */
 
-#include "time.h"
-
 #include <chrono>
 #include <ctime>
+#include <ctime>
 #include <thread>
+
+#include "types.h"
 
 namespace stdext {
     const static auto startup_time = std::chrono::high_resolution_clock::now();

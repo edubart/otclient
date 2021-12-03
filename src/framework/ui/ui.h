@@ -23,14 +23,14 @@
 #ifndef UI_H
 #define UI_H
 
-#include "uimanager.h"
-#include "uiwidget.h"
-#include "uitextedit.h"
-#include "uilayout.h"
-#include "uihorizontallayout.h"
-#include "uiverticallayout.h"
-#include "uigridlayout.h"
 #include "uianchorlayout.h"
+#include "uigridlayout.h"
+#include "uihorizontallayout.h"
+#include "uilayout.h"
+#include "uimanager.h"
 #include "uiparticles.h"
+#include "uitextedit.h"
+#include "uiverticallayout.h"
+#include "uiwidget.h"
 
 #endif

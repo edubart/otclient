@@ -24,11 +24,9 @@
  */
 
 #include "apngloader.h"
-#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <iostream>
 #include <memory>
 #include <sstream>
 
@@ -109,18 +107,14 @@ unsigned short readshort(unsigned char* p)
 
 void read_sub_row(unsigned char* row, unsigned int rowbytes, unsigned int bpp)
 {
-    unsigned int i;
-
-    for(i = bpp; i < rowbytes; i++)
+    for(unsigned int i = bpp; i < rowbytes; i++)
         row[i] += row[i - bpp];
 }
 
 void read_up_row(unsigned char* row, unsigned char* prev_row, unsigned int rowbytes, unsigned int)
 {
-    unsigned int i;
-
     if(prev_row)
-        for(i = 0; i < rowbytes; i++)
+        for(unsigned int i = 0; i < rowbytes; i++)
             row[i] += prev_row[i];
 }
 
@@ -144,7 +138,6 @@ void read_average_row(unsigned char* row, unsigned char* prev_row, unsigned int 
 void read_paeth_row(unsigned char* row, unsigned char* prev_row, unsigned int rowbytes, unsigned int bpp)
 {
     unsigned int i;
-    int a, b, c, pa, pb, pc, p;
 
     if(prev_row)
     {
@@ -152,13 +145,13 @@ void read_paeth_row(unsigned char* row, unsigned char* prev_row, unsigned int ro
             row[i] += prev_row[i];
         for(i = bpp; i < rowbytes; i++)
         {
-            a = row[i - bpp];
-            b = prev_row[i];
-            c = prev_row[i - bpp];
-            p = b - c;
-            pc = a - c;
-            pa = abs(p);
-            pb = abs(pc);
+            int a = row[i - bpp];
+            int b = prev_row[i];
+            int c = prev_row[i - bpp];
+            int p = b - c;
+            int pc = a - c;
+            int pa = abs(p);
+            int pb = abs(pc);
             pc = abs(p + pc);
             row[i] += ((pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c);
         }
@@ -171,7 +164,6 @@ void read_paeth_row(unsigned char* row, unsigned char* prev_row, unsigned int ro
 
 void unpack(z_stream& zstream, unsigned char* dst, unsigned int dst_size, unsigned char* src, unsigned int src_size, unsigned int h, unsigned int rowbytes, unsigned char bpp)
 {
-    unsigned int    j;
     unsigned char* row = dst;
     unsigned char* prev_row = nullptr;
 
@@ -182,7 +174,7 @@ void unpack(z_stream& zstream, unsigned char* dst, unsigned int dst_size, unsign
     inflate(&zstream, Z_FINISH);
     inflateReset(&zstream);
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
         switch(*row++)
         {
@@ -199,16 +191,13 @@ void unpack(z_stream& zstream, unsigned char* dst, unsigned int dst_size, unsign
 
 void compose0(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, unsigned int dstbytes2, unsigned char* src, unsigned int srcbytes, unsigned int w, unsigned int h, unsigned int bop, unsigned char depth)
 {
-    unsigned int    i, j, g, a;
-    unsigned char* sp;
-    unsigned char* dp1;
-    unsigned int* dp2;
+    unsigned int    i, g, a;
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
-        sp = src + 1;
-        dp1 = dst1;
-        dp2 = (unsigned int*)dst2;
+        unsigned char* sp = src + 1;
+        unsigned char* dp1 = dst1;
+        unsigned int* dp2 = (unsigned int*)dst2;
 
         if(bop == PNG_BLEND_OP_SOURCE)
         {
@@ -240,17 +229,14 @@ void compose0(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
 
 void compose2(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, unsigned int dstbytes2, unsigned char* src, unsigned int srcbytes, unsigned int w, unsigned int h, unsigned int bop, unsigned char depth)
 {
-    unsigned int    i, j;
+    unsigned int    i;
     unsigned int    r, g, b, a;
-    unsigned char* sp;
-    unsigned char* dp1;
-    unsigned int* dp2;
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
-        sp = src + 1;
-        dp1 = dst1;
-        dp2 = (unsigned int*)dst2;
+        unsigned char* sp = src + 1;
+        unsigned char* dp1 = dst1;
+        unsigned int* dp2 = (unsigned int*)dst2;
 
         if(bop == PNG_BLEND_OP_SOURCE)
         {
@@ -309,22 +295,16 @@ void compose2(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
 
 void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, unsigned int dstbytes2, unsigned char* src, unsigned int srcbytes, unsigned int w, unsigned int h, unsigned int bop, unsigned char depth)
 {
-    unsigned int    i, j;
-    unsigned int    r, g, b, a;
-    unsigned int    r2, g2, b2, a2;
-    int             u, v, al;
+    unsigned int a2;
     unsigned char   col = 0;
-    unsigned char* sp;
-    unsigned char* dp1;
-    unsigned int* dp2;
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
-        sp = src + 1;
-        dp1 = dst1;
-        dp2 = (unsigned int*)dst2;
+        unsigned char* sp = src + 1;
+        unsigned char* dp1 = dst1;
+        unsigned int* dp2 = (unsigned int*)dst2;
 
-        for(i = 0; i < w; i++)
+        for(unsigned int i = 0; i < w; i++)
         {
             switch(depth)
             {
@@ -334,10 +314,10 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
             case 1: col = (sp[i >> 3] & mask1[i & 7]) >> shift1[i & 7]; break;
             }
 
-            b = pal[col][0];
-            g = pal[col][1];
-            r = pal[col][2];
-            a = trns[col];
+            unsigned int b = pal[col][0];
+            unsigned int g = pal[col][1];
+            unsigned int r = pal[col][2];
+            unsigned int a = trns[col];
 
             if(bop == PNG_BLEND_OP_SOURCE)
             {
@@ -355,12 +335,12 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
                         if((a2 = (*dp2) >> 24) != 0)
                         {
                             keep_original = 0;
-                            u = a * 255;
-                            v = (255 - a) * a2;
-                            al = 255 * 255 - (255 - a) * (255 - a2);
-                            b2 = ((*dp2) & 255);
-                            g2 = (((*dp2) >> 8) & 255);
-                            r2 = (((*dp2) >> 16) & 255);
+                            int u = a * 255;
+                            int v = (255 - a) * a2;
+                            int al = 255 * 255 - (255 - a) * (255 - a2);
+                            unsigned int b2 = ((*dp2) & 255);
+                            unsigned int g2 = (((*dp2) >> 8) & 255);
+                            unsigned int r2 = (((*dp2) >> 16) & 255);
                             b = (b * u + b2 * v) / al;
                             g = (g * u + g2 * v) / al;
                             r = (r * u + r2 * v) / al;
@@ -383,18 +363,15 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
 
 void compose4(unsigned char* dst, unsigned int dstbytes, unsigned char* src, unsigned int srcbytes, unsigned int w, unsigned int h, unsigned int bop, unsigned char depth)
 {
-    unsigned int    i, j, step;
-    unsigned int    g, a, g2, a2;
-    int             u, v, al;
-    unsigned char* sp;
-    unsigned char* dp;
+    unsigned int    i;
+    unsigned int    g, a, a2;
 
-    step = (depth + 7) / 8;
+    unsigned int step = (depth + 7) / 8;
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
-        sp = src + 1;
-        dp = dst;
+        unsigned char* sp = src + 1;
+        unsigned char* dp = dst;
 
         if(bop == PNG_BLEND_OP_SOURCE)
         {
@@ -420,10 +397,10 @@ void compose4(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
                     {
                         if((a2 = *(dp + 1)) != 0)
                         {
-                            u = a * 255;
-                            v = (255 - a) * a2;
-                            al = 255 * 255 - (255 - a) * (255 - a2);
-                            g2 = ((*dp) & 255);
+                            int u = a * 255;
+                            int v = (255 - a) * a2;
+                            int al = 255 * 255 - (255 - a) * (255 - a2);
+                            unsigned int g2 = ((*dp) & 255);
                             g = (g * u + g2 * v) / al;
                             a = al / 255;
                         }
@@ -440,19 +417,16 @@ void compose4(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
 
 void compose6(unsigned char* dst, unsigned int dstbytes, unsigned char* src, unsigned int srcbytes, unsigned int w, unsigned int h, unsigned int bop, unsigned char depth)
 {
-    unsigned int    i, j, step;
+    unsigned int    i;
     unsigned int    r, g, b, a;
-    unsigned int    r2, g2, b2, a2;
-    int             u, v, al;
-    unsigned char* sp;
-    unsigned int* dp;
+    unsigned int a2;
 
-    step = (depth + 7) / 8;
+    unsigned int step = (depth + 7) / 8;
 
-    for(j = 0; j < h; j++)
+    for(unsigned int j = 0; j < h; j++)
     {
-        sp = src + 1;
-        dp = (unsigned int*)dst;
+        unsigned char* sp = src + 1;
+        unsigned int* dp = (unsigned int*)dst;
 
         if(bop == PNG_BLEND_OP_SOURCE)
         {
@@ -479,12 +453,12 @@ void compose6(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
                     {
                         if((a2 = (*dp) >> 24) != 0)
                         {
-                            u = a * 255;
-                            v = (255 - a) * a2;
-                            al = 255 * 255 - (255 - a) * (255 - a2);
-                            b2 = ((*dp) & 255);
-                            g2 = (((*dp) >> 8) & 255);
-                            r2 = (((*dp) >> 16) & 255);
+                            int u = a * 255;
+                            int v = (255 - a) * a2;
+                            int al = 255 * 255 - (255 - a) * (255 - a2);
+                            unsigned int b2 = ((*dp) & 255);
+                            unsigned int g2 = (((*dp) >> 8) & 255);
+                            unsigned int r2 = (((*dp) >> 16) & 255);
                             b = (b * u + b2 * v) / al;
                             g = (g * u + g2 * v) / al;
                             r = (r * u + r2 * v) / al;
@@ -524,9 +498,9 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
         trns[i] = 255;
     }
 
-    zstream.zalloc = Z_NULL;
-    zstream.zfree = Z_NULL;
-    zstream.opaque = Z_NULL;
+    zstream.zalloc = nullptr;
+    zstream.zfree = nullptr;
+    zstream.opaque = nullptr;
     inflateInit(&zstream);
 
     frames = 1;
@@ -848,7 +822,7 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
 
 void write_chunk(std::ostream& f, const char* name, unsigned char* data, unsigned int length)
 {
-    unsigned int crc = crc32(0, Z_NULL, 0);
+    unsigned int crc = crc32(0, nullptr, 0);
     unsigned int len = swap32(length);
 
     f.write((char*)&len, 4);
@@ -931,13 +905,13 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     unsigned int idat_size = (rowbytes + 1) * height;
     unsigned int zbuf_size = idat_size + ((idat_size + 7) >> 3) + ((idat_size + 63) >> 6) + 11;
 
-    unsigned char* row_buf = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    unsigned char* sub_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    unsigned char* up_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    unsigned char* avg_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    unsigned char* paeth_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    unsigned char* zbuf1 = static_cast<unsigned char*>(malloc(zbuf_size));
-    unsigned char* zbuf2 = static_cast<unsigned char*>(malloc(zbuf_size));
+    auto row_buf = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto sub_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto up_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto avg_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto paeth_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto zbuf1 = static_cast<unsigned char*>(malloc(zbuf_size));
+    auto zbuf2 = static_cast<unsigned char*>(malloc(zbuf_size));
 
     if(!row_buf || !sub_row || !up_row || !avg_row || !paeth_row || !zbuf1 || !zbuf2) {
         free(row_buf);
@@ -958,15 +932,15 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     paeth_row[0] = 4;
 
     zstream1.data_type = Z_BINARY;
-    zstream1.zalloc = Z_NULL;
-    zstream1.zfree = Z_NULL;
-    zstream1.opaque = Z_NULL;
+    zstream1.zalloc = nullptr;
+    zstream1.zfree = nullptr;
+    zstream1.opaque = nullptr;
     deflateInit2(&zstream1, Z_BEST_COMPRESSION, 8, 15, 8, Z_DEFAULT_STRATEGY);
 
     zstream2.data_type = Z_BINARY;
-    zstream2.zalloc = Z_NULL;
-    zstream2.zfree = Z_NULL;
-    zstream2.opaque = Z_NULL;
+    zstream2.zalloc = nullptr;
+    zstream2.zfree = nullptr;
+    zstream2.opaque = nullptr;
     deflateInit2(&zstream2, Z_BEST_COMPRESSION, 8, 15, 8, Z_FILTERED);
 
     int a, b, c, pa, pb, pc, p, v;

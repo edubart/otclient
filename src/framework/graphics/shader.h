@@ -34,7 +34,7 @@ public:
     };
 
     Shader(ShaderType shaderType);
-    ~Shader();
+    ~Shader() override;
 
     bool compileSourceCode(const std::string& sourceCode);
     bool compileSourceFile(const std::string& sourceFile);

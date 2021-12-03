@@ -24,15 +24,8 @@
 #define MAP_H
 
 #include "animatedtext.h"
-#include "creature.h"
 #include "creatures.h"
-#include "houses.h"
-#include "statictext.h"
 #include "tile.h"
-#include "towns.h"
-
-#include <framework/core/clock.h>
-#include <framework/graphics/framebuffer.h>
 
 enum OTBM_ItemAttr
 {
@@ -137,7 +130,7 @@ public:
     void addMapView(const MapViewPtr& mapView);
     void removeMapView(const MapViewPtr& mapView);
 
-    void notificateTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
+    void notificateTileUpdate(const Position& pos, const ThingPtr& thing, Otc::Operation operation);
     void notificateCameraMove(const Point& offset);
     void notificateKeyRelease(const InputEvent& inputEvent);
 
@@ -158,7 +151,7 @@ public:
 
     std::string getHouseFile() { return m_attribs.get<std::string>(OTBM_ATTR_HOUSE_FILE); }
     std::string getSpawnFile() { return m_attribs.get<std::string>(OTBM_ATTR_SPAWN_FILE); }
-    Size getSize() { return Size(m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT)); }
+    Size getSize() { return { m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT) }; }
     std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION), "\n"); }
 
     void clean();

@@ -21,13 +21,15 @@
  */
 
 #include "uitextedit.h"
+#include <framework/core/application.h>
+#include <framework/core/clock.h>
 #include <framework/graphics/bitmapfont.h>
 #include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
-#include <framework/core/clock.h>
-#include <framework/otml/otmlnode.h>
-#include <framework/core/application.h>
 #include <framework/input/mouse.h>
+#include <framework/otml/otmlnode.h>
+#include <framework/platform/platformwindow.h>
+
+#include "framework/graphics/drawpool.h"
 
 UITextEdit::UITextEdit()
 {
@@ -76,7 +78,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
         if(glyphsMustRecache) {
             m_glyphsTextRectCache.clear();
             for(int i = 0; i < textLength; ++i)
-                m_glyphsTextRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
+                m_glyphsTextRectCache.emplace_back(m_glyphsCoords[i], m_glyphsTexCoords[i]);
         }
         for(const auto& rect : m_glyphsTextRectCache)
             g_drawPool.addTexturedRect(rect.first, texture, rect.second, m_color);
@@ -86,7 +88,7 @@ void UITextEdit::drawSelf(Fw::DrawPane drawPane)
         if(glyphsMustRecache) {
             m_glyphsSelectRectCache.clear();
             for(int i = m_selectionStart; i < m_selectionEnd; ++i)
-                m_glyphsSelectRectCache.push_back(std::make_pair(m_glyphsCoords[i], m_glyphsTexCoords[i]));
+                m_glyphsSelectRectCache.emplace_back(m_glyphsCoords[i], m_glyphsTexCoords[i]);
         }
         for(const auto& rect : m_glyphsSelectRectCache)
             g_drawPool.addFilledRect(rect.first, m_selectionBackgroundColor);
@@ -393,7 +395,7 @@ void UITextEdit::appendText(std::string text)
 
             // only ignore text append if it contains invalid characters
             if(!m_validCharacters.empty()) {
-                for(char i : text) {
+                for(const char i : text) {
                     if(m_validCharacters.find(i) == std::string::npos)
                         return;
                 }
@@ -575,7 +577,7 @@ std::string UITextEdit::getDisplayedText()
 std::string UITextEdit::getSelection()
 {
     if(!hasSelection())
-        return std::string();
+        return {};
     return m_text.substr(m_selectionStart, m_selectionEnd - m_selectionStart);
 }
 

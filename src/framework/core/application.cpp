@@ -22,15 +22,14 @@
 
 #include "application.h"
 #include <csignal>
-#include <framework/core/clock.h>
-#include <framework/core/resourcemanager.h>
-#include <framework/core/modulemanager.h>
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/configmanager.h>
-#include "asyncdispatcher.h"
+#include <framework/core/eventdispatcher.h>
+#include <framework/core/modulemanager.h>
+#include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
 #include <framework/platform/crashhandler.h>
 #include <framework/platform/platform.h>
+#include "asyncdispatcher.h"
 
 #include <gitinfo.h>
 
@@ -51,7 +50,7 @@ void exitSignalHandler(int sig)
     case SIGINT:
         if(!signaled && !g_app.isStopping() && !g_app.isTerminated()) {
             signaled = true;
-            g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
+            g_dispatcher.addEvent([ObjectPtr = &g_app] { ObjectPtr->close(); });
         }
         break;
     }

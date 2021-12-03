@@ -21,10 +21,9 @@
  */
 
 #include "cachedtext.h"
-#include "painter.h"
-#include "fontmanager.h"
-#include "bitmapfont.h"
 #include <framework/graphics/drawpool.h>
+#include "bitmapfont.h"
+#include "fontmanager.h"
 
 CachedText::CachedText()
 {

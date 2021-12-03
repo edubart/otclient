@@ -21,17 +21,17 @@
  */
 
 #include "uiwidget.h"
-#include "uimanager.h"
 #include "uianchorlayout.h"
+#include "uimanager.h"
 #include "uitranslator.h"
 
-#include <framework/core/eventdispatcher.h>
-#include <framework/otml/otmlnode.h>
-#include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/otml/otmlnode.h>
+#include <framework/platform/platformwindow.h>
+
+#include "framework/graphics/drawpool.h"
 
 UIWidget::UIWidget()
 {
@@ -245,7 +245,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
 
         // remove access to child via widget.childId
         if(child->m_customId) {
-            std::string widgetId = child->getId();
+            const std::string widgetId = child->getId();
             if(hasLuaField(widgetId)) {
                 setLuaField(widgetId, nullptr);
             }

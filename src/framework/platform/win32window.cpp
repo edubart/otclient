@@ -22,20 +22,20 @@
 
 #ifdef WIN32
 
-#include <client/map.h>
 #include "win32window.h"
-#include <framework/graphics/image.h>
+#include <client/map.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/graphics/image.h>
 
 #define HSB_BIT_SET(p, n) (p[(n)/8] |= (128 >>((n)%8)))
 
 WIN32Window::WIN32Window()
 {
-    m_window = 0;
-    m_instance = 0;
-    m_deviceContext = 0;
-    m_cursor = 0;
+    m_window = nullptr;
+    m_instance = nullptr;
+    m_deviceContext = nullptr;
+    m_cursor = nullptr;
     m_minimumSize = Size(600, 480);
     m_size = Size(600, 480);
     m_hidden = true;
@@ -46,7 +46,7 @@ WIN32Window::WIN32Window()
     m_eglDisplay = 0;
     m_eglSurface = 0;
 #else
-    m_wglContext = 0;
+    m_wglContext = nullptr;
 #endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
@@ -203,7 +203,7 @@ WIN32Window::WIN32Window()
 
 void WIN32Window::init()
 {
-    m_instance = GetModuleHandle(NULL);
+    m_instance = GetModuleHandle(nullptr);
 
 #ifdef DIRECTX
     m_d3d = Direct3DCreate9(D3D_SDK_VERSION);    // create the Direct3D interface
@@ -232,13 +232,13 @@ void WIN32Window::init()
 
 void WIN32Window::terminate()
 {
-    SetCursor(NULL);
+    SetCursor(nullptr);
     if(m_defaultCursor) {
         DestroyCursor(m_defaultCursor);
-        m_defaultCursor = NULL;
+        m_defaultCursor = nullptr;
     }
 
-    for(HCURSOR& cursor : m_cursors)
+    for(const HCURSOR& cursor : m_cursors)
         DestroyCursor(cursor);
     m_cursors.clear();
 
@@ -247,68 +247,68 @@ void WIN32Window::terminate()
     if(m_deviceContext) {
         if(!ReleaseDC(m_window, m_deviceContext))
             g_logger.error("Release device context failed.");
-        m_deviceContext = NULL;
+        m_deviceContext = nullptr;
     }
 
     if(m_window) {
         if(!DestroyWindow(m_window))
             g_logger.error("ERROR: Destroy window failed.");
-        m_window = NULL;
+        m_window = nullptr;
     }
 
     if(m_instance) {
         if(!UnregisterClassA(g_app.getCompactName().c_str(), m_instance))
             g_logger.error("UnregisterClassA failed");
-        m_instance = NULL;
+        m_instance = nullptr;
     }
 }
 
 struct WindowProcProxy {
     static LRESULT CALLBACK call(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        WIN32Window* window = static_cast<WIN32Window*>(&g_window);
+        auto window = static_cast<WIN32Window*>(&g_window);
         return window->windowProc(hWnd, uMsg, wParam, lParam);
     }
 };
 
 void WIN32Window::internalCreateWindow()
 {
-    m_defaultCursor = LoadCursor(NULL, IDC_ARROW);
+    m_defaultCursor = LoadCursor(nullptr, IDC_ARROW);
     WNDCLASSA wc;
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     wc.lpfnWndProc = static_cast<WNDPROC>(WindowProcProxy::call);
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = m_instance;
-    wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);
+    wc.hIcon = LoadIcon(nullptr, IDI_WINLOGO);
     wc.hCursor = m_defaultCursor;
     wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    wc.lpszMenuName = NULL;
+    wc.lpszMenuName = nullptr;
     wc.lpszClassName = g_app.getCompactName().c_str();
 
     if(!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
-    DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+    const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+    const DWORD dwStyle = WS_OVERLAPPEDWINDOW;
 
     // initialize in the center of the screen
     m_position = ((getDisplaySize() - m_size) / 2).toPoint();
 
-    Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
+    const Rect screenRect = adjustWindowRect(Rect(m_position, m_size));
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
                                g_app.getCompactName().c_str(),
-                               NULL,
+                               nullptr,
                                dwStyle,
                                screenRect.left(),
                                screenRect.top(),
                                screenRect.width(),
                                screenRect.height(),
-                               NULL,
-                               NULL,
+                               nullptr,
+                               nullptr,
                                m_instance,
-                               NULL);
+                               nullptr);
 
     if(!m_window)
         g_logger.fatal("Unable to create window");
@@ -372,7 +372,6 @@ void WIN32Window::internalCreateGLContext()
         g_logger.fatal(stdext::format("Unable to create EGL context: %s", eglGetError()));
 
 #else
-    uint pixelFormat;
     static PIXELFORMATDESCRIPTOR pfd = { sizeof(PIXELFORMATDESCRIPTOR),
                                          1,
                                          PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
@@ -390,7 +389,7 @@ void WIN32Window::internalCreateGLContext()
                                          0,                          // Reserved
                                          0, 0, 0 };                  // Layer Masks Ignored
 
-    pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
+    uint pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
     if(!pixelFormat)
         g_logger.fatal("Could not find a suitable pixel format");
 
@@ -419,11 +418,11 @@ void WIN32Window::internalDestroyGLContext()
     }
 #else
     if(m_wglContext) {
-        if(!wglMakeCurrent(NULL, NULL))
+        if(!wglMakeCurrent(nullptr, nullptr))
             g_logger.error("Release of dc and rc failed.");
         if(!wglDeleteContext(m_wglContext))
             g_logger.error("Release rendering context failed.");
-        m_wglContext = NULL;
+        m_wglContext = nullptr;
     }
 #endif
 }
@@ -445,8 +444,8 @@ bool WIN32Window::isExtensionSupported(const char* ext)
     //TODO
     return false;
 #else
-    typedef const char* (WINAPI* wglGetExtensionsStringProc)();
-    wglGetExtensionsStringProc wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
+    using wglGetExtensionsStringProc = const char* (WINAPI*)();
+    const auto wglGetExtensionsString = static_cast<wglGetExtensionsStringProc>(getExtensionProcAddress("wglGetExtensionsStringEXT"));
     if(!wglGetExtensionsString)
         return false;
 
@@ -470,8 +469,8 @@ void* WIN32Window::getExtensionProcAddress(const char* ext)
 
 void WIN32Window::move(const Point& pos)
 {
-    Rect clientRect(pos, getClientRect().size());
-    Rect windowRect = adjustWindowRect(clientRect);
+    const Rect clientRect(pos, getClientRect().size());
+    const Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if(m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -481,8 +480,8 @@ void WIN32Window::resize(const Size& size)
 {
     if(size.width() < m_minimumSize.width() || size.height() < m_minimumSize.height())
         return;
-    Rect clientRect(getClientRect().topLeft(), size);
-    Rect windowRect = adjustWindowRect(clientRect);
+    const Rect clientRect(getClientRect().topLeft(), size);
+    const Rect windowRect = adjustWindowRect(clientRect);
     MoveWindow(m_window, windowRect.x(), windowRect.y(), windowRect.width(), windowRect.height(), TRUE);
     if(m_hidden)
         ShowWindow(m_window, SW_HIDE);
@@ -516,7 +515,7 @@ void WIN32Window::poll()
     fireKeysPress();
 
     MSG msg;
-    while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
@@ -532,7 +531,7 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
 
     // lParam will have this state when receiving insert,end,down,etc presses from numpad
     if(!(((HIWORD(lParam) >> 8) & 0xFF) & 1)) {
-        bool numlockOn = GetKeyState(VK_NUMLOCK);
+        const bool numlockOn = GetKeyState(VK_NUMLOCK);
         // retranslate numpad keys
         switch(wParam) {
         case VK_INSERT:
@@ -830,16 +829,16 @@ void WIN32Window::displayFatalError(const std::string& message)
 
 int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
 {
-    int width = image->getWidth();
-    int height = image->getHeight();
-    int numbits = width * height;
-    int numbytes = (width * height) / 8;
+    const int width = image->getWidth();
+    const int height = image->getHeight();
+    const int numbits = width * height;
+    const int numbytes = (width * height) / 8;
 
     std::vector<uchar> andMask(numbytes, 0);
     std::vector<uchar> xorMask(numbytes, 0);
 
     for(int i = 0; i < numbits; ++i) {
-        uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
+        const uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
         if(rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         } else if(rgba == 0x00000000) { //alpha
@@ -847,7 +846,7 @@ int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hot
         } // otherwise 0xff000000 => black
     }
 
-    HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
+    const HCURSOR cursor = CreateCursor(m_instance, hotSpot.x, hotSpot.y, width, height, &andMask[0], &xorMask[0]);
     m_cursors.push_back(cursor);
     return m_cursors.size() - 1;
 }
@@ -865,7 +864,7 @@ void WIN32Window::setMouseCursor(int cursorId)
 void WIN32Window::restoreMouseCursor()
 {
     if(m_cursor) {
-        m_cursor = NULL;
+        m_cursor = nullptr;
         SetCursor(m_defaultCursor);
         ShowCursor(true);
     }
@@ -894,13 +893,13 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
     if(fullscreen) {
         MONITORINFO mi;
-        HMONITOR m = MonitorFromWindow(m_window, MONITOR_DEFAULTTONEAREST);
+        const HMONITOR m = MonitorFromWindow(m_window, MONITOR_DEFAULTTONEAREST);
         mi.cbSize = sizeof(mi);
         GetMonitorInfoW(m, &mi);
-        uint x = mi.rcMonitor.left;
-        uint y = mi.rcMonitor.top;
-        uint width = mi.rcMonitor.right - mi.rcMonitor.left;
-        uint height = mi.rcMonitor.bottom - mi.rcMonitor.top;
+        const uint x = mi.rcMonitor.left;
+        const uint y = mi.rcMonitor.top;
+        const uint width = mi.rcMonitor.right - mi.rcMonitor.left;
+        const uint height = mi.rcMonitor.bottom - mi.rcMonitor.top;
 
         GetWindowPlacement(m_window, &wpPrev);
 
@@ -921,8 +920,8 @@ void WIN32Window::setVerticalSync(bool enable)
     if(!isExtensionSupported("WGL_EXT_swap_control"))
         return;
 
-    typedef BOOL(WINAPI* wglSwapIntervalProc)(int);
-    wglSwapIntervalProc wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
+    using wglSwapIntervalProc = BOOL(WINAPI*)(int);
+    const auto wglSwapInterval = static_cast<wglSwapIntervalProc>(getExtensionProcAddress("wglSwapIntervalEXT"));
     if(!wglSwapInterval)
         return;
 
@@ -932,7 +931,7 @@ void WIN32Window::setVerticalSync(bool enable)
 
 void WIN32Window::setIcon(const std::string& file)
 {
-    ImagePtr image = Image::load(file);
+    const ImagePtr image = Image::load(file);
 
     if(!image) {
         g_logger.traceError(stdext::format("unable to load icon file %s", file));
@@ -944,18 +943,18 @@ void WIN32Window::setIcon(const std::string& file)
         return;
     }
 
-    int n = image->getWidth() * image->getHeight();
+    const int n = image->getWidth() * image->getHeight();
     std::vector<uint32> iconData(n);
     for(int i = 0; i < n; ++i) {
-        uint8* pixel = (uint8*)&iconData[i];
+        auto pixel = (uint8*)&iconData[i];
         pixel[2] = *(image->getPixelData() + (i * 4) + 0);
         pixel[1] = *(image->getPixelData() + (i * 4) + 1);
         pixel[0] = *(image->getPixelData() + (i * 4) + 2);
         pixel[3] = *(image->getPixelData() + (i * 4) + 3);
     }
 
-    HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
-    HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(NULL), image->getWidth(), image->getHeight());
+    const HBITMAP hbmColor = CreateBitmap(image->getWidth(), image->getHeight(), 1, 32, &iconData[0]);
+    const HBITMAP hbmMask = CreateCompatibleBitmap(GetDC(nullptr), image->getWidth(), image->getHeight());
 
     ICONINFO ii;
     ii.fIcon = TRUE;
@@ -977,13 +976,13 @@ void WIN32Window::setClipboardText(const std::string& text)
     if(!OpenClipboard(m_window))
         return;
 
-    HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
+    const HGLOBAL hglb = GlobalAlloc(GMEM_MOVEABLE, (text.length() + 1) * sizeof(WCHAR));
     if(!hglb)
         return;
 
     std::wstring wtext = stdext::latin1_to_utf16(text);
 
-    LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+    const auto lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
     memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
     lpwstr[text.length()] = static_cast<WCHAR>(0);
     GlobalUnlock(hglb);
@@ -995,7 +994,7 @@ void WIN32Window::setClipboardText(const std::string& text)
 
 Size WIN32Window::getDisplaySize()
 {
-    return Size(GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+    return { GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
 }
 
 std::string WIN32Window::getClipboardText()
@@ -1005,9 +1004,9 @@ std::string WIN32Window::getClipboardText()
     if(!OpenClipboard(m_window))
         return text;
 
-    HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
+    const HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if(hglb) {
-        LPWSTR lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+        const auto lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
         if(lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);
@@ -1030,24 +1029,22 @@ Rect WIN32Window::getClientRect()
 {
     if(m_window) {
         RECT clientRect = { 0,0,0,0 };
-        int ret = GetClientRect(m_window, &clientRect);
+        const int ret = GetClientRect(m_window, &clientRect);
         assert(ret != 0);
         return Rect(Point(clientRect.left, clientRect.top), Point(clientRect.right, clientRect.bottom));
-    } else {
-        return Rect(m_position, m_size);
     }
+    return Rect(m_position, m_size);
 }
 
 Rect WIN32Window::getWindowRect()
 {
     if(m_window) {
         RECT windowRect = { 0,0,0,0 };
-        int ret = GetWindowRect(m_window, &windowRect);
+        const int ret = GetWindowRect(m_window, &windowRect);
         assert(ret != 0);
         return Rect(Point(windowRect.left, windowRect.top), Point(windowRect.right, windowRect.bottom));
-    } else {
-        return adjustWindowRect(getClientRect());
     }
+    return adjustWindowRect(getClientRect());
 }
 
 Rect WIN32Window::adjustWindowRect(const Rect& clientRect)

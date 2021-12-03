@@ -30,8 +30,8 @@
 class LuaInterface;
 class LuaObject;
 
-typedef std::function<int(LuaInterface*)> LuaCppFunction;
-typedef std::unique_ptr<LuaCppFunction> LuaCppFunctionPtr;
-typedef stdext::shared_object_ptr<LuaObject> LuaObjectPtr;
+using LuaCppFunction = std::function<int(LuaInterface*)>;
+using LuaCppFunctionPtr = std::unique_ptr<LuaCppFunction>;
+using LuaObjectPtr = stdext::shared_object_ptr<LuaObject>;
 
 #endif

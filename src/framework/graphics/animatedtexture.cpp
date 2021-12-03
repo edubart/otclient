@@ -25,7 +25,9 @@
 
 #include <framework/core/eventdispatcher.h>
 
-AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames, std::vector<int> framesDelay, bool buildMipmaps, bool compress)
+#include <utility>
+
+AnimatedTexture::AnimatedTexture(const Size& size, const std::vector<ImagePtr>& frames, std::vector<int> framesDelay, bool buildMipmaps, bool compress)
 {
     if(!setupSize(size, buildMipmaps))
         return;
@@ -34,7 +36,7 @@ AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames,
         m_frames.push_back(new Texture(frame, buildMipmaps, compress));
     }
 
-    m_framesDelay = framesDelay;
+    m_framesDelay = std::move(framesDelay);
     m_hasMipmaps = buildMipmaps;
     m_id = m_frames[0]->getId();
     m_currentFrame = 0;
@@ -42,8 +44,7 @@ AnimatedTexture::AnimatedTexture(const Size& size, std::vector<ImagePtr> frames,
 }
 
 AnimatedTexture::~AnimatedTexture()
-{
-}
+= default;
 
 bool AnimatedTexture::buildHardwareMipmaps()
 {

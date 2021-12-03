@@ -25,13 +25,14 @@
 
 #include "traits.h"
 
-#include <string>
-#include <cstdio>
 #include <cassert>
-#include <tuple>
+#include <cstdio>
+#include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
-#include <iomanip>
+#include <string>
+#include <tuple>
 
 namespace stdext {
     template<class T> void print_ostream(std::ostringstream& stream, const T& last) { stream << last; }
@@ -76,7 +77,7 @@ namespace stdext {
     }
 
     template<typename... Args>
-    inline int snprintf(char* s, size_t maxlen, const char* format)
+    int snprintf(char* s, size_t maxlen, const char* format)
     {
         std::strncpy(s, format, maxlen);
         s[maxlen - 1] = 0;
@@ -84,10 +85,10 @@ namespace stdext {
     }
 
     template<typename... Args>
-    inline std::string format() { return std::string(); }
+    std::string format() { return std::string(); }
 
     template<typename... Args>
-    inline std::string format(const std::string& format) { return format; }
+    std::string format(const std::string& format) { return format; }
 
     // Format strings with the sprintf style, accepting std::string and string convertible types for %s
     template<typename... Args>

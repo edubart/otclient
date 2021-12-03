@@ -21,8 +21,8 @@
  */
 
 #include "otmldocument.h"
-#include "otmlparser.h"
 #include "otmlemitter.h"
+#include "otmlparser.h"
 
 #include <framework/core/resourcemanager.h>
 
@@ -36,7 +36,7 @@ OTMLDocumentPtr OTMLDocument::create()
 OTMLDocumentPtr OTMLDocument::parse(const std::string& fileName)
 {
     std::stringstream fin;
-    std::string source = g_resources.resolvePath(fileName);
+    const std::string source = g_resources.resolvePath(fileName);
     g_resources.readFileStream(source, fin);
     return parse(fin, source);
 }

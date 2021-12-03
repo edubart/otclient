@@ -21,11 +21,8 @@
  */
 
 #include "thing.h"
-#include "thing.h"
-#include <framework/graphics/graphics.h>
 #include "game.h"
 #include "map.h"
-#include "spritemanager.h"
 #include "thingtypemanager.h"
 #include "tile.h"
 

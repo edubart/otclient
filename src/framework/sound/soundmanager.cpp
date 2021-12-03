@@ -21,17 +21,15 @@
  */
 
 #include "soundmanager.h"
-#include "soundsource.h"
 #include "soundbuffer.h"
 #include "soundfile.h"
+#include "soundsource.h"
 #include "streamsoundsource.h"
-#include "combinedsoundsource.h"
 
+#include <framework/core/asyncdispatcher.h>
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
-#include <framework/core/asyncdispatcher.h>
-#include <thread>
 
 SoundManager g_sounds;
 
@@ -96,7 +94,7 @@ void SoundManager::poll()
     ensureContext();
 
     for(auto it = m_streamFiles.begin(); it != m_streamFiles.end();) {
-        StreamSoundSourcePtr source = it->first;
+        const StreamSoundSourcePtr source = it->first;
         auto& future = it->second;
 
         if(future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
@@ -112,7 +110,7 @@ void SoundManager::poll()
     }
 
     for(auto it = m_sources.begin(); it != m_sources.end();) {
-        SoundSourcePtr source = *it;
+        const SoundSourcePtr source = *it;
 
         source->update();
 
@@ -154,13 +152,13 @@ void SoundManager::preload(std::string filename)
         return;
 
     ensureContext();
-    SoundFilePtr soundFile = SoundFile::loadSoundFile(filename);
+    const SoundFilePtr soundFile = SoundFile::loadSoundFile(filename);
 
     // only keep small files
     if(!soundFile || soundFile->getSize() > MAX_CACHE_SIZE)
         return;
 
-    auto buffer = SoundBufferPtr(new SoundBuffer);
+    const auto buffer = SoundBufferPtr(new SoundBuffer);
     if(buffer->fillBuffer(soundFile))
         m_buffers[filename] = buffer;
 }

@@ -21,7 +21,6 @@
  */
 
 #include "game.h"
-#include "thingtype.h"
 #include "thingtypemanager.h"
 
 #include <framework/core/binarytree.h>

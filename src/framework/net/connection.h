@@ -23,15 +23,13 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include "declarations.h"
 #include <framework/luaengine/luaobject.h>
-#include <framework/core/timer.h>
-#include <framework/core/declarations.h>
+#include "declarations.h"
 
 class Connection : public LuaObject
 {
-    typedef std::function<void(const boost::system::error_code&)> ErrorCallback;
-    typedef std::function<void(uint8*, uint16)> RecvCallback;
+    using ErrorCallback = std::function<void(const boost::system::error_code&)>;
+    using RecvCallback = std::function<void(uint8*, uint16)>;
 
     enum {
         READ_TIMEOUT = 30,
@@ -42,7 +40,7 @@ class Connection : public LuaObject
 
 public:
     Connection();
-    ~Connection();
+    ~Connection() override;
 
     static void poll();
     static void terminate();
@@ -66,12 +64,13 @@ public:
     ConnectionPtr asConnection() { return static_self_cast<Connection>(); }
 
 protected:
-    void internal_connect(asio::ip::basic_resolver<asio::ip::tcp>::iterator endpointIterator);
+    void internal_connect(const asio::ip::basic_resolver<asio::ip::tcp>::iterator& endpointIterator);
     void internal_write();
     void onResolve(const boost::system::error_code& error, asio::ip::tcp::resolver::iterator endpointIterator);
     void onConnect(const boost::system::error_code& error);
     void onCanWrite(const boost::system::error_code& error);
-    void onWrite(const boost::system::error_code& error, size_t writeSize, std::shared_ptr<asio::streambuf> outputStream);
+    void onWrite(const boost::system::error_code& error, size_t writeSize, const std::shared_ptr<asio::streambuf>&
+                 outputStream);
     void onRecv(const boost::system::error_code& error, size_t recvSize);
     void onTimeout(const boost::system::error_code& error);
     void handleError(const boost::system::error_code& error);

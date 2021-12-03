@@ -23,8 +23,8 @@
 #ifndef PARTICLEAFFECTOR_H
 #define PARTICLEAFFECTOR_H
 
-#include "declarations.h"
 #include <framework/otml/otml.h>
+#include "declarations.h"
 
 class ParticleAffector : public stdext::shared_object
 {
@@ -45,8 +45,8 @@ protected:
 
 class GravityAffector : public ParticleAffector {
 public:
-    void load(const OTMLNodePtr& node);
-    void updateParticle(const ParticlePtr& particle, float elapsedTime);
+    void load(const OTMLNodePtr& node) override;
+    void updateParticle(const ParticlePtr& particle, float elapsedTime) override;
 
 private:
     float m_angle, m_gravity;
@@ -54,8 +54,8 @@ private:
 
 class AttractionAffector : public ParticleAffector {
 public:
-    void load(const OTMLNodePtr& node);
-    void updateParticle(const ParticlePtr& particle, float elapsedTime);
+    void load(const OTMLNodePtr& node) override;
+    void updateParticle(const ParticlePtr& particle, float elapsedTime) override;
 
 private:
     Point m_position;

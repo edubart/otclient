@@ -22,8 +22,9 @@
 
 #include "uiprogressrect.h"
 #include <framework/graphics/fontmanager.h>
-#include <framework/graphics/graphics.h>
-#include <framework/otml/otml.h>
+
+#include "framework/graphics/drawpool.h"
+#include "framework/graphics/pool.h"
 
 void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
 {
@@ -37,35 +38,35 @@ void UIProgressRect::drawSelf(Fw::DrawPane drawPane)
     // 0% - 12.5% (12.5)
     // triangle from top center, to top right (var x)
     if(m_percent < 12.5) {
-        const Point var = Point(std::max<int>(m_percent - 0.0, 0.0) * (drawRect.right() - drawRect.horizontalCenter()) / 12.5, 0);
+        const auto var = Point(std::max<int>(m_percent - 0.0, 0.0) * (drawRect.right() - drawRect.horizontalCenter()) / 12.5, 0);
         g_drawPool.addFilledTriangle(drawRect.center(), drawRect.topRight() + Point(1, 0), drawRect.topCenter() + var, m_backgroundColor);
     }
 
     // 12.5% - 37.5% (25)
     // triangle from top right to bottom right (var y)
     if(m_percent < 37.5) {
-        const Point var = Point(0, std::max<int>(m_percent - 12.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
+        const auto var = Point(0, std::max<int>(m_percent - 12.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
         g_drawPool.addFilledTriangle(drawRect.center(), drawRect.bottomRight() + Point(1), drawRect.topRight() + var + Point(1, 0), m_backgroundColor);
     }
 
     // 37.5% - 62.5% (25)
     // triangle from bottom right to bottom left (var x)
     if(m_percent < 62.5) {
-        const Point var = Point(std::max<int>(m_percent - 37.5, 0.0) * (drawRect.right() - drawRect.left()) / 25.0, 0);
+        const auto var = Point(std::max<int>(m_percent - 37.5, 0.0) * (drawRect.right() - drawRect.left()) / 25.0, 0);
         g_drawPool.addFilledTriangle(drawRect.center(), drawRect.bottomLeft() + Point(0, 1), drawRect.bottomRight() - var + Point(1), m_backgroundColor);
     }
 
     // 62.5% - 87.5% (25)
     // triangle from bottom left to top left
     if(m_percent < 87.5) {
-        const Point var = Point(0, std::max<int>(m_percent - 62.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
+        const auto var = Point(0, std::max<int>(m_percent - 62.5, 0.0) * (drawRect.bottom() - drawRect.top()) / 25.0);
         g_drawPool.addFilledTriangle(drawRect.center(), drawRect.topLeft(), drawRect.bottomLeft() - var + Point(0, 1), m_backgroundColor);
     }
 
     // 87.5% - 100% (12.5)
     // triangle from top left to top center
     if(m_percent < 100) {
-        const Point var = Point(std::max<int>(m_percent - 87.5, 0.0) * (drawRect.horizontalCenter() - drawRect.left()) / 12.5, 0);
+        const auto var = Point(std::max<int>(m_percent - 87.5, 0.0) * (drawRect.horizontalCenter() - drawRect.left()) / 12.5, 0);
         g_drawPool.addFilledTriangle(drawRect.center(), drawRect.topCenter(), drawRect.topLeft() + var, m_backgroundColor);
     }
 

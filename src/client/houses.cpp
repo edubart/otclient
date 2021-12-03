@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#include "houses.h"
+
 #include "map.h"
 
 #include <framework/core/resourcemanager.h>
@@ -100,10 +102,9 @@ void House::save(TiXmlElement* elem)
 }
 
 HouseManager::HouseManager()
-{
-}
+= default;
 
-void HouseManager::addHouse(const HousePtr& house)
+void HouseManager::addHouse(const HousePtr & house)
 {
     if(findHouse(house->getId()) == m_houses.end())
         m_houses.push_back(house);
@@ -122,14 +123,14 @@ HousePtr HouseManager::getHouse(uint32 houseId)
     return it != m_houses.end() ? *it : nullptr;
 }
 
-HousePtr HouseManager::getHouseByName(const std::string& name)
+HousePtr HouseManager::getHouseByName(const std::string & name)
 {
     const auto it = std::find_if(m_houses.begin(), m_houses.end(),
                                  [=](const HousePtr& house) -> bool { return house->getName() == name; });
     return it != m_houses.end() ? *it : nullptr;
 }
 
-void HouseManager::load(const std::string& fileName)
+void HouseManager::load(const std::string & fileName)
 {
     try {
         TiXmlDocument doc;
@@ -158,20 +159,20 @@ void HouseManager::load(const std::string& fileName)
     sort();
 }
 
-void HouseManager::save(const std::string& fileName)
+void HouseManager::save(const std::string & fileName)
 {
     try {
         TiXmlDocument doc;
         doc.SetTabSize(2);
 
-        TiXmlDeclaration* decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+        auto decl = new TiXmlDeclaration("1.0", "UTF-8", "");
         doc.LinkEndChild(decl);
 
-        TiXmlElement* root = new TiXmlElement("houses");
+        auto root = new TiXmlElement("houses");
         doc.LinkEndChild(root);
 
         for(const auto& house : m_houses) {
-            TiXmlElement* elem = new TiXmlElement("house");
+            auto elem = new TiXmlElement("house");
             house->save(elem);
             root->LinkEndChild(elem);
         }

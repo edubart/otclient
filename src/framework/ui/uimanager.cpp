@@ -23,12 +23,11 @@
 #include "uimanager.h"
 #include "ui.h"
 
-#include <framework/otml/otml.h>
-#include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
-#include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/core/resourcemanager.h>
+#include <framework/otml/otml.h>
+#include <framework/platform/platformwindow.h>
 
 UIManager g_ui;
 
@@ -334,7 +333,7 @@ bool UIManager::importStyle(std::string file)
 void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
 {
     const std::string tag = styleNode->tag();
-    std::vector<std::string> split = stdext::split(tag, "<");
+    const std::vector<std::string> split = stdext::split(tag, "<");
     if(split.size() != 2)
         throw OTMLException(styleNode, "not a valid style declaration");
 

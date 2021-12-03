@@ -31,7 +31,7 @@
 class AdaptativeFrameCounter
 {
 public:
-    inline AdaptativeFrameCounter() : m_interval(stdext::millis()) {}
+    AdaptativeFrameCounter() : m_interval(stdext::millis()) {}
 
     bool update();
     bool canRefresh();

@@ -21,12 +21,11 @@
  */
 
 #include "protocolhttp.h"
-#include "connection.h"
 #include <framework/core/application.h>
+#include "connection.h"
 
 ProtocolHttp::ProtocolHttp()
-{
-}
+= default;
 
 ProtocolHttp::~ProtocolHttp()
 {
@@ -36,11 +35,14 @@ ProtocolHttp::~ProtocolHttp()
     disconnect();
 }
 
-void ProtocolHttp::connect(const std::string& host, uint16 port)
+void ProtocolHttp::connect(const std::string & host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
-    m_connection->setErrorCallback(std::bind(&ProtocolHttp::onError, asProtocolHttp(), std::placeholders::_1));
-    m_connection->connect(host, port, std::bind(&ProtocolHttp::onConnect, asProtocolHttp()));
+    m_connection->setErrorCallback([capture0 = asProtocolHttp()](auto&& PH1)
+    {
+        capture0->onError(std::forward<decltype(PH1)>(PH1));
+    });
+    m_connection->connect(host, port, [capture0 = asProtocolHttp()]{ capture0->onConnect(); });
 }
 
 void ProtocolHttp::disconnect()
@@ -60,7 +62,11 @@ void ProtocolHttp::send(const std::string& message)
 void ProtocolHttp::recv()
 {
     if(m_connection)
-        m_connection->read_until("\r\n\r\n", std::bind(&ProtocolHttp::onRecv, asProtocolHttp(), std::placeholders::_1, std::placeholders::_2));
+        m_connection->read_until("\r\n\r\n", [capture0 = asProtocolHttp()](auto&& PH1, auto&& PH2)
+    {
+        capture0->onRecv(std::forward<decltype(PH1)>(PH1),
+                         std::forward<decltype(PH2)>(PH2));
+    });
 }
 
 void ProtocolHttp::onConnect()
@@ -70,7 +76,7 @@ void ProtocolHttp::onConnect()
 
 void ProtocolHttp::onRecv(uint8* buffer, uint16 size)
 {
-    std::string string = std::string((char*)buffer, static_cast<size_t>(size));
+    const auto string = std::string((char*)buffer, static_cast<size_t>(size));
     callLuaField("onRecv", string);
 }
 

@@ -25,7 +25,6 @@
 
 #include <framework/global.h>
 #include "effect.h"
-#include "itemtype.h"
 #include "thing.h"
 
 enum ItemAttr : uint8
@@ -76,7 +75,7 @@ class Item : public Thing
 {
 public:
     Item() = default;
-    virtual ~Item() {}
+    ~Item() override = default;
 
     static ItemPtr create(int id);
     static ItemPtr createFromOtb(int id);

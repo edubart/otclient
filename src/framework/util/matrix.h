@@ -23,10 +23,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-#include <array>
-#include <cstring>
 #include <initializer_list>
-#include <sstream>
 
 template<int N, int M, typename T = float>
 class Matrix

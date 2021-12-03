@@ -22,11 +22,10 @@
 
 #ifdef WIN32
 
-#include "platform.h"
-#include <winsock2.h>
-#include <windows.h>
-#include <framework/stdext/stdext.h>
 #include <tchar.h>
+#include <framework/stdext/stdext.h>
+
+#include "platform.h"
 
 void Platform::processArgs(std::vector<std::string>& args)
 {
@@ -45,17 +44,17 @@ void Platform::processArgs(std::vector<std::string>& args)
 bool Platform::spawnProcess(std::string process, const std::vector<std::string>& args)
 {
     std::string commandLine;
-    for(uint i = 0; i < args.size(); ++i)
-        commandLine += stdext::format(" \"%s\"", args[i]);
+    for(const auto& arg : args)
+        commandLine += stdext::format(" \"%s\"", arg);
 
     stdext::replace_all(process, "/", "\\");
     if(!process.ends_with(".exe"))
         process += ".exe";
 
-    std::wstring wfile = stdext::utf8_to_utf16(process);
-    std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
+    const std::wstring wfile = stdext::utf8_to_utf16(process);
+    const std::wstring wcommandLine = stdext::utf8_to_utf16(commandLine);
 
-    if((size_t)ShellExecuteW(NULL, L"open", wfile.c_str(), wcommandLine.c_str(), NULL, SW_SHOWNORMAL) > 32)
+    if((size_t)ShellExecuteW(nullptr, L"open", wfile.c_str(), wcommandLine.c_str(), nullptr, SW_SHOWNORMAL) > 32)
         return true;
     return false;
 }
@@ -67,41 +66,39 @@ int Platform::getProcessId()
 
 bool Platform::isProcessRunning(const std::string& name)
 {
-    if(FindWindowA(name.c_str(), NULL) != NULL)
+    if(FindWindowA(name.c_str(), nullptr) != nullptr)
         return true;
     return false;
 }
 
 bool Platform::killProcess(const std::string& name)
 {
-    HWND window = FindWindowA(name.c_str(), NULL);
-    if(window == NULL)
+    const HWND window = FindWindowA(name.c_str(), nullptr);
+    if(window == nullptr)
         return false;
-    DWORD pid = GetProcessId(window);
-    HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
-    if(handle == NULL)
+    const DWORD pid = GetProcessId(window);
+    const HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, false, pid);
+    if(handle == nullptr)
         return false;
-    bool ok = TerminateProcess(handle, 1) != 0;
+    const bool ok = TerminateProcess(handle, 1) != 0;
     CloseHandle(handle);
     return ok;
 }
 
 std::string Platform::getTempPath()
 {
-    std::string ret;
     wchar_t path[MAX_PATH];
     GetTempPathW(MAX_PATH, path);
-    ret = stdext::utf16_to_utf8(path);
+    std::string ret = stdext::utf16_to_utf8(path);
     stdext::replace_all(ret, "\\", "/");
     return ret;
 }
 
 std::string Platform::getCurrentDir()
 {
-    std::string ret;
     wchar_t path[MAX_PATH];
     GetCurrentDirectoryW(MAX_PATH, path);
-    ret = stdext::utf16_to_utf8(path);
+    std::string ret = stdext::utf16_to_utf8(path);
     stdext::replace_all(ret, "\\", "/");
     ret += "/";
     return ret;
@@ -110,7 +107,7 @@ std::string Platform::getCurrentDir()
 bool Platform::fileExists(std::string file)
 {
     stdext::replace_all(file, "/", "\\");
-    std::wstring wfile = stdext::utf8_to_utf16(file);
+    const std::wstring wfile = stdext::utf8_to_utf16(file);
     DWORD dwAttrib = GetFileAttributesW(wfile.c_str());
     return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 }
@@ -135,7 +132,7 @@ bool Platform::removeFile(std::string file)
 ticks_t Platform::getFileModificationTime(std::string file)
 {
     stdext::replace_all(file, "/", "\\");
-    std::wstring wfile = stdext::utf8_to_utf16(file);
+    const std::wstring wfile = stdext::utf8_to_utf16(file);
     WIN32_FILE_ATTRIBUTE_DATA fileAttrData;
     memset(&fileAttrData, 0, sizeof(fileAttrData));
     GetFileAttributesExW(wfile.c_str(), GetFileExInfoStandard, &fileAttrData);
@@ -149,7 +146,7 @@ void Platform::openUrl(std::string url)
 {
     if(url.find("http://") == std::string::npos && url.find("https://") == std::string::npos)
         url.insert(0, "http://");
-    ShellExecuteW(NULL, L"open", stdext::utf8_to_utf16(url).c_str(), NULL, NULL, SW_SHOWNORMAL);
+    ShellExecuteW(nullptr, L"open", stdext::utf8_to_utf16(url).c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 }
 
 std::string Platform::getCPUName()
@@ -158,9 +155,9 @@ std::string Platform::getCPUName()
     memset(buf, 0, sizeof(buf));
     DWORD bufSize = sizeof(buf);
     HKEY hKey;
-    if(RegOpenKeyExA(HKEY_LOCAL_MACHINE, "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+    if(RegOpenKeyExA(HKEY_LOCAL_MACHINE, R"(HARDWARE\DESCRIPTION\System\CentralProcessor\0)", 0, KEY_READ, &hKey) != ERROR_SUCCESS)
         return "";
-    RegQueryValueExA(hKey, "ProcessorNameString", NULL, NULL, (LPBYTE)buf, static_cast<LPDWORD>(&bufSize));
+    RegQueryValueExA(hKey, "ProcessorNameString", nullptr, nullptr, (LPBYTE)buf, static_cast<LPDWORD>(&bufSize));
     return buf;
 }
 
@@ -233,8 +230,8 @@ double Platform::getTotalSystemMemory()
 
 std::string Platform::getOSName()
 {
-    typedef void (WINAPI* PGNSI)(LPSYSTEM_INFO);
-    typedef BOOL(WINAPI* PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+    using PGNSI = void(WINAPI*)(LPSYSTEM_INFO);
+    using PGPI = BOOL(WINAPI*)(DWORD, DWORD, DWORD, DWORD, PDWORD);
 
     std::string ret;
     OSVERSIONINFOEX osvi;
@@ -251,10 +248,10 @@ std::string Platform::getOSName()
     bOsVersionInfoEx = VerifyVersionInfo(&osvi, 0, 0);
 
     if(!bOsVersionInfoEx)
-        return std::string();
+        return {};
 
     pGNSI = (PGNSI)GetProcAddress(GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
-    if(NULL != pGNSI)
+    if(nullptr != pGNSI)
         pGNSI(&si);
     else
         GetSystemInfo(&si);

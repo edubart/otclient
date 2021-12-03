@@ -20,15 +20,14 @@
  * THE SOFTWARE.
  */
 
+#include "framework/core/graphicalapplication.h"
 #if defined(WIN32) && defined(CRASH_HANDLER)
 
-#include "crashhandler.h"
 #include <framework/global.h>
-#include <framework/core/application.h>
+#include "crashhandler.h"
 
-#include <winsock2.h>
 #include <windows.h>
-#include <process.h>
+#include <winsock2.h>
 
 #ifdef _MSC_VER
 
@@ -74,7 +73,6 @@ const char* getExceptionName(DWORD exceptionCode)
 
 void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
 {
-    PIMAGEHLP_SYMBOL pSym;
     STACKFRAME sf;
     HANDLE process, thread;
     ULONG_PTR dwModBase, Disp;
@@ -84,7 +82,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     char modname[MAX_PATH];
     char symBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
 
-    pSym = (PIMAGEHLP_SYMBOL)symBuffer;
+    PIMAGEHLP_SYMBOL pSym = (PIMAGEHLP_SYMBOL)symBuffer;
 
     ZeroMemory(&sf, sizeof(sf));
 #ifdef _WIN64
@@ -106,8 +104,8 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     process = GetCurrentProcess();
     thread = GetCurrentThread();
 
-    while(1) {
-        more = StackWalk(machineType, process, thread, &sf, e->ContextRecord, NULL, SymFunctionTableAccess, SymGetModuleBase, NULL);
+    while(true) {
+        more = StackWalk(machineType, process, thread, &sf, e->ContextRecord, nullptr, SymFunctionTableAccess, SymGetModuleBase, nullptr);
         if(!more || sf.AddrFrame.Offset == 0)
             break;
 
@@ -133,7 +131,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
 LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
 {
     // generate crash report
-    SymInitialize(GetCurrentProcess(), 0, TRUE);
+    SymInitialize(GetCurrentProcess(), nullptr, TRUE);
     std::stringstream ss;
     ss << "== application crashed\n";
     ss << stdext::format("app name: %s\n", g_app.getName());
@@ -156,7 +154,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     // write stacktrace to crashreport.log
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
-    std::string fileName = stdext::format("%s\\crashreport.log", dir);
+    const std::string fileName = stdext::format("%s\\crashreport.log", dir);
     std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
     if(fout.is_open() && fout.good()) {
         fout << ss.str();
@@ -166,11 +164,11 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
         g_logger.error("Failed to save crash report!");
 
     // inform the user
-    std::string msg = stdext::format(
+    const std::string msg = stdext::format(
         "The application has crashed.\n\n"
         "A crash report has been written to:\n"
         "%s", fileName.c_str());
-    MessageBox(NULL, msg.c_str(), "Application crashed", 0);
+    MessageBox(nullptr, msg.c_str(), "Application crashed", 0);
 
     // this seems to silently close the application
     //return EXCEPTION_EXECUTE_HANDLER;

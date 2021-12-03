@@ -23,11 +23,11 @@
 #ifndef FILESTREAM_H
 #define FILESTREAM_H
 
-#include "declarations.h"
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/util/databuffer.h>
 #include <framework/util/point.h>
+#include "declarations.h"
 
 struct PHYSFS_File;
 
@@ -35,9 +35,9 @@ struct PHYSFS_File;
 class FileStream : public LuaObject
 {
 public:
-    FileStream(const std::string& name, PHYSFS_File* fileHandle, bool writeable);
-    FileStream(const std::string& name, const std::string& buffer);
-    ~FileStream();
+    FileStream(std::string name, PHYSFS_File* fileHandle, bool writeable);
+    FileStream(std::string name, const std::string& buffer);
+    ~FileStream() override;
 
     void cache();
     void close();

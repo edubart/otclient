@@ -20,9 +20,11 @@
  * THE SOFTWARE.
  */
 
-#include "string.h"
-#include "format.h"
 #include <boost/algorithm/string.hpp>
+
+#include "exception.h"
+#include "format.h"
+#include "types.h"
 
 #ifdef _MSC_VER
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
@@ -34,7 +36,7 @@ namespace stdext {
         if(filePath.starts_with("/"))
             return filePath;
         if(!sourcePath.ends_with("/")) {
-            std::size_t slashPos = sourcePath.find_last_of("/");
+            const std::size_t slashPos = sourcePath.find_last_of('/');
             if(slashPos == std::string::npos)
                 throw_exception(format("invalid source path '%s', for file '%s'", sourcePath, filePath));
             sourcePath = sourcePath.substr(0, slashPos + 1);
@@ -47,7 +49,7 @@ namespace stdext {
         char date[100];
         std::time_t tnow;
         std::time(&tnow);
-        std::tm* ts = std::localtime(&tnow);
+        const std::tm* ts = std::localtime(&tnow);
         std::strftime(date, 100, format, ts);
         return std::string(date);
     }
@@ -69,7 +71,7 @@ namespace stdext {
 
     bool is_valid_utf8(const std::string& src)
     {
-        const unsigned char* bytes = (const unsigned char*)src.c_str();
+        auto bytes = (const unsigned char*)src.c_str();
         while(*bytes) {
             if((// ASCII
                  // use bytes[0] <= 0x7F to allow ASCII control characters
@@ -142,11 +144,11 @@ namespace stdext {
     {
         std::string out;
         for(uint i = 0; i < src.length();) {
-            uchar c = src[i++];
+            const uchar c = src[i++];
             if((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
                 out += c;
             else if(c == 0xc2 || c == 0xc3) {
-                uchar c2 = src[i++];
+                const uchar c2 = src[i++];
                 if(c == 0xc2) {
                     if(c2 > 0xa1 && c2 < 0xbb)
                         out += c2;
@@ -192,7 +194,7 @@ namespace stdext {
     {
         std::string res;
         char out[4096];
-        if(WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, out, 4096, NULL, NULL))
+        if(WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, out, 4096, nullptr, nullptr))
             res = out;
         return res;
     }
@@ -225,7 +227,7 @@ namespace stdext {
 
     void ucwords(std::string& str)
     {
-        uint32 strLen = str.length();
+        const uint32 strLen = str.length();
         if(strLen == 0)
             return;
 
@@ -247,7 +249,7 @@ namespace stdext {
 
     void eraseWhiteSpace(std::string& str)
     {
-        str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
+        std::erase_if(str, isspace);
     }
 
     std::vector<std::string> split(const std::string& str, const std::string& separators)

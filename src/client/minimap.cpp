@@ -26,12 +26,9 @@
 #include <zlib.h>
 #include <framework/core/filestream.h>
 #include <framework/core/resourcemanager.h>
-#include <framework/graphics/framebuffermanager.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/painter.h>
-#include <framework/graphics/texture.h>
 #include <framework/graphics/drawpool.h>
+#include <framework/graphics/image.h>
+#include <framework/graphics/texture.h>
 
 Minimap g_minimap;
 
@@ -47,7 +44,7 @@ void MinimapBlock::update()
     if(!m_mustUpdate)
         return;
 
-    ImagePtr image(new Image(Size(MMBLOCK_SIZE, MMBLOCK_SIZE)));
+    const ImagePtr image(new Image(Size(MMBLOCK_SIZE, MMBLOCK_SIZE)));
 
     bool shouldDraw = false;
     for(int x = 0; x < MMBLOCK_SIZE; ++x) {
@@ -148,7 +145,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
-        return Point(-1, -1);
+        return { -1, -1 };
 
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
@@ -159,18 +156,18 @@ Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const P
 Position Minimap::getTilePosition(const Point& point, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty())
-        return Position();
+        return {};
 
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
     const Point pos2d = (point - screenRect.topLeft() + off) / scale + mapRect.topLeft();
-    return Position(pos2d.x, pos2d.y, mapCenter.z);
+    return { pos2d.x, pos2d.y, mapCenter.z };
 }
 
 Rect Minimap::getTileRect(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if(screenRect.isEmpty() || pos.z != mapCenter.z)
-        return Rect();
+        return {};
 
     const int tileSize = SPRITE_SIZE * scale;
     Rect tileRect(0, 0, tileSize, tileSize);
@@ -226,7 +223,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
         colorFactor = 1.0f;
 
     try {
-        ImagePtr image = Image::load(fileName);
+        const ImagePtr image = Image::load(fileName);
 
         const uint8 waterc = Color::to8bit(std::string("#3300cc"));
 
@@ -304,7 +301,7 @@ void Minimap::saveImage(const std::string&, const Rect&)
 bool Minimap::loadOtmm(const std::string& fileName)
 {
     try {
-        FileStreamPtr fin = g_resources.openFile(fileName);
+        const FileStreamPtr fin = g_resources.openFile(fileName);
         if(!fin)
             stdext::throw_exception("unable to open file");
 
@@ -370,7 +367,7 @@ void Minimap::saveOtmm(const std::string& fileName)
     try {
         stdext::timer saveTimer;
 
-        FileStreamPtr fin = g_resources.createFile(fileName);
+        const FileStreamPtr fin = g_resources.createFile(fileName);
         fin->cache();
 
         //TODO: compression flag with zlib

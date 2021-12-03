@@ -23,9 +23,8 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+#include <gl/glew.h>
 #include "declarations.h"
-#include "painter.h"
-#include <framework/graphics/drawpool.h>
 
  // @bindsingleton g_graphics
 class Graphics

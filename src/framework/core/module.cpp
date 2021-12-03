@@ -24,8 +24,8 @@
 #include "modulemanager.h"
 #include "resourcemanager.h"
 
-#include <framework/otml/otml.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/otml/otml.h>
 
 Module::Module(const std::string& name)
 {
@@ -171,7 +171,7 @@ bool Module::hasDependency(const std::string& name, bool recursive)
 
     if(recursive) {
         for(const std::string& depName : m_dependencies) {
-            ModulePtr dep = g_modules.getModule(depName);
+            const ModulePtr dep = g_modules.getModule(depName);
             if(dep && dep->hasDependency(name, true))
                 return true;
         }
@@ -198,24 +198,24 @@ void Module::discover(const OTMLNodePtr& moduleNode)
     m_sandboxed = moduleNode->valueAt<bool>("sandboxed", false);
     m_autoLoadPriority = moduleNode->valueAt<int>("autoload-priority", 9999);
 
-    if(OTMLNodePtr node = moduleNode->get("dependencies")) {
+    if(const OTMLNodePtr node = moduleNode->get("dependencies")) {
         for(const OTMLNodePtr& tmp : node->children())
             m_dependencies.push_back(tmp->value());
     }
 
-    if(OTMLNodePtr node = moduleNode->get("scripts")) {
+    if(const OTMLNodePtr node = moduleNode->get("scripts")) {
         for(const OTMLNodePtr& tmp : node->children())
             m_scripts.push_back(stdext::resolve_path(tmp->value(), node->source()));
     }
 
-    if(OTMLNodePtr node = moduleNode->get("load-later")) {
+    if(const OTMLNodePtr node = moduleNode->get("load-later")) {
         for(const OTMLNodePtr& tmp : node->children())
             m_loadLaterModules.push_back(tmp->value());
     }
 
-    if(OTMLNodePtr node = moduleNode->get("@onLoad"))
+    if(const OTMLNodePtr node = moduleNode->get("@onLoad"))
         m_onLoadFunc = std::make_tuple(node->value(), "@" + node->source() + ":[" + node->tag() + "]");
 
-    if(OTMLNodePtr node = moduleNode->get("@onUnload"))
+    if(const OTMLNodePtr node = moduleNode->get("@onUnload"))
         m_onUnloadFunc = std::make_tuple(node->value(), "@" + node->source() + ":[" + node->tag() + "]");
 }

@@ -22,8 +22,8 @@
 
 #include "event.h"
 
-Event::Event(const std::function<void()>& callback) :
-    m_callback(callback),
+Event::Event(std::function<void()> callback) :
+    m_callback(std::move(callback)),
     m_canceled(false),
     m_executed(false)
 {

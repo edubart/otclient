@@ -29,14 +29,14 @@ class LuaException : public stdext::exception
 {
 public:
     LuaException(const std::string& error, int traceLevel = -1);
-    virtual ~LuaException() throw() {}
+    ~LuaException() throw() override = default;
 
     void generateLuaErrorMessage(const std::string& error, int traceLevel);
 
-    virtual const char* what() const throw() { return m_what.c_str(); }
+    const char* what() const throw() override { return m_what.c_str(); }
 
 protected:
-    LuaException() {}
+    LuaException() = default;
 
     std::string m_what;
 };

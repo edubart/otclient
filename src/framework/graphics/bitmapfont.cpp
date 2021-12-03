@@ -21,11 +21,13 @@
  */
 
 #include "bitmapfont.h"
-#include "texturemanager.h"
 #include "graphics.h"
 #include "image.h"
+#include "texturemanager.h"
 
 #include <framework/otml/otml.h>
+
+#include "drawpool.h"
 
 namespace
 {
@@ -35,7 +37,7 @@ namespace
 
 void BitmapFont::load(const OTMLNodePtr& fontNode)
 {
-    OTMLNodePtr textureNode = fontNode->at("texture");
+    const OTMLNodePtr textureNode = fontNode->at("texture");
     const std::string textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
     const auto glyphSize = fontNode->valueAt<Size>("glyph-size");
     m_glyphHeight = fontNode->valueAt<int>("height");
@@ -48,7 +50,7 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     m_texture = g_textures.getTexture(textureFile);
     const Size textureSize = m_texture->getSize();
 
-    if(OTMLNodePtr node = fontNode->get("fixed-glyph-width")) {
+    if(const OTMLNodePtr node = fontNode->get("fixed-glyph-width")) {
         for(int glyph = m_firstGlyph; glyph < 256; ++glyph)
             m_glyphsSize[glyph] = Size(node->value<int>(), m_glyphHeight);
     } else {
@@ -170,7 +172,7 @@ std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::stri
         }
 
         // add glyph
-        list.push_back(std::make_pair(glyphScreenCoords, glyphTextureCoords));
+        list.emplace_back(glyphScreenCoords, glyphTextureCoords);
     }
 
     return list;
@@ -299,7 +301,7 @@ std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
 {
     std::string outText;
     std::vector<std::string> words;
-    std::vector<std::string> wordsSplit = stdext::split(text);
+    const std::vector<std::string> wordsSplit = stdext::split(text);
 
     // break huge words into small ones
     for(const auto& word : wordsSplit) {

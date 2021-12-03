@@ -62,7 +62,7 @@ ConfigPtr ConfigManager::get(const std::string& file)
     return nullptr;
 }
 
-ConfigPtr ConfigManager::loadSettings(const std::string file)
+ConfigPtr ConfigManager::loadSettings(const std::string& file)
 {
     if(file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
@@ -93,20 +93,19 @@ ConfigPtr ConfigManager::load(const std::string& file)
     if(file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
         return nullptr;
-    } else {
-        ConfigPtr config = get(file);
-        if(!config) {
-            config = ConfigPtr(new Config());
-
-            if(config->load(file)) {
-                m_configs.push_back(config);
-            } else {
-                // cannot load config
-                config = nullptr;
-            }
-        }
-        return config;
     }
+    ConfigPtr config = get(file);
+    if(!config) {
+        config = ConfigPtr(new Config());
+
+        if(config->load(file)) {
+            m_configs.push_back(config);
+        } else {
+            // cannot load config
+            config = nullptr;
+        }
+    }
+    return config;
 }
 
 bool ConfigManager::unload(const std::string& file)
@@ -121,7 +120,7 @@ bool ConfigManager::unload(const std::string& file)
     return false;
 }
 
-void ConfigManager::remove(const ConfigPtr config)
+void ConfigManager::remove(const ConfigPtr& config)
 {
     m_configs.remove(config);
 }

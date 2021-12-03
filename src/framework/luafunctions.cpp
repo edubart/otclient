@@ -21,40 +21,41 @@
  */
 
 #include <framework/core/application.h>
-#include <framework/luaengine/luainterface.h>
-#include <framework/core/eventdispatcher.h>
-#include <framework/core/configmanager.h>
 #include <framework/core/config.h>
-#include <framework/otml/otml.h>
-#include <framework/core/modulemanager.h>
+#include <framework/core/configmanager.h>
+#include <framework/core/eventdispatcher.h>
 #include <framework/core/module.h>
-#include <framework/util/crypt.h>
+#include <framework/core/modulemanager.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/stdext/net.h>
+#include <framework/luaengine/luainterface.h>
 #include <framework/platform/platform.h>
+#include <framework/stdext/net.h>
+#include <framework/util/crypt.h>
+
+#include "graphics/particleeffect.h"
 
 #ifdef FW_SOUND
+#include <framework/sound/combinedsoundsource.h>
+#include <framework/sound/soundchannel.h>
 #include <framework/sound/soundmanager.h>
 #include <framework/sound/soundsource.h>
-#include <framework/sound/soundchannel.h>
-#include <framework/sound/combinedsoundsource.h>
 #include <framework/sound/streamsoundsource.h>
 #endif
 
 #ifdef FW_GRAPHICS
-#include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
-#include <framework/graphics/particlemanager.h>
 #include <framework/graphics/fontmanager.h>
-#include <framework/ui/ui.h>
+#include <framework/graphics/graphics.h>
+#include <framework/graphics/particlemanager.h>
 #include <framework/input/mouse.h>
+#include <framework/platform/platformwindow.h>
+#include <framework/ui/ui.h>
 #endif
 
 #ifdef FW_NET
-#include <framework/net/server.h>
 #include <framework/net/protocol.h>
 #include <framework/net/protocolhttp.h>
+#include <framework/net/server.h>
 #endif
 
 #ifdef FW_SQL

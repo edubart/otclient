@@ -23,13 +23,13 @@
 #include "logger.h"
 #include "eventdispatcher.h"
 
-#include <framework/core/resourcemanager.h>
 #include <framework/core/asyncdispatcher.h>
+#include <framework/core/resourcemanager.h>
 
 #ifdef FW_GRAPHICS
-#include <framework/platform/platformwindow.h>
-#include <framework/platform/platform.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/platform/platform.h>
+#include <framework/platform/platformwindow.h>
 #endif
 
 Logger g_logger;

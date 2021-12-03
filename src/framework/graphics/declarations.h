@@ -24,7 +24,6 @@
 #define FRAMEWORK_GRAPHICS_DECLARATIONS_H
 
 #include <framework/global.h>
-#include "glutil.h"
 
 class Texture;
 class TextureManager;
@@ -48,25 +47,25 @@ class Pool;
 class FramedPool;
 class DrawPool;
 
-typedef stdext::shared_object_ptr<Image> ImagePtr;
-typedef stdext::shared_object_ptr<Texture> TexturePtr;
-typedef stdext::shared_object_ptr<AnimatedTexture> AnimatedTexturePtr;
-typedef stdext::shared_object_ptr<BitmapFont> BitmapFontPtr;
-typedef stdext::shared_object_ptr<CachedText> CachedTextPtr;
-typedef stdext::shared_object_ptr<FrameBuffer> FrameBufferPtr;
-typedef stdext::shared_object_ptr<Shader> ShaderPtr;
-typedef stdext::shared_object_ptr<ShaderProgram> ShaderProgramPtr;
-typedef stdext::shared_object_ptr<PainterShaderProgram> PainterShaderProgramPtr;
-typedef stdext::shared_object_ptr<Particle> ParticlePtr;
-typedef stdext::shared_object_ptr<ParticleType> ParticleTypePtr;
-typedef stdext::shared_object_ptr<ParticleEmitter> ParticleEmitterPtr;
-typedef stdext::shared_object_ptr<ParticleAffector> ParticleAffectorPtr;
-typedef stdext::shared_object_ptr<ParticleSystem> ParticleSystemPtr;
-typedef stdext::shared_object_ptr<ParticleEffect> ParticleEffectPtr;
-typedef stdext::shared_object_ptr<ParticleEffectType> ParticleEffectTypePtr;
-typedef std::vector<ShaderPtr> ShaderList;
+using ImagePtr = stdext::shared_object_ptr<Image>;
+using TexturePtr = stdext::shared_object_ptr<Texture>;
+using AnimatedTexturePtr = stdext::shared_object_ptr<AnimatedTexture>;
+using BitmapFontPtr = stdext::shared_object_ptr<BitmapFont>;
+using CachedTextPtr = stdext::shared_object_ptr<CachedText>;
+using FrameBufferPtr = stdext::shared_object_ptr<FrameBuffer>;
+using ShaderPtr = stdext::shared_object_ptr<Shader>;
+using ShaderProgramPtr = stdext::shared_object_ptr<ShaderProgram>;
+using PainterShaderProgramPtr = stdext::shared_object_ptr<PainterShaderProgram>;
+using ParticlePtr = stdext::shared_object_ptr<Particle>;
+using ParticleTypePtr = stdext::shared_object_ptr<ParticleType>;
+using ParticleEmitterPtr = stdext::shared_object_ptr<ParticleEmitter>;
+using ParticleAffectorPtr = stdext::shared_object_ptr<ParticleAffector>;
+using ParticleSystemPtr = stdext::shared_object_ptr<ParticleSystem>;
+using ParticleEffectPtr = stdext::shared_object_ptr<ParticleEffect>;
+using ParticleEffectTypePtr = stdext::shared_object_ptr<ParticleEffectType>;
+using ShaderList = std::vector<ShaderPtr>;
 
-typedef std::shared_ptr<Pool> PoolPtr;
-typedef std::shared_ptr<FramedPool> PoolFramedPtr;
+using PoolPtr = std::shared_ptr<Pool>;
+using PoolFramedPtr = std::shared_ptr<FramedPool>;
 
 #endif

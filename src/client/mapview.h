@@ -24,9 +24,7 @@
 #define MAPVIEW_H
 
 #include <framework/core/inputevent.h>
-#include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
-#include <framework/graphics/texturemanager.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/luaengine/luaobject.h>
 #include "lightview.h"
@@ -56,7 +54,7 @@ public:
     };
 
     MapView();
-    ~MapView();
+    ~MapView() override;
     void draw(const Rect& rect);
 
 public:
@@ -132,14 +130,14 @@ public:
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
-    bool isInRange(const Position& pos, const bool ignoreZ = false);
+    bool isInRange(const Position& pos, bool ignoreZ = false);
 
     TilePtr getTopTile(Position tilePos);
 
     void setCrosshairTexture(const std::string& texturePath);
-    void setAntiAliasingMode(const AntialiasingMode mode);
+    void setAntiAliasingMode(AntialiasingMode mode);
 
-    void onMouseMove(const Position& mousePos, const bool isVirtualMove = false);
+    void onMouseMove(const Position& mousePos, bool isVirtualMove = false);
     void onKeyRelease(const InputEvent& inputEvent);
 
     void setLastMousePosition(const Position& mousePos) { m_mousePosition = mousePos; }
@@ -149,8 +147,8 @@ public:
 
 protected:
     void onGlobalLightChange(const Light& light);
-    void onFloorChange(const uint8 floor, const uint8 previousFloor);
-    void onTileUpdate(const Position& pos, const ThingPtr& thing, const Otc::Operation operation);
+    void onFloorChange(uint8 floor, uint8 previousFloor);
+    void onTileUpdate(const Position& pos, const ThingPtr& thing, Otc::Operation operation);
     void onMapCenterChange(const Position& newPos, const Position& oldPos);
     void onCameraMove(const Point& offset);
 
@@ -198,8 +196,10 @@ private:
 
     Point transformPositionTo2D(const Position& position, const Position& relativePosition)
     {
-        return Point((m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
-                     (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize);
+        return {
+            (m_virtualCenterOffset.x + (position.x - relativePosition.x) - (relativePosition.z - position.z)) * m_tileSize,
+                     (m_virtualCenterOffset.y + (position.y - relativePosition.y) - (relativePosition.z - position.z)) * m_tileSize
+        };
     }
 
     uint8 m_lockedFirstVisibleFloor{ UINT8_MAX },

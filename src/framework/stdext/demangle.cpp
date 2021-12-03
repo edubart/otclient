@@ -24,8 +24,7 @@
 
 #ifdef _MSC_VER
 
-#include <winsock2.h>
-#include <windows.h>
+#include <Windows.h>
 
 #pragma warning (push)
 #pragma warning (disable:4091) // warning C4091: 'typedef ': ignored on left of '' when no variable is declared
@@ -47,7 +46,7 @@ namespace stdext {
         static char Buffer[BufferSize] = {};
 
 #ifdef _MSC_VER
-        int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
+        const int written = UnDecorateSymbolName(name, Buffer, BufferSize - 1, UNDNAME_COMPLETE);
         Buffer[written] = '\0';
 #else
         size_t len;

@@ -22,7 +22,6 @@
 
 #include "localplayer.h"
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
 #include "game.h"
 #include "map.h"
 #include "tile.h"
@@ -358,7 +357,7 @@ void LocalPlayer::setMana(double mana, double maxMana)
 {
     if(m_mana != mana || m_maxMana != maxMana) {
         const double oldMana = m_mana;
-        double oldMaxMana = m_maxMana;
+        const double oldMaxMana = m_maxMana;
         m_mana = mana;
         m_maxMana = maxMana;
 

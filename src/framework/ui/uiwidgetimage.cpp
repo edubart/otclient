@@ -20,11 +20,11 @@
  * THE SOFTWARE.
  */
 
-#include "uiwidget.h"
 #include <framework/graphics/painter.h>
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
-#include <framework/graphics/graphics.h>
+#include "uiwidget.h"
+#include "framework/graphics/drawpool.h"
 
 void UIWidget::initImage() {}
 
@@ -114,32 +114,32 @@ void UIWidget::drawImage(const Rect& screenCoords)
             // first the center
             if(centerSize.area() > 0) {
                 rectCoords = Rect(drawRect.left() + leftBorder.width(), drawRect.top() + topBorder.height(), centerSize);
-                m_imageCoordsCache.push_back(std::make_pair(rectCoords, center));
+                m_imageCoordsCache.emplace_back(rectCoords, center);
             }
             // top left corner
             rectCoords = Rect(drawRect.topLeft(), topLeftCorner.size());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topLeftCorner));
+            m_imageCoordsCache.emplace_back(rectCoords, topLeftCorner);
             // top
             rectCoords = Rect(drawRect.left() + topLeftCorner.width(), drawRect.topLeft().y, centerSize.width(), topBorder.height());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topBorder));
+            m_imageCoordsCache.emplace_back(rectCoords, topBorder);
             // top right corner
             rectCoords = Rect(drawRect.left() + topLeftCorner.width() + centerSize.width(), drawRect.top(), topRightCorner.size());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, topRightCorner));
+            m_imageCoordsCache.emplace_back(rectCoords, topRightCorner);
             // left
             rectCoords = Rect(drawRect.left(), drawRect.top() + topLeftCorner.height(), leftBorder.width(), centerSize.height());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, leftBorder));
+            m_imageCoordsCache.emplace_back(rectCoords, leftBorder);
             // right
             rectCoords = Rect(drawRect.left() + leftBorder.width() + centerSize.width(), drawRect.top() + topRightCorner.height(), rightBorder.width(), centerSize.height());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, rightBorder));
+            m_imageCoordsCache.emplace_back(rectCoords, rightBorder);
             // bottom left corner
             rectCoords = Rect(drawRect.left(), drawRect.top() + topLeftCorner.height() + centerSize.height(), bottomLeftCorner.size());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomLeftCorner));
+            m_imageCoordsCache.emplace_back(rectCoords, bottomLeftCorner);
             // bottom
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width(), drawRect.top() + topBorder.height() + centerSize.height(), centerSize.width(), bottomBorder.height());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomBorder));
+            m_imageCoordsCache.emplace_back(rectCoords, bottomBorder);
             // bottom right corner
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width() + centerSize.width(), drawRect.top() + topRightCorner.height() + centerSize.height(), bottomRightCorner.size());
-            m_imageCoordsCache.push_back(std::make_pair(rectCoords, bottomRightCorner));
+            m_imageCoordsCache.emplace_back(rectCoords, bottomRightCorner);
         } else {
             if(m_imageFixedRatio) {
                 Size textureSize = m_imageTexture->getSize(),
@@ -156,7 +156,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
                 clipRect = Rect(texCoordsOffset, textureClipSize);
             }
 
-            m_imageCoordsCache.push_back(std::make_pair(drawRect, clipRect));
+            m_imageCoordsCache.emplace_back(drawRect, clipRect);
         }
     }
 

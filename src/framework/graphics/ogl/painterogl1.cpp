@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#include "framework/graphics/texture.h"
 #if !defined(OPENGL_ES) || OPENGL_ES==1
 
 #include "painterogl1.h"
@@ -97,8 +98,8 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 #ifndef OPENGL_ES
     else {
         const int verticesSize = vertexCount * 2;
-        float* vertices = coordsBuffer.getVertexArray();
-        float* texCoords = coordsBuffer.getTextureCoordArray();
+        const float* vertices = coordsBuffer.getVertexArray();
+        const float* texCoords = coordsBuffer.getTextureCoordArray();
 
         // use glBegin/glEnd, this is not available in OpenGL ES
         // and is considered much slower then glDrawArrays,
@@ -201,7 +202,7 @@ void PainterOGL1::updateGlMatrixMode()
 
 void PainterOGL1::updateGlTransformMatrix()
 {
-    float glTransformMatrix[] = {
+    const float glTransformMatrix[] = {
             m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
             m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
                                                 0.0f,                   0.0f,                    1.0f,                   0.0f,
@@ -214,7 +215,7 @@ void PainterOGL1::updateGlTransformMatrix()
 
 void PainterOGL1::updateGlProjectionMatrix()
 {
-    float glProjectionMatrix[] = {
+    const float glProjectionMatrix[] = {
             m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
             m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
                                                  0.0f,                    0.0f,                    1.0f,                    0.0f,
@@ -227,7 +228,7 @@ void PainterOGL1::updateGlProjectionMatrix()
 
 void PainterOGL1::updateGlTextureMatrix()
 {
-    float glTextureMatrix[] = {
+    const float glTextureMatrix[] = {
             m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
             m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
                                             0.0f,                 0.0f,             1.0f,                 0.0f,

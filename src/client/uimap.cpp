@@ -21,11 +21,9 @@
  */
 
 #include "uimap.h"
-#include <framework/graphics/graphics.h>
 #include <framework/graphics/drawpool.h>
-#include <framework/otml/otml.h>
+#include <framework/graphics/graphics.h>
 #include "game.h"
-#include "localplayer.h"
 #include "map.h"
 #include "mapview.h"
 
@@ -135,7 +133,7 @@ void UIMap::setKeepAspectRatio(bool enable)
 Position UIMap::getPosition(const Point& mousePos)
 {
     if(!m_mapRect.contains(mousePos))
-        return Position();
+        return {};
 
     const Point relativeMousePos = mousePos - m_mapRect.topLeft();
     return m_mapView->getPosition(relativeMousePos, m_mapRect.size());
@@ -143,7 +141,7 @@ Position UIMap::getPosition(const Point& mousePos)
 
 TilePtr UIMap::getTile(const Point& mousePos)
 {
-    Position tilePos = getPosition(mousePos);
+    const Position tilePos = getPosition(mousePos);
     if(!tilePos.isValid())
         return nullptr;
 

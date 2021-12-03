@@ -24,10 +24,10 @@
 #define THINGTYPEMANAGER_H
 
 #include <framework/global.h>
-#include <framework/core/declarations.h>
 
 #include "itemtype.h"
 #include "thingtype.h"
+#include "framework/xml/tinyxml.h"
 
 class ThingTypeManager
 {

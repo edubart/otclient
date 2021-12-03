@@ -31,7 +31,7 @@ namespace stdext {
     class any {
     public:
         struct placeholder {
-            virtual ~placeholder() {}
+            virtual ~placeholder() = default;
             virtual const std::type_info& type() const = 0;
             virtual placeholder* clone() const = 0;
         };
@@ -39,16 +39,16 @@ namespace stdext {
         template<typename T>
         struct holder : public placeholder {
             holder(const T& value) : held(value) {}
-            const std::type_info& type() const { return typeid(T); }
-            placeholder* clone() const { return new holder(held); }
+            const std::type_info& type() const override { return typeid(T); }
+            placeholder* clone() const override { return new holder(held); }
             T held;
         private:
             holder& operator=(const holder&);
         };
 
-        placeholder* content;
+        placeholder* content{ nullptr };
 
-        any() : content(nullptr) {}
+        any() = default;
         any(const any& other) : content(other.content ? other.content->clone() : nullptr) {}
         template<typename T> any(const T& value) : content(new holder<T>(value)) {}
         ~any() { delete content; }

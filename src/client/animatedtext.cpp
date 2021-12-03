@@ -21,9 +21,8 @@
  */
 
 #include "animatedtext.h"
-#include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
-#include <framework/graphics/graphics.h>
+#include <framework/core/graphicalapplication.h>
 #include "game.h"
 #include "map.h"
 

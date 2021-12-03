@@ -24,11 +24,10 @@
 #define STDEXT_STRING_H
 
 #include <string>
-#include <cstring>
 #include <vector>
 
-#include "types.h"
 #include "cast.h"
+#include "types.h"
 
 namespace stdext {
     template<typename T> std::string to_string(const T& t) { return unsafe_cast<std::string, T>(t); }
@@ -63,7 +62,7 @@ namespace stdext {
     std::vector<std::string> split(const std::string& str, const std::string& separators = " ");
     template<typename T> std::vector<T> split(const std::string& str, const std::string& separators = " ")
     {
-        std::vector<std::string> splitted = split(str, separators);
+        const std::vector<std::string> splitted = split(str, separators);
         std::vector<T> results(splitted.size());
         for(uint i = 0; i < splitted.size(); ++i)
             results[i] = safe_cast<T>(splitted[i]);

@@ -23,8 +23,6 @@
 #include "soundsource.h"
 #include "soundbuffer.h"
 
-#include <framework/core/clock.h>
-
 #include "framework/stdext/time.h"
 
 SoundSource::SoundSource()

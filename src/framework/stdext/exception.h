@@ -26,14 +26,15 @@
 #include <exception>
 #include <string>
 
-namespace stdext {
+namespace stdext
+{
     class exception : public std::exception
     {
     public:
-        exception() {}
-        exception(const std::string& what) : m_what(what) {}
-        virtual ~exception() throw() {};
-        virtual const char* what() const throw() { return m_what.c_str(); }
+        exception() = default;
+        exception(std::string what) : m_what(std::move(what)) {}
+        ~exception() throw() override = default;;
+        const char* what() const throw() override { return m_what.c_str(); }
     protected:
         std::string m_what;
     };

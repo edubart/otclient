@@ -23,9 +23,7 @@
 #ifndef CLIENT_LUAVALUECASTS_H
 #define CLIENT_LUAVALUECASTS_H
 
-#include <framework/luaengine/declarations.h>
 #include "game.h"
-#include "global.h"
 #include "outfit.h"
 
  // outfit

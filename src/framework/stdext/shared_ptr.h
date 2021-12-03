@@ -23,12 +23,12 @@
 #ifndef STDEXT_SHARED_PTR_H
 #define STDEXT_SHARED_PTR_H
 
-#include "types.h"
-#include "dumper.h"
-#include <type_traits>
-#include <functional>
 #include <cassert>
+#include <functional>
 #include <ostream>
+#include <type_traits>
+#include "dumper.h"
+#include "types.h"
 
 #ifdef THREAD_SAFE
 #include <atomic>
@@ -95,13 +95,13 @@ namespace stdext {
     class shared_ptr
     {
     public:
-        typedef T element_type;
+        using element_type = T;
 
         shared_ptr() : base(nullptr) {}
         shared_ptr(T* p) { if(p != nullptr) base = new shared_base<T>(p); else base = nullptr; }
-        shared_ptr(shared_ptr const& rhs) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
+        shared_ptr(const shared_ptr& rhs) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
         template<class U>
-        shared_ptr(shared_ptr<U> const& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
+        shared_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
         ~shared_ptr() { if(base != nullptr) base->dec_ref(); }
 
         void reset() { shared_ptr().swap(*this); }
@@ -119,18 +119,21 @@ namespace stdext {
         T* operator->() const { assert(base != nullptr); return base->get(); }
 
         template<class U>
-        shared_ptr& operator=(shared_ptr<U> const& rhs) { shared_ptr(rhs).swap(*this); return *this; }
-        shared_ptr& operator=(shared_ptr const& rhs) { shared_ptr(rhs).swap(*this); return *this; }
+        shared_ptr& operator=(const shared_ptr<U>& rhs) { shared_ptr(rhs).swap(*this); return *this; }
+        shared_ptr& operator=(const shared_ptr& rhs) { shared_ptr(rhs).swap(*this); return *this; }
         shared_ptr& operator=(T* rhs) { shared_ptr(rhs).swap(*this); return *this; }
 
         // implicit conversion to bool
-        typedef shared_base<T>* shared_ptr::* unspecified_bool_type;
+        using unspecified_bool_type = shared_base<T>* shared_ptr::*;
         operator unspecified_bool_type() const { return base == nullptr ? nullptr : &shared_ptr::base; }
         bool operator!() const { return base == nullptr; }
 
         // std::move support
-        shared_ptr(shared_ptr&& rhs) : base(rhs.base) { rhs.base = nullptr; }
-        shared_ptr& operator=(shared_ptr&& rhs) { shared_ptr(static_cast<shared_ptr&&>(rhs)).swap(*this); return *this; }
+        shared_ptr(shared_ptr&& rhs) noexcept : base(rhs.base) { rhs.base = nullptr; }
+        shared_ptr& operator=(shared_ptr&& rhs) noexcept
+        {
+            shared_ptr(static_cast<shared_ptr&&>(rhs)).swap(*this); return *this;
+        }
 
     private:
         shared_ptr(shared_base<T>* base)
@@ -149,15 +152,15 @@ namespace stdext {
     template<class T>
     class weak_ptr {
     public:
-        typedef T element_type;
+        using element_type = T;
 
         weak_ptr() : base(nullptr) {}
-        weak_ptr(shared_ptr<T> const& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const shared_ptr<T>& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
         template<class U>
-        weak_ptr(shared_ptr<U> const& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
-        weak_ptr(weak_ptr<T> const& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const weak_ptr<T>& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
         template<class U>
-        weak_ptr(weak_ptr<U> const& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const weak_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
         ~weak_ptr() { if(base != nullptr) base->dec_weak_ref(); }
 
         void reset() { weak_ptr().swap(*this); }
@@ -169,54 +172,58 @@ namespace stdext {
         bool expired() const { return base ? base->expired() : false; }
         shared_ptr<T> lock() { return shared_ptr<T>(base); }
 
-        weak_ptr& operator=(weak_ptr const& rhs) { weak_ptr(rhs).swap(*this); return *this; }
+        weak_ptr& operator=(const weak_ptr& rhs) { weak_ptr(rhs).swap(*this); return *this; }
         template<class U>
-        weak_ptr& operator=(shared_ptr<U> const& rhs) { weak_ptr(rhs).swap(*this); return *this; }
+        weak_ptr& operator=(const shared_ptr<U>& rhs) { weak_ptr(rhs).swap(*this); return *this; }
         template<class U>
-        weak_ptr& operator=(weak_ptr<T> const& rhs) { weak_ptr(rhs).swap(*this); return *this; }
+        weak_ptr& operator=(const weak_ptr<T>& rhs) { weak_ptr(rhs).swap(*this); return *this; }
 
         // implicit conversion to bool
-        typedef shared_base<T>* weak_ptr::* unspecified_bool_type;
+        using unspecified_bool_type = shared_base<T>* weak_ptr::*;
         operator unspecified_bool_type() const { return base == nullptr ? nullptr : &weak_ptr::base; }
         bool operator!() const { return !expired(); }
 
         // std::move support
-        weak_ptr(weak_ptr&& rhs) : base(rhs.base) { rhs.base = nullptr; }
-        weak_ptr& operator=(weak_ptr&& rhs) { weak_ptr(static_cast<weak_ptr&&>(rhs)).swap(*this); return *this; }
+        weak_ptr(weak_ptr&& rhs) noexcept : base(rhs.base) { rhs.base = nullptr; }
+        weak_ptr& operator=(weak_ptr&& rhs) noexcept
+        {
+            weak_ptr(static_cast<weak_ptr&&>(rhs)).swap(*this); return *this;
+        }
 
     private:
         shared_base<T>* base;
     };
 
-    template<class T, class U> bool operator==(shared_ptr<T> const& a, shared_ptr<U> const& b) { return a.get() == b.get(); }
-    template<class T, class U> bool operator==(weak_ptr<T> const& a, weak_ptr<U> const& b) { return a.get() == b.get(); }
-    template<class T, class U> bool operator==(shared_ptr<T> const& a, weak_ptr<U> const& b) { return a.get() == b.get(); }
-    template<class T, class U> bool operator==(weak_ptr<T> const& a, shared_ptr<U> const& b) { return a.get() == b.get(); }
-    template<class T, class U> bool operator!=(shared_ptr<T> const& a, shared_ptr<U> const& b) { return a.get() != b.get(); }
-    template<class T, class U> bool operator!=(weak_ptr<T> const& a, weak_ptr<U> const& b) { return a.get() != b.get(); }
-    template<class T, class U> bool operator!=(shared_ptr<T> const& a, weak_ptr<U> const& b) { return a.get() != b.get(); }
-    template<class T, class U> bool operator!=(weak_ptr<T> const& a, shared_ptr<U> const& b) { return a.get() != b.get(); }
-    template<class T, class U> bool operator==(shared_ptr<T> const& a, U* b) { return a.get() == b; }
-    template<class T, class U> bool operator==(weak_ptr<T> const& a, U* b) { return a.get() == b; }
-    template<class T, class U> bool operator!=(shared_ptr<T> const& a, U* b) { return a.get() != b; }
-    template<class T, class U> bool operator!=(weak_ptr<T> const& a, U* b) { return a.get() != b; }
-    template<class T, class U> bool operator==(T* a, shared_ptr<U> const& b) { return a == b.get(); }
-    template<class T, class U> bool operator==(T* a, weak_ptr<U> const& b) { return a == b.get(); }
-    template<class T, class U> bool operator!=(T* a, shared_ptr<U> const& b) { return a != b.get(); }
-    template<class T, class U> bool operator!=(T* a, weak_ptr<U> const& b) { return a != b.get(); }
-    template<class T> bool operator<(shared_ptr<T> const& a, shared_ptr<T> const& b) { return std::less<T*>()(a.get(), b.get()); }
-    template<class T> bool operator<(weak_ptr<T> const& a, weak_ptr<T> const& b) { return std::less<T*>()(a.get(), b.get()); }
+    template<class T, class U> bool operator==(const shared_ptr<T>& a, const shared_ptr<U>& b) { return a.get() == b.get(); }
+    template<class T, class U> bool operator==(const weak_ptr<T>& a, const weak_ptr<U>& b) { return a.get() == b.get(); }
+    template<class T, class U> bool operator==(const shared_ptr<T>& a, const weak_ptr<U>& b) { return a.get() == b.get(); }
+    template<class T, class U> bool operator==(const weak_ptr<T>& a, const shared_ptr<U>& b) { return a.get() == b.get(); }
+    template<class T, class U> bool operator!=(const shared_ptr<T>& a, const shared_ptr<U>& b) { return a.get() != b.get(); }
+    template<class T, class U> bool operator!=(const weak_ptr<T>& a, const weak_ptr<U>& b) { return a.get() != b.get(); }
+    template<class T, class U> bool operator!=(const shared_ptr<T>& a, const weak_ptr<U>& b) { return a.get() != b.get(); }
+    template<class T, class U> bool operator!=(const weak_ptr<T>& a, const shared_ptr<U>& b) { return a.get() != b.get(); }
+    template<class T, class U> bool operator==(const shared_ptr<T>& a, U* b) { return a.get() == b; }
+    template<class T, class U> bool operator==(const weak_ptr<T>& a, U* b) { return a.get() == b; }
+    template<class T, class U> bool operator!=(const shared_ptr<T>& a, U* b) { return a.get() != b; }
+    template<class T, class U> bool operator!=(const weak_ptr<T>& a, U* b) { return a.get() != b; }
+    template<class T, class U> bool operator==(T* a, const shared_ptr<U>& b) { return a == b.get(); }
+    template<class T, class U> bool operator==(T* a, const weak_ptr<U>& b) { return a == b.get(); }
+    template<class T, class U> bool operator!=(T* a, const shared_ptr<U>& b) { return a != b.get(); }
+    template<class T, class U> bool operator!=(T* a, const weak_ptr<U>& b) { return a != b.get(); }
+    template<class T> bool operator<(const shared_ptr<T>& a, const shared_ptr<T>& b) { return std::less<T*>()(a.get(), b.get()); }
+    template<class T> bool operator<(const weak_ptr<T>& a, const weak_ptr<T>& b) { return std::less<T*>()(a.get(), b.get()); }
 
-    template<class T> T* get_pointer(shared_ptr<T> const& p) { return p.get(); }
-    template<class T> T* get_pointer(weak_ptr<T> const& p) { return p.get(); }
-    template<class T, class U> shared_ptr<T> static_pointer_cast(shared_ptr<U> const& p) { return static_cast<T*>(p.get()); }
-    template<class T, class U> shared_ptr<T> const_pointer_cast(shared_ptr<U> const& p) { return const_cast<T*>(p.get()); }
-    template<class T, class U> shared_ptr<T> dynamic_pointer_cast(shared_ptr<U> const& p) { return dynamic_cast<T*>(p.get()); }
-    template<class T, typename... Args> stdext::shared_ptr<T> make_shared(Args... args) { return stdext::shared_ptr<T>(new T(args...)); }
+    template<class T> T* get_pointer(const shared_ptr<T>& p) { return p.get(); }
+    template<class T> T* get_pointer(const weak_ptr<T>& p) { return p.get(); }
+    template<class T, class U> shared_ptr<T> static_pointer_cast(const shared_ptr<U>& p) { return static_cast<T*>(p.get()); }
+    template<class T, class U> shared_ptr<T> const_pointer_cast(const shared_ptr<U>& p) { return const_cast<T*>(p.get()); }
+    template<class T, class U> shared_ptr<T> dynamic_pointer_cast(const shared_ptr<U>& p) { return dynamic_cast<T*>(p.get()); }
+    template<class T, typename... Args>
+    shared_ptr<T> make_shared(Args... args) { return stdext::shared_ptr<T>(new T(args...)); }
 
     // operator<< support
-    template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, shared_ptr<Y> const& p) { os << p.get(); return os; }
-    template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, weak_ptr<Y> const& p) { os << p.get(); return os; }
+    template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, const shared_ptr<Y>& p) { os << p.get(); return os; }
+    template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, const weak_ptr<Y>& p) { os << p.get(); return os; }
 }
 
 namespace std {

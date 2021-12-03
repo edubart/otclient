@@ -30,8 +30,10 @@
 #include "luavaluecasts.h"
 #include "map.h"
 #include "missile.h"
+#include "statictext.h"
 #include "thingtypemanager.h"
 #include "tile.h"
+#include "framework/net/inputmessage.h"
 
 void ProtocolGame::parseMessage(const InputMessagePtr& msg)
 {
@@ -498,9 +500,8 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
         std::string category = msg->getString();
         std::string description = msg->getString();
 
-        int highlightState = 0;
         if(g_game.getFeature(Otc::GameIngameStoreHighlights))
-            highlightState = msg->getU8();
+            msg->getU8(); // highlightState
 
         std::vector<std::string> icons;
         const int iconCount = msg->getU8();
@@ -518,16 +519,14 @@ void ProtocolGame::parseStore(const InputMessagePtr& msg)
 void ProtocolGame::parseCoinBalance(const InputMessagePtr& msg)
 {
     const bool update = msg->getU8() == 1;
-    int coins = -1;
-    int transferableCoins = -1;
     if(update) {
         // amount of coins that can be used to buy prodcuts
         // in the ingame store
-        coins = msg->getU32();
+        msg->getU32(); // coins
 
         // amount of coins that can be sold in market
         // or be transfered to another player
-        transferableCoins = msg->getU32();
+        msg->getU32(); // transferableCoins
     }
 }
 
@@ -834,7 +833,7 @@ void ProtocolGame::parseTileAddThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseTileTransformThing(const InputMessagePtr& msg)
 {
-    ThingPtr thing = getMappedThing(msg);
+    const ThingPtr thing = getMappedThing(msg);
     const ThingPtr newThing = getThing(msg);
 
     if(!thing) {
@@ -867,7 +866,7 @@ void ProtocolGame::parseTileRemoveThing(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
 {
-    ThingPtr thing = getMappedThing(msg);
+    const ThingPtr thing = getMappedThing(msg);
     const Position newPos = getPosition(msg);
 
     if(!thing || !thing->isCreature()) {
@@ -880,7 +879,7 @@ void ProtocolGame::parseCreatureMove(const InputMessagePtr& msg)
         return;
     }
 
-    CreaturePtr creature = thing->static_self_cast<Creature>();
+    const CreaturePtr creature = thing->static_self_cast<Creature>();
     creature->allowAppearWalk();
 
     g_map.addThing(thing, newPos, -1);
@@ -1089,7 +1088,7 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
         return;
     }
 
-    EffectPtr effect = EffectPtr(new Effect());
+    const auto effect = EffectPtr(new Effect());
     effect->setId(effectId);
     g_map.addThing(effect, pos);
 }
@@ -1100,7 +1099,7 @@ void ProtocolGame::parseAnimatedText(const InputMessagePtr& msg)
     const int color = msg->getU8();
     const std::string text = msg->getString();
 
-    AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+    const auto animatedText = AnimatedTextPtr(new AnimatedText);
     animatedText->setColor(color);
     animatedText->setText(text);
     g_map.addThing(animatedText, position);
@@ -1117,7 +1116,7 @@ void ProtocolGame::parseDistanceMissile(const InputMessagePtr& msg)
         return;
     }
 
-    MissilePtr missile = MissilePtr(new Missile());
+    const auto missile = MissilePtr(new Missile());
     missile->setId(shotId);
     missile->setPath(fromPos, toPos);
     g_map.addThing(missile, fromPos);
@@ -1128,7 +1127,7 @@ void ProtocolGame::parseCreatureMark(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const int color = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->addTimedSquare(color);
     else
@@ -1157,7 +1156,7 @@ void ProtocolGame::parseCreatureHealth(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const int healthPercent = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(creature) creature->setHealthPercent(healthPercent);
 }
 
@@ -1169,7 +1168,7 @@ void ProtocolGame::parseCreatureLight(const InputMessagePtr& msg)
     light.intensity = msg->getU8();
     light.color = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) {
         g_logger.traceError("could not get creature");
         return;
@@ -1183,7 +1182,7 @@ void ProtocolGame::parseCreatureOutfit(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const Outfit outfit = getOutfit(msg);
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) {
         g_logger.traceError("could not get creature");
         return;
@@ -1202,7 +1201,7 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
 
     const int speed = msg->getU16();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) return;
 
     creature->setSpeed(speed);
@@ -1215,7 +1214,7 @@ void ProtocolGame::parseCreatureSkulls(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const int skull = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) {
         g_logger.traceError("could not get creature");
         return;
@@ -1229,7 +1228,7 @@ void ProtocolGame::parseCreatureShields(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const int shield = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) {
         g_logger.traceError("could not get creature");
         return;
@@ -1243,7 +1242,7 @@ void ProtocolGame::parseCreatureUnpass(const InputMessagePtr& msg)
     const uint id = msg->getU32();
     const bool unpass = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(!creature) {
         g_logger.traceError("could not get creature");
         return;
@@ -1259,7 +1258,7 @@ void ProtocolGame::parseEditText(const InputMessagePtr& msg)
     int itemId;
     if(g_game.getClientVersion() >= 1010) {
         // TODO: processEditText with ItemPtr as parameter
-        ItemPtr item = getItem(msg);
+        const ItemPtr item = getItem(msg);
         itemId = item->getId();
     } else
         itemId = msg->getU16();
@@ -1677,7 +1676,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
         for(int i = 0; i < 2; ++i) {
             if(value[i] == 0)
                 continue;
-            AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+            auto animatedText = AnimatedTextPtr(new AnimatedText);
             animatedText->setColor(color[i]);
             animatedText->setText(std::to_string(value[i]));
             g_map.addThing(animatedText, pos);
@@ -1695,7 +1694,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
         const int color = msg->getU8();
         text = msg->getString();
 
-        AnimatedTextPtr animatedText = AnimatedTextPtr(new AnimatedText);
+        const auto animatedText = AnimatedTextPtr(new AnimatedText);
         animatedText->setColor(color);
         animatedText->setText(std::to_string(value));
         g_map.addThing(animatedText, pos);
@@ -1714,7 +1713,7 @@ void ProtocolGame::parseTextMessage(const InputMessagePtr& msg)
 
 void ProtocolGame::parseCancelWalk(const InputMessagePtr& msg)
 {
-    const Otc::Direction direction = static_cast<Otc::Direction>(msg->getU8());
+    const auto direction = static_cast<Otc::Direction>(msg->getU8());
 
     g_game.processWalkCancel(direction);
 }
@@ -1943,7 +1942,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     for(int i = 0; i < sizeButtons; ++i) {
         std::string value = msg->getString();
         int buttonId = msg->getU8();
-        buttonList.push_back(std::make_tuple(buttonId, value));
+        buttonList.emplace_back(buttonId, value);
     }
 
     const int sizeChoices = msg->getU8();
@@ -1951,7 +1950,7 @@ void ProtocolGame::parseModalDialog(const InputMessagePtr& msg)
     for(int i = 0; i < sizeChoices; ++i) {
         std::string value = msg->getString();
         int choideId = msg->getU8();
-        choiceList.push_back(std::make_tuple(choideId, value));
+        choiceList.emplace_back(choideId, value);
     }
 
     int enterButton, escapeButton;
@@ -2029,7 +2028,7 @@ void ProtocolGame::parseCreatureType(const InputMessagePtr& msg)
     const uint32 id = msg->getU32();
     const uint8 type = msg->getU8();
 
-    CreaturePtr creature = g_map.getCreatureById(id);
+    const CreaturePtr creature = g_map.getCreatureById(id);
     if(creature)
         creature->setType(type);
     else
@@ -2252,7 +2251,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         }
 
         const int healthPercent = msg->getU8();
-        const Otc::Direction direction = static_cast<Otc::Direction>(msg->getU8());
+        const auto direction = static_cast<Otc::Direction>(msg->getU8());
         const Outfit outfit = getOutfit(msg);
 
         Light light;
@@ -2324,7 +2323,7 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
         if(!creature)
             g_logger.traceError("invalid creature");
 
-        const Otc::Direction direction = static_cast<Otc::Direction>(msg->getU8());
+        const auto direction = static_cast<Otc::Direction>(msg->getU8());
         if(creature)
             creature->turn(direction);
 
@@ -2376,7 +2375,7 @@ StaticTextPtr ProtocolGame::getStaticText(const InputMessagePtr& msg, int)
     const Color color = Color::from8bit(colorByte);
     const std::string fontName = msg->getString();
     const std::string text = msg->getString();
-    StaticTextPtr staticText = StaticTextPtr(new StaticText);
+    auto staticText = StaticTextPtr(new StaticText);
     staticText->setText(text);
     staticText->setFont(fontName);
     staticText->setColor(color);
@@ -2389,5 +2388,5 @@ Position ProtocolGame::getPosition(const InputMessagePtr& msg)
     const uint16 y = msg->getU16();
     const uint8 z = msg->getU8();
 
-    return Position(x, y, z);
+    return { x, y, z };
 }

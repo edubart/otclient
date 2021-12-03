@@ -20,9 +20,10 @@
  * THE SOFTWARE.
  */
 
-#include "particle.h"
 #include "particlesystem.h"
 #include <framework/core/clock.h>
+#include "particle.h"
+#include "particleaffector.h"
 
 ParticleSystem::ParticleSystem()
 {
@@ -34,7 +35,7 @@ void ParticleSystem::load(const OTMLNodePtr& node)
 {
     for(const OTMLNodePtr& childNode : node->children()) {
         if(childNode->tag() == "Emitter") {
-            ParticleEmitterPtr emitter = ParticleEmitterPtr(new ParticleEmitter());
+            auto emitter = ParticleEmitterPtr(new ParticleEmitter());
             emitter->load(childNode);
             m_emitters.push_back(emitter);
         } else if(childNode->tag().find("Affector") != std::string::npos) {
@@ -60,7 +61,7 @@ void ParticleSystem::addParticle(const ParticlePtr& particle)
 
 void ParticleSystem::render()
 {
-    for(auto& particle : m_particles)
+    for(const auto& particle : m_particles)
         particle->render();
 }
 
@@ -69,7 +70,7 @@ void ParticleSystem::update()
     static const float delay = 0.0166; // 60 updates/s
 
     // check time
-    float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
+    const float elapsedTime = g_clock.seconds() - m_lastUpdateTime;
     if(elapsedTime < delay)
         return;
 
@@ -81,7 +82,7 @@ void ParticleSystem::update()
 
     m_lastUpdateTime = g_clock.seconds() - std::fmod(elapsedTime, delay);
 
-    auto self = static_self_cast<ParticleSystem>();
+    const auto self = static_self_cast<ParticleSystem>();
     for(int i = 0; i < std::floor(elapsedTime / delay); ++i) {
         // update emitters
         for(auto it = m_emitters.begin(); it != m_emitters.end();) {

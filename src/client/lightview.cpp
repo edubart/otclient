@@ -20,17 +20,13 @@
  * THE SOFTWARE.
  */
 
-#include <framework/graphics/framebuffer.h>
-#include <framework/graphics/framebuffermanager.h>
-#include <framework/graphics/image.h>
-#include <framework/graphics/painter.h>
-#include <framework/graphics/drawpool.h>
 #include "lightview.h"
-#include "mapview.h"
+#include <framework/graphics/drawpool.h>
 #include "map.h"
+#include "mapview.h"
 #include "spritemanager.h"
 
-LightView::LightView(const MapViewPtr& mapView) : m_mapView(mapView), m_pool(g_drawPool.createPoolF(PoolType::LIGHT)) { resize(); }
+LightView::LightView(const MapViewPtr& mapView) : m_pool(g_drawPool.createPoolF(LIGHT)), m_mapView(mapView) { resize(); }
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
@@ -50,9 +46,9 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     lights.push_back(LightSource{ pos , light.color, radius, light.brightness });
 }
 
-void LightView::setShade(const Point& point, const std::vector<Otc::Direction> dirs)
+void LightView::setShade(const Point& point, const std::vector<Otc::Direction>& dirs)
 {
-    size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
+    const size_t index = (m_mapView->m_drawDimension.width() * (point.y / m_mapView->m_tileSize)) + (point.x / m_mapView->m_tileSize);
     if(index >= m_shades.size()) return;
     auto& shade = m_shades[index];
     shade.floor = m_currentFloor;
@@ -84,7 +80,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
                 shade.floor = -1;
 
                 auto newPos = shade.pos;
-                for(auto dir : shade.dirs) {
+                for(const auto dir : shade.dirs) {
                     if(dir == Otc::South)
                         newPos.y -= SPRITE_SIZE / 1.6;
                     else if(dir == Otc::East)

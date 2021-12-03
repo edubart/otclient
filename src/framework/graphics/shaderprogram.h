@@ -23,8 +23,10 @@
 #ifndef SHADERPROGRAM_H
 #define SHADERPROGRAM_H
 
-#include "shader.h"
 #include <framework/luaengine/luaobject.h>
+#include <GL/glew.h>
+
+#include "shader.h"
 
  // @bindclass
 class ShaderProgram : public LuaObject
@@ -35,7 +37,7 @@ class ShaderProgram : public LuaObject
 
 public:
     ShaderProgram();
-    ~ShaderProgram();
+    ~ShaderProgram() override;
 
     bool addShader(const ShaderPtr& shader);
     bool addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode);

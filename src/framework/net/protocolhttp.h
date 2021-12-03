@@ -24,7 +24,6 @@
 #define PROTOCOLHTTP_H
 
 #include "declarations.h"
-#include "connection.h"
 
 #include <framework/luaengine/luaobject.h>
 
@@ -33,7 +32,7 @@ class ProtocolHttp : public LuaObject
 {
 public:
     ProtocolHttp();
-    virtual ~ProtocolHttp();
+    ~ProtocolHttp() override;
 
     void connect(const std::string& host, uint16 port);
     void disconnect();

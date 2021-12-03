@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include "math.h"
+#include <cmath>
 #include <random>
 
 #ifdef _MSC_VER
@@ -30,9 +30,9 @@
 namespace stdext {
     uint32_t adler32(const uint8_t* buffer, size_t size)
     {
-        size_t a = 1, b = 0, tlen;
+        size_t a = 1, b = 0;
         while(size > 0) {
-            tlen = size > 5552 ? 5552 : size;
+            size_t tlen = size > 5552 ? 5552 : size;
             size -= tlen;
             do {
                 a += *buffer++;
