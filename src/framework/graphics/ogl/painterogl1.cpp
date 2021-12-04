@@ -118,30 +118,6 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 #endif
 }
 
-void PainterOGL1::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-        return;
-
-    setTexture(texture.get());
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addQuad(dest, src);
-    drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
-}
-
-void PainterOGL1::drawFilledRect(const Rect& dest)
-{
-    if(dest.isEmpty())
-        return;
-
-    setTexture(nullptr);
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRect(dest);
-    drawCoords(m_coordsBuffer);
-}
-
 void PainterOGL1::setMatrixMode(MatrixMode matrixMode)
 {
     if(m_matrixMode == static_cast<GLenum>(matrixMode))

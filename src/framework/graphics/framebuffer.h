@@ -86,6 +86,9 @@ private:
         m_smooth{ true },
         m_useAlphaWriting{ false },
         m_disableBlend{ false };
+
+    Rect m_dest, m_src;
+    CoordsBuffer m_coordsBuffer;
 };
 
 #endif

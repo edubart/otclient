@@ -41,8 +41,6 @@ public:
     void unbind() override;
 
     void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-    void drawFilledRect(const Rect& dest) override;
 
     void setDrawProgram(PainterShaderProgram* drawProgram) { m_drawProgram = drawProgram; }
 

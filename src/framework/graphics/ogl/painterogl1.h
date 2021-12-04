@@ -50,8 +50,6 @@ public:
     void refreshState() override;
 
     void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src) override;
-    void drawFilledRect(const Rect& dest) override;
 
     void setMatrixMode(MatrixMode matrixMode);
     void setTransformMatrix(const Matrix3& transformMatrix) override;

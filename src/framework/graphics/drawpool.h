@@ -62,6 +62,8 @@ public:
     void addBoundingRect(const Rect& dest, Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
+    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
+
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
     void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
     void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
@@ -92,12 +94,12 @@ private:
 
     Painter::PainterState generateState();
 
-    CoordsBuffer m_coordsbuffer;
+    CoordsBuffer m_coordsBuffer;
     std::array<PoolPtr, UNKNOW + 1> m_pools;
 
     PoolPtr m_currentPool, n_unknowPool;
 
-    bool m_multiThread, m_forceGrouping;
+    bool m_forceGrouping;
 
     friend class GraphicalApplication;
 };

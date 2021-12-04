@@ -106,25 +106,3 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     if(!textured)
         PainterShaderProgram::enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }
-
-void PainterOGL2::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
-{
-    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
-        return;
-
-    setTexture(texture);
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addQuad(dest, src);
-    drawCoords(m_coordsBuffer, DrawMode::TriangleStrip);
-}
-
-void PainterOGL2::drawFilledRect(const Rect& dest)
-{
-    if(dest.isEmpty())
-        return;
-
-    m_coordsBuffer.clear();
-    m_coordsBuffer.addRect(dest);
-    drawCoords(m_coordsBuffer);
-}

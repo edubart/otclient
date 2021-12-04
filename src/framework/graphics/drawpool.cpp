@@ -157,26 +157,26 @@ void DrawPool::drawObject(Pool::DrawObject& obj)
 
     for(const auto& method : obj.drawMethods) {
         if(method.type == Pool::DrawMethodType::BOUNDING_RECT) {
-            m_coordsbuffer.addBoudingRect(method.rects.first, method.intValue);
+            m_coordsBuffer.addBoudingRect(method.rects.first, method.intValue);
         } else if(method.type == Pool::DrawMethodType::RECT) {
             if(obj.drawMode == Painter::DrawMode::Triangles)
-                m_coordsbuffer.addRect(method.rects.first, method.rects.second);
+                m_coordsBuffer.addRect(method.rects.first, method.rects.second);
             else
-                m_coordsbuffer.addQuad(method.rects.first, method.rects.second);
+                m_coordsBuffer.addQuad(method.rects.first, method.rects.second);
         } else if(method.type == Pool::DrawMethodType::TRIANGLE) {
-            m_coordsbuffer.addTriangle(std::get<0>(method.points), std::get<1>(method.points), std::get<2>(method.points));
+            m_coordsBuffer.addTriangle(std::get<0>(method.points), std::get<1>(method.points), std::get<2>(method.points));
         } else if(method.type == Pool::DrawMethodType::UPSIDEDOWN_RECT) {
             if(obj.drawMode == Painter::DrawMode::Triangles)
-                m_coordsbuffer.addUpsideDownRect(method.rects.first, method.rects.second);
+                m_coordsBuffer.addUpsideDownRect(method.rects.first, method.rects.second);
             else
-                m_coordsbuffer.addUpsideDownQuad(method.rects.first, method.rects.second);
+                m_coordsBuffer.addUpsideDownQuad(method.rects.first, method.rects.second);
         } else if(method.type == Pool::DrawMethodType::REPEATED_RECT) {
-            m_coordsbuffer.addRepeatedRects(method.rects.first, method.rects.second);
+            m_coordsBuffer.addRepeatedRects(method.rects.first, method.rects.second);
         }
     }
 
-    g_painter->drawCoords(m_coordsbuffer, obj.drawMode);
-    m_coordsbuffer.clear();
+    g_painter->drawCoords(m_coordsBuffer, obj.drawMode);
+    m_coordsBuffer.clear();
 }
 
 void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color)
@@ -309,6 +309,18 @@ void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
     pool->m_dest = dest;
     pool->m_src = src;
     pool->m_state.alphaWriting = false;
+}
+
+void DrawPool::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
+{
+    if(dest.isEmpty() || src.isEmpty() || texture->isEmpty())
+        return;
+
+    g_painter->setTexture(texture.get());
+
+    m_coordsBuffer.clear();
+    m_coordsBuffer.addQuad(dest, src);
+    g_painter->drawCoords(m_coordsBuffer, Painter::DrawMode::TriangleStrip);
 }
 
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method)
