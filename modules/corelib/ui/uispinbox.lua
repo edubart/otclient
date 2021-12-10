@@ -18,17 +18,17 @@ function UISpinBox.create()
 end
 
 function UISpinBox:onSetup()
-    g_mouse.bindAutoPress(self:getChildById('up'), function() self:up() end, 300)
-    g_mouse.bindAutoPress(self:getChildById('down'), function() self:down() end,
+    g_mouse.bindAutoPress(self:getChildById('up'), function() self:upSpin() end, 300)
+    g_mouse.bindAutoPress(self:getChildById('down'), function() self:downSpin() end,
                           300)
 end
 
 function UISpinBox:onMouseWheel(mousePos, direction)
     if not self.mouseScroll then return false end
     if direction == MouseWheelUp then
-        self:up()
+        self:upSpin()
     elseif direction == MouseWheelDown then
-        self:down()
+        self:downSpin()
     end
     return true
 end
@@ -157,3 +157,7 @@ function UISpinBox:setStep(step) self.step = step or 1 end
 function UISpinBox:setMouseScroll(mouseScroll) self.mouseScroll = mouseScroll end
 
 function UISpinBox:getMouseScroll() return self.mouseScroll end
+
+function UISpinBox:upSpin() self:setValue(self.value + self.step) end
+
+function UISpinBox:downSpin() self:setValue(self.value - self.step) end
