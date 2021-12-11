@@ -557,7 +557,7 @@ void Creature::updateWalkingTile()
             newWalkingTile->addWalkingCreature(static_self_cast<Creature>());
 
             // recache visible tiles in map views
-            if(newWalkingTile->isEmpty())
+            if(!newWalkingTile->isEmpty())
                 g_map.notificateTileUpdate(newWalkingTile->getPosition());
         }
         m_walkingTile = newWalkingTile;
