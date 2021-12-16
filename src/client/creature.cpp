@@ -133,6 +133,10 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
         auto* datType = rawGetThingType();
 
+        // Hack for fix outfit glitching on walk (#177)
+        if(isLocalPlayer() && datType->getDisplacementY() < 3)
+            dest.y -= 3;
+
         // yPattern => creature addon
         for(int yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
             // continue if we dont have this addon
