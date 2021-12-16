@@ -85,7 +85,7 @@ function onGameQuestLine(questId, questMissions)
     end
 
     questLineWindow.onDestroy = function()
-        if questLogWindow then questLogWindow:show() end
+        if questLogWindow then questLogWindow:show(true) end
         questLineWindow = nil
     end
 
