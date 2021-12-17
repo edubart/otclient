@@ -46,7 +46,7 @@ public:
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, TextureType textureType, Otc::Direction direction, Color color);
 
     void drawOutfit(const Rect& destRect, bool resize, Color color = Color::white);
-    void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, float horizontalStretchFactor, float verticalStretchFactor, int drawFlags);
+    void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, bool useGray, float horizontalStretchFactor, float verticalStretchFactor, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
     void setName(const std::string& name);

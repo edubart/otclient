@@ -40,7 +40,9 @@ local defaultOptions = {
     shadowFloorIntensity = 30,
     optimizeFps = true,
     forceEffectOptimization = true,
-    drawEffectOnTop = false
+    drawEffectOnTop = false,
+    floorViewMode = 1,
+    floorFading = 500
 }
 
 local optionsWindow
@@ -56,6 +58,7 @@ local audioButton
 
 local crosshairCombobox
 local antialiasingModeCombobox
+local floorViewModeCombobox
 
 local function setupGraphicsEngines()
     local enginesRadioGroup = UIRadioGroup.create()
@@ -172,6 +175,19 @@ function setupComboBox()
     antialiasingModeCombobox.onOptionChange =
         function(comboBox, option)
             setOption('antialiasingMode', comboBox:getCurrentOption().data)
+        end
+
+    floorViewModeCombobox = graphicsPanel:recursiveGetChildById('floorViewMode')
+
+    floorViewModeCombobox:addOption('Normal', 0)
+    floorViewModeCombobox:addOption('Fade', 1)
+    floorViewModeCombobox:addOption('Locked', 2)
+    floorViewModeCombobox:addOption('Always', 3)
+    floorViewModeCombobox:addOption('Always with transparency', 4)
+
+    floorViewModeCombobox.onOptionChange =
+        function(comboBox, option)
+            setOption('floorViewMode', comboBox:getCurrentOption().data)
         end
 end
 
@@ -292,6 +308,11 @@ function setOption(key, value, force)
                                                                             'Shadow floor Intensity: %s%%',
                                                                             value))
         gameMapPanel:setShadowFloorIntensity(1 - (value / 100))
+    elseif key == 'floorFading' then
+        graphicsPanel:getChildById('floorFadingLabel'):setText(tr(
+                                                                   'Floor Fading: %s ms',
+                                                                   value))
+        gameMapPanel:setFloorFading(tonumber(value))
     elseif key == 'drawViewportEdge' then
         gameMapPanel:setDrawViewportEdge(value)
     elseif key == 'floatingEffect' then
@@ -333,6 +354,13 @@ function setOption(key, value, force)
     elseif key == 'antialiasingMode' then
         gameMapPanel:setAntiAliasingMode(value)
         antialiasingModeCombobox:setCurrentOptionByData(value, true)
+    elseif key == 'floorViewMode' then
+        gameMapPanel:setFloorViewMode(value)
+        floorViewModeCombobox:setCurrentOptionByData(value, true)
+
+        local fadeMode = value == 1
+        graphicsPanel:getChildById('floorFading'):setEnabled(fadeMode)
+        graphicsPanel:getChildById('floorFadingLabel'):setEnabled(fadeMode)
     end
 
     -- change value for keybind updates

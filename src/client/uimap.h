@@ -42,12 +42,10 @@ public:
     void setCameraPosition(const Position& pos) { m_mapView->setCameraPosition(pos); }
     void setMaxZoomIn(int maxZoomIn) { m_maxZoomIn = maxZoomIn; }
     void setMaxZoomOut(int maxZoomOut) { m_maxZoomOut = maxZoomOut; }
-    void setMultifloor(bool enable) { m_mapView->setMultifloor(enable); }
     void lockVisibleFloor(int floor) { m_mapView->lockFirstVisibleFloor(floor); }
     void unlockVisibleFloor() { m_mapView->unlockFirstVisibleFloor(); }
     void setVisibleDimension(const Size& visibleDimension);
-    void setViewMode(MapView::ViewMode viewMode) { m_mapView->setViewMode(viewMode); }
-    void setAutoViewMode(bool enable) { m_mapView->setAutoViewMode(enable); }
+    void setFloorViewMode(MapView::FloorViewMode viewMode) { m_mapView->setFloorViewMode(viewMode); }
     void setDrawTexts(bool enable) { m_mapView->setDrawTexts(enable); }
     void setDrawNames(bool enable) { m_mapView->setDrawNames(enable); }
     void setDrawHealthBars(bool enable) { m_mapView->setDrawHealthBars(enable); }
@@ -62,8 +60,6 @@ public:
     bool zoomIn();
     bool zoomOut();
     bool setZoom(int zoom);
-    bool isMultifloor() { return m_mapView->isMultifloor(); }
-    bool isAutoViewModeEnabled() { return m_mapView->isAutoViewModeEnabled(); }
     bool isDrawingTexts() { return m_mapView->isDrawingTexts(); }
     bool isDrawingNames() { return m_mapView->isDrawingNames(); }
     bool isDrawingHealthBars() { return m_mapView->isDrawingHealthBars(); }
@@ -81,7 +77,7 @@ public:
     bool isInRange(const Position& pos) { return m_mapView->isInRange(pos); }
 
     PainterShaderProgramPtr getMapShader() { return m_mapView->getShader(); }
-    MapView::ViewMode getViewMode() { return m_mapView->getViewMode(); }
+    MapView::FloorViewMode getFloorViewMode() { return m_mapView->getFloorViewMode(); }
     CreaturePtr getFollowingCreature() { return m_mapView->getFollowingCreature(); }
     Position getCameraPosition() { return m_mapView->getCameraPosition(); }
     Position getPosition(const Point& mousePos);
@@ -97,6 +93,7 @@ public:
     void setCrosshairTexture(const std::string& texturePath) { m_mapView->setCrosshairTexture(texturePath); }
     void setDrawHighlightTarget(const bool enable) { m_mapView->setDrawHighlightTarget(enable); }
     void setAntiAliasingMode(const MapView::AntialiasingMode mode) { m_mapView->setAntiAliasingMode(mode); }
+    void setFloorFading(const uint16 v) { m_mapView->setFloorFading(v); }
 
 protected:
     void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;

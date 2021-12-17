@@ -38,7 +38,8 @@ namespace stdext {
         float elapsed_seconds() { return (micros() - m_start) / 1000000.f; }
         ticks_t elapsed_millis() { return (micros() - m_start) / 1000; }
         ticks_t elapsed_micros() { return micros() - m_start; }
-        void restart() { m_start = micros(); }
+        void restart(int shift = 0) { m_start = stdext::micros() - shift; }
+
     private:
         ticks_t m_start;
     };

@@ -152,11 +152,7 @@ void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleN
 {
     UIWidget::onStyleApply(styleName, styleNode);
     for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "multifloor")
-            setMultifloor(node->value<bool>());
-        else if(node->tag() == "auto-view-mode")
-            setAutoViewMode(node->value<bool>());
-        else if(node->tag() == "draw-texts")
+        if(node->tag() == "draw-texts")
             setDrawTexts(node->value<bool>());
         else if(node->tag() == "draw-lights")
             setDrawLights(node->value<bool>());

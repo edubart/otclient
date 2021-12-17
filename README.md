@@ -16,6 +16,7 @@
 - Highlight Mouse Target (press shift to select any object)
 - Crosshair
 - Floor Shadowing
+- Floor View Mode (Normal, Fade, Locked, Always, Always with transparency)
 - Anti-Aliasing Mode Options (Note: Smooth Retro will consume a little more GPU)
 - Floating Effects Option
 - Adjusted Path Finding
@@ -26,6 +27,7 @@
 - Client Config in [config.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/config.h)
 
 ##### Community (Features)
+- Floor Fading by [@Kondra](https://github.com/OTCv8)
 - Access to widget children via widget.childId by [@Hugo0x1337](https://github.com/Hugo0x1337)
 - Shader System Fix (CTRL + Y) by [@FreshyPeshy](https://github.com/FreshyPeshy)
 - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)

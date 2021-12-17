@@ -205,14 +205,8 @@ void Creature::drawOutfit(const Rect& destRect, bool resize, const Color color)
     internalDrawOutfit(dest, scaleFactor, true, TextureType::SMOOTH, Otc::South, color);
 }
 
-void Creature::drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags)
+void Creature::drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, bool useGray, const float horizontalStretchFactor, const float verticalStretchFactor, int drawFlags)
 {
-    if(isDead() || !canBeSeen())
-        return;
-
-    const auto& tile = getTile();
-    if(!tile) return;
-
     const PointF jumpOffset = getJumpOffset() * scaleFactor;
     const auto creatureOffset = Point(16 - getDisplacementX(), -getDisplacementY() - 2);
 
@@ -222,7 +216,6 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     p.y *= verticalStretchFactor;
     p += parentRect.topLeft();
 
-    const bool useGray = tile->isCovered();
     auto fillColor = Color(96, 96, 96);
 
     if(!useGray) {

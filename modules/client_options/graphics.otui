@@ -68,10 +68,27 @@ Panel
     !text: tr('Don\'t stretch/shrink Game Window')
 
   Label
+    id: floorViewModeLabel
+    !text: tr('Floor View Mode')..':'
+    phantom: false
+    anchors.left: prev.left
+    anchors.top: prev.bottom
+    margin-top: 13
+
+  ComboBox
+    id: floorViewMode
+    width: 180
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-top: -4
+    margin-left: 5
+    mouse-scroll: false
+
+  Label
     id: antialiasingModeLabel
     !text: tr('Antialiasing Mode')..':'
     phantom: false
-    anchors.left: prev.left
+    anchors.left: floorViewModeLabel.left
     anchors.top: prev.bottom
     margin-top: 13
 
@@ -121,6 +138,25 @@ Panel
     margin-top: 3
     minimum: 0
     maximum: 100
+
+  Label
+    id: floorFadingLabel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 12
+    @onSetup: |
+      local value = modules.client_options.getOption('floorFading')
+      self:setText(tr('Floor Fading: %s ms', value))
+
+  OptionScrollbar
+    id: floorFading
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 3
+    minimum: 0
+    maximum: 1000
 
   Label
     id: backgroundFrameRateLabel
