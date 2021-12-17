@@ -267,7 +267,7 @@ void MapView::drawCreatureInformation()
         bool useGray = false;
         if(m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY) {
             useGray = tile->isCovered() && !tile->getPosition().isInRange(cameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true);
-        } else if(m_floorViewMode == FloorViewMode::FADE) {
+        } else if(canFloorFade()) {
             useGray = g_map.isCovered(tile->getPosition(), m_cachedFirstVisibleFloor);
         } else {
             useGray = tile->isCovered();
