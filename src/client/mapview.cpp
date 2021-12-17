@@ -182,7 +182,7 @@ void MapView::drawFloor()
             if(lightView) lightView->setFloor(z);
 
             Position _camera = cameraPosition;
-            const bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && z < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - z);
+            const bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && z < m_cachedFirstVisibleFloor&& _camera.coveredUp(cameraPosition.z - z);
             const auto& map = m_cachedVisibleTiles[z];
 
             g_drawPool.startPosition();
