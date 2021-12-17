@@ -780,8 +780,8 @@ TilePtr MapView::getTopTile(Position tilePos)
     if(m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && tilePos.isInRange(m_lastCameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE))
         tile = g_map.getTile(tilePos);
     else {
-        tilePos.coveredUp(tilePos.z - m_floorMin);
-        for(uint8 i = m_floorMin; i <= m_floorMax; ++i) {
+        tilePos.coveredUp(tilePos.z - m_cachedFirstVisibleFloor);
+        for(uint8 i = m_cachedFirstVisibleFloor; i <= m_floorMax; ++i) {
             tile = g_map.getTile(tilePos);
             if(tile && tile->isClickable())
                 break;
