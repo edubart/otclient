@@ -264,8 +264,14 @@ void MapView::drawCreatureInformation()
         const auto& tile = creature->getTile();
         if(!tile) continue;
 
-        bool useGray = m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY ?
-            tile->isCovered() : !tile->getPosition().isInRange(cameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true);
+        bool useGray = false;
+        if(m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY) {
+            useGray = tile->isCovered() && !tile->getPosition().isInRange(cameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true);
+        } else if(m_floorViewMode == FloorViewMode::FADE) {
+            useGray = g_map.isCovered(tile->getPosition(), m_cachedFirstVisibleFloor);
+        } else {
+            useGray = tile->isCovered();
+        }
 
         creature->drawInformation(m_rectCache.rect,
                                   transformPositionTo2D(creature->getPosition(), cameraPosition),
