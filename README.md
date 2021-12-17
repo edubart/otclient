@@ -28,6 +28,7 @@
 
 ##### Community (Features)
 - Floor Fading by [@Kondra](https://github.com/OTCv8)
+- Action Bar by [@DipSet](https://github.com/Dip-Set1)
 - Access to widget children via widget.childId by [@Hugo0x1337](https://github.com/Hugo0x1337)
 - Shader System Fix (CTRL + Y) by [@FreshyPeshy](https://github.com/FreshyPeshy)
 - Refactored Battle Module by [@andersonfaaria](https://github.com/andersonfaaria)
