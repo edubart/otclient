@@ -212,5 +212,5 @@ ticks_t Animator::getTotalDuration()
         time += pair.first + (pair.second - pair.first);
     }
 
-    return time * m_loopCount;
+    return time * std::max(m_loopCount, 1);
 }
