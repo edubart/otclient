@@ -119,7 +119,9 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     // only cancel client side walks
     if(m_walking && m_preWalking)
         stopWalk();
-
+    
+    g_map.notificateCameraMove(m_walkOffset); 
+    
     lockWalk();
     retryAutoWalk();
 
