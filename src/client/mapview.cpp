@@ -427,7 +427,7 @@ void MapView::updateVisibleTilesCache()
                     if(!canFloorFade()) {
                         // skip tiles that are completely behind another tile
                         if(tile->isCompletelyCovered(cachedFirstVisibleFloor)) {
-                            if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || tilePos.z < cameraPosition.z && tile->isCovered()) {
+                            if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
                                 continue;
                             }
                         }
