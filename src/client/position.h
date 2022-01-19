@@ -34,6 +34,7 @@
 #include <math.h>
 #include <ostream>
 #include <vector>
+#include <string>
 
 class Position
 {
@@ -290,6 +291,11 @@ public:
         return false;
     }
 
+    std::string toString()
+    {
+        return std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z);
+    }
+
     int32_t x{ UINT16_MAX };
     int32_t y{ UINT16_MAX };
     uint8_t z{ UINT8_MAX };
@@ -320,4 +326,5 @@ inline std::istream& operator>>(std::istream& in, Position& pos)
     pos.z = z;
     return in;
 }
+
 #endif

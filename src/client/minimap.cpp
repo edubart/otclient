@@ -93,6 +93,7 @@ void Minimap::terminate()
 
 void Minimap::clean()
 {
+    std::lock_guard<std::mutex> lock(m_lock);
     for(int i = 0; i <= MAX_Z; ++i)
         m_tileBlocks[i].clear();
 }
@@ -215,6 +216,21 @@ const MinimapTile& Minimap::getTile(const Position& pos)
         return block.getTile(pos.x - offsetPos.x, pos.y - offsetPos.y);
     }
     return nulltile;
+}
+
+std::pair<MinimapBlock_ptr, MinimapTile> Minimap::threadGetTile(const Position& pos)
+{
+    std::lock_guard<std::mutex> lock(m_lock);
+    static MinimapTile nulltile;
+
+    if(pos.z <= MAX_Z && hasBlock(pos)) {
+        MinimapBlock_ptr block = m_tileBlocks[pos.z][getBlockIndex(pos)];
+        if(block) {
+            Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+            return std::make_pair(block, block->getTile(pos.x - offsetPos.x, pos.y - offsetPos.y));
+        }
+    }
+    return std::make_pair(nullptr, nulltile);
 }
 
 bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, float colorFactor)
@@ -395,7 +411,7 @@ void Minimap::saveOtmm(const std::string& fileName)
         for(uint8_t z = 0; z <= MAX_Z; ++z) {
             for(auto& it : m_tileBlocks[z]) {
                 const int index = it.first;
-                MinimapBlock& block = it.second;
+                MinimapBlock& block = *it.second;
                 if(!block.wasSeen())
                     continue;
 

@@ -402,7 +402,8 @@ namespace Otc
         PathFindAllowNotSeenTiles = 1,
         PathFindAllowCreatures = 2,
         PathFindAllowNonPathable = 4,
-        PathFindAllowNonWalkable = 8
+        PathFindAllowNonWalkable = 8,
+        PathFindIgnoreCreatures = 16
     };
 
     enum AutomapFlags : uint8_t {

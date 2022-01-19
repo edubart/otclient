@@ -92,25 +92,21 @@ void LocalPlayer::preWalk(Otc::Direction direction)
 
 bool LocalPlayer::retryAutoWalk()
 {
-    if(m_autoWalkDestination.isValid()) {
+    if (m_autoWalkDestination.isValid()) {
         g_game.stop();
+        auto self = asLocalPlayer();
 
-        if(++m_autoWalkRetries <= 3) {
-            if(m_autoWalkContinueEvent) {
+        if (m_autoWalkRetries <= 3) {
+            if (m_autoWalkContinueEvent)
                 m_autoWalkContinueEvent->cancel();
-            }
-
-            auto self = asLocalPlayer();
-            m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([self]() {
-                if(self->m_autoWalkDestination.isValid()) {
-                    self->autoWalk(self->m_autoWalkDestination, true);
-                }
-            }, 350);
+            m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, asLocalPlayer(), m_autoWalkDestination, true), 200);
+            self->m_autoWalkRetries += 1;
+            return true;
         }
-
-        return true;
+        else {
+            self->m_autoWalkDestination = Position();
+        }
     }
-
     return false;
 }
 
@@ -134,63 +130,58 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 
 bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 {
-    if(!retry)
+    // reset state
+    m_autoWalkDestination = Position();
+    m_lastAutoWalkPosition = Position();
+    if (m_autoWalkContinueEvent)
+        m_autoWalkContinueEvent->cancel();
+    m_autoWalkContinueEvent = nullptr;
+
+    if (!retry)
         m_autoWalkRetries = 0;
 
-    if(m_position == destination) return false;
-
-    if(m_position.isInRange(destination, 1, 1))
-        return g_game.walk(m_position.getDirectionFromPosition(destination));
-
-    bool tryKnownPath = false;
-    if(destination != m_autoWalkDestination) {
-        m_knownCompletePath = false;
-        tryKnownPath = true;
-    }
+    if (destination == m_position)
+        return true;
 
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result;
     std::vector<Otc::Direction> limitedPath;
 
-    if(destination == m_position)
-        return true;
-
-    // try to find a path that we know
-    if(tryKnownPath || m_knownCompletePath) {
-        result = g_map.findPath(m_position, destination, 25000, 0);
-        if(std::get<1>(result) == Otc::PathFindResultOk) {
-            limitedPath = std::get<0>(result);
-            // limit to 127 steps
-            if(limitedPath.size() > 127)
-                limitedPath.resize(127);
-            m_knownCompletePath = true;
-        }
-    }
-
-    // no known path found, try to discover one
-    if(limitedPath.empty()) {
-        result = g_map.findPath(m_position, destination, 25000, Otc::PathFindAllowNotSeenTiles);
-        if(std::get<1>(result) != Otc::PathFindResultOk) {
-            if(!retry || !retryAutoWalk()) {
-                callLuaField("onAutoWalkFail", std::get<1>(result));
-                stopAutoWalk();
-            }
-
-            return false;
-        }
-
-        Position currentPos = m_position;
-        for(auto dir : std::get<0>(result)) {
-            currentPos = currentPos.translatedToDirection(dir);
-            if(!hasSight(currentPos))
-                break;
-            limitedPath.push_back(dir);
-        }
-    }
-
     m_autoWalkDestination = destination;
-    m_lastAutoWalkPosition = m_position.translatedToDirections(limitedPath).back();
+    auto self(asLocalPlayer());
+    g_map.findPathAsync(m_position, destination, [self](PathFindResult_ptr result) {
+        if (self->m_autoWalkDestination != result->destination)
+            return;
 
-    g_game.autoWalk(limitedPath);
+        if (result->status != Otc::PathFindResultOk) {
+            if (self->m_autoWalkRetries > 0 && self->m_autoWalkRetries <= 3) { // try again in 300, 700, 1200 ms if canceled by server
+                self->m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, self, result->destination, true), 200 + self->m_autoWalkRetries * 100);
+                return;
+            }
+            self->m_autoWalkDestination = Position();
+            self->callLuaField("onAutoWalkFail", result->status);
+            return;
+        }
+
+        if (result->path.size() > 127)
+            result->path.resize(127);
+
+        if (result->path.empty()) {
+            self->m_autoWalkDestination = Position();
+            self->callLuaField("onAutoWalkFail", result->status);
+            return;
+        }
+
+        auto finalAutowalkPos = self->m_position.translatedToDirections(result->path).back();
+        if (self->m_autoWalkDestination != finalAutowalkPos) {
+            self->m_lastAutoWalkPosition = finalAutowalkPos;
+        }
+
+        g_game.autoWalk(result->path, result->start);
+        });
+
+    if (!retry)
+        lockWalk();
+
     return true;
 }
 

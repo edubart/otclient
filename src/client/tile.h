@@ -103,6 +103,7 @@ public:
     bool isDrawable();
     bool isBorder() { return !m_borderDirections.empty(); };
     bool hasCreature();
+    bool hasBlockingCreature();
     bool hasTallThings() { return m_countFlag.hasTallThings; }
     bool hasWideThings() { return m_countFlag.hasWideThings; }
     bool hasTallItems() { return m_countFlag.hasTallItems; }

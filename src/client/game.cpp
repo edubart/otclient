@@ -654,39 +654,37 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
     return true;
 }
 
-void Game::autoWalk(std::vector<Otc::Direction> dirs)
+void Game::autoWalk(std::vector<Otc::Direction> dirs, Position startPos)
 {
     if(!canPerformGameAction())
         return;
 
-    if(dirs.empty())
+    if(dirs.size() == 0)
         return;
 
-    // protocol limits walk path up to 127 directions
+    // protocol limits walk path
     if(dirs.size() > 127) {
-        g_logger.error("Auto walk path too great, the maximum number of directions is 127");
+        g_logger.error("Auto walk path too great");
         return;
     }
 
     // must cancel follow before any new walk
-    if(isFollowing())
+    if(isFollowing()) {
         cancelFollow();
+    }
 
-    const auto it = dirs.begin();
-    const Otc::Direction direction = *it;
-    if(!m_localPlayer->canWalk(direction))
-        return;
+    auto it = dirs.begin();
+    Otc::Direction direction = *it;
 
-    if(!m_localPlayer->isWalking()) {
-        const TilePtr toTile = g_map.getTile(m_localPlayer->getPosition().translatedToDirection(direction));
-        if(toTile && toTile->isWalkable()) {
-            m_localPlayer->preWalk(direction);
+    uint8_t flags = 0x04; // auto walk flag
 
-            if(getFeature(Otc::GameForceFirstAutoWalkStep)) {
-                forceWalk(direction);
-                dirs.erase(it);
-            }
-        }
+    TilePtr toTile = g_map.getTile(startPos.translatedToDirection(direction));
+    if(startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk(direction)) {
+        m_localPlayer->preWalk(direction);
+
+        forceWalk(direction);
+        dirs.erase(it);
+        flags |= 0x01; // prewalk flag
     }
 
     g_lua.callGlobalField("g_game", "onAutoWalk", dirs);

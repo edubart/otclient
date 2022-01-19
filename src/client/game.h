@@ -165,7 +165,7 @@ public:
 
     // walk related
     bool walk(Otc::Direction direction, bool isKeyDown = false);
-    void autoWalk(std::vector<Otc::Direction> dirs);
+    void autoWalk(std::vector<Otc::Direction> dirs, Position startPos);
     void forceWalk(Otc::Direction direction);
     void turn(Otc::Direction direction);
     void stop();

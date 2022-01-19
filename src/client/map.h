@@ -120,6 +120,25 @@ private:
     std::array<TilePtr, BLOCK_SIZE* BLOCK_SIZE> m_tiles;
 };
 
+struct PathFindResult
+{
+    Otc::PathFindResult status = Otc::PathFindResultNoWay;
+    std::vector<Otc::Direction> path;
+    int complexity = 0;
+    Position start;
+    Position destination;
+};
+using PathFindResult_ptr = std::shared_ptr<PathFindResult>;
+
+struct Node {
+    float cost;
+    float totalCost;
+    Position pos;
+    Node* prev;
+    int distance;
+    int unseen;
+};
+
 //@bindsingleton g_map
 class Map
 {
@@ -232,7 +251,10 @@ public:
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
 
-    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, uint16 maxComplexity, uint32 flags = 0);
+    std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> findPath(const Position& start, const Position& goal, int maxComplexity, int flags = 0);
+    PathFindResult_ptr newFindPath(const Position& start, const Position& goal, std::shared_ptr<std::list<Node*>> visibleNodes);
+    void findPathAsync(const Position& start, const Position& goal, std::function<void(PathFindResult_ptr)> callback);
+    std::map<std::string, std::tuple<int, int, int, std::string>> findEveryPath(const Position& start, int maxDistance, const std::map<std::string, std::string>& params);
 
     void setFloatingEffect(bool enable) { m_floatingEffect = enable; }
     bool isDrawingFloatingEffects() { return m_floatingEffect; }

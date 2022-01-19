@@ -33,7 +33,8 @@ constexpr uint32 OTMM_SIGNATURE = 0x4D4d544F;
 enum MinimapTileFlags {
     MinimapTileWasSeen = 1,
     MinimapTileNotPathable = 2,
-    MinimapTileNotWalkable = 4
+    MinimapTileNotWalkable = 4,
+    MinimapTileEmpty = 8
 };
 
 #pragma pack(push,1) // disable memory alignment
@@ -73,6 +74,8 @@ private:
 
 #pragma pack(pop)
 
+using MinimapBlock_ptr = std::shared_ptr<MinimapBlock>;
+
 class Minimap
 {
 public:
@@ -88,6 +91,7 @@ public:
 
     void updateTile(const Position& pos, const TilePtr& tile);
     const MinimapTile& getTile(const Position& pos);
+    std::pair<MinimapBlock_ptr, MinimapTile> threadGetTile(const Position& pos);
 
     bool loadImage(const std::string& fileName, const Position& topLeft, float colorFactor);
     void saveImage(const std::string& fileName, const Rect& mapRect);
@@ -97,7 +101,14 @@ public:
 private:
     Rect calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale);
     bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].find(getBlockIndex(pos)) != m_tileBlocks[pos.z].end(); }
-    MinimapBlock& getBlock(const Position& pos) { return m_tileBlocks[pos.z][getBlockIndex(pos)]; }
+    MinimapBlock& getBlock(const Position& pos)
+    {
+        std::lock_guard<std::mutex> lock(m_lock);
+        auto& ptr = m_tileBlocks[pos.z][getBlockIndex(pos)];
+        if(!ptr)
+            ptr = std::make_shared<MinimapBlock>();
+        return *ptr;
+    }
     Point getBlockOffset(const Point& pos)
     {
         return {
@@ -113,7 +124,8 @@ private:
         };
     }
     uint getBlockIndex(const Position& pos) { return ((pos.y / MMBLOCK_SIZE) * (65536 / MMBLOCK_SIZE)) + (pos.x / MMBLOCK_SIZE); }
-    std::unordered_map<uint, MinimapBlock> m_tileBlocks[MAX_Z + 1];
+    std::unordered_map<uint, MinimapBlock_ptr> m_tileBlocks[MAX_Z + 1];
+    std::mutex m_lock;
 };
 
 extern Minimap g_minimap;
