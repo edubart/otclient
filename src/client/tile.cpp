@@ -660,8 +660,8 @@ bool Tile::hasCreature()
 
 bool Tile::hasBlockingCreature()
 {
-    for (const ThingPtr& thing : m_things)
-        if (thing->isCreature() && !thing->static_self_cast<Creature>()->isPassable() && !thing->isLocalPlayer())
+    for(const ThingPtr& thing : m_things)
+        if(thing->isCreature() && !thing->static_self_cast<Creature>()->isPassable() && !thing->isLocalPlayer())
             return true;
     return false;
 }
