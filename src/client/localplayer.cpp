@@ -119,7 +119,7 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
     g_map.notificateCameraMove(m_walkOffset); 
     
     lockWalk();
-    retryAutoWalk();
+    if (retryAutoWalk()) return;
 
     // turn to the cancel direction
     if(direction != Otc::InvalidDirection)
@@ -133,9 +133,6 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
     // reset state
     m_autoWalkDestination = Position();
     m_lastAutoWalkPosition = Position();
-    if (m_autoWalkContinueEvent)
-        m_autoWalkContinueEvent->cancel();
-    m_autoWalkContinueEvent = nullptr;
 
     if (!retry)
         m_autoWalkRetries = 0;
@@ -154,6 +151,9 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 
         if (result->status != Otc::PathFindResultOk) {
             if (self->m_autoWalkRetries > 0 && self->m_autoWalkRetries <= 3) { // try again in 300, 700, 1200 ms if canceled by server
+                if (self->m_autoWalkContinueEvent)
+                     self->m_autoWalkContinueEvent->cancel();
+                
                 self->m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, self, result->destination, true), 200 + self->m_autoWalkRetries * 100);
                 return;
             }
