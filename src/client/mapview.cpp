@@ -40,6 +40,8 @@
 
 #include "framework/graphics/texturemanager.h"
 
+#include <framework/platform/platformwindow.h>
+
 MapView::MapView()
 {
     m_pools.map = g_drawPool.createPoolF(MAP);
@@ -235,10 +237,16 @@ void MapView::drawFloor()
                 g_drawPool.resetOpacity();
         }
 
-        if(m_crosshairTexture && m_mousePosition.isValid()) {
-            const Point& point = transformPositionTo2D(m_mousePosition, cameraPosition);
-            const auto crosshairRect = Rect(point, m_tileSize, m_tileSize);
-            g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
+        if(m_rectCache.rect.contains(g_window.getMousePosition())) {
+            if(m_crosshairTexture) {
+                const Point& point = transformPositionTo2D(m_mousePosition, cameraPosition);
+                const auto crosshairRect = Rect(point, m_tileSize, m_tileSize);
+                g_drawPool.addTexturedRect(crosshairRect, m_crosshairTexture);
+            }
+        } else if(m_lastHighlightTile) {
+            m_mousePosition = {}; // Invalidate mousePosition
+            m_lastHighlightTile->unselect();
+            m_lastHighlightTile = nullptr;
         }
     }
 }
