@@ -1,9 +1,0 @@
-Module
-  name: client_stats
-  description: Sends client statistics to a server
-  author: baxnie
-  website: https://github.com/edubart/otclient
-  sandboxed: true
-  scripts: [ stats ]
-  @onLoad: init()
-  @onUnload: terminate()
