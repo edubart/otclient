@@ -138,9 +138,9 @@ void Game::processLoginWait(const std::string& message, int time)
     g_lua.callGlobalField("g_game", "onLoginWait", message, time);
 }
 
-void Game::processLoginToken(bool unknown)
+void Game::processSessionEnd(int reason)
 {
-    g_lua.callGlobalField("g_game", "onLoginToken", unknown);
+    g_lua.callGlobalField("g_game", "onSessionEnd", reason);
 }
 
 void Game::processLogin()
@@ -1481,7 +1481,7 @@ void Game::setProtocolVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change protocol version while online");
 
-    if(version != 0 && (version < 740 || version > 1099))
+    if(version != 0 && (version < 740 || version > 1281))
         stdext::throw_exception(stdext::format("Protocol version %d not supported", version));
 
     m_protocolVersion = version;
@@ -1499,7 +1499,7 @@ void Game::setClientVersion(int version)
     if(isOnline())
         stdext::throw_exception("Unable to change client version while online");
 
-    if(version != 0 && (version < 740 || version > 1099))
+    if(version != 0 && (version < 740 || version > 1281))
         stdext::throw_exception(stdext::format("Client version %d not supported", version));
 
     m_features.reset();
@@ -1665,6 +1665,11 @@ void Game::setClientVersion(int version)
 
     if(version >= 1094) {
         enableFeature(Otc::GameAdditionalSkills);
+    }
+
+    if(version >= 1281) {
+        disableFeature(Otc::GameEnvironmentEffect);
+        disableFeature(Otc::GameItemAnimationPhase);
     }
 
     m_clientVersion = version;

@@ -76,7 +76,7 @@ protected:
     static void processLoginError(const std::string& error);
     static void processLoginAdvice(const std::string& message);
     static void processLoginWait(const std::string& message, int time);
-    static void processLoginToken(bool unknown);
+    static void processSessionEnd(int reason);
     static void processLogin();
     void processPendingGame();
     void processEnterGame();

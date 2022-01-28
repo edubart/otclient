@@ -4,7 +4,7 @@
 
 #### :heart:  If you are interested in supporting the project, go to this [link](https://www.paypal.com/donate/?business=CV9D5JF8E46LY&no_recurring=0&item_name=Thank+you+very+much+for+your+donation.&currency_code=BRL), any value is great help, thank you.
 
-### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.757
+### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.758
 
 
 ### Features
@@ -27,6 +27,7 @@
 - Client Config in [config.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/config.h)
 
 ##### Community (Features)
+- Support Tibia 12.81 by [@Nekiro](https://github.com/nekiro)
 - Floor Fading by [@Kondra](https://github.com/OTCv8)
 - Action Bar by [@DipSet](https://github.com/Dip-Set1)
 - Access to widget children via widget.childId by [@Hugo0x1337](https://github.com/Hugo0x1337)

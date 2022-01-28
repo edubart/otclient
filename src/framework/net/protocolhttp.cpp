@@ -61,12 +61,11 @@ void ProtocolHttp::send(const std::string& message)
 
 void ProtocolHttp::recv()
 {
-    if(m_connection)
-        m_connection->read_until("\r\n\r\n", [capture0 = asProtocolHttp()](auto&& PH1, auto&& PH2)
-    {
-        capture0->onRecv(std::forward<decltype(PH1)>(PH1),
-                         std::forward<decltype(PH2)>(PH2));
-    });
+    if(m_connection) {
+        m_connection->read_some([capture0 = asProtocolHttp()](auto&& PH1, auto&& PH2) {
+            capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
+        });
+    }
 }
 
 void ProtocolHttp::onConnect()

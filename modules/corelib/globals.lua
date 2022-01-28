@@ -55,4 +55,6 @@ function removeEvent(event)
     end
 end
 
+json = require "json"
+
 -- @}

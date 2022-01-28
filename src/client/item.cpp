@@ -80,6 +80,7 @@ void Item::setId(uint32 id)
 {
     if(!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
+
     m_serverId = g_things.findItemTypeByClientId(id)->getServerId();
     m_clientId = id;
 }

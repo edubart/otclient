@@ -8,6 +8,7 @@ local motdButton
 local enterGameButton
 local clientBox
 local protocolLogin
+local protocolHttp
 local motdEnabled = true
 
 -- private functions
@@ -193,6 +194,9 @@ function EnterGame.terminate()
         protocolLogin:cancelLogin()
         protocolLogin = nil
     end
+    if protocolHttp then
+        protocolHttp = nil
+    end
     EnterGame = nil
 end
 
@@ -315,34 +319,125 @@ function EnterGame.doLogin()
     g_settings.set('port', G.port)
     g_settings.set('client-version', clientVersion)
 
-    protocolLogin = ProtocolLogin.create()
-    protocolLogin.onLoginError = onError
-    protocolLogin.onMotd = onMotd
-    protocolLogin.onSessionKey = onSessionKey
-    protocolLogin.onCharacterList = onCharacterList
-    protocolLogin.onUpdateNeeded = onUpdateNeeded
+    if clientVersion >= 1281 then
+        -- http login server
+        protocolHttp = ProtocolHttp.create()
+        protocolHttp.onConnect = function(protocol)
+            local body = json.encode({email = G.account, password = G.password})
+            local message = ''
+            message = message .. "POST /login HTTP/1.1\r\n"
+            message = message .. "Host: " .. G.host .. "\r\n"
+            message = message .. "Accept: */*\r\n"
+            message = message .. "Content-Type: application/json\r\n"
+            message = message .. "Connection: close\r\n"
+            message = message .. "Content-Length: " .. body:len() .. "\r\n\r\n"
+            message = message .. body
+            protocol:send(message)
+            protocol:recv()
+        end
 
-    loadBox = displayCancelBox(tr('Please wait'),
-                               tr('Connecting to login server...'))
-    connect(loadBox, {
-        onCancel = function(msgbox)
+        protocolHttp.onRecv = function(protocol, message)
+            local split = message:split('\r\n\r\n')
+            if #split < 2 or not string.find(message, 'HTTP/1.1 200 OK') then
+                onError(nil, "Connection timed out.", 408)
+                return
+            end
+
+            protocol:disconnect()
+
+            local response = json.decode(split[2])
+            if response.errorMessage then
+                onError(nil, response.errorMessage, response.errorCode)
+                return
+            end
+
+            local worlds = {}
+            for _, world in ipairs(response.playdata.worlds) do
+                worlds[world.id] = {
+                    name = world.name,
+                    ip = world.externaladdress,
+                    port = world.externalport,
+                    previewState = world.previewstate == 1,
+                }
+            end
+
+            local characters = {}
+            for index, character in ipairs(response.playdata.characters) do
+                local world = worlds[character.worldid]
+                characters[index] = {
+                    name = character.name,
+                    worldName = world.name,
+                    worldIp = world.ip,
+                    worldPort = world.port,
+                    previewState = world.previewstate
+                }
+            end
+
+            local account = {
+                status = "",
+                premDays = math.floor((response.session.premiumuntil - os.time()) / 86400),
+                subStatus = response.session.premiumuntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
+            }
+
+            -- set session key
+            G.sessionKey = response.session.sessionkey
+
+            onCharacterList(nil, characters, account)
+        end
+
+        protocolHttp.onError = onError
+
+        loadBox = displayCancelBox(tr('Please wait'),
+                                   tr('Connecting to login server...'))
+        connect(loadBox, {
+            onCancel = function(msgbox)
+                loadBox = nil
+                protocolHttp:disconnect()
+                EnterGame.show()
+            end
+        })
+
+        g_game.setClientVersion(clientVersion)
+        g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
+        g_game.chooseRsa(G.host)
+
+        if modules.game_things.isLoaded() then
+            protocolHttp:connect(G.host, G.port)
+        else
+            loadBox:destroy()
             loadBox = nil
-            protocolLogin:cancelLogin()
             EnterGame.show()
         end
-    })
-
-    g_game.setClientVersion(clientVersion)
-    g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
-    g_game.chooseRsa(G.host)
-
-    if modules.game_things.isLoaded() then
-        protocolLogin:login(G.host, G.port, G.account, G.password,
-                            G.authenticatorToken, G.stayLogged)
     else
-        loadBox:destroy()
-        loadBox = nil
-        EnterGame.show()
+        protocolLogin = ProtocolLogin.create()
+        protocolLogin.onLoginError = onError
+        protocolLogin.onMotd = onMotd
+        protocolLogin.onSessionKey = onSessionKey
+        protocolLogin.onCharacterList = onCharacterList
+        protocolLogin.onUpdateNeeded = onUpdateNeeded
+
+        loadBox = displayCancelBox(tr('Please wait'),
+                                   tr('Connecting to login server...'))
+        connect(loadBox, {
+            onCancel = function(msgbox)
+                loadBox = nil
+                protocolLogin:cancelLogin()
+                EnterGame.show()
+            end
+        })
+
+        g_game.setClientVersion(clientVersion)
+        g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
+        g_game.chooseRsa(G.host)
+
+        if modules.game_things.isLoaded() then
+            protocolLogin:login(G.host, G.port, G.account, G.password,
+                                G.authenticatorToken, G.stayLogged)
+        else
+            loadBox:destroy()
+            loadBox = nil
+            EnterGame.show()
+        end
     end
 end
 
