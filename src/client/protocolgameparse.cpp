@@ -180,7 +180,10 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseDistanceMissile(msg);
                 break;
             case Proto::GameServerItemClasses:
-                parseItemClasses(msg);
+                if(g_game.getClientVersion() >= 1000)
+                    parseItemClasses(msg);
+                else
+                    parseCreatureMark(msg);
                 break;
             case Proto::GameServerTrappers:
                 parseTrappers(msg);
@@ -1180,6 +1183,18 @@ void ProtocolGame::parseItemClasses(const InputMessagePtr& msg)
     for(uint8_t i = 0; i < tiersSize + 1; i++) {
         msg->getU8(); // ??
     }
+}
+
+void ProtocolGame::parseCreatureMark(const InputMessagePtr& msg)
+{
+    const uint id = msg->getU32();
+    const int color = msg->getU8();
+
+    const CreaturePtr creature = g_map.getCreatureById(id);
+    if(creature)
+        creature->addTimedSquare(color);
+    else
+        g_logger.traceError("could not get creature");
 }
 
 void ProtocolGame::parseTrappers(const InputMessagePtr& msg)
