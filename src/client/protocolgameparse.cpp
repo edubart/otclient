@@ -180,7 +180,7 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
                 parseDistanceMissile(msg);
                 break;
             case Proto::GameServerItemClasses:
-                if(g_game.getClientVersion() >= 1000)
+                if(g_game.getClientVersion() >= 1281)
                     parseItemClasses(msg);
                 else
                     parseCreatureMark(msg);
