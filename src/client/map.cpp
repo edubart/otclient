@@ -1177,8 +1177,8 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
                     continue;
                 Position neighbor = node->pos.translated(i, j);
                 if(neighbor.x < 0 || neighbor.y < 0) continue;
-                auto it = nodes.find(neighbor);
-                if(it == nodes.end()) {
+                auto it2 = nodes.find(neighbor);
+                if(it2 == nodes.end()) {
                     bool wasSeen = false;
                     bool hasCreature = false;
                     bool isNotWalkable = true;
@@ -1209,34 +1209,34 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
                     if((!wasSeen && !allowUnseen) || (hasStairs && !ignoreStairs && neighbor != destPos) ||
                        (isNotPathable && !ignoreNonPathable && neighbor != destPos) || (isNotWalkable && !ignoreNonWalkable) ||
                        hasReachedMaxDistance) {
-                        it = nodes.emplace(neighbor, nullptr).first;
+                        it2 = nodes.emplace(neighbor, nullptr).first;
                     } else if((hasCreature && !ignoreCreatures)) {
-                        it = nodes.emplace(neighbor, nullptr).first;
+                        it2 = nodes.emplace(neighbor, nullptr).first;
                         if(ignoreLastCreature) {
                             ret[neighbor.toString()] = std::make_tuple(node->totalCost + 100, node->distance + 1,
                                                                        node->pos.getDirectionFromPosition(neighbor),
                                                                        node->pos.toString());
                         }
                     } else {
-                        it = nodes.emplace(neighbor, new Node{ (float)speed, 10000000.0f, neighbor, node, node->distance + 1, wasSeen ? 0 : 1 }).first;
+                        it2 = nodes.emplace(neighbor, new Node{ (float)speed, 10000000.0f, neighbor, node, node->distance + 1, wasSeen ? 0 : 1 }).first;
                     }
                 }
 
-                if(!it->second) {
+                if(!it2->second) {
                     continue;
                 }
 
                 float diagonal = ((i == 0 || j == 0) ? 1.0f : 3.0f);
-                float cost = it->second->cost * diagonal;
+                float cost = it2->second->cost * diagonal;
                 if(ignoreCost)
                     cost = 1;
-                if(node->totalCost + cost < it->second->totalCost) {
-                    it->second->totalCost = node->totalCost + cost;
-                    it->second->prev = node;
-                    if(it->second->unseen)
-                        it->second->unseen = node->unseen + 1;
-                    it->second->distance = node->distance + 1;
-                    searchList.push(it->second);
+                if(node->totalCost + cost < it2->second->totalCost) {
+                    it2->second->totalCost = node->totalCost + cost;
+                    it2->second->prev = node;
+                    if(it2->second->unseen)
+                        it2->second->unseen = node->unseen + 1;
+                    it2->second->distance = node->distance + 1;
+                    searchList.push(it2->second);
                 }
             }
         }

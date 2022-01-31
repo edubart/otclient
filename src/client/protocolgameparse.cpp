@@ -1566,7 +1566,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
     if(g_game.getClientVersion() >= 1281) {
         // bonus cap
         int capacity = msg->getU32(); // base + bonus capacity
-        int baseCapacity = msg->getU32(); // base capacity
+        msg->getU32(); // base capacity
 
         //m_localPlayer->setFreeCapacity(freeCapacity);
         m_localPlayer->setTotalCapacity(capacity);
