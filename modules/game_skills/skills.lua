@@ -240,7 +240,10 @@ function refresh()
     end
 
     update()
+    updateHeight()
+end
 
+function updateHeight()
     local maximumHeight = 8 -- margin top and bottom
 
     if g_game.isOnline() then
@@ -256,13 +259,10 @@ function refresh()
             local percentBar = skillButton:getChildById('percent')
 
             if skillButton:isVisible() then
-                maximumHeight = maximumHeight + skillButton:getHeight() + skillButton:getMarginBottom()
                 if percentBar then
                     showPercentBar(skillButton, skillSettings[char][skillButton:getId()] ~= 1)
-                    if not percentBar:isVisible() then
-                        maximumHeight = maximumHeight - 6
-                    end
                 end
+                maximumHeight = maximumHeight + skillButton:getHeight() + skillButton:getMarginBottom()
             end
         end
     else
@@ -290,6 +290,7 @@ function toggle()
     else
         skillsWindow:open()
         skillsButton:setOn(true)
+        updateHeight()
     end
 end
 
