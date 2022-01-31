@@ -323,10 +323,11 @@ function EnterGame.doLogin()
         -- http login server
         protocolHttp = ProtocolHttp.create()
         protocolHttp.onConnect = function(protocol)
-            local body = json.encode({email = G.account, password = G.password})
+            local body = json.encode({email = G.account, password = G.password, type = "login"})
             local message = ''
-            message = message .. "POST /login HTTP/1.1\r\n"
+            message = message .. "POST /login.php HTTP/1.1\r\n"
             message = message .. "Host: " .. G.host .. "\r\n"
+            message = message .. "User-Agent: Mozilla/5.0\r\n"
             message = message .. "Accept: */*\r\n"
             message = message .. "Content-Type: application/json\r\n"
             message = message .. "Connection: close\r\n"
@@ -337,15 +338,21 @@ function EnterGame.doLogin()
         end
 
         protocolHttp.onRecv = function(protocol, message)
-            local split = message:split('\r\n\r\n')
-            if #split < 2 or not string.find(message, 'HTTP/1.1 200 OK') then
+            if not string.find(message, 'HTTP/1.1 200 OK') then
                 onError(nil, "Connection timed out.", 408)
+                return
+            end
+
+            local _, bodyStart = message:find("{")
+            local _, bodyEnd = message:find(".*}")
+            if bodyStart == -1 or bodyEnd == -1 then
+                onError(nil, "Bad Request.", 400)
                 return
             end
 
             protocol:disconnect()
 
-            local response = json.decode(split[2])
+            local response = json.decode(message:sub(bodyStart, bodyEnd))
             if response.errorMessage then
                 onError(nil, response.errorMessage, response.errorCode)
                 return
@@ -375,8 +382,8 @@ function EnterGame.doLogin()
 
             local account = {
                 status = "",
-                premDays = math.floor((response.session.premiumuntil - os.time()) / 86400),
-                subStatus = response.session.premiumuntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
+                premDays = math.floor((tonumber(response.session.premiumuntil) - os.time()) / 86400),
+                subStatus = tonumber(response.session.premiumuntil) > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
             }
 
             -- set session key
