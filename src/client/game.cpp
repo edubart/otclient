@@ -575,7 +575,7 @@ bool Game::walk(const Otc::Direction direction, bool isKeyDown /*= false*/)
     }
 
     // check we can walk and add new walk event if false
-    if(!m_localPlayer->canWalk(direction)) {
+    if(!m_localPlayer->canWalk()) {
         if(m_nextScheduledDir != direction) {
             const float ticks = std::clamp<float>(m_localPlayer->getStepTicksLeft(), 1, 2000);
             if(isKeyDown || (m_scheduleLastWalk && ticks < std::min<int>(m_localPlayer->getStepDuration() / 3, 250))) {
@@ -677,7 +677,7 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs, Position startPos)
     Otc::Direction direction = *it;
 
     TilePtr toTile = g_map.getTile(startPos.translatedToDirection(direction));
-    if(startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk(direction, true)) {
+    if(startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk(true)) {
         m_localPlayer->preWalk(direction);
 
         forceWalk(direction);
