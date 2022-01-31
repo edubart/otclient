@@ -38,14 +38,14 @@ void LocalPlayer::lockWalk(int millis)
     m_walkLockExpiration = std::max<ticks_t>(m_walkLockExpiration, g_clock.millis() + millis);
 }
 
-bool LocalPlayer::canWalk()
+bool LocalPlayer::canWalk(Otc::Direction direction, bool ignoreLock)
 {
     // paralyzed
     if(isParalyzed())
         return false;
 
     // cannot walk while locked
-    if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
+    if ((m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration) && !ignoreLock)
         return false;
 
     if(isAutoWalking())
@@ -140,6 +140,9 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
     if (destination == m_position)
         return true;
 
+    if (m_position.isInRange(destination, 1, 1))
+        return g_game.walk(m_position.getDirectionFromPosition(destination));
+    
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result;
     std::vector<Otc::Direction> limitedPath;
 

@@ -676,15 +676,12 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs, Position startPos)
     auto it = dirs.begin();
     Otc::Direction direction = *it;
 
-    uint8_t flags = 0x04; // auto walk flag
-
     TilePtr toTile = g_map.getTile(startPos.translatedToDirection(direction));
-    if(startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk()) {
+    if(startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk(direction, true)) {
         m_localPlayer->preWalk(direction);
 
         forceWalk(direction);
         dirs.erase(it);
-        flags |= 0x01; // prewalk flag
     }
 
     g_lua.callGlobalField("g_game", "onAutoWalk", dirs);

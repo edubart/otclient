@@ -39,7 +39,7 @@ public:
     void lockWalk(int millis = 250);
     void stopAutoWalk();
     bool autoWalk(const Position& destination, bool retry = false);
-    bool canWalk();
+    bool canWalk(Otc::Direction direction, bool ignoreLock = false); 
 
     void setStates(int states);
     void setSkill(Otc::Skill skill, int level, int levelPercent);

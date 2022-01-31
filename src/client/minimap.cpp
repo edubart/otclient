@@ -74,8 +74,6 @@ void MinimapBlock::update()
 
 void MinimapBlock::updateTile(int x, int y, const MinimapTile& tile)
 {
-    if(tile.color == 255)
-        return;
     if(m_tiles[getTileIndex(x, y)].color != tile.color)
         m_mustUpdate = true;
 
