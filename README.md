@@ -4,7 +4,7 @@
 
 #### :heart:  If you are interested in supporting the project, go to this [link](https://www.paypal.com/donate/?business=CV9D5JF8E46LY&no_recurring=0&item_name=Thank+you+very+much+for+your+donation.&currency_code=BRL), any value is great help, thank you.
 
-### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: 2.758
+### Based on [edubart/otclient](https://github.com/edubart/otclient) Rev: [2.758](https://github.com/edubart/otclient/commit/45afb65b90284ce70f328733715043860186bf50)
 
 
 ### Features
