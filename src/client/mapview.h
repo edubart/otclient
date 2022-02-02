@@ -188,7 +188,7 @@ private:
     void drawCreatureInformation();
     void drawText();
 
-    bool canFloorFade();
+    bool canFloorFade() { return m_floorViewMode == FloorViewMode::FADE && m_floorFading; }
 
     float getFadeLevel(uint8 z)
     {

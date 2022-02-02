@@ -380,8 +380,10 @@ void MapView::updateVisibleTilesCache()
         m_floorMin = m_floorMax = cameraPosition.z;
     }
 
+    const bool _canFloorFade = canFloorFade();
+
     uint8 cachedFirstVisibleFloor = m_cachedFirstVisibleFloor;
-    if(m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY || canFloorFade()) {
+    if(m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY || _canFloorFade) {
         cachedFirstVisibleFloor = calcFirstVisibleFloor(false);
     }
 
@@ -432,7 +434,7 @@ void MapView::updateVisibleTilesCache()
                         }
                     }
 
-                    if(!canFloorFade()) {
+                    if(!_canFloorFade) {
                         // skip tiles that are completely behind another tile
                         if(tile->isCompletelyCovered(cachedFirstVisibleFloor)) {
                             if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
@@ -910,9 +912,4 @@ bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 void MapView::setCrosshairTexture(const std::string& texturePath)
 {
     m_crosshairTexture = texturePath.empty() ? nullptr : g_textures.getTexture(texturePath);
-}
-
-bool MapView::canFloorFade()
-{
-    return m_floorViewMode == FloorViewMode::FADE && m_floorFading && !g_app.canOptimize();
 }
