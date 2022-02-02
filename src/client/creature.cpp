@@ -74,7 +74,6 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Hi
         if(isLocalPlayer() && (g_map.getLight().intensity < 64 || m_position.z > SEA_FLOOR)) {
             if(light.intensity == 0) {
                 light.intensity = 2;
-                light.brightness = .2f;
             } else if(light.color == 0 || light.color > 215) {
                 light.color = 215;
             }
