@@ -449,7 +449,7 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     g_drawPool.forceGrouping(false);
 
     if(lightView && hasLight()) {
-        Light light = getLight();
+        const Light light = getLight();
         if(light.intensity > 0) {
             lightView->addLightSource(screenRect.center(), light);
         }

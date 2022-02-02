@@ -122,10 +122,9 @@ struct MarketData {
 };
 
 struct Light {
-    Light() { intensity = 0; color = 215; brightness = 1.f; }
+    Light() { intensity = 0; color = 215; }
     uint8 intensity;
     uint8 color;
-    float brightness;
 };
 
 class ThingType : public LuaObject

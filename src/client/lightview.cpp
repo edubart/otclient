@@ -28,13 +28,11 @@
 
 LightView::LightView(const MapViewPtr& mapView) : m_pool(g_drawPool.createPoolF(LIGHT)), m_mapView(mapView) { resize(); }
 
-void LightView::addLightSource(const Point& pos, Light& light)
+void LightView::addLightSource(const Point& pos, const Light& light)
 {
     if(!isDark()) return;
 
     const uint16 radius = (light.intensity * SPRITE_SIZE * m_mapView->m_scaleFactor);
-
-    light.brightness = light.intensity / 5.f;
 
     auto& lights = m_lights[m_currentFloor];
     if(!lights.empty()) {
@@ -45,7 +43,7 @@ void LightView::addLightSource(const Point& pos, Light& light)
         }
     }
 
-    lights.push_back(LightSource{ pos , light.color, radius, light.brightness });
+    lights.push_back(LightSource{ pos , light.color, radius, std::min<float>(light.intensity / 5.f, 1.f) });
 }
 
 void LightView::setShade(const Point& point, const std::vector<Otc::Direction>& dirs)

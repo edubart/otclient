@@ -48,7 +48,7 @@ public:
 
     void resize();
     void draw(const Rect& dest, const Rect& src);
-    void addLightSource(const Point& mainCenter, Light& light);
+    void addLightSource(const Point& mainCenter, const Light& light);
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
     void setFloor(const uint8 floor) { m_currentFloor = floor; }
