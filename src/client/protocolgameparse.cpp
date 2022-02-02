@@ -282,6 +282,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerChooseOutfit:
                 parseOpenOutfitWindow(msg);
                 break;
+            case Proto::GameServerKillTracker:
+                parseKillTracker(msg);
+                break;
             case Proto::GameServerVipAdd:
                 parseVipAdd(msg);
                 break;
@@ -1150,9 +1153,9 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
 
 void ProtocolGame::parseAnimatedText(const InputMessagePtr& msg)
 {
-    const Position position = getPosition(msg);
+    const Position& position = getPosition(msg);
     const int color = msg->getU8();
-    const std::string text = msg->getString();
+    const std::string& text = msg->getString();
 
     const auto animatedText = AnimatedTextPtr(new AnimatedText);
     animatedText->setColor(color);
@@ -1920,15 +1923,18 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
     const Outfit currentOutfit = getOutfit(msg);
 
     // mount color bytes are required here regardless of having one
-    if(g_game.getClientVersion() >= 1281 && currentOutfit.getMount() == 0) {
-        msg->getU8(); //head
-        msg->getU8(); //body
-        msg->getU8(); //legs
-        msg->getU8(); //feet
+    if(g_game.getClientVersion() >= 1281) {
+        if(currentOutfit.getMount() == 0) {
+            msg->getU8(); //head
+            msg->getU8(); //body
+            msg->getU8(); //legs
+            msg->getU8(); //feet
+        }
+
         msg->getU16(); // current familiar looktype
     }
 
-    std::vector<std::tuple<int, std::string, int> > outfitList;
+    std::vector<std::tuple<int, std::string, int>> outfitList;
 
     if(g_game.getFeature(Otc::GameNewOutfitProtocol)) {
         const int outfitCount = g_game.getClientVersion() >= 1281 ? msg->getU16() : msg->getU8();
@@ -1984,6 +1990,18 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
     }
 
     g_game.processOpenOutfitWindow(currentOutfit, outfitList, mountList);
+}
+
+void ProtocolGame::parseKillTracker(const InputMessagePtr& msg)
+{
+    msg->getString(); // monster name
+    getOutfit(msg, false);
+
+    // corpse items
+    const int size = msg->getU8();
+    for(int i = 0; i < size; i++) {
+        getItem(msg);
+    }
 }
 
 void ProtocolGame::parseVipAdd(const InputMessagePtr& msg)
@@ -2274,7 +2292,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
     return 0;
 }
 
-Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
+Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg, bool parseMount/* = true*/)
 {
     Outfit outfit;
 
@@ -2320,7 +2338,7 @@ Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
         }
     }
 
-    if(g_game.getFeature(Otc::GamePlayerMounts)) {
+    if(g_game.getFeature(Otc::GamePlayerMounts) && parseMount) {
         const int mount = msg->getU16();
         if(g_game.getClientVersion() >= 1281 && mount != 0) {
             msg->getU8(); //head

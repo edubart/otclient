@@ -229,6 +229,7 @@ private:
     void parseWalkWait(const InputMessagePtr& msg);
     void parseFloorChangeUp(const InputMessagePtr& msg);
     void parseFloorChangeDown(const InputMessagePtr& msg);
+    void parseKillTracker(const InputMessagePtr& msg);
     void parseOpenOutfitWindow(const InputMessagePtr& msg);
     void parseVipAdd(const InputMessagePtr& msg);
     void parseVipState(const InputMessagePtr& msg);
@@ -250,7 +251,7 @@ public:
     int setFloorDescription(const InputMessagePtr& msg, int x, int y, int z, int width, int height, int offset, int skip);
     int setTileDescription(const InputMessagePtr& msg, Position position);
 
-    Outfit getOutfit(const InputMessagePtr& msg);
+    Outfit getOutfit(const InputMessagePtr& msg, bool parseMount = true);
     ThingPtr getThing(const InputMessagePtr& msg);
     ThingPtr getMappedThing(const InputMessagePtr& msg);
     CreaturePtr getCreature(const InputMessagePtr& msg, int type = 0);

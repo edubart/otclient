@@ -140,6 +140,7 @@ namespace Proto {
         GameServerFloorChangeUp = 190,
         GameServerFloorChangeDown = 191,
         GameServerChooseOutfit = 200,
+        GameServerKillTracker = 209, // 1281
         GameServerVipAdd = 210,
         GameServerVipState = 211,
         GameServerVipLogout = 212,
