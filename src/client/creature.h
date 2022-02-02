@@ -158,8 +158,8 @@ protected:
     Outfit m_outfit;
     Light m_light;
 
-    int m_speed{ 200 };
-    int m_calculatedStepSpeed;
+    int m_speed{ 0 };
+    int m_calculatedStepSpeed{ 0 };
 
     double m_baseSpeed;
     uint8 m_healthPercent{ 101 };
