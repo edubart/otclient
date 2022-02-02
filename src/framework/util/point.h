@@ -84,7 +84,7 @@ public:
         return TPoint<T>(x - other.x, y - other.y).length();
     }
 
-    std::size_t hash() const { return static_cast<int>(x) << 16 | static_cast<int>(y); }
+    std::size_t hash() const { return (7 * 15 + x) * 15 + y; }
 
     std::array<TPoint<T>, static_cast<uint8>(8)> getPointsAround(const uint8 pixel) const
     {
