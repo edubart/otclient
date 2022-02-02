@@ -1107,6 +1107,7 @@ void ProtocolGame::parseWorldLight(const InputMessagePtr& msg)
 void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
 {
     const Position pos = getPosition(msg);
+    Position toPos;
 
     Otc::MagicEffectsType_t type = Otc::MAGIC_EFFECTS_CREATE_EFFECT;
 
@@ -1125,15 +1126,26 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
         return;
     }
 
-    // TODO support missiles
-
     if(g_game.getClientVersion() >= 1281) {
+        if (type == Otc::MAGIC_EFFECTS_CREATE_DISTANCEEFFECT) {
+            int8_t x = msg->getU8();
+            int8_t y = msg->getU8();
+            toPos = Position(pos.x + x, pos.y + y, pos.z);
+        }
+
         msg->getU8(); // end loop
     }
 
-    const auto effect = EffectPtr(new Effect());
-    effect->setId(effectId);
-    g_map.addThing(effect, pos);
+    if(type == Otc::MAGIC_EFFECTS_CREATE_DISTANCEEFFECT) {
+        const auto missile = MissilePtr(new Missile());
+        missile->setId(effectId);
+        missile->setPath(pos, toPos);
+        g_map.addThing(missile, pos);
+    } else {
+        const auto effect = EffectPtr(new Effect());
+        effect->setId(effectId);
+        g_map.addThing(effect, pos);
+    }
 }
 
 void ProtocolGame::parseAnimatedText(const InputMessagePtr& msg)
