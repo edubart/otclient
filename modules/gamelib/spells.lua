@@ -6,11 +6,19 @@ SpelllistSettings = {
     spellWindowWidth = 550,
     spellOrder = {'Animate Dead', 'Annihilation', 'Avalanche', 'Berserk', 'Blood Rage', 'Brutal Strike', 'Cancel Invisibility', 'Challenge', 'Chameleon', 'Charge', 'Conjure Arrow', 'Conjure Bolt', 'Conjure Explosive Arrow', 'Conjure Piercing Bolt', 'Conjure Poisoned Arrow', 'Conjure Power Bolt', 'Conjure Sniper Arrow', 'Convince Creature', 'Creature Illusion', 'Cure Bleeding', 'Cure Burning', 'Cure Curse', 'Cure Electrification', 'Cure Poison', 'Cure Poison Rune', 'Curse', 'Death Strike', 'Desintegrate', 'Destroy Field', 'Divine Caldera', 'Divine Healing', 'Divine Missile', 'Electrify', 'Enchant Party', 'Enchant Spear', 'Enchant Staff', 'Energy Beam', 'Energy Field', 'Energy Strike', 'Energy Wall', 'Energy Wave', 'Energybomb', 'Envenom', 'Eternal Winter', 'Ethereal Spear', 'Explosion', 'Fierce Berserk', 'Find Person', 'Fire Field', 'Fire Wall', 'Fire Wave', 'Fireball', 'Firebomb', 'Flame Strike', 'Food', 'Front Sweep', 'Great Energy Beam', 'Great Fireball', 'Great Light', 'Groundshaker', 'Haste', 'Heal Friend', 'Heal Party', 'Heavy Magic Missile', 'Hells Core', 'Holy Flash', 'Holy Missile', 'Ice Strike', 'Ice Wave', 'Icicle', 'Ignite', 'Inflict Wound', 'Intense Healing', 'Intense Healing Rune', 'Intense Recovery', 'Intense Wound Cleansing', 'Invisibility', 'Levitate', 'Light', 'Light Healing', 'Light Magic Missile', 'Lightning', 'Magic Rope', 'Magic Shield', 'Magic Wall', 'Mass Healing', 'Paralyze', 'Physical Strike', 'Poison Bomb', 'Poison Field', 'Poison Wall', 'Protect Party', 'Protector', 'Rage of the Skies', 'Recovery', 'Salvation', 'Sharpshooter', 'Soulfire', 'Stalagmite', 'Stone Shower', 'Strong Energy Strike', 'Strong Ethereal Spear', 'Strong Flame Strike', 'Strong Haste', 'Strong Ice Strike', 'Strong Ice Wave', 'Strong Terra Strike', 'Sudden Death', 'Summon Creature', 'Swift Foot', 'Terra Strike', 'Terra Wave', 'Thunderstorm', 'Train Party', 'Ultimate Energy Strike', 'Ultimate Flame Strike', 'Ultimate Healing', 'Ultimate Healing Rune', 'Ultimate Ice Strike', 'Ultimate Light', 'Ultimate Terra Strike', 'Whirlwind Throw', 'Wild Growth', 'Wound Cleansing', 'Wrath of Nature'}
   }--[[,
-
-  ['Sample'] =  {
-    iconFile = '/images/game/spells/sample',
-    iconSize = {width = 64, height = 64},
-    spellOrder = {'Critical Strike', 'Firefly', 'Fire Breath', 'Moonglaives', 'Wind Walk'}
+  ['Custom'] =  {
+    iconFile = '/images/game/spells/custom',
+    iconSize = {width = 32, height = 32},
+    spellOrder = {
+      'Chain Lighting'
+      ,'Chain Healing'
+      ,'Divine Chain'
+      ,'Berserk Chain'
+      ,'Cheat death'
+      ,'Brutal Charge'
+      ,'Empower Summons'
+      ,'Summon Doppelganger'
+    }
   }]]
 }
 
@@ -142,13 +150,15 @@ SpellInfo = {
     ['Thunderstorm'] =             {id = 117, words = 'adori mas vis',         exhaustion = 2000,  premium = false, type = 'Conjure', icon = 'thunderstorm',           mana = 430,    level = 28, soul = 3, group = {[3] = 2000},               parameter = false, vocations = {1, 5}},
     ['Holy Missile'] =             {id = 130, words = 'adori san',             exhaustion = 2000,  premium = false, type = 'Conjure', icon = 'holymissile',            mana = 350,    level = 27, soul = 3, group = {[3] = 2000},               parameter = false, vocations = {3, 7}}
   }--[[,
-
-  ['Sample'] = {
-    ['Wind Walk'] =                {id = 1, words = 'windwalk',        description = 'Run at enormous speed.',          exhaustion = 2000,  premium = false, type = 'Instant', icon = 1,  mana = 50,     level = 10, soul = 0, group = {[3] = 2000}, vocations = {1, 2}},
-    ['Fire Breath'] =              {id = 2, words = 'firebreath',      description = 'A strong firewave.',              exhaustion = 2000,  premium = false, type = 'Instant', icon = 2,  mana = 350,    level = 27, soul = 0, group = {[1] = 2000}, vocations = {4, 8}},
-    ['Moonglaives'] =              {id = 3, words = 'moonglaives',     description = 'Throw moonglaives around you.',   exhaustion = 2000,  premium = false, type = 'Instant', icon = 3,  mana = 90,     level = 55, soul = 0, group = {[1] = 2000}, vocations = {3, 7}},
-    ['Critical Strike'] =          {id = 4, words = 'criticalstrike',  description = 'Land a critical strike.',         exhaustion = 2000,  premium = false, type = 'Instant', icon = 4,  mana = 350,    level = 27, soul = 0, group = {[1] = 2000}, vocations = {3, 4, 7, 8}},
-    ['Firefly'] =                  {id = 5, words = 'firefly',         description = 'Summon a angry firefly',          exhaustion = 2000,  premium = false, type = 'Instant', icon = 5,  mana = 350,    level = 27, soul = 0, group = {[1] = 2000}, vocations = {1, 2, 5, 6}}
+  ['Custom'] = {
+    ['Chain Lighting'] =           {id = 1, words = 'exori chain vis',        description = 'Chained attack pattern lightning strike.',                     exhaustion = 2000,  premium = false, type = 'Instant', icon = 1,  mana = 650,  level = 90, soul = 0, group = {[1] = 2000}, vocations = {5}},
+    ['Chain Healing'] =            {id = 2, words = 'exura chain frigo',      description = 'Chained healing that deals ice damage to adjacent creatures.', exhaustion = 2000,  premium = false, type = 'Instant', icon = 2,  mana = 160,  level = 60, soul = 0, group = {[1] = 2000}, vocations = {6}},
+    ['Divine Chain'] =             {id = 3, words = 'exori chain san',        description = 'Chained attack pattern holy strike.',                          exhaustion = 2000,  premium = false, type = 'Instant', icon = 3,  mana = 160,  level = 60, soul = 0, group = {[1] = 2000}, vocations = {7}},
+    ['Berserk Chain'] =            {id = 4, words = 'exori chain mas',        description = 'Bouncing exori that challenges creatures.',                    exhaustion = 2000,  premium = false, type = 'Instant', icon = 4,  mana = 160,  level = 60, soul = 0, group = {[1] = 2000}, vocations = {8}},
+    ['Cheat death'] =              {id = 5, words = 'exura prohibere mortem', description = 'Recover from an otherwise fatal killing blow.',                exhaustion = 2000,  premium = false, type = 'Instant', icon = 5,  mana = 500,  level = 100, soul = 0, group = {[2] = 2000}, vocations = {6}},
+    ['Brutal Charge'] =            {id = 6, words = 'exori tempo hur',        description = 'Quick charge attack that challenges target.',                  exhaustion = 2000,  premium = false, type = 'Instant', icon = 6,  mana = 80,   level = 60, soul = 0, group = {[1] = 2000}, vocations = {8}},
+    ['Empower Summons'] =          {id = 7, words = 'utevo gran res',         description = 'Empower summons with extra strength and intelligence.',        exhaustion = 2000,  premium = false, type = 'Instant', icon = 7,  mana = 1800, level = 70, soul = 25, group = {[2] = 2000}, vocations = {6}},
+    ['Summon Doppelganger'] =      {id = 8, words = 'utevo duplex res',       description = 'Summon a Doppelganger of yourself to assist you.',             exhaustion = 2000,  premium = false, type = 'Instant', icon = 8,  mana = 1105, level = 100, soul = 25, group = {[2] = 2000}, vocations = {7}}
   }]]
 }
 
@@ -438,4 +448,8 @@ function Spells.getImageClip(id, profile)
     .. ((math.ceil(id/12)-1)*SpelllistSettings[profile].iconSize.height) .. ' '
     .. SpelllistSettings[profile].iconSize.width .. ' '
     .. SpelllistSettings[profile].iconSize.height
+end
+
+function Spells.getIconFileByProfile(profile)
+  return SpelllistSettings[profile]['iconFile']
 end

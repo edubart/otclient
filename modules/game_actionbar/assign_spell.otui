@@ -3,7 +3,6 @@ PreviewSpell < UIItem
   background-color: gray
   image-clip: 0 0 32 32
   image-size: 40 40
-  image-source: /images/game/spells/defaultspells
 
 Spell < UIItem
   size: 32 32
@@ -18,7 +17,6 @@ SpellListLabel < Label
   image-clip: 0 0 32 32
   image-size: 32 32
   image-offset: 2 2
-  image-source: /images/game/spells/defaultspells
   
   $focus:
     background-color: #585858

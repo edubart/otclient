@@ -23,11 +23,6 @@ local ProgressCallback = {
     finish = 2
 }
 
-local SpelllistProfile = 'Default'
-function getSpelllistProfile()
-    return SpelllistProfile
-end
-
 function init()
     bottomPanel = modules.game_interface.getBottomPanel()
     actionBar = g_ui.loadUI('game_actionbar', bottomPanel)
@@ -155,30 +150,34 @@ end
 function initializeSpelllist()
     g_keyboard.bindKeyPress('Down', function() spellsPanel:focusNextChild(KeyboardFocusReason) end, spellsPanel:getParent())
     g_keyboard.bindKeyPress('Up', function() spellsPanel:focusPreviousChild(KeyboardFocusReason) end, spellsPanel:getParent())
-    for i = 1, #SpelllistSettings[SpelllistProfile].spellOrder do
-        local spell = SpelllistSettings[SpelllistProfile].spellOrder[i]
-        local info = SpellInfo[SpelllistProfile][spell]
-        if info then
-            local tmpLabel = g_ui.createWidget('SpellListLabel', spellsPanel)
-            tmpLabel:setId(spell)
-            tmpLabel:setText(spell .. '\n\'' .. info.words .. '\'')
-            tmpLabel:setPhantom(false)
-            tmpLabel.defaultHeight = tmpLabel:getHeight()
-            tmpLabel.words = info.words:lower()
-            tmpLabel.name = spell:lower()
+    
+    for spellProfile, _ in pairs(SpelllistSettings) do
+        for i = 1, #SpelllistSettings[spellProfile].spellOrder do
+            local spell = SpelllistSettings[spellProfile].spellOrder[i]
+            local info = SpellInfo[spellProfile][spell]
+            if info then
+                local tmpLabel = g_ui.createWidget('SpellListLabel', spellsPanel)
+                tmpLabel:setId(spell)
+                tmpLabel:setText(spell .. '\n\'' .. info.words .. '\'')
+                tmpLabel:setPhantom(false)
+                tmpLabel.defaultHeight = tmpLabel:getHeight()
+                tmpLabel.words = info.words:lower()
+                tmpLabel.name = spell:lower()
 
-            local iconId = tonumber(info.icon)
-            if not iconId and SpellIcons[info.icon] then
-                iconId = SpellIcons[info.icon][1]
+                local iconId = tonumber(info.icon)
+                if not iconId and SpellIcons[info.icon] then
+                    iconId = SpellIcons[info.icon][1]
+                end
+
+                tmpLabel:setHeight(SpelllistSettings[spellProfile].iconSize.height + 4)
+                tmpLabel:setTextOffset(topoint((SpelllistSettings[spellProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[spellProfile].iconSize.height - 32)/2 + 3))
+                tmpLabel:setImageSource(SpelllistSettings[spellProfile].iconFile)
+                tmpLabel:setImageClip(Spells.getImageClip(iconId, spellProfile))
+                tmpLabel:setImageSize(tosize(SpelllistSettings[spellProfile].iconSize.width .. ' ' .. SpelllistSettings[spellProfile].iconSize.height))
             end
-
-            tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
-            tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' .. (SpelllistSettings[SpelllistProfile].iconSize.height - 32)/2 + 3))
-            tmpLabel:setImageSource(SpelllistSettings[SpelllistProfile].iconFile)
-            tmpLabel:setImageClip(Spells.getImageClip(iconId, SpelllistProfile))
-            tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' .. SpelllistSettings[SpelllistProfile].iconSize.height))
         end
     end
+
     for v, k in ipairs(spellsPanel:getChildren()) do
         if k:isVisible() then 
             spellsPanel:focusChild(k, KeyboardFocusReason)
@@ -199,6 +198,7 @@ function updatePreviewSpell(focusedChild)
     iconId = tonumber(Spells.getClientId(spellName))
     local spell = Spells.getSpellByName(spellName)
     local profile = Spells.getSpellProfileByName(spellName)
+    spellsPanel:getParent():getChildById('previewSpell'):setImageSource(SpelllistSettings[profile].iconFile)
     spellsPanel:getParent():getChildById('previewSpell'):setImageClip(Spells.getImageClip(iconId, profile))
     spellsPanel:getParent():getChildById('previewSpellName'):setText(spellName)
     spellsPanel:getParent():getChildById('previewSpellWords'):setText("'"..spell.words.."'")
@@ -218,7 +218,7 @@ function spellAssignAccept()
     local spell = Spells.getSpellByName(spellName)
     local profile = Spells.getSpellProfileByName(spellName)
     local slot = actionBarPanel:getChildById(slotToEdit)
-    slot:setImageSource('/images/game/spells/defaultspells')
+    slot:setImageSource(Spells.getIconFileByProfile(profile))
     slot:setImageClip(Spells.getImageClip(iconId, profile))
     slot.words = spell.words
     if spell.parameter then
@@ -282,7 +282,7 @@ function textAssignAccept()
     if spellName then
         iconId = tonumber(Spells.getClientId(spellName))
         clearSlot()
-        slot:setImageSource('/images/game/spells/defaultspells')
+        slot:setImageSource(Spells.getIconFileByProfile(profile))
         slot:setImageClip(Spells.getImageClip(iconId, profile))
         slot.words = spell.words
         if parameter and spell.parameter then
@@ -611,7 +611,7 @@ end
 function loadSpell(slot)
     local spell, profile, spellName = Spells.getSpellByWords(slot.words)
     iconId = tonumber(Spells.getClientId(spellName))
-    slot:setImageSource('/images/game/spells/defaultspells')
+    slot:setImageSource(Spells.getIconFileByProfile(profile))
     slot:setImageClip(Spells.getImageClip(iconId, profile))
     slot:getChildById('text'):setText('')
     slot:setBorderWidth(0)
