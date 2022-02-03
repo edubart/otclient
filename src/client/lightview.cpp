@@ -60,13 +60,15 @@ void LightView::draw(const Rect& dest, const Rect& src)
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 2.8), Size(m_mapView->getTileSize() * 1.6));
 
     for(auto& light : m_lights) {
-        g_drawPool.setOpacity(light.opacity);
         if(light.radius && light.color) {
+            const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.brightness));
+
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), Color::from8bit(light.color, light.brightness));
+            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), color);
         } else {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
             g_drawPool.addTexturedRect(Rect(light.pos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
+            g_drawPool.setOpacity(light.opacity, g_drawPool.size());
         }
     }
 
