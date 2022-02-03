@@ -68,7 +68,6 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_pool->setEnable(isDark());
     if(!isDark()) return;
 
-    m_mapView->getFadeLevel(8);
     const float intensity = m_globalLight.intensity / static_cast<float>(UINT8_MAX);
     auto globalight = Color::from8bit(m_globalLight.color, intensity);
 

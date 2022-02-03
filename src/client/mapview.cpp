@@ -406,6 +406,8 @@ void MapView::updateVisibleTilesCache()
 
     m_lastCameraPosition = cameraPosition;
 
+    const bool fadeFinished = getFadeLevel(m_cachedFirstVisibleFloor) == 1.f;
+
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     const uint32 numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
@@ -434,9 +436,9 @@ void MapView::updateVisibleTilesCache()
                         }
                     }
 
-                    if(!_canFloorFade) {
+                    if(!_canFloorFade || fadeFinished) {
                         // skip tiles that are completely behind another tile
-                        if(tile->isCompletelyCovered(cachedFirstVisibleFloor)) {
+                        if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor)) {
                             if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
                                 continue;
                             }
