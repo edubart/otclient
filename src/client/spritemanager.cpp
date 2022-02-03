@@ -219,11 +219,11 @@ ImagePtr SpriteManager::getSpriteImage(int id)
 
 void SpriteManager::generateLightTexture()
 {
-    const float brightnessIntensity = 1.3f;
+    const float brightnessIntensity = 1.5f;
     const int maxBrightness = 0xff;
 
     const int bubbleRadius = 6,
-        bubbleDiameter = bubbleRadius * 2.2;
+        bubbleDiameter = bubbleRadius * 2.3;
 
     const auto lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
     for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
@@ -234,7 +234,7 @@ void SpriteManager::generateLightTexture()
             // light intensity varies inversely with the square of the distance
             const uint8_t colorByte = std::min<int16>((intensity * brightnessIntensity) * 0xff, maxBrightness);
 
-            uint8_t pixel[4] = { 0xff, 0xff, 0xff, colorByte };
+            uint8_t pixel[4] = { colorByte, colorByte, colorByte, 0xff };
             lightImage->setPixel(x, y, pixel);
         }
     }

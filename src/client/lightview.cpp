@@ -44,7 +44,7 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     }
 
     const float intensity = m_globalLight.intensity / static_cast<float>(UINT8_MAX),
-        brightness = std::min<float>((light.intensity / 5.f) + intensity, 1.f);
+        brightness = std::min<float>((light.intensity / 6.f) + intensity, 1.f);
 
     m_lights.push_back(LightSource{ pos , light.color, radius, brightness, g_drawPool.getOpacity() });
 }
@@ -62,11 +62,14 @@ void LightView::draw(const Rect& dest, const Rect& src)
     for(auto& light : m_lights) {
         g_drawPool.setOpacity(light.opacity);
         if(light.radius && light.color) {
+            g_painter->setBlendEquation(Painter::BlendEquation_Max);
             g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), Color::from8bit(light.color, light.brightness));
         } else {
+            g_painter->setBlendEquation(Painter::BlendEquation_Add);
             g_drawPool.addTexturedRect(Rect(light.pos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
         }
     }
+
     m_lights.clear();
     m_lastPos = 0;
 
