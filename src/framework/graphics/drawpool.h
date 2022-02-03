@@ -69,6 +69,8 @@ public:
     void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1) { m_currentPool->setShaderProgram(shaderProgram, pos); }
 
+    float getOpacity(const int pos = -1) { return m_currentPool->getOpacity(pos); }
+
     void resetClipRect() { m_currentPool->resetClipRect(); }
     void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
     void resetOpacity() { m_currentPool->resetOpacity(); }

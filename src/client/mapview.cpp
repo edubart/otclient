@@ -145,46 +145,9 @@ void MapView::drawFloor()
                     g_drawPool.setOpacity(fading);
             }
 
-            if(isDrawingLights()) {
-                const int8 nextFloor = z - 1;
-
-                if(nextFloor >= m_cachedFirstVisibleFloor) {
-                    Position _camera = cameraPosition;
-                    const bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
-
-                    lightView->setFloor(nextFloor);
-                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
-                        const auto& ground = tile->getGround();
-                        if(ground && !ground->isTranslucent()) {
-                            if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
-                                continue;
-
-                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
-                            if(ground->isTopGround()) {
-                                const auto currentPos = tile->getPosition();
-                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
-                                    const auto& nextDownTile = g_map.getTile(pos);
-                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                        lightView->setShade(pos2D);
-                                        break;
-                                    }
-                                }
-
-                                pos2D -= m_tileSize;
-                                lightView->setShade(pos2D);
-                                continue;
-                            }
-
-                            lightView->setShade(pos2D, std::vector<Otc::Direction>() /*tile->hasTallItems() || tile->hasWideItems() ? tile->getBorderDirections() : std::vector<Otc::Direction>()*/);
-                        }
-                    }
-                }
-            }
-
-            if(lightView) lightView->setFloor(z);
-
             Position _camera = cameraPosition;
-            const bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && z < m_cachedFirstVisibleFloor&& _camera.coveredUp(cameraPosition.z - z);
+            bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && z < m_cachedFirstVisibleFloor&& _camera.coveredUp(cameraPosition.z - z);
+
             const auto& map = m_cachedVisibleTiles[z];
 
             g_drawPool.startPosition();
@@ -231,6 +194,44 @@ void MapView::drawFloor()
             if(m_shadowFloorIntensity > 0 && z == cameraPosition.z + 1) {
                 g_drawPool.addFilledRect(m_rectDimension, Color::black);
                 g_drawPool.setOpacity(m_shadowFloorIntensity, g_drawPool.size());
+            }
+
+            if(isDrawingLights()) {
+                m_lightView->organize();
+
+                const int8 nextFloor = z - 1;
+
+                if(nextFloor >= m_floorMin) {
+                    const float fadeLevel = canFloorFade() ? getFadeLevel(nextFloor) : 1.f;
+
+                    alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
+
+                    for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
+                        const auto& ground = tile->getGround();
+                        if(ground && !ground->isTranslucent()) {
+                            if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
+                                continue;
+
+                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
+                            if(ground->isTopGround()) {
+                                const auto currentPos = tile->getPosition();
+                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
+                                    const auto& nextDownTile = g_map.getTile(pos);
+                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
+                                        lightView->setShade(pos2D, fadeLevel);
+                                        break;
+                                    }
+                                }
+
+                                pos2D -= m_tileSize;
+                                lightView->setShade(pos2D, fadeLevel);
+                                continue;
+                            }
+
+                            lightView->setShade(pos2D, fadeLevel);
+                        }
+                    }
+                }
             }
 
             if(canFloorFade())

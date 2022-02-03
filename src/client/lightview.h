@@ -28,17 +28,12 @@
 #include "declarations.h"
 #include "thingtype.h"
 
-struct ShadeBlock {
-    int8 floor = -1;
-    Point pos;
-    std::vector<Otc::Direction> dirs;
-};
-
 struct LightSource {
     Point pos;
-    uint8 color;
-    uint16 radius;
-    float brightness;
+    uint8 color{ 0 };
+    uint16 radius{ 0 };
+    float brightness{ 0.f };
+    float opacity{ 1.f };
 };
 
 class LightView : public LuaObject
@@ -50,9 +45,10 @@ public:
     void draw(const Rect& dest, const Rect& src);
     void addLightSource(const Point& mainCenter, const Light& light);
 
-    void setGlobalLight(const Light& light) { m_globalLight = light; }
-    void setFloor(const uint8 floor) { m_currentFloor = floor; }
-    void setShade(const Point& point, const std::vector<Otc::Direction>& dirs = std::vector<Otc::Direction>());
+    void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
+    void setShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity });  m_lastPos = m_lights.size(); }
+
+    void organize() { std::sort(m_lights.begin() + m_lastPos, m_lights.end(), orderLightComparator); }
 
     const Light& getGlobalLight() const { return m_globalLight; }
     bool isDark() const { return m_globalLight.intensity < 250; }
@@ -61,14 +57,13 @@ private:
     static bool orderLightComparator(const LightSource& a, const LightSource& b) { return (a.brightness == b.brightness && a.color < b.color) || a.brightness < b.brightness; }
 
     Light m_globalLight;
+    Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
     MapViewPtr m_mapView;
 
-    int8 m_currentFloor;
-
-    std::vector<ShadeBlock> m_shades;
-    std::array<std::vector<LightSource>, MAX_Z + 1> m_lights;
+    std::vector<LightSource> m_lights;
+    int m_lastPos{ 0 };
 };
 
 #endif
