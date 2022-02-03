@@ -68,13 +68,21 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_pool->setEnable(isDark());
     if(!isDark()) return;
 
+    m_mapView->getFadeLevel(8);
     const float intensity = m_globalLight.intensity / static_cast<float>(UINT8_MAX);
+    auto globalight = Color::from8bit(m_globalLight.color, intensity);
 
     g_drawPool.use(m_pool, dest, src);
-    g_drawPool.addFilledRect(m_mapView->m_rectDimension, m_globalLightColor);
+    g_drawPool.addFilledRect(m_mapView->m_rectDimension, globalight);
     const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 2.8), Size(m_mapView->getTileSize() * 1.6));
     for(int_fast8_t z = m_mapView->m_floorMax; z >= m_mapView->m_floorMin; --z) {
         if(z < m_mapView->m_floorMax) {
+            if(m_mapView->canFloorFade()) {
+                const float fadeLevel = m_mapView->getFadeLevel(z);
+                if(fadeLevel == 0) break;
+                globalight = Color::from8bit(m_globalLight.color, std::clamp<float>(1.f - fadeLevel, intensity, 1.f));
+            }
+
             for(auto& shade : m_shades) {
                 if(shade.floor != z) continue;
                 shade.floor = -1;
@@ -87,7 +95,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
                         newPos.x -= SPRITE_SIZE / 1.6;
                 }
 
-                g_drawPool.addTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
+                g_drawPool.addTexturedRect(Rect(newPos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), globalight);
             }
         }
 

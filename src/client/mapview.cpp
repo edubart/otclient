@@ -148,7 +148,7 @@ void MapView::drawFloor()
             if(isDrawingLights()) {
                 const int8 nextFloor = z - 1;
 
-                if(nextFloor >= m_floorMin && (m_floorViewMode != FloorViewMode::FADE || getFadeLevel(nextFloor) > 0.4)) {
+                if(nextFloor >= m_cachedFirstVisibleFloor) {
                     Position _camera = cameraPosition;
                     const bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 

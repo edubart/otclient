@@ -50,7 +50,7 @@ public:
     void draw(const Rect& dest, const Rect& src);
     void addLightSource(const Point& mainCenter, const Light& light);
 
-    void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
+    void setGlobalLight(const Light& light) { m_globalLight = light; }
     void setFloor(const uint8 floor) { m_currentFloor = floor; }
     void setShade(const Point& point, const std::vector<Otc::Direction>& dirs = std::vector<Otc::Direction>());
 
@@ -61,7 +61,6 @@ private:
     static bool orderLightComparator(const LightSource& a, const LightSource& b) { return (a.brightness == b.brightness && a.color < b.color) || a.brightness < b.brightness; }
 
     Light m_globalLight;
-    Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
     MapViewPtr m_mapView;
