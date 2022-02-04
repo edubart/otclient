@@ -43,10 +43,11 @@ public:
 
     void resize();
     void draw(const Rect& dest, const Rect& src);
+
     void addLightSource(const Point& mainCenter, const Light& light);
+    void addShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity });  m_lastPos = m_lights.size(); }
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
-    void setShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity });  m_lastPos = m_lights.size(); }
 
     const Light& getGlobalLight() const { return m_globalLight; }
     bool isDark() const { return m_globalLight.intensity < 250; }

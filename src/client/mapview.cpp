@@ -198,9 +198,10 @@ void MapView::drawFloor()
 
             if(isDrawingLights()) {
                 const int8 nextFloor = z - 1;
-
                 if(nextFloor >= m_floorMin) {
                     const float fadeLevel = canFloorFade() ? getFadeLevel(nextFloor) : 1.f;
+                    if(fadeLevel == 0.f)
+                        continue;
 
                     alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 
@@ -216,17 +217,17 @@ void MapView::drawFloor()
                                 for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
                                     const auto& nextDownTile = g_map.getTile(pos);
                                     if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                        lightView->setShade(pos2D, fadeLevel);
+                                        lightView->addShade(pos2D, fadeLevel);
                                         break;
                                     }
                                 }
 
                                 pos2D -= m_tileSize;
-                                lightView->setShade(pos2D, fadeLevel);
+                                lightView->addShade(pos2D, fadeLevel);
                                 continue;
                             }
 
-                            lightView->setShade(pos2D, fadeLevel);
+                            lightView->addShade(pos2D, fadeLevel);
                         }
                     }
                 }

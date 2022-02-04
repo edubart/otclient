@@ -64,8 +64,9 @@ void LightView::draw(const Rect& dest, const Rect& src)
             g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), color);
         } else {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
+            g_drawPool.setOpacity(light.opacity);
             g_drawPool.addTexturedRect(Rect(light.pos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
-            g_drawPool.setOpacity(light.opacity, g_drawPool.size());
+            g_drawPool.resetOpacity();
         }
     }
 
