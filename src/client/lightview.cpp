@@ -73,5 +73,5 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_lights.clear();
     m_lastPos = 0;
 
-    g_drawPool.resetOpacity();
+    g_painter->setBlendEquation(Painter::BlendEquation_Add);
 }
