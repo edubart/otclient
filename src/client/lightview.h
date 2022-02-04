@@ -48,14 +48,10 @@ public:
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
     void setShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity });  m_lastPos = m_lights.size(); }
 
-    void organize() { std::sort(m_lights.begin() + m_lastPos, m_lights.end(), orderLightComparator); }
-
     const Light& getGlobalLight() const { return m_globalLight; }
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
-    static bool orderLightComparator(const LightSource& a, const LightSource& b) { return (a.brightness == b.brightness && a.color < b.color) || a.brightness < b.brightness; }
-
     Light m_globalLight;
     Color m_globalLightColor;
 

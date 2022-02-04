@@ -43,10 +43,7 @@ void LightView::addLightSource(const Point& pos, const Light& light)
         }
     }
 
-    const float intensity = m_globalLight.intensity / static_cast<float>(UINT8_MAX),
-        brightness = std::min<float>((light.intensity / 6.f) + intensity, 1.f);
-
-    m_lights.push_back(LightSource{ pos , light.color, radius, brightness, g_drawPool.getOpacity() });
+    m_lights.push_back(LightSource{ pos , light.color, radius, light.intensity / 6.f, g_drawPool.getOpacity() });
 }
 
 void LightView::draw(const Rect& dest, const Rect& src)

@@ -197,8 +197,6 @@ void MapView::drawFloor()
             }
 
             if(isDrawingLights()) {
-                m_lightView->organize();
-
                 const int8 nextFloor = z - 1;
 
                 if(nextFloor >= m_floorMin) {
