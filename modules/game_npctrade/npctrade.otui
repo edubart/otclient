@@ -9,7 +9,7 @@ NPCItemBox < UICheckBox
   border-color: #000000
   color: #aaaaaa
   text-align: center
-  text-offset: 0 30
+  text-offset: 0 20
   @onCheckChange: modules.game_npctrade.onItemBoxChecked(self)
 
   Item
@@ -85,7 +85,7 @@ MainWindow
       margin-right: 5
       layout:
         type: grid
-        cell-size: 160 90
+        cell-size: 160 95
         flow: true
         auto-spacing: true
 
