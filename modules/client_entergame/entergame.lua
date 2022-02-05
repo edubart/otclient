@@ -345,7 +345,7 @@ function EnterGame.doLogin()
 
             local _, bodyStart = message:find("{")
             local _, bodyEnd = message:find(".*}")
-            if bodyStart == -1 or bodyEnd == -1 then
+            if not bodyStart or not bodyEnd then
                 onError(nil, "Bad Request.", 400)
                 return
             end
@@ -380,10 +380,12 @@ function EnterGame.doLogin()
                 }
             end
 
+            local premiumUntil = tonumber(response.session.premiumuntil)
+
             local account = {
                 status = "",
-                premDays = math.floor((tonumber(response.session.premiumuntil) - os.time()) / 86400),
-                subStatus = tonumber(response.session.premiumuntil) > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
+                premDays = math.floor((premiumUntil - os.time()) / 86400),
+                subStatus = premiumUntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
             }
 
             -- set session key
