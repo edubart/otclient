@@ -1,0 +1,202 @@
+syntax = "proto2";
+
+package tibia.protobuf.appearances;
+
+import "shared.proto";
+
+message Appearances {
+    repeated Appearance object = 1;
+    repeated Appearance outfit = 2;
+    repeated Appearance effect = 3;
+    repeated Appearance missile = 4;
+    optional SpecialMeaningAppearanceIds special_meaning_appearance_ids = 5;
+}
+
+message SpritePhase {
+    optional uint32 duration_min = 1;
+    optional uint32 duration_max = 2;
+}
+
+message SpriteAnimation {
+    optional uint32 default_start_phase = 1;
+    optional bool synchronized = 2;
+    optional bool random_start_phase = 3;
+    optional shared.ANIMATION_LOOP_TYPE loop_type = 4;
+    optional uint32 loop_count = 5;
+    repeated SpritePhase sprite_phase = 6;
+}
+
+message Box {
+    optional uint32 x = 1;
+    optional uint32 y = 2;
+    optional uint32 width = 3;
+    optional uint32 height = 4;
+}
+
+message SpriteInfo {
+    optional uint32 pattern_width = 1;
+    optional uint32 pattern_height = 2;
+    optional uint32 pattern_depth = 3;
+    optional uint32 layers = 4;
+    repeated uint32 sprite_id = 5;
+    optional uint32 bounding_square = 7;
+    optional SpriteAnimation animation = 6;
+    optional bool is_opaque = 8;
+    repeated Box bounding_box_per_direction = 9;
+}
+
+message FrameGroup {
+    optional FIXED_FRAME_GROUP fixed_frame_group = 1;
+    optional uint32 id = 2;
+    optional SpriteInfo sprite_info = 3;
+}
+
+message Appearance {
+    optional uint32 id = 1;
+    repeated FrameGroup frame_group = 2;
+    optional AppearanceFlags flags = 3;
+    optional string name = 4;
+    optional bytes description = 5;
+}
+
+message AppearanceFlags {
+    optional AppearanceFlagBank bank = 1;
+    optional bool clip = 2;
+    optional bool bottom = 3;
+    optional bool top = 4;
+    optional bool container = 5;
+    optional bool cumulative = 6;
+    optional bool usable = 7;
+    optional bool forceuse = 8;
+    optional bool multiuse = 9;
+    optional AppearanceFlagWrite write = 10;
+    optional AppearanceFlagWriteOnce write_once = 11;
+    optional bool liquidpool = 12;
+    optional bool unpass = 13;
+    optional bool unmove = 14;
+    optional bool unsight = 15;
+    optional bool avoid = 16;
+    optional bool no_movement_animation = 17;
+    optional bool take = 18;
+    optional bool liquidcontainer = 19;
+    optional bool hang = 20;
+    optional AppearanceFlagHook hook = 21;
+    optional bool rotate = 22;
+    optional AppearanceFlagLight light = 23;
+    optional bool dont_hide = 24;
+    optional bool translucent = 25;
+    optional AppearanceFlagShift shift = 26;
+    optional AppearanceFlagHeight height = 27;
+    optional bool lying_object = 28;
+    optional bool animate_always = 29;
+    optional AppearanceFlagAutomap automap = 30;
+    optional AppearanceFlagLenshelp lenshelp = 31;
+    optional bool fullbank = 32;
+    optional bool ignore_look = 33;
+    optional AppearanceFlagClothes clothes = 34;
+    optional AppearanceFlagDefaultAction default_action = 35;
+    optional AppearanceFlagMarket market = 36;
+    optional bool wrap = 37;
+    optional bool unwrap = 38;
+    optional bool topeffect = 39;
+    repeated AppearanceFlagNPC npcsaledata = 40;
+    optional AppearanceFlagChangedToExpire changedtoexpire = 41;
+    optional bool corpse = 42;
+    optional bool player_corpse = 43;
+    optional AppearanceFlagCyclopedia cyclopediaitem = 44;
+    optional bool ammo = 45;
+    optional bool show_off_socket = 46;
+    optional bool reportable = 47;
+    optional AppearanceFlagUpgradeClassification upgradeclassification = 48;
+}
+
+message AppearanceFlagBank {
+    optional uint32 waypoints = 1;
+}
+
+message AppearanceFlagWrite {
+    optional uint32 max_text_length = 1;
+}
+
+message AppearanceFlagWriteOnce {
+    optional uint32 max_text_length_once = 1;
+}
+
+message AppearanceFlagLight {
+    optional uint32 brightness = 1;
+    optional uint32 color = 2;
+}
+
+message AppearanceFlagHeight {
+    optional uint32 elevation = 1;
+}
+
+message AppearanceFlagShift {
+    optional uint32 x = 1;
+    optional uint32 y = 2;
+}
+
+message AppearanceFlagClothes {
+    optional uint32 slot = 1;
+}
+
+message AppearanceFlagDefaultAction {
+    optional shared.PLAYER_ACTION action = 1;
+}
+
+message AppearanceFlagMarket {
+    optional shared.ITEM_CATEGORY category = 1;
+    optional uint32 trade_as_object_id = 2;
+    optional uint32 show_as_object_id = 3;
+    optional string name = 4;
+    repeated shared.PLAYER_PROFESSION restrict_to_profession = 5;
+    optional uint32 minimum_level = 6;
+}
+
+message AppearanceFlagNPC {
+    optional string name = 1;
+    optional string location = 2;
+    optional uint32 sale_price = 3;
+    optional uint32 buy_price = 4;
+    optional uint32 currency_object_type_id = 5;
+    optional string currency_quest_flag_display_name = 6;
+}
+
+message AppearanceFlagAutomap {
+    optional uint32 color = 1;
+}
+
+message AppearanceFlagHook {
+    optional shared.HOOK_TYPE direction = 1;
+}
+
+message AppearanceFlagLenshelp {
+    optional uint32 id = 1;
+}
+
+message AppearanceFlagUpgradeClassification {
+    optional uint32 upgrade_classification = 1;
+}
+
+message AppearanceFlagChangedToExpire {
+    optional uint32 former_object_typeid = 1;
+}
+
+message AppearanceFlagCyclopedia {
+    optional uint32 cyclopedia_type = 1;
+}
+
+message SpecialMeaningAppearanceIds {
+    optional uint32 gold_coin_id = 1;
+    optional uint32 platinum_coin_id = 2;
+    optional uint32 crystal_coin_id = 3;
+    optional uint32 tibia_coin_id = 4;
+    optional uint32 stamped_letter_id = 5;
+    optional uint32 supply_stash_id = 6;
+}
+
+enum FIXED_FRAME_GROUP {
+    FIXED_FRAME_GROUP_OUTFIT_IDLE = 0;
+    FIXED_FRAME_GROUP_OUTFIT_MOVING = 1;
+    FIXED_FRAME_GROUP_OBJECT_INITIAL = 2;
+}

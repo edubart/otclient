@@ -145,6 +145,7 @@ public:
     bool isOpaque() { return rawGetThingType()->isOpaque(); }
     bool isSingleDimension() { return rawGetThingType()->isSingleDimension(); }
     bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
+    uint16_t getClassification() { return rawGetThingType()->getClassification(); }
 
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
     bool canDraw()  const { return m_canDraw; }

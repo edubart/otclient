@@ -32,6 +32,9 @@
 #include <framework/net/server.h>
 #include <framework/otml/declarations.h>
 
+using namespace tibia::protobuf;
+using namespace tibia::protobuf::shared;
+
 enum class TextureType {
     NONE,
     SMOOTH,
@@ -41,7 +44,8 @@ enum class TextureType {
 enum FrameGroupType : uint8 {
     FrameGroupDefault = 0,
     FrameGroupIdle = FrameGroupDefault,
-    FrameGroupMoving
+    FrameGroupMoving,
+    FrameGroupInitial
 };
 
 enum ThingCategory : uint8 {
@@ -92,6 +96,7 @@ enum ThingAttr : uint8 {
     ThingAttrWrapable = 35,
     ThingAttrUnwrapable = 36,
     ThingAttrTopEffect = 37,
+    ThingAttrUpgradeClassification = 38,
 
     // additional
     ThingAttrOpacity = 100,
@@ -122,14 +127,16 @@ struct MarketData {
 };
 
 struct Light {
-    Light() { intensity = 0; color = 215; }
-    uint8 intensity;
-    uint8 color;
+    Light() {}
+    Light(uint8_t intensity, uint8_t color) : intensity(intensity), color(color) {}
+    uint8 intensity = 0;
+    uint8 color = 215;
 };
 
 class ThingType : public LuaObject
 {
 public:
+    void unserializeAppearance(uint16 clientId, ThingCategory category, const appearances::Appearance& appearance);
     void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
     void unserializeOtml(const OTMLNodePtr& node);
 
@@ -215,6 +222,7 @@ public:
     bool hasAction() { return m_attribs.has(ThingAttrDefaultAction); }
     bool isOpaque() { getTexture(0); return m_opaque; }
     bool isTall(const bool useRealSize = false) { return useRealSize ? getRealSize() > SPRITE_SIZE : getHeight() > 1; }
+    uint16_t getClassification() { return m_attribs.get<uint16_t>(ThingAttrUpgradeClassification); }
     bool isSingleDimension() { return m_size.area() == 1; }
     std::vector<int> getSprites() { return m_spritesIndex; }
 
@@ -223,7 +231,7 @@ public:
     bool isNotPreWalkable() { return m_attribs.has(ThingAttrNotPreWalkable); }
     void setPathable(bool var);
     int getExactHeight();
-    const TexturePtr& getTexture(int animationPhase, TextureType txtType = TextureType::NONE);
+    TexturePtr getTexture(int animationPhase, TextureType txtType = TextureType::NONE);
 
 private:
     bool hasTexture() const { return !m_textures.empty(); }

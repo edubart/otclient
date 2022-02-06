@@ -126,6 +126,12 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
+
+    # protobuf
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.cc
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.h
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.cc
+    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.h
 )
 
 if(NOT MSVC)
@@ -217,12 +223,18 @@ message(STATUS "LuaJIT: " ${LUAJIT})
 
 find_package(PhysFS REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(Protobuf REQUIRED)
+find_package(LibLZMA REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 set(framework_LIBRARIES ${framework_LIBRARIES}
     ${Boost_LIBRARIES}
     ${LUA_LIBRARY}
     ${PHYSFS_LIBRARY}
     ${ZLIB_LIBRARY}
+    ${PROTOBUF_LIBRARY}
+    ${LIBLZMA_LIBRARIES}
+    ${NLOHMANN_JSON_LIBRARY}
 )
 
 set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
@@ -230,6 +242,9 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${LUA_INCLUDE_DIR}
     ${PHYSFS_INCLUDE_DIR}
     ${framework_INCLUDE_DIRS}
+    ${PROTOBUF_INCLUDE_DIRS}
+    ${LIBLZMA_INCLUDE_DIRS}
+    ${NLOHMANN_JSON_INCLUDE_DIR}
 )
 
 find_package(OpenSSL QUIET)

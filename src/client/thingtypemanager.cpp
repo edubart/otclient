@@ -33,6 +33,16 @@
 #include <framework/otml/otml.h>
 #include <framework/xml/tinyxml.h>
 
+#include <client/spriteappearances.h>
+#include <client/spritemanager.h>
+
+#include "framework/protobuf/appearances.pb.h"
+
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
+using namespace tibia::protobuf;
+
 ThingTypeManager g_things;
 
 void ThingTypeManager::init()
@@ -272,6 +282,68 @@ void ThingTypeManager::loadXml(const std::string& file)
         g_logger.debug("items.xml read successfully.");
     } catch(std::exception& e) {
         g_logger.error(stdext::format("Failed to load '%s' (XML file): %s", file, e.what()));
+    }
+}
+
+bool ThingTypeManager::loadAppearances(const std::string& file)
+{
+    try {
+        int spritesCount = 0;
+        std::string appearancesFile;
+
+        json document = json::parse(g_resources.readFileContents(g_resources.resolvePath(g_resources.guessFilePath(file, "json"))));
+        for (const auto& obj : document) {
+            const auto& type = obj["type"];
+            if (type == "appearances") {
+                appearancesFile = obj["file"];
+            } else if (type == "sprite") {
+                int lastSpriteId = obj["lastspriteid"].get<int>();
+                g_spriteAppearances.addSpriteSheet(SpriteSheetPtr(new SpriteSheet(obj["firstspriteid"].get<int>(), lastSpriteId, static_cast<SpriteLayout>(obj["spritetype"].get<int>()), obj["file"].get<std::string>())));
+                spritesCount = std::max(spritesCount, lastSpriteId);
+            }
+        }
+
+        g_spriteAppearances.setSpritesCount(spritesCount + 1);
+
+        // load appearances.dat
+        std::stringstream fin;
+        g_resources.readFileStream(g_resources.resolvePath(stdext::format("/things/%d/%s", g_game.getClientVersion(), appearancesFile)), fin);
+
+        appearances::Appearances appearancesLib = appearances::Appearances();
+        if (!appearancesLib.ParseFromIstream(&fin)) {
+            throw stdext::exception("Couldn't parse appearances lib.");
+        }
+
+        for (int category = ThingCategoryItem; category < ThingLastCategory; ++category) {
+            const google::protobuf::RepeatedPtrField<appearances::Appearance>* appearances = nullptr;
+
+            switch (category) {
+                case ThingCategoryItem: appearances = &appearancesLib.object(); break;
+                case ThingCategoryCreature: appearances = &appearancesLib.outfit(); break;
+                case ThingCategoryEffect: appearances = &appearancesLib.effect(); break;
+                case ThingCategoryMissile: appearances = &appearancesLib.missile(); break;
+                default: return false;
+            }
+
+            const auto& lastAppearance = appearances->Get(appearances->size() - 1);
+
+            auto& things = m_thingTypes[category];
+            things.clear();
+            things.resize(lastAppearance.id() + 1, m_nullThingType);
+
+            for (const auto& appearance : *appearances) {
+                const ThingTypePtr type(new ThingType);
+                const uint16 id = appearance.id();
+                type->unserializeAppearance(id, static_cast<ThingCategory>(category), appearance);
+                m_thingTypes[category][id] = type;
+            }
+        }
+;
+        m_datLoaded = true;
+        return true;
+    } catch (std::exception& e) {
+        g_logger.error(stdext::format("Failed to load '%s' (Appearances): %s", file, e.what()));
+        return false;
     }
 }
 

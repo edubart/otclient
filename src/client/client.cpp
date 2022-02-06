@@ -27,6 +27,7 @@
 #include "minimap.h"
 #include "shadermanager.h"
 #include "spritemanager.h"
+#include "spriteappearances.h"
 
 Client g_client;
 
@@ -40,6 +41,7 @@ void Client::init(std::vector<std::string>& /*args*/)
     g_game.init();
     g_shaders.init();
     g_sprites.init();
+    g_spriteAppearances.init();
     g_things.init();
 
     //TODO: restore options
@@ -87,5 +89,6 @@ void Client::terminate()
     g_minimap.terminate();
     g_things.terminate();
     g_sprites.terminate();
+    g_spriteAppearances.terminate();
     g_shaders.terminate();
 }

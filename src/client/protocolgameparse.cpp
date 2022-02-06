@@ -2592,15 +2592,20 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
 
     if(item->isStackable() || item->isFluidContainer() || item->isSplash() || item->isChargeable()) {
         item->setCountOrSubType(msg->getU8());
-    } else if(g_game.getClientVersion() >= 1281 && item->isContainer()) {
-        uint8 hasQuickLootFlags = msg->getU8();
-        if(hasQuickLootFlags) {
-            msg->getU32(); // quick loot flags
-        }
+    } else if(g_game.getClientVersion() >= 1281) {
+        if(item->isContainer()) {
 
-        uint8 hasQuiverAmmoCount = msg->getU8();
-        if(hasQuiverAmmoCount) {
-            msg->getU32(); // ammoTotal
+            uint8 hasQuickLootFlags = msg->getU8();
+            if(hasQuickLootFlags) {
+                msg->getU32(); // quick loot flags
+            }
+
+            uint8 hasQuiverAmmoCount = msg->getU8();
+            if(hasQuiverAmmoCount) {
+                msg->getU32(); // ammoTotal
+            }
+        } else if(item->getClassification() != 0) {
+            msg->getU8();
         }
     }
 

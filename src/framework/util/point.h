@@ -69,7 +69,7 @@ public:
 
     bool operator<=(const TPoint<T>& other) const { return x <= other.x && y <= other.y; }
     bool operator>=(const TPoint<T>& other) const { return x >= other.x && y >= other.y; }
-    bool operator<(const TPoint<T>& other) const { return x < other.x&& y < other.y; }
+    bool operator<(const TPoint<T>& other) const { return x < other.x && y < other.y; }
     bool operator>(const TPoint<T>& other) const { return x > other.x && y > other.y; }
 
     TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; return *this; }

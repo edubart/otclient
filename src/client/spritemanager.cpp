@@ -21,6 +21,7 @@
  */
 
 #include "spritemanager.h"
+#include "spriteappearances.h"
 #include <framework/core/filestream.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/image.h>
@@ -127,6 +128,10 @@ void SpriteManager::unload()
 
 ImagePtr SpriteManager::getSpriteImage(int id)
 {
+    if(g_game.getClientVersion() >= 1281) {
+        return g_spriteAppearances.getSpriteImage(id);
+    }
+
     try {
         if(id == 0 || !m_spritesFile)
             return nullptr;

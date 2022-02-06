@@ -25,6 +25,7 @@
 #include "lightview.h"
 #include "map.h"
 #include "spritemanager.h"
+#include "spriteappearances.h"
 
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/filestream.h>
@@ -118,6 +119,287 @@ void ThingType::serialize(const FileStreamPtr& fin)
         else
             fin->addU16(i);
     }
+}
+
+void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, const appearances::Appearance& appearance)
+{
+    m_null = false;
+    m_id = clientId;
+    m_category = category;
+
+    const appearances::AppearanceFlags& flags = appearance.flags();
+
+    if (flags.has_bank()) {
+        m_attribs.set<uint16_t>(ThingAttrGround, flags.bank().waypoints());
+    }
+
+    if (flags.has_clip()) {
+        m_attribs.set(ThingAttrGroundBorder, flags.clip());
+    }
+
+    if (flags.has_bottom()) {
+        m_attribs.set(ThingAttrOnBottom, flags.bottom());
+    }
+
+    if (flags.has_top()) {
+        m_attribs.set(ThingAttrOnTop, flags.top());
+    }
+
+    if (flags.has_container()) {
+        m_attribs.set(ThingAttrContainer, flags.container());
+    }
+
+    if (flags.has_cumulative()) {
+        m_attribs.set(ThingAttrStackable, flags.cumulative());
+    }
+
+    if (flags.has_multiuse()) {
+        m_attribs.set(ThingAttrMultiUse, flags.multiuse());
+    }
+
+    if (flags.has_forceuse()) {
+        m_attribs.set(ThingAttrForceUse, flags.forceuse());
+    }
+
+    if (flags.has_write()) {
+        m_attribs.set(ThingAttrWritable, flags.write().max_text_length());
+    }
+
+    if (flags.has_write_once()) {
+        m_attribs.set(ThingAttrWritableOnce, flags.write_once().max_text_length_once());
+    }
+
+    if (flags.has_liquidpool()) {
+        m_attribs.set(ThingAttrSplash, flags.liquidpool());
+    }
+
+    if (flags.has_unpass()) {
+        m_attribs.set(ThingAttrNotWalkable, flags.unpass());
+    }
+
+    if (flags.has_unmove()) {
+        m_attribs.set(ThingAttrNotMoveable, flags.unmove());
+    }
+
+    if (flags.has_unsight()) {
+        m_attribs.set(ThingAttrBlockProjectile, flags.unsight());
+    }
+
+    if (flags.has_avoid()) {
+        m_attribs.set(ThingAttrNotPathable, flags.avoid());
+    }
+
+    // no_movement_animation (?)
+
+    if (flags.has_take()) {
+        m_attribs.set(ThingAttrPickupable, flags.take());
+    }
+
+    if (flags.has_liquidcontainer()) {
+        m_attribs.set(ThingAttrFluidContainer, flags.liquidcontainer());
+    }
+
+    if (flags.has_hang()) {
+        m_attribs.set(ThingAttrHangable, flags.hang());
+    }
+
+    if (flags.has_hook()) {
+        const auto hookDirection = flags.hook().direction();
+        if (hookDirection == HOOK_TYPE::HOOK_TYPE_EAST) {
+            m_attribs.set(ThingAttrHookEast, true);
+        } else if (hookDirection == HOOK_TYPE::HOOK_TYPE_SOUTH) {
+            m_attribs.set(ThingAttrHookSouth, true);
+        }
+    }
+
+    if (flags.has_light()) {
+        m_attribs.set(ThingAttrLight, Light(flags.light().brightness(), flags.light().color()));
+    }
+
+    if (flags.has_rotate()) {
+        m_attribs.set(ThingAttrRotateable, flags.rotate());
+    }
+
+    if (flags.has_dont_hide()) {
+        m_attribs.set(ThingAttrDontHide, flags.dont_hide());
+    }
+
+    if (flags.has_translucent()) {
+        m_attribs.set(ThingAttrTranslucent, flags.translucent());
+    }
+
+    if (flags.has_shift()) {
+        m_displacement = Point(flags.shift().x(), flags.shift().y());
+        m_attribs.set(ThingAttrDisplacement, true);
+    }
+
+    if (flags.has_height()) {
+        m_attribs.set(ThingAttrElevation, flags.height().elevation());
+    }
+
+    if (flags.has_lying_object()) {
+        m_attribs.set(ThingAttrLyingCorpse, flags.lying_object());
+    }
+
+    if (flags.has_animate_always()) {
+        m_attribs.set(ThingAttrAnimateAlways, flags.animate_always());
+    }
+
+    if (flags.has_automap()) {
+        m_attribs.set(ThingAttrMinimapColor, static_cast<uint16_t>(flags.automap().color()));
+    }
+
+    if (flags.has_lenshelp()) {
+        m_attribs.set(ThingAttrLensHelp, flags.lenshelp().id());
+    }
+
+    if (flags.has_fullbank()) {
+        m_attribs.set(ThingAttrFullGround, flags.fullbank());
+    }
+
+    if (flags.has_ignore_look()) {
+        m_attribs.set(ThingAttrLook, flags.ignore_look());
+    }
+
+    if (flags.has_clothes()) {
+        m_attribs.set(ThingAttrCloth, flags.clothes().slot());
+    }
+
+    // default action
+
+    if (flags.has_market()) {
+        MarketData market;
+        market.category = flags.market().category();
+        market.tradeAs = flags.market().trade_as_object_id();
+        market.showAs = flags.market().show_as_object_id();
+        market.name = flags.market().name();
+
+        for (const int32_t voc : flags.market().restrict_to_profession()) {
+            market.restrictVocation |= voc;
+        }
+
+        market.requiredLevel = flags.market().minimum_level();
+        m_attribs.set(ThingAttrMarket, market);
+    }
+
+    if (flags.has_wrap()) {
+        m_attribs.set(ThingAttrWrapable, flags.wrap());
+    }
+
+    if (flags.has_unwrap()) {
+        m_attribs.set(ThingAttrUnwrapable, flags.unwrap());
+    }
+
+    if (flags.has_topeffect()) {
+        m_attribs.set(ThingAttrTopEffect, flags.topeffect());
+    }
+
+    // npcsaledata
+    // charged to expire
+    // corpse
+    // player_corpse
+    // cyclopediaitem
+    // ammo
+    // show_off_socket
+    // reportable
+
+    if (flags.has_upgradeclassification()) {
+        m_attribs.set<uint16_t>(ThingAttrUpgradeClassification, flags.upgradeclassification().upgrade_classification());
+    }
+
+    // now lets parse sprite data
+    m_animationPhases = 0;
+    int totalSpritesCount = 0;
+
+    std::vector<Size> sizes;
+    std::vector<int> total_sprites;
+
+    for (const auto& framegroup : appearance.frame_group()) {
+        int frameGroupType = framegroup.fixed_frame_group();
+        const auto& spriteInfo = framegroup.sprite_info();
+        const auto& animation = spriteInfo.animation();
+        const auto& sprites = spriteInfo.sprite_id();
+        const auto& spritesPhases = animation.sprite_phase();
+
+        m_numPatternX = spriteInfo.pattern_width();
+        m_numPatternY = spriteInfo.pattern_height();
+        m_numPatternZ = spriteInfo.pattern_depth();
+        m_layers = spriteInfo.layers();
+
+        m_animationPhases += std::max<int>(1, spritesPhases.size());
+
+        SpriteSheetPtr sheet = g_spriteAppearances.getSheetBySpriteId(spriteInfo.sprite_id(0), false);
+        if (sheet) {
+            m_size = sheet->getSpriteSize() / SPRITE_SIZE;
+            sizes.push_back(m_size);
+        }
+
+        // animations
+        if (spritesPhases.size() > 1) {
+            auto animator = AnimatorPtr(new Animator);
+            animator->unserializeAppearance(animation);
+
+            if (frameGroupType == FrameGroupMoving)
+                m_animator = animator;
+            else if (frameGroupType == FrameGroupIdle || frameGroupType == FrameGroupInitial)
+                m_idleAnimator = animator;
+        }
+
+        const int totalSprites = m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * std::max<int>(1, spritesPhases.size());
+        total_sprites.push_back(totalSprites);
+
+        if (totalSpritesCount + totalSprites > 4096)
+            stdext::throw_exception("a thing type has more than 4096 sprites");
+
+        m_spritesIndex.resize(totalSpritesCount + totalSprites);
+        for (int j = totalSpritesCount, spriteId = 0; j < (totalSpritesCount + totalSprites); ++j, ++spriteId) {
+            m_spritesIndex[j] = spriteInfo.sprite_id(spriteId);
+        }
+
+        totalSpritesCount += totalSprites;
+    }
+
+    if (sizes.size() > 1) {
+        // correction for some sprites
+        for (auto& s : sizes) {
+            m_size.setWidth(std::max<int>(m_size.width(), s.width()));
+            m_size.setHeight(std::max<int>(m_size.height(), s.height()));
+        }
+        size_t expectedSize = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+        if (expectedSize != m_spritesIndex.size()) {
+            std::vector<int> sprites(std::move(m_spritesIndex));
+            m_spritesIndex.clear();
+            m_spritesIndex.reserve(expectedSize);
+            for (size_t i = 0, idx = 0; i < sizes.size(); ++i) {
+                int totalSprites = total_sprites[i];
+                if (m_size == sizes[i]) {
+                    for (int j = 0; j < totalSprites; ++j) {
+                        m_spritesIndex.push_back(sprites[idx++]);
+                    }
+                    continue;
+                }
+                size_t patterns = (totalSprites / sizes[i].area());
+                for (size_t p = 0; p < patterns; ++p) {
+                    for (int x = 0; x < m_size.width(); ++x) {
+                        for (int y = 0; y < m_size.height(); ++y) {
+                            if (x < sizes[i].width() && y < sizes[i].height()) {
+                                m_spritesIndex.push_back(sprites[idx++]);
+                                continue;
+                            }
+                            m_spritesIndex.push_back(0);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    m_textures.resize(m_animationPhases);
+    m_blankTextures.resize(m_animationPhases);
+    m_smoothTextures.resize(m_animationPhases);
+    m_texturesFramesRects.resize(m_animationPhases);
+    m_texturesFramesOriginRects.resize(m_animationPhases);
+    m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
 void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
@@ -456,8 +738,12 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     }
 }
 
-const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType txtType)
+TexturePtr ThingType::getTexture(int animationPhase, const TextureType txtType)
 {
+    if (m_null) {
+        return nullptr;
+    }
+
     const bool allBlank = txtType == TextureType::ALL_BLANK,
         smoth = txtType == TextureType::SMOOTH;
 
@@ -484,6 +770,11 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
     m_texturesFramesRects[animationPhase].resize(indexSize);
     m_texturesFramesOriginRects[animationPhase].resize(indexSize);
     m_texturesFramesOffsets[animationPhase].resize(indexSize);
+
+    bool protobufSupported = g_game.getProtocolVersion() >= 1281;
+
+    static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
+
     for(int z = 0; z < m_numPatternZ; ++z) {
         for(int y = 0; y < m_numPatternY; ++y) {
             for(int x = 0; x < m_numPatternX; ++x) {
@@ -494,28 +785,49 @@ const TexturePtr& ThingType::getTexture(int animationPhase, const TextureType tx
                     Point framePos = Point(frameIndex % (textureSize.width() / m_size.width()) * m_size.width(),
                                            frameIndex / (textureSize.width() / m_size.width()) * m_size.height()) * SPRITE_SIZE;
 
-                    if(!useCustomImage) {
-                        for(int h = 0; h < m_size.height(); ++h) {
-                            for(int w = 0; w < m_size.width(); ++w) {
-                                const uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
-                                ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
+                    if (!useCustomImage) {
+                        if(protobufSupported) {
+                            const uint spriteIndex = getSpriteIndex(-1, -1, spriteMask ? 1 : l, x, y, z, animationPhase);
+                            ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
+                            if(!spriteImage) {
+                                return nullptr;
+                            }
 
-                                // verifies that the first block in the lower right corner is transparent.
-                                if(h == 0 && w == 0 && (!spriteImage || spriteImage->hasTransparentPixel())) {
-                                    fullImage->setTransparentPixel(true);
-                                }
+                            // verifies that the first block in the lower right corner is transparent.
+                            if(spriteImage->hasTransparentPixel()) {
+                                fullImage->setTransparentPixel(true);
+                            }
 
-                                if(spriteImage) {
-                                    if(allBlank) {
-                                        spriteImage->overwrite(Color::white);
-                                    } else if(spriteMask) {
-                                        static Color maskColors[] = { Color::red, Color::green, Color::blue, Color::yellow };
-                                        spriteImage->overwriteMask(maskColors[l - 1]);
+                            if(allBlank) {
+                                spriteImage->overwrite(Color::white);
+                            } else if(spriteMask) {
+                                spriteImage->overwriteMask(maskColors[l - 1]);
+                            }
+
+                            fullImage->blit(framePos, spriteImage);
+                        } else {
+                            for(int h = 0; h < m_size.height(); ++h) {
+                                for(int w = 0; w < m_size.width(); ++w) {
+                                    const uint spriteIndex = getSpriteIndex(w, h, spriteMask ? 1 : l, x, y, z, animationPhase);
+                                    ImagePtr spriteImage = g_sprites.getSpriteImage(m_spritesIndex[spriteIndex]);
+
+                                    // verifies that the first block in the lower right corner is transparent.
+                                    if (h == 0 && w == 0 && (!spriteImage || spriteImage->hasTransparentPixel())) {
+                                        fullImage->setTransparentPixel(true);
                                     }
-                                    Point spritePos = Point(m_size.width() - w - 1,
-                                                            m_size.height() - h - 1) * SPRITE_SIZE;
 
-                                    fullImage->blit(framePos + spritePos, spriteImage);
+                                    if(spriteImage) {
+                                        if(allBlank) {
+                                            spriteImage->overwrite(Color::white);
+                                        } else if(spriteMask) {
+                                            spriteImage->overwriteMask(maskColors[l - 1]);
+                                        }
+
+                                        Point spritePos = Point(m_size.width() - w - 1,
+                                            m_size.height() - h - 1) * SPRITE_SIZE;
+
+                                        fullImage->blit(framePos + spritePos, spriteImage);
+                                    }
                                 }
                             }
                         }
@@ -588,14 +900,22 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
 
 uint ThingType::getSpriteIndex(int w, int h, int l, int x, int y, int z, int a)
 {
-    const uint index =
-        ((((((a % m_animationPhases)
-             * m_numPatternZ + z)
+    uint index = ((((((a % m_animationPhases)
+            * m_numPatternZ + z)
             * m_numPatternY + y)
-           * m_numPatternX + x)
-          * m_layers + l)
-         * m_size.height() + h)
-        * m_size.width() + w;
+            * m_numPatternX + x)
+            * m_layers + l)
+            * m_size.height() + h)
+            * m_size.width() + w;
+
+    if (w == -1 && h == -1) { // protobuf does not use width and height, because sprite image is the exact sprite size, not split by 32x32, so -1 is passed instead
+        index = ((((a % m_animationPhases)
+            * m_numPatternZ + z)
+            * m_numPatternY + y)
+            * m_numPatternX + x)
+            * m_layers + l;
+    }
+            
     assert(index < m_spritesIndex.size());
     return index;
 }

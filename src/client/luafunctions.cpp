@@ -49,12 +49,14 @@
 #include "uiminimap.h"
 #include "uiprogressrect.h"
 #include "uisprite.h"
+#include "spriteappearances.h"
 
 #include <framework/luaengine/luainterface.h>
 
 void Client::registerLuaFunctions()
 {
     g_lua.registerSingletonClass("g_things");
+    g_lua.bindSingletonFunction("g_things", "loadAppearances", &ThingTypeManager::loadAppearances, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadDat", &ThingTypeManager::loadDat, &g_things);
     g_lua.bindSingletonFunction("g_things", "saveDat", &ThingTypeManager::saveDat, &g_things);
     g_lua.bindSingletonFunction("g_things", "loadOtb", &ThingTypeManager::loadOtb, &g_things);
@@ -101,6 +103,10 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_sprites", "isLoaded", &SpriteManager::isLoaded, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSprSignature", &SpriteManager::getSignature, &g_sprites);
     g_lua.bindSingletonFunction("g_sprites", "getSpritesCount", &SpriteManager::getSpritesCount, &g_sprites);
+
+    g_lua.registerSingletonClass("g_spriteAppearances");
+    g_lua.bindSingletonFunction("g_spriteAppearances", "saveSpriteToFile", &SpriteAppearances::saveSpriteToFile, &g_spriteAppearances);
+    g_lua.bindSingletonFunction("g_spriteAppearances", "saveSheetToFileBySprite", &SpriteAppearances::saveSheetToFileBySprite, &g_spriteAppearances);
 
     g_lua.registerSingletonClass("g_map");
     g_lua.bindSingletonFunction("g_map", "isLookPossible", &Map::isLookPossible, &g_map);

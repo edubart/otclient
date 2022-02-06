@@ -126,6 +126,7 @@
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -139,6 +140,7 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -155,6 +157,7 @@
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -173,6 +176,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <TargetMachine>MachineX86</TargetMachine>
@@ -206,6 +210,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>Default</LanguageStandard_C>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -225,6 +230,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <AdditionalIncludeDirectories>$(VcpkgInstalledDir)$(VcpkgTriplet)\include\luajit;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -247,6 +253,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
   <ItemGroup>
     <ClCompile Include="..\src\client\animatedtext.cpp" />
     <ClCompile Include="..\src\client\animator.cpp" />
+    <ClCompile Include="..\src\client\spriteappearances.cpp" />
     <ClCompile Include="..\src\client\client.cpp" />
     <ClCompile Include="..\src\client\container.cpp" />
     <ClCompile Include="..\src\client\creature.cpp" />
@@ -395,11 +402,14 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClCompile Include="..\src\framework\xml\tinyxml.cpp" />
     <ClCompile Include="..\src\framework\xml\tinyxmlerror.cpp" />
     <ClCompile Include="..\src\framework\xml\tinyxmlparser.cpp" />
+    <ClCompile Include="..\src\framework\protobuf\appearances.pb.cc" />
+    <ClCompile Include="..\src\framework\protobuf\shared.pb.cc" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\client\animatedtext.h" />
     <ClInclude Include="..\src\client\animator.h" />
+    <ClInclude Include="..\src\client\spriteappearances.h" />
     <ClInclude Include="..\src\client\client.h" />
     <ClInclude Include="..\src\client\const.h" />
     <ClInclude Include="..\src\client\container.h" />
@@ -572,6 +582,8 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\util\size.h" />
     <ClInclude Include="..\src\framework\xml\tinystr.h" />
     <ClInclude Include="..\src\framework\xml\tinyxml.h" />
+    <ClInclude Include="..\src\framework\protobuf\appearances.pb.h" />
+    <ClInclude Include="..\src\framework\protobuf\shared.pb.h" />
     <ClInclude Include="..\src\gitinfo.h" />
   </ItemGroup>
   <ItemGroup>

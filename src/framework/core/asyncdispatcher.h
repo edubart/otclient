@@ -44,8 +44,7 @@ public:
         return std::shared_future<typename std::invoke_result<F>::type>(prom->get_future());
     }
 
-    void dispatch(std::function<void()> f)
-    {
+    void dispatch(std::function<void()> f) {
         std::lock_guard<std::mutex> lock(m_mutex);
         m_tasks.push_back(f);
         m_condition.notify_all();

@@ -39,6 +39,7 @@ public:
     bool loadOtml(std::string file);
     void loadOtb(const std::string& file);
     void loadXml(const std::string& file);
+    bool loadAppearances(const std::string& file);
     void parseItemType(uint16 id, TiXmlElement* elem);
 
     void saveDat(const std::string& fileName);

@@ -40,6 +40,7 @@ public:
     bool isNull() const { return wd == 0 && ht == 0; }
     bool isEmpty() const { return wd < 1 || ht < 1; }
     bool isValid() const { return wd >= 0 && ht >= 0; }
+    bool isUnset() const { return wd == -1 && ht == -1; }
 
     int width() const { return wd; }
     int height() const { return ht; }

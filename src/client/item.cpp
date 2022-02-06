@@ -100,7 +100,7 @@ void Item::setOtbId(uint16 id)
 
 bool Item::isValid()
 {
-    return g_things.isValidDatId(m_clientId, ThingCategoryItem);
+    return g_things.isValidDatId(m_clientId, ThingCategoryItem) && !g_things.getThingType(m_clientId, ThingCategoryItem)->isNull();
 }
 
 void Item::unserializeItem(const BinaryTreePtr& in)
