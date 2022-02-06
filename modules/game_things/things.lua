@@ -22,19 +22,19 @@ function load()
 
   local datPath, sprPath
   if filename then
-    datPath = resolvepath('/things/' .. filename)
-    sprPath = resolvepath('/things/' .. filename)
+    datPath = resolvepath('/data/things/' .. filename)
+    sprPath = resolvepath('/data/things/' .. filename)
   else
-    datPath = resolvepath('/things/' .. version .. '/Tibia')
-    sprPath = resolvepath('/things/' .. version .. '/Tibia')
+    datPath = resolvepath('/data/things/' .. version .. '/Tibia')
+    sprPath = resolvepath('/data/things/' .. version .. '/Tibia')
   end
 
   local errorMessage = ''
   if not g_things.loadDat(datPath) then
-    errorMessage = errorMessage .. tr("Unable to load dat file, please place a valid dat in '%s'", datPath) .. '\n'
+    errorMessage = errorMessage .. tr("Unable to load dat file, please place a valid dat in '%s.dat'", datPath) .. '\n'
   end
   if not g_sprites.loadSpr(sprPath) then
-    errorMessage = errorMessage .. tr("Unable to load spr file, please place a valid spr in '%s'", sprPath)
+    errorMessage = errorMessage .. tr("Unable to load spr file, please place a valid spr in '%s.spr'", sprPath)
   end
 
   loaded = (errorMessage:len() == 0)

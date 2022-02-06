@@ -140,9 +140,26 @@ function EnterGame.init()
     enterGame:getChildById('autoLoginBox'):setChecked(autologin)
     enterGame:getChildById('stayLoggedBox'):setChecked(stayLogged)
 
+    local installedClients = {}
+    local installed_qty = 0
+    for _, dirItem in ipairs(g_resources.listDirectoryFiles('/data/things/')) do
+        if tonumber(dirItem) ~= nil then
+            installedClients[dirItem] = true
+            installed_qty = installed_qty + 1
+        end
+    end
     clientBox = enterGame:getChildById('clientComboBox')
     for _, proto in pairs(g_game.getSupportedClients()) do
-        clientBox:addOption(proto)
+        local proto_str = tostring(proto)
+        if installedClients[proto_str] or installed_qty == 0 then
+            installedClients[proto_str] = nil
+            clientBox:addOption(proto)
+        end
+    end
+    for proto_str, status in pairs(installedClients) do
+        if status == true then
+            print(string.format("Warning: %s recognized as an installed client, but not supported.", proto_str))
+        end
     end
     clientBox:setCurrentOption(clientVersion)
 
