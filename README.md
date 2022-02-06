@@ -27,7 +27,7 @@
 - Client Config in [config.h](https://github.com/mehah/otclient/blob/cache-for-all/src/client/config.h)
 
 ##### Community (Features)
-- Support Tibia 12.81 by [@Nekiro](https://github.com/nekiro)
+- Support Tibia 12.85/protobuf by [@Nekiro](https://github.com/nekiro)
 - Floor Fading by [@Kondra](https://github.com/OTCv8)
 - Action Bar by [@DipSet](https://github.com/Dip-Set1)
 - Access to widget children via widget.childId by [@Hugo0x1337](https://github.com/Hugo0x1337)
@@ -87,7 +87,7 @@ client, instead otclient was designed to be a combination of a framework and tib
 
 In short, if you need to compile OTClient, follow these tutorials:
 
-- [Compiling on Windows](https://github.com/edubart/otclient/wiki/Compiling-on-Windows)
+- [Compiling on Windows](https://github.com/mehah/otclient/wiki/Compiling-on-Windows)
 - [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
 - [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
 
