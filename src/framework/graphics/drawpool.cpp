@@ -63,14 +63,10 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
     auto& list = m_currentPool->m_objects;
 
     if(m_forceGrouping) {
-        auto& groupList = m_currentPool->m_objects;
-
-        const uint16 startIndex = m_currentPool->m_indexToStartSearching ? m_currentPool->m_indexToStartSearching - 1 : 0;
-
-        const auto itFind = std::find_if(m_currentPool->m_objects.begin() + startIndex, m_currentPool->m_objects.end(), [state]
+        const auto itFind = std::find_if(list.begin() + m_currentPool->m_indexToStartSearching, list.end(), [state]
         (const Pool::DrawObject& action) { return action.state == state; });
 
-        if(itFind != groupList.end()) {
+        if(itFind != list.end()) {
             (*itFind).drawMethods.push_back(method);
         } else {
             list.push_back(Pool::DrawObject{ state, Painter::DrawMode::Triangles, {method} });
@@ -196,11 +192,7 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
         originalDest
     };
 
-    auto state = generateState();
-    state.color = color;
-    state.texture = texture;
-
-    add(state, method, Painter::DrawMode::TriangleStrip);
+    add(generateState(color, texture), method, Painter::DrawMode::TriangleStrip);
 }
 
 void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
@@ -210,11 +202,7 @@ void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& tex
 
     const Pool::DrawMethod method{ Pool::DrawMethodType::UPSIDEDOWN_RECT, std::make_pair(dest, src) };
 
-    auto state = generateState();
-    state.color = color;
-    state.texture = texture;
-
-    add(state, method, Painter::DrawMode::TriangleStrip);
+    add(generateState(color, texture), method, Painter::DrawMode::TriangleStrip);
 }
 
 void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
@@ -224,11 +212,7 @@ void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& textu
 
     const Pool::DrawMethod method{ Pool::DrawMethodType::REPEATED_RECT,std::make_pair(dest, src) };
 
-    auto state = generateState();
-    state.color = color;
-    state.texture = texture;
-
-    add(state, method);
+    add(generateState(color, texture), method);
 }
 
 void DrawPool::addFilledRect(const Rect& dest, const Color color)
@@ -238,10 +222,7 @@ void DrawPool::addFilledRect(const Rect& dest, const Color color)
 
     const Pool::DrawMethod method{ Pool::DrawMethodType::RECT,std::make_pair(dest, Rect()) };
 
-    auto state = generateState();
-    state.color = color;
-
-    add(state, method);
+    add(generateState(color), method);
 }
 
 void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color)
@@ -251,10 +232,7 @@ void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c,
 
     const Pool::DrawMethod method{ Pool::DrawMethodType::TRIANGLE, {}, std::make_tuple(a, b, c) };
 
-    auto state = generateState();
-    state.color = color;
-
-    add(state, method);
+    add(generateState(color), method);
 }
 
 void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLineWidth)
@@ -269,10 +247,7 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
         static_cast<uint16>(innerLineWidth)
     };
 
-    auto state = generateState();
-    state.color = color;
-
-    add(state, method);
+    add(generateState(color), method);
 }
 
 void DrawPool::addAction(std::function<void()> action)
@@ -280,7 +255,7 @@ void DrawPool::addAction(std::function<void()> action)
     m_currentPool->m_objects.push_back(Pool::DrawObject{ {}, Painter::DrawMode::None, {}, std::move(action) });
 }
 
-Painter::PainterState DrawPool::generateState()
+Painter::PainterState DrawPool::generateState(const Color& color, const TexturePtr& texture)
 {
     Painter::PainterState state = g_painter->getCurrentState();
     state.clipRect = m_currentPool->m_state.clipRect;
@@ -288,13 +263,15 @@ Painter::PainterState DrawPool::generateState()
     state.opacity = m_currentPool->m_state.opacity;
     state.alphaWriting = m_currentPool->m_state.alphaWriting;
     state.shaderProgram = m_currentPool->m_state.shaderProgram;
+    state.color = color;
+    state.texture = texture;
 
     return state;
 }
 
-void DrawPool::use(const PoolPtr& pool)
+void DrawPool::use(const PoolPtr& pool, bool forceGrouping)
 {
-    m_forceGrouping = false;
+    m_forceGrouping = forceGrouping;
 
     m_currentPool = pool ? pool : n_unknowPool;
     m_currentPool->resetState();

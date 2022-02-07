@@ -107,6 +107,7 @@ public:
     void onAfterDraw(std::function<void()> f) { m_afterDraw = std::move(f); }
     void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
+    Size getSize() { return m_framebuffer->getSize(); }
 
 protected:
     bool m_autoUpdate{ false };

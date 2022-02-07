@@ -31,7 +31,7 @@
 struct LightSource {
     Point pos;
     uint8 color{ 0 };
-    uint16 radius{ 0 };
+    uint16 intensity{ 0 };
     float brightness{ 0.f };
     float opacity{ 1.f };
 };
@@ -39,13 +39,13 @@ struct LightSource {
 class LightView : public LuaObject
 {
 public:
-    LightView(const MapViewPtr& mapView);
+    LightView();
 
-    void resize();
-    void draw(const Rect& dest, const Rect& src);
+    void resize(const Size& size);
+    void draw(const Rect& dest, const Rect& src, const uint8 tileSize);
 
     void addLightSource(const Point& mainCenter, const Light& light);
-    void addShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity });  m_lastPos = m_lights.size(); }
+    void addShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, 0, opacity }); }
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
 
@@ -57,10 +57,8 @@ private:
     Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
-    MapViewPtr m_mapView;
 
     std::vector<LightSource> m_lights;
-    int m_lastPos{ 0 };
 };
 
 #endif

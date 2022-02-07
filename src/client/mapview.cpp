@@ -125,7 +125,7 @@ void MapView::draw(const Rect& rect)
     }
 
     drawCreatureInformation();
-    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect);
+    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect, m_tileSize);
     drawText();
 }
 
@@ -255,9 +255,6 @@ void MapView::drawCreatureInformation()
 {
     if(!m_drawNames && !m_drawHealthBars && !m_drawManaBar) return;
 
-    g_drawPool.use(m_pools.creatureInformation);
-    g_drawPool.forceGrouping(true);
-
     const Position cameraPosition = getCameraPosition();
 
     uint32_t flags = 0;
@@ -265,6 +262,7 @@ void MapView::drawCreatureInformation()
     if(m_drawHealthBars) { flags |= Otc::DrawBars; }
     if(m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
+    g_drawPool.use(m_pools.creatureInformation, true);
     for(const auto& creature : m_visibleCreatures) {
         if(creature->isDead() || !creature->canBeSeen())
             continue;
@@ -292,10 +290,9 @@ void MapView::drawText()
 {
     if(!m_drawTexts || (g_map.getStaticTexts().empty() && g_map.getAnimatedTexts().empty())) return;
 
-    g_drawPool.use(m_pools.text);
-    g_drawPool.forceGrouping(true);
-
     const Position cameraPosition = getCameraPosition();
+
+    g_drawPool.use(m_pools.text, true);
     for(const StaticTextPtr& staticText : g_map.getStaticTexts()) {
         if(staticText->getMessageMode() == Otc::MessageNone) continue;
 
@@ -491,7 +488,7 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_rectDimension = Rect(0, 0, bufferSize);
 
     m_pools.map->resize(bufferSize);
-    if(m_drawLights) m_lightView->resize();
+    if(m_drawLights) m_lightView->resize(bufferSize);
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
     m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
@@ -847,7 +844,10 @@ void MapView::setDrawLights(bool enable)
 
     if(enable == m_drawLights) return;
 
-    m_lightView = enable ? LightViewPtr(new LightView(this)) : nullptr;
+    if(enable) {
+        m_lightView = LightViewPtr(new LightView);
+        m_lightView->resize(m_rectDimension.size());
+    }
     m_drawLights = enable;
 
     updateLight();

@@ -50,7 +50,7 @@ public:
     PoolFramedPtr createPoolF(PoolType type);
     PoolPtr get(const PoolType type) const { return m_pools[type]; }
 
-    void use(const PoolPtr& pool);
+    void use(const PoolPtr& pool, bool forceGrouping = false);
     void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);
 
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
@@ -94,7 +94,7 @@ private:
 
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<FramedPool>(m_currentPool); }
 
-    Painter::PainterState generateState();
+    Painter::PainterState generateState(const Color& color, const TexturePtr& texture = nullptr);
 
     CoordsBuffer m_coordsBuffer;
     std::array<PoolPtr, UNKNOW + 1> m_pools;

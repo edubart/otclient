@@ -26,42 +26,42 @@
 #include "mapview.h"
 #include "spritemanager.h"
 
-LightView::LightView(const MapViewPtr& mapView) : m_pool(g_drawPool.createPoolF(LIGHT)), m_mapView(mapView) { resize(); }
-void LightView::resize() { m_pool->resize(m_mapView->m_rectDimension.size()); }
+LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
+
+void LightView::resize(const Size& size) { m_pool->resize(size); };
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
     if(!isDark()) return;
 
-    const uint16 radius = (light.intensity * SPRITE_SIZE * m_mapView->m_scaleFactor);
-
     if(!m_lights.empty()) {
         auto& prevLight = m_lights.back();
         if(prevLight.pos == pos && prevLight.color == light.color) {
-            prevLight.radius = std::max<uint16>(prevLight.radius, radius);
+            prevLight.intensity = std::max<uint16>(prevLight.intensity, light.intensity);
             return;
         }
     }
 
-    m_lights.push_back(LightSource{ pos , light.color, radius, light.intensity / 6.f, g_drawPool.getOpacity() });
+    m_lights.push_back(LightSource{ pos , light.color, light.intensity, light.intensity / 6.f, g_drawPool.getOpacity() });
 }
 
-void LightView::draw(const Rect& dest, const Rect& src)
+void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
 {
     // draw light, only if there is darkness
     m_pool->setEnable(isDark());
     if(!isDark()) return;
 
     g_drawPool.use(m_pool, dest, src);
-    g_drawPool.addFilledRect(m_mapView->m_rectDimension, m_globalLightColor);
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_mapView->getTileSize() / 2.8), Size(m_mapView->getTileSize() * 1.6));
+    g_drawPool.addFilledRect(Rect(0, 0, m_pool->getSize()), m_globalLightColor);
 
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
     for(auto& light : m_lights) {
-        if(light.radius && light.color) {
+        if(light.color && light.intensity) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.brightness));
+            const uint16 radius = light.intensity * tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(light.radius), Size(light.radius * 2)), g_sprites.getLightTexture(), color);
+            g_drawPool.addTexturedRect(Rect(light.pos - Point(radius), Size(radius * 2)), g_sprites.getLightTexture(), color);
         } else {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
             g_drawPool.setOpacity(light.opacity);
@@ -71,7 +71,6 @@ void LightView::draw(const Rect& dest, const Rect& src)
     }
 
     m_lights.clear();
-    m_lastPos = 0;
 
     g_painter->setBlendEquation(Painter::BlendEquation_Add);
 }
