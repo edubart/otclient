@@ -978,6 +978,19 @@ PathFindResult_ptr Map::newFindPath(const Position& start, const Position& goal,
         return ret;
     }
 
+    // check the goal pos is walkable
+    if (g_map.isAwareOfPosition(goal)) {
+        const TilePtr goalTile = getTile(goal);
+        if (!goalTile || (!goalTile->isWalkable())) {
+            return ret;
+        }
+    } else {
+        const MinimapTile& goalTile = g_minimap.getTile(goal);
+        if (goalTile.hasFlag(MinimapTileNotWalkable)) {
+            return ret;
+        }
+    }
+    
     struct LessNode {
         bool operator()(Node* a, Node* b) const
         {
