@@ -1167,7 +1167,12 @@ void ProtocolGame::parseDistanceMissile(const InputMessagePtr& msg)
 {
     const Position fromPos = getPosition(msg);
     const Position toPos = getPosition(msg);
-    const int shotId = msg->getU8();
+
+    int shotId;
+    if(g_game.getFeature(Otc::GameDistanceEffectU16))
+        shotId = msg->getU16();
+    else
+        shotId = msg->getU8();
 
     if(!g_things.isValidDatId(shotId, ThingCategoryMissile)) {
         g_logger.traceError(stdext::format("invalid missile id %d", shotId));
