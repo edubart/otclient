@@ -1130,7 +1130,7 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
     }
 
     if(g_game.getClientVersion() >= 1281) {
-        if (type == Otc::MAGIC_EFFECTS_CREATE_DISTANCEEFFECT) {
+        if(type == Otc::MAGIC_EFFECTS_CREATE_DISTANCEEFFECT) {
             int8_t x = msg->getU8();
             int8_t y = msg->getU8();
             toPos = Position(pos.x + x, pos.y + y, pos.z);
@@ -2282,7 +2282,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
             continue;
         }
 
-        if(stackPos > 10)
+        if(stackPos > MAX_THINGS)
             g_logger.traceError(stdext::format("too many things, pos=%s, stackpos=%d", stdext::to_string(position), stackPos));
 
         ThingPtr thing = getThing(msg);
@@ -2594,7 +2594,6 @@ ItemPtr ProtocolGame::getItem(const InputMessagePtr& msg, int id)
         item->setCountOrSubType(msg->getU8());
     } else if(g_game.getClientVersion() >= 1281) {
         if(item->isContainer()) {
-
             uint8 hasQuickLootFlags = msg->getU8();
             if(hasQuickLootFlags) {
                 msg->getU32(); // quick loot flags
