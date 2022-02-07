@@ -201,11 +201,11 @@ MiniWindow
     SmallSkillButton
       id: skillId11
       SkillNameLabel
-        !text: tr('Life Leech Chance')
+        !text: tr('Mana Leech Chance')
       SkillValueLabel
 
     SmallSkillButton
       id: skillId12
       SkillNameLabel
-        !text: tr('Life Leech Amount')
+        !text: tr('Mana Leech Amount')
       SkillValueLabel
