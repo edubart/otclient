@@ -529,7 +529,7 @@ void MapView::updateLight()
 
     const auto cameraPosition = getCameraPosition();
 
-    Light ambientLight = cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
+    Light ambientLight = Light(); //cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
     ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * 255, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
@@ -918,7 +918,7 @@ bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 
 bool MapView::isInRangeEx(const Position& pos, const bool ignoreZ)
 {
-    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right - 1, m_awareRange.top, m_awareRange.bottom, ignoreZ);
+    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
 void MapView::setCrosshairTexture(const std::string& texturePath)

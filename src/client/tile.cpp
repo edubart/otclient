@@ -47,7 +47,7 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
             continue;
 
         const TilePtr& tile = g_map.getTile(pos.second);
-        if(!tile || tile->hasTranslucentLight() || (!tile->isFullyOpaque() && !tile->isWalkable(true))) {
+        if(!tile || tile->getGround() && tile->getGround()->isTranslucent() || !tile->isFullyOpaque()) {
             m_borderDirections.push_back(pos.first);
         }
     }

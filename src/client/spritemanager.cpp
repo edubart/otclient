@@ -250,7 +250,7 @@ void SpriteManager::generateLightTexture()
 
 void SpriteManager::generateShadeTexture()
 {
-    const int bubbleRadius = 25,
+    const int bubbleRadius = 20,
         bubbleDiameter = bubbleRadius * 2;
 
     const auto lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
