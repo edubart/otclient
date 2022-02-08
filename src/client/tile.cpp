@@ -33,17 +33,22 @@
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(position.getPositionsAround())
 {
     for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
+        //for(auto dir : { Otc::North,        Otc::East,        Otc::South,        Otc::West,        Otc::NorthEast,        Otc::SouthEast,        Otc::SouthWest,        Otc::NorthWest }) {
         Position pos = position;
         m_positionsBorder.emplace_back(dir, pos.translatedToDirection(dir));
     }
 }
 
-void Tile::onAddVisibleTileList(const MapViewPtr& /*mapView*/)
+void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
     m_borderDirections.clear();
+    const auto centerPos = mapView->getCameraPosition().coveredUp(m_position.z - mapView->getCameraPosition().z);
     for(const auto& pos : m_positionsBorder) {
+        if(!mapView->isInRange(pos.second, true))
+            continue;
+
         const TilePtr& tile = g_map.getTile(pos.second);
-        if(!tile || (!tile->isFullyOpaque() && tile->isWalkable(true))) {
+        if(!tile || tile->hasTranslucentLight() || (!tile->isFullyOpaque() && !tile->isWalkable(true))) {
             m_borderDirections.push_back(pos.first);
         }
     }

@@ -54,7 +54,7 @@ void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
     g_drawPool.use(m_pool, dest, src);
     g_drawPool.addFilledRect(Rect(0, 0, m_pool->getSize()), m_globalLightColor);
 
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize * 7), Size(tileSize * 15));
     for(auto& light : m_lights) {
         if(light.color && light.intensity) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));

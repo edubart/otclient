@@ -227,7 +227,8 @@ void MapView::drawFloor()
                                 continue;
                             }
 
-                            lightView->addShade(pos2D, fadeLevel);
+                            if(!tile->isBorder())
+                                lightView->addShade(pos2D, fadeLevel);
                         }
                     }
                 }
@@ -747,8 +748,8 @@ uint8 MapView::calcFirstVisibleFloor(bool checkLimitsFloorsView)
                             tile = g_map.getTile(coveredPos);
                             if(tile && tile->limitsFloorsView(isLookPossible)) {
                                 firstFloor = coveredPos.z + 1;
-                                break;
                             }
+                                break;
                         }
                     }
                 }
@@ -906,7 +907,12 @@ std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool 
 
 bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 {
-    return getCameraPosition().isInRange(pos, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2, ignoreZ);
+    auto camera = getCameraPosition();
+    if(ignoreZ) {
+        camera.coveredUp(camera.z - pos.z);
+    }
+
+    return camera.isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
 void MapView::setCrosshairTexture(const std::string& texturePath)
