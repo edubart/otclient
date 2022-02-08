@@ -103,6 +103,12 @@
     <Filter Include="Header Files\framework\graphics\ogl">
       <UniqueIdentifier>{8b96ee09-99f1-4c70-90c1-d99505de6264}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\framework\protobuf">
+      <UniqueIdentifier>{4e135b84-c0bb-4aaa-97fc-f36be2a62505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\framework\protobuf">
+      <UniqueIdentifier>{8616aecc-d171-4390-b004-38517b68a5a4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\framework\luafunctions.cpp">
@@ -533,6 +539,15 @@
     </ClCompile>
     <ClCompile Include="..\src\framework\graphics\pool.cpp">
       <Filter>Source Files\framework\graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\protobuf\appearances.pb.cc">
+      <Filter>Source Files\framework\protobuf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\framework\protobuf\shared.pb.cc">
+      <Filter>Source Files\framework\protobuf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\client\spriteappearances.cpp">
+      <Filter>Source Files\client</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1060,6 +1075,15 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\hash.h">
       <Filter>Header Files\framework\stdext</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\protobuf\shared.pb.h">
+      <Filter>Header Files\framework\protobuf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\framework\protobuf\appearances.pb.h">
+      <Filter>Header Files\framework\protobuf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\spriteappearances.h">
+      <Filter>Header Files\client</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
