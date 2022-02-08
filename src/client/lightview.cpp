@@ -42,7 +42,7 @@ void LightView::addLightSource(const Point& pos, const Light& light)
         }
     }
 
-    m_lights.push_back(LightSource{ pos , light.color, light.intensity, light.intensity / 6.f, g_drawPool.getOpacity() });
+    m_lights.push_back(LightSource{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
 }
 
 void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
@@ -57,7 +57,7 @@ void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
     const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
     for(auto& light : m_lights) {
         if(light.color && light.intensity) {
-            const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.brightness));
+            const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
             const uint16 radius = light.intensity * tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
