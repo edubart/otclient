@@ -42,9 +42,8 @@ Tile::Tile(const Position& position) : m_position(position), m_positionsAround(p
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
     m_borderDirections.clear();
-    const auto centerPos = mapView->getCameraPosition().coveredUp(m_position.z - mapView->getCameraPosition().z);
     for(const auto& pos : m_positionsBorder) {
-        if(!mapView->isInRange(pos.second, true))
+        if(!mapView->isInRangeEx(pos.second, true))
             continue;
 
         const TilePtr& tile = g_map.getTile(pos.second);

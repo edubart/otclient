@@ -235,8 +235,10 @@ public:
     bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
     bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
     {
-        if(!ignoreZ && pos.z != z) return false;
-        return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange;
+        auto _pos = pos;
+        if(ignoreZ) { _pos.coveredUp(_pos.z - pos.z); }
+
+        return std::abs(x - _pos.x) <= xRange && std::abs(y - _pos.y) <= yRange && z == pos.z;
     }
     bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
     {

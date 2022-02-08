@@ -434,11 +434,13 @@ void MapView::updateVisibleTilesCache()
                         }
                     }
 
+                    bool addTile = true;
+
                     if(!_canFloorFade || fadeFinished) {
                         // skip tiles that are completely behind another tile
                         if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor)) {
                             if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
-                                continue;
+                                addTile = false;
                             }
                         }
                     }
@@ -446,21 +448,25 @@ void MapView::updateVisibleTilesCache()
                     if(isDrawingLights() && (tile->isFullyOpaque() || (tile->getGround() && tile->getGround()->isTopGround())))
                         floor.shades.push_back(tile);
 
-                    if(tile->hasGround())
-                        floor.grounds.push_back(tile);
+                    if(addTile) {
+                        if(tile->hasGround())
+                            floor.grounds.push_back(tile);
 
-                    if(tile->hasSurface())
-                        floor.surfaces.push_back(tile);
+                        if(tile->hasSurface())
+                            floor.surfaces.push_back(tile);
 
-                    if(g_app.isDrawingEffectsOnTop() && tile->hasEffect())
-                        floor.effects.push_back(tile);
+                        if(g_app.isDrawingEffectsOnTop() && tile->hasEffect())
+                            floor.effects.push_back(tile);
+                    }
 
-                    tile->onAddVisibleTileList(this);
+                    if(addTile || !floor.shades.empty()) {
+                        tile->onAddVisibleTileList(this);
 
-                    if(iz < m_floorMin)
-                        m_floorMin = iz;
-                    else if(iz > m_floorMax)
-                        m_floorMax = iz;
+                        if(iz < m_floorMin)
+                            m_floorMin = iz;
+                        else if(iz > m_floorMax)
+                            m_floorMax = iz;
+                    }
                 }
             }
         }
@@ -749,7 +755,7 @@ uint8 MapView::calcFirstVisibleFloor(bool checkLimitsFloorsView)
                             if(tile && tile->limitsFloorsView(isLookPossible)) {
                                 firstFloor = coveredPos.z + 1;
                             }
-                                break;
+                            break;
                         }
                     }
                 }
@@ -907,12 +913,12 @@ std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool 
 
 bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 {
-    auto camera = getCameraPosition();
-    if(ignoreZ) {
-        camera.coveredUp(camera.z - pos.z);
-    }
+    return getCameraPosition().isInRange(pos, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2, ignoreZ);
+}
 
-    return camera.isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
+bool MapView::isInRangeEx(const Position& pos, const bool ignoreZ)
+{
+    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right - 1, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
 void MapView::setCrosshairTexture(const std::string& texturePath)
