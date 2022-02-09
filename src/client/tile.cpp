@@ -32,8 +32,7 @@
 
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(position.getPositionsAround())
 {
-    for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
-        //for(auto dir : { Otc::North,        Otc::East,        Otc::South,        Otc::West,        Otc::NorthEast,        Otc::SouthEast,        Otc::SouthWest,        Otc::NorthWest }) {
+    for(auto dir : { Otc::North, Otc::West, Otc::NorthWest, Otc::NorthEast, Otc::SouthWest, Otc::South, Otc::SouthEast, Otc::East }) {
         Position pos = position;
         m_positionsBorder.emplace_back(dir, pos.translatedToDirection(dir));
     }
@@ -41,14 +40,29 @@ Tile::Tile(const Position& position) : m_position(position), m_positionsAround(p
 
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
-    m_borderDirections.clear();
+    m_topLeftborderDirections.clear();
+    m_bottomRightborderDirections.clear();
+
     for(const auto& pos : m_positionsBorder) {
         if(!mapView->isInRangeEx(pos.second, true))
             continue;
 
         const TilePtr& tile = g_map.getTile(pos.second);
-        if(!tile || tile->getGround() && tile->getGround()->isTranslucent() || !tile->isFullyOpaque()) {
-            m_borderDirections.push_back(pos.first);
+        if(tile && tile->getGround() && tile->getGround()->isTranslucent()) {
+            m_topLeftborderDirections.push_back(pos.first);
+        }
+    }
+
+    if(m_topLeftborderDirections.empty()) {
+        for(const auto& pos : m_positionsBorder) {
+            if(!mapView->isInRangeEx(pos.second, true))
+                continue;
+
+            const TilePtr& tile = g_map.getTile(pos.second);
+            if(!tile || !tile->isFullyOpaque()) {
+                if(!(pos.first == Otc::North || pos.first == Otc::West || pos.first == Otc::NorthWest || pos.first == Otc::SouthWest || pos.first == Otc::NorthEast))
+                    m_bottomRightborderDirections.push_back(pos.first);
+            }
         }
     }
 }

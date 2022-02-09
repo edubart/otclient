@@ -58,8 +58,10 @@ void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
     const float pos = size / 2.25f;
 
     const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize * pos), Size(tileSize * size));
+    const auto& shadeBase2 = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
+
     for(auto& light : m_lights) {
-        if(light.color && light.intensity) {
+        if(light.color) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
             const uint16 radius = light.intensity * tileSize;
 
@@ -68,7 +70,10 @@ void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
         } else {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
             g_drawPool.setOpacity(light.opacity);
-            g_drawPool.addTexturedRect(Rect(light.pos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
+
+            auto base = light.intensity ? shadeBase2 : shadeBase;
+
+            g_drawPool.addTexturedRect(Rect(light.pos - base.first, base.second), g_sprites.getShadeTexture(light.intensity), m_globalLightColor);
             g_drawPool.resetOpacity();
         }
     }

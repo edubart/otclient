@@ -227,8 +227,8 @@ void MapView::drawFloor()
                                 continue;
                             }
 
-                            if(!tile->isBorder())
-                                lightView->addShade(pos2D, fadeLevel);
+                            if(!tile->isBottomRightBorder())
+                                lightView->addShade(pos2D, fadeLevel, tile->hasTranslucentObjectAround());
                         }
                     }
                 }

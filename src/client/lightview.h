@@ -44,7 +44,7 @@ public:
     void draw(const Rect& dest, const Rect& src, const uint8 tileSize);
 
     void addLightSource(const Point& mainCenter, const Light& light);
-    void addShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, opacity }); }
+    void addShade(const Point& point, const float opacity, bool isSimpleShade = false) { m_lights.push_back(LightSource{ point, 0, isSimpleShade, opacity }); }
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
 

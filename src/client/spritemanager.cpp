@@ -35,6 +35,7 @@ void SpriteManager::terminate()
     unload();
     m_shadeTexture = nullptr;
     m_lightTexture = nullptr;
+    m_simpleShadeTexture = nullptr;
 }
 
 bool SpriteManager::loadSpr(std::string file)
@@ -269,4 +270,17 @@ void SpriteManager::generateShadeTexture()
 
     m_shadeTexture = TexturePtr(new Texture(lightImage));
     m_shadeTexture->setSmooth(true);
+
+    const uint16 diameter = 8;
+    const auto image = ImagePtr(new Image(Size(diameter, diameter)));
+    for(int_fast16_t x = -1; ++x < diameter;) {
+        for(int_fast16_t y = -1; ++y < diameter;) {
+            const uint8 alpha = x == 0 || y == 0 || x == diameter - 1 || y == diameter - 1 ? 0 : 0xff;
+            uint8_t pixel[4] = { 0xff, 0xff, 0xff, alpha };
+            image->setPixel(x, y, pixel);
+        }
+    }
+
+    m_simpleShadeTexture = TexturePtr(new Texture(image));
+    m_simpleShadeTexture->setSmooth(true);
 }

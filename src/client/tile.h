@@ -101,7 +101,8 @@ public:
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
-    bool isBorder() { return !m_borderDirections.empty(); };
+    bool hasTranslucentObjectAround() { return !m_topLeftborderDirections.empty(); };
+    bool isBottomRightBorder() { return !m_bottomRightborderDirections.empty(); };
     bool hasCreature();
     bool hasBlockingCreature();
     bool hasTallThings() { return m_countFlag.hasTallThings; }
@@ -120,7 +121,8 @@ public:
     bool hasTopGround() { return (m_ground && m_ground->isTopGround()) || m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
 
-    std::vector<Otc::Direction> getBorderDirections() { return m_borderDirections; };
+    std::vector<Otc::Direction> getTopLeftBorderDirections() { return m_topLeftborderDirections; };
+    std::vector<Otc::Direction> getBottomRightBorderDirections() { return m_bottomRightborderDirections; };
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -197,7 +199,9 @@ private:
 
     std::array<Position, 8> m_positionsAround;
     std::vector<std::pair<Otc::Direction, Position>> m_positionsBorder;
-    std::vector<Otc::Direction> m_borderDirections;
+
+    std::vector<Otc::Direction> m_topLeftborderDirections;
+    std::vector<Otc::Direction> m_bottomRightborderDirections;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
