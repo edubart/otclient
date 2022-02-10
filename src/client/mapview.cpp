@@ -485,7 +485,7 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_tileSize = tileSize;
     m_virtualCenterOffset = (drawDimension / 2 - Size(1)).toPoint();
 
-    m_rectDimension = Rect(0, 0, bufferSize);
+    m_rectDimension = { 0, 0, bufferSize };
 
     m_pools.map->resize(bufferSize);
     if(m_drawLights) m_lightView->resize(bufferSize);
@@ -494,9 +494,11 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
     m_awareRange.bottom = m_awareRange.top + 1;
     m_awareRange.right = m_awareRange.left + 1;
-    m_rectCache.rect = Rect();
+    m_rectCache.rect = {};
 
     updateViewportDirectionCache();
+    updateViewport();
+
     requestVisibleTilesCacheUpdate();
 }
 
@@ -505,11 +507,7 @@ void MapView::onCameraMove(const Point& /*offset*/)
     m_rectCache.rect = Rect();
 
     if(isFollowingCreature()) {
-        if(m_followingCreature->isWalking()) {
-            m_viewport = m_viewPortDirection[m_followingCreature->getDirection()];
-        } else {
-            m_viewport = m_viewPortDirection[Otc::InvalidDirection];
-        }
+        updateViewport(m_followingCreature->isWalking() ? m_followingCreature->getDirection() : Otc::InvalidDirection);
     }
 }
 

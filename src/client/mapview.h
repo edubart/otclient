@@ -188,6 +188,8 @@ private:
     void drawCreatureInformation();
     void drawText();
 
+    void updateViewport(const Otc::Direction dir = Otc::InvalidDirection) { m_viewport = m_viewPortDirection[dir]; }
+
     bool canFloorFade() { return m_floorViewMode == FloorViewMode::FADE && m_floorFading; }
 
     float getFadeLevel(uint8 z)
