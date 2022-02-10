@@ -28,6 +28,11 @@
 #include "declarations.h"
 #include "thingtype.h"
 
+struct ShadeSource {
+    int start;
+    Point pos;
+};
+
 struct LightSource {
     Point pos;
     uint8 color{ 0 };
@@ -40,11 +45,11 @@ class LightView : public LuaObject
 public:
     LightView();
 
-    void resize(const Size& size);
-    void draw(const Rect& dest, const Rect& src, const uint8 tileSize);
+    void resize(const Size& size, const uint8_t tileSize);
+    void draw(const Rect& dest, const Rect& src);
 
     void addLightSource(const Point& mainCenter, const Light& light);
-    void addShade(const Point& point, const float opacity, bool isSimpleShade = false) { m_lights.push_back(LightSource{ point, 0, isSimpleShade, opacity }); }
+    void addShade(const Point& point, const float opacity);
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
 
@@ -52,11 +57,15 @@ public:
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
+    uint8_t m_tileSize;
+    Size m_dimension;
+
     Light m_globalLight;
     Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
 
+    std::vector<int> m_shades;
     std::vector<LightSource> m_lights;
 };
 

@@ -125,7 +125,7 @@ void MapView::draw(const Rect& rect)
     }
 
     drawCreatureInformation();
-    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect, m_tileSize);
+    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect);
     drawText();
 }
 
@@ -211,9 +211,14 @@ void MapView::drawFloor()
                             if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
                                 continue;
 
+                            const auto currentPos = tile->getPosition();
+
                             auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
+
+                            if(tile->isBottomRightBorder())
+                                continue;
+
                             if(ground->isTopGround()) {
-                                const auto currentPos = tile->getPosition();
                                 for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
                                     const auto& nextDownTile = g_map.getTile(pos);
                                     if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
@@ -228,7 +233,7 @@ void MapView::drawFloor()
                             }
 
                             if(!tile->isBottomRightBorder())
-                                lightView->addShade(pos2D, fadeLevel, tile->hasTranslucentObjectAround());
+                                lightView->addShade(pos2D, fadeLevel);
                         }
                     }
                 }
@@ -495,7 +500,7 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_rectDimension = { 0, 0, bufferSize };
 
     m_pools.map->resize(bufferSize);
-    if(m_drawLights) m_lightView->resize(bufferSize);
+    if(m_drawLights) m_lightView->resize(drawDimension, tileSize);
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
     m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
@@ -851,7 +856,7 @@ void MapView::setDrawLights(bool enable)
 
     if(enable) {
         m_lightView = LightViewPtr(new LightView);
-        m_lightView->resize(m_rectDimension.size());
+        m_lightView->resize(m_drawDimension, m_tileSize);
     }
     m_drawLights = enable;
 

@@ -30,39 +30,35 @@
 #include "map.h"
 #include "protocolgame.h"
 
-Tile::Tile(const Position& position) : m_position(position), m_positionsAround(position.getPositionsAround())
+Tile::Tile(const Position& position) : m_position(position)
 {
-    for(auto dir : { Otc::North, Otc::West, Otc::NorthWest, Otc::NorthEast, Otc::SouthWest, Otc::South, Otc::SouthEast, Otc::East }) {
+    const auto& positions = position.getPositionsAround();
+    int i = -1;
+    for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
+        auto& data = m_positionsAround[++i];
         Position pos = position;
-        m_positionsBorder.emplace_back(dir, pos.translatedToDirection(dir));
+
+        data.pos = pos.translatedToDirection(dir);
+        data.dir = dir;
     }
 }
 
 void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 {
-    m_topLeftborderDirections.clear();
-    m_bottomRightborderDirections.clear();
+    m_isBorder = false;
+    m_isBottomRightBorder = false;
 
-    for(const auto& pos : m_positionsBorder) {
-        if(!mapView->isInRangeEx(pos.second, true))
-            continue;
-
-        const TilePtr& tile = g_map.getTile(pos.second);
-        if(tile && tile->getGround() && tile->getGround()->isTranslucent()) {
-            m_topLeftborderDirections.push_back(pos.first);
-        }
-    }
-
-    if(m_topLeftborderDirections.empty()) {
-        for(const auto& pos : m_positionsBorder) {
-            if(!mapView->isInRangeEx(pos.second, true))
+    for(const auto& data : m_positionsAround) {
+        //if(data.dir == Otc::North || data.dir == Otc::West || data.dir == Otc::SouthWest || data.dir == Otc::NorthWest)
+            if(!mapView->isInRangeEx(data.pos, true))
                 continue;
 
-            const TilePtr& tile = g_map.getTile(pos.second);
-            if(!tile || !tile->isFullyOpaque()) {
-                if(!(pos.first == Otc::North || pos.first == Otc::West || pos.first == Otc::NorthWest || pos.first == Otc::SouthWest || pos.first == Otc::NorthEast))
-                    m_bottomRightborderDirections.push_back(pos.first);
-            }
+        const TilePtr& tile = g_map.getTile(data.pos);
+        if(!tile || tile->getGround() && tile->getGround()->isTranslucent() || !tile->isFullyOpaque() && !tile->hasTopGround()) {
+            if(data.dir == Otc::South || data.dir == Otc::SouthEast || data.dir == Otc::East)
+                m_isBottomRightBorder = true;
+
+            m_isBorder = true;
         }
     }
 }
@@ -512,8 +508,8 @@ CreaturePtr Tile::getTopCreature(const bool checkAround)
 
     // check for walking creatures in tiles around
     if(checkAround) {
-        for(const auto& position : m_positionsAround) {
-            const TilePtr& tile = g_map.getTile(position);
+        for(const auto& data : m_positionsAround) {
+            const TilePtr& tile = g_map.getTile(data.pos);
             if(!tile) continue;
 
             for(const CreaturePtr& c : tile->getCreatures()) {

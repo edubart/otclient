@@ -101,8 +101,8 @@ public:
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
-    bool hasTranslucentObjectAround() { return !m_topLeftborderDirections.empty(); };
-    bool isBottomRightBorder() { return !m_bottomRightborderDirections.empty(); };
+    bool isBottomRightBorder() { return m_isBottomRightBorder; };
+    bool isBorder() { return m_isBorder; }
     bool hasCreature();
     bool hasBlockingCreature();
     bool hasTallThings() { return m_countFlag.hasTallThings; }
@@ -120,9 +120,6 @@ public:
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
     bool hasTopGround() { return (m_ground && m_ground->isTopGround()) || m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
-
-    std::vector<Otc::Direction> getTopLeftBorderDirections() { return m_topLeftborderDirections; };
-    std::vector<Otc::Direction> getBottomRightBorderDirections() { return m_bottomRightborderDirections; };
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -184,6 +181,25 @@ private:
         int hasTopGroundBorder = 0;
     };
 
+    struct PositionData {
+        Otc::Direction dir{ Otc::InvalidDirection };
+        Position pos;
+    };
+
+    struct Borders {
+        struct Data {
+            Otc::Direction dir{ Otc::InvalidDirection };
+            Position pos;
+            bool is{ false };
+        };
+
+        std::vector<Data> bottomRight, topDown, leftRight;
+
+        bool hasBottomOrRight{ false },
+            hasTopAndDown{ false },
+            hasLeftAndRight{ false };
+    };
+
     void drawTop(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawCreature(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
@@ -193,15 +209,12 @@ private:
     bool checkForDetachableThing();
 
     Position m_position;
+    bool m_isBorder, m_isBottomRightBorder;
 
     uint8 m_drawElevation{ 0 }, m_minimapColor{ 0 };
     uint32 m_flags{ 0 }, m_houseId{ 0 };
 
-    std::array<Position, 8> m_positionsAround;
-    std::vector<std::pair<Otc::Direction, Position>> m_positionsBorder;
-
-    std::vector<Otc::Direction> m_topLeftborderDirections;
-    std::vector<Otc::Direction> m_bottomRightborderDirections;
+    std::array<PositionData, 8> m_positionsAround;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;

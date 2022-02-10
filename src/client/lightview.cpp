@@ -28,7 +28,14 @@
 
 LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
 
-void LightView::resize(const Size& size) { m_pool->resize(size); };
+void LightView::resize(const Size& size, const uint8_t tileSize)
+{
+    m_tileSize = tileSize;
+    m_dimension = size;
+
+    m_pool->resize(size * tileSize);
+    m_shades.resize(size.area(), -1);
+};
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
@@ -45,7 +52,24 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     m_lights.push_back(LightSource{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
 }
 
-void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
+void LightView::addShade(const Point& point, const float opacity)
+{
+    const size_t index = (m_dimension.width() * (point.y / m_tileSize)) + (point.x / m_tileSize);
+    if(index >= m_shades.size()) return;
+
+    const int indexLight = m_shades[index];
+    if(indexLight > -1) {
+        m_lights[indexLight].pos = {};
+        m_lights[indexLight].opacity = 0;
+    }
+
+    m_shades[index] = m_lights.size();
+    m_lights.push_back(LightSource{ point, 0, static_cast<uint16_t>(index), opacity });
+}
+
+// m_lights.push_back(LightSource{ point, 0, isSimpleShade, opacity });
+
+void LightView::draw(const Rect& dest, const Rect& src)
 {
     // draw light, only if there is darkness
     m_pool->setEnable(isDark());
@@ -57,24 +81,24 @@ void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
     const int size = 12;
     const float pos = size / 2.25f;
 
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize * pos), Size(tileSize * size));
-    const auto& shadeBase2 = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
+    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_tileSize * pos), Size(m_tileSize * size));
+    const auto& shadeBase2 = std::make_pair<Point, Size>(Point(m_tileSize / 1.3), Size(m_tileSize * 3.3));
 
     for(auto& light : m_lights) {
         if(light.color) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
-            const uint16 radius = light.intensity * tileSize;
+            const uint16 radius = light.intensity * m_tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
             g_drawPool.addTexturedRect(Rect(light.pos - Point(radius), Size(radius * 2)), g_sprites.getLightTexture(), color);
-        } else {
+        } else if(light.opacity) {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
             g_drawPool.setOpacity(light.opacity);
 
-            auto base = light.intensity ? shadeBase2 : shadeBase;
-
-            g_drawPool.addTexturedRect(Rect(light.pos - base.first, base.second), g_sprites.getShadeTexture(light.intensity), m_globalLightColor);
+            g_drawPool.addTexturedRect(Rect(light.pos - shadeBase2.first, shadeBase2.second), g_sprites.getShadeTexture(true), m_globalLightColor);
             g_drawPool.resetOpacity();
+
+            m_shades[light.intensity] = -1;
         }
     }
 
