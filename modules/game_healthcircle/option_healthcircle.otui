@@ -60,7 +60,7 @@ Panel
     margin-top: -4
     margin-left: 5
     mouse-scroll: false
-    @onTextChange: modules.game_healthcircle.setSkillType(self:getText())
+    @onTextChange: modules.game_healthcircle.setSkillType(self:getCurrentOption().data)
 
   Label
     id: distFromCenLabel

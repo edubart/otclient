@@ -497,14 +497,14 @@ function addToOptionsModule()
     opacityScrollbar = optionPanel:recursiveGetChildById('opacityScrollbar')
 
     -- ComboBox start values
-    chooseSkillComboBox:addOption('magic')
-    chooseSkillComboBox:addOption('fist')
-    chooseSkillComboBox:addOption('club')
-    chooseSkillComboBox:addOption('sword')
-    chooseSkillComboBox:addOption('axe')
-    chooseSkillComboBox:addOption('distance')
-    chooseSkillComboBox:addOption('shielding')
-    chooseSkillComboBox:addOption('fishing')
+    chooseSkillComboBox:addOption(tr('Magic Level'), 'magic')
+    chooseSkillComboBox:addOption(tr('Fist Fighting'), 'fist')
+    chooseSkillComboBox:addOption(tr('Club Fighting'), 'club')
+    chooseSkillComboBox:addOption(tr('Sword Fighting'), 'sword')
+    chooseSkillComboBox:addOption(tr('Axe Fighting'), 'axe')
+    chooseSkillComboBox:addOption(tr('Distance Fighting'), 'distance')
+    chooseSkillComboBox:addOption(tr('Shielding'), 'shielding')
+    chooseSkillComboBox:addOption(tr('Fishing'), 'fishing')
 
     -- Set values
     healthCheckBox:setChecked(isHealthCircle)
