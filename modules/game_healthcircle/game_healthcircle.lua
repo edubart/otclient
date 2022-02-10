@@ -511,7 +511,7 @@ function addToOptionsModule()
     manaCheckBox:setChecked(isManaCircle)
     experienceCheckBox:setChecked(isExpCircle)
     skillCheckBox:setChecked(isSkillCircle)
-    chooseSkillComboBox:setOption(skillType)
+    chooseSkillComboBox:setCurrentOptionByData(skillType, true)
     -- Prevent skill overwritten before initialize
     skillsLoaded = true
 
