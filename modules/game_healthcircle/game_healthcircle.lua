@@ -480,8 +480,8 @@ opacityScrollbar = nil
 function addToOptionsModule()
     -- Add to options module
     optionPanel = g_ui.loadUI('option_healthcircle')
-    modules.client_options.addTab(tr('Hp Mp Circle'), optionPanel,
-                                  '/game_healthcircle/img_game_healthcircle/hp_mp_circle')
+    modules.client_options.addTab(tr('HP/MP Circle'), optionPanel,
+                                  '/images/optionstab/health_circle')
 
     -- UI values
     healthCheckBox = optionPanel:recursiveGetChildById('healthCheckBox')
@@ -532,6 +532,6 @@ function destroyOptionsModule()
     opacityLabel = nil
     opacityScrollbar = nil
 
-    modules.client_options.removeTab('Hp Mp Circle')
+    modules.client_options.removeTab('HP/MP Circle')
     optionPanel = nil
 end

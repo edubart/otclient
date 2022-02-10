@@ -38,7 +38,6 @@ Panel
 
   Label
     id: chooseCrosshairLabel
-    width: 60
     !text: tr('Crosshair:')
     phantom: false
     anchors.left: prev.left
@@ -49,8 +48,8 @@ Panel
     id: crosshair
     width: 120
     anchors.left: prev.right
-    anchors.top: enableHighlightMouseTarget.bottom
-    margin-top: 10
+    anchors.top: prev.top
+    margin-top: -4
     margin-left: 5
     mouse-scroll: false
 

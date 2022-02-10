@@ -1,13 +1,8 @@
 Panel
-  CheckBox
+  OptionCheckBox
     id: healthCheckBox
-    text: Health circle
-    phantom: false
+    !text: tr('Health circle')
     !tooltip: tr('On health circle')
-    anchors.left: parent.left
-    anchors.top: parent.top
-    width: 140
-    //margin-top: 8
     @onCheckChange: |
       if self:isChecked() then
         modules.game_healthcircle.setHealthCircle(true)
@@ -15,15 +10,10 @@ Panel
         modules.game_healthcircle.setHealthCircle(false)
       end
 
-  CheckBox
+  OptionCheckBox
     id: manaCheckBox
-    text: Mana circle
-    phantom: false
+    !text: tr('Mana circle')
     !tooltip: tr('On mana circle')
-    anchors.left: parent.left
-    anchors.top: healthCheckBox.bottom
-    width: 140
-    margin-top: 8
     @onCheckChange: |
       if self:isChecked() then
         modules.game_healthcircle.setManaCircle(true)
@@ -31,15 +21,10 @@ Panel
         modules.game_healthcircle.setManaCircle(false)
       end
 
-  CheckBox
+  OptionCheckBox
     id: experienceCheckBox
-    text: Experience circle
-    phantom: false
+    !text: tr('Experience circle')
     !tooltip: tr('On experience circle')
-    anchors.left: parent.left
-    anchors.top: manaCheckBox.bottom
-    width: 140
-    margin-top: 8
     @onCheckChange: |
       if self:isChecked() then
         modules.game_healthcircle.setExpCircle(true)
@@ -47,15 +32,10 @@ Panel
         modules.game_healthcircle.setExpCircle(false)
       end
 
-  CheckBox
+  OptionCheckBox
     id: skillCheckBox
-    text: Skill circle
-    phantom: false
+    !text: tr('Skill circle')
     !tooltip: tr('On skill circle')
-    anchors.left: parent.left
-    anchors.top: experienceCheckBox.bottom
-    width: 140
-    margin-top: 8
     @onCheckChange: |
       if self:isChecked() then
         modules.game_healthcircle.setSkillCircle(true)
@@ -65,20 +45,20 @@ Panel
 
   Label
     id: chooseSkillLabel
-    width: 60
     !text: tr('Skill:')
-    phantom: false
     !tooltip: tr('Choose skill to show in skill circle.')
-    anchors.left: parent.left
-    anchors.top: skillCheckBox.bottom
+    phantom: false
+    anchors.left: prev.left
+    anchors.top: prev.bottom
     margin-top: 13
 
   ComboBox
     id: chooseSkillComboBox
     width: 120
-    anchors.left: chooseSkillLabel.right
-    anchors.top: skillCheckBox.bottom
-    margin-top: 10
+    anchors.left: prev.right
+    anchors.top: prev.top
+    margin-top: -4
+    margin-left: 5
     mouse-scroll: false
     @onTextChange: modules.game_healthcircle.setSkillType(self:getText())
 
@@ -86,17 +66,17 @@ Panel
     id: distFromCenLabel
     phantom: false
     !tooltip: tr('Set distance from center.')
-    width: 120
     anchors.left: parent.left
-    anchors.top: chooseSkillComboBox.bottom
+    anchors.right: parent.right
+    anchors.top: prev.bottom
     margin-top: 8
 
   OptionScrollbar
     id: distFromCenScrollbar
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: distFromCenLabel.bottom
-    margin-top: 5
+    anchors.top: prev.bottom
+    margin-top: 3
     minimum: 0
     maximum: 100
     @onValueChange: |
@@ -107,8 +87,8 @@ Panel
     id: opacityLabel
     phantom: false
     !tooltip: tr('Set circle opacity.')
-    width: 120
     anchors.left: parent.left
+    anchors.right: parent.right
     anchors.top: distFromCenScrollbar.bottom
     margin-top: 8
 
@@ -116,7 +96,7 @@ Panel
     id: opacityScrollbar
     anchors.left: parent.left
     anchors.right: parent.right
-    anchors.top: opacityLabel.bottom
+    anchors.top: prev.bottom
     margin-top: 5
     minimum: 0
     maximum: 100
