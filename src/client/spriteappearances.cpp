@@ -185,7 +185,7 @@ SpriteSheetPtr SpriteAppearances::getSheetBySpriteId(int id, bool load /* = true
     if (!sheet->loaded && load) {
         if (!sheet->loading) {
             sheet->loading = true;
-            g_asyncDispatcher.dispatch([=] {
+            g_asyncDispatcher.dispatch([this, &sheet] {
                 loadSpriteSheet(sheet);
             });
         }
