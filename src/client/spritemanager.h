@@ -45,7 +45,7 @@ public:
     bool isLoaded() { return m_loaded; }
 
     const TexturePtr& getLightTexture() const { return m_lightTexture; }
-    const TexturePtr& getShadeTexture(const bool isSimple) const { return isSimple ? m_simpleShadeTexture : m_shadeTexture; }
+    const TexturePtr& getShadeTexture() const { return m_shadeTexture; }
 
 private:
     enum {
@@ -55,7 +55,7 @@ private:
     void generateLightTexture(),
         generateShadeTexture();
 
-    TexturePtr m_lightTexture, m_shadeTexture, m_simpleShadeTexture;
+    TexturePtr m_lightTexture, m_shadeTexture;
 
     bool m_loaded{ false };
     uint32 m_signature{ 0 };

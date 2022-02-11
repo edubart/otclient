@@ -35,7 +35,6 @@ void SpriteManager::terminate()
     unload();
     m_shadeTexture = nullptr;
     m_lightTexture = nullptr;
-    m_simpleShadeTexture = nullptr;
 }
 
 bool SpriteManager::loadSpr(std::string file)
@@ -251,26 +250,6 @@ void SpriteManager::generateLightTexture()
 
 void SpriteManager::generateShadeTexture()
 {
-    const int bubbleRadius = 40,
-        bubbleDiameter = bubbleRadius * 2;
-
-    const auto lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
-    for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
-        for(int_fast16_t y = -1; ++y < bubbleDiameter;) {
-            const float radius = std::round((bubbleRadius - x) * (bubbleRadius - x) + (bubbleRadius - y) * (bubbleRadius - y)) / 2;
-            const float intensity = std::clamp<float>((bubbleRadius - radius) / (bubbleRadius + radius * 2), 0.f, 1.0f);
-
-            // light intensity varies inversely with the square of the distance
-            const uint8_t colorByte = std::min<int16>(intensity * 2 * 0xff, 0xff);
-
-            uint8_t pixel[4] = { 0xff, 0xff, 0xff, colorByte };
-            lightImage->setPixel(x, y, pixel);
-        }
-    }
-
-    m_shadeTexture = TexturePtr(new Texture(lightImage));
-    m_shadeTexture->setSmooth(true);
-
     const uint16 diameter = 4;
     const auto image = ImagePtr(new Image(Size(diameter, diameter)));
     for(int_fast16_t x = -1; ++x < diameter;) {
@@ -281,6 +260,6 @@ void SpriteManager::generateShadeTexture()
         }
     }
 
-    m_simpleShadeTexture = TexturePtr(new Texture(image));
-    m_simpleShadeTexture->setSmooth(true);
+    m_shadeTexture = TexturePtr(new Texture(image));
+    m_shadeTexture->setSmooth(true);
 }

@@ -111,6 +111,7 @@ public:
 
     float ratio() const { return static_cast<float>(wd) / ht; }
     T area() const { return wd * ht; }
+    T dimension() const { return wd + ht; }
 
 private:
     T wd, ht;

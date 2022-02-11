@@ -52,9 +52,9 @@ void LightView::addLightSource(const Point& pos, const Light& light)
     m_lights.push_back(LightSource{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
 }
 
-void LightView::addShade(const Point& point, const float opacity)
+void LightView::addShade(const Point& pos, const float opacity)
 {
-    const size_t index = (m_dimension.width() * (point.y / m_tileSize)) + (point.x / m_tileSize);
+    const size_t index = (m_dimension.width() * (pos.y / m_tileSize)) + (pos.x / m_tileSize);
     if(index >= m_shades.size()) return;
 
     const int indexLight = m_shades[index];
@@ -64,7 +64,8 @@ void LightView::addShade(const Point& point, const float opacity)
     }
 
     m_shades[index] = m_lights.size();
-    m_lights.push_back(LightSource{ point, 0, static_cast<uint16_t>(index), opacity });
+
+    m_lights.push_back(LightSource{ pos, 0, static_cast<uint16_t>(index), opacity });
 }
 
 // m_lights.push_back(LightSource{ point, 0, isSimpleShade, opacity });
@@ -78,11 +79,8 @@ void LightView::draw(const Rect& dest, const Rect& src)
     g_drawPool.use(m_pool, dest, src);
     g_drawPool.addFilledRect(Rect(0, 0, m_pool->getSize()), m_globalLightColor);
 
-    const int size = 12;
-    const float pos = size / 2.25f;
-
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(m_tileSize * pos), Size(m_tileSize * size));
-    const auto& shadeBase2 = std::make_pair<Point, Size>(Point(m_tileSize / 1.3), Size(m_tileSize * 3.3));
+    const int size = m_tileSize * 3.3;
+    const int pos = (size / 2.3) - (m_tileSize / 2);
 
     for(auto& light : m_lights) {
         if(light.color) {
@@ -90,12 +88,13 @@ void LightView::draw(const Rect& dest, const Rect& src)
             const uint16 radius = light.intensity * m_tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(radius), Size(radius * 2)), g_sprites.getLightTexture(), color);
+
+            g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
         } else if(light.opacity) {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
-            g_drawPool.setOpacity(light.opacity);
 
-            g_drawPool.addTexturedRect(Rect(light.pos - shadeBase2.first, shadeBase2.second), g_sprites.getShadeTexture(true), m_globalLightColor);
+            g_drawPool.setOpacity(light.opacity);
+            g_drawPool.addTexturedRect(Rect(light.pos - pos, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
             g_drawPool.resetOpacity();
 
             m_shades[light.intensity] = -1;

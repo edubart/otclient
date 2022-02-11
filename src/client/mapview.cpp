@@ -214,10 +214,10 @@ void MapView::drawFloor()
                             const auto currentPos = tile->getPosition();
 
                             auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
-
                             if(tile->isBottomRightBorder())
                                 continue;
 
+                            /*
                             if(ground->isTopGround()) {
                                 for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
                                     const auto& nextDownTile = g_map.getTile(pos);
@@ -230,10 +230,9 @@ void MapView::drawFloor()
                                 pos2D -= m_tileSize;
                                 lightView->addShade(pos2D, fadeLevel);
                                 continue;
-                            }
+                            }*/
 
-                            if(!tile->isBottomRightBorder())
-                                lightView->addShade(pos2D, fadeLevel);
+                            lightView->addShade(pos2D, fadeLevel);
                         }
                     }
                 }

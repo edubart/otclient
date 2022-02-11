@@ -48,8 +48,8 @@ public:
     void resize(const Size& size, const uint8_t tileSize);
     void draw(const Rect& dest, const Rect& src);
 
-    void addLightSource(const Point& mainCenter, const Light& light);
-    void addShade(const Point& point, const float opacity);
+    void addLightSource(const Point& pos, const Light& light);
+    void addShade(const Point& pos, const float opacity);
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
 
