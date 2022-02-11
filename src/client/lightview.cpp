@@ -76,11 +76,10 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_pool->setEnable(isDark());
     if(!isDark()) return;
 
-    g_drawPool.use(m_pool, dest, src);
-    g_drawPool.addFilledRect(Rect(0, 0, m_pool->getSize()), m_globalLightColor);
+    g_drawPool.use(m_pool, dest, src, m_globalLightColor);
 
     const int size = m_tileSize * 3.3;
-    const int pos = (size / 2.3) - (m_tileSize / 2);
+    const int pos = (size / 2) - (m_tileSize / 2);
 
     for(auto& light : m_lights) {
         if(light.color) {

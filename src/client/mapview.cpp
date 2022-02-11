@@ -131,12 +131,11 @@ void MapView::draw(const Rect& rect)
 
 void MapView::drawFloor()
 {
-    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect);
+    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect, Color::black);
     {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
 
-        g_drawPool.addFilledRect(m_rectDimension, Color::black);
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             if(canFloorFade()) {
                 float fading = getFadeLevel(z);
@@ -217,20 +216,20 @@ void MapView::drawFloor()
                             if(tile->isBottomRightBorder())
                                 continue;
 
-                            /*
-                            if(ground->isTopGround()) {
-                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
-                                    const auto& nextDownTile = g_map.getTile(pos);
-                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                        lightView->addShade(pos2D, fadeLevel);
-                                        break;
+                                /*
+                                if(ground->isTopGround()) {
+                                    for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
+                                        const auto& nextDownTile = g_map.getTile(pos);
+                                        if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
+                                            lightView->addShade(pos2D, fadeLevel);
+                                            break;
+                                        }
                                     }
-                                }
 
-                                pos2D -= m_tileSize;
-                                lightView->addShade(pos2D, fadeLevel);
-                                continue;
-                            }*/
+                                    pos2D -= m_tileSize;
+                                    lightView->addShade(pos2D, fadeLevel);
+                                    continue;
+                                }*/
 
                             lightView->addShade(pos2D, fadeLevel);
                         }
