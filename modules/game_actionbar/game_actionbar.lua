@@ -308,6 +308,9 @@ function textAssignAccept()
 end
 
 function openObjectAssignWindow()
+    if objectAssignWindow ~= nil then
+        objectAssignWindow:destroy()
+    end
     objectAssignWindow = g_ui.loadUI('assign_object', g_ui.getRootWidget())
     actionRadioGroup = UIRadioGroup.create()
     actionRadioGroup:addWidget(objectAssignWindow:getChildById('useOnYourselfCheckbox'))
@@ -391,9 +394,8 @@ function onChooseItemMouseRelease(self, mousePosition, mouseButton)
             actionRadioGroup:selectWidget(objectAssignWindow:getChildById('useCheckbox'))
         end
         if not objectAssignWindow:isVisible() then
-            modules.game_hotkeys.enableHotkeys(false)
+            objectAssignWindow:show()
         end
-        objectAssignWindow:show()
         objectAssignWindow:raise()
         objectAssignWindow:focus()
     end
