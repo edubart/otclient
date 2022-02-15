@@ -216,20 +216,20 @@ void MapView::drawFloor()
                             if(tile->isBottomRightBorder())
                                 continue;
 
-                                /*
-                                if(ground->isTopGround()) {
-                                    for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
-                                        const auto& nextDownTile = g_map.getTile(pos);
-                                        if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                            lightView->addShade(pos2D, fadeLevel);
-                                            break;
-                                        }
+                            /*
+                            if(ground->isTopGround()) {
+                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
+                                    const auto& nextDownTile = g_map.getTile(pos);
+                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
+                                        lightView->addShade(pos2D, fadeLevel);
+                                        break;
                                     }
+                                }
 
-                                    pos2D -= m_tileSize;
-                                    lightView->addShade(pos2D, fadeLevel);
-                                    continue;
-                                }*/
+                                pos2D -= m_tileSize;
+                                lightView->addShade(pos2D, fadeLevel);
+                                continue;
+                            }*/
 
                             lightView->addShade(pos2D, fadeLevel);
                         }
@@ -757,8 +757,8 @@ uint8 MapView::calcFirstVisibleFloor(bool checkLimitsFloorsView)
                             tile = g_map.getTile(coveredPos);
                             if(tile && tile->limitsFloorsView(isLookPossible)) {
                                 firstFloor = coveredPos.z + 1;
+                                break;
                             }
-                            break;
                         }
                     }
                 }
