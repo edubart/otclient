@@ -50,11 +50,11 @@ void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
 
     for(const auto& data : m_positionsAround) {
         //if(data.dir == Otc::North || data.dir == Otc::West || data.dir == Otc::SouthWest || data.dir == Otc::NorthWest)
-            if(!mapView->isInRangeEx(data.pos, true))
-                continue;
+        if(!mapView->isInRangeEx(data.pos, true))
+            continue;
 
         const TilePtr& tile = g_map.getTile(data.pos);
-        if(!tile || tile->getGround() && tile->getGround()->isTranslucent() || !tile->isFullyOpaque() && !tile->hasTopGround()) {
+        if(!tile || !tile->isFullyOpaque() && !tile->hasTopGround()) {
             if(data.dir == Otc::South || data.dir == Otc::SouthEast || data.dir == Otc::East)
                 m_isBottomRightBorder = true;
 

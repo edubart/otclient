@@ -34,6 +34,7 @@ void SpriteManager::terminate()
 {
     unload();
     m_shadeTexture = nullptr;
+    m_shadeTexture2 = nullptr;
     m_lightTexture = nullptr;
 }
 

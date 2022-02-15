@@ -43,7 +43,7 @@ public:
     Position(int32_t x, int32_t y, uint8_t z) : x(x), y(y), z(z) {}
     Position(const Position& position) = default;
 
-    Position translatedToDirection(Otc::Direction direction)
+    Position translatedToDirection(Otc::Direction direction) const
     {
         Position pos = *this;
         switch(direction) {
@@ -81,7 +81,7 @@ public:
         return pos;
     }
 
-    Position translatedToReverseDirection(Otc::Direction direction)
+    Position translatedToReverseDirection(Otc::Direction direction)  const
     {
         Position pos = *this;
         switch(direction) {

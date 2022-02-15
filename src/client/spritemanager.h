@@ -55,7 +55,7 @@ private:
     void generateLightTexture(),
         generateShadeTexture();
 
-    TexturePtr m_lightTexture, m_shadeTexture;
+    TexturePtr m_lightTexture, m_shadeTexture, m_shadeTexture2;
 
     bool m_loaded{ false };
     uint32 m_signature{ 0 };

@@ -210,27 +210,10 @@ void MapView::drawFloor()
                             if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
                                 continue;
 
-                            const auto currentPos = tile->getPosition();
-
-                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
                             if(tile->isBottomRightBorder())
                                 continue;
 
-                            /*
-                            if(ground->isTopGround()) {
-                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
-                                    const auto& nextDownTile = g_map.getTile(pos);
-                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                        lightView->addShade(pos2D, fadeLevel);
-                                        break;
-                                    }
-                                }
-
-                                pos2D -= m_tileSize;
-                                lightView->addShade(pos2D, fadeLevel);
-                                continue;
-                            }*/
-
+                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
                             lightView->addShade(pos2D, fadeLevel);
                         }
                     }
