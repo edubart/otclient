@@ -78,8 +78,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
     g_drawPool.use(m_pool, dest, src, m_globalLightColor);
 
-    const float size = m_tileSize * 3.2;
-    const float pos = (size / 3) - (m_tileSize / 2);
+    const float size = m_tileSize * 3.3;
 
     for(auto& light : m_lights) {
         if(light.color) {
@@ -87,13 +86,12 @@ void LightView::draw(const Rect& dest, const Rect& src)
             const uint16 radius = light.intensity * m_tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
-
             g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
         } else if(light.opacity) {
             g_painter->setBlendEquation(Painter::BlendEquation_Add);
 
             g_drawPool.setOpacity(light.opacity);
-            g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize / 1.3, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
+            g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize / 1.2, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
             g_drawPool.resetOpacity();
 
             m_shades[light.intensity] = -1;
