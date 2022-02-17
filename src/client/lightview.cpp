@@ -31,10 +31,7 @@ LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
 void LightView::resize(const Size& size, const uint8_t tileSize)
 {
     m_tileSize = tileSize;
-    m_dimension = size;
-
     m_pool->resize(size * tileSize);
-    m_shades.resize(size.area(), -1);
 };
 
 void LightView::addLightSource(const Point& pos, const Light& light)
@@ -54,21 +51,8 @@ void LightView::addLightSource(const Point& pos, const Light& light)
 
 void LightView::addShade(const Point& pos, const float opacity)
 {
-    const size_t index = (m_dimension.width() * (pos.y / m_tileSize)) + (pos.x / m_tileSize);
-    if(index >= m_shades.size()) return;
-
-    const int indexLight = m_shades[index];
-    if(indexLight > -1) {
-        m_lights[indexLight].pos = {};
-        m_lights[indexLight].opacity = 0;
-    }
-
-    m_shades[index] = m_lights.size();
-
-    m_lights.push_back(LightSource{ pos, 0, static_cast<uint16_t>(index), opacity });
+    m_lights.push_back(LightSource{ pos, 0, 0, opacity });
 }
-
-// m_lights.push_back(LightSource{ point, 0, isSimpleShade, opacity });
 
 void LightView::draw(const Rect& dest, const Rect& src)
 {
@@ -86,15 +70,14 @@ void LightView::draw(const Rect& dest, const Rect& src)
             const uint16 radius = light.intensity * m_tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
+
             g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
         } else if(light.opacity) {
-            g_painter->setBlendEquation(Painter::BlendEquation_Add);
+            g_painter->setBlendEquation(Painter::BlendEquation_Rever_Subtract);
 
             g_drawPool.setOpacity(light.opacity);
-            g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize / 1.2, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
+            g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize * 1.8, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
             g_drawPool.resetOpacity();
-
-            m_shades[light.intensity] = -1;
         }
     }
 

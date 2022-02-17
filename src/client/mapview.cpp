@@ -205,17 +205,11 @@ void MapView::drawFloor()
                     alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 
                     for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
-                        const auto& ground = tile->getGround();
-                        if(ground && !ground->isTranslucent()) {
-                            if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
-                                continue;
+                        if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
+                            continue;
 
-                            if(tile->isBottomRightBorder())
-                                continue;
-
-                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
-                            lightView->addShade(pos2D, fadeLevel);
-                        }
+                        auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
+                        lightView->addShade(pos2D, fadeLevel);
                     }
                 }
             }
@@ -431,7 +425,7 @@ void MapView::updateVisibleTilesCache()
                         }
                     }
 
-                    if(isDrawingLights() && (tile->isFullyOpaque() || (tile->getGround() && tile->getGround()->isTopGround())))
+                    if(isDrawingLights() && tile->canShade(this))
                         floor.shades.push_back(tile);
 
                     if(addTile) {
@@ -446,8 +440,6 @@ void MapView::updateVisibleTilesCache()
                     }
 
                     if(addTile || !floor.shades.empty()) {
-                        tile->onAddVisibleTileList(this);
-
                         if(iz < m_floorMin)
                             m_floorMin = iz;
                         else if(iz > m_floorMax)

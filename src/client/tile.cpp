@@ -30,36 +30,7 @@
 #include "map.h"
 #include "protocolgame.h"
 
-Tile::Tile(const Position& position) : m_position(position)
-{
-    const auto& positions = position.getPositionsAround();
-    int i = -1;
-    for(auto dir : { Otc::South, Otc::SouthEast, Otc::East }) {
-        auto& data = m_positionsAround[++i];
-        Position pos = position;
-
-        data.pos = pos.translatedToDirection(dir);
-        data.dir = dir;
-    }
-}
-
-void Tile::onAddVisibleTileList(const MapViewPtr& mapView)
-{
-    m_isBorder = false;
-    m_isBottomRightBorder = false;
-
-    for(const auto& data : m_positionsAround) {
-        //if(data.dir == Otc::North || data.dir == Otc::West || data.dir == Otc::SouthWest || data.dir == Otc::NorthWest)
-
-        const TilePtr& tile = g_map.getTile(data.pos);
-        if(!tile || !tile->isFullyOpaque() && !tile->hasTopGround()) {
-            if(data.dir == Otc::South || data.dir == Otc::SouthEast || data.dir == Otc::East)
-                m_isBottomRightBorder = true;
-
-            m_isBorder = true;
-        }
-    }
-}
+Tile::Tile(const Position& position) : m_position(position), m_positionsAround(m_position.getPositionsAround()) {}
 
 bool Tile::isCompletelyCovered(int8 firstFloor)
 {
@@ -506,8 +477,8 @@ CreaturePtr Tile::getTopCreature(const bool checkAround)
 
     // check for walking creatures in tiles around
     if(checkAround) {
-        for(const auto& data : m_positionsAround) {
-            const TilePtr& tile = g_map.getTile(data.pos);
+        for(const auto& pos : m_positionsAround) {
+            const TilePtr& tile = g_map.getTile(pos);
             if(!tile) continue;
 
             for(const CreaturePtr& c : tile->getCreatures()) {
@@ -668,6 +639,20 @@ bool Tile::mustHookSouth()
 bool Tile::hasCreature()
 {
     return m_countFlag.hasCreature > 0;
+}
+
+bool Tile::canShade(const MapViewPtr& mapView)
+{
+    for(auto dir : { Otc::North, Otc::NorthWest, Otc::West }) {
+        const auto& pos = m_position.translatedToDirection(dir);
+        const TilePtr& tile = g_map.getTile(pos);
+
+        if(!tile && mapView->isInRange(pos, true) || tile && !tile->isFullyOpaque() && !tile->isFullGround() && !tile->hasTopGround()) {
+            return false;
+        }
+    }
+
+    return isFullyOpaque() || hasTopGround() || isFullGround();
 }
 
 bool Tile::hasBlockingCreature()
@@ -853,8 +838,9 @@ void Tile::analyzeThing(const ThingPtr& thing, bool add)
     if(thing->hasElevation())
         m_countFlag.elevation += value;
 
-    if(thing->isOpaque())
-        m_countFlag.opaque += value;
+    if(thing->isOpaque()) {
+        m_countFlag.opaque = std::max<int>(m_countFlag.opaque + value, 0);
+    }
 
     if(thing->isGroundBorder() && thing->isNotWalkable())
         m_countFlag.hasNoWalkableEdge += value;

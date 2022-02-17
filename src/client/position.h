@@ -242,7 +242,9 @@ public:
     }
     bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
     {
-        if(!ignoreZ && pos.z != z) return false;
+        auto _pos = pos;
+        if(ignoreZ) { _pos.coveredUp(_pos.z - pos.z); }
+
         return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange;
     }
     // operator less than for std::map

@@ -50,7 +50,7 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
 
     if(type == MAP) pool->m_framebuffer->disableBlend();
     else if(type == LIGHT) {
-        pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Multiply);
+        pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
         pool->setSmooth(false);
     }
 

@@ -58,14 +58,12 @@ public:
 
 private:
     uint8_t m_tileSize;
-    Size m_dimension;
 
     Light m_globalLight;
     Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
 
-    std::vector<int> m_shades;
     std::vector<LightSource> m_lights;
 };
 

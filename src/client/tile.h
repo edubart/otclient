@@ -57,7 +57,6 @@ class Tile : public LuaObject
 public:
     Tile(const Position& position);
 
-    void onAddVisibleTileList(const MapViewPtr& mapView);
     void drawSurface(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
@@ -95,14 +94,13 @@ public:
     bool isPathable();
     bool isWalkable(bool ignoreCreatures = false);
     bool isFullGround();
+    bool isTranslucent() { return m_countFlag.translucent; }
     bool isFullyOpaque();
     bool isSingleDimension();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
-    bool isBottomRightBorder() { return m_isBottomRightBorder; };
-    bool isBorder() { return m_isBorder; }
     bool hasCreature();
     bool hasBlockingCreature();
     bool hasTallThings() { return m_countFlag.hasTallThings; }
@@ -115,6 +113,7 @@ public:
     bool mustHookEast();
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
+    bool canShade(const MapViewPtr& mapView);
 
     bool hasEffect() { return !m_effects.empty(); }
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
@@ -155,6 +154,7 @@ public:
 private:
     struct CountFlag {
         int fullGround = 0;
+        int translucent = 0;
         int notWalkable = 0;
         int notPathable = 0;
         int notSingleDimension = 0;
@@ -181,25 +181,6 @@ private:
         int hasTopGroundBorder = 0;
     };
 
-    struct PositionData {
-        Otc::Direction dir{ Otc::InvalidDirection };
-        Position pos;
-    };
-
-    struct Borders {
-        struct Data {
-            Otc::Direction dir{ Otc::InvalidDirection };
-            Position pos;
-            bool is{ false };
-        };
-
-        std::vector<Data> bottomRight, topDown, leftRight;
-
-        bool hasBottomOrRight{ false },
-            hasTopAndDown{ false },
-            hasLeftAndRight{ false };
-    };
-
     void drawTop(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawBottom(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawCreature(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
@@ -209,12 +190,11 @@ private:
     bool checkForDetachableThing();
 
     Position m_position;
-    bool m_isBorder, m_isBottomRightBorder;
 
     uint8 m_drawElevation{ 0 }, m_minimapColor{ 0 };
     uint32 m_flags{ 0 }, m_houseId{ 0 };
 
-    std::array<PositionData, 8> m_positionsAround;
+    std::array<Position, 8> m_positionsAround;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;
