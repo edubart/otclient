@@ -600,6 +600,9 @@ void MapView::setAntiAliasingMode(const AntialiasingMode mode)
 {
     m_pools.map->setSmooth(mode != ANTIALIASING_DISABLED);
     m_scaleFactor = mode == ANTIALIASING_SMOOTH_RETRO ? 2.f : 1.f;
+
+    if(m_drawLights) m_lightView->setSmooth(mode != ANTIALIASING_DISABLED);
+
     updateGeometry(m_visibleDimension);
 }
 

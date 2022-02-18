@@ -28,11 +28,9 @@
 
 LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
 
-void LightView::resize(const Size& size, const uint8_t tileSize)
-{
-    m_tileSize = tileSize;
-    m_pool->resize(size * tileSize);
-};
+void LightView::setSmooth(bool enabled) { m_pool->setSmooth(enabled); }
+
+void LightView::resize(const Size& size, const uint8_t tileSize) { m_pool->resize(size * (m_tileSize = tileSize)); }
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
