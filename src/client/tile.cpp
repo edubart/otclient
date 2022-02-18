@@ -592,7 +592,7 @@ bool Tile::canShade(const MapViewPtr& mapView)
         const auto& pos = m_position.translatedToDirection(dir);
         const auto& tile = g_map.getTile(pos);
 
-        if(!tile && mapView->isInRangeEx(pos, true) || tile && !tile->isFullyOpaque() && !tile->isFullGround() && !tile->hasTopGround(true))
+        if((!tile && mapView->isInRangeEx(pos, true)) || (tile && !tile->isFullyOpaque() && !tile->isFullGround() && !tile->hasTopGround(true)))
             return false;
     }
 
