@@ -202,6 +202,7 @@ void MapView::drawFloor()
                     if(fadeLevel == 0.f)
                         continue;
 
+                    _camera = cameraPosition;
                     alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 
                     for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
