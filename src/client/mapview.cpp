@@ -507,7 +507,7 @@ void MapView::updateLight()
 
     const auto cameraPosition = getCameraPosition();
 
-    Light ambientLight = Light(); //cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
+    Light ambientLight = cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
     ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * 255, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
