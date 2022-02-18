@@ -38,20 +38,15 @@ void LightView::addLightSource(const Point& pos, const Light& light)
 {
     if(!isDark()) return;
 
-    if(!m_lights.empty()) {
-        auto& prevLight = m_lights.back();
+    if(!m_sources.empty()) {
+        auto& prevLight = m_sources.back();
         if(prevLight.pos == pos && prevLight.color == light.color) {
             prevLight.intensity = std::max<uint16>(prevLight.intensity, light.intensity);
             return;
         }
     }
 
-    m_lights.push_back(LightSource{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
-}
-
-void LightView::addShade(const Point& pos, const float opacity)
-{
-    m_lights.push_back(LightSource{ pos, 0, 0, opacity });
+    m_sources.push_back(Source{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
 }
 
 void LightView::draw(const Rect& dest, const Rect& src)
@@ -64,7 +59,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
 
     const float size = m_tileSize * 3.3;
 
-    for(auto& light : m_lights) {
+    for(auto& light : m_sources) {
         if(light.color) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
             const uint16 radius = light.intensity * m_tileSize;
@@ -72,7 +67,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
 
             g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
-        } else if(light.opacity) {
+        } else {
             g_painter->setBlendEquation(Painter::BlendEquation_Rever_Subtract);
 
             g_drawPool.setOpacity(light.opacity);
@@ -81,7 +76,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
         }
     }
 
-    m_lights.clear();
+    m_sources.clear();
 
     g_painter->setBlendEquation(Painter::BlendEquation_Add);
 }

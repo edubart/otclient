@@ -34,7 +34,6 @@ void SpriteManager::terminate()
 {
     unload();
     m_shadeTexture = nullptr;
-    m_shadeTexture2 = nullptr;
     m_lightTexture = nullptr;
 }
 
@@ -251,6 +250,7 @@ void SpriteManager::generateLightTexture()
 void SpriteManager::generateShadeTexture()
 {
     const uint16 diameter = 4;
+
     const auto image = ImagePtr(new Image(Size(diameter, diameter)));
     for(int_fast16_t x = -1; ++x < diameter;) {
         for(int_fast16_t y = -1; ++y < diameter;) {

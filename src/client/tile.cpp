@@ -32,21 +32,6 @@
 
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(m_position.getPositionsAround()) {}
 
-bool Tile::isCompletelyCovered(int8 firstFloor)
-{
-    if(m_ignoreCompletelyCoveredCheck || hasLight())
-        return false;
-
-    if(firstFloor > -1) {
-        m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
-        if((m_covered = m_completelyCovered) == false) {
-            m_covered = g_map.isCovered(m_position, firstFloor);
-        }
-    }
-
-    return m_completelyCovered;
-}
-
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
     if(thing->isEffect()) {
@@ -565,6 +550,21 @@ bool Tile::isWalkable(bool ignoreCreatures)
     return true;
 }
 
+bool Tile::isCompletelyCovered(int8 firstFloor)
+{
+    if(m_ignoreCompletelyCoveredCheck || hasLight())
+        return false;
+
+    if(firstFloor > -1) {
+        m_completelyCovered = g_map.isCompletelyCovered(m_position, firstFloor);
+        if((m_covered = m_completelyCovered) == false) {
+            m_covered = g_map.isCovered(m_position, firstFloor);
+        }
+    }
+
+    return m_completelyCovered;
+}
+
 bool Tile::isPathable()
 {
     return m_countFlag.notPathable == 0;
@@ -645,11 +645,10 @@ bool Tile::canShade(const MapViewPtr& mapView)
 {
     for(auto dir : { Otc::North, Otc::NorthWest, Otc::West }) {
         const auto& pos = m_position.translatedToDirection(dir);
-        const TilePtr& tile = g_map.getTile(pos);
+        const auto& tile = g_map.getTile(pos);
 
-        if(!tile && mapView->isInRange(pos, true) || tile && !tile->isFullyOpaque() && !tile->isFullGround() && !tile->hasTopGround()) {
+        if(!tile && mapView->isInRangeEx(pos, true) || tile && !tile->isFullyOpaque() && !tile->isFullGround() && !tile->hasTopGround())
             return false;
-        }
     }
 
     return isFullyOpaque() || hasTopGround() || isFullGround();

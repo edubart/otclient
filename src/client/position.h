@@ -236,16 +236,22 @@ public:
     bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
-        if(ignoreZ) { _pos.coveredUp(_pos.z - pos.z); }
+        if(pos.z != z) {
+            if(!ignoreZ) return false;
+            _pos.coveredUp(pos.z - z);
+        }
 
         return std::abs(x - _pos.x) <= xRange && std::abs(y - _pos.y) <= yRange && z == pos.z;
     }
     bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
-        if(ignoreZ) { _pos.coveredUp(_pos.z - pos.z); }
+        if(pos.z != z) {
+            if(!ignoreZ) return false;
+            _pos.coveredUp(pos.z - z);
+        }
 
-        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange;
+        return _pos.x >= x - minXRange && _pos.x <= x + maxXRange && _pos.y >= y - minYRange && _pos.y <= y + maxYRange;
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }
