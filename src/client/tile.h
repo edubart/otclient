@@ -117,7 +117,7 @@ public:
 
     bool hasEffect() { return !m_effects.empty(); }
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
-    bool hasTopGround() { return (m_ground && m_ground->isTopGround()) || m_countFlag.hasTopGroundBorder; }
+    bool hasTopGround(bool ignoreBorder = false) { return (m_ground && m_ground->isTopGround()) || !ignoreBorder && m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
 
     int getElevation() const;
