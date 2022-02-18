@@ -125,6 +125,7 @@ public:
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
 
     bool isInRange(const Position& pos, bool ignoreZ = false);
+    bool isInRangeEx(const Position& pos, bool ignoreZ = false);
 
     TilePtr getTopTile(Position tilePos);
 

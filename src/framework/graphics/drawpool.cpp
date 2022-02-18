@@ -49,7 +49,10 @@ PoolFramedPtr DrawPool::createPoolF(const PoolType type)
     pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
 
     if(type == MAP) pool->m_framebuffer->disableBlend();
-    else if(type == LIGHT) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+    else if(type == LIGHT) {
+        pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
+        pool->setSmooth(false);
+    }
 
     m_pools[type] = pool;
 
@@ -280,12 +283,14 @@ void DrawPool::use(const PoolPtr& pool, bool forceGrouping)
     }
 }
 
-void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src)
+void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src, const Color colorClear)
 {
     use(pool);
     pool->m_dest = dest;
     pool->m_src = src;
     pool->m_state.alphaWriting = false;
+
+    g_drawPool.addFilledRect(Rect(0, 0, pool->getSize()), colorClear);
 }
 
 void DrawPool::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)

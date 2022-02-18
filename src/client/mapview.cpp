@@ -125,18 +125,17 @@ void MapView::draw(const Rect& rect)
     }
 
     drawCreatureInformation();
-    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect, m_tileSize);
+    if(m_drawLights) m_lightView->draw(rect, m_rectCache.srcRect);
     drawText();
 }
 
 void MapView::drawFloor()
 {
-    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect);
+    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect, Color::black);
     {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
 
-        g_drawPool.addFilledRect(m_rectDimension, Color::black);
         for(int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             if(canFloorFade()) {
                 float fading = getFadeLevel(z);
@@ -206,29 +205,11 @@ void MapView::drawFloor()
                     alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 
                     for(const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
-                        const auto& ground = tile->getGround();
-                        if(ground && !ground->isTranslucent()) {
-                            if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
-                                continue;
+                        if(alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
+                            continue;
 
-                            auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
-                            if(ground->isTopGround()) {
-                                const auto currentPos = tile->getPosition();
-                                for(const auto& pos : currentPos.translatedToDirections({ Otc::South, Otc::East })) {
-                                    const auto& nextDownTile = g_map.getTile(pos);
-                                    if(nextDownTile && nextDownTile->hasGround() && !nextDownTile->isTopGround()) {
-                                        lightView->addShade(pos2D, fadeLevel);
-                                        break;
-                                    }
-                                }
-
-                                pos2D -= m_tileSize;
-                                lightView->addShade(pos2D, fadeLevel);
-                                continue;
-                            }
-
-                            lightView->addShade(pos2D, fadeLevel);
-                        }
+                        auto pos2D = transformPositionTo2D(tile->getPosition(), cameraPosition);
+                        lightView->addShade(pos2D, fadeLevel);
                     }
                 }
             }
@@ -433,33 +414,37 @@ void MapView::updateVisibleTilesCache()
                         }
                     }
 
+                    bool addTile = true;
+
                     if(!_canFloorFade || fadeFinished) {
                         // skip tiles that are completely behind another tile
                         if(tile->isCompletelyCovered(m_cachedFirstVisibleFloor)) {
                             if(m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
-                                continue;
+                                addTile = false;
                             }
                         }
                     }
 
-                    if(isDrawingLights() && (tile->isFullyOpaque() || (tile->getGround() && tile->getGround()->isTopGround())))
+                    if(isDrawingLights() && tile->canShade(this))
                         floor.shades.push_back(tile);
 
-                    if(tile->hasGround())
-                        floor.grounds.push_back(tile);
+                    if(addTile) {
+                        if(tile->hasGround())
+                            floor.grounds.push_back(tile);
 
-                    if(tile->hasSurface())
-                        floor.surfaces.push_back(tile);
+                        if(tile->hasSurface())
+                            floor.surfaces.push_back(tile);
 
-                    if(g_app.isDrawingEffectsOnTop() && tile->hasEffect())
-                        floor.effects.push_back(tile);
+                        if(g_app.isDrawingEffectsOnTop() && tile->hasEffect())
+                            floor.effects.push_back(tile);
+                    }
 
-                    tile->onAddVisibleTileList(this);
-
-                    if(iz < m_floorMin)
-                        m_floorMin = iz;
-                    else if(iz > m_floorMax)
-                        m_floorMax = iz;
+                    if(addTile || !floor.shades.empty()) {
+                        if(iz < m_floorMin)
+                            m_floorMin = iz;
+                        else if(iz > m_floorMax)
+                            m_floorMax = iz;
+                    }
                 }
             }
         }
@@ -488,7 +473,7 @@ void MapView::updateGeometry(const Size& visibleDimension)
     m_rectDimension = { 0, 0, bufferSize };
 
     m_pools.map->resize(bufferSize);
-    if(m_drawLights) m_lightView->resize(bufferSize);
+    if(m_drawLights) m_lightView->resize(drawDimension, tileSize);
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
     m_awareRange.top = std::min<uint16>(g_map.getAwareRange().top, (m_drawDimension.height() / 2) - 1);
@@ -522,7 +507,7 @@ void MapView::updateLight()
 
     const auto cameraPosition = getCameraPosition();
 
-    Light ambientLight = cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
+    Light ambientLight = Light(); //cameraPosition.z > SEA_FLOOR ? Light() : g_map.getLight();
     ambientLight.intensity = std::max<uint8>(m_minimumAmbientLight * 255, ambientLight.intensity);
 
     m_lightView->setGlobalLight(ambientLight);
@@ -615,6 +600,9 @@ void MapView::setAntiAliasingMode(const AntialiasingMode mode)
 {
     m_pools.map->setSmooth(mode != ANTIALIASING_DISABLED);
     m_scaleFactor = mode == ANTIALIASING_SMOOTH_RETRO ? 2.f : 1.f;
+
+    if(m_drawLights) m_lightView->setSmooth(mode != ANTIALIASING_DISABLED);
+
     updateGeometry(m_visibleDimension);
 }
 
@@ -844,7 +832,7 @@ void MapView::setDrawLights(bool enable)
 
     if(enable) {
         m_lightView = LightViewPtr(new LightView);
-        m_lightView->resize(m_rectDimension.size());
+        m_lightView->resize(m_drawDimension, m_tileSize);
     }
     m_drawLights = enable;
 
@@ -907,6 +895,11 @@ std::vector<CreaturePtr> MapView::getSpectators(const Position& centerPos, bool 
 bool MapView::isInRange(const Position& pos, const bool ignoreZ)
 {
     return getCameraPosition().isInRange(pos, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2, ignoreZ);
+}
+
+bool MapView::isInRangeEx(const Position& pos, const bool ignoreZ)
+{
+    return getCameraPosition().isInRange(pos, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom, ignoreZ);
 }
 
 void MapView::setCrosshairTexture(const std::string& texturePath)

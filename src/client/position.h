@@ -43,7 +43,7 @@ public:
     Position(int32_t x, int32_t y, uint8_t z) : x(x), y(y), z(z) {}
     Position(const Position& position) = default;
 
-    Position translatedToDirection(Otc::Direction direction)
+    Position translatedToDirection(Otc::Direction direction) const
     {
         Position pos = *this;
         switch(direction) {
@@ -81,7 +81,7 @@ public:
         return pos;
     }
 
-    Position translatedToReverseDirection(Otc::Direction direction)
+    Position translatedToReverseDirection(Otc::Direction direction)  const
     {
         Position pos = *this;
         switch(direction) {
@@ -235,13 +235,23 @@ public:
     bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
     bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
     {
-        if(!ignoreZ && pos.z != z) return false;
-        return std::abs(x - pos.x) <= xRange && std::abs(y - pos.y) <= yRange;
+        auto _pos = pos;
+        if(pos.z != z) {
+            if(!ignoreZ) return false;
+            _pos.coveredUp(pos.z - z);
+        }
+
+        return std::abs(x - _pos.x) <= xRange && std::abs(y - _pos.y) <= yRange && z == pos.z;
     }
     bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
     {
-        if(!ignoreZ && pos.z != z) return false;
-        return pos.x >= x - minXRange && pos.x <= x + maxXRange && pos.y >= y - minYRange && pos.y <= y + maxYRange;
+        auto _pos = pos;
+        if(pos.z != z) {
+            if(!ignoreZ) return false;
+            _pos.coveredUp(pos.z - z);
+        }
+
+        return _pos.x >= x - minXRange && _pos.x <= x + maxXRange && _pos.y >= y - minYRange && _pos.y <= y + maxYRange;
     }
     // operator less than for std::map
     bool operator<(const Position& other) const { return x < other.x || y < other.y || z < other.z; }

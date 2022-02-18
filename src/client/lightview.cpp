@@ -28,49 +28,53 @@
 
 LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
 
-void LightView::resize(const Size& size) { m_pool->resize(size); };
+void LightView::setSmooth(bool enabled) { m_pool->setSmooth(enabled); }
+
+void LightView::resize(const Size& size, const uint8_t tileSize) { m_pool->resize(size * (m_tileSize = tileSize)); }
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
     if(!isDark()) return;
 
-    if(!m_lights.empty()) {
-        auto& prevLight = m_lights.back();
+    if(!m_sources.empty()) {
+        auto& prevLight = m_sources.back();
         if(prevLight.pos == pos && prevLight.color == light.color) {
             prevLight.intensity = std::max<uint16>(prevLight.intensity, light.intensity);
             return;
         }
     }
 
-    m_lights.push_back(LightSource{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
+    m_sources.push_back(Source{ pos , light.color, light.intensity, g_drawPool.getOpacity() });
 }
 
-void LightView::draw(const Rect& dest, const Rect& src, const uint8 tileSize)
+void LightView::draw(const Rect& dest, const Rect& src)
 {
     // draw light, only if there is darkness
     m_pool->setEnable(isDark());
     if(!isDark()) return;
 
-    g_drawPool.use(m_pool, dest, src);
-    g_drawPool.addFilledRect(Rect(0, 0, m_pool->getSize()), m_globalLightColor);
+    g_drawPool.use(m_pool, dest, src, m_globalLightColor);
 
-    const auto& shadeBase = std::make_pair<Point, Size>(Point(tileSize / 2.8), Size(tileSize * 1.6));
-    for(auto& light : m_lights) {
-        if(light.color && light.intensity) {
+    const float size = m_tileSize * 3.3;
+
+    for(auto& light : m_sources) {
+        if(light.color) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
-            const uint16 radius = light.intensity * tileSize;
+            const uint16 radius = light.intensity * m_tileSize;
 
             g_painter->setBlendEquation(Painter::BlendEquation_Max);
-            g_drawPool.addTexturedRect(Rect(light.pos - Point(radius), Size(radius * 2)), g_sprites.getLightTexture(), color);
+
+            g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
         } else {
-            g_painter->setBlendEquation(Painter::BlendEquation_Add);
+            g_painter->setBlendEquation(Painter::BlendEquation_Rever_Subtract);
+
             g_drawPool.setOpacity(light.opacity);
-            g_drawPool.addTexturedRect(Rect(light.pos - shadeBase.first, shadeBase.second), g_sprites.getShadeTexture(), m_globalLightColor);
+            g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize * 1.8, size, size), g_sprites.getShadeTexture(), m_globalLightColor);
             g_drawPool.resetOpacity();
         }
     }
 
-    m_lights.clear();
+    m_sources.clear();
 
     g_painter->setBlendEquation(Painter::BlendEquation_Add);
 }

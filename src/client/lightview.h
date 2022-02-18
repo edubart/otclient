@@ -28,36 +28,39 @@
 #include "declarations.h"
 #include "thingtype.h"
 
-struct LightSource {
-    Point pos;
-    uint8 color{ 0 };
-    uint16 intensity{ 0 };
-    float opacity{ 1.f };
-};
-
 class LightView : public LuaObject
 {
 public:
     LightView();
 
-    void resize(const Size& size);
-    void draw(const Rect& dest, const Rect& src, const uint8 tileSize);
+    void resize(const Size& size, const uint8_t tileSize);
+    void draw(const Rect& dest, const Rect& src);
 
-    void addLightSource(const Point& mainCenter, const Light& light);
-    void addShade(const Point& point, const float opacity) { m_lights.push_back(LightSource{ point, 0, 0, opacity }); }
+    void addLightSource(const Point& pos, const Light& light);
+    void addShade(const Point& pos, const float opacity) { m_sources.push_back(Source{ pos, 0, 0, opacity }); }
 
     void setGlobalLight(const Light& light) { m_globalLight = light; m_globalLightColor = Color::from8bit(m_globalLight.color, m_globalLight.intensity / static_cast<float>(UINT8_MAX)); }
+    void setSmooth(bool enabled);
 
     const Light& getGlobalLight() const { return m_globalLight; }
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
+    struct Source {
+        Point pos;
+        uint8 color{ 0 };
+        uint16 intensity{ 0 };
+        float opacity{ 1.f };
+    };
+
+    uint8_t m_tileSize{ SPRITE_SIZE };
+
     Light m_globalLight;
     Color m_globalLightColor;
 
     PoolFramedPtr m_pool;
 
-    std::vector<LightSource> m_lights;
+    std::vector<Source> m_sources;
 };
 
 #endif

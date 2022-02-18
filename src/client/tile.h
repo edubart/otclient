@@ -57,7 +57,6 @@ class Tile : public LuaObject
 public:
     Tile(const Position& position);
 
-    void onAddVisibleTileList(const MapViewPtr& mapView);
     void drawSurface(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
     void drawGround(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
@@ -95,13 +94,13 @@ public:
     bool isPathable();
     bool isWalkable(bool ignoreCreatures = false);
     bool isFullGround();
+    bool isTranslucent() { return m_countFlag.translucent; }
     bool isFullyOpaque();
     bool isSingleDimension();
     bool isLookPossible();
     bool isClickable();
     bool isEmpty();
     bool isDrawable();
-    bool isBorder() { return !m_borderDirections.empty(); };
     bool hasCreature();
     bool hasBlockingCreature();
     bool hasTallThings() { return m_countFlag.hasTallThings; }
@@ -114,13 +113,12 @@ public:
     bool mustHookEast();
     bool limitsFloorsView(bool isFreeView = false);
     bool canErase();
+    bool canShade(const MapViewPtr& mapView);
 
     bool hasEffect() { return !m_effects.empty(); }
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
-    bool hasTopGround() { return (m_ground && m_ground->isTopGround()) || m_countFlag.hasTopGroundBorder; }
+    bool hasTopGround(bool ignoreBorder = false) { return (m_ground && m_ground->isTopGround()) || !ignoreBorder && m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
-
-    std::vector<Otc::Direction> getBorderDirections() { return m_borderDirections; };
 
     int getElevation() const;
     bool hasElevation(int elevation = 1);
@@ -156,6 +154,7 @@ public:
 private:
     struct CountFlag {
         int fullGround = 0;
+        int translucent = 0;
         int notWalkable = 0;
         int notPathable = 0;
         int notSingleDimension = 0;
@@ -196,8 +195,6 @@ private:
     uint32 m_flags{ 0 }, m_houseId{ 0 };
 
     std::array<Position, 8> m_positionsAround;
-    std::vector<std::pair<Otc::Direction, Position>> m_positionsBorder;
-    std::vector<Otc::Direction> m_borderDirections;
 
     std::vector<CreaturePtr> m_walkingCreatures;
     std::vector<ThingPtr> m_things;

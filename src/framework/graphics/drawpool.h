@@ -51,7 +51,7 @@ public:
     PoolPtr get(const PoolType type) const { return m_pools[type]; }
 
     void use(const PoolPtr& pool, bool forceGrouping = false);
-    void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src);
+    void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src, const Color colorClear);
 
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = Point());
