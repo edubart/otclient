@@ -91,40 +91,51 @@ public:
     int getGroundSpeed();
     uint8 getMinimapColorByte();
     int getThingCount() { return m_things.size() + m_effects.size(); }
-    bool isPathable();
+
     bool isWalkable(bool ignoreCreatures = false);
-    bool isFullGround();
-    bool isTranslucent() { return m_countFlag.translucent; }
-    bool isFullyOpaque();
-    bool isSingleDimension();
-    bool isLookPossible();
     bool isClickable();
-    bool isEmpty();
-    bool isDrawable();
-    bool hasCreature();
+    bool isCompletelyCovered(int8 firstFloor = -1);
+
+    bool isPathable() { return m_countFlag.notPathable == 0; }
+    bool isFullGround() { return m_countFlag.fullGround > 0; }
+    bool isTranslucent() { return m_countFlag.translucent; }
+    bool isFullyOpaque() { return m_countFlag.opaque > 0; }
+    bool isSingleDimension() { return m_countFlag.notSingleDimension == 0 && m_walkingCreatures.empty(); }
+    bool isLookPossible() { return m_countFlag.blockProjectile == 0; }
+    bool isEmpty() { return m_things.empty(); }
+    bool isDrawable() { return !isEmpty() || !m_walkingCreatures.empty() || !m_effects.empty(); }
+    bool hasCreature() { return m_countFlag.hasCreature > 0; }
+    bool isTopGround() const { return m_ground && m_ground->isTopGround(); }
+    bool isCovered() { return m_covered; };
+
     bool hasBlockingCreature();
-    bool hasTallThings() { return m_countFlag.hasTallThings; }
-    bool hasWideThings() { return m_countFlag.hasWideThings; }
-    bool hasTallItems() { return m_countFlag.hasTallItems; }
-    bool hasWideItems() { return m_countFlag.hasWideItems; }
-    bool hasWall() { return m_countFlag.hasWall; }
-    bool hasTranslucentLight() { return m_flags & TILESTATE_TRANSLUECENT_LIGHT; }
-    bool mustHookSouth();
-    bool mustHookEast();
-    bool limitsFloorsView(bool isFreeView = false);
-    bool canErase();
-    bool canShade(const MapViewPtr& mapView);
 
     bool hasEffect() { return !m_effects.empty(); }
     bool hasGround() { return (m_ground && m_ground->isSingleGround()) || m_countFlag.hasGroundBorder; };
     bool hasTopGround(bool ignoreBorder = false) { return (m_ground && m_ground->isTopGround()) || !ignoreBorder && m_countFlag.hasTopGroundBorder; }
     bool hasSurface() { return m_countFlag.hasTopItem || !m_effects.empty() || m_countFlag.hasBottomItem || m_countFlag.hasCommonItem || m_countFlag.hasCreature || !m_walkingCreatures.empty() || hasTopGround(); }
 
-    int getElevation() const;
-    bool hasElevation(int elevation = 1);
-    void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
+    bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
+    bool hasLight() { return m_countFlag.hasLight > 0; }
+    bool hasTallThings() { return m_countFlag.hasTallThings; }
+    bool hasWideThings() { return m_countFlag.hasWideThings; }
+    bool hasTallItems() { return m_countFlag.hasTallItems; }
+    bool hasWideItems() { return m_countFlag.hasWideItems; }
+    bool hasWall() { return m_countFlag.hasWall; }
+    bool hasTranslucentLight() { return m_flags & TILESTATE_TRANSLUECENT_LIGHT; }
 
-    bool isCompletelyCovered(int8 firstFloor = -1);
+    bool mustHookSouth() { return m_countFlag.hasHookSouth > 0; }
+    bool mustHookEast() { return m_countFlag.hasHookEast > 0; }
+
+    bool limitsFloorsView(bool isFreeView = false);
+
+    bool canShade(const MapViewPtr& mapView);
+    bool canRender(bool drawViewportEdge, const Position& cameraPosition, AwareRange viewPort, LightView* lightView);
+    bool canErase() { return m_walkingCreatures.empty() && m_effects.empty() && isEmpty() && m_flags == 0 && m_minimapColor == 0; }
+
+    int getElevation() const { return m_countFlag.elevation; }
+    bool hasElevation(int elevation = 1) { return m_countFlag.elevation >= elevation; }
+    void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
 
     void remFlag(uint32 flag) { m_flags &= ~flag; }
     void setFlag(uint32 flag) { m_flags |= flag; }
@@ -142,43 +153,36 @@ public:
 
     TilePtr asTile() { return static_self_cast<Tile>(); }
 
-    bool hasDisplacement() { return m_countFlag.hasDisplacement > 0; }
-    bool hasLight();
-    bool isTopGround() const { return m_ground && m_ground->isTopGround(); }
-    bool isCovered() { return m_covered; };
-
     void analyzeThing(const ThingPtr& thing, bool add);
-
-    bool canRender(bool drawViewportEdge, const Position& cameraPosition, AwareRange viewPort, LightView* lightView);
 
 private:
     struct CountFlag {
-        int fullGround = 0;
-        int translucent = 0;
-        int notWalkable = 0;
-        int notPathable = 0;
-        int notSingleDimension = 0;
-        int blockProjectile = 0;
-        int totalElevation = 0;
-        int hasDisplacement = 0;
-        int isNotPathable = 0;
-        int elevation = 0;
-        int opaque = 0;
-        int hasLight = 0;
-        int hasTallThings = 0;
-        int hasWideThings = 0;
-        int hasTallItems = 0;
-        int hasWideItems = 0;
-        int hasWall = 0;
-        int hasHookEast = 0;
-        int hasHookSouth = 0;
-        int hasNoWalkableEdge = 0;
-        int hasCreature = 0;
-        int hasCommonItem = 0;
-        int hasTopItem = 0;
-        int hasBottomItem = 0;
-        int hasGroundBorder = 0;
-        int hasTopGroundBorder = 0;
+        int fullGround{ 0 },
+            translucent{ 0 },
+            notWalkable{ 0 },
+            notPathable{ 0 },
+            notSingleDimension{ 0 },
+            blockProjectile{ 0 },
+            totalElevation{ 0 },
+            hasDisplacement{ 0 },
+            isNotPathable{ 0 },
+            elevation{ 0 },
+            opaque{ 0 },
+            hasLight{ 0 },
+            hasTallThings{ 0 },
+            hasWideThings{ 0 },
+            hasTallItems{ 0 },
+            hasWideItems{ 0 },
+            hasWall{ 0 },
+            hasHookEast{ 0 },
+            hasHookSouth{ 0 },
+            hasNoWalkableEdge{ 0 },
+            hasCreature{ 0 },
+            hasCommonItem{ 0 },
+            hasTopItem{ 0 },
+            hasBottomItem{ 0 },
+            hasGroundBorder{ 0 },
+            hasTopGroundBorder{ 0 };
     };
 
     void drawTop(const Point& dest, float scaleFactor, LightView* lightView = nullptr);

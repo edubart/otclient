@@ -565,31 +565,6 @@ bool Tile::isCompletelyCovered(int8 firstFloor)
     return m_completelyCovered;
 }
 
-bool Tile::isPathable()
-{
-    return m_countFlag.notPathable == 0;
-}
-
-bool Tile::isFullGround()
-{
-    return m_countFlag.fullGround > 0;
-}
-
-bool Tile::isFullyOpaque()
-{
-    return m_countFlag.opaque > 0;
-}
-
-bool Tile::isSingleDimension()
-{
-    return m_countFlag.notSingleDimension == 0 && m_walkingCreatures.empty();
-}
-
-bool Tile::isLookPossible()
-{
-    return m_countFlag.blockProjectile == 0;
-}
-
 bool Tile::isClickable()
 {
     bool hasGround = false;
@@ -609,36 +584,6 @@ bool Tile::isClickable()
     }
 
     return false;
-}
-
-bool Tile::isEmpty()
-{
-    return m_things.empty();
-}
-
-bool Tile::canErase()
-{
-    return m_walkingCreatures.empty() && m_effects.empty() && isEmpty() && m_flags == 0 && m_minimapColor == 0;
-}
-
-bool Tile::isDrawable()
-{
-    return !isEmpty() || !m_walkingCreatures.empty() || !m_effects.empty();
-}
-
-bool Tile::mustHookEast()
-{
-    return m_countFlag.hasHookEast > 0;
-}
-
-bool Tile::mustHookSouth()
-{
-    return m_countFlag.hasHookSouth > 0;
-}
-
-bool Tile::hasCreature()
-{
-    return m_countFlag.hasCreature > 0;
 }
 
 bool Tile::canShade(const MapViewPtr& mapView)
@@ -667,21 +612,6 @@ bool Tile::limitsFloorsView(bool isFreeView)
     // ground and walls limits the view
     const ThingPtr& firstThing = getThing(0);
     return firstThing && (firstThing->isGround() || (isFreeView ? firstThing->isOnBottom() && firstThing->blockProjectile() : firstThing->isOnBottom()));
-}
-
-int Tile::getElevation() const
-{
-    return m_countFlag.elevation;
-}
-
-bool Tile::hasElevation(int elevation)
-{
-    return m_countFlag.elevation >= elevation;
-}
-
-bool Tile::hasLight()
-{
-    return m_countFlag.hasLight > 0;
 }
 
 void Tile::checkTranslucentLight()
