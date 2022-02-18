@@ -226,8 +226,8 @@ void SpriteManager::generateLightTexture()
 {
     const float brightnessIntensity = 1.5f;
 
-    const int bubbleRadius = 256,
-        bubbleDiameter = bubbleRadius * 2;
+    const int bubbleRadius = 6,
+        bubbleDiameter = bubbleRadius * 2.3;
 
     const auto lightImage = ImagePtr(new Image(Size(bubbleDiameter, bubbleDiameter)));
     for(int_fast16_t x = -1; ++x < bubbleDiameter;) {
@@ -244,7 +244,7 @@ void SpriteManager::generateLightTexture()
     }
 
     m_lightTexture = TexturePtr(new Texture(lightImage));
-    m_lightTexture->setSmooth(false);
+    m_lightTexture->setSmooth(true);
 }
 
 void SpriteManager::generateShadeTexture()
