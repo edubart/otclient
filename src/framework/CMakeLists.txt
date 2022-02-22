@@ -126,12 +126,6 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/platform/unixplatform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/platform/platform.h
-
-    # protobuf
-    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.cc
-    ${CMAKE_CURRENT_LIST_DIR}/protobuf/appearances.pb.h
-    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.cc
-    ${CMAKE_CURRENT_LIST_DIR}/protobuf/shared.pb.h
 )
 
 if(NOT MSVC)
@@ -246,6 +240,34 @@ set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS}
     ${LIBLZMA_INCLUDE_DIRS}
     ${NLOHMANN_JSON_INCLUDE_DIR}
 )
+
+# protobuf
+set(protobuf_PATH ${CMAKE_CURRENT_LIST_DIR}/protobuf/proto)
+set(protobuf_MODULES
+    appearances
+    shared
+)
+
+foreach(protobuf_FILENAME ${protobuf_MODULES})
+
+    set(protobuf_SOURCES
+        ${CMAKE_CURRENT_LIST_DIR}/protobuf/${protobuf_FILENAME}.pb.cc
+        ${CMAKE_CURRENT_LIST_DIR}/protobuf/${protobuf_FILENAME}.pb.h
+    )
+
+    set(framework_SOURCES ${framework_SOURCES} ${protobuf_SOURCES})
+
+    if(NOT WIN32)
+        add_custom_command(
+            OUTPUT ${protobuf_SOURCES}
+            DEPENDS ${protobuf_PATH}/${protobuf_FILENAME}.proto
+            COMMAND protoc --cpp_out=../ ${protobuf_FILENAME}.proto
+            WORKING_DIRECTORY ${protobuf_PATH}
+            COMMENT "Compiling ${protobuf_FILENAME}.proto"
+        )
+    endif()
+
+endforeach()
 
 find_package(OpenSSL QUIET)
 
