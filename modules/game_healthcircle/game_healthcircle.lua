@@ -26,15 +26,13 @@ isHealthCircle = not g_settings.getBoolean('healthcircle_hpcircle')
 isManaCircle = not g_settings.getBoolean('healthcircle_mpcircle')
 isExpCircle = g_settings.getBoolean('healthcircle_expcircle')
 isSkillCircle = g_settings.getBoolean('healthcircle_skillcircle')
-skillType = g_settings.getString('healthcircle_skilltype')
+skillTypes = g_settings.getNode('healthcircle_skilltypes')
 skillsLoaded = false
+
+if not skillTypes then skillTypes = {} end
 
 distanceFromCenter = g_settings.getNumber('healthcircle_distfromcenter')
 opacityCircle = g_settings.getNumber('healthcircle_opacity', 0.35)
-
-if not (skillType == 'magic' or skillType == 'fist' or skillType == 'club' or
-    skillType == 'sword' or skillType == 'axe' or skillType == 'distance' or
-    skillType == 'shielding' or skillType == 'fishing') then skillType = 'magic' end
 
 function init()
     healthCircle = g_ui.createWidget('HealthCircle', mapPanel)
@@ -77,6 +75,10 @@ function init()
 
     -- Add option window in options module
     addToOptionsModule()
+
+    connect(g_game, {
+        onGameStart = setPlayerValues,
+    })
 end
 
 function terminate()
@@ -104,6 +106,10 @@ function terminate()
 
     -- Delete from options module
     destroyOptionsModule()
+
+    disconnect(g_game, {
+        onGameStart = setPlayerValues,
+    })
 end
 
 -------------------------------------------------
@@ -213,11 +219,9 @@ function whenSkillsChange()
 
             local skillPercent
             local skillColor
+            local skillType = skillTypes[player:getName()]
 
-            if skillType == 'magic' then
-                skillPercent = player:getMagicLevelPercent()
-                skillColor = '#00ffcc'
-            elseif skillType == 'fist' then
+            if skillType == 'fist' then
                 skillPercent = player:getSkillLevelPercent(0)
                 skillColor = '#9900cc'
             elseif skillType == 'club' then
@@ -239,7 +243,9 @@ function whenSkillsChange()
                 skillPercent = player:getSkillLevelPercent(6)
                 skillColor = '#ffff33'
             else
-                return
+            -- default skill: MAGIC
+                skillPercent = player:getMagicLevelPercent()
+                skillColor = '#00ffcc'
             end
 
             local Xskpc = math.floor(imageSizeBroad * (1 - skillPercent / 100))
@@ -429,19 +435,12 @@ end
 function setSkillType(skill)
     if not skillsLoaded then return end
 
-    if skill == 'magic' or skill == 'fist' or skill == 'club' or skill ==
-        'sword' or skill == 'axe' or skill == 'distance' or skill == 'shielding' or
-        skill == 'fishing' then
-        skillType = skill
-        whenMapResizeChange()
-        g_settings.set('healthcircle_skilltype', skill)
-    else
-        if not skillType then
-            skillType = 'magic'
-            whenMapResizeChange()
-            g_settings.set('healthcircle_skilltype', 'magic')
-        end
-    end
+    local char = g_game.getCharacterName()
+    local skillType = skillTypes[char]
+
+    skillTypes[char] = skill
+    whenMapResizeChange()
+    g_settings.setNode('healthcircle_skilltypes', skillTypes)
 end
 
 function setDistanceFromCenter(value)
@@ -513,7 +512,7 @@ function addToOptionsModule()
     manaCheckBox:setChecked(isManaCircle)
     experienceCheckBox:setChecked(isExpCircle)
     skillCheckBox:setChecked(isSkillCircle)
-    chooseSkillComboBox:setCurrentOptionByData(skillType, true)
+
     -- Prevent skill overwritten before initialize
     skillsLoaded = true
 
@@ -521,6 +520,14 @@ function addToOptionsModule()
     distFromCenScrollbar:setValue(distanceFromCenter)
     opacityLabel:setText('Opacity: ' .. opacityCircle)
     opacityScrollbar:setValue(opacityCircle * 100)
+end
+
+function setPlayerValues()
+    local skillType = skillTypes[g_game.getCharacterName()]
+    if not skillType then
+        skillType = 'magic'
+    end
+    chooseSkillComboBox:setCurrentOptionByData(skillType, true)
 end
 
 function destroyOptionsModule()
