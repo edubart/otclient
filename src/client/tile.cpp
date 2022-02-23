@@ -611,7 +611,7 @@ bool Tile::limitsFloorsView(bool isFreeView)
 {
     // ground and walls limits the view
     const ThingPtr& firstThing = getThing(0);
-    return firstThing && (firstThing->isGround() || (isFreeView ? firstThing->isOnBottom() && firstThing->blockProjectile() : firstThing->isOnBottom()));
+    return firstThing && (firstThing->isGround() || (isFreeView ? firstThing->isOnBottom() : firstThing->isOnBottom() && firstThing->blockProjectile()));
 }
 
 void Tile::checkTranslucentLight()
