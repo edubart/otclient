@@ -33,28 +33,21 @@ UIParticles::UIParticles()
 
 void UIParticles::drawSelf(Fw::DrawPane drawPane)
 {
-    if(drawPane & Fw::ForegroundPane) {
-        if(drawPane != Fw::BothPanes) {
-            g_drawPool.addAction([]() {glDisable(GL_BLEND); });
-            g_drawPool.addFilledRect(m_rect, Color::alpha);
-            g_drawPool.addAction([]() {glEnable(GL_BLEND); });
-        }
-    }
+    UIWidget::drawSelf(Fw::ForegroundPane);
 
-    if(drawPane & Fw::BackgroundPane) {
-        UIWidget::drawSelf(Fw::ForegroundPane);
-        g_drawPool.setClipRect(getPaddingRect());
+    g_drawPool.setClipRect(getPaddingRect());
+    g_painter->pushTransformMatrix();
 
-        if(m_referencePos.x < 0 && m_referencePos.y < 0)
-            g_painter->translate(m_rect.center());
-        else
-            g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
+    if(m_referencePos.x < 0 && m_referencePos.y < 0)
+        g_painter->translate(m_rect.center());
+    else
+        g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
 
-        for(auto& effect : m_effects)
-            effect->render();
+    for(auto& effect : m_effects)
+        effect->render();
 
-        g_drawPool.resetClipRect();
-    }
+    g_painter->popTransformMatrix();
+    g_drawPool.resetClipRect();
 }
 
 void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
