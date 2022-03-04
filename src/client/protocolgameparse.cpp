@@ -1990,6 +1990,7 @@ void ProtocolGame::parseOpenOutfitWindow(const InputMessagePtr& msg)
 
         msg->getU8(); //Try outfit mode (?)
         msg->getU8(); // mounted
+        msg->getU8(); // randomize mount (bool)
     }
 
     g_game.processOpenOutfitWindow(currentOutfit, outfitList, mountList);
