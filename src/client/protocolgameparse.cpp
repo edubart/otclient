@@ -1470,19 +1470,19 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         maxMana = msg->getU16();
     }
 
-    double magicLevel = 0;
-    double baseMagicLevel = 0;
-    double magicLevelPercent = 0;
-
     if(g_game.getClientVersion() < 1281) {
-        magicLevel = msg->getU8();
+        double magicLevel = msg->getU8();
 
+        double baseMagicLevel = 0;
         if(g_game.getFeature(Otc::GameSkillsBase))
             baseMagicLevel = msg->getU8();
         else
             baseMagicLevel = magicLevel;
 
-        magicLevelPercent = msg->getU8();
+        double magicLevelPercent = msg->getU8();
+
+        m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
+        m_localPlayer->setBaseMagicLevel(baseMagicLevel);
     }
 
     const double soul = msg->getU8();
@@ -1519,8 +1519,6 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     m_localPlayer->setExperience(experience);
     m_localPlayer->setLevel(level, levelPercent);
     m_localPlayer->setMana(mana, maxMana);
-    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
-    m_localPlayer->setBaseMagicLevel(baseMagicLevel);
     m_localPlayer->setStamina(stamina);
     m_localPlayer->setSoul(soul);
     m_localPlayer->setBaseSpeed(baseSpeed);
@@ -1535,7 +1533,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
         int magicLevel = msg->getU16();
         int baseMagicLevel = msg->getU16();
         msg->getU16(); // base + loyalty bonus(?)
-        int percent = msg->getU16();
+        int percent = msg->getU16() / 100; // perfect opportunity to use float :)
 
         m_localPlayer->setMagicLevel(magicLevel, percent);
         m_localPlayer->setBaseMagicLevel(baseMagicLevel);
@@ -1562,7 +1560,7 @@ void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
 
         if(g_game.getClientVersion() >= 1281) {
             msg->getU16(); // base + loyalty bonus(?)
-            levelPercent = msg->getU16();
+            levelPercent = msg->getU16() / 100;
         } else {
             levelPercent = msg->getU8();
         }
