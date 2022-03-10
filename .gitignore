@@ -15,9 +15,10 @@
 # Build results
 
 [Dd]ebug/
-[Rr]elease/
+[Rr]elease*/
 x64/
 build/
+static/
 [Bb]in/
 [Oo]bj/
 cmake-build-*/
@@ -50,6 +51,8 @@ cmake-build-*/
 *.scc
 *.dll
 *.exe
+*.exp
+*.lib
 
 # Visual C++ cache files
 ipch/
