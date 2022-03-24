@@ -32,61 +32,61 @@
 
 class GraphicalApplication : public Application
 {
-	enum {
-		POLL_CYCLE_DELAY = 10
-	};
+    enum {
+        POLL_CYCLE_DELAY = 10
+    };
 
 public:
-	void init(std::vector<std::string>& args) override;
-	void deinit() override;
-	void terminate() override;
-	void run() override;
-	void poll() override;
-	void close() override;
+    void init(std::vector<std::string>& args) override;
+    void deinit() override;
+    void terminate() override;
+    void run() override;
+    void poll() override;
+    void close() override;
 
-	void repaint() { m_mustRepaint = true; }
+    void repaint() { m_mustRepaint = true; }
 
-	void setMaxFps(int maxFps) { m_frameCounter.setMaxFps(maxFps); }
+    void setMaxFps(int maxFps) { m_frameCounter.setMaxFps(maxFps); }
 
-	int getFps() { return m_frameCounter.getFps(); }
-	int getMaxFps() { return m_frameCounter.getMaxFps(); }
+    int getFps() { return m_frameCounter.getFps(); }
+    int getMaxFps() { return m_frameCounter.getMaxFps(); }
 
-	bool isOnInputEvent() { return m_onInputEvent; }
-	bool canOptimize() { return m_optimize && getFps() < 60; }
-	bool isForcedEffectOptimization() { return m_forceEffectOptimization; }
+    bool isOnInputEvent() { return m_onInputEvent; }
+    bool canOptimize() { return m_optimize && getFps() < 60; }
+    bool isForcedEffectOptimization() { return m_forceEffectOptimization; }
 
-	void optimize(const bool optimize) { m_optimize = optimize; }
+    void optimize(const bool optimize) { m_optimize = optimize; }
 
-	void forceEffectOptimization(const bool optimize) { m_forceEffectOptimization = optimize; }
-	void setDrawEffectOnTop(const bool draw) { m_drawEffectOnTop = draw; }
-	bool isDrawingEffectsOnTop() { return m_drawEffectOnTop || canOptimize(); }
+    void forceEffectOptimization(const bool optimize) { m_forceEffectOptimization = optimize; }
+    void setDrawEffectOnTop(const bool draw) { m_drawEffectOnTop = draw; }
+    bool isDrawingEffectsOnTop() { return m_drawEffectOnTop || canOptimize(); }
 
 protected:
-	void resize(const Size& size);
-	void inputEvent(const InputEvent& event);
+    void resize(const Size& size);
+    void inputEvent(const InputEvent& event);
 
 private:
-	bool foregroundCanUpdate()
-	{
-		if (m_mustRepaint && m_foregroundRefreshTime.ticksElapsed() >= 16) {
-			m_foregroundRefreshTime.restart();
-			return true;
-		}
+    bool foregroundCanUpdate()
+    {
+        if (m_mustRepaint && m_foregroundRefreshTime.ticksElapsed() >= 16) {
+            m_foregroundRefreshTime.restart();
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	bool m_onInputEvent{ false },
-		m_mustRepaint{ false },
-		m_optimize{ true },
-		m_forceEffectOptimization{ false },
-		m_drawEffectOnTop{ false };
+    bool m_onInputEvent{ false },
+        m_mustRepaint{ false },
+        m_optimize{ true },
+        m_forceEffectOptimization{ false },
+        m_drawEffectOnTop{ false };
 
-	Timer m_foregroundRefreshTime;
+    Timer m_foregroundRefreshTime;
 
-	AdaptativeFrameCounter m_frameCounter;
+    AdaptativeFrameCounter m_frameCounter;
 
-	PoolFramedPtr m_foregroundFramed;
+    PoolFramedPtr m_foregroundFramed;
 };
 
 extern GraphicalApplication g_app;
