@@ -177,7 +177,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>cmd /c "$(VcpkgRoot)\installed\x64-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
+      <Command>cmd /c "$(VcpkgRoot)\installed\x86-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -216,7 +216,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>cmd /c "$(VcpkgRoot)\installed\x64-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
+      <Command>cmd /c "$(VcpkgRoot)\installed\x86-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='static|Win32'">
@@ -240,7 +240,7 @@
       <AdditionalDependencies>glew32.lib;zlib.lib;physfs-static.lib;openal32.lib;lua51.lib;ogg.lib;vorbisfile.lib;vorbis.lib;opengl32.lib;dbghelp.lib;kernel32.lib;user32.lib;shell32.lib;gdi32.lib;advapi32.lib;ole32.lib;crypt32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>cmd /c "$(VcpkgRoot)\installed\x64-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
+      <Command>cmd /c "$(VcpkgRoot)\installed\x86-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release - GIT Version|Win32'">
@@ -264,7 +264,7 @@
       <AdditionalDependencies>glew32.lib;zlib.lib;physfs-static.lib;openal32.lib;lua51.lib;ogg.lib;vorbisfile.lib;vorbis.lib;opengl32.lib;dbghelp.lib;kernel32.lib;user32.lib;shell32.lib;gdi32.lib;advapi32.lib;ole32.lib;crypt32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>cmd /c "$(VcpkgRoot)\installed\x64-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"
+      <Command>cmd /c "$(VcpkgRoot)\installed\x86-windows\tools\protobuf\protoc --cpp_out=$(ProjectDir)../src/framework/protobuf/ --proto_path=$(ProjectDir)../src/framework/protobuf/proto/ appearances.proto shared.proto"
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;  ../src/gitinfo.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  ../src/gitinfo.h
