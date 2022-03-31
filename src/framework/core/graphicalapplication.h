@@ -70,6 +70,7 @@ private:
     {
         if (m_mustRepaint && m_foregroundRefreshTime.ticksElapsed() >= 16) {
             m_foregroundRefreshTime.restart();
+            m_mustRepaint = false;
             return true;
         }
 
