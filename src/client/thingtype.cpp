@@ -234,8 +234,7 @@ void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, c
     }
 
     if(flags.has_height()) {
-        m_elevation = flags.height().elevation();
-        m_attribs.set(ThingAttrElevation, m_elevation);
+        m_attribs.set<uint16_t>(ThingAttrElevation, flags.height().elevation());
     }
 
     if(flags.has_lying_object()) {
@@ -528,8 +527,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         }
         case ThingAttrElevation:
         {
-            m_elevation = fin->getU16();
-            m_attribs.set(attr, m_elevation);
+            m_attribs.set<uint16_t>(attr, fin->getU16());
             break;
         }
         case ThingAttrUsable:
