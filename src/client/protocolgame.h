@@ -142,6 +142,7 @@ private:
     void parseStoreOffers(const InputMessagePtr& msg);
     void parseCompleteStorePurchase(const InputMessagePtr& msg);
     void parseRequestPurchaseData(const InputMessagePtr& msg);
+    void parseResourceBalance(const InputMessagePtr& msg);
     void parseWorldTime(const InputMessagePtr& msg);
     void parseCoinBalance(const InputMessagePtr& msg);
     void parseCoinBalanceUpdating(const InputMessagePtr& msg);

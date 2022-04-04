@@ -149,6 +149,7 @@ namespace Proto {
         GameServerCoinBalance = 223, // 1080
         GameServerStoreError = 224, // 1080
         GameServerRequestPurchaseData = 225, // 1080
+        GameServerResourceBalance = 238, // 1281
         GameServerWorldTime = 239, // 1281
         GameServerQuestLog = 240,
         GameServerQuestLine = 241,

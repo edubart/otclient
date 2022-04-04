@@ -63,6 +63,7 @@ public:
     void setOfflineTrainingTime(double offlineTrainingTime);
     void setSpells(const std::vector<int>& spells);
     void setBlessings(int blessings);
+    void setResourceBalance(Otc::ResourceTypes_t type, uint64_t value);
 
     int getStates() { return m_states; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
@@ -88,6 +89,10 @@ public:
     const std::vector<int>& getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
     int getBlessings() { return m_blessings; }
+    uint64_t getResourceBalance(Otc::ResourceTypes_t type) {
+        auto it = m_resourcesBalance.find(type);
+        return it != m_resourcesBalance.end() ? it->second : 0;
+    }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -137,6 +142,8 @@ private:
     std::array<int, Otc::LastSkill> m_skillsBaseLevel;
     std::array<int, Otc::LastSkill> m_skillsLevelPercent;
     std::vector<int> m_spells;
+
+    std::map<Otc::ResourceTypes_t, uint64_t> m_resourcesBalance;
 
     uint8 m_autoWalkRetries{ 0 };
 

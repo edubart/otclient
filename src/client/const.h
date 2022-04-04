@@ -490,6 +490,14 @@ namespace Otc
         StateSale = 2,
         StateTimed = 3
     };
+
+    enum ResourceTypes_t : uint8_t {
+        RESOURCE_BANK_BALANCE = 0,
+        RESOURCE_GOLD_EQUIPPED = 1,
+        RESOURCE_PREY_WILDCARDS = 10,
+        RESOURCE_DAILYREWARD_STREAK = 20,
+        RESOURCE_DAILYREWARD_JOKERS = 21,
+    };
 }
 
 #endif

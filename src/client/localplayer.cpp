@@ -477,6 +477,15 @@ void LocalPlayer::setBlessings(int blessings)
     }
 }
 
+void LocalPlayer::setResourceBalance(Otc::ResourceTypes_t type, uint64_t value)
+{
+    uint64_t oldBalance = getResourceBalance(type);
+    if (value != oldBalance) {
+        m_resourcesBalance[type] = value;
+        callLuaField("onResourcesBalanceChange", value, oldBalance);
+    }
+}
+
 bool LocalPlayer::hasSight(const Position& pos)
 {
     return m_position.isInRange(pos, g_map.getAwareRange().left - 1, g_map.getAwareRange().top - 1);
