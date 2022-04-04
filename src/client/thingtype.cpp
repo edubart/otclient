@@ -234,7 +234,8 @@ void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, c
     }
 
     if(flags.has_height()) {
-        m_attribs.set(ThingAttrElevation, flags.height().elevation());
+        m_elevation = flags.height().elevation();
+        m_attribs.set(ThingAttrElevation, m_elevation);
     }
 
     if(flags.has_lying_object()) {
