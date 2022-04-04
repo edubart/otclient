@@ -1052,7 +1052,6 @@ void ProtocolGame::parsePlayerGoods(const InputMessagePtr& msg)
 {
     std::vector<std::tuple<ItemPtr, int>> goods;
 
-
     // 12.x NOTE: this u64 is parsed only, because TFS stil sends it, we use resource balance in this protocol
     int money = 0;
     if (g_game.getClientVersion() >= 973)
