@@ -28,13 +28,11 @@ set(framework_SOURCES ${framework_SOURCES}
     ${CMAKE_CURRENT_LIST_DIR}/util/size.h
 
     # stdext
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/any.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/cast.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/compiler.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/stdext/demangle.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/dumper.h
-    ${CMAKE_CURRENT_LIST_DIR}/stdext/dynamic_storage.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/exception.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/format.h
     ${CMAKE_CURRENT_LIST_DIR}/stdext/hash.h

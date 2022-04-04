@@ -246,7 +246,7 @@ private:
     bool m_null{ true },
         m_opaque{ false };
 
-    stdext::dynamic_storage<uint8> m_attribs;
+    dynamic_storage<uint8> m_attribs;
 
     Size m_size;
     Point m_displacement;

@@ -152,7 +152,7 @@ private:
     ItemCategory m_category{ ItemCategoryInvalid };
     bool m_null{ true };
 
-    stdext::dynamic_storage<uint8> m_attribs;
+    dynamic_storage<uint8> m_attribs;
 };
 
 #endif

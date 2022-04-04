@@ -25,6 +25,8 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <unordered_map>
+#include <any>
 
 using uchar = unsigned char;
 using ushort = unsigned short;
@@ -45,5 +47,44 @@ using refcount_t = uint_fast32_t;
 
 using std::size_t;
 using std::ptrdiff_t;
+
+template<typename Key>
+class dynamic_storage {
+    public:
+        template<typename T> void set(const Key& key, const T& value) {
+            m_data[key] = value;
+        }
+
+        bool remove(const Key& k) {
+            return m_data.erase(k) > 0;
+        }
+
+        template<typename T> T get(const Key& k) const {
+            auto it = m_data.find(k);
+            if (it == m_data.end()) {
+                return T();
+            }
+
+            try {
+                return std::any_cast<T>(it->second);
+            } catch (std::exception&) {
+                return T();
+            }
+        }
+
+        bool has(const Key& k) const {
+            auto it = m_data.find(k);
+            return it != m_data.end();
+        }
+
+        size_t size() const {
+            return m_data.count();
+        }
+
+        void clear() { m_data.clear(); }
+
+    private:
+        std::unordered_map<Key, std::any> m_data;
+};
 
 #endif

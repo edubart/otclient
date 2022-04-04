@@ -646,12 +646,10 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\sound\soundmanager.h" />
     <ClInclude Include="..\src\framework\sound\soundsource.h" />
     <ClInclude Include="..\src\framework\sound\streamsoundsource.h" />
-    <ClInclude Include="..\src\framework\stdext\any.h" />
     <ClInclude Include="..\src\framework\stdext\cast.h" />
     <ClInclude Include="..\src\framework\stdext\compiler.h" />
     <ClInclude Include="..\src\framework\stdext\demangle.h" />
     <ClInclude Include="..\src\framework\stdext\dumper.h" />
-    <ClInclude Include="..\src\framework\stdext\dynamic_storage.h" />
     <ClInclude Include="..\src\framework\stdext\exception.h" />
     <ClInclude Include="..\src\framework\stdext\format.h" />
     <ClInclude Include="..\src\framework\stdext\hash.h" />
