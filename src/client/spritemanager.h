@@ -48,7 +48,8 @@ public:
     const TexturePtr& getShadeTexture() const { return m_shadeTexture; }
 
 private:
-    enum {
+    enum
+    {
         SPRITE_DATA_SIZE = SPRITE_SIZE * SPRITE_SIZE * 4
     };
 

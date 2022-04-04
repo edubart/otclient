@@ -30,14 +30,16 @@
 class Painter
 {
 public:
-    enum BlendEquation {
+    enum BlendEquation
+    {
         BlendEquation_Add,
         BlendEquation_Max,
         BlendEquation_Min,
         BlendEquation_Subtract,
         BlendEquation_Rever_Subtract,
     };
-    enum CompositionMode {
+    enum CompositionMode
+    {
         CompositionMode_Normal,
         CompositionMode_Multiply,
         CompositionMode_Add,
@@ -46,13 +48,15 @@ public:
         CompositionMode_Light
     };
 
-    enum class DrawMode {
+    enum class DrawMode
+    {
         None = GL_NONE,
         Triangles = GL_TRIANGLES,
         TriangleStrip = GL_TRIANGLE_STRIP
     };
 
-    struct PainterState {
+    struct PainterState
+    {
         Size resolution;
         Matrix3 transformMatrix;
         Matrix3 projectionMatrix;

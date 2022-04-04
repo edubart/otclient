@@ -27,15 +27,14 @@ extern asio::io_service g_ioService;
 
 Server::Server(int port)
     : m_acceptor(g_ioService, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
-{
-}
+{}
 
 ServerPtr Server::create(int port)
 {
     try {
         auto server = new Server(port);
         return { server };
-    } catch(const std::exception& e) {
+    } catch (const std::exception& e) {
         g_logger.error(stdext::format("Failed to initialize server: %s", e.what()));
         return {};
     }
@@ -54,7 +53,7 @@ void Server::acceptNext()
     connection->m_connecting = true;
     const auto self = static_self_cast<Server>();
     m_acceptor.async_accept(connection->m_socket, [=](const boost::system::error_code& error) {
-        if(!error) {
+        if (!error) {
             connection->m_connected = true;
             connection->m_connecting = false;
         }

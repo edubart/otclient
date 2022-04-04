@@ -294,7 +294,7 @@ protected:
 
     static bool IsWhiteSpace(int c)
     {
-        if(c < 256)
+        if (c < 256)
             return IsWhiteSpace(static_cast<char>(c));
         return false;    // Again, only truly correct for English/Latin...but usually works.
     }
@@ -328,27 +328,23 @@ protected:
     static const char* GetChar(const char* p, char* _value, int* length, TiXmlEncoding encoding)
     {
         assert(p);
-        if(encoding == TIXML_ENCODING_UTF8)
-        {
+        if (encoding == TIXML_ENCODING_UTF8) {
             *length = utf8ByteTable[*((const unsigned char*)p)];
             assert(*length >= 0 && *length < 5);
-        } else
-        {
+        } else {
             *length = 1;
         }
 
-        if(*length == 1)
-        {
-            if(*p == '&')
+        if (*length == 1) {
+            if (*p == '&')
                 return GetEntity(p, _value, length, encoding);
             *_value = *p;
             return p + 1;
         }
-        if(*length)
-        {
+        if (*length) {
             //strncpy( _value, p, *length );    // lots of compilers don't like this function (unsafe),
             // and the null terminator isn't needed
-            for(int i = 0; p[i] && i < *length; ++i) {
+            for (int i = 0; p[i] && i < *length; ++i) {
                 _value[i] = p[i];
             }
             return p + (*length);
@@ -379,9 +375,8 @@ protected:
 
     static int ToLower(int v, TiXmlEncoding encoding)
     {
-        if(encoding == TIXML_ENCODING_UTF8)
-        {
-            if(v < 128) return tolower(v);
+        if (encoding == TIXML_ENCODING_UTF8) {
+            if (v < 128) return tolower(v);
             return v;
         }
         return tolower(v);
@@ -949,7 +944,7 @@ public:
     {
         T ret;
         const int r = QueryValueAttribute(str, &ret);
-        if(r == TIXML_NO_ATTRIBUTE || r == TIXML_WRONG_TYPE)
+        if (r == TIXML_NO_ATTRIBUTE || r == TIXML_WRONG_TYPE)
             return T();
         return ret;
     }
@@ -965,12 +960,12 @@ public:
     template< typename T > int QueryValueAttribute(const std::string& name, T* outValue) const
     {
         const TiXmlAttribute* node = attributeSet.Find(name);
-        if(!node)
+        if (!node)
             return TIXML_NO_ATTRIBUTE;
 
         std::stringstream sstream(node->ValueStr());
         sstream >> *outValue;
-        if(!sstream.fail())
+        if (!sstream.fail())
             return TIXML_SUCCESS;
         return TIXML_WRONG_TYPE;
     }
@@ -978,7 +973,7 @@ public:
     int QueryValueAttribute(const std::string& name, std::string* outValue) const
     {
         const TiXmlAttribute* node = attributeSet.Find(name);
-        if(!node)
+        if (!node)
             return TIXML_NO_ATTRIBUTE;
         *outValue = node->ValueStr();
         return TIXML_SUCCESS;
@@ -1552,7 +1547,7 @@ public:
     TiXmlHandle(TiXmlNode* _node) { this->node = _node; }
     /// Copy constructor
     TiXmlHandle(const TiXmlHandle& ref) { this->node = ref.node; }
-    TiXmlHandle operator=(const TiXmlHandle& ref) { if(&ref != this) this->node = ref.node; return *this; }
+    TiXmlHandle operator=(const TiXmlHandle& ref) { if (&ref != this) this->node = ref.node; return *this; }
 
     /// Return a handle to the first child node.
     TiXmlHandle FirstChild() const;
@@ -1694,7 +1689,7 @@ public:
 private:
     void DoIndent()
     {
-        for(int i = 0; i < depth; ++i)
+        for (int i = 0; i < depth; ++i)
             buffer += indent;
     }
     void DoLineBreak()

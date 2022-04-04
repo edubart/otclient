@@ -40,7 +40,8 @@ public:
     int cyclesExecuted() { return m_cyclesExecuted; }
     int maxCycles() { return m_maxCycles; }
 
-    struct Compare {
+    struct Compare
+    {
         bool operator() (const ScheduledEventPtr& a, const ScheduledEventPtr& b) const
         {
             return b->ticks() < a->ticks();

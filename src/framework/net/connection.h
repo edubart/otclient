@@ -31,7 +31,8 @@ class Connection : public LuaObject
     using ErrorCallback = std::function<void(const boost::system::error_code&)>;
     using RecvCallback = std::function<void(uint8*, uint16)>;
 
-    enum {
+    enum
+    {
         READ_TIMEOUT = 30,
         WRITE_TIMEOUT = 30,
         SEND_BUFFER_SIZE = 65536,

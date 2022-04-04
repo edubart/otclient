@@ -28,7 +28,8 @@
 #include "thingtype.h"
 #include "thingtypemanager.h"
 
-struct Highlight {
+struct Highlight
+{
     int fadeLevel;
     Color rgbColor = Color::alpha;
     ThingPtr thing;

@@ -108,7 +108,7 @@ template<>
 inline std::string OTMLNode::value<std::string>()
 {
     std::string value = m_value;
-    if(value.starts_with("\"") && value.ends_with("\"")) {
+    if (value.starts_with("\"") && value.ends_with("\"")) {
         value = value.substr(1, value.length() - 2);
         stdext::replace_all(value, "\\\\", "\\");
         stdext::replace_all(value, "\\\"", "\"");
@@ -123,7 +123,7 @@ template<typename T>
 T OTMLNode::value()
 {
     T ret;
-    if(!stdext::cast(m_value, ret))
+    if (!stdext::cast(m_value, ret))
         throw OTMLException(asOTMLNode(), stdext::format("failed to cast node value '%s' to type '%s'", m_value, stdext::demangle_type<T>()));
     return ret;
 }
@@ -145,8 +145,8 @@ T OTMLNode::valueAtIndex(int childIndex)
 template<typename T>
 T OTMLNode::valueAt(const std::string& childTag, const T& def)
 {
-    if(const OTMLNodePtr node = get(childTag))
-        if(!node->isNull())
+    if (const OTMLNodePtr node = get(childTag))
+        if (!node->isNull())
             return node->value<T>();
     return def;
 }
@@ -154,7 +154,7 @@ T OTMLNode::valueAt(const std::string& childTag, const T& def)
 template<typename T>
 T OTMLNode::valueAtIndex(int childIndex, const T& def)
 {
-    if(const OTMLNodePtr node = getIndex(childIndex))
+    if (const OTMLNodePtr node = getIndex(childIndex))
         return node->value<T>();
     return def;
 }

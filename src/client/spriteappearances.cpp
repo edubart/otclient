@@ -95,17 +95,17 @@ bool SpriteAppearances::loadSpriteSheet(const SpriteSheetPtr& sheet)
         fin->skip(8); // cip compressed size
 
         lzma_stream stream = LZMA_STREAM_INIT;
-        
+
         lzma_filter filters[2] = {
             lzma_filter{LZMA_FILTER_LZMA1, &options},
             lzma_filter{LZMA_VLI_UNKNOWN, NULL}
         };
-        
+
         lzma_ret ret = lzma_raw_decoder(&stream, filters);
         if (ret != LZMA_OK) {
             throw stdext::exception(stdext::format("failed to initialize lzma raw decoder result: %d", ret));
         }
-        
+
         stream.next_in = &fin->m_data.data()[fin->tell()];
         stream.next_out = decompressed.get();
         stream.avail_in = fin->size();
@@ -213,7 +213,7 @@ ImagePtr SpriteAppearances::getSpriteImage(int id)
         int allColumns = size.width() == 32 ? 12 : 6; // 64 pixel width == 6 columns each 64x or 32 pixels, 12 columns
         int spriteRow = std::floor(static_cast<float>(spriteOffset) / static_cast<float>(allColumns));
         int spriteColumn = spriteOffset % allColumns;
-        
+
         int spriteWidthBytes = size.width() * 4;
 
         for (int height = size.height() * spriteRow, offset = 0; height < size.height() + (spriteRow * size.height()); height++, offset++) {
@@ -232,7 +232,7 @@ ImagePtr SpriteAppearances::getSpriteImage(int id)
         }
 
         return image;
-    } catch(stdext::exception& e) {
+    } catch (stdext::exception& e) {
         g_logger.error(stdext::format("Failed to get sprite id %d: %s", id, e.what()));
         return nullptr;
     }

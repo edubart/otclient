@@ -52,7 +52,7 @@ void Protocol::connect(const std::string& host, uint16 port)
 
 void Protocol::disconnect()
 {
-    if(m_connection) {
+    if (m_connection) {
         m_connection->close();
         m_connection.reset();
     }
@@ -60,14 +60,14 @@ void Protocol::disconnect()
 
 bool Protocol::isConnected()
 {
-    if(m_connection && m_connection->isConnected())
+    if (m_connection && m_connection->isConnected())
         return true;
     return false;
 }
 
 bool Protocol::isConnecting()
 {
-    if(m_connection && m_connection->isConnecting())
+    if (m_connection && m_connection->isConnecting())
         return true;
     return false;
 }
@@ -75,18 +75,18 @@ bool Protocol::isConnecting()
 void Protocol::send(const OutputMessagePtr& outputMessage)
 {
     // encrypt
-    if(m_xteaEncryptionEnabled)
+    if (m_xteaEncryptionEnabled)
         xteaEncrypt(outputMessage);
 
     // write checksum
-    if(m_checksumEnabled)
+    if (m_checksumEnabled)
         outputMessage->writeChecksum();
 
     // write message size
     outputMessage->writeMessageSize();
 
     // send
-    if(m_connection)
+    if (m_connection)
         m_connection->write(outputMessage->getHeaderBuffer(), outputMessage->getMessageSize());
 
     // reset message to allow reuse
@@ -99,14 +99,14 @@ void Protocol::recv()
 
     // first update message header size
     int headerSize = 2; // 2 bytes for message size
-    if(m_checksumEnabled)
+    if (m_checksumEnabled)
         headerSize += 4; // 4 bytes for checksum
-    if(m_xteaEncryptionEnabled)
+    if (m_xteaEncryptionEnabled)
         headerSize += 2; // 2 bytes for XTEA encrypted message size
     m_inputMessage->setHeaderSize(headerSize);
 
     // read the first 2 bytes which contain the message size
-    if(m_connection)
+    if (m_connection)
         m_connection->read(2, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
     {
         capture0->internalRecvHeader(std::forward<decltype(PH1)>(PH1),
@@ -121,7 +121,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
     const uint16 remainingSize = m_inputMessage->readSize();
 
     // read remaining message data
-    if(m_connection)
+    if (m_connection)
         m_connection->read(remainingSize, [capture0 = asProtocol()](auto&& PH1, auto&& PH2)
     {
         capture0->internalRecvData(std::forward<decltype(PH1)>(PH1),
@@ -132,20 +132,20 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 void Protocol::internalRecvData(uint8* buffer, uint16 size)
 {
     // process data only if really connected
-    if(!isConnected()) {
+    if (!isConnected()) {
         g_logger.traceError("received data while disconnected");
         return;
     }
 
     m_inputMessage->fillBuffer(buffer, size);
 
-    if(m_checksumEnabled && !m_inputMessage->readChecksum()) {
+    if (m_checksumEnabled && !m_inputMessage->readChecksum()) {
         g_logger.traceError("got a network message with invalid checksum");
         return;
     }
 
-    if(m_xteaEncryptionEnabled) {
-        if(!xteaDecrypt(m_inputMessage)) {
+    if (m_xteaEncryptionEnabled) {
+        if (!xteaDecrypt(m_inputMessage)) {
             g_logger.traceError("failed to decrypt message");
             return;
         }
@@ -160,13 +160,14 @@ void Protocol::generateXteaKey()
     std::generate(m_xteaKey.begin(), m_xteaKey.end(), [&]() { return unif(rd); });
 }
 
-namespace {
+namespace
+{
     constexpr uint32_t delta = 0x9E3779B9;
 
     template<typename Round>
     void apply_rounds(uint8_t* data, size_t length, Round round)
     {
-        for(auto j = 0u; j < length; j += 8) {
+        for (auto j = 0u; j < length; j += 8) {
             uint32_t left = data[j + 0] | data[j + 1] << 8u | data[j + 2] << 16u | data[j + 3] << 24u,
                 right = data[j + 4] | data[j + 5] << 8u | data[j + 6] << 16u | data[j + 7] << 24u;
 
@@ -187,12 +188,12 @@ namespace {
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
     const uint16 encryptedSize = inputMessage->getUnreadSize();
-    if(encryptedSize % 8 != 0) {
+    if (encryptedSize % 8 != 0) {
         g_logger.traceError("invalid encrypted network message");
         return false;
     }
 
-    for(uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
+    for (uint32_t i = 0, sum = delta << 5, next_sum = sum - delta; i < 32; ++i, sum = next_sum, next_sum -= delta) {
         apply_rounds(inputMessage->getReadBuffer(), encryptedSize, [&](uint32_t& left, uint32_t& right) {
             right -= ((left << 4 ^ left >> 5) + left) ^ (sum + m_xteaKey[(sum >> 11) & 3]);
             left -= ((right << 4 ^ right >> 5) + right) ^ (next_sum + m_xteaKey[next_sum & 3]);
@@ -201,7 +202,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 
     const uint16 decryptedSize = inputMessage->getU16() + 2;
     const int sizeDelta = decryptedSize - encryptedSize;
-    if(sizeDelta > 0 || -sizeDelta > encryptedSize) {
+    if (sizeDelta > 0 || -sizeDelta > encryptedSize) {
         g_logger.traceError("invalid decrypted network message");
         return false;
     }
@@ -216,13 +217,13 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
     uint16 encryptedSize = outputMessage->getMessageSize();
 
     //add bytes until reach 8 multiple
-    if((encryptedSize % 8) != 0) {
+    if ((encryptedSize % 8) != 0) {
         const uint16 n = 8 - (encryptedSize % 8);
         outputMessage->addPaddingBytes(n);
         encryptedSize += n;
     }
 
-    for(uint32_t i = 0, sum = 0, next_sum = sum + delta; i < 32; ++i, sum = next_sum, next_sum += delta) {
+    for (uint32_t i = 0, sum = 0, next_sum = sum + delta; i < 32; ++i, sum = next_sum, next_sum += delta) {
         apply_rounds(outputMessage->getDataBuffer() - 2, encryptedSize, [&](uint32_t& left, uint32_t& right) {
             left += ((right << 4 ^ right >> 5) + right) ^ (sum + m_xteaKey[sum & 3]);
             right += ((left << 4 ^ left >> 5) + left) ^ (next_sum + m_xteaKey[(next_sum >> 11) & 3]);

@@ -34,7 +34,7 @@ Image::Image(const Size& size, int bpp, uint8* pixels)
     m_bpp = bpp;
 
     m_pixels.resize(size.area() * bpp, 0);
-    if(pixels)
+    if (pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
 
@@ -46,7 +46,7 @@ ImagePtr Image::load(std::string file)
 
         // load image file data
         image = loadPNG(file);
-    } catch(stdext::exception& e) {
+    } catch (stdext::exception& e) {
         g_logger.error(stdext::format("unable to load image '%s': %s", file, e.what()));
     }
     return image;
@@ -58,14 +58,14 @@ ImagePtr Image::loadPNG(const std::string& file)
     g_resources.readFileStream(file, fin);
     ImagePtr image;
     apng_data apng;
-    if(load_apng(fin, &apng) == 0) {
+    if (load_apng(fin, &apng) == 0) {
         image = ImagePtr(new Image(Size(apng.width, apng.height), apng.bpp, apng.pdata));
         free_apng(&apng);
     }
 
     int cntTransparentPixel = 0;
-    for(const auto& pixel : image->getPixels()) {
-        if(pixel == 0 && ++cntTransparentPixel == 4) {
+    for (const auto& pixel : image->getPixels()) {
+        if (pixel == 0 && ++cntTransparentPixel == 4) {
             image->setTransparentPixel(true);
             break;
         }
@@ -77,7 +77,7 @@ ImagePtr Image::loadPNG(const std::string& file)
 void Image::savePNG(const std::string& fileName)
 {
     const FileStreamPtr fin = g_resources.createFile(fileName);
-    if(!fin)
+    if (!fin)
         stdext::throw_exception(stdext::format("failed to open file '%s' for write", fileName));
 
     fin->cache();
@@ -92,7 +92,7 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
 {
     assert(m_bpp == 4);
 
-    for(int p = 0; p < getPixelCount(); ++p) {
+    for (int p = 0; p < getPixelCount(); ++p) {
         uint8& r = m_pixels[p * 4 + 0];
         uint8& g = m_pixels[p * 4 + 1];
         uint8& b = m_pixels[p * 4 + 2];
@@ -112,7 +112,7 @@ void Image::overwrite(const Color& color)
 {
     assert(m_bpp == 4);
 
-    for(int p = 0; p < getPixelCount(); ++p) {
+    for (int p = 0; p < getPixelCount(); ++p) {
         uint8& r = m_pixels[p * 4 + 0];
         uint8& g = m_pixels[p * 4 + 1];
         uint8& b = m_pixels[p * 4 + 2];
@@ -132,18 +132,18 @@ void Image::blit(const Point& dest, const ImagePtr& other)
 {
     assert(m_bpp == 4);
 
-    if(!other)
+    if (!other)
         return;
 
     int coloredPixelSize = 0;
 
     const uint8* otherPixels = other->getPixelData();
-    for(int p = 0; p < other->getPixelCount(); ++p) {
+    for (int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();
         const int pos = ((dest.y + y) * m_size.width() + (dest.x + x)) * 4;
 
-        if(otherPixels[p * 4 + 3] != 0) {
+        if (otherPixels[p * 4 + 3] != 0) {
             m_pixels[pos + 0] = otherPixels[p * 4 + 0];
             m_pixels[pos + 1] = otherPixels[p * 4 + 1];
             m_pixels[pos + 2] = otherPixels[p * 4 + 2];
@@ -157,11 +157,11 @@ void Image::paste(const ImagePtr& other)
 {
     assert(m_bpp == 4);
 
-    if(!other)
+    if (!other)
         return;
 
     const uint8* otherPixels = other->getPixelData();
-    for(int p = 0; p < other->getPixelCount(); ++p) {
+    for (int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();
         const int pos = (y * m_size.width() + x) * 4;
@@ -180,7 +180,7 @@ bool Image::nextMipmap()
 
     const int iw = m_size.width();
     const int ih = m_size.height();
-    if(iw == 1 && ih == 1)
+    if (iw == 1 && ih == 1)
         return false;
 
     const int ow = iw > 1 ? iw / 2 : 1;
@@ -189,9 +189,9 @@ bool Image::nextMipmap()
     std::vector<uint8> pixels(ow * oh * 4, 0xFF);
 
     //FIXME: calculate mipmaps for 8x1, 4x1, 2x1 ...
-    if(iw != 1 && ih != 1) {
-        for(int x = 0; x < ow; ++x) {
-            for(int y = 0; y < oh; ++y) {
+    if (iw != 1 && ih != 1) {
+        for (int x = 0; x < ow; ++x) {
+            for (int y = 0; y < oh; ++y) {
                 uint8* inPixel[4];
                 inPixel[0] = &m_pixels[((y * 2) * iw + (x * 2)) * 4];
                 inPixel[1] = &m_pixels[((y * 2) * iw + (x * 2) + 1) * 4];
@@ -200,25 +200,24 @@ bool Image::nextMipmap()
                 uint8* outPixel = &pixels[(y * ow + x) * 4];
 
                 int pixelsSum[4];
-                for(int& i : pixelsSum)
+                for (int& i : pixelsSum)
                     i = 0;
 
                 int usedPixels = 0;
-                for(auto& j : inPixel)
-                {
+                for (auto& j : inPixel) {
                     // ignore colors of complete alpha pixels
-                    if(j[3] < 16)
+                    if (j[3] < 16)
                         continue;
 
-                    for(int i = 0; i < 4; ++i)
+                    for (int i = 0; i < 4; ++i)
                         pixelsSum[i] += j[i];
 
                     usedPixels++;
                 }
 
                 // try to guess the alpha pixel more accurately
-                for(int i = 0; i < 4; ++i) {
-                    if(usedPixels > 0)
+                for (int i = 0; i < 4; ++i) {
+                    if (usedPixels > 0)
                         outPixel[i] = pixelsSum[i] / usedPixels;
                     else
                         outPixel[i] = 0;
@@ -238,11 +237,11 @@ void Image::flipVertically()
     uint rowIncrement = m_size.height() * m_bpp;
     uint8* pixelData = m_pixels.data();
 
-    for(int y = 0; y < (getHeight() / 2); ++y) {
+    for (int y = 0; y < (getHeight() / 2); ++y) {
         uint8* itr1 = &pixelData[y * rowIncrement];
         uint8* itr2 = &pixelData[(m_size.height() - y - 1) * rowIncrement];
 
-        for(std::size_t x = 0; x < rowIncrement; ++x) {
+        for (std::size_t x = 0; x < rowIncrement; ++x) {
             std::swap(*(itr1 + x), *(itr2 + x));
         }
     }
@@ -251,7 +250,7 @@ void Image::flipVertically()
 void Image::reverseChannels()
 {
     uint8* pixelData = m_pixels.data();
-    for(uint8* itr = pixelData; itr < pixelData + m_pixels.size(); itr += m_bpp) {
+    for (uint8* itr = pixelData; itr < pixelData + m_pixels.size(); itr += m_bpp) {
         std::swap(*(itr + 0), *(itr + 2));
     }
 }

@@ -38,12 +38,12 @@ void UIParticles::drawSelf(Fw::DrawPane drawPane)
     g_drawPool.setClipRect(getPaddingRect());
     g_painter->pushTransformMatrix();
 
-    if(m_referencePos.x < 0 && m_referencePos.y < 0)
+    if (m_referencePos.x < 0 && m_referencePos.y < 0)
         g_painter->translate(m_rect.center());
     else
         g_painter->translate(m_rect.x() + m_referencePos.x * m_rect.width(), m_rect.y() + m_referencePos.y * m_rect.height());
 
-    for(auto& effect : m_effects)
+    for (auto& effect : m_effects)
         effect->render();
 
     g_painter->popTransformMatrix();
@@ -54,10 +54,10 @@ void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& 
 {
     UIWidget::onStyleApply(styleName, styleNode);
 
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "effect")
+    for (const OTMLNodePtr& node : styleNode->children()) {
+        if (node->tag() == "effect")
             addEffect(node->value());
-        else if(node->tag() == "reference-pos")
+        else if (node->tag() == "reference-pos")
             setReferencePos(node->value<PointF>());
     }
 }
@@ -65,6 +65,6 @@ void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& 
 void UIParticles::addEffect(const std::string& name)
 {
     const ParticleEffectPtr effect = g_particles.createEffect(name);
-    if(effect)
+    if (effect)
         m_effects.push_back(effect);
 }

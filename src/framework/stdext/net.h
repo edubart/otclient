@@ -27,7 +27,8 @@
 #include <vector>
 #include "types.h"
 
-namespace stdext {
+namespace stdext
+{
     std::string ip_to_string(uint32 ip);
     uint32 string_to_ip(const std::string& string);
     std::vector<uint32> listSubnetAddresses(uint32 address, uint8 mask);

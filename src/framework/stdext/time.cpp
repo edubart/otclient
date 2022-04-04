@@ -27,7 +27,8 @@
 
 #include "types.h"
 
-namespace stdext {
+namespace stdext
+{
     const static auto startup_time = std::chrono::high_resolution_clock::now();
 
     ticks_t time()

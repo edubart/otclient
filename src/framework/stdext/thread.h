@@ -34,7 +34,8 @@
 #include <boost/thread/locks.hpp>
 #include <boost/thread/condition_variable.hpp>
 
-namespace std {
+namespace std
+{
     using boost::thread;
     using boost::mutex;
     using boost::recursive_mutex;

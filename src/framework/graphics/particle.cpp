@@ -45,7 +45,7 @@ Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSiz
 
 void Particle::render()
 {
-    if(!m_texture)
+    if (!m_texture)
         g_drawPool.addFilledRect(m_rect, m_color);
     else {
         g_drawPool.addTexturedRect(m_rect, m_texture, m_color);
@@ -56,7 +56,7 @@ void Particle::render()
 void Particle::update(float elapsedTime)
 {
     // check if finished
-    if(m_duration >= 0 && m_elapsedTime >= m_duration) {
+    if (m_duration >= 0 && m_elapsedTime >= m_duration) {
         m_finished = true;
         return;
     }
@@ -70,14 +70,14 @@ void Particle::update(float elapsedTime)
 
 void Particle::updatePosition(float elapsedTime)
 {
-    if(m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter) {
+    if (m_ignorePhysicsAfter < 0 || m_elapsedTime < m_ignorePhysicsAfter) {
         // update position
         PointF delta = m_velocity * elapsedTime;
         delta.y *= -1; // painter orientate Y axis in the inverse direction
 
         const PointF position = m_position + delta;
 
-        if(m_position != position) {
+        if (m_position != position) {
             m_position += delta;
         }
 
@@ -97,16 +97,16 @@ void Particle::updateSize()
 void Particle::updateColor()
 {
     const float currentLife = m_elapsedTime / m_duration;
-    if(currentLife < m_colorsStops[1]) {
+    if (currentLife < m_colorsStops[1]) {
         const float range = m_colorsStops[1] - m_colorsStops[0];
         const float factor = (currentLife - m_colorsStops[0]) / range;
         m_color = m_colors[0] * (1.0f - factor) + m_colors[1] * factor;
     } else {
-        if(m_colors.size() > 1) {
+        if (m_colors.size() > 1) {
             m_colors.erase(m_colors.begin());
             m_colorsStops.erase(m_colorsStops.begin());
         } else {
-            if(m_color != m_colors[0]) {
+            if (m_color != m_colors[0]) {
                 m_color = m_colors[0];
             }
         }

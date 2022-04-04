@@ -31,7 +31,8 @@
  // @bindclass
 class ShaderProgram : public LuaObject
 {
-    enum {
+    enum
+    {
         MAX_UNIFORM_LOCATIONS = 30
     };
 

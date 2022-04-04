@@ -123,7 +123,7 @@ void PainterOGL::clearRect(const Color& color, const Rect& rect)
 
 void PainterOGL::setCompositionMode(CompositionMode compositionMode)
 {
-    if(m_compositionMode == compositionMode)
+    if (m_compositionMode == compositionMode)
         return;
     m_compositionMode = compositionMode;
 
@@ -132,7 +132,7 @@ void PainterOGL::setCompositionMode(CompositionMode compositionMode)
 
 void PainterOGL::setBlendEquation(BlendEquation blendEquation)
 {
-    if(m_blendEquation == blendEquation)
+    if (m_blendEquation == blendEquation)
         return;
     m_blendEquation = blendEquation;
 
@@ -141,7 +141,7 @@ void PainterOGL::setBlendEquation(BlendEquation blendEquation)
 
 void PainterOGL::setClipRect(const Rect& clipRect)
 {
-    if(m_clipRect == clipRect)
+    if (m_clipRect == clipRect)
         return;
     m_clipRect = clipRect;
 
@@ -150,19 +150,19 @@ void PainterOGL::setClipRect(const Rect& clipRect)
 
 void PainterOGL::setTexture(Texture* texture)
 {
-    if(m_texture == texture)
+    if (m_texture == texture)
         return;
 
     m_texture = texture;
 
     uint glTextureId;
-    if(texture) {
+    if (texture) {
         setTextureMatrix(texture->getTransformMatrix());
         glTextureId = texture->getId();
     } else
         glTextureId = 0;
 
-    if(m_glTextureId != glTextureId) {
+    if (m_glTextureId != glTextureId) {
         m_glTextureId = glTextureId;
         updateGlTexture();
     }
@@ -170,7 +170,7 @@ void PainterOGL::setTexture(Texture* texture)
 
 void PainterOGL::setAlphaWriting(bool enable)
 {
-    if(m_alphaWriting == enable)
+    if (m_alphaWriting == enable)
         return;
 
     m_alphaWriting = enable;
@@ -179,7 +179,7 @@ void PainterOGL::setAlphaWriting(bool enable)
 
 void PainterOGL::setResolution(const Size& resolution)
 {
-    if(resolution == m_resolution)
+    if (resolution == m_resolution)
         return;
 
     // The projection matrix converts from Painter's coordinate system to GL's coordinate system
@@ -202,7 +202,7 @@ void PainterOGL::setResolution(const Size& resolution)
     m_resolution = resolution;
 
     setProjectionMatrix(projectionMatrix);
-    if(g_painter == this)
+    if (g_painter == this)
         updateGlViewport();
 }
 
@@ -261,56 +261,56 @@ void PainterOGL::popTransformMatrix()
 
 void PainterOGL::updateGlTexture()
 {
-    if(m_glTextureId != 0)
+    if (m_glTextureId != 0)
         glBindTexture(GL_TEXTURE_2D, m_glTextureId);
 }
 
 void PainterOGL::updateGlCompositionMode()
 {
-    switch(m_compositionMode) {
-    case CompositionMode_Normal:
-        if(g_graphics.canUseBlendFuncSeparate())
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-        else
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositionMode_Multiply:
-        glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-        break;
-    case CompositionMode_Add:
-        glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
-        break;
-    case CompositionMode_Replace:
-        glBlendFunc(GL_ONE, GL_ZERO);
-        break;
-    case CompositionMode_DestBlending:
-        glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
-        break;
-    case CompositionMode_Light:
-        glBlendFunc(GL_ZERO, GL_SRC_COLOR);
-        break;
+    switch (m_compositionMode) {
+        case CompositionMode_Normal:
+            if (g_graphics.canUseBlendFuncSeparate())
+                glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+            else
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case CompositionMode_Multiply:
+            glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case CompositionMode_Add:
+            glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
+            break;
+        case CompositionMode_Replace:
+            glBlendFunc(GL_ONE, GL_ZERO);
+            break;
+        case CompositionMode_DestBlending:
+            glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
+            break;
+        case CompositionMode_Light:
+            glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+            break;
     }
 }
 
 void PainterOGL::updateGlBlendEquation()
 {
-    if(!g_graphics.canUseBlendEquation())
+    if (!g_graphics.canUseBlendEquation())
         return;
-    if(m_blendEquation == BlendEquation_Add)
+    if (m_blendEquation == BlendEquation_Add)
         glBlendEquation(0x8006); // GL_FUNC_ADD
-    else if(m_blendEquation == BlendEquation_Max)
+    else if (m_blendEquation == BlendEquation_Max)
         glBlendEquation(0x8008); // GL_MAX
-    else if(m_blendEquation == BlendEquation_Min)
+    else if (m_blendEquation == BlendEquation_Min)
         glBlendEquation(0x8007); // GL_MIN
-    else if(m_blendEquation == BlendEquation_Subtract)
+    else if (m_blendEquation == BlendEquation_Subtract)
         glBlendEquation(0x800A); // GL_FUNC_SUBTRACT
-    else if(m_blendEquation == BlendEquation_Rever_Subtract)
+    else if (m_blendEquation == BlendEquation_Rever_Subtract)
         glBlendEquation(0x800B); // GL_FUNC_REVERSE_SUBTRACT
 }
 
 void PainterOGL::updateGlClipRect()
 {
-    if(m_clipRect.isValid()) {
+    if (m_clipRect.isValid()) {
         glEnable(GL_SCISSOR_TEST);
         glScissor(m_clipRect.left(), m_resolution.height() - m_clipRect.bottom() - 1, m_clipRect.width(), m_clipRect.height());
     } else {
@@ -321,7 +321,7 @@ void PainterOGL::updateGlClipRect()
 
 void PainterOGL::updateGlAlphaWriting()
 {
-    if(m_alphaWriting)
+    if (m_alphaWriting)
         glColorMask(1, 1, 1, 1);
     else
         glColorMask(1, 1, 1, 0);

@@ -32,8 +32,7 @@ class UIAnchor : public stdext::shared_object
 public:
     UIAnchor(Fw::AnchorEdge anchoredEdge, std::string hookedWidgetId, Fw::AnchorEdge hookedEdge) :
         m_anchoredEdge(anchoredEdge), m_hookedEdge(hookedEdge), m_hookedWidgetId(std::move(hookedWidgetId))
-    {
-    }
+    {}
 
     Fw::AnchorEdge getAnchoredEdge() const { return m_anchoredEdge; }
     Fw::AnchorEdge getHookedEdge() const { return m_hookedEdge; }

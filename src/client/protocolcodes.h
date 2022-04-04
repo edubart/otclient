@@ -25,15 +25,18 @@
 
 #include "global.h"
 
-namespace Proto {
-    enum LoginServerOpts {
+namespace Proto
+{
+    enum LoginServerOpts
+    {
         LoginServerError = 10,
         LoginServerMotd = 20,
         LoginServerUpdateNeeded = 30,
         LoginServerCharacterList = 100
     };
 
-    enum ItemOpcode {
+    enum ItemOpcode
+    {
         StaticText = 96,
         UnknownCreature = 97,
         OutdatedCreature = 98,
@@ -276,7 +279,8 @@ namespace Proto {
         ClientRequestTransactionHistory = 254  // 1080
     };
 
-    enum CreatureType {
+    enum CreatureType
+    {
         CreatureTypePlayer = 0,
         CreatureTypeMonster,
         CreatureTypeNpc,
@@ -286,7 +290,8 @@ namespace Proto {
         CreatureTypeUnknown = 0xFF
     };
 
-    enum CreaturesIdRange {
+    enum CreaturesIdRange
+    {
         PlayerStartId = 0x10000000,
         PlayerEndId = 0x40000000,
         MonsterStartId = 0x40000000,

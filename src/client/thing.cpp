@@ -28,7 +28,7 @@
 
 void Thing::setPosition(const Position& position)
 {
-    if(m_position == position)
+    if (m_position == position)
         return;
 
     const Position oldPos = m_position;
@@ -38,19 +38,19 @@ void Thing::setPosition(const Position& position)
 
 int Thing::getStackPriority()
 {
-    if(isGround())
+    if (isGround())
         return 0;
 
-    if(isGroundBorder())
+    if (isGroundBorder())
         return 1;
 
-    if(isOnBottom())
+    if (isOnBottom())
         return 2;
 
-    if(isOnTop())
+    if (isOnTop())
         return 3;
 
-    if(isCreature())
+    if (isCreature())
         return 4;
 
     // common items
@@ -64,7 +64,7 @@ const TilePtr& Thing::getTile()
 
 ContainerPtr Thing::getParentContainer()
 {
-    if(m_position.x == 0xffff && m_position.y & 0x40) {
+    if (m_position.x == 0xffff && m_position.y & 0x40) {
         const int containerId = m_position.y ^ 0x40;
         return g_game.getContainer(containerId);
     }
@@ -74,10 +74,10 @@ ContainerPtr Thing::getParentContainer()
 
 int Thing::getStackPos()
 {
-    if(m_position.x == UINT16_MAX && isItem()) // is inside a container
+    if (m_position.x == UINT16_MAX && isItem()) // is inside a container
         return m_position.z;
 
-    if(const TilePtr& tile = getTile())
+    if (const TilePtr& tile = getTile())
         return tile->getThingStackPos(static_self_cast<Thing>());
 
     g_logger.traceError("got a thing with invalid stackpos");

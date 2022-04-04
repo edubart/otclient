@@ -53,11 +53,11 @@ bool ResourceManager::discoverWorkDir(const std::string& existentFile)
                                     g_resources.getBaseDir() + "../share/" + g_app.getCompactName() + "/" };
 
     bool found = false;
-    for(const std::string& dir : possiblePaths) {
-        if(!PHYSFS_mount(dir.c_str(), nullptr, 0))
+    for (const std::string& dir : possiblePaths) {
+        if (!PHYSFS_mount(dir.c_str(), nullptr, 0))
             continue;
 
-        if(PHYSFS_exists(existentFile.c_str())) {
+        if (PHYSFS_exists(existentFile.c_str())) {
             g_logger.debug(stdext::format("Found work dir at '%s'", dir));
             m_workDir = dir;
             found = true;
@@ -80,8 +80,8 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 #endif
     const std::string writeDir = userDir + dirName;
 
-    if(!PHYSFS_setWriteDir(writeDir.c_str())) {
-        if(!PHYSFS_setWriteDir(userDir.c_str()) || !PHYSFS_mkdir(dirName.c_str())) {
+    if (!PHYSFS_setWriteDir(writeDir.c_str())) {
+        if (!PHYSFS_setWriteDir(userDir.c_str()) || !PHYSFS_mkdir(dirName.c_str())) {
             g_logger.error(stdext::format("Unable to create write directory '%s': %s", writeDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
             return false;
         }
@@ -91,17 +91,17 @@ bool ResourceManager::setupUserWriteDir(const std::string& appWriteDirName)
 
 bool ResourceManager::setWriteDir(const std::string& writeDir, bool)
 {
-    if(!PHYSFS_setWriteDir(writeDir.c_str())) {
+    if (!PHYSFS_setWriteDir(writeDir.c_str())) {
         g_logger.error(stdext::format("Unable to set write directory '%s': %s", writeDir, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
         return false;
     }
 
-    if(!m_writeDir.empty())
+    if (!m_writeDir.empty())
         removeSearchPath(m_writeDir);
 
     m_writeDir = writeDir;
 
-    if(!addSearchPath(writeDir))
+    if (!addSearchPath(writeDir))
         g_logger.error(stdext::format("Unable to add write '%s' directory to search path", writeDir));
 
     return true;
@@ -110,23 +110,23 @@ bool ResourceManager::setWriteDir(const std::string& writeDir, bool)
 bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 {
     std::string savePath = path;
-    if(!PHYSFS_mount(path.c_str(), nullptr, pushFront ? 0 : 1)) {
+    if (!PHYSFS_mount(path.c_str(), nullptr, pushFront ? 0 : 1)) {
         bool found = false;
-        for(const std::string& searchPath : m_searchPaths) {
+        for (const std::string& searchPath : m_searchPaths) {
             std::string newPath = searchPath + path;
-            if(PHYSFS_mount(newPath.c_str(), nullptr, pushFront ? 0 : 1)) {
+            if (PHYSFS_mount(newPath.c_str(), nullptr, pushFront ? 0 : 1)) {
                 savePath = newPath;
                 found = true;
                 break;
             }
         }
 
-        if(!found) {
+        if (!found) {
             //g_logger.error(stdext::format("Could not add '%s' to directory search path. Reason %s", path, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
             return false;
         }
     }
-    if(pushFront)
+    if (pushFront)
         m_searchPaths.push_front(savePath);
     else
         m_searchPaths.push_back(savePath);
@@ -135,7 +135,7 @@ bool ResourceManager::addSearchPath(const std::string& path, bool pushFront)
 
 bool ResourceManager::removeSearchPath(const std::string& path)
 {
-    if(!PHYSFS_unmount(path.c_str()))
+    if (!PHYSFS_unmount(path.c_str()))
         return false;
     const auto it = std::find(m_searchPaths.begin(), m_searchPaths.end(), path);
     assert(it != m_searchPaths.end());
@@ -146,13 +146,13 @@ bool ResourceManager::removeSearchPath(const std::string& path)
 void ResourceManager::searchAndAddPackages(const std::string& packagesDir, const std::string& packageExt)
 {
     auto files = listDirectoryFiles(packagesDir);
-    for(auto it = files.rbegin(); it != files.rend(); ++it) {
+    for (auto it = files.rbegin(); it != files.rend(); ++it) {
         const std::string& file = *it;
 
-        if(!file.ends_with(packageExt))
+        if (!file.ends_with(packageExt))
             continue;
         std::string package = getRealDir(packagesDir) + "/" + file;
-        if(!addSearchPath(package, true))
+        if (!addSearchPath(package, true))
             g_logger.error(stdext::format("Unable to read package '%s': %s", package, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     }
 }
@@ -165,7 +165,7 @@ bool ResourceManager::fileExists(const std::string& fileName)
 bool ResourceManager::directoryExists(const std::string& directoryName)
 {
     PHYSFS_Stat stat = {};
-    if(!PHYSFS_stat(resolvePath(directoryName).c_str(), &stat)) {
+    if (!PHYSFS_stat(resolvePath(directoryName).c_str(), &stat)) {
         return false;
     }
 
@@ -175,7 +175,7 @@ bool ResourceManager::directoryExists(const std::string& directoryName)
 void ResourceManager::readFileStream(const std::string& fileName, std::iostream& out)
 {
     const std::string buffer = readFileContents(fileName);
-    if(buffer.length() == 0) {
+    if (buffer.length() == 0) {
         out.clear(std::ios::eofbit);
         return;
     }
@@ -189,7 +189,7 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
     const std::string fullPath = resolvePath(fileName);
 
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
-    if(!file)
+    if (!file)
         stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
 
     const int fileSize = PHYSFS_fileLength(file);
@@ -207,7 +207,7 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
 bool ResourceManager::writeFileBuffer(const std::string& fileName, const uchar* data, uint size)
 {
     PHYSFS_file* file = PHYSFS_openWrite(fileName.c_str());
-    if(!file) {
+    if (!file) {
         g_logger.error(PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode()));
         return false;
     }
@@ -244,7 +244,7 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
     const std::string fullPath = resolvePath(fileName);
 
     PHYSFS_File* file = PHYSFS_openRead(fullPath.c_str());
-    if(!file)
+    if (!file)
         stdext::throw_exception(stdext::format("unable to open file '%s': %s", fullPath, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return { new FileStream(fullPath, file, false) };
 }
@@ -252,7 +252,7 @@ FileStreamPtr ResourceManager::openFile(const std::string& fileName)
 FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openAppend(fileName.c_str());
-    if(!file)
+    if (!file)
         stdext::throw_exception(stdext::format("failed to append file '%s': %s", fileName, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return { new FileStream(fileName, file, true) };
 }
@@ -260,7 +260,7 @@ FileStreamPtr ResourceManager::appendFile(const std::string& fileName)
 FileStreamPtr ResourceManager::createFile(const std::string& fileName)
 {
     PHYSFS_File* file = PHYSFS_openWrite(fileName.c_str());
-    if(!file)
+    if (!file)
         stdext::throw_exception(stdext::format("failed to create file '%s': %s", fileName, PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode())));
     return { new FileStream(fileName, file, true) };
 }
@@ -280,7 +280,7 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
     std::list<std::string> files;
     const auto rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
-    for(int i = 0; rc[i] != nullptr; i++)
+    for (int i = 0; rc[i] != nullptr; i++)
         files.emplace_back(rc[i]);
 
     PHYSFS_freeList(rc);
@@ -289,7 +289,7 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
 
 std::vector<std::string> ResourceManager::getDirectoryFiles(const std::string& path, bool filenameOnly, bool recursive)
 {
-    if(!std::filesystem::exists(path))
+    if (!std::filesystem::exists(path))
         return {};
 
     const std::filesystem::path p(path);
@@ -303,12 +303,12 @@ std::vector<std::string> ResourceManager::discoverPath(const std::filesystem::pa
     /* Before doing anything, we have to add this directory to search path,
      * this is needed so it works correctly when one wants to open a file.  */
     addSearchPath(path.generic_string(), true);
-    for(std::filesystem::directory_iterator it(path), end; it != end; ++it) {
-        if(std::filesystem::is_directory(it->path().generic_string()) && recursive) {
+    for (std::filesystem::directory_iterator it(path), end; it != end; ++it) {
+        if (std::filesystem::is_directory(it->path().generic_string()) && recursive) {
             std::vector<std::string> subfiles = discoverPath(it->path(), filenameOnly, recursive);
             files.insert(files.end(), subfiles.begin(), subfiles.end());
         } else {
-            if(filenameOnly)
+            if (filenameOnly)
                 files.push_back(it->path().filename().string());
             else
                 files.push_back(it->path().generic_string() + "/" + it->path().filename().string());
@@ -321,15 +321,15 @@ std::vector<std::string> ResourceManager::discoverPath(const std::filesystem::pa
 std::string ResourceManager::resolvePath(const std::string& path)
 {
     std::string fullPath;
-    if(path.starts_with("/"))
+    if (path.starts_with("/"))
         fullPath = path;
     else {
         const std::string scriptPath = "/" + g_lua.getCurrentSourcePath();
-        if(!scriptPath.empty())
+        if (!scriptPath.empty())
             fullPath += scriptPath + "/";
         fullPath += path;
     }
-    if(!(fullPath.starts_with("/")))
+    if (!(fullPath.starts_with("/")))
         g_logger.traceWarning(stdext::format("the following file path is not fully resolved: %s", path));
 
     stdext::replace_all(fullPath, "//", "/");
@@ -340,7 +340,7 @@ std::string ResourceManager::getRealDir(const std::string& path)
 {
     std::string dir;
     const char* cdir = PHYSFS_getRealDir(resolvePath(path).c_str());
-    if(cdir)
+    if (cdir)
         dir = cdir;
     return dir;
 }
@@ -362,14 +362,14 @@ std::string ResourceManager::getUserDir()
 
 std::string ResourceManager::guessFilePath(const std::string& filename, const std::string& type)
 {
-    if(isFileType(filename, type))
+    if (isFileType(filename, type))
         return filename;
     return filename + "." + type;
 }
 
 bool ResourceManager::isFileType(const std::string& filename, const std::string& type)
 {
-    if(filename.ends_with(std::string(".") + type))
+    if (filename.ends_with(std::string(".") + type))
         return true;
     return false;
 }
@@ -386,10 +386,9 @@ std::string ResourceManager::encrypt(const std::string& data, const std::string&
 
     std::ostringstream ss;
     int j = 0;
-    for(int i = -1; ++i < len;)
-    {
+    for (int i = -1; ++i < len;) {
         int ct = data[i];
-        if(i % 2) {
+        if (i % 2) {
             ct = ct - password[j] + i;
         } else {
             ct = ct + password[j] - i;
@@ -397,7 +396,7 @@ std::string ResourceManager::encrypt(const std::string& data, const std::string&
         ss << static_cast<char>(ct);
         j++;
 
-        if(j >= plen)
+        if (j >= plen)
             j = 0;
     }
 
@@ -412,10 +411,9 @@ std::string ResourceManager::decrypt(const std::string& data)
 
     std::ostringstream ss;
     int j = 0;
-    for(int i = -1; ++i < len;)
-    {
+    for (int i = -1; ++i < len;) {
         int ct = data[i];
-        if(i % 2) {
+        if (i % 2) {
             ct = ct + password[j] - i;
         } else {
             ct = ct - password[j] + i;
@@ -423,7 +421,7 @@ std::string ResourceManager::decrypt(const std::string& data)
         ss << static_cast<char>(ct);
         ++j;
 
-        if(j >= plen)
+        if (j >= plen)
             j = 0;
     }
 
@@ -438,10 +436,9 @@ uint8_t* ResourceManager::decrypt(uint8_t* data, int32_t size)
     auto new_Data = new uint8_t[size];
 
     int j = 0;
-    for(int i = -1; ++i < size;)
-    {
+    for (int i = -1; ++i < size;) {
         const int ct = data[i];
-        if(i % 2) {
+        if (i % 2) {
             new_Data[i] = ct + password[j] - i;
         } else {
             new_Data[i] = ct - password[j] + i;
@@ -449,7 +446,7 @@ uint8_t* ResourceManager::decrypt(uint8_t* data, int32_t size)
         data[i] = new_Data[i];
         ++j;
 
-        if(j >= plen)
+        if (j >= plen)
             j = 0;
     }
 
@@ -459,9 +456,9 @@ uint8_t* ResourceManager::decrypt(uint8_t* data, int32_t size)
 void ResourceManager::runEncryption(const std::string& password)
 {
     std::vector<std::string> excludedExtensions = { ".rar",".ogg",".xml",".dll",".exe", ".log",".otb" };
-    for(const auto& entry : std::filesystem::recursive_directory_iterator("./")) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator("./")) {
         std::string ext = entry.path().extension().string();
-        if(std::find(excludedExtensions.begin(), excludedExtensions.end(), ext) != excludedExtensions.end())
+        if (std::find(excludedExtensions.begin(), excludedExtensions.end(), ext) != excludedExtensions.end())
             continue;
 
         std::ifstream ifs(entry.path().string(), std::ios_base::binary);

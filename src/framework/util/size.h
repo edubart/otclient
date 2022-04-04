@@ -86,19 +86,19 @@ public:
 
     void scale(const TSize<T>& s, Fw::AspectRatioMode mode)
     {
-        if(mode == Fw::IgnoreAspectRatio || wd == 0 || ht == 0) {
+        if (mode == Fw::IgnoreAspectRatio || wd == 0 || ht == 0) {
             wd = s.wd;
             ht = s.ht;
         } else {
             bool useHeight;
             T rw = (s.ht * wd) / ht;
 
-            if(mode == Fw::KeepAspectRatio)
+            if (mode == Fw::KeepAspectRatio)
                 useHeight = (rw <= s.wd);
             else // mode == Fw::KeepAspectRatioByExpanding
                 useHeight = (rw >= s.wd);
 
-            if(useHeight) {
+            if (useHeight) {
                 wd = rw;
                 ht = s.ht;
             } else {

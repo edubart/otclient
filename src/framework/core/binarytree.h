@@ -26,7 +26,8 @@
 #include <framework/util/databuffer.h>
 #include "declarations.h"
 
-enum {
+enum
+{
     BINARYTREE_ESCAPE_CHAR = 0xFD,
     BINARYTREE_NODE_START = 0xFE,
     BINARYTREE_NODE_END = 0xFF

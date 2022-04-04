@@ -26,14 +26,17 @@
 #include "packed_any.h"
 #include "types.h"
 
-namespace stdext {
+namespace stdext
+{
     // disable memory alignment
 #pragma pack(push,1)
 
 // this class was designed to use less memory as possible
     template<typename Key, typename SizeType = uint8>
-    class packed_storage {
-        struct value_pair {
+    class packed_storage
+    {
+        struct value_pair
+        {
             Key id;
             packed_any value;
         };
@@ -45,14 +48,14 @@ namespace stdext {
         template<typename T>
         void set(Key id, const T& value)
         {
-            for(SizeType i = 0; i < m_size; ++i) {
-                if(m_values[i].id == id) {
+            for (SizeType i = 0; i < m_size; ++i) {
+                if (m_values[i].id == id) {
                     m_values[i].value = value;
                     return;
                 }
             }
             auto tmp = new value_pair[m_size + 1];
-            if(m_size > 0) {
+            if (m_size > 0) {
                 std::copy(m_values, m_values + m_size, tmp);
                 delete[] m_values;
             }
@@ -65,7 +68,7 @@ namespace stdext {
             auto begin = m_values;
             auto end = m_values + m_size;
             auto it = std::find_if(begin, end, [=](const value_pair& pair) -> bool { return pair.id == id; });
-            if(it == end)
+            if (it == end)
                 return false;
             int pos = it - begin;
             auto tmp = new value_pair[m_size - 1];
@@ -80,23 +83,23 @@ namespace stdext {
         template<typename T>
         T get(Key id) const
         {
-            for(SizeType i = 0; i < m_size; ++i)
-                if(m_values[i].id == id)
+            for (SizeType i = 0; i < m_size; ++i)
+                if (m_values[i].id == id)
                     return packed_any_cast<T>(m_values[i].value);
             return T();
         }
 
         bool has(Key id) const
         {
-            for(SizeType i = 0; i < m_size; ++i)
-                if(m_values[i].id == id)
+            for (SizeType i = 0; i < m_size; ++i)
+                if (m_values[i].id == id)
                     return true;
             return false;
         }
 
         void clear()
         {
-            if(m_values)
+            if (m_values)
                 delete[] m_values;
             m_values = nullptr;
             m_size = 0;

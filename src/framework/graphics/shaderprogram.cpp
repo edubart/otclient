@@ -32,7 +32,7 @@ ShaderProgram::ShaderProgram()
     m_linked = false;
     m_programId = glCreateProgram();
     m_uniformLocations.fill(-1);
-    if(!m_programId)
+    if (!m_programId)
         g_logger.fatal("Unable to create GL shader program");
 }
 
@@ -41,7 +41,7 @@ ShaderProgram::~ShaderProgram()
 #ifndef NDEBUG
     assert(!g_app.isTerminated());
 #endif
-    if(g_graphics.ok())
+    if (g_graphics.ok())
         glDeleteProgram(m_programId);
 }
 
@@ -56,7 +56,7 @@ bool ShaderProgram::addShader(const ShaderPtr& shader)
 bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode)
 {
     const ShaderPtr shader(new Shader(shaderType));
-    if(!shader->compileSourceCode(sourceCode)) {
+    if (!shader->compileSourceCode(sourceCode)) {
         g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
         return false;
     }
@@ -66,7 +66,7 @@ bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const
 bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile)
 {
     const ShaderPtr shader(new Shader(shaderType));
-    if(!shader->compileSourceFile(sourceFile)) {
+    if (!shader->compileSourceFile(sourceFile)) {
         g_logger.error(stdext::format("failed to compile shader: %s", shader->log()));
         return false;
     }
@@ -76,7 +76,7 @@ bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const
 void ShaderProgram::removeShader(const ShaderPtr& shader)
 {
     const auto it = std::find(m_shaders.begin(), m_shaders.end(), shader);
-    if(it == m_shaders.end())
+    if (it == m_shaders.end())
         return;
 
     glDetachShader(m_programId, shader->getShaderId());
@@ -86,13 +86,13 @@ void ShaderProgram::removeShader(const ShaderPtr& shader)
 
 void ShaderProgram::removeAllShaders()
 {
-    while(!m_shaders.empty())
+    while (!m_shaders.empty())
         removeShader(m_shaders.front());
 }
 
 bool ShaderProgram::link()
 {
-    if(m_linked)
+    if (m_linked)
         return true;
 
     glLinkProgram(m_programId);
@@ -101,15 +101,15 @@ bool ShaderProgram::link()
     glGetProgramiv(m_programId, GL_LINK_STATUS, &value);
     m_linked = (value != GL_FALSE);
 
-    if(!m_linked)
+    if (!m_linked)
         g_logger.traceWarning(log());
     return m_linked;
 }
 
 bool ShaderProgram::bind()
 {
-    if(m_currentProgram != m_programId) {
-        if(!m_linked && !link())
+    if (m_currentProgram != m_programId) {
+        if (!m_linked && !link())
             return false;
         glUseProgram(m_programId);
         m_currentProgram = m_programId;
@@ -119,7 +119,7 @@ bool ShaderProgram::bind()
 
 void ShaderProgram::release()
 {
-    if(m_currentProgram != 0) {
+    if (m_currentProgram != 0) {
         m_currentProgram = 0;
         glUseProgram(0);
     }
@@ -130,7 +130,7 @@ std::string ShaderProgram::log()
     std::string infoLog;
     int infoLogLength = 0;
     glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if(infoLogLength > 1) {
+    if (infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
         glGetShaderInfoLog(m_programId, infoLogLength - 1, nullptr, &buf[0]);
         infoLog = &buf[0];

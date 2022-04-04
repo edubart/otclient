@@ -32,7 +32,7 @@ ScheduledEvent::ScheduledEvent(const std::function<void()>& callback, int delay,
 
 void ScheduledEvent::execute()
 {
-    if(!m_canceled && m_callback && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
+    if (!m_canceled && m_callback && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
         m_callback();
         m_executed = true;
         // callback may be used in the next cycle
@@ -46,7 +46,7 @@ void ScheduledEvent::execute()
 
 bool ScheduledEvent::nextCycle()
 {
-    if(m_callback && !m_canceled && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
+    if (m_callback && !m_canceled && (m_maxCycles == 0 || m_cyclesExecuted < m_maxCycles)) {
         m_ticks += m_delay;
         return true;
     }

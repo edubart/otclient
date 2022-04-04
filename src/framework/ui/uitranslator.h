@@ -26,7 +26,8 @@
 #include <string>
 #include "../const.h"
 
-namespace Fw {
+namespace Fw
+{
     AlignmentFlag translateAlignment(std::string aligment);
     AnchorEdge translateAnchorEdge(std::string anchorEdge);
     WidgetState translateState(std::string state);

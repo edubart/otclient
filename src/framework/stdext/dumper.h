@@ -25,9 +25,12 @@
 
 #include <iostream>
 
-namespace stdext {
-    static struct {
-        struct dumper_dummy {
+namespace stdext
+{
+    static struct
+    {
+        struct dumper_dummy
+        {
             ~dumper_dummy() { std::cout << std::endl; }
             template<class T> dumper_dummy& operator<<(const T& v) { std::cout << v << " "; return *this; }
         };

@@ -43,7 +43,8 @@ protected:
     float m_elapsedTime;
 };
 
-class GravityAffector : public ParticleAffector {
+class GravityAffector : public ParticleAffector
+{
 public:
     void load(const OTMLNodePtr& node) override;
     void updateParticle(const ParticlePtr& particle, float elapsedTime) override;
@@ -52,7 +53,8 @@ private:
     float m_angle, m_gravity;
 };
 
-class AttractionAffector : public ParticleAffector {
+class AttractionAffector : public ParticleAffector
+{
 public:
     void load(const OTMLNodePtr& node) override;
     void updateParticle(const ParticlePtr& particle, float elapsedTime) override;

@@ -66,11 +66,11 @@ void Connection::terminate()
 
 void Connection::close()
 {
-    if(!m_connected && !m_connecting)
+    if (!m_connected && !m_connecting)
         return;
 
     // flush send data before disconnecting on clean connections
-    if(m_connected && !m_error && m_outputStream)
+    if (m_connected && !m_error && m_outputStream)
         internal_write();
 
     m_connecting = false;
@@ -84,7 +84,7 @@ void Connection::close()
     m_writeTimer.cancel();
     m_delayedWriteTimer.cancel();
 
-    if(m_socket.is_open()) {
+    if (m_socket.is_open()) {
         boost::system::error_code ec;
         m_socket.shutdown(asio::ip::tcp::socket::shutdown_both, ec);
         m_socket.close();
@@ -130,12 +130,12 @@ void Connection::internal_connect(const asio::ip::basic_resolver<asio::ip::tcp>:
 
 void Connection::write(uint8* buffer, size_t size)
 {
-    if(!m_connected)
+    if (!m_connected)
         return;
 
     // we can't send the data right away, otherwise we could create tcp congestion
-    if(!m_outputStream) {
-        if(!m_outputStreams.empty()) {
+    if (!m_outputStream) {
+        if (!m_outputStreams.empty()) {
             m_outputStream = m_outputStreams.front();
             m_outputStreams.pop_front();
         } else
@@ -156,7 +156,7 @@ void Connection::write(uint8* buffer, size_t size)
 
 void Connection::internal_write()
 {
-    if(!m_connected)
+    if (!m_connected)
         return;
 
     std::shared_ptr<asio::streambuf> outputStream = m_outputStream;
@@ -179,7 +179,7 @@ void Connection::internal_write()
 
 void Connection::read(uint16 bytes, const RecvCallback& callback)
 {
-    if(!m_connected)
+    if (!m_connected)
         return;
 
     m_recvCallback = callback;
@@ -201,7 +201,7 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
 
 void Connection::read_until(const std::string& what, const RecvCallback& callback)
 {
-    if(!m_connected)
+    if (!m_connected)
         return;
 
     m_recvCallback = callback;
@@ -224,7 +224,7 @@ void Connection::read_until(const std::string& what, const RecvCallback& callbac
 
 void Connection::read_some(const RecvCallback& callback)
 {
-    if(!m_connected)
+    if (!m_connected)
         return;
 
     m_recvCallback = callback;
@@ -247,10 +247,10 @@ void Connection::onResolve(const boost::system::error_code& error, asio::ip::bas
 {
     m_readTimer.cancel();
 
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
-    if(!error)
+    if (!error)
         internal_connect(std::move(endpointIterator));
     else
         handleError(error);
@@ -261,17 +261,17 @@ void Connection::onConnect(const boost::system::error_code& error)
     m_readTimer.cancel();
     m_activityTimer.restart();
 
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
-    if(!error) {
+    if (!error) {
         m_connected = true;
 
         // disable nagle's algorithm, this make the game play smoother
         const asio::ip::tcp::no_delay option(true);
         m_socket.set_option(option);
 
-        if(m_connectCallback)
+        if (m_connectCallback)
             m_connectCallback();
     } else
         handleError(error);
@@ -283,10 +283,10 @@ void Connection::onCanWrite(const boost::system::error_code& error)
 {
     m_delayedWriteTimer.cancel();
 
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
-    if(m_connected)
+    if (m_connected)
         internal_write();
 }
 
@@ -295,14 +295,14 @@ void Connection::onWrite(const boost::system::error_code& error, size_t, const s
 {
     m_writeTimer.cancel();
 
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
     // free output stream and store for using it again later
     outputStream->consume(outputStream->size());
     m_outputStreams.push_back(outputStream);
 
-    if(m_connected && error)
+    if (m_connected && error)
         handleError(error);
 }
 
@@ -311,12 +311,12 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
     m_readTimer.cancel();
     m_activityTimer.restart();
 
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
-    if(m_connected) {
-        if(!error) {
-            if(m_recvCallback) {
+    if (m_connected) {
+        if (!error) {
+            if (m_recvCallback) {
                 auto header = boost::asio::buffer_cast<const char*>(m_inputStream.data());
                 m_recvCallback((uint8*)header, recvSize);
             }
@@ -324,13 +324,13 @@ void Connection::onRecv(const boost::system::error_code& error, size_t recvSize)
             handleError(error);
     }
 
-    if(!error)
+    if (!error)
         m_inputStream.consume(recvSize);
 }
 
 void Connection::onTimeout(const boost::system::error_code& error)
 {
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
     handleError(asio::error::timed_out);
@@ -338,13 +338,13 @@ void Connection::onTimeout(const boost::system::error_code& error)
 
 void Connection::handleError(const boost::system::error_code& error)
 {
-    if(error == asio::error::operation_aborted)
+    if (error == asio::error::operation_aborted)
         return;
 
     m_error = error;
-    if(m_errorCallback)
+    if (m_errorCallback)
         m_errorCallback(error);
-    if(m_connected || m_connecting)
+    if (m_connected || m_connecting)
         close();
 }
 
@@ -352,7 +352,7 @@ int Connection::getIp()
 {
     boost::system::error_code error;
     const asio::ip::tcp::endpoint ip = m_socket.remote_endpoint(error);
-    if(!error)
+    if (!error)
         return asio::detail::socket_ops::host_to_network_long(ip.address().to_v4().to_ulong());
 
     g_logger.error("Getting remote ip");

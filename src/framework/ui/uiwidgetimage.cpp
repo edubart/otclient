@@ -30,67 +30,67 @@ void UIWidget::initImage() {}
 
 void UIWidget::parseImageStyle(const OTMLNodePtr& styleNode)
 {
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "image-source")
+    for (const OTMLNodePtr& node : styleNode->children()) {
+        if (node->tag() == "image-source")
             setImageSource(stdext::resolve_path(node->value(), node->source()));
-        else if(node->tag() == "image-offset-x")
+        else if (node->tag() == "image-offset-x")
             setImageOffsetX(node->value<int>());
-        else if(node->tag() == "image-offset-y")
+        else if (node->tag() == "image-offset-y")
             setImageOffsetY(node->value<int>());
-        else if(node->tag() == "image-offset")
+        else if (node->tag() == "image-offset")
             setImageOffset(node->value<Point>());
-        else if(node->tag() == "image-width")
+        else if (node->tag() == "image-width")
             setImageWidth(node->value<int>());
-        else if(node->tag() == "image-height")
+        else if (node->tag() == "image-height")
             setImageHeight(node->value<int>());
-        else if(node->tag() == "image-size")
+        else if (node->tag() == "image-size")
             setImageSize(node->value<Size>());
-        else if(node->tag() == "image-rect")
+        else if (node->tag() == "image-rect")
             setImageRect(node->value<Rect>());
-        else if(node->tag() == "image-clip")
+        else if (node->tag() == "image-clip")
             setImageClip(node->value<Rect>());
-        else if(node->tag() == "image-fixed-ratio")
+        else if (node->tag() == "image-fixed-ratio")
             setImageFixedRatio(node->value<bool>());
-        else if(node->tag() == "image-repeated")
+        else if (node->tag() == "image-repeated")
             setImageRepeated(node->value<bool>());
-        else if(node->tag() == "image-smooth")
+        else if (node->tag() == "image-smooth")
             setImageSmooth(node->value<bool>());
-        else if(node->tag() == "image-color")
+        else if (node->tag() == "image-color")
             setImageColor(node->value<Color>());
-        else if(node->tag() == "image-border-top")
+        else if (node->tag() == "image-border-top")
             setImageBorderTop(node->value<int>());
-        else if(node->tag() == "image-border-right")
+        else if (node->tag() == "image-border-right")
             setImageBorderRight(node->value<int>());
-        else if(node->tag() == "image-border-bottom")
+        else if (node->tag() == "image-border-bottom")
             setImageBorderBottom(node->value<int>());
-        else if(node->tag() == "image-border-left")
+        else if (node->tag() == "image-border-left")
             setImageBorderLeft(node->value<int>());
-        else if(node->tag() == "image-border")
+        else if (node->tag() == "image-border")
             setImageBorder(node->value<int>());
-        else if(node->tag() == "image-auto-resize")
+        else if (node->tag() == "image-auto-resize")
             setImageAutoResize(node->value<bool>());
     }
 }
 
 void UIWidget::drawImage(const Rect& screenCoords)
 {
-    if(!m_imageTexture || !screenCoords.isValid())
+    if (!m_imageTexture || !screenCoords.isValid())
         return;
 
     // cache vertex buffers
-    if(m_imageCachedScreenCoords != screenCoords || m_imageMustRecache) {
+    if (m_imageCachedScreenCoords != screenCoords || m_imageMustRecache) {
         m_imageCoordsCache.clear();
         m_imageCachedScreenCoords = screenCoords;
         m_imageMustRecache = false;
 
         Rect drawRect = screenCoords;
         drawRect.translate(m_imageRect.topLeft());
-        if(m_imageRect.isValid())
+        if (m_imageRect.isValid())
             drawRect.resize(m_imageRect.size());
 
         Rect clipRect = m_imageClipRect.isValid() ? m_imageClipRect : Rect(0, 0, m_imageTexture->getSize());
 
-        if(m_imageBordered) {
+        if (m_imageBordered) {
             int top = m_imageBorder.top;
             int bottom = m_imageBorder.bottom;
             int left = m_imageBorder.left;
@@ -112,7 +112,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
             Rect rectCoords;
 
             // first the center
-            if(centerSize.area() > 0) {
+            if (centerSize.area() > 0) {
                 rectCoords = Rect(drawRect.left() + leftBorder.width(), drawRect.top() + topBorder.height(), centerSize);
                 m_imageCoordsCache.emplace_back(rectCoords, center);
             }
@@ -141,16 +141,16 @@ void UIWidget::drawImage(const Rect& screenCoords)
             rectCoords = Rect(drawRect.left() + bottomLeftCorner.width() + centerSize.width(), drawRect.top() + topRightCorner.height() + centerSize.height(), bottomRightCorner.size());
             m_imageCoordsCache.emplace_back(rectCoords, bottomRightCorner);
         } else {
-            if(m_imageFixedRatio) {
+            if (m_imageFixedRatio) {
                 Size textureSize = m_imageTexture->getSize(),
                     textureClipSize = drawRect.size();
 
                 textureClipSize.scale(textureSize, Fw::KeepAspectRatio);
 
                 Point texCoordsOffset;
-                if(textureSize.height() > textureClipSize.height())
+                if (textureSize.height() > textureClipSize.height())
                     texCoordsOffset.y = (textureSize.height() - textureClipSize.height()) / 2;
-                else if(textureSize.width() > textureClipSize.width())
+                else if (textureSize.width() > textureClipSize.width())
                     texCoordsOffset.x = (textureSize.width() - textureClipSize.width()) / 2;
 
                 clipRect = Rect(texCoordsOffset, textureClipSize);
@@ -163,8 +163,8 @@ void UIWidget::drawImage(const Rect& screenCoords)
     // smooth is now enabled by default for all textures
     //m_imageTexture->setSmooth(m_imageSmooth);
     const bool useRepeated = m_imageBordered || m_imageRepeated;
-    for(const auto& rect : m_imageCoordsCache) {
-        if(useRepeated)
+    for (const auto& rect : m_imageCoordsCache) {
+        if (useRepeated)
             g_drawPool.addTexturedRepeatedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
         else
             g_drawPool.addTexturedRect(rect.first, m_imageTexture, rect.second, m_imageColor);
@@ -173,17 +173,17 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
 void UIWidget::setImageSource(const std::string& source)
 {
-    if(source.empty())
+    if (source.empty())
         m_imageTexture = nullptr;
     else
         m_imageTexture = g_textures.getTexture(source);
 
-    if(m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
+    if (m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
         Size size = getSize();
         const Size imageSize = m_imageTexture->getSize();
-        if(size.width() <= 0 || m_imageAutoResize)
+        if (size.width() <= 0 || m_imageAutoResize)
             size.setWidth(imageSize.width());
-        if(size.height() <= 0 || m_imageAutoResize)
+        if (size.height() <= 0 || m_imageAutoResize)
             size.setHeight(imageSize.height());
         setSize(size);
     }

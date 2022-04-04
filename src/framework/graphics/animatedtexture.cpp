@@ -29,10 +29,10 @@
 
 AnimatedTexture::AnimatedTexture(const Size& size, const std::vector<ImagePtr>& frames, std::vector<int> framesDelay, bool buildMipmaps, bool compress)
 {
-    if(!setupSize(size, buildMipmaps))
+    if (!setupSize(size, buildMipmaps))
         return;
 
-    for(const auto& frame : frames) {
+    for (const auto& frame : frames) {
         m_frames.push_back(new Texture(frame, buildMipmaps, compress));
     }
 
@@ -48,9 +48,9 @@ AnimatedTexture::~AnimatedTexture()
 
 bool AnimatedTexture::buildHardwareMipmaps()
 {
-    if(!g_graphics.canUseHardwareMipmaps())
+    if (!g_graphics.canUseHardwareMipmaps())
         return false;
-    for(const TexturePtr& frame : m_frames)
+    for (const TexturePtr& frame : m_frames)
         frame->buildHardwareMipmaps();
     m_hasMipmaps = true;
     return true;
@@ -58,26 +58,26 @@ bool AnimatedTexture::buildHardwareMipmaps()
 
 void AnimatedTexture::setSmooth(bool smooth)
 {
-    for(const TexturePtr& frame : m_frames)
+    for (const TexturePtr& frame : m_frames)
         frame->setSmooth(smooth);
     m_smooth = smooth;
 }
 
 void AnimatedTexture::setRepeat(bool repeat)
 {
-    for(const TexturePtr& frame : m_frames)
+    for (const TexturePtr& frame : m_frames)
         frame->setRepeat(repeat);
     m_repeat = repeat;
 }
 
 void AnimatedTexture::updateAnimation()
 {
-    if(m_animTimer.ticksElapsed() < m_framesDelay[m_currentFrame])
+    if (m_animTimer.ticksElapsed() < m_framesDelay[m_currentFrame])
         return;
 
     m_animTimer.restart();
     m_currentFrame++;
-    if(m_currentFrame >= m_frames.size())
+    if (m_currentFrame >= m_frames.size())
         m_currentFrame = 0;
     m_id = m_frames[m_currentFrame]->getId();
 }

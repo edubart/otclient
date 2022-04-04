@@ -60,32 +60,32 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
 {
     //TODO: this could be moved to lua
     // first message
-    if(m_messages.empty()) {
+    if (m_messages.empty()) {
         m_name = name;
         m_mode = mode;
     }
     // check if we can really own the message
-    else if(m_name != name || m_mode != mode) {
+    else if (m_name != name || m_mode != mode) {
         return false;
     }
     // too many messages
-    else if(m_messages.size() > 10) {
+    else if (m_messages.size() > 10) {
         m_messages.pop_front();
         m_updateEvent->cancel();
         m_updateEvent = nullptr;
     }
 
     int delay = std::max<int>(STATIC_DURATION_PER_CHARACTER * text.length(), MIN_STATIC_TEXT_DURATION);
-    if(isYell())
+    if (isYell())
         delay *= 2;
 
-    if(g_app.canOptimize())
+    if (g_app.canOptimize())
         delay /= 2;
 
     m_messages.emplace_back(text, g_clock.millis() + delay);
     compose();
 
-    if(!m_updateEvent)
+    if (!m_updateEvent)
         scheduleUpdate();
 
     return true;
@@ -94,7 +94,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
 void StaticText::update()
 {
     m_messages.pop_front();
-    if(m_messages.empty()) {
+    if (m_messages.empty()) {
         // schedule removal
         auto self = asStaticText();
         g_dispatcher.addEvent([self]() { g_map.removeThing(self); });
@@ -120,22 +120,22 @@ void StaticText::compose()
     //TODO: this could be moved to lua
     std::string text;
 
-    if(m_mode == Otc::MessageSay) {
+    if (m_mode == Otc::MessageSay) {
         text += m_name;
         text += " says:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_mode == Otc::MessageWhisper) {
+    } else if (m_mode == Otc::MessageWhisper) {
         text += m_name;
         text += " whispers:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_mode == Otc::MessageYell) {
+    } else if (m_mode == Otc::MessageYell) {
         text += m_name;
         text += " yells:\n";
         m_color = Color(239, 239, 0);
-    } else if(m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell
+    } else if (m_mode == Otc::MessageMonsterSay || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageSpell
               || m_mode == Otc::MessageBarkLow || m_mode == Otc::MessageBarkLoud) {
         m_color = Color(254, 101, 0);
-    } else if(m_mode == Otc::MessageNpcFrom || m_mode == Otc::MessageNpcFromStartBlock) {
+    } else if (m_mode == Otc::MessageNpcFrom || m_mode == Otc::MessageNpcFromStartBlock) {
         text += m_name;
         text += " says:\n";
         m_color = Color(95, 247, 247);
@@ -143,10 +143,10 @@ void StaticText::compose()
         g_logger.warning(stdext::format("Unknown speak type: %d", m_mode));
     }
 
-    for(uint i = 0; i < m_messages.size(); ++i) {
+    for (uint i = 0; i < m_messages.size(); ++i) {
         text += m_messages[i].first;
 
-        if(i < m_messages.size() - 1)
+        if (i < m_messages.size() - 1)
             text += "\n";
     }
 

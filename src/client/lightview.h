@@ -46,7 +46,8 @@ public:
     bool isDark() const { return m_globalLight.intensity < 250; }
 
 private:
-    struct Source {
+    struct Source
+    {
         Point pos;
         uint8 color{ 0 };
         uint16 intensity{ 0 };

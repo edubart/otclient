@@ -123,18 +123,18 @@ bool InputMessage::readChecksum()
 
 bool InputMessage::canRead(int bytes)
 {
-    if((m_readPos - m_headerPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
+    if ((m_readPos - m_headerPos + bytes > m_messageSize) || (m_readPos + bytes > BUFFER_MAXSIZE))
         return false;
     return true;
 }
 void InputMessage::checkRead(int bytes)
 {
-    if(!canRead(bytes))
+    if (!canRead(bytes))
         throw stdext::exception("InputMessage eof reached");
 }
 
 void InputMessage::checkWrite(int bytes)
 {
-    if(bytes > BUFFER_MAXSIZE)
+    if (bytes > BUFFER_MAXSIZE)
         throw stdext::exception("InputMessage max buffer size reached");
 }

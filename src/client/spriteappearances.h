@@ -35,62 +35,65 @@ enum class SpriteLayout
     TWO_BY_TWO = 3
 };
 
-class SpriteSheet : public LuaObject {
-    public:
-        SpriteSheet(int firstId, int lastId, SpriteLayout spriteLayout, const std::string& file) : firstId(firstId), lastId(lastId), spriteLayout(spriteLayout), file(file) {}
+class SpriteSheet : public LuaObject
+{
+public:
+    SpriteSheet(int firstId, int lastId, SpriteLayout spriteLayout, const std::string& file) : firstId(firstId), lastId(lastId), spriteLayout(spriteLayout), file(file) {}
 
-        Size getSpriteSize() {
-            Size size(SPRITE_SIZE, SPRITE_SIZE);
+    Size getSpriteSize()
+    {
+        Size size(SPRITE_SIZE, SPRITE_SIZE);
 
-            switch (spriteLayout) {
-                case SpriteLayout::ONE_BY_ONE: break;
-                case SpriteLayout::ONE_BY_TWO: size.setHeight(64); break;
-                case SpriteLayout::TWO_BY_ONE: size.setWidth(64); break;
-                case SpriteLayout::TWO_BY_TWO: size.resize(64, 64); break;
-                default: break;
-            }
-
-            return size;
+        switch (spriteLayout) {
+            case SpriteLayout::ONE_BY_ONE: break;
+            case SpriteLayout::ONE_BY_TWO: size.setHeight(64); break;
+            case SpriteLayout::TWO_BY_ONE: size.setWidth(64); break;
+            case SpriteLayout::TWO_BY_TWO: size.resize(64, 64); break;
+            default: break;
         }
 
-        int firstId = 0;
-        int lastId = 0;
-        SpriteLayout spriteLayout = SpriteLayout::ONE_BY_ONE;
-        std::unique_ptr<uint8_t[]> data;
-        std::string file;
-        bool loaded = false;
-        bool loading = false;
+        return size;
+    }
 
-        std::mutex mutex;
+    int firstId = 0;
+    int lastId = 0;
+    SpriteLayout spriteLayout = SpriteLayout::ONE_BY_ONE;
+    std::unique_ptr<uint8_t[]> data;
+    std::string file;
+    bool loaded = false;
+    bool loading = false;
+
+    std::mutex mutex;
 };
 
 //@bindsingleton g_spriteAppearances
 class SpriteAppearances
 {
-    public:
-        void init();
-        void terminate();
+public:
+    void init();
+    void terminate();
 
-        void unload();
+    void unload();
 
-        void setSpritesCount(int count) { m_spritesCount = count; }
-        int getSpritesCount() const { return m_spritesCount; }
+    void setSpritesCount(int count) { m_spritesCount = count; }
+    int getSpritesCount() const { return m_spritesCount; }
 
-        bool loadSpriteSheet(const SpriteSheetPtr& sheet);
-        void saveSheetToFileBySprite(int id, const std::string& file);
-        void saveSheetToFile(const SpriteSheetPtr& sheet, const std::string& file);
-        SpriteSheetPtr getSheetBySpriteId(int id, bool load = true);
+    bool loadSpriteSheet(const SpriteSheetPtr& sheet);
+    void saveSheetToFileBySprite(int id, const std::string& file);
+    void saveSheetToFile(const SpriteSheetPtr& sheet, const std::string& file);
+    SpriteSheetPtr getSheetBySpriteId(int id, bool load = true);
 
-        void addSpriteSheet(SpriteSheetPtr sheet) {
-            m_sheets.push_back(sheet);
-        }
+    void addSpriteSheet(SpriteSheetPtr sheet)
+    {
+        m_sheets.push_back(sheet);
+    }
 
-        ImagePtr getSpriteImage(int id);
-        void saveSpriteToFile(int id, const std::string& file);
+    ImagePtr getSpriteImage(int id);
+    void saveSpriteToFile(int id, const std::string& file);
 
-    private:
-        int m_spritesCount{ 0 };
-        std::vector<SpriteSheetPtr> m_sheets;
+private:
+    int m_spritesCount{ 0 };
+    std::vector<SpriteSheetPtr> m_sheets;
 };
 
 extern SpriteAppearances g_spriteAppearances;

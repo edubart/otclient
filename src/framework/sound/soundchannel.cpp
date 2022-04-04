@@ -27,10 +27,10 @@
 
 SoundSourcePtr SoundChannel::play(const std::string& filename, float fadetime, float gain)
 {
-    if(!g_sounds.isAudioEnabled() || !m_enabled)
+    if (!g_sounds.isAudioEnabled() || !m_enabled)
         return nullptr;
 
-    if(m_currentSource)
+    if (m_currentSource)
         m_currentSource->stop();
 
     m_currentSource = g_sounds.play(filename, fadetime, m_gain * gain);
@@ -41,8 +41,8 @@ void SoundChannel::stop(float fadetime)
 {
     m_queue.clear();
 
-    if(m_currentSource) {
-        if(fadetime > 0)
+    if (m_currentSource) {
+        if (fadetime > 0)
             m_currentSource->setFading(StreamSoundSource::FadingOff, fadetime);
         else {
             m_currentSource->stop();
@@ -53,7 +53,7 @@ void SoundChannel::stop(float fadetime)
 
 void SoundChannel::enqueue(const std::string& filename, float fadetime, float gain)
 {
-    if(gain == 0)
+    if (gain == 0)
         gain = 1.0f;
     m_queue.push_back(QueueEntry{ g_sounds.resolveSoundFile(filename), fadetime, gain });
 
@@ -63,10 +63,10 @@ void SoundChannel::enqueue(const std::string& filename, float fadetime, float ga
 
 void SoundChannel::update()
 {
-    if(m_currentSource && !m_currentSource->isPlaying())
+    if (m_currentSource && !m_currentSource->isPlaying())
         m_currentSource = nullptr;
 
-    if(!m_currentSource && !m_queue.empty() && g_sounds.isAudioEnabled() && m_enabled) {
+    if (!m_currentSource && !m_queue.empty() && g_sounds.isAudioEnabled() && m_enabled) {
         const QueueEntry entry = m_queue.front();
         m_queue.pop_front();
         m_queue.push_back(entry);
@@ -76,15 +76,15 @@ void SoundChannel::update()
 
 void SoundChannel::setEnabled(bool enable)
 {
-    if(m_enabled == enable)
+    if (m_enabled == enable)
         return;
 
-    if(enable) {
+    if (enable) {
         m_enabled = true;
         update();
     } else {
         m_enabled = false;
-        if(m_currentSource) {
+        if (m_currentSource) {
             m_currentSource->stop();
             m_currentSource = nullptr;
         }
@@ -93,7 +93,7 @@ void SoundChannel::setEnabled(bool enable)
 
 void SoundChannel::setGain(float gain)
 {
-    if(m_currentSource)
+    if (m_currentSource)
         m_currentSource->setGain(gain);
     m_gain = gain;
 }

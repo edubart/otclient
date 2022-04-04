@@ -42,7 +42,7 @@ SoundSource::SoundSource()
 
 SoundSource::~SoundSource()
 {
-    if(m_sourceId != 0) {
+    if (m_sourceId != 0) {
         stop();
         alDeleteSources(1, &m_sourceId);
         assert(alGetError() == AL_NO_ERROR);
@@ -59,7 +59,7 @@ void SoundSource::stop()
 {
     alSourceStop(m_sourceId);
     assert(alGetError() == AL_NO_ERROR);
-    if(m_buffer) {
+    if (m_buffer) {
         alSourcei(m_sourceId, AL_BUFFER, AL_NONE);
         assert(alGetError() == AL_NO_ERROR);
         m_buffer = nullptr;
@@ -119,10 +119,10 @@ void SoundSource::setVelocity(const Point& velocity)
 void SoundSource::setFading(FadeState state, float fadeTime)
 {
     const float now = stdext::millis() / 1000.0f;
-    if(m_fadeState != NoFading) {
+    if (m_fadeState != NoFading) {
         const float elapsed = now - m_fadeStartTime;
         float add;
-        if(m_fadeState == FadingOn)
+        if (m_fadeState == FadingOn)
             add = -(1 - (elapsed / m_fadeTime)) * fadeTime;
         else
             add = -(elapsed / m_fadeTime) * fadeTime;
@@ -134,23 +134,23 @@ void SoundSource::setFading(FadeState state, float fadeTime)
     m_fadeTime = fadeTime;
     m_fadeGain = m_gain;
 
-    if(m_fadeState == FadingOn)
+    if (m_fadeState == FadingOn)
         setGain(0.0);
 }
 
 void SoundSource::update()
 {
     const float now = stdext::millis() / 1000.0f;
-    if(m_fadeState == FadingOn) {
+    if (m_fadeState == FadingOn) {
         const float elapsed = now - m_fadeStartTime;
-        if(elapsed >= m_fadeTime) {
+        if (elapsed >= m_fadeTime) {
             m_fadeState = NoFading;
         } else {
             setGain((elapsed / m_fadeTime) * m_fadeGain);
         }
-    } else if(m_fadeState == FadingOff) {
+    } else if (m_fadeState == FadingOff) {
         const float elapsed = now - m_fadeStartTime;
-        if(elapsed >= m_fadeTime) {
+        if (elapsed >= m_fadeTime) {
             setGain(m_fadeGain);
             stop();
             m_fadeState = NoFading;

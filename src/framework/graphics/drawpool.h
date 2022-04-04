@@ -29,7 +29,8 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/pool.h>
 
-enum  PoolType : uint8 {
+enum  PoolType : uint8
+{
     MAP,
     CREATURE_INFORMATION,
     LIGHT,
@@ -38,7 +39,8 @@ enum  PoolType : uint8 {
     UNKNOW
 };
 
-enum class PoolEventType : uint8 {
+enum class PoolEventType : uint8
+{
     ON_BEFORE_DRAW,
     ON_AFTER_DRAW
 };

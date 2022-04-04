@@ -27,17 +27,18 @@
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
 #endif
 
-namespace stdext {
+namespace stdext
+{
     uint32_t adler32(const uint8_t* buffer, size_t size)
     {
         size_t a = 1, b = 0;
-        while(size > 0) {
+        while (size > 0) {
             size_t tlen = size > 5552 ? 5552 : size;
             size -= tlen;
             do {
                 a += *buffer++;
                 b += a;
-            } while(--tlen);
+            } while (--tlen);
 
             a %= 65521;
             b %= 65521;

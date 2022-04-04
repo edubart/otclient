@@ -28,16 +28,16 @@
 
 void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightView)
 {
-    if(m_id == 0 || !canDraw()) return;
+    if (m_id == 0 || !canDraw()) return;
 
     // It only starts to draw when the first effect as it is about to end.
-    if(m_animationTimer.ticksElapsed() < m_timeToStartDrawing)
+    if (m_animationTimer.ticksElapsed() < m_timeToStartDrawing)
         return;
 
     int animationPhase;
-    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+    if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
         const auto& animator = rawGetThingType()->getIdleAnimator();
-        if(!animator)
+        if (!animator)
             return;
 
         // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
@@ -45,7 +45,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
     } else {
         // hack to fix some animation phases duration, currently there is no better solution
         int ticks = EFFECT_TICKS_PER_FRAME;
-        if(m_id == 33) {
+        if (m_id == 33) {
             ticks <<= 2;
         }
 
@@ -60,9 +60,9 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
 
 void Effect::onAppear()
 {
-    if(g_game.getFeature(Otc::GameEnhancedAnimations)) {
+    if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
         const auto& animator = getThingType()->getIdleAnimator();
-        if(!animator)
+        if (!animator)
             return;
 
         m_duration = animator->getTotalDuration();
@@ -70,7 +70,7 @@ void Effect::onAppear()
         m_duration = EFFECT_TICKS_PER_FRAME;
 
         // hack to fix some animation phases duration, currently there is no better solution
-        if(m_id == 33) {
+        if (m_id == 33) {
             m_duration <<= 2;
         }
 
@@ -91,7 +91,7 @@ void Effect::waitFor(const EffectPtr& effect)
 
 void Effect::setId(uint32 id)
 {
-    if(!g_things.isValidDatId(id, ThingCategoryEffect))
+    if (!g_things.isValidDatId(id, ThingCategoryEffect))
         id = 0;
 
     m_id = id;

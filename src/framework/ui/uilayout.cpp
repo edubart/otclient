@@ -28,7 +28,7 @@
 void UILayout::update()
 {
     //logTraceCounter();
-    if(!m_parentWidget)
+    if (!m_parentWidget)
         return;
 
     /*
@@ -41,10 +41,10 @@ void UILayout::update()
     } while(parent);
     */
 
-    if(m_updateDisabled)
+    if (m_updateDisabled)
         return;
 
-    if(m_updating) {
+    if (m_updating) {
         updateLater();
         return;
     }
@@ -57,10 +57,10 @@ void UILayout::update()
 
 void UILayout::updateLater()
 {
-    if(m_updateDisabled || m_updateScheduled)
+    if (m_updateDisabled || m_updateScheduled)
         return;
 
-    if(!getParentWidget())
+    if (!getParentWidget())
         return;
 
     auto self = static_self_cast<UILayout>();

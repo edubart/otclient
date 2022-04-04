@@ -69,7 +69,7 @@ public:
 
     bool operator<=(const TPoint<T>& other) const { return x <= other.x && y <= other.y; }
     bool operator>=(const TPoint<T>& other) const { return x >= other.x && y >= other.y; }
-    bool operator<(const TPoint<T>& other) const { return x < other.x && y < other.y; }
+    bool operator<(const TPoint<T>& other) const { return x < other.x&& y < other.y; }
     bool operator>(const TPoint<T>& other) const { return x > other.x && y > other.y; }
 
     TPoint<T>& operator=(const TPoint<T>& other) { x = other.x; y = other.y; return *this; }
@@ -90,10 +90,10 @@ public:
     {
         std::array<TPoint<T>, static_cast<uint8>(8)> positions;
         int_fast8_t i = -1;
-        for(int_fast32_t xi = -1; xi <= 1; ++xi) {
-            for(int_fast32_t yi = -1; yi <= 1; ++yi) {
+        for (int_fast32_t xi = -1; xi <= 1; ++xi) {
+            for (int_fast32_t yi = -1; yi <= 1; ++yi) {
                 const TPoint<T>& pos = translated(xi * pixel, yi * pixel, xi, yi);
-                if(pos == *this)
+                if (pos == *this)
                     continue;
 
                 positions[++i] = pos;

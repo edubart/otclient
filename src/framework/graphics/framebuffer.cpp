@@ -41,9 +41,9 @@ void FrameBuffer::internalCreate()
 {
     m_prevBoundFbo = 0;
     m_fbo = 0;
-    if(g_graphics.canUseFBO()) {
+    if (g_graphics.canUseFBO()) {
         glGenFramebuffers(1, &m_fbo);
-        if(!m_fbo)
+        if (!m_fbo)
             g_logger.fatal("Unable to create framebuffer object");
     }
 }
@@ -53,7 +53,7 @@ FrameBuffer::~FrameBuffer()
 #ifndef NDEBUG
     assert(!g_app.isTerminated());
 #endif
-    if(g_graphics.ok() && m_fbo != 0)
+    if (g_graphics.ok() && m_fbo != 0)
         glDeleteFramebuffers(1, &m_fbo);
 }
 
@@ -61,23 +61,23 @@ void FrameBuffer::resize(const Size& size)
 {
     assert(size.isValid());
 
-    if(m_texture && m_texture->getSize() == size)
+    if (m_texture && m_texture->getSize() == size)
         return;
 
     m_texture = TexturePtr(new Texture(size));
     m_texture->setSmooth(m_smooth);
     m_texture->setUpsideDown(true);
 
-    if(m_fbo) {
+    if (m_fbo) {
         internalBind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->getId(), 0);
 
         const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        if(status != GL_FRAMEBUFFER_COMPLETE)
+        if (status != GL_FRAMEBUFFER_COMPLETE)
             g_logger.fatal("Unable to setup framebuffer object");
         internalRelease();
     } else {
-        if(m_backuping) {
+        if (m_backuping) {
             m_screenBackup = TexturePtr(new Texture(size));
             m_screenBackup->setUpsideDown(true);
         }
@@ -101,10 +101,10 @@ void FrameBuffer::release()
 void FrameBuffer::draw(const Rect& dest, const Rect& src)
 {
     Rect _dest(0, 0, getSize()), _src = _dest;
-    if(dest.isValid()) _dest = dest;
-    if(src.isValid()) _src = src;
+    if (dest.isValid()) _dest = dest;
+    if (src.isValid()) _src = src;
 
-    if(_src != m_src || _dest != m_dest) {
+    if (_src != m_src || _dest != m_dest) {
         m_src = _src;
         m_dest = _dest;
 
@@ -112,22 +112,22 @@ void FrameBuffer::draw(const Rect& dest, const Rect& src)
         m_coordsBuffer.addQuad(m_dest, m_src);
     }
 
-    if(m_disableBlend) glDisable(GL_BLEND);
+    if (m_disableBlend) glDisable(GL_BLEND);
     g_painter->setCompositionMode(m_compositeMode);
     g_painter->setTexture(m_texture.get());
     g_painter->drawCoords(m_coordsBuffer, Painter::DrawMode::TriangleStrip);
     g_painter->resetCompositionMode();
-    if(m_disableBlend) glEnable(GL_BLEND);
+    if (m_disableBlend) glEnable(GL_BLEND);
 }
 
 void FrameBuffer::internalBind()
 {
-    if(m_fbo) {
+    if (m_fbo) {
         assert(boundFbo != m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         m_prevBoundFbo = boundFbo;
         boundFbo = m_fbo;
-    } else if(m_backuping) {
+    } else if (m_backuping) {
         // backup screen color buffer into a texture
         m_screenBackup->copyFromScreen(Rect(0, 0, getSize()));
     }
@@ -135,7 +135,7 @@ void FrameBuffer::internalBind()
 
 void FrameBuffer::internalRelease()
 {
-    if(m_fbo) {
+    if (m_fbo) {
         assert(boundFbo == m_fbo);
         glBindFramebuffer(GL_FRAMEBUFFER, m_prevBoundFbo);
         boundFbo = m_prevBoundFbo;
@@ -146,7 +146,7 @@ void FrameBuffer::internalRelease()
         m_texture->copyFromScreen(screenRect);
 
         // restore screen original content
-        if(m_backuping) {
+        if (m_backuping) {
             glDisable(GL_BLEND);
             g_painter->resetColor();
             g_drawPool.drawTexturedRect(screenRect, m_screenBackup, screenRect);
@@ -157,7 +157,7 @@ void FrameBuffer::internalRelease()
 
 Size FrameBuffer::getSize()
 {
-    if(m_fbo == 0) {
+    if (m_fbo == 0) {
         // the buffer size is limited by the window size
         return {
             std::min<int>(m_texture->getWidth(), g_window.getWidth()),

@@ -46,37 +46,37 @@ public:
     Position translatedToDirection(Otc::Direction direction) const
     {
         Position pos = *this;
-        switch(direction) {
-        case Otc::North:
-            --pos.y;
-            break;
-        case Otc::East:
-            ++pos.x;
-            break;
-        case Otc::South:
-            ++pos.y;
-            break;
-        case Otc::West:
-            --pos.x;
-            break;
-        case Otc::NorthEast:
-            ++pos.x;
-            --pos.y;
-            break;
-        case Otc::SouthEast:
-            ++pos.x;
-            ++pos.y;
-            break;
-        case Otc::SouthWest:
-            --pos.x;
-            ++pos.y;
-            break;
-        case Otc::NorthWest:
-            --pos.x;
-            --pos.y;
-            break;
-        default:
-            break;
+        switch (direction) {
+            case Otc::North:
+                --pos.y;
+                break;
+            case Otc::East:
+                ++pos.x;
+                break;
+            case Otc::South:
+                ++pos.y;
+                break;
+            case Otc::West:
+                --pos.x;
+                break;
+            case Otc::NorthEast:
+                ++pos.x;
+                --pos.y;
+                break;
+            case Otc::SouthEast:
+                ++pos.x;
+                ++pos.y;
+                break;
+            case Otc::SouthWest:
+                --pos.x;
+                ++pos.y;
+                break;
+            case Otc::NorthWest:
+                --pos.x;
+                --pos.y;
+                break;
+            default:
+                break;
         }
         return pos;
     }
@@ -84,37 +84,37 @@ public:
     Position translatedToReverseDirection(Otc::Direction direction)  const
     {
         Position pos = *this;
-        switch(direction) {
-        case Otc::North:
-            ++pos.y;
-            break;
-        case Otc::East:
-            --pos.x;
-            break;
-        case Otc::South:
-            --pos.y;
-            break;
-        case Otc::West:
-            ++pos.x;
-            break;
-        case Otc::NorthEast:
-            --pos.x;
-            ++pos.y;
-            break;
-        case Otc::SouthEast:
-            --pos.x;
-            --pos.y;
-            break;
-        case Otc::SouthWest:
-            ++pos.x;
-            --pos.y;
-            break;
-        case Otc::NorthWest:
-            ++pos.x;
-            ++pos.y;
-            break;
-        default:
-            break;
+        switch (direction) {
+            case Otc::North:
+                ++pos.y;
+                break;
+            case Otc::East:
+                --pos.x;
+                break;
+            case Otc::South:
+                --pos.y;
+                break;
+            case Otc::West:
+                ++pos.x;
+                break;
+            case Otc::NorthEast:
+                --pos.x;
+                ++pos.y;
+                break;
+            case Otc::SouthEast:
+                --pos.x;
+                --pos.y;
+                break;
+            case Otc::SouthWest:
+                ++pos.x;
+                --pos.y;
+                break;
+            case Otc::NorthWest:
+                ++pos.x;
+                ++pos.y;
+                break;
+            default:
+                break;
         }
         return pos;
     }
@@ -124,14 +124,14 @@ public:
         Position lastPos = *this;
         std::vector<Position> positions;
 
-        if(!lastPos.isValid())
+        if (!lastPos.isValid())
             return positions;
 
         positions.push_back(lastPos);
 
-        for(const auto dir : dirs) {
+        for (const auto dir : dirs) {
             lastPos = lastPos.translatedToDirection(dir);
-            if(!lastPos.isValid())
+            if (!lastPos.isValid())
                 break;
             positions.push_back(lastPos);
         }
@@ -146,11 +146,11 @@ public:
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
         const int32_t dx = toPos.x - fromPos.x;
         const int32_t dy = toPos.y - fromPos.y;
-        if(dx == 0 && dy == 0)
+        if (dx == 0 && dy == 0)
             return -1;
 
         double angle = std::atan2<int32_t>(dy * -1, dx);
-        if(angle < 0)
+        if (angle < 0)
             angle += 2 * Fw::pi;
 
         return angle;
@@ -165,28 +165,28 @@ public:
     {
         const double angle = getAngleFromPositions(fromPos, toPos) * RAD_TO_DEC;
 
-        if(angle >= 360 - 22.5 || angle < 0 + 22.5)
+        if (angle >= 360 - 22.5 || angle < 0 + 22.5)
             return Otc::East;
 
-        if(angle >= 45 - 22.5 && angle < 45 + 22.5)
+        if (angle >= 45 - 22.5 && angle < 45 + 22.5)
             return Otc::NorthEast;
 
-        if(angle >= 90 - 22.5 && angle < 90 + 22.5)
+        if (angle >= 90 - 22.5 && angle < 90 + 22.5)
             return Otc::North;
 
-        if(angle >= 135 - 22.5 && angle < 135 + 22.5)
+        if (angle >= 135 - 22.5 && angle < 135 + 22.5)
             return Otc::NorthWest;
 
-        if(angle >= 180 - 22.5 && angle < 180 + 22.5)
+        if (angle >= 180 - 22.5 && angle < 180 + 22.5)
             return Otc::West;
 
-        if(angle >= 225 - 22.5 && angle < 225 + 22.5)
+        if (angle >= 225 - 22.5 && angle < 225 + 22.5)
             return Otc::SouthWest;
 
-        if(angle >= 270 - 22.5 && angle < 270 + 22.5)
+        if (angle >= 270 - 22.5 && angle < 270 + 22.5)
             return Otc::South;
 
-        if(angle >= 315 - 22.5 && angle < 315 + 22.5)
+        if (angle >= 315 - 22.5 && angle < 315 + 22.5)
             return Otc::SouthEast;
 
         return Otc::InvalidDirection;
@@ -209,10 +209,10 @@ public:
     {
         std::array<Position, 8> positions;
         int_fast8_t i = -1;
-        for(int_fast32_t xi = -1; xi <= 1; ++xi) {
-            for(int_fast32_t yi = -1; yi <= 1; ++yi) {
+        for (int_fast32_t xi = -1; xi <= 1; ++xi) {
+            for (int_fast32_t yi = -1; yi <= 1; ++yi) {
                 const Position pos = translated(xi, yi);
-                if(pos == *this)
+                if (pos == *this)
                     continue;
 
                 positions[++i] = pos;
@@ -236,8 +236,8 @@ public:
     bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
-        if(pos.z != z) {
-            if(!ignoreZ) return false;
+        if (pos.z != z) {
+            if (!ignoreZ) return false;
             _pos.coveredUp(pos.z - z);
         }
 
@@ -246,8 +246,8 @@ public:
     bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
-        if(pos.z != z) {
-            if(!ignoreZ) return false;
+        if (pos.z != z) {
+            if (!ignoreZ) return false;
             _pos.coveredUp(pos.z - z);
         }
 
@@ -259,7 +259,7 @@ public:
     bool up(int8_t n = 1)
     {
         const int8_t nz = z - n;
-        if(nz >= 0 && nz <= MAX_Z) {
+        if (nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
         }
@@ -269,7 +269,7 @@ public:
     bool down(int8_t n = 1)
     {
         const int8_t nz = z + n;
-        if(nz >= 0 && nz <= MAX_Z) {
+        if (nz >= 0 && nz <= MAX_Z) {
             z = nz;
             return true;
         }
@@ -281,7 +281,7 @@ public:
     {
         const int32_t nx = x + n, ny = y + n;
         const int8_t nz = z - n;
-        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
+        if (nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }
@@ -293,7 +293,7 @@ public:
     {
         const int32_t nx = x - n, ny = y - n;
         const int8_t nz = z + n;
-        if(nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
+        if (nx >= 0 && nx <= UINT16_MAX && ny >= 0 && ny <= UINT16_MAX && nz >= 0 && nz <= MAX_Z) {
             x = nx; y = ny; z = nz;
             return true;
         }

@@ -29,7 +29,8 @@
 class PainterShaderProgram : public ShaderProgram
 {
 protected:
-    enum {
+    enum
+    {
         VERTEX_ATTR = 0,
         TEXCOORD_ATTR = 1,
         PROJECTION_MATRIX_UNIFORM = 0,

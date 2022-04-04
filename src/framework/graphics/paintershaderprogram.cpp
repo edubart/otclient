@@ -66,7 +66,7 @@ bool PainterShaderProgram::link()
     m_startTime = g_clock.seconds();
     bindAttributeLocation(VERTEX_ATTR, "a_Vertex");
     bindAttributeLocation(TEXCOORD_ATTR, "a_TexCoord");
-    if(ShaderProgram::link()) {
+    if (ShaderProgram::link()) {
         bind();
         setupUniforms();
         release();
@@ -77,7 +77,7 @@ bool PainterShaderProgram::link()
 
 void PainterShaderProgram::setTransformMatrix(const Matrix3& transformMatrix)
 {
-    if(transformMatrix == m_transformMatrix)
+    if (transformMatrix == m_transformMatrix)
         return;
 
     bind();
@@ -87,7 +87,7 @@ void PainterShaderProgram::setTransformMatrix(const Matrix3& transformMatrix)
 
 void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
 {
-    if(projectionMatrix == m_projectionMatrix)
+    if (projectionMatrix == m_projectionMatrix)
         return;
 
     bind();
@@ -97,7 +97,7 @@ void PainterShaderProgram::setProjectionMatrix(const Matrix3& projectionMatrix)
 
 void PainterShaderProgram::setTextureMatrix(const Matrix3& textureMatrix)
 {
-    if(textureMatrix == m_textureMatrix)
+    if (textureMatrix == m_textureMatrix)
         return;
 
     bind();
@@ -107,7 +107,7 @@ void PainterShaderProgram::setTextureMatrix(const Matrix3& textureMatrix)
 
 void PainterShaderProgram::setColor(const Color& color)
 {
-    if(color == m_color)
+    if (color == m_color)
         return;
 
     bind();
@@ -117,7 +117,7 @@ void PainterShaderProgram::setColor(const Color& color)
 
 void PainterShaderProgram::setOpacity(float opacity)
 {
-    if(m_opacity == opacity)
+    if (m_opacity == opacity)
         return;
 
     bind();
@@ -127,7 +127,7 @@ void PainterShaderProgram::setOpacity(float opacity)
 
 void PainterShaderProgram::setResolution(const Size& resolution)
 {
-    if(m_resolution == resolution)
+    if (m_resolution == resolution)
         return;
 
     bind();
@@ -138,7 +138,7 @@ void PainterShaderProgram::setResolution(const Size& resolution)
 void PainterShaderProgram::updateTime()
 {
     const float time = g_clock.seconds() - m_startTime;
-    if(m_time == time)
+    if (m_time == time)
         return;
 
     bind();
@@ -148,11 +148,11 @@ void PainterShaderProgram::updateTime()
 
 void PainterShaderProgram::addMultiTexture(const std::string& file)
 {
-    if(m_multiTextures.size() > 3)
+    if (m_multiTextures.size() > 3)
         g_logger.error("cannot add more multi textures to shader, the max is 3");
 
     const TexturePtr texture = g_textures.getTexture(file);
-    if(!texture)
+    if (!texture)
         return;
 
     texture->setSmooth(true);
@@ -163,11 +163,11 @@ void PainterShaderProgram::addMultiTexture(const std::string& file)
 
 void PainterShaderProgram::bindMultiTextures()
 {
-    if(m_multiTextures.empty())
+    if (m_multiTextures.empty())
         return;
 
     int i = 1;
-    for(const TexturePtr& tex : m_multiTextures) {
+    for (const TexturePtr& tex : m_multiTextures) {
         glActiveTexture(GL_TEXTURE0 + i++);
         glBindTexture(GL_TEXTURE_2D, tex->getId());
     }

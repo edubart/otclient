@@ -30,7 +30,8 @@ constexpr uint8 MMBLOCK_SIZE = 64;
 constexpr uint8 OTMM_VERSION = 1;
 constexpr uint32 OTMM_SIGNATURE = 0x4D4d544F;
 
-enum MinimapTileFlags {
+enum MinimapTileFlags
+{
     MinimapTileWasSeen = 1,
     MinimapTileNotPathable = 2,
     MinimapTileNotWalkable = 4,
@@ -105,7 +106,7 @@ private:
     {
         std::lock_guard<std::mutex> lock(m_lock);
         auto& ptr = m_tileBlocks[pos.z][getBlockIndex(pos)];
-        if(!ptr)
+        if (!ptr)
             ptr = std::make_shared<MinimapBlock>();
         return *ptr;
     }

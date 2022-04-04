@@ -36,7 +36,8 @@
 class PainterOGL1 : public PainterOGL
 {
 public:
-    enum MatrixMode {
+    enum MatrixMode
+    {
         MatrixProjection = 0x1701, // GL_PROJECTION
         MatrixTexture = 0x1702, // GL_TEXTURE
         MatrixTransform = 0x1700 // GL_MODELVIEW

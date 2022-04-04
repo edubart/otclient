@@ -40,7 +40,8 @@ namespace luabinder
 {
     /// Pack arguments from lua stack into a tuple recursively
     template<int N>
-    struct pack_values_into_tuple {
+    struct pack_values_into_tuple
+    {
         template<typename Tuple>
         static void call(Tuple& tuple, LuaInterface* lua)
         {
@@ -50,7 +51,8 @@ namespace luabinder
         }
     };
     template<>
-    struct pack_values_into_tuple<0> {
+    struct pack_values_into_tuple<0>
+    {
         template<typename Tuple>
         static void call(Tuple& /*tuple*/, LuaInterface* /*lua*/) {}
     };
@@ -76,7 +78,8 @@ namespace luabinder
 
     /// Expand arguments from tuple for later calling the C++ function
     template<int N, typename Ret>
-    struct expand_fun_arguments {
+    struct expand_fun_arguments
+    {
         template<typename Tuple, typename F, typename... Args>
         static int call(const Tuple& tuple, const F& f, LuaInterface* lua, const Args&... args)
         {
@@ -84,7 +87,8 @@ namespace luabinder
         }
     };
     template<typename Ret>
-    struct expand_fun_arguments<0, Ret> {
+    struct expand_fun_arguments<0, Ret>
+    {
         template<typename Tuple, typename F, typename... Args>
         static int call(const Tuple& /*tuple*/, const F& f, LuaInterface* lua, const Args&... args)
         {
@@ -98,8 +102,8 @@ namespace luabinder
     {
         enum { N = std::tuple_size<Tuple>::value };
         return [=](LuaInterface* lua) -> int {
-            while(lua->stackSize() != N) {
-                if(lua->stackSize() < N)
+            while (lua->stackSize() != N) {
+                if (lua->stackSize() < N)
                     g_lua.pushNil();
                 else
                     g_lua.pop();
@@ -132,7 +136,8 @@ namespace luabinder
     struct bind_lambda_fun;
 
     template<typename Lambda, typename Ret, typename... Args>
-    struct bind_lambda_fun<Ret(Lambda::*)(Args...) const> {
+    struct bind_lambda_fun<Ret(Lambda::*)(Args...) const>
+    {
         static LuaCppFunction call(const Lambda& f)
         {
             using Tuple = std::tuple<typename stdext::remove_const_ref<Args>::type...>;
@@ -162,7 +167,7 @@ namespace luabinder
     {
         auto mf = std::mem_fn(f);
         return [=](const stdext::shared_object_ptr<C>& obj, const Args&... args) mutable -> Ret {
-            if(!obj)
+            if (!obj)
                 throw LuaException("failed to call a member function because the passed object is nil");
             return mf(obj.get(), args...);
         };
@@ -172,7 +177,7 @@ namespace luabinder
     {
         auto mf = std::mem_fn(f);
         return [=](const stdext::shared_object_ptr<C>& obj, const Args&... args) mutable -> void {
-            if(!obj)
+            if (!obj)
                 throw LuaException("failed to call a member function because the passed object is nil");
             mf(obj.get(), args...);
         };

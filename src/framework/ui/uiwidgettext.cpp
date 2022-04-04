@@ -33,19 +33,19 @@ void UIWidget::initText()
 
 void UIWidget::updateText()
 {
-    if(m_textWrap && m_rect.isValid())
+    if (m_textWrap && m_rect.isValid())
         m_drawText = m_font->wrapText(m_text, getWidth() - m_textOffset.x);
     else
         m_drawText = m_text;
 
     // update rect size
-    if(!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
+    if (!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
         Size textBoxSize = getTextSize();
         textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
-        if(size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
+        if (size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
             size.setWidth(textBoxSize.width());
-        if(size.height() <= 0 || m_textVerticalAutoResize)
+        if (size.height() <= 0 || m_textVerticalAutoResize)
             size.setHeight(textBoxSize.height());
         setSize(size);
     }
@@ -64,34 +64,34 @@ void UIWidget::resizeToText()
 
 void UIWidget::parseTextStyle(const OTMLNodePtr& styleNode)
 {
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "text")
+    for (const OTMLNodePtr& node : styleNode->children()) {
+        if (node->tag() == "text")
             setText(node->value());
-        else if(node->tag() == "text-align")
+        else if (node->tag() == "text-align")
             setTextAlign(Fw::translateAlignment(node->value()));
-        else if(node->tag() == "text-offset")
+        else if (node->tag() == "text-offset")
             setTextOffset(node->value<Point>());
-        else if(node->tag() == "text-wrap")
+        else if (node->tag() == "text-wrap")
             setTextWrap(node->value<bool>());
-        else if(node->tag() == "text-auto-resize")
+        else if (node->tag() == "text-auto-resize")
             setTextAutoResize(node->value<bool>());
-        else if(node->tag() == "text-horizontal-auto-resize")
+        else if (node->tag() == "text-horizontal-auto-resize")
             setTextHorizontalAutoResize(node->value<bool>());
-        else if(node->tag() == "text-vertical-auto-resize")
+        else if (node->tag() == "text-vertical-auto-resize")
             setTextVerticalAutoResize(node->value<bool>());
-        else if(node->tag() == "text-only-upper-case")
+        else if (node->tag() == "text-only-upper-case")
             setTextOnlyUpperCase(node->value<bool>());
-        else if(node->tag() == "font")
+        else if (node->tag() == "font")
             setFont(node->value());
     }
 }
 
 void UIWidget::drawText(const Rect& screenCoords)
 {
-    if(m_drawText.length() == 0 || m_color.aF() == 0.0f)
+    if (m_drawText.length() == 0 || m_color.aF() == 0.0f)
         return;
 
-    if(screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
+    if (screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
         auto coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
         coords.translate(m_textOffset);
 
@@ -102,7 +102,7 @@ void UIWidget::drawText(const Rect& screenCoords)
         m_textCoordsCache = m_font->getDrawTextCoords(m_drawText, coords, m_textAlign);
     }
 
-    for(const auto& fontRect : m_textCoordsCache)
+    for (const auto& fontRect : m_textCoordsCache)
         g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, m_color);
 }
 
@@ -119,10 +119,10 @@ void UIWidget::onFontChange(const std::string& font)
 
 void UIWidget::setText(std::string text, bool dontFireLuaCall)
 {
-    if(m_textOnlyUpperCase)
+    if (m_textOnlyUpperCase)
         stdext::toupper(text);
 
-    if(m_text == text)
+    if (m_text == text)
         return;
 
     const std::string oldText = m_text;
@@ -131,7 +131,7 @@ void UIWidget::setText(std::string text, bool dontFireLuaCall)
 
     text = m_text;
 
-    if(!dontFireLuaCall) {
+    if (!dontFireLuaCall) {
         onTextChange(text, oldText);
     }
 }

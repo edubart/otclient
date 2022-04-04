@@ -33,7 +33,8 @@
 #include <atomic>
 #endif
 
-namespace stdext {
+namespace stdext
+{
     template<class T>
     class shared_object_ptr;
 
@@ -43,7 +44,7 @@ namespace stdext {
         shared_object() = default;
         virtual ~shared_object() = default;
         void add_ref() { ++refs; }
-        void dec_ref() { if(--refs == 0) delete this; }
+        void dec_ref() { if (--refs == 0) delete this; }
         refcount_t ref_count() { return refs; }
 
         template<typename T>
@@ -54,11 +55,11 @@ namespace stdext {
         shared_object_ptr<T> const_self_cast() { return stdext::shared_object_ptr<T>(const_cast<T*>(this)); }
 
     private:
-#ifdef THREAD_SAFE
+    #ifdef THREAD_SAFE
         std::atomic<refcount_t> refs{ 0 };
-#else
+    #else
         refcount_t refs{ 0 };
-#endif
+    #endif
     };
 
     template<class T>
@@ -71,13 +72,13 @@ namespace stdext {
         shared_object_ptr(T* p, bool add_ref = true) : px(p)
         {
             static_assert(std::is_base_of<shared_object, T>::value, "classes using shared_object_ptr must be a derived of stdext::shared_object");
-            if(px != nullptr && add_ref)
+            if (px != nullptr && add_ref)
                 this->add_ref();
         }
-        shared_object_ptr(const shared_object_ptr& rhs) : px(rhs.px) { if(px != nullptr) add_ref(); }
+        shared_object_ptr(const shared_object_ptr& rhs) : px(rhs.px) { if (px != nullptr) add_ref(); }
         template<class U>
-        shared_object_ptr(const shared_object_ptr<U>& rhs, typename std::enable_if<std::is_convertible<U*, T*>::value, U*>::type = nullptr) : px(rhs.get()) { if(px != nullptr) add_ref(); }
-        ~shared_object_ptr() { if(px != nullptr) dec_ref(); }
+        shared_object_ptr(const shared_object_ptr<U>& rhs, typename std::enable_if<std::is_convertible<U*, T*>::value, U*>::type = nullptr) : px(rhs.get()) { if (px != nullptr) add_ref(); }
+        ~shared_object_ptr() { if (px != nullptr) dec_ref(); }
 
         void reset() { shared_object_ptr().swap(*this); }
         void reset(T* rhs) { shared_object_ptr(rhs).swap(*this); }
@@ -133,7 +134,8 @@ namespace stdext {
     template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, const shared_object_ptr<Y>& p) { os << p.get(); return os; }
 }
 
-namespace std {
+namespace std
+{
     // hash, for unordered_map support
     template<typename T> struct hash<stdext::shared_object_ptr<T>> { size_t operator()(const stdext::shared_object_ptr<T>& p) const { return std::hash<T*>()(p.get()); } };
 

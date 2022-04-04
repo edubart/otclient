@@ -49,42 +49,48 @@ using std::size_t;
 using std::ptrdiff_t;
 
 template<typename Key>
-class dynamic_storage {
-    public:
-        template<typename T> void set(const Key& key, const T& value) {
-            m_data[key] = value;
+class dynamic_storage
+{
+public:
+    template<typename T> void set(const Key& key, const T& value)
+    {
+        m_data[key] = value;
+    }
+
+    bool remove(const Key& k)
+    {
+        return m_data.erase(k) > 0;
+    }
+
+    template<typename T> T get(const Key& k) const
+    {
+        auto it = m_data.find(k);
+        if (it == m_data.end()) {
+            return T();
         }
 
-        bool remove(const Key& k) {
-            return m_data.erase(k) > 0;
+        try {
+            return std::any_cast<T>(it->second);
+        } catch (std::exception&) {
+            return T();
         }
+    }
 
-        template<typename T> T get(const Key& k) const {
-            auto it = m_data.find(k);
-            if (it == m_data.end()) {
-                return T();
-            }
+    bool has(const Key& k) const
+    {
+        auto it = m_data.find(k);
+        return it != m_data.end();
+    }
 
-            try {
-                return std::any_cast<T>(it->second);
-            } catch (std::exception&) {
-                return T();
-            }
-        }
+    size_t size() const
+    {
+        return m_data.count();
+    }
 
-        bool has(const Key& k) const {
-            auto it = m_data.find(k);
-            return it != m_data.end();
-        }
+    void clear() { m_data.clear(); }
 
-        size_t size() const {
-            return m_data.count();
-        }
-
-        void clear() { m_data.clear(); }
-
-    private:
-        std::unordered_map<Key, std::any> m_data;
+private:
+    std::unordered_map<Key, std::any> m_data;
 };
 
 #endif

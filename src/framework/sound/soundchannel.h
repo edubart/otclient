@@ -50,7 +50,8 @@ protected:
     friend class SoundManager;
 
 private:
-    struct QueueEntry {
+    struct QueueEntry
+    {
         std::string filename;
         float fadetime;
         float gain;

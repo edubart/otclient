@@ -28,49 +28,49 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
     std::stringstream ss;
 
     // emit nodes
-    if(currentDepth >= 0) {
+    if (currentDepth >= 0) {
         // fill spaces for current depth
-        for(int i = 0; i < currentDepth; ++i)
+        for (int i = 0; i < currentDepth; ++i)
             ss << "  ";
 
         // emit node tag
-        if(node->hasTag()) {
+        if (node->hasTag()) {
             ss << node->tag();
 
             // add ':' to if the node is unique or has value
-            if(node->hasValue() || node->isUnique() || node->isNull())
+            if (node->hasValue() || node->isUnique() || node->isNull())
                 ss << ":";
         } else
             ss << "-";
 
         // emit node value
-        if(node->isNull())
+        if (node->isNull())
             ss << " ~";
-        else if(node->hasValue()) {
+        else if (node->hasValue()) {
             ss << " ";
 
             std::string value = node->value();
 
             // emit multiline values
-            if(value.find('\n') != std::string::npos) {
-                if(value[value.length() - 1] == '\n' && value[value.length() - 2] == '\n')
+            if (value.find('\n') != std::string::npos) {
+                if (value[value.length() - 1] == '\n' && value[value.length() - 2] == '\n')
                     ss << "|+";
-                else if(value[value.length() - 1] == '\n')
+                else if (value[value.length() - 1] == '\n')
                     ss << "|";
                 else
                     ss << "|-";
 
                 //  multilines
-                for(std::size_t pos = 0; pos < value.length(); ++pos) {
+                for (std::size_t pos = 0; pos < value.length(); ++pos) {
                     ss << "\n";
 
                     // fill spaces for multiline depth
-                    for(int i = 0; i < currentDepth + 1; ++i)
+                    for (int i = 0; i < currentDepth + 1; ++i)
                         ss << "  ";
 
                     // fill until a new line
-                    while(pos < value.length()) {
-                        if(value[pos] == '\n')
+                    while (pos < value.length()) {
+                        if (value[pos] == '\n')
                             break;
                         ss << value[pos++];
                     }
@@ -82,8 +82,8 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
     }
 
     // emit children
-    for(int i = 0; i < node->size(); ++i) {
-        if(currentDepth >= 0 || i != 0)
+    for (int i = 0; i < node->size(); ++i) {
+        if (currentDepth >= 0 || i != 0)
             ss << "\n";
         ss << emitNode(node->atIndex(i), currentDepth + 1);
     }

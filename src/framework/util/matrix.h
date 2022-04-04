@@ -69,9 +69,9 @@ private:
 template<int N, int M, typename T>
 void Matrix<N, M, T>::setIdentity()
 {
-    for(int i = 0; i < N; ++i) {
-        for(int j = 0; j < M; ++j) {
-            if(i == j)
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < M; ++j) {
+            if (i == j)
                 m[i][j] = 1.0f;
             else
                 m[i][j] = 0.0f;
@@ -82,9 +82,9 @@ void Matrix<N, M, T>::setIdentity()
 template<int N, int M, typename T>
 bool Matrix<N, M, T>::isIdentity() const
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
-            if((i == j && m[i][j] != 1.0f) || (i != j && m[i][j] != 0.0f))
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
+            if ((i == j && m[i][j] != 1.0f) || (i != j && m[i][j] != 0.0f))
                 return false;
     return true;
 }
@@ -92,8 +92,8 @@ bool Matrix<N, M, T>::isIdentity() const
 template<int N, int M, typename T>
 void Matrix<N, M, T>::fill(T value)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] = value;
 }
 
@@ -101,8 +101,8 @@ template<int N, int M, typename T>
 Matrix<M, N, T> Matrix<N, M, T>::transposed() const
 {
     Matrix<M, N, T> result(1);
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             result.m[j][i] = m[i][j];
     return result;
 }
@@ -112,8 +112,8 @@ template<typename U>
 Matrix<N, M, T>& Matrix<N, M, T>::operator=(const std::initializer_list<U>& values)
 {
     auto it = values.begin();
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] = *(it++);
     return *this;
 }
@@ -122,8 +122,8 @@ template<int N, int M, typename T>
 template<typename U>
 Matrix<N, M, T>& Matrix<N, M, T>::operator=(const U* values)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] = values[i * N + j];
     return *this;
 }
@@ -131,8 +131,8 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator=(const U* values)
 template<int N, int M, typename T>
 Matrix<N, M, T>& Matrix<N, M, T>::operator+=(const Matrix<N, M, T>& other)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] += other.m[i][j];
     return *this;
 }
@@ -140,8 +140,8 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator+=(const Matrix<N, M, T>& other)
 template<int N, int M, typename T>
 Matrix<N, M, T>& Matrix<N, M, T>::operator-=(const Matrix<N, M, T>& other)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] -= other.m[i][j];
     return *this;
 }
@@ -149,8 +149,8 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator-=(const Matrix<N, M, T>& other)
 template<int N, int M, typename T>
 Matrix<N, M, T>& Matrix<N, M, T>::operator*=(T factor)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] *= factor;
     return *this;
 }
@@ -158,8 +158,8 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator*=(T factor)
 template<int N, int M, typename T>
 Matrix<N, M, T>& Matrix<N, M, T>::operator/=(T divisor)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             m[i][j] /= divisor;
     return *this;
 }
@@ -167,9 +167,9 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator/=(T divisor)
 template<int N, int M, typename T>
 bool Matrix<N, M, T>::operator==(const Matrix<N, M, T>& other) const
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
-            if(m[i][j] != other.m[i][j])
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
+            if (m[i][j] != other.m[i][j])
                 return false;
     return true;
 }
@@ -183,10 +183,10 @@ bool Matrix<N, M, T>::operator!=(const Matrix<N, M, T>& other) const
 template<int N, int M, typename T>
 std::ostream& operator<<(std::ostream& out, const Matrix<N, M, T>& mat)
 {
-    for(int i = 1; i <= N; ++i) {
-        for(int j = 1; j <= M; ++j) {
+    for (int i = 1; i <= N; ++i) {
+        for (int j = 1; j <= M; ++j) {
             out << mat(i, j);
-            if(j != M)
+            if (j != M)
                 out << " ";
         }
         out << "\n";
@@ -197,8 +197,8 @@ std::ostream& operator<<(std::ostream& out, const Matrix<N, M, T>& mat)
 template<int N, int M, typename T>
 std::istream& operator>>(std::istream& in, Matrix<N, M, T>& mat)
 {
-    for(int i = 0; i < N; ++i)
-        for(int j = 0; j < M; ++j)
+    for (int i = 0; i < N; ++i)
+        for (int j = 0; j < M; ++j)
             in >> mat(i, j);
     return in;
 }
@@ -219,10 +219,10 @@ Matrix<M, Q, T> operator*(const Matrix<M, N, T>& a, const Matrix<P, Q, T>& b)
 {
     static_assert(N == P, "N==P");
     Matrix<M, Q, T> c(1);
-    for(int i = 1; i <= M; ++i) {
-        for(int j = 1; j <= Q; ++j) {
+    for (int i = 1; i <= M; ++i) {
+        for (int j = 1; j <= Q; ++j) {
             T sum = 0;
-            for(int k = 1; k <= N; ++k)
+            for (int k = 1; k <= N; ++k)
                 sum += a(i, k) * b(k, j);
             c(i, j) = sum;
         }

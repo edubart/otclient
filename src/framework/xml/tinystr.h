@@ -61,8 +61,7 @@ public:
 
     // TiXmlString empty constructor
     TiXmlString() : rep_(&nullrep_)
-    {
-    }
+    {}
 
     // TiXmlString copy constructor
     TiXmlString(const TiXmlString& copy) : rep_(nullptr)
@@ -160,11 +159,10 @@ public:
     // find a char in a string from an offset. Return TiXmlString::npos if not found
     size_type find(char tofind, size_type offset) const
     {
-        if(offset >= length()) return npos;
+        if (offset >= length()) return npos;
 
-        for(const char* p = c_str() + offset; *p != '\0'; ++p)
-        {
-            if(*p == tofind) return static_cast<size_type>(p - c_str());
+        for (const char* p = c_str() + offset; *p != '\0'; ++p) {
+            if (*p == tofind) return static_cast<size_type>(p - c_str());
         }
         return npos;
     }
@@ -210,8 +208,7 @@ private:
 
     void init(size_type sz, size_type cap)
     {
-        if(cap)
-        {
+        if (cap) {
             // Lee: the original form:
             //    rep_ = static_cast<Rep*>(operator new(sizeof(Rep) + cap));
             // doesn't work in some cases of new being overloaded. Switching
@@ -223,16 +220,14 @@ private:
 
             rep_->str[rep_->size = sz] = '\0';
             rep_->capacity = cap;
-        } else
-        {
+        } else {
             rep_ = &nullrep_;
         }
     }
 
     void quit()
     {
-        if(rep_ != &nullrep_)
-        {
+        if (rep_ != &nullrep_) {
             // The rep_ is really an array of ints. (see the allocator, above).
             // Cast it back before delete, so the compiler won't incorrectly call destructors.
             delete[](reinterpret_cast<int*>(rep_));

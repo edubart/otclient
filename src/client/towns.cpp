@@ -28,7 +28,7 @@ TownManager g_towns;
 
 Town::Town(uint32 tid, std::string name, const Position& pos) : m_id(tid), m_name(std::move(name))
 {
-    if(pos.isValid())
+    if (pos.isValid())
         m_pos = pos;
 }
 
@@ -39,14 +39,14 @@ TownManager::TownManager()
 
 void TownManager::addTown(const TownPtr& town)
 {
-    if(findTown(town->getId()) == m_towns.end())
+    if (findTown(town->getId()) == m_towns.end())
         m_towns.push_back(town);
 }
 
 void TownManager::removeTown(uint32 townId)
 {
     const auto it = findTown(townId);
-    if(it != m_towns.end())
+    if (it != m_towns.end())
         m_towns.erase(it);
 }
 
@@ -54,7 +54,7 @@ const TownPtr& TownManager::getTown(uint32 townId)
 {
     const auto it = std::find_if(m_towns.begin(), m_towns.end(),
                                  [=](const TownPtr& town) -> bool { return town->getId() == townId; });
-    if(it != m_towns.end())
+    if (it != m_towns.end())
         return *it;
     return m_nullTown;
 }
@@ -63,7 +63,7 @@ const TownPtr& TownManager::getTownByName(const std::string& name)
 {
     const auto it = std::find_if(m_towns.begin(), m_towns.end(),
                                  [=](const TownPtr& town) -> bool { return town->getName() == name; });
-    if(it != m_towns.end())
+    if (it != m_towns.end())
         return *it;
     return m_nullTown;
 }

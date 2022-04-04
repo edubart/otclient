@@ -34,11 +34,11 @@ void LightView::resize(const Size& size, const uint8_t tileSize) { m_pool->resiz
 
 void LightView::addLightSource(const Point& pos, const Light& light)
 {
-    if(!isDark()) return;
+    if (!isDark()) return;
 
-    if(!m_sources.empty()) {
+    if (!m_sources.empty()) {
         auto& prevLight = m_sources.back();
-        if(prevLight.pos == pos && prevLight.color == light.color) {
+        if (prevLight.pos == pos && prevLight.color == light.color) {
             prevLight.intensity = std::max<uint16>(prevLight.intensity, light.intensity);
             return;
         }
@@ -51,14 +51,14 @@ void LightView::draw(const Rect& dest, const Rect& src)
 {
     // draw light, only if there is darkness
     m_pool->setEnable(isDark());
-    if(!isDark()) return;
+    if (!isDark()) return;
 
     g_drawPool.use(m_pool, dest, src, m_globalLightColor);
 
     const float size = m_tileSize * 3.3;
 
-    for(auto& light : m_sources) {
-        if(light.color) {
+    for (auto& light : m_sources) {
+        if (light.color) {
             const Color color = Color::from8bit(light.color, std::min<float>(light.opacity, light.intensity / 6.f));
             const uint16 radius = light.intensity * m_tileSize;
 

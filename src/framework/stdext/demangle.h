@@ -26,18 +26,19 @@
 #include <string>
 #include <typeinfo>
 
-namespace stdext {
+namespace stdext
+{
     /// Demangle names for GNU g++ compiler
     const char* demangle_name(const char* name);
 
     /// Returns the name of a class
     template<typename T> std::string demangle_class()
     {
-#ifdef _MSC_VER
+    #ifdef _MSC_VER
         return demangle_name(typeid(T).name()) + 6;
-#else
+    #else
         return demangle_name(typeid(T).name());
-#endif
+    #endif
     }
 
     /// Returns the name of a type

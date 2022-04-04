@@ -28,25 +28,30 @@
 #include <typeinfo>
 #include <type_traits>
 
-namespace stdext {
+namespace stdext
+{
     // disable memory alignment
 #pragma pack(push,1)
 
     template<typename T>
     struct can_pack_in_any : std::integral_constant<bool,
-        (sizeof(T) <= sizeof(void*) && std::is_trivial<T>::value)> {};
+        (sizeof(T) <= sizeof(void*) && std::is_trivial<T>::value)>
+    {};
 
     // improved to use less memory
-    class packed_any {
+    class packed_any
+    {
     public:
-        struct placeholder {
+        struct placeholder
+        {
             virtual ~placeholder() = default;
             virtual const std::type_info& type() const = 0;
             virtual placeholder* clone() const = 0;
         };
 
         template<typename T>
-        struct holder : public placeholder {
+        struct holder : public placeholder
+        {
             holder(const T& value) : held(value) {}
             const std::type_info& type() const override { return typeid(T); }
             placeholder* clone() const override { return new holder(held); }
@@ -62,21 +67,18 @@ namespace stdext {
         packed_any(const packed_any& other) :
             content(!other.scalar&& other.content ? other.content->clone() : other.content),
             scalar(other.scalar)
-        {
-        }
+        {}
         template<typename T>
         packed_any(const T& value, typename std::enable_if<(can_pack_in_any<T>::value)>::type* = nullptr) :
             content(reinterpret_cast<placeholder*>(static_cast<std::size_t>(value))), scalar(true)
-        {
-        }
+        {}
         template<typename T>
         packed_any(const T& value, typename std::enable_if<!(can_pack_in_any<T>::value)>::type* = nullptr) :
             content(new holder<T>(value)), scalar(false)
-        {
-        }
+        {}
         ~packed_any()
         {
-            if(!scalar && content) delete content;
+            if (!scalar && content) delete content;
         }
 
         packed_any& swap(packed_any& rhs) { std::swap(content, rhs.content); std::swap(scalar, rhs.scalar); return *this; }
@@ -88,7 +90,7 @@ namespace stdext {
         template<typename T> T cast() const;
         const std::type_info& type() const
         {
-            if(!scalar)
+            if (!scalar)
                 return content ? content->type() : typeid(void);
             return typeid(std::size_t);
         }
@@ -99,7 +101,8 @@ namespace stdext {
         packed_any_cast(const packed_any& operand)
     {
         assert(operand.scalar);
-        union {
+        union
+        {
             T v;
             packed_any::placeholder* content;
         };

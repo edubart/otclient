@@ -47,7 +47,7 @@ void ProtocolHttp::connect(const std::string & host, uint16 port)
 
 void ProtocolHttp::disconnect()
 {
-    if(m_connection) {
+    if (m_connection) {
         m_connection->close();
         m_connection.reset();
     }
@@ -55,13 +55,13 @@ void ProtocolHttp::disconnect()
 
 void ProtocolHttp::send(const std::string& message)
 {
-    if(m_connection)
+    if (m_connection)
         m_connection->write((uint8*)message.c_str(), message.length());
 }
 
 void ProtocolHttp::recv()
 {
-    if(m_connection) {
+    if (m_connection) {
         m_connection->read_some([capture0 = asProtocolHttp()](auto&& PH1, auto&& PH2) {
             capture0->onRecv(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2));
         });

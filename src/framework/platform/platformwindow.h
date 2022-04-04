@@ -31,7 +31,8 @@
  //@bindsingleton g_window
 class PlatformWindow
 {
-    enum {
+    enum
+    {
         KEY_PRESS_REPEAT_INTERVAL = 30,
     };
 

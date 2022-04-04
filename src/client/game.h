@@ -34,7 +34,8 @@
 
 #include <bitset>
 
-struct UnjustifiedPoints {
+struct UnjustifiedPoints
+{
     bool operator==(const UnjustifiedPoints& other)
     {
         return killsDay == other.killsDay &&

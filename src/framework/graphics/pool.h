@@ -37,7 +37,8 @@ public:
     bool isEnabled() const { return m_enabled; }
 
 protected:
-    enum class DrawMethodType {
+    enum class DrawMethodType
+    {
         RECT,
         TRIANGLE,
         REPEATED_RECT,
@@ -45,7 +46,8 @@ protected:
         UPSIDEDOWN_RECT,
     };
 
-    struct DrawMethod {
+    struct DrawMethod
+    {
         DrawMethodType type;
         std::pair<Rect, Rect> rects{};
         std::tuple<Point, Point, Point> points{};
@@ -55,7 +57,8 @@ protected:
         size_t hash{ 0 };
     };
 
-    struct DrawObject {
+    struct DrawObject
+    {
         ~DrawObject() { drawMethods.clear(); state.texture = nullptr; action = nullptr; }
 
         Painter::PainterState state;
@@ -66,7 +69,8 @@ protected:
     };
 
 private:
-    struct State {
+    struct State
+    {
         Painter::CompositionMode compositionMode;
         Rect clipRect;
         float opacity;
@@ -101,7 +105,8 @@ private:
     friend class DrawPool;
 };
 
-class FramedPool : public Pool {
+class FramedPool : public Pool
+{
 public:
     void onBeforeDraw(std::function<void()> f) { m_beforeDraw = std::move(f); }
     void onAfterDraw(std::function<void()> f) { m_afterDraw = std::move(f); }

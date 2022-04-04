@@ -24,12 +24,12 @@
 
 void UICreature::drawSelf(Fw::DrawPane drawPane)
 {
-    if((drawPane & Fw::ForegroundPane) == 0)
+    if ((drawPane & Fw::ForegroundPane) == 0)
         return;
 
     UIWidget::drawSelf(drawPane);
 
-    if(m_creature) {
+    if (m_creature) {
         const Rect drawRect = getPaddingRect();
         m_creature->drawOutfit(drawRect, !m_fixedCreatureSize, m_imageColor);
     }
@@ -37,7 +37,7 @@ void UICreature::drawSelf(Fw::DrawPane drawPane)
 
 void UICreature::setOutfit(const Outfit& outfit)
 {
-    if(!m_creature)
+    if (!m_creature)
         m_creature = CreaturePtr(new Creature);
     m_creature->setDirection(Otc::South);
     m_creature->setOutfit(outfit);
@@ -47,26 +47,26 @@ void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& s
 {
     UIWidget::onStyleApply(styleName, styleNode);
 
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "fixed-creature-size")
+    for (const OTMLNodePtr& node : styleNode->children()) {
+        if (node->tag() == "fixed-creature-size")
             setFixedCreatureSize(node->value<bool>());
-        else if(node->tag() == "outfit-id") {
+        else if (node->tag() == "outfit-id") {
             Outfit outfit = m_creature ? m_creature->getOutfit() : Outfit();
             outfit.setId(node->value<int>());
             setOutfit(outfit);
-        } else if(node->tag() == "outfit-head") {
+        } else if (node->tag() == "outfit-head") {
             Outfit outfit = m_creature ? m_creature->getOutfit() : Outfit();
             outfit.setHead(node->value<int>());
             setOutfit(outfit);
-        } else if(node->tag() == "outfit-body") {
+        } else if (node->tag() == "outfit-body") {
             Outfit outfit = m_creature ? m_creature->getOutfit() : Outfit();
             outfit.setBody(node->value<int>());
             setOutfit(outfit);
-        } else if(node->tag() == "outfit-legs") {
+        } else if (node->tag() == "outfit-legs") {
             Outfit outfit = m_creature ? m_creature->getOutfit() : Outfit();
             outfit.setLegs(node->value<int>());
             setOutfit(outfit);
-        } else if(node->tag() == "outfit-feet") {
+        } else if (node->tag() == "outfit-feet") {
             Outfit outfit = m_creature ? m_creature->getOutfit() : Outfit();
             outfit.setFeet(node->value<int>());
             setOutfit(outfit);

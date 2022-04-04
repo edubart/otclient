@@ -30,7 +30,8 @@
 class ShaderManager
 {
 public:
-    enum {
+    enum
+    {
         ITEM_ID_UNIFORM = 10,
         OUTFIT_ID_UNIFORM = 11,
         MOUNT_ID_UNIFORM = 12,

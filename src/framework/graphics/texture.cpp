@@ -42,7 +42,7 @@ Texture::Texture(const Size& size) : m_uniqueId(++LAST_ID)
     m_id = 0;
     m_time = 0;
 
-    if(!setupSize(size))
+    if (!setupSize(size))
         return;
 
     createTexture();
@@ -59,7 +59,7 @@ Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress, bool c
     m_canSuperimposed = canSuperimposed;
     m_compress = compress;
     m_buildMipmaps = buildMipmaps;
-    if(load) {
+    if (load) {
         createTexture();
         uploadPixels(image, m_buildMipmaps, m_compress);
     } else {
@@ -73,13 +73,13 @@ Texture::~Texture()
     assert(!g_app.isTerminated());
 #endif
     // free texture from gl memory
-    if(g_graphics.ok() && m_id != 0)
+    if (g_graphics.ok() && m_id != 0)
         glDeleteTextures(1, &m_id);
 }
 
 void Texture::create()
 {
-    if(m_image) {
+    if (m_image) {
         createTexture();
         uploadPixels(m_image, m_buildMipmaps, m_compress);
         m_image = nullptr;
@@ -88,11 +88,11 @@ void Texture::create()
 
 void Texture::uploadPixels(const ImagePtr& image, bool buildMipmaps, bool compress)
 {
-    if(!setupSize(image->getSize(), buildMipmaps))
+    if (!setupSize(image->getSize(), buildMipmaps))
         return;
 
     ImagePtr glImage = image;
-    if(m_size != m_glSize) {
+    if (m_size != m_glSize) {
         glImage = ImagePtr(new Image(m_glSize, image->getBpp()));
         glImage->paste(image);
     } else
@@ -100,11 +100,11 @@ void Texture::uploadPixels(const ImagePtr& image, bool buildMipmaps, bool compre
 
     bind();
 
-    if(buildMipmaps) {
+    if (buildMipmaps) {
         int level = 0;
         do {
             setupPixels(level++, glImage->getSize(), glImage->getPixelData(), glImage->getBpp(), compress);
-        } while(glImage->nextMipmap());
+        } while (glImage->nextMipmap());
         m_hasMipmaps = true;
     } else
         setupPixels(0, glImage->getSize(), glImage->getPixelData(), glImage->getBpp(), compress);
@@ -130,12 +130,12 @@ void Texture::copyFromScreen(const Rect& screenRect)
 
 bool Texture::buildHardwareMipmaps()
 {
-    if(!g_graphics.canUseHardwareMipmaps())
+    if (!g_graphics.canUseHardwareMipmaps())
         return false;
 
     bind();
 
-    if(!m_hasMipmaps) {
+    if (!m_hasMipmaps) {
         m_hasMipmaps = true;
         setupFilters();
     }
@@ -146,10 +146,10 @@ bool Texture::buildHardwareMipmaps()
 
 void Texture::setSmooth(bool smooth)
 {
-    if(smooth && !g_graphics.canUseBilinearFiltering())
+    if (smooth && !g_graphics.canUseBilinearFiltering())
         return;
 
-    if(smooth == m_smooth)
+    if (smooth == m_smooth)
         return;
 
     m_smooth = smooth;
@@ -159,7 +159,7 @@ void Texture::setSmooth(bool smooth)
 
 void Texture::setRepeat(bool repeat)
 {
-    if(m_repeat == repeat)
+    if (m_repeat == repeat)
         return;
 
     m_repeat = repeat;
@@ -169,7 +169,7 @@ void Texture::setRepeat(bool repeat)
 
 void Texture::setUpsideDown(bool upsideDown)
 {
-    if(m_upsideDown == upsideDown)
+    if (m_upsideDown == upsideDown)
         return;
     m_upsideDown = upsideDown;
     setupTranformMatrix();
@@ -184,13 +184,13 @@ void Texture::createTexture()
 bool Texture::setupSize(const Size& size, bool forcePowerOfTwo)
 {
     Size glSize;
-    if(!g_graphics.canUseNonPowerOfTwoTextures() || forcePowerOfTwo)
+    if (!g_graphics.canUseNonPowerOfTwoTextures() || forcePowerOfTwo)
         glSize.resize(stdext::to_power_of_two(size.width()), stdext::to_power_of_two(size.height()));
     else
         glSize = size;
 
     // checks texture max size
-    if(std::max<int>(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
+    if (std::max<int>(glSize.width(), glSize.height()) > g_graphics.getMaxTextureSize()) {
         g_logger.error(stdext::format("loading texture with size %dx%d failed, "
                                       "the maximum size allowed by the graphics card is %dx%d,"
                                       "to prevent crashes the texture will be displayed as a blank texture",
@@ -207,7 +207,7 @@ bool Texture::setupSize(const Size& size, bool forcePowerOfTwo)
 void Texture::setupWrap()
 {
     int texParam;
-    if(!m_repeat && g_graphics.canUseClampToEdge())
+    if (!m_repeat && g_graphics.canUseClampToEdge())
         texParam = GL_CLAMP_TO_EDGE;
     else
         texParam = GL_REPEAT;
@@ -220,7 +220,7 @@ void Texture::setupFilters()
 {
     int minFilter;
     int magFilter;
-    if(m_smooth) {
+    if (m_smooth) {
         minFilter = m_hasMipmaps ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
         magFilter = GL_LINEAR;
     } else {
@@ -233,7 +233,7 @@ void Texture::setupFilters()
 
 void Texture::setupTranformMatrix()
 {
-    if(m_upsideDown) {
+    if (m_upsideDown) {
         m_transformMatrix = { 1.0f / m_glSize.width(),  0.0f,                                     0.0f,
                                                     0.0f,                  -1.0f / m_glSize.height(),                   0.0f,
                                                     0.0f,                   m_size.height() / static_cast<float>(m_glSize.height()), 1.0f };
@@ -247,19 +247,19 @@ void Texture::setupTranformMatrix()
 void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channels, bool compress)
 {
     GLenum format = 0;
-    switch(channels) {
-    case 4:
-        format = GL_RGBA;
-        break;
-    case 3:
-        format = GL_RGB;
-        break;
-    case 2:
-        format = GL_LUMINANCE_ALPHA;
-        break;
-    case 1:
-        format = GL_LUMINANCE;
-        break;
+    switch (channels) {
+        case 4:
+            format = GL_RGBA;
+            break;
+        case 3:
+            format = GL_RGB;
+            break;
+        case 2:
+            format = GL_LUMINANCE_ALPHA;
+            break;
+        case 1:
+            format = GL_LUMINANCE;
+            break;
     }
 
     GLenum internalFormat = GL_RGBA;
@@ -267,7 +267,7 @@ void Texture::setupPixels(int level, const Size& size, uchar* pixels, int channe
 #ifdef OPENGL_ES
     //TODO
 #else
-    if(compress)
+    if (compress)
         internalFormat = GL_COMPRESSED_RGBA;
 #endif
 

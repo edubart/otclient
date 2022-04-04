@@ -28,31 +28,31 @@ Fw::AlignmentFlag Fw::translateAlignment(std::string aligment)
     stdext::tolower(aligment);
     stdext::eraseWhiteSpace(aligment);
 
-    if(aligment == "topleft")
+    if (aligment == "topleft")
         return AlignTopLeft;
 
-    if(aligment == "topright")
+    if (aligment == "topright")
         return AlignTopRight;
 
-    if(aligment == "bottomleft")
+    if (aligment == "bottomleft")
         return AlignBottomLeft;
 
-    if(aligment == "bottomright")
+    if (aligment == "bottomright")
         return AlignBottomRight;
 
-    if(aligment == "left")
+    if (aligment == "left")
         return AlignLeftCenter;
 
-    if(aligment == "right")
+    if (aligment == "right")
         return AlignRightCenter;
 
-    if(aligment == "top")
+    if (aligment == "top")
         return AlignTopCenter;
 
-    if(aligment == "bottom")
+    if (aligment == "bottom")
         return AlignBottomCenter;
 
-    if(aligment == "center")
+    if (aligment == "center")
         return AlignCenter;
 
     return AlignNone;
@@ -63,22 +63,22 @@ Fw::AnchorEdge Fw::translateAnchorEdge(std::string anchorEdge)
     stdext::tolower(anchorEdge);
     stdext::eraseWhiteSpace(anchorEdge);
 
-    if(anchorEdge == "left")
+    if (anchorEdge == "left")
         return AnchorLeft;
 
-    if(anchorEdge == "right")
+    if (anchorEdge == "right")
         return AnchorRight;
 
-    if(anchorEdge == "top")
+    if (anchorEdge == "top")
         return AnchorTop;
 
-    if(anchorEdge == "bottom")
+    if (anchorEdge == "bottom")
         return AnchorBottom;
 
-    if(anchorEdge == "horizontalcenter")
+    if (anchorEdge == "horizontalcenter")
         return AnchorHorizontalCenter;
 
-    if(anchorEdge == "verticalcenter")
+    if (anchorEdge == "verticalcenter")
         return AnchorVerticalCenter;
 
     return AnchorNone;
@@ -88,31 +88,31 @@ Fw::WidgetState Fw::translateState(std::string state)
 {
     stdext::tolower(state);
     stdext::trim(state);
-    if(state == "active")
+    if (state == "active")
         return ActiveState;
-    if(state == "focus")
+    if (state == "focus")
         return FocusState;
-    if(state == "hover")
+    if (state == "hover")
         return HoverState;
-    if(state == "pressed")
+    if (state == "pressed")
         return PressedState;
-    if(state == "checked")
+    if (state == "checked")
         return CheckedState;
-    if(state == "disabled")
+    if (state == "disabled")
         return DisabledState;
-    if(state == "on")
+    if (state == "on")
         return OnState;
-    if(state == "first")
+    if (state == "first")
         return FirstState;
-    if(state == "middle")
+    if (state == "middle")
         return MiddleState;
-    if(state == "last")
+    if (state == "last")
         return LastState;
-    if(state == "alternate")
+    if (state == "alternate")
         return AlternateState;
-    if(state == "dragging")
+    if (state == "dragging")
         return DraggingState;
-    if(state == "hidden")
+    if (state == "hidden")
         return HiddenState;
     return InvalidState;
 }
@@ -121,9 +121,9 @@ Fw::AutoFocusPolicy Fw::translateAutoFocusPolicy(std::string policy)
 {
     stdext::tolower(policy);
     stdext::trim(policy);
-    if(policy == "first")
+    if (policy == "first")
         return AutoFocusFirst;
-    if(policy == "last")
+    if (policy == "last")
         return AutoFocusLast;
     return AutoFocusNone;
 }

@@ -41,17 +41,17 @@ void LocalPlayer::lockWalk(int millis)
 bool LocalPlayer::canWalk(bool ignoreLock)
 {
     // paralyzed
-    if(isParalyzed())
+    if (isParalyzed())
         return false;
 
     // cannot walk while locked
     if ((m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration) && !ignoreLock)
         return false;
 
-    if(isAutoWalking())
+    if (isAutoWalking())
         return true;
 
-    if(m_forceWalk) {
+    if (m_forceWalk) {
         m_forceWalk = false;
         return true;
     }
@@ -64,9 +64,9 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 {
     m_autoWalkRetries = 0;
 
-    if(m_preWalking) {
+    if (m_preWalking) {
         m_preWalking = false;
-        if(newPos == m_lastPrewalkDestination) {
+        if (newPos == m_lastPrewalkDestination) {
             updateWalk();
             return;
         }
@@ -78,7 +78,7 @@ void LocalPlayer::walk(const Position& oldPos, const Position& newPos)
 void LocalPlayer::preWalk(Otc::Direction direction)
 {
     // avoid reanimating prewalks
-    if(m_preWalking) {
+    if (m_preWalking) {
         return;
     }
 
@@ -102,8 +102,7 @@ bool LocalPlayer::retryAutoWalk()
             m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, asLocalPlayer(), m_autoWalkDestination, true), 200);
             self->m_autoWalkRetries += 1;
             return true;
-        }
-        else {
+        } else {
             self->m_autoWalkDestination = Position();
         }
     }
@@ -113,16 +112,16 @@ bool LocalPlayer::retryAutoWalk()
 void LocalPlayer::cancelWalk(Otc::Direction direction)
 {
     // only cancel client side walks
-    if(m_walking && m_preWalking)
+    if (m_walking && m_preWalking)
         stopWalk();
-    
-    g_map.notificateCameraMove(m_walkOffset); 
-    
+
+    g_map.notificateCameraMove(m_walkOffset);
+
     lockWalk();
     if (retryAutoWalk()) return;
 
     // turn to the cancel direction
-    if(direction != Otc::InvalidDirection)
+    if (direction != Otc::InvalidDirection)
         setDirection(direction);
 
     callLuaField("onCancelWalk", direction);
@@ -142,7 +141,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 
     if (m_position.isInRange(destination, 1, 1))
         return g_game.walk(m_position.getDirectionFromPosition(destination));
-    
+
     std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> result;
     std::vector<Otc::Direction> limitedPath;
 
@@ -155,8 +154,8 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
         if (result->status != Otc::PathFindResultOk) {
             if (self->m_autoWalkRetries > 0 && self->m_autoWalkRetries <= 3) { // try again in 300, 700, 1200 ms if canceled by server
                 if (self->m_autoWalkContinueEvent)
-                     self->m_autoWalkContinueEvent->cancel();
-                
+                    self->m_autoWalkContinueEvent->cancel();
+
                 self->m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, self, result->destination, true), 200 + self->m_autoWalkRetries * 100);
                 return;
             }
@@ -180,7 +179,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
         }
 
         g_game.autoWalk(result->path, result->start);
-        });
+    });
 
     if (!retry)
         lockWalk();
@@ -194,7 +193,7 @@ void LocalPlayer::stopAutoWalk()
     m_lastAutoWalkPosition = Position();
     m_knownCompletePath = false;
 
-    if(m_autoWalkContinueEvent)
+    if (m_autoWalkContinueEvent)
         m_autoWalkContinueEvent->cancel();
 }
 
@@ -207,21 +206,21 @@ void LocalPlayer::stopWalk()
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
 {
-    if(!m_preWalking) {
+    if (!m_preWalking) {
         Creature::updateWalkOffset(totalPixelsWalked);
         return;
     }
 
     // pre walks offsets are calculated in the oposite direction
     m_walkOffset = Point();
-    if(m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
+    if (m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
         m_walkOffset.y = -totalPixelsWalked;
-    else if(m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
+    else if (m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
         m_walkOffset.y = totalPixelsWalked;
 
-    if(m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
+    if (m_direction == Otc::East || m_direction == Otc::NorthEast || m_direction == Otc::SouthEast)
         m_walkOffset.x = totalPixelsWalked;
-    else if(m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
+    else if (m_direction == Otc::West || m_direction == Otc::NorthWest || m_direction == Otc::SouthWest)
         m_walkOffset.x = -totalPixelsWalked;
 }
 
@@ -235,19 +234,19 @@ void LocalPlayer::onPositionChange(const Position& newPos, const Position& oldPo
 {
     Creature::onPositionChange(newPos, oldPos);
 
-    if(newPos == m_autoWalkDestination)
+    if (newPos == m_autoWalkDestination)
         stopAutoWalk();
-    else if(m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
+    else if (m_autoWalkDestination.isValid() && newPos == m_lastAutoWalkPosition)
         autoWalk(m_autoWalkDestination);
 
-    if(newPos.z != oldPos.z) {
+    if (newPos.z != oldPos.z) {
         m_forceWalk = true;
     }
 }
 
 void LocalPlayer::setStates(int states)
 {
-    if(m_states != states) {
+    if (m_states != states) {
         const int oldStates = m_states;
         m_states = states;
 
@@ -257,7 +256,7 @@ void LocalPlayer::setStates(int states)
 
 void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
 {
-    if(skill >= Otc::LastSkill) {
+    if (skill >= Otc::LastSkill) {
         g_logger.traceError("invalid skill");
         return;
     }
@@ -265,7 +264,7 @@ void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
     const int oldLevel = m_skillsLevel[skill];
     const int oldLevelPercent = m_skillsLevelPercent[skill];
 
-    if(level != oldLevel || levelPercent != oldLevelPercent) {
+    if (level != oldLevel || levelPercent != oldLevelPercent) {
         m_skillsLevel[skill] = level;
         m_skillsLevelPercent[skill] = levelPercent;
 
@@ -275,13 +274,13 @@ void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
 
 void LocalPlayer::setBaseSkill(Otc::Skill skill, int baseLevel)
 {
-    if(skill >= Otc::LastSkill) {
+    if (skill >= Otc::LastSkill) {
         g_logger.traceError("invalid skill");
         return;
     }
 
     const int oldBaseLevel = m_skillsBaseLevel[skill];
-    if(baseLevel != oldBaseLevel) {
+    if (baseLevel != oldBaseLevel) {
         m_skillsBaseLevel[skill] = baseLevel;
 
         callLuaField("onBaseSkillChange", skill, baseLevel, oldBaseLevel);
@@ -290,7 +289,7 @@ void LocalPlayer::setBaseSkill(Otc::Skill skill, int baseLevel)
 
 void LocalPlayer::setHealth(double health, double maxHealth)
 {
-    if(m_health != health || m_maxHealth != maxHealth) {
+    if (m_health != health || m_maxHealth != maxHealth) {
         const double oldHealth = m_health;
         const double oldMaxHealth = m_maxHealth;
         m_health = health;
@@ -299,8 +298,8 @@ void LocalPlayer::setHealth(double health, double maxHealth)
         callLuaField("onHealthChange", health, maxHealth, oldHealth, oldMaxHealth);
 
         // cannot walk while dying
-        if(health == 0) {
-            if(isPreWalking())
+        if (health == 0) {
+            if (isPreWalking())
                 stopWalk();
             lockWalk();
         }
@@ -309,7 +308,7 @@ void LocalPlayer::setHealth(double health, double maxHealth)
 
 void LocalPlayer::setFreeCapacity(double freeCapacity)
 {
-    if(m_freeCapacity != freeCapacity) {
+    if (m_freeCapacity != freeCapacity) {
         const double oldFreeCapacity = m_freeCapacity;
         m_freeCapacity = freeCapacity;
 
@@ -319,7 +318,7 @@ void LocalPlayer::setFreeCapacity(double freeCapacity)
 
 void LocalPlayer::setTotalCapacity(double totalCapacity)
 {
-    if(m_totalCapacity != totalCapacity) {
+    if (m_totalCapacity != totalCapacity) {
         const double oldTotalCapacity = m_totalCapacity;
         m_totalCapacity = totalCapacity;
 
@@ -329,7 +328,7 @@ void LocalPlayer::setTotalCapacity(double totalCapacity)
 
 void LocalPlayer::setExperience(double experience)
 {
-    if(m_experience != experience) {
+    if (m_experience != experience) {
         const double oldExperience = m_experience;
         m_experience = experience;
 
@@ -339,7 +338,7 @@ void LocalPlayer::setExperience(double experience)
 
 void LocalPlayer::setLevel(double level, double levelPercent)
 {
-    if(m_level != level || m_levelPercent != levelPercent) {
+    if (m_level != level || m_levelPercent != levelPercent) {
         const double oldLevel = m_level;
         const double oldLevelPercent = m_levelPercent;
         m_level = level;
@@ -351,7 +350,7 @@ void LocalPlayer::setLevel(double level, double levelPercent)
 
 void LocalPlayer::setMana(double mana, double maxMana)
 {
-    if(m_mana != mana || m_maxMana != maxMana) {
+    if (m_mana != mana || m_maxMana != maxMana) {
         const double oldMana = m_mana;
         const double oldMaxMana = m_maxMana;
         m_mana = mana;
@@ -363,7 +362,7 @@ void LocalPlayer::setMana(double mana, double maxMana)
 
 void LocalPlayer::setMagicLevel(double magicLevel, double magicLevelPercent)
 {
-    if(m_magicLevel != magicLevel || m_magicLevelPercent != magicLevelPercent) {
+    if (m_magicLevel != magicLevel || m_magicLevelPercent != magicLevelPercent) {
         const double oldMagicLevel = m_magicLevel;
         const double oldMagicLevelPercent = m_magicLevelPercent;
         m_magicLevel = magicLevel;
@@ -375,7 +374,7 @@ void LocalPlayer::setMagicLevel(double magicLevel, double magicLevelPercent)
 
 void LocalPlayer::setBaseMagicLevel(double baseMagicLevel)
 {
-    if(m_baseMagicLevel != baseMagicLevel) {
+    if (m_baseMagicLevel != baseMagicLevel) {
         const double oldBaseMagicLevel = m_baseMagicLevel;
         m_baseMagicLevel = baseMagicLevel;
 
@@ -385,7 +384,7 @@ void LocalPlayer::setBaseMagicLevel(double baseMagicLevel)
 
 void LocalPlayer::setSoul(double soul)
 {
-    if(m_soul != soul) {
+    if (m_soul != soul) {
         const double oldSoul = m_soul;
         m_soul = soul;
 
@@ -395,7 +394,7 @@ void LocalPlayer::setSoul(double soul)
 
 void LocalPlayer::setStamina(double stamina)
 {
-    if(m_stamina != stamina) {
+    if (m_stamina != stamina) {
         const double oldStamina = m_stamina;
         m_stamina = stamina;
 
@@ -405,12 +404,12 @@ void LocalPlayer::setStamina(double stamina)
 
 void LocalPlayer::setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& item)
 {
-    if(inventory >= Otc::LastInventorySlot) {
+    if (inventory >= Otc::LastInventorySlot) {
         g_logger.traceError("invalid slot");
         return;
     }
 
-    if(m_inventoryItems[inventory] != item) {
+    if (m_inventoryItems[inventory] != item) {
         const ItemPtr oldItem = m_inventoryItems[inventory];
         m_inventoryItems[inventory] = item;
 
@@ -420,7 +419,7 @@ void LocalPlayer::setInventoryItem(Otc::InventorySlot inventory, const ItemPtr& 
 
 void LocalPlayer::setVocation(int vocation)
 {
-    if(m_vocation != vocation) {
+    if (m_vocation != vocation) {
         const int oldVocation = m_vocation;
         m_vocation = vocation;
 
@@ -430,7 +429,7 @@ void LocalPlayer::setVocation(int vocation)
 
 void LocalPlayer::setPremium(bool premium)
 {
-    if(m_premium != premium) {
+    if (m_premium != premium) {
         m_premium = premium;
 
         callLuaField("onPremiumChange", premium);
@@ -439,7 +438,7 @@ void LocalPlayer::setPremium(bool premium)
 
 void LocalPlayer::setRegenerationTime(double regenerationTime)
 {
-    if(m_regenerationTime != regenerationTime) {
+    if (m_regenerationTime != regenerationTime) {
         const double oldRegenerationTime = m_regenerationTime;
         m_regenerationTime = regenerationTime;
 
@@ -449,7 +448,7 @@ void LocalPlayer::setRegenerationTime(double regenerationTime)
 
 void LocalPlayer::setOfflineTrainingTime(double offlineTrainingTime)
 {
-    if(m_offlineTrainingTime != offlineTrainingTime) {
+    if (m_offlineTrainingTime != offlineTrainingTime) {
         const double oldOfflineTrainingTime = m_offlineTrainingTime;
         m_offlineTrainingTime = offlineTrainingTime;
 
@@ -459,7 +458,7 @@ void LocalPlayer::setOfflineTrainingTime(double offlineTrainingTime)
 
 void LocalPlayer::setSpells(const std::vector<int>& spells)
 {
-    if(m_spells != spells) {
+    if (m_spells != spells) {
         const std::vector<int> oldSpells = m_spells;
         m_spells = spells;
 
@@ -469,7 +468,7 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
 
 void LocalPlayer::setBlessings(int blessings)
 {
-    if(blessings != m_blessings) {
+    if (blessings != m_blessings) {
         const int oldBlessings = m_blessings;
         m_blessings = blessings;
 

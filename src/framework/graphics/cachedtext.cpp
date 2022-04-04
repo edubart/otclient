@@ -33,10 +33,10 @@ CachedText::CachedText()
 
 void CachedText::draw(const Rect& rect, const Color color)
 {
-    if(!m_font)
+    if (!m_font)
         return;
 
-    if(m_textMustRecache || m_textCachedScreenCoords != rect) {
+    if (m_textMustRecache || m_textCachedScreenCoords != rect) {
         m_textMustRecache = false;
         m_textCachedScreenCoords = rect;
 
@@ -44,13 +44,13 @@ void CachedText::draw(const Rect& rect, const Color color)
         m_textCoordsCache = m_font->getDrawTextCoords(m_text, rect, m_align);
     }
 
-    for(const auto& fontRect : m_textCoordsCache)
+    for (const auto& fontRect : m_textCoordsCache)
         g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
 }
 
 void CachedText::update()
 {
-    if(m_font)
+    if (m_font)
         m_textSize = m_font->calculateTextRectSize(m_text);
 
     m_textMustRecache = true;
@@ -58,7 +58,7 @@ void CachedText::update()
 
 void CachedText::wrapText(int maxWidth)
 {
-    if(m_font) {
+    if (m_font) {
         m_text = m_font->wrapText(m_text, maxWidth);
         update();
     }

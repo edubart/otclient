@@ -25,7 +25,8 @@
 
 #include <sstream>
 
-struct apng_data {
+struct apng_data
+{
     unsigned char* pdata;
     unsigned int width;
     unsigned int height;

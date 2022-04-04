@@ -40,7 +40,8 @@ struct AwareRange
 class MapView : public LuaObject
 {
 public:
-    enum FloorViewMode {
+    enum FloorViewMode
+    {
         NORMAL,
         FADE,
         LOCKED,
@@ -48,7 +49,8 @@ public:
         ALWAYS_WITH_TRANSPARENCY
     };
 
-    enum AntialiasingMode :uint8 {
+    enum AntialiasingMode :uint8
+    {
         ANTIALIASING_DISABLED,
         ANTIALIASING_ENABLED,
         ANTIALIASING_SMOOTH_RETRO
@@ -154,23 +156,27 @@ protected:
     friend class LightView;
 
 private:
-    struct MapList {
+    struct MapList
+    {
         std::vector<TilePtr> shades, grounds, surfaces, effects;
         void clear() { shades.clear(); grounds.clear(); surfaces.clear(); effects.clear(); }
     };
 
-    struct Pools {
+    struct Pools
+    {
         PoolFramedPtr map;
         PoolPtr creatureInformation, text;
     };
 
-    struct Crosshair {
+    struct Crosshair
+    {
         bool positionChanged = false;
         Position position;
         TexturePtr texture;
     };
 
-    struct RectCache {
+    struct RectCache
+    {
         Rect rect, srcRect;
         Point drawOffset;
         float horizontalStretchFactor, verticalStretchFactor;
@@ -196,7 +202,7 @@ private:
     float getFadeLevel(uint8 z)
     {
         float fading = std::clamp<float>(static_cast<float>(m_fadingFloorTimers[z].elapsed_millis()) / static_cast<float>(m_floorFading), 0.f, 1.f);
-        if(z < m_cachedFirstVisibleFloor)
+        if (z < m_cachedFirstVisibleFloor)
             fading = 1.0 - fading;
         return fading;
     }

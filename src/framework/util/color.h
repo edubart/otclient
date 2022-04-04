@@ -108,7 +108,7 @@ public:
 
     static Color from8bit(const int color, const float brightness = 1.0f)
     {
-        if(color >= 216 || color <= 0)
+        if (color >= 216 || color <= 0)
             return Color(0, 0, 0);
 
         const int
@@ -148,14 +148,14 @@ inline std::istream& operator>>(std::istream& in, Color& color)
 {
     std::string tmp;
 
-    if(in.peek() == '#') {
+    if (in.peek() == '#') {
         in.ignore() >> tmp;
 
-        if(tmp.length() == 6 || tmp.length() == 8) {
+        if (tmp.length() == 6 || tmp.length() == 8) {
             color.setRed(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(0, 2))));
             color.setGreen(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(2, 2))));
             color.setBlue(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(4, 2))));
-            if(tmp.length() == 8)
+            if (tmp.length() == 8)
                 color.setAlpha(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(6, 2))));
             else
                 color.setAlpha(255);
@@ -165,43 +165,43 @@ inline std::istream& operator>>(std::istream& in, Color& color)
     } else {
         in >> tmp;
 
-        if(tmp == "alpha") {
+        if (tmp == "alpha") {
             color = Color::alpha;
-        } else if(tmp == "black") {
+        } else if (tmp == "black") {
             color = Color::black;
-        } else if(tmp == "white") {
+        } else if (tmp == "white") {
             color = Color::white;
-        } else if(tmp == "red") {
+        } else if (tmp == "red") {
             color = Color::red;
-        } else if(tmp == "darkRed") {
+        } else if (tmp == "darkRed") {
             color = Color::darkRed;
-        } else if(tmp == "green") {
+        } else if (tmp == "green") {
             color = Color::green;
-        } else if(tmp == "darkGreen") {
+        } else if (tmp == "darkGreen") {
             color = Color::darkGreen;
-        } else if(tmp == "blue") {
+        } else if (tmp == "blue") {
             color = Color::blue;
-        } else if(tmp == "darkBlue") {
+        } else if (tmp == "darkBlue") {
             color = Color::darkBlue;
-        } else if(tmp == "pink") {
+        } else if (tmp == "pink") {
             color = Color::pink;
-        } else if(tmp == "darkPink") {
+        } else if (tmp == "darkPink") {
             color = Color::darkPink;
-        } else if(tmp == "yellow") {
+        } else if (tmp == "yellow") {
             color = Color::yellow;
-        } else if(tmp == "darkYellow") {
+        } else if (tmp == "darkYellow") {
             color = Color::darkYellow;
-        } else if(tmp == "teal") {
+        } else if (tmp == "teal") {
             color = Color::teal;
-        } else if(tmp == "darkTeal") {
+        } else if (tmp == "darkTeal") {
             color = Color::darkTeal;
-        } else if(tmp == "gray") {
+        } else if (tmp == "gray") {
             color = Color::gray;
-        } else if(tmp == "darkGray") {
+        } else if (tmp == "darkGray") {
             color = Color::darkGray;
-        } else if(tmp == "lightGray") {
+        } else if (tmp == "lightGray") {
             color = Color::lightGray;
-        } else if(tmp == "orange") {
+        } else if (tmp == "orange") {
             color = Color::orange;
         } else {
             in.seekg(0 - tmp.length(), std::ios_base::cur);

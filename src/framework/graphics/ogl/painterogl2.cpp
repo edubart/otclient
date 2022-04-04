@@ -67,13 +67,13 @@ void PainterOGL2::unbind()
 void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
 {
     const int vertexCount = coordsBuffer.getVertexCount();
-    if(vertexCount == 0)
+    if (vertexCount == 0)
         return;
 
     const bool textured = coordsBuffer.getTextureCoordCount() > 0 && m_texture;
 
     // skip drawing of empty textures
-    if(textured && m_texture->isEmpty())
+    if (textured && m_texture->isEmpty())
         return;
 
     m_drawProgram = m_shaderProgram ? m_shaderProgram : textured ? m_drawTexturedProgram.get() : m_drawSolidColorProgram.get();
@@ -82,7 +82,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     m_drawProgram->bind();
     m_drawProgram->setTransformMatrix(m_transformMatrix);
     m_drawProgram->setProjectionMatrix(m_projectionMatrix);
-    if(textured) {
+    if (textured) {
         m_drawProgram->setTextureMatrix(m_textureMatrix);
         m_drawProgram->bindMultiTextures();
     }
@@ -92,7 +92,7 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     m_drawProgram->updateTime();
 
     // only set texture coords arrays when needed
-    if(textured) {
+    if (textured) {
         m_drawProgram->setAttributeArray(PainterShaderProgram::TEXCOORD_ATTR, coordsBuffer.getTextureCoordArray(), 2);
     } else
         PainterShaderProgram::disableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
@@ -103,6 +103,6 @@ void PainterOGL2::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
     // draw the element in coords buffers
     glDrawArrays(static_cast<GLenum>(drawMode), 0, vertexCount);
 
-    if(!textured)
+    if (!textured)
         PainterShaderProgram::enableAttributeArray(PainterShaderProgram::TEXCOORD_ATTR);
 }

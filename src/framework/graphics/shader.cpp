@@ -29,16 +29,16 @@
 Shader::Shader(ShaderType shaderType)
 {
     m_shaderType = shaderType;
-    switch(shaderType) {
-    case Vertex:
-        m_shaderId = glCreateShader(GL_VERTEX_SHADER);
-        break;
-    case Fragment:
-        m_shaderId = glCreateShader(GL_FRAGMENT_SHADER);
-        break;
+    switch (shaderType) {
+        case Vertex:
+            m_shaderId = glCreateShader(GL_VERTEX_SHADER);
+            break;
+        case Fragment:
+            m_shaderId = glCreateShader(GL_FRAGMENT_SHADER);
+            break;
     }
 
-    if(!m_shaderId)
+    if (!m_shaderId)
         g_logger.fatal("Unable to create GL shader");
 }
 
@@ -47,7 +47,7 @@ Shader::~Shader()
 #ifndef NDEBUG
     assert(!g_app.isTerminated());
 #endif
-    if(g_graphics.ok())
+    if (g_graphics.ok())
         glDeleteShader(m_shaderId);
 }
 
@@ -82,7 +82,7 @@ bool Shader::compileSourceFile(const std::string& sourceFile)
     try {
         const std::string sourceCode = g_resources.readFileContents(sourceFile);
         return compileSourceCode(sourceCode);
-    } catch(stdext::exception& e) {
+    } catch (stdext::exception& e) {
         g_logger.error(stdext::format("unable to load shader source form file '%s': %s", sourceFile, e.what()));
     }
     return false;
@@ -93,7 +93,7 @@ std::string Shader::log()
     std::string infoLog;
     int infoLogLength = 0;
     glGetShaderiv(m_shaderId, GL_INFO_LOG_LENGTH, &infoLogLength);
-    if(infoLogLength > 1) {
+    if (infoLogLength > 1) {
         std::vector<char> buf(infoLogLength);
         glGetShaderInfoLog(m_shaderId, infoLogLength - 1, nullptr, &buf[0]);
         infoLog = &buf[0];

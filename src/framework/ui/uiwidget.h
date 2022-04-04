@@ -35,7 +35,8 @@
 #include "framework/graphics/texture.h"
 
 template<typename T = int>
-struct EdgeGroup {
+struct EdgeGroup
+{
     EdgeGroup() { top = right = bottom = left = T(0); }
     void set(T value) { top = right = bottom = left = value; }
     T top;

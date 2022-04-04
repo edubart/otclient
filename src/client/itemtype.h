@@ -26,7 +26,8 @@
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
 
-enum ItemCategory : uint8 {
+enum ItemCategory : uint8
+{
     ItemCategoryInvalid = 0,
     ItemCategoryGround = 1,
     ItemCategoryContainer = 2,
@@ -45,7 +46,8 @@ enum ItemCategory : uint8 {
     ItemCategoryLast = 15
 };
 
-enum ItemTypeAttr : uint8 {
+enum ItemTypeAttr : uint8
+{
     ItemTypeAttrServerId = 16,
     ItemTypeAttrClientId = 17,
     ItemTypeAttrName = 18,   // deprecated

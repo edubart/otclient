@@ -46,7 +46,7 @@ public:
     void addRect(const Rect& dest, const Rect& src)
     {
         m_vertexArray.addRect(dest);
-        if(src.isValid())
+        if (src.isValid())
             m_textureCoordArray.addRect(src);
     }
     void addQuad(const Rect& dest, const Rect& src)

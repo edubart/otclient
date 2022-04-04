@@ -42,7 +42,7 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     const float t = m_animationTimer.ticksElapsed();
     p.x += (24 - textSize.width() / 2);
 
-    if(g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
+    if (g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
         p.x -= (4 * t / tf) + (8 * t * t / tftf);
     }
 
@@ -50,12 +50,12 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     p += m_offset;
     const Rect rect(p, textSize);
 
-    if(visibleRect.contains(rect)) {
+    if (visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
         const float t0 = tf / 1.2;
 
         Color color = m_color;
-        if(t > t0) {
+        if (t > t0) {
             color.setAlpha(static_cast<float>(1 - (t - t0) / (tf - t0)));
         }
 
@@ -68,7 +68,7 @@ void AnimatedText::onAppear()
     m_animationTimer.restart();
 
     uint16 textDuration = ANIMATED_TEXT_DURATION;
-    if(g_app.canOptimize())
+    if (g_app.canOptimize())
         textDuration /= 2;
 
     // schedule removal
@@ -88,13 +88,13 @@ void AnimatedText::setText(const std::string& text)
 
 bool AnimatedText::merge(const AnimatedTextPtr& other)
 {
-    if(other->getColor() != m_color)
+    if (other->getColor() != m_color)
         return false;
 
-    if(other->getCachedText().getFont() != m_cachedText.getFont())
+    if (other->getCachedText().getFont() != m_cachedText.getFont())
         return false;
 
-    if(m_animationTimer.ticksElapsed() > ANIMATED_TEXT_DURATION / 2.5)
+    if (m_animationTimer.ticksElapsed() > ANIMATED_TEXT_DURATION / 2.5)
         return false;
 
     try {
@@ -104,7 +104,7 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
         const std::string text = stdext::format("%d", number + otherNumber);
         m_cachedText.setText(text);
         return true;
-    } catch(...) {
+    } catch (...) {
         return false;
     }
 }

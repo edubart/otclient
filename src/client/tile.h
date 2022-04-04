@@ -156,7 +156,8 @@ public:
     void analyzeThing(const ThingPtr& thing, bool add);
 
 private:
-    struct CountFlag {
+    struct CountFlag
+    {
         int fullGround{ 0 },
             translucent{ 0 },
             notWalkable{ 0 },

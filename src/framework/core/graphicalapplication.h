@@ -32,7 +32,8 @@
 
 class GraphicalApplication : public Application
 {
-    enum {
+    enum
+    {
         POLL_CYCLE_DELAY = 10,
         FOREGROUND_REFRESH_TIME = 1000 / 20 // 20 FPS (50ms)
     };

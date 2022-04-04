@@ -144,33 +144,33 @@ public:
     bool contains(const TPoint<T>& p, bool insideOnly = false) const
     {
         T l, r;
-        if(x2 < x1 - 1) {
+        if (x2 < x1 - 1) {
             l = x2;
             r = x1;
         } else {
             l = x1;
             r = x2;
         }
-        if(insideOnly) {
-            if(p.x <= l || p.x >= r)
+        if (insideOnly) {
+            if (p.x <= l || p.x >= r)
                 return false;
         } else {
-            if(p.x < l || p.x > r)
+            if (p.x < l || p.x > r)
                 return false;
         }
         T t, b;
-        if(y2 < y1 - 1) {
+        if (y2 < y1 - 1) {
             t = y2;
             b = y1;
         } else {
             t = y1;
             b = y2;
         }
-        if(insideOnly) {
-            if(p.y <= t || p.y >= b)
+        if (insideOnly) {
+            if (p.y <= t || p.y >= b)
                 return false;
         } else {
-            if(p.y < t || p.y > b)
+            if (p.y < t || p.y > b)
                 return false;
         }
         return true;
@@ -178,48 +178,48 @@ public:
 
     bool contains(const TRect<T>& r, bool insideOnly = false) const
     {
-        if(contains(r.topLeft(), insideOnly) && contains(r.bottomRight(), insideOnly))
+        if (contains(r.topLeft(), insideOnly) && contains(r.bottomRight(), insideOnly))
             return true;
         return false;
     }
 
     bool intersects(const TRect<T>& r) const
     {
-        if(isNull() || r.isNull())
+        if (isNull() || r.isNull())
             return false;
 
         int l1 = x1;
         int r1 = x1;
-        if(x2 - x1 + 1 < 0)
+        if (x2 - x1 + 1 < 0)
             l1 = x2;
         else
             r1 = x2;
 
         int l2 = r.x1;
         int r2 = r.x1;
-        if(r.x2 - r.x1 + 1 < 0)
+        if (r.x2 - r.x1 + 1 < 0)
             l2 = r.x2;
         else
             r2 = r.x2;
 
-        if(l1 > r2 || l2 > r1)
+        if (l1 > r2 || l2 > r1)
             return false;
 
         int t1 = y1;
         int b1 = y1;
-        if(y2 - y1 + 1 < 0)
+        if (y2 - y1 + 1 < 0)
             t1 = y2;
         else
             b1 = y2;
 
         int t2 = r.y1;
         int b2 = r.y1;
-        if(r.y2 - r.y1 + 1 < 0)
+        if (r.y2 - r.y1 + 1 < 0)
             t2 = r.y2;
         else
             b2 = r.y2;
 
-        if(t1 > b2 || t2 > b1)
+        if (t1 > b2 || t2 > b1)
             return false;
 
         return true;
@@ -237,35 +237,35 @@ public:
 
     TRect<T> intersection(const TRect<T>& r) const
     {
-        if(isNull())
+        if (isNull())
             return r;
-        if(r.isNull())
+        if (r.isNull())
             return *this;
 
         int l1 = x1;
         int r1 = x1;
-        if(x2 - x1 + 1 < 0)
+        if (x2 - x1 + 1 < 0)
             l1 = x2;
         else
             r1 = x2;
 
         int l2 = r.x1;
         int r2 = r.x1;
-        if(r.x2 - r.x1 + 1 < 0)
+        if (r.x2 - r.x1 + 1 < 0)
             l2 = r.x2;
         else
             r2 = r.x2;
 
         int t1 = y1;
         int b1 = y1;
-        if(y2 - y1 + 1 < 0)
+        if (y2 - y1 + 1 < 0)
             t1 = y2;
         else
             b1 = y2;
 
         int t2 = r.y1;
         int b2 = r.y1;
-        if(r.y2 - r.y1 + 1 < 0)
+        if (r.y2 - r.y1 + 1 < 0)
             t2 = r.y2;
         else
             b2 = r.y2;
@@ -280,38 +280,38 @@ public:
 
     void bind(const TRect<T>& r)
     {
-        if(isNull() || r.isNull())
+        if (isNull() || r.isNull())
             return;
 
-        if(right() > r.right())
+        if (right() > r.right())
             moveRight(r.right());
-        if(bottom() > r.bottom())
+        if (bottom() > r.bottom())
             moveBottom(r.bottom());
-        if(left() < r.left())
+        if (left() < r.left())
             moveLeft(r.left());
-        if(top() < r.top())
+        if (top() < r.top())
             moveTop(r.top());
     }
 
     void alignIn(const TRect<T>& r, Fw::AlignmentFlag align)
     {
-        if(align == Fw::AlignTopLeft)
+        if (align == Fw::AlignTopLeft)
             moveTopLeft(r.topLeft());
-        else if(align == Fw::AlignTopRight)
+        else if (align == Fw::AlignTopRight)
             moveTopRight(r.topRight());
-        else if(align == Fw::AlignTopCenter)
+        else if (align == Fw::AlignTopCenter)
             moveTopCenter(r.topCenter());
-        else if(align == Fw::AlignBottomLeft)
+        else if (align == Fw::AlignBottomLeft)
             moveBottomLeft(r.bottomLeft());
-        else if(align == Fw::AlignBottomRight)
+        else if (align == Fw::AlignBottomRight)
             moveBottomRight(r.bottomRight());
-        else if(align == Fw::AlignBottomCenter)
+        else if (align == Fw::AlignBottomCenter)
             moveBottomCenter(r.bottomCenter());
-        else if(align == Fw::AlignLeftCenter)
+        else if (align == Fw::AlignLeftCenter)
             moveCenterLeft(r.centerLeft());
-        else if(align == Fw::AlignCenter)
+        else if (align == Fw::AlignCenter)
             moveCenter(r.center());
-        else if(align == Fw::AlignRightCenter)
+        else if (align == Fw::AlignRightCenter)
             moveCenterRight(r.centerRight());
     }
 

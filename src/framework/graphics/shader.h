@@ -28,7 +28,8 @@
 class Shader : public stdext::shared_object
 {
 public:
-    enum ShaderType {
+    enum ShaderType
+    {
         Vertex,
         Fragment
     };

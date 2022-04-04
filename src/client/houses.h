@@ -84,7 +84,8 @@ private:
     friend class HouseManager;
 };
 
-class HouseManager {
+class HouseManager
+{
 public:
     HouseManager();
 

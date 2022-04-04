@@ -29,11 +29,11 @@
 
 void UISprite::drawSelf(Fw::DrawPane drawPane)
 {
-    if((drawPane & Fw::ForegroundPane) == 0)
+    if ((drawPane & Fw::ForegroundPane) == 0)
         return;
 
     // draw style components in order
-    if(m_backgroundColor.aF() > Fw::MIN_ALPHA) {
+    if (m_backgroundColor.aF() > Fw::MIN_ALPHA) {
         Rect backgroundDestRect = m_rect;
         backgroundDestRect.expand(-m_borderWidth.top, -m_borderWidth.right, -m_borderWidth.bottom, -m_borderWidth.left);
         drawBackground(m_rect);
@@ -41,7 +41,7 @@ void UISprite::drawSelf(Fw::DrawPane drawPane)
 
     drawImage(m_rect);
 
-    if(m_spriteVisible && m_sprite) {
+    if (m_spriteVisible && m_sprite) {
         g_drawPool.addTexturedRect(getPaddingRect(), m_sprite, m_spriteColor);
     }
 
@@ -52,15 +52,15 @@ void UISprite::drawSelf(Fw::DrawPane drawPane)
 
 void UISprite::setSpriteId(int id)
 {
-    if(!g_sprites.isLoaded())
+    if (!g_sprites.isLoaded())
         return;
 
     m_spriteId = id;
-    if(id == 0)
+    if (id == 0)
         m_sprite = nullptr;
     else {
         const ImagePtr image = g_sprites.getSpriteImage(id);
-        if(image)
+        if (image)
             m_sprite = new Texture(image);
         else
             m_sprite = nullptr;
@@ -71,12 +71,12 @@ void UISprite::onStyleApply(const std::string& styleName, const OTMLNodePtr& sty
 {
     UIWidget::onStyleApply(styleName, styleNode);
 
-    for(const OTMLNodePtr& node : styleNode->children()) {
-        if(node->tag() == "sprite-id")
+    for (const OTMLNodePtr& node : styleNode->children()) {
+        if (node->tag() == "sprite-id")
             setSpriteId(node->value<int>());
-        else if(node->tag() == "sprite-visible")
+        else if (node->tag() == "sprite-visible")
             setSpriteVisible(node->value<bool>());
-        else if(node->tag() == "sprite-color")
+        else if (node->tag() == "sprite-color")
             setSpriteColor(node->value<Color>());
     }
 }

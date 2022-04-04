@@ -32,7 +32,8 @@ class Graphics
 public:
     Graphics();
 
-    enum PainterEngine {
+    enum PainterEngine
+    {
         Painter_Any = 0,
         Painter_OpenGL1,
         Painter_OpenGL2,

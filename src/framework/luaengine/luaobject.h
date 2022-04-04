@@ -101,17 +101,17 @@ template<typename T>
 void LuaObject::connectLuaField(const std::string& field, const std::function<T>& f, bool pushFront)
 {
     luaGetField(field);
-    if(g_lua.isTable()) {
-        if(pushFront)
+    if (g_lua.isTable()) {
+        if (pushFront)
             g_lua.pushInteger(1);
         push_luavalue(f);
         g_lua.callGlobalField("table", "insert");
     } else {
-        if(g_lua.isNil()) {
+        if (g_lua.isNil()) {
             push_luavalue(f);
             luaSetField(field);
             g_lua.pop();
-        } else if(g_lua.isFunction()) {
+        } else if (g_lua.isFunction()) {
             g_lua.newTable();
             g_lua.insert(-2);
             g_lua.rawSeti(1);
@@ -129,12 +129,14 @@ void connect(const LuaObjectPtr& obj, const std::string& field, const std::funct
     obj->connectLuaField<F>(field, f, pushFront);
 }
 
-namespace luabinder {
+namespace luabinder
+{
     template<typename F>
     struct connect_lambda;
 
     template<typename Lambda, typename Ret, typename... Args>
-    struct connect_lambda<Ret(Lambda::*)(Args...) const> {
+    struct connect_lambda<Ret(Lambda::*)(Args...) const>
+    {
         static void call(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront)
         {
             connect(obj, field, std::function<Ret(Args...)>(f), pushFront);
@@ -161,7 +163,7 @@ int LuaObject::luaCallLuaField(const std::string& field, const T&... args)
     g_lua.pushObject(asLuaObject());
     g_lua.getField(field);
 
-    if(!g_lua.isNil()) {
+    if (!g_lua.isNil()) {
         // the first argument is always this object (self)
         g_lua.insert(-2);
         const int numArgs = g_lua.polymorphicPush(args...);
@@ -176,7 +178,7 @@ R LuaObject::callLuaField(const std::string& field, const T&... args)
 {
     R result;
     const int rets = luaCallLuaField(field, args...);
-    if(rets > 0) {
+    if (rets > 0) {
         assert(rets == 1);
         result = g_lua.polymorphicPop<R>();
     } else
@@ -188,14 +190,14 @@ template<typename... T>
 void LuaObject::callLuaField(const std::string& field, const T&... args)
 {
     const int rets = luaCallLuaField(field, args...);
-    if(rets > 0)
+    if (rets > 0)
         g_lua.pop(rets);
 }
 
 template<typename T>
 void LuaObject::setLuaField(const std::string& key, const T& value)
 {
-    if(value == nullptr) {
+    if (value == nullptr) {
         g_lua.pushNil();
     } else {
         g_lua.polymorphicPush(value);

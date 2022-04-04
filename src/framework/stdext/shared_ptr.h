@@ -34,7 +34,8 @@
 #include <atomic>
 #endif
 
-namespace stdext {
+namespace stdext
+{
     template<class T>
     class shared_ptr;
 
@@ -51,10 +52,10 @@ namespace stdext {
         void add_ref() { ++refs; }
         void dec_ref()
         {
-            if(--refs == 0) {
+            if (--refs == 0) {
                 delete px;
                 px = nullptr;
-                if(weaks == 0)
+                if (weaks == 0)
                     delete this;
             }
         }
@@ -62,7 +63,7 @@ namespace stdext {
         void add_weak_ref() { ++weaks; }
         void dec_weak_ref()
         {
-            if(--weaks == 0 && refs == 0)
+            if (--weaks == 0 && refs == 0)
                 delete this;
         }
 
@@ -70,7 +71,7 @@ namespace stdext {
         {
             T* tmp = px;
             px = p;
-            if(tmp)
+            if (tmp)
                 delete tmp;
         }
         T* get() { return px; }
@@ -80,15 +81,15 @@ namespace stdext {
         bool expired() { return refs == 0; }
 
     private:
-#ifdef THREAD_SAFE
+    #ifdef THREAD_SAFE
         std::atomic<refcount_t> refs;
         std::atomic<refcount_t> weaks;
         std::atomic<T*> px;
-#else
+    #else
         refcount_t refs;
         refcount_t weaks;
         T* px;
-#endif
+    #endif
     };
 
     template<class T>
@@ -98,11 +99,11 @@ namespace stdext {
         using element_type = T;
 
         shared_ptr() : base(nullptr) {}
-        shared_ptr(T* p) { if(p != nullptr) base = new shared_base<T>(p); else base = nullptr; }
-        shared_ptr(const shared_ptr& rhs) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
+        shared_ptr(T* p) { if (p != nullptr) base = new shared_base<T>(p); else base = nullptr; }
+        shared_ptr(const shared_ptr& rhs) : base(rhs.base) { if (base != nullptr) base->add_ref(); }
         template<class U>
-        shared_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_ref(); }
-        ~shared_ptr() { if(base != nullptr) base->dec_ref(); }
+        shared_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if (base != nullptr) base->add_ref(); }
+        ~shared_ptr() { if (base != nullptr) base->dec_ref(); }
 
         void reset() { shared_ptr().swap(*this); }
         void reset(T* rhs) { shared_ptr(rhs).swap(*this); }
@@ -138,7 +139,7 @@ namespace stdext {
     private:
         shared_ptr(shared_base<T>* base)
         {
-            if(base && !base->expired()) {
+            if (base && !base->expired()) {
                 base->add_ref();
                 this->base = base;
             } else
@@ -150,18 +151,19 @@ namespace stdext {
     };
 
     template<class T>
-    class weak_ptr {
+    class weak_ptr
+    {
     public:
         using element_type = T;
 
         weak_ptr() : base(nullptr) {}
-        weak_ptr(const shared_ptr<T>& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const shared_ptr<T>& rhs) : base(rhs.base) { if (base != nullptr) base->add_weak_ref(); }
         template<class U>
-        weak_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
-        weak_ptr(const weak_ptr<T>& rhs) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const shared_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if (base != nullptr) base->add_weak_ref(); }
+        weak_ptr(const weak_ptr<T>& rhs) : base(rhs.base) { if (base != nullptr) base->add_weak_ref(); }
         template<class U>
-        weak_ptr(const weak_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if(base != nullptr) base->add_weak_ref(); }
-        ~weak_ptr() { if(base != nullptr) base->dec_weak_ref(); }
+        weak_ptr(const weak_ptr<U>& rhs, typename std::is_convertible<U, T>::type* = nullptr) : base(rhs.base) { if (base != nullptr) base->add_weak_ref(); }
+        ~weak_ptr() { if (base != nullptr) base->dec_weak_ref(); }
 
         void reset() { weak_ptr().swap(*this); }
         void swap(weak_ptr& rhs) { std::swap(base, rhs.base); }
@@ -226,7 +228,8 @@ namespace stdext {
     template<class E, class T, class Y> std::basic_ostream<E, T>& operator<<(std::basic_ostream<E, T>& os, const weak_ptr<Y>& p) { os << p.get(); return os; }
 }
 
-namespace std {
+namespace std
+{
     // hash, for unordered_map support
     template<typename T> struct hash<stdext::shared_ptr<T>> { size_t operator()(const stdext::shared_ptr<T>& p) const { return std::hash<T*>()(p.get()); } };
     template<typename T> struct hash<stdext::weak_ptr<T>> { size_t operator()(const stdext::weak_ptr<T>& p) const { return std::hash<T*>()(p.get()); } };

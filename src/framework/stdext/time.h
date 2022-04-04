@@ -25,14 +25,16 @@
 
 #include "types.h"
 
-namespace stdext {
+namespace stdext
+{
     ticks_t time();
     ticks_t millis();
     ticks_t micros();
     void millisleep(size_t ms);
     void microsleep(size_t us);
 
-    struct timer {
+    struct timer
+    {
     public:
         timer() { restart(); }
         float elapsed_seconds() { return (micros() - m_start) / 1000000.f; }

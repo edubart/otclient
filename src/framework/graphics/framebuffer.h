@@ -27,7 +27,8 @@
 #include "painter.h"
 #include "texture.h"
 
-enum class DrawMethodType {
+enum class DrawMethodType
+{
     DRAW_FILL_COORDS,
     DRAW_TEXTURE_COORDS,
     DRAW_TEXTURED_RECT,

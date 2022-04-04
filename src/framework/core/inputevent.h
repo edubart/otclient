@@ -25,7 +25,8 @@
 
 #include "declarations.h"
 
-struct InputEvent {
+struct InputEvent
+{
     InputEvent()
     {
         reset();

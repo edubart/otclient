@@ -55,9 +55,9 @@ public:
 
     void reserve(unsigned int n)
     {
-        if(n > m_capacity) {
+        if (n > m_capacity) {
             T* buffer = new T[n];
-            for(unsigned int i = 0; i < m_size; ++i)
+            for (unsigned int i = 0; i < m_size; ++i)
                 buffer[i] = m_buffer[i];
 
             delete[] m_buffer;
@@ -68,21 +68,21 @@ public:
 
     void resize(unsigned int n, T def = T())
     {
-        if(n == m_size)
+        if (n == m_size)
             return;
         reserve(n);
-        for(unsigned int i = m_size; i < n; ++i)
+        for (unsigned int i = m_size; i < n; ++i)
             m_buffer[i] = def;
         m_size = n;
     }
 
     void grow(unsigned int n)
     {
-        if(n <= m_size)
+        if (n <= m_size)
             return;
-        if(n > m_capacity) {
+        if (n > m_capacity) {
             unsigned int newcapacity = m_capacity;
-            do { newcapacity *= 2; } while(newcapacity < n);
+            do { newcapacity *= 2; } while (newcapacity < n);
             reserve(newcapacity);
         }
         m_size = n;

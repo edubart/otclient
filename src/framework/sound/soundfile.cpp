@@ -35,7 +35,7 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 {
     stdext::timer t;
     const FileStreamPtr file = g_resources.openFile(filename);
-    if(!file)
+    if (!file)
         stdext::throw_exception(stdext::format("unable to open %s", filename));
 
     // cache file buffer to avoid lags from hard drive
@@ -46,9 +46,9 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
     file->seek(0);
 
     SoundFilePtr soundFile;
-    if(strncmp(magic, "OggS", 4) == 0) {
+    if (strncmp(magic, "OggS", 4) == 0) {
         const auto oggSoundFile = OggSoundFilePtr(new OggSoundFile(file));
-        if(oggSoundFile->prepareOgg())
+        if (oggSoundFile->prepareOgg())
             soundFile = oggSoundFile;
     } else
         stdext::throw_exception(stdext::format("unknown sound file format %s", filename));
@@ -58,15 +58,15 @@ SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
 
 ALenum SoundFile::getSampleFormat()
 {
-    if(m_channels == 2) {
-        if(m_bps == 16)
+    if (m_channels == 2) {
+        if (m_bps == 16)
             return AL_FORMAT_STEREO16;
-        if(m_bps == 8)
+        if (m_bps == 8)
             return AL_FORMAT_STEREO8;
-    } else if(m_channels == 1) {
-        if(m_bps == 16)
+    } else if (m_channels == 1) {
+        if (m_bps == 16)
             return AL_FORMAT_MONO16;
-        if(m_bps == 8)
+        if (m_bps == 8)
             return AL_FORMAT_MONO8;
     }
     return AL_UNDETERMINED;

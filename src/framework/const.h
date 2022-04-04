@@ -53,7 +53,8 @@ namespace Fw
     static const float pi = 3.14159265f;
     static const float MIN_ALPHA = 0.003f;
 
-    enum Key : unsigned char {
+    enum Key : unsigned char
+    {
         KeyUnknown = 0,
         KeyEscape = 1,
         KeyTab = 2,
@@ -174,7 +175,8 @@ namespace Fw
         KeyNumpad9 = 150
     };
 
-    enum LogLevel {
+    enum LogLevel
+    {
         LogDebug = 0,
         LogInfo,
         LogWarning,
@@ -182,13 +184,15 @@ namespace Fw
         LogFatal
     };
 
-    enum AspectRatioMode {
+    enum AspectRatioMode
+    {
         IgnoreAspectRatio,
         KeepAspectRatio,
         KeepAspectRatioByExpanding
     };
 
-    enum AlignmentFlag {
+    enum AlignmentFlag
+    {
         AlignNone = 0,
         AlignLeft = 1,
         AlignRight = 2,
@@ -207,7 +211,8 @@ namespace Fw
         AlignCenter = AlignVerticalCenter | AlignHorizontalCenter // 48
     };
 
-    enum AnchorEdge {
+    enum AnchorEdge
+    {
         AnchorNone = 0,
         AnchorTop,
         AnchorBottom,
@@ -217,20 +222,23 @@ namespace Fw
         AnchorHorizontalCenter
     };
 
-    enum FocusReason {
+    enum FocusReason
+    {
         MouseFocusReason = 0,
         KeyboardFocusReason,
         ActiveFocusReason,
         OtherFocusReason
     };
 
-    enum AutoFocusPolicy {
+    enum AutoFocusPolicy
+    {
         AutoFocusNone = 0,
         AutoFocusFirst,
         AutoFocusLast
     };
 
-    enum InputEventType {
+    enum InputEventType
+    {
         NoInputEvent = 0,
         KeyTextInputEvent,
         KeyDownInputEvent,
@@ -242,27 +250,31 @@ namespace Fw
         MouseWheelInputEvent
     };
 
-    enum MouseButton {
+    enum MouseButton
+    {
         MouseNoButton = 0,
         MouseLeftButton,
         MouseRightButton,
         MouseMidButton
     };
 
-    enum MouseWheelDirection {
+    enum MouseWheelDirection
+    {
         MouseNoWheel = 0,
         MouseWheelUp,
         MouseWheelDown
     };
 
-    enum KeyboardModifier {
+    enum KeyboardModifier
+    {
         KeyboardNoModifier = 0,
         KeyboardCtrlModifier = 1,
         KeyboardAltModifier = 2,
         KeyboardShiftModifier = 4
     };
 
-    enum WidgetState {
+    enum WidgetState
+    {
         InvalidState = -1,
         DefaultState = 0,
         ActiveState = 1,
@@ -281,14 +293,16 @@ namespace Fw
         LastWidgetState = 8192
     };
 
-    enum DrawPane {
+    enum DrawPane
+    {
         ForegroundPane = 1,
         BackgroundPane = 2,
         BothPanes = 3
     };
 
 #ifdef FW_SQL
-    enum DatabaseEngine {
+    enum DatabaseEngine
+    {
         DatabaseNone = 0,
         DatabaseMySQL
     };

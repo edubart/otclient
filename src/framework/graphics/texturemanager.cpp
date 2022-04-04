@@ -39,7 +39,7 @@ void TextureManager::init()
 
 void TextureManager::terminate()
 {
-    if(m_liveReloadEvent) {
+    if (m_liveReloadEvent) {
         m_liveReloadEvent->cancel();
         m_liveReloadEvent = nullptr;
     }
@@ -53,11 +53,11 @@ void TextureManager::poll()
     // update only every 16msec, this allows upto 60 fps for animated textures
     static ticks_t lastUpdate = 0;
     const ticks_t now = g_clock.millis();
-    if(now - lastUpdate < 16)
+    if (now - lastUpdate < 16)
         return;
     lastUpdate = now;
 
-    for(const AnimatedTexturePtr& animatedTexture : m_animatedTextures)
+    for (const AnimatedTexturePtr& animatedTexture : m_animatedTextures)
         animatedTexture->updateAnimation();
 }
 
@@ -69,17 +69,17 @@ void TextureManager::clearCache()
 
 void TextureManager::liveReload()
 {
-    if(m_liveReloadEvent)
+    if (m_liveReloadEvent)
         return;
     m_liveReloadEvent = g_dispatcher.cycleEvent([this] {
-        for(auto& it : m_textures) {
+        for (auto& it : m_textures) {
             const std::string& path = g_resources.guessFilePath(it.first, "png");
             const TexturePtr& tex = it.second;
-            if(tex->getTime() >= g_resources.getFileTime(path))
+            if (tex->getTime() >= g_resources.getFileTime(path))
                 continue;
 
             ImagePtr image = Image::load(path);
-            if(!image)
+            if (!image)
                 continue;
             tex->uploadPixels(image, tex->hasMipmaps());
             tex->setTime(stdext::time());
@@ -96,12 +96,12 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
 
     // check if the texture is already loaded
     const auto it = m_textures.find(filePath);
-    if(it != m_textures.end()) {
+    if (it != m_textures.end()) {
         texture = it->second;
     }
 
     // texture not found, load it
-    if(!texture) {
+    if (!texture) {
         try {
             const std::string filePathEx = g_resources.guessFilePath(filePath, "png");
 
@@ -109,12 +109,12 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
             std::stringstream fin;
             g_resources.readFileStream(filePathEx, fin);
             texture = loadTexture(fin);
-        } catch(stdext::exception& e) {
+        } catch (stdext::exception& e) {
             g_logger.error(stdext::format("Unable to load texture '%s': %s", fileName, e.what()));
             texture = g_textures.getEmptyTexture();
         }
 
-        if(texture) {
+        if (texture) {
             texture->setTime(stdext::time());
             texture->setSmooth(true);
             m_textures[filePath] = texture;
@@ -129,12 +129,12 @@ TexturePtr TextureManager::loadTexture(std::stringstream& file)
     TexturePtr texture;
 
     apng_data apng;
-    if(load_apng(file, &apng) == 0) {
+    if (load_apng(file, &apng) == 0) {
         const Size imageSize(apng.width, apng.height);
-        if(apng.num_frames > 1) { // animated texture
+        if (apng.num_frames > 1) { // animated texture
             std::vector<ImagePtr> frames;
             std::vector<int> framesDelay;
-            for(uint i = 0; i < apng.num_frames; ++i) {
+            for (uint i = 0; i < apng.num_frames; ++i) {
                 uchar* frameData = apng.pdata + ((apng.first_frame + i) * imageSize.area() * apng.bpp);
                 int frameDelay = apng.frames_delay[i];
 

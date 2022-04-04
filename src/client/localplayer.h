@@ -28,7 +28,8 @@
  // @bindclass
 class LocalPlayer : public Player
 {
-    enum {
+    enum
+    {
         PREWALK_TIMEOUT = 1000
     };
 
@@ -39,7 +40,7 @@ public:
     void lockWalk(int millis = 250);
     void stopAutoWalk();
     bool autoWalk(const Position& destination, bool retry = false);
-    bool canWalk(bool ignoreLock = false); 
+    bool canWalk(bool ignoreLock = false);
 
     void setStates(int states);
     void setSkill(Otc::Skill skill, int level, int levelPercent);
@@ -89,7 +90,8 @@ public:
     const std::vector<int>& getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
     int getBlessings() { return m_blessings; }
-    uint64_t getResourceBalance(Otc::ResourceTypes_t type) {
+    uint64_t getResourceBalance(Otc::ResourceTypes_t type)
+    {
         auto it = m_resourcesBalance.find(type);
         return it != m_resourcesBalance.end() ? it->second : 0;
     }

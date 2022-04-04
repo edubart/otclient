@@ -218,11 +218,13 @@ protected:
     Timer m_jumpTimer;
 
 private:
-    struct DrawCache {
+    struct DrawCache
+    {
         int exactSize, frameSizeNotResized;
     };
 
-    struct StepCache {
+    struct StepCache
+    {
         uint16 speed = 0;
         uint16 groundSpeed = 0;
         uint64 duration = 0;

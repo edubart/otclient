@@ -26,7 +26,8 @@
 #include "declarations.h"
 #include "particleemitter.h"
 
-class ParticleSystem : public stdext::shared_object {
+class ParticleSystem : public stdext::shared_object
+{
 public:
     ParticleSystem();
 

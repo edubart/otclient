@@ -30,14 +30,15 @@
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
 #endif
 
-namespace stdext {
+namespace stdext
+{
     std::string resolve_path(const std::string& filePath, std::string sourcePath)
     {
-        if(filePath.starts_with("/"))
+        if (filePath.starts_with("/"))
             return filePath;
-        if(!sourcePath.ends_with("/")) {
+        if (!sourcePath.ends_with("/")) {
             const std::size_t slashPos = sourcePath.find_last_of('/');
-            if(slashPos == std::string::npos)
+            if (slashPos == std::string::npos)
                 throw_exception(format("invalid source path '%s', for file '%s'", sourcePath, filePath));
             sourcePath = sourcePath.substr(0, slashPos + 1);
         }
@@ -72,31 +73,31 @@ namespace stdext {
     bool is_valid_utf8(const std::string& src)
     {
         auto bytes = (const unsigned char*)src.c_str();
-        while(*bytes) {
-            if((// ASCII
+        while (*bytes) {
+            if ((// ASCII
                  // use bytes[0] <= 0x7F to allow ASCII control characters
-                bytes[0] == 0x09 ||
-                bytes[0] == 0x0A ||
-                bytes[0] == 0x0D ||
-                (0x20 <= bytes[0] && bytes[0] <= 0x7E)
-                )
+                 bytes[0] == 0x09 ||
+                 bytes[0] == 0x0A ||
+                 bytes[0] == 0x0D ||
+                 (0x20 <= bytes[0] && bytes[0] <= 0x7E)
+                 )
                ) {
                 bytes += 1;
                 continue;
             }
-            if((// non-overlong 2-byte
-                (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
-                (0x80 <= bytes[1] && bytes[1] <= 0xBF)
-                )
+            if ((// non-overlong 2-byte
+                 (0xC2 <= bytes[0] && bytes[0] <= 0xDF) &&
+                 (0x80 <= bytes[1] && bytes[1] <= 0xBF)
+                 )
                ) {
                 bytes += 2;
                 continue;
             }
-            if((// excluding overlongs
-                bytes[0] == 0xE0 &&
-                (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
-                (0x80 <= bytes[2] && bytes[2] <= 0xBF)
-                ) ||
+            if ((// excluding overlongs
+                 bytes[0] == 0xE0 &&
+                 (0xA0 <= bytes[1] && bytes[1] <= 0xBF) &&
+                 (0x80 <= bytes[2] && bytes[2] <= 0xBF)
+                 ) ||
                (// straight 3-byte
                 ((0xE1 <= bytes[0] && bytes[0] <= 0xEC) ||
                  bytes[0] == 0xEE ||
@@ -113,12 +114,12 @@ namespace stdext {
                 bytes += 3;
                 continue;
             }
-            if((// planes 1-3
-                bytes[0] == 0xF0 &&
-                (0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
-                (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
-                (0x80 <= bytes[3] && bytes[3] <= 0xBF)
-                ) ||
+            if ((// planes 1-3
+                 bytes[0] == 0xF0 &&
+                 (0x90 <= bytes[1] && bytes[1] <= 0xBF) &&
+                 (0x80 <= bytes[2] && bytes[2] <= 0xBF) &&
+                 (0x80 <= bytes[3] && bytes[3] <= 0xBF)
+                 ) ||
                (// planes 4-15
                 (0xF1 <= bytes[0] && bytes[0] <= 0xF3) &&
                 (0x80 <= bytes[1] && bytes[1] <= 0xBF) &&
@@ -143,22 +144,22 @@ namespace stdext {
     std::string utf8_to_latin1(const std::string& src)
     {
         std::string out;
-        for(uint i = 0; i < src.length();) {
+        for (uint i = 0; i < src.length();) {
             const uchar c = src[i++];
-            if((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
+            if ((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
                 out += c;
-            else if(c == 0xc2 || c == 0xc3) {
+            else if (c == 0xc2 || c == 0xc3) {
                 const uchar c2 = src[i++];
-                if(c == 0xc2) {
-                    if(c2 > 0xa1 && c2 < 0xbb)
+                if (c == 0xc2) {
+                    if (c2 > 0xa1 && c2 < 0xbb)
                         out += c2;
-                } else if(c == 0xc3)
+                } else if (c == 0xc3)
                     out += 64 + c2;
-            } else if(c >= 0xc4 && c <= 0xdf)
+            } else if (c >= 0xc4 && c <= 0xdf)
                 i += 1;
-            else if(c >= 0xe0 && c <= 0xed)
+            else if (c >= 0xe0 && c <= 0xed)
                 i += 2;
-            else if(c >= 0xf0 && c <= 0xf4)
+            else if (c >= 0xf0 && c <= 0xf4)
                 i += 3;
         }
         return out;
@@ -167,8 +168,8 @@ namespace stdext {
     std::string latin1_to_utf8(const std::string& src)
     {
         std::string out;
-        for(uchar c : src) {
-            if((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
+        for (uchar c : src) {
+            if ((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
                 out += c;
             else {
                 out += 0xc2 + (c > 0xbf);
@@ -185,7 +186,7 @@ namespace stdext {
     {
         std::wstring res;
         wchar_t out[4096];
-        if(MultiByteToWideChar(CP_UTF8, 0, src.c_str(), -1, out, 4096))
+        if (MultiByteToWideChar(CP_UTF8, 0, src.c_str(), -1, out, 4096))
             res = out;
         return res;
     }
@@ -194,7 +195,7 @@ namespace stdext {
     {
         std::string res;
         char out[4096];
-        if(WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, out, 4096, nullptr, nullptr))
+        if (WideCharToMultiByte(CP_UTF8, 0, src.c_str(), -1, out, 4096, nullptr, nullptr))
             res = out;
         return res;
     }
@@ -228,12 +229,12 @@ namespace stdext {
     void ucwords(std::string& str)
     {
         const uint32 strLen = str.length();
-        if(strLen == 0)
+        if (strLen == 0)
             return;
 
         str[0] = static_cast<char>(std::toupper(str[0]));
-        for(uint32 i = 1; i < strLen; ++i) {
-            if(str[i - 1] == ' ')
+        for (uint32 i = 1; i < strLen; ++i) {
+            if (str[i - 1] == ' ')
                 str[i] = static_cast<char>(std::toupper(str[i]));
         }
     }
@@ -241,7 +242,7 @@ namespace stdext {
     void replace_all(std::string& str, const std::string& search, const std::string& replacement)
     {
         size_t pos = 0;
-        while((pos = str.find(search, pos)) != std::string::npos) {
+        while ((pos = str.find(search, pos)) != std::string::npos) {
             str.replace(pos, search.length(), replacement);
             pos += replacement.length();
         }

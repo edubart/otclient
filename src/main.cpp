@@ -34,14 +34,14 @@ int main(int argc, const char* argv[])
     g_app.setCompactName("otclient");
 
 #if ENABLE_ENCRYPTION == 1
-    if(std::find(args.begin(), args.end(), "--encrypt") != args.end()) {
+    if (std::find(args.begin(), args.end(), "--encrypt") != args.end()) {
         g_lua.init();
         g_resources.init(args[0].c_str());
         g_resources.runEncryption(args.size() >= 3 ? args[2] : "");
         std::cout << "Encryption complete" << std::endl;
-#ifdef WIN32
+    #ifdef WIN32
         MessageBoxA(NULL, "Encryption complete", "Success", 0);
-#endif
+    #endif
         return 0;
     }
 #endif
@@ -51,10 +51,10 @@ int main(int argc, const char* argv[])
     g_client.init(args);
 
     // find script init.lua and run it
-    if(!g_resources.discoverWorkDir("init.lua"))
+    if (!g_resources.discoverWorkDir("init.lua"))
         g_logger.fatal("Unable to find work directory, the application cannot be initialized.");
 
-    if(!g_lua.safeRunScript("init.lua"))
+    if (!g_lua.safeRunScript("init.lua"))
         g_logger.fatal("Unable to run script init.lua!");
 
     // the run application main loop
