@@ -43,7 +43,9 @@ namespace stdext
     uint64_t hex_to_dec(const std::string& str);
     void tolower(std::string& str);
     void toupper(std::string& str);
-    void trim(std::string& str);
+    void ltrim(std::string& s);
+    void rtrim(std::string& s);
+    void trim(std::string& s);
     void ucwords(std::string& str);
     void eraseWhiteSpace(std::string& str);
     void replace_all(std::string& str, const std::string& search, const std::string& replacement);

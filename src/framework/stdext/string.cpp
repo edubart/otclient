@@ -20,7 +20,7 @@
  * THE SOFTWARE.
  */
 
-#include <boost/algorithm/string.hpp>
+#include <algorithm>
 
 #include "exception.h"
 #include "format.h"
@@ -221,9 +221,24 @@ namespace stdext
         std::transform(str.begin(), str.end(), str.begin(), [](int c) -> char { return static_cast<char>(::toupper(c)); });
     }
 
-    void trim(std::string& str)
+    void ltrim(std::string& s)
     {
-        boost::trim(str);
+        s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+            return !std::isspace(ch);
+        }));
+    }
+
+    void rtrim(std::string& s)
+    {
+        s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
+            return !std::isspace(ch);
+        }).base(), s.end());
+    }
+
+    void trim(std::string& s)
+    {
+        ltrim(s);
+        rtrim(s);
     }
 
     void ucwords(std::string& str)
@@ -255,8 +270,19 @@ namespace stdext
 
     std::vector<std::string> split(const std::string& str, const std::string& separators)
     {
-        std::vector<std::string> splitted;
-        boost::split(splitted, str, boost::is_any_of(separators));
-        return splitted;
+        std::vector<std::string> result;
+
+        size_t found = str.find(separators);
+        size_t startIndex = 0;
+
+        while (found != std::string::npos) {
+            result.push_back(std::string(str.begin() + startIndex, str.begin() + found));
+            startIndex = found + separators.size();
+            found = str.find(separators, startIndex);
+        }
+        if (startIndex != str.size())
+            result.push_back(std::string(str.begin() + startIndex, str.end()));
+
+        return result;
     }
 }
