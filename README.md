@@ -69,7 +69,7 @@ or connect to one listed on [otservlist](https://otservlist.org/).#
 
 Compiled for Windows can be found here (but can be outdated):
 
-- [Windows Builds](http://otland.net/threads/otclient-builds-windows.217977/)
+- [Windows Builds](https://github.com/mehah/otclient/releases)
 
 **NOTE:** You will need to download spr/dat files on your own and place them in `data/things/VERSION/` (i.e: `data/things/1098/Tibia.spr`)
 
