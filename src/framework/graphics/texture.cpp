@@ -24,6 +24,7 @@
 #include "framebuffer.h"
 #include "graphics.h"
 #include "image.h"
+#include <atomic>
 
 #include <framework/core/application.h>
 

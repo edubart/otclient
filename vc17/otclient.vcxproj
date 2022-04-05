@@ -661,7 +661,6 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\stdext\shared_ptr.h" />
     <ClInclude Include="..\src\framework\stdext\stdext.h" />
     <ClInclude Include="..\src\framework\stdext\string.h" />
-    <ClInclude Include="..\src\framework\stdext\thread.h" />
     <ClInclude Include="..\src\framework\stdext\time.h" />
     <ClInclude Include="..\src\framework\stdext\traits.h" />
     <ClInclude Include="..\src\framework\stdext\types.h" />

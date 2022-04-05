@@ -27,7 +27,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <memory>
 #include <sstream>
 
 #include <zlib.h>

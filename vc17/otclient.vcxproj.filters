@@ -809,9 +809,6 @@
     <ClInclude Include="..\src\framework\sound\streamsoundsource.h">
       <Filter>Header Files\framework\sound</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\any.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\framework\stdext\cast.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
@@ -822,9 +819,6 @@
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\dumper.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\dynamic_storage.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\exception.h">
@@ -855,9 +849,6 @@
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\string.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\thread.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\time.h">

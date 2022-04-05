@@ -25,7 +25,6 @@
 #include <framework/core/application.h>
 #include <framework/core/eventdispatcher.h>
 
-#include <memory>
 #include <utility>
 #include <boost/asio.hpp>
 
