@@ -241,7 +241,7 @@ void Protocol::onRecv(const InputMessagePtr& inputMessage)
     callLuaField("onRecv", inputMessage);
 }
 
-void Protocol::onError(const boost::system::error_code& err)
+void Protocol::onError(const std::error_code& err)
 {
     callLuaField("onError", err.message(), err.value());
     disconnect();

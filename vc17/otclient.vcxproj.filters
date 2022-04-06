@@ -1076,6 +1076,9 @@
     <ClInclude Include="..\src\client\spriteappearances.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\framework\util\uuid.h">
+      <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\src\otcicon.rc">

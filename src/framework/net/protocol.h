@@ -62,7 +62,7 @@ public:
 protected:
     virtual void onConnect();
     virtual void onRecv(const InputMessagePtr& inputMessage);
-    virtual void onError(const boost::system::error_code& err);
+    virtual void onError(const std::error_code& err);
 
     std::array<uint32, 4> m_xteaKey;
 

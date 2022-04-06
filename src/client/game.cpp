@@ -95,7 +95,7 @@ void Game::resetGameStates()
     g_map.resetAwareRange();
 }
 
-void Game::processConnectionError(const boost::system::error_code& ec)
+void Game::processConnectionError(const std::error_code& ec)
 {
     // connection errors only have meaning if we still have a protocol
     if (m_protocolGame) {

@@ -68,7 +68,7 @@ private:
     void resetGameStates();
 
 protected:
-    void processConnectionError(const boost::system::error_code& ec);
+    void processConnectionError(const std::error_code& ec);
     void processDisconnect();
     void processPing();
     void processPingBack();

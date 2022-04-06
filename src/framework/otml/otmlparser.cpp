@@ -21,7 +21,6 @@
  */
 
 #include "otmlparser.h"
-#include <boost/tokenizer.hpp>
 #include "otmldocument.h"
 #include "otmlexception.h"
 
@@ -188,8 +187,8 @@ void OTMLParser::parseNode(const std::string& data)
         node->setNull(true);
     else {
         if (value.starts_with("[") && value.ends_with("]")) {
-            std::string tmp = value.substr(1, value.length() - 2);
-            boost::tokenizer<boost::escaped_list_separator<char>> tokens(tmp);
+            const std::string tmp = value.substr(1, value.length() - 2);
+            const std::vector tokens = stdext::split(tmp, ",");
             for (std::string v : tokens) {
                 stdext::trim(v);
                 node->writeIn(v);

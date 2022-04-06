@@ -45,7 +45,7 @@ public:
 protected:
     void onConnect();
     void onRecv(uint8* buffer, uint16 size);
-    void onError(const boost::system::error_code& err);
+    void onError(const std::error_code& err);
 
 private:
     ConnectionPtr m_connection;
