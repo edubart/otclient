@@ -23,7 +23,6 @@
 #include "otmlparser.h"
 #include "otmldocument.h"
 #include "otmlexception.h"
-#include <boost/tokenizer.hpp>
 
 OTMLParser::OTMLParser(const OTMLDocumentPtr& doc, std::istream& in) :
     currentDepth(0), currentLine(0),
