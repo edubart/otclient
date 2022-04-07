@@ -21,10 +21,10 @@
  */
 
 #include "localplayer.h"
-#include <framework/core/eventdispatcher.h>
 #include "game.h"
 #include "map.h"
 #include "tile.h"
+#include <framework/core/eventdispatcher.h>
 
 LocalPlayer::LocalPlayer()
 {
@@ -94,18 +94,23 @@ bool LocalPlayer::retryAutoWalk()
 {
     if (m_autoWalkDestination.isValid()) {
         g_game.stop();
-        auto self = asLocalPlayer();
 
         if (m_autoWalkRetries <= 3) {
             if (m_autoWalkContinueEvent)
                 m_autoWalkContinueEvent->cancel();
-            m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, asLocalPlayer(), m_autoWalkDestination, true), 200);
-            self->m_autoWalkRetries += 1;
+
+            m_autoWalkContinueEvent = g_dispatcher.scheduleEvent([capture0 = asLocalPlayer(), this]
+            {
+                capture0->autoWalk(m_autoWalkDestination, true);
+            }, 200);
+            m_autoWalkRetries += 1;
+
             return true;
-        } else {
-            self->m_autoWalkDestination = Position();
         }
+
+        m_autoWalkDestination = {};
     }
+
     return false;
 }
 
@@ -147,7 +152,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 
     m_autoWalkDestination = destination;
     auto self(asLocalPlayer());
-    g_map.findPathAsync(m_position, destination, [self](PathFindResult_ptr result) {
+    g_map.findPathAsync(m_position, destination, [self](const PathFindResult_ptr& result) {
         if (self->m_autoWalkDestination != result->destination)
             return;
 
@@ -156,7 +161,8 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
                 if (self->m_autoWalkContinueEvent)
                     self->m_autoWalkContinueEvent->cancel();
 
-                self->m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(std::bind(&LocalPlayer::autoWalk, self, result->destination, true), 200 + self->m_autoWalkRetries * 100);
+                self->m_autoWalkContinueEvent = g_dispatcher.scheduleEvent(
+                    [self, capture0 = result->destination]{ self->autoWalk(capture0, true); }, 200 + self->m_autoWalkRetries * 100);
                 return;
             }
             self->m_autoWalkDestination = Position();
@@ -173,7 +179,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
             return;
         }
 
-        auto finalAutowalkPos = self->m_position.translatedToDirections(result->path).back();
+        const auto finalAutowalkPos = self->m_position.translatedToDirections(result->path).back();
         if (self->m_autoWalkDestination != finalAutowalkPos) {
             self->m_lastAutoWalkPosition = finalAutowalkPos;
         }
@@ -478,7 +484,7 @@ void LocalPlayer::setBlessings(int blessings)
 
 void LocalPlayer::setResourceBalance(Otc::ResourceTypes_t type, uint64_t value)
 {
-    uint64_t oldBalance = getResourceBalance(type);
+    const uint64_t oldBalance = getResourceBalance(type);
     if (value != oldBalance) {
         m_resourcesBalance[type] = value;
         callLuaField("onResourcesBalanceChange", value, oldBalance);

@@ -278,7 +278,7 @@ bool ResourceManager::makeDir(const std::string& directory)
 std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& directoryPath)
 {
     std::list<std::string> files;
-    const auto rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
+    auto* const rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
     for (int i = 0; rc[i] != nullptr; i++)
         files.emplace_back(rc[i]);
@@ -433,7 +433,7 @@ uint8_t* ResourceManager::decrypt(uint8_t* data, int32_t size)
     const auto& password = std::string(ENCRYPTION_PASSWORD);
     const int plen = password.length();
 
-    auto new_Data = new uint8_t[size];
+    auto* const new_Data = new uint8_t[size];
 
     int j = 0;
     for (int i = -1; ++i < size;) {
@@ -462,7 +462,7 @@ void ResourceManager::runEncryption(const std::string& password)
             continue;
 
         std::ifstream ifs(entry.path().string(), std::ios_base::binary);
-        std::string data((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+        std::string data((std::istreambuf_iterator(ifs)), std::istreambuf_iterator<char>());
         ifs.close();
         data = encrypt(data, password);
         save_string_into_file(data, entry.path().string());

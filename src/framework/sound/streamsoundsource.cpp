@@ -160,7 +160,7 @@ bool StreamSoundSource::fillBufferAndQueue(uint buffer)
             if (format == AL_FORMAT_STEREO16) {
                 assert(bytesRead % 2 == 0);
                 bytesRead /= 2;
-                const auto data = (uint16_t*)bufferData.data();
+                auto* const data = (uint16_t*)bufferData.data();
                 for (int i = 0; i < bytesRead / 2; i++)
                     data[i] = data[2 * i + (m_downMix == DownMixLeft ? 0 : 1)];
                 format = AL_FORMAT_MONO16;

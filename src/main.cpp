@@ -48,7 +48,7 @@ int main(int argc, const char* argv[])
 
     // initialize application framework and otclient
     g_app.init(args);
-    g_client.init(args);
+    Client::init(args);
 
     // find script init.lua and run it
     if (!g_resources.discoverWorkDir("init.lua"))
@@ -64,7 +64,7 @@ int main(int argc, const char* argv[])
     g_app.deinit();
 
     // terminate everything and free memory
-    g_client.terminate();
+    Client::terminate();
     g_app.terminate();
     return 0;
 }

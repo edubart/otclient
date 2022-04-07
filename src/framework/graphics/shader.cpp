@@ -54,7 +54,7 @@ Shader::~Shader()
 bool Shader::compileSourceCode(const std::string& sourceCode)
 {
 #ifndef OPENGL_ES
-    static auto qualifierDefines =
+    static const auto* qualifierDefines =
         "#define lowp\n"
         "#define mediump\n"
         "#define highp\n";

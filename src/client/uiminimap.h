@@ -23,8 +23,8 @@
 #ifndef UIMINIMAP_H
 #define UIMINIMAP_H
 
-#include <framework/ui/uiwidget.h>
 #include "declarations.h"
+#include <framework/ui/uiwidget.h>
 
 class UIMinimap : public UIWidget
 {

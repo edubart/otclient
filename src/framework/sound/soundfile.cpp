@@ -21,8 +21,8 @@
  */
 
 #include "soundfile.h"
-#include <framework/core/resourcemanager.h>
 #include "oggsoundfile.h"
+#include <framework/core/resourcemanager.h>
 
 #include "framework/stdext/time.h"
 

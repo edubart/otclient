@@ -23,9 +23,9 @@
 #ifndef UIMAP_H
 #define UIMAP_H
 
-#include <framework/ui/uiwidget.h>
 #include "declarations.h"
 #include "tile.h"
+#include <framework/ui/uiwidget.h>
 
 #include "mapview.h"
 

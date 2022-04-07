@@ -206,7 +206,7 @@ std::string Crypt::getMachineUUID()
 
 std::string Crypt::getCryptKey(bool useMachineUUID)
 {
-    const std::hash<uuids::uuid> uuid_hasher;
+    constexpr std::hash<uuids::uuid> uuid_hasher;
     const uuids::uuid uuid = useMachineUUID ? m_machineUUID : uuids::uuid();
     const uuids::uuid u = uuids::uuid_name_generator(uuid)
         (g_app.getCompactName() + g_platform.getCPUName() + g_platform.getOSName() + g_resources.getUserDir());

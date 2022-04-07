@@ -54,7 +54,7 @@ void AsyncDispatcher::stop()
 
 void AsyncDispatcher::exec_loop()
 {
-    std::unique_lock<std::mutex> lock(m_mutex);
+    std::unique_lock lock(m_mutex);
     while (true) {
         while (m_tasks.empty() && m_running)
             m_condition.wait(lock);

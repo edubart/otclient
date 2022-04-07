@@ -23,9 +23,9 @@
 #ifndef UIITEM_H
 #define UIITEM_H
 
-#include <framework/ui/uiwidget.h>
 #include "declarations.h"
 #include "item.h"
+#include <framework/ui/uiwidget.h>
 
 class UIItem : public UIWidget
 {

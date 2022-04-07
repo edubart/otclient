@@ -23,10 +23,10 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include <filesystem>
 #include "declarations.h"
+#include <filesystem>
 
- // @bindsingleton g_resources
+// @bindsingleton g_resources
 class ResourceManager
 {
 public:

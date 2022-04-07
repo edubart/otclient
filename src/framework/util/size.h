@@ -23,8 +23,8 @@
 #ifndef SIZE_H
 #define SIZE_H
 
-#include "point.h"
 #include "../const.h"
+#include "point.h"
 
 template<class T>
 class TSize

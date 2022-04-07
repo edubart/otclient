@@ -21,9 +21,9 @@
  */
 
 #include "uimapanchorlayout.h"
-#include <framework/ui/uiwidget.h>
 #include "declarations.h"
 #include "uiminimap.h"
+#include <framework/ui/uiwidget.h>
 
 int UIPositionAnchor::getHookedPoint(const UIWidgetPtr& hookedWidget, const UIWidgetPtr&)
 {

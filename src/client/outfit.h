@@ -23,8 +23,8 @@
 #ifndef OUTFIT_H
 #define OUTFIT_H
 
-#include <framework/util/color.h>
 #include "thingtypemanager.h"
+#include <framework/util/color.h>
 
 class Outfit
 {

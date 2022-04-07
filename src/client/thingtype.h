@@ -134,7 +134,7 @@ struct MarketData
 
 struct Light
 {
-    Light() {}
+    Light() = default;
     Light(uint8_t intensity, uint8_t color) : intensity(intensity), color(color) {}
     uint8 intensity = 0;
     uint8 color = 215;

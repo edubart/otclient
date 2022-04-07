@@ -38,16 +38,16 @@ public:
     template<class F>
     std::shared_future<typename std::invoke_result<F>::type> schedule(const F& task)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard lock(m_mutex);
         auto prom = std::make_shared<std::promise<typename std::invoke_result<F>::type>>();
         m_tasks.push_back([=]() { prom->set_value(task()); });
         m_condition.notify_all();
         return std::shared_future<typename std::invoke_result<F>::type>(prom->get_future());
     }
 
-    void dispatch(std::function<void()> f)
+    void dispatch(const std::function<void()>& f)
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard lock(m_mutex);
         m_tasks.push_back(f);
         m_condition.notify_all();
     }

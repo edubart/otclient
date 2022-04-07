@@ -21,9 +21,9 @@
  */
 
 #include "protocol.h"
-#include <random>
-#include <framework/core/application.h>
 #include "connection.h"
+#include <framework/core/application.h>
+#include <random>
 
 Protocol::Protocol()
 {
@@ -156,7 +156,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 void Protocol::generateXteaKey()
 {
     std::random_device rd;
-    std::uniform_int_distribution<uint32> unif;
+    const std::uniform_int_distribution<uint32> unif;
     std::generate(m_xteaKey.begin(), m_xteaKey.end(), [&]() { return unif(rd); });
 }
 

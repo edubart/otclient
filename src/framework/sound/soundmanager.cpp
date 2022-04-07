@@ -21,9 +21,9 @@
  */
 
 #include "combinedsoundsource.h"
-#include "soundmanager.h"
 #include "soundbuffer.h"
 #include "soundfile.h"
+#include "soundmanager.h"
 #include "soundsource.h"
 #include "streamsoundsource.h"
 

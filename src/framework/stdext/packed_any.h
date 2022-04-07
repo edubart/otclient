@@ -25,8 +25,8 @@
 
 #include <algorithm>
 #include <cassert>
-#include <typeinfo>
 #include <type_traits>
+#include <typeinfo>
 
 namespace stdext
 {
@@ -74,7 +74,7 @@ namespace stdext
         {}
         template<typename T>
         packed_any(const T& value, typename std::enable_if<!(can_pack_in_any<T>::value)>::type* = nullptr) :
-            content(new holder<T>(value)), scalar(false)
+            content(new holder<T>(value))
         {}
         ~packed_any()
         {

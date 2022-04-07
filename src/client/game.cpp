@@ -21,8 +21,6 @@
  */
 
 #include "game.h"
-#include <framework/core/application.h>
-#include <framework/core/eventdispatcher.h>
 #include "container.h"
 #include "creature.h"
 #include "localplayer.h"
@@ -30,9 +28,11 @@
 #include "map.h"
 #include "protocolcodes.h"
 #include "protocolgame.h"
+#include <framework/core/application.h>
+#include <framework/core/eventdispatcher.h>
 
-#include "tile.h"
 #include "framework/core/graphicalapplication.h"
+#include "tile.h"
 
 Game g_game;
 
@@ -658,7 +658,7 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs, Position startPos)
     if (!canPerformGameAction())
         return;
 
-    if (dirs.size() == 0)
+    if (dirs.empty())
         return;
 
     // protocol limits walk path
@@ -672,10 +672,10 @@ void Game::autoWalk(std::vector<Otc::Direction> dirs, Position startPos)
         cancelFollow();
     }
 
-    auto it = dirs.begin();
-    Otc::Direction direction = *it;
+    const auto it = dirs.begin();
+    const Otc::Direction direction = *it;
 
-    TilePtr toTile = g_map.getTile(startPos.translatedToDirection(direction));
+    const TilePtr toTile = g_map.getTile(startPos.translatedToDirection(direction));
     if (startPos == m_localPlayer->m_position && toTile && toTile->isWalkable() && !m_localPlayer->isWalking() && m_localPlayer->canWalk(true)) {
         m_localPlayer->preWalk(direction);
 

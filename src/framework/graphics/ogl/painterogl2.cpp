@@ -21,9 +21,9 @@
  */
 
 #include "painterogl2.h"
-#include <framework/platform/platformwindow.h>
-#include "painterogl2_shadersources.h"
 #include "framework/graphics/texture.h"
+#include "painterogl2_shadersources.h"
+#include <framework/platform/platformwindow.h>
 
 PainterOGL2* g_painterOGL2 = nullptr;
 

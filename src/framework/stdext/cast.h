@@ -148,7 +148,7 @@ namespace stdext
     class cast_exception : public exception
     {
     public:
-        ~cast_exception() throw() override = default;
+        ~cast_exception() noexcept override = default;
 
         template<class T, class R>
         void update_what()
@@ -158,7 +158,7 @@ namespace stdext
             m_what = ss.str();
         }
 
-        const char* what() const throw() override { return m_what.c_str(); }
+        const char* what() const noexcept override { return m_what.c_str(); }
     private:
         std::string m_what;
     };

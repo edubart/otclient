@@ -23,9 +23,9 @@
 #ifndef PLATFORMWINDOW_H
 #define PLATFORMWINDOW_H
 
-#include <framework/global.h>
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
+#include <framework/global.h>
 #include <framework/graphics/declarations.h>
 
  //@bindsingleton g_window

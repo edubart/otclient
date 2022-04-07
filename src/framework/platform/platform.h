@@ -23,9 +23,9 @@
 #ifndef PLATFORM_H
 #define PLATFORM_H
 
+#include <framework/stdext/types.h>
 #include <string>
 #include <vector>
-#include <framework/stdext/types.h>
 
 class Platform
 {

@@ -23,10 +23,10 @@
 #ifndef PROTOCOLGAME_H
 #define PROTOCOLGAME_H
 
-#include <framework/net/protocol.h>
 #include "creature.h"
 #include "declarations.h"
 #include "protocolcodes.h"
+#include <framework/net/protocol.h>
 
 class ProtocolGame : public Protocol
 {

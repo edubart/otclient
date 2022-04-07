@@ -23,8 +23,8 @@
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
-#include <framework/graphics/declarations.h>
 #include "declarations.h"
+#include <framework/graphics/declarations.h>
 
 constexpr uint8 MMBLOCK_SIZE = 64;
 constexpr uint8 OTMM_VERSION = 1;
@@ -101,10 +101,10 @@ public:
 
 private:
     Rect calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale);
-    bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].find(getBlockIndex(pos)) != m_tileBlocks[pos.z].end(); }
+    bool hasBlock(const Position& pos) { return m_tileBlocks[pos.z].contains(getBlockIndex(pos)); }
     MinimapBlock& getBlock(const Position& pos)
     {
-        std::lock_guard<std::mutex> lock(m_lock);
+        std::lock_guard lock(m_lock);
         auto& ptr = m_tileBlocks[pos.z][getBlockIndex(pos)];
         if (!ptr)
             ptr = std::make_shared<MinimapBlock>();

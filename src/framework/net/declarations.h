@@ -25,6 +25,8 @@
 
 #include <framework/global.h>
 #include <asio/ip/tcp.hpp>
+#include <asio/io_service.hpp>
+#include <asio/write.hpp>
 
 class InputMessage;
 class OutputMessage;

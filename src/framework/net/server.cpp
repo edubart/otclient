@@ -32,7 +32,7 @@ Server::Server(int port)
 ServerPtr Server::create(int port)
 {
     try {
-        auto server = new Server(port);
+        auto* server = new Server(port);
         return { server };
     } catch (const std::exception& e) {
         g_logger.error(stdext::format("Failed to initialize server: %s", e.what()));

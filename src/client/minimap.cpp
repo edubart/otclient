@@ -23,12 +23,12 @@
 #include "minimap.h"
 #include "tile.h"
 
-#include <zlib.h>
 #include <framework/core/filestream.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/graphics/drawpool.h>
 #include <framework/graphics/image.h>
 #include <framework/graphics/texture.h>
+#include <zlib.h>
 
 Minimap g_minimap;
 
@@ -90,7 +90,7 @@ void Minimap::terminate()
 
 void Minimap::clean()
 {
-    std::lock_guard<std::mutex> lock(m_lock);
+    std::lock_guard lock(m_lock);
     for (int i = 0; i <= MAX_Z; ++i)
         m_tileBlocks[i].clear();
 }
@@ -217,13 +217,13 @@ const MinimapTile& Minimap::getTile(const Position& pos)
 
 std::pair<MinimapBlock_ptr, MinimapTile> Minimap::threadGetTile(const Position& pos)
 {
-    std::lock_guard<std::mutex> lock(m_lock);
+    std::lock_guard lock(m_lock);
     static MinimapTile nulltile;
 
     if (pos.z <= MAX_Z && hasBlock(pos)) {
         MinimapBlock_ptr block = m_tileBlocks[pos.z][getBlockIndex(pos)];
         if (block) {
-            Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
+            const Point offsetPos = getBlockOffset(Point(pos.x, pos.y));
             return std::make_pair(block, block->getTile(pos.x - offsetPos.x, pos.y - offsetPos.y));
         }
     }
@@ -340,7 +340,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
 
         fin->seek(start);
 
-        const uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
+        constexpr uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
         std::vector<uchar> compressBuffer(compressBound(blockSize));
         std::vector<uchar> decompressBuffer(blockSize);
 
@@ -401,9 +401,9 @@ void Minimap::saveOtmm(const std::string& fileName)
         fin->addU16(start);
         fin->seek(start);
 
-        const uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile);
+        constexpr uint blockSize = MMBLOCK_SIZE * MMBLOCK_SIZE * sizeof(MinimapTile),
+            COMPRESS_LEVEL = 3;
         std::vector<uchar> compressBuffer(compressBound(blockSize));
-        const int COMPRESS_LEVEL = 3;
 
         for (uint8_t z = 0; z <= MAX_Z; ++z) {
             for (auto& it : m_tileBlocks[z]) {

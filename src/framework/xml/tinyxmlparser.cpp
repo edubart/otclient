@@ -59,9 +59,9 @@ TiXmlBase::Entity TiXmlBase::entity[NUM_ENTITY] =
 //                ef bf be
 //                ef bf bf
 
-const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
-const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
-const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
+constexpr unsigned char TIXML_UTF_LEAD_0 = 0xefU,
+TIXML_UTF_LEAD_1 = 0xbbU,
+TIXML_UTF_LEAD_2 = 0xbfU;
 
 const int TiXmlBase::utf8ByteTable[256] =
 {
@@ -86,9 +86,9 @@ const int TiXmlBase::utf8ByteTable[256] =
 
 void TiXmlBase::ConvertUTF32ToUTF8(unsigned long input, char* output, int* length)
 {
-    const unsigned long BYTE_MASK = 0xBF;
-    const unsigned long BYTE_MARK = 0x80;
-    const unsigned long FIRST_BYTE_MARK[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+    constexpr unsigned long BYTE_MASK = 0xBF,
+        BYTE_MARK = 0x80,
+        FIRST_BYTE_MARK[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
 
     if (input < 0x80)
         *length = 1;
@@ -209,7 +209,7 @@ void TiXmlParsingData::Stamp(const char* now, TiXmlEncoding encoding)
 
     while (p < now) {
         // Treat p as unsigned, so we have a happy compiler.
-        const auto pU = (const unsigned char*)p;
+        const auto* const pU = (const unsigned char*)p;
 
         // Code contributed by Fletcher Dunn: (modified by lee)
         switch (*pU) {
@@ -308,7 +308,7 @@ const char* TiXmlBase::SkipWhiteSpace(const char* p, TiXmlEncoding encoding)
     }
     if (encoding == TIXML_ENCODING_UTF8) {
         while (*p) {
-            const auto pU = (const unsigned char*)p;
+            const auto* const pU = (const unsigned char*)p;
 
             // Skip the stupid Microsoft UTF-8 Byte order marks
             if (*(pU + 0) == TIXML_UTF_LEAD_0
@@ -480,7 +480,7 @@ const char* TiXmlBase::GetEntity(const char* p, char* value, int* length, TiXmlE
     }
 
     // Now try to match it.
-    for (auto& i : entity) {
+    for (const auto& i : entity) {
         if (strncmp(i.str, p, i.strLength) == 0) {
             assert(strlen(i.str) == i.strLength);
             *value = i.chr;
@@ -669,7 +669,7 @@ const char* TiXmlDocument::Parse(const char* p, TiXmlParsingData* prevData, TiXm
 
     if (encoding == TIXML_ENCODING_UNKNOWN) {
         // Check for the Microsoft UTF-8 lead bytes.
-        const auto pU = (const unsigned char*)p;
+        const auto* const pU = (const unsigned char*)p;
         if (*(pU + 0) && *(pU + 0) == TIXML_UTF_LEAD_0
            && *(pU + 1) && *(pU + 1) == TIXML_UTF_LEAD_1
            && *(pU + 2) && *(pU + 2) == TIXML_UTF_LEAD_2) {
@@ -782,7 +782,7 @@ TiXmlNode* TiXmlNode::Identify(const char* p, TiXmlEncoding encoding)
     #ifdef DEBUG_PARSER
         TIXML_LOG("XML parsing CDATA\n");
     #endif
-        const auto text = new TiXmlText("");
+        auto* const text = new TiXmlText("");
         text->SetCDATA(true);
         returnNode = text;
     } else if (StringEqual(p, dtdHeader, false, encoding)) {
@@ -1021,7 +1021,7 @@ const char* TiXmlElement::Parse(const char* p, TiXmlParsingData* data, TiXmlEnco
             return nullptr;
         }
         // Try to read an attribute:
-        const auto attrib = new TiXmlAttribute();
+        auto* attrib = new TiXmlAttribute();
         if (!attrib) {
             return nullptr;
         }
@@ -1064,7 +1064,7 @@ const char* TiXmlElement::ReadValue(const char* p, TiXmlParsingData* data, TiXml
     while (p && *p) {
         if (*p != '<') {
             // Take what we have, make a text element.
-            const auto textNode = new TiXmlText("");
+            auto* textNode = new TiXmlText("");
 
             if (!textNode) {
                 return nullptr;
@@ -1193,8 +1193,8 @@ const char* TiXmlComment::Parse(const char* p, TiXmlParsingData* data, TiXmlEnco
         data->Stamp(p, encoding);
         location = data->Cursor();
     }
-    const auto startTag = "<!--";
-    const auto endTag = "-->";
+    const auto* const startTag = "<!--";
+    const auto* const endTag = "-->";
 
     if (!StringEqual(p, startTag, false, encoding)) {
         if (document)
@@ -1263,8 +1263,8 @@ const char* TiXmlAttribute::Parse(const char* p, TiXmlParsingData* data, TiXmlEn
     }
 
     const char* end;
-    const char SINGLE_QUOTE = '\'';
-    const char DOUBLE_QUOTE = '\"';
+    constexpr char SINGLE_QUOTE = '\'',
+        DOUBLE_QUOTE = '\"';
 
     if (*p == SINGLE_QUOTE) {
         ++p;
@@ -1336,8 +1336,8 @@ const char* TiXmlText::Parse(const char* p, TiXmlParsingData* data, TiXmlEncodin
         location = data->Cursor();
     }
 
-    const auto startTag = "<![CDATA[";
-    const auto endTag = "]]>";
+    const auto* const startTag = "<![CDATA[";
+    const auto* const endTag = "]]>";
 
     if (cdata || StringEqual(p, startTag, false, encoding)) {
         cdata = true;
@@ -1361,9 +1361,10 @@ const char* TiXmlText::Parse(const char* p, TiXmlParsingData* data, TiXmlEncodin
         p = ReadText(p, &dummy, false, endTag, false, encoding);
         return p;
     }
-    const bool ignoreWhite = true;
 
-    const auto end = "<";
+    constexpr bool ignoreWhite = true;
+
+    const auto* const end = "<";
     p = ReadText(p, &value, ignoreWhite, end, false, encoding);
     if (p && *p)
         return p - 1;    // don't truncate the '<'
@@ -1441,7 +1442,7 @@ const char* TiXmlDeclaration::Parse(const char* p, TiXmlParsingData* data, TiXml
 
 bool TiXmlText::Blank() const
 {
-    for (char i : value)
+    for (const char i : value)
         if (!IsWhiteSpace(i))
             return false;
     return true;

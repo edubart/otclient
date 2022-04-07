@@ -170,7 +170,7 @@ void UIManager::inputEvent(const InputEvent& event)
 
 void UIManager::updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos, bool fireClicks)
 {
-    UIWidgetPtr oldPressedWidget = m_pressedWidget;
+    const UIWidgetPtr oldPressedWidget = m_pressedWidget;
     m_pressedWidget = newPressedWidget;
 
     // when releasing mouse inside pressed widget area send onClick event
@@ -188,12 +188,12 @@ bool UIManager::updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Po
 {
     bool accepted = false;
 
-    UIWidgetPtr oldDraggingWidget = m_draggingWidget;
+    const UIWidgetPtr oldDraggingWidget = m_draggingWidget;
     m_draggingWidget = nullptr;
     if (oldDraggingWidget) {
         UIWidgetPtr droppedWidget;
         if (!clickedPos.isNull()) {
-            auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(clickedPos);
+            const auto clickedChildren = m_rootWidget->recursiveGetChildrenByPos(clickedPos);
             for (const UIWidgetPtr& child : clickedChildren) {
                 if (child->onDrop(oldDraggingWidget, clickedPos)) {
                     droppedWidget = child;
@@ -234,7 +234,7 @@ void UIManager::updateHoveredWidget(bool now)
         //}
 
         if (hoveredWidget != m_hoveredWidget) {
-            UIWidgetPtr oldHovered = m_hoveredWidget;
+            const UIWidgetPtr oldHovered = m_hoveredWidget;
             m_hoveredWidget = hoveredWidget;
             if (oldHovered) {
                 oldHovered->updateState(Fw::HoverState);
@@ -319,7 +319,7 @@ bool UIManager::importStyle(std::string file)
     try {
         file = g_resources.guessFilePath(file, "otui");
 
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
 
         for (const OTMLNodePtr& styleNode : doc->children())
             importStyleFromOTML(styleNode);
@@ -352,7 +352,7 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
         styleNode->writeAt("__unique", true);
     }
 
-    OTMLNodePtr oldStyle = m_styles[name];
+    const OTMLNodePtr oldStyle = m_styles[name];
 
     // Warn about redefined styles
     /*
@@ -364,10 +364,10 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     */
 
     if (!oldStyle || !oldStyle->valueAt("__unique", false) || unique) {
-        OTMLNodePtr originalStyle = getStyle(base);
+        const OTMLNodePtr originalStyle = getStyle(base);
         if (!originalStyle)
             stdext::throw_exception(stdext::format("base style '%s', is not defined", base));
-        OTMLNodePtr style = originalStyle->clone();
+        const OTMLNodePtr style = originalStyle->clone();
         style->merge(styleNode);
         style->setTag(name);
         m_styles[name] = style;
@@ -393,7 +393,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
 
 std::string UIManager::getStyleClass(const std::string& styleName)
 {
-    OTMLNodePtr style = getStyle(styleName);
+    const OTMLNodePtr style = getStyle(styleName);
     if (style && style->get("__class"))
         return style->valueAt("__class");
     return "";
@@ -404,7 +404,7 @@ UIWidgetPtr UIManager::loadUI(std::string file, const UIWidgetPtr& parent)
     try {
         file = g_resources.guessFilePath(file, "otui");
 
-        OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
         UIWidgetPtr widget;
         for (const OTMLNodePtr& node : doc->children()) {
             std::string tag = node->tag();
@@ -439,11 +439,11 @@ UIWidgetPtr UIManager::createWidget(const std::string& styleName, const UIWidget
 
 UIWidgetPtr UIManager::createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent)
 {
-    OTMLNodePtr originalStyleNode = getStyle(widgetNode->tag());
+    const OTMLNodePtr originalStyleNode = getStyle(widgetNode->tag());
     if (!originalStyleNode)
         stdext::throw_exception(stdext::format("'%s' is not a defined style", widgetNode->tag()));
 
-    OTMLNodePtr styleNode = originalStyleNode->clone();
+    const OTMLNodePtr styleNode = originalStyleNode->clone();
     styleNode->merge(widgetNode);
 
     const std::string widgetType = styleNode->valueAt("__class");

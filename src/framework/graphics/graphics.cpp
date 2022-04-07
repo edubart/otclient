@@ -35,10 +35,10 @@
 #include "dx/painterdx9.h"
 #endif
 
-#include <framework/graphics/graphics.h>
-#include <framework/platform/platformwindow.h>
 #include "framebuffermanager.h"
 #include "texturemanager.h"
+#include <framework/graphics/graphics.h>
+#include <framework/platform/platformwindow.h>
 
 Graphics g_graphics;
 

@@ -29,11 +29,11 @@ class LuaException : public stdext::exception
 {
 public:
     LuaException(const std::string& error, int traceLevel = -1);
-    ~LuaException() throw() override = default;
+    ~LuaException() noexcept override = default;
 
     void generateLuaErrorMessage(const std::string& error, int traceLevel);
 
-    const char* what() const throw() override { return m_what.c_str(); }
+    const char* what() const noexcept override { return m_what.c_str(); }
 
 protected:
     LuaException() = default;

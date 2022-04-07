@@ -23,8 +23,8 @@
 #ifndef BINARYTREE_H
 #define BINARYTREE_H
 
-#include <framework/util/databuffer.h>
 #include "declarations.h"
+#include <framework/util/databuffer.h>
 
 enum
 {

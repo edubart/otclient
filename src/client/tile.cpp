@@ -21,14 +21,14 @@
  */
 
 #include "tile.h"
-#include <framework/core/eventdispatcher.h>
-#include <framework/graphics/drawpool.h>
 #include "effect.h"
 #include "game.h"
 #include "item.h"
 #include "lightview.h"
 #include "map.h"
 #include "protocolgame.h"
+#include <framework/core/eventdispatcher.h>
+#include <framework/graphics/drawpool.h>
 
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(m_position.getPositionsAround()) {}
 
@@ -588,7 +588,7 @@ bool Tile::isClickable()
 
 bool Tile::canShade(const MapViewPtr& mapView)
 {
-    for (auto dir : { Otc::North, Otc::NorthWest, Otc::West }) {
+    for (const auto dir : { Otc::North, Otc::NorthWest, Otc::West }) {
         const auto& pos = m_position.translatedToDirection(dir);
         const auto& tile = g_map.getTile(pos);
 

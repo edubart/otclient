@@ -21,13 +21,13 @@
  */
 
 #include "client.h"
-#include <framework/core/resourcemanager.h>
 #include "game.h"
 #include "map.h"
 #include "minimap.h"
 #include "shadermanager.h"
-#include "spritemanager.h"
 #include "spriteappearances.h"
+#include "spritemanager.h"
+#include <framework/core/resourcemanager.h>
 
 Client g_client;
 

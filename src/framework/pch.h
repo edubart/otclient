@@ -40,12 +40,12 @@
 #include <iostream>
 #include <list>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <tuple>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include <memory>
 
 #endif

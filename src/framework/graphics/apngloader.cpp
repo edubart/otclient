@@ -143,10 +143,10 @@ void read_paeth_row(unsigned char* row, unsigned char* prev_row, unsigned int ro
             int a = row[i - bpp];
             int b = prev_row[i];
             int c = prev_row[i - bpp];
-            int p = b - c;
+            const int p = b - c;
             int pc = a - c;
-            int pa = abs(p);
-            int pb = abs(pc);
+            const int pa = abs(p);
+            const int pb = abs(pc);
             pc = abs(p + pc);
             row[i] += ((pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c);
         }
@@ -188,7 +188,7 @@ void compose0(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
     for (unsigned int j = 0; j < h; j++) {
         unsigned char* sp = src + 1;
         unsigned char* dp1 = dst1;
-        unsigned int* dp2 = (unsigned int*)dst2;
+        auto* dp2 = (unsigned int*)dst2;
 
         if (bop == PNG_BLEND_OP_SOURCE) {
             switch (depth) {
@@ -223,7 +223,7 @@ void compose2(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
     for (unsigned int j = 0; j < h; j++) {
         unsigned char* sp = src + 1;
         unsigned char* dp1 = dst1;
-        unsigned int* dp2 = (unsigned int*)dst2;
+        auto* dp2 = (unsigned int*)dst2;
 
         if (bop == PNG_BLEND_OP_SOURCE) {
             if (depth == 8) {
@@ -279,7 +279,7 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
     for (unsigned int j = 0; j < h; j++) {
         unsigned char* sp = src + 1;
         unsigned char* dp1 = dst1;
-        unsigned int* dp2 = (unsigned int*)dst2;
+        auto* dp2 = (unsigned int*)dst2;
 
         for (unsigned int i = 0; i < w; i++) {
             switch (depth) {
@@ -306,12 +306,12 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
                     if (a != 0) {
                         if ((a2 = (*dp2) >> 24) != 0) {
                             keep_original = 0;
-                            int u = a * 255;
-                            int v = (255 - a) * a2;
-                            int al = 255 * 255 - (255 - a) * (255 - a2);
-                            unsigned int b2 = ((*dp2) & 255);
-                            unsigned int g2 = (((*dp2) >> 8) & 255);
-                            unsigned int r2 = (((*dp2) >> 16) & 255);
+                            const int u = a * 255;
+                            const int v = (255 - a) * a2;
+                            const int al = 255 * 255 - (255 - a) * (255 - a2);
+                            const unsigned int b2 = ((*dp2) & 255);
+                            const unsigned int g2 = (((*dp2) >> 8) & 255);
+                            const unsigned int r2 = (((*dp2) >> 16) & 255);
                             b = (b * u + b2 * v) / al;
                             g = (g * u + g2 * v) / al;
                             r = (r * u + r2 * v) / al;
@@ -336,7 +336,7 @@ void compose4(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
     unsigned int    i;
     unsigned int    g, a, a2;
 
-    unsigned int step = (depth + 7) / 8;
+    const unsigned int step = (depth + 7) / 8;
 
     for (unsigned int j = 0; j < h; j++) {
         unsigned char* sp = src + 1;
@@ -360,10 +360,10 @@ void compose4(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
                 } else
                     if (a != 0) {
                         if ((a2 = *(dp + 1)) != 0) {
-                            int u = a * 255;
-                            int v = (255 - a) * a2;
-                            int al = 255 * 255 - (255 - a) * (255 - a2);
-                            unsigned int g2 = ((*dp) & 255);
+                            const int u = a * 255;
+                            const int v = (255 - a) * a2;
+                            const int al = 255 * 255 - (255 - a) * (255 - a2);
+                            const unsigned int g2 = ((*dp) & 255);
                             g = (g * u + g2 * v) / al;
                             a = al / 255;
                         }
@@ -384,11 +384,11 @@ void compose6(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
     unsigned int    r, g, b, a;
     unsigned int a2;
 
-    unsigned int step = (depth + 7) / 8;
+    const unsigned int step = (depth + 7) / 8;
 
     for (unsigned int j = 0; j < h; j++) {
         unsigned char* sp = src + 1;
-        unsigned int* dp = (unsigned int*)dst;
+        auto* dp = (unsigned int*)dst;
 
         if (bop == PNG_BLEND_OP_SOURCE) {
             for (i = 0; i < w; i++) {
@@ -410,12 +410,12 @@ void compose6(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
                 else
                     if (a != 0) {
                         if ((a2 = (*dp) >> 24) != 0) {
-                            int u = a * 255;
-                            int v = (255 - a) * a2;
-                            int al = 255 * 255 - (255 - a) * (255 - a2);
-                            unsigned int b2 = ((*dp) & 255);
-                            unsigned int g2 = (((*dp) >> 8) & 255);
-                            unsigned int r2 = (((*dp) >> 16) & 255);
+                            const int u = a * 255;
+                            const int v = (255 - a) * a2;
+                            const int al = 255 * 255 - (255 - a) * (255 - a2);
+                            const unsigned int b2 = ((*dp) & 255);
+                            const unsigned int g2 = (((*dp) >> 8) & 255);
+                            const unsigned int r2 = (((*dp) >> 16) & 255);
                             b = (b * u + b2 * v) / al;
                             g = (g * u + g2 * v) / al;
                             r = (r * u + r2 * v) / al;
@@ -841,13 +841,13 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     unsigned int idat_size = (rowbytes + 1) * height;
     unsigned int zbuf_size = idat_size + ((idat_size + 7) >> 3) + ((idat_size + 63) >> 6) + 11;
 
-    auto row_buf = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    auto sub_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    auto up_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    auto avg_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    auto paeth_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
-    auto zbuf1 = static_cast<unsigned char*>(malloc(zbuf_size));
-    auto zbuf2 = static_cast<unsigned char*>(malloc(zbuf_size));
+    auto* row_buf = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto* sub_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto* up_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto* avg_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto* paeth_row = static_cast<unsigned char*>(malloc(rowbytes + 1));
+    auto* zbuf1 = static_cast<unsigned char*>(malloc(zbuf_size));
+    auto* zbuf2 = static_cast<unsigned char*>(malloc(zbuf_size));
 
     if (!row_buf || !sub_row || !up_row || !avg_row || !paeth_row || !zbuf1 || !zbuf2) {
         free(row_buf);

@@ -37,6 +37,7 @@
 #include "player.h"
 #include "protocolgame.h"
 #include "shadermanager.h"
+#include "spriteappearances.h"
 #include "spritemanager.h"
 #include "statictext.h"
 #include "thingtypemanager.h"
@@ -49,7 +50,6 @@
 #include "uiminimap.h"
 #include "uiprogressrect.h"
 #include "uisprite.h"
-#include "spriteappearances.h"
 
 #include <framework/luaengine/luainterface.h>
 

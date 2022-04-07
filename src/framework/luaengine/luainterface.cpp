@@ -273,8 +273,8 @@ int LuaInterface::luaObjectEqualEvent(LuaInterface * lua)
 
     // check if obj1 == obj2
     if (lua->isUserdata(-1) && lua->isUserdata(-2)) {
-        const auto objPtr2 = static_cast<LuaObjectPtr*>(lua->popUserdata());
-        const auto objPtr1 = static_cast<LuaObjectPtr*>(lua->popUserdata());
+        auto* const objPtr2 = static_cast<LuaObjectPtr*>(lua->popUserdata());
+        auto* const objPtr1 = static_cast<LuaObjectPtr*>(lua->popUserdata());
         assert(objPtr1 && objPtr2);
         if (*objPtr1 == *objPtr2)
             ret = true;
@@ -288,7 +288,7 @@ int LuaInterface::luaObjectEqualEvent(LuaInterface * lua)
 int LuaInterface::luaObjectCollectEvent(LuaInterface * lua)
 {
     // gets object pointer
-    const auto objPtr = static_cast<LuaObjectPtr*>(lua->popUserdata());
+    auto* const objPtr = static_cast<LuaObjectPtr*>(lua->popUserdata());
     assert(objPtr);
 
     // resets pointer to decrease object use count
@@ -579,7 +579,7 @@ int LuaInterface::lua_dofile(lua_State*)
 
 int LuaInterface::lua_dofiles(lua_State*)
 {
-    std::string contains = "";
+    std::string contains;
     if (g_lua.getTop() > 2) {
         contains = g_lua.popString();
     }
@@ -627,7 +627,7 @@ int LuaInterface::luaErrorHandler(lua_State*)
 int LuaInterface::luaCppFunctionCallback(lua_State*)
 {
     // retrieves function pointer from userdata
-    const auto funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUpvalueUserdata());
+    auto* const funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUpvalueUserdata());
     assert(funcPtr);
 
     int numRets = 0;
@@ -652,7 +652,7 @@ int LuaInterface::luaCppFunctionCallback(lua_State*)
 
 int LuaInterface::luaCollectCppFunction(lua_State*)
 {
-    const auto funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUserdata());
+    auto* const funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUserdata());
     assert(funcPtr);
     funcPtr->reset();
     g_lua.m_totalFuncRefs--;
@@ -1242,7 +1242,7 @@ LuaObjectPtr LuaInterface::toObject(int index)
 {
     assert(hasIndex(index));
     if (isUserdata(index)) {
-        const auto objRef = static_cast<LuaObjectPtr*>(toUserdata(index));
+        auto* const objRef = static_cast<LuaObjectPtr*>(toUserdata(index));
         if (objRef && *objRef)
             return *objRef;
     }

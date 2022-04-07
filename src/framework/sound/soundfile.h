@@ -23,8 +23,8 @@
 #ifndef SOUNDFILE_H
 #define SOUNDFILE_H
 
-#include <framework/core/filestream.h>
 #include "declarations.h"
+#include <framework/core/filestream.h>
 
 class SoundFile : public stdext::shared_object
 {

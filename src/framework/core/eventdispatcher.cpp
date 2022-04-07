@@ -22,8 +22,8 @@
 
 #include "eventdispatcher.h"
 
-#include <framework/core/clock.h>
 #include "timer.h"
+#include <framework/core/clock.h>
 
 EventDispatcher g_dispatcher;
 

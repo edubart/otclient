@@ -23,11 +23,11 @@
 #ifndef UIMANAGER_H
 #define UIMANAGER_H
 
+#include "declarations.h"
 #include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
-#include "declarations.h"
 
- //@bindsingleton g_ui
+//@bindsingleton g_ui
 class UIManager
 {
 public:

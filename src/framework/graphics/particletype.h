@@ -23,10 +23,10 @@
 #ifndef PARTICLETYPE_H
 #define PARTICLETYPE_H
 
+#include "declarations.h"
 #include <framework/graphics/painter.h>
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
-#include "declarations.h"
 
 class ParticleType : public LuaObject
 {

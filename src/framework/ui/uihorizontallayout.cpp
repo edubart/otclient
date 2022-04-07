@@ -21,8 +21,8 @@
  */
 
 #include "uihorizontallayout.h"
-#include <framework/core/eventdispatcher.h>
 #include "uiwidget.h"
+#include <framework/core/eventdispatcher.h>
 
 void UIHorizontalLayout::applyStyle(const OTMLNodePtr& styleNode)
 {
@@ -36,7 +36,7 @@ void UIHorizontalLayout::applyStyle(const OTMLNodePtr& styleNode)
 
 bool UIHorizontalLayout::internalUpdate()
 {
-    UIWidgetPtr parentWidget = getParentWidget();
+    const UIWidgetPtr parentWidget = getParentWidget();
     if (!parentWidget)
         return false;
     UIWidgetList widgets = parentWidget->getChildren();

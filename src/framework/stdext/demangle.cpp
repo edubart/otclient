@@ -43,7 +43,7 @@ namespace stdext
 {
     const char* demangle_name(const char* name)
     {
-        static const unsigned BufferSize = 1024;
+        static constexpr unsigned BufferSize = 1024;
         static char Buffer[BufferSize] = {};
 
     #ifdef _MSC_VER

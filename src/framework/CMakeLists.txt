@@ -3,7 +3,6 @@
 # FRAMEWORK_GRAPHICS
 # FRAMEWORK_NET
 # FRAMEWORK_XML
-# FRAMEWORK_SQL
 
 # add framework cmake modules
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake;${CMAKE_MODULE_PATH}")
@@ -572,22 +571,6 @@ if(FRAMEWORK_XML)
         ${CMAKE_CURRENT_LIST_DIR}/xml/tinyxmlparser.cpp
     )
     set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_XML)
-endif()
-
-if(FRAMEWORK_SQL)
-    find_package(MySQL REQUIRED)
-
-    set(framework_INCLUDE_DIRS ${framework_INCLUDE_DIRS} ${MYSQL_INCLUDE_DIR})
-    set(framework_LIBRARIES ${MYSQL_LIBRARY} ${framework_LIBRARIES})
-
-    set(framework_SOURCES ${framework_SOURCES}
-        ${CMAKE_CURRENT_LIST_DIR}/sql/declarations.h
-        ${CMAKE_CURRENT_LIST_DIR}/sql/database.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/sql/database.h
-        ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.cpp
-        ${CMAKE_CURRENT_LIST_DIR}/sql/mysql.h
-    )
-    set(framework_DEFINITIONS ${framework_DEFINITIONS} -DFW_SQL)
 endif()
 
 if(EXTRA_LIBS)

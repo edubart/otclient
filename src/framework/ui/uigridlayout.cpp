@@ -74,11 +74,11 @@ void UIGridLayout::addWidget(const UIWidgetPtr&)
 bool UIGridLayout::internalUpdate()
 {
     bool changed = false;
-    UIWidgetPtr parentWidget = getParentWidget();
+    const UIWidgetPtr parentWidget = getParentWidget();
     if (!parentWidget)
         return false;
 
-    UIWidgetList widgets = parentWidget->getChildren();
+    const UIWidgetList widgets = parentWidget->getChildren();
 
     const Rect clippingRect = parentWidget->getPaddingRect();
     const Point topLeft = clippingRect.topLeft();

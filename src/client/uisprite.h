@@ -23,8 +23,8 @@
 #ifndef UISPRITE_H
 #define UISPRITE_H
 
-#include <framework/ui/uiwidget.h>
 #include "declarations.h"
+#include <framework/ui/uiwidget.h>
 
 class UISprite : public UIWidget
 {

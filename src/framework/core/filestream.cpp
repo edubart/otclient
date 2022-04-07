@@ -21,8 +21,8 @@
  */
 
 #include "filestream.h"
-#include <framework/core/application.h>
 #include "binarytree.h"
+#include <framework/core/application.h>
 
 #include <physfs.h>
 
@@ -114,7 +114,7 @@ int FileStream::read(void* buffer, uint32 size, uint32 nmemb)
         return res;
     }
     int writePos = 0;
-    auto outBuffer = static_cast<uint8*>(buffer);
+    auto* const outBuffer = static_cast<uint8*>(buffer);
     for (uint i = 0; i < nmemb; ++i) {
         if (m_pos + size > m_data.size())
             return i;

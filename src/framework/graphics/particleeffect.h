@@ -23,9 +23,9 @@
 #ifndef PARTICLEEFFECT_H
 #define PARTICLEEFFECT_H
 
+#include "declarations.h"
 #include <framework/luaengine/luaobject.h>
 #include <framework/otml/otml.h>
-#include "declarations.h"
 
 class ParticleEffectType : public LuaObject
 {

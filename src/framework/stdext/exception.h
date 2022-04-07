@@ -33,8 +33,8 @@ namespace stdext
     public:
         exception() = default;
         exception(std::string what) : m_what(std::move(what)) {}
-        ~exception() throw() override = default;;
-        const char* what() const throw() override { return m_what.c_str(); }
+        ~exception() noexcept override = default;;
+        const char* what() const noexcept override { return m_what.c_str(); }
     protected:
         std::string m_what;
     };

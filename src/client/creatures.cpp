@@ -72,7 +72,7 @@ void Spawn::load(TiXmlElement* node)
 
         cType->setSpawnTime(cNode->readType<int>("spawntime"));
         Otc::Direction dir = Otc::North;
-        int16 dir_ = cNode->readType<int16>("direction");
+        auto dir_ = cNode->readType<int16>("direction");
         if (dir_ >= Otc::East && dir_ <= Otc::West)
             dir = static_cast<Otc::Direction>(dir_);
         cType->setDirection(dir);
@@ -98,7 +98,7 @@ void Spawn::save(TiXmlElement* node)
 
     for (const auto& pair : m_creatures) {
         const CreatureTypePtr& creature = pair.second;
-        auto creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster");
+        auto* const creatureNode = new TiXmlElement(creature->getRace() == CreatureRaceNpc ? "npc" : "monster");
 
         if (!creatureNode)
             stdext::throw_exception("Spawn::save: Ran out of memory while allocating XML element!  Terminating now.");
@@ -264,14 +264,14 @@ void CreatureManager::saveSpawns(const std::string& fileName)
         TiXmlDocument doc;
         doc.SetTabSize(2);
 
-        auto decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+        auto* const decl = new TiXmlDeclaration("1.0", "UTF-8", "");
         doc.LinkEndChild(decl);
 
-        auto root = new TiXmlElement("spawns");
+        auto* const root = new TiXmlElement("spawns");
         doc.LinkEndChild(root);
 
         for (const auto& pair : m_spawns) {
-            auto elem = new TiXmlElement("spawn");
+            auto* const elem = new TiXmlElement("spawn");
             pair.second->save(elem);
             root->LinkEndChild(elem);
         }
@@ -318,7 +318,7 @@ void CreatureManager::internalLoadCreatureBuffer(TiXmlElement* attrib, const Cre
 
     Outfit out;
 
-    const int32 type = attrib->readType<int32>("type");
+    const auto type = attrib->readType<int32>("type");
     if (type > 0) {
         out.setCategory(ThingCategoryCreature);
         out.setId(type);

@@ -267,7 +267,7 @@ struct WindowProcProxy
 {
     static LRESULT CALLBACK call(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
-        auto window = static_cast<WIN32Window*>(&g_window);
+        auto* const window = static_cast<WIN32Window*>(&g_window);
         return window->windowProc(hWnd, uMsg, wParam, lParam);
     }
 };
@@ -289,8 +289,8 @@ void WIN32Window::internalCreateWindow()
 
     if (!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
-    const DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-    const DWORD dwStyle = WS_OVERLAPPEDWINDOW;
+    constexpr DWORD dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
+        dwStyle = WS_OVERLAPPEDWINDOW;
 
     // initialize in the center of the screen
     m_position = ((getDisplaySize() - m_size) / 2).toPoint();
@@ -390,7 +390,7 @@ void WIN32Window::internalCreateGLContext()
                                          0,                          // Reserved
                                          0, 0, 0 };                  // Layer Masks Ignored
 
-    uint pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
+    const uint pixelFormat = ChoosePixelFormat(m_deviceContext, &pfd);
     if (!pixelFormat)
         g_logger.fatal("Could not find a suitable pixel format");
 
@@ -559,7 +559,7 @@ Fw::Key WIN32Window::retranslateVirtualKey(WPARAM wParam, LPARAM lParam)
     }
 
     Fw::Key key = Fw::KeyUnknown;
-    if (m_keyMap.find(wParam) != m_keyMap.end())
+    if (m_keyMap.contains(wParam))
         key = m_keyMap[wParam];
 
     // actually ignore alt/ctrl/shift keys, they is states are already stored in m_inputEvent.keyboardModifiers
@@ -753,7 +753,7 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         }
         case WM_GETMINMAXINFO:
         {
-            const auto pMMI = (LPMINMAXINFO)lParam;
+            auto* const pMMI = (LPMINMAXINFO)lParam;
             const Rect adjustedRect = adjustWindowRect(Rect(0, 0, m_minimumSize));
             pMMI->ptMinTrackSize.x = adjustedRect.width();
             pMMI->ptMinTrackSize.y = adjustedRect.height();
@@ -946,7 +946,7 @@ void WIN32Window::setIcon(const std::string& file)
     const int n = image->getWidth() * image->getHeight();
     std::vector<uint32> iconData(n);
     for (int i = 0; i < n; ++i) {
-        auto pixel = (uint8*)&iconData[i];
+        auto* const pixel = (uint8*)&iconData[i];
         pixel[2] = *(image->getPixelData() + (i * 4) + 0);
         pixel[1] = *(image->getPixelData() + (i * 4) + 1);
         pixel[0] = *(image->getPixelData() + (i * 4) + 2);
@@ -982,7 +982,7 @@ void WIN32Window::setClipboardText(const std::string& text)
 
     std::wstring wtext = stdext::latin1_to_utf16(text);
 
-    const auto lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+    auto* const lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
     memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
     lpwstr[text.length()] = static_cast<WCHAR>(0);
     GlobalUnlock(hglb);
@@ -1006,7 +1006,7 @@ std::string WIN32Window::getClipboardText()
 
     const HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if (hglb) {
-        const auto lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+        auto* const lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
         if (lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);

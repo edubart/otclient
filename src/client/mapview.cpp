@@ -138,14 +138,14 @@ void MapView::drawFloor()
 
         for (int_fast8_t z = m_floorMax; z >= m_floorMin; --z) {
             if (canFloorFade()) {
-                float fading = getFadeLevel(z);
+                const float fading = getFadeLevel(z);
                 if (fading == 0) break;
                 if (fading < 0.99)
                     g_drawPool.setOpacity(fading);
             }
 
             Position _camera = cameraPosition;
-            bool alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && z < m_cachedFirstVisibleFloor&& _camera.coveredUp(cameraPosition.z - z);
+            bool alwaysTransparent = m_floorViewMode == ALWAYS_WITH_TRANSPARENCY && z < m_cachedFirstVisibleFloor&& _camera.coveredUp(cameraPosition.z - z);
 
             const auto& map = m_cachedVisibleTiles[z];
 
@@ -203,7 +203,7 @@ void MapView::drawFloor()
                         continue;
 
                     _camera = cameraPosition;
-                    alwaysTransparent = m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
+                    alwaysTransparent = m_floorViewMode == ALWAYS_WITH_TRANSPARENCY && nextFloor < cameraPosition.z&& _camera.coveredUp(cameraPosition.z - nextFloor);
 
                     for (const auto& tile : m_cachedVisibleTiles[nextFloor].shades) {
                         if (alwaysTransparent && tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true))
@@ -253,7 +253,7 @@ void MapView::drawCreatureInformation()
         if (!tile) continue;
 
         bool useGray = false;
-        if (m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY) {
+        if (m_floorViewMode == ALWAYS_WITH_TRANSPARENCY) {
             useGray = tile->isCovered() && !tile->getPosition().isInRange(cameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true);
         } else if (canFloorFade()) {
             useGray = g_map.isCovered(tile->getPosition(), m_cachedFirstVisibleFloor);
@@ -321,13 +321,13 @@ void MapView::updateVisibleTilesCache()
         m_visibleCreatures.clear();
     }
 
-    if (m_floorViewMode == FloorViewMode::LOCKED) {
+    if (m_floorViewMode == LOCKED) {
         m_lockedFirstVisibleFloor = cameraPosition.z;
     } else {
         m_lockedFirstVisibleFloor = -1;
     }
 
-    uint8 prevFirstVisibleFloor = m_cachedFirstVisibleFloor;
+    const uint8 prevFirstVisibleFloor = m_cachedFirstVisibleFloor;
     if (m_lastCameraPosition != cameraPosition) {
         if (m_mousePosition.isValid()) {
             const Otc::Direction direction = m_lastCameraPosition.getDirectionFromPosition(cameraPosition);
@@ -345,7 +345,7 @@ void MapView::updateVisibleTilesCache()
             onFloorChange(cameraPosition.z, m_lastCameraPosition.z);
         }
 
-        const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor(m_floorViewMode != FloorViewMode::ALWAYS);
+        const uint8 cachedFirstVisibleFloor = calcFirstVisibleFloor(m_floorViewMode != ALWAYS);
         uint8 cachedLastVisibleFloor = calcLastVisibleFloor();
 
         assert(cachedFirstVisibleFloor <= MAX_Z && cachedLastVisibleFloor <= MAX_Z);
@@ -362,7 +362,7 @@ void MapView::updateVisibleTilesCache()
     const bool _canFloorFade = canFloorFade();
 
     uint8 cachedFirstVisibleFloor = m_cachedFirstVisibleFloor;
-    if (m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY || _canFloorFade) {
+    if (m_floorViewMode == ALWAYS_WITH_TRANSPARENCY || _canFloorFade) {
         cachedFirstVisibleFloor = calcFirstVisibleFloor(false);
     }
 
@@ -373,12 +373,12 @@ void MapView::updateVisibleTilesCache()
         }
     } else if (prevFirstVisibleFloor < m_cachedFirstVisibleFloor) { // showing new floor
         for (int iz = prevFirstVisibleFloor; iz < m_cachedFirstVisibleFloor; ++iz) {
-            int shift = std::max<int>(0, m_floorFading - m_fadingFloorTimers[iz].elapsed_millis());
+            const int shift = std::max<int>(0, m_floorFading - m_fadingFloorTimers[iz].elapsed_millis());
             m_fadingFloorTimers[iz].restart(shift * 1000);
         }
     } else if (prevFirstVisibleFloor > m_cachedFirstVisibleFloor) { // hiding floor
         for (int iz = m_cachedFirstVisibleFloor; iz < prevFirstVisibleFloor; ++iz) {
-            int shift = std::max<int>(0, m_floorFading - m_fadingFloorTimers[iz].elapsed_millis());
+            const int shift = std::max<int>(0, m_floorFading - m_fadingFloorTimers[iz].elapsed_millis());
             m_fadingFloorTimers[iz].restart(shift * 1000);
         }
     }
@@ -420,7 +420,7 @@ void MapView::updateVisibleTilesCache()
                     if (!_canFloorFade || fadeFinished) {
                         // skip tiles that are completely behind another tile
                         if (tile->isCompletelyCovered(m_cachedFirstVisibleFloor)) {
-                            if (m_floorViewMode != FloorViewMode::ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
+                            if (m_floorViewMode != ALWAYS_WITH_TRANSPARENCY || (tilePos.z < cameraPosition.z && tile->isCovered())) {
                                 addTile = false;
                             }
                         }
@@ -642,7 +642,7 @@ Position MapView::getPosition(const Point& point, const Size& mapSize)
     if (tilePos2D.x + cameraPosition.x < 0 && tilePos2D.y + cameraPosition.y < 0)
         return {};
 
-    Position position = Position(tilePos2D.x, tilePos2D.y, 0) + cameraPosition;
+    const Position position = Position(tilePos2D.x, tilePos2D.y, 0) + cameraPosition;
 
     if (!position.isValid())
         return {};
@@ -779,7 +779,7 @@ TilePtr MapView::getTopTile(Position tilePos)
     // we must check every floor, from top to bottom to check for a clickable tile
     TilePtr tile;
 
-    if (m_floorViewMode == FloorViewMode::ALWAYS_WITH_TRANSPARENCY && tilePos.isInRange(m_lastCameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE))
+    if (m_floorViewMode == ALWAYS_WITH_TRANSPARENCY && tilePos.isInRange(m_lastCameraPosition, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE))
         tile = g_map.getTile(tilePos);
     else {
         tilePos.coveredUp(tilePos.z - m_cachedFirstVisibleFloor);

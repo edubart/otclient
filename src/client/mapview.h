@@ -23,11 +23,11 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+#include "lightview.h"
 #include <framework/core/inputevent.h>
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/luaengine/luaobject.h>
-#include "lightview.h"
 
 struct AwareRange
 {
@@ -60,7 +60,7 @@ public:
     ~MapView() override;
     void draw(const Rect& rect);
 
-public:
+
     // floor visibility related
     uint8 getLockedFirstVisibleFloor() { return m_lockedFirstVisibleFloor; }
     uint8 getCachedFirstVisibleFloor() { return m_cachedFirstVisibleFloor; }
@@ -197,7 +197,7 @@ private:
 
     void updateViewport(const Otc::Direction dir = Otc::InvalidDirection) { m_viewport = m_viewPortDirection[dir]; }
 
-    bool canFloorFade() { return m_floorViewMode == FloorViewMode::FADE && m_floorFading; }
+    bool canFloorFade() { return m_floorViewMode == FADE && m_floorFading; }
 
     float getFadeLevel(uint8 z)
     {

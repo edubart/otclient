@@ -77,7 +77,7 @@ void Mouse::popCursor(const std::string& name)
     if (m_cursorStack.empty())
         return;
 
-    if (name.empty() || m_cursors.find(name) == m_cursors.end())
+    if (name.empty() || !m_cursors.contains(name))
         m_cursorStack.pop_back();
     else {
         const int cursorId = m_cursors[name];

@@ -21,8 +21,8 @@
  */
 
 #include "protocolhttp.h"
-#include <framework/core/application.h>
 #include "connection.h"
+#include <framework/core/application.h>
 
 ProtocolHttp::ProtocolHttp()
 = default;

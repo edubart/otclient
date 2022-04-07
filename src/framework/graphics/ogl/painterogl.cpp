@@ -254,7 +254,7 @@ void PainterOGL::pushTransformMatrix()
 
 void PainterOGL::popTransformMatrix()
 {
-    assert(m_transformMatrixStack.size() > 0);
+    assert(!m_transformMatrixStack.empty());
     setTransformMatrix(m_transformMatrixStack.back());
     m_transformMatrixStack.pop_back();
 }

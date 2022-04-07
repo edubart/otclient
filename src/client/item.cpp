@@ -181,7 +181,7 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
     out->addU8(ATTR_CHARGES);
     out->addU16(getCountOrSubType());
 
-    const Position dest = m_attribs.get<Position>(ATTR_TELE_DEST);
+    const auto dest = m_attribs.get<Position>(ATTR_TELE_DEST);
     if (dest.isValid()) {
         out->addU8(ATTR_TELE_DEST);
         out->addPos(dest.x, dest.y, dest.z);
@@ -197,8 +197,8 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU8(getDoorId());
     }
 
-    const uint16 aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
-    const uint16 uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
+    const auto aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
+    const auto uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
     if (aid) {
         out->addU8(ATTR_ACTION_ID);
         out->addU16(aid);

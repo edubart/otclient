@@ -23,11 +23,11 @@
 #ifndef SHOT_H
 #define SHOT_H
 
-#include <framework/global.h>
-#include <framework/core/timer.h>
 #include "thing.h"
+#include <framework/core/timer.h>
+#include <framework/global.h>
 
- // @bindclass
+// @bindclass
 class Missile : public Thing
 {
 public:

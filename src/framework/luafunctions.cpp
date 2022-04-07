@@ -58,10 +58,6 @@
 #include <framework/net/server.h>
 #endif
 
-#ifdef FW_SQL
-#include <framework/sql/mysql.h>
-#endif
-
 void Application::registerLuaFunctions()
 {
     // conversion globals
@@ -855,55 +851,5 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<SoundChannel>("setEnabled", &SoundChannel::setEnabled);
     g_lua.bindClassMemberFunction<SoundChannel>("isEnabled", &SoundChannel::isEnabled);
     g_lua.bindClassMemberFunction<SoundChannel>("getId", &SoundChannel::getId);
-#endif
-
-#ifdef FW_SQL
-    // Database
-    g_lua.registerClass<Database>();
-    g_lua.bindClassMemberFunction<Database>("getDatabaseEngine", &Database::getDatabaseEngine);
-    g_lua.bindClassMemberFunction<Database>("isConnected", &Database::isConnected);
-    g_lua.bindClassMemberFunction<Database>("getStringComparer", &Database::getStringComparer);
-    g_lua.bindClassMemberFunction<Database>("getUpdateLimiter", &Database::getUpdateLimiter);
-    g_lua.bindClassMemberFunction<Database>("getLastInsertedRowID", &Database::getLastInsertedRowID);
-    g_lua.bindClassMemberFunction<Database>("escapeString", &Database::escapeString);
-    //g_lua.bindClassMemberFunction<Database>("escapeBlob", &Database::escapeBlob); // need to write a cast for this type to work (if needed)
-
-    // DBQuery
-    /* (not sure if this class will work as a luafunction)
-    g_lua.registerClass<DBQuery>();
-    g_lua.bindClassStaticFunction<DBQuery>("create", []{ return DBQuery(); });
-    g_lua.bindClassMemberFunction<DBQuery>("append", &DBQuery::append);
-    g_lua.bindClassMemberFunction<DBQuery>("set", &DBQuery::set);
-    */
-
-    // DBResult
-    g_lua.registerClass<DBResult>();
-    g_lua.bindClassMemberFunction<DBResult>("getDataInt", &DBResult::getDataInt);
-    g_lua.bindClassMemberFunction<DBResult>("getDataLong", &DBResult::getDataLong);
-    g_lua.bindClassMemberFunction<DBResult>("getDataString", &DBResult::getDataString);
-    //g_lua.bindClassMemberFunction<DBResult>("getDataStream", &DBResult::getDataStream); // need to write a cast for this type to work (if needed)
-    g_lua.bindClassMemberFunction<DBResult>("getRowCount", &DBResult::getRowCount);
-    g_lua.bindClassMemberFunction<DBResult>("free", &DBResult::free);
-    g_lua.bindClassMemberFunction<DBResult>("next", &DBResult::next);
-
-    // MySQL
-    g_lua.registerClass<DatabaseMySQL, Database>();
-    g_lua.bindClassStaticFunction<DatabaseMySQL>("create", [] { return DatabaseMySQLPtr(new DatabaseMySQL); });
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("connect", &DatabaseMySQL::connect);
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("beginTransaction", &DatabaseMySQL::beginTransaction);
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("rollback", &DatabaseMySQL::rollback);
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("commit", &DatabaseMySQL::commit);
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("executeQuery", &DatabaseMySQL::executeQuery);
-    g_lua.bindClassMemberFunction<DatabaseMySQL>("storeQuery", &DatabaseMySQL::storeQuery);
-
-    // MySQLResult
-    g_lua.registerClass<MySQLResult>();
-    g_lua.bindClassMemberFunction<MySQLResult>("getDataInt", &MySQLResult::getDataInt);
-    g_lua.bindClassMemberFunction<MySQLResult>("getDataLong", &MySQLResult::getDataLong);
-    g_lua.bindClassMemberFunction<MySQLResult>("getDataString", &MySQLResult::getDataString);
-    //g_lua.bindClassMemberFunction<MySQLResult>("getDataStream", &MySQLResult::getDataStream); // need to write a cast for this type to work (if needed)
-    g_lua.bindClassMemberFunction<MySQLResult>("getRowCount", &MySQLResult::getRowCount);
-    g_lua.bindClassMemberFunction<MySQLResult>("free", &MySQLResult::free);
-    g_lua.bindClassMemberFunction<MySQLResult>("next", &MySQLResult::next);
 #endif
 }

@@ -92,7 +92,7 @@ public:
     int getBlessings() { return m_blessings; }
     uint64_t getResourceBalance(Otc::ResourceTypes_t type)
     {
-        auto it = m_resourcesBalance.find(type);
+        const auto it = m_resourcesBalance.find(type);
         return it != m_resourcesBalance.end() ? it->second : 0;
     }
 
@@ -117,7 +117,7 @@ protected:
 
     friend class Game;
 
-protected:
+
     void updateWalkOffset(int totalPixelsWalked) override;
     void terminateWalk() override;
 

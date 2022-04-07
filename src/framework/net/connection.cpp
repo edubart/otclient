@@ -23,9 +23,10 @@
 #include "connection.h"
 
 #include <framework/core/application.h>
-#include <framework/core/eventdispatcher.h>
 
 #include <utility>
+#include <asio/read.hpp>
+#include <asio/read_until.hpp>
 
 asio::io_service g_ioService;
 std::list<std::shared_ptr<asio::streambuf>> Connection::m_outputStreams;
@@ -241,7 +242,8 @@ void Connection::read_some(const RecvCallback& callback)
     });
 }
 
-void Connection::onResolve(const std::error_code& error, asio::ip::basic_resolver<asio::ip::tcp>::iterator endpointIterator)
+void Connection::onResolve(const std::error_code& error, const asio::ip::basic_resolver<asio::ip::tcp>::iterator&
+                           endpointIterator)
 {
     m_readTimer.cancel();
 
@@ -249,7 +251,7 @@ void Connection::onResolve(const std::error_code& error, asio::ip::basic_resolve
         return;
 
     if (!error)
-        internal_connect(std::move(endpointIterator));
+        internal_connect(endpointIterator);
     else
         handleError(error);
 }
@@ -315,7 +317,7 @@ void Connection::onRecv(const std::error_code& error, size_t recvSize)
     if (m_connected) {
         if (!error) {
             if (m_recvCallback) {
-                auto header = asio::buffer_cast<const char*>(m_inputStream.data());
+                const auto* header = asio::buffer_cast<const char*>(m_inputStream.data());
                 m_recvCallback((uint8*)header, recvSize);
             }
         } else

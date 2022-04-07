@@ -146,7 +146,7 @@ void HouseManager::load(const std::string & fileName)
             if (elem->ValueTStr() != "house")
                 stdext::throw_exception("invalid house tag.");
 
-            const uint32 houseId = elem->readType<uint32>("houseid");
+            const auto houseId = elem->readType<uint32>("houseid");
             HousePtr house = getHouse(houseId);
             if (!house)
                 house = HousePtr(new House(houseId)), addHouse(house);
@@ -165,14 +165,14 @@ void HouseManager::save(const std::string & fileName)
         TiXmlDocument doc;
         doc.SetTabSize(2);
 
-        auto decl = new TiXmlDeclaration("1.0", "UTF-8", "");
+        auto* const decl = new TiXmlDeclaration("1.0", "UTF-8", "");
         doc.LinkEndChild(decl);
 
-        auto root = new TiXmlElement("houses");
+        auto* const root = new TiXmlElement("houses");
         doc.LinkEndChild(root);
 
         for (const auto& house : m_houses) {
-            auto elem = new TiXmlElement("house");
+            auto* const elem = new TiXmlElement("house");
             house->save(elem);
             root->LinkEndChild(elem);
         }

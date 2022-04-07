@@ -23,10 +23,10 @@
 #ifndef STDEXT_TYPES_H
 #define STDEXT_TYPES_H
 
+#include <any>
 #include <cstddef>
 #include <cstdint>
 #include <unordered_map>
-#include <any>
 
 using uchar = unsigned char;
 using ushort = unsigned short;

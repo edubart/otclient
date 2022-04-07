@@ -21,11 +21,11 @@
  */
 
 #include "statictext.h"
+#include "framework/core/graphicalapplication.h"
+#include "map.h"
 #include <framework/core/clock.h>
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/fontmanager.h>
-#include "map.h"
-#include "framework/core/graphicalapplication.h"
 
 StaticText::StaticText()
 {

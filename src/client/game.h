@@ -23,7 +23,6 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <framework/core/timer.h>
 #include "animatedtext.h"
 #include "container.h"
 #include "creature.h"
@@ -31,6 +30,7 @@
 #include "item.h"
 #include "outfit.h"
 #include "protocolgame.h"
+#include <framework/core/timer.h>
 
 #include <bitset>
 

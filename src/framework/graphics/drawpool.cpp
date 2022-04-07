@@ -21,11 +21,11 @@
  */
 
 #include "drawpool.h"
-#include <framework/graphics/framebuffermanager.h>
 #include "declarations.h"
+#include <framework/graphics/framebuffermanager.h>
 
-#include <utility>
 #include "painter.h"
+#include <utility>
 
 DrawPool g_drawPool;
 
@@ -121,7 +121,7 @@ void DrawPool::draw()
     for (const auto& pool : m_pools) {
         if (!pool->isEnabled()) continue;
         if (pool->hasFrameBuffer()) {
-            const auto pf = pool->toFramedPool();
+            const auto* const pf = pool->toFramedPool();
 
             g_painter->saveAndResetState();
             if (pf->m_beforeDraw) pf->m_beforeDraw();

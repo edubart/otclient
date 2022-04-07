@@ -23,8 +23,8 @@
 #include "framework/core/graphicalapplication.h"
 #if defined(WIN32) && defined(CRASH_HANDLER)
 
-#include <framework/global.h>
 #include "crashhandler.h"
+#include <framework/global.h>
 
 #include <windows.h>
 #include <winsock2.h>
@@ -82,7 +82,7 @@ void Stacktrace(LPEXCEPTION_POINTERS e, std::stringstream& ss)
     char modname[MAX_PATH];
     char symBuffer[sizeof(IMAGEHLP_SYMBOL) + 255];
 
-    PIMAGEHLP_SYMBOL pSym = (PIMAGEHLP_SYMBOL)symBuffer;
+    auto* pSym = (PIMAGEHLP_SYMBOL)symBuffer;
 
     ZeroMemory(&sf, sizeof(sf));
 #ifdef _WIN64

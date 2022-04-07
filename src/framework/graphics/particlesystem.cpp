@@ -21,9 +21,9 @@
  */
 
 #include "particlesystem.h"
-#include <framework/core/clock.h>
 #include "particle.h"
 #include "particleaffector.h"
+#include <framework/core/clock.h>
 
 ParticleSystem::ParticleSystem()
 {
@@ -67,7 +67,7 @@ void ParticleSystem::render()
 
 void ParticleSystem::update()
 {
-    static const float delay = 0.0166; // 60 updates/s
+    static constexpr float delay = 0.0166; // 60 updates/s
 
     // check time
     const float elapsedTime = g_clock.seconds() - m_lastUpdateTime;

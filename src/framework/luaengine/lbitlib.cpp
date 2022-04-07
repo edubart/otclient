@@ -149,7 +149,7 @@ union luai_Cast2 { double l_d; LUAI_INT32 l_p[2]; };
 
 static void lua_pushunsigned(lua_State* L, lua_Unsigned u)
 {
-    lua_Number n = lua_unsigned2number(u);
+    const lua_Number n = lua_unsigned2number(u);
     lua_pushnumber(L, n);
 }
 
@@ -220,7 +220,7 @@ using b_uint = lua_Unsigned;
 
 static b_uint andaux(lua_State* L)
 {
-    int n = lua_gettop(L);
+    const int n = lua_gettop(L);
     b_uint r = ~static_cast<b_uint>(0);
     for (int i = 1; i <= n; i++)
         r &= luaL_checkunsigned(L, i);
@@ -243,7 +243,7 @@ static int b_test(lua_State* L)
 
 static int b_or(lua_State* L)
 {
-    int n = lua_gettop(L);
+    const int n = lua_gettop(L);
     b_uint r = 0;
     for (int i = 1; i <= n; i++)
         r |= luaL_checkunsigned(L, i);
@@ -253,7 +253,7 @@ static int b_or(lua_State* L)
 
 static int b_xor(lua_State* L)
 {
-    int n = lua_gettop(L);
+    const int n = lua_gettop(L);
     b_uint r = 0;
     for (int i = 1; i <= n; i++)
         r ^= luaL_checkunsigned(L, i);
@@ -367,7 +367,7 @@ static int b_replace(lua_State* L)
     return 1;
 }
 
-static const luaL_Reg bitlib[] = {
+static constexpr luaL_Reg bitlib[] = {
   {"arshift", b_arshift},
   {"band", b_and},
   {"bnot", b_not},

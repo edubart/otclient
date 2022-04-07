@@ -23,8 +23,8 @@
 #ifndef UIMAPANCHORLAYOUT_H
 #define UIMAPANCHORLAYOUT_H
 
-#include <framework/ui/uianchorlayout.h>
 #include "declarations.h"
+#include <framework/ui/uianchorlayout.h>
 
 #include <utility>
 

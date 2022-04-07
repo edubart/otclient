@@ -21,8 +21,8 @@
  */
 
 #include "uiverticallayout.h"
-#include <framework/core/eventdispatcher.h>
 #include "uiwidget.h"
+#include <framework/core/eventdispatcher.h>
 
 void UIVerticalLayout::applyStyle(const OTMLNodePtr& styleNode)
 {
@@ -38,7 +38,7 @@ bool UIVerticalLayout::internalUpdate()
 {
     bool changed = false;
 
-    UIWidgetPtr parentWidget = getParentWidget();
+    const UIWidgetPtr parentWidget = getParentWidget();
     if (!parentWidget)
         return false;
 

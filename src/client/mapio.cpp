@@ -199,7 +199,7 @@ void Map::loadOtbm(const std::string& fileName)
                         stdext::throw_exception("invalid town node.");
 
                     const uint32 townId = nodeTown->getU32();
-                    std::string townName = nodeTown->getString();
+                    const std::string townName = nodeTown->getString();
 
                     Position townCoords;
                     townCoords.x = nodeTown->getU16();
@@ -222,7 +222,7 @@ void Map::loadOtbm(const std::string& fileName)
                     waypointPos.y = nodeWaypoint->getU16();
                     waypointPos.z = nodeWaypoint->getU8();
 
-                    if (waypointPos.isValid() && !name.empty() && m_waypoints.find(waypointPos) == m_waypoints.end())
+                    if (waypointPos.isValid() && !name.empty() && !m_waypoints.contains(waypointPos))
                         m_waypoints.insert(std::make_pair(waypointPos, name));
                 }
             } else

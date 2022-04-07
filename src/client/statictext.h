@@ -23,10 +23,10 @@
 #ifndef STATICTEXT_H
 #define STATICTEXT_H
 
-#include <framework/graphics/cachedtext.h>
 #include "thing.h"
+#include <framework/graphics/cachedtext.h>
 
- // @bindclass
+// @bindclass
 class StaticText : public Thing
 {
 public:

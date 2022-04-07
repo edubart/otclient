@@ -21,10 +21,10 @@
  */
 
 #include "lightview.h"
-#include <framework/graphics/drawpool.h>
 #include "map.h"
 #include "mapview.h"
 #include "spritemanager.h"
+#include <framework/graphics/drawpool.h>
 
 LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
 

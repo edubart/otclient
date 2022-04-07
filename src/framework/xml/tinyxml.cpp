@@ -54,7 +54,7 @@ void TiXmlBase::EncodeString(const TIXML_STRING& str, TIXML_STRING* outString)
     int i = 0;
 
     while (i < static_cast<int>(str.length())) {
-        unsigned char c = static_cast<unsigned char>(str[i]);
+        auto c = static_cast<unsigned char>(str[i]);
 
         if (c == '&'
            && i < (static_cast<int>(str.length()) - 2)
@@ -425,7 +425,7 @@ const TiXmlElement* TiXmlNode::NextSiblingElement(const char* _value) const
 
 const TiXmlDocument* TiXmlNode::GetDocument() const
 {
-    for (auto node = this; node; node = node->parent) {
+    for (const auto* node = this; node; node = node->parent) {
         if (node->ToDocument())
             return node->ToDocument();
     }
@@ -579,7 +579,7 @@ bool TiXmlElement::Accept(TiXmlVisitor* visitor) const
 
 TiXmlNode* TiXmlElement::Clone() const
 {
-    const auto clone = new TiXmlElement(Value());
+    auto* const clone = new TiXmlElement(Value());
     if (!clone)
         return nullptr;
 
@@ -705,7 +705,7 @@ bool TiXmlDocument::LoadFile(FILE* file, TiXmlEncoding encoding)
     }
     */
 
-    const auto buf = new char[length + 1];
+    auto* const buf = new char[length + 1];
     buf[0] = 0;
 
     if (fread(buf, length, 1, file) != 1) {
@@ -727,8 +727,8 @@ bool TiXmlDocument::LoadFile(FILE* file, TiXmlEncoding encoding)
 
     const char* p = buf;    // the read head
     char* q = buf;            // the write head
-    const char CR = 0x0d;
-    const char LF = 0x0a;
+    constexpr char CR = 0x0d,
+        LF = 0x0a;
 
     buf[length] = 0;
     while (*p) {
@@ -770,9 +770,9 @@ bool TiXmlDocument::SaveFile(const char* filename) const
 bool TiXmlDocument::SaveFile(FILE* fp) const
 {
     if (useMicrosoftBOM) {
-        const unsigned char TIXML_UTF_LEAD_0 = 0xefU;
-        const unsigned char TIXML_UTF_LEAD_1 = 0xbbU;
-        const unsigned char TIXML_UTF_LEAD_2 = 0xbfU;
+        constexpr unsigned char TIXML_UTF_LEAD_0 = 0xefU,
+            TIXML_UTF_LEAD_1 = 0xbbU,
+            TIXML_UTF_LEAD_2 = 0xbfU;
 
         fputc(TIXML_UTF_LEAD_0, fp);
         fputc(TIXML_UTF_LEAD_1, fp);
@@ -800,7 +800,7 @@ void TiXmlDocument::CopyTo(TiXmlDocument* target) const
 
 TiXmlNode* TiXmlDocument::Clone() const
 {
-    const auto clone = new TiXmlDocument();
+    auto* const clone = new TiXmlDocument();
     if (!clone)
         return nullptr;
 
@@ -971,7 +971,7 @@ bool TiXmlComment::Accept(TiXmlVisitor* visitor) const
 
 TiXmlNode* TiXmlComment::Clone() const
 {
-    const auto clone = new TiXmlComment();
+    auto* const clone = new TiXmlComment();
 
     if (!clone)
         return nullptr;
@@ -1009,7 +1009,7 @@ bool TiXmlText::Accept(TiXmlVisitor* visitor) const
 
 TiXmlNode* TiXmlText::Clone() const
 {
-    auto clone = new TiXmlText("");
+    auto* const clone = new TiXmlText("");
 
     if (!clone)
         return nullptr;
@@ -1090,7 +1090,7 @@ bool TiXmlDeclaration::Accept(TiXmlVisitor* visitor) const
 
 TiXmlNode* TiXmlDeclaration::Clone() const
 {
-    const auto clone = new TiXmlDeclaration();
+    auto* const clone = new TiXmlDeclaration();
 
     if (!clone)
         return nullptr;
@@ -1118,7 +1118,7 @@ bool TiXmlUnknown::Accept(TiXmlVisitor* visitor) const
 
 TiXmlNode* TiXmlUnknown::Clone() const
 {
-    const auto clone = new TiXmlUnknown();
+    auto* const clone = new TiXmlUnknown();
 
     if (!clone)
         return nullptr;

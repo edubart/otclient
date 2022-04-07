@@ -23,18 +23,18 @@
 #ifndef POSITION_H
 #define POSITION_H
 
+#include "config.h"
+#include "const.h"
 #include <framework/const.h>
 #include <framework/stdext/types.h>
 #include <framework/util/point.h>
-#include "config.h"
-#include "const.h"
 
 #include <array>
 #include <istream>
-#include <math.h>
+#include <cmath>
 #include <ostream>
-#include <vector>
 #include <string>
+#include <vector>
 
 class Position
 {

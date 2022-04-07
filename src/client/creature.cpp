@@ -34,9 +34,9 @@
 #include <framework/graphics/drawpool.h>
 #include <framework/graphics/graphics.h>
 
+#include "shadermanager.h"
 #include <framework/graphics/paintershaderprogram.h>
 #include <framework/graphics/texturemanager.h>
-#include "shadermanager.h"
 
 double Creature::speedA = 0;
 double Creature::speedB = 0;
@@ -222,7 +222,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     // calculate main rects
 
     const Size nameSize = m_nameCache.getTextSize();
-    const int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
+    constexpr int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
         cropSizeBackGround = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? cropSizeText - nameSize.height() : 0;
 
     auto backgroundRect = Rect(p.x - (13.5), p.y - cropSizeBackGround, 27, 4);

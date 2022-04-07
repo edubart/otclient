@@ -23,10 +23,10 @@
 #ifndef SHADERMANAGER_H
 #define SHADERMANAGER_H
 
-#include <framework/graphics/paintershaderprogram.h>
 #include "declarations.h"
+#include <framework/graphics/paintershaderprogram.h>
 
- //@bindsingleton g_shaders
+//@bindsingleton g_shaders
 class ShaderManager
 {
 public:

@@ -21,10 +21,10 @@
  */
 
 #include "missile.h"
-#include <framework/core/eventdispatcher.h>
 #include "map.h"
 #include "thingtypemanager.h"
 #include "tile.h"
+#include <framework/core/eventdispatcher.h>
 
 void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
 {

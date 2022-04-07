@@ -23,7 +23,7 @@
 #ifndef CLIENT_CONST_H
 #define CLIENT_CONST_H
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace Otc
 {

@@ -21,9 +21,9 @@
  */
 
 #include "soundchannel.h"
-#include <random>
 #include "soundmanager.h"
 #include "streamsoundsource.h"
+#include <random>
 
 SoundSourcePtr SoundChannel::play(const std::string& filename, float fadetime, float gain)
 {

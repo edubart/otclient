@@ -27,8 +27,8 @@
 
 #include "declarations.h"
 #include "framebuffer.h"
-#include "texture.h"
 #include "framework/core/timer.h"
+#include "texture.h"
 
 class Pool
 {

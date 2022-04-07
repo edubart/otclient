@@ -25,9 +25,9 @@
 
 #include <framework/global.h>
 
+#include "framework/xml/tinyxml.h"
 #include "itemtype.h"
 #include "thingtype.h"
-#include "framework/xml/tinyxml.h"
 
 class ThingTypeManager
 {
