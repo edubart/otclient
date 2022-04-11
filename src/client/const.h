@@ -328,8 +328,36 @@ namespace Otc
         MessageRVRContinue = 49,
         MessageGameHighlight = 50,
         MessageNpcFromStartBlock = 51,
-        LastMessage = 52,
+
+        // 12x
+        MessageAttention = 52,
+        MessageBoostedCreature = 53,
+        MessageOfflineTrainning = 54,
+        MessageTransaction = 55,
+        MessagePotion = 56,
+        LastMessage = 57,
         MessageInvalid = 255
+    };
+
+    enum PreyState_t : uint8_t
+    {
+        PREY_STATE_LOCKED = 0,
+        PREY_STATE_INACTIVE = 1,
+        PREY_STATE_ACTIVE = 2,
+        PREY_STATE_SELECTION = 3,
+        PREY_STATE_SELECTION_CHANGE_MONSTER = 4,
+        PREY_STATE_LIST_SELECTION = 5,
+        PREY_STATE_WILDCARD_SELECTION = 6,
+    };
+
+    enum PreyTaskstate_t : uint8_t
+    {
+        PREY_TASK_STATE_LOCKED = 0,
+        PREY_TASK_STATE_INACTIVE = 1,
+        PREY_TASK_STATE_SELECTION = 2,
+        PREY_TASK_STATE_LIST_SELECTION = 3,
+        PREY_TASK_STATE_ACTIVE = 4,
+        PREY_TASK_STATE_COMPLETED = 5
     };
 
     enum GameFeature : uint8_t

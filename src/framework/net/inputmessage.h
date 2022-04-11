@@ -47,6 +47,7 @@ public:
     uint16 getU16();
     uint32 getU32();
     uint64 getU64();
+    int64 get64();
     std::string getString();
     double getDouble();
 
