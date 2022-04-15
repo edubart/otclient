@@ -59,8 +59,6 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     g_graphics.init();
     g_drawPool.init();
 
-    m_foregroundFramed = g_drawPool.createPoolF(FOREGROUND);
-
     // fire first resize event
     resize(g_window.getSize());
 
@@ -144,7 +142,7 @@ void GraphicalApplication::run()
         {
             // foreground pane - steady pane with few animated stuff (UI)
             if (foregroundCanUpdate()) {
-                g_drawPool.use(m_foregroundFramed);
+                g_drawPool.use(PoolType::FOREGROUND);
                 g_ui.render(Fw::ForegroundPane);
             }
 
@@ -198,7 +196,8 @@ void GraphicalApplication::resize(const Size& size)
     g_ui.resize(size);
     m_onInputEvent = false;
 
-    m_foregroundFramed->resize(size);
+    g_drawPool.get<PoolFramed>(PoolType::FOREGROUND)
+        ->resize(size);
 
     m_mustRepaint = true;
 }

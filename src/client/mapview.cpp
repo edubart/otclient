@@ -44,11 +44,9 @@
 
 MapView::MapView()
 {
-    m_pools.map = g_drawPool.createPoolF(MAP);
-    m_pools.creatureInformation = g_drawPool.createPool(CREATURE_INFORMATION);
-    m_pools.text = g_drawPool.createPool(TEXT);
+    auto mapPool = g_drawPool.get<PoolFramed>(PoolType::MAP);
 
-    m_pools.map->onBeforeDraw([&]() {
+    mapPool->onBeforeDraw([&]() {
         const Position cameraPosition = getCameraPosition();
 
         float fadeOpacity = 1.0f;
@@ -86,7 +84,7 @@ MapView::MapView()
         g_painter->setOpacity(fadeOpacity);
     });
 
-    m_pools.map->onAfterDraw([&]() {
+    mapPool->onAfterDraw([&]() {
         g_painter->resetShaderProgram();
         g_painter->resetOpacity();
     });
@@ -131,7 +129,7 @@ void MapView::draw(const Rect& rect)
 
 void MapView::drawFloor()
 {
-    g_drawPool.use(m_pools.map, m_rectCache.rect, m_rectCache.srcRect, Color::black);
+    g_drawPool.use(PoolType::MAP, m_rectCache.rect, m_rectCache.srcRect, Color::black);
     {
         const Position cameraPosition = getCameraPosition();
         const auto& lightView = m_drawLights ? m_lightView.get() : nullptr;
@@ -244,7 +242,7 @@ void MapView::drawCreatureInformation()
     if (m_drawHealthBars) { flags |= Otc::DrawBars; }
     if (m_drawManaBar) { flags |= Otc::DrawManaBar; }
 
-    g_drawPool.use(m_pools.creatureInformation, true);
+    g_drawPool.use(PoolType::CREATURE_INFORMATION);
     for (const auto& creature : m_visibleCreatures) {
         if (creature->isDead() || !creature->canBeSeen())
             continue;
@@ -274,7 +272,7 @@ void MapView::drawText()
 
     const Position cameraPosition = getCameraPosition();
 
-    g_drawPool.use(m_pools.text, true);
+    g_drawPool.use(PoolType::TEXT);
     for (const StaticTextPtr& staticText : g_map.getStaticTexts()) {
         if (staticText->getMessageMode() == Otc::MessageNone) continue;
 
@@ -473,7 +471,9 @@ void MapView::updateGeometry(const Size& visibleDimension)
 
     m_rectDimension = { 0, 0, bufferSize };
 
-    m_pools.map->resize(bufferSize);
+    g_drawPool.get<PoolFramed>(PoolType::MAP)
+        ->resize(bufferSize);
+
     if (m_drawLights) m_lightView->resize(drawDimension, tileSize);
 
     m_awareRange.left = std::min<uint16>(g_map.getAwareRange().left, (m_drawDimension.width() / 2) - 1);
@@ -599,7 +599,9 @@ void MapView::setFloorViewMode(FloorViewMode floorViewMode)
 
 void MapView::setAntiAliasingMode(const AntialiasingMode mode)
 {
-    m_pools.map->setSmooth(mode != ANTIALIASING_DISABLED);
+    g_drawPool.get<PoolFramed>(PoolType::MAP)
+        ->setSmooth(mode != ANTIALIASING_DISABLED);
+
     m_scaleFactor = mode == ANTIALIASING_SMOOTH_RETRO ? 2.f : 1.f;
 
     if (m_drawLights) m_lightView->setSmooth(mode != ANTIALIASING_DISABLED);
@@ -826,7 +828,7 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
 
 void MapView::setDrawLights(bool enable)
 {
-    const auto& pool = g_drawPool.get(LIGHT);
+    const auto& pool = g_drawPool.get<PoolFramed>(PoolType::LIGHT);
     if (pool) pool->setEnable(enable);
 
     if (enable == m_drawLights) return;

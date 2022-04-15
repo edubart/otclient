@@ -26,7 +26,7 @@
 #include "spritemanager.h"
 #include <framework/graphics/drawpool.h>
 
-LightView::LightView() : m_pool(g_drawPool.createPoolF(LIGHT)) {}
+LightView::LightView() : m_pool(g_drawPool.get<PoolFramed>(PoolType::LIGHT)) {}
 
 void LightView::setSmooth(bool enabled) { m_pool->setSmooth(enabled); }
 
@@ -53,7 +53,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
     m_pool->setEnable(isDark());
     if (!isDark()) return;
 
-    g_drawPool.use(m_pool, dest, src, m_globalLightColor);
+    g_drawPool.use(m_pool->getType(), dest, src, m_globalLightColor);
 
     const float size = m_tileSize * 3.3;
 

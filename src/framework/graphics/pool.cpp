@@ -25,7 +25,7 @@
 void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
     if (hasFrameBuffer()) {
-        stdext::hash_combine(toFramedPool()->m_status.second, mode);
+        stdext::hash_combine(toPoolFramed()->m_status.second, mode);
     }
 
     if (pos == -1) {
@@ -39,7 +39,7 @@ void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos
 void Pool::setClipRect(const Rect& clipRect, const int pos)
 {
     if (hasFrameBuffer()) {
-        stdext::hash_combine(toFramedPool()->m_status.second, clipRect.hash());
+        stdext::hash_combine(toPoolFramed()->m_status.second, clipRect.hash());
     }
 
     if (pos == -1) {
@@ -53,7 +53,7 @@ void Pool::setClipRect(const Rect& clipRect, const int pos)
 void Pool::setOpacity(const float opacity, const int pos)
 {
     if (hasFrameBuffer()) {
-        stdext::hash_combine(toFramedPool()->m_status.second, opacity);
+        stdext::hash_combine(toPoolFramed()->m_status.second, opacity);
     }
 
     if (pos == -1) {
@@ -69,7 +69,7 @@ void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const 
     const auto& shader = shaderProgram ? shaderProgram.get() : nullptr;
 
     if (hasFrameBuffer() && shader) {
-        toFramedPool()->m_autoUpdate = true;
+        toPoolFramed()->m_autoUpdate = true;
     }
 
     if (pos == -1) {
@@ -89,11 +89,11 @@ void Pool::resetState()
     m_indexToStartSearching = 0;
 
     if (hasFrameBuffer()) {
-        toFramedPool()->m_autoUpdate = false;
+        toPoolFramed()->m_autoUpdate = false;
     }
 }
 
-bool FramedPool::hasModification(const bool autoUpdateStatus)
+bool PoolFramed::hasModification(const bool autoUpdateStatus)
 {
     const bool hasModification = m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
 

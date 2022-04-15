@@ -30,11 +30,22 @@
 #include "framework/core/timer.h"
 #include "texture.h"
 
+enum class PoolType : uint8
+{
+    MAP,
+    CREATURE_INFORMATION,
+    LIGHT,
+    TEXT,
+    FOREGROUND,
+    UNKNOW
+};
+
 class Pool
 {
 public:
     void setEnable(const bool v) { m_enabled = v; }
     bool isEnabled() const { return m_enabled; }
+    const PoolType getType() const { return m_type; }
 
 protected:
     enum class DrawMethodType
@@ -93,7 +104,7 @@ private:
     void startPosition() { m_indexToStartSearching = m_objects.size(); }
 
     virtual bool hasFrameBuffer() const { return false; };
-    virtual FramedPool* toFramedPool() { return nullptr; }
+    virtual PoolFramed* toPoolFramed() { return nullptr; }
 
     std::vector<DrawObject> m_objects;
 
@@ -102,10 +113,12 @@ private:
 
     uint16_t m_indexToStartSearching{ 0 };
 
+    PoolType m_type;
+
     friend class DrawPool;
 };
 
-class FramedPool : public Pool
+class PoolFramed : public Pool
 {
 public:
     void onBeforeDraw(std::function<void()> f) { m_beforeDraw = std::move(f); }
@@ -126,7 +139,7 @@ private:
     bool hasModification(bool autoUpdateStatus = false);
     bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
 
-    FramedPool* toFramedPool() override { return static_cast<FramedPool*>(this); }
+    PoolFramed* toPoolFramed() override { return static_cast<PoolFramed*>(this); }
 
     FrameBufferPtr m_framebuffer;
     Rect m_dest, m_src;

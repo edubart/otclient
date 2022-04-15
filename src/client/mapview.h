@@ -60,7 +60,6 @@ public:
     ~MapView() override;
     void draw(const Rect& rect);
 
-
     // floor visibility related
     uint8 getLockedFirstVisibleFloor() { return m_lockedFirstVisibleFloor; }
     uint8 getCachedFirstVisibleFloor() { return m_cachedFirstVisibleFloor; }
@@ -160,12 +159,6 @@ private:
     {
         std::vector<TilePtr> shades, grounds, surfaces, effects;
         void clear() { shades.clear(); grounds.clear(); surfaces.clear(); effects.clear(); }
-    };
-
-    struct Pools
-    {
-        PoolFramedPtr map;
-        PoolPtr creatureInformation, text;
     };
 
     struct Crosshair
@@ -273,7 +266,6 @@ private:
     PainterShaderProgramPtr m_shader, m_nextShader;
     LightViewPtr m_lightView;
     CreaturePtr m_followingCreature;
-    Pools m_pools;
 
     RectCache m_rectCache;
     FloorViewMode m_floorViewMode{ NORMAL };

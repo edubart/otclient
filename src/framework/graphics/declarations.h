@@ -45,7 +45,7 @@ class ParticleEffect;
 class ParticleEffectType;
 class SpriteSheet;
 class Pool;
-class FramedPool;
+class PoolFramed;
 class DrawPool;
 
 using ImagePtr = stdext::shared_object_ptr<Image>;
@@ -68,6 +68,6 @@ using SpriteSheetPtr = stdext::shared_object_ptr<SpriteSheet>;
 using ShaderList = std::vector<ShaderPtr>;
 
 using PoolPtr = std::shared_ptr<Pool>;
-using PoolFramedPtr = std::shared_ptr<FramedPool>;
+using PoolFramedPtr = std::shared_ptr<PoolFramed>;
 
 #endif

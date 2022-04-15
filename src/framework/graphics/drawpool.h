@@ -29,31 +29,14 @@
 #include <framework/graphics/graphics.h>
 #include <framework/graphics/pool.h>
 
-enum  PoolType : uint8
-{
-    MAP,
-    CREATURE_INFORMATION,
-    LIGHT,
-    TEXT,
-    FOREGROUND,
-    UNKNOW
-};
-
-enum class PoolEventType : uint8
-{
-    ON_BEFORE_DRAW,
-    ON_AFTER_DRAW
-};
-
 class DrawPool
 {
 public:
-    PoolPtr createPool(const PoolType type) { return m_pools[type] = std::make_shared<Pool>(); }
-    PoolFramedPtr createPoolF(PoolType type);
-    PoolPtr get(const PoolType type) const { return m_pools[type]; }
+    template <class T>
+    std::shared_ptr<T> get(const PoolType type) { return std::static_pointer_cast<T>(m_pools[static_cast<uint8>(type)]); }
 
-    void use(const PoolPtr& pool, bool forceGrouping = false);
-    void use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src, const Color colorClear = Color::alpha);
+    void use(const PoolType type);
+    void use(const PoolType type, const Rect& dest, const Rect& src, const Color colorClear = Color::alpha);
 
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = Point());
@@ -90,20 +73,22 @@ private:
     void draw();
     void init();
     void terminate();
+    void createPools();
     void drawObject(Pool::DrawObject& obj);
     void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void setConfig(const PoolType& state);
 
-    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<FramedPool>(m_currentPool); }
+    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
 
     Painter::PainterState generateState(const Color& color, const TexturePtr& texture = nullptr);
 
     CoordsBuffer m_coordsBuffer;
-    std::array<PoolPtr, UNKNOW + 1> m_pools;
+    std::array<PoolPtr, static_cast<uint8>(PoolType::UNKNOW) + 1> m_pools;
 
     PoolPtr m_currentPool, n_unknowPool;
 
-    bool m_forceGrouping;
+    bool m_forceGrouping{ false };
 
     friend class GraphicalApplication;
 };

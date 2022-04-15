@@ -29,31 +29,13 @@
 
 DrawPool g_drawPool;
 
-void DrawPool::init()
-{
-    n_unknowPool = g_drawPool.createPool(UNKNOW);
-    use(n_unknowPool);
-}
+void DrawPool::init() { createPools(); }
 
 void DrawPool::terminate()
 {
     m_currentPool = nullptr;
-    for (int8 i = -1; ++i <= UNKNOW;)
+    for (int8 i = -1; ++i <= static_cast<uint8_t>(PoolType::UNKNOW);)
         m_pools[i] = nullptr;
-}
-
-PoolFramedPtr DrawPool::createPoolF(const PoolType type)
-{
-    auto pool = std::make_shared<FramedPool>();
-
-    pool->m_framebuffer = g_framebuffers.createFrameBuffer(true);
-
-    if (type == MAP) pool->m_framebuffer->disableBlend();
-    else if (type == LIGHT) pool->m_framebuffer->setCompositionMode(Painter::CompositionMode_Light);
-
-    m_pools[type] = pool;
-
-    return pool;
 }
 
 void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
@@ -108,7 +90,7 @@ void DrawPool::draw()
     for (const auto& pool : m_pools) {
         if (!pool->isEnabled() || !pool->hasFrameBuffer()) continue;
 
-        const auto& pf = pool->toFramedPool();
+        const auto& pf = pool->toPoolFramed();
         if (pf->hasModification(true) && !pool->m_objects.empty()) {
             pf->m_framebuffer->bind();
             for (auto& obj : pool->m_objects)
@@ -121,7 +103,7 @@ void DrawPool::draw()
     for (const auto& pool : m_pools) {
         if (!pool->isEnabled()) continue;
         if (pool->hasFrameBuffer()) {
-            const auto* const pf = pool->toFramedPool();
+            const auto* const pf = pool->toPoolFramed();
 
             g_painter->saveAndResetState();
             if (pf->m_beforeDraw) pf->m_beforeDraw();
@@ -269,20 +251,60 @@ Painter::PainterState DrawPool::generateState(const Color& color, const TextureP
     return state;
 }
 
-void DrawPool::use(const PoolPtr& pool, bool forceGrouping)
+void DrawPool::createPools()
 {
-    m_forceGrouping = forceGrouping;
+    for (int8 i = -1; ++i <= static_cast<uint8_t>(PoolType::UNKNOW);) {
+        const auto type = static_cast<PoolType>(i);
+        PoolPtr pool;
+        if (type == PoolType::MAP || type == PoolType::LIGHT || type == PoolType::FOREGROUND) {
+            pool = std::make_shared<PoolFramed>();
 
-    m_currentPool = pool ? pool : n_unknowPool;
+            auto& frameBuffer = pool->toPoolFramed()->m_framebuffer
+                = g_framebuffers.createFrameBuffer(true);
+
+            if (type == PoolType::MAP) frameBuffer->disableBlend();
+            else if (type == PoolType::LIGHT) frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
+        } else {
+            pool = std::make_shared<Pool>();
+        }
+
+        pool->m_type = type;
+        m_pools[i] = pool;
+    }
+}
+
+void DrawPool::setConfig(const PoolType& state)
+{
+    switch (state) {
+        case PoolType::CREATURE_INFORMATION:
+        case PoolType::TEXT:
+            m_forceGrouping = true;
+            break;
+
+        default:
+            m_forceGrouping = false;
+    }
+}
+
+void DrawPool::use(const PoolType type)
+{
+    setConfig(type);
+
+    m_currentPool = get<Pool>(type);
     m_currentPool->resetState();
     if (m_currentPool->hasFrameBuffer()) {
         poolFramed()->resetCurrentStatus();
     }
 }
 
-void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src, const Color colorClear)
+void DrawPool::use(const PoolType type, const Rect& dest, const Rect& src, const Color colorClear)
 {
-    use(pool);
+    use(type);
+    if (!m_currentPool->hasFrameBuffer())
+        return;
+
+    auto pool = m_currentPool->toPoolFramed();
+
     pool->m_dest = dest;
     pool->m_src = src;
     pool->m_state.alphaWriting = false;
