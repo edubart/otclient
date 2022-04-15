@@ -433,7 +433,7 @@ end
 function setupHotkeys()
     unbindHotkeys()
     for v, slot in pairs(actionBarPanel:getChildren()) do
-        g_mouse.bindPress(slot, function()
+        slot.onMouseRelease = function()
             if g_clock.millis() - lastHotkeyTime < modules.client_options.getOption('hotkeyDelay') then
                 return
             end
@@ -470,7 +470,7 @@ function setupHotkeys()
                     modules.game_console.setTextEditText(slot.text)
                 end
             end
-        end)
+        end
 
         if slot.hotkey and slot.hotkey ~= '' then
             g_keyboard.bindKeyPress(slot.hotkey, function()
