@@ -45,7 +45,7 @@ class Pool
 public:
     void setEnable(const bool v) { m_enabled = v; }
     bool isEnabled() const { return m_enabled; }
-    const PoolType getType() const { return m_type; }
+    PoolType getType() const { return m_type; }
 
 protected:
     enum class DrawMethodType
