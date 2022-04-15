@@ -287,7 +287,8 @@ void DrawPool::use(const PoolFramedPtr& pool, const Rect& dest, const Rect& src,
     pool->m_src = src;
     pool->m_state.alphaWriting = false;
 
-    g_drawPool.addFilledRect(Rect(0, 0, pool->getSize()), colorClear);
+    if (colorClear != Color::alpha)
+        g_drawPool.addFilledRect(Rect(0, 0, pool->getSize()), colorClear);
 }
 
 void DrawPool::drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src)
