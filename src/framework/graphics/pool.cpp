@@ -97,7 +97,8 @@ bool PoolFramed::hasModification(const bool autoUpdateStatus)
 {
     const bool hasModification = m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
 
-    if (autoUpdateStatus) updateStatus();
+    if (hasModification && autoUpdateStatus)
+        updateStatus();
 
     return hasModification;
 }
