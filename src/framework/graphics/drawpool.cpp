@@ -245,6 +245,7 @@ Painter::PainterState DrawPool::generateState(const Color& color, const TextureP
     state.opacity = m_currentPool->m_state.opacity;
     state.alphaWriting = m_currentPool->m_state.alphaWriting;
     state.shaderProgram = m_currentPool->m_state.shaderProgram;
+    state.action = m_currentPool->m_state.action;
     state.color = color;
     state.texture = texture;
 

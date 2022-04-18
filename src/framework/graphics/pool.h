@@ -82,17 +82,20 @@ protected:
 private:
     struct State
     {
+        ~State() { shaderProgram = nullptr; action = nullptr; }
+
         Painter::CompositionMode compositionMode;
         Rect clipRect;
         float opacity;
         bool alphaWriting{ true };
         PainterShaderProgram* shaderProgram;
+        std::function<void()> action{ nullptr };
     };
 
     void setCompositionMode(Painter::CompositionMode mode, int pos = -1);
     void setClipRect(const Rect& clipRect, int pos = -1);
     void setOpacity(float opacity, int pos = -1);
-    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1);
+    void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1, const std::function<void()>& action = nullptr);
 
     float getOpacity(const int pos = -1) { return pos == -1 ? m_state.opacity : m_objects[pos - 1].state.opacity; }
 

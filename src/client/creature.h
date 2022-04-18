@@ -30,7 +30,7 @@
 #include <framework/core/timer.h>
 #include <framework/graphics/cachedtext.h>
 
-// @bindclass
+ // @bindclass
 class Creature : public Thing
 {
 public:
@@ -237,7 +237,11 @@ private:
     DrawCache m_drawCache;
 
     bool m_drawOutfitColor{ true };
-    PainterShaderProgramPtr m_outfitShader, m_mountShader;
+    PainterShaderProgramPtr m_outfitShader,
+        m_mountShader;
+
+    std::function<void()> m_outfitShaderAction{ nullptr },
+        m_mountShaderAction{ nullptr };
 };
 
 // @bindclass

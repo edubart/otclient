@@ -57,6 +57,8 @@ public:
 
     struct PainterState
     {
+        ~PainterState() { shaderProgram = nullptr; action = nullptr; }
+
         Size resolution;
         Matrix3 transformMatrix;
         Matrix3 projectionMatrix;
@@ -69,6 +71,7 @@ public:
         TexturePtr texture;
         PainterShaderProgram* shaderProgram;
         bool alphaWriting;
+        std::function<void()> action{ nullptr };
 
         bool operator==(const PainterState& s2) const
         {

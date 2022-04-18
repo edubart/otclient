@@ -47,6 +47,20 @@ Creature::Creature() :m_type(Proto::CreatureTypeUnknown)
     m_nameCache.setFont(g_fonts.getFont("verdana-11px-rounded"));
     m_nameCache.setAlign(Fw::AlignTopCenter);
     m_speedFormula.fill(-1);
+
+    // Example of how to send a UniformValue to shader
+    /*
+        m_outfitShaderAction = [=]()-> void {
+            const int id = m_outfit.getCategory() == ThingCategoryCreature ? m_outfit.getId() : m_outfit.getAuxId();
+            m_outfitShader->bind();
+            m_outfitShader->setUniformValue(ShaderManager::OUTFIT_ID_UNIFORM, id);
+        };
+
+        m_mountShaderAction = [=]()-> void {
+            m_mountShader->bind();
+            m_mountShader->setUniformValue(ShaderManager::MOUNT_ID_UNIFORM, m_outfit.getMount());
+        };
+    */
 }
 
 void Creature::draw(const Point& dest, float scaleFactor, bool animate, const Highlight& highLight, TextureType textureType, Color color, LightView* lightView)
@@ -119,9 +133,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
 
             if (canDrawShader && m_mountShader) {
-                m_mountShader->bind();
-                m_mountShader->setUniformValue(ShaderManager::MOUNT_ID_UNIFORM, m_outfit.getMount());
-                g_drawPool.setShaderProgram(m_mountShader, g_drawPool.size());
+                g_drawPool.setShaderProgram(m_mountShader, g_drawPool.size(), m_mountShaderAction);
             }
         }
 
@@ -140,9 +152,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
             datType->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType, color);
             if (canDrawShader && m_outfitShader) {
-                m_outfitShader->bind();
-                m_outfitShader->setUniformValue(ShaderManager::OUTFIT_ID_UNIFORM, m_outfit.getId());
-                g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size());
+                g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size(), m_outfitShaderAction);
             }
 
             if (m_drawOutfitColor && isNotBlank && getLayers() > 1) {
@@ -179,9 +189,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         type->draw(dest - (getDisplacement() * scaleFactor), scaleFactor, 0, 0, 0, 0, animationPhase, textureType, color);
 
         if (canDrawShader && m_outfitShader) {
-            m_outfitShader->bind();
-            m_outfitShader->setUniformValue(ShaderManager::OUTFIT_ID_UNIFORM, m_outfit.getAuxId());
-            g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size());
+            g_drawPool.setShaderProgram(m_outfitShader, g_drawPool.size(), m_outfitShaderAction);
         }
     }
 }

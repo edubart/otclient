@@ -64,7 +64,7 @@ void Pool::setOpacity(const float opacity, const int pos)
     m_objects[pos - 1].state.opacity = opacity;
 }
 
-void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos)
+void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos, const std::function<void()>& action)
 {
     const auto& shader = shaderProgram ? shaderProgram.get() : nullptr;
 
@@ -74,10 +74,13 @@ void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const 
 
     if (pos == -1) {
         m_state.shaderProgram = shader;
+        m_state.action = action;
         return;
     }
 
-    m_objects[pos - 1].state.shaderProgram = shader;
+    auto& o = m_objects[pos - 1];
+    o.state.shaderProgram = shader;
+    o.state.action = action;
 }
 
 void Pool::resetState()
