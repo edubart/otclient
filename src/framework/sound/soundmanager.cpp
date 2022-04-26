@@ -164,7 +164,7 @@ void SoundManager::preload(std::string filename)
         m_buffers[filename] = buffer;
 }
 
-SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float gain)
+SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float gain, float pitch)
 {
     if (!m_audioEnabled)
         return nullptr;
@@ -184,6 +184,7 @@ SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float ga
     soundSource->setName(filename);
     soundSource->setRelative(true);
     soundSource->setGain(gain);
+    soundSource->setPitch(pitch);
 
     if (fadetime > 0)
         soundSource->setFading(StreamSoundSource::FadingOn, fadetime);

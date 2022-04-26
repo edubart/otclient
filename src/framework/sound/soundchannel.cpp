@@ -25,7 +25,7 @@
 #include "streamsoundsource.h"
 #include <random>
 
-SoundSourcePtr SoundChannel::play(const std::string& filename, float fadetime, float gain)
+SoundSourcePtr SoundChannel::play(const std::string& filename, float fadetime, float gain, float pitch)
 {
     if (!g_sounds.isAudioEnabled() || !m_enabled)
         return nullptr;
@@ -33,7 +33,7 @@ SoundSourcePtr SoundChannel::play(const std::string& filename, float fadetime, f
     if (m_currentSource)
         m_currentSource->stop();
 
-    m_currentSource = g_sounds.play(filename, fadetime, m_gain * gain);
+    m_currentSource = g_sounds.play(filename, fadetime, m_gain * gain, pitch);
     return m_currentSource;
 }
 
