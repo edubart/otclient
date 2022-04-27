@@ -154,12 +154,15 @@ function whenHealthChange()
     if g_game.isOnline() then
         local healthPercent = math.floor(g_game.getLocalPlayer():getHealthPercent())
 
-        local Yhppc = math.floor(imageSizeBroad * (1 - (healthPercent / 100)))
-        healthCircleFront:setImageClip({x = 0, y = Yhppc, width = imageSizeThin, height = imageSizeBroad})
-        healthCircleFront:setY(healthCircle:getY() + Yhppc)
+        local yhppc = math.floor(imageSizeBroad * (1 - (healthPercent / 100)))
+        local restYhppc = imageSizeBroad - yhppc
 
-        healthCircle:setImageClip({x = 0, y = 0, width = imageSizeThin, height = Yhppc})
-        healthCircle:setHeight(Yhppc)
+        healthCircleFront:setY(healthCircle:getY() + yhppc)
+        healthCircleFront:setHeight(restYhppc)
+        healthCircleFront:setImageClip({x = 0, y = yhppc, width = imageSizeThin, height = restYhppc })
+
+        healthCircle:setHeight(yhppc)
+        healthCircle:setImageClip({x = 0, y = 0, width = imageSizeThin, height = yhppc})
 
         if healthPercent > 92 then
             healthCircleFront:setImageColor("#00BC00")
@@ -191,12 +194,15 @@ function whenManaChange()
 
         local manaPercent = math.floor(maxMana - (maxMana - g_game.getLocalPlayer():getMana())) * 100 / maxMana
 
-        local Ymppc = math.floor(imageSizeBroad * (1 - (manaPercent / 100)))
-        manaCircleFront:setImageClip({x = 0, y = Ymppc, width = imageSizeThin, height = imageSizeBroad})
-        manaCircleFront:setY(manaCircle:getY() + Ymppc)
+        local ymppc = math.floor(imageSizeBroad * (1 - (manaPercent / 100)))
+        local restYmppc = imageSizeBroad - ymppc
 
-        manaCircle:setImageClip({x = 0, y = 0, width = imageSizeThin, height = Ymppc})
-        manaCircle:setHeight(Ymppc)
+        manaCircleFront:setY(manaCircle:getY() + ymppc)
+        manaCircleFront:setHeight(restYmppc)
+        manaCircleFront:setImageClip({x = 0, y = ymppc, width = imageSizeThin, height = restYmppc})
+
+        manaCircle:setHeight(ymppc)
+        manaCircle:setImageClip({x = 0, y = 0, width = imageSizeThin, height = ymppc})
     end
 end
 
