@@ -15,6 +15,17 @@ function g_mouse.bindAutoPress(widget, callback, delay, button)
     })
 end
 
+function g_mouse.bindPressMove(widget, callback)
+    connect(widget, {
+        onMouseMove = function(widget, mousePos, mouseMoved)
+            if widget:isPressed() then
+                callback(mousePos, mouseMoved)
+                return true
+            end
+        end
+    })
+end
+
 function g_mouse.bindMove(widget, callback)
     connect(widget, {
         onMouseMove = function(widget, mousePos, mouseMoved)
