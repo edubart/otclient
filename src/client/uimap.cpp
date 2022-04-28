@@ -168,10 +168,14 @@ void UIMap::onGeometryChange(const Rect& oldRect, const Rect& newRect)
 bool UIMap::onMouseMove(const Point& mousePos, const Point& mouseMoved)
 {
     const Position& pos = getPosition(mousePos);
-    if (pos.isValid() && m_mapView->getLastMousePosition() != pos) {
+    if (!pos.isValid())
+        return false;
+
+    if (m_mapView->getLastMousePosition() != pos) {
         m_mapView->onMouseMove(pos);
         m_mapView->setLastMousePosition(pos);
     }
+
     return UIWidget::onMouseMove(mousePos, mouseMoved);
 }
 

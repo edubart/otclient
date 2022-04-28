@@ -60,6 +60,8 @@ function UIGameMap:onMousePress()
     if not self:isDragging() then self.allowNextRelease = true end
 end
 
+function UIGameMap:onMouseMove() return false end
+
 function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     if not self.allowNextRelease then return true end
 
