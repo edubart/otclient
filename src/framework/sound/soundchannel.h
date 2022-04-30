@@ -33,7 +33,7 @@ public:
 
     SoundSourcePtr play(const std::string& filename, float fadetime = 0, float gain = 1.0f, float pitch = 1.0f);
     void stop(float fadetime = 0);
-    void enqueue(const std::string& filename, float fadetime = 0, float gain = 1.0f);
+    void enqueue(const std::string& filename, float fadetime = 0, float gain = 1.0f, float pitch = 1.0f);
     void enable() { setEnabled(true); }
     void disable() { setEnabled(false); }
 
@@ -55,6 +55,7 @@ private:
         std::string filename;
         float fadetime;
         float gain;
+        float pitch;
     };
     std::deque<QueueEntry> m_queue;
     SoundSourcePtr m_currentSource;

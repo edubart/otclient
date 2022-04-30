@@ -51,11 +51,11 @@ void SoundChannel::stop(float fadetime)
     }
 }
 
-void SoundChannel::enqueue(const std::string& filename, float fadetime, float gain)
+void SoundChannel::enqueue(const std::string& filename, float fadetime, float gain, float pitch)
 {
     if (gain == 0)
         gain = 1.0f;
-    m_queue.push_back(QueueEntry{ g_sounds.resolveSoundFile(filename), fadetime, gain });
+    m_queue.push_back(QueueEntry{ g_sounds.resolveSoundFile(filename), fadetime, gain, pitch });
 
     std::shuffle(m_queue.begin(), m_queue.end(), std::mt19937(std::random_device()()));
     //update();
@@ -70,7 +70,7 @@ void SoundChannel::update()
         const QueueEntry entry = m_queue.front();
         m_queue.pop_front();
         m_queue.push_back(entry);
-        play(entry.filename, entry.fadetime, entry.gain);
+        play(entry.filename, entry.fadetime, entry.gain, entry.pitch);
     }
 }
 
