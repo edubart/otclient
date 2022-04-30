@@ -5,12 +5,9 @@ function init()
     g_ui.importStyle('questlogwindow')
     g_ui.importStyle('questlinewindow')
 
-    questLogButton = modules.client_topmenu.addLeftGameButton('questLogButton',
-                                                              tr('Quest Log'),
+    questLogButton = modules.client_topmenu.addLeftGameButton('questLogButton', tr('Quest Log'),
                                                               '/images/topbuttons/questlog',
-                                                              function()
-        g_game.requestQuestLog()
-    end)
+                                                              function() g_game.requestQuestLog() end)
 
     connect(g_game, {
         onQuestLog = onGameQuestLog,
@@ -65,8 +62,7 @@ function onGameQuestLine(questId, questMissions)
 
     questLineWindow = g_ui.createWidget('QuestLineWindow', rootWidget)
     local missionList = questLineWindow:getChildById('missionList')
-    local missionDescription =
-        questLineWindow:getChildById('missionDescription')
+    local missionDescription = questLineWindow:getChildById('missionDescription')
 
     connect(missionList, {
         onChildFocusChange = function(self, focusedChild)

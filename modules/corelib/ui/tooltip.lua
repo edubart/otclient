@@ -7,10 +7,7 @@ local currentHoveredWidget
 
 -- private functions
 local function moveToolTip(first)
-    if not first and
-        (not toolTipLabel:isVisible() or toolTipLabel:getOpacity() < 0.1) then
-        return
-    end
+    if not first and (not toolTipLabel:isVisible() or toolTipLabel:getOpacity() < 0.1) then return end
 
     local pos = g_window.getMousePosition()
     local windowSize = g_window.getSize()
@@ -87,21 +84,24 @@ function g_tooltip.display(text)
 
     toolTipLabel:setText(text)
     toolTipLabel:resizeToText()
-    toolTipLabel:resize(toolTipLabel:getWidth() + 4,
-                        toolTipLabel:getHeight() + 4)
+    toolTipLabel:resize(toolTipLabel:getWidth() + 4, toolTipLabel:getHeight() + 4)
     toolTipLabel:show()
     toolTipLabel:raise()
     toolTipLabel:enable()
     g_effects.fadeIn(toolTipLabel, 100)
     moveToolTip(true)
 
-    connect(rootWidget, {onMouseMove = moveToolTip})
+    connect(rootWidget, {
+        onMouseMove = moveToolTip
+    })
 end
 
 function g_tooltip.hide()
     g_effects.fadeOut(toolTipLabel, 100)
 
-    disconnect(rootWidget, {onMouseMove = moveToolTip})
+    disconnect(rootWidget, {
+        onMouseMove = moveToolTip
+    })
 end
 
 -- @docclass UIWidget @{
@@ -116,4 +116,6 @@ function UIWidget:getTooltip() return self.tooltip end
 -- @}
 
 g_tooltip.init()
-connect(g_app, {onTerminate = g_tooltip.terminate})
+connect(g_app, {
+    onTerminate = g_tooltip.terminate
+})

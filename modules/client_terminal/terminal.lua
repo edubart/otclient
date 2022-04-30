@@ -36,11 +36,9 @@ local function navigateCommand(step)
 
     local numCommands = #commandHistory
     if numCommands > 0 then
-        currentHistoryIndex = math.min(math.max(currentHistoryIndex + step, 0),
-                                       numCommands)
+        currentHistoryIndex = math.min(math.max(currentHistoryIndex + step, 0), numCommands)
         if currentHistoryIndex > 0 then
-            local command =
-                commandHistory[numCommands - currentHistoryIndex + 1]
+            local command = commandHistory[numCommands - currentHistoryIndex + 1]
             commandTextEdit:setText(command)
             commandTextEdit:setCursorPos(-1)
         else
@@ -61,11 +59,7 @@ local function completeCommand()
     table.merge(allVars, commandEnv)
 
     -- match commands
-    for k, v in pairs(allVars) do
-        if k:sub(1, cursorPos) == commandBegin then
-            table.insert(possibleCommands, k)
-        end
-    end
+    for k, v in pairs(allVars) do if k:sub(1, cursorPos) == commandBegin then table.insert(possibleCommands, k) end end
 
     -- complete command with one match
     if #possibleCommands == 1 then
@@ -81,12 +75,9 @@ local function completeCommand()
         while not done do
             cursorPos = #commandBegin + 1
             if #possibleCommands[1] < cursorPos then break end
-            expandedComplete = commandBegin ..
-                                   possibleCommands[1]:sub(cursorPos, cursorPos)
+            expandedComplete = commandBegin .. possibleCommands[1]:sub(cursorPos, cursorPos)
             for i, v in ipairs(possibleCommands) do
-                if v:sub(1, #expandedComplete) ~= expandedComplete then
-                    done = true
-                end
+                if v:sub(1, #expandedComplete) ~= expandedComplete then done = true end
             end
             if not done then commandBegin = expandedComplete end
         end
@@ -133,25 +124,21 @@ function init()
 
     terminalWindow.onDoubleClick = popWindow
 
-    terminalButton = modules.client_topmenu.addLeftButton('terminalButton', tr(
-                                                              'Terminal') ..
-                                                              ' (Ctrl + T)',
-                                                          '/images/topbuttons/terminal',
-                                                          toggle)
+    terminalButton = modules.client_topmenu.addLeftButton('terminalButton', tr('Terminal') .. ' (Ctrl + T)',
+                                                          '/images/topbuttons/terminal', toggle)
     g_keyboard.bindKeyDown('Ctrl+T', toggle)
 
     commandHistory = g_settings.getList('terminal-history')
 
     commandTextEdit = terminalWindow:getChildById('commandTextEdit')
     commandTextEdit:setHeight(commandTextEdit.baseHeight)
-    connect(commandTextEdit, {onTextChange = onCommandChange})
-    g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end,
-                            commandTextEdit)
-    g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end,
-                            commandTextEdit)
+    connect(commandTextEdit, {
+        onTextChange = onCommandChange
+    })
+    g_keyboard.bindKeyPress('Up', function() navigateCommand(1) end, commandTextEdit)
+    g_keyboard.bindKeyPress('Down', function() navigateCommand(-1) end, commandTextEdit)
     g_keyboard.bindKeyPress('Ctrl+C', function()
-        if commandTextEdit:hasSelection() or
-            not terminalSelectText:hasSelection() then return false end
+        if commandTextEdit:hasSelection() or not terminalSelectText:hasSelection() then return false end
         g_window.setClipboardText(terminalSelectText:getSelection())
         return true
     end, commandTextEdit)
@@ -163,21 +150,15 @@ function init()
     terminalBuffer = terminalWindow:getChildById('terminalBuffer')
     terminalSelectText = terminalWindow:getChildById('terminalSelectText')
     terminalSelectText.onDoubleClick = popWindow
-    terminalSelectText.onMouseWheel = function(a, b, c)
-        terminalBuffer:onMouseWheel(b, c)
-    end
-    terminalBuffer.onScrollChange = function(self, value)
-        terminalSelectText:setTextVirtualOffset(value)
-    end
+    terminalSelectText.onMouseWheel = function(a, b, c) terminalBuffer:onMouseWheel(b, c) end
+    terminalBuffer.onScrollChange = function(self, value) terminalSelectText:setTextVirtualOffset(value) end
 
     g_logger.setOnLog(onLog)
 
     if not g_app.isRunning() then
         g_logger.fireOldMessages()
     elseif _G.terminalLines then
-        for _, line in pairs(_G.terminalLines) do
-            addLine(line.text, line.color)
-        end
+        for _, line in pairs(_G.terminalLines) do addLine(line.text, line.color) end
     end
 end
 
@@ -190,7 +171,11 @@ function terminate()
         oldPos = terminalWindow:getPosition()
         oldSize = terminalWindow:getSize()
     end
-    local settings = {size = oldSize, pos = oldPos, poped = poped}
+    local settings = {
+        size = oldSize,
+        pos = oldPos,
+        poped = poped
+    }
     g_settings.setNode('terminal-window', settings)
 
     g_keyboard.unbindKeyDown('Ctrl+T')
@@ -222,13 +207,15 @@ function popWindow()
     else
         terminalWindow:breakAnchors()
         terminalWindow:setOn(true)
-        local size = oldSize or
-                         {
-                width = g_window.getWidth() / 2.5,
-                height = g_window.getHeight() / 4
-            }
+        local size = oldSize or {
+            width = g_window.getWidth() / 2.5,
+            height = g_window.getHeight() / 4
+        }
         terminalWindow:setSize(size)
-        local pos = oldPos or {x = 0, y = g_window.getHeight()}
+        local pos = oldPos or {
+            x = 0,
+            y = g_window.getHeight()
+        }
         terminalWindow:setPosition(pos)
         terminalWindow:getChildById('bottomResizeBorder'):enable()
         terminalWindow:getChildById('rightResizeBorder'):enable()
@@ -298,7 +285,10 @@ function flushLines()
         label:setText(line.text)
         label:setColor(line.color)
 
-        table.insert(allLines, {text = line.text, color = line.color})
+        table.insert(allLines, {
+            text = line.text,
+            color = line.color
+        })
 
         fulltext = fulltext .. '\n' .. line.text
     end
@@ -312,18 +302,19 @@ end
 
 function addLine(text, color)
     text = string.gsub(text, '\t', '    ')
-    table.insert(cachedLines, {text = text, color = color})
+    table.insert(cachedLines, {
+        text = text,
+        color = color
+    })
 
-    if terminalWindow:isVisible() and not flushEvent then
-        flushEvent = scheduleEvent(flushLines, 10)
-    end
+    if terminalWindow:isVisible() and not flushEvent then flushEvent = scheduleEvent(flushLines, 10) end
 end
 
 function executeCommand(command)
     if command == nil or #string.gsub(command, '\n', '') == 0 then return end
 
     -- add command line
-    addLine("> " .. command, "#ffffff")
+    addLine('> ' .. command, '#ffffff')
 
     -- reset current history index
     currentHistoryIndex = 0
@@ -331,9 +322,7 @@ function executeCommand(command)
     -- add new command to history
     if #commandHistory == 0 or commandHistory[#commandHistory] ~= command then
         table.insert(commandHistory, command)
-        if #commandHistory > MaxHistory then
-            table.remove(commandHistory, 1)
-        end
+        if #commandHistory > MaxHistory then table.remove(commandHistory, 1) end
     end
 
     -- detect and convert commands with simple syntax
@@ -344,19 +333,15 @@ function executeCommand(command)
         realCommand = command
     end
 
-    local func, err = loadstring(realCommand, "@")
+    local func, err = loadstring(realCommand, '@')
 
     -- detect terminal commands
     if not func then
         local command_name = command:match('^([%w_]+)[%s]*.*')
         if command_name then
             local args = string.split(command:match('^[%w_]+[%s]*(.*)'), ' ')
-            if commandEnv[command_name] and type(commandEnv[command_name]) ==
-                'function' then
-                func = function()
-                    modules.client_terminal.commandEnv[command_name](
-                        unpack(args))
-                end
+            if commandEnv[command_name] and type(commandEnv[command_name]) == 'function' then
+                func = function() modules.client_terminal.commandEnv[command_name](unpack(args)) end
             elseif command_name == command then
                 addLine('ERROR: command not found', 'red')
                 return

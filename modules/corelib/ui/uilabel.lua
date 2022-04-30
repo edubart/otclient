@@ -1,5 +1,5 @@
 -- @docclass
-UILabel = extends(UIWidget, "UILabel")
+UILabel = extends(UIWidget, 'UILabel')
 
 function UILabel.create()
     local label = UILabel.internalCreate()

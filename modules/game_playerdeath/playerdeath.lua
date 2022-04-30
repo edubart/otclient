@@ -21,11 +21,17 @@ local deathTexts = {
 function init()
     g_ui.importStyle('deathwindow')
 
-    connect(g_game, {onDeath = display, onGameEnd = reset})
+    connect(g_game, {
+        onDeath = display,
+        onGameEnd = reset
+    })
 end
 
 function terminate()
-    disconnect(g_game, {onDeath = display, onGameEnd = reset})
+    disconnect(g_game, {
+        onDeath = display,
+        onGameEnd = reset
+    })
 
     reset()
 end
@@ -43,9 +49,7 @@ function display(deathType, penalty)
 end
 
 function displayDeadMessage()
-    local advanceLabel =
-        modules.game_interface.getRootPanel():recursiveGetChildById(
-            'middleCenterLabel')
+    local advanceLabel = modules.game_interface.getRootPanel():recursiveGetChildById('middleCenterLabel')
     if advanceLabel:isVisible() then return end
 
     modules.game_textmessage.displayGameMessage(tr('You are dead.'))
@@ -63,15 +67,11 @@ function openWindow(deathType, penalty)
     if deathType == DeathType.Regular then
         if penalty == 100 then
             textLabel:setText(deathTexts.regular.text)
-            deathWindow:setHeight(deathWindow.baseHeight +
-                                      deathTexts.regular.height)
-            deathWindow:setWidth(deathWindow.baseWidth +
-                                     deathTexts.regular.width)
+            deathWindow:setHeight(deathWindow.baseHeight + deathTexts.regular.height)
+            deathWindow:setWidth(deathWindow.baseWidth + deathTexts.regular.width)
         else
-            textLabel:setText(string.format(deathTexts.unfair.text,
-                                            100 - penalty))
-            deathWindow:setHeight(deathWindow.baseHeight +
-                                      deathTexts.unfair.height)
+            textLabel:setText(string.format(deathTexts.unfair.text, 100 - penalty))
+            deathWindow:setHeight(deathWindow.baseHeight + deathTexts.unfair.height)
             deathWindow:setWidth(deathWindow.baseWidth + deathTexts.unfair.width)
         end
     elseif deathType == DeathType.Blessed then

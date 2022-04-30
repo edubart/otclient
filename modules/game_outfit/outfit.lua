@@ -48,12 +48,9 @@ localPlayerEvent = EventController:new(LocalPlayer, {
         outfit.addons = 0
 
         for k, addon in pairs(addons) do
-            local isEnabled = availableAddons == 3 or addon.value ==
-                                  availableAddons
+            local isEnabled = availableAddons == 3 or addon.value == availableAddons
             addon.widget:setEnabled(isEnabled)
-            addon.widget:setChecked(isEnabled and
-                                        (selectedAddons == 3 or addon.value ==
-                                            selectedAddons))
+            addon.widget:setChecked(isEnabled and (selectedAddons == 3 or addon.value == selectedAddons))
         end
 
         outfit.type = selectedOutfit[1]
@@ -74,8 +71,7 @@ controller = Controller:new()
 controller:onGameEnd(function() destroy() end)
 
 controller:gameEvent('onOpenOutfitWindow',
-                     function(creatureOutfit, outfitList, creatureMount,
-                              mountList, creatureFamiliar, familiarList)
+                     function(creatureOutfit, outfitList, creatureMount, mountList, creatureFamiliar, familiarList)
 
     if outfitWindow and not outfitWindow:isHidden() then return end
 
@@ -114,14 +110,18 @@ controller:gameEvent('onOpenOutfitWindow',
 
     -- set addons
     addons = {
-        [1] = {widget = outfitWindow:getChildById('addon1'), value = 1},
-        [2] = {widget = outfitWindow:getChildById('addon2'), value = 2}
+        [1] = {
+            widget = outfitWindow:getChildById('addon1'),
+            value = 1
+        },
+        [2] = {
+            widget = outfitWindow:getChildById('addon2'),
+            value = 2
+        }
     }
 
     for _, addon in pairs(addons) do
-        addon.widget.onCheckChange = function(self)
-            onAddonCheckChange(self, addon.value)
-        end
+        addon.widget.onCheckChange = function(self) onAddonCheckChange(self, addon.value) end
     end
 
     -- hook outfit sections
@@ -191,11 +191,8 @@ function destroy()
 end
 
 function randomize()
-    local outfitTemplate = {
-        outfitWindow:getChildById('detail'),
-        outfitWindow:getChildById('secondary'),
-        outfitWindow:getChildById('primary'), outfitWindow:getChildById('head')
-    }
+    local outfitTemplate = {outfitWindow:getChildById('detail'), outfitWindow:getChildById('secondary'),
+                            outfitWindow:getChildById('primary'), outfitWindow:getChildById('head')}
 
     for i, template in pairs(outfitTemplate) do
         template:setChecked(true)
@@ -305,7 +302,6 @@ function onClotheCheckChange(clotheButtonBox)
         elseif currentClotheButtonBox:getId() == 'detail' then
             colorId = outfit.feet
         end
-        outfitWindow:recursiveGetChildById('colorBox' .. colorId):setChecked(
-            true)
+        outfitWindow:recursiveGetChildById('colorBox' .. colorId):setChecked(true)
     end
 end

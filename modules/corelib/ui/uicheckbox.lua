@@ -1,5 +1,5 @@
 -- @docclass
-UICheckBox = extends(UIWidget, "UICheckBox")
+UICheckBox = extends(UIWidget, 'UICheckBox')
 
 function UICheckBox.create()
     local checkbox = UICheckBox.internalCreate()

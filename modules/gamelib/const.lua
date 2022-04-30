@@ -232,19 +232,17 @@ MessageModes = {
     Invalid = 255
 }
 
-OTSERV_RSA =
-    "1091201329673994292788609605089955415282375029027981291234687579" ..
-        "3726629149257644633073969600111060390723088861007265581882535850" ..
-        "3429057592827629436413108566029093628212635953836686562675849720" ..
-        "6207862794310902180176810615217550567108238764764442605581471797" ..
-        "07119674283982419152118103759076030616683978566631413"
+OTSERV_RSA = '1091201329673994292788609605089955415282375029027981291234687579' ..
+                 '3726629149257644633073969600111060390723088861007265581882535850' ..
+                 '3429057592827629436413108566029093628212635953836686562675849720' ..
+                 '6207862794310902180176810615217550567108238764764442605581471797' ..
+                 '07119674283982419152118103759076030616683978566631413'
 
-CIPSOFT_RSA =
-    "1321277432058722840622950990822933849527763264961655079678763618" ..
-        "4334395343554449668205332383339435179772895415509701210392836078" ..
-        "6959821132214473291575712138800495033169914814069637740318278150" ..
-        "2907336840325241747827401343576296990629870233111328210165697754" ..
-        "88792221429527047321331896351555606801473202394175817"
+CIPSOFT_RSA = '1321277432058722840622950990822933849527763264961655079678763618' ..
+                  '4334395343554449668205332383339435179772895415509701210392836078' ..
+                  '6959821132214473291575712138800495033169914814069637740318278150' ..
+                  '2907336840325241747827401343576296990629870233111328210165697754' ..
+                  '88792221429527047321331896351555606801473202394175817'
 
 -- set to the latest Tibia.pic signature to make otclient compatible with official tibia
 PIC_SIGNATURE = 0x56C5DDE7
@@ -258,7 +256,13 @@ OsTypes = {
     OtclientMac = 12
 }
 
-PathFindResults = {Ok = 0, Position = 1, Impossible = 2, TooFar = 3, NoWay = 4}
+PathFindResults = {
+    Ok = 0,
+    Position = 1,
+    Impossible = 2,
+    TooFar = 3,
+    NoWay = 4
+}
 
 PathFindFlags = {
     AllowNullTiles = 1,
@@ -267,7 +271,11 @@ PathFindFlags = {
     AllowNonWalkable = 8
 }
 
-VipState = {Offline = 0, Online = 1, Pending = 2}
+VipState = {
+    Offline = 0,
+    Online = 1,
+    Pending = 2
+}
 
 ExtendedIds = {
     Activate = 0,
@@ -280,7 +288,11 @@ ExtendedIds = {
     NeedsUpdate = 7
 }
 
-PreviewState = {Default = 0, Inactive = 1, Active = 2}
+PreviewState = {
+    Default = 0,
+    Inactive = 1,
+    Active = 2
+}
 
 Blessings = {
     None = 0,
@@ -292,9 +304,15 @@ Blessings = {
     SparkOfPhoenix = 32
 }
 
-DeathType = {Regular = 0, Blessed = 1}
+DeathType = {
+    Regular = 0,
+    Blessed = 1
+}
 
-ProductType = {Other = 0, NameChange = 1}
+ProductType = {
+    Other = 0,
+    NameChange = 1
+}
 
 StoreErrorType = {
     NoError = -1,
@@ -305,12 +323,29 @@ StoreErrorType = {
     Information = 4
 }
 
-StoreState = {None = 0, New = 1, Sale = 2, Timed = 3}
+StoreState = {
+    None = 0,
+    New = 1,
+    Sale = 2,
+    Timed = 3
+}
 
-AccountStatus = {Ok = 0, Frozen = 1, Suspended = 2}
+AccountStatus = {
+    Ok = 0,
+    Frozen = 1,
+    Suspended = 2
+}
 
-SubscriptionStatus = {Free = 0, Premium = 1}
+SubscriptionStatus = {
+    Free = 0,
+    Premium = 1
+}
 
-ChannelEvent = {Join = 0, Leave = 1, Invite = 2, Exclude = 3}
+ChannelEvent = {
+    Join = 0,
+    Leave = 1,
+    Invite = 2,
+    Exclude = 3
+}
 
 -- @}

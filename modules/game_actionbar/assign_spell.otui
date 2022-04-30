@@ -17,7 +17,7 @@ SpellListLabel < Label
   image-clip: 0 0 32 32
   image-size: 32 32
   image-offset: 2 2
-  
+
   $focus:
     background-color: #585858
     color: #ffffff

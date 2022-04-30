@@ -110,9 +110,8 @@ function init()
         onGameEnd = offline
     })
 
-    healthInfoButton = modules.client_topmenu.addRightGameToggleButton(
-                           'healthInfoButton', tr('Health Information'),
-                           '/images/topbuttons/healthinfo', toggle)
+    healthInfoButton = modules.client_topmenu.addRightGameToggleButton('healthInfoButton', tr('Health Information'),
+                                                                       '/images/topbuttons/healthinfo', toggle)
     healthInfoButton:setOn(true)
 
     healthInfoWindow = g_ui.loadUI('healthinfo')
@@ -128,21 +127,16 @@ function init()
 
     if g_game.isOnline() then
         local localPlayer = g_game.getLocalPlayer()
-        onHealthChange(localPlayer, localPlayer:getHealth(),
-                       localPlayer:getMaxHealth())
-        onManaChange(localPlayer, localPlayer:getMana(),
-                     localPlayer:getMaxMana())
-        onLevelChange(localPlayer, localPlayer:getLevel(),
-                      localPlayer:getLevelPercent())
+        onHealthChange(localPlayer, localPlayer:getHealth(), localPlayer:getMaxHealth())
+        onManaChange(localPlayer, localPlayer:getMana(), localPlayer:getMaxMana())
+        onLevelChange(localPlayer, localPlayer:getLevel(), localPlayer:getLevelPercent())
         onStatesChange(localPlayer, localPlayer:getStates(), 0)
         onSoulChange(localPlayer, localPlayer:getSoul())
         onFreeCapacityChange(localPlayer, localPlayer:getFreeCapacity())
     end
 
     healthInfoWindow:setup()
-    if g_game.isOnline() then
-        healthInfoWindow:setupOnStart()
-    end
+    if g_game.isOnline() then healthInfoWindow:setupOnStart() end
 end
 
 function terminate()
@@ -231,13 +225,9 @@ function onLevelChange(localPlayer, value, percent)
     experienceBar:setPercent(percent)
 end
 
-function onSoulChange(localPlayer, soul)
-    soulLabel:setText(tr('Soul') .. ': ' .. soul)
-end
+function onSoulChange(localPlayer, soul) soulLabel:setText(tr('Soul') .. ': ' .. soul) end
 
-function onFreeCapacityChange(player, freeCapacity)
-    capLabel:setText(tr('Cap') .. ': ' .. freeCapacity)
-end
+function onFreeCapacityChange(player, freeCapacity) capLabel:setText(tr('Cap') .. ': ' .. freeCapacity) end
 
 function onStatesChange(localPlayer, now, old)
     if now == old then return end
@@ -253,41 +243,30 @@ end
 
 -- personalization functions
 function hideLabels()
-    local removeHeight = math.max(capLabel:getMarginRect().height,
-                                  soulLabel:getMarginRect().height)
+    local removeHeight = math.max(capLabel:getMarginRect().height, soulLabel:getMarginRect().height)
     capLabel:setOn(false)
     soulLabel:setOn(false)
-    healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight,
-                                        healthInfoWindow:getHeight() -
-                                            removeHeight))
+    healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
 end
 
 function hideExperience()
     local removeHeight = experienceBar:getMarginRect().height
     experienceBar:setOn(false)
-    healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight,
-                                        healthInfoWindow:getHeight() -
-                                            removeHeight))
+    healthInfoWindow:setHeight(math.max(healthInfoWindow.minimizedHeight, healthInfoWindow:getHeight() - removeHeight))
 end
 
 function setHealthTooltip(tooltip)
     healthTooltip = tooltip
 
     local localPlayer = g_game.getLocalPlayer()
-    if localPlayer then
-        healthBar:setTooltip(tr(healthTooltip, localPlayer:getHealth(),
-                                localPlayer:getMaxHealth()))
-    end
+    if localPlayer then healthBar:setTooltip(tr(healthTooltip, localPlayer:getHealth(), localPlayer:getMaxHealth())) end
 end
 
 function setManaTooltip(tooltip)
     manaTooltip = tooltip
 
     local localPlayer = g_game.getLocalPlayer()
-    if localPlayer then
-        manaBar:setTooltip(tr(manaTooltip, localPlayer:getMana(),
-                              localPlayer:getMaxMana()))
-    end
+    if localPlayer then manaBar:setTooltip(tr(manaTooltip, localPlayer:getMana(), localPlayer:getMaxMana())) end
 end
 
 function setExperienceTooltip(tooltip)
@@ -295,8 +274,6 @@ function setExperienceTooltip(tooltip)
 
     local localPlayer = g_game.getLocalPlayer()
     if localPlayer then
-        experienceBar:setTooltip(tr(experienceTooltip,
-                                    localPlayer:getLevelPercent(),
-                                    localPlayer:getLevel() + 1))
+        experienceBar:setTooltip(tr(experienceTooltip, localPlayer:getLevelPercent(), localPlayer:getLevel() + 1))
     end
 end

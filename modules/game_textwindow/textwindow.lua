@@ -54,7 +54,7 @@ function onGameEditText(id, itemId, maxLength, text, writer, time)
     end
 
     if #text == 0 and not writeable then
-        desc = tr("It is empty.")
+        desc = tr('It is empty.')
     elseif writeable then
         desc = desc .. tr('You can enter new text.')
     end

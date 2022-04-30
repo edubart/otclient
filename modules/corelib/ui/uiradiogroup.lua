@@ -1,5 +1,5 @@
 -- @docclass
-UIRadioGroup = newclass("UIRadioGroup")
+UIRadioGroup = newclass('UIRadioGroup')
 
 function UIRadioGroup.create()
     local radiogroup = UIRadioGroup.internalCreate()
@@ -34,10 +34,7 @@ function UIRadioGroup:selectWidget(selectedWidget, dontSignal)
 
     if selectedWidget then selectedWidget:setChecked(true) end
 
-    if not dontSignal then
-        signalcall(self.onSelectionChange, self, selectedWidget,
-                   previousSelectedWidget)
-    end
+    if not dontSignal then signalcall(self.onSelectionChange, self, selectedWidget, previousSelectedWidget) end
 end
 
 function UIRadioGroup:clearSelected()

@@ -21,12 +21,14 @@ local function onError(protocol, message, errorCode)
     if not errorCode then EnterGame.clearAccountFields() end
 
     local errorBox = displayErrorBox(tr('Login Error'), message)
-    connect(errorBox, {onOk = EnterGame.show})
+    connect(errorBox, {
+        onOk = EnterGame.show
+    })
 end
 
 local function onMotd(protocol, motd)
-    G.motdNumber = tonumber(motd:sub(0, motd:find("\n")))
-    G.motdMessage = motd:sub(motd:find("\n") + 1, #motd)
+    G.motdNumber = tonumber(motd:sub(0, motd:find('\n')))
+    G.motdMessage = motd:sub(motd:find('\n') + 1, #motd)
     if motdEnabled then motdButton:show() end
 end
 
@@ -37,8 +39,7 @@ local function onCharacterList(protocol, characters, account, otui)
     ServerList.add(G.host, G.port, g_game.getClientVersion())
 
     -- Save 'Stay logged in' setting
-    g_settings.set('staylogged',
-                   enterGame:getChildById('stayLoggedBox'):isChecked())
+    g_settings.set('staylogged', enterGame:getChildById('stayLoggedBox'):isChecked())
 
     if enterGame:getChildById('rememberPasswordBox'):isChecked() then
         local account = g_crypt.encrypt(G.account)
@@ -50,8 +51,7 @@ local function onCharacterList(protocol, characters, account, otui)
         ServerList.setServerAccount(G.host, account)
         ServerList.setServerPassword(G.host, password)
 
-        g_settings.set('autologin',
-                       enterGame:getChildById('autoLoginBox'):isChecked())
+        g_settings.set('autologin', enterGame:getChildById('autoLoginBox'):isChecked())
     else
         -- reset server list account/password
         ServerList.setServerAccount(G.host, '')
@@ -64,8 +64,7 @@ local function onCharacterList(protocol, characters, account, otui)
     loadBox = nil
 
     for _, characterInfo in pairs(characters) do
-        if characterInfo.previewState and characterInfo.previewState ~=
-            PreviewState.Default then
+        if characterInfo.previewState and characterInfo.previewState ~= PreviewState.Default then
             characterInfo.worldName = characterInfo.worldName .. ', Preview'
         end
     end
@@ -74,9 +73,9 @@ local function onCharacterList(protocol, characters, account, otui)
     CharacterList.show()
 
     if motdEnabled then
-        local lastMotdNumber = g_settings.getNumber("motd")
+        local lastMotdNumber = g_settings.getNumber('motd')
         if G.motdNumber and G.motdNumber ~= lastMotdNumber then
-            g_settings.set("motd", G.motdNumber)
+            g_settings.set('motd', G.motdNumber)
             motdWindow = displayInfoBox(tr('Message of the day'), G.motdMessage)
             connect(motdWindow, {
                 onOk = function()
@@ -98,23 +97,19 @@ local function onUpdateNeeded(protocol, signature)
         local cancelFunc = EnterGame.show
         EnterGame.updateFunc(signature, continueFunc, cancelFunc)
     else
-        local errorBox = displayErrorBox(tr('Update needed'), tr(
-                                             'Your client needs updating, try redownloading it.'))
-        connect(errorBox, {onOk = EnterGame.show})
+        local errorBox = displayErrorBox(tr('Update needed'), tr('Your client needs updating, try redownloading it.'))
+        connect(errorBox, {
+            onOk = EnterGame.show
+        })
     end
 end
 
 -- public functions
 function EnterGame.init()
     enterGame = g_ui.displayUI('entergame')
-    enterGameButton = modules.client_topmenu.addLeftButton('enterGameButton',
-                                                           tr('Login') ..
-                                                               ' (Ctrl + G)',
-                                                           '/images/topbuttons/login',
-                                                           EnterGame.openWindow)
-    motdButton = modules.client_topmenu.addLeftButton('motdButton',
-                                                      tr('Message of the day'),
-                                                      '/images/topbuttons/motd',
+    enterGameButton = modules.client_topmenu.addLeftButton('enterGameButton', tr('Login') .. ' (Ctrl + G)',
+                                                           '/images/topbuttons/login', EnterGame.openWindow)
+    motdButton = modules.client_topmenu.addLeftButton('motdButton', tr('Message of the day'), '/images/topbuttons/motd',
                                                       EnterGame.displayMotd)
     motdButton:hide()
     g_keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
@@ -158,14 +153,16 @@ function EnterGame.init()
     end
     for proto_str, status in pairs(installedClients) do
         if status == true then
-            print(string.format("Warning: %s recognized as an installed client, but not supported.", proto_str))
+            print(string.format('Warning: %s recognized as an installed client, but not supported.', proto_str))
         end
     end
     clientBox:setCurrentOption(clientVersion)
 
     EnterGame.toggleAuthenticatorToken(clientVersion, true)
     EnterGame.toggleStayLoggedBox(clientVersion, true)
-    connect(clientBox, {onOptionChange = EnterGame.onClientVersionChange})
+    connect(clientBox, {
+        onOptionChange = EnterGame.onClientVersionChange
+    })
 
     enterGame:hide()
 
@@ -189,7 +186,9 @@ end
 
 function EnterGame.terminate()
     g_keyboard.unbindKeyDown('Ctrl+G')
-    disconnect(clientBox, {onOptionChange = EnterGame.onClientVersionChange})
+    disconnect(clientBox, {
+        onOptionChange = EnterGame.onClientVersionChange
+    })
     enterGame:destroy()
     enterGame = nil
     enterGameButton:destroy()
@@ -211,9 +210,7 @@ function EnterGame.terminate()
         protocolLogin:cancelLogin()
         protocolLogin = nil
     end
-    if protocolHttp then
-        protocolHttp = nil
-    end
+    if protocolHttp then protocolHttp = nil end
     EnterGame = nil
 end
 
@@ -317,8 +314,7 @@ end
 function EnterGame.doLogin()
     G.account = enterGame:getChildById('accountNameTextEdit'):getText()
     G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
-    G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit')
-                               :getText()
+    G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit'):getText()
     G.stayLogged = enterGame:getChildById('stayLoggedBox'):isChecked()
     G.host = enterGame:getChildById('serverHostTextEdit'):getText()
     G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
@@ -326,9 +322,10 @@ function EnterGame.doLogin()
     EnterGame.hide()
 
     if g_game.isOnline() then
-        local errorBox = displayErrorBox(tr('Login Error'), tr(
-                                             'Cannot login while already in game.'))
-        connect(errorBox, {onOk = EnterGame.show})
+        local errorBox = displayErrorBox(tr('Login Error'), tr('Cannot login while already in game.'))
+        connect(errorBox, {
+            onOk = EnterGame.show
+        })
         return
     end
 
@@ -340,15 +337,19 @@ function EnterGame.doLogin()
         -- http login server
         protocolHttp = ProtocolHttp.create()
         protocolHttp.onConnect = function(protocol)
-            local body = json.encode({email = G.account, password = G.password, type = "login"})
+            local body = json.encode({
+                email = G.account,
+                password = G.password,
+                type = 'login'
+            })
             local message = ''
-            message = message .. "POST /login.php HTTP/1.1\r\n"
-            message = message .. "Host: " .. G.host .. "\r\n"
-            message = message .. "User-Agent: Mozilla/5.0\r\n"
-            message = message .. "Accept: */*\r\n"
-            message = message .. "Content-Type: application/json\r\n"
-            message = message .. "Connection: close\r\n"
-            message = message .. "Content-Length: " .. body:len() .. "\r\n\r\n"
+            message = message .. 'POST /login.php HTTP/1.1\r\n'
+            message = message .. 'Host: ' .. G.host .. '\r\n'
+            message = message .. 'User-Agent: Mozilla/5.0\r\n'
+            message = message .. 'Accept: */*\r\n'
+            message = message .. 'Content-Type: application/json\r\n'
+            message = message .. 'Connection: close\r\n'
+            message = message .. 'Content-Length: ' .. body:len() .. '\r\n\r\n'
             message = message .. body
             protocol:send(message)
             protocol:recv()
@@ -356,14 +357,14 @@ function EnterGame.doLogin()
 
         protocolHttp.onRecv = function(protocol, message)
             if not string.find(message, 'HTTP/1.1 200 OK') then
-                onError(nil, "Connection timed out.", 408)
+                onError(nil, 'Connection timed out.', 408)
                 return
             end
 
-            local _, bodyStart = message:find("{")
-            local _, bodyEnd = message:find(".*}")
+            local _, bodyStart = message:find('{')
+            local _, bodyEnd = message:find('.*}')
             if not bodyStart or not bodyEnd then
-                onError(nil, "Bad Request.", 400)
+                onError(nil, 'Bad Request.', 400)
                 return
             end
 
@@ -381,7 +382,7 @@ function EnterGame.doLogin()
                     name = world.name,
                     ip = world.externaladdress,
                     port = world.externalport,
-                    previewState = world.previewstate == 1,
+                    previewState = world.previewstate == 1
                 }
             end
 
@@ -400,9 +401,9 @@ function EnterGame.doLogin()
             local premiumUntil = tonumber(response.session.premiumuntil)
 
             local account = {
-                status = "",
+                status = '',
                 premDays = math.floor((premiumUntil - os.time()) / 86400),
-                subStatus = premiumUntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free,
+                subStatus = premiumUntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free
             }
 
             -- set session key
@@ -413,8 +414,7 @@ function EnterGame.doLogin()
 
         protocolHttp.onError = onError
 
-        loadBox = displayCancelBox(tr('Please wait'),
-                                   tr('Connecting to login server...'))
+        loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
         connect(loadBox, {
             onCancel = function(msgbox)
                 loadBox = nil
@@ -442,8 +442,7 @@ function EnterGame.doLogin()
         protocolLogin.onCharacterList = onCharacterList
         protocolLogin.onUpdateNeeded = onUpdateNeeded
 
-        loadBox = displayCancelBox(tr('Please wait'),
-                                   tr('Connecting to login server...'))
+        loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
         connect(loadBox, {
             onCancel = function(msgbox)
                 loadBox = nil
@@ -457,8 +456,7 @@ function EnterGame.doLogin()
         g_game.chooseRsa(G.host)
 
         if modules.game_things.isLoaded() then
-            protocolLogin:login(G.host, G.port, G.account, G.password,
-                                G.authenticatorToken, G.stayLogged)
+            protocolLogin:login(G.host, G.port, G.account, G.password, G.authenticatorToken, G.stayLogged)
         else
             loadBox:destroy()
             loadBox = nil
@@ -480,8 +478,7 @@ function EnterGame.setDefaultServer(host, port, protocol)
     local clientLabel = enterGame:getChildById('clientLabel')
     local accountTextEdit = enterGame:getChildById('accountNameTextEdit')
     local passwordTextEdit = enterGame:getChildById('accountPasswordTextEdit')
-    local authenticatorTokenTextEdit = enterGame:getChildById(
-                                           'authenticatorTokenTextEdit')
+    local authenticatorTokenTextEdit = enterGame:getChildById('authenticatorTokenTextEdit')
 
     if hostTextEdit:getText() ~= host then
         hostTextEdit:setText(host)
@@ -493,8 +490,7 @@ function EnterGame.setDefaultServer(host, port, protocol)
     end
 end
 
-function EnterGame.setUniqueServer(host, port, protocol, windowWidth,
-                                   windowHeight)
+function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeight)
     local hostTextEdit = enterGame:getChildById('serverHostTextEdit')
     hostTextEdit:setText(host)
     hostTextEdit:setVisible(false)
@@ -504,12 +500,10 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth,
     portTextEdit:setVisible(false)
     portTextEdit:setHeight(0)
 
-    local authenticatorTokenTextEdit = enterGame:getChildById(
-                                           'authenticatorTokenTextEdit')
+    local authenticatorTokenTextEdit = enterGame:getChildById('authenticatorTokenTextEdit')
     authenticatorTokenTextEdit:setText('')
     authenticatorTokenTextEdit:setOn(false)
-    local authenticatorTokenLabel = enterGame:getChildById(
-                                        'authenticatorTokenLabel')
+    local authenticatorTokenLabel = enterGame:getChildById('authenticatorTokenLabel')
     authenticatorTokenLabel:setOn(false)
 
     local stayLoggedBox = enterGame:getChildById('stayLoggedBox')

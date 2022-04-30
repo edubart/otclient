@@ -18,20 +18,16 @@ local function tryLogin(charInfo, tries)
 
     if g_game.isOnline() then
         if tries == 1 then g_game.safeLogout() end
-        loginEvent = scheduleEvent(function()
-            tryLogin(charInfo, tries + 1)
-        end, 100)
+        loginEvent = scheduleEvent(function() tryLogin(charInfo, tries + 1) end, 100)
         return
     end
 
     CharacterList.hide()
 
-    g_game.loginWorld(G.account, G.password, charInfo.worldName,
-                      charInfo.worldHost, charInfo.worldPort,
+    g_game.loginWorld(G.account, G.password, charInfo.worldName, charInfo.worldHost, charInfo.worldPort,
                       charInfo.characterName, G.authenticatorToken, G.sessionKey)
 
-    loadBox = displayCancelBox(tr('Please wait'),
-                               tr('Connecting to game server...'))
+    loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to game server...'))
     connect(loadBox, {
         onCancel = function()
             loadBox = nil
@@ -50,7 +46,7 @@ local function updateWait(timeStart, timeEnd)
         local time = g_clock.seconds()
         if time <= timeEnd then
             local percent = ((time - timeStart) / (timeEnd - timeStart)) * 100
-            local timeStr = string.format("%.0f", timeEnd - time)
+            local timeStr = string.format('%.0f', timeEnd - time)
 
             local progressBar = waitingWindow:getChildById('progressBar')
             progressBar:setPercent(percent)
@@ -58,10 +54,8 @@ local function updateWait(timeStart, timeEnd)
             local label = waitingWindow:getChildById('timeLabel')
             label:setText(tr('Trying to reconnect in %s seconds.', timeStr))
 
-            updateWaitEvent = scheduleEvent(function()
-                updateWait(timeStart, timeEnd)
-            end, 1000 * progressBar:getPercentPixels() / 100 *
-                                                (timeEnd - timeStart))
+            updateWaitEvent = scheduleEvent(function() updateWait(timeStart, timeEnd) end,
+                                            1000 * progressBar:getPercentPixels() / 100 * (timeEnd - timeStart))
             return true
         end
     end
@@ -105,15 +99,13 @@ local function onLoginWait(message, time)
     local label = waitingWindow:getChildById('infoLabel')
     label:setText(message)
 
-    updateWaitEvent = scheduleEvent(function()
-        updateWait(g_clock.seconds(), g_clock.seconds() + time)
-    end, 0)
+    updateWaitEvent = scheduleEvent(function() updateWait(g_clock.seconds(), g_clock.seconds() + time) end, 0)
     resendWaitEvent = scheduleEvent(resendWait, time * 1000)
 end
 
 function onGameLoginError(message)
     CharacterList.destroyLoadBox()
-    errorBox = displayErrorBox(tr("Login Error"), message)
+    errorBox = displayErrorBox(tr('Login Error'), message)
     errorBox.onOk = function()
         errorBox = nil
         CharacterList.showAgain()
@@ -127,10 +119,9 @@ end
 
 function onGameConnectionError(message, code)
     CharacterList.destroyLoadBox()
-    local text = translateNetworkError(code, g_game.getProtocolGame() and
-                                           g_game.getProtocolGame():isConnecting(),
+    local text = translateNetworkError(code, g_game.getProtocolGame() and g_game.getProtocolGame():isConnecting(),
                                        message)
-    errorBox = displayErrorBox(tr("Connection Error"), text)
+    errorBox = displayErrorBox(tr('Connection Error'), text)
     errorBox.onOk = function()
         errorBox = nil
         CharacterList.showAgain()
@@ -139,8 +130,7 @@ end
 
 function onGameUpdateNeeded(signature)
     CharacterList.destroyLoadBox()
-    errorBox = displayErrorBox(tr("Update needed"), tr(
-                                   'Enter with your account again to update your client.'))
+    errorBox = displayErrorBox(tr('Update needed'), tr('Enter with your account again to update your client.'))
     errorBox.onOk = function()
         errorBox = nil
         CharacterList.showAgain()
@@ -149,27 +139,53 @@ end
 
 -- public functions
 function CharacterList.init()
-    connect(g_game, {onLoginError = onGameLoginError})
-    connect(g_game, {onSessionEnd = onGameSessionEnd})
-    connect(g_game, {onUpdateNeeded = onGameUpdateNeeded})
-    connect(g_game, {onConnectionError = onGameConnectionError})
-    connect(g_game, {onGameStart = CharacterList.destroyLoadBox})
-    connect(g_game, {onLoginWait = onLoginWait})
-    connect(g_game, {onGameEnd = CharacterList.showAgain})
+    connect(g_game, {
+        onLoginError = onGameLoginError
+    })
+    connect(g_game, {
+        onSessionEnd = onGameSessionEnd
+    })
+    connect(g_game, {
+        onUpdateNeeded = onGameUpdateNeeded
+    })
+    connect(g_game, {
+        onConnectionError = onGameConnectionError
+    })
+    connect(g_game, {
+        onGameStart = CharacterList.destroyLoadBox
+    })
+    connect(g_game, {
+        onLoginWait = onLoginWait
+    })
+    connect(g_game, {
+        onGameEnd = CharacterList.showAgain
+    })
 
-    if G.characters then
-        CharacterList.create(G.characters, G.characterAccount)
-    end
+    if G.characters then CharacterList.create(G.characters, G.characterAccount) end
 end
 
 function CharacterList.terminate()
-    disconnect(g_game, {onLoginError = onGameLoginError})
-    disconnect(g_game, {onSessionEnd = onGameSessionEnd})
-    disconnect(g_game, {onUpdateNeeded = onGameUpdateNeeded})
-    disconnect(g_game, {onConnectionError = onGameConnectionError})
-    disconnect(g_game, {onGameStart = CharacterList.destroyLoadBox})
-    disconnect(g_game, {onLoginWait = onLoginWait})
-    disconnect(g_game, {onGameEnd = CharacterList.showAgain})
+    disconnect(g_game, {
+        onLoginError = onGameLoginError
+    })
+    disconnect(g_game, {
+        onSessionEnd = onGameSessionEnd
+    })
+    disconnect(g_game, {
+        onUpdateNeeded = onGameUpdateNeeded
+    })
+    disconnect(g_game, {
+        onConnectionError = onGameConnectionError
+    })
+    disconnect(g_game, {
+        onGameStart = CharacterList.destroyLoadBox
+    })
+    disconnect(g_game, {
+        onLoginWait = onLoginWait
+    })
+    disconnect(g_game, {
+        onGameEnd = CharacterList.showAgain
+    })
 
     if charactersWindow then
         characterList = nil
@@ -219,8 +235,7 @@ function CharacterList.create(characters, account, otui)
     G.characterAccount = account
 
     characterList:destroyChildren()
-    local accountStatusLabel = charactersWindow:getChildById(
-                                   'accountStatusLabel')
+    local accountStatusLabel = charactersWindow:getChildById('accountStatusLabel')
 
     local focusLabel
     for i, characterInfo in ipairs(characters) do
@@ -256,10 +271,8 @@ function CharacterList.create(characters, account, otui)
         })
 
         if i == 1 or
-            (g_settings.get('last-used-character') == widget.characterName and
-                g_settings.get('last-used-world') == widget.worldName) then
-            focusLabel = widget
-        end
+            (g_settings.get('last-used-character') == widget.characterName and g_settings.get('last-used-world') ==
+                widget.worldName) then focusLabel = widget end
     end
 
     if focusLabel then
@@ -279,14 +292,9 @@ function CharacterList.create(characters, account, otui)
         accountStatusLabel:setText(('%s%s'):format(tr('Free Account'), status))
     elseif account.subStatus == SubscriptionStatus.Premium then
         if account.premDays == 0 or account.premDays == 65535 then
-            accountStatusLabel:setText(('%s%s'):format(tr(
-                                                           'Gratis Premium Account'),
-                                                       status))
+            accountStatusLabel:setText(('%s%s'):format(tr('Gratis Premium Account'), status))
         else
-            accountStatusLabel:setText(('%s%s'):format(tr(
-                                                           'Premium Account (%s) days left',
-                                                           account.premDays),
-                                                       status))
+            accountStatusLabel:setText(('%s%s'):format(tr('Premium Account (%s) days left', account.premDays), status))
         end
     end
 
@@ -318,16 +326,10 @@ function CharacterList.hide(showLogin)
     showLogin = showLogin or false
     charactersWindow:hide()
 
-    if showLogin and EnterGame and not g_game.isOnline() then
-        EnterGame.show()
-    end
+    if showLogin and EnterGame and not g_game.isOnline() then EnterGame.show() end
 end
 
-function CharacterList.showAgain()
-    if characterList and characterList:hasChildren() then
-        CharacterList.show()
-    end
-end
+function CharacterList.showAgain() if characterList and characterList:hasChildren() then CharacterList.show() end end
 
 function CharacterList.isVisible()
     if charactersWindow and charactersWindow:isVisible() then return true end

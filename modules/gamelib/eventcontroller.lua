@@ -1,7 +1,14 @@
-EventController = {events = nil, connected = false}
+EventController = {
+    events = nil,
+    connected = false
+}
 
 function EventController:new(actor, events)
-    local obj = {actor = actor, events = events, connected = false}
+    local obj = {
+        actor = actor,
+        events = events,
+        connected = false
+    }
     setmetatable(obj, self)
     self.__index = self
     return obj

@@ -7,7 +7,9 @@ function init()
         onSizeChange = onContainerChangeSize,
         onUpdateItem = onContainerUpdateItem
     })
-    connect(Game, {onGameEnd = clean()})
+    connect(Game, {
+        onGameEnd = clean()
+    })
 
     reloadContainers()
 end
@@ -19,21 +21,17 @@ function terminate()
         onSizeChange = onContainerChangeSize,
         onUpdateItem = onContainerUpdateItem
     })
-    disconnect(Game, {onGameEnd = clean()})
+    disconnect(Game, {
+        onGameEnd = clean()
+    })
 end
 
 function reloadContainers()
     clean()
-    for _, container in pairs(g_game.getContainers()) do
-        onContainerOpen(container)
-    end
+    for _, container in pairs(g_game.getContainers()) do onContainerOpen(container) end
 end
 
-function clean()
-    for containerid, container in pairs(g_game.getContainers()) do
-        destroy(container)
-    end
-end
+function clean() for containerid, container in pairs(g_game.getContainers()) do destroy(container) end end
 
 function destroy(container)
     if container.window then
@@ -53,51 +51,33 @@ function refreshContainerItems(container)
 end
 
 function toggleContainerPages(containerWindow, pages)
-    containerWindow:getChildById('miniwindowScrollBar'):setMarginTop(pages and
-                                                                         42 or
-                                                                         22)
-    containerWindow:getChildById('contentsPanel'):setMarginTop(pages and 42 or
-                                                                   22)
+    containerWindow:getChildById('miniwindowScrollBar'):setMarginTop(pages and 42 or 22)
+    containerWindow:getChildById('contentsPanel'):setMarginTop(pages and 42 or 22)
     containerWindow:getChildById('pagePanel'):setVisible(pages)
 end
 
 function refreshContainerPages(container)
-    local currentPage = 1 +
-                            math.floor(
-                                container:getFirstIndex() /
-                                    container:getCapacity())
-    local pages = 1 +
-                      math.floor(
-                          math.max(0, (container:getSize() - 1)) /
-                              container:getCapacity())
-    container.window:recursiveGetChildById('pageLabel'):setText(string.format(
-                                                                    'Page %i of %i',
-                                                                    currentPage,
-                                                                    pages))
+    local currentPage = 1 + math.floor(container:getFirstIndex() / container:getCapacity())
+    local pages = 1 + math.floor(math.max(0, (container:getSize() - 1)) / container:getCapacity())
+    container.window:recursiveGetChildById('pageLabel'):setText(string.format('Page %i of %i', currentPage, pages))
 
-    local prevPageButton = container.window:recursiveGetChildById(
-                               'prevPageButton')
+    local prevPageButton = container.window:recursiveGetChildById('prevPageButton')
     if currentPage == 1 then
         prevPageButton:setEnabled(false)
     else
         prevPageButton:setEnabled(true)
         prevPageButton.onClick = function()
-            g_game.seekInContainer(container:getId(),
-                                   container:getFirstIndex() -
-                                       container:getCapacity())
+            g_game.seekInContainer(container:getId(), container:getFirstIndex() - container:getCapacity())
         end
     end
 
-    local nextPageButton = container.window:recursiveGetChildById(
-                               'nextPageButton')
+    local nextPageButton = container.window:recursiveGetChildById('nextPageButton')
     if currentPage >= pages then
         nextPageButton:setEnabled(false)
     else
         nextPageButton:setEnabled(true)
         nextPageButton.onClick = function()
-            g_game.seekInContainer(container:getId(),
-                                   container:getFirstIndex() +
-                                       container:getCapacity())
+            g_game.seekInContainer(container:getId(), container:getFirstIndex() + container:getCapacity())
         end
     end
 end
@@ -113,8 +93,7 @@ function onContainerOpen(container, previousContainer)
     end
     containerWindow:setId('container' .. container:getId())
     local containerPanel = containerWindow:getChildById('contentsPanel')
-    local containerItemWidget = containerWindow:getChildById(
-                                    'containerItemWidget')
+    local containerItemWidget = containerWindow:getChildById('containerItemWidget')
     containerWindow.onClose = function()
         g_game.close(container)
         containerWindow:hide()
@@ -122,7 +101,9 @@ function onContainerOpen(container, previousContainer)
 
     -- this disables scrollbar auto hiding
     local scrollbar = containerWindow:getChildById('miniwindowScrollBar')
-    scrollbar:mergeStyle({['$!on'] = {}})
+    scrollbar:mergeStyle({
+        ['$!on'] = {}
+    })
 
     local upButton = containerWindow:getChildById('upButton')
     upButton.onClick = function() g_game.openParent(container) end
@@ -143,9 +124,7 @@ function onContainerOpen(container, previousContainer)
         itemWidget:setMargin(0)
         itemWidget.position = container:getSlotPosition(slot)
 
-        if not container:isUnlocked() then
-            itemWidget:setBorderColor('red')
-        end
+        if not container:isUnlocked() then itemWidget:setBorderColor('red') end
     end
 
     container.window = containerWindow
@@ -157,19 +136,16 @@ function onContainerOpen(container, previousContainer)
     local layout = containerPanel:getLayout()
     local cellSize = layout:getCellSize()
     containerWindow:setContentMinimumHeight(cellSize.height)
-    containerWindow:setContentMaximumHeight(cellSize.height *
-                                                layout:getNumLines())
+    containerWindow:setContentMaximumHeight(cellSize.height * layout:getNumLines())
 
     if not previousContainer then
         local panel = modules.game_interface.findContentPanelAvailable(containerWindow, cellSize.height)
         panel:addChild(containerWindow)
 
         if modules.client_options.getOption('openMaximized') then
-            containerWindow:setContentHeight(cellSize.height*layout:getNumLines())
+            containerWindow:setContentHeight(cellSize.height * layout:getNumLines())
         else
-            local filledLines = math.max(math.ceil(
-                                             container:getItemsCount() /
-                                                 layout:getNumColumns()), 1)
+            local filledLines = math.max(math.ceil(container:getItemsCount() / layout:getNumColumns()), 1)
             containerWindow:setContentHeight(filledLines * cellSize.height)
         end
     end

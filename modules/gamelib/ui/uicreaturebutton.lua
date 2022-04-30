@@ -1,19 +1,46 @@
 -- @docclass
-UICreatureButton = extends(UIWidget, "UICreatureButton")
+UICreatureButton = extends(UIWidget, 'UICreatureButton')
 
 local CreatureButtonColors = {
-    onIdle = {notHovered = '#888888', hovered = '#FFFFFF'},
-    onTargeted = {notHovered = '#FF0000', hovered = '#FF8888'},
-    onFollowed = {notHovered = '#00FF00', hovered = '#88FF88'}
+    onIdle = {
+        notHovered = '#888888',
+        hovered = '#FFFFFF'
+    },
+    onTargeted = {
+        notHovered = '#FF0000',
+        hovered = '#FF8888'
+    },
+    onFollowed = {
+        notHovered = '#00FF00',
+        hovered = '#88FF88'
+    }
 }
 
 local LifeBarColors = {} -- Must be sorted by percentAbove
-table.insert(LifeBarColors, {percentAbove = 92, color = '#00BC00'})
-table.insert(LifeBarColors, {percentAbove = 60, color = '#50A150'})
-table.insert(LifeBarColors, {percentAbove = 30, color = '#A1A100'})
-table.insert(LifeBarColors, {percentAbove = 8, color = '#BF0A0A'})
-table.insert(LifeBarColors, {percentAbove = 3, color = '#910F0F'})
-table.insert(LifeBarColors, {percentAbove = -1, color = '#850C0C'})
+table.insert(LifeBarColors, {
+    percentAbove = 92,
+    color = '#00BC00'
+})
+table.insert(LifeBarColors, {
+    percentAbove = 60,
+    color = '#50A150'
+})
+table.insert(LifeBarColors, {
+    percentAbove = 30,
+    color = '#A1A100'
+})
+table.insert(LifeBarColors, {
+    percentAbove = 8,
+    color = '#BF0A0A'
+})
+table.insert(LifeBarColors, {
+    percentAbove = 3,
+    color = '#910F0F'
+})
+table.insert(LifeBarColors, {
+    percentAbove = -1,
+    color = '#850C0C'
+})
 
 function UICreatureButton.create()
     local button = UICreatureButton.internalCreate()
@@ -84,9 +111,7 @@ function UICreatureButton:updateSkull(skullId)
         labelWidget:setMarginLeft(5)
     else
         skullWidget:setWidth(0)
-        if self.creature:getEmblem() == EmblemNone then
-            labelWidget:setMarginLeft(2)
-        end
+        if self.creature:getEmblem() == EmblemNone then labelWidget:setMarginLeft(2) end
     end
 end
 
@@ -105,9 +130,7 @@ function UICreatureButton:updateEmblem(emblemId)
     else
         emblemWidget:setWidth(0)
         emblemWidget:setMarginLeft(0)
-        if self.creature:getSkull() == SkullNone then
-            labelWidget:setMarginLeft(2)
-        end
+        if self.creature:getSkull() == SkullNone then labelWidget:setMarginLeft(2) end
     end
 end
 

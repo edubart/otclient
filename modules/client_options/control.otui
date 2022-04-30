@@ -6,7 +6,7 @@ Panel
   OptionCheckBox
     id: autoChaseOverride
     !text: tr('Allow auto chase override')
-    
+
   OptionCheckBox
     id: moveStack
     !text: tr('Move stacks directly')

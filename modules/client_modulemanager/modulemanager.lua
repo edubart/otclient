@@ -13,16 +13,11 @@ function init()
         end
     })
 
-    g_keyboard.bindKeyPress('Up', function()
-        moduleList:focusPreviousChild(KeyboardFocusReason)
-    end, moduleManagerWindow)
-    g_keyboard.bindKeyPress('Down', function()
-        moduleList:focusNextChild(KeyboardFocusReason)
-    end, moduleManagerWindow)
+    g_keyboard.bindKeyPress('Up', function() moduleList:focusPreviousChild(KeyboardFocusReason) end, moduleManagerWindow)
+    g_keyboard.bindKeyPress('Down', function() moduleList:focusNextChild(KeyboardFocusReason) end, moduleManagerWindow)
 
-    moduleManagerButton = modules.client_topmenu.addLeftButton(
-                              'moduleManagerButton', tr('Module Manager'),
-                              '/images/topbuttons/modulemanager', toggle)
+    moduleManagerButton = modules.client_topmenu.addLeftButton('moduleManagerButton', tr('Module Manager'),
+                                                               '/images/topbuttons/modulemanager', toggle)
 
     -- refresh modules only after all modules are loaded
     addEvent(listModules)
@@ -107,14 +102,12 @@ function updateModuleInfo(moduleName)
     end
 
     moduleManagerWindow:recursiveGetChildById('moduleName'):setText(name)
-    moduleManagerWindow:recursiveGetChildById('moduleDescription'):setText(
-        description)
+    moduleManagerWindow:recursiveGetChildById('moduleDescription'):setText(description)
     moduleManagerWindow:recursiveGetChildById('moduleAuthor'):setText(author)
     moduleManagerWindow:recursiveGetChildById('moduleWebsite'):setText(website)
     moduleManagerWindow:recursiveGetChildById('moduleVersion'):setText(version)
 
-    local reloadButton = moduleManagerWindow:recursiveGetChildById(
-                             'moduleReloadButton')
+    local reloadButton = moduleManagerWindow:recursiveGetChildById('moduleReloadButton')
     reloadButton:setEnabled(canReload)
     if loaded then
         reloadButton:setText('Reload')
@@ -122,8 +115,7 @@ function updateModuleInfo(moduleName)
         reloadButton:setText('Load')
     end
 
-    local unloadButton = moduleManagerWindow:recursiveGetChildById(
-                             'moduleUnloadButton')
+    local unloadButton = moduleManagerWindow:recursiveGetChildById('moduleUnloadButton')
     unloadButton:setEnabled(canUnload)
 end
 

@@ -23,8 +23,7 @@ function terminate()
 end
 
 function createTrade()
-    tradeWindow = g_ui.createWidget('TradeWindow',
-                                    modules.game_interface.getRightPanel())
+    tradeWindow = g_ui.createWidget('TradeWindow', modules.game_interface.getRightPanel())
     tradeWindow.onClose = function()
         g_game.rejectTrade()
         tradeWindow:hide()
@@ -41,8 +40,7 @@ function fillTrade(name, items, counter)
     local tradeContainer
     local label
     if counter then
-        tradeContainer = tradeWindow:recursiveGetChildById(
-                             'counterTradeContainer')
+        tradeContainer = tradeWindow:recursiveGetChildById('counterTradeContainer')
         label = tradeWindow:recursiveGetChildById('counterTradeLabel')
 
         tradeWindow:recursiveGetChildById('acceptButton'):enable()
@@ -57,9 +55,7 @@ function fillTrade(name, items, counter)
         itemWidget:setItem(item)
         itemWidget:setVirtual(true)
         itemWidget:setMargin(0)
-        itemWidget.onClick = function()
-            g_game.inspectTrade(counter, index - 1)
-        end
+        itemWidget.onClick = function() g_game.inspectTrade(counter, index - 1) end
     end
 end
 

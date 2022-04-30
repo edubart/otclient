@@ -1,5 +1,5 @@
 -- @docclass
-UISpinBox = extends(UITextEdit, "UISpinBox")
+UISpinBox = extends(UITextEdit, 'UISpinBox')
 
 function UISpinBox.create()
     local spinbox = UISpinBox.internalCreate()
@@ -12,15 +12,14 @@ function UISpinBox.create()
     spinbox.step = 1
     spinbox.firstchange = true
     spinbox.mouseScroll = true
-    spinbox:setText("1")
+    spinbox:setText('1')
     spinbox:setValue(1)
     return spinbox
 end
 
 function UISpinBox:onSetup()
     g_mouse.bindAutoPress(self:getChildById('up'), function() self:upSpin() end, 300)
-    g_mouse.bindAutoPress(self:getChildById('down'), function() self:downSpin() end,
-                          300)
+    g_mouse.bindAutoPress(self:getChildById('down'), function() self:downSpin() end, 300)
 end
 
 function UISpinBox:onMouseWheel(mousePos, direction)
@@ -69,9 +68,7 @@ function UISpinBox:onValueChange(value)
 end
 
 function UISpinBox:onFocusChange(focused)
-    if not focused then
-        if self:getText():len() == 0 then self:setText(self.minimum) end
-    end
+    if not focused then if self:getText():len() == 0 then self:setText(self.minimum) end end
 end
 
 function UISpinBox:onStyleApply(styleName, styleNode)
@@ -121,14 +118,8 @@ function UISpinBox:setValue(value, dontSignal)
 
     local upButton = self:getChildById('up')
     local downButton = self:getChildById('down')
-    if upButton then
-        upButton:setEnabled(self.maximum ~= self.minimum and self.value ~=
-                                self.maximum)
-    end
-    if downButton then
-        downButton:setEnabled(self.maximum ~= self.minimum and self.value ~=
-                                  self.minimum)
-    end
+    if upButton then upButton:setEnabled(self.maximum ~= self.minimum and self.value ~= self.maximum) end
+    if downButton then downButton:setEnabled(self.maximum ~= self.minimum and self.value ~= self.minimum) end
 
     if not dontSignal then signalcall(self.onValueChange, self, value) end
 end

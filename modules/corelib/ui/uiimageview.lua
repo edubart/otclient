@@ -1,5 +1,5 @@
 -- @docclass
-UIImageView = extends(UIWidget, "UIImageView")
+UIImageView = extends(UIWidget, 'UIImageView')
 
 function UIImageView.create()
     local imageView = UIImageView.internalCreate()
@@ -60,9 +60,7 @@ function UIImageView:zoomOut(x, y)
     self:setZoom(zoom, x, y)
 end
 
-function UIImageView:center()
-    self:move(self:getImageTextureWidth() / 2, self:getImageTextureHeight() / 2)
-end
+function UIImageView:center() self:move(self:getImageTextureWidth() / 2, self:getImageTextureHeight() / 2) end
 
 function UIImageView:move(x, y, centerX, centerY)
     x = math.max(math.min(x, self:getImageTextureWidth()), 0)
@@ -71,7 +69,10 @@ function UIImageView:move(x, y, centerX, centerY)
     local centerY = centerY or self:getHeight() / 2
     local offsetX = centerX - x * self.zoom
     local offsetY = centerY - y * self.zoom
-    self:setImageOffset({x = offsetX, y = offsetY})
+    self:setImageOffset({
+        x = offsetX,
+        y = offsetY
+    })
 end
 
 function UIImageView:onDragEnter(pos) return true end

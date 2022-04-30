@@ -1,5 +1,5 @@
 -- @docclass
-UIComboBox = extends(UIWidget, "UIComboBox")
+UIComboBox = extends(UIWidget, 'UIComboBox')
 
 function UIComboBox.create()
     local combobox = UIComboBox.internalCreate()
@@ -21,15 +21,11 @@ end
 
 function UIComboBox:isOption(text)
     if not self.options then return false end
-    for i, v in ipairs(self.options) do
-        if v.text == text then return true end
-    end
+    for i, v in ipairs(self.options) do if v.text == text then return true end end
     return false
 end
 
-function UIComboBox:setOption(text, dontSignal)
-    self:setCurrentOption(text, dontSignal)
-end
+function UIComboBox:setOption(text, dontSignal) self:setCurrentOption(text, dontSignal) end
 
 function UIComboBox:setCurrentOption(text, dontSignal)
     if not self.options then return end
@@ -37,9 +33,7 @@ function UIComboBox:setCurrentOption(text, dontSignal)
         if v.text == text and self.currentIndex ~= i then
             self.currentIndex = i
             self:setText(text)
-            if not dontSignal then
-                signalcall(self.onOptionChange, self, text, v.data)
-            end
+            if not dontSignal then signalcall(self.onOptionChange, self, text, v.data) end
             return
         end
     end
@@ -51,9 +45,7 @@ function UIComboBox:setCurrentOptionByData(data, dontSignal)
         if v.data == data and self.currentIndex ~= i then
             self.currentIndex = i
             self:setText(v.text)
-            if not dontSignal then
-                signalcall(self.onOptionChange, self, v.text, v.data)
-            end
+            if not dontSignal then signalcall(self.onOptionChange, self, v.text, v.data) end
             return
         end
     end
@@ -69,13 +61,14 @@ function UIComboBox:setCurrentIndex(index)
 end
 
 function UIComboBox:getCurrentOption()
-    if table.haskey(self.options, self.currentIndex) then
-        return self.options[self.currentIndex]
-    end
+    if table.haskey(self.options, self.currentIndex) then return self.options[self.currentIndex] end
 end
 
 function UIComboBox:addOption(text, data)
-    table.insert(self.options, {text = text, data = data})
+    table.insert(self.options, {
+        text = text,
+        data = data
+    })
     local index = #self.options
     if index == 1 then self:setCurrentOption(text) end
     return index
@@ -100,19 +93,20 @@ function UIComboBox:onMousePress(mousePos, mouseButton)
     if self.menuScroll then
         menu = g_ui.createWidget(self:getStyleName() .. 'PopupScrollMenu')
         menu:setHeight(self.menuHeight)
-        if self.menuScrollStep > 0 then
-            menu:setScrollbarStep(self.menuScrollStep)
-        end
+        if self.menuScrollStep > 0 then menu:setScrollbarStep(self.menuScrollStep) end
     else
         menu = g_ui.createWidget(self:getStyleName() .. 'PopupMenu')
     end
     menu:setId(self:getId() .. 'PopupMenu')
-    for i, v in ipairs(self.options) do
-        menu:addOption(v.text, function() self:setCurrentOption(v.text) end)
-    end
+    for i, v in ipairs(self.options) do menu:addOption(v.text, function() self:setCurrentOption(v.text) end) end
     menu:setWidth(self:getWidth())
-    menu:display({x = self:getX(), y = self:getY() + self:getHeight()})
-    connect(menu, {onDestroy = function() self:setOn(false) end})
+    menu:display({
+        x = self:getX(),
+        y = self:getY() + self:getHeight()
+    })
+    connect(menu, {
+        onDestroy = function() self:setOn(false) end
+    })
     self:setOn(true)
     return true
 end
@@ -128,11 +122,7 @@ function UIComboBox:onMouseWheel(mousePos, direction)
 end
 
 function UIComboBox:onStyleApply(styleName, styleNode)
-    if styleNode.options then
-        for k, option in pairs(styleNode.options) do
-            self:addOption(option)
-        end
-    end
+    if styleNode.options then for k, option in pairs(styleNode.options) do self:addOption(option) end end
 
     if styleNode.data then
         for k, data in pairs(styleNode.data) do

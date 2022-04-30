@@ -15,19 +15,16 @@ fightModeRadioGroup = nil
 pvpModeRadioGroup = nil
 
 function init()
-    combatControlsButton = modules.client_topmenu.addRightGameToggleButton(
-                               'combatControlsButton', tr('Combat Controls'),
-                               '/images/topbuttons/combatcontrols', toggle)
+    combatControlsButton = modules.client_topmenu.addRightGameToggleButton('combatControlsButton',
+                                                                           tr('Combat Controls'),
+                                                                           '/images/topbuttons/combatcontrols', toggle)
     combatControlsButton:setOn(true)
     combatControlsWindow = g_ui.loadUI('combatcontrols')
     combatControlsWindow:disableResize()
 
-    fightOffensiveBox = combatControlsWindow:recursiveGetChildById(
-                            'fightOffensiveBox')
-    fightBalancedBox = combatControlsWindow:recursiveGetChildById(
-                           'fightBalancedBox')
-    fightDefensiveBox = combatControlsWindow:recursiveGetChildById(
-                            'fightDefensiveBox')
+    fightOffensiveBox = combatControlsWindow:recursiveGetChildById('fightOffensiveBox')
+    fightBalancedBox = combatControlsWindow:recursiveGetChildById('fightBalancedBox')
+    fightDefensiveBox = combatControlsWindow:recursiveGetChildById('fightDefensiveBox')
 
     chaseModeButton = combatControlsWindow:recursiveGetChildById('chaseModeBox')
     safeFightButton = combatControlsWindow:recursiveGetChildById('safeFightBox')
@@ -53,10 +50,18 @@ function init()
     pvpModeRadioGroup:addWidget(yellowHandBox)
     pvpModeRadioGroup:addWidget(redFistBox)
 
-    connect(fightModeRadioGroup, {onSelectionChange = onSetFightMode})
-    connect(pvpModeRadioGroup, {onSelectionChange = onSetPVPMode})
-    connect(chaseModeButton, {onCheckChange = onSetChaseMode})
-    connect(safeFightButton, {onCheckChange = onSetSafeFight})
+    connect(fightModeRadioGroup, {
+        onSelectionChange = onSetFightMode
+    })
+    connect(pvpModeRadioGroup, {
+        onSelectionChange = onSetPVPMode
+    })
+    connect(chaseModeButton, {
+        onCheckChange = onSetChaseMode
+    })
+    connect(safeFightButton, {
+        onCheckChange = onSetSafeFight
+    })
     connect(g_game, {
         onGameStart = online,
         onGameEnd = offline,
@@ -68,7 +73,9 @@ function init()
         onAutoWalk = check
     })
 
-    connect(LocalPlayer, {onOutfitChange = onOutfitChange})
+    connect(LocalPlayer, {
+        onOutfitChange = onOutfitChange
+    })
 
     if g_game.isOnline() then online() end
 
@@ -94,7 +101,9 @@ function terminate()
         onAutoWalk = check
     })
 
-    disconnect(LocalPlayer, {onOutfitChange = onOutfitChange})
+    disconnect(LocalPlayer, {
+        onOutfitChange = onOutfitChange
+    })
 
     combatControlsButton = nil
     combatControlsWindow = nil
@@ -138,9 +147,7 @@ end
 
 function check()
     if modules.client_options.getOption('autoChaseOverride') then
-        if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
-            g_game.setChaseMode(DontChase)
-        end
+        if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then g_game.setChaseMode(DontChase) end
     end
 end
 
@@ -172,12 +179,10 @@ function online()
 
         if g_game.getFeature(GamePVPMode) then
             pvpModesPanel:setVisible(true)
-            combatControlsWindow:setHeight(
-                combatControlsWindow.extendedControlsHeight)
+            combatControlsWindow:setHeight(combatControlsWindow.extendedControlsHeight)
         else
             pvpModesPanel:setVisible(false)
-            combatControlsWindow:setHeight(
-                combatControlsWindow.simpleControlsHeight)
+            combatControlsWindow:setHeight(combatControlsWindow.simpleControlsHeight)
         end
     end
 
@@ -198,9 +203,7 @@ function offline()
             safeFight = g_game.isSafeFight()
         }
 
-        if g_game.getFeature(GamePVPMode) then
-            lastCombatControls[char].pvpMode = g_game.getPVPMode()
-        end
+        if g_game.getFeature(GamePVPMode) then lastCombatControls[char].pvpMode = g_game.getPVPMode() end
 
         -- save last combat control settings
         g_settings.setNode('LastCombatControls', lastCombatControls)
@@ -231,9 +234,7 @@ function onSetFightMode(self, selectedFightButton)
     g_game.setFightMode(fightMode)
 end
 
-function toggleChaseMode()
-    chaseModeButton:setChecked(not chaseModeButton:isChecked())
-end
+function toggleChaseMode() chaseModeButton:setChecked(not chaseModeButton:isChecked()) end
 
 function onSetChaseMode(self, checked)
     local chaseMode

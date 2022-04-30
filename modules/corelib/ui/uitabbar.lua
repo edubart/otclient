@@ -1,5 +1,5 @@
 -- @docclass
-UITabBar = extends(UIWidget, "UITabBar")
+UITabBar = extends(UIWidget, 'UITabBar')
 
 -- private functions
 local function onTabClick(tab) tab.tabBar:selectTab(tab) end
@@ -18,8 +18,7 @@ function UITabBar.create()
     return tabbar
 end
 
-function UITabBar:onSetup() self.buttonsPanel =
-    self:getChildById('buttonsPanel') end
+function UITabBar:onSetup() self.buttonsPanel = self:getChildById('buttonsPanel') end
 
 function UITabBar:setContentWidget(widget)
     self.contentWidget = widget
@@ -32,16 +31,14 @@ function UITabBar:addTab(text, panel, icon)
         panel:setId('tabPanel')
     end
 
-    local tab = g_ui.createWidget(self:getStyleName() .. 'Button',
-                                  self.buttonsPanel)
+    local tab = g_ui.createWidget(self:getStyleName() .. 'Button', self.buttonsPanel)
 
     panel.isTab = true
     tab.tabPanel = panel
     tab.tabBar = self
     tab:setId('tab')
     tab:setText(text)
-    tab:setWidth(tab:getTextSize().width + tab:getPaddingLeft() +
-                     tab:getPaddingRight())
+    tab:setWidth(tab:getTextSize().width + tab:getPaddingLeft() + tab:getPaddingRight())
     tab.onClick = onTabClick
     tab.onMouseRelease = onTabMouseRelease
     tab.onDestroy = function() tab.tabPanel:destroy() end
@@ -57,8 +54,7 @@ function UITabBar:addTab(text, panel, icon)
 end
 
 function UITabBar:addButton(text, func, icon)
-    local button = g_ui.createWidget(self:getStyleName() .. 'Button',
-                                     self.buttonsPanel)
+    local button = g_ui.createWidget(self:getStyleName() .. 'Button', self.buttonsPanel)
     button:setText(text)
 
     local style = {}
@@ -86,18 +82,14 @@ function UITabBar:removeTab(tab)
 end
 
 function UITabBar:getTab(text)
-    for k, tab in pairs(self.tabs) do
-        if tab:getText():lower() == text:lower() then return tab end
-    end
+    for k, tab in pairs(self.tabs) do if tab:getText():lower() == text:lower() then return tab end end
 end
 
 function UITabBar:selectTab(tab)
     if self.currentTab == tab then return end
     if self.contentWidget then
         local selectedWidget = self.contentWidget:getLastChild()
-        if selectedWidget and selectedWidget.isTab then
-            self.contentWidget:removeChild(selectedWidget)
-        end
+        if selectedWidget and selectedWidget.isTab then self.contentWidget:removeChild(selectedWidget) end
         self.contentWidget:addChild(tab.tabPanel)
         tab.tabPanel:fill('parent')
     end
@@ -132,14 +124,10 @@ end
 
 function UITabBar:getTabPanel(tab) return tab.tabPanel end
 
-function UITabBar:getCurrentTabPanel()
-    if self.currentTab then return self.currentTab.tabPanel end
-end
+function UITabBar:getCurrentTabPanel() if self.currentTab then return self.currentTab.tabPanel end end
 
 function UITabBar:getCurrentTab() return self.currentTab end
 
 function UITabBar:getTabs() return self.tabs end
 
-function UITabBar:getTabsPanel()
-    return table.collect(self.tabs, function(_, tab) return tab.tabPanel end)
-end
+function UITabBar:getTabsPanel() return table.collect(self.tabs, function(_, tab) return tab.tabPanel end) end

@@ -75,9 +75,7 @@ function init()
 
     cancelNextRelease = false
 
-    if g_game.isOnline() then
-        playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity()
-    end
+    if g_game.isOnline() then playerFreeCapacity = g_game.getLocalPlayer():getFreeCapacity() end
 
     connect(g_game, {
         onGameEnd = hide,
@@ -134,17 +132,13 @@ function onItemBoxChecked(widget)
         refreshItem(item)
         tradeButton:enable()
 
-        if getCurrentTradeType() == SELL then
-            quantityScroll:setValue(quantityScroll:getMaximum())
-        end
+        if getCurrentTradeType() == SELL then quantityScroll:setValue(quantityScroll:getMaximum()) end
     end
 end
 
 function onQuantityValueChange(quantity)
     if selectedItem then
-        weightLabel:setText(
-            string.format('%.2f', selectedItem.weight * quantity) .. ' ' ..
-                WEIGHT_UNIT)
+        weightLabel:setText(string.format('%.2f', selectedItem.weight * quantity) .. ' ' .. WEIGHT_UNIT)
         priceLabel:setText(formatCurrency(getItemPrice(selectedItem)))
     end
 end
@@ -167,11 +161,10 @@ end
 
 function onTradeClick()
     if getCurrentTradeType() == BUY then
-        g_game.buyItem(selectedItem.ptr, quantityScroll:getValue(),
-                       ignoreCapacity:isChecked(), buyWithBackpack:isChecked())
+        g_game.buyItem(selectedItem.ptr, quantityScroll:getValue(), ignoreCapacity:isChecked(),
+                       buyWithBackpack:isChecked())
     else
-        g_game.sellItem(selectedItem.ptr, quantityScroll:getValue(),
-                        ignoreEquipped:isChecked())
+        g_game.sellItem(selectedItem.ptr, quantityScroll:getValue(), ignoreEquipped:isChecked())
     end
 end
 
@@ -186,13 +179,10 @@ function itemPopup(self, mousePosition, mouseButton)
     if mouseButton == MouseRightButton then
         local menu = g_ui.createWidget('PopupMenu')
         menu:setGameMenu(true)
-        menu:addOption(tr('Look'), function()
-            return g_game.inspectNpcTrade(self:getItem())
-        end)
+        menu:addOption(tr('Look'), function() return g_game.inspectNpcTrade(self:getItem()) end)
         menu:display(mousePosition)
         return true
-    elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton ==
-        MouseRightButton) or
+    elseif ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
         (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
         cancelNextRelease = true
         g_game.inspectNpcTrade(self:getItem())
@@ -201,9 +191,7 @@ function itemPopup(self, mousePosition, mouseButton)
     return false
 end
 
-function onBuyWithBackpackChange()
-    if selectedItem then refreshItem(selectedItem) end
-end
+function onBuyWithBackpackChange() if selectedItem then refreshItem(selectedItem) end end
 
 function onIgnoreCapacityChange() refreshPlayerGoods() end
 
@@ -282,9 +270,9 @@ end
 
 function canTradeItem(item)
     if getCurrentTradeType() == BUY then
-        return (ignoreCapacity:isChecked() or
-                   (not ignoreCapacity:isChecked() and playerFreeCapacity >=
-                       item.weight)) and playerMoney >= getItemPrice(item, true)
+        return
+            (ignoreCapacity:isChecked() or (not ignoreCapacity:isChecked() and playerFreeCapacity >= item.weight)) and
+                playerMoney >= getItemPrice(item, true)
     else
         return getSellQuantity(item.ptr) > 0
     end
@@ -299,15 +287,12 @@ function refreshItem(item)
         local capacityMaxCount = math.floor(playerFreeCapacity / item.weight)
         if ignoreCapacity:isChecked() then capacityMaxCount = 65535 end
         local priceMaxCount = math.floor(playerMoney / getItemPrice(item, true))
-        local finalCount = math.max(0, math.min(getMaxAmount(), math.min(
-                                                    priceMaxCount,
-                                                    capacityMaxCount)))
+        local finalCount = math.max(0, math.min(getMaxAmount(), math.min(priceMaxCount, capacityMaxCount)))
         quantityScroll:setMinimum(1)
         quantityScroll:setMaximum(finalCount)
     else
         quantityScroll:setMinimum(1)
-        quantityScroll:setMaximum(math.max(0, math.min(getMaxAmount(),
-                                                       getSellQuantity(item.ptr))))
+        quantityScroll:setMaximum(math.max(0, math.min(getMaxAmount(), getSellQuantity(item.ptr))))
     end
 
     setupPanel:enable()
@@ -335,8 +320,7 @@ function refreshTradeItems()
         local name = item.name
         text = text .. name
         if showWeight then
-            local weight = string.format('%.2f', item.weight) .. ' ' ..
-                               WEIGHT_UNIT
+            local weight = string.format('%.2f', item.weight) .. ' ' .. WEIGHT_UNIT
             text = text .. '\n' .. weight
         end
         local price = formatCurrency(item.price)
@@ -360,8 +344,7 @@ function refreshPlayerGoods()
     checkSellAllTooltip()
 
     moneyLabel:setText(formatCurrency(playerMoney))
-    capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' ..
-                              WEIGHT_UNIT)
+    capacityLabel:setText(string.format('%.2f', playerFreeCapacity) .. ' ' .. WEIGHT_UNIT)
 
     local currentTradeType = getCurrentTradeType()
     local searchFilter = searchText:getText():lower()
@@ -377,18 +360,14 @@ function refreshPlayerGoods()
         itemWidget:setEnabled(canTrade)
 
         local searchCondition = (searchFilter == '') or
-                                    (searchFilter ~= '' and
-                                        string.find(item.name:lower(),
-                                                    searchFilter) ~= nil)
-        local showAllItemsCondition = (currentTradeType == BUY) or
-                                          (showAllItems:isChecked()) or
-                                          (currentTradeType == SELL and
-                                              not showAllItems:isChecked() and
-                                              canTrade)
+                                    (searchFilter ~= '' and string.find(item.name:lower(), searchFilter) ~= nil)
+        local showAllItemsCondition = (currentTradeType == BUY) or (showAllItems:isChecked()) or
+                                          (currentTradeType == SELL and not showAllItems:isChecked() and canTrade)
         itemWidget:setVisible(searchCondition and showAllItemsCondition)
 
-        if selectedItem == item and itemWidget:isEnabled() and
-            itemWidget:isVisible() then foundSelectedItem = true end
+        if selectedItem == item and itemWidget:isEnabled() and itemWidget:isVisible() then
+            foundSelectedItem = true
+        end
     end
 
     if not foundSelectedItem then clearSelectedItem() end
@@ -459,16 +438,10 @@ function getTradeItemData(id, type)
     if table.empty(tradeItems[type]) then return false end
 
     if type then
-        for key, item in pairs(tradeItems[type]) do
-            if item.ptr and item.ptr:getId() == id then return item end
-        end
+        for key, item in pairs(tradeItems[type]) do if item.ptr and item.ptr:getId() == id then return item end end
     else
         for _, items in pairs(tradeItems) do
-            for key, item in pairs(items) do
-                if item.ptr and item.ptr:getId() == id then
-                    return item
-                end
-            end
+            for key, item in pairs(items) do if item.ptr and item.ptr:getId() == id then return item end end
         end
     end
     return false
@@ -488,9 +461,8 @@ function checkSellAllTooltip()
             amount = getSellQuantity(data.ptr)
             if amount > 0 then
                 if data and amount > 0 then
-                    info =
-                        info .. (not first and "\n" or "") .. amount .. " " ..
-                            data.name .. " (" .. data.price * amount .. " gold)"
+                    info = info .. (not first and '\n' or '') .. amount .. ' ' .. data.name .. ' (' .. data.price *
+                               amount .. ' gold)'
 
                     total = total + (data.price * amount)
                     if first then first = false end
@@ -499,7 +471,7 @@ function checkSellAllTooltip()
         end
     end
     if info ~= '' then
-        info = info .. "\nTotal: " .. total .. " gold"
+        info = info .. '\nTotal: ' .. total .. ' gold'
         sellAllButton:setTooltip(info)
     else
         sellAllButton:setEnabled(false)
@@ -508,15 +480,14 @@ end
 
 function formatCurrency(amount)
     if CURRENCY_DECIMAL then
-        return string.format("%.02f", amount / 100.0) .. ' ' .. CURRENCY
+        return string.format('%.02f', amount / 100.0) .. ' ' .. CURRENCY
     else
         return amount .. ' ' .. CURRENCY
     end
 end
 
 function getMaxAmount()
-    if getCurrentTradeType() == SELL and
-        g_game.getFeature(GameDoubleShopSellAmount) then return 10000 end
+    if getCurrentTradeType() == SELL and g_game.getFeature(GameDoubleShopSellAmount) then return 10000 end
     return 100
 end
 
@@ -524,8 +495,6 @@ function sellAll()
     for itemid, item in pairs(playerItems) do
         local item = Item.create(itemid)
         local amount = getSellQuantity(item)
-        if amount > 0 then
-            g_game.sellItem(item, amount, ignoreEquipped:isChecked())
-        end
+        if amount > 0 then g_game.sellItem(item, amount, ignoreEquipped:isChecked()) end
     end
 end

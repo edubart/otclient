@@ -1,6 +1,6 @@
 -- @docfuncs @{
 function print(...)
-    local msg = ""
+    local msg = ''
     local args = {...}
     local appendSpace = #args > 1
     for i, v in ipairs(args) do
@@ -28,7 +28,9 @@ function connect(object, arg1, arg2, arg3)
     local signalsAndSlots
     local pushFront
     if type(arg1) == 'string' then
-        signalsAndSlots = {[arg1] = arg2}
+        signalsAndSlots = {
+            [arg1] = arg2
+        }
         pushFront = arg3
     else
         signalsAndSlots = arg1
@@ -39,9 +41,7 @@ function connect(object, arg1, arg2, arg3)
         if not object[signal] then
             local mt = getmetatable(object)
             if mt and type(object) == 'userdata' then
-                object[signal] = function(...)
-                    return signalcall(mt[signal], ...)
-                end
+                object[signal] = function(...) return signalcall(mt[signal], ...) end
             end
         end
 
@@ -51,9 +51,7 @@ function connect(object, arg1, arg2, arg3)
             object[signal] = {object[signal]}
         end
 
-        if type(slot) ~= 'function' then
-            perror(debug.traceback('unable to connect a non function value'))
-        end
+        if type(slot) ~= 'function' then perror(debug.traceback('unable to connect a non function value')) end
 
         if type(object[signal]) == 'table' then
             if pushFront then
@@ -72,7 +70,9 @@ function disconnect(object, arg1, arg2)
             object[arg1] = nil
             return
         end
-        signalsAndSlots = {[arg1] = arg2}
+        signalsAndSlots = {
+            [arg1] = arg2
+        }
     elseif type(arg1) == 'table' then
         signalsAndSlots = arg1
     else
@@ -88,9 +88,7 @@ function disconnect(object, arg1, arg2)
                 if func == slot then
                     table.remove(object[signal], k)
 
-                    if #object[signal] == 1 then
-                        object[signal] = object[signal][1]
-                    end
+                    if #object[signal] == 1 then object[signal] = object[signal][1] end
                     break
                 end
             end
@@ -135,7 +133,9 @@ function runinsandbox(func, ...)
     end
     local env = {}
     local oldenv = getfenv(0)
-    setmetatable(env, {__index = oldenv})
+    setmetatable(env, {
+        __index = oldenv
+    })
     setfenv(0, env)
     func(...)
     setfenv(0, oldenv)
@@ -154,9 +154,7 @@ local function module_loader(modname)
     local module = g_modules.getModule(modname)
     if not module then return '\n\tno module \'' .. modname .. '\'' end
     return function()
-        if not module:load() then
-            error('unable to load required module ' .. modname)
-        end
+        if not module:load() then error('unable to load required module ' .. modname) end
         return module:getSandbox()
     end
 end
@@ -186,9 +184,9 @@ end
 
 function getfsrcpath(depth)
     depth = depth or 2
-    local info = debug.getinfo(1 + depth, "Sn")
+    local info = debug.getinfo(1 + depth, 'Sn')
     local path
-    if info.short_src then path = info.short_src:match("(.*)/.*") end
+    if info.short_src then path = info.short_src:match('(.*)/.*') end
     if not path then
         path = '/'
     elseif path:sub(0, 1) ~= '/' then
@@ -203,9 +201,7 @@ function resolvepath(filePath, depth)
     if filePath then
         if filePath:sub(0, 1) ~= '/' then
             local basepath = getfsrcpath(depth + 1)
-            if basepath:sub(#basepath) ~= '/' then
-                basepath = basepath .. '/'
-            end
+            if basepath:sub(#basepath) ~= '/' then basepath = basepath .. '/' end
             return basepath .. filePath
         else
             return filePath
@@ -307,39 +303,29 @@ function makesingleton(obj)
     local singleton = {}
     if obj.getClassName then
         for key, value in pairs(_G[obj:getClassName()]) do
-            if type(value) == 'function' then
-                singleton[key] = function(...)
-                    return value(obj, ...)
-                end
-            end
+            if type(value) == 'function' then singleton[key] = function(...) return value(obj, ...) end end
         end
     end
     return singleton
 end
 
--- TFS compliant Lua debugging: 
+-- TFS compliant Lua debugging:
 -- https://github.com/otland/forgottenserver/blob/b23850046a2aec05636761c49d296c755865288a/data/lib/debugging/dump.lua
 
 -- recursive dump function
 function dumpLevel(input, level)
     local indent = ''
 
-    for i = 1, level do
-        indent = indent .. '    '
-    end
+    for i = 1, level do indent = indent .. '    ' end
 
     if type(input) == 'table' then
         local str = '{ \n'
         local lines = {}
 
         for k, v in pairs(input) do
-            if type(k) ~= 'number' then
-                k = '"' .. k .. '"'
-            end
+            if type(k) ~= 'number' then k = '"' .. k .. '"' end
 
-            if type(v) == 'string' then
-                v = '"' .. v .. '"'
-            end
+            if type(v) == 'string' then v = '"' .. v .. '"' end
 
             table.insert(lines, indent .. '    [' .. k .. '] = ' .. dumpLevel(v, level + 1))
         end
@@ -350,9 +336,7 @@ function dumpLevel(input, level)
 end
 
 -- Return a string representation of input for debugging purposes
-function dump(input)
-    return dumpLevel(input, 0)
-end
+function dump(input) return dumpLevel(input, 0) end
 
 -- Call the dump function and print it to console
 function pdump(input)
@@ -364,9 +348,7 @@ end
 -- Call the dump function with a title and print it beautifully to the console
 function tdump(title, input)
     local title_fill = ''
-    for i = 1, title:len() do
-        title_fill = title_fill .. '='
-    end
+    for i = 1, title:len() do title_fill = title_fill .. '=' end
 
     local header_str = '\n====' .. title_fill .. '====\n'
     header_str = header_str .. '=== ' .. title .. ' ===\n'

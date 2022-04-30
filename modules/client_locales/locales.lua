@@ -68,11 +68,15 @@ function init()
         pdebug('Using configured locale: ' .. userLocaleName)
     else
         setLocale(defaultLocaleName)
-        connect(g_app, {onRun = createWindow})
+        connect(g_app, {
+            onRun = createWindow
+        })
     end
 
     ProtocolGame.registerExtendedOpcode(ExtendedIds.Locale, onExtendedLocales)
-    connect(g_game, {onGameStart = onGameStart})
+    connect(g_game, {
+        onGameStart = onGameStart
+    })
 end
 
 function terminate()
@@ -80,8 +84,12 @@ function terminate()
     currentLocale = nil
 
     ProtocolGame.unregisterExtendedOpcode(ExtendedIds.Locale)
-    disconnect(g_app, {onRun = createWindow})
-    disconnect(g_game, {onGameStart = onGameStart})
+    disconnect(g_app, {
+        onRun = createWindow
+    })
+    disconnect(g_game, {
+        onGameStart = onGameStart
+    })
 end
 
 function generateNewTranslationTable(localename)
@@ -112,25 +120,18 @@ function installLocale(locale)
     if locale.name ~= defaultLocaleName then
         local updatesNamesMissing = {}
         for _, k in pairs(neededTranslations) do
-            if locale.translation[k] == nil then
-                updatesNamesMissing[#updatesNamesMissing + 1] = k
-            end
+            if locale.translation[k] == nil then updatesNamesMissing[#updatesNamesMissing + 1] = k end
         end
 
         if #updatesNamesMissing > 0 then
-            pdebug('Locale \'' .. locale.name .. '\' is missing ' ..
-                       #updatesNamesMissing .. ' translations.')
-            for _, name in pairs(updatesNamesMissing) do
-                pdebug('["' .. name .. '"] = \"\",')
-            end
+            pdebug('Locale \'' .. locale.name .. '\' is missing ' .. #updatesNamesMissing .. ' translations.')
+            for _, name in pairs(updatesNamesMissing) do pdebug('["' .. name .. '"] = \"\",') end
         end
     end
 
     local installedLocale = installedLocales[locale.name]
     if installedLocale then
-        for word, translation in pairs(locale.translation) do
-            installedLocale.translation[word] = translation
-        end
+        for word, translation in pairs(locale.translation) do installedLocale.translation[word] = translation end
     else
         installedLocales[locale.name] = locale
     end
@@ -145,7 +146,7 @@ function setLocale(name)
         return
     end
     if not locale then
-        pwarning("Locale " .. name .. ' does not exist.')
+        pwarning('Locale ' .. name .. ' does not exist.')
         return false
     end
     if currentLocale then sendLocale(locale.name) end
@@ -168,14 +169,10 @@ function _G.tr(text, ...)
             local reverseNumber = number[1]:reverse()
             for i = 1, #reverseNumber do
                 out = out .. reverseNumber:sub(i, i)
-                if i % 3 == 0 and i ~= #number then
-                    out = out .. currentLocale.thousandsSeperator
-                end
+                if i % 3 == 0 and i ~= #number then out = out .. currentLocale.thousandsSeperator end
             end
 
-            if number[2] then
-                out = number[2] .. currentLocale.decimalSeperator .. out
-            end
+            if number[2] then out = number[2] .. currentLocale.decimalSeperator .. out end
             return out:reverse()
         elseif tostring(text) then
             local translation = currentLocale.translation[text]

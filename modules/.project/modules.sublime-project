@@ -1,10 +1,9 @@
 {
-	"folders":
-	[
-		{
-			"path": "..",
-			"folder_exclude_patterns": [".*", "*.*~"],
-			"file_exclude_patterns": [".*", "*.*~"]
-		}
-	]
+  "folders": [
+    {
+      "path": "..",
+      "folder_exclude_patterns": [".*", "*.*~"],
+      "file_exclude_patterns": [".*", "*.*~"]
+    }
+  ]
 }

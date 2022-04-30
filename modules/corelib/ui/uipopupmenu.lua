@@ -1,5 +1,5 @@
 -- @docclass
-UIPopupMenu = extends(UIWidget, "UIPopupMenu")
+UIPopupMenu = extends(UIWidget, 'UIPopupMenu')
 
 local currentMenu
 
@@ -53,33 +53,25 @@ function UIPopupMenu:onGeometryChange(oldRect, newRect)
 end
 
 function UIPopupMenu:addOption(optionName, optionCallback, shortcut)
-    local optionWidget =
-        g_ui.createWidget(self:getStyleName() .. 'Button', self)
+    local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self)
     optionWidget.onClick = function(widget)
         self:destroy()
         optionCallback()
     end
     optionWidget:setText(optionName)
-    local width = optionWidget:getTextSize().width +
-                      optionWidget:getMarginLeft() +
-                      optionWidget:getMarginRight() + 15
+    local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 15
 
     if shortcut then
-        local shortcutLabel = g_ui.createWidget(
-                                  self:getStyleName() .. 'ShortcutLabel',
-                                  optionWidget)
+        local shortcutLabel = g_ui.createWidget(self:getStyleName() .. 'ShortcutLabel', optionWidget)
         shortcutLabel:setText(shortcut)
-        width = width + shortcutLabel:getTextSize().width +
-                    shortcutLabel:getMarginLeft() +
+        width = width + shortcutLabel:getTextSize().width + shortcutLabel:getMarginLeft() +
                     shortcutLabel:getMarginRight()
     end
 
     self:setWidth(math.max(self:getWidth(), width))
 end
 
-function UIPopupMenu:addSeparator()
-    g_ui.createWidget(self:getStyleName() .. 'Separator', self)
-end
+function UIPopupMenu:addSeparator() g_ui.createWidget(self:getStyleName() .. 'Separator', self) end
 
 function UIPopupMenu:setGameMenu(state) self.isGameMenu = state end
 
@@ -103,13 +95,13 @@ function UIPopupMenu:onKeyPress(keyCode, keyboardModifiers)
 end
 
 -- close all menus when the window is resized
-local function onRootGeometryUpdate()
-    if currentMenu then currentMenu:destroy() end
-end
+local function onRootGeometryUpdate() if currentMenu then currentMenu:destroy() end end
 
-local function onGameEnd()
-    if currentMenu and currentMenu.isGameMenu then currentMenu:destroy() end
-end
+local function onGameEnd() if currentMenu and currentMenu.isGameMenu then currentMenu:destroy() end end
 
-connect(rootWidget, {onGeometryChange = onRootGeometryUpdate})
-connect(g_game, {onGameEnd = onGameEnd})
+connect(rootWidget, {
+    onGeometryChange = onRootGeometryUpdate
+})
+connect(g_game, {
+    onGameEnd = onGameEnd
+})

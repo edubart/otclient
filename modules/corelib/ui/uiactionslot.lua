@@ -1,5 +1,5 @@
 -- @docclass
-UIActionSlot = extends(UIItem, "UIActionSlot")
+UIActionSlot = extends(UIItem, 'UIActionSlot')
 
 function UIActionSlot.create()
     local slot = UIActionSlot.internalCreate()

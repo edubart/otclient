@@ -3,9 +3,7 @@ local function pcolored(text, color)
     modules.client_terminal.addLine(tostring(text), color)
 end
 
-function draw_debug_boxes()
-    g_ui.setDebugBoxesDrawing(not g_ui.isDrawingDebugBoxes())
-end
+function draw_debug_boxes() g_ui.setDebugBoxesDrawing(not g_ui.isDrawingDebugBoxes()) end
 
 function hide_map() modules.game_interface.getMapPanel():hide() end
 
@@ -31,9 +29,7 @@ function live_module_reload(name)
     end
 
     if not module:canReload() then
-        pcolored(
-            'ERROR: some other modules requires this module, cannot reload now',
-            'red')
+        pcolored('ERROR: some other modules requires this module, cannot reload now', 'red')
         return
     end
 
@@ -62,9 +58,7 @@ function live_module_reload(name)
                 module:reload()
                 files[filepath] = newtime
 
-                if name == 'client_terminal' then
-                    modules.client_terminal.show()
-                end
+                if name == 'client_terminal' then modules.client_terminal.show() end
                 break
             end
         end
@@ -96,9 +90,7 @@ function live_sprites_reload()
                 modules.game_things.load()
                 files[filepath] = newtime
 
-                if name == 'client_terminal' then
-                    modules.client_terminal.show()
-                end
+                if name == 'client_terminal' then modules.client_terminal.show() end
                 break
             end
         end
@@ -122,8 +114,7 @@ function ping()
         g_game.setPingDelay(1000)
         disconnect(g_game, 'onPingBack', pingBack)
     else
-        if not (g_game.getFeature(GameClientPing) or
-            g_game.getFeature(GameExtendedClientPing)) then
+        if not (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
             pcolored('this server does not support ping', 'red')
             return
         elseif not g_game.isOnline() then
@@ -153,9 +144,8 @@ function ls(path)
 end
 
 function about_version()
-    pcolored(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' .. 'Rev  ' ..
-                 g_app.getBuildRevision() .. ' (' .. g_app.getBuildCommit() ..
-                 ')\n' .. 'Built on ' .. g_app.getBuildDate())
+    pcolored(g_app.getName() .. ' ' .. g_app.getVersion() .. '\n' .. 'Rev  ' .. g_app.getBuildRevision() .. ' (' ..
+                 g_app.getBuildCommit() .. ')\n' .. 'Built on ' .. g_app.getBuildDate())
 end
 
 function about_graphics()

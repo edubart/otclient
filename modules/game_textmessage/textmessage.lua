@@ -1,8 +1,17 @@
 MessageSettings = {
     none = {},
-    consoleRed = {color = TextColors.red, consoleTab = 'Default'},
-    consoleOrange = {color = TextColors.orange, consoleTab = 'Default'},
-    consoleBlue = {color = TextColors.blue, consoleTab = 'Default'},
+    consoleRed = {
+        color = TextColors.red,
+        consoleTab = 'Default'
+    },
+    consoleOrange = {
+        color = TextColors.orange,
+        consoleTab = 'Default'
+    },
+    consoleBlue = {
+        color = TextColors.blue,
+        consoleTab = 'Default'
+    },
     centerRed = {
         color = TextColors.red,
         consoleTab = 'Server Log',
@@ -32,8 +41,14 @@ MessageSettings = {
         screenTarget = 'statusLabel',
         consoleOption = 'showStatusMessagesInConsole'
     },
-    statusSmall = {color = TextColors.white, screenTarget = 'statusLabel'},
-    private = {color = TextColors.lightblue, screenTarget = 'privateLabel'}
+    statusSmall = {
+        color = TextColors.white,
+        screenTarget = 'statusLabel'
+    },
+    private = {
+        color = TextColors.lightblue,
+        screenTarget = 'privateLabel'
+    }
 }
 
 MessageTypes = {
@@ -83,19 +98,14 @@ MessageTypes = {
 messagesPanel = nil
 
 function init()
-    for messageMode, _ in pairs(MessageTypes) do
-        registerMessageMode(messageMode, displayMessage)
-    end
+    for messageMode, _ in pairs(MessageTypes) do registerMessageMode(messageMode, displayMessage) end
 
     connect(g_game, 'onGameEnd', clearMessages)
-    messagesPanel = g_ui.loadUI('textmessage',
-                                modules.game_interface.getRootPanel())
+    messagesPanel = g_ui.loadUI('textmessage', modules.game_interface.getRootPanel())
 end
 
 function terminate()
-    for messageMode, _ in pairs(MessageTypes) do
-        unregisterMessageMode(messageMode, displayMessage)
-    end
+    for messageMode, _ in pairs(MessageTypes) do unregisterMessageMode(messageMode, displayMessage) end
 
     disconnect(g_game, 'onGameEnd', clearMessages)
     clearMessages()
@@ -113,8 +123,8 @@ function displayMessage(mode, text)
 
     if msgtype == MessageSettings.none then return end
 
-    if msgtype.consoleTab ~= nil and (msgtype.consoleOption == nil or
-        modules.client_options.getOption(msgtype.consoleOption)) then
+    if msgtype.consoleTab ~= nil and
+        (msgtype.consoleOption == nil or modules.client_options.getOption(msgtype.consoleOption)) then
         modules.game_console.addText(text, msgtype, tr(msgtype.consoleTab))
         -- TODO move to game_console
     end
@@ -125,9 +135,7 @@ function displayMessage(mode, text)
         label:setColor(msgtype.color)
         label:setVisible(true)
         removeEvent(label.hideEvent)
-        label.hideEvent = scheduleEvent(function()
-            label:setVisible(false)
-        end, calculateVisibleTime(text))
+        label.hideEvent = scheduleEvent(function() label:setVisible(false) end, calculateVisibleTime(text))
     end
 end
 
@@ -150,6 +158,4 @@ function clearMessages()
     end
 end
 
-function LocalPlayer:onAutoWalkFail(player)
-    modules.game_textmessage.displayFailureMessage(tr('There is no way.'))
-end
+function LocalPlayer:onAutoWalkFail(player) modules.game_textmessage.displayFailureMessage(tr('There is no way.')) end

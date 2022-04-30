@@ -37,7 +37,10 @@ function init()
     -- resized to a stable state, otherwise the saved
     -- settings can get overridden by false onGeometryChange
     -- events
-    connect(g_app, {onRun = load, onExit = save})
+    connect(g_app, {
+        onRun = load,
+        onExit = save
+    })
 
     gameRootPanel = g_ui.displayUI('gameinterface')
     gameRootPanel:hide()
@@ -55,32 +58,34 @@ function init()
     gameLeftPanel = gameRootPanel:getChildById('gameLeftPanel')
     gameBottomPanel = gameRootPanel:getChildById('gameBottomPanel')
 
-    panelsList = {
-        {
-            panel = gameRightPanel,
-            checkbox = gameRootPanel:getChildById('gameSelectRightColumn'),
-        },{
-            panel = gameRightExtraPanel,
-            checkbox = gameRootPanel:getChildById('gameSelectRightExtraColumn'),
-        },{
-            panel = gameLeftPanel,
-            checkbox = gameRootPanel:getChildById('gameSelectLeftColumn'),
-        },
-    }
+    panelsList = {{
+        panel = gameRightPanel,
+        checkbox = gameRootPanel:getChildById('gameSelectRightColumn')
+    }, {
+        panel = gameRightExtraPanel,
+        checkbox = gameRootPanel:getChildById('gameSelectRightExtraColumn')
+    }, {
+        panel = gameLeftPanel,
+        checkbox = gameRootPanel:getChildById('gameSelectLeftColumn')
+    }}
 
     panelsRadioGroup = UIRadioGroup.create()
-    for k,v in pairs(panelsList) do
+    for k, v in pairs(panelsList) do
         panelsRadioGroup:addWidget(v.checkbox)
-        connect(v.checkbox, { onCheckChange = onSelectPanel })
+        connect(v.checkbox, {
+            onCheckChange = onSelectPanel
+        })
     end
     panelsRadioGroup:selectWidget(panelsList[1].checkbox)
 
-    connect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
-    connect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
+    connect(gameLeftPanel, {
+        onVisibilityChange = onExtraPanelVisibilityChange
+    })
+    connect(gameRightExtraPanel, {
+        onVisibilityChange = onExtraPanelVisibilityChange
+    })
 
-    logoutButton = modules.client_topmenu.addLeftButton('logoutButton',
-                                                        tr('Exit'),
-                                                        '/images/topbuttons/logout',
+    logoutButton = modules.client_topmenu.addLeftButton('logoutButton', tr('Exit'), '/images/topbuttons/logout',
                                                         tryLogout, true)
 
     showTopMenuButton = gameMapPanel:getChildById('showTopMenuButton')
@@ -95,7 +100,7 @@ end
 
 function onSelectPanel(self, checked)
     if checked then
-        for k,v in pairs(panelsList) do
+        for k, v in pairs(panelsList) do
             if v.checkbox == self then
                 gameSelectedPanel = v.panel
                 break
@@ -129,17 +134,11 @@ function bindKeys()
     bindTurnKey('Ctrl+Numpad2', South)
     bindTurnKey('Ctrl+Numpad4', West)
 
-    g_keyboard.bindKeyPress('Escape',
-                            function() g_game.cancelAttackAndFollow() end,
-                            gameRootPanel)
-    g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end,
-                            gameRootPanel)
-    g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end,
-                            gameRootPanel)
-    g_keyboard.bindKeyDown('Ctrl+Q', function() tryLogout(false) end,
-                           gameRootPanel)
-    g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end,
-                           gameRootPanel)
+    g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel)
+    g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
+    g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
+    g_keyboard.bindKeyDown('Ctrl+Q', function() tryLogout(false) end, gameRootPanel)
+    g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end, gameRootPanel)
     g_keyboard.bindKeyDown('Alt+W', function()
         g_map.cleanTexts()
         modules.game_textmessage.clearMessages()
@@ -148,10 +147,8 @@ function bindKeys()
 end
 
 function bindWalkKey(key, dir)
-    g_keyboard.bindKeyDown(key, function() onWalkKeyDown(dir)
-    end, gameRootPanel, true)
-    g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true)
-    end, gameRootPanel, true)
+    g_keyboard.bindKeyDown(key, function() onWalkKeyDown(dir) end, gameRootPanel, true)
+    g_keyboard.bindKeyUp(key, function() changeWalkDir(dir, true) end, gameRootPanel, true)
     g_keyboard.bindKeyPress(key, function() smartWalk(dir) end, gameRootPanel)
 end
 
@@ -163,8 +160,7 @@ end
 
 function bindTurnKey(key, dir)
     local function callback(widget, code, repeatTicks)
-        if g_clock.millis() - lastDirTime >=
-            modules.client_options.getOption('turnDelay') then
+        if g_clock.millis() - lastDirTime >= modules.client_options.getOption('turnDelay') then
             g_game.turn(dir)
             changeWalkDir(dir)
 
@@ -175,9 +171,7 @@ function bindTurnKey(key, dir)
     g_keyboard.bindKeyPress(key, callback, gameRootPanel)
 end
 
-function unbindTurnKey(key)
-  g_keyboard.unbindKeyPress(key, gameRootPanel)
-end
+function unbindTurnKey(key) g_keyboard.unbindKeyPress(key, gameRootPanel) end
 
 function terminate()
     hide()
@@ -192,11 +186,17 @@ function terminate()
         onLoginAdvice = onLoginAdvice
     })
 
-    disconnect(gameLeftPanel, {onVisibilityChange = onExtraPanelVisibilityChange})
-    disconnect(gameRightExtraPanel, { onVisibilityChange = onExtraPanelVisibilityChange })
+    disconnect(gameLeftPanel, {
+        onVisibilityChange = onExtraPanelVisibilityChange
+    })
+    disconnect(gameRightExtraPanel, {
+        onVisibilityChange = onExtraPanelVisibilityChange
+    })
 
-    for k,v in pairs(panelsList) do
-        disconnect(v.checkbox, { onCheckChange = onSelectPanel })
+    for k, v in pairs(panelsList) do
+        disconnect(v.checkbox, {
+            onCheckChange = onSelectPanel
+        })
     end
 
     logoutButton:destroy()
@@ -220,7 +220,9 @@ function onGameEnd()
 end
 
 function show()
-    connect(g_app, {onClose = tryExit})
+    connect(g_app, {
+        onClose = tryExit
+    })
     modules.client_background.hide()
     gameRootPanel:show()
     gameRootPanel:focus()
@@ -241,7 +243,9 @@ function show()
 end
 
 function hide()
-    disconnect(g_app, {onClose = tryExit})
+    disconnect(g_app, {
+        onClose = tryExit
+    })
     logoutButton:setTooltip(tr('Exit'))
 
     if logoutWindow then
@@ -269,15 +273,11 @@ end
 function load()
     local settings = g_settings.getNode('game_interface')
     if settings then
-        if settings.splitterMarginBottom then
-            bottomSplitter:setMarginBottom(settings.splitterMarginBottom)
-        end
+        if settings.splitterMarginBottom then bottomSplitter:setMarginBottom(settings.splitterMarginBottom) end
     end
 end
 
-function onLoginAdvice(message)
-    displayInfoBox(tr("For Your Information"), message)
-end
+function onLoginAdvice(message) displayInfoBox(tr('For Your Information'), message) end
 
 function forceExit()
     g_game.cancelLogin()
@@ -303,11 +303,20 @@ function tryExit()
     end
 
     exitWindow = displayGeneralBox(tr('Exit'), tr(
-                                       "If you shut down the program, your character might stay in the game.\nClick on 'Logout' to ensure that you character leaves the game properly.\nClick on 'Exit' if you want to exit the program without logging out your character."),
+                                       'If you shut down the program, your character might stay in the game.\nClick on \'Logout\' to ensure that you character leaves the game properly.\nClick on \'Exit\' if you want to exit the program without logging out your character.'),
                                    {
-        {text = tr('Force Exit'), callback = exitFunc},
-        {text = tr('Logout'), callback = logoutFunc},
-        {text = tr('Cancel'), callback = cancelFunc},
+        {
+            text = tr('Force Exit'),
+            callback = exitFunc
+        },
+        {
+            text = tr('Logout'),
+            callback = logoutFunc
+        },
+        {
+            text = tr('Cancel'),
+            callback = cancelFunc
+        },
         anchor = AnchorHorizontalCenter
     }, logoutFunc, cancelFunc)
 
@@ -315,7 +324,7 @@ function tryExit()
 end
 
 function tryLogout(prompt)
-    if type(prompt) ~= "boolean" then prompt = true end
+    if type(prompt) ~= 'boolean' then prompt = true end
     if not g_game.isOnline() then
         exit()
         return
@@ -354,8 +363,14 @@ function tryLogout(prompt)
 
     if prompt then
         logoutWindow = displayGeneralBox(tr('Logout'), tr(msg), {
-            {text = tr('Yes'), callback = yesCallback},
-            {text = tr('No'), callback = noCallback},
+            {
+                text = tr('Yes'),
+                callback = yesCallback
+            },
+            {
+                text = tr('No'),
+                callback = noCallback
+            },
             anchor = AnchorHorizontalCenter
         }, yesCallback, noCallback)
     else
@@ -370,9 +385,7 @@ end
 
 function onWalkKeyDown(dir)
     if modules.client_options.getOption('autoChaseOverride') then
-        if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
-            g_game.setChaseMode(DontChase)
-        end
+        if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then g_game.setChaseMode(DontChase) end
     end
     firstStep = true
     changeWalkDir(dir)
@@ -392,20 +405,16 @@ function changeWalkDir(dir, pop)
     smartWalkDir = smartWalkDirs[1]
     if modules.client_options.getOption('smartWalk') and #smartWalkDirs > 1 then
         for _, d in pairs(smartWalkDirs) do
-            if (smartWalkDir == North and d == West) or
-                (smartWalkDir == West and d == North) then
+            if (smartWalkDir == North and d == West) or (smartWalkDir == West and d == North) then
                 smartWalkDir = NorthWest
                 break
-            elseif (smartWalkDir == North and d == East) or
-                (smartWalkDir == East and d == North) then
+            elseif (smartWalkDir == North and d == East) or (smartWalkDir == East and d == North) then
                 smartWalkDir = NorthEast
                 break
-            elseif (smartWalkDir == South and d == West) or
-                (smartWalkDir == West and d == South) then
+            elseif (smartWalkDir == South and d == West) or (smartWalkDir == West and d == South) then
                 smartWalkDir = SouthWest
                 break
-            elseif (smartWalkDir == South and d == East) or
-                (smartWalkDir == East and d == South) then
+            elseif (smartWalkDir == South and d == East) or (smartWalkDir == East and d == South) then
                 smartWalkDir = SouthEast
                 break
             end
@@ -423,22 +432,21 @@ function smartWalk(dir)
 end
 
 function updateStretchShrink()
-    if modules.client_options.getOption('dontStretchShrink') and
-        not alternativeView then
-        gameMapPanel:setVisibleDimension({width = 15, height = 11})
+    if modules.client_options.getOption('dontStretchShrink') and not alternativeView then
+        gameMapPanel:setVisibleDimension({
+            width = 15,
+            height = 11
+        })
 
         -- Set gameMapPanel size to height = 11 * 32 + 2
-        bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() +
-                                           (gameMapPanel:getHeight() - 32 * 11) -
-                                           10)
+        bottomSplitter:setMarginBottom(bottomSplitter:getMarginBottom() + (gameMapPanel:getHeight() - 32 * 11) - 10)
     end
 end
 
 function onMouseGrabberRelease(self, mousePosition, mouseButton)
     if selectedThing == nil then return false end
     if mouseButton == MouseLeftButton then
-        local clickedWidget = gameRootPanel:recursiveGetChildByPos(
-                                  mousePosition, false)
+        local clickedWidget = gameRootPanel:recursiveGetChildByPos(mousePosition, false)
         if clickedWidget then
             if selectedType == 'use' then
                 onUseWith(clickedWidget, mousePosition)
@@ -464,8 +472,7 @@ function onUseWith(clickedWidget, mousePosition)
                 g_game.useWith(selectedThing, tile:getTopUseThing())
             end
         end
-    elseif clickedWidget:getClassName() == 'UIItem' and
-        not clickedWidget:isVirtual() then
+    elseif clickedWidget:getClassName() == 'UIItem' and not clickedWidget:isVirtual() then
         g_game.useWith(selectedThing, clickedWidget:getItem())
     elseif clickedWidget:getClassName() == 'UICreatureButton' then
         local creature = clickedWidget:getCreature()
@@ -476,9 +483,7 @@ end
 function onTradeWith(clickedWidget, mousePosition)
     if clickedWidget:getClassName() == 'UIGameMap' then
         local tile = clickedWidget:getTile(mousePosition)
-        if tile then
-            g_game.requestTrade(selectedThing, tile:getTopCreature())
-        end
+        if tile then g_game.requestTrade(selectedThing, tile:getTopCreature()) end
     elseif clickedWidget:getClassName() == 'UICreatureButton' then
         local creature = clickedWidget:getCreature()
         if creature then g_game.requestTrade(selectedThing, creature) end
@@ -516,9 +521,7 @@ function startTradeWith(thing)
 end
 
 function isMenuHookCategoryEmpty(category)
-    if category then
-        for _, opt in pairs(category) do if opt then return false end end
-    end
+    if category then for _, opt in pairs(category) do if opt then return false end end end
     return true
 end
 
@@ -553,10 +556,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     else
         shortcut = nil
     end
-    if lookThing then
-        menu:addOption(tr('Look'), function() g_game.look(lookThing) end,
-                       shortcut)
-    end
+    if lookThing then menu:addOption(tr('Look'), function() g_game.look(lookThing) end, shortcut) end
 
     if not classic then
         shortcut = '(Ctrl)'
@@ -569,43 +569,28 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
                 menu:addOption(tr('Open'), function()
                     g_game.open(useThing, useThing:getParentContainer())
                 end, shortcut)
-                menu:addOption(tr('Open in new window'),
-                               function() g_game.open(useThing) end)
+                menu:addOption(tr('Open in new window'), function() g_game.open(useThing) end)
             else
-                menu:addOption(tr('Open'), function()
-                    g_game.open(useThing)
-                end, shortcut)
+                menu:addOption(tr('Open'), function() g_game.open(useThing) end, shortcut)
             end
         else
             if useThing:isMultiUse() then
-                menu:addOption(tr('Use with ...'),
-                               function() startUseWith(useThing) end, shortcut)
+                menu:addOption(tr('Use with ...'), function() startUseWith(useThing) end, shortcut)
             else
-                menu:addOption(tr('Use'), function()
-                    g_game.use(useThing)
-                end, shortcut)
+                menu:addOption(tr('Use'), function() g_game.use(useThing) end, shortcut)
             end
         end
 
-        if useThing:isRotateable() then
-            menu:addOption(tr('Rotate'), function()
-                g_game.rotate(useThing)
-            end)
-        end
+        if useThing:isRotateable() then menu:addOption(tr('Rotate'), function() g_game.rotate(useThing) end) end
 
-        if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~=
-            0xffff then
-            menu:addOption(tr('Browse Field'), function()
-                g_game.browseField(useThing:getPosition())
-            end)
+        if g_game.getFeature(GameBrowseField) and useThing:getPosition().x ~= 0xffff then
+            menu:addOption(tr('Browse Field'), function() g_game.browseField(useThing:getPosition()) end)
         end
     end
 
-    if lookThing and not lookThing:isCreature() and
-        not lookThing:isNotMoveable() and lookThing:isPickupable() then
+    if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
         menu:addSeparator()
-        menu:addOption(tr('Trade with ...'),
-                       function() startTradeWith(lookThing) end)
+        menu:addOption(tr('Trade with ...'), function() startTradeWith(lookThing) end)
     end
 
     if lookThing then
@@ -622,20 +607,13 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         menu:addSeparator()
 
         if creatureThing:isLocalPlayer() then
-            menu:addOption(tr('Set Outfit'),
-                           function() g_game.requestOutfit() end)
+            menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
 
             if g_game.getFeature(GamePlayerMounts) then
                 if not localPlayer:isMounted() then
-                    menu:addOption(tr('Mount'),
-                                   function()
-                        localPlayer:mount()
-                    end)
+                    menu:addOption(tr('Mount'), function() localPlayer:mount() end)
                 else
-                    menu:addOption(tr('Dismount'),
-                                   function()
-                        localPlayer:dismount()
-                    end)
+                    menu:addOption(tr('Dismount'), function() localPlayer:dismount() end)
                 end
             end
 
@@ -643,18 +621,14 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
                 if creatureThing:isPartyLeader() then
                     if creatureThing:isPartySharedExperienceActive() then
                         menu:addOption(tr('Disable Shared Experience'),
-                                       function()
-                            g_game.partyShareExperience(false)
-                        end)
+                                       function() g_game.partyShareExperience(false) end)
                     else
-                        menu:addOption(tr('Enable Shared Experience'),
-                                       function()
+                        menu:addOption(tr('Enable Shared Experience'), function()
                             g_game.partyShareExperience(true)
                         end)
                     end
                 end
-                menu:addOption(tr('Leave Party'),
-                               function() g_game.partyLeave() end)
+                menu:addOption(tr('Leave Party'), function() g_game.partyLeave() end)
             end
 
         else
@@ -666,27 +640,15 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
             end
             if creatureThing:getPosition().z == localPosition.z then
                 if g_game.getAttackingCreature() ~= creatureThing then
-                    menu:addOption(tr('Attack'),
-                                   function()
-                        g_game.attack(creatureThing)
-                    end, shortcut)
+                    menu:addOption(tr('Attack'), function() g_game.attack(creatureThing) end, shortcut)
                 else
-                    menu:addOption(tr('Stop Attack'),
-                                   function()
-                        g_game.cancelAttack()
-                    end, shortcut)
+                    menu:addOption(tr('Stop Attack'), function() g_game.cancelAttack() end, shortcut)
                 end
 
                 if g_game.getFollowingCreature() ~= creatureThing then
-                    menu:addOption(tr('Follow'),
-                                   function()
-                        g_game.follow(creatureThing)
-                    end)
+                    menu:addOption(tr('Follow'), function() g_game.follow(creatureThing) end)
                 else
-                    menu:addOption(tr('Stop Follow'),
-                                   function()
-                        g_game.cancelFollow()
-                    end)
+                    menu:addOption(tr('Stop Follow'), function() g_game.cancelFollow() end)
                 end
             end
 
@@ -700,39 +662,28 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
                     menu:addOption(tr('Invite to private chat'), function()
                         g_game.inviteToOwnChannel(creatureName)
                     end)
-                    menu:addOption(tr('Exclude from private chat'), function()
-                        g_game.excludeFromOwnChannel(creatureName)
-                    end) -- [TODO] must be removed after message's popup labels been implemented
+                    menu:addOption(tr('Exclude from private chat'),
+                                   function() g_game.excludeFromOwnChannel(creatureName) end) -- [TODO] must be removed after message's popup labels been implemented
                 end
                 if not localPlayer:hasVip(creatureName) then
-                    menu:addOption(tr('Add to VIP list'),
-                                   function()
-                        g_game.addVip(creatureName)
-                    end)
+                    menu:addOption(tr('Add to VIP list'), function() g_game.addVip(creatureName) end)
                 end
 
                 if modules.game_console.isIgnored(creatureName) then
                     menu:addOption(tr('Unignore') .. ' ' .. creatureName,
-                                   function()
-                        modules.game_console.removeIgnoredPlayer(creatureName)
-                    end)
+                                   function() modules.game_console.removeIgnoredPlayer(creatureName) end)
                 else
                     menu:addOption(tr('Ignore') .. ' ' .. creatureName,
-                                   function()
-                        modules.game_console.addIgnoredPlayer(creatureName)
-                    end)
+                                   function() modules.game_console.addIgnoredPlayer(creatureName) end)
                 end
 
                 local localPlayerShield = localPlayer:getShield()
                 local creatureShield = creatureThing:getShield()
 
-                if localPlayerShield == ShieldNone or localPlayerShield ==
-                    ShieldWhiteBlue then
+                if localPlayerShield == ShieldNone or localPlayerShield == ShieldWhiteBlue then
                     if creatureShield == ShieldWhiteYellow then
-                        menu:addOption(tr('Join %s\'s Party',
-                                          creatureThing:getName()), function()
-                            g_game.partyJoin(creatureThing:getId())
-                        end)
+                        menu:addOption(tr('Join %s\'s Party', creatureThing:getName()),
+                                       function() g_game.partyJoin(creatureThing:getId()) end)
                     else
                         menu:addOption(tr('Invite to Party'), function()
                             g_game.partyInvite(creatureThing:getId())
@@ -740,26 +691,22 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
                     end
                 elseif localPlayerShield == ShieldWhiteYellow then
                     if creatureShield == ShieldWhiteBlue then
-                        menu:addOption(tr('Revoke %s\'s Invitation',
-                                          creatureThing:getName()), function()
+                        menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()),
+                                       function()
                             g_game.partyRevokeInvitation(creatureThing:getId())
                         end)
                     end
-                elseif localPlayerShield == ShieldYellow or localPlayerShield ==
-                    ShieldYellowSharedExp or localPlayerShield ==
-                    ShieldYellowNoSharedExpBlink or localPlayerShield ==
-                    ShieldYellowNoSharedExp then
+                elseif localPlayerShield == ShieldYellow or localPlayerShield == ShieldYellowSharedExp or
+                    localPlayerShield == ShieldYellowNoSharedExpBlink or localPlayerShield == ShieldYellowNoSharedExp then
                     if creatureShield == ShieldWhiteBlue then
-                        menu:addOption(tr('Revoke %s\'s Invitation',
-                                          creatureThing:getName()), function()
+                        menu:addOption(tr('Revoke %s\'s Invitation', creatureThing:getName()),
+                                       function()
                             g_game.partyRevokeInvitation(creatureThing:getId())
                         end)
-                    elseif creatureShield == ShieldBlue or creatureShield ==
-                        ShieldBlueSharedExp or creatureShield ==
-                        ShieldBlueNoSharedExpBlink or creatureShield ==
-                        ShieldBlueNoSharedExp then
-                        menu:addOption(tr('Pass Leadership to %s',
-                                          creatureThing:getName()), function()
+                    elseif creatureShield == ShieldBlue or creatureShield == ShieldBlueSharedExp or creatureShield ==
+                        ShieldBlueNoSharedExpBlink or creatureShield == ShieldBlueNoSharedExp then
+                        menu:addOption(tr('Pass Leadership to %s', creatureThing:getName()),
+                                       function()
                             g_game.partyPassLeadership(creatureThing:getId())
                         end)
                     else
@@ -771,8 +718,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
             end
         end
 
-        if modules.game_ruleviolation.hasWindowAccess() and
-            creatureThing:isPlayer() then
+        if modules.game_ruleviolation.hasWindowAccess() and creatureThing:isPlayer() then
             menu:addSeparator()
             menu:addOption(tr('Rule Violation'), function()
                 modules.game_ruleviolation.show(creatureThing:getName())
@@ -780,9 +726,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         end
 
         menu:addSeparator()
-        menu:addOption(tr('Copy Name'), function()
-            g_window.setClipboardText(creatureThing:getName())
-        end)
+        menu:addOption(tr('Copy Name'), function() g_window.setClipboardText(creatureThing:getName()) end)
     end
 
     -- hooked menu options
@@ -790,12 +734,9 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         if not isMenuHookCategoryEmpty(category) then
             menu:addSeparator()
             for name, opt in pairs(category) do
-                if opt and
-                    opt.condition(menuPosition, lookThing, useThing,
-                                  creatureThing) then
+                if opt and opt.condition(menuPosition, lookThing, useThing, creatureThing) then
                     menu:addOption(name, function()
-                        opt.callback(menuPosition, lookThing, useThing,
-                                     creatureThing)
+                        opt.callback(menuPosition, lookThing, useThing, creatureThing)
                     end, opt.shortcut)
                 end
             end
@@ -805,13 +746,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:display(menuPosition)
 end
 
-function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
-                            useThing, creatureThing, attackCreature)
+function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, useThing, creatureThing, attackCreature)
     local keyboardModifiers = g_keyboard.getModifiers()
 
     if not modules.client_options.getOption('classicControl') then
-        if keyboardModifiers == KeyboardNoModifier and mouseButton ==
-            MouseRightButton then
+        if keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton then
             createThingMenu(menuPosition, lookThing, useThing, creatureThing)
             return true
         elseif lookThing and keyboardModifiers == KeyboardShiftModifier and
@@ -835,15 +774,15 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
                 return true
             end
             return true
-        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and
+            (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.open(useThing)
             return true
         elseif attackCreature and g_keyboard.isAltPressed() and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.attack(attackCreature)
             return true
-        elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and
-            g_keyboard.isAltPressed() and
+        elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and g_keyboard.isAltPressed() and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.attack(creatureThing)
             return true
@@ -851,14 +790,13 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
 
         -- classic control
     else
-        if useThing and keyboardModifiers == KeyboardNoModifier and mouseButton ==
-            MouseRightButton and not g_mouse.isPressed(MouseLeftButton) then
+        if useThing and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseRightButton and
+            not g_mouse.isPressed(MouseLeftButton) then
             local player = g_game.getLocalPlayer()
             if attackCreature and attackCreature ~= player then
                 g_game.attack(attackCreature)
                 return true
-            elseif creatureThing and creatureThing ~= player and
-                creatureThing:getPosition().z == autoWalkPos.z then
+            elseif creatureThing and creatureThing ~= player and creatureThing:getPosition().z == autoWalkPos.z then
                 g_game.attack(creatureThing)
                 return true
             elseif useThing:isContainer() then
@@ -877,18 +815,16 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
                 return true
             end
             return true
-        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
+        elseif useThing and useThing:isContainer() and keyboardModifiers == KeyboardCtrlShiftModifier and
+            (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.open(useThing)
             return true
         elseif lookThing and keyboardModifiers == KeyboardShiftModifier and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.look(lookThing)
             return true
-        elseif lookThing and
-            ((g_mouse.isPressed(MouseLeftButton) and mouseButton ==
-                MouseRightButton) or
-                (g_mouse.isPressed(MouseRightButton) and mouseButton ==
-                    MouseLeftButton)) then
+        elseif lookThing and ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
+            (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
             g_game.look(lookThing)
             return true
         elseif useThing and keyboardModifiers == KeyboardCtrlModifier and
@@ -899,8 +835,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.attack(attackCreature)
             return true
-        elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and
-            g_keyboard.isAltPressed() and
+        elseif creatureThing and creatureThing:getPosition().z == autoWalkPos.z and g_keyboard.isAltPressed() and
             (mouseButton == MouseLeftButton or mouseButton == MouseRightButton) then
             g_game.attack(creatureThing)
             return true
@@ -910,8 +845,7 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing,
     local player = g_game.getLocalPlayer()
     player:stopAutoWalk()
 
-    if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton ==
-        MouseLeftButton then
+    if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
         player:autoWalk(autoWalkPos)
         return true
     end
@@ -959,27 +893,27 @@ function moveStackableItem(item, toPos)
             spinbox.firstEdit = false
         end
     end
-    g_keyboard.bindKeyPress("Up", function()
+    g_keyboard.bindKeyPress('Up', function()
         check()
         spinbox:up()
     end, spinbox)
-    g_keyboard.bindKeyPress("Down", function()
+    g_keyboard.bindKeyPress('Down', function()
         check()
         spinbox:down()
     end, spinbox)
-    g_keyboard.bindKeyPress("Right", function()
+    g_keyboard.bindKeyPress('Right', function()
         check()
         spinbox:up()
     end, spinbox)
-    g_keyboard.bindKeyPress("Left", function()
+    g_keyboard.bindKeyPress('Left', function()
         check()
         spinbox:down()
     end, spinbox)
-    g_keyboard.bindKeyPress("PageUp", function()
+    g_keyboard.bindKeyPress('PageUp', function()
         check()
         spinbox:setValue(spinbox:getValue() + 10)
     end, spinbox)
-    g_keyboard.bindKeyPress("PageDown", function()
+    g_keyboard.bindKeyPress('PageDown', function()
         check()
         spinbox:setValue(spinbox:getValue() - 10)
     end, spinbox)
@@ -1035,7 +969,7 @@ function findContentPanelAvailable(child, minContentHeight)
         return gameSelectedPanel
     end
 
-    for k,v in pairs(panelsList) do
+    for k, v in pairs(panelsList) do
         if v.panel ~= gameSelectedPanel and v.panel:isVisible() and v.panel:fits(child, minContentHeight, 0) >= 0 then
             return v.panel
         end
@@ -1053,16 +987,10 @@ function onExtraPanelVisibilityChange(extraPanel, visible)
         end
 
         -- unselect hiding panel
-        if extraPanel == getSelectedPanel() then
-            panelsRadioGroup:selectWidget(panelsList[1].checkbox)
-        end
+        if extraPanel == getSelectedPanel() then panelsRadioGroup:selectWidget(panelsList[1].checkbox) end
 
         -- hide checkbox of hidden panel
-        for k,v in pairs(panelsList) do
-            if v.panel == extraPanel then
-                v.checkbox:setVisible(false)
-            end
-        end
+        for k, v in pairs(panelsList) do if v.panel == extraPanel then v.checkbox:setVisible(false) end end
 
         -- if there is only the right panel visible, hide its checkbox too
         if not gameRightExtraPanel:isVisible() and not gameLeftPanel:isVisible() then
@@ -1071,11 +999,7 @@ function onExtraPanelVisibilityChange(extraPanel, visible)
     else
         -- this means that, besided the right panel, there is another panel visible
         -- so we'll enable the checkboxes from the one at right, and the one being shown
-        for k,v in pairs(panelsList) do
-            if v.panel == extraPanel then
-                v.checkbox:setVisible(true)
-            end
-        end
+        for k, v in pairs(panelsList) do if v.panel == extraPanel then v.checkbox:setVisible(true) end end
         panelsList[1].checkbox:setVisible(true)
     end
 end
@@ -1108,24 +1032,29 @@ function setupViewMode(mode, autoJustDrawViewportEdge)
         gameMapPanel:setKeepAspectRatio(true)
         gameMapPanel:setLimitVisibleRange(false)
         gameMapPanel:setZoom(11)
-        gameMapPanel:setVisibleDimension({width = 15, height = 11})
-		
-		if autoJustDrawViewportEdge then
-			modules.client_options.setOption('drawViewportEdge', false)
-		end
+        gameMapPanel:setVisibleDimension({
+            width = 15,
+            height = 11
+        })
+
+        if autoJustDrawViewportEdge then modules.client_options.setOption('drawViewportEdge', false) end
     elseif mode == 1 then
         gameMapPanel:setKeepAspectRatio(false)
         gameMapPanel:setLimitVisibleRange(true)
         gameMapPanel:setZoom(11)
-        gameMapPanel:setVisibleDimension({width = 15, height = 11})
-		if autoJustDrawViewportEdge then
-			modules.client_options.setOption('drawViewportEdge', false)
-		end
+        gameMapPanel:setVisibleDimension({
+            width = 15,
+            height = 11
+        })
+        if autoJustDrawViewportEdge then modules.client_options.setOption('drawViewportEdge', false) end
     elseif mode == 2 then
         local limit = limitedZoom and not g_game.isGM()
         gameMapPanel:setLimitVisibleRange(limit)
         gameMapPanel:setZoom(11)
-        gameMapPanel:setVisibleDimension({width = 15, height = 11})
+        gameMapPanel:setVisibleDimension({
+            width = 15,
+            height = 11
+        })
         gameMapPanel:fill('parent')
         gameRootPanel:fill('parent')
         gameLeftPanel:setImageColor('alpha')
@@ -1133,7 +1062,8 @@ function setupViewMode(mode, autoJustDrawViewportEdge)
         gameRightExtraPanel:setImageColor('alpha')
         gameLeftPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameLeftPanel:getPaddingTop())
         gameRightPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightPanel:getPaddingTop())
-        gameRightExtraPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() - gameRightExtraPanel:getPaddingTop())
+        gameRightExtraPanel:setMarginTop(modules.client_topmenu.getTopMenu():getHeight() -
+                                             gameRightExtraPanel:getPaddingTop())
         gameLeftPanel:setOn(true)
         gameLeftPanel:setVisible(true)
         gameRightPanel:setOn(true)
@@ -1144,9 +1074,7 @@ function setupViewMode(mode, autoJustDrawViewportEdge)
         modules.client_topmenu.getTopMenu():setImageColor('#ffffff66')
         if not limit then g_game.changeMapAwareRange(24, 20) end
 
-		if autoJustDrawViewportEdge then
-			modules.client_options.setOption('drawViewportEdge', true)
-		end
+        if autoJustDrawViewportEdge then modules.client_options.setOption('drawViewportEdge', true) end
     end
 
     currentViewMode = mode

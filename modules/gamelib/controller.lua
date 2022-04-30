@@ -27,9 +27,7 @@ function Controller:init()
     local gameEvent = self.events.game
     if gameEvent then
         connect(g_game, gameEvent)
-        if gameEvent.onGameStart and g_game.isOnline() then
-            gameEvent.onGameStart()
-        end
+        if gameEvent.onGameStart and g_game.isOnline() then gameEvent.onGameStart() end
     end
 end
 
@@ -39,9 +37,7 @@ function Controller:terminate()
     local gameEvent = self.events.game
     if gameEvent then
         disconnect(g_game, gameEvent)
-        if gameEvent.onGameEnd and g_game.isOnline() then
-            gameEvent.onGameEnd()
-        end
+        if gameEvent.onGameEnd and g_game.isOnline() then gameEvent.onGameEnd() end
         self.events.game = nil
     end
 
@@ -49,13 +45,9 @@ function Controller:terminate()
 
     for name, widget in pairs(self.widgets) do widget:destroy() end
 
-    for i, event in pairs(self.keyboardEvents) do
-        g_keyboard['unbind' .. event.name](event.args)
-    end
+    for i, event in pairs(self.keyboardEvents) do g_keyboard['unbind' .. event.name](event.args) end
 
-    for i, opcode in pairs(self.opcodes) do
-        ProtocolGame.unregisterExtendedOpcode(opcode)
-    end
+    for i, opcode in pairs(self.opcodes) do ProtocolGame.unregisterExtendedOpcode(opcode) end
 
     self:disconnectExternalEvents()
 
@@ -81,17 +73,11 @@ function Controller:onGameStart(callback) self:gameEvent('onGameStart', callback
 
 function Controller:onGameEnd(callback) self:gameEvent('onGameEnd', callback) end
 
-function Controller:attachExternalEvent(event)
-    table.insert(self.externalEvents, event)
-end
+function Controller:attachExternalEvent(event) table.insert(self.externalEvents, event) end
 
-function Controller:connectExternalEvents()
-    for i, event in pairs(self.externalEvents) do event:connect() end
-end
+function Controller:connectExternalEvents() for i, event in pairs(self.externalEvents) do event:connect() end end
 
-function Controller:disconnectExternalEvents()
-    for i, event in pairs(self.externalEvents) do event:disconnect() end
-end
+function Controller:disconnectExternalEvents() for i, event in pairs(self.externalEvents) do event:disconnect() end end
 
 function Controller:registerEvents(actor, events) self.events[actor] = events end
 
@@ -101,9 +87,7 @@ function Controller:getWidget(name) return self.widgets[name] end
 
 function Controller:connectEvents(actor, events)
     if type(actor) == 'table' then
-        for _, target in pairs(actor) do
-            self:connectEvents(target, events)
-        end
+        for _, target in pairs(actor) do self:connectEvents(target, events) end
         return
     end
 
@@ -119,9 +103,7 @@ end
 
 function Controller:disconnectEvents(actor, destroy)
     if type(actor) == 'table' then
-        for _, target in pairs(actor) do
-            self:disconnectEvents(target, destroy)
-        end
+        for _, target in pairs(actor) do self:disconnectEvents(target, destroy) end
         return
     end
 
@@ -147,16 +129,25 @@ function Controller:setAttribute(name, value) self.attributes[name] = value end
 function Controller:getAttribute(name) return self.attributes[name] end
 
 function Controller:bindKeyDown(...)
-    table.insert(self.keyboardEvents, {name = 'KeyDown', args = ...})
+    table.insert(self.keyboardEvents, {
+        name = 'KeyDown',
+        args = ...
+    })
     g_keyboard.bindKeyDown(...)
 end
 
 function Controller:bindKeyUp(...)
-    table.insert(self.keyboardEvents, {name = 'KeyUp', args = ...})
+    table.insert(self.keyboardEvents, {
+        name = 'KeyUp',
+        args = ...
+    })
     g_keyboard.bindKeyUp(...)
 end
 
 function Controller:bindKeyPress(...)
-    table.insert(self.keyboardEvents, {name = 'KeyPress', args = ...})
+    table.insert(self.keyboardEvents, {
+        name = 'KeyPress',
+        args = ...
+    })
     g_keyboard.bindKeyPress(...)
 end

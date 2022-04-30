@@ -1,5 +1,5 @@
 -- @docclass
-UIResizeBorder = extends(UIWidget, "UIResizeBorder")
+UIResizeBorder = extends(UIWidget, 'UIResizeBorder')
 
 function UIResizeBorder.create()
     local resizeborder = UIResizeBorder.internalCreate()
@@ -17,9 +17,7 @@ function UIResizeBorder:onSetup()
     end
 end
 
-function UIResizeBorder:onDestroy()
-    if self.hovering then g_mouse.popCursor(self.cursortype) end
-end
+function UIResizeBorder:onDestroy() if self.hovering then g_mouse.popCursor(self.cursortype) end end
 
 function UIResizeBorder:onHoverChange(hovered)
     if hovered then
@@ -49,15 +47,11 @@ function UIResizeBorder:onMouseMove(mousePos, mouseMoved)
         local newSize = 0
         if self.vertical then
             local delta = mousePos.y - self:getY() - self:getHeight() / 2
-            newSize = math.min(
-                          math.max(parent:getHeight() + delta, self.minimum),
-                          self.maximum)
+            newSize = math.min(math.max(parent:getHeight() + delta, self.minimum), self.maximum)
             parent:setHeight(newSize)
         else
             local delta = mousePos.x - self:getX() - self:getWidth() / 2
-            newSize = math.min(
-                          math.max(parent:getWidth() + delta, self.minimum),
-                          self.maximum)
+            newSize = math.min(math.max(parent:getWidth() + delta, self.minimum), self.maximum)
             parent:setWidth(newSize)
         end
 
@@ -84,9 +78,7 @@ function UIResizeBorder:onStyleApply(styleName, styleNode)
     end
 end
 
-function UIResizeBorder:onVisibilityChange(visible)
-    if visible and self.maximum == self.minimum then self:hide() end
-end
+function UIResizeBorder:onVisibilityChange(visible) if visible and self.maximum == self.minimum then self:hide() end end
 
 function UIResizeBorder:setMaximum(maximum)
     self.maximum = maximum

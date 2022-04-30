@@ -38,32 +38,26 @@ InventorySlotLast = 10
 
 function Player:isPartyLeader()
     local shield = self:getShield()
-    return (shield == ShieldWhiteYellow or shield == ShieldYellow or shield ==
-               ShieldYellowSharedExp or shield == ShieldYellowNoSharedExpBlink or
-               shield == ShieldYellowNoSharedExp)
+    return (shield == ShieldWhiteYellow or shield == ShieldYellow or shield == ShieldYellowSharedExp or shield ==
+               ShieldYellowNoSharedExpBlink or shield == ShieldYellowNoSharedExp)
 end
 
 function Player:isPartyMember()
     local shield = self:getShield()
-    return (shield == ShieldWhiteYellow or shield == ShieldYellow or shield ==
-               ShieldYellowSharedExp or shield == ShieldYellowNoSharedExpBlink or
-               shield == ShieldYellowNoSharedExp or shield ==
-               ShieldBlueSharedExp or shield == ShieldBlueNoSharedExpBlink or
-               shield == ShieldBlueNoSharedExp or shield == ShieldBlue)
+    return (shield == ShieldWhiteYellow or shield == ShieldYellow or shield == ShieldYellowSharedExp or shield ==
+               ShieldYellowNoSharedExpBlink or shield == ShieldYellowNoSharedExp or shield == ShieldBlueSharedExp or
+               shield == ShieldBlueNoSharedExpBlink or shield == ShieldBlueNoSharedExp or shield == ShieldBlue)
 end
 
 function Player:isPartySharedExperienceActive()
     local shield = self:getShield()
-    return (shield == ShieldYellowSharedExp or shield ==
-               ShieldYellowNoSharedExpBlink or shield == ShieldYellowNoSharedExp or
-               shield == ShieldBlueSharedExp or shield ==
-               ShieldBlueNoSharedExpBlink or shield == ShieldBlueNoSharedExp)
+    return (shield == ShieldYellowSharedExp or shield == ShieldYellowNoSharedExpBlink or shield ==
+               ShieldYellowNoSharedExp or shield == ShieldBlueSharedExp or shield == ShieldBlueNoSharedExpBlink or
+               shield == ShieldBlueNoSharedExp)
 end
 
 function Player:hasVip(creatureName)
-    for id, vip in pairs(g_game.getVips()) do
-        if (vip[1] == creatureName) then return true end
-    end
+    for id, vip in pairs(g_game.getVips()) do if (vip[1] == creatureName) then return true end end
     return false
 end
 
@@ -72,23 +66,13 @@ function Player:isMounted()
     return outfit.mount ~= nil and outfit.mount > 0
 end
 
-function Player:toggleMount()
-    if g_game.getFeature(GamePlayerMounts) then
-        g_game.mount(not self:isMounted())
-    end
-end
+function Player:toggleMount() if g_game.getFeature(GamePlayerMounts) then g_game.mount(not self:isMounted()) end end
 
-function Player:mount()
-    if g_game.getFeature(GamePlayerMounts) then g_game.mount(true) end
-end
+function Player:mount() if g_game.getFeature(GamePlayerMounts) then g_game.mount(true) end end
 
-function Player:dismount()
-    if g_game.getFeature(GamePlayerMounts) then g_game.mount(false) end
-end
+function Player:dismount() if g_game.getFeature(GamePlayerMounts) then g_game.mount(false) end end
 
-function Player:getItem(itemId, subType)
-    return g_game.findPlayerItem(itemId, subType or -1)
-end
+function Player:getItem(itemId, subType) return g_game.findPlayerItem(itemId, subType or -1) end
 
 function Player:getItems(itemId, subType)
     local subType = subType or -1
@@ -96,16 +80,14 @@ function Player:getItems(itemId, subType)
     local items = {}
     for i = InventorySlotFirst, InventorySlotLast do
         local item = self:getInventoryItem(i)
-        if item and item:getId() == itemId and
-            (subType == -1 or item:getSubType() == subType) then
+        if item and item:getId() == itemId and (subType == -1 or item:getSubType() == subType) then
             table.insert(items, item)
         end
     end
 
     for i, container in pairs(g_game.getContainers()) do
         for j, item in pairs(container:getItems()) do
-            if item:getId() == itemId and
-                (subType == -1 or item:getSubType() == subType) then
+            if item:getId() == itemId and (subType == -1 or item:getSubType() == subType) then
                 item.container = container
                 table.insert(items, item)
             end

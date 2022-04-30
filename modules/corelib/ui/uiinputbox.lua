@@ -1,7 +1,7 @@
 if not UIWindow then dofile 'uiwindow' end
 
 -- @docclass
-UIInputBox = extends(UIWindow, "UIInputBox")
+UIInputBox = extends(UIWindow, 'UIInputBox')
 
 function UIInputBox.create(title, okCallback, cancelCallback)
     local inputBox = UIInputBox.internalCreate()
@@ -10,9 +10,7 @@ function UIInputBox.create(title, okCallback, cancelCallback)
     inputBox.inputs = {}
     inputBox.onEnter = function()
         local results = {}
-        for _, func in pairs(inputBox.inputs) do
-            table.insert(results, func())
-        end
+        for _, func in pairs(inputBox.inputs) do table.insert(results, func()) end
         okCallback(unpack(results))
         inputBox:destroy()
     end
@@ -103,8 +101,7 @@ function displayTextInputBox(title, label, okCallback, cancelCallback)
     inputBox:display()
 end
 
-function displayNumberInputBox(title, label, okCallback, cancelCallback, min,
-                               max, value, step)
+function displayNumberInputBox(title, label, okCallback, cancelCallback, min, max, value, step)
     local inputBox = UIInputBox.create(title, okCallback, cancelCallback)
     inputBox:addSpinBox(label, min, max, value, step)
     inputBox:display()

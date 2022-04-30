@@ -1,5 +1,5 @@
 -- @docclass
-UIButton = extends(UIWidget, "UIButton")
+UIButton = extends(UIWidget, 'UIButton')
 
 function UIButton.create()
     local button = UIButton.internalCreate()

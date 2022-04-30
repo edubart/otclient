@@ -1,4 +1,7 @@
-local ProgressCallback = {update = 1, finish = 2}
+local ProgressCallback = {
+    update = 1,
+    finish = 2
+}
 
 cooldownWindow = nil
 cooldownButton = nil
@@ -17,9 +20,8 @@ function init()
         onSpellCooldown = onSpellCooldown
     })
 
-    cooldownButton = modules.client_topmenu.addRightGameToggleButton(
-                         'cooldownButton', tr('Cooldowns'),
-                         '/images/topbuttons/cooldowns', toggle)
+    cooldownButton = modules.client_topmenu.addRightGameToggleButton('cooldownButton', tr('Cooldowns'),
+                                                                     '/images/topbuttons/cooldowns', toggle)
     cooldownButton:setOn(true)
     cooldownButton:hide()
 
@@ -99,11 +101,7 @@ function online()
     end
 end
 
-function offline()
-    if g_game.getFeature(GameSpellList) then
-        cooldownWindow:setParent(nil, true)
-    end
-end
+function offline() if g_game.getFeature(GameSpellList) then cooldownWindow:setParent(nil, true) end end
 
 function refresh() cooldownPanel:destroyChildren() end
 
@@ -147,9 +145,7 @@ function updateCooldown(progressRect, duration)
     if progressRect:getPercent() < 100 then
         removeEvent(progressRect.event)
 
-        progressRect.event = scheduleEvent(function()
-            progressRect.callback[ProgressCallback.update]()
-        end, 100)
+        progressRect.event = scheduleEvent(function() progressRect.callback[ProgressCallback.update]() end, 100)
     else
         progressRect.callback[ProgressCallback.finish]()
     end
@@ -188,8 +184,7 @@ function onSpellGroupCooldown(groupId, duration)
     if not SpellGroups[groupId] then return end
 
     local icon = contentsPanel:getChildById('groupIcon' .. SpellGroups[groupId])
-    local progressRect = contentsPanel:getChildById('progressRect' ..
-                                                        SpellGroups[groupId])
+    local progressRect = contentsPanel:getChildById('progressRect' .. SpellGroups[groupId])
     if icon then
         icon:setOn(true)
         removeEvent(icon.event)
@@ -198,9 +193,7 @@ function onSpellGroupCooldown(groupId, duration)
     progressRect.icon = icon
     if progressRect then
         removeEvent(progressRect.event)
-        local updateFunc = function()
-            updateCooldown(progressRect, duration)
-        end
+        local updateFunc = function() updateCooldown(progressRect, duration) end
         local finishFunc = function()
             turnOffCooldown(progressRect)
             groupCooldown[groupId] = false

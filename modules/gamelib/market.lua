@@ -3,9 +3,15 @@ MarketMaxAmountStackable = 64000
 MarketMaxPrice = 999999999
 MarketMaxOffers = 100
 
-MarketAction = {Buy = 0, Sell = 1}
+MarketAction = {
+    Buy = 0,
+    Sell = 1
+}
 
-MarketRequest = {MyOffers = 0xFFFE, MyHistory = 0xFFFF}
+MarketRequest = {
+    MyOffers = 0xFFFE,
+    MyHistory = 0xFFFF
+}
 
 MarketOfferState = {
     Active = 0,
@@ -47,7 +53,9 @@ MarketCategory.First = MarketCategory.Armors
 MarketCategory.Last = MarketCategory.TibiaCoins
 
 MarketCategoryWeapons = {
-    [MarketCategory.Ammunition] = {slots = {255}},
+    [MarketCategory.Ammunition] = {
+        slots = {255}
+    },
     [MarketCategory.Axes] = {
         slots = {255, InventorySlotOther, InventorySlotLeft}
     },
@@ -93,11 +101,7 @@ MarketCategoryStrings = {
     [255] = 'Weapons'
 }
 
-function getMarketCategoryName(id)
-    if table.haskey(MarketCategoryStrings, id) then
-        return MarketCategoryStrings[id]
-    end
-end
+function getMarketCategoryName(id) if table.haskey(MarketCategoryStrings, id) then return MarketCategoryStrings[id] end end
 
 function getMarketCategoryId(name)
     local id = table.find(MarketCategoryStrings, name)
@@ -158,9 +162,7 @@ MarketItemDescriptionStrings = {
 }
 
 function getMarketDescriptionName(id)
-    if table.haskey(MarketItemDescriptionStrings, id) then
-        return MarketItemDescriptionStrings[id]
-    end
+    if table.haskey(MarketItemDescriptionStrings, id) then return MarketItemDescriptionStrings[id] end
 end
 
 function getMarketDescriptionId(name)
@@ -169,12 +171,17 @@ function getMarketDescriptionId(name)
 end
 
 MarketSlotFilters = {
-    [InventorySlotOther] = "Two-Handed",
-    [InventorySlotLeft] = "One-Handed",
-    [255] = "Any"
+    [InventorySlotOther] = 'Two-Handed',
+    [InventorySlotLeft] = 'One-Handed',
+    [255] = 'Any'
 }
 
-MarketFilters = {Vocation = 1, Level = 2, Depot = 3, SearchAll = 4}
+MarketFilters = {
+    Vocation = 1,
+    Level = 2,
+    Depot = 3,
+    SearchAll = 4
+}
 
 MarketFilters.First = MarketFilters.Vocation
 MarketFilters.Last = MarketFilters.Depot
@@ -184,6 +191,4 @@ function getMarketSlotFilterId(name)
     if id then return id end
 end
 
-function getMarketSlotFilterName(id)
-    if table.haskey(MarketSlotFilters, id) then return MarketSlotFilters[id] end
-end
+function getMarketSlotFilterName(id) if table.haskey(MarketSlotFilters, id) then return MarketSlotFilters[id] end end

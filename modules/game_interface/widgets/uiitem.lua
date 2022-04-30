@@ -32,9 +32,7 @@ function UIItem:onDrop(widget, mousePos)
     if itemPos.x ~= 65535 and not itemTile then return false end
 
     local toPos = self.position
-    if itemPos.x == toPos.x and itemPos.y == toPos.y and itemPos.z == toPos.z then
-        return false
-    end
+    if itemPos.x == toPos.x and itemPos.y == toPos.y and itemPos.z == toPos.z then return false end
 
     if item:getCount() > 1 then
         modules.game_interface.moveStackableItem(item, toPos)
@@ -46,9 +44,7 @@ function UIItem:onDrop(widget, mousePos)
 end
 
 function UIItem:onDestroy()
-    if self == g_ui.getDraggingWidget() and self.hoveredWho then
-        self.hoveredWho:setBorderWidth(0)
-    end
+    if self == g_ui.getDraggingWidget() and self.hoveredWho then self.hoveredWho:setBorderWidth(0) end
 
     if self.hoveredWho then self.hoveredWho = nil end
 end
@@ -61,8 +57,7 @@ function UIItem:onHoverChange(hovered)
     local draggingWidget = g_ui.getDraggingWidget()
     if draggingWidget and self ~= draggingWidget then
         local gotMap = draggingWidget:getClassName() == 'UIGameMap'
-        local gotItem = draggingWidget:getClassName() == 'UIItem' and
-                            not draggingWidget:isVirtual()
+        local gotItem = draggingWidget:getClassName() == 'UIItem' and not draggingWidget:isVirtual()
         if hovered and (gotItem or gotMap) then
             self:setBorderWidth(1)
             draggingWidget.hoveredWho = self
@@ -86,13 +81,11 @@ function UIItem:onMouseRelease(mousePosition, mouseButton)
 
     if modules.client_options.getOption('classicControl') and
         ((g_mouse.isPressed(MouseLeftButton) and mouseButton == MouseRightButton) or
-            (g_mouse.isPressed(MouseRightButton) and mouseButton ==
-                MouseLeftButton)) then
+            (g_mouse.isPressed(MouseRightButton) and mouseButton == MouseLeftButton)) then
         g_game.look(item)
         self.cancelNextRelease = true
         return true
-    elseif modules.game_interface.processMouseAction(mousePosition, mouseButton,
-                                                     nil, item, item, nil, nil) then
+    elseif modules.game_interface.processMouseAction(mousePosition, mouseButton, nil, item, item, nil, nil) then
         return true
     end
     return false

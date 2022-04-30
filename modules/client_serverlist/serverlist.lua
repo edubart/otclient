@@ -26,9 +26,7 @@ function ServerList.terminate()
 end
 
 function ServerList.load()
-    for host, server in pairs(servers) do
-        ServerList.add(host, server.port, server.protocol, true)
-    end
+    for host, server in pairs(servers) do ServerList.add(host, server.port, server.protocol, true) end
 end
 
 function ServerList.select()
@@ -36,8 +34,7 @@ function ServerList.select()
     if selected then
         local server = servers[selected:getId()]
         if server then
-            EnterGame.setDefaultServer(selected:getId(), server.port,
-                                       server.protocol)
+            EnterGame.setDefaultServer(selected:getId(), server.port, server.protocol)
             EnterGame.setAccountName(server.account)
             EnterGame.setPassword(server.password)
             ServerList.hide()
@@ -96,10 +93,15 @@ function ServerList.remove(widget)
         removeWindow = nil
     end
 
-    removeWindow = displayGeneralBox(tr('Remove'), tr('Remove ' .. host .. '?'),
-                                     {
-        {text = tr('Yes'), callback = yesCallback},
-        {text = tr('No'), callback = noCallback},
+    removeWindow = displayGeneralBox(tr('Remove'), tr('Remove ' .. host .. '?'), {
+        {
+            text = tr('Yes'),
+            callback = yesCallback
+        },
+        {
+            text = tr('No'),
+            callback = noCallback
+        },
         anchor = AnchorHorizontalCenter
     }, yesCallback, noCallback)
 end
@@ -121,10 +123,6 @@ end
 
 function ServerList.hide() serverListWindow:hide() end
 
-function ServerList.setServerAccount(host, account)
-    if servers[host] then servers[host].account = account end
-end
+function ServerList.setServerAccount(host, account) if servers[host] then servers[host].account = account end end
 
-function ServerList.setServerPassword(host, password)
-    if servers[host] then servers[host].password = password end
-end
+function ServerList.setServerPassword(host, password) if servers[host] then servers[host].password = password end end

@@ -91,15 +91,16 @@ end
 function offline() resetWindow() end
 
 function init()
-    connect(g_game, {onGameStart = online, onGameEnd = offline})
+    connect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
-    spelllistWindow = g_ui.displayUI('spelllist',
-                                     modules.game_interface.getRightPanel())
+    spelllistWindow = g_ui.displayUI('spelllist', modules.game_interface.getRightPanel())
     spelllistWindow:hide()
 
-    spelllistButton = modules.client_topmenu.addRightGameToggleButton(
-                          'spelllistButton', tr('Spell List'),
-                          '/images/topbuttons/spelllist', toggle)
+    spelllistButton = modules.client_topmenu.addRightGameToggleButton('spelllistButton', tr('Spell List'),
+                                                                      '/images/topbuttons/spelllist', toggle)
     spelllistButton:setOn(false)
 
     nameValueLabel = spelllistWindow:getChildById('labelNameValue')
@@ -111,8 +112,7 @@ function init()
     levelValueLabel = spelllistWindow:getChildById('labelLevelValue')
     manaValueLabel = spelllistWindow:getChildById('labelManaValue')
     premiumValueLabel = spelllistWindow:getChildById('labelPremiumValue')
-    descriptionValueLabel =
-        spelllistWindow:getChildById('labelDescriptionValue')
+    descriptionValueLabel = spelllistWindow:getChildById('labelDescriptionValue')
 
     vocationBoxAny = spelllistWindow:getChildById('vocationBoxAny')
     vocationBoxSorcerer = spelllistWindow:getChildById('vocationBoxSorcerer')
@@ -157,12 +157,8 @@ function init()
 
     spellList = spelllistWindow:getChildById('spellList')
 
-    g_keyboard.bindKeyPress('Down', function()
-        spellList:focusNextChild(KeyboardFocusReason)
-    end, spelllistWindow)
-    g_keyboard.bindKeyPress('Up', function()
-        spellList:focusPreviousChild(KeyboardFocusReason)
-    end, spelllistWindow)
+    g_keyboard.bindKeyPress('Down', function() spellList:focusNextChild(KeyboardFocusReason) end, spelllistWindow)
+    g_keyboard.bindKeyPress('Up', function() spellList:focusPreviousChild(KeyboardFocusReason) end, spelllistWindow)
 
     initializeSpelllist()
     resizeWindow()
@@ -171,7 +167,10 @@ function init()
 end
 
 function terminate()
-    disconnect(g_game, {onGameStart = online, onGameEnd = offline})
+    disconnect(g_game, {
+        onGameStart = online,
+        onGameEnd = offline
+    })
 
     disconnect(spellList, {
         onChildFocusChange = function(self, focusedChild)
@@ -199,26 +198,17 @@ function initializeSpelllist()
         tmpLabel:setPhantom(false)
 
         local iconId = tonumber(info.icon)
-        if not iconId and SpellIcons[info.icon] then
-            iconId = SpellIcons[info.icon][1]
-        end
+        if not iconId and SpellIcons[info.icon] then iconId = SpellIcons[info.icon][1] end
 
-        if not (iconId) then
-            perror('Spell icon \'' .. info.icon .. '\' not found.')
-        end
+        if not (iconId) then perror('Spell icon \'' .. info.icon .. '\' not found.') end
 
-        tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height +
-                               4)
-        tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile]
-                                           .iconSize.width + 10) .. ' ' ..
-                                           (SpelllistSettings[SpelllistProfile]
-                                               .iconSize.height - 32) / 2 + 3))
+        tmpLabel:setHeight(SpelllistSettings[SpelllistProfile].iconSize.height + 4)
+        tmpLabel:setTextOffset(topoint((SpelllistSettings[SpelllistProfile].iconSize.width + 10) .. ' ' ..
+                                           (SpelllistSettings[SpelllistProfile].iconSize.height - 32) / 2 + 3))
         tmpLabel:setImageSource(SpelllistSettings[SpelllistProfile].iconFile)
         tmpLabel:setImageClip(Spells.getImageClip(iconId, SpelllistProfile))
-        tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile]
-                                         .iconSize.width .. ' ' ..
-                                         SpelllistSettings[SpelllistProfile]
-                                             .iconSize.height))
+        tmpLabel:setImageSize(tosize(SpelllistSettings[SpelllistProfile].iconSize.width .. ' ' ..
+                                         SpelllistSettings[SpelllistProfile].iconSize.height))
         tmpLabel.onClick = updateSpellInformation
     end
 
@@ -253,14 +243,11 @@ function updateSpelllist()
 
         local localPlayer = g_game.getLocalPlayer()
         if (not (filters.level) or info.level <= localPlayer:getLevel()) and
-            (not (filters.vocation) or
-                table.find(info.vocations, localPlayer:getVocation())) and
-            (filters.vocationId == FILTER_VOCATION_ANY or
-                table.find(info.vocations, filters.vocationId) or
+            (not (filters.vocation) or table.find(info.vocations, localPlayer:getVocation())) and
+            (filters.vocationId == FILTER_VOCATION_ANY or table.find(info.vocations, filters.vocationId) or
                 table.find(info.vocations, filters.vocationId + 4)) and
             (filters.groupId == FILTER_GROUP_ANY or info.group[filters.groupId]) and
-            (filters.premium == FILTER_PREMIUM_ANY or
-                (info.premium and filters.premium == FILTER_PREMIUM_YES) or
+            (filters.premium == FILTER_PREMIUM_ANY or (info.premium and filters.premium == FILTER_PREMIUM_YES) or
                 (not (info.premium) and filters.premium == FILTER_PREMIUM_NO)) then
             tmpLabel:setVisible(true)
         else
@@ -291,10 +278,8 @@ function updateSpellInformation(widget)
 
         for i = 1, #info.vocations do
             local vocationId = info.vocations[i]
-            if vocationId <= 4 or
-                not (table.find(info.vocations, (vocationId - 4))) then
-                vocation = vocation .. (vocation:len() == 0 and '' or ', ') ..
-                               VocationNames[vocationId]
+            if vocationId <= 4 or not (table.find(info.vocations, (vocationId - 4))) then
+                vocation = vocation .. (vocation:len() == 0 and '' or ', ') .. VocationNames[vocationId]
             end
         end
 
@@ -302,8 +287,7 @@ function updateSpellInformation(widget)
         for groupId, groupName in ipairs(SpellGroups) do
             if info.group[groupId] then
                 group = group .. (group:len() == 0 and '' or ' / ') .. groupName
-                cooldown = cooldown .. ' / ' .. (info.group[groupId] / 1000) ..
-                               's'
+                cooldown = cooldown .. ' / ' .. (info.group[groupId] / 1000) .. 's'
             end
         end
 
@@ -388,11 +372,9 @@ end
 
 function resizeWindow()
     spelllistWindow:setWidth(SpelllistSettings['Default'].spellWindowWidth +
-                                 SpelllistSettings[SpelllistProfile].iconSize
-                                     .width - 32)
-    spellList:setWidth(SpelllistSettings['Default'].spellListWidth +
-                           SpelllistSettings[SpelllistProfile].iconSize.width -
-                           32)
+                                 SpelllistSettings[SpelllistProfile].iconSize.width - 32)
+    spellList:setWidth(
+        SpelllistSettings['Default'].spellListWidth + SpelllistSettings[SpelllistProfile].iconSize.width - 32)
 end
 
 function resetWindow()
@@ -406,8 +388,7 @@ function resetWindow()
     local buttonFilterLevel = spelllistWindow:getChildById('buttonFilterLevel')
     buttonFilterLevel:setOn(filters.level)
 
-    local buttonFilterVocation = spelllistWindow:getChildById(
-                                     'buttonFilterVocation')
+    local buttonFilterVocation = spelllistWindow:getChildById('buttonFilterVocation')
     buttonFilterVocation:setOn(filters.vocation)
 
     vocationRadioGroup:selectWidget(vocationBoxAny)

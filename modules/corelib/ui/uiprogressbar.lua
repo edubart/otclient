@@ -1,5 +1,5 @@
 -- @docclass
-UIProgressBar = extends(UIWidget, "UIProgressBar")
+UIProgressBar = extends(UIWidget, 'UIProgressBar')
 
 function UIProgressBar.create()
     local progressbar = UIProgressBar.internalCreate()
@@ -38,9 +38,7 @@ function UIProgressBar:setPercent(percent) self:setValue(percent, 0, 100) end
 
 function UIProgressBar:getPercent() return self.value end
 
-function UIProgressBar:getPercentPixels()
-    return (self.maximum - self.minimum) / self:getWidth()
-end
+function UIProgressBar:getPercentPixels() return (self.maximum - self.minimum) / self:getWidth() end
 
 function UIProgressBar:getProgress()
     if self.minimum == self.maximum then return 1 end
@@ -49,10 +47,8 @@ end
 
 function UIProgressBar:updateBackground()
     if self:isOn() then
-        local width = math.round(math.max(
-                                     (self:getProgress() *
-                                         (self:getWidth() - self.bgBorderLeft -
-                                             self.bgBorderRight)), 1))
+        local width = math.round(math.max((self:getProgress() *
+                                              (self:getWidth() - self.bgBorderLeft - self.bgBorderRight)), 1))
         local height = self:getHeight() - self.bgBorderTop - self.bgBorderBottom
         local rect = {
             x = self.bgBorderLeft,

@@ -3,7 +3,7 @@ function table.dump(t, depth)
     if not depth then depth = 0 end
     for k, v in pairs(t) do
         str = (' '):rep(depth * 2) .. k .. ': '
-        if type(v) ~= "table" then
+        if type(v) ~= 'table' then
             print(str .. tostring(v))
         else
             print(str)
@@ -23,7 +23,7 @@ end
 function table.recursivecopy(t)
     local res = {}
     for k, v in pairs(t) do
-        if type(v) == "table" then
+        if type(v) == 'table' then
             res[k] = table.recursivecopy(v)
         else
             res[k] = v
@@ -58,14 +58,10 @@ function table.findbykey(t, key, lowercase)
     end
 end
 
-function table.contains(t, value, lowercase)
-    return table.find(t, value, lowercase) ~= nil
-end
+function table.contains(t, value, lowercase) return table.find(t, value, lowercase) ~= nil end
 
 function table.findkey(t, key)
-    if t and type(t) == 'table' then
-        for k, v in pairs(t) do if k == key then return k end end
-    end
+    if t and type(t) == 'table' then for k, v in pairs(t) do if k == key then return k end end end
 end
 
 function table.haskey(t, key) return table.findkey(t, key) ~= nil end
@@ -111,9 +107,7 @@ function table.permute(t, n, count)
 end
 
 function table.findbyfield(t, fieldname, fieldvalue)
-    for _i, subt in pairs(t) do
-        if subt[fieldname] == fieldvalue then return subt end
-    end
+    for _i, subt in pairs(t) do if subt[fieldname] == fieldvalue then return subt end end
     return nil
 end
 
@@ -126,15 +120,15 @@ end
 
 function table.tostring(t)
     local maxn = #t
-    local str = ""
+    local str = ''
     for k, v in pairs(t) do
         v = tostring(v)
         if k == maxn and k ~= 1 then
-            str = str .. " and " .. v
+            str = str .. ' and ' .. v
         elseif maxn > 1 and k ~= 1 then
-            str = str .. ", " .. v
+            str = str .. ', ' .. v
         else
-            str = str .. " " .. v
+            str = str .. ' ' .. v
         end
     end
     return str
@@ -154,7 +148,7 @@ function table.collect(t, func)
 end
 
 function table.equals(t, comp)
-    if type(t) == "table" and type(comp) == "table" then
+    if type(t) == 'table' and type(comp) == 'table' then
         for k, v in pairs(t) do if v ~= comp[k] then return false end end
     end
     return true

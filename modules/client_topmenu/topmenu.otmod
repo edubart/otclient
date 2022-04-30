@@ -7,4 +7,3 @@ Module
   sandboxed: true
   @onLoad: init()
   @onUnload: terminate()
-

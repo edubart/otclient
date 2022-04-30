@@ -1,50 +1,110 @@
 HOTKEY = 'Ctrl+Y'
-MAP_SHADERS = {
-    {name = 'Map - Default', frag = nil}, {
-        name = 'Map - Fog',
-        frag = 'shaders/fragment/fog.frag',
-        tex1 = 'images/clouds'
-    }, {name = 'Map - Rain', frag = 'shaders/fragment/rain.frag'}, {
-        name = 'Map - Snow',
-        frag = 'shaders/fragment/snow.frag',
-        tex1 = 'images/snow'
-    }, {name = 'Map - Gray Scale', frag = 'shaders/fragment/grayscale.frag'},
-    {name = 'Map - Bloom', frag = 'shaders/fragment/bloom.frag'},
-    {name = 'Map - Sepia', frag = 'shaders/fragment/sepia.frag'},
-    {name = 'Map - Pulse', frag = 'shaders/fragment/pulse.frag'},
-    {name = 'Map - Old Tv', frag = 'shaders/fragment/oldtv.frag'},
-    {name = 'Map - Party', frag = 'shaders/fragment/party.frag'},
-    {name = 'Map - Radial Blur', frag = 'shaders/fragment/radialblur.frag'},
-    {name = 'Map - Zomg', frag = 'shaders/fragment/zomg.frag'},
-    {name = 'Map - Heat', frag = 'shaders/fragment/heat.frag'},
-    {name = 'Map - Noise', frag = 'shaders/fragment/noise.frag'}
-}
+MAP_SHADERS = {{
+    name = 'Map - Default',
+    frag = nil
+}, {
+    name = 'Map - Fog',
+    frag = 'shaders/fragment/fog.frag',
+    tex1 = 'images/clouds'
+}, {
+    name = 'Map - Rain',
+    frag = 'shaders/fragment/rain.frag'
+}, {
+    name = 'Map - Snow',
+    frag = 'shaders/fragment/snow.frag',
+    tex1 = 'images/snow'
+}, {
+    name = 'Map - Gray Scale',
+    frag = 'shaders/fragment/grayscale.frag'
+}, {
+    name = 'Map - Bloom',
+    frag = 'shaders/fragment/bloom.frag'
+}, {
+    name = 'Map - Sepia',
+    frag = 'shaders/fragment/sepia.frag'
+}, {
+    name = 'Map - Pulse',
+    frag = 'shaders/fragment/pulse.frag'
+}, {
+    name = 'Map - Old Tv',
+    frag = 'shaders/fragment/oldtv.frag'
+}, {
+    name = 'Map - Party',
+    frag = 'shaders/fragment/party.frag'
+}, {
+    name = 'Map - Radial Blur',
+    frag = 'shaders/fragment/radialblur.frag'
+}, {
+    name = 'Map - Zomg',
+    frag = 'shaders/fragment/zomg.frag'
+}, {
+    name = 'Map - Heat',
+    frag = 'shaders/fragment/heat.frag'
+}, {
+    name = 'Map - Noise',
+    frag = 'shaders/fragment/noise.frag'
+}}
 
-OUTFIT_SHADERS = {
-    {name = 'Outfit - Default', frag = nil},
-    {name = 'Outfit - Rainbow', frag = 'shaders/fragment/party.frag'}, {
-        name = 'Outfit - Ghost',
-        frag = 'shaders/fragment/radialblur.frag',
-        drawColor = false
-    }, {name = 'Outfit - Jelly', frag = 'shaders/fragment/heat.frag'},
-    {name = 'Outfit - Fragmented', frag = 'shaders/fragment/noise.frag'}
-}
+OUTFIT_SHADERS = {{
+    name = 'Outfit - Default',
+    frag = nil
+}, {
+    name = 'Outfit - Rainbow',
+    frag = 'shaders/fragment/party.frag'
+}, {
+    name = 'Outfit - Ghost',
+    frag = 'shaders/fragment/radialblur.frag',
+    drawColor = false
+}, {
+    name = 'Outfit - Jelly',
+    frag = 'shaders/fragment/heat.frag'
+}, {
+    name = 'Outfit - Fragmented',
+    frag = 'shaders/fragment/noise.frag'
+}}
 
-MOUNT_SHADERS = {
-    {name = 'Mount - Default', frag = nil},
-    {name = 'Mount - Rainbow', frag = 'shaders/fragment/party.frag'}
-}
+MOUNT_SHADERS = {{
+    name = 'Mount - Default',
+    frag = nil
+}, {
+    name = 'Mount - Rainbow',
+    frag = 'shaders/fragment/party.frag'
+}}
 
 -- Fix for texture offset drawing, adding walking offsets.
 local dirs = {
-    [0] = {x = 0, y = 1},
-    [1] = {x = 1, y = 0},
-    [2] = {x = 0, y = -1},
-    [3] = {x = -1, y = 0},
-    [4] = {x = 1, y = 1},
-    [5] = {x = 1, y = -1},
-    [6] = {x = -1, y = -1},
-    [7] = {x = -1, y = 1}
+    [0] = {
+        x = 0,
+        y = 1
+    },
+    [1] = {
+        x = 1,
+        y = 0
+    },
+    [2] = {
+        x = 0,
+        y = -1
+    },
+    [3] = {
+        x = -1,
+        y = 0
+    },
+    [4] = {
+        x = 1,
+        y = 1
+    },
+    [5] = {
+        x = 1,
+        y = -1
+    },
+    [6] = {
+        x = -1,
+        y = -1
+    },
+    [7] = {
+        x = -1,
+        y = 1
+    }
 }
 
 shadersPanel = nil
@@ -66,12 +126,15 @@ function attachShaders()
     player:setOutfitShader(g_shaders.getShader('Default'))
     player:setMountShader(g_shaders.getShader('Default'))
 
-    connect(g_game.getLocalPlayer(),
-            {onWalkEnd = onWalkEvent --[[, onAutoWalk = function() end]] })
+    connect(g_game.getLocalPlayer(), {
+        onWalkEnd = onWalkEvent --[[, onAutoWalk = function() end]]
+    })
 end
 
 function init()
-    connect(g_game, {onGameStart = attachShaders})
+    connect(g_game, {
+        onGameStart = attachShaders
+    })
 
     if not g_graphics.canUseShaders() then return end
 
@@ -79,8 +142,7 @@ function init()
 
     g_keyboard.bindKeyDown(HOTKEY, toggle)
 
-    shadersPanel = g_ui.createWidget('ShadersPanel',
-                                     modules.game_interface.getMapPanel())
+    shadersPanel = g_ui.createWidget('ShadersPanel', modules.game_interface.getMapPanel())
     shadersPanel:hide()
 
     local mapComboBox = shadersPanel:getChildById('mapComboBox')
@@ -107,9 +169,7 @@ function init()
 
     local registerShader = function(opts, method)
         local fragmentShaderPath = resolvepath(opts.frag)
-        local vertexShaderPath = resolvepath(
-                                     opts.frag ~= nil and opts.vert or
-                                         "shaders/core/vertex/default.vert")
+        local vertexShaderPath = resolvepath(opts.frag ~= nil and opts.vert or 'shaders/core/vertex/default.vert')
 
         if fragmentShaderPath ~= nil then
             --  local shader = g_shaders.createShader()
@@ -142,10 +202,14 @@ end
 
 function terminate()
     if g_game.getLocalPlayer() then
-        disconnect(g_game.getLocalPlayer(),
-                   {onWalkEnd = onWalkEvent, onAutoWalk = onAutoWalkEvent})
+        disconnect(g_game.getLocalPlayer(), {
+            onWalkEnd = onWalkEvent,
+            onAutoWalk = onAutoWalkEvent
+        })
     end
-    disconnect(g_game, {onGameStart = attachShaders})
+    disconnect(g_game, {
+        onGameStart = attachShaders
+    })
 
     g_keyboard.unbindKeyDown(HOTKEY)
     shadersPanel:destroy()

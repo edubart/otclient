@@ -97,4 +97,3 @@ MiniWindow
       anchors.left: parent.left
       anchors.right: parent.right
       background-color: #00000022
-

@@ -21,6 +21,4 @@ function math.isu32(num) return math.isinteger(num) and num >= U16 and num < U32
 
 function math.isu64(num) return math.isinteger(num) and num >= U32 and num < U64 end
 
-function math.isinteger(num)
-    return ((type(num) == 'number') and (num == math.floor(num)))
-end
+function math.isinteger(num) return ((type(num) == 'number') and (num == math.floor(num))) end

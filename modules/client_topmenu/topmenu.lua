@@ -42,7 +42,9 @@ function init()
         onGameEnd = offline,
         onPingBack = updatePing
     })
-    connect(g_app, {onFps = updateFps})
+    connect(g_app, {
+        onFps = updateFps
+    })
 
     topMenu = g_ui.displayUI('topmenu')
 
@@ -64,7 +66,9 @@ function terminate()
         onGameEnd = offline,
         onPingBack = updatePing
     })
-    disconnect(g_app, {onFps = updateFps})
+    disconnect(g_app, {
+        onFps = updateFps
+    })
 
     topMenu:destroy()
 end
@@ -74,8 +78,7 @@ function online()
 
     addEvent(function()
         if modules.client_options.getOption('showPing') and
-            (g_game.getFeature(GameClientPing) or
-                g_game.getFeature(GameExtendedClientPing)) then
+            (g_game.getFeature(GameClientPing) or g_game.getFeature(GameExtendedClientPing)) then
             pingLabel:show()
         else
             pingLabel:hide()
@@ -97,7 +100,7 @@ function updatePing(ping)
     local text = 'Ping: '
     local color
     if ping < 0 then
-        text = text .. "??"
+        text = text .. '??'
         color = 'yellow'
     else
         text = text .. ping .. ' ms'
@@ -118,43 +121,35 @@ function setPingVisible(enable) pingLabel:setVisible(enable) end
 function setFpsVisible(enable) fpsLabel:setVisible(enable) end
 
 function addLeftButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, leftButtonsPanel, false,
-                     front)
+    return addButton(id, description, icon, callback, leftButtonsPanel, false, front)
 end
 
 function addLeftToggleButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, leftButtonsPanel, true,
-                     front)
+    return addButton(id, description, icon, callback, leftButtonsPanel, true, front)
 end
 
 function addRightButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, rightButtonsPanel, false,
-                     front)
+    return addButton(id, description, icon, callback, rightButtonsPanel, false, front)
 end
 
 function addRightToggleButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, rightButtonsPanel, true,
-                     front)
+    return addButton(id, description, icon, callback, rightButtonsPanel, true, front)
 end
 
 function addLeftGameButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, leftGameButtonsPanel,
-                     false, front)
+    return addButton(id, description, icon, callback, leftGameButtonsPanel, false, front)
 end
 
 function addLeftGameToggleButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, leftGameButtonsPanel,
-                     true, front)
+    return addButton(id, description, icon, callback, leftGameButtonsPanel, true, front)
 end
 
 function addRightGameButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, rightGameButtonsPanel,
-                     false, front)
+    return addButton(id, description, icon, callback, rightGameButtonsPanel, false, front)
 end
 
 function addRightGameToggleButton(id, description, icon, callback, front)
-    return addButton(id, description, icon, callback, rightGameButtonsPanel,
-                     true, front)
+    return addButton(id, description, icon, callback, rightGameButtonsPanel, true, front)
 end
 
 function showGameButtons()
@@ -177,18 +172,13 @@ function toggle()
 
     if menu:isVisible() then
         menu:hide()
-        modules.client_background.getBackground():addAnchor(AnchorTop, 'parent',
-                                                            AnchorTop)
-        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent',
-                                                        AnchorTop)
+        modules.client_background.getBackground():addAnchor(AnchorTop, 'parent', AnchorTop)
+        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'parent', AnchorTop)
         modules.game_interface.getShowTopMenuButton():show()
     else
         menu:show()
-        modules.client_background.getBackground():addAnchor(AnchorTop,
-                                                            'topMenu',
-                                                            AnchorBottom)
-        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu',
-                                                        AnchorBottom)
+        modules.client_background.getBackground():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
+        modules.game_interface.getRootPanel():addAnchor(AnchorTop, 'topMenu', AnchorBottom)
         modules.game_interface.getShowTopMenuButton():hide()
     end
 end

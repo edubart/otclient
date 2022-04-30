@@ -1,9 +1,12 @@
-UIGameMap = extends(UIMap, "UIGameMap")
+UIGameMap = extends(UIMap, 'UIGameMap')
 
 function UIGameMap.create()
     local gameMap = UIGameMap.internalCreate()
     gameMap:setKeepAspectRatio(true)
-    gameMap:setVisibleDimension({width = 15, height = 11})
+    gameMap:setVisibleDimension({
+        width = 15,
+        height = 11
+    })
     gameMap:setDrawLights(true)
     return gameMap
 end
@@ -43,9 +46,7 @@ function UIGameMap:onDrop(widget, mousePos)
     if thingPos.x ~= 65535 and not thingTile then return false end
 
     local toPos = tile:getPosition()
-    if thingPos.x == toPos.x and thingPos.y == toPos.y and thingPos.z == toPos.z then
-        return false
-    end
+    if thingPos.x == toPos.x and thingPos.y == toPos.y and thingPos.z == toPos.z then return false end
 
     if thing:isItem() and thing:getCount() > 1 then
         modules.game_interface.moveStackableItem(thing, toPos)
@@ -56,9 +57,7 @@ function UIGameMap:onDrop(widget, mousePos)
     return true
 end
 
-function UIGameMap:onMousePress()
-    if not self:isDragging() then self.allowNextRelease = true end
-end
+function UIGameMap:onMousePress() if not self:isDragging() then self.allowNextRelease = true end end
 
 function UIGameMap:onMouseMove() return false end
 
@@ -94,12 +93,8 @@ function UIGameMap:onMouseRelease(mousePosition, mouseButton)
     local autoWalkTile = g_map.getTile(autoWalkPos)
     if autoWalkTile then attackCreature = autoWalkTile:getTopCreature() end
 
-    local ret = modules.game_interface.processMouseAction(mousePosition,
-                                                          mouseButton,
-                                                          autoWalkPos,
-                                                          lookThing, useThing,
-                                                          creatureThing,
-                                                          attackCreature)
+    local ret = modules.game_interface.processMouseAction(mousePosition, mouseButton, autoWalkPos, lookThing, useThing,
+                                                          creatureThing, attackCreature)
     if ret then self.allowNextRelease = false end
 
     return ret

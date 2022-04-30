@@ -151,4 +151,3 @@ MainWindow
     !text: tr('Close')
     width: 90
     @onClick: modules.client_modulemanager.hide()
-

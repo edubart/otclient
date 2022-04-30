@@ -60,9 +60,8 @@ controller = Controller:new()
 controller:attachExternalEvent(localPlayerEvent)
 
 function controller:onInit()
-    local minimapButton = modules.client_topmenu.addRightGameToggleButton(
-                              'minimapButton', tr('Minimap') .. ' (Ctrl+M)',
-                              '/images/topbuttons/minimap', toggle)
+    local minimapButton = modules.client_topmenu.addRightGameToggleButton('minimapButton', tr('Minimap') .. ' (Ctrl+M)',
+                                                                          '/images/topbuttons/minimap', toggle)
     minimapButton:setOn(true)
 
     local minimapWindow = g_ui.loadUI('minimap')
@@ -72,14 +71,10 @@ function controller:onInit()
     local minimapWidget = minimapWindow:recursiveGetChildById('minimap')
 
     local gameRootPanel = modules.game_interface.getRootPanel()
-    self:bindKeyPress('Alt+Left', function() minimapWidget:move(1, 0) end,
-                      gameRootPanel)
-    self:bindKeyPress('Alt+Right', function() minimapWidget:move(-1, 0) end,
-                      gameRootPanel)
-    self:bindKeyPress('Alt+Up', function() minimapWidget:move(0, 1) end,
-                      gameRootPanel)
-    self:bindKeyPress('Alt+Down', function() minimapWidget:move(0, -1) end,
-                      gameRootPanel)
+    self:bindKeyPress('Alt+Left', function() minimapWidget:move(1, 0) end, gameRootPanel)
+    self:bindKeyPress('Alt+Right', function() minimapWidget:move(-1, 0) end, gameRootPanel)
+    self:bindKeyPress('Alt+Up', function() minimapWidget:move(0, 1) end, gameRootPanel)
+    self:bindKeyPress('Alt+Down', function() minimapWidget:move(0, -1) end, gameRootPanel)
 
     self:bindKeyDown('Ctrl+M', toggle)
     self:bindKeyDown('Ctrl+Shift+M', toggleFullMap)

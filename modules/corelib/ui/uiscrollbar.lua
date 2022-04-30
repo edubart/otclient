@@ -1,5 +1,5 @@
 -- @docclass
-UIScrollBar = extends(UIWidget, "UIScrollBar")
+UIScrollBar = extends(UIWidget, 'UIScrollBar')
 
 -- private functions
 local function calcValues(self)
@@ -9,19 +9,13 @@ local function calcValues(self)
 
     local pxrange, center
     if self.orientation == 'vertical' then
-        pxrange = (self:getHeight() - decrementButton:getHeight() -
-                      decrementButton:getMarginTop() -
-                      decrementButton:getMarginBottom() -
-                      incrementButton:getHeight() -
-                      incrementButton:getMarginTop() -
+        pxrange = (self:getHeight() - decrementButton:getHeight() - decrementButton:getMarginTop() -
+                      decrementButton:getMarginBottom() - incrementButton:getHeight() - incrementButton:getMarginTop() -
                       incrementButton:getMarginBottom())
         center = self:getY() + math.floor(self:getHeight() / 2)
     else -- horizontal
-        pxrange = (self:getWidth() - decrementButton:getWidth() -
-                      decrementButton:getMarginLeft() -
-                      decrementButton:getMarginRight() -
-                      incrementButton:getWidth() -
-                      incrementButton:getMarginLeft() -
+        pxrange = (self:getWidth() - decrementButton:getWidth() - decrementButton:getMarginLeft() -
+                      decrementButton:getMarginRight() - incrementButton:getWidth() - incrementButton:getMarginLeft() -
                       incrementButton:getMarginRight())
         center = self:getX() + math.floor(self:getWidth() / 2)
     end
@@ -42,23 +36,18 @@ local function calcValues(self)
     local offset = 0
     if range == 0 or self.value == self.minimum then
         if self.orientation == 'vertical' then
-            offset = -math.floor((self:getHeight() - px) / 2) +
-                         decrementButton:getMarginRect().height
+            offset = -math.floor((self:getHeight() - px) / 2) + decrementButton:getMarginRect().height
         else
-            offset = -math.floor((self:getWidth() - px) / 2) +
-                         decrementButton:getMarginRect().width
+            offset = -math.floor((self:getWidth() - px) / 2) + decrementButton:getMarginRect().width
         end
     elseif range > 1 and self.value == self.maximum then
         if self.orientation == 'vertical' then
-            offset = math.ceil((self:getHeight() - px) / 2) -
-                         incrementButton:getMarginRect().height
+            offset = math.ceil((self:getHeight() - px) / 2) - incrementButton:getMarginRect().height
         else
-            offset = math.ceil((self:getWidth() - px) / 2) -
-                         incrementButton:getMarginRect().width
+            offset = math.ceil((self:getWidth() - px) / 2) - incrementButton:getMarginRect().width
         end
     elseif range > 1 then
-        offset = (((self.value - self.minimum) / (range - 1)) - 0.5) *
-                     (pxrange - px)
+        offset = (((self.value - self.minimum) / (range - 1)) - 0.5) * (pxrange - px)
     end
 
     return range, pxrange, px, offset, center
@@ -67,9 +56,7 @@ end
 local function updateValueDisplay(widget)
     if widget == nil then return end
 
-    if widget:getShowValue() then
-        widget:setText(widget:getValue() .. (widget:getSymbol() or ''))
-    end
+    if widget:getShowValue() then widget:setText(widget:getValue() .. (widget:getSymbol() or '')) end
 end
 
 local function updateSlider(self)
@@ -102,8 +89,7 @@ local function parseSliderPos(self, slider, pos, move)
         hotDistance = pos.x - slider:getX()
     end
 
-    if (delta > 0 and hotDistance + delta > self.hotDistance) or
-        (delta < 0 and hotDistance + delta < self.hotDistance) then
+    if (delta > 0 and hotDistance + delta > self.hotDistance) or (delta < 0 and hotDistance + delta < self.hotDistance) then
         local range, pxrange, px, offset, center = calcValues(self)
         local newvalue = self.value + delta * (range / (pxrange - px))
         self:setValue(newvalue)
@@ -137,16 +123,12 @@ end
 function UIScrollBar:onSetup()
     self.setupDone = true
     local sliderButton = self:getChildById('sliderButton')
-    g_mouse.bindAutoPress(self:getChildById('decrementButton'),
-                          function() self:onDecrement() end, 300)
-    g_mouse.bindAutoPress(self:getChildById('incrementButton'),
-                          function() self:onIncrement() end, 300)
-    g_mouse.bindPressMove(sliderButton, function(mousePos, mouseMoved)
-        parseSliderPos(self, sliderButton, mousePos, mouseMoved)
-    end)
-    g_mouse.bindPress(sliderButton, function(mousePos, mouseButton)
-        parseSliderPress(self, sliderButton, mousePos, mouseButton)
-    end)
+    g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:onDecrement() end, 300)
+    g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:onIncrement() end, 300)
+    g_mouse.bindPressMove(sliderButton,
+                          function(mousePos, mouseMoved) parseSliderPos(self, sliderButton, mousePos, mouseMoved) end)
+    g_mouse.bindPress(sliderButton,
+                      function(mousePos, mouseButton) parseSliderPress(self, sliderButton, mousePos, mouseButton) end)
 
     updateSlider(self)
 end
@@ -238,9 +220,7 @@ function UIScrollBar:setValue(value)
     local delta = value - self.value
     self.value = value
     updateSlider(self)
-    if self.setupDone then
-        signalcall(self.onValueChange, self, math.round(value), delta)
-    end
+    if self.setupDone then signalcall(self.onValueChange, self, math.round(value), delta) end
 end
 
 function UIScrollBar:setMouseScroll(scroll) self.mouseScroll = scroll end

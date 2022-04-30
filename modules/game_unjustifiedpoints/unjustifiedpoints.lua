@@ -21,12 +21,14 @@ function init()
         onUnjustifiedPointsChange = onUnjustifiedPointsChange,
         onOpenPvpSituationsChange = onOpenPvpSituationsChange
     })
-    connect(LocalPlayer, {onSkullChange = onSkullChange})
+    connect(LocalPlayer, {
+        onSkullChange = onSkullChange
+    })
 
-    unjustifiedPointsButton = modules.client_topmenu.addRightGameToggleButton(
-                                  'unjustifiedPointsButton',
-                                  tr('Unjustified Points'),
-                                  '/images/topbuttons/unjustifiedpoints', toggle)
+    unjustifiedPointsButton = modules.client_topmenu.addRightGameToggleButton('unjustifiedPointsButton',
+                                                                              tr('Unjustified Points'),
+                                                                              '/images/topbuttons/unjustifiedpoints',
+                                                                              toggle)
     unjustifiedPointsButton:setOn(true)
     unjustifiedPointsButton:hide()
 
@@ -36,8 +38,7 @@ function init()
 
     contentsPanel = unjustifiedPointsWindow:getChildById('contentsPanel')
 
-    openPvpSituationsLabel =
-        contentsPanel:getChildById('openPvpSituationsLabel')
+    openPvpSituationsLabel = contentsPanel:getChildById('openPvpSituationsLabel')
     currentSkullWidget = contentsPanel:getChildById('currentSkullWidget')
     skullTimeLabel = contentsPanel:getChildById('skullTimeLabel')
 
@@ -58,7 +59,9 @@ function terminate()
         onUnjustifiedPointsChange = onUnjustifiedPointsChange,
         onOpenPvpSituationsChange = onOpenPvpSituationsChange
     })
-    disconnect(LocalPlayer, {onSkullChange = onSkullChange})
+    disconnect(LocalPlayer, {
+        onSkullChange = onSkullChange
+    })
 
     unjustifiedPointsWindow:destroy()
     unjustifiedPointsButton:destroy()
@@ -88,11 +91,7 @@ function online()
     refresh()
 end
 
-function offline()
-    if g_game.getFeature(GameUnjustifiedPoints) then
-        unjustifiedPointsWindow:setParent(nil, true)
-    end
-end
+function offline() if g_game.getFeature(GameUnjustifiedPoints) then unjustifiedPointsWindow:setParent(nil, true) end end
 
 function refresh()
     local localPlayer = g_game.getLocalPlayer()
@@ -142,41 +141,26 @@ function onUnjustifiedPointsChange(unjustifiedPoints)
     end
 
     dayProgressBar:setValue(unjustifiedPoints.killsDay, 0, 100)
-    dayProgressBar:setBackgroundColor(getColorByKills(
-                                          unjustifiedPoints.killsDayRemaining))
-    dayProgressBar:setTooltip(string.format(
-                                  'Unjustified points gained during the last 24 hours.\n%i kill%s left.',
-                                  unjustifiedPoints.killsDayRemaining,
-                                  (unjustifiedPoints.killsDayRemaining == 1 and
-                                      '' or 's')))
-    dayProgressBar:setText(string.format('%i kill%s left',
-                                         unjustifiedPoints.killsDayRemaining,
-                                         (unjustifiedPoints.killsDayRemaining ==
-                                             1 and '' or 's')))
+    dayProgressBar:setBackgroundColor(getColorByKills(unjustifiedPoints.killsDayRemaining))
+    dayProgressBar:setTooltip(string.format('Unjustified points gained during the last 24 hours.\n%i kill%s left.',
+                                            unjustifiedPoints.killsDayRemaining,
+                                            (unjustifiedPoints.killsDayRemaining == 1 and '' or 's')))
+    dayProgressBar:setText(string.format('%i kill%s left', unjustifiedPoints.killsDayRemaining,
+                                         (unjustifiedPoints.killsDayRemaining == 1 and '' or 's')))
 
     weekProgressBar:setValue(unjustifiedPoints.killsWeek, 0, 100)
-    weekProgressBar:setBackgroundColor(getColorByKills(
-                                           unjustifiedPoints.killsWeekRemaining))
-    weekProgressBar:setTooltip(string.format(
-                                   'Unjustified points gained during the last 7 days.\n%i kill%s left.',
-                                   unjustifiedPoints.killsWeekRemaining,
-                                   (unjustifiedPoints.killsWeekRemaining == 1 and
-                                       '' or 's')))
-    weekProgressBar:setText(string.format('%i kill%s left',
-                                          unjustifiedPoints.killsWeekRemaining,
-                                          (unjustifiedPoints.killsWeekRemaining ==
-                                              1 and '' or 's')))
+    weekProgressBar:setBackgroundColor(getColorByKills(unjustifiedPoints.killsWeekRemaining))
+    weekProgressBar:setTooltip(string.format('Unjustified points gained during the last 7 days.\n%i kill%s left.',
+                                             unjustifiedPoints.killsWeekRemaining,
+                                             (unjustifiedPoints.killsWeekRemaining == 1 and '' or 's')))
+    weekProgressBar:setText(string.format('%i kill%s left', unjustifiedPoints.killsWeekRemaining,
+                                          (unjustifiedPoints.killsWeekRemaining == 1 and '' or 's')))
 
     monthProgressBar:setValue(unjustifiedPoints.killsMonth, 0, 100)
-    monthProgressBar:setBackgroundColor(getColorByKills(
-                                            unjustifiedPoints.killsMonthRemaining))
-    monthProgressBar:setTooltip(string.format(
-                                    'Unjustified points gained during the last 30 days.\n%i kill%s left.',
-                                    unjustifiedPoints.killsMonthRemaining,
-                                    (unjustifiedPoints.killsMonthRemaining == 1 and
-                                        '' or 's')))
-    monthProgressBar:setText(string.format('%i kill%s left',
-                                           unjustifiedPoints.killsMonthRemaining,
-                                           (unjustifiedPoints.killsMonthRemaining ==
-                                               1 and '' or 's')))
+    monthProgressBar:setBackgroundColor(getColorByKills(unjustifiedPoints.killsMonthRemaining))
+    monthProgressBar:setTooltip(string.format('Unjustified points gained during the last 30 days.\n%i kill%s left.',
+                                              unjustifiedPoints.killsMonthRemaining,
+                                              (unjustifiedPoints.killsMonthRemaining == 1 and '' or 's')))
+    monthProgressBar:setText(string.format('%i kill%s left', unjustifiedPoints.killsMonthRemaining,
+                                           (unjustifiedPoints.killsMonthRemaining == 1 and '' or 's')))
 end

@@ -44,8 +44,7 @@ function Config:getNumber(key, default)
     return v
 end
 
-function Config:getBoolean(key, default) return
-    toboolean(self:get(key, default)) end
+function Config:getBoolean(key, default) return toboolean(self:get(key, default)) end
 
 function Config:getPoint(key, default) return topoint(self:get(key, default)) end
 

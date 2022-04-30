@@ -1,5 +1,5 @@
 -- @docclass
-UIPopupScrollMenu = extends(UIWidget, "UIPopupScrollMenu")
+UIPopupScrollMenu = extends(UIWidget, 'UIPopupScrollMenu')
 
 local currentMenu
 
@@ -70,33 +70,25 @@ function UIPopupScrollMenu:onGeometryChange(oldRect, newRect)
 end
 
 function UIPopupScrollMenu:addOption(optionName, optionCallback, shortcut)
-    local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button',
-                                           self.scrollArea)
+    local optionWidget = g_ui.createWidget(self:getStyleName() .. 'Button', self.scrollArea)
     optionWidget.onClick = function(widget)
         self:destroy()
         optionCallback()
     end
     optionWidget:setText(optionName)
-    local width = optionWidget:getTextSize().width +
-                      optionWidget:getMarginLeft() +
-                      optionWidget:getMarginRight() + 15
+    local width = optionWidget:getTextSize().width + optionWidget:getMarginLeft() + optionWidget:getMarginRight() + 15
 
     if shortcut then
-        local shortcutLabel = g_ui.createWidget(
-                                  self:getStyleName() .. 'ShortcutLabel',
-                                  optionWidget)
+        local shortcutLabel = g_ui.createWidget(self:getStyleName() .. 'ShortcutLabel', optionWidget)
         shortcutLabel:setText(shortcut)
-        width = width + shortcutLabel:getTextSize().width +
-                    shortcutLabel:getMarginLeft() +
+        width = width + shortcutLabel:getTextSize().width + shortcutLabel:getMarginLeft() +
                     shortcutLabel:getMarginRight()
     end
 
     self:setWidth(math.max(self:getWidth(), width))
 end
 
-function UIPopupScrollMenu:addSeparator()
-    g_ui.createWidget(self:getStyleName() .. 'Separator', self.scrollArea)
-end
+function UIPopupScrollMenu:addSeparator() g_ui.createWidget(self:getStyleName() .. 'Separator', self.scrollArea) end
 
 function UIPopupScrollMenu:onDestroy()
     if currentMenu == self then currentMenu = nil end
@@ -118,7 +110,7 @@ function UIPopupScrollMenu:onKeyPress(keyCode, keyboardModifiers)
 end
 
 -- close all menus when the window is resized
-local function onRootGeometryUpdate()
-    if currentMenu then currentMenu:destroy() end
-end
-connect(rootWidget, {onGeometryChange = onRootGeometryUpdate})
+local function onRootGeometryUpdate() if currentMenu then currentMenu:destroy() end end
+connect(rootWidget, {
+    onGeometryChange = onRootGeometryUpdate
+})
