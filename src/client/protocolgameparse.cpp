@@ -2545,29 +2545,36 @@ CreaturePtr ProtocolGame::getCreature(const InputMessagePtr& msg, int type)
 
             const std::string name = g_game.formatCreatureName(msg->getString());
 
-            if (creature) {
-                creature->setName(name);
-            } else {
-                if (id == m_localPlayer->getId())
-                    creature = m_localPlayer;
-                else if (creatureType == Proto::CreatureTypePlayer) {
+            if (!creature) {
+                if (id == m_localPlayer->getId() ||
                     // fixes a bug server side bug where GameInit is not sent and local player id is unknown
-                    if (m_localPlayer->getId() == 0 && name == m_localPlayer->getName())
-                        creature = m_localPlayer;
-                    else
+                    creatureType == Proto::CreatureTypePlayer && !m_localPlayer->getId() && name == m_localPlayer->getName()) {
+                    creature = m_localPlayer;
+                } else switch (creatureType) {
+                    case Proto::CreatureTypePlayer:
                         creature = PlayerPtr(new Player);
-                } else if (creatureType == Proto::CreatureTypeMonster)
-                    creature = MonsterPtr(new Monster);
-                else if (creatureType == Proto::CreatureTypeNpc)
-                    creature = NpcPtr(new Npc);
-                else
-                    g_logger.traceError("creature type is invalid");
+                        break;
+
+                    case Proto::CreatureTypeNpc:
+                        creature = NpcPtr(new Npc);
+                        break;
+
+                    case Proto::CreatureTypeHidden:
+                    case Proto::CreatureTypeMonster:
+                    case Proto::CreatureTypeSummonOwn:
+                    case Proto::CreatureTypeSummonOther:
+                        creature = MonsterPtr(new Monster);
+                        break;
+
+                    default:
+                        g_logger.traceError("creature type is invalid");
+                }
             }
 
             if (creature) {
                 creature->setId(id);
                 creature->setName(name);
-
+				
                 g_map.addCreature(creature);
             }
         }
