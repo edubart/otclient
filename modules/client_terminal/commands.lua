@@ -49,7 +49,7 @@ function live_module_reload(name)
         return
     end
 
-    cycleEvent(function()
+    return cycleEvent(function()
         for filepath, time in pairs(files) do
             local newtime = g_resources.getFileTime(filepath)
             if newtime > time then

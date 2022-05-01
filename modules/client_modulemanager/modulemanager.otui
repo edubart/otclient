@@ -144,6 +144,16 @@ MainWindow
     width: 90
     @onClick: modules.client_modulemanager.unloadCurrentModule()
 
+  CheckBox
+    id: moduleAutoReloadCheckBox
+    anchors.top: moduleReloadButton.bottom
+    anchors.left: moduleReloadButton.left
+    margin-top: 8
+    !text: tr('Auto Reload')
+    !tooltip: tr('Check this option so that the module is automatically reloaded when it is modified.')
+    width: 90
+    @onClick: modules.client_modulemanager.autoReloadCurrentModule(self)
+
   Button
     id: closeButton
     anchors.bottom: parent.bottom

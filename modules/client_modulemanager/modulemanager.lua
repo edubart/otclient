@@ -1,6 +1,7 @@
 local moduleManagerWindow
 local moduleManagerButton
 local moduleList
+local autoReloadEvents = {}
 
 function init()
     moduleManagerWindow = g_ui.displayUI('modulemanager')
@@ -133,6 +134,22 @@ function reloadCurrentModule()
     end
 end
 
+function autoReloadCurrentModule(checkbox)
+    local focusedChild = moduleList:getFocusedChild()
+    if focusedChild then
+        local childId = focusedChild:getId()
+        local eventId = autoReloadEvents[childId]
+        if eventId then
+            removeEvent(eventId)
+            checkbox:setChecked(false)
+            autoReloadEvents[childId] = nil
+        else
+            autoReloadEvents[childId] = live_module_reload(focusedChild:getText())
+            checkbox:setChecked(true)
+        end
+    end
+end
+
 function unloadCurrentModule()
     local focusedChild = moduleList:getFocusedChild()
     if focusedChild then
@@ -147,6 +164,11 @@ function unloadCurrentModule()
 end
 
 function reloadAllModules()
+    for i, child in ipairs(moduleList:getChildren()) do
+        local eventId = autoReloadEvents[child:getId()]
+        if eventId then removeEvent(eventId) end
+    end
+
     g_modules.reloadModules()
     refreshLoadedModules()
     show()
