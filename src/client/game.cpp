@@ -1718,17 +1718,16 @@ int Game::findEmptyContainerId()
     return id;
 }
 
-int Game::getOs()
+Otc::OperatingSystem_t Game::getOs()
 {
-    if (m_clientCustomOs >= 0)
+    if (m_clientCustomOs > Otc::CLIENTOS_NONE)
         return m_clientCustomOs;
 
     if (g_app.getOs() == "windows")
-        return 10;
+        return Otc::CLIENTOS_OTCLIENT_WINDOWS;
 
     if (g_app.getOs() == "mac")
-        return 12;
+        return Otc::CLIENTOS_OTCLIENT_MAC;
 
-    // linux
-    return 11;
+    return Otc::CLIENTOS_OTCLIENT_LINUX;
 }

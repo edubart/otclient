@@ -27,6 +27,14 @@
 
 namespace Otc
 {
+    enum OperatingSystem_t : uint16_t
+    {
+        CLIENTOS_NONE = 0,
+        CLIENTOS_OTCLIENT_LINUX = 10,
+        CLIENTOS_OTCLIENT_WINDOWS = 11,
+        CLIENTOS_OTCLIENT_MAC = 12,
+    };
+
     enum Operation : uint8_t
     {
         OPERATION_ADD, OPERATION_REMOVE, OPERATION_CLEAN
