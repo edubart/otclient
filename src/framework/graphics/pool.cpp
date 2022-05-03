@@ -24,27 +24,41 @@
 
 void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
 {
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, mode);
-    }
-
     if (pos == -1) {
         m_state.compositionMode = mode;
         return;
     }
 
+    if (hasFrameBuffer()) {
+        stdext::hash_combine(toPoolFramed()->m_status.second, mode);
+    }
+
     m_objects[pos - 1].state.compositionMode = mode;
+}
+
+void Pool::setBlendEquation(Painter::BlendEquation equation, const int pos)
+{
+    if (pos == -1) {
+        m_state.blendEquation = equation;
+        return;
+    }
+
+    if (hasFrameBuffer()) {
+        stdext::hash_combine(toPoolFramed()->m_status.second, equation);
+    }
+
+    m_objects[pos - 1].state.blendEquation = equation;
 }
 
 void Pool::setClipRect(const Rect& clipRect, const int pos)
 {
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, clipRect.hash());
-    }
-
     if (pos == -1) {
         m_state.clipRect = clipRect;
         return;
+    }
+
+    if (hasFrameBuffer()) {
+        stdext::hash_combine(toPoolFramed()->m_status.second, clipRect.hash());
     }
 
     m_objects[pos - 1].state.clipRect = clipRect;
@@ -52,13 +66,13 @@ void Pool::setClipRect(const Rect& clipRect, const int pos)
 
 void Pool::setOpacity(const float opacity, const int pos)
 {
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, opacity);
-    }
-
     if (pos == -1) {
         m_state.opacity = opacity;
         return;
+    }
+
+    if (hasFrameBuffer()) {
+        stdext::hash_combine(toPoolFramed()->m_status.second, opacity);
     }
 
     m_objects[pos - 1].state.opacity = opacity;
@@ -68,14 +82,14 @@ void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const 
 {
     const auto& shader = shaderProgram ? shaderProgram.get() : nullptr;
 
-    if (hasFrameBuffer() && shader) {
-        toPoolFramed()->m_autoUpdate = true;
-    }
-
     if (pos == -1) {
         m_state.shaderProgram = shader;
         m_state.action = action;
         return;
+    }
+
+    if (hasFrameBuffer() && shader) {
+        toPoolFramed()->m_autoUpdate = true;
     }
 
     auto& o = m_objects[pos - 1];

@@ -85,6 +85,7 @@ private:
         ~State() { shaderProgram = nullptr; action = nullptr; }
 
         Painter::CompositionMode compositionMode;
+        Painter::BlendEquation blendEquation;
         Rect clipRect;
         float opacity;
         bool alphaWriting{ true };
@@ -93,6 +94,7 @@ private:
     };
 
     void setCompositionMode(Painter::CompositionMode mode, int pos = -1);
+    void setBlendEquation(Painter::BlendEquation equation, int pos = -1);
     void setClipRect(const Rect& clipRect, int pos = -1);
     void setOpacity(float opacity, int pos = -1);
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1, const std::function<void()>& action = nullptr);
