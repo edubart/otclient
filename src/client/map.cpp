@@ -507,7 +507,7 @@ std::map<Position, ItemPtr> Map::findItemsById(uint16 clientId, uint32 max)
                     continue;
                 for (const ItemPtr& item : tile->getItems()) {
                     if (item->getId() == clientId) {
-                        ret.insert(std::make_pair(tile->getPosition(), item));
+                        ret.emplace(tile->getPosition(), item);
                         if (++count >= max)
                             break;
                     }

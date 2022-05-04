@@ -131,7 +131,7 @@ void Spawn::addCreature(const Position& placePos, const CreatureTypePtr& cType)
     }
 
     g_map.addThing(cType->cast(), placePos, 4);
-    m_creatures.insert(std::make_pair(placePos, cType));
+    m_creatures.emplace(placePos, cType);
 }
 
 void Spawn::removeCreature(const Position& pos)
@@ -249,7 +249,7 @@ void CreatureManager::loadSpawns(const std::string& fileName)
 
             SpawnPtr spawn(new Spawn);
             spawn->load(node);
-            m_spawns.insert(std::make_pair(spawn->getCenterPos(), spawn));
+            m_spawns.emplace(spawn->getCenterPos(), spawn);
         }
         doc.Clear();
         m_spawnLoaded = true;
@@ -402,7 +402,7 @@ SpawnPtr CreatureManager::addSpawn(const Position& centerPos, int radius)
     ret->setRadius(radius);
     ret->setCenterPos(centerPos);
 
-    m_spawns.insert(std::make_pair(centerPos, ret));
+    m_spawns.emplace(centerPos, ret);
     return ret;
 }
 

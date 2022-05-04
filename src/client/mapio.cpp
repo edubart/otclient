@@ -223,7 +223,7 @@ void Map::loadOtbm(const std::string& fileName)
                     waypointPos.z = nodeWaypoint->getU8();
 
                     if (waypointPos.isValid() && !name.empty() && !m_waypoints.contains(waypointPos))
-                        m_waypoints.insert(std::make_pair(waypointPos, name));
+                        m_waypoints.emplace(waypointPos, name);
                 }
             } else
                 stdext::throw_exception(stdext::format("Unknown map data node %d", static_cast<int>(mapDataType)));

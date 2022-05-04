@@ -46,7 +46,7 @@ void ModuleManager::discoverModules()
             if (g_resources.isFileType(moduleFile, "otmod")) {
                 ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
                 if (module && module->isAutoLoad())
-                    m_autoLoadModules.insert(std::make_pair(module->getAutoLoadPriority(), module));
+                    m_autoLoadModules.emplace(module->getAutoLoadPriority(), module);
             }
         }
     }
