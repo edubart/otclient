@@ -36,26 +36,21 @@
 #endif
 #define BUILD_COMPILER "gcc " __VERSION__
 #elif defined(_MSC_VER)
-#if _MSC_VER < 1800
-#error "You need Visual Studio 2013 or greater to compile."
+
+#if _MSC_VER < 1930
+#error "You need Visual Studio 2022 or greater to compile."
 #endif
+
+#define BUILD_COMPILER "Visual Studio"
+
 #pragma warning(disable:4244) // conversion from 'A' to 'B', possible loss of data
 #pragma warning(disable:4267) // '?' : conversion from 'A' to 'B', possible loss of data
 #pragma warning(disable:4305) // 'initializing' : truncation from 'A' to 'B'
 #pragma warning(disable:4146) // unary minus operator applied to unsigned type, result still unsigned
 #pragma warning(disable:4800) // 'A' : forcing value to bool 'true' or 'false' (performance warning)
 
-#if _MSC_VER == 1912 || _MSC_VER == 1911 || _MSC_VER == 1910
-#define BUILD_COMPILER "Visual Studio 2017"
-#elif _MSC_VER == 1900
-#define BUILD_COMPILER "Visual Studio 2015"
-#elif _MSC_VER == 1800
-#define BUILD_COMPILER "Visual Studio 2013"
-#else
-#define BUILD_COMPILER "Visual Studio"
-#endif
-
 #define __PRETTY_FUNCTION__ __FUNCDNAME__
+
 #else
 #error "Compiler not supported."
 #endif
