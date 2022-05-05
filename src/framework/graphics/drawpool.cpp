@@ -45,7 +45,7 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
     auto& list = m_currentPool->m_objects;
 
     if (m_forceGrouping) {
-        const auto itFind = std::find_if(list.begin() + m_currentPool->m_indexToStartSearching, list.end(), [state]
+        const auto itFind = std::find_if(list.begin() + m_currentPool->m_indexToStartSearching, list.end(), [&state]
         (const Pool::DrawObject& action) { return action.state == state; });
 
         if (itFind != list.end()) {
