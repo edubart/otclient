@@ -41,7 +41,7 @@
   - To generate an encryption, just run the client with flag "--encrypt SET_YOUR_PASSWORD_HERE" and don't forget to change the password.
 
 ##### [Active Developers]
-[@mehah](https://github.com/mehah) [@scopz](https://github.com/scopz)
+[@mehah](https://github.com/mehah) [@scopz](https://github.com/scopz) [@nekiro](https://github.com/nekiro)
 
 <h2>
 
@@ -85,13 +85,9 @@ client, instead otclient was designed to be a combination of a framework and tib
 
 ### Compiling
 
-In short, if you need to compile OTClient, follow these tutorials:
+[If you are interested in compiling this project, just go to the wiki.](https://github.com/mehah/otclient/wiki)
 
-- [Compiling on Windows](https://github.com/mehah/otclient/wiki/Compiling-on-Windows)
-- [Compiling on Linux](https://github.com/edubart/otclient/wiki/Compiling-on-Linux)
-- [Compiling on OS X](https://github.com/edubart/otclient/wiki/Compiling-on-Mac-OS-X)
-
-### Build and run with Docker
+##### Build and run with Docker
 
 To build the image:
 
