@@ -27,7 +27,7 @@
 
 ParticleEmitter::ParticleEmitter()
 {
-    m_position = Point();
+    m_position = {};
     m_duration = -1;
     m_delay = 0;
     m_burstRate = 1;

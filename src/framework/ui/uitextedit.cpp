@@ -202,7 +202,7 @@ void UITextEdit::update(bool focusCursor)
                 }
             }
         } else {
-            m_textVirtualOffset = Point();
+            m_textVirtualOffset = {};
         }
         m_cursorInRange = true;
     } else {

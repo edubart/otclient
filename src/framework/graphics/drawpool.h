@@ -39,7 +39,7 @@ public:
     void use(const PoolType type, const Rect& dest, const Rect& src, const Color colorClear = Color::alpha);
 
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = Point());
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = {});
     void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
     void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
     void addFilledRect(const Rect& dest, Color color = Color::white);

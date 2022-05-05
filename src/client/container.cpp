@@ -23,10 +23,6 @@
 #include "container.h"
 #include "item.h"
 
-Container::Container(int id, int capacity, const std::string& name, const ItemPtr& containerItem, bool hasParent, bool isUnlocked, bool hasPages, int containerSize, int firstIndex)
-    :m_id(id), m_capacity(capacity), m_containerItem(containerItem), m_name(name), m_hasParent(hasParent), m_unlocked(isUnlocked), m_hasPages(hasPages), m_size(containerSize), m_firstIndex(firstIndex)
-{}
-
 ItemPtr Container::getItem(int slot)
 {
     if (slot < 0 || slot >= static_cast<int>(m_items.size()))

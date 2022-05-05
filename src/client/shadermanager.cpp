@@ -117,6 +117,7 @@ PainterShaderProgramPtr ShaderManager::createItemShader(const std::string& name,
     PainterShaderProgramPtr shader = createFragmentShader(name, file);
     if (shader)
         setupItemShader(shader);
+
     return shader;
 }
 
@@ -125,6 +126,7 @@ PainterShaderProgramPtr ShaderManager::createOutfitShader(const std::string& nam
     PainterShaderProgramPtr shader = createFragmentShader(name, file);
     if (shader)
         setupOutfitShader(shader);
+
     return shader;
 }
 
@@ -133,6 +135,7 @@ PainterShaderProgramPtr ShaderManager::createMountShader(const std::string& name
     PainterShaderProgramPtr shader = createFragmentShader(name, file);
     if (shader)
         setupMountShader(shader);
+
     return shader;
 }
 
@@ -141,6 +144,7 @@ PainterShaderProgramPtr ShaderManager::createMapShader(const std::string& name, 
     PainterShaderProgramPtr shader = createFragmentShader(name, file);
     if (shader)
         setupMapShader(shader);
+
     return shader;
 }
 
@@ -148,6 +152,7 @@ void ShaderManager::setupItemShader(const PainterShaderProgramPtr& shader)
 {
     if (!shader)
         return;
+
     shader->bindUniformLocation(ITEM_ID_UNIFORM, "u_ItemId");
 }
 
@@ -155,6 +160,7 @@ void ShaderManager::setupOutfitShader(const PainterShaderProgramPtr& shader)
 {
     if (!shader)
         return;
+
     shader->bindUniformLocation(OUTFIT_ID_UNIFORM, "u_OutfitId");
 }
 
@@ -162,6 +168,7 @@ void ShaderManager::setupMountShader(const PainterShaderProgramPtr& shader)
 {
     if (!shader)
         return;
+
     shader->bindUniformLocation(MOUNT_ID_UNIFORM, "u_MountId");
 }
 
@@ -169,6 +176,7 @@ void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)
 {
     if (!shader)
         return;
+
     shader->bindUniformLocation(MAP_CENTER_COORD, "u_MapCenterCoord");
     shader->bindUniformLocation(MAP_GLOBAL_COORD, "u_MapGlobalCoord");
     shader->bindUniformLocation(MAP_WALKOFFSET, "u_WalkOffset");
@@ -185,5 +193,6 @@ PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)
     const auto it = m_shaders.find(name);
     if (it != m_shaders.end())
         return it->second;
+
     return nullptr;
 }

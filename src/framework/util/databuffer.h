@@ -28,10 +28,7 @@ class DataBuffer
 {
 public:
     DataBuffer(unsigned int res = 64) : m_capacity(res), m_buffer(new T[m_capacity]) {}
-    ~DataBuffer()
-    {
-        delete[] m_buffer;
-    }
+    ~DataBuffer() { delete[] m_buffer; }
 
     void reset() { m_size = 0; }
 

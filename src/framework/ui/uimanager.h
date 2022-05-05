@@ -27,7 +27,7 @@
 #include <framework/core/inputevent.h>
 #include <framework/otml/declarations.h>
 
-//@bindsingleton g_ui
+ //@bindsingleton g_ui
 class UIManager
 {
 public:
@@ -38,8 +38,8 @@ public:
     void resize(const Size& size);
     void inputEvent(const InputEvent& event);
 
-    void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = Point(), bool fireClicks = true);
-    bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = Point());
+    void updatePressedWidget(const UIWidgetPtr& newPressedWidget, const Point& clickedPos = {}, bool fireClicks = true);
+    bool updateDraggingWidget(const UIWidgetPtr& draggingWidget, const Point& clickedPos = {});
     void updateHoveredWidget(bool now = false);
 
     void clearStyles();

@@ -101,7 +101,7 @@ private:
 
     float getOpacity(const int pos = -1) { return pos == -1 ? m_state.opacity : m_objects[pos - 1].state.opacity; }
 
-    void resetClipRect() { m_state.clipRect = Rect(); }
+    void resetClipRect() { m_state.clipRect = {}; }
     void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
     void resetOpacity() { m_state.opacity = 1.f; }
     void resetShaderProgram() { m_state.shaderProgram = nullptr; }

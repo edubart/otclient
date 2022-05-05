@@ -41,7 +41,7 @@ struct InputEvent
         keyCode = Fw::KeyUnknown;
         keyText = "";
         autoRepeatTicks = 0;
-        mouseMoved = Point();
+        mouseMoved = {};
     };
 
     Fw::InputEventType type;

@@ -28,7 +28,7 @@
 #include <framework/graphics/cachedtext.h>
 #include <framework/graphics/fontmanager.h>
 
-// @bindclass
+ // @bindclass
 class AnimatedText : public Thing
 {
 public:
@@ -36,8 +36,8 @@ public:
 
     void drawText(const Point& dest, const Rect& visibleRect);
 
-    void setColor(int color);
-    void setText(const std::string& text);
+    void setColor(int color) { m_color = Color::from8bit(color); }
+    void setText(const std::string& text) { m_cachedText.setText(text); }
     void setOffset(const Point& offset) { m_offset = offset; }
 
     Color getColor() { return m_color; }

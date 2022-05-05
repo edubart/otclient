@@ -80,13 +80,8 @@ void MinimapBlock::updateTile(int x, int y, const MinimapTile& tile)
     m_tiles[getTileIndex(x, y)] = tile;
 }
 
-void Minimap::init()
-{}
-
-void Minimap::terminate()
-{
-    clean();
-}
+void Minimap::init() {}
+void Minimap::terminate() { clean(); }
 
 void Minimap::clean()
 {

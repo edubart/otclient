@@ -46,15 +46,8 @@ void StaticText::drawText(const Point& dest, const Rect& parentRect)
     //}
 }
 
-void StaticText::setFont(const std::string& fontName)
-{
-    m_cachedText.setFont(g_fonts.getFont(fontName));
-}
-
-void StaticText::setText(const std::string& text)
-{
-    m_cachedText.setText(text);
-}
+void StaticText::setText(const std::string& text) { m_cachedText.setText(text); }
+void StaticText::setFont(const std::string& fontName) { m_cachedText.setFont(g_fonts.getFont(fontName)); }
 
 bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text)
 {
@@ -68,6 +61,7 @@ bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, cons
     else if (m_name != name || m_mode != mode) {
         return false;
     }
+
     // too many messages
     else if (m_messages.size() > 10) {
         m_messages.pop_front();

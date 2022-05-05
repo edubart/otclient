@@ -214,8 +214,9 @@ public:
     bool showZone(tileflags_t zone) { return (m_zoneFlags & zone) == zone; }
 
     void setForceShowAnimations(bool force);
-    bool isForcingAnimations();
-    bool isShowingAnimations();
+    bool isShowingAnimations() { return (m_animationFlags & Animation_Show) == Animation_Show; }
+    bool isForcingAnimations() { return (m_animationFlags & Animation_Force) == Animation_Force; }
+
     void setShowAnimations(bool show);
 
     void beginGhostMode(float opacity);

@@ -51,30 +51,31 @@ int push_luavalue(const Outfit& outfit)
 
 bool luavalue_cast(int index, Outfit& outfit)
 {
-    if (g_lua.isTable(index)) {
-        g_lua.getField("type", index);
-        outfit.setId(g_lua.popInteger());
-        g_lua.getField("auxType", index);
-        outfit.setAuxId(g_lua.popInteger());
-        if (g_game.getFeature(Otc::GamePlayerAddons)) {
-            g_lua.getField("addons", index);
-            outfit.setAddons(g_lua.popInteger());
-        }
-        g_lua.getField("head", index);
-        outfit.setHead(g_lua.popInteger());
-        g_lua.getField("body", index);
-        outfit.setBody(g_lua.popInteger());
-        g_lua.getField("legs", index);
-        outfit.setLegs(g_lua.popInteger());
-        g_lua.getField("feet", index);
-        outfit.setFeet(g_lua.popInteger());
-        if (g_game.getFeature(Otc::GamePlayerMounts)) {
-            g_lua.getField("mount", index);
-            outfit.setMount(g_lua.popInteger());
-        }
-        return true;
+    if (!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("type", index);
+    outfit.setId(g_lua.popInteger());
+    g_lua.getField("auxType", index);
+    outfit.setAuxId(g_lua.popInteger());
+    if (g_game.getFeature(Otc::GamePlayerAddons)) {
+        g_lua.getField("addons", index);
+        outfit.setAddons(g_lua.popInteger());
     }
-    return false;
+    g_lua.getField("head", index);
+    outfit.setHead(g_lua.popInteger());
+    g_lua.getField("body", index);
+    outfit.setBody(g_lua.popInteger());
+    g_lua.getField("legs", index);
+    outfit.setLegs(g_lua.popInteger());
+    g_lua.getField("feet", index);
+    outfit.setFeet(g_lua.popInteger());
+    if (g_game.getFeature(Otc::GamePlayerMounts)) {
+        g_lua.getField("mount", index);
+        outfit.setMount(g_lua.popInteger());
+    }
+
+    return true;
 }
 
 int push_luavalue(const Position& pos)
@@ -89,21 +90,23 @@ int push_luavalue(const Position& pos)
         g_lua.setField("z");
     } else
         g_lua.pushNil();
+
     return 1;
 }
 
 bool luavalue_cast(int index, Position& pos)
 {
-    if (g_lua.isTable(index)) {
-        g_lua.getField("x", index);
-        pos.x = g_lua.popInteger();
-        g_lua.getField("y", index);
-        pos.y = g_lua.popInteger();
-        g_lua.getField("z", index);
-        pos.z = g_lua.popInteger();
-        return true;
-    }
-    return false;
+    if (!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("x", index);
+    pos.x = g_lua.popInteger();
+    g_lua.getField("y", index);
+    pos.y = g_lua.popInteger();
+    g_lua.getField("z", index);
+    pos.z = g_lua.popInteger();
+
+    return true;
 }
 
 int push_luavalue(const MarketData& data)
@@ -121,27 +124,29 @@ int push_luavalue(const MarketData& data)
     g_lua.setField("showAs");
     g_lua.pushInteger(data.tradeAs);
     g_lua.setField("tradeAs");
+
     return 1;
 }
 
 bool luavalue_cast(int index, MarketData& data)
 {
-    if (g_lua.isTable(index)) {
-        g_lua.getField("category", index);
-        data.category = g_lua.popInteger();
-        g_lua.getField("name", index);
-        data.name = g_lua.popString();
-        g_lua.getField("requiredLevel", index);
-        data.requiredLevel = g_lua.popInteger();
-        g_lua.getField("restrictVocation", index);
-        data.restrictVocation = g_lua.popInteger();
-        g_lua.getField("showAs", index);
-        data.showAs = g_lua.popInteger();
-        g_lua.getField("tradeAs", index);
-        data.tradeAs = g_lua.popInteger();
-        return true;
-    }
-    return false;
+    if (!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("category", index);
+    data.category = g_lua.popInteger();
+    g_lua.getField("name", index);
+    data.name = g_lua.popString();
+    g_lua.getField("requiredLevel", index);
+    data.requiredLevel = g_lua.popInteger();
+    g_lua.getField("restrictVocation", index);
+    data.restrictVocation = g_lua.popInteger();
+    g_lua.getField("showAs", index);
+    data.showAs = g_lua.popInteger();
+    g_lua.getField("tradeAs", index);
+    data.tradeAs = g_lua.popInteger();
+
+    return true;
 }
 
 int push_luavalue(const Light& light)
@@ -151,19 +156,21 @@ int push_luavalue(const Light& light)
     g_lua.setField("color");
     g_lua.pushInteger(light.intensity);
     g_lua.setField("intensity");
+
     return 1;
 }
 
 bool luavalue_cast(int index, Light& light)
 {
-    if (g_lua.isTable(index)) {
-        g_lua.getField("color", index);
-        light.color = g_lua.popInteger();
-        g_lua.getField("intensity", index);
-        light.intensity = g_lua.popInteger();
-        return true;
-    }
-    return false;
+    if (!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("color", index);
+    light.color = g_lua.popInteger();
+    g_lua.getField("intensity", index);
+    light.intensity = g_lua.popInteger();
+
+    return true;
 }
 
 int push_luavalue(const UnjustifiedPoints& unjustifiedPoints)
@@ -183,27 +190,28 @@ int push_luavalue(const UnjustifiedPoints& unjustifiedPoints)
     g_lua.setField("killsMonthRemaining");
     g_lua.pushInteger(unjustifiedPoints.skullTime);
     g_lua.setField("skullTime");
+
     return 1;
 }
 
 bool luavalue_cast(int index, UnjustifiedPoints& unjustifiedPoints)
 {
-    if (g_lua.isTable(index)) {
-        g_lua.getField("killsDay", index);
-        unjustifiedPoints.killsDay = g_lua.popInteger();
-        g_lua.getField("killsDayRemaining", index);
-        unjustifiedPoints.killsDayRemaining = g_lua.popInteger();
-        g_lua.getField("killsWeek", index);
-        unjustifiedPoints.killsWeek = g_lua.popInteger();
-        g_lua.getField("killsWeekRemaining", index);
-        unjustifiedPoints.killsWeekRemaining = g_lua.popInteger();
-        g_lua.getField("killsMonth", index);
-        unjustifiedPoints.killsMonth = g_lua.popInteger();
-        g_lua.getField("killsMonthRemaining", index);
-        unjustifiedPoints.killsMonthRemaining = g_lua.popInteger();
-        g_lua.getField("skullTime", index);
-        unjustifiedPoints.skullTime = g_lua.popInteger();
-        return true;
-    }
-    return false;
+    if (!g_lua.isTable(index))
+        return false;
+
+    g_lua.getField("killsDay", index);
+    unjustifiedPoints.killsDay = g_lua.popInteger();
+    g_lua.getField("killsDayRemaining", index);
+    unjustifiedPoints.killsDayRemaining = g_lua.popInteger();
+    g_lua.getField("killsWeek", index);
+    unjustifiedPoints.killsWeek = g_lua.popInteger();
+    g_lua.getField("killsWeekRemaining", index);
+    unjustifiedPoints.killsWeekRemaining = g_lua.popInteger();
+    g_lua.getField("killsMonth", index);
+    unjustifiedPoints.killsMonth = g_lua.popInteger();
+    g_lua.getField("killsMonthRemaining", index);
+    unjustifiedPoints.killsMonthRemaining = g_lua.popInteger();
+    g_lua.getField("skullTime", index);
+    unjustifiedPoints.skullTime = g_lua.popInteger();
+    return true;
 }

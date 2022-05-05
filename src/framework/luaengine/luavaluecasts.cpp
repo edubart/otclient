@@ -24,7 +24,7 @@
 #include "luainterface.h"
 #include <framework/otml/otmlnode.h>
 
-// bool
+ // bool
 int push_luavalue(bool b)
 {
     g_lua.pushBoolean(b);
@@ -163,7 +163,7 @@ bool luavalue_cast(int index, Rect& rect)
         return stdext::cast(g_lua.toString(index), rect);
     }
     if (g_lua.isNil()) {
-        rect = Rect();
+        rect = {};
         return true;
     }
     return false;
@@ -193,7 +193,7 @@ bool luavalue_cast(int index, Point& point)
         return stdext::cast(g_lua.toString(index), point);
     }
     if (g_lua.isNil()) {
-        point = Point();
+        point = {};
         return true;
     }
     return false;
@@ -223,7 +223,7 @@ bool luavalue_cast(int index, Size& size)
         return stdext::cast(g_lua.toString(index), size);
     }
     if (g_lua.isNil()) {
-        size = Size();
+        size = {};
         return true;
     }
     return false;

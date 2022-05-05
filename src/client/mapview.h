@@ -119,7 +119,7 @@ public:
 
     MapViewPtr asMapView() { return static_self_cast<MapView>(); }
 
-    void resetLastCamera() { m_lastCameraPosition = Position(); }
+    void resetLastCamera() { m_lastCameraPosition = {}; }
 
     std::vector<CreaturePtr>& getVisibleCreatures() { return m_visibleCreatures; }
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);

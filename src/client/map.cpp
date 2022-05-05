@@ -370,7 +370,8 @@ const TilePtr& Map::getTile(const Position& pos)
 const TileList Map::getTiles(int8 floor/* = -1*/)
 {
     TileList tiles;
-    if (floor > MAX_Z) return tiles;
+    if (floor > MAX_Z)
+        return tiles;
 
     if (floor < 0) {
         // Search all floors
@@ -466,16 +467,6 @@ void Map::setForceShowAnimations(bool force)
         m_animationFlags |= Animation_Force;
 }
 
-bool Map::isForcingAnimations()
-{
-    return (m_animationFlags & Animation_Force) == Animation_Force;
-}
-
-bool Map::isShowingAnimations()
-{
-    return (m_animationFlags & Animation_Show) == Animation_Show;
-}
-
 void Map::setShowAnimations(bool show)
 {
     if (show) {
@@ -485,15 +476,8 @@ void Map::setShowAnimations(bool show)
         m_animationFlags &= ~Animation_Show;
 }
 
-void Map::beginGhostMode(float opacity)
-{
-    g_painter->setOpacity(opacity);
-}
-
-void Map::endGhostMode()
-{
-    g_painter->resetOpacity();
-}
+void Map::beginGhostMode(float opacity) { g_painter->setOpacity(opacity); }
+void Map::endGhostMode() { g_painter->resetOpacity(); }
 
 std::map<Position, ItemPtr> Map::findItemsById(uint16 clientId, uint32 max)
 {
@@ -630,14 +614,14 @@ void Map::setLight(const Light& light)
         mapView->onGlobalLightChange(m_light);
 }
 
-std::vector<CreaturePtr> Map::getSightSpectators(const Position& centerPos, bool multiFloor)
-{
-    return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2);
-}
-
 std::vector<CreaturePtr> Map::getSpectators(const Position& centerPos, bool multiFloor)
 {
     return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left, m_awareRange.right, m_awareRange.top, m_awareRange.bottom);
+}
+
+std::vector<CreaturePtr> Map::getSightSpectators(const Position& centerPos, bool multiFloor)
+{
+    return getSpectatorsInRangeEx(centerPos, multiFloor, m_awareRange.left - 1, m_awareRange.right - 2, m_awareRange.top - 1, m_awareRange.bottom - 2);
 }
 
 std::vector<CreaturePtr> Map::getSpectatorsInRange(const Position& centerPos, bool multiFloor, int32 xRange, int32 yRange)
@@ -691,6 +675,7 @@ bool Map::isCovered(const Position& pos, uint8 firstFloor)
         if (tile && tile->isTopGround())
             return true;
     }
+
     return false;
 }
 
@@ -772,18 +757,18 @@ void Map::setAwareRange(const AwareRange& range)
 
 uint8 Map::getFirstAwareFloor()
 {
-    if (m_centralPosition.z > SEA_FLOOR)
-        return m_centralPosition.z - AWARE_UNDEGROUND_FLOOR_RANGE;
+    if (m_centralPosition.z <= SEA_FLOOR)
+        return 0;
 
-    return 0;
+    return m_centralPosition.z - AWARE_UNDEGROUND_FLOOR_RANGE;
 }
 
 uint8 Map::getLastAwareFloor()
 {
-    if (m_centralPosition.z > SEA_FLOOR)
-        return std::min<uint8>(m_centralPosition.z + AWARE_UNDEGROUND_FLOOR_RANGE, MAX_Z);
+    if (m_centralPosition.z <= SEA_FLOOR)
+        return SEA_FLOOR;
 
-    return SEA_FLOOR;
+    return std::min<uint8>(m_centralPosition.z + AWARE_UNDEGROUND_FLOOR_RANGE, MAX_Z);
 }
 
 std::tuple<std::vector<Otc::Direction>, Otc::PathFindResult> Map::findPath(const Position& startPos, const Position& goalPos, int maxComplexity, int flags)

@@ -76,16 +76,6 @@ void AnimatedText::onAppear()
     g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, textDuration);
 }
 
-void AnimatedText::setColor(int color)
-{
-    m_color = Color::from8bit(color);
-}
-
-void AnimatedText::setText(const std::string& text)
-{
-    m_cachedText.setText(text);
-}
-
 bool AnimatedText::merge(const AnimatedTextPtr& other)
 {
     if (other->getColor() != m_color)

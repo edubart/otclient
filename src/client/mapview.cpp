@@ -490,7 +490,7 @@ void MapView::updateGeometry(const Size& visibleDimension)
 
 void MapView::onCameraMove(const Point& /*offset*/)
 {
-    m_rectCache.rect = Rect();
+    m_rectCache.rect = {};
 
     if (isFollowingCreature()) {
         updateViewport(m_followingCreature->isWalking() ? m_followingCreature->getDirection() : Otc::InvalidDirection);
@@ -613,7 +613,7 @@ void MapView::followCreature(const CreaturePtr& creature)
 {
     m_follow = true;
     m_followingCreature = creature;
-    m_lastCameraPosition = Position();
+    m_lastCameraPosition = {};
 
     requestVisibleTilesCacheUpdate();
 }
@@ -672,7 +672,7 @@ void MapView::move(int32 x, int32 y)
         requestTilesUpdate = true;
     }
 
-    m_rectCache.rect = Rect();
+    m_rectCache.rect = {};
 
     if (requestTilesUpdate)
         requestVisibleTilesCacheUpdate();

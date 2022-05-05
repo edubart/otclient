@@ -131,15 +131,9 @@ void UIMinimap::centerInPosition(const UIWidgetPtr& anchoredWidget, const Positi
     layout->centerInPosition(anchoredWidget, hookedPosition);
 }
 
-void UIMinimap::onZoomChange(int zoom, int oldZoom)
-{
-    callLuaField("onZoomChange", zoom, oldZoom);
-}
+void UIMinimap::onZoomChange(int zoom, int oldZoom) { callLuaField("onZoomChange", zoom, oldZoom); }
 
-void UIMinimap::onCameraPositionChange(const Position& position, const Position& oldPosition)
-{
-    callLuaField("onCameraPositionChange", position, oldPosition);
-}
+void UIMinimap::onCameraPositionChange(const Position& position, const Position& oldPosition) { callLuaField("onCameraPositionChange", position, oldPosition); }
 
 void UIMinimap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
 {

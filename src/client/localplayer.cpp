@@ -135,8 +135,8 @@ void LocalPlayer::cancelWalk(Otc::Direction direction)
 bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 {
     // reset state
-    m_autoWalkDestination = Position();
-    m_lastAutoWalkPosition = Position();
+    m_autoWalkDestination = {};
+    m_lastAutoWalkPosition = {};
 
     if (!retry)
         m_autoWalkRetries = 0;
@@ -165,7 +165,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
                     [self, capture0 = result->destination]{ self->autoWalk(capture0, true); }, 200 + self->m_autoWalkRetries * 100);
                 return;
             }
-            self->m_autoWalkDestination = Position();
+            self->m_autoWalkDestination = {};
             self->callLuaField("onAutoWalkFail", result->status);
             return;
         }
@@ -174,7 +174,7 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
             result->path.resize(127);
 
         if (result->path.empty()) {
-            self->m_autoWalkDestination = Position();
+            self->m_autoWalkDestination = {};
             self->callLuaField("onAutoWalkFail", result->status);
             return;
         }
@@ -195,8 +195,8 @@ bool LocalPlayer::autoWalk(const Position& destination, const bool retry)
 
 void LocalPlayer::stopAutoWalk()
 {
-    m_autoWalkDestination = Position();
-    m_lastAutoWalkPosition = Position();
+    m_autoWalkDestination = {};
+    m_lastAutoWalkPosition = {};
     m_knownCompletePath = false;
 
     if (m_autoWalkContinueEvent)
@@ -207,7 +207,7 @@ void LocalPlayer::stopWalk()
 {
     Creature::stopWalk(); // will call terminateWalk
 
-    m_lastPrewalkDestination = Position();
+    m_lastPrewalkDestination = {};
 }
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
@@ -218,7 +218,7 @@ void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
     }
 
     // pre walks offsets are calculated in the oposite direction
-    m_walkOffset = Point();
+    m_walkOffset = {};
     if (m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
         m_walkOffset.y = -totalPixelsWalked;
     else if (m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)

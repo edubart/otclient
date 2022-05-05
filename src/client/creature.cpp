@@ -230,7 +230,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     // calculate main rects
 
     const Size nameSize = m_nameCache.getTextSize();
-    constexpr int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
+    int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
         cropSizeBackGround = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? cropSizeText - nameSize.height() : 0;
 
     auto backgroundRect = Rect(p.x - (13.5), p.y - cropSizeBackGround, 27, 4);
@@ -462,7 +462,7 @@ void Creature::onDisappear()
         if (!self->isLocalPlayer())
             self->setPosition(Position());
 
-        self->m_oldPosition = Position();
+        self->m_oldPosition = {};
         self->m_disappearEvent = nullptr;
     });
 }
@@ -503,7 +503,7 @@ void Creature::updateWalkAnimation()
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
 {
-    m_walkOffset = Point();
+    m_walkOffset = {};
     if (m_direction == Otc::North || m_direction == Otc::NorthEast || m_direction == Otc::NorthWest)
         m_walkOffset.y = SPRITE_SIZE - totalPixelsWalked;
     else if (m_direction == Otc::South || m_direction == Otc::SouthEast || m_direction == Otc::SouthWest)
@@ -611,7 +611,7 @@ void Creature::terminateWalk()
     }
 
     m_walkedPixels = 0;
-    m_walkOffset = Point();
+    m_walkOffset = {};
     m_walking = false;
 
     const auto self = static_self_cast<Creature>();
@@ -761,40 +761,16 @@ void Creature::setBaseSpeed(double baseSpeed)
     }
 }
 
-void Creature::setSkull(uint8 skull)
-{
-    m_skull = skull;
-    callLuaField("onSkullChange", m_skull);
-}
+void Creature::setType(uint8 type) { callLuaField("onTypeChange", m_type = type); }
+void Creature::setIcon(uint8 icon) { callLuaField("onIconChange", m_icon = icon); }
+void Creature::setSkull(uint8 skull) { callLuaField("onSkullChange", m_skull = skull); }
+void Creature::setShield(uint8 shield) { callLuaField("onShieldChange", m_shield = shield); }
+void Creature::setEmblem(uint8 emblem) { callLuaField("onEmblemChange", m_emblem = emblem); }
 
-void Creature::setShield(uint8 shield)
-{
-    m_shield = shield;
-    callLuaField("onShieldChange", m_shield);
-}
-
-void Creature::setEmblem(uint8 emblem)
-{
-    m_emblem = emblem;
-    callLuaField("onEmblemChange", m_emblem);
-}
-
-void Creature::setType(uint8 type)
-{
-    m_type = type;
-    callLuaField("onTypeChange", m_type);
-}
-
-void Creature::setIcon(uint8 icon)
-{
-    m_icon = icon;
-    callLuaField("onIconChange", m_icon);
-}
-
-void Creature::setSkullTexture(const std::string& filename)
-{
-    m_skullTexture = g_textures.getTexture(filename);
-}
+void Creature::setTypeTexture(const std::string& filename) { m_typeTexture = g_textures.getTexture(filename); }
+void Creature::setIconTexture(const std::string& filename) { m_iconTexture = g_textures.getTexture(filename); }
+void Creature::setSkullTexture(const std::string& filename) { m_skullTexture = g_textures.getTexture(filename); }
+void Creature::setEmblemTexture(const std::string& filename) { m_emblemTexture = g_textures.getTexture(filename); }
 
 void Creature::setShieldTexture(const std::string& filename, bool blink)
 {
@@ -809,21 +785,6 @@ void Creature::setShieldTexture(const std::string& filename, bool blink)
     }
 
     m_shieldBlink = blink;
-}
-
-void Creature::setEmblemTexture(const std::string& filename)
-{
-    m_emblemTexture = g_textures.getTexture(filename);
-}
-
-void Creature::setTypeTexture(const std::string& filename)
-{
-    m_typeTexture = g_textures.getTexture(filename);
-}
-
-void Creature::setIconTexture(const std::string& filename)
-{
-    m_iconTexture = g_textures.getTexture(filename);
 }
 
 void Creature::addTimedSquare(uint8 color)
@@ -958,7 +919,8 @@ Light Creature::getLight()
 
 int Creature::getTotalAnimationPhase()
 {
-    if (!m_outfit.hasMount()) return getAnimationPhases();
+    if (!m_outfit.hasMount())
+        return getAnimationPhases();
 
     return rawGetMountThingType()->getAnimationPhases();
 }
