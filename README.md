@@ -87,7 +87,7 @@ client, instead otclient was designed to be a combination of a framework and tib
 
 [If you are interested in compiling this project, just go to the wiki.](https://github.com/mehah/otclient/wiki)
 
-##### Build and run with Docker
+### Build and run with Docker
 
 To build the image:
 
