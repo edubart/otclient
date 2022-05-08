@@ -70,18 +70,19 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         msg->addU8(0);
 
     const int offset = msg->getMessageSize();
-    // first RSA byte must be 0
-    msg->addU8(0);
 
     if (g_game.getFeature(Otc::GameLoginPacketEncryption)) {
+        // first RSA byte must be 0
+        msg->addU8(0);
         // xtea key
         generateXteaKey();
         msg->addU32(m_xteaKey[0]);
         msg->addU32(m_xteaKey[1]);
         msg->addU32(m_xteaKey[2]);
         msg->addU32(m_xteaKey[3]);
-        msg->addU8(0); // is gm set?
     }
+
+    msg->addU8(0); // is gm set?
 
     if (g_game.getFeature(Otc::GameSessionKey)) {
         msg->addString(m_sessionKey);

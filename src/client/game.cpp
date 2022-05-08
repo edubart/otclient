@@ -1553,6 +1553,14 @@ void Game::setClientVersion(int version)
     m_features.reset();
     enableFeature(Otc::GameFormatCreatureName);
 
+    if (version >= 750) {
+        enableFeature(Otc::GameSoul);
+    }
+
+    if (version >= 760) {
+        enableFeature(Otc::GameLevelU16);
+    }
+
     if (version >= 770) {
         enableFeature(Otc::GameLooktypeU16);
         enableFeature(Otc::GameMessageStatements);

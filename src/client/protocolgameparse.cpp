@@ -1227,6 +1227,9 @@ void ProtocolGame::parseMagicEffect(const InputMessagePtr& msg)
     else
         effectId = msg->getU8();
 
+    if (g_game.getClientVersion() <= 750)
+        effectId += 1; //hack to fix effects in earlier clients
+
     if (!g_things.isValidDatId(effectId, ThingCategoryEffect)) {
         g_logger.traceError(stdext::format("invalid effect id %d", effectId));
         return;
@@ -1544,7 +1547,12 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
     else
         experience = msg->getU32();
 
-    const double level = msg->getU16();
+    double level;
+    if (g_game.getFeature(Otc::GameLevelU16))
+        level = msg->getU16();
+    else
+        level = msg->getU8();
+
     const double levelPercent = msg->getU8();
 
     if (g_game.getFeature(Otc::GameExperienceBonus)) {
@@ -1587,7 +1595,10 @@ void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
         m_localPlayer->setBaseMagicLevel(baseMagicLevel);
     }
 
-    const double soul = msg->getU8();
+    double soul = 0;
+    if (g_game.getFeature(Otc::GameSoul))
+        soul = msg->getU8();
+
     double stamina = 0;
     if (g_game.getFeature(Otc::GamePlayerStamina))
         stamina = msg->getU16();
