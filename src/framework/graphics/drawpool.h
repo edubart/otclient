@@ -52,7 +52,7 @@ public:
     void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
     void setBlendEquation(Painter::BlendEquation equation, const int pos = -1) { m_currentPool->setBlendEquation(equation, pos); }
     void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
-    void setOpacity(const float opacity, const int pos = -1, const std::function<void()>& action = nullptr) { m_currentPool->setOpacity(opacity, pos); }
+    void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1, const std::function<void()>& action = nullptr) { m_currentPool->setShaderProgram(shaderProgram, pos, action); }
 
     float getOpacity(const int pos = -1) { return m_currentPool->getOpacity(pos); }
