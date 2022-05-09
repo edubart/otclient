@@ -173,10 +173,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
 
 void UIWidget::setImageSource(const std::string& source)
 {
-    if (source.empty())
-        m_imageTexture = nullptr;
-    else
-        m_imageTexture = g_textures.getTexture(source);
+    m_imageTexture = source.empty() ? nullptr : g_textures.getTexture(source);
 
     if (m_imageTexture && (!m_rect.isValid() || m_imageAutoResize)) {
         Size size = getSize();

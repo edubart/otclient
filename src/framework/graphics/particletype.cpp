@@ -30,8 +30,8 @@ ParticleType::ParticleType()
     pMaxPositionRadius = 3;
     pMinPositionAngle = 0;
     pMaxPositionAngle = 360;
-    pStartSize = Size(32);
-    pFinalSize = Size(32);
+    pStartSize = { 32 };
+    pFinalSize = { 32 };
     pMinDuration = 0;
     pMaxDuration = 10;
     pIgnorePhysicsAfter = -1;

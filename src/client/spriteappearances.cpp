@@ -250,13 +250,13 @@ void SpriteAppearances::saveSheetToFileBySprite(int id, const std::string& file)
 {
     const SpriteSheetPtr sheet = getSheetBySpriteId(id);
     if (sheet) {
-        Image image(Size(384, 384), 4, sheet->data.get());
+        Image image({ 384 }, 4, sheet->data.get());
         image.savePNG(file);
     }
 }
 
 void SpriteAppearances::saveSheetToFile(const SpriteSheetPtr& sheet, const std::string& file)
 {
-    Image image(Size(384, 384), 4, sheet->data.get());
+    Image image({ 384 }, 4, sheet->data.get());
     image.savePNG(file);
 }

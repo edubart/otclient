@@ -228,7 +228,7 @@ bool Image::nextMipmap()
     }
 
     m_pixels = pixels;
-    m_size = Size(ow, oh);
+    m_size = { ow, oh };
     return true;
 }
 

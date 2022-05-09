@@ -94,7 +94,7 @@ void Graphics::init()
     if (m_maxTextureSize == -1 || m_maxTextureSize > maxTextureSize)
         m_maxTextureSize = maxTextureSize;
 
-    if (Size(m_maxTextureSize, m_maxTextureSize) < g_window.getDisplaySize())
+    if (Size(m_maxTextureSize) < g_window.getDisplaySize())
         m_cacheBackbuffer = false;
 
     m_alphaBits = 0;

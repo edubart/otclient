@@ -39,6 +39,7 @@ bool UIHorizontalLayout::internalUpdate()
     const UIWidgetPtr parentWidget = getParentWidget();
     if (!parentWidget)
         return false;
+
     UIWidgetList widgets = parentWidget->getChildren();
 
     if (m_alignRight)

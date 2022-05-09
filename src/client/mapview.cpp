@@ -456,7 +456,7 @@ void MapView::updateVisibleTilesCache()
 void MapView::updateGeometry(const Size& visibleDimension)
 {
     const uint8 tileSize = SPRITE_SIZE * m_scaleFactor;
-    const Size drawDimension = visibleDimension + Size(3),
+    const Size drawDimension = visibleDimension + 3,
         bufferSize = drawDimension * tileSize;
 
     if (bufferSize.width() > g_graphics.getMaxTextureSize() || bufferSize.height() > g_graphics.getMaxTextureSize()) {

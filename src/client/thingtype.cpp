@@ -565,7 +565,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
 
         const uint8 width = fin->getU8();
         const uint8 height = fin->getU8();
-        m_size = Size(width, height);
+        m_size = { width, height };
         sizes.push_back(m_size);
         if (width > 1 || height > 1) {
             m_realSize = fin->getU8();
@@ -658,7 +658,7 @@ void ThingType::exportImage(const std::string& fileName)
     if (m_spritesIndex.empty())
         stdext::throw_exception("cannot export thingtype without sprites");
 
-    const ImagePtr image(new Image(Size(32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
+    const ImagePtr image(new Image({ 32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ }));
     for (int z = 0; z < m_numPatternZ; ++z) {
         for (int y = 0; y < m_numPatternY; ++y) {
             for (int x = 0; x < m_numPatternX; ++x) {
@@ -882,10 +882,10 @@ Size ThingType::getBestTextureDimension(int w, int h, int count)
     assert(w <= SPRITE_SIZE);
     assert(h <= SPRITE_SIZE);
 
-    auto bestDimension = Size(SPRITE_SIZE);
+    Size bestDimension = { SPRITE_SIZE };
     for (int i = w; i <= SPRITE_SIZE; i <<= 1) {
         for (int j = h; j <= SPRITE_SIZE; j <<= 1) {
-            auto candidateDimension = Size(i, j);
+            Size candidateDimension = { i, j };
             if (candidateDimension.area() < numSprites)
                 continue;
             if ((candidateDimension.area() < bestDimension.area()) ||

@@ -368,31 +368,29 @@ void UIWidget::drawBorder(const Rect& screenCoords)
 
 void UIWidget::drawIcon(const Rect& screenCoords)
 {
-    if (m_icon) {
-        Rect drawRect;
-        if (m_iconRect.isValid()) {
-            drawRect = screenCoords;
-            drawRect.translate(m_iconRect.topLeft());
-            drawRect.resize(m_iconRect.size());
-        } else {
-            drawRect.resize(m_iconClipRect.size());
+    if (!m_icon)
+        return;
 
-            if (m_iconAlign == Fw::AlignNone)
-                drawRect.moveCenter(screenCoords.center());
-            else
-                drawRect.alignIn(screenCoords, m_iconAlign);
-        }
-        drawRect.translate(m_iconOffset);
-        g_drawPool.addTexturedRect(drawRect, m_icon, m_iconClipRect, m_iconColor);
+    Rect drawRect;
+    if (m_iconRect.isValid()) {
+        drawRect = screenCoords;
+        drawRect.translate(m_iconRect.topLeft());
+        drawRect.resize(m_iconRect.size());
+    } else {
+        drawRect.resize(m_iconClipRect.size());
+
+        if (m_iconAlign == Fw::AlignNone)
+            drawRect.moveCenter(screenCoords.center());
+        else
+            drawRect.alignIn(screenCoords, m_iconAlign);
     }
+    drawRect.translate(m_iconOffset);
+    g_drawPool.addTexturedRect(drawRect, m_icon, m_iconClipRect, m_iconColor);
 }
 
 void UIWidget::setIcon(const std::string& iconFile)
 {
-    if (iconFile.empty())
-        m_icon = nullptr;
-    else
-        m_icon = g_textures.getTexture(iconFile);
+    m_icon = iconFile.empty() ? nullptr : g_textures.getTexture(iconFile);
     if (m_icon && !m_iconClipRect.isValid())
         m_iconClipRect = Rect(0, 0, m_icon->getSize());
 }

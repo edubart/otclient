@@ -205,7 +205,7 @@ void UIMap::updateMapSize()
     Size mapSize;
     if (m_keepAspectRatio) {
         const Rect mapRect = clippingRect.expanded(-1);
-        mapSize = Size(m_aspectRatio * m_zoom, m_zoom);
+        mapSize = { static_cast<int>(m_aspectRatio * m_zoom), m_zoom };
         mapSize.scale(mapRect.size(), Fw::KeepAspectRatio);
     } else {
         mapSize = clippingRect.expanded(-1).size();
