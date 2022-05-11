@@ -47,26 +47,22 @@ void MinimapBlock::update()
     const ImagePtr image(new Image(Size(MMBLOCK_SIZE, MMBLOCK_SIZE)));
 
     bool shouldDraw = false;
-    for (int x = 0; x < MMBLOCK_SIZE; ++x) {
-        for (int y = 0; y < MMBLOCK_SIZE; ++y) {
+    for (uint_fast8_t x = 0; x < MMBLOCK_SIZE; ++x) {
+        for (uint_fast8_t y = 0; y < MMBLOCK_SIZE; ++y) {
             const uint8 c = getTile(x, y).color;
-            uint32 col;
+
+            Color col = Color::alpha.rgba();
             if (c != UINT8_MAX) {
                 col = Color::from8bit(c).rgba();
                 shouldDraw = true;
-            } else
-                col = Color::alpha.rgba();
+            }
             image->setPixel(x, y, col);
         }
     }
 
-    if (shouldDraw) {
-        if (!m_texture) {
-            m_texture = TexturePtr(new Texture(image, true));
-        } else {
-            m_texture->uploadPixels(image, true);
-        }
-    } else
+    if (shouldDraw)
+        m_texture = TexturePtr(new Texture(image, true));
+    else
         m_texture.reset();
 
     m_mustUpdate = false;
@@ -86,7 +82,7 @@ void Minimap::terminate() { clean(); }
 void Minimap::clean()
 {
     std::lock_guard lock(m_lock);
-    for (int i = 0; i <= MAX_Z; ++i)
+    for (uint_fast8_t i = 0; i <= MAX_Z; ++i)
         m_tileBlocks[i].clear();
 }
 
@@ -107,11 +103,11 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
     const Point start = screenRect.topLeft() - (mapRect.topLeft() - blockOff) * scale - off;
 
     g_drawPool.setClipRect(screenRect);
-    for (int y = blockOff.y, ys = start.y; ys < screenRect.bottom(); y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE * scale) {
+    for (int_fast32_t y = blockOff.y, ys = start.y; ys < screenRect.bottom(); y += MMBLOCK_SIZE, ys += MMBLOCK_SIZE * scale) {
         if (y < 0 || y >= 65536)
             continue;
 
-        for (int x = blockOff.x, xs = start.x; xs < screenRect.right(); x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE * scale) {
+        for (int_fast32_t x = blockOff.x, xs = start.x; xs < screenRect.right(); x += MMBLOCK_SIZE, xs += MMBLOCK_SIZE * scale) {
             if (x < 0 || x >= 65536)
                 continue;
 
@@ -138,7 +134,7 @@ void Minimap::draw(const Rect& screenRect, const Position& mapCenter, float scal
 Point Minimap::getTilePoint(const Position& pos, const Rect& screenRect, const Position& mapCenter, float scale)
 {
     if (screenRect.isEmpty() || pos.z != mapCenter.z)
-        return { -1, -1 };
+        return { -1 };
 
     const Rect mapRect = calcMapRect(screenRect, mapCenter, scale);
     const Point off = Point((mapRect.size() * scale).toPoint() - screenRect.size().toPoint()) / 2;
@@ -186,7 +182,7 @@ void Minimap::updateTile(const Position& pos, const TilePtr& tile)
             minimapTile.flags |= MinimapTileNotWalkable;
         if (!tile->isPathable())
             minimapTile.flags |= MinimapTileNotPathable;
-        minimapTile.speed = std::min<int>(static_cast<int>(std::ceil(tile->getGroundSpeed() / 10.0f)), UINT8_MAX);
+        minimapTile.speed = std::min<int>(static_cast<int>(std::ceil(tile->getGroundSpeed() / 10.f)), UINT8_MAX);
     } else {
         minimapTile.flags |= MinimapTileNotWalkable | MinimapTileNotPathable;
     }
@@ -227,39 +223,39 @@ std::pair<MinimapBlock_ptr, MinimapTile> Minimap::threadGetTile(const Position& 
 
 bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, float colorFactor)
 {
-    if (colorFactor <= 0.01f)
-        colorFactor = 1.0f;
+    // non pathable colors
+    static Color nonPathableColors[] = {
+       std::string("#ffff00"), // yellow
+    };
+
+    // non walkable colors
+    static Color nonWalkableColors[] = {
+       std::string("#000000"), // oil, black
+       std::string("#006600"), // trees, dark green
+       std::string("#ff3300"), // walls, red
+       std::string("#666666"), // mountain, grey
+       std::string("#ff6600"), // lava, orange
+       std::string("#00ff00"), // positon
+       std::string("#ccffff"), // ice, very light blue
+    };
+
+    if (colorFactor <= .01f)
+        colorFactor = 1.f;
 
     try {
         const ImagePtr image = Image::load(fileName);
 
         const uint8 waterc = Color::to8bit(std::string("#3300cc"));
 
-        // non pathable colors
-        Color nonPathableColors[] = {
-            std::string("#ffff00"), // yellow
-        };
-
-        // non walkable colors
-        Color nonWalkableColors[] = {
-            std::string("#000000"), // oil, black
-            std::string("#006600"), // trees, dark green
-            std::string("#ff3300"), // walls, red
-            std::string("#666666"), // mountain, grey
-            std::string("#ff6600"), // lava, orange
-            std::string("#00ff00"), // positon
-            std::string("#ccffff"), // ice, very light blue
-        };
-
-        for (int y = 0; y < image->getHeight(); ++y) {
-            for (int x = 0; x < image->getWidth(); ++x) {
+        for (int_fast32_t y = -1; ++y < image->getHeight();) {
+            for (int_fast32_t x = -1; ++x < image->getWidth();) {
                 Color color = *(uint32*)image->getPixel(x, y);
                 uint8 c = Color::to8bit(color * colorFactor);
                 int flags = 0;
 
                 if (c == waterc || color.a() == 0) {
                     flags |= MinimapTileNotWalkable;
-                    c = 255; // alpha
+                    c = UINT8_MAX; // alpha
                 }
 
                 if (flags != 0) {
@@ -280,7 +276,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
                     }
                 }
 
-                if (c == 255)
+                if (c == UINT8_MAX)
                     continue;
 
                 Position pos(topLeft.x + x, topLeft.y + y, topLeft.z);
@@ -400,7 +396,7 @@ void Minimap::saveOtmm(const std::string& fileName)
             COMPRESS_LEVEL = 3;
         std::vector<uchar> compressBuffer(compressBound(blockSize));
 
-        for (uint8_t z = 0; z <= MAX_Z; ++z) {
+        for (uint_fast8_t z = 0; z <= MAX_Z; ++z) {
             for (auto& it : m_tileBlocks[z]) {
                 const int index = it.first;
                 MinimapBlock& block = *it.second;
