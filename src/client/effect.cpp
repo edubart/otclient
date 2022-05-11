@@ -41,7 +41,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
             return;
 
         // This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
-        animationPhase = rawGetThingType()->getIdleAnimator()->getPhaseAt(m_animationTimer);
+        animationPhase = animator->getPhaseAt(m_animationTimer);
     } else {
         // hack to fix some animation phases duration, currently there is no better solution
         int ticks = EFFECT_TICKS_PER_FRAME;

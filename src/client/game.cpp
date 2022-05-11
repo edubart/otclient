@@ -254,12 +254,15 @@ void Game::processPingBack()
 {
     ++m_pingReceived;
 
+    ticks_t oldPing = m_ping;
+
     if (m_pingReceived == m_pingSent)
         m_ping = m_pingTimer.elapsed_millis();
     else
         g_logger.error("got an invalid ping from server");
 
-    g_lua.callGlobalField("g_game", "onPingBack", m_ping);
+    if (oldPing != m_ping)
+        g_lua.callGlobalField("g_game", "onPingBack", m_ping);
 
     m_pingEvent = g_dispatcher.scheduleEvent([this] {
         g_game.ping();

@@ -44,7 +44,7 @@ void DrawPool::add(const Painter::PainterState& state, const Pool::DrawMethod& m
 
     auto& list = m_currentPool->m_objects;
 
-    if (m_forceGrouping) {
+    if (m_currentPool->m_forceGrouping) {
         const auto itFind = std::find_if(list.begin() + m_currentPool->m_indexToStartSearching, list.end(), [&state]
         (const Pool::DrawObject& action) { return action.state == state; });
 
@@ -267,6 +267,7 @@ void DrawPool::createPools()
             else if (type == PoolType::LIGHT) frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
         } else {
             pool = std::make_shared<Pool>();
+            pool->m_forceGrouping = true; // CREATURE_INFORMATION & TEXT
         }
 
         pool->m_type = type;
@@ -274,23 +275,8 @@ void DrawPool::createPools()
     }
 }
 
-void DrawPool::setConfig(const PoolType& state)
-{
-    switch (state) {
-        case PoolType::CREATURE_INFORMATION:
-        case PoolType::TEXT:
-            m_forceGrouping = true;
-            break;
-
-        default:
-            m_forceGrouping = false;
-    }
-}
-
 void DrawPool::use(const PoolType type)
 {
-    setConfig(type);
-
     m_currentPool = get<Pool>(type);
     m_currentPool->resetState();
     if (m_currentPool->hasFrameBuffer()) {

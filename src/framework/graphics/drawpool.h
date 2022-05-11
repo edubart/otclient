@@ -63,8 +63,8 @@ public:
     void resetState() { m_currentPool->resetState(); }
     void resetShaderProgram() { m_currentPool->resetShaderProgram(); }
 
-    void forceGrouping(const bool force) { m_forceGrouping = force; }
-    bool isForcingGrouping() const { return m_forceGrouping; }
+    void forceGrouping(const bool force) { m_currentPool->m_forceGrouping = force; }
+    bool isForcingGrouping() const { return m_currentPool->m_forceGrouping; }
 
     void startPosition() { m_currentPool->startPosition(); }
 
@@ -78,7 +78,6 @@ private:
     void drawObject(Pool::DrawObject& obj);
     void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
     void add(const Painter::PainterState& state, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
-    void setConfig(const PoolType& state);
 
     PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
 
@@ -88,8 +87,6 @@ private:
     std::array<PoolPtr, static_cast<uint8>(PoolType::UNKNOW) + 1> m_pools;
 
     PoolPtr m_currentPool, n_unknowPool;
-
-    bool m_forceGrouping{ false };
 
     friend class GraphicalApplication;
 };

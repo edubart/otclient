@@ -113,7 +113,7 @@ private:
 
     std::vector<DrawObject> m_objects;
 
-    bool m_enabled{ true };
+    bool m_enabled{ true }, m_forceGrouping{ false };
     State m_state;
 
     uint16_t m_indexToStartSearching{ 0 };
