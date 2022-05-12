@@ -41,7 +41,6 @@
     <OTCLIENT_LIBDEPS_D>
         glew32d.lib;
         zlibd.lib;
-        zstd.lib;
         physfs.lib;
         openal32.lib;
         lua51.lib;
