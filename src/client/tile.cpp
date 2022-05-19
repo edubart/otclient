@@ -30,6 +30,8 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/graphics/drawpool.h>
 
+#include <ranges>
+
 Tile::Tile(const Position& position) : m_position(position), m_positionsAround(m_position.getPositionsAround()) {}
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, LightView* lightView)
@@ -120,8 +122,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
         redrawPreviousTopH = 0;
 
     if (m_countFlag.hasCommonItem) {
-        for (auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            const auto& item = *it;
+        for (const auto& item : m_things | std::views::reverse) {
             if (!item->isCommon()) continue;
 
             drawThing(item, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
@@ -399,8 +400,7 @@ uint8 Tile::getMinimapColorByte()
     if (m_minimapColor != 0)
         return m_minimapColor;
 
-    for (auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-        const auto& thing = *it;
+    for (const auto& thing : m_things | std::views::reverse) {
         if (thing->isCreature() || thing->isCommon())
             continue;
 
@@ -642,8 +642,7 @@ bool Tile::checkForDetachableThing()
         return true;
 
     if (m_highlightWithoutFilter) {
-        for (auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            const auto& item = *it;
+        for (const auto& item : m_things | std::views::reverse) {
             if (!item->canDraw()) continue;
 
             m_highlight.thing = item;
@@ -665,8 +664,7 @@ bool Tile::checkForDetachableThing()
     }
 
     if (m_countFlag.hasBottomItem) {
-        for (auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            const auto& item = *it;
+        for (const auto& item : m_things | std::views::reverse) {
             if (!item->isOnBottom() || !item->canDraw() || item->isIgnoreLook() || item->isFluidContainer()) continue;
             m_highlight.thing = item;
             return true;
@@ -674,8 +672,7 @@ bool Tile::checkForDetachableThing()
     }
 
     if (m_countFlag.hasTopItem) {
-        for (auto it = m_things.rbegin(); it != m_things.rend(); ++it) {
-            const auto& item = *it;
+        for (const auto& item : m_things | std::views::reverse) {
             if (!item->isOnTop()) break;
             if (!item->canDraw() || item->isIgnoreLook()) continue;
 

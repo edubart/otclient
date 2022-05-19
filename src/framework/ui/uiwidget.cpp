@@ -31,6 +31,8 @@
 #include <framework/otml/otmlnode.h>
 #include <framework/platform/platformwindow.h>
 
+#include <ranges>
+
 #include "framework/graphics/drawpool.h"
 
 UIWidget::UIWidget()
@@ -1180,8 +1182,7 @@ UIWidgetPtr UIWidget::getChildByPos(const Point& childPos)
     if (!containsPaddingPoint(childPos))
         return nullptr;
 
-    for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+    for (const auto& child : m_children | std::views::reverse) {
         if (child->isExplicitlyVisible() && child->containsPoint(childPos))
             return child;
     }
@@ -1216,8 +1217,7 @@ UIWidgetPtr UIWidget::recursiveGetChildByPos(const Point& childPos, bool wantsPh
     if (!containsPaddingPoint(childPos))
         return nullptr;
 
-    for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+    for (const auto& child : m_children | std::views::reverse) {
         if (child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             UIWidgetPtr subChild = child->recursiveGetChildByPos(childPos, wantsPhantom);
             if (subChild)
@@ -1247,8 +1247,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByPos(const Point& childPos)
     if (!containsPaddingPoint(childPos))
         return children;
 
-    for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+    for (const auto& child : m_children | std::views::reverse) {
         if (child->isExplicitlyVisible() && child->containsPoint(childPos)) {
             UIWidgetList subChildren = child->recursiveGetChildrenByPos(childPos);
             if (!subChildren.empty())
@@ -1265,8 +1264,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByMarginPos(const Point& childPos)
     if (!containsPaddingPoint(childPos))
         return children;
 
-    for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-        const UIWidgetPtr& child = (*it);
+    for (const auto& child : m_children | std::views::reverse) {
         if (child->isExplicitlyVisible() && child->containsMarginPoint(childPos)) {
             UIWidgetList subChildren = child->recursiveGetChildrenByMarginPos(childPos);
             if (!subChildren.empty())
@@ -1744,8 +1742,7 @@ bool UIWidget::propagateOnMouseEvent(const Point& mousePos, UIWidgetList& widget
 {
     bool ret = false;
     if (containsPaddingPoint(mousePos)) {
-        for (auto it = m_children.rbegin(); it != m_children.rend(); ++it) {
-            const UIWidgetPtr& child = *it;
+        for (const auto& child : m_children | std::views::reverse) {
             if (child->isExplicitlyEnabled() && child->isExplicitlyVisible() && child->containsPoint(mousePos)) {
                 if (child->propagateOnMouseEvent(mousePos, widgetList)) {
                     ret = true;
