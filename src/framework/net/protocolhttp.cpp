@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2020 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2022 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ ProtocolHttp::~ProtocolHttp()
     disconnect();
 }
 
-void ProtocolHttp::connect(const std::string & host, uint16 port)
+void ProtocolHttp::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
     m_connection->setErrorCallback([capture0 = asProtocolHttp()](auto&& PH1)
