@@ -1109,7 +1109,7 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
         }
     };
 
-    std::map<std::string, std::string>::const_iterator it = params.find("ignoreLastCreature");
+    auto it = params.find("ignoreLastCreature");
     const bool ignoreLastCreature = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreCreatures");
     const bool ignoreCreatures = it != params.end() && it->second != "0" && !it->second.empty();
