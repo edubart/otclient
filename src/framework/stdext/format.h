@@ -45,10 +45,10 @@ namespace stdext
     void print(const T&... args) { std::ostringstream buf; print_ostream(buf, args...); std::cout << buf.str() << std::endl; }
 
     template<typename T>
-    typename std::enable_if<std::is_integral<T>::value ||
-        std::is_pointer<T>::value ||
-        std::is_floating_point<T>::value ||
-        std::is_enum<T>::value, T>::type sprintf_cast(const T& t) { return t; }
+    std::enable_if_t<std::is_integral_v<T> ||
+                   std::is_pointer_v<T> ||
+                   std::is_floating_point_v<T> ||
+                   std::is_enum_v<T>, T> sprintf_cast(const T& t) { return t; }
     inline const char* sprintf_cast(const char* s) { return s; }
     inline const char* sprintf_cast(const std::string& s) { return s.c_str(); }
 
@@ -76,7 +76,7 @@ namespace stdext
     int snprintf(char* s, size_t maxlen, const char* format, const Args&... args)
     {
         std::tuple<typename replace_extent<Args>::type...> tuple(args...);
-        return expand_snprintf<std::tuple_size<decltype(tuple)>::value>::call(s, maxlen, format, tuple);
+        return expand_snprintf<std::tuple_size_v<decltype(tuple)>>::call(s, maxlen, format, tuple);
     }
 
     template<typename... Args>

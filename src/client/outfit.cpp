@@ -33,7 +33,7 @@ Color Outfit::getColor(int color)
         loc2 = 1;
         loc3 = 1;
 
-        switch (static_cast<int>(color / HSI_H_STEPS)) {
+        switch (color / HSI_H_STEPS) {
             case 0:
                 loc2 = 0.25;
                 loc3 = 1.00;

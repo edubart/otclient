@@ -263,7 +263,7 @@ static int b_xor(lua_State* L)
 
 static int b_not(lua_State* L)
 {
-    b_uint r = ~luaL_checkunsigned(L, 1);
+    const b_uint r = ~luaL_checkunsigned(L, 1);
     lua_pushunsigned(L, trim(r));
     return 1;
 }

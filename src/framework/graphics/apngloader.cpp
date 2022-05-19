@@ -277,7 +277,7 @@ void compose3(unsigned char* dst1, unsigned int dstbytes1, unsigned char* dst2, 
     unsigned char   col = 0;
 
     for (unsigned int j = 0; j < h; j++) {
-        unsigned char* sp = src + 1;
+        const unsigned char* sp = src + 1;
         unsigned char* dp1 = dst1;
         auto* dp2 = (unsigned int*)dst2;
 
@@ -431,7 +431,7 @@ void compose6(unsigned char* dst, unsigned int dstbytes, unsigned char* src, uns
     }
 }
 
-int load_apng(std::stringstream& file, struct apng_data* apng)
+int load_apng(std::stringstream& file, apng_data* apng)
 {
     unsigned int    i, j;
     unsigned int    rowbytes;
@@ -445,7 +445,7 @@ int load_apng(std::stringstream& file, struct apng_data* apng)
     unsigned char   channels, depth, pixeldepth, bpp;
     unsigned char   coltype, compr, filter, interl;
     z_stream        zstream;
-    memset(apng, 0, sizeof(struct apng_data));
+    memset(apng, 0, sizeof(apng_data));
 
     for (i = 0; i < 256; i++) {
         pal[i][0] = i;
@@ -900,7 +900,7 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     prev = nullptr;
     row = pixels;
 
-    for (j = 0; j < static_cast<unsigned int>(height); j++) {
+    for (j = 0; j < height; j++) {
         unsigned char* out;
         unsigned int    sum = 0;
         unsigned char* best_row = row_buf;
@@ -1038,7 +1038,7 @@ void save_png(std::stringstream& f, unsigned int width, unsigned int height, int
     free(paeth_row);
 }
 
-void free_apng(struct apng_data* apng)
+void free_apng(apng_data* apng)
 {
     if (apng->pdata)
         free(apng->pdata);

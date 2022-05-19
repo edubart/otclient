@@ -82,7 +82,7 @@ void Animator::setPhase(int phase)
         if (phase == AnimPhaseAsync)
             m_phase = 0;
         else if (phase == AnimPhaseRandom)
-            m_phase = static_cast<int>(stdext::random_range(0, static_cast<long>(m_animationPhases)));
+            m_phase = stdext::random_range(0, m_animationPhases);
         else if (phase >= 0 && phase < m_animationPhases)
             m_phase = phase;
         else
@@ -152,7 +152,7 @@ int Animator::getStartPhase() const
     if (m_startPhase > -1)
         return m_startPhase;
 
-    return static_cast<int>(stdext::random_range(0, static_cast<long>(m_animationPhases)));
+    return stdext::random_range(0, m_animationPhases);
 }
 
 void Animator::resetAnimation()
@@ -198,7 +198,7 @@ int Animator::getPhaseDuration(int phase)
     const auto& data = m_phaseDurations.at(phase);
     if (data.first == data.second) return data.first;
 
-    return static_cast<int>(stdext::random_range(static_cast<long>(data.first), static_cast<long>(data.second)));
+    return stdext::random_range(data.first, data.second);
 }
 
 void Animator::calculateSynchronous()

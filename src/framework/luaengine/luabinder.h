@@ -45,7 +45,7 @@ namespace luabinder
         template<typename Tuple>
         static void call(Tuple& tuple, LuaInterface* lua)
         {
-            using ValueType = typename std::tuple_element<N - 1, Tuple>::type;
+            using ValueType = std::tuple_element_t<N - 1, Tuple>;
             std::get<N - 1>(tuple) = lua->polymorphicPop<ValueType>();
             pack_values_into_tuple<N - 1>::call(tuple, lua);
         }
@@ -59,7 +59,7 @@ namespace luabinder
 
     /// C++ function caller that can push results to lua
     template<typename Ret, typename F, typename... Args>
-    typename std::enable_if<!std::is_void<Ret>::value, int>::type
+    std::enable_if_t<!std::is_void_v<Ret>, int>
         call_fun_and_push_result(const F& f, LuaInterface* lua, const Args&... args)
     {
         Ret ret = f(args...);
@@ -69,7 +69,7 @@ namespace luabinder
 
     /// C++ void function caller
     template<typename Ret, typename F, typename... Args>
-    typename std::enable_if<std::is_void<Ret>::value, int>::type
+    std::enable_if_t<std::is_void_v<Ret>, int>
         call_fun_and_push_result(const F& f, LuaInterface* /*lua*/, const Args&... args)
     {
         f(args...);
@@ -100,7 +100,7 @@ namespace luabinder
     template<typename Ret, typename F, typename Tuple>
     LuaCppFunction bind_fun_specializer(const F& f)
     {
-        enum { N = std::tuple_size<Tuple>::value };
+        enum { N = std::tuple_size_v<Tuple> };
         return [=](LuaInterface* lua) -> int {
             while (lua->stackSize() != N) {
                 if (lua->stackSize() < N)
@@ -148,7 +148,7 @@ namespace luabinder
     };
 
     template<typename Lambda>
-    typename std::enable_if<std::is_constructible<decltype(&Lambda::operator())>::value, LuaCppFunction>::type bind_fun(const Lambda& f)
+    std::enable_if_t<std::is_constructible_v<decltype(&Lambda::operator())>, LuaCppFunction> bind_fun(const Lambda& f)
     {
         using F = decltype(&Lambda::operator());
         return bind_lambda_fun<F>::call(f);

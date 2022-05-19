@@ -322,7 +322,7 @@ public:
 
 inline std::ostream& operator<<(std::ostream& out, const Position& pos)
 {
-    out << static_cast<int>(pos.x) << " " << static_cast<int>(pos.y) << " " << static_cast<int>(pos.z);
+    out << pos.x << " " << pos.y << " " << static_cast<int>(pos.z);
     return out;
 }
 

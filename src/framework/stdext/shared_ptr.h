@@ -69,7 +69,7 @@ namespace stdext
 
         void set(T* p)
         {
-            T* tmp = px;
+            const T* tmp = px;
             px = p;
             if (tmp)
                 delete tmp;

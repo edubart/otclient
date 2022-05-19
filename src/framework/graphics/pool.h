@@ -144,7 +144,7 @@ private:
     bool hasModification(bool autoUpdateStatus = false);
     bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
 
-    PoolFramed* toPoolFramed() override { return static_cast<PoolFramed*>(this); }
+    PoolFramed* toPoolFramed() override { return this; }
 
     FrameBufferPtr m_framebuffer;
     Rect m_dest, m_src;

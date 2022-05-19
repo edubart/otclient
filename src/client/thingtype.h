@@ -33,7 +33,7 @@
 #include <framework/otml/declarations.h>
 
 using namespace tibia::protobuf;
-using namespace tibia::protobuf::shared;
+using namespace shared;
 
 enum class TextureType
 {

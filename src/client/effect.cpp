@@ -81,7 +81,7 @@ void Effect::onAppear()
 
     // schedule removal
     const auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_duration);
+    g_dispatcher.scheduleEvent([self] { g_map.removeThing(self); }, m_duration);
 }
 
 void Effect::waitFor(const EffectPtr& effect)

@@ -76,7 +76,7 @@ namespace stdext
             std::copy(begin + pos + 1, end, tmp + pos);
             delete[] m_values;
             m_values = tmp;
-            m_size--;
+            --m_size;
             return true;
         }
 

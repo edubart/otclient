@@ -40,7 +40,7 @@ void InputMessage::setBuffer(const std::string& buffer)
     const int len = buffer.size();
     reset();
     checkWrite(len);
-    memcpy((char*)(m_buffer + m_readPos), buffer.c_str(), len);
+    memcpy(m_buffer + m_readPos, buffer.c_str(), len);
     m_readPos += len;
     m_messageSize += len;
 }

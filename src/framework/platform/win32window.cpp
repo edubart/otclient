@@ -887,7 +887,7 @@ void WIN32Window::setFullscreen(bool fullscreen)
 
     m_fullscreen = fullscreen;
 
-    DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
+    const DWORD dwStyle = GetWindowLong(m_window, GWL_STYLE);
     static WINDOWPLACEMENT wpPrev;
     wpPrev.length = sizeof(wpPrev);
 
@@ -980,10 +980,10 @@ void WIN32Window::setClipboardText(const std::string& text)
     if (!hglb)
         return;
 
-    std::wstring wtext = stdext::latin1_to_utf16(text);
+    const std::wstring wtext = stdext::latin1_to_utf16(text);
 
     auto* const lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
-    memcpy(lpwstr, (char*)&wtext[0], wtext.length() * sizeof(WCHAR));
+    memcpy(lpwstr, &wtext[0], wtext.length() * sizeof(WCHAR));
     lpwstr[text.length()] = static_cast<WCHAR>(0);
     GlobalUnlock(hglb);
 
@@ -1006,7 +1006,7 @@ std::string WIN32Window::getClipboardText()
 
     const HGLOBAL hglb = GetClipboardData(CF_UNICODETEXT);
     if (hglb) {
-        auto* const lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
+        const auto* const lpwstr = static_cast<LPWSTR>(GlobalLock(hglb));
         if (lpwstr) {
             text = stdext::utf16_to_latin1(lpwstr);
             GlobalUnlock(hglb);

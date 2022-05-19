@@ -75,7 +75,7 @@ void ProtocolHttp::onConnect()
 
 void ProtocolHttp::onRecv(uint8* buffer, uint16 size)
 {
-    const auto string = std::string((char*)buffer, static_cast<size_t>(size));
+    const auto string = std::string((char*)buffer, size);
     callLuaField("onRecv", string);
 }
 

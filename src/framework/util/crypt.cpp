@@ -172,7 +172,7 @@ std::string Crypt::genUUID()
     std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
     std::mt19937 generator(seq);
 
-    return uuids::to_string(uuids::uuid_random_generator{ generator }());
+    return to_string(uuids::uuid_random_generator{ generator }());
 }
 
 bool Crypt::setMachineUUID(std::string uuidstr)
@@ -201,7 +201,7 @@ std::string Crypt::getMachineUUID()
 
         m_machineUUID = uuids::uuid_random_generator{ generator }();
     }
-    return _encrypt(uuids::to_string(m_machineUUID), false);
+    return _encrypt(to_string(m_machineUUID), false);
 }
 
 std::string Crypt::getCryptKey(bool useMachineUUID)

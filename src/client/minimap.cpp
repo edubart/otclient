@@ -353,7 +353,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
             if (ret != Z_OK || destLen != blockSize)
                 break;
 
-            memcpy((uchar*)&block.getTiles(), decompressBuffer.data(), blockSize);
+            memcpy(reinterpret_cast<uchar*>(&block.getTiles()), decompressBuffer.data(), blockSize);
             block.mustUpdate();
             block.justSaw();
         }

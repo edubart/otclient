@@ -193,7 +193,7 @@ std::string ResourceManager::readFileContents(const std::string& fileName)
 
     const int fileSize = PHYSFS_fileLength(file);
     std::string buffer(fileSize, 0);
-    PHYSFS_readBytes(file, static_cast<void*>(&buffer[0]), fileSize);
+    PHYSFS_readBytes(file, &buffer[0], fileSize);
     PHYSFS_close(file);
 
 #if ENABLE_ENCRYPTION == 1
@@ -211,7 +211,7 @@ bool ResourceManager::writeFileBuffer(const std::string& fileName, const uchar* 
         return false;
     }
 
-    PHYSFS_writeBytes(file, (void*)data, size);
+    PHYSFS_writeBytes(file, data, size);
     PHYSFS_close(file);
     return true;
 }

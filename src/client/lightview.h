@@ -33,7 +33,7 @@ class LightView : public LuaObject
 public:
     LightView();
 
-    void resize(const Size& size, const uint8_t tileSize);
+    void resize(const Size& size, uint8_t tileSize);
     void draw(const Rect& dest, const Rect& src);
 
     void addLightSource(const Point& pos, const Light& light);

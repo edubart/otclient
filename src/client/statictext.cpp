@@ -91,7 +91,7 @@ void StaticText::update()
     if (m_messages.empty()) {
         // schedule removal
         auto self = asStaticText();
-        g_dispatcher.addEvent([self]() { g_map.removeThing(self); });
+        g_dispatcher.addEvent([self] { g_map.removeThing(self); });
     } else {
         compose();
         scheduleUpdate();
@@ -103,7 +103,8 @@ void StaticText::scheduleUpdate()
     const int delay = std::max<int>(m_messages.front().second - g_clock.millis(), 0);
 
     auto self = asStaticText();
-    m_updateEvent = g_dispatcher.scheduleEvent([self]() {
+    m_updateEvent = g_dispatcher.scheduleEvent([self]
+    {
         self->m_updateEvent = nullptr;
         self->update();
     }, delay);

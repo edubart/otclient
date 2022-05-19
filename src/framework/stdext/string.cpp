@@ -168,7 +168,7 @@ namespace stdext
     std::string latin1_to_utf8(const std::string& src)
     {
         std::string out;
-        for (uchar c : src) {
+        for (const uchar c : src) {
             if ((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
                 out += c;
             else {

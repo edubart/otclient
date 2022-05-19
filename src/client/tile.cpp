@@ -787,7 +787,8 @@ void Tile::select(const bool noFilter)
     m_highlight.fadeLevel = HIGHTLIGHT_FADE_START;
 
     const auto self = this->static_self_cast<Tile>();
-    m_highlight.listeningEvent = g_dispatcher.cycleEvent([self]() {
+    m_highlight.listeningEvent = g_dispatcher.cycleEvent([self]
+    {
         auto& highLight = self->m_highlight;
 
         highLight.fadeLevel += 10 * (highLight.invertedColorSelection ? 1 : -1);

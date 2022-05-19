@@ -46,11 +46,11 @@ namespace stdext
         return (b << 16) | a;
     }
 
-    long random_range(long min, long max)
+    int random_range(int min, int max)
     {
         static std::random_device rd;
         static std::mt19937 gen(rd());
-        static std::uniform_int_distribution<long> dis(0, 2147483647);
+        static std::uniform_int_distribution dis(0, INT_MAX);
         return min + (dis(gen) % (max - min + 1));
     }
 

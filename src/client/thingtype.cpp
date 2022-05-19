@@ -585,7 +585,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
         m_animationPhases += groupAnimationsPhases;
 
         if (groupAnimationsPhases > 1 && g_game.getFeature(Otc::GameEnhancedAnimations)) {
-            auto animator = AnimatorPtr(new Animator);
+            const auto animator = AnimatorPtr(new Animator);
             animator->unserialize(groupAnimationsPhases, fin);
 
             if (frameGroupType == FrameGroupMoving)
@@ -613,20 +613,20 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             m_size.setWidth(std::max<int>(m_size.width(), s.width()));
             m_size.setHeight(std::max<int>(m_size.height(), s.height()));
         }
-        size_t expectedSize = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
+        const size_t expectedSize = m_size.area() * m_layers * m_numPatternX * m_numPatternY * m_numPatternZ * m_animationPhases;
         if (expectedSize != m_spritesIndex.size()) {
-            std::vector sprites(std::move(m_spritesIndex));
+            const std::vector sprites(std::move(m_spritesIndex));
             m_spritesIndex.clear();
             m_spritesIndex.reserve(expectedSize);
             for (size_t i = 0, idx = 0; i < sizes.size(); ++i) {
-                int totalSprites = total_sprites[i];
+                const int totalSprites = total_sprites[i];
                 if (m_size == sizes[i]) {
                     for (int j = 0; j < totalSprites; ++j) {
                         m_spritesIndex.push_back(sprites[idx++]);
                     }
                     continue;
                 }
-                size_t patterns = (totalSprites / sizes[i].area());
+                const size_t patterns = (totalSprites / sizes[i].area());
                 for (size_t p = 0; p < patterns; ++p) {
                     for (int x = 0; x < m_size.width(); ++x) {
                         for (int y = 0; y < m_size.height(); ++y) {

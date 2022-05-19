@@ -66,7 +66,7 @@ public:
     void removeWalkingCreature(const CreaturePtr& creature);
 
     void addThing(const ThingPtr& thing, int stackPos);
-    bool removeThing(const ThingPtr thing);
+    bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);
     EffectPtr getEffect(uint16 id);
     bool hasThing(const ThingPtr& thing);

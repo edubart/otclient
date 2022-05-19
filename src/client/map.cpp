@@ -1109,23 +1109,22 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
         }
     };
 
-    std::map<std::string, std::string>::const_iterator it;
-    it = params.find("ignoreLastCreature");
-    bool ignoreLastCreature = it != params.end() && it->second != "0" && !it->second.empty();
+    std::map<std::string, std::string>::const_iterator it = params.find("ignoreLastCreature");
+    const bool ignoreLastCreature = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreCreatures");
-    bool ignoreCreatures = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool ignoreCreatures = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreNonPathable");
-    bool ignoreNonPathable = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool ignoreNonPathable = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreNonWalkable");
-    bool ignoreNonWalkable = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool ignoreNonWalkable = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreStairs");
-    bool ignoreStairs = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool ignoreStairs = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("ignoreCost");
-    bool ignoreCost = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool ignoreCost = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("allowUnseen");
-    bool allowUnseen = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool allowUnseen = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("allowOnlyVisibleTiles");
-    bool allowOnlyVisibleTiles = it != params.end() && it->second != "0" && !it->second.empty();
+    const bool allowOnlyVisibleTiles = it != params.end() && it->second != "0" && !it->second.empty();
     it = params.find("marginMin");
     bool hasMargin = it != params.end();
     it = params.find("marginMax");
@@ -1207,7 +1206,7 @@ std::map<std::string, std::tuple<int, int, int, std::string>> Map::findEveryPath
                             wasSeen = true;
                         speed = mtile.getSpeed();
                     }
-                    bool hasStairs = isNotPathable && mapColor >= 210 && mapColor <= 213;
+                    const bool hasStairs = isNotPathable && mapColor >= 210 && mapColor <= 213;
                     bool hasReachedMaxDistance = maxDistanceFrom && maxDistanceFromPos.isValid() && maxDistanceFromPos.distance(neighbor) > maxDistanceFrom;
                     if ((!wasSeen && !allowUnseen) || (hasStairs && !ignoreStairs && neighbor != destPos) ||
                        (isNotPathable && !ignoreNonPathable && neighbor != destPos) || (isNotWalkable && !ignoreNonWalkable) ||

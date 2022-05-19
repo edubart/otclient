@@ -47,8 +47,7 @@ namespace stdext
     inline void writeSLE64(uchar* addr, int64_t value) { writeSLE32(addr + 4, value >> 32); writeSLE32(addr, static_cast<int32_t>(value)); }
 
     uint32_t adler32(const uint8_t* buffer, size_t size);
-
-    long random_range(long min, long max);
+    int random_range(int min, int max);
     float random_range(float min, float max);
 }
 

@@ -36,13 +36,13 @@ public:
     void stop();
 
     template<class F>
-    std::shared_future<typename std::invoke_result<F>::type> schedule(const F& task)
+    std::shared_future<std::invoke_result_t<F>> schedule(const F& task)
     {
         std::lock_guard lock(m_mutex);
-        auto prom = std::make_shared<std::promise<typename std::invoke_result<F>::type>>();
-        m_tasks.push_back([=]() { prom->set_value(task()); });
+        auto prom = std::make_shared<std::promise<std::invoke_result_t<F>>>();
+        m_tasks.push_back([=] { prom->set_value(task()); });
         m_condition.notify_all();
-        return std::shared_future<typename std::invoke_result<F>::type>(prom->get_future());
+        return std::shared_future<std::invoke_result_t<F>>(prom->get_future());
     }
 
     void dispatch(const std::function<void()>& f)

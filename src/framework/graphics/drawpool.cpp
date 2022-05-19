@@ -258,7 +258,7 @@ void DrawPool::createPools()
         if (type == PoolType::MAP || type == PoolType::LIGHT || type == PoolType::FOREGROUND) {
             pool = std::make_shared<PoolFramed>();
 
-            auto& frameBuffer = pool->toPoolFramed()->m_framebuffer
+            const auto& frameBuffer = pool->toPoolFramed()->m_framebuffer
                 = g_framebuffers.createFrameBuffer(true);
 
             if (type == PoolType::MAP) frameBuffer->disableBlend();
@@ -288,7 +288,7 @@ void DrawPool::use(const PoolType type, const Rect& dest, const Rect& src, const
     if (!m_currentPool->hasFrameBuffer())
         return;
 
-    auto pool = m_currentPool->toPoolFramed();
+    const auto pool = m_currentPool->toPoolFramed();
 
     pool->m_dest = dest;
     pool->m_src = src;

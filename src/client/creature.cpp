@@ -230,8 +230,8 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     // calculate main rects
 
     const Size nameSize = m_nameCache.getTextSize();
-    int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
-        cropSizeBackGround = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? cropSizeText - nameSize.height() : 0;
+    const int cropSizeText = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? m_drawCache.exactSize : 12,
+              cropSizeBackGround = ADJUST_CREATURE_INFORMATION_BASED_ON_CROP_SIZE ? cropSizeText - nameSize.height() : 0;
 
     auto backgroundRect = Rect(p.x - (13.5), p.y - cropSizeBackGround, 27, 4);
     backgroundRect.bind(parentRect);
@@ -779,7 +779,8 @@ void Creature::setShieldTexture(const std::string& filename, bool blink)
 
     if (blink && !m_shieldBlink) {
         auto self = static_self_cast<Creature>();
-        g_dispatcher.scheduleEvent([self]() {
+        g_dispatcher.scheduleEvent([self]
+        {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     }
@@ -794,7 +795,8 @@ void Creature::addTimedSquare(uint8 color)
 
     // schedule removal
     const auto self = static_self_cast<Creature>();
-    g_dispatcher.scheduleEvent([self]() {
+    g_dispatcher.scheduleEvent([self]
+    {
         self->removeTimedSquare();
     }, VOLATILE_SQUARE_DURATION);
 }
@@ -805,7 +807,8 @@ void Creature::updateShield()
 
     if (m_shield != Otc::ShieldNone && m_shieldBlink) {
         auto self = static_self_cast<Creature>();
-        g_dispatcher.scheduleEvent([self]() {
+        g_dispatcher.scheduleEvent([self]
+        {
             self->updateShield();
         }, SHIELD_BLINK_TICKS);
     } else if (!m_shieldBlink)

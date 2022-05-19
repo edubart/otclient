@@ -98,7 +98,7 @@ void House::save(TiXmlElement* elem)
     elem->SetAttribute("rent", getRent());
     elem->SetAttribute("townid", getTownId());
     elem->SetAttribute("size", getSize());
-    elem->SetAttribute("guildhall", static_cast<int>(m_isGuildHall));
+    elem->SetAttribute("guildhall", m_isGuildHall);
 }
 
 HouseManager::HouseManager()

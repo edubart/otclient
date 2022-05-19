@@ -64,11 +64,11 @@ void LuaInterface::init()
     bindClassMemberFunction<LuaObject>("getUseCount", &LuaObject::getUseCount);
     bindClassMemberFunction<LuaObject>("getClassName", &LuaObject::getClassName);
 
-    registerClassMemberFunction<LuaObject>("getFieldsTable", static_cast<LuaCppFunction>([](LuaInterface*) -> int {
+    registerClassMemberFunction<LuaObject>("getFieldsTable", [](LuaInterface*) -> int {
         const LuaObjectPtr obj = g_lua.popObject();
         obj->luaGetFieldsTable();
         return 1;
-    }));
+    });
 }
 
 void LuaInterface::terminate()
@@ -273,8 +273,8 @@ int LuaInterface::luaObjectEqualEvent(LuaInterface* lua)
 
     // check if obj1 == obj2
     if (lua->isUserdata(-1) && lua->isUserdata(-2)) {
-        auto* const objPtr2 = static_cast<LuaObjectPtr*>(lua->popUserdata());
-        auto* const objPtr1 = static_cast<LuaObjectPtr*>(lua->popUserdata());
+        const auto* const objPtr2 = static_cast<LuaObjectPtr*>(lua->popUserdata());
+        const auto* const objPtr1 = static_cast<LuaObjectPtr*>(lua->popUserdata());
         assert(objPtr1 && objPtr2);
         if (*objPtr1 == *objPtr2)
             ret = true;
@@ -627,7 +627,7 @@ int LuaInterface::luaErrorHandler(lua_State*)
 int LuaInterface::luaCppFunctionCallback(lua_State*)
 {
     // retrieves function pointer from userdata
-    auto* const funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUpvalueUserdata());
+    const auto* const funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUpvalueUserdata());
     assert(funcPtr);
 
     int numRets = 0;

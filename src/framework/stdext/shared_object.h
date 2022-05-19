@@ -71,13 +71,13 @@ namespace stdext
         shared_object_ptr() : px(nullptr) {}
         shared_object_ptr(T* p, bool add_ref = true) : px(p)
         {
-            static_assert(std::is_base_of<shared_object, T>::value, "classes using shared_object_ptr must be a derived of stdext::shared_object");
+            static_assert(std::is_base_of_v<shared_object, T>, "classes using shared_object_ptr must be a derived of stdext::shared_object");
             if (px != nullptr && add_ref)
                 this->add_ref();
         }
         shared_object_ptr(const shared_object_ptr& rhs) : px(rhs.px) { if (px != nullptr) add_ref(); }
         template<class U>
-        shared_object_ptr(const shared_object_ptr<U>& rhs, typename std::enable_if<std::is_convertible<U*, T*>::value, U*>::type = nullptr) : px(rhs.get()) { if (px != nullptr) add_ref(); }
+        shared_object_ptr(const shared_object_ptr<U>& rhs, std::enable_if_t<std::is_convertible_v<U*, T*>, U*> = nullptr) : px(rhs.get()) { if (px != nullptr) add_ref(); }
         ~shared_object_ptr() { if (px != nullptr) dec_ref(); }
 
         void reset() { shared_object_ptr().swap(*this); }
@@ -109,8 +109,8 @@ namespace stdext
         }
 
     private:
-        void add_ref() { ((shared_object*)px)->add_ref(); }
-        void dec_ref() { ((shared_object*)px)->dec_ref(); }
+        void add_ref() { reinterpret_cast<shared_object*>(px)->add_ref(); }
+        void dec_ref() { reinterpret_cast<shared_object*>(px)->dec_ref(); }
 
         T* px;
     };

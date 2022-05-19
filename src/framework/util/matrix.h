@@ -42,7 +42,7 @@ public:
     void fill(T value);
 
     Matrix<M, N, T> transposed() const;
-    typename std::enable_if<N == M>::type transpose() { *this = transposed(); }
+    std::enable_if_t<N == M> transpose() { *this = transposed(); }
 
     T* data() { return m[0]; }
     const T* data() const { return m[0]; }

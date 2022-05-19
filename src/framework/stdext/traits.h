@@ -41,7 +41,7 @@ namespace stdext
     };
     template<typename T> struct remove_const_ref
     {
-        using type = typename std::remove_const<typename std::remove_reference<T>::type>::type;
+        using type = std::remove_const_t<std::remove_reference_t<T>>;
     };
 };
 

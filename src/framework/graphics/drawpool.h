@@ -35,8 +35,8 @@ public:
     template <class T>
     std::shared_ptr<T> get(const PoolType type) { return std::static_pointer_cast<T>(m_pools[static_cast<uint8>(type)]); }
 
-    void use(const PoolType type);
-    void use(const PoolType type, const Rect& dest, const Rect& src, const Color colorClear = Color::alpha);
+    void use(PoolType type);
+    void use(PoolType type, const Rect& dest, const Rect& src, Color colorClear = Color::alpha);
 
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
     void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = {});

@@ -37,7 +37,7 @@ bool OggSoundFile::prepareOgg()
     constexpr ov_callbacks callbacks = { cb_read, cb_seek, cb_close, cb_tell };
     ov_open_callbacks(m_file.get(), &m_vorbisFile, nullptr, 0, callbacks);
 
-    vorbis_info* vi = ov_info(&m_vorbisFile, -1);
+    const vorbis_info* vi = ov_info(&m_vorbisFile, -1);
     if (!vi) {
         g_logger.error(stdext::format("ogg file not supported: %s", m_file->name()));
         return false;
