@@ -168,10 +168,9 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
         return;
 
     const Pool::DrawMethod method{
-        Pool::DrawMethodType::RECT,
-        std::make_pair(dest, src),
-        {},
-        originalDest
+        .type = Pool::DrawMethodType::RECT,
+        .rects = std::make_pair(dest, src),
+        .dest = originalDest
     };
 
     add(generateState(color, texture), method, Painter::DrawMode::TriangleStrip);
@@ -212,7 +211,7 @@ void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c,
     if (a == b || a == c || b == c)
         return;
 
-    const Pool::DrawMethod method{ Pool::DrawMethodType::TRIANGLE, {}, std::make_tuple(a, b, c) };
+    const Pool::DrawMethod method{ .type = Pool::DrawMethodType::TRIANGLE, .points = std::make_tuple(a, b, c) };
 
     add(generateState(color), method);
 }
@@ -223,10 +222,9 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
         return;
 
     const Pool::DrawMethod method{
-        Pool::DrawMethodType::BOUNDING_RECT,
-        std::make_pair(dest, Rect()),
-        {},{},
-        static_cast<uint16>(innerLineWidth)
+        .type = Pool::DrawMethodType::BOUNDING_RECT,
+        .rects = std::make_pair(dest, Rect()),
+        .intValue = static_cast<uint16>(innerLineWidth)
     };
 
     add(generateState(color), method);
@@ -234,7 +232,7 @@ void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLin
 
 void DrawPool::addAction(std::function<void()> action)
 {
-    m_currentPool->m_objects.push_back(Pool::DrawObject{ {}, Painter::DrawMode::None, {}, std::move(action) });
+    m_currentPool->m_objects.push_back(Pool::DrawObject{ .action = std::move(action) });
 }
 
 Painter::PainterState DrawPool::generateState(const Color& color, const TexturePtr& texture)
