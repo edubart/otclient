@@ -37,8 +37,8 @@
 #define BUILD_COMPILER "gcc " __VERSION__
 #elif defined(_MSC_VER)
 
-#if _MSC_VER < 1930
-#error "You need Visual Studio 2022 or greater to compile."
+#if _MSC_VER < 1932
+#error "You need Visual Studio 2022(17.2) or greater to compile."
 #endif
 
 #define BUILD_COMPILER "Visual Studio"
