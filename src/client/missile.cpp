@@ -26,7 +26,7 @@
 #include "tile.h"
 #include <framework/core/eventdispatcher.h>
 
-void Missile::draw(const Point& dest, float scaleFactor, LightView* lightView)
+void Missile::drawMissile(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if (m_id == 0)
         return;

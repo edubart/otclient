@@ -658,7 +658,7 @@ void ThingType::exportImage(const std::string& fileName)
     if (m_spritesIndex.empty())
         stdext::throw_exception("cannot export thingtype without sprites");
 
-    const ImagePtr image(new Image({ 32 * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ }));
+    const ImagePtr image(new Image(Size(SPRITE_SIZE * m_size.width() * m_layers * m_numPatternX, SPRITE_SIZE * m_size.height() * m_animationPhases * m_numPatternY * m_numPatternZ)));
     for (int z = 0; z < m_numPatternZ; ++z) {
         for (int y = 0; y < m_numPatternY; ++y) {
             for (int x = 0; x < m_numPatternX; ++x) {

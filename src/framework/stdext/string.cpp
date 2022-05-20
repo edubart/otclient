@@ -21,6 +21,7 @@
  */
 
 #include <algorithm>
+#include <vector>
 
 #include "exception.h"
 #include "format.h"

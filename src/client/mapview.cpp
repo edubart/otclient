@@ -46,8 +46,7 @@ MapView::MapView()
 {
     const auto mapPool = g_drawPool.get<PoolFramed>(PoolType::MAP);
 
-    mapPool->onBeforeDraw([&]
-    {
+    mapPool->onBeforeDraw([&] {
         const Position cameraPosition = getCameraPosition();
 
         float fadeOpacity = 1.0f;
@@ -85,8 +84,7 @@ MapView::MapView()
         g_painter->setOpacity(fadeOpacity);
     });
 
-    mapPool->onAfterDraw([&]
-    {
+    mapPool->onAfterDraw([&] {
         g_painter->resetShaderProgram();
         g_painter->resetOpacity();
     });
@@ -187,7 +185,7 @@ void MapView::drawFloor()
             g_drawPool.startPosition();
             {
                 for (const MissilePtr& missile : g_map.getFloorMissiles(z))
-                    missile->draw(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
+                    missile->drawMissile(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
             }
 
             if (m_shadowFloorIntensity > 0 && z == cameraPosition.z + 1) {
@@ -541,7 +539,7 @@ void MapView::onMouseMove(const Position& mousePos, const bool /*isVirtualMove*/
         }
 
         if (m_drawHighlightTarget) {
-            if (m_lastHighlightTile = m_shiftPressed ? getTopTile(mousePos) : g_map.getTile(mousePos))
+            if (m_lastHighlightTile = (m_shiftPressed ? getTopTile(mousePos) : g_map.getTile(mousePos)))
                 m_lastHighlightTile->select(m_shiftPressed);
         }
     }
