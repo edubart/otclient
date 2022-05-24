@@ -550,7 +550,7 @@ bool Tile::isClickable()
 
 bool Tile::isEmpty()
 {
-    return m_things.size() == 0;
+    return m_things.empty();
 }
 
 bool Tile::isDrawable()
