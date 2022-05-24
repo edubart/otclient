@@ -27,7 +27,6 @@
 #include "../stdext/cast.h"
 #include "../stdext/string.h"
 #include "../const.h"
-#include <iomanip>
 
 class Color
 {
@@ -124,81 +123,7 @@ private:
     float m_a;
 };
 
-inline std::ostream& operator<<(std::ostream& out, const Color& color)
-{
-    return out << '#'
-           << std::hex << std::setfill('0')
-           << std::setw(2) << (int)color.r()
-           << std::setw(2) << (int)color.g()
-           << std::setw(2) << (int)color.b()
-           << std::setw(2) << (int)color.a()
-           << std::dec << std::setfill(' ');
-}
-
-inline std::istream& operator>>(std::istream& in, Color& color)
-{
-    std::string tmp;
-
-    if(in.peek() == '#') {
-        in.ignore() >> tmp;
-
-        if(tmp.length() == 6 || tmp.length() == 8) {
-            color.setRed((uint8)stdext::hex_to_dec(tmp.substr(0, 2)));
-            color.setGreen((uint8)stdext::hex_to_dec(tmp.substr(2, 2)));
-            color.setBlue((uint8)stdext::hex_to_dec(tmp.substr(4, 2)));
-            if(tmp.length() == 8)
-                color.setAlpha((uint8)stdext::hex_to_dec(tmp.substr(6, 2)));
-            else
-                color.setAlpha(255);
-        } else {
-            in.seekg(-tmp.length()-1, std::ios_base::cur);
-        }
-    } else {
-        in >> tmp;
-
-        if(tmp == "alpha") {
-            color = Color::alpha;
-        } else if(tmp == "black") {
-            color = Color::black;
-        } else if(tmp == "white") {
-            color = Color::white;
-        } else if(tmp == "red") {
-            color = Color::red;
-        } else if(tmp == "darkRed") {
-            color = Color::darkRed;
-        } else if(tmp == "green") {
-            color = Color::green;
-        } else if(tmp == "darkGreen") {
-            color = Color::darkGreen;
-        } else if(tmp == "blue") {
-            color = Color::blue;
-        } else if(tmp == "darkBlue") {
-            color = Color::darkBlue;
-        } else if(tmp == "pink") {
-            color = Color::pink;
-        } else if(tmp == "darkPink") {
-            color = Color::darkPink;
-        } else if(tmp == "yellow") {
-            color = Color::yellow;
-        } else if(tmp == "darkYellow") {
-            color = Color::darkYellow;
-        } else if(tmp == "teal") {
-            color = Color::teal;
-        } else if(tmp == "darkTeal") {
-            color = Color::darkTeal;
-        } else if(tmp == "gray") {
-            color = Color::gray;
-        } else if(tmp == "darkGray") {
-            color = Color::darkGray;
-        } else if(tmp == "lightGray") {
-            color = Color::lightGray;
-        } else if(tmp == "orange") {
-            color = Color::orange;
-        } else {
-            in.seekg(-tmp.length(), std::ios_base::cur);
-        }
-    }
-    return in;
-}
+std::ostream& operator<<(std::ostream& out, const Color& color);
+std::istream& operator>>(std::istream& in, Color& color);
 
 #endif
