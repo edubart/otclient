@@ -57,7 +57,9 @@ function init()
 
     g_keyboard.bindKeyDown('Ctrl+Shift+T', toggle)
 
-    if g_game.isOnline() then online() end
+    if g_game.isOnline() then
+        online()
+    end
 end
 
 function terminate()
@@ -92,11 +94,19 @@ function offline()
 end
 
 function updateFps(fps)
+    if not fpsLabel:isVisible() then
+        return
+    end
+
     text = 'FPS: ' .. fps
     fpsLabel:setText(text)
 end
 
 function updatePing(ping)
+    if not pingLabel:isVisible() then
+        return
+    end
+
     local text = 'Ping: '
     local color
     if ping < 0 then
@@ -116,9 +126,13 @@ function updatePing(ping)
     pingLabel:setText(text)
 end
 
-function setPingVisible(enable) pingLabel:setVisible(enable) end
+function setPingVisible(enable)
+    pingLabel:setVisible(enable)
+end
 
-function setFpsVisible(enable) fpsLabel:setVisible(enable) end
+function setFpsVisible(enable)
+    fpsLabel:setVisible(enable)
+end
 
 function addLeftButton(id, description, icon, callback, front)
     return addButton(id, description, icon, callback, leftButtonsPanel, false, front)
@@ -162,13 +176,19 @@ function hideGameButtons()
     rightGameButtonsPanel:hide()
 end
 
-function getButton(id) return topMenu:recursiveGetChildById(id) end
+function getButton(id)
+    return topMenu:recursiveGetChildById(id)
+end
 
-function getTopMenu() return topMenu end
+function getTopMenu()
+    return topMenu
+end
 
 function toggle()
     local menu = getTopMenu()
-    if not menu then return end
+    if not menu then
+        return
+    end
 
     if menu:isVisible() then
         menu:hide()
