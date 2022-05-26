@@ -127,7 +127,10 @@ void UITextEdit::update(bool focusCursor)
     if (!m_updatesEnabled)
         return;
 
-    const std::string text = getDisplayedText();
+    std::string text = getDisplayedText();
+    if (m_text.ends_with(" "))
+        text += " ";
+
     m_drawText = text;
     const int textLength = text.length();
 
