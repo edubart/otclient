@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#pragma once
 
 #include <asio/streambuf.hpp>
 
@@ -98,5 +97,3 @@ protected:
 
     friend class Server;
 };
-
-#endif

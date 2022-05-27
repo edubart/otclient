@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OGGSOUNDFILE_H
-#define OGGSOUNDFILE_H
+#pragma once
 
 #include "soundfile.h"
 
@@ -46,5 +45,3 @@ private:
 
     OggVorbis_File m_vorbisFile;
 };
-
-#endif

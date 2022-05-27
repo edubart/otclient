@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OUTFIT_H
-#define OUTFIT_H
+#pragma once
 
 #include "thingtypemanager.h"
 #include <framework/util/color.h>
@@ -86,5 +85,3 @@ private:
     int m_id{ 1 }, m_auxId{ 0 }, m_head{ 0 }, m_body{ 0 }, m_legs{ 0 }, m_feet{ 0 }, m_addons{ 0 }, m_mount{ 0 };
     Color m_headColor, m_bodyColor, m_legsColor, m_feetColor;
 };
-
-#endif

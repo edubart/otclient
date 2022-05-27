@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTUREMANAGER_H
-#define TEXTUREMANAGER_H
+#pragma once
 
 #include "texture.h"
 #include <framework/core/declarations.h>
@@ -50,5 +49,3 @@ private:
 };
 
 extern TextureManager g_textures;
-
-#endif

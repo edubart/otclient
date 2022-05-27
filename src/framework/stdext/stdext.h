@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_H
-#define STDEXT_H
+#pragma once
 
 #include <cmath>
 #include <cstring>
@@ -41,5 +40,3 @@
 #include "string.h"
 #include "time.h"
 #include "types.h"
-
-#endif

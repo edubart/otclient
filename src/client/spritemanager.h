@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SPRITEMANAGER_H
-#define SPRITEMANAGER_H
+#pragma once
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
@@ -66,5 +65,3 @@ private:
 };
 
 extern SpriteManager g_sprites;
-
-#endif

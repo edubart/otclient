@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLEAFFECTOR_H
-#define PARTICLEAFFECTOR_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/otml/otml.h>
@@ -64,5 +63,3 @@ private:
     float m_acceleration, m_reduction;
     bool m_repelish;
 };
-
-#endif

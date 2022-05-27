@@ -20,13 +20,10 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_GLOBAL_H
-#define CLIENT_GLOBAL_H
+#pragma once
 
 #include <framework/global.h>
 
  // widely used headers
 #include "const.h"
 #include "position.h"
-
-#endif

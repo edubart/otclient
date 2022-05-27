@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef TOWNS_H
-#define TOWNS_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
@@ -69,5 +68,3 @@ protected:
 };
 
 extern TownManager g_towns;
-
-#endif

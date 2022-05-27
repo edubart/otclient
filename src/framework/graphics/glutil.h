@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef GLUTIL_H
-#define GLUTIL_H
+#pragma once
 
 #if OPENGL_ES==2
 #include <GLES2/gl2.h>
@@ -106,6 +105,4 @@ inline void glDisableVertexAttribArray(GLuint index) {}
 #define GLEW_STATIC
 #endif
 #include <GL/glew.h>
-#endif
-
 #endif

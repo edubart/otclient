@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIPARTICLES_H
-#define UIPARTICLES_H
+#pragma once
 
 #include <framework/ui/uiwidget.h>
 
@@ -43,5 +42,3 @@ private:
     std::vector<ParticleEffectPtr> m_effects;
     PointF m_referencePos;
 };
-
-#endif

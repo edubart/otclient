@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef APNGLOADER_H
-#define APNGLOADER_H
+#pragma once
 
 #include <sstream>
 
@@ -43,5 +42,3 @@ struct apng_data
 int load_apng(std::stringstream& file, apng_data* apng);
 void save_png(std::stringstream& file, unsigned int width, unsigned int height, int channels, unsigned char* pixels);
 void free_apng(apng_data* apng);
-
-#endif

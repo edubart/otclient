@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTER_H
-#define PAINTER_H
+#pragma once
 
 #include <framework/graphics/coordsbuffer.h>
 #include <framework/graphics/declarations.h>
@@ -153,5 +152,3 @@ protected:
 };
 
 extern Painter* g_painter;
-
-#endif

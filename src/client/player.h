@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#pragma once
 
 #include "creature.h"
 
@@ -35,5 +34,3 @@ public:
     PlayerPtr asPlayer() { return static_self_cast<Player>(); }
     bool isPlayer() override { return true; }
 };
-
-#endif

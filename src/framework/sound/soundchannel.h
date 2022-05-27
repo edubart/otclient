@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHOUNDCHANNEL_H
-#define SHOUNDCHANNEL_H
+#pragma once
 
 #include "soundsource.h"
 
@@ -63,5 +62,3 @@ private:
     int m_id;
     float m_gain;
 };
-
-#endif

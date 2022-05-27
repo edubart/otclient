@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
 #include "declarations.h"
 
@@ -48,5 +47,3 @@ private:
     uint m_shaderId;
     ShaderType m_shaderType;
 };
-
-#endif

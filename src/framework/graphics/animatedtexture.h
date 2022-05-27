@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef ANIMATEDTEXTURE_H
-#define ANIMATEDTEXTURE_H
+#pragma once
 
 #include "texture.h"
 #include <framework/core/timer.h>
@@ -47,5 +46,3 @@ private:
     uint m_currentFrame;
     Timer m_animTimer;
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LUAOBJECT_H
-#define LUAOBJECT_H
+#pragma once
 
 #include "declarations.h"
 
@@ -211,5 +210,3 @@ T LuaObject::getLuaField(const std::string& key)
     luaGetField(key);
     return g_lua.polymorphicPop<T>();
 }
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHADERPROGRAM_H
-#define SHADERPROGRAM_H
+#pragma once
 
 #include <GL/glew.h>
 #include <framework/luaengine/luaobject.h>
@@ -97,5 +96,3 @@ private:
     ShaderList m_shaders;
     std::array<int, MAX_UNIFORM_LOCATIONS> m_uniformLocations;
 };
-
-#endif

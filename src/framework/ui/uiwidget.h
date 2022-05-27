@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIWIDGET_H
-#define UIWIDGET_H
+#pragma once
 
 #include "declarations.h"
 #include "uilayout.h"
@@ -510,5 +509,3 @@ public:
     std::string getFont() { return m_font->getName(); }
     Size getTextSize() { return m_font->calculateTextRectSize(m_drawText); }
 };
-
-#endif

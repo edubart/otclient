@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef WIN32WINDOW_H
-#define WIN32WINDOW_H
+#pragma once
 
 #include "platformwindow.h"
 
@@ -113,5 +112,3 @@ private:
     HGLRC m_wglContext;
 #endif
 };
-
-#endif

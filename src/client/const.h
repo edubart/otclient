@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_CONST_H
-#define CLIENT_CONST_H
+#pragma once
 
 #include <cstdint>
 
@@ -568,5 +567,3 @@ namespace Otc
         RESOURCE_DAILYREWARD_JOKERS = 21,
     };
 }
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef EFFECT_H
-#define EFFECT_H
+#pragma once
 
 #include "thing.h"
 #include <framework/core/timer.h>
@@ -55,5 +54,3 @@ private:
     int m_duration;
     int m_timeToStartDrawing{ 0 };
 };
-
-#endif

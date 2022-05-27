@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_EXCEPTION_H
-#define STDEXT_EXCEPTION_H
+#pragma once
 
 #include <exception>
 #include <string>
@@ -42,5 +41,3 @@ namespace stdext
     /// Throws a generic exception
     inline void throw_exception(const std::string& what) { throw exception(what); }
 }
-
-#endif

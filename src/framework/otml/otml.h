@@ -20,10 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTML_H
-#define OTML_H
+#pragma once
 
 #include "otmldocument.h"
 #include "otmlnode.h"
-
-#endif

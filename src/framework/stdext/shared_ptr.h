@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_SHARED_PTR_H
-#define STDEXT_SHARED_PTR_H
+#pragma once
 
 #include <cassert>
 #include <functional>
@@ -238,5 +237,3 @@ namespace std
     template<class T> void swap(stdext::shared_ptr<T>& lhs, stdext::shared_ptr<T>& rhs) { lhs.swap(rhs); }
     template<class T> void swap(stdext::weak_ptr<T>& lhs, stdext::weak_ptr<T>& rhs) { lhs.swap(rhs); }
 }
-
-#endif

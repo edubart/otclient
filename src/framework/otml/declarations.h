@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_OTML_DECLARATIONS_H
-#define FRAMEWORK_OTML_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -33,5 +32,3 @@ class OTMLEmitter;
 using OTMLNodePtr = stdext::shared_object_ptr<OTMLNode>;
 using OTMLDocumentPtr = stdext::shared_object_ptr<OTMLDocument>;
 using OTMLNodeList = std::vector<OTMLNodePtr>;
-
-#endif

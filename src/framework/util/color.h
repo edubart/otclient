@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef COLOR_H
-#define COLOR_H
+#pragma once
 
 #include "../stdext/cast.h"
 #include "../stdext/string.h"
@@ -210,5 +209,3 @@ inline std::istream& operator>>(std::istream& in, Color& color)
 
     return in;
 }
-
-#endif

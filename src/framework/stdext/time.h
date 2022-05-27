@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_TIME_H
-#define STDEXT_TIME_H
+#pragma once
 
 #include "types.h"
 
@@ -46,5 +45,3 @@ namespace stdext
         ticks_t m_start;
     };
 }
-
-#endif

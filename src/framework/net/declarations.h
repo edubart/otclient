@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_NET_DECLARATIONS_H
-#define FRAMEWORK_NET_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 #include <asio/ip/tcp.hpp>
@@ -41,5 +40,3 @@ using ConnectionPtr = stdext::shared_object_ptr<Connection>;
 using ProtocolPtr = stdext::shared_object_ptr<Protocol>;
 using ProtocolHttpPtr = stdext::shared_object_ptr<ProtocolHttp>;
 using ServerPtr = stdext::shared_object_ptr<Server>;
-
-#endif

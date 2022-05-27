@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#pragma once
 
 #include "declarations.h"
 
@@ -44,5 +43,3 @@ private:
 };
 
 extern Clock g_clock;
-
-#endif

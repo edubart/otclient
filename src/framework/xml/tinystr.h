@@ -23,8 +23,7 @@ distribution.
 
 #ifndef TIXML_USE_STL
 
-#ifndef TIXML_STRING_INCLUDED
-#define TIXML_STRING_INCLUDED
+#pragma once
 
 #include <cassert>
 #include <cstring>
@@ -285,5 +284,4 @@ public:
     }
 };
 
-#endif    // TIXML_STRING_INCLUDED
 #endif    // TIXML_USE_STL

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LUAINTERFACE_H
-#define LUAINTERFACE_H
+#pragma once
 
 #include "declarations.h"
 
@@ -481,5 +480,3 @@ R LuaInterface::callGlobalField(const std::string& global, const std::string& fi
         result = R();
     return result;
 }
-
-#endif

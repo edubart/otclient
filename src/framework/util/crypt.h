@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CRYPT_H
-#define CRYPT_H
+#pragma once
 
 #include <string>
 
@@ -69,5 +68,3 @@ private:
 };
 
 extern Crypt g_crypt;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_TRAITS_H
-#define STDEXT_TRAITS_H
+#pragma once
 
 #include <type_traits>
 
@@ -44,5 +43,3 @@ namespace stdext
         using type = std::remove_const_t<std::remove_reference_t<T>>;
     };
 };
-
-#endif

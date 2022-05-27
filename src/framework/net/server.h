@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SERVER_H
-#define SERVER_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
@@ -40,5 +39,3 @@ private:
     bool m_isOpen{ true };
     asio::ip::tcp::acceptor m_acceptor;
 };
-
-#endif

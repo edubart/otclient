@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#pragma once
 
 #include "connection.h"
 #include "declarations.h"
@@ -78,5 +77,3 @@ private:
     ConnectionPtr m_connection;
     InputMessagePtr m_inputMessage;
 };
-
-#endif

@@ -20,10 +20,9 @@
  * THE SOFTWARE.
  */
 
-#ifndef PCH_H
-#define PCH_H
+#pragma once
 
- // common C headers
+// common C headers
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -47,5 +46,3 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-
-#endif

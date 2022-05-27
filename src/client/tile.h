@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef TILE_H
-#define TILE_H
+#pragma once
 
 #include "declarations.h"
 #include "effect.h"
@@ -214,5 +213,3 @@ private:
         m_completelyCovered{ false },
         m_ignoreCompletelyCoveredCheck{ false };
 };
-
-#endif

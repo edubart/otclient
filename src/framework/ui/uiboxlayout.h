@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIBOXLAYOUT_H
-#define UIBOXLAYOUT_H
+#pragma once
 
 #include "uilayout.h"
 
@@ -44,5 +43,3 @@ protected:
     bool m_fitChildren{ false };
     int m_spacing;
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLEXCEPTION_H
-#define OTMLEXCEPTION_H
+#pragma once
 
 #include "declarations.h"
 
@@ -38,5 +37,3 @@ public:
 protected:
     std::string m_what;
 };
-
-#endif

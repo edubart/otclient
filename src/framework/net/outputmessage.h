@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OUTPUTMESSAGE_H
-#define OUTPUTMESSAGE_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
@@ -78,5 +77,3 @@ private:
     uint16 m_messageSize;
     uint8 m_buffer[BUFFER_MAXSIZE];
 };
-
-#endif

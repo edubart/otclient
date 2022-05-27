@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef INPUTEVENT_H
-#define INPUTEVENT_H
+#pragma once
 
 #include "declarations.h"
 
@@ -54,5 +53,3 @@ struct InputEvent
     Point mouseMoved;
     int autoRepeatTicks;
 };
-
-#endif

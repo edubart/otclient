@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_MATH_H
-#define STDEXT_MATH_H
+#pragma once
 
 #include "types.h"
 
@@ -50,5 +49,3 @@ namespace stdext
     int random_range(int min, int max);
     float random_range(float min, float max);
 }
-
-#endif

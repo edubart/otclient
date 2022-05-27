@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LOCALPLAYER_H
-#define LOCALPLAYER_H
+#pragma once
 
 #include "player.h"
 
@@ -169,5 +168,3 @@ private:
     double m_regenerationTime{ -1 };
     double m_offlineTrainingTime{ -1 };
 };
-
-#endif

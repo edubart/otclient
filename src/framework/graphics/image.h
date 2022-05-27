@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef IMAGE_H
-#define IMAGE_H
+#pragma once
 
 #include "declarations.h"
 
@@ -67,5 +66,3 @@ private:
     int m_bpp;
     bool m_transparentPixel{ false };
 };
-
-#endif

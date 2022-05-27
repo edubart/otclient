@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef COORDSBUFFER_H
-#define COORDSBUFFER_H
+#pragma once
 
 #include "vertexarray.h"
 
@@ -78,5 +77,3 @@ private:
     VertexArray m_vertexArray;
     VertexArray m_textureCoordArray;
 };
-
-#endif

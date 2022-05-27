@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTEROGL1_H
-#define PAINTEROGL1_H
+#pragma once
 
 #define PAINTER_OGL1
 
@@ -74,5 +73,3 @@ private:
 };
 
 extern PainterOGL1* g_painterOGL1;
-
-#endif

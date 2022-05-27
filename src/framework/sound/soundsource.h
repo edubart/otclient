@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SOUNDSOURCE_H
-#define SOUNDSOURCE_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/luaengine/luaobject.h>
@@ -75,5 +74,3 @@ protected:
     float m_fadeGain;
     float m_gain;
 };
-
-#endif

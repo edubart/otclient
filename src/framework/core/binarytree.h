@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef BINARYTREE_H
-#define BINARYTREE_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/util/databuffer.h>
@@ -85,5 +84,3 @@ private:
 protected:
     void write(const uint8* data, size_t size);
 };
-
-#endif

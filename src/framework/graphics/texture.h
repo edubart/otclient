@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef TEXTURE_H
-#define TEXTURE_H
+#pragma once
 
 #include "declarations.h"
 
@@ -87,5 +86,3 @@ protected:
         m_compress{ false },
         m_buildMipmaps{ false };
 };
-
-#endif

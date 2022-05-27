@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SPRITEAPPEARANCES_H
-#define SPRITEAPPEARANCES_H
+#pragma once
 
 #include <framework/core/declarations.h>
 #include <framework/graphics/declarations.h>
@@ -97,5 +96,3 @@ private:
 };
 
 extern SpriteAppearances g_spriteAppearances;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTEROGL2_SHADERSOURCES_H
-#define PAINTEROGL2_SHADERSOURCES_H
+#pragma once
 
 static const std::string glslMainVertexShader = "\n\
     highp vec4 calculatePosition();\n\
@@ -70,5 +69,3 @@ static const std::string glslSolidColorFragmentShader = "\n\
     lowp vec4 calculatePixel() {\n\
         return u_Color;\n\
     }\n";
-
-#endif

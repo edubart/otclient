@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CREATURE_H
-#define CREATURE_H
+#pragma once
 
 #include "mapview.h"
 #include "outfit.h"
@@ -257,5 +256,3 @@ class Monster : public Creature
 public:
     bool isMonster() override { return true; }
 };
-
-#endif

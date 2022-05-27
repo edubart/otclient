@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PLATFORMWINDOW_H
-#define PLATFORMWINDOW_H
+#pragma once
 
 #include <framework/core/inputevent.h>
 #include <framework/core/timer.h>
@@ -130,5 +129,3 @@ protected:
 };
 
 extern PlatformWindow& g_window;
-
-#endif

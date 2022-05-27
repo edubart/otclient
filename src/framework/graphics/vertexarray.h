@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef VERTEXARRAY_H
-#define VERTEXARRAY_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/util/databuffer.h>
@@ -105,5 +104,3 @@ public:
 private:
     DataBuffer<float> m_buffer;
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_LUA_DECLARATIONS_H
-#define FRAMEWORK_LUA_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -31,5 +30,3 @@ class LuaObject;
 using LuaCppFunction = std::function<int(LuaInterface*)>;
 using LuaCppFunctionPtr = std::unique_ptr<LuaCppFunction>;
 using LuaObjectPtr = stdext::shared_object_ptr<LuaObject>;
-
-#endif

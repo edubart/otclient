@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef ASYNCDISPATCHER_H
-#define ASYNCDISPATCHER_H
+#pragma once
 
 #include <future>
 #include <list>
@@ -64,5 +63,3 @@ private:
 };
 
 extern AsyncDispatcher g_asyncDispatcher;
-
-#endif

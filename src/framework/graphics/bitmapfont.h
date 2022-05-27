@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef BITMAPFONT_H
-#define BITMAPFONT_H
+#pragma once
 
 #include "declarations.h"
 
@@ -76,5 +75,3 @@ private:
     Rect m_glyphsTextureCoords[256];
     Size m_glyphsSize[256];
 };
-
-#endif

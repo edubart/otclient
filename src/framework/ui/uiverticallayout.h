@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIVERTICALLAYOUT_H
-#define UIVERTICALLAYOUT_H
+#pragma once
 
 #include <utility>
 
@@ -45,5 +44,3 @@ protected:
 
     bool m_alignBottom{ false };
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_LUAVALUECASTS_H
-#define CLIENT_LUAVALUECASTS_H
+#pragma once
 
 #include "game.h"
 #include "outfit.h"
@@ -45,5 +44,3 @@ bool luavalue_cast(int index, Light& light);
 // unjustified points
 int push_luavalue(const UnjustifiedPoints& unjustifiedPoints);
 bool luavalue_cast(int index, UnjustifiedPoints& unjustifiedPoints);
-
-#endif

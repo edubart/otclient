@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_TYPES_H
-#define STDEXT_TYPES_H
+#pragma once
 
 #include <any>
 #include <cstddef>
@@ -92,5 +91,3 @@ public:
 private:
     std::unordered_map<Key, std::any> m_data;
 };
-
-#endif

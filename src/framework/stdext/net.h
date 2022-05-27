@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_NET_H
-#define STDEXT_NET_H
+#pragma once
 
 #include "types.h"
 #include <string>
@@ -33,5 +32,3 @@ namespace stdext
     uint32 string_to_ip(const std::string& string);
     std::vector<uint32> listSubnetAddresses(uint32 address, uint8 mask);
 }
-
-#endif

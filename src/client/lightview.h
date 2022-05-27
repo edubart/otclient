@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LIGHTVIEW_H
-#define LIGHTVIEW_H
+#pragma once
 
 #include "declarations.h"
 #include "thingtype.h"
@@ -63,5 +62,3 @@ private:
 
     std::vector<Source> m_sources;
 };
-
-#endif

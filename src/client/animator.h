@@ -20,8 +20,7 @@
 * THE SOFTWARE.
 */
 
-#ifndef ANIMATOR_H
-#define ANIMATOR_H
+#pragma once
 
 #include "declarations.h"
 
@@ -86,5 +85,3 @@ private:
     AnimationDirection m_currentDirection{ AnimDirForward };
     ticks_t m_lastPhaseTicks{ 0 };
 };
-
-#endif

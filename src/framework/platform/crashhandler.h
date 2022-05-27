@@ -20,11 +20,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef CRASHHANDLER_H
-#define CRASHHANDLER_H
+#pragma once
 
 #ifdef CRASH_HANDLER
 void installCrashHandler();
-#endif
-
 #endif

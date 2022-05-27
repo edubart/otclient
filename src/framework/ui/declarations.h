@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_UI_DECLARATIONS_H
-#define FRAMEWORK_UI_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -52,5 +51,3 @@ using UIAnchorLayoutPtr = stdext::shared_object_ptr<UIAnchorLayout>;
 
 using UIWidgetList = std::deque<UIWidgetPtr>;
 using UIAnchorList = std::vector<UIAnchorPtr>;
-
-#endif

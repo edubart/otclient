@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_FORMAT_H
-#define STDEXT_FORMAT_H
+#pragma once
 
 #include "traits.h"
 
@@ -69,7 +68,7 @@ namespace stdext
             return snprintf(s, maxlen, format, args...);
         #endif
         }
-    };
+        };
 
     // Improved snprintf that accepts std::string and other types
     template<typename... Args>
@@ -105,6 +104,4 @@ namespace stdext
         buffer.resize(n);
         return buffer;
     }
-}
-
-#endif
+    }

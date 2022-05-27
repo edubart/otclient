@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UICREATURE_H
-#define UICREATURE_H
+#pragma once
 
 #include "creature.h"
 #include "declarations.h"
@@ -45,5 +44,3 @@ protected:
     CreaturePtr m_creature;
     bool m_fixedCreatureSize{ false };
 };
-
-#endif

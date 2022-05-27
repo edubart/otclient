@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CREATURES_H
-#define CREATURES_H
+#pragma once
 
 #include <framework/luaengine/luaobject.h>
 #include <framework/xml/tinyxml.h>
@@ -145,5 +144,3 @@ private:
 };
 
 extern CreatureManager g_creatures;
-
-#endif

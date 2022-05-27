@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LUAVALUECASTS_H
-#define LUAVALUECASTS_H
+#pragma once
 
  // this file is and must be included only from luainterface.h
 
@@ -492,5 +491,3 @@ int push_luavalue(const std::tuple<Args...>& tuple)
     push_tuple_luavalue<sizeof...(Args)>::call(tuple);
     return sizeof...(Args);
 }
-
-#endif

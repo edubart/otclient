@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_GRAPHICS_DECLARATIONS_H
-#define FRAMEWORK_GRAPHICS_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -69,5 +68,3 @@ using ShaderList = std::vector<ShaderPtr>;
 
 using PoolPtr = std::shared_ptr<Pool>;
 using PoolFramedPtr = std::shared_ptr<PoolFramed>;
-
-#endif

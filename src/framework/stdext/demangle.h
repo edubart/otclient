@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_DEMANGLE_H
-#define STDEXT_DEMANGLE_H
+#pragma once
 
 #include <string>
 #include <typeinfo>
@@ -43,6 +42,4 @@ namespace stdext
 
     /// Returns the name of a type
     template<typename T> std::string demangle_type() { return demangle_name(typeid(T).name()); }
-}
-
-#endif
+    }

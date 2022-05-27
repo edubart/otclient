@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLE_H
-#define PARTICLE_H
+#pragma once
 
 #include "declarations.h"
 #include "painter.h"
@@ -61,5 +60,3 @@ private:
     float m_elapsedTime;
     bool m_finished;
 };
-
-#endif

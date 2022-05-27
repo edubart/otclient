@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENTDISPATCHER_H
-#define EVENTDISPATCHER_H
+#pragma once
 
 #include "clock.h"
 #include "scheduledevent.h"
@@ -47,5 +46,3 @@ private:
 };
 
 extern EventDispatcher g_dispatcher;
-
-#endif

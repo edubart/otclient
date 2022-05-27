@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 #include <framework/luaengine/luaobject.h>
 
@@ -43,5 +42,3 @@ protected:
     bool m_canceled;
     bool m_executed;
 };
-
-#endif

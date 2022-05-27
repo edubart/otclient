@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONFIGMANAGER_H
-#define CONFIGMANAGER_H
+#pragma once
 
 #include "config.h"
 
@@ -50,5 +49,3 @@ private:
 };
 
 extern ConfigManager g_configs;
-
-#endif

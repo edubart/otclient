@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef HOUSES_H
-#define HOUSES_H
+#pragma once
 
 #include "declarations.h"
 #include "tile.h"
@@ -110,5 +109,3 @@ protected:
 };
 
 extern HouseManager g_houses;
-
-#endif

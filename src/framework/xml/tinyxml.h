@@ -22,8 +22,7 @@ must not be misrepresented as being the original software.
 distribution.
 */
 
-#ifndef TINYXML_INCLUDED
-#define TINYXML_INCLUDED
+#pragma once
 
 #define TIXML_USE_STL // use STL strings instead
 
@@ -1706,6 +1705,4 @@ private:
 
 #ifdef _MSC_VER
 #pragma warning( pop )
-#endif
-
 #endif

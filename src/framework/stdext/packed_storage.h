@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_PACKEDSTORAGE_H
-#define STDEXT_PACKEDSTORAGE_H
+#pragma once
 
 #include "packed_any.h"
 #include "types.h"
@@ -115,5 +114,3 @@ namespace stdext
     // restore memory alignment
 #pragma pack(pop)
 }
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_CONST_H
-#define FRAMEWORK_CONST_H
+#pragma once
 
 #define DEG_TO_RAD (std::acos(-1.f)/180.f)
 #define RAD_TO_DEC (180.f/std::acos(-1.f))
@@ -300,5 +299,3 @@ namespace Fw
         BothPanes = 3
     };
 }
-
-#endif

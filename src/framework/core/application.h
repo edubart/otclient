@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -76,6 +75,4 @@ protected:
 #include "graphicalapplication.h"
 #else
 #include "consoleapplication.h"
-#endif
-
 #endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_HASH_H
-#define STDEXT_HASH_H
+#pragma once
 
 namespace stdext
 {
@@ -32,5 +31,3 @@ namespace stdext
         seed ^= hasher(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
 }
-
-#endif

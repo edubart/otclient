@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PAINTEROGL_H
-#define PAINTEROGL_H
+#pragma once
 
 #include <framework/graphics/painter.h>
 
@@ -103,5 +102,3 @@ protected:
 
     uint m_glTextureId;
 };
-
-#endif

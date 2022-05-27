@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LUABINDER_H
-#define LUABINDER_H
+#pragma once
 
  // this file is and must be included only from luainterface.h
 #include "luaexception.h"
@@ -232,5 +231,3 @@ namespace luabinder
         };
     }
 }
-
-#endif

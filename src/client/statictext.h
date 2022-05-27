@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STATICTEXT_H
-#define STATICTEXT_H
+#pragma once
 
 #include "thing.h"
 #include <framework/graphics/cachedtext.h>
@@ -63,5 +62,3 @@ private:
     CachedText m_cachedText;
     ScheduledEventPtr m_updateEvent;
 };
-
-#endif

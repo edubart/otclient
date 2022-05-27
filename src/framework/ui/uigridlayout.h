@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIGRIDLAYOUT_H
-#define UIGRIDLAYOUT_H
+#pragma once
 
 #include "uilayout.h"
 
@@ -64,5 +63,3 @@ private:
         m_fitChildren{ false },
         m_flow{ false };
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIANCHORLAYOUT_H
-#define UIANCHORLAYOUT_H
+#pragma once
 
 #include <utility>
 
@@ -84,5 +83,3 @@ protected:
     virtual bool updateWidget(const UIWidgetPtr& widget, const UIAnchorGroupPtr& anchorGroup, UIWidgetPtr first = nullptr);
     std::unordered_map<UIWidgetPtr, UIAnchorGroupPtr> m_anchorsGroups;
 };
-
-#endif

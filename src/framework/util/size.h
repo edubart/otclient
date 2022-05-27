@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SIZE_H
-#define SIZE_H
+#pragma once
 
 #include "../const.h"
 #include "point.h"
@@ -135,5 +134,3 @@ std::istream& operator>>(std::istream& in, TSize<T>& size)
     size.resize(w, h);
     return in;
 }
-
-#endif

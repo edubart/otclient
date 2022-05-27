@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_SOUND_DECLARATIONS_H
-#define FRAMEWORK_SOUND_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -51,5 +50,3 @@ using SoundChannelPtr = stdext::shared_object_ptr<SoundChannel>;
 using StreamSoundSourcePtr = stdext::shared_object_ptr<StreamSoundSource>;
 using CombinedSoundSourcePtr = stdext::shared_object_ptr<CombinedSoundSource>;
 using OggSoundFilePtr = stdext::shared_object_ptr<OggSoundFile>;
-
-#endif

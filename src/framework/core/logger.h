@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once
 
 #include "../global.h"
 
@@ -96,5 +95,3 @@ extern Logger g_logger;
         __timer.restart(); \
     } \
 }
-
-#endif

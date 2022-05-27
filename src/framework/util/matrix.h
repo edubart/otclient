@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#pragma once
 
 #include <initializer_list>
 
@@ -249,5 +248,3 @@ using Matrix2x2 = Matrix<2, 2>;
 using Matrix4 = Matrix4x4;
 using Matrix3 = Matrix3x3;
 using Matrix2 = Matrix2x2;
-
-#endif

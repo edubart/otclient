@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIMAPANCHORLAYOUT_H
-#define UIMAPANCHORLAYOUT_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/ui/uianchorlayout.h>
@@ -54,5 +53,3 @@ public:
 
 protected:
 };
-
-#endif

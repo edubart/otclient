@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef RECT_H
-#define RECT_H
+#pragma once
 
 #include "../const.h"
 
@@ -344,5 +343,3 @@ std::istream& operator>>(std::istream& in, TRect<T>& rect)
     rect.setRect(x, y, w, h);
     return in;
 }
-
-#endif

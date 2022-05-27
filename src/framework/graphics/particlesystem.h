@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLESYSTEM_H
-#define PARTICLESYSTEM_H
+#pragma once
 
 #include "declarations.h"
 #include "particleemitter.h"
@@ -47,5 +46,3 @@ private:
     std::list<ParticleEmitterPtr> m_emitters;
     std::list<ParticleAffectorPtr> m_affectors;
 };
-
-#endif

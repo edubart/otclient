@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef MAP_H
-#define MAP_H
+#pragma once
 
 #include "animatedtext.h"
 #include "creatures.h"
@@ -302,5 +301,3 @@ private:
 };
 
 extern Map g_map;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SOUNDMANAGER_H
-#define SOUNDMANAGER_H
+#pragma once
 
 #include "declarations.h"
 #include "soundchannel.h"
@@ -67,5 +66,3 @@ private:
 };
 
 extern SoundManager g_sounds;
-
-#endif

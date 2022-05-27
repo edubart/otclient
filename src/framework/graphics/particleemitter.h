@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLEEMITTER_H
-#define PARTICLEEMITTER_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/global.h>
@@ -48,5 +47,3 @@ private:
     int m_currentBurst, m_burstCount;
     ParticleTypePtr m_particleType;
 };
-
-#endif

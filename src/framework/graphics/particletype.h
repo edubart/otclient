@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLETYPE_H
-#define PARTICLETYPE_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/graphics/painter.h>
@@ -68,5 +67,3 @@ protected:
 
     friend class ParticleEmitter;
 };
-
-#endif

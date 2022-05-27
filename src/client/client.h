@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_H
-#define CLIENT_H
+#pragma once
 
 #include "global.h"
 
@@ -34,5 +33,3 @@ public:
 };
 
 extern Client g_client;
-
-#endif

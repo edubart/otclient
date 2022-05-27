@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_STRING_H
-#define STDEXT_STRING_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -72,5 +71,3 @@ namespace stdext
         return results;
     }
 }
-
-#endif

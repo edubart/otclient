@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UI_H
-#define UI_H
+#pragma once
 
 #include "uianchorlayout.h"
 #include "uigridlayout.h"
@@ -32,5 +31,3 @@
 #include "uitextedit.h"
 #include "uiverticallayout.h"
 #include "uiwidget.h"
-
-#endif

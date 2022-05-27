@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef LUAEXCEPTION_H
-#define LUAEXCEPTION_H
+#pragma once
 
 #include "declarations.h"
 
@@ -52,5 +51,3 @@ class LuaBadValueCastException : public LuaException
 public:
     LuaBadValueCastException(const std::string& luaTypeName, const std::string& cppTypeName);
 };
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIHORIZONTALLAYOUT_H
-#define UIHORIZONTALLAYOUT_H
+#pragma once
 
 #include <utility>
 
@@ -44,5 +43,3 @@ protected:
     Fw::AlignmentFlag m_alignChidren;
     bool m_alignRight{ false };
 };
-
-#endif

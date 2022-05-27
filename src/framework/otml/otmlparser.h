@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLPARSER_H
-#define OTMLPARSER_H
+#pragma once
 
 #include "declarations.h"
 
@@ -52,5 +51,3 @@ private:
     OTMLNodePtr previousNode;
     std::istream& in;
 };
-
-#endif

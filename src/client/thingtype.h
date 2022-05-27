@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef THINGTYPE_H
-#define THINGTYPE_H
+#pragma once
 
 #include "animator.h"
 #include "declarations.h"
@@ -278,5 +277,3 @@ private:
     std::vector<std::vector<Rect>> m_texturesFramesOriginRects;
     std::vector<std::vector<Point>> m_texturesFramesOffsets;
 };
-
-#endif

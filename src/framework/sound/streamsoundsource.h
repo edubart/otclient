@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STREAMSOUNDSOURCE_H
-#define STREAMSOUNDSOURCE_H
+#pragma once
 
 #include "soundsource.h"
 
@@ -64,5 +63,3 @@ private:
         m_eof{ false },
         m_waitingFile{ false };
 };
-
-#endif

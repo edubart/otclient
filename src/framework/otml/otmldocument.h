@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLDOCUMENT_H
-#define OTMLDOCUMENT_H
+#pragma once
 
 #include "otmlnode.h"
 
@@ -49,5 +48,3 @@ public:
 private:
     OTMLDocument() = default;
 };
-
-#endif

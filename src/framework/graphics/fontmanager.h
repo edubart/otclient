@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FONTMANAGER_H
-#define FONTMANAGER_H
+#pragma once
 
 #include "bitmapfont.h"
 
@@ -48,5 +47,3 @@ private:
 };
 
 extern FontManager g_fonts;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include "animatedtext.h"
 #include "container.h"
@@ -403,5 +402,3 @@ private:
 };
 
 extern Game g_game;
-
-#endif

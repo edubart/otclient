@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_GLOBAL_H
-#define FRAMEWORK_GLOBAL_H
+#pragma once
 
 #include <client/config.h>
 
@@ -45,5 +44,3 @@
 
 // logger
 #include "core/logger.h"
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHADERMANAGER_H
-#define SHADERMANAGER_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/graphics/paintershaderprogram.h>
@@ -74,5 +73,3 @@ private:
 };
 
 extern ShaderManager g_shaders;
-
-#endif

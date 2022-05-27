@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SHOT_H
-#define SHOT_H
+#pragma once
 
 #include "thing.h"
 #include <framework/core/timer.h>
@@ -52,5 +51,3 @@ private:
     uint16 m_id;
     Otc::Direction m_direction;
 };
-
-#endif

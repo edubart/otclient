@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef OTMLNODE_H
-#define OTMLNODE_H
+#pragma once
 
 #include "declarations.h"
 
@@ -181,5 +180,3 @@ void OTMLNode::writeIn(const T& v)
     child->write<T>(v);
     addChild(child);
 }
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SCHEDULEDEVENT_H
-#define SCHEDULEDEVENT_H
+#pragma once
 
 #include "clock.h"
 #include "event.h"
@@ -54,5 +53,3 @@ private:
     int m_maxCycles;
     int m_cyclesExecuted;
 };
-
-#endif

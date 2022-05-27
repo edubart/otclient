@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_CAST_H
-#define STDEXT_CAST_H
+#pragma once
 
 #include "demangle.h"
 #include "exception.h"
@@ -188,5 +187,3 @@ namespace stdext
         }
     }
 }
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_SHARED_OBJECT_H
-#define STDEXT_SHARED_OBJECT_H
+#pragma once
 
 #include <cassert>
 #include <functional>
@@ -142,5 +141,3 @@ namespace std
     // swap support
     template<class T> void swap(stdext::shared_object_ptr<T>& lhs, stdext::shared_object_ptr<T>& rhs) { lhs.swap(rhs); }
 }
-
-#endif

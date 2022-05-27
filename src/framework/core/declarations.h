@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEWORK_CORE_DECLARATIONS_H
-#define FRAMEWORK_CORE_DECLARATIONS_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -45,5 +44,3 @@ using BinaryTreePtr = stdext::shared_object_ptr<BinaryTree>;
 using OutputBinaryTreePtr = stdext::shared_object_ptr<OutputBinaryTree>;
 
 using BinaryTreeVec = std::vector<BinaryTreePtr>;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PROTOCOLHTTP_H
-#define PROTOCOLHTTP_H
+#pragma once
 
 #include "declarations.h"
 
@@ -50,5 +49,3 @@ protected:
 private:
     ConnectionPtr m_connection;
 };
-
-#endif

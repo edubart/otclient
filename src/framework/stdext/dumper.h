@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_DUMPER_H
-#define STDEXT_DUMPER_H
+#pragma once
 
 #include <iostream>
 
@@ -39,5 +38,3 @@ namespace stdext
 }
 
 using stdext::dump;
-
-#endif

@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef DATABUFFER_H
-#define DATABUFFER_H
+#pragma once
 
 template<class T>
 class DataBuffer
@@ -98,5 +97,3 @@ private:
     unsigned int m_capacity;
     T* m_buffer;
 };
-
-#endif

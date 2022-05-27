@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef RESOURCES_H
-#define RESOURCES_H
+#pragma once
 
 #include "declarations.h"
 #include <filesystem>
@@ -93,5 +92,3 @@ private:
 };
 
 extern ResourceManager g_resources;
-
-#endif

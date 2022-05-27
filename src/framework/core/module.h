@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef MODULE_H
-#define MODULE_H
+#pragma once
 
 #include "declarations.h"
 
@@ -83,5 +82,3 @@ private:
     std::list<std::string> m_scripts;
     std::list<std::string> m_loadLaterModules;
 };
-
-#endif

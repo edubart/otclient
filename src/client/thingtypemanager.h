@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef THINGTYPEMANAGER_H
-#define THINGTYPEMANAGER_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -95,5 +94,3 @@ private:
 };
 
 extern ThingTypeManager g_things;
-
-#endif

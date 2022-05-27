@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UITEXTEDIT_H
-#define UITEXTEDIT_H
+#pragma once
 
 #include "uiwidget.h"
 
@@ -143,5 +142,3 @@ private:
 
     bool m_glyphsMustRecache;
 };
-
-#endif

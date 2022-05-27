@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_PACKEDANY_H
-#define STDEXT_PACKEDANY_H
+#pragma once
 
 #include <algorithm>
 #include <cassert>
@@ -123,5 +122,3 @@ namespace stdext
     // restore memory alignment
 #pragma pack(pop)
 }
-
-#endif

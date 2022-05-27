@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEBUFFER_H
-#define FRAMEBUFFER_H
+#pragma once
 
 #include "declarations.h"
 #include "painter.h"
@@ -91,5 +90,3 @@ private:
     Rect m_dest, m_src;
     CoordsBuffer m_coordsBuffer;
 };
-
-#endif

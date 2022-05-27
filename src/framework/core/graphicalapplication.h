@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef GRAPHICALAPPLICATION_H
-#define GRAPHICALAPPLICATION_H
+#pragma once
 
 #include <framework/core/adaptativeframecounter.h>
 #include <framework/core/inputevent.h>
@@ -93,5 +92,3 @@ private:
 };
 
 extern GraphicalApplication g_app;
-
-#endif

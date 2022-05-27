@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef MODULEMANAGER_H
-#define MODULEMANAGER_H
+#pragma once
 
 #include "module.h"
 
@@ -52,5 +51,3 @@ private:
 };
 
 extern ModuleManager g_modules;
-
-#endif

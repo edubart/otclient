@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef FRAMEBUFFERMANAGER_H
-#define FRAMEBUFFERMANAGER_H
+#pragma once
 
 #include "framebuffer.h"
 
@@ -40,5 +39,3 @@ protected:
 };
 
 extern FrameBufferManager g_framebuffers;
-
-#endif

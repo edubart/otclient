@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef COMBINEDSOUNDSOURCE_H
-#define COMBINEDSOUNDSOURCE_H
+#pragma once
 
 #include "soundsource.h"
 
@@ -54,5 +53,3 @@ protected:
 private:
     std::vector<SoundSourcePtr> m_sources;
 };
-
-#endif

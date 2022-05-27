@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef ITEMTYPE_H
-#define ITEMTYPE_H
+#pragma once
 
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
@@ -156,5 +155,3 @@ private:
 
     dynamic_storage<uint8> m_attribs;
 };
-
-#endif

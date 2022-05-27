@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef STDEXT_COMPILER_H
-#define STDEXT_COMPILER_H
+#pragma once
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -68,6 +67,4 @@
 
 #if !defined(_MSC_VER) && !defined(__GXX_EXPERIMENTAL_CXX0X__)
 #error "C++0x is required to compile this application.  Try updating your compiler."
-#endif
-
 #endif

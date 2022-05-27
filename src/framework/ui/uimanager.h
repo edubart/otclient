@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIMANAGER_H
-#define UIMANAGER_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/core/inputevent.h>
@@ -91,5 +90,3 @@ private:
 };
 
 extern UIManager g_ui;
-
-#endif

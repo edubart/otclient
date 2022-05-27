@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SOUNDBUFFER_H
-#define SOUNDBUFFER_H
+#pragma once
 
 #include "declarations.h"
 
@@ -41,5 +40,3 @@ public:
 private:
     uint m_bufferId;
 };
-
-#endif

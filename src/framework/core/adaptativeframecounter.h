@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef ADAPTATIVEFRAMECOUNTER_H
-#define ADAPTATIVEFRAMECOUNTER_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -51,5 +50,3 @@ private:
 
     ticks_t m_currentTime{ 0 }, m_lastTime{ 0 };
 };
-
-#endif

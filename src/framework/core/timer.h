@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef TIMER_H
-#define TIMER_H
+#pragma once
 
 #include <framework/global.h>
 
@@ -44,5 +43,3 @@ private:
     ticks_t m_startTicks;
     bool m_stopped{ false };
 };
-
-#endif

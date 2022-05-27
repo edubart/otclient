@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIMAP_H
-#define UIMAP_H
+#pragma once
 
 #include "declarations.h"
 #include "tile.h"
@@ -115,5 +114,3 @@ private:
         m_maxZoomOut,
         m_zoom;
 };
-
-#endif

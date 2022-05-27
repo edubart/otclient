@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef SOUNDFILE_H
-#define SOUNDFILE_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/core/filestream.h>
@@ -52,5 +51,3 @@ protected:
     int m_bps;
     int m_size;
 };
-
-#endif

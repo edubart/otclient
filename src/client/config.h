@@ -20,6 +20,8 @@
  * THE SOFTWARE.
  */
 
+#pragma once
+
  // GENERAL
 #define SPRITE_SIZE 32
 

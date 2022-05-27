@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef MINIMAP_H
-#define MINIMAP_H
+#pragma once
 
 #include "declarations.h"
 #include <framework/graphics/declarations.h>
@@ -130,5 +129,3 @@ private:
 };
 
 extern Minimap g_minimap;
-
-#endif

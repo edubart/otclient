@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CLIENT_DECLARATIONS_H
-#define CLIENT_DECLARATIONS_H
+#pragma once
 
 #include "global.h"
 #include <framework/net/declarations.h>
@@ -113,5 +112,3 @@ using UIMinimapPtr = stdext::shared_object_ptr<UIMinimap>;
 using UIProgressRectPtr = stdext::shared_object_ptr<UIProgressRect>;
 using UIMapAnchorLayoutPtr = stdext::shared_object_ptr<UIMapAnchorLayout>;
 using UIPositionAnchorPtr = stdext::shared_object_ptr<UIPositionAnchor>;
-
-#endif

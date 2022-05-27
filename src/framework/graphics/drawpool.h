@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef DRAWPOOL_H
-#define DRAWPOOL_H
+#pragma once
 
 #include <framework/core/graphicalapplication.h>
 #include <framework/graphics/declarations.h>
@@ -92,5 +91,3 @@ private:
 };
 
 extern DrawPool g_drawPool;
-
-#endif

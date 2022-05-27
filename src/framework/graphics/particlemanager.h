@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef PARTICLEMANAGER_H
-#define PARTICLEMANAGER_H
+#pragma once
 
 #include "declarations.h"
 #include "particletype.h"
@@ -48,5 +47,3 @@ private:
 };
 
 extern ParticleManager g_particles;
-
-#endif

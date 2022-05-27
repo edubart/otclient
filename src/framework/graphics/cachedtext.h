@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef CACHEDTEXT_H
-#define CACHEDTEXT_H
+#pragma once
 
 #include "declarations.h"
 
@@ -55,5 +54,3 @@ private:
 
     std::vector<std::pair<Rect, Rect>> m_textCoordsCache;
 };
-
-#endif

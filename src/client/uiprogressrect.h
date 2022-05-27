@@ -20,8 +20,7 @@
  * THE SOFTWARE.
  */
 
-#ifndef UIPROGRESSRECT_H
-#define UIPROGRESSRECT_H
+#pragma once
 
 #include "declarations.h"
 #include "item.h"
@@ -40,5 +39,3 @@ protected:
 
     float m_percent{ 0 };
 };
-
-#endif
