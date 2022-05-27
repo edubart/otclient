@@ -41,7 +41,7 @@ void ScheduledEvent::execute()
         m_callback = nullptr;
     }
 
-    m_cyclesExecuted++;
+    ++m_cyclesExecuted;
 }
 
 bool ScheduledEvent::nextCycle()

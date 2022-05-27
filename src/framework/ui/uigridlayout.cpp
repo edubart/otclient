@@ -109,7 +109,7 @@ bool UIGridLayout::internalUpdate()
         if (widget->setRect(dest))
             changed = true;
 
-        index++;
+        ++index;
 
         if (m_numLines > 0 && index >= m_numColumns * m_numLines)
             break;

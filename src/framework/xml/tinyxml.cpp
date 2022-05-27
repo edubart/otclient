@@ -738,9 +738,9 @@ bool TiXmlDocument::LoadFile(FILE* file, TiXmlEncoding encoding)
 
         if (*p == CR) {
             *q++ = LF;
-            p++;
+            ++p;
             if (*p == LF) {        // check for CR+LF (and skip LF)
-                p++;
+                ++p;
             }
         } else {
             *q++ = *p++;

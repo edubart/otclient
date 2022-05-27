@@ -431,7 +431,7 @@ void UITextEdit::appendCharacter(char c)
         tmp = c;
         std::string tmp2 = m_text;
         tmp2.insert(m_cursorPos, tmp);
-        m_cursorPos++;
+        ++m_cursorPos;
         setText(tmp2);
     }
 }
@@ -504,12 +504,12 @@ void UITextEdit::moveCursorHorizontally(bool right)
 {
     if (right) {
         if (static_cast<uint>(m_cursorPos) + 1 <= m_text.length())
-            m_cursorPos++;
+            ++m_cursorPos;
         else
             m_cursorPos = 0;
     } else {
         if (m_cursorPos - 1 >= 0)
-            m_cursorPos--;
+            --m_cursorPos;
         else
             m_cursorPos = m_text.length();
     }

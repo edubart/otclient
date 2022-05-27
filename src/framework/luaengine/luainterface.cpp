@@ -293,7 +293,7 @@ int LuaInterface::luaObjectCollectEvent(LuaInterface* lua)
 
     // resets pointer to decrease object use count
     objPtr->reset();
-    g_lua.m_totalObjRefs--;
+    --g_lua.m_totalObjRefs;
     return 0;
 }
 
@@ -425,7 +425,7 @@ std::string LuaInterface::getCurrentSourcePath(int level)
         pop();
 
         // next level
-        level++;
+        ++level;
     }
 
     return path;
@@ -456,10 +456,10 @@ int LuaInterface::safeCall(int numArgs, int numRets)
     while (numRets != -1 && rets != numRets) {
         if (rets < numRets) {
             pushNil();
-            rets++;
+            ++rets;
         } else {
             pop();
-            rets--;
+            --rets;
         }
     }
 
@@ -528,7 +528,7 @@ int LuaInterface::signalCall(int numArgs, int numRets)
     // pushes nil values if needed
     while (numRets != -1 && rets < numRets) {
         pushNil();
-        rets++;
+        ++rets;
     }
 
     // returns the number of results on the stack
@@ -634,9 +634,9 @@ int LuaInterface::luaCppFunctionCallback(lua_State*)
 
     // do the call
     try {
-        g_lua.m_cppCallbackDepth++;
+        ++g_lua.m_cppCallbackDepth;
         numRets = (*(funcPtr->get()))(&g_lua);
-        g_lua.m_cppCallbackDepth--;
+        --g_lua.m_cppCallbackDepth;
         assert(numRets == g_lua.stackSize());
     } catch (stdext::exception& e) {
         // cleanup stack
@@ -655,7 +655,7 @@ int LuaInterface::luaCollectCppFunction(lua_State*)
     auto* const funcPtr = static_cast<LuaCppFunctionPtr*>(g_lua.popUserdata());
     assert(funcPtr);
     funcPtr->reset();
-    g_lua.m_totalFuncRefs--;
+    --g_lua.m_totalFuncRefs;
     return 0;
 }
 
@@ -721,7 +721,7 @@ void LuaInterface::collectGarbage()
 
         // we must collect two times because __gc metamethod
         // is called on uservalues only the second time
-        for (int i = 0; i < 2; ++i)
+        for (int i = -1; ++i < 2;)
             lua_gc(L, LUA_GCCOLLECT, 0);
 
         collecting = false;
@@ -1112,7 +1112,7 @@ void LuaInterface::pushObject(const LuaObjectPtr& obj)
 {
     // fills a new userdata with a new LuaObjectPtr pointer
     new(newUserdata(sizeof(LuaObjectPtr))) LuaObjectPtr(obj);
-    m_totalObjRefs++;
+    ++m_totalObjRefs;
 
     obj->luaGetMetatable();
     if (isNil())
@@ -1130,7 +1130,7 @@ void LuaInterface::pushCppFunction(const LuaCppFunction& func)
 {
     // create a pointer to func (this pointer will hold the function existence)
     new(newUserdata(sizeof(LuaCppFunctionPtr))) LuaCppFunctionPtr(new LuaCppFunction(func));
-    m_totalFuncRefs++;
+    ++m_totalFuncRefs;
 
     // sets the userdata __gc metamethod, needed to free the function pointer when it gets collected
     newTable();

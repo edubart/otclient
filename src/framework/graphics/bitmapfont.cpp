@@ -205,7 +205,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
             glyph = static_cast<uchar>(text[i]);
 
             if (glyph == static_cast<uchar>('\n')) {
-                lines++;
+                ++lines;
                 // resize s_lineWidths vector when needed
                 if (lines + 1 > static_cast<int>(s_lineWidths.size()))
                     s_lineWidths.resize(lines + 1);
@@ -229,7 +229,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
         if (glyph == static_cast<uchar>('\n') || i == 0) {
             if (glyph == static_cast<uchar>('\n')) {
                 virtualPos.y += m_glyphHeight + m_glyphSpacing.height();
-                lines++;
+                ++lines;
             }
 
             // calculate start x pos
@@ -287,7 +287,7 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
             // check if all vertical pixels are alpha
             for (int y = glyphCoords.top(); y <= glyphCoords.bottom(); ++y) {
                 if (texturePixels[(y * imageSize.width() * 4) + (x * 4) + 3] != 0)
-                    filledPixels++;
+                    ++filledPixels;
             }
             if (filledPixels > 0)
                 width = x - glyphCoords.left() + 1;

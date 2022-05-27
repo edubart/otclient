@@ -76,7 +76,7 @@ void AnimatedTexture::updateAnimation()
         return;
 
     m_animTimer.restart();
-    m_currentFrame++;
+    ++m_currentFrame;
     if (m_currentFrame >= m_frames.size())
         m_currentFrame = 0;
     m_id = m_frames[m_currentFrame]->getId();

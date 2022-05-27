@@ -279,7 +279,7 @@ std::list<std::string> ResourceManager::listDirectoryFiles(const std::string& di
     std::list<std::string> files;
     auto* const rc = PHYSFS_enumerateFiles(resolvePath(directoryPath).c_str());
 
-    for (int i = 0; rc[i] != nullptr; i++)
+    for (int i = 0; rc[i] != nullptr; ++i)
         files.emplace_back(rc[i]);
 
     PHYSFS_freeList(rc);
@@ -393,7 +393,7 @@ std::string ResourceManager::encrypt(const std::string& data, const std::string&
             ct = ct + password[j] - i;
         }
         ss << static_cast<char>(ct);
-        j++;
+        ++j;
 
         if (j >= plen)
             j = 0;

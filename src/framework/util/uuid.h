@@ -145,7 +145,7 @@ namespace uuids
                 const uint8_t* finish = static_cast<const uint8_t*>(end);
                 while (begin != finish) {
                     process_byte(*begin);
-                    begin++;
+                    ++begin;
                 }
             }
 
@@ -463,7 +463,7 @@ namespace uuids
                 if (firstDigit) {
                     firstDigit = false;
                 } else {
-                    index++;
+                    ++index;
                     firstDigit = true;
                 }
             }
@@ -504,7 +504,7 @@ namespace uuids
                     firstDigit = false;
                 } else {
                     data[index] = static_cast<uint8_t>(data[index] | detail::hex2char(str[i]));
-                    index++;
+                    ++index;
                     firstDigit = true;
                 }
             }
@@ -553,7 +553,7 @@ namespace uuids
     template <class CharT,
         class Traits,
         class Allocator>
-        inline std::basic_string<CharT, Traits, Allocator> to_string(uuid const& id)
+    inline std::basic_string<CharT, Traits, Allocator> to_string(uuid const& id)
     {
         std::basic_string<CharT, Traits, Allocator> uustr{ detail::empty_guid<CharT> };
 
@@ -563,7 +563,7 @@ namespace uuids
             }
             uustr[i] = detail::guid_encoder<CharT>[id.data[index] >> 4 & 0x0f];
             uustr[++i] = detail::guid_encoder<CharT>[id.data[index] & 0x0f];
-            index++;
+            ++index;
         }
 
         return uustr;

@@ -45,7 +45,7 @@ bool OTMLNode::hasChildren()
     int count = 0;
     for (const OTMLNodePtr& child : m_children) {
         if (!child->isNull())
-            count++;
+            ++count;
     }
     return count > 0;
 }

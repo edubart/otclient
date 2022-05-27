@@ -41,7 +41,7 @@ void OTMLParser::parse()
 
 std::string OTMLParser::getNextLine()
 {
-    currentLine++;
+    ++currentLine;
     std::string line;
     std::getline(in, line);
     return line;
@@ -52,7 +52,7 @@ int OTMLParser::getLineDepth(const std::string& line, bool multilining)
     // count number of spaces at the line beginning
     std::size_t spaces = 0;
     while (line[spaces] == ' ')
-        spaces++;
+        ++spaces;
 
     // pre calculate depth
     const int depth = spaces / 2;
@@ -150,7 +150,7 @@ void OTMLParser::parseNode(const std::string& data)
                 if (!line.empty()) {
                     // rewind and break
                     in.seekg(lastPos, std::ios::beg);
-                    currentLine--;
+                    --currentLine;
                     break;
                 }
             }

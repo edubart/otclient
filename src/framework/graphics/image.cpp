@@ -212,7 +212,7 @@ bool Image::nextMipmap()
                     for (int i = 0; i < 4; ++i)
                         pixelsSum[i] += j[i];
 
-                    usedPixels++;
+                    ++usedPixels;
                 }
 
                 // try to guess the alpha pixel more accurately
@@ -295,7 +295,7 @@ void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
                                         for(int i=0;i<4;++i)
                                                 pixelsSum[i] += inPixel[j][i];
 
-                                        usedPixels++;
+                                        ++usedPixels;
                                 }
 
                                 // try to guess the alpha pixel more accurately

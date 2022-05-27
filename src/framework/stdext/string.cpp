@@ -146,11 +146,11 @@ namespace stdext
     {
         std::string out;
         for (uint i = 0; i < src.length();) {
-            const uchar c = src[i++];
+            const uchar c = src[++i];
             if ((c >= 32 && c < 128) || c == 0x0d || c == 0x0a || c == 0x09)
                 out += c;
             else if (c == 0xc2 || c == 0xc3) {
-                const uchar c2 = src[i++];
+                const uchar c2 = src[++i];
                 if (c == 0xc2) {
                     if (c2 > 0xa1 && c2 < 0xbb)
                         out += c2;

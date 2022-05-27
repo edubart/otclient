@@ -260,7 +260,7 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
                     g_lua.insert(-2);
                     g_lua.rawSet();
                 } else
-                    g_lua.rawSeti(currentIndex++);
+                    g_lua.rawSeti(++currentIndex);
                 pushedChild = true;
             } else
                 g_lua.pop();
@@ -283,7 +283,7 @@ int push_luavalue(const OTMLNodePtr& node)
             if (cnode->isUnique() && !cnode->tag().empty()) {
                 g_lua.setField(cnode->tag());
             } else
-                g_lua.rawSeti(currentIndex++);
+                g_lua.rawSeti(++currentIndex);
         }
     } else
         g_lua.pushNil();

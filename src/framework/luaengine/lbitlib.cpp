@@ -222,7 +222,7 @@ static b_uint andaux(lua_State* L)
 {
     const int n = lua_gettop(L);
     b_uint r = ~static_cast<b_uint>(0);
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; ++i <= n; )
         r &= luaL_checkunsigned(L, i);
     return trim(r);
 }
@@ -245,7 +245,7 @@ static int b_or(lua_State* L)
 {
     const int n = lua_gettop(L);
     b_uint r = 0;
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; ++i <= n;)
         r |= luaL_checkunsigned(L, i);
     lua_pushunsigned(L, trim(r));
     return 1;
@@ -255,7 +255,7 @@ static int b_xor(lua_State* L)
 {
     const int n = lua_gettop(L);
     b_uint r = 0;
-    for (int i = 1; i <= n; i++)
+    for (int i = 0; ++i <= n;)
         r ^= luaL_checkunsigned(L, i);
     lua_pushunsigned(L, trim(r));
     return 1;

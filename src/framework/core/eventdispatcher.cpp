@@ -74,7 +74,7 @@ void EventDispatcher::poll()
         }
         m_pollEventsSize = m_eventList.size();
 
-        loops++;
+        ++loops;
     }
 }
 
@@ -110,7 +110,7 @@ EventPtr EventDispatcher::addEvent(const std::function<void()>& callback, bool p
     if (pushFront) {
         m_eventList.push_front(event);
         // the poll event list only grows when pushing into front
-        m_pollEventsSize++;
+        ++m_pollEventsSize;
     } else
         m_eventList.push_back(event);
     return event;

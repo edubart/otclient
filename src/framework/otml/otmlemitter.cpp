@@ -72,7 +72,7 @@ std::string OTMLEmitter::emitNode(const OTMLNodePtr& node, int currentDepth)
                     while (pos < value.length()) {
                         if (value[pos] == '\n')
                             break;
-                        ss << value[pos++];
+                        ss << value[++pos];
                     }
                 }
                 // emit inline values

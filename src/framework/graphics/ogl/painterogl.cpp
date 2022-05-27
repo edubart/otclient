@@ -66,7 +66,7 @@ void PainterOGL::saveState()
 {
     assert(m_oldStateIndex < 10);
     m_olderStates[m_oldStateIndex] = getCurrentState();
-    m_oldStateIndex++;
+    ++m_oldStateIndex;
 }
 
 PainterOGL::PainterState PainterOGL::getCurrentState()
@@ -98,7 +98,7 @@ void PainterOGL::saveAndResetState()
 
 void PainterOGL::restoreSavedState()
 {
-    m_oldStateIndex--;
+    --m_oldStateIndex;
     const auto& state = m_olderStates[m_oldStateIndex];
 
     setResolution(state.resolution);

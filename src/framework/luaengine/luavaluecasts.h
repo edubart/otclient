@@ -333,7 +333,7 @@ int push_luavalue(const std::list<T>& list)
     for (const T& v : list) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
-        i++;
+        ++i;
     }
     return 1;
 }
@@ -362,7 +362,7 @@ int push_luavalue(const std::vector<T>& vec)
     for (const T& v : vec) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
-        i++;
+        ++i;
     }
     return 1;
 }
@@ -391,7 +391,7 @@ int push_luavalue(const std::deque<T>& vec)
     for (const T& v : vec) {
         push_internal_luavalue(v);
         g_lua.rawSeti(i);
-        i++;
+        ++i;
     }
     return 1;
 }
@@ -474,7 +474,7 @@ struct push_tuple_luavalue
     template<typename Tuple>
     static void call(const Tuple& tuple)
     {
-        push_internal_luavalue(std::get<std::tuple_size_v<Tuple> - N>(tuple));
+        push_internal_luavalue(std::get<std::tuple_size_v<Tuple> -N>(tuple));
         push_tuple_luavalue<N - 1>::call(tuple);
     }
 };
