@@ -311,6 +311,109 @@ function EnterGame.onClientVersionChange(comboBox, text, data)
     EnterGame.toggleStayLoggedBox(clientVersion)
 end
 
+function EnterGame.tryHttpLogin(clientVersion)
+     -- http login server
+     protocolHttp = ProtocolHttp.create()
+     protocolHttp.onConnect = function(protocol)
+         local body = json.encode({
+             email = G.account,
+             password = G.password,
+             type = 'login'
+         })
+         local message = ''
+         message = message .. 'POST /login.php HTTP/1.1\r\n'
+         message = message .. 'Host: ' .. G.host .. '\r\n'
+         message = message .. 'User-Agent: Mozilla/5.0\r\n'
+         message = message .. 'Accept: */*\r\n'
+         message = message .. 'Content-Type: application/json\r\n'
+         message = message .. 'Connection: close\r\n'
+         message = message .. 'Content-Length: ' .. body:len() .. '\r\n\r\n'
+         message = message .. body
+         protocol:send(message)
+         protocol:recv()
+     end
+
+     protocolHttp.onRecv = function(protocol, message)
+         if not string.find(message, 'HTTP/1.1 200 OK') then
+             onError(nil, 'Connection timed out.', 408)
+             return
+         end
+
+         local _, bodyStart = message:find('{')
+         local _, bodyEnd = message:find('.*}')
+         if not bodyStart or not bodyEnd then
+             onError(nil, 'Bad Request.', 400)
+             return
+         end
+
+         protocol:disconnect()
+
+         local response = json.decode(message:sub(bodyStart, bodyEnd))
+         if response.errorMessage then
+             onError(nil, response.errorMessage, response.errorCode)
+             return
+         end
+
+         local worlds = {}
+         for _, world in ipairs(response.playdata.worlds) do
+             worlds[world.id] = {
+                 name = world.name,
+                 ip = world.externaladdress,
+                 port = world.externalport,
+                 previewState = world.previewstate == 1
+             }
+         end
+
+         local characters = {}
+         for index, character in ipairs(response.playdata.characters) do
+             local world = worlds[character.worldid]
+             characters[index] = {
+                 name = character.name,
+                 worldName = world.name,
+                 worldIp = world.ip,
+                 worldPort = world.port,
+                 previewState = world.previewstate
+             }
+         end
+
+         local premiumUntil = tonumber(response.session.premiumuntil)
+
+         local account = {
+             status = '',
+             premDays = math.floor((premiumUntil - os.time()) / 86400),
+             subStatus = premiumUntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free
+         }
+
+         -- set session key
+         G.sessionKey = response.session.sessionkey
+
+         onCharacterList(nil, characters, account)
+     end
+
+     protocolHttp.onError = onError
+
+     loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
+     connect(loadBox, {
+         onCancel = function(msgbox)
+             loadBox = nil
+             protocolHttp:disconnect()
+             EnterGame.show()
+         end
+     })
+
+     g_game.setClientVersion(clientVersion)
+     g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
+     g_game.chooseRsa(G.host)
+
+     if modules.game_things.isLoaded() then
+         protocolHttp:connect(G.host, G.port)
+     else
+         loadBox:destroy()
+         loadBox = nil
+         EnterGame.show()
+     end
+end
+
 function EnterGame.doLogin()
     G.account = enterGame:getChildById('accountNameTextEdit'):getText()
     G.password = enterGame:getChildById('accountPasswordTextEdit'):getText()
@@ -333,107 +436,8 @@ function EnterGame.doLogin()
     g_settings.set('port', G.port)
     g_settings.set('client-version', clientVersion)
 
-    if clientVersion >= 1281 then
-        -- http login server
-        protocolHttp = ProtocolHttp.create()
-        protocolHttp.onConnect = function(protocol)
-            local body = json.encode({
-                email = G.account,
-                password = G.password,
-                type = 'login'
-            })
-            local message = ''
-            message = message .. 'POST /login.php HTTP/1.1\r\n'
-            message = message .. 'Host: ' .. G.host .. '\r\n'
-            message = message .. 'User-Agent: Mozilla/5.0\r\n'
-            message = message .. 'Accept: */*\r\n'
-            message = message .. 'Content-Type: application/json\r\n'
-            message = message .. 'Connection: close\r\n'
-            message = message .. 'Content-Length: ' .. body:len() .. '\r\n\r\n'
-            message = message .. body
-            protocol:send(message)
-            protocol:recv()
-        end
-
-        protocolHttp.onRecv = function(protocol, message)
-            if not string.find(message, 'HTTP/1.1 200 OK') then
-                onError(nil, 'Connection timed out.', 408)
-                return
-            end
-
-            local _, bodyStart = message:find('{')
-            local _, bodyEnd = message:find('.*}')
-            if not bodyStart or not bodyEnd then
-                onError(nil, 'Bad Request.', 400)
-                return
-            end
-
-            protocol:disconnect()
-
-            local response = json.decode(message:sub(bodyStart, bodyEnd))
-            if response.errorMessage then
-                onError(nil, response.errorMessage, response.errorCode)
-                return
-            end
-
-            local worlds = {}
-            for _, world in ipairs(response.playdata.worlds) do
-                worlds[world.id] = {
-                    name = world.name,
-                    ip = world.externaladdress,
-                    port = world.externalport,
-                    previewState = world.previewstate == 1
-                }
-            end
-
-            local characters = {}
-            for index, character in ipairs(response.playdata.characters) do
-                local world = worlds[character.worldid]
-                characters[index] = {
-                    name = character.name,
-                    worldName = world.name,
-                    worldIp = world.ip,
-                    worldPort = world.port,
-                    previewState = world.previewstate
-                }
-            end
-
-            local premiumUntil = tonumber(response.session.premiumuntil)
-
-            local account = {
-                status = '',
-                premDays = math.floor((premiumUntil - os.time()) / 86400),
-                subStatus = premiumUntil > os.time() and SubscriptionStatus.Premium or SubscriptionStatus.Free
-            }
-
-            -- set session key
-            G.sessionKey = response.session.sessionkey
-
-            onCharacterList(nil, characters, account)
-        end
-
-        protocolHttp.onError = onError
-
-        loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
-        connect(loadBox, {
-            onCancel = function(msgbox)
-                loadBox = nil
-                protocolHttp:disconnect()
-                EnterGame.show()
-            end
-        })
-
-        g_game.setClientVersion(clientVersion)
-        g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
-        g_game.chooseRsa(G.host)
-
-        if modules.game_things.isLoaded() then
-            protocolHttp:connect(G.host, G.port)
-        else
-            loadBox:destroy()
-            loadBox = nil
-            EnterGame.show()
-        end
+    if clientVersion >= 1281 and G.port ~= 7171 then
+       EnterGame.tryHttpLogin(clientVersion)
     else
         protocolLogin = ProtocolLogin.create()
         protocolLogin.onLoginError = onError
