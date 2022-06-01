@@ -227,7 +227,7 @@ uint64 FileStream::getU64()
 {
     uint64 v = 0;
     if (!m_caching) {
-        if (PHYSFS_readULE64(m_fileHandle, static_cast<PHYSFS_uint64*>(&v)) == 0)
+        if (PHYSFS_readULE64(m_fileHandle, (PHYSFS_uint64*)&v) == 0)
             throwError("read failed", true);
     } else {
         if (m_pos + 8 > m_data.size())
@@ -290,7 +290,7 @@ int64 FileStream::get64()
 {
     int64 v = 0;
     if (!m_caching) {
-        if (PHYSFS_readSLE64(m_fileHandle, static_cast<PHYSFS_sint64*>(&v)) == 0)
+        if (PHYSFS_readSLE64(m_fileHandle, (PHYSFS_sint64*)&v) == 0)
             throwError("read failed", true);
     } else {
         if (m_pos + 8 > m_data.size())
@@ -314,15 +314,15 @@ std::string FileStream::getString()
                 str = std::string(buffer, len);
         } else {
             if (m_pos + len > m_data.size()) {
-                throwError("read failed");
-                return nullptr;
+                throwError("[FileStream::getString] - Read failed");
+                return std::string();
             }
 
             str = std::string((char*)&m_data[m_pos], len);
             m_pos += len;
         }
     } else if (len != 0)
-        throwError("read failed because string is too big");
+        throwError("[FileStream::getString] - Read failed because string is too big");
     return str;
 }
 

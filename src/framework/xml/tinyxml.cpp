@@ -493,7 +493,7 @@ std::string TiXmlElement::Attribute(const std::string& name, int* i) const
 std::string TiXmlElement::Attribute(const std::string& name, double* d) const
 {
     const TiXmlAttribute* attrib = attributeSet.Find(name);
-    std::string result = nullptr;
+    std::string result = std::string();
 
     if (attrib) {
         result = attrib->ValueStr();
