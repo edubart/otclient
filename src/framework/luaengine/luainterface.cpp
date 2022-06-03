@@ -1210,10 +1210,11 @@ double LuaInterface::toNumber(int index)
     return lua_tonumber(L, index);
 }
 
-const char* LuaInterface::toCString(int index)
+std::string_view LuaInterface::toVString(int index)
 {
     assert(hasIndex(index));
-    return lua_tostring(L, index);
+    const char* value = lua_tostring(L, index);
+    return value != nullptr ? value : ""sv;
 }
 
 std::string LuaInterface::toString(int index)

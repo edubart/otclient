@@ -312,7 +312,7 @@ public:
     bool toBoolean(int index = -1);
     int toInteger(int index = -1);
     double toNumber(int index = -1);
-    const char* toCString(int index = -1);
+    std::string_view toVString(int index = -1);
     std::string toString(int index = -1);
     void* toUserdata(int index = -1);
     LuaObjectPtr toObject(int index = -1);
@@ -440,9 +440,8 @@ template<class T>
 T LuaInterface::castValue(int index)
 {
     T o;
-
     if constexpr (std::is_same_v<T, std::string_view>) {
-        o = g_lua.toCString(index);
+        o = g_lua.toVString(index);
     } else if (!luavalue_cast(index, o))
         throw LuaBadValueCastException(typeName(index), stdext::demangle_type<T>());
     return o;
