@@ -32,6 +32,7 @@
 #include <framework/platform/platformwindow.h>
 
 #include <ranges>
+#include <numbers>
 
 #include "framework/graphics/drawpool.h"
 
@@ -67,7 +68,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 
     if (m_rotation != 0.0f) {
         g_painter->pushTransformMatrix();
-        g_painter->rotate(m_rect.center(), m_rotation * (Fw::pi / 180.0));
+        g_painter->rotate(m_rect.center(), m_rotation * (std::numbers::pi / 180.0));
     }
 
     drawSelf(drawPane);
