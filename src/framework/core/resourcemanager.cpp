@@ -473,7 +473,7 @@ void ResourceManager::runEncryption(const std::string_view password)
 void ResourceManager::save_string_into_file(const std::string_view contents, const std::string_view name)
 {
     std::ofstream datFile;
-    datFile.open(name, std::ofstream::binary | std::ofstream::trunc | std::ofstream::out);
+    datFile.open(name.data(), std::ofstream::binary | std::ofstream::trunc | std::ofstream::out);
     datFile.write(contents.data(), contents.size());
     datFile.close();
 }

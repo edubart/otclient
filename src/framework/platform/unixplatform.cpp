@@ -65,12 +65,12 @@ int Platform::getProcessId()
     return getpid();
 }
 
-bool Platform::isProcessRunning(const std::string& name)
+bool Platform::isProcessRunning(const std::string_view name)
 {
     return false;
 }
 
-bool Platform::killProcess(const std::string& name)
+bool Platform::killProcess(const std::string_view name)
 {
     return false;
 }
@@ -175,7 +175,7 @@ std::string Platform::getOSName()
     return std::string();
 }
 
-std::string Platform::traceback(const std::string& where, int level, int maxDepth)
+std::string Platform::traceback(const std::string_view where, int level, int maxDepth)
 {
     std::stringstream ss;
 

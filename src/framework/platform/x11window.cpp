@@ -932,10 +932,10 @@ int X11Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSp
     return m_cursors.size()-1;
 }
 
-void X11Window::setTitle(const std::string& title)
+void X11Window::setTitle(const std::string_view title)
 {
-    XStoreName(m_display, m_window, title.c_str());
-    XSetIconName(m_display, m_window, title.c_str());
+    XStoreName(m_display, m_window, title.data());
+    XSetIconName(m_display, m_window, title.data());
 }
 
 void X11Window::setMinimumSize(const Size& minimumSize)
@@ -989,7 +989,7 @@ void X11Window::setVerticalSync(bool enable)
 #endif
 }
 
-void X11Window::setIcon(const std::string& file)
+void X11Window::setIcon(const std::string_view file)
 {
     ImagePtr image = Image::load(file);
 
@@ -1020,7 +1020,7 @@ void X11Window::setIcon(const std::string& file)
         g_logger.error("Couldn't set app icon");
 }
 
-void X11Window::setClipboardText(const std::string& text)
+void X11Window::setClipboardText(const std::string_view text)
 {
     m_clipboardText = text;
     Atom clipboard = XInternAtom(m_display, "CLIPBOARD", False);
