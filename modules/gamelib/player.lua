@@ -109,7 +109,7 @@ function Player:hasState(state, states)
         local pow = math.pow(2, i - 1)
         if pow > states then break end
 
-        local states = bit32.band(states, pow)
+        local states = bit.band(states, pow)
         if states == state then return true end
     end
     return false

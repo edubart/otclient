@@ -38,7 +38,7 @@
 
 #include <locale>
 
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
 #include <framework/net/connection.h>
 #endif
 
@@ -126,7 +126,7 @@ void Application::deinit()
 
 void Application::terminate()
 {
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
     // terminate network
     Connection::terminate();
 #endif
@@ -148,14 +148,14 @@ void Application::terminate()
 
 void Application::poll()
 {
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
     Connection::poll();
 #endif
 
     g_dispatcher.poll();
 
     // poll connection again to flush pending write
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
     Connection::poll();
 #endif
 }

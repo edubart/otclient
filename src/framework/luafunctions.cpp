@@ -35,7 +35,14 @@
 
 #include "graphics/particleeffect.h"
 
-#ifdef FW_SOUND
+#include "framework/graphics/fontmanager.h"
+#include "framework/graphics/graphics.h"
+#include "framework/graphics/particlemanager.h"
+#include "framework/input/mouse.h"
+#include "framework/platform/platformwindow.h"
+#include "framework/ui/ui.h"
+
+#ifdef FRAMEWORK_SOUND
 #include <framework/sound/combinedsoundsource.h>
 #include <framework/sound/soundchannel.h>
 #include <framework/sound/soundmanager.h>
@@ -43,16 +50,7 @@
 #include <framework/sound/streamsoundsource.h>
 #endif
 
-#ifdef FW_GRAPHICS
-#include <framework/graphics/fontmanager.h>
-#include <framework/graphics/graphics.h>
-#include <framework/graphics/particlemanager.h>
-#include <framework/input/mouse.h>
-#include <framework/platform/platformwindow.h>
-#include <framework/ui/ui.h>
-#endif
-
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
 #include <framework/net/protocol.h>
 #include <framework/net/protocolhttp.h>
 #include <framework/net/server.h>
@@ -239,7 +237,6 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<ScheduledEvent>("cyclesExecuted", &ScheduledEvent::cyclesExecuted);
     g_lua.bindClassMemberFunction<ScheduledEvent>("maxCycles", &ScheduledEvent::maxCycles);
 
-#ifdef FW_GRAPHICS
     // GraphicalApplication
     g_lua.bindSingletonFunction("g_app", "isOnInputEvent", &GraphicalApplication::isOnInputEvent, &g_app);
 
@@ -745,9 +742,8 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<UIParticles, UIWidget>();
     g_lua.bindClassStaticFunction<UIParticles>("create", [] { return UIParticlesPtr(new UIParticles); });
     g_lua.bindClassMemberFunction<UIParticles>("addEffect", &UIParticles::addEffect);
-#endif
 
-#ifdef FW_NET
+#ifdef FRAMEWORK_NET
     // Server
     g_lua.registerClass<Server>();
     g_lua.bindClassStaticFunction<Server>("create", &Server::create);
@@ -824,7 +820,7 @@ void Application::registerLuaFunctions()
     g_lua.bindClassMemberFunction<OutputMessage>("setWritePos", &OutputMessage::setWritePos);
 #endif
 
-#ifdef FW_SOUND
+#ifdef FRAMEWORK_SOUND
     // SoundManager
     g_lua.registerSingletonClass("g_sounds");
     g_lua.bindSingletonFunction("g_sounds", "preload", &SoundManager::preload, &g_sounds);

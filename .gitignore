@@ -54,10 +54,6 @@ cmake-build-*/
 *.exp
 *.lib
 
-# Protobuf generated files
-*.pb.cc
-*.pb.h
-
 # Visual C++ cache files
 ipch/
 *.aps

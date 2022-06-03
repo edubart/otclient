@@ -27,9 +27,9 @@
 #include <framework/core/declarations.h>
 #include <framework/core/timer.h>
 
-#include <framework/protobuf/appearances.pb.h>
+#include <protobuf/appearances.pb.h>
 
-using namespace tibia::protobuf;
+using namespace otclient::protobuf;
 
 enum AnimationPhase : int16
 {

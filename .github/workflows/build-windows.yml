@@ -1,0 +1,68 @@
+---
+name: Build - Windows
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: 2
+  MAKEFLAGS: '-j 2'
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-${{ matrix.buildtype }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2022]
+        buildtype: [windows-release, windows-release-asan, windows-debug, windows-release-static-lib]
+        include:
+          - os: windows-2022
+            triplet: x64-windows
+            packages: >
+              sccache
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          max-size: "1G"
+          variant: "sccache"
+          key: ccache-${{ matrix.os }}-${{ matrix.buildtype }}
+          restore-keys: |
+            ccache-${{ matrix.os }}
+
+      - name: Restore artifacts and install vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgGitCommitId: 8d41d43e1f7f5933622b02e16430312da649361e
+
+      - name: Get latest CMake and ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: ${{ matrix.buildtype }}
+          buildPreset: ${{ matrix.buildtype }}
+
+      - name: Create and Upload Artifact (exe)
+        uses: actions/upload-artifact@v3
+        with:
+          name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
+          path: |
+            ${{ github.workspace }}/otclient.exe
+
+      - name: Create and Upload Artifact (dlls)
+        uses: actions/upload-artifact@v3
+        with:
+          name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
+          path: |
+            ${{ github.workspace }}/*.dll

@@ -1,48 +1,43 @@
-FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58 AS builder
+FROM ubuntu:22.04 AS builder
 
-RUN apt-get update; \
-  apt-get install -y \
-    build-essential \
-    cmake \
-    git-core \
-    libboost-atomic1.65-dev \
-    libboost-chrono1.65-dev \
-    libboost-date-time1.65-dev \
-    libboost-filesystem1.65-dev \
-    libboost-system1.65-dev \
-    libboost-thread1.65-dev \
-    libglew-dev \
-    liblua5.1-0-dev \
-    libncurses5-dev \
-    libopenal-dev \
-    libssl-dev \
-    libvorbis-dev \
-    zlib1g-dev; \
-  apt-get clean && apt-get autoclean
+RUN export DEBIAN_FRONTEND=noninteractive \
+	&& ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime
 
-WORKDIR /
-RUN git clone --branch release-3.0.2 --depth 1 https://github.com/icculus/physfs.git
-WORKDIR /physfs/build/
-RUN cmake ..
-RUN make -j$(nproc)
-RUN make install
+RUN apt-get update && apt-get install -y build-essential cmake \
+	curl git libglew-dev libx11-dev liblua5.1-0-dev libluajit-5.1-dev \
+	libncurses5-dev libopenal-dev libssl-dev libvorbis-dev mercurial \
+	tar unzip zip zlib1g-dev tzdata \
+	&& dpkg-reconfigure --frontend noninteractive tzdata \
+	&& apt-get clean && apt-get autoclean
 
-COPY ./src/ /otclient/src/.
-COPY CMakeLists.txt /otclient/.
-WORKDIR /otclient/build/
-RUN cmake -DCMAKE_CXX_LINK_FLAGS=-no-pie -DCMAKE_BUILD_TYPE=Release ..
+WORKDIR /opt
+RUN git clone https://github.com/microsoft/vcpkg
+RUN ./vcpkg/bootstrap-vcpkg.sh
+
+WORKDIR /opt/vcpkg
+COPY vcpkg.json /opt/vcpkg/
+RUN /opt/vcpkg/vcpkg --feature-flags=binarycaching,manifests,versions install
+
+COPY ./ /otclient/
+WORKDIR /otclient/build
+
+RUN cmake -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 RUN make -j$(nproc)
 
-FROM ubuntu@sha256:b88f8848e9a1a4e4558ba7cfc4acc5879e1d0e7ac06401409062ad2627e6fb58
-RUN apt-get update; \
-  apt-get install -y \
-    libglew2.0 \
-    libopenal1; \
-  apt-get clean && apt-get autoclean
-COPY --from=builder /otclient/build/otclient /otclient/bin/otclient
+FROM ubuntu:20.04
+
+ RUN apt-get update; \
+ 	apt-get install -y \
+	libluajit-5.1-dev \
+ 	libglew2.1 \
+ 	libopenal1 \
+ 	libopengl0 \
+ 	&& apt-get clean && apt-get autoclean
+
+COPY --from=builder /otclient /otclient
 COPY ./data/ /otclient/data/.
 COPY ./mods/ /otclient/mods/.
 COPY ./modules/ /otclient/modules/.
 COPY ./init.lua /otclient/.
 WORKDIR /otclient
-CMD ["./bin/otclient"]
+CMD ["./otclient"]

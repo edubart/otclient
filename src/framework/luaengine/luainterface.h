@@ -24,6 +24,30 @@
 
 #include "declarations.h"
 
+#ifdef __has_include
+
+#if __has_include("luajit/lua.hpp")
+#include <luajit/lua.hpp>
+#elif __has_include(<lua.hpp>)
+#include <lua.hpp>
+#else
+#error "Cannot detect luajit library"
+#endif
+
+#else
+#include <lua.hpp>
+#endif
+
+#if LUA_VERSION_NUM >= 502
+#ifndef LUA_COMPAT_ALL
+#ifndef LUA_COMPAT_MODULE
+#define luaL_register(L, libname, l) (luaL_newlib(L, l), lua_pushvalue(L, -1), lua_setglobal(L, libname))
+#endif
+#undef lua_equal
+#define lua_equal(L, i1, i2) lua_compare(L, (i1), (i2), LUA_OPEQ)
+#endif
+#endif
+
 struct lua_State;
 using LuaCFunction = int(*) (lua_State* L);
 
@@ -218,7 +242,20 @@ private:
     /// Collect bound cpp function pointers
     static int luaCollectCppFunction(lua_State* L);
 
+    // Bit functions
+    #ifndef LUAJIT_VERSION
+    static int luaBitAnd(lua_State* L);
+    static int luaBitNot(lua_State* L);
+    static int luaBitOr(lua_State* L);
+    static int luaBitXor(lua_State* L);
+    static int luaBitRightShift(lua_State* L);
+    static int luaBitLeftShift(lua_State* L);
+    #endif
+
 public:
+    void registerTable(lua_State* L, const std::string& tableName);
+    void registerMethod(lua_State* L, const std::string& globalName, const std::string& methodName, lua_CFunction func);
+    
     void createLuaState();
     void closeLuaState();
 

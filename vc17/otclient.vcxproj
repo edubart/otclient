@@ -177,8 +177,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -195,8 +195,8 @@ cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -220,8 +220,8 @@ cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -246,8 +246,8 @@ cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=
       <AdditionalDependencies>glew32.lib;zlib.lib;physfs-static.lib;openal32.lib;lua51.lib;ogg.lib;vorbisfile.lib;vorbis.lib;opengl32.lib;dbghelp.lib;kernel32.lib;user32.lib;shell32.lib;gdi32.lib;advapi32.lib;ole32.lib;crypt32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -272,8 +272,8 @@ cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=
       <AdditionalDependencies>glew32.lib;zlib.lib;physfs-static.lib;openal32.lib;lua51.lib;ogg.lib;vorbisfile.lib;vorbis.lib;opengl32.lib;dbghelp.lib;kernel32.lib;user32.lib;shell32.lib;gdi32.lib;advapi32.lib;ole32.lib;crypt32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;  ../src/gitinfo.h
@@ -308,8 +308,8 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -354,8 +354,8 @@ cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PreBuildEvent>
-      <Command>if NOT EXIST ../src/framework/protobuf/appearances.pb.cc (
-cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/framework/protobuf/ --proto_path=../src/framework/protobuf/proto/ appearances.proto shared.proto
+      <Command>if NOT EXIST ../src/protobuf/appearances.pb.cc (
+cmd /c "$(VcpkgRoot)\installed\$(VcpkgTriplet)\tools\protobuf\protoc" --cpp_out=../src/protobuf/ --proto_path=../src/protobuf/ appearances.proto
 )
 
 echo | set /p dummyName=#define GIT_BRANCH &gt;  ../src/gitinfo.h
@@ -419,14 +419,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClCompile Include="..\src\framework\core\clock.cpp" />
     <ClCompile Include="..\src\framework\core\config.cpp" />
     <ClCompile Include="..\src\framework\core\configmanager.cpp" />
-    <ClCompile Include="..\src\framework\core\event.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='static|Win32'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release - GIT Version|Win32'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='static|x64'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release - GIT Version|x64'">FW_GRAPHICS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
+    <ClCompile Include="..\src\framework\core\event.cpp" />
     <ClCompile Include="..\src\framework\core\eventdispatcher.cpp" />
     <ClCompile Include="..\src\framework\core\filestream.cpp" />
     <ClCompile Include="..\src\framework\core\graphicalapplication.cpp" />
@@ -465,7 +458,6 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClCompile Include="..\src\framework\graphics\texture.cpp" />
     <ClCompile Include="..\src\framework\graphics\texturemanager.cpp" />
     <ClCompile Include="..\src\framework\input\mouse.cpp" />
-    <ClCompile Include="..\src\framework\luaengine\lbitlib.cpp" />
     <ClCompile Include="..\src\framework\luaengine\luaexception.cpp" />
     <ClCompile Include="..\src\framework\luaengine\luainterface.cpp" />
     <ClCompile Include="..\src\framework\luaengine\luaobject.cpp" />
@@ -523,8 +515,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClCompile Include="..\src\framework\xml\tinyxml.cpp" />
     <ClCompile Include="..\src\framework\xml\tinyxmlerror.cpp" />
     <ClCompile Include="..\src\framework\xml\tinyxmlparser.cpp" />
-    <ClCompile Include="..\src\framework\protobuf\appearances.pb.cc" />
-    <ClCompile Include="..\src\framework\protobuf\shared.pb.cc" />
+    <ClCompile Include="..\src\protobuf\appearances.pb.cc" />
     <ClCompile Include="..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -626,7 +617,6 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\graphics\vertexarray.h" />
     <ClInclude Include="..\src\framework\input\mouse.h" />
     <ClInclude Include="..\src\framework\luaengine\declarations.h" />
-    <ClInclude Include="..\src\framework\luaengine\lbitlib.h" />
     <ClInclude Include="..\src\framework\luaengine\luabinder.h" />
     <ClInclude Include="..\src\framework\luaengine\luaexception.h" />
     <ClInclude Include="..\src\framework\luaengine\luainterface.h" />
@@ -701,8 +691,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\util\uuid.h" />
     <ClInclude Include="..\src\framework\xml\tinystr.h" />
     <ClInclude Include="..\src\framework\xml\tinyxml.h" />
-    <ClInclude Include="..\src\framework\protobuf\appearances.pb.h" />
-    <ClInclude Include="..\src\framework\protobuf\shared.pb.h" />
+    <ClInclude Include="..\src\protobuf\appearances.pb.h" />
     <ClInclude Include="..\src\gitinfo.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,139 @@
+---
+name: Analysis - SonarCloud
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+env:
+  VCPKG_BUILD_TYPE: release
+  CMAKE_BUILD_PARALLEL_LEVEL: 2
+  MAKEFLAGS: '-j 2'
+  NUMBER_OF_PROCESSORS: 2
+  SONAR_SCANNER_VERSION: 4.7.0.2747
+  SONAR_SERVER_URL: "https://sonarcloud.io"
+  BUILD_WRAPPER_OUT_DIR: bw-output
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+          repository: ${{github.event.pull_request.head.repo.full_name}}
+
+      - uses: actions/checkout@v3
+        if: ${{ github.event_name == 'push' }}
+
+      - name: Install Linux Dependencies
+        run: >
+          sudo apt-get update && sudo apt-get install ccache libxmu-dev libxi-dev libgl-dev libx11-dev linux-headers-$(uname -r)
+
+      - name: Switch to gcc-11
+        run: |
+          sudo apt install gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+          sudo update-alternatives --set gcc /usr/bin/gcc-11
+
+      - name: CCache
+        id: ccache
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.ccache
+          key: ccache-${{ runner.os}}-${{ matrix.buildtype }}-${{ hashFiles('**/src') }}
+          restore-keys: |
+            ccache-${{ runner.os}}-${{ matrix.buildtype }}-
+            ccache-${{ runner.os}}-
+
+      - name: Sonar cache
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.cfamily
+          key: sonar-${{ runner.os}}-${{ matrix.buildtype }}-${{ hashFiles('**/src') }}
+          restore-keys: |
+            sonar-${{ runner.os}}-${{ matrix.buildtype }}-
+            sonar-${{ runner.os}}-
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: $HOME/.sonar/cache
+          key: sonar-${{ runner.os}}-${{ matrix.buildtype }}-${{ hashFiles('**/src') }}
+          restore-keys: |
+            sonar-${{ runner.os}}-${{ matrix.buildtype }}-
+            sonar-${{ runner.os}}-
+
+      - name: Restore artifacts, or setup vcpkg (do not install any package)
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgGitCommitId: 8d41d43e1f7f5933622b02e16430312da649361e
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+
+      - name: Download and set up sonar-scanner
+        env:
+          SONAR_SCANNER_DOWNLOAD_URL: https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${{ env.SONAR_SCANNER_VERSION }}-linux.zip
+        run: |
+          mkdir -p $HOME/.sonar
+          curl -sSLo $HOME/.sonar/sonar-scanner.zip ${{ env.SONAR_SCANNER_DOWNLOAD_URL }}
+          unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+          echo "$HOME/.sonar/sonar-scanner-${{ env.SONAR_SCANNER_VERSION }}-linux/bin" >> $GITHUB_PATH
+
+      - name: Download and set up build-wrapper
+        env:
+          BUILD_WRAPPER_DOWNLOAD_URL: ${{ env.SONAR_SERVER_URL }}/static/cpp/build-wrapper-linux-x86.zip
+        run: |
+          curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
+          unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
+          echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
+
+      - name: Run build-wrapper
+        run: |
+          mkdir -p build
+          cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake -S . -B build
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build
+
+      - name: Run PR sonar-scanner
+        if: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
+            --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+            --define sonar.cfamily.threads="${{ env.NUMBER_OF_PROCESSORS  }}" \
+            --define sonar.cfamily.cache.enabled=true \
+            --define sonar.cfamily.cache.path=$HOME/.cfamily \
+            --define sonar.pullrequest.key=${{ github.event.pull_request.number }} \
+            --define sonar.pullrequest.branch=${{ github.head_ref }} \
+            --define sonar.pullrequest.base=${{ github.base_ref }}
+
+      - name: Run sonar-scanner
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" \
+            --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}" \
+            --define sonar.cfamily.threads="${{ env.NUMBER_OF_PROCESSORS  }}" \
+            --define sonar.cfamily.cache.enabled=true \
+            --define sonar.cfamily.cache.path=$HOME/.cfamily
+
+      - name: SonarQube Quality Gate check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

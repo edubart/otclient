@@ -100,7 +100,7 @@ function onSelectReason(reasonLabel, focused)
         actionsTextList:destroyChildren()
         for actionBaseFlag = 0, #rvactions do
             local actionFlagString = rvactions[actionBaseFlag]
-            if bit32.band(reasonLabel.actionFlags, math.pow(2, actionBaseFlag)) > 0 then
+            if bit.band(reasonLabel.actionFlags, math.pow(2, actionBaseFlag)) > 0 then
                 local label = g_ui.createWidget('RVListLabel', actionsTextList)
                 label:setText(actionFlagString)
                 label.actionId = actionBaseFlag

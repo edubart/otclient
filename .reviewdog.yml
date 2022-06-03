@@ -1,0 +1,29 @@
+---
+runner:
+
+  cppcheck:
+    cmd: cppcheck --enable=all --template="{file}:{line}:{message}" src/
+    errorformat:
+      - "%f:%l:%m"
+    level: warning
+
+  luacheck:
+    cmd: luacheck --formatter=plain --no-color --no-config --no-global \
+      --no-unused --no-unused-args --no-cache --no-max-line-length \
+      --no-max-code-line-length --no-max-string-line-length \
+      --no-max-comment-line-length -d ./data/
+    errorformat:
+      - "%f:%l:%c: %m"
+    level: warning
+
+  luac:
+    cmd: find data/ -name '*.lua' -exec luac -p {} \;
+    errorformat:
+      - "%r: %f:%l: %m"
+    level: warning
+
+  xmllint:
+    cmd: find data/ -name '*.xml' -exec xmllint --noout {} \;
+    errorformat:
+      - "%f:%l: %m"
+    level: warning

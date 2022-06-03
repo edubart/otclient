@@ -1,0 +1,134 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 22,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "windows-release",
+      "displayName": "Windows - Release",
+      "description": "Sets Ninja generator, compilers, build and install directory and set build type as release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+           "type": "FILEPATH"
+        },
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "OPTIONS_ENABLE_SCCACHE": "ON"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "linux-release",
+      "displayName": "Linux - Release",
+      "description": "Sets Ninja generator, compilers, build and install directory and set build type as release",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": {
+          "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+           "type": "FILEPATH"
+        },
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "OPTIONS_ENABLE_CCACHE": "ON"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      }
+    },
+    {
+      "name": "windows-release-asan",
+      "inherits": "windows-release",
+      "displayName": "Windows - Release + ASAN",
+      "description": "Release Mode with ASAN",
+      "cacheVariables": {
+        "ASAN_ENABLED": "ON"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-release-static-lib",
+      "inherits": "windows-release",
+      "displayName": "Windows - Release + Static-lib",
+      "description": "Release Mode with Static-lib",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "inherits": "windows-release",
+      "displayName": "Windows - Debug",
+      "description": "Build Debug Mode",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DEBUG_LOG": "ON",
+        "ASAN_ENABLED": "ON"
+      },
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "linux-debug",
+      "inherits": "linux-release",
+      "displayName": "Linux - Debug Build",
+      "description": "Build Debug Mode",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "DEBUG_LOG": "ON",
+        "ASAN_ENABLED": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-release",
+      "configurePreset": "linux-release"
+    },
+    {
+      "name": "linux-debug",
+      "configurePreset": "linux-debug"
+    },
+    {
+      "name": "windows-release",
+      "configurePreset": "windows-release"
+    },
+    {
+      "name": "windows-release-asan",
+      "configurePreset": "windows-release-asan"
+    },
+    {
+      "name": "windows-release-static-lib",
+      "configurePreset": "windows-release-static-lib"
+    },
+    {
+      "name": "windows-debug",
+      "configurePreset": "windows-debug"
+    }
+  ]
+}

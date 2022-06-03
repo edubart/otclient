@@ -125,7 +125,10 @@ void Platform::openUrl(std::string url)
 #if defined(__APPLE__)
     system(stdext::format("open %s", url).c_str());
 #else
-    system(stdext::format("xdg-open %s", url).c_str());
+    int systemRet = system(stdext::format("xdg-open %s", url).c_str());
+    if(systemRet == -1){
+        return;
+    }
 #endif
 }
 

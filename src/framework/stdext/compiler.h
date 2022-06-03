@@ -27,11 +27,11 @@
 #endif
 
 #ifdef __clang__
- // clang is supported
+    #error "Clang is not supported by the project, you can use the docker"
 #define BUILD_COMPILER "clang " __VERSION__
 #elif defined(__GNUC__)
-#if !(__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6))
-#error "Sorry, you need gcc 4.6 or greater to compile."
+#if !(__GNUC__ > 4 || (__GNUC__ == 11 && __GNUC_MINOR__ >= 0))
+#error "Sorry, you need gcc 11 or greater to compile."
 #endif
 #define BUILD_COMPILER "gcc " __VERSION__
 #elif defined(_MSC_VER)

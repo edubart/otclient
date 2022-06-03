@@ -1,0 +1,26 @@
+---
+name: Tests - Lua
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+      - devel
+      - develop
+
+jobs:
+  job:
+    name: Run Lua Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update
+        run: sudo apt-get update
+
+      - name: Setup Lua
+        run: sudo apt-get install -y lua5.1 liblua5.1-0-dev
+
+      - name: Check out code.
+        uses: actions/checkout@v1

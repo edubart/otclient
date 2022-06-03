@@ -1,0 +1,76 @@
+---
+name: Analysis - CodeQL
+
+on:
+  push:
+    paths:
+      - 'src/**'
+      - '**.py'
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: 2
+  MAKEFLAGS: '-j 2'
+  NODE_OPTIONS: ' --max-old-space-size=8192 '
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        language: ['cpp', 'python']
+        include:
+          - language: cpp
+            buildtype: linux-release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Install Linux Dependencies
+        if: ${{ matrix.language == 'cpp' }}
+        run: >
+          sudo apt-get update && sudo apt-get install ccache libglew-dev libx11-dev linux-headers-$(uname -r)
+
+      - name: Switch to gcc-11
+        if: ${{ matrix.language == 'cpp' }}
+        run: |
+          sudo apt install gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+          sudo update-alternatives --set gcc /usr/bin/gcc-11
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          max-size: "1G"
+          key: ccache-${{ matrix.os }}-${{ matrix.buildtype }}
+          restore-keys: |
+            ccache-${{ matrix.os }}
+
+      - name: Restore artifacts, or setup vcpkg (do not install any package)
+        if: ${{ matrix.language == 'cpp' }}
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgGitCommitId: 8d41d43e1f7f5933622b02e16430312da649361e
+
+      - name: Get latest CMake and ninja
+        if: ${{ matrix.language == 'cpp' }}
+        uses: lukka/get-cmake@latest
+
+      - name: Run CMake
+        if: ${{ matrix.language == 'cpp' }}
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: ${{ matrix.buildtype }}
+          buildPreset: ${{ matrix.buildtype }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

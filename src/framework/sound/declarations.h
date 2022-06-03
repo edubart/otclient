@@ -24,8 +24,6 @@
 
 #include <framework/global.h>
 
-#define AL_LIBTYPE_STATIC
-
 #if defined(__APPLE__)
 #include <OpenAL/al.h>
 #include <OpenAL/alc.h>

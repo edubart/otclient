@@ -26,11 +26,9 @@
 #include <framework/core/asyncdispatcher.h>
 #include <framework/core/resourcemanager.h>
 
-#ifdef FW_GRAPHICS
 #include <framework/luaengine/luainterface.h>
 #include <framework/platform/platform.h>
 #include <framework/platform/platformwindow.h>
-#endif
 
 Logger g_logger;
 
@@ -79,9 +77,7 @@ void Logger::log(Fw::LogLevel level, const std::string_view message)
     }
 
     if (level == Fw::LogFatal) {
-    #ifdef FW_GRAPHICS
         g_window.displayFatalError(message);
-    #endif
         s_ignoreLogs = true;
 
         // NOTE: Threads must finish before the process can exit.

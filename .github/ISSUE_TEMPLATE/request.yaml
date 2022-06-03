@@ -1,0 +1,48 @@
+---
+name: Request
+description: Any request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue!
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How critical is this?
+      options:
+        - Missing Content
+        - Enhancement
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: area
+    attributes:
+      label: Area
+      description: Where is the problem?
+      options:
+        - label: Data
+        - label: Source
+        - label: Docker
+        - label: Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: missing-content
+    attributes:
+      label: What is missing?
+      description: script, module, etc. Attach screenshots, logs, etc, anything that can helps us
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct]
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true

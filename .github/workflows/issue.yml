@@ -1,0 +1,26 @@
+---
+name: Issue - Labeling
+on:
+  workflow_dispatch:
+  issues:
+      types: ['opened']
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Renato66/auto-label@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          ignore-comments: true
+          labels-synonyms: '{
+            "Priority: Low":["Low"],
+            "Priority: Medium":["Medium"],
+            "Priority: High":["High"],
+            "Priority: Critical":["Critical"],
+            "Area: Datapack":["[X] Datapack"],
+            "Area: Source":["[X] Source"],
+            "Area: Map":["[X] Map"],
+            "Type: Enhancement":["Enhancement"],
+            "Type: Missing Content":["Missing Content"]
+          }'
+          default-labels: '["Status: Pending Test"]'

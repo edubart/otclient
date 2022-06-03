@@ -204,10 +204,10 @@ void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, c
     }
 
     if (flags.has_hook()) {
-        const auto hookDirection = flags.hook().direction();
-        if (hookDirection == HOOK_TYPE_EAST) {
+        const auto hookDirection = flags.hook();
+        if (hookDirection.east()) {
             m_attribs.set(ThingAttrHookEast, true);
-        } else if (hookDirection == HOOK_TYPE_SOUTH) {
+        } else if (hookDirection.south()) {
             m_attribs.set(ThingAttrHookSouth, true);
         }
     }

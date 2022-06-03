@@ -1,0 +1,72 @@
+---
+name: Build - Ubuntu
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+
+env:
+  CMAKE_BUILD_PARALLEL_LEVEL: 2
+  MAKEFLAGS: '-j 2'
+
+jobs:
+  job:
+    name: ${{ matrix.os }}-${{ matrix.buildtype }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+        buildtype: [linux-release, linux-debug]
+        include:
+          - os: ubuntu-18.04
+            triplet: x64-linux
+          - os: ubuntu-20.04
+            triplet: x64-linux
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Linux Dependencies
+        run: > 
+          sudo apt-get update && sudo apt-get install ccache libglew-dev libx11-dev linux-headers-$(uname -r)
+
+      - name: Switch to gcc-11
+        run: |
+          sudo apt install gcc-11 g++-11
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-12
+          sudo update-alternatives --set gcc /usr/bin/gcc-11
+
+      - name: CCache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          max-size: "1G"
+          key: ccache-${{ matrix.os }}-${{ matrix.buildtype }}
+          restore-keys: |
+            ccache-${{ matrix.os }}
+
+      - name: Restore artifacts and install vcpkg
+        uses: lukka/run-vcpkg@v10
+        with:
+          vcpkgGitCommitId: 8d41d43e1f7f5933622b02e16430312da649361e
+
+      - name: Get latest CMake and ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
+        with:
+          configurePreset: ${{ matrix.buildtype }}
+          buildPreset: ${{ matrix.buildtype }}
+
+      - name: Create and Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: otclient-${{ matrix.buildtype }}-${{ github.sha }}
+          path: |
+            ${{ github.workspace }}/otclient
