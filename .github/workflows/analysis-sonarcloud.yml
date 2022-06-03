@@ -34,7 +34,7 @@ jobs:
 
       - name: Install Linux Dependencies
         run: >
-          sudo apt-get update && sudo apt-get install ccache libxmu-dev libxi-dev libgl-dev libx11-dev linux-headers-$(uname -r)
+          sudo apt-get update && sudo apt-get install ccache libglew-dev libx11-dev linux-headers-$(uname -r)
 
       - name: Switch to gcc-11
         run: |
