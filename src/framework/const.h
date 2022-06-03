@@ -25,18 +25,6 @@
 #define DEG_TO_RAD (std::acos(-1.f)/180.f)
 #define RAD_TO_DEC (180.f/std::acos(-1.f))
 
-#ifndef BUILD_COMMIT
-#define BUILD_COMMIT "devel"
-#endif
-
-#ifndef BUILD_REVISION
-#define BUILD_REVISION "0"
-#endif
-
-#ifndef BUILD_TYPE
-#define BUILD_TYPE "unknown"
-#endif
-
 #ifndef BUILD_ARCH
 #if defined(__amd64) || defined(_M_X64)
 #define BUILD_ARCH "x64"

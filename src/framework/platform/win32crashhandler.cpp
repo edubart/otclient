@@ -136,10 +136,10 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     ss << "== application crashed\n";
     ss << stdext::format("app name: %s\n", g_app.getName());
     ss << stdext::format("app version: %s\n", g_app.getVersion());
-    ss << stdext::format("build compiler: %s\n", BUILD_COMPILER);
+    ss << stdext::format("build compiler: %s\n", g_app.getBuildCompiler());
     ss << stdext::format("build date: %s\n", __DATE__);
-    ss << stdext::format("build type: %s\n", BUILD_TYPE);
-    ss << stdext::format("build revision: %s (%s)\n", BUILD_REVISION, BUILD_COMMIT);
+    ss << stdext::format("build type: %s\n", g_app.getBuildType());
+    ss << stdext::format("build revision: %s (%s)\n", g_app.getBuildRevision(), g_app.getBuildCommit());
     ss << stdext::format("crash date: %s\n", stdext::date_time_string());
     ss << stdext::format("exception: %s (0x%08lx)\n", getExceptionName(e->ExceptionRecord->ExceptionCode), e->ExceptionRecord->ExceptionCode);
     ss << stdext::format("exception address: 0x%08lx\n", (size_t)e->ExceptionRecord->ExceptionAddress);
