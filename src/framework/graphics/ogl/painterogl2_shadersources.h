@@ -26,9 +26,9 @@ static constexpr std::string_view glslMainVertexShader = "\n\
     highp vec4 calculatePosition();\n\
     void main() {\n\
         gl_Position = calculatePosition();\n\
-    }\n";
+    }\n",
 
-static constexpr std::string_view glslMainWithTexCoordsVertexShader = "\n\
+    glslMainWithTexCoordsVertexShader = "\n\
     attribute highp vec2 a_TexCoord;\n\
     uniform highp mat3 u_TextureMatrix;\n\
     varying highp vec2 v_TexCoord;\n\
@@ -37,34 +37,34 @@ static constexpr std::string_view glslMainWithTexCoordsVertexShader = "\n\
     {\n\
         gl_Position = calculatePosition();\n\
         v_TexCoord = (u_TextureMatrix * vec3(a_TexCoord,1.0)).xy;\n\
-    }\n";
+    }\n",
 
-static constexpr std::string_view glslPositionOnlyVertexShader = "\n\
+    glslPositionOnlyVertexShader = "\n\
     attribute highp vec2 a_Vertex;\n\
     uniform highp mat3 u_TransformMatrix;\n\
     uniform highp mat3 u_ProjectionMatrix;\n\
     highp vec4 calculatePosition() {\n\
         return vec4(u_ProjectionMatrix * u_TransformMatrix * vec3(a_Vertex.xy, 1.0), 1.0);\n\
-    }\n";
+    }\n",
 
-static constexpr std::string_view glslMainFragmentShader = "\n\
+    glslMainFragmentShader = "\n\
     uniform lowp float u_Opacity;\n\
     lowp vec4 calculatePixel();\n\
     void main()\n\
     {\n\
         gl_FragColor = calculatePixel();\n\
         gl_FragColor.a *= u_Opacity;\n\
-    }\n";
+    }\n",
 
-static constexpr std::string_view glslTextureSrcFragmentShader = "\n\
+    glslTextureSrcFragmentShader = "\n\
     varying mediump vec2 v_TexCoord;\n\
     uniform lowp vec4 u_Color;\n\
     uniform sampler2D u_Tex0;\n\
     lowp vec4 calculatePixel() {\n\
         return texture2D(u_Tex0, v_TexCoord) * u_Color;\n\
-    }\n";
+    }\n",
 
-static constexpr std::string_view glslSolidColorFragmentShader = "\n\
+    glslSolidColorFragmentShader = "\n\
     uniform lowp vec4 u_Color;\n\
     lowp vec4 calculatePixel() {\n\
         return u_Color;\n\

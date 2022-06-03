@@ -54,19 +54,19 @@ Shader::~Shader()
 bool Shader::compileSourceCode(const std::string_view sourceCode)
 {
 #ifndef OPENGL_ES
-    static const auto* qualifierDefines =
+    static constexpr std::string_view qualifierDefines =
         "#define lowp\n"
         "#define mediump\n"
         "#define highp\n";
 #else
-    static const char* qualifierDefines =
+    static constexpr std::string_view =
         "#ifndef GL_FRAGMENT_PRECISION_HIGH\n"
         "#define highp mediump\n"
         "#endif\n"
         "precision highp float;\n";
 #endif
 
-    std::string code = qualifierDefines;
+    std::string code = std::string{ qualifierDefines };
     code.append(sourceCode);
     const char* c_source = code.data();
     glShaderSource(m_shaderId, 1, &c_source, nullptr);
