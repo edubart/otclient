@@ -37,7 +37,7 @@ enum class SpriteLayout
 class SpriteSheet : public LuaObject
 {
 public:
-    SpriteSheet(int firstId, int lastId, SpriteLayout spriteLayout, const std::string& file) : firstId(firstId), lastId(lastId), spriteLayout(spriteLayout), file(file) {}
+    SpriteSheet(int firstId, int lastId, SpriteLayout spriteLayout, const std::string_view file) : firstId(firstId), lastId(lastId), spriteLayout(spriteLayout), file(file) {}
 
     Size getSpriteSize()
     {
@@ -78,8 +78,8 @@ public:
     int getSpritesCount() const { return m_spritesCount; }
 
     bool loadSpriteSheet(const SpriteSheetPtr& sheet);
-    void saveSheetToFileBySprite(int id, const std::string& file);
-    void saveSheetToFile(const SpriteSheetPtr& sheet, const std::string& file);
+    void saveSheetToFileBySprite(int id, const std::string_view file);
+    void saveSheetToFile(const SpriteSheetPtr& sheet, const std::string_view file);
     SpriteSheetPtr getSheetBySpriteId(int id, bool load = true);
 
     void addSpriteSheet(const SpriteSheetPtr& sheet)
@@ -88,7 +88,7 @@ public:
     }
 
     ImagePtr getSpriteImage(int id);
-    void saveSpriteToFile(int id, const std::string& file);
+    void saveSpriteToFile(int id, const std::string_view file);
 
 private:
     int m_spritesCount{ 0 };

@@ -32,7 +32,7 @@ public:
     Town(uint32 tid, std::string name, const Position& pos = {});
 
     void setId(uint32 tid) { m_id = tid; }
-    void setName(const std::string& name) { m_name = name; }
+    void setName(const std::string_view name) { m_name = name; }
     void setPos(const Position& pos) { m_pos = pos; }
 
     uint32 getId() { return m_id; }
@@ -53,7 +53,7 @@ public:
     void addTown(const TownPtr& town);
     void removeTown(uint32 townId);
     const TownPtr& getTown(uint32 townId);
-    const TownPtr& getTownByName(const std::string& name);
+    const TownPtr& getTownByName(const std::string_view name);
 
     void sort();
     TownList getTowns() { return m_towns; }

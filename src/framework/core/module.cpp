@@ -27,7 +27,7 @@
 #include <framework/luaengine/luainterface.h>
 #include <framework/otml/otml.h>
 
-Module::Module(const std::string& name)
+Module::Module(const std::string_view name)
 {
     m_name = name;
     m_sandboxEnv = g_lua.newSandboxEnv();
@@ -68,8 +68,8 @@ bool Module::load()
             g_lua.safeCall(0, 0);
         }
 
-        const std::string& onLoadBuffer = std::get<0>(m_onLoadFunc);
-        const std::string& onLoadSource = std::get<1>(m_onLoadFunc);
+        const auto& onLoadBuffer = std::get<0>(m_onLoadFunc);
+        const auto& onLoadSource = std::get<1>(m_onLoadFunc);
         if (!onLoadBuffer.empty()) {
             g_lua.loadBuffer(onLoadBuffer, onLoadSource);
             if (m_sandboxed) {
@@ -117,8 +117,8 @@ void Module::unload()
             if (m_sandboxed)
                 g_lua.setGlobalEnvironment(m_sandboxEnv);
 
-            const std::string& onUnloadBuffer = std::get<0>(m_onUnloadFunc);
-            const std::string& onUnloadSource = std::get<1>(m_onUnloadFunc);
+            const auto& onUnloadBuffer = std::get<0>(m_onUnloadFunc);
+            const auto& onUnloadSource = std::get<1>(m_onUnloadFunc);
             if (!onUnloadBuffer.empty()) {
                 g_lua.loadBuffer(onUnloadBuffer, onUnloadSource);
                 g_lua.safeCall(0, 0);
@@ -164,7 +164,7 @@ bool Module::isDependent()
     return false;
 }
 
-bool Module::hasDependency(const std::string& name, bool recursive)
+bool Module::hasDependency(const std::string_view name, bool recursive)
 {
     if (std::find(m_dependencies.begin(), m_dependencies.end(), name) != m_dependencies.end())
         return true;

@@ -42,7 +42,7 @@ public:
     bool hasSprite() { return m_sprite != nullptr; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
+    void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode) override;
 
     TexturePtr m_sprite;
     uint16 m_spriteId{ 0 };

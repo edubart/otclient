@@ -42,14 +42,14 @@ public:
     void updateHoveredWidget(bool now = false);
 
     void clearStyles();
-    bool importStyle(std::string file);
+    bool importStyle(const std::string_view file);
     void importStyleFromOTML(const OTMLNodePtr& styleNode);
-    OTMLNodePtr getStyle(const std::string& styleName);
-    std::string getStyleClass(const std::string& styleName);
+    OTMLNodePtr getStyle(const std::string_view styleName);
+    std::string getStyleClass(const std::string_view styleName);
 
-    UIWidgetPtr loadUI(std::string file, const UIWidgetPtr& parent);
-    UIWidgetPtr displayUI(const std::string& file) { return loadUI(file, m_rootWidget); }
-    UIWidgetPtr createWidget(const std::string& styleName, const UIWidgetPtr& parent);
+    UIWidgetPtr loadUI(const std::string_view file, const UIWidgetPtr& parent);
+    UIWidgetPtr displayUI(const std::string_view file) { return loadUI(file, m_rootWidget); }
+    UIWidgetPtr createWidget(const std::string_view styleName, const UIWidgetPtr& parent);
     UIWidgetPtr createWidgetFromOTML(const OTMLNodePtr& widgetNode, const UIWidgetPtr& parent);
 
     void setMouseReceiver(const UIWidgetPtr& widget) { m_mouseReceiver = widget; }

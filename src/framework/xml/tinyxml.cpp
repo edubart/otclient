@@ -71,7 +71,7 @@ void TiXmlBase::EncodeString(const TIXML_STRING& str, TIXML_STRING* outString)
             // However, there is no mechanism (currently) for
             // this function to return an error.
             while (i < static_cast<int>(str.length()) - 1) {
-                outString->append(str.c_str() + i, 1);
+                outString->append(str.data() + i, 1);
                 ++i;
                 if (str[i] == ';')
                     break;
@@ -138,7 +138,7 @@ TiXmlNode::~TiXmlNode()
 
 void TiXmlNode::CopyTo(TiXmlNode* target) const
 {
-    target->SetValue(value.c_str());
+    target->SetValue(value.data());
     target->userData = userData;
     target->location = location;
 }
@@ -370,7 +370,7 @@ const TiXmlNode* TiXmlNode::PreviousSibling(const char* _value) const
     return nullptr;
 }
 
-void TiXmlElement::RemoveAttribute(const std::string& name)
+void TiXmlElement::RemoveAttribute(const std::string_view name)
 {
     TiXmlAttribute* node = attributeSet.Find(name);
     if (node) {
@@ -432,7 +432,7 @@ const TiXmlDocument* TiXmlNode::GetDocument() const
     return nullptr;
 }
 
-TiXmlElement::TiXmlElement(const std::string& _value)
+TiXmlElement::TiXmlElement(const std::string_view _value)
     : TiXmlNode(TINYXML_ELEMENT)
 {
     firstChild = lastChild = nullptr;
@@ -468,7 +468,7 @@ void TiXmlElement::ClearThis()
     }
 }
 
-std::string TiXmlElement::Attribute(const std::string& name) const
+std::string TiXmlElement::Attribute(const std::string_view name) const
 {
     const TiXmlAttribute* attrib = attributeSet.Find(name);
     if (attrib)
@@ -476,7 +476,7 @@ std::string TiXmlElement::Attribute(const std::string& name) const
     return {};
 }
 
-std::string TiXmlElement::Attribute(const std::string& name, int* i) const
+std::string TiXmlElement::Attribute(const std::string_view name, int* i) const
 {
     const TiXmlAttribute* attrib = attributeSet.Find(name);
     std::string result;
@@ -490,7 +490,7 @@ std::string TiXmlElement::Attribute(const std::string& name, int* i) const
     return result;
 }
 
-std::string TiXmlElement::Attribute(const std::string& name, double* d) const
+std::string TiXmlElement::Attribute(const std::string_view name, double* d) const
 {
     const TiXmlAttribute* attrib = attributeSet.Find(name);
     std::string result = std::string();
@@ -504,7 +504,7 @@ std::string TiXmlElement::Attribute(const std::string& name, double* d) const
     return result;
 }
 
-void TiXmlElement::SetAttribute(const std::string& _name, const std::string& _value)
+void TiXmlElement::SetAttribute(const std::string_view _name, const std::string_view _value)
 {
     TiXmlAttribute* attrib = attributeSet.FindOrCreate(_name);
     if (attrib) {
@@ -520,7 +520,7 @@ void TiXmlElement::Print(FILE* cfile, int depth) const
         fprintf(cfile, "    ");
     }
 
-    fprintf(cfile, "<%s", value.c_str());
+    fprintf(cfile, "<%s", value.data());
 
     for (const TiXmlAttribute* attrib = attributeSet.First(); attrib; attrib = attrib->Next()) {
         fprintf(cfile, " ");
@@ -532,7 +532,7 @@ void TiXmlElement::Print(FILE* cfile, int depth) const
     } else if (firstChild == lastChild && firstChild->ToText()) {
         fprintf(cfile, ">");
         firstChild->Print(cfile, depth + 1);
-        fprintf(cfile, "</%s>", value.c_str());
+        fprintf(cfile, "</%s>", value.data());
     } else {
         fprintf(cfile, ">");
 
@@ -546,7 +546,7 @@ void TiXmlElement::Print(FILE* cfile, int depth) const
         for (i = 0; i < depth; ++i) {
             fprintf(cfile, "    ");
         }
-        fprintf(cfile, "</%s>", value.c_str());
+        fprintf(cfile, "</%s>", value.data());
     }
 }
 
@@ -615,7 +615,7 @@ TiXmlDocument::TiXmlDocument(const char* documentName) : TiXmlNode(TINYXML_DOCUM
 }
 
 #ifdef TIXML_USE_STL
-TiXmlDocument::TiXmlDocument(const std::string& documentName) : TiXmlNode(TINYXML_DOCUMENT)
+TiXmlDocument::TiXmlDocument(const std::string_view documentName) : TiXmlNode(TINYXML_DOCUMENT)
 {
     tabsize = 4;
     useMicrosoftBOM = false;
@@ -652,7 +652,7 @@ bool TiXmlDocument::LoadFile(const char* _filename, TiXmlEncoding encoding)
     value = filename;
 
     // reading in binary mode so that tinyxml can normalize the EOL
-    FILE* file = TiXmlFOpen(value.c_str(), "rb");
+    FILE* file = TiXmlFOpen(value.data(), "rb");
 
     if (file) {
         const bool result = LoadFile(file, encoding);
@@ -877,14 +877,14 @@ void TiXmlAttribute::Print(FILE* cfile, int /*depth*/, TIXML_STRING* str) const
 
     if (value.find('\"') == TIXML_STRING::npos) {
         if (cfile) {
-            fprintf(cfile, "%s=\"%s\"", n.c_str(), v.c_str());
+            fprintf(cfile, "%s=\"%s\"", n.data(), v.data());
         }
         if (str) {
             (*str) += n; (*str) += "=\""; (*str) += v; (*str) += "\"";
         }
     } else {
         if (cfile) {
-            fprintf(cfile, "%s='%s'", n.c_str(), v.c_str());
+            fprintf(cfile, "%s='%s'", n.data(), v.data());
         }
         if (str) {
             (*str) += n; (*str) += "='"; (*str) += v; (*str) += "'";
@@ -894,14 +894,14 @@ void TiXmlAttribute::Print(FILE* cfile, int /*depth*/, TIXML_STRING* str) const
 
 int TiXmlAttribute::QueryIntValue(int* ival) const
 {
-    if (TIXML_SSCANF(value.c_str(), "%d", ival) == 1)
+    if (TIXML_SSCANF(value.data(), "%d", ival) == 1)
         return TIXML_SUCCESS;
     return TIXML_WRONG_TYPE;
 }
 
 int TiXmlAttribute::QueryDoubleValue(double* dval) const
 {
-    if (TIXML_SSCANF(value.c_str(), "%lf", dval) == 1)
+    if (TIXML_SSCANF(value.data(), "%lf", dval) == 1)
         return TIXML_SUCCESS;
     return TIXML_WRONG_TYPE;
 }
@@ -930,12 +930,12 @@ void TiXmlAttribute::SetDoubleValue(double _value)
 
 int TiXmlAttribute::IntValue() const
 {
-    return atoi(value.c_str());
+    return atoi(value.data());
 }
 
 double  TiXmlAttribute::DoubleValue() const
 {
-    return atof(value.c_str());
+    return atof(value.data());
 }
 
 TiXmlComment::TiXmlComment(const TiXmlComment& copy) : TiXmlNode(TINYXML_COMMENT)
@@ -956,7 +956,7 @@ void TiXmlComment::Print(FILE* cfile, int depth) const
     for (int i = 0; i < depth; i++) {
         fprintf(cfile, "    ");
     }
-    fprintf(cfile, "<!--%s-->", value.c_str());
+    fprintf(cfile, "<!--%s-->", value.data());
 }
 
 void TiXmlComment::CopyTo(TiXmlComment* target) const
@@ -988,11 +988,11 @@ void TiXmlText::Print(FILE* cfile, int depth) const
         for (int i = 0; i < depth; i++) {
             fprintf(cfile, "    ");
         }
-        fprintf(cfile, "<![CDATA[%s]]>\n", value.c_str());    // unformatted output
+        fprintf(cfile, "<![CDATA[%s]]>\n", value.data());    // unformatted output
     } else {
         TIXML_STRING buffer;
         EncodeString(value, &buffer);
-        fprintf(cfile, "%s", buffer.c_str());
+        fprintf(cfile, "%s", buffer.data());
     }
 }
 
@@ -1029,9 +1029,9 @@ TiXmlDeclaration::TiXmlDeclaration(const char* _version,
 }
 
 #ifdef TIXML_USE_STL
-TiXmlDeclaration::TiXmlDeclaration(const std::string& _version,
-                                   const std::string& _encoding,
-                                   const std::string& _standalone)
+TiXmlDeclaration::TiXmlDeclaration(const std::string_view _version,
+                                   const std::string_view _encoding,
+                                   const std::string_view _standalone)
     : TiXmlNode(TINYXML_DECLARATION)
 {
     version = _version;
@@ -1059,15 +1059,15 @@ void TiXmlDeclaration::Print(FILE* cfile, int /*depth*/, TIXML_STRING* str) cons
     if (str)     (*str) += "<?xml ";
 
     if (!version.empty()) {
-        if (cfile) fprintf(cfile, "version=\"%s\" ", version.c_str());
+        if (cfile) fprintf(cfile, "version=\"%s\" ", version.data());
         if (str) { (*str) += "version=\""; (*str) += version; (*str) += "\" "; }
     }
     if (!encoding.empty()) {
-        if (cfile) fprintf(cfile, "encoding=\"%s\" ", encoding.c_str());
+        if (cfile) fprintf(cfile, "encoding=\"%s\" ", encoding.data());
         if (str) { (*str) += "encoding=\""; (*str) += encoding; (*str) += "\" "; }
     }
     if (!standalone.empty()) {
-        if (cfile) fprintf(cfile, "standalone=\"%s\" ", standalone.c_str());
+        if (cfile) fprintf(cfile, "standalone=\"%s\" ", standalone.data());
         if (str) { (*str) += "standalone=\""; (*str) += standalone; (*str) += "\" "; }
     }
     if (cfile) fprintf(cfile, "?>");
@@ -1103,7 +1103,7 @@ void TiXmlUnknown::Print(FILE* cfile, int depth) const
 {
     for (int i = 0; i < depth; i++)
         fprintf(cfile, "    ");
-    fprintf(cfile, "<%s>", value.c_str());
+    fprintf(cfile, "<%s>", value.data());
 }
 
 void TiXmlUnknown::CopyTo(TiXmlUnknown* target) const
@@ -1169,7 +1169,7 @@ void TiXmlAttributeSet::Remove(TiXmlAttribute* removeMe)
 }
 
 #ifdef TIXML_USE_STL
-TiXmlAttribute* TiXmlAttributeSet::Find(const std::string& name) const
+TiXmlAttribute* TiXmlAttributeSet::Find(const std::string_view name) const
 {
     for (TiXmlAttribute* node = sentinel.next; node != &sentinel; node = node->next) {
         if (node->name == name)
@@ -1178,7 +1178,7 @@ TiXmlAttribute* TiXmlAttributeSet::Find(const std::string& name) const
     return nullptr;
 }
 
-TiXmlAttribute* TiXmlAttributeSet::FindOrCreate(const std::string& _name)
+TiXmlAttribute* TiXmlAttributeSet::FindOrCreate(const std::string_view _name)
 {
     TiXmlAttribute* attrib = Find(_name);
     if (!attrib) {
@@ -1193,7 +1193,7 @@ TiXmlAttribute* TiXmlAttributeSet::FindOrCreate(const std::string& _name)
 TiXmlAttribute* TiXmlAttributeSet::Find(const char* name) const
 {
     for (TiXmlAttribute* node = sentinel.next; node != &sentinel; node = node->next) {
-        if (strcmp(node->name.c_str(), name) == 0)
+        if (strcmp(node->name.data(), name) == 0)
             return node;
     }
     return nullptr;
@@ -1217,7 +1217,7 @@ std::istream& operator>> (std::istream& in, TiXmlNode& base)
     tag.reserve(8 * 1000);
     base.StreamIn(&in, &tag);
 
-    base.Parse(tag.c_str(), nullptr, TIXML_DEFAULT_ENCODING);
+    base.Parse(tag.data(), nullptr, TIXML_DEFAULT_ENCODING);
     return in;
 }
 #endif

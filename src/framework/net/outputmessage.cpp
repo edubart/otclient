@@ -35,12 +35,12 @@ void OutputMessage::reset()
     m_messageSize = 0;
 }
 
-void OutputMessage::setBuffer(const std::string& buffer)
+void OutputMessage::setBuffer(const std::string_view buffer)
 {
     const int len = buffer.size();
     reset();
     checkWrite(len);
-    memcpy(m_buffer + m_writePos, buffer.c_str(), len);
+    memcpy(m_buffer + m_writePos, buffer.data(), len);
     m_writePos += len;
     m_messageSize += len;
 }
@@ -77,14 +77,14 @@ void OutputMessage::addU64(uint64 value)
     m_messageSize += 8;
 }
 
-void OutputMessage::addString(const std::string& buffer)
+void OutputMessage::addString(const std::string_view buffer)
 {
     const int len = buffer.length();
     if (len > MAX_STRING_LENGTH)
         throw stdext::exception(stdext::format("string length > %d", MAX_STRING_LENGTH));
     checkWrite(len + 2);
     addU16(len);
-    memcpy(m_buffer + m_writePos, buffer.c_str(), len);
+    memcpy(m_buffer + m_writePos, buffer.data(), len);
     m_writePos += len;
     m_messageSize += len;
 }

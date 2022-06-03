@@ -257,7 +257,7 @@ void WIN32Window::terminate()
     }
 
     if (m_instance) {
-        if (!UnregisterClassA(g_app.getCompactName().c_str(), m_instance))
+        if (!UnregisterClassA(g_app.getCompactName().data(), m_instance))
             g_logger.error("UnregisterClassA failed");
         m_instance = nullptr;
     }
@@ -285,7 +285,7 @@ void WIN32Window::internalCreateWindow()
     wc.hCursor = m_defaultCursor;
     wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
     wc.lpszMenuName = nullptr;
-    wc.lpszClassName = g_app.getCompactName().c_str();
+    wc.lpszClassName = g_app.getCompactName().data();
 
     if (!RegisterClassA(&wc))
         g_logger.fatal("Failed to register the window class.");
@@ -299,7 +299,7 @@ void WIN32Window::internalCreateWindow()
 
     updateUnmaximizedCoords();
     m_window = CreateWindowExA(dwExStyle,
-                               g_app.getCompactName().c_str(),
+                               g_app.getCompactName().data(),
                                nullptr,
                                dwStyle,
                                screenRect.left(),
@@ -822,9 +822,9 @@ void WIN32Window::hideMouse()
     ShowCursor(false);
 }
 
-void WIN32Window::displayFatalError(const std::string& message)
+void WIN32Window::displayFatalError(const std::string_view message)
 {
-    MessageBoxW(m_window, stdext::latin1_to_utf16(message).c_str(), L"FATAL ERROR", MB_OK | MB_ICONERROR);
+    MessageBoxW(m_window, stdext::latin1_to_utf16(message).data(), L"FATAL ERROR", MB_OK | MB_ICONERROR);
 }
 
 int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot)
@@ -870,9 +870,9 @@ void WIN32Window::restoreMouseCursor()
     }
 }
 
-void WIN32Window::setTitle(const std::string& title)
+void WIN32Window::setTitle(const std::string_view title)
 {
-    SetWindowTextW(m_window, stdext::latin1_to_utf16(title).c_str());
+    SetWindowTextW(m_window, stdext::latin1_to_utf16(title).data());
 }
 
 void WIN32Window::setMinimumSize(const Size& minimumSize)
@@ -929,7 +929,7 @@ void WIN32Window::setVerticalSync(bool enable)
 #endif
 }
 
-void WIN32Window::setIcon(const std::string& file)
+void WIN32Window::setIcon(const std::string_view file)
 {
     const ImagePtr image = Image::load(file);
 
@@ -971,7 +971,7 @@ void WIN32Window::setIcon(const std::string& file)
     SendMessage(m_window, WM_SETICON, ICON_BIG, (LPARAM)icon);
 }
 
-void WIN32Window::setClipboardText(const std::string& text)
+void WIN32Window::setClipboardText(const std::string_view text)
 {
     if (!OpenClipboard(m_window))
         return;

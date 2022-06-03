@@ -81,12 +81,12 @@ class CreatureType : public LuaObject
 {
 public:
     CreatureType() = default;
-    CreatureType(const std::string& name) { setName(name); }
+    CreatureType(const std::string_view name) { setName(name); }
 
     void setSpawnTime(int32 spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
     int32 getSpawnTime() { return m_attribs.get<int32>(CreatureAttrSpawnTime); }
 
-    void setName(const std::string& name) { m_attribs.set(CreatureAttrName, name); }
+    void setName(const std::string_view name) { m_attribs.set(CreatureAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }
 
     void setOutfit(const Outfit& o) { m_attribs.set(CreatureAttrOutfit, o); }
@@ -112,12 +112,12 @@ public:
     void clearSpawns();
     void terminate();
 
-    void loadMonsters(const std::string& file);
-    void loadSingleCreature(const std::string& file);
-    void loadNpcs(const std::string& folder);
-    void loadCreatureBuffer(const std::string& buffer);
-    void loadSpawns(const std::string& fileName);
-    void saveSpawns(const std::string& fileName);
+    void loadMonsters(const std::string_view file);
+    void loadSingleCreature(const std::string_view file);
+    void loadNpcs(const std::string_view folder);
+    void loadCreatureBuffer(const std::string_view buffer);
+    void loadSpawns(const std::string_view fileName);
+    void saveSpawns(const std::string_view fileName);
 
     const CreatureTypePtr& getCreatureByName(std::string name);
     const CreatureTypePtr& getCreatureByLook(int look);

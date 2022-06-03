@@ -29,7 +29,7 @@
 class UIAnchor : public stdext::shared_object
 {
 public:
-    UIAnchor(Fw::AnchorEdge anchoredEdge, std::string hookedWidgetId, Fw::AnchorEdge hookedEdge) :
+    UIAnchor(Fw::AnchorEdge anchoredEdge, std::string_view hookedWidgetId, Fw::AnchorEdge hookedEdge) :
         m_anchoredEdge(anchoredEdge), m_hookedEdge(hookedEdge), m_hookedWidgetId(std::move(hookedWidgetId))
     {}
 
@@ -67,11 +67,11 @@ public:
     UIAnchorLayout(UIWidgetPtr parentWidget) : UILayout(std::move(parentWidget)) {}
 
     void addAnchor(const UIWidgetPtr& anchoredWidget, Fw::AnchorEdge anchoredEdge,
-                   const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
+                   const std::string_view hookedWidgetId, Fw::AnchorEdge hookedEdge);
     void removeAnchors(const UIWidgetPtr& anchoredWidget);
     bool hasAnchors(const UIWidgetPtr& anchoredWidget);
-    void centerIn(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
-    void fill(const UIWidgetPtr& anchoredWidget, const std::string& hookedWidgetId);
+    void centerIn(const UIWidgetPtr& anchoredWidget, const std::string_view hookedWidgetId);
+    void fill(const UIWidgetPtr& anchoredWidget, const std::string_view hookedWidgetId);
 
     void addWidget(const UIWidgetPtr& widget) override;
     void removeWidget(const UIWidgetPtr& widget) override;

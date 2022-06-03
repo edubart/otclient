@@ -155,7 +155,7 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     char dir[MAX_PATH];
     GetCurrentDirectory(sizeof(dir) - 1, dir);
     const std::string fileName = stdext::format("%s\\crashreport.log", dir);
-    std::ofstream fout(fileName.c_str(), std::ios::out | std::ios::app);
+    std::ofstream fout(fileName.data(), std::ios::out | std::ios::app);
     if (fout.is_open() && fout.good()) {
         fout << ss.str();
         fout.close();
@@ -167,8 +167,8 @@ LONG CALLBACK ExceptionHandler(LPEXCEPTION_POINTERS e)
     const std::string msg = stdext::format(
         "The application has crashed.\n\n"
         "A crash report has been written to:\n"
-        "%s", fileName.c_str());
-    MessageBox(nullptr, msg.c_str(), "Application crashed", 0);
+        "%s", fileName.data());
+    MessageBox(nullptr, msg.data(), "Application crashed", 0);
 
     // this seems to silently close the application
     //return EXCEPTION_EXECUTE_HANDLER;

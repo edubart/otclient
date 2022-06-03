@@ -35,7 +35,7 @@
 #include "houses.h"
 #include "towns.h"
 
-void Map::loadOtbm(const std::string& fileName)
+void Map::loadOtbm(const std::string_view fileName)
 {
     try {
         if (!g_things.isOtbLoaded())
@@ -90,10 +90,10 @@ void Map::loadOtbm(const std::string& fileName)
                     setDescription(tmp);
                     break;
                 case OTBM_ATTR_SPAWN_FILE:
-                    setSpawnFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
+                    setSpawnFile(fileName.substr(0, fileName.rfind('/') + 1).data() + tmp);
                     break;
                 case OTBM_ATTR_HOUSE_FILE:
-                    setHouseFile(fileName.substr(0, fileName.rfind('/') + 1) + tmp);
+                    setHouseFile(fileName.substr(0, fileName.rfind('/') + 1).data() + tmp);
                     break;
                 default:
                     stdext::throw_exception(stdext::format("Invalid attribute '%d'", static_cast<int>(attribute)));
@@ -199,7 +199,7 @@ void Map::loadOtbm(const std::string& fileName)
                         stdext::throw_exception("invalid town node.");
 
                     const uint32 townId = nodeTown->getU32();
-                    const std::string townName = nodeTown->getString();
+                    const auto& townName = nodeTown->getString();
 
                     Position townCoords;
                     townCoords.x = nodeTown->getU16();
@@ -235,7 +235,7 @@ void Map::loadOtbm(const std::string& fileName)
     }
 }
 
-void Map::saveOtbm(const std::string& fileName)
+void Map::saveOtbm(const std::string_view fileName)
 {
     try {
         const FileStreamPtr fin = g_resources.createFile(fileName);
@@ -401,7 +401,7 @@ void Map::saveOtbm(const std::string& fileName)
     }
 }
 
-bool Map::loadOtcm(const std::string& fileName)
+bool Map::loadOtcm(const std::string_view fileName)
 {
     try {
         const FileStreamPtr fin = g_resources.openFile(fileName);
@@ -479,7 +479,7 @@ bool Map::loadOtcm(const std::string& fileName)
     }
 }
 
-void Map::saveOtcm(const std::string& fileName)
+void Map::saveOtcm(const std::string_view fileName)
 {
     try {
         stdext::timer saveTimer;

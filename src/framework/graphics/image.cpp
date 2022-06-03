@@ -38,24 +38,24 @@ Image::Image(const Size& size, int bpp, uint8* pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
 }
 
-ImagePtr Image::load(std::string file)
+ImagePtr Image::load(std::string_view file)
 {
+    const auto& path = g_resources.guessFilePath(file.data(), "png");
+
     ImagePtr image;
     try {
-        file = g_resources.guessFilePath(file, "png");
-
         // load image file data
-        image = loadPNG(file);
+        image = loadPNG(path);
     } catch (stdext::exception& e) {
-        g_logger.error(stdext::format("unable to load image '%s': %s", file, e.what()));
+        g_logger.error(stdext::format("unable to load image '%s': %s", path, e.what()));
     }
     return image;
 }
 
-ImagePtr Image::loadPNG(const std::string& file)
+ImagePtr Image::loadPNG(const std::string_view file)
 {
     std::stringstream fin;
-    g_resources.readFileStream(file, fin);
+    g_resources.readFileStream(file.data(), fin);
     ImagePtr image;
     apng_data apng;
     if (load_apng(fin, &apng) == 0) {
@@ -74,7 +74,7 @@ ImagePtr Image::loadPNG(const std::string& file)
     return image;
 }
 
-void Image::savePNG(const std::string& fileName)
+void Image::savePNG(const std::string_view fileName)
 {
     const FileStreamPtr fin = g_resources.createFile(fileName);
     if (!fin)
@@ -83,7 +83,7 @@ void Image::savePNG(const std::string& fileName)
     fin->cache();
     std::stringstream data;
     save_png(data, m_size.width(), m_size.height(), 4, getPixelData());
-    fin->write(data.str().c_str(), data.str().length());
+    fin->write(data.str().data(), data.str().length());
     fin->flush();
     fin->close();
 }

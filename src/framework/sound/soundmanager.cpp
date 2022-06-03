@@ -164,7 +164,7 @@ void SoundManager::preload(std::string filename)
         m_buffers[filename] = buffer;
 }
 
-SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float gain, float pitch)
+SoundSourcePtr SoundManager::play(const std::string_view fn, float fadetime, float gain, float pitch)
 {
     if (!m_audioEnabled)
         return nullptr;
@@ -177,7 +177,7 @@ SoundSourcePtr SoundManager::play(std::string filename, float fadetime, float ga
     if (pitch == 0)
         pitch = 1.0f;
 
-    filename = resolveSoundFile(filename);
+    const std::string filename = resolveSoundFile(fn);
     SoundSourcePtr soundSource = createSoundSource(filename);
     if (!soundSource) {
         g_logger.error(stdext::format("unable to play '%s'", filename));
@@ -219,12 +219,12 @@ void SoundManager::stopAll()
     }
 }
 
-SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
+SoundSourcePtr SoundManager::createSoundSource(const std::string_view filename)
 {
     SoundSourcePtr source;
 
     try {
-        const auto it = m_buffers.find(filename);
+        const auto it = m_buffers.find(filename.data());
         if (it != m_buffers.end()) {
             source = SoundSourcePtr(new SoundSource);
             source->setBuffer(it->second);
@@ -287,11 +287,11 @@ SoundSourcePtr SoundManager::createSoundSource(const std::string& filename)
     return source;
 }
 
-std::string SoundManager::resolveSoundFile(std::string file)
+std::string SoundManager::resolveSoundFile(const std::string_view file)
 {
-    file = g_resources.guessFilePath(file, "ogg");
-    file = g_resources.resolvePath(file);
-    return file;
+    std::string _file = g_resources.guessFilePath(file, "ogg");
+    _file = g_resources.resolvePath(_file);
+    return _file;
 }
 
 void SoundManager::ensureContext()

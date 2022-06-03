@@ -39,9 +39,9 @@ public:
 
     bool isYell() { return m_mode == Otc::MessageYell || m_mode == Otc::MessageMonsterYell || m_mode == Otc::MessageBarkLoud; }
 
-    void setText(const std::string& text);
-    void setFont(const std::string& fontName);
-    bool addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text);
+    void setText(const std::string_view text);
+    void setFont(const std::string_view fontName);
+    bool addMessage(const std::string_view name, Otc::MessageMode mode, const std::string_view text);
 
     StaticTextPtr asStaticText() { return static_self_cast<StaticText>(); }
     bool isStaticText() override { return true; }

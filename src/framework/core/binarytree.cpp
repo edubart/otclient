@@ -206,13 +206,13 @@ void OutputBinaryTree::addU32(uint32 v)
     write(data, 4);
 }
 
-void OutputBinaryTree::addString(const std::string& v)
+void OutputBinaryTree::addString(const std::string_view v)
 {
     if (v.size() > 0xFFFF)
         stdext::throw_exception("too long string");
 
     addU16(v.length());
-    write((const uint8*)v.c_str(), v.length());
+    write((const uint8*)v.data(), v.length());
 }
 
 void OutputBinaryTree::addPos(uint16 x, uint16 y, uint8 z)

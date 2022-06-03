@@ -133,7 +133,7 @@ void Graphics::terminate()
     m_ok = false;
 }
 
-bool Graphics::parseOption(const std::string& option)
+bool Graphics::parseOption(const std::string_view option)
 {
     if (option == "-no-draw-arrays")
         m_useDrawArrays = false;

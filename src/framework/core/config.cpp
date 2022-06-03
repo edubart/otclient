@@ -31,14 +31,14 @@ Config::Config()
     m_fileName = "";
 }
 
-bool Config::load(const std::string& file)
+bool Config::load(const std::string_view file)
 {
-    m_fileName = file;
-
     if (!g_resources.fileExists(file))
         return false;
 
     try {
+        m_fileName = file;
+
         const OTMLDocumentPtr confsDoc = OTMLDocument::parse(file);
         if (confsDoc)
             m_confsDoc = confsDoc;
@@ -71,7 +71,7 @@ void Config::clear()
     m_confsDoc->clear();
 }
 
-void Config::setValue(const std::string& key, const std::string& value)
+void Config::setValue(const std::string_view key, const std::string_view value)
 {
     if (value.empty()) {
         remove(key);
@@ -82,7 +82,7 @@ void Config::setValue(const std::string& key, const std::string& value)
     m_confsDoc->addChild(child);
 }
 
-void Config::setList(const std::string& key, const std::vector<std::string>& list)
+void Config::setList(const std::string_view key, const std::vector<std::string>& list)
 {
     remove(key);
 
@@ -95,12 +95,12 @@ void Config::setList(const std::string& key, const std::vector<std::string>& lis
     m_confsDoc->addChild(child);
 }
 
-bool Config::exists(const std::string& key)
+bool Config::exists(const std::string_view key)
 {
     return m_confsDoc->hasChildAt(key);
 }
 
-std::string Config::getValue(const std::string& key)
+std::string Config::getValue(const std::string_view key)
 {
     const OTMLNodePtr child = m_confsDoc->get(key);
     if (child)
@@ -108,7 +108,7 @@ std::string Config::getValue(const std::string& key)
     return "";
 }
 
-std::vector<std::string> Config::getList(const std::string& key)
+std::vector<std::string> Config::getList(const std::string_view key)
 {
     std::vector<std::string> list;
     const OTMLNodePtr child = m_confsDoc->get(key);
@@ -119,20 +119,20 @@ std::vector<std::string> Config::getList(const std::string& key)
     return list;
 }
 
-void Config::remove(const std::string& key)
+void Config::remove(const std::string_view key)
 {
     const OTMLNodePtr child = m_confsDoc->get(key);
     if (child)
         m_confsDoc->removeChild(child);
 }
 
-void Config::setNode(const std::string& key, const OTMLNodePtr& node)
+void Config::setNode(const std::string_view key, const OTMLNodePtr& node)
 {
     remove(key);
     mergeNode(key, node);
 }
 
-void Config::mergeNode(const std::string& key, const OTMLNodePtr& node)
+void Config::mergeNode(const std::string_view key, const OTMLNodePtr& node)
 {
     OTMLNodePtr clone = node->clone();
     node->setTag(key);
@@ -140,7 +140,7 @@ void Config::mergeNode(const std::string& key, const OTMLNodePtr& node)
     m_confsDoc->addChild(node);
 }
 
-OTMLNodePtr Config::getNode(const std::string& key)
+OTMLNodePtr Config::getNode(const std::string_view key)
 {
     return m_confsDoc->get(key);
 }

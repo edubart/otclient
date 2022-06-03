@@ -96,10 +96,10 @@ public:
     void unlockChild(const UIWidgetPtr& child);
     void mergeStyle(const OTMLNodePtr& styleNode);
     void applyStyle(const OTMLNodePtr& styleNode);
-    void addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge);
+    void addAnchor(Fw::AnchorEdge anchoredEdge, const std::string_view hookedWidgetId, Fw::AnchorEdge hookedEdge);
     void removeAnchor(Fw::AnchorEdge anchoredEdge);
-    void fill(const std::string& hookedWidgetId);
-    void centerIn(const std::string& hookedWidgetId);
+    void fill(const std::string_view hookedWidgetId);
+    void centerIn(const std::string_view hookedWidgetId);
     void breakAnchors();
     void updateParentLayout();
     void updateLayout();
@@ -117,11 +117,11 @@ public:
     void destroy();
     void destroyChildren();
 
-    void setId(const std::string& id);
+    void setId(const std::string_view id);
     void setParent(const UIWidgetPtr& parent);
     void setLayout(const UILayoutPtr& layout);
     bool setRect(const Rect& rect);
-    void setStyle(const std::string& styleName);
+    void setStyle(const std::string_view styleName);
     void setStyleFromNode(const OTMLNodePtr& styleNode);
     void setEnabled(bool enabled);
     void setVisible(bool visible);
@@ -148,15 +148,15 @@ public:
     UIWidgetPtr getRootParent();
     UIWidgetPtr getChildAfter(const UIWidgetPtr& relativeChild);
     UIWidgetPtr getChildBefore(const UIWidgetPtr& relativeChild);
-    UIWidgetPtr getChildById(const std::string& childId);
+    UIWidgetPtr getChildById(const std::string_view childId);
     UIWidgetPtr getChildByPos(const Point& childPos);
     UIWidgetPtr getChildByIndex(int index);
-    UIWidgetPtr recursiveGetChildById(const std::string& id);
+    UIWidgetPtr recursiveGetChildById(const std::string_view id);
     UIWidgetPtr recursiveGetChildByPos(const Point& childPos, bool wantsPhantom);
     UIWidgetList recursiveGetChildren();
     UIWidgetList recursiveGetChildrenByPos(const Point& childPos);
     UIWidgetList recursiveGetChildrenByMarginPos(const Point& childPos);
-    UIWidgetPtr backwardsGetWidgetById(const std::string& id);
+    UIWidgetPtr backwardsGetWidgetById(const std::string_view id);
 
 private:
     bool m_updateEventScheduled{ false },
@@ -181,7 +181,7 @@ private:
 
     // event processing
 protected:
-    virtual void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode);
+    virtual void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode);
     virtual void onGeometryChange(const Rect& oldRect, const Rect& newRect);
     virtual void onLayoutUpdate();
     virtual void onFocusChange(bool focused, Fw::FocusReason reason);
@@ -192,7 +192,7 @@ protected:
     virtual bool onDragLeave(UIWidgetPtr droppedWidget, const Point& mousePos);
     virtual bool onDragMove(const Point& mousePos, const Point& mouseMoved);
     virtual bool onDrop(UIWidgetPtr draggedWidget, const Point& mousePos);
-    virtual bool onKeyText(const std::string& keyText);
+    virtual bool onKeyText(const std::string_view keyText);
     virtual bool onKeyDown(uchar keyCode, int keyboardModifiers);
     virtual bool onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     virtual bool onKeyUp(uchar keyCode, int keyboardModifiers);
@@ -205,7 +205,7 @@ protected:
 
     friend class UILayout;
 
-    bool propagateOnKeyText(const std::string& keyText);
+    bool propagateOnKeyText(const std::string_view keyText);
     bool propagateOnKeyDown(uchar keyCode, int keyboardModifiers);
     bool propagateOnKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeatTicks);
     bool propagateOnKeyUp(uchar keyCode, int keyboardModifiers);
@@ -310,7 +310,7 @@ public:
     void setBackgroundHeight(int height) { m_backgroundRect.setHeight(height); }
     void setBackgroundSize(const Size& size) { m_backgroundRect.resize(size); }
     void setBackgroundRect(const Rect& rect) { m_backgroundRect = rect; }
-    void setIcon(const std::string& iconFile);
+    void setIcon(const std::string_view iconFile);
     void setIconColor(const Color& color) { m_iconColor = color; }
     void setIconOffsetX(int x) { m_iconOffset.x = x; }
     void setIconOffsetY(int y) { m_iconOffset.y = y; }
@@ -421,7 +421,7 @@ protected:
     EdgeGroup<int> m_imageBorder;
 
 public:
-    void setImageSource(const std::string& source);
+    void setImageSource(const std::string_view source);
     void setImageClip(const Rect& clipRect) { m_imageClipRect = clipRect; updateImageCache(); }
     void setImageOffsetX(int x) { m_imageRect.setX(x); updateImageCache(); }
     void setImageOffsetY(int y) { m_imageRect.setY(y); updateImageCache(); }
@@ -474,8 +474,8 @@ protected:
     virtual void updateText();
     void drawText(const Rect& screenCoords);
 
-    virtual void onTextChange(const std::string& text, const std::string& oldText);
-    virtual void onFontChange(const std::string& font);
+    virtual void onTextChange(const std::string_view text, const std::string_view oldText);
+    virtual void onFontChange(const std::string_view font);
 
     std::string m_text;
     std::string m_drawText;
@@ -491,7 +491,7 @@ public:
     void resizeToText();
     void clearText() { setText(""); }
 
-    void setText(std::string text, bool dontFireLuaCall = false);
+    void setText(const std::string_view text, bool dontFireLuaCall = false);
     void setTextAlign(Fw::AlignmentFlag align) { m_textAlign = align; updateText(); }
     void setTextOffset(const Point& offset) { m_textOffset = offset; updateText(); }
     void setTextWrap(bool textWrap) { m_textWrap = textWrap; updateText(); }
@@ -499,7 +499,7 @@ public:
     void setTextHorizontalAutoResize(bool textAutoResize) { m_textHorizontalAutoResize = textAutoResize; updateText(); }
     void setTextVerticalAutoResize(bool textAutoResize) { m_textVerticalAutoResize = textAutoResize; updateText(); }
     void setTextOnlyUpperCase(bool textOnlyUpperCase) { m_textOnlyUpperCase = textOnlyUpperCase; setText(m_text); }
-    void setFont(const std::string& fontName);
+    void setFont(const std::string_view fontName);
 
     std::string getText() { return m_text; }
     std::string getDrawText() { return m_drawText; }

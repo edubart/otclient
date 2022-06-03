@@ -52,7 +52,7 @@ bool ParticleManager::importParticle(std::string file)
     }
 }
 
-ParticleEffectPtr ParticleManager::createEffect(const std::string& name)
+ParticleEffectPtr ParticleManager::createEffect(const std::string_view name)
 {
     try {
         auto particleEffect = ParticleEffectPtr(new ParticleEffect);

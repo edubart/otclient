@@ -93,10 +93,10 @@ public:
     const MinimapTile& getTile(const Position& pos);
     std::pair<MinimapBlock_ptr, MinimapTile> threadGetTile(const Position& pos);
 
-    bool loadImage(const std::string& fileName, const Position& topLeft, float colorFactor);
-    void saveImage(const std::string& fileName, const Rect& mapRect);
-    bool loadOtmm(const std::string& fileName);
-    void saveOtmm(const std::string& fileName);
+    bool loadImage(const std::string_view fileName, const Position& topLeft, float colorFactor);
+    void saveImage(const std::string_view fileName, const Rect& mapRect);
+    bool loadOtmm(const std::string_view fileName);
+    void saveOtmm(const std::string_view fileName);
 
 private:
     Rect calcMapRect(const Rect& screenRect, const Position& mapCenter, float scale);

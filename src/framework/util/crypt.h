@@ -38,24 +38,24 @@ public:
     Crypt();
     ~Crypt();
 
-    std::string base64Encode(const std::string& decoded_string);
-    std::string base64Decode(const std::string& encoded_string);
-    std::string xorCrypt(const std::string& buffer, const std::string& key);
-    std::string encrypt(const std::string& decrypted_string) { return _encrypt(decrypted_string, true); }
-    std::string decrypt(const std::string& encrypted_string) { return _decrypt(encrypted_string, true); }
+    std::string base64Encode(const std::string_view decoded_string);
+    std::string base64Decode(const std::string_view encoded_string);
+    std::string xorCrypt(const std::string_view buffer, const std::string_view key);
+    std::string encrypt(const std::string_view decrypted_string) { return _encrypt(decrypted_string, true); }
+    std::string decrypt(const std::string_view encrypted_string) { return _decrypt(encrypted_string, true); }
     std::string genUUID();
     bool setMachineUUID(std::string uuidstr);
     std::string getMachineUUID();
 
-    void rsaSetPublicKey(const std::string& n, const std::string& e);
-    void rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d);
+    void rsaSetPublicKey(const std::string_view n, const std::string_view e);
+    void rsaSetPrivateKey(const std::string_view p, const std::string_view q, const std::string_view d);
     bool rsaEncrypt(unsigned char* msg, int size);
     bool rsaDecrypt(unsigned char* msg, int size);
     int rsaGetSize();
 
 private:
-    std::string _encrypt(const std::string& decrypted_string, bool useMachineUUID);
-    std::string _decrypt(const std::string& encrypted_string, bool useMachineUUID);
+    std::string _encrypt(const std::string_view decrypted_string, bool useMachineUUID);
+    std::string _decrypt(const std::string_view encrypted_string, bool useMachineUUID);
     std::string getCryptKey(bool useMachineUUID);
 
     uuids::uuid m_machineUUID;

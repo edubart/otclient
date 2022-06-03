@@ -39,7 +39,7 @@ public:
     bool isFixedCreatureSize() { return m_fixedCreatureSize; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
+    void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode) override;
 
     CreaturePtr m_creature;
     bool m_fixedCreatureSize{ false };

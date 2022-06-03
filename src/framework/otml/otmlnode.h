@@ -29,8 +29,8 @@ class OTMLNode : public stdext::shared_object
 public:
     ~OTMLNode() override = default;
 
-    static OTMLNodePtr create(const std::string& tag = "", bool unique = false);
-    static OTMLNodePtr create(const std::string& tag, const std::string& value);
+    static OTMLNodePtr create(const std::string_view tag = "", bool unique = false);
+    static OTMLNodePtr create(const std::string_view tag, const std::string_view value);
 
     std::string tag() { return m_tag; }
     int size() { return m_children.size(); }
@@ -43,19 +43,19 @@ public:
     bool hasTag() { return !m_tag.empty(); }
     bool hasValue() { return !m_value.empty(); }
     bool hasChildren();
-    bool hasChildAt(const std::string& childTag) { return !!get(childTag); }
+    bool hasChildAt(const std::string_view childTag) { return !!get(childTag); }
     bool hasChildAtIndex(int childIndex) { return !!getIndex(childIndex); }
 
-    void setTag(const std::string& tag) { m_tag = tag; }
-    void setValue(const std::string& value) { m_value = value; }
+    void setTag(const std::string_view tag) { m_tag = tag; }
+    void setValue(const std::string_view value) { m_value = value; }
     void setNull(bool null) { m_null = null; }
     void setUnique(bool unique) { m_unique = unique; }
-    void setSource(const std::string& source) { m_source = source; }
+    void setSource(const std::string_view source) { m_source = source; }
 
-    OTMLNodePtr get(const std::string& childTag);
+    OTMLNodePtr get(const std::string_view childTag);
     OTMLNodePtr getIndex(int childIndex);
 
-    OTMLNodePtr at(const std::string& childTag);
+    OTMLNodePtr at(const std::string_view childTag);
     OTMLNodePtr atIndex(int childIndex);
 
     void addChild(const OTMLNodePtr& newChild);
@@ -71,18 +71,18 @@ public:
     template<typename T = std::string>
     T value();
     template<typename T = std::string>
-    T valueAt(const std::string& childTag);
+    T valueAt(const std::string_view childTag);
     template<typename T = std::string>
     T valueAtIndex(int childIndex);
     template<typename T = std::string>
-    T valueAt(const std::string& childTag, const T& def);
+    T valueAt(const std::string_view childTag, const T& def);
     template<typename T = std::string>
     T valueAtIndex(int childIndex, const T& def);
 
     template<typename T>
     void write(const T& v);
     template<typename T>
-    void writeAt(const std::string& childTag, const T& v);
+    void writeAt(const std::string_view childTag, const T& v);
     template<typename T>
     void writeIn(const T& v);
 
@@ -128,7 +128,7 @@ T OTMLNode::value()
 }
 
 template<typename T>
-T OTMLNode::valueAt(const std::string& childTag)
+T OTMLNode::valueAt(const std::string_view childTag)
 {
     const OTMLNodePtr node = at(childTag);
     return node->value<T>();
@@ -142,7 +142,7 @@ T OTMLNode::valueAtIndex(int childIndex)
 }
 
 template<typename T>
-T OTMLNode::valueAt(const std::string& childTag, const T& def)
+T OTMLNode::valueAt(const std::string_view childTag, const T& def)
 {
     if (const OTMLNodePtr node = get(childTag))
         if (!node->isNull())
@@ -165,7 +165,7 @@ void OTMLNode::write(const T& v)
 }
 
 template<typename T>
-void OTMLNode::writeAt(const std::string& childTag, const T& v)
+void OTMLNode::writeAt(const std::string_view childTag, const T& v)
 {
     const OTMLNodePtr child = create(childTag);
     child->setUnique(true);

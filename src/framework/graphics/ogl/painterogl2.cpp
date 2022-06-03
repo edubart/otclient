@@ -34,14 +34,14 @@ PainterOGL2::PainterOGL2()
 
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     assert(m_drawTexturedProgram);
-    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, glslMainWithTexCoordsVertexShader + glslPositionOnlyVertexShader);
-    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslTextureSrcFragmentShader);
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());
+    m_drawTexturedProgram->addShaderFromSourceCode(Shader::Fragment, std::string{ glslMainFragmentShader } + glslTextureSrcFragmentShader.data());
     m_drawTexturedProgram->link();
 
     m_drawSolidColorProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     assert(m_drawSolidColorProgram);
-    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, glslMainVertexShader + glslPositionOnlyVertexShader);
-    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, glslMainFragmentShader + glslSolidColorFragmentShader);
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Vertex, std::string{ glslMainVertexShader } + glslPositionOnlyVertexShader.data());
+    m_drawSolidColorProgram->addShaderFromSourceCode(Shader::Fragment, std::string{ glslMainFragmentShader } + glslSolidColorFragmentShader.data());
     m_drawSolidColorProgram->link();
 
     PainterShaderProgram::release();

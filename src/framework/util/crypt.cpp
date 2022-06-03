@@ -34,7 +34,7 @@
 #include <openssl/rsa.h>
 #endif
 
-static const std::string base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+static constexpr std::string_view base64_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 static inline bool is_base64(unsigned char c) { return (isalnum(c) || (c == '+') || (c == '/')); }
 
 Crypt g_crypt;
@@ -65,7 +65,7 @@ Crypt::~Crypt()
 #endif
 }
 
-std::string Crypt::base64Encode(const std::string& decoded_string)
+std::string Crypt::base64Encode(const std::string_view decoded_string)
 {
     std::string ret;
     int i = 0;
@@ -108,7 +108,7 @@ std::string Crypt::base64Encode(const std::string& decoded_string)
     return ret;
 }
 
-std::string Crypt::base64Decode(const std::string& encoded_string)
+std::string Crypt::base64Decode(const std::string_view encoded_string)
 {
     int len = encoded_string.size();
     int i = 0;
@@ -151,7 +151,7 @@ std::string Crypt::base64Decode(const std::string& encoded_string)
     return ret;
 }
 
-std::string Crypt::xorCrypt(const std::string& buffer, const std::string& key)
+std::string Crypt::xorCrypt(const std::string_view buffer, const std::string_view key)
 {
     std::string out;
     out.resize(buffer.size());
@@ -217,41 +217,41 @@ std::string Crypt::getCryptKey(bool useMachineUUID)
     return key;
 }
 
-std::string Crypt::_encrypt(const std::string& decrypted_string, bool useMachineUUID)
+std::string Crypt::_encrypt(const std::string_view decrypted_string, bool useMachineUUID)
 {
-    const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+    const uint32 sum = stdext::adler32((const uint8*)decrypted_string.data(), decrypted_string.size());
 
-    std::string tmp = "0000" + decrypted_string;
+    std::string tmp = "0000"s + decrypted_string.data();
 
     stdext::writeULE32((uint8*)&tmp[0], sum);
     std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
 }
 
-std::string Crypt::_decrypt(const std::string& encrypted_string, bool useMachineUUID)
+std::string Crypt::_decrypt(const std::string_view encrypted_string, bool useMachineUUID)
 {
-    const std::string decoded = base64Decode(encrypted_string);
-    const std::string tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
+    const auto& decoded = base64Decode(encrypted_string);
+    const auto& tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
 
     if (tmp.length() >= 4) {
-        const uint32 readsum = stdext::readULE32((const uint8*)tmp.c_str());
+        const uint32 readsum = stdext::readULE32((const uint8*)tmp.data());
         std::string decrypted_string = tmp.substr(4);
-        const uint32 sum = stdext::adler32((const uint8*)decrypted_string.c_str(), decrypted_string.size());
+        const uint32 sum = stdext::adler32((const uint8*)decrypted_string.data(), decrypted_string.size());
         if (readsum == sum)
             return decrypted_string;
     }
     return {};
 }
 
-void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
+void Crypt::rsaSetPublicKey(const std::string_view n, const std::string_view e)
 {
 #ifdef USE_GMP
-    mpz_set_str(m_n, n.c_str(), 10);
-    mpz_set_str(m_e, e.c_str(), 10);
+    mpz_set_str(m_n, n.data(), 10);
+    mpz_set_str(m_e, e.data(), 10);
 #else
 #if OPENSSL_VERSION_NUMBER < 0x10100005L
-    BN_dec2bn(&m_rsa->n, n.c_str());
-    BN_dec2bn(&m_rsa->e, e.c_str());
+    BN_dec2bn(&m_rsa->n, n.data());
+    BN_dec2bn(&m_rsa->e, e.data());
     // clear rsa cache
     if (m_rsa->_method_mod_n) {
         BN_MONT_CTX_free(m_rsa->_method_mod_n);
@@ -259,27 +259,27 @@ void Crypt::rsaSetPublicKey(const std::string& n, const std::string& e)
     }
 #else
     BIGNUM* bn = nullptr, * be = nullptr;
-    BN_dec2bn(&bn, n.c_str());
-    BN_dec2bn(&be, e.c_str());
+    BN_dec2bn(&bn, n.data());
+    BN_dec2bn(&be, e.data());
     RSA_set0_key(m_rsa, bn, be, nullptr);
 #endif
 #endif
 }
 
-void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const std::string& d)
+void Crypt::rsaSetPrivateKey(const std::string_view p, const std::string_view q, const std::string_view d)
 {
 #ifdef USE_GMP
-    mpz_set_str(m_p, p.c_str(), 10);
-    mpz_set_str(m_q, q.c_str(), 10);
-    mpz_set_str(m_d, d.c_str(), 10);
+    mpz_set_str(m_p, p.data(), 10);
+    mpz_set_str(m_q, q.data(), 10);
+    mpz_set_str(m_d, d.data(), 10);
 
     // n = p * q
     mpz_mul(m_n, m_p, m_q);
 #else
 #if OPENSSL_VERSION_NUMBER < 0x10100005L
-    BN_dec2bn(&m_rsa->p, p.c_str());
-    BN_dec2bn(&m_rsa->q, q.c_str());
-    BN_dec2bn(&m_rsa->d, d.c_str());
+    BN_dec2bn(&m_rsa->p, p.data());
+    BN_dec2bn(&m_rsa->q, q.data());
+    BN_dec2bn(&m_rsa->d, d.data());
     // clear rsa cache
     if (m_rsa->_method_mod_p) {
         BN_MONT_CTX_free(m_rsa->_method_mod_p);
@@ -291,9 +291,9 @@ void Crypt::rsaSetPrivateKey(const std::string& p, const std::string& q, const s
     }
 #else
     BIGNUM* bp = nullptr, * bq = nullptr, * bd = nullptr;
-    BN_dec2bn(&bp, p.c_str());
-    BN_dec2bn(&bq, q.c_str());
-    BN_dec2bn(&bd, d.c_str());
+    BN_dec2bn(&bp, p.data());
+    BN_dec2bn(&bq, q.data());
+    BN_dec2bn(&bd, d.data());
     RSA_set0_key(m_rsa, nullptr, nullptr, bd);
     RSA_set0_factors(m_rsa, bp, bq);
 #endif

@@ -38,7 +38,7 @@ LuaObject::~LuaObject()
     releaseLuaFieldsTable();
 }
 
-bool LuaObject::hasLuaField(const std::string& field)
+bool LuaObject::hasLuaField(const std::string_view field)
 {
     bool ret = false;
     if (m_fieldsTableRef != -1) {
@@ -58,7 +58,13 @@ void LuaObject::releaseLuaFieldsTable()
     }
 }
 
-void LuaObject::luaSetField(const std::string& key)
+void LuaObject::clearLuaField(const std::string_view key)
+{
+    g_lua.pushNil();
+    luaSetField(key);
+}
+
+void LuaObject::luaSetField(const std::string_view key)
 {
     // create fields table on the fly
     if (m_fieldsTableRef == -1) {
@@ -72,7 +78,7 @@ void LuaObject::luaSetField(const std::string& key)
     g_lua.pop(); // pop the fields table
 }
 
-void LuaObject::luaGetField(const std::string& key)
+void LuaObject::luaGetField(const std::string_view key)
 {
     if (m_fieldsTableRef != -1) {
         g_lua.getRef(m_fieldsTableRef); // push the obj's fields table

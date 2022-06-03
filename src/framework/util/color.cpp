@@ -43,8 +43,8 @@ const Color Color::darkGray = 0xff808080;
 const Color Color::lightGray = 0xffc0c0c0;
 const Color Color::orange = 0xff008cff;
 
-Color::Color(const std::string& coltext)
+Color::Color(const std::string_view coltext)
 {
-    std::stringstream ss(coltext);
+    std::stringstream ss(coltext.data());
     ss >> *this;
 }

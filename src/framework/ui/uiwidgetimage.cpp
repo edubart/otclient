@@ -171,7 +171,7 @@ void UIWidget::drawImage(const Rect& screenCoords)
     }
 }
 
-void UIWidget::setImageSource(const std::string& source)
+void UIWidget::setImageSource(const std::string_view source)
 {
     m_imageTexture = source.empty() ? nullptr : g_textures.getTexture(source);
 

@@ -47,8 +47,11 @@ std::string OTMLParser::getNextLine()
     return line;
 }
 
-int OTMLParser::getLineDepth(const std::string& line, bool multilining)
+int OTMLParser::getLineDepth(const std::string_view line, bool multilining)
 {
+    if (line.empty())
+        return 0;
+
     // count number of spaces at the line beginning
     std::size_t spaces = 0;
     while (line[spaces] == ' ')
@@ -107,7 +110,7 @@ void OTMLParser::parseLine(std::string line)
     parseNode(line);
 }
 
-void OTMLParser::parseNode(const std::string& data)
+void OTMLParser::parseNode(const std::string_view data)
 {
     std::string tag;
     std::string value;
@@ -187,7 +190,7 @@ void OTMLParser::parseNode(const std::string& data)
         node->setNull(true);
     else {
         if (value.starts_with("[") && value.ends_with("]")) {
-            const std::string tmp = value.substr(1, value.length() - 2);
+            const auto& tmp = value.substr(1, value.length() - 2);
             const std::vector tokens = stdext::split(tmp, ",");
             for (std::string v : tokens) {
                 stdext::trim(v);

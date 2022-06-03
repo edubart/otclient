@@ -27,12 +27,12 @@
 class LuaException : public stdext::exception
 {
 public:
-    LuaException(const std::string& error, int traceLevel = -1);
+    LuaException(const std::string_view error, int traceLevel = -1);
     ~LuaException() noexcept override = default;
 
-    void generateLuaErrorMessage(const std::string& error, int traceLevel);
+    void generateLuaErrorMessage(const std::string_view error, int traceLevel);
 
-    const char* what() const noexcept override { return m_what.c_str(); }
+    const char* what() const noexcept override { return m_what.data(); }
 
 protected:
     LuaException() = default;
@@ -49,5 +49,5 @@ public:
 class LuaBadValueCastException : public LuaException
 {
 public:
-    LuaBadValueCastException(const std::string& luaTypeName, const std::string& cppTypeName);
+    LuaBadValueCastException(const std::string_view luaTypeName, const std::string_view cppTypeName);
 };

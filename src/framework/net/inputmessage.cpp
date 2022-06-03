@@ -35,12 +35,12 @@ void InputMessage::reset()
     m_headerPos = MAX_HEADER_SIZE;
 }
 
-void InputMessage::setBuffer(const std::string& buffer)
+void InputMessage::setBuffer(const std::string_view buffer)
 {
     const int len = buffer.size();
     reset();
     checkWrite(len);
-    memcpy(m_buffer + m_readPos, buffer.c_str(), len);
+    memcpy(m_buffer + m_readPos, buffer.data(), len);
     m_readPos += len;
     m_messageSize += len;
 }
@@ -85,13 +85,13 @@ int64 InputMessage::get64()
     return v;
 }
 
-std::string InputMessage::getString()
+std::string_view InputMessage::getString()
 {
     const uint16 stringLength = getU16();
     checkRead(stringLength);
-    const auto* const v = (char*)(m_buffer + m_readPos);
+    const std::string_view v{ (char*)(m_buffer + m_readPos), stringLength };
     m_readPos += stringLength;
-    return std::string(v, stringLength);
+    return v;
 }
 
 double InputMessage::getDouble()

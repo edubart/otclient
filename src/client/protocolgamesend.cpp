@@ -35,7 +35,7 @@ void ProtocolGame::send(const OutputMessagePtr& outputMessage)
     Protocol::send(outputMessage);
 }
 
-void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string& buffer)
+void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string_view buffer)
 {
     if (m_enableSendExtendedOpcode) {
         const OutputMessagePtr msg(new OutputMessage);
@@ -449,7 +449,7 @@ void ProtocolGame::sendUpContainer(int containerId)
     send(msg);
 }
 
-void ProtocolGame::sendEditText(uint id, const std::string& text)
+void ProtocolGame::sendEditText(uint id, const std::string_view text)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientEditText);
@@ -458,7 +458,7 @@ void ProtocolGame::sendEditText(uint id, const std::string& text)
     send(msg);
 }
 
-void ProtocolGame::sendEditList(uint id, int doorId, const std::string& text)
+void ProtocolGame::sendEditList(uint id, int doorId, const std::string_view text)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientEditList);
@@ -478,7 +478,7 @@ void ProtocolGame::sendLook(const Position& position, int thingId, int stackpos)
     send(msg);
 }
 
-void ProtocolGame::sendLookCreature(uint32 creatureId)
+void ProtocolGame::sendLookCreature(uint creatureId)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientLookCreature);
@@ -486,7 +486,7 @@ void ProtocolGame::sendLookCreature(uint32 creatureId)
     send(msg);
 }
 
-void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message)
+void ProtocolGame::sendTalk(Otc::MessageMode mode, int channelId, const std::string_view receiver, const std::string_view message)
 {
     if (message.empty())
         return;
@@ -543,7 +543,7 @@ void ProtocolGame::sendLeaveChannel(int channelId)
     send(msg);
 }
 
-void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
+void ProtocolGame::sendOpenPrivateChannel(const std::string_view receiver)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientOpenPrivateChannel);
@@ -551,7 +551,7 @@ void ProtocolGame::sendOpenPrivateChannel(const std::string& receiver)
     send(msg);
 }
 
-void ProtocolGame::sendOpenRuleViolation(const std::string& reporter)
+void ProtocolGame::sendOpenRuleViolation(const std::string_view reporter)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientOpenRuleViolation);
@@ -559,7 +559,7 @@ void ProtocolGame::sendOpenRuleViolation(const std::string& reporter)
     send(msg);
 }
 
-void ProtocolGame::sendCloseRuleViolation(const std::string& reporter)
+void ProtocolGame::sendCloseRuleViolation(const std::string_view reporter)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientCloseRuleViolation);
@@ -669,7 +669,7 @@ void ProtocolGame::sendOpenOwnChannel()
     send(msg);
 }
 
-void ProtocolGame::sendInviteToOwnChannel(const std::string& name)
+void ProtocolGame::sendInviteToOwnChannel(const std::string_view name)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientInviteToOwnChannel);
@@ -677,7 +677,7 @@ void ProtocolGame::sendInviteToOwnChannel(const std::string& name)
     send(msg);
 }
 
-void ProtocolGame::sendExcludeFromOwnChannel(const std::string& name)
+void ProtocolGame::sendExcludeFromOwnChannel(const std::string_view name)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientExcludeFromOwnChannel);
@@ -758,7 +758,7 @@ void ProtocolGame::sendMountStatus(bool mount)
     }
 }
 
-void ProtocolGame::sendAddVip(const std::string& name)
+void ProtocolGame::sendAddVip(const std::string_view name)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAddVip);
@@ -774,7 +774,7 @@ void ProtocolGame::sendRemoveVip(uint playerId)
     send(msg);
 }
 
-void ProtocolGame::sendEditVip(uint playerId, const std::string& description, int iconId, bool notifyLogin)
+void ProtocolGame::sendEditVip(uint playerId, const std::string_view description, int iconId, bool notifyLogin)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientEditVip);
@@ -785,7 +785,7 @@ void ProtocolGame::sendEditVip(uint playerId, const std::string& description, in
     send(msg);
 }
 
-void ProtocolGame::sendBugReport(const std::string& comment)
+void ProtocolGame::sendBugReport(const std::string_view comment)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientBugReport);
@@ -793,7 +793,7 @@ void ProtocolGame::sendBugReport(const std::string& comment)
     send(msg);
 }
 
-void ProtocolGame::sendRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment)
+void ProtocolGame::sendRuleViolation(const std::string_view target, int reason, int action, const std::string_view comment, const std::string_view statement, int statementId, bool ipBanishment)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRuleViolation);
@@ -807,7 +807,7 @@ void ProtocolGame::sendRuleViolation(const std::string& target, int reason, int 
     send(msg);
 }
 
-void ProtocolGame::sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d)
+void ProtocolGame::sendDebugReport(const std::string_view a, const std::string_view b, const std::string_view c, const std::string_view d)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientDebugReport);
@@ -833,7 +833,7 @@ void ProtocolGame::sendRequestQuestLine(int questId)
     send(msg);
 }
 
-void ProtocolGame::sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation)
+void ProtocolGame::sendNewNewRuleViolation(int reason, int action, const std::string_view characterName, const std::string_view comment, const std::string_view translation)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientNewRuleViolation);
@@ -888,7 +888,7 @@ void ProtocolGame::sendSeekInContainer(int cid, int index)
     send(msg);
 }
 
-void ProtocolGame::sendBuyStoreOffer(int offerId, int productType, const std::string& name)
+void ProtocolGame::sendBuyStoreOffer(int offerId, int productType, const std::string_view name)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientBuyStoreOffer);
@@ -916,7 +916,7 @@ void ProtocolGame::sendRequestTransactionHistory(int page, int entriesPerPage)
     send(msg);
 }
 
-void ProtocolGame::sendRequestStoreOffers(const std::string& categoryName, int serviceType)
+void ProtocolGame::sendRequestStoreOffers(const std::string_view categoryName, int serviceType)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientRequestStoreOffers);
@@ -929,7 +929,7 @@ void ProtocolGame::sendRequestStoreOffers(const std::string& categoryName, int s
     send(msg);
 }
 
-void ProtocolGame::sendOpenStore(int serviceType, const std::string& category)
+void ProtocolGame::sendOpenStore(int serviceType, const std::string_view category)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientOpenStore);
@@ -942,7 +942,7 @@ void ProtocolGame::sendOpenStore(int serviceType, const std::string& category)
     send(msg);
 }
 
-void ProtocolGame::sendTransferCoins(const std::string& recipient, int amount)
+void ProtocolGame::sendTransferCoins(const std::string_view recipient, int amount)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientTransferCoins);

@@ -26,16 +26,16 @@
 
 #include <physfs.h>
 
-FileStream::FileStream(std::string name, PHYSFS_File* fileHandle, bool writeable) :
-    m_name(std::move(name)),
+FileStream::FileStream(std::string_view name, PHYSFS_File* fileHandle, bool writeable) :
+    m_name(name),
     m_fileHandle(fileHandle),
     m_pos(0),
     m_writeable(writeable),
     m_caching(false)
 {}
 
-FileStream::FileStream(std::string name, const std::string& buffer) :
-    m_name(std::move(name)),
+FileStream::FileStream(std::string_view name, const std::string_view buffer) :
+    m_name(name),
     m_fileHandle(nullptr),
     m_pos(0),
     m_writeable(false),
@@ -311,14 +311,14 @@ std::string FileStream::getString()
             if (PHYSFS_readBytes(m_fileHandle, buffer, len) == 0)
                 throwError("read failed", true);
             else
-                str = std::string(buffer, len);
+                str = { buffer, len };
         } else {
             if (m_pos + len > m_data.size()) {
                 throwError("[FileStream::getString] - Read failed");
-                return std::string();
+                return {};
             }
 
-            str = std::string((char*)&m_data[m_pos], len);
+            str = { (char*)&m_data[m_pos], len };
             m_pos += len;
         }
     } else if (len != 0)
@@ -440,16 +440,16 @@ void FileStream::add64(int64 v)
     }
 }
 
-void FileStream::addString(const std::string& v)
+void FileStream::addString(const std::string_view v)
 {
     addU16(v.length());
-    write(v.c_str(), v.length());
+    write(v.data(), v.length());
 }
 
-void FileStream::throwError(const std::string& message, bool physfsError)
+void FileStream::throwError(const std::string_view message, bool physfsError)
 {
     std::string completeMessage = stdext::format("in file '%s': %s", m_name, message);
     if (physfsError)
-        completeMessage += std::string(": ") + PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
+        completeMessage += ": "s + PHYSFS_getErrorByCode(PHYSFS_getLastErrorCode());
     stdext::throw_exception(completeMessage);
 }

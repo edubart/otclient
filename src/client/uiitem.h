@@ -48,7 +48,7 @@ public:
     bool isItemVisible() { return m_itemVisible; }
 
 protected:
-    void onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode) override;
+    void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode) override;
 
     ItemPtr m_item;
     bool m_virtual{ false },

@@ -31,7 +31,7 @@ SoundFile::SoundFile(const FileStreamPtr& fileStream)
     m_file = fileStream;
 }
 
-SoundFilePtr SoundFile::loadSoundFile(const std::string& filename)
+SoundFilePtr SoundFile::loadSoundFile(const std::string_view filename)
 {
     stdext::timer t;
     const FileStreamPtr file = g_resources.openFile(filename);

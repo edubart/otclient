@@ -32,13 +32,13 @@ public:
     void terminate();
 
     ConfigPtr getSettings();
-    ConfigPtr get(const std::string& file);
+    ConfigPtr get(const std::string_view file);
 
-    ConfigPtr create(const std::string& file);
-    ConfigPtr loadSettings(const std::string& file);
-    ConfigPtr load(const std::string& file);
+    ConfigPtr create(const std::string_view file);
+    ConfigPtr loadSettings(const std::string_view file);
+    ConfigPtr load(const std::string_view file);
 
-    bool unload(const std::string& file);
+    bool unload(const std::string_view file);
     void remove(const ConfigPtr& config);
 
 protected:

@@ -44,7 +44,7 @@ void ModuleManager::discoverModules()
         auto moduleFiles = g_resources.listDirectoryFiles("/" + moduleDir);
         for (const std::string& moduleFile : moduleFiles) {
             if (g_resources.isFileType(moduleFile, "otmod")) {
-                ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile);
+                ModulePtr module = discoverModule("/" + moduleDir + "/" + moduleFile.data());
                 if (module && module->isAutoLoad())
                     m_autoLoadModules.emplace(module->getAutoLoadPriority(), module);
             }
@@ -63,14 +63,14 @@ void ModuleManager::autoLoadModules(int maxPriority)
     }
 }
 
-ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
+ModulePtr ModuleManager::discoverModule(const std::string_view moduleFile)
 {
     ModulePtr module;
     try {
         const OTMLDocumentPtr doc = OTMLDocument::parse(moduleFile);
         const OTMLNodePtr moduleNode = doc->at("Module");
 
-        const std::string name = moduleNode->valueAt("name");
+        const auto& name = moduleNode->valueAt("name");
 
         bool push = false;
         module = getModule(name);
@@ -89,7 +89,7 @@ ModulePtr ModuleManager::discoverModule(const std::string& moduleFile)
     return module;
 }
 
-void ModuleManager::ensureModuleLoaded(const std::string& moduleName)
+void ModuleManager::ensureModuleLoaded(const std::string_view moduleName)
 {
     const ModulePtr module = g_modules.getModule(moduleName);
     if (!module || !module->load())
@@ -122,7 +122,7 @@ void ModuleManager::reloadModules()
         module->load();
 }
 
-ModulePtr ModuleManager::getModule(const std::string& moduleName)
+ModulePtr ModuleManager::getModule(const std::string_view moduleName)
 {
     for (const ModulePtr& module : m_modules)
         if (module->getName() == moduleName)

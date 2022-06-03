@@ -36,18 +36,18 @@ public:
 
     bool loadDat(std::string file);
     bool loadOtml(std::string file);
-    void loadOtb(const std::string& file);
-    void loadXml(const std::string& file);
-    bool loadAppearances(const std::string& file);
+    void loadOtb(const std::string_view file);
+    void loadXml(const std::string_view file);
+    bool loadAppearances(const std::string_view file);
     void parseItemType(uint16 id, TiXmlElement* elem);
 
-    void saveDat(const std::string& fileName);
+    void saveDat(const std::string_view fileName);
 
     void addItemType(const ItemTypePtr& itemType);
     const ItemTypePtr& findItemTypeByClientId(uint16 id);
-    const ItemTypePtr& findItemTypeByName(const std::string& name);
-    ItemTypeList findItemTypesByName(const std::string& name);
-    ItemTypeList findItemTypesByString(const std::string& name);
+    const ItemTypePtr& findItemTypeByName(const std::string_view name);
+    ItemTypeList findItemTypesByName(const std::string_view name);
+    ItemTypeList findItemTypesByString(const std::string_view name);
 
     const ThingTypePtr& getNullThingType() { return m_nullThingType; }
     const ItemTypePtr& getNullItemType() { return m_nullItemType; }

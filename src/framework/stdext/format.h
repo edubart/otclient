@@ -45,11 +45,11 @@ namespace stdext
 
     template<typename T>
     std::enable_if_t<std::is_integral_v<T> ||
-                   std::is_pointer_v<T> ||
-                   std::is_floating_point_v<T> ||
-                   std::is_enum_v<T>, T> sprintf_cast(const T& t) { return t; }
+        std::is_pointer_v<T> ||
+        std::is_floating_point_v<T> ||
+        std::is_enum_v<T>, T> sprintf_cast(const T& t) { return t; }
     inline const char* sprintf_cast(const char* s) { return s; }
-    inline const char* sprintf_cast(const std::string& s) { return s.c_str(); }
+    inline const char* sprintf_cast(const std::string_view s) { return s.data(); }
 
     template<int N> struct expand_snprintf
     {
@@ -68,7 +68,7 @@ namespace stdext
             return snprintf(s, maxlen, format, args...);
         #endif
         }
-        };
+    };
 
     // Improved snprintf that accepts std::string and other types
     template<typename... Args>
@@ -87,21 +87,21 @@ namespace stdext
     }
 
     template<typename... Args>
-    std::string format() { return std::string(); }
+    std::string format() { return {}; }
 
     template<typename... Args>
-    std::string format(const std::string& format) { return format; }
+    std::string format(const std::string_view format) { return std::string(format); }
 
     // Format strings with the sprintf style, accepting std::string and string convertible types for %s
     template<typename... Args>
-    std::string format(const std::string& format, const Args&... args)
+    std::string format(const std::string_view format, const Args&... args)
     {
-        int n = snprintf(NULL, 0, format.c_str(), args...);
+        int n = snprintf(NULL, 0, format.data(), args...);
         assert(n != -1);
         std::string buffer(n + 1, '\0');
-        n = snprintf(&buffer[0], buffer.size(), format.c_str(), args...);
+        n = snprintf(&buffer[0], buffer.size(), format.data(), args...);
         assert(n != -1);
         buffer.resize(n);
         return buffer;
     }
-    }
+}

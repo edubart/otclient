@@ -379,8 +379,10 @@ void UITextEdit::setTextVirtualOffset(const Point& offset)
     update();
 }
 
-void UITextEdit::appendText(std::string text)
+void UITextEdit::appendText(const std::string_view txt)
 {
+    std::string text{ txt.data() };
+
     if (hasSelection())
         del();
 
@@ -471,10 +473,11 @@ void UITextEdit::del(bool right)
         removeCharacter(right);
 }
 
-void UITextEdit::paste(const std::string& text)
+void UITextEdit::paste(const std::string_view text)
 {
     if (hasSelection())
         del();
+
     appendText(text);
 }
 
@@ -609,7 +612,7 @@ void UITextEdit::onHoverChange(bool hovered)
     }
 }
 
-void UITextEdit::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UITextEdit::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
 
@@ -777,10 +780,10 @@ bool UITextEdit::onKeyPress(uchar keyCode, int keyboardModifiers, int autoRepeat
     return false;
 }
 
-bool UITextEdit::onKeyText(const std::string& keyText)
+bool UITextEdit::onKeyText(const std::string_view keyText)
 {
     if (m_editable) {
-        appendText(keyText);
+        appendText(keyText.data());
         return true;
     }
     return false;

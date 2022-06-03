@@ -45,15 +45,14 @@ void FontManager::clearFonts()
     m_defaultFont = BitmapFontPtr(new BitmapFont("emptyfont"));
 }
 
-bool FontManager::importFont(std::string file)
+bool FontManager::importFont(const std::string_view file)
 {
+    const auto& path = g_resources.guessFilePath(file, "otfont");
     try {
-        file = g_resources.guessFilePath(file, "otfont");
-
-        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(path);
         const OTMLNodePtr fontNode = doc->at("Font");
 
-        const std::string name = fontNode->valueAt("name");
+        const auto& name = fontNode->valueAt("name");
 
         // remove any font with the same name
         for (auto it = m_fonts.begin(); it != m_fonts.end(); ++it) {
@@ -73,12 +72,12 @@ bool FontManager::importFont(std::string file)
 
         return true;
     } catch (stdext::exception& e) {
-        g_logger.error(stdext::format("Unable to load font from file '%s': %s", file, e.what()));
+        g_logger.error(stdext::format("Unable to load font from file '%s': %s", path, e.what()));
         return false;
     }
 }
 
-bool FontManager::fontExists(const std::string& fontName)
+bool FontManager::fontExists(const std::string_view fontName)
 {
     for (const BitmapFontPtr& font : m_fonts) {
         if (font->getName() == fontName)
@@ -87,7 +86,7 @@ bool FontManager::fontExists(const std::string& fontName)
     return false;
 }
 
-BitmapFontPtr FontManager::getFont(const std::string& fontName)
+BitmapFontPtr FontManager::getFont(const std::string_view fontName)
 {
     // find font by name
     for (const BitmapFontPtr& font : m_fonts) {

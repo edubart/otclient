@@ -41,13 +41,13 @@ class House : public LuaObject
 {
 public:
     House() = default;
-    House(uint32 hId, const std::string& name = "", const Position& pos = {});
+    House(uint32 hId, const std::string_view name = "", const Position& pos = {});
     ~House() override { m_tiles.clear(); }
 
     void setTile(const TilePtr& tile);
     TilePtr getTile(const Position& pos);
 
-    void setName(const std::string& name) { m_attribs.set(HouseAttrName, name); }
+    void setName(const std::string_view name) { m_attribs.set(HouseAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(HouseAttrName); }
 
     void setId(uint32 hId) { m_attribs.set(HouseAttrId, hId); }
@@ -91,10 +91,10 @@ public:
     void addHouse(const HousePtr& house);
     void removeHouse(uint32 houseId);
     HousePtr getHouse(uint32 houseId);
-    HousePtr getHouseByName(const std::string& name);
+    HousePtr getHouseByName(const std::string_view name);
 
-    void load(const std::string& fileName);
-    void save(const std::string& fileName);
+    void load(const std::string_view fileName);
+    void save(const std::string_view fileName);
 
     void sort();
     void clear() { m_houses.clear(); }

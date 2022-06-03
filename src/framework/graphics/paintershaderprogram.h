@@ -65,7 +65,7 @@ public:
     void setResolution(const Size& resolution);
     void updateTime();
 
-    void addMultiTexture(const std::string& file);
+    void addMultiTexture(const std::string_view file);
     void bindMultiTextures();
 
 private:

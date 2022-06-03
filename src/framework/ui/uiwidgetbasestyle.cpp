@@ -388,7 +388,7 @@ void UIWidget::drawIcon(const Rect& screenCoords)
     g_drawPool.addTexturedRect(drawRect, m_icon, m_iconClipRect, m_iconColor);
 }
 
-void UIWidget::setIcon(const std::string& iconFile)
+void UIWidget::setIcon(const std::string_view iconFile)
 {
     m_icon = iconFile.empty() ? nullptr : g_textures.getTexture(iconFile);
     if (m_icon && !m_iconClipRect.isValid())

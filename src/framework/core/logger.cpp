@@ -36,7 +36,7 @@ Logger g_logger;
 
 namespace
 {
-    const std::string s_logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
+    constexpr std::string_view s_logPrefixes[] = { "", "", "WARNING: ", "ERROR: ", "FATAL ERROR: " };
 #if ENABLE_ENCRYPTION == 1
     bool s_ignoreLogs = true;
 #else
@@ -44,7 +44,7 @@ namespace
 #endif
 }
 
-void Logger::log(Fw::LogLevel level, const std::string& message)
+void Logger::log(Fw::LogLevel level, const std::string_view message)
 {
     std::lock_guard lock(m_mutex);
 
@@ -56,7 +56,7 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     if (s_ignoreLogs)
         return;
 
-    std::string outmsg = s_logPrefixes[level] + message;
+    std::string outmsg{ std::string{s_logPrefixes[level]} + message.data() };
 
     std::cout << outmsg << std::endl;
 
@@ -91,21 +91,21 @@ void Logger::log(Fw::LogLevel level, const std::string& message)
     }
 }
 
-void Logger::logFunc(Fw::LogLevel level, const std::string& message, std::string prettyFunction)
+void Logger::logFunc(Fw::LogLevel level, const std::string_view message, const std::string_view prettyFunction)
 {
     std::lock_guard lock(m_mutex);
 
-    prettyFunction = prettyFunction.substr(0, prettyFunction.find_first_of('('));
-    if (prettyFunction.find_last_of(' ') != std::string::npos)
-        prettyFunction = prettyFunction.substr(prettyFunction.find_last_of(' ') + 1);
+    auto fncName = prettyFunction.substr(0, prettyFunction.find_first_of('('));
+    if (fncName.find_last_of(' ') != std::string::npos)
+        fncName = fncName.substr(fncName.find_last_of(' ') + 1);
 
     std::stringstream ss;
     ss << message;
 
-    if (!prettyFunction.empty()) {
+    if (!fncName.empty()) {
         if (g_lua.isInCppCallback())
             ss << g_lua.traceback("", 1);
-        ss << g_platform.traceback(prettyFunction, 1, 8);
+        ss << g_platform.traceback(fncName, 1, 8);
     }
 
     log(level, ss.str());
@@ -122,11 +122,11 @@ void Logger::fireOldMessages()
     }
 }
 
-void Logger::setLogFile(const std::string& file)
+void Logger::setLogFile(const std::string_view file)
 {
     std::lock_guard lock(m_mutex);
 
-    m_outFile.open(stdext::utf8_to_latin1(file).c_str(), std::ios::out | std::ios::app);
+    m_outFile.open(stdext::utf8_to_latin1(file), std::ios::out | std::ios::app);
     if (!m_outFile.is_open() || !m_outFile.good()) {
         g_logger.error(stdext::format("Unable to save log to '%s'", file));
         return;

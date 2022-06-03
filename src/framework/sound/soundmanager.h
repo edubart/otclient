@@ -46,14 +46,14 @@ public:
     void stopAll();
 
     void preload(std::string filename);
-    SoundSourcePtr play(std::string filename, float fadetime = 0, float gain = 1.0f, float pitch = 1.0f);
+    SoundSourcePtr play(const std::string_view filename, float fadetime = 0, float gain = 1.0f, float pitch = 1.0f);
     SoundChannelPtr getChannel(int channel);
 
-    std::string resolveSoundFile(std::string file);
+    std::string resolveSoundFile(const std::string_view file);
     void ensureContext();
 
 private:
-    SoundSourcePtr createSoundSource(const std::string& filename);
+    SoundSourcePtr createSoundSource(const std::string_view filename);
 
     ALCdevice* m_device;
     ALCcontext* m_context;

@@ -90,14 +90,14 @@ void Connection::close()
     }
 }
 
-void Connection::connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback)
+void Connection::connect(const std::string_view host, uint16 port, const std::function<void()>& connectCallback)
 {
     m_connected = false;
     m_connecting = true;
     m_error.clear();
     m_connectCallback = connectCallback;
 
-    const asio::ip::tcp::resolver::query query(host, stdext::unsafe_cast<std::string>(port));
+    const asio::ip::tcp::resolver::query query(host.data(), stdext::unsafe_cast<std::string>(port));
     m_resolver.async_resolve(query, [capture0 = asConnection()](auto&& PH1, auto&& PH2)
     {
         capture0->onResolve(std::forward<decltype(PH1)>(PH1),
@@ -198,7 +198,7 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
     });
 }
 
-void Connection::read_until(const std::string& what, const RecvCallback& callback)
+void Connection::read_until(const std::string_view what, const RecvCallback& callback)
 {
     if (!m_connected)
         return;

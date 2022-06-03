@@ -31,13 +31,13 @@ namespace stdext
     {
     public:
         exception() = default;
-        exception(std::string what) : m_what(std::move(what)) {}
+        exception(std::string_view what) : m_what(std::move(what)) {}
         ~exception() noexcept override = default;;
-        const char* what() const noexcept override { return m_what.c_str(); }
+        const char* what() const noexcept override { return m_what.data(); }
     protected:
         std::string m_what;
     };
 
     /// Throws a generic exception
-    inline void throw_exception(const std::string& what) { throw exception(what); }
+    inline void throw_exception(const std::string_view what) { throw exception(what); }
 }

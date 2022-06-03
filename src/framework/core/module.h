@@ -31,7 +31,7 @@
 class Module : public LuaObject
 {
 public:
-    Module(const std::string& name);
+    Module(const std::string_view name);
 
     bool load();
     void unload();
@@ -43,7 +43,7 @@ public:
     bool isReloadable() { return m_reloadable; }
     bool isDependent();
     bool isSandboxed() { return m_sandboxed; }
-    bool hasDependency(const std::string& name, bool recursive = false);
+    bool hasDependency(const std::string_view name, bool recursive = false);
     int getSandbox(LuaInterface* lua);
 
     std::string getDescription() { return m_description; }

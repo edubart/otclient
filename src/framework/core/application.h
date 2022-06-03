@@ -39,8 +39,8 @@ public:
     virtual void exit();
     virtual void close();
 
-    void setName(const std::string& name) { m_appName = name; }
-    void setCompactName(const std::string& compactName) { m_appCompactName = compactName; }
+    void setName(const std::string_view name) { m_appName = name; }
+    void setCompactName(const std::string_view compactName) { m_appCompactName = compactName; }
 
     bool isRunning() { return m_running; }
     bool isStopping() { return m_stopping; }
@@ -51,7 +51,7 @@ public:
 
     std::string getCharset() { return m_charset; }
     std::string getBuildCompiler() { return BUILD_COMPILER; }
-    std::string getBuildDate() { return std::string(__DATE__); }
+    std::string getBuildDate() { return std::string{ __DATE__ }; }
     std::string getBuildType() { return BUILD_TYPE; }
     std::string getBuildArch() { return BUILD_ARCH; }
     std::string getBuildRevision();

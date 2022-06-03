@@ -40,8 +40,8 @@ public:
     ~ShaderProgram() override;
 
     bool addShader(const ShaderPtr& shader);
-    bool addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string& sourceCode);
-    bool addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string& sourceFile);
+    bool addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string_view sourceCode);
+    bool addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string_view sourceFile);
     void removeShader(const ShaderPtr& shader);
     void removeAllShaders();
     virtual bool link();

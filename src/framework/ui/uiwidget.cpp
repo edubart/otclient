@@ -249,7 +249,7 @@ void UIWidget::removeChild(const UIWidgetPtr& child)
         if (child->m_customId) {
             const std::string widgetId = child->getId();
             if (hasLuaField(widgetId)) {
-                setLuaField(widgetId, nullptr);
+                clearLuaField(widgetId);
             }
         }
 
@@ -581,7 +581,7 @@ void UIWidget::applyStyle(const OTMLNodePtr& styleNode)
     m_loadingStyle = false;
 }
 
-void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string& hookedWidgetId, Fw::AnchorEdge hookedEdge)
+void UIWidget::addAnchor(Fw::AnchorEdge anchoredEdge, const std::string_view hookedWidgetId, Fw::AnchorEdge hookedEdge)
 {
     if (m_destroyed)
         return;
@@ -597,7 +597,7 @@ void UIWidget::removeAnchor(Fw::AnchorEdge anchoredEdge)
     addAnchor(anchoredEdge, "none", Fw::AnchorNone);
 }
 
-void UIWidget::centerIn(const std::string& hookedWidgetId)
+void UIWidget::centerIn(const std::string_view hookedWidgetId)
 {
     if (m_destroyed)
         return;
@@ -609,7 +609,7 @@ void UIWidget::centerIn(const std::string& hookedWidgetId)
         g_logger.traceError(stdext::format("cannot add anchors to widget '%s': the parent doesn't use anchors layout", m_id));
 }
 
-void UIWidget::fill(const std::string& hookedWidgetId)
+void UIWidget::fill(const std::string_view hookedWidgetId)
 {
     if (m_destroyed)
         return;
@@ -821,7 +821,7 @@ void UIWidget::destroyChildren()
         if (child->m_customId) {
             std::string widgetId = child->getId();
             if (hasLuaField(widgetId)) {
-                setLuaField(widgetId, nullptr);
+                clearLuaField(widgetId);
             }
         }
     }
@@ -830,7 +830,7 @@ void UIWidget::destroyChildren()
         layout->enableUpdates();
 }
 
-void UIWidget::setId(const std::string& id)
+void UIWidget::setId(const std::string_view id)
 {
     if (id == m_id)
         return;
@@ -838,7 +838,7 @@ void UIWidget::setId(const std::string& id)
     m_customId = true;
 
     if (m_parent) {
-        m_parent->setLuaField(m_id, nullptr);
+        m_parent->clearLuaField(m_id);
         m_parent->setLuaField(id, static_self_cast<UIWidget>());
     }
 
@@ -920,8 +920,7 @@ bool UIWidget::setRect(const Rect& rect)
     // avoid massive update events
     if (!m_updateEventScheduled) {
         UIWidgetPtr self = static_self_cast<UIWidget>();
-        g_dispatcher.addEvent([self, oldRect]
-        {
+        g_dispatcher.addEvent([self, oldRect] {
             self->m_updateEventScheduled = false;
             if (oldRect != self->getRect())
                 self->onGeometryChange(oldRect, self->getRect());
@@ -936,7 +935,7 @@ bool UIWidget::setRect(const Rect& rect)
     return true;
 }
 
-void UIWidget::setStyle(const std::string& styleName)
+void UIWidget::setStyle(const std::string_view styleName)
 {
     OTMLNodePtr styleNode = g_ui.getStyle(styleName);
     if (!styleNode) {
@@ -1169,7 +1168,7 @@ UIWidgetPtr UIWidget::getChildBefore(const UIWidgetPtr& relativeChild)
     return nullptr;
 }
 
-UIWidgetPtr UIWidget::getChildById(const std::string& childId)
+UIWidgetPtr UIWidget::getChildById(const std::string_view childId)
 {
     for (const UIWidgetPtr& child : m_children) {
         if (child->getId() == childId)
@@ -1200,7 +1199,7 @@ UIWidgetPtr UIWidget::getChildByIndex(int index)
     return nullptr;
 }
 
-UIWidgetPtr UIWidget::recursiveGetChildById(const std::string& id)
+UIWidgetPtr UIWidget::recursiveGetChildById(const std::string_view id)
 {
     UIWidgetPtr widget = getChildById(id);
     if (!widget) {
@@ -1276,7 +1275,7 @@ UIWidgetList UIWidget::recursiveGetChildrenByMarginPos(const Point& childPos)
     return children;
 }
 
-UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string& id)
+UIWidgetPtr UIWidget::backwardsGetWidgetById(const std::string_view id)
 {
     UIWidgetPtr widget = getChildById(id);
     if (!widget) {
@@ -1510,7 +1509,7 @@ void UIWidget::updateStyle()
     m_stateStyle = newStateStyle;
 }
 
-void UIWidget::onStyleApply(const std::string&, const OTMLNodePtr& styleNode)
+void UIWidget::onStyleApply(const std::string_view, const OTMLNodePtr& styleNode)
 {
     if (m_destroyed)
         return;
@@ -1589,7 +1588,7 @@ bool UIWidget::onDrop(UIWidgetPtr draggedWidget, const Point& mousePos)
     return callLuaField<bool>("onDrop", draggedWidget, mousePos);
 }
 
-bool UIWidget::onKeyText(const std::string& keyText)
+bool UIWidget::onKeyText(const std::string_view keyText)
 {
     return callLuaField<bool>("onKeyText", keyText);
 }
@@ -1649,7 +1648,7 @@ bool UIWidget::onDoubleClick(const Point& mousePos)
     return callLuaField<bool>("onDoubleClick", mousePos);
 }
 
-bool UIWidget::propagateOnKeyText(const std::string& keyText)
+bool UIWidget::propagateOnKeyText(const std::string_view keyText)
 {
     // do a backup of children list, because it may change while looping it
     UIWidgetList children;

@@ -36,8 +36,8 @@ public:
     Shader(ShaderType shaderType);
     ~Shader() override;
 
-    bool compileSourceCode(const std::string& sourceCode);
-    bool compileSourceFile(const std::string& sourceFile);
+    bool compileSourceCode(const std::string_view sourceCode);
+    bool compileSourceFile(const std::string_view sourceFile);
     std::string log();
 
     uint getShaderId() { return m_shaderId; }

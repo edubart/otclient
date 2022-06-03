@@ -30,10 +30,10 @@ public:
     void init();
     void terminate();
 
-    void loadCursors(std::string filename);
-    void addCursor(const std::string& name, const std::string& file, const Point& hotSpot);
-    bool pushCursor(const std::string& name);
-    void popCursor(const std::string& name);
+    void loadCursors(const std::string_view filename);
+    void addCursor(const std::string_view name, const std::string_view file, const Point& hotSpot);
+    bool pushCursor(const std::string_view name);
+    void popCursor(const std::string_view name);
     bool isCursorChanged();
     bool isPressed(Fw::MouseButton mouseButton);
 

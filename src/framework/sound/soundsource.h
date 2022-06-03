@@ -42,7 +42,7 @@ public:
     virtual bool isBuffering();
     virtual bool isPlaying() { return isBuffering(); }
 
-    void setName(const std::string& name) { m_name = name; }
+    void setName(const std::string_view name) { m_name = name; }
     virtual void setLooping(bool looping);
     virtual void setRelative(bool relative);
     virtual void setReferenceDistance(float distance);

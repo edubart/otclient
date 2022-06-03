@@ -314,15 +314,15 @@ void UIManager::clearStyles()
     m_styles.clear();
 }
 
-bool UIManager::importStyle(std::string file)
+bool UIManager::importStyle(const std::string_view fl)
 {
+    const std::string file{ g_resources.guessFilePath(fl, "otui") };
     try {
-        file = g_resources.guessFilePath(file, "otui");
-
         const OTMLDocumentPtr doc = OTMLDocument::parse(file);
 
         for (const OTMLNodePtr& styleNode : doc->children())
             importStyleFromOTML(styleNode);
+
         return true;
     } catch (stdext::exception& e) {
         g_logger.error(stdext::format("Failed to import UI styles from '%s': %s", file, e.what()));
@@ -374,14 +374,15 @@ void UIManager::importStyleFromOTML(const OTMLNodePtr& styleNode)
     }
 }
 
-OTMLNodePtr UIManager::getStyle(const std::string& styleName)
+OTMLNodePtr UIManager::getStyle(const std::string_view sn)
 {
+    const auto* styleName = sn.data();
     const auto it = m_styles.find(styleName);
     if (it != m_styles.end())
         return m_styles[styleName];
 
     // styles starting with UI are automatically defined
-    if (styleName.starts_with("UI")) {
+    if (sn.starts_with("UI")) {
         OTMLNodePtr node = OTMLNode::create(styleName);
         node->writeAt("__class", styleName);
         m_styles[styleName] = node;
@@ -391,7 +392,7 @@ OTMLNodePtr UIManager::getStyle(const std::string& styleName)
     return nullptr;
 }
 
-std::string UIManager::getStyleClass(const std::string& styleName)
+std::string UIManager::getStyleClass(const std::string_view styleName)
 {
     const OTMLNodePtr style = getStyle(styleName);
     if (style && style->get("__class"))
@@ -399,12 +400,12 @@ std::string UIManager::getStyleClass(const std::string& styleName)
     return "";
 }
 
-UIWidgetPtr UIManager::loadUI(std::string file, const UIWidgetPtr& parent)
+UIWidgetPtr UIManager::loadUI(const std::string_view file, const UIWidgetPtr& parent)
 {
     try {
-        file = g_resources.guessFilePath(file, "otui");
+        const auto& pathfile = g_resources.guessFilePath(file, "otui");
 
-        const OTMLDocumentPtr doc = OTMLDocument::parse(file);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(pathfile);
         UIWidgetPtr widget;
         for (const OTMLNodePtr& node : doc->children()) {
             std::string tag = node->tag();
@@ -426,7 +427,7 @@ UIWidgetPtr UIManager::loadUI(std::string file, const UIWidgetPtr& parent)
     }
 }
 
-UIWidgetPtr UIManager::createWidget(const std::string& styleName, const UIWidgetPtr& parent)
+UIWidgetPtr UIManager::createWidget(const std::string_view styleName, const UIWidgetPtr& parent)
 {
     const OTMLNodePtr node = OTMLNode::create(styleName);
     try {

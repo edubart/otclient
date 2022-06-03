@@ -73,7 +73,7 @@ void TextureManager::liveReload()
         return;
     m_liveReloadEvent = g_dispatcher.cycleEvent([this] {
         for (auto& it : m_textures) {
-            const std::string& path = g_resources.guessFilePath(it.first, "png");
+            const auto& path = g_resources.guessFilePath(it.first, "png");
             const TexturePtr& tex = it.second;
             if (tex->getTime() >= g_resources.getFileTime(path))
                 continue;
@@ -87,12 +87,12 @@ void TextureManager::liveReload()
     }, 1000);
 }
 
-TexturePtr TextureManager::getTexture(const std::string& fileName)
+TexturePtr TextureManager::getTexture(const std::string_view fileName)
 {
     TexturePtr texture;
 
     // before must resolve filename to full path
-    const std::string filePath = g_resources.resolvePath(fileName);
+    const auto& filePath = g_resources.resolvePath(fileName);
 
     // check if the texture is already loaded
     const auto it = m_textures.find(filePath);
@@ -103,7 +103,7 @@ TexturePtr TextureManager::getTexture(const std::string& fileName)
     // texture not found, load it
     if (!texture) {
         try {
-            const std::string filePathEx = g_resources.guessFilePath(filePath, "png");
+            const auto& filePathEx = g_resources.guessFilePath(filePath, "png");
 
             // load texture file data
             std::stringstream fin;

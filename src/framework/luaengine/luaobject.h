@@ -33,38 +33,40 @@ public:
     ~LuaObject() override;
 
     template<typename T>
-    void connectLuaField(const std::string& field, const std::function<T>& f, bool pushFront = false);
+    void connectLuaField(const std::string_view field, const std::function<T>& f, bool pushFront = false);
 
     /// Calls a function or table of functions stored in a lua field, results are pushed onto the stack,
     /// if any lua error occurs, it will be reported to stdout and return 0 results
     /// @return the number of results
     template<typename... T>
-    int luaCallLuaField(const std::string& field, const T&... args);
+    int luaCallLuaField(const std::string_view field, const T&... args);
 
     template<typename R, typename... T>
-    R callLuaField(const std::string& field, const T&... args);
+    R callLuaField(const std::string_view field, const T&... args);
     template<typename... T>
-    void callLuaField(const std::string& field, const T&... args);
+    void callLuaField(const std::string_view field, const T&... args);
 
     /// Returns true if the lua field exists
-    bool hasLuaField(const std::string& field);
+    bool hasLuaField(const std::string_view field);
 
     /// Sets a field in this lua object
     template<typename T>
-    void setLuaField(const std::string& key, const T& value);
+    void setLuaField(const std::string_view key, const T& value);
+
+    void clearLuaField(const std::string_view key);
 
     /// Gets a field from this lua object
     template<typename T>
-    T getLuaField(const std::string& key);
+    T getLuaField(const std::string_view key);
 
     /// Release fields table reference
     void releaseLuaFieldsTable();
 
     /// Sets a field from this lua object, the value must be on the stack
-    void luaSetField(const std::string& key);
+    void luaSetField(const std::string_view key);
 
     /// Gets a field from this lua object, the result is pushed onto the stack
-    void luaGetField(const std::string& key);
+    void luaGetField(const std::string_view key);
 
     /// Get object's metatable
     void luaGetMetatable();
@@ -88,16 +90,16 @@ private:
 };
 
 template<typename F>
-void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront = false);
+void connect(const LuaObjectPtr& obj, const std::string_view field, const std::function<F>& f, bool pushFront = false);
 
 template<typename Lambda>
 std::enable_if_t<std::is_constructible_v<decltype(&Lambda::operator())>, void>
-connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront = false);
+connect(const LuaObjectPtr& obj, const std::string_view field, const Lambda& f, bool pushFront = false);
 
 #include "luainterface.h"
 
 template<typename T>
-void LuaObject::connectLuaField(const std::string& field, const std::function<T>& f, bool pushFront)
+void LuaObject::connectLuaField(const std::string_view field, const std::function<T>& f, bool pushFront)
 {
     luaGetField(field);
     if (g_lua.isTable()) {
@@ -123,7 +125,7 @@ void LuaObject::connectLuaField(const std::string& field, const std::function<T>
 
 // connect for std::function
 template<typename F>
-void connect(const LuaObjectPtr& obj, const std::string& field, const std::function<F>& f, bool pushFront)
+void connect(const LuaObjectPtr& obj, const std::string_view field, const std::function<F>& f, bool pushFront)
 {
     obj->connectLuaField<F>(field, f, pushFront);
 }
@@ -136,7 +138,7 @@ namespace luabinder
     template<typename Lambda, typename Ret, typename... Args>
     struct connect_lambda<Ret(Lambda::*)(Args...) const>
     {
-        static void call(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront)
+        static void call(const LuaObjectPtr& obj, const std::string_view field, const Lambda& f, bool pushFront)
         {
             connect(obj, field, std::function<Ret(Args...)>(f), pushFront);
         }
@@ -146,14 +148,14 @@ namespace luabinder
 // connect for lambdas
 template<typename Lambda>
 std::enable_if_t<std::is_constructible_v<decltype(&Lambda::operator())>, void>
-connect(const LuaObjectPtr& obj, const std::string& field, const Lambda& f, bool pushFront)
+connect(const LuaObjectPtr& obj, const std::string_view field, const Lambda& f, bool pushFront)
 {
     using F = decltype(&Lambda::operator());
     luabinder::connect_lambda<F>::call(obj, field, f, pushFront);
 }
 
 template<typename... T>
-int LuaObject::luaCallLuaField(const std::string& field, const T&... args)
+int LuaObject::luaCallLuaField(const std::string_view field, const T&... args)
 {
     // note that the field must be retrieved from this object lua value
     // to force using the __index metamethod of it's metatable
@@ -173,7 +175,7 @@ int LuaObject::luaCallLuaField(const std::string& field, const T&... args)
 }
 
 template<typename R, typename... T>
-R LuaObject::callLuaField(const std::string& field, const T&... args)
+R LuaObject::callLuaField(const std::string_view field, const T&... args)
 {
     R result;
     const int rets = luaCallLuaField(field, args...);
@@ -186,7 +188,7 @@ R LuaObject::callLuaField(const std::string& field, const T&... args)
 }
 
 template<typename... T>
-void LuaObject::callLuaField(const std::string& field, const T&... args)
+void LuaObject::callLuaField(const std::string_view field, const T&... args)
 {
     const int rets = luaCallLuaField(field, args...);
     if (rets > 0)
@@ -194,18 +196,14 @@ void LuaObject::callLuaField(const std::string& field, const T&... args)
 }
 
 template<typename T>
-void LuaObject::setLuaField(const std::string& key, const T& value)
+void LuaObject::setLuaField(const std::string_view key, const T& value)
 {
-    if (value == nullptr) {
-        g_lua.pushNil();
-    } else {
-        g_lua.polymorphicPush(value);
-    }
+    g_lua.polymorphicPush(value);
     luaSetField(key);
 }
 
 template<typename T>
-T LuaObject::getLuaField(const std::string& key)
+T LuaObject::getLuaField(const std::string_view key)
 {
     luaGetField(key);
     return g_lua.polymorphicPop<T>();

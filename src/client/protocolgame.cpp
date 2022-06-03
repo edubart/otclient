@@ -24,8 +24,8 @@
 #include "framework/net/inputmessage.h"
 #include "game.h"
 
-void ProtocolGame::login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port,
-                         const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey)
+void ProtocolGame::login(const std::string_view accountName, const std::string_view accountPassword, const std::string_view host, uint16 port,
+                         const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey)
 {
     m_accountName = accountName;
     m_accountPassword = accountPassword;

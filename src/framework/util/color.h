@@ -31,7 +31,7 @@ class Color
 {
 public:
     Color() = default;
-    Color(const std::string& coltext);
+    Color(const std::string_view coltext);
     Color(const uint32 rgba) { setRGBA(rgba); }
     Color(const int r, const int g, const int b, const int a = 0xFF) : m_r(r / 255.f), m_g(g / 255.f), m_b(b / 255.f), m_a(a / 255.f) {}
     Color(const float r, const float g, const float b, const float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) {}

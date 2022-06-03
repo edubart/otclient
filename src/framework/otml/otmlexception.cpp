@@ -23,7 +23,7 @@
 #include "otmlexception.h"
 #include "otmldocument.h"
 
-OTMLException::OTMLException(const OTMLNodePtr& node, const std::string& error)
+OTMLException::OTMLException(const OTMLNodePtr& node, const std::string_view error)
 {
     std::stringstream ss;
     ss << "OTML error";
@@ -33,7 +33,7 @@ OTMLException::OTMLException(const OTMLNodePtr& node, const std::string& error)
     m_what = ss.str();
 }
 
-OTMLException::OTMLException(const OTMLDocumentPtr& doc, const std::string& error, int line)
+OTMLException::OTMLException(const OTMLDocumentPtr& doc, const std::string_view error, int line)
 {
     std::stringstream ss;
     ss << "OTML error";

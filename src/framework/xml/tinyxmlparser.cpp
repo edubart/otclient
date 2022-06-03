@@ -616,7 +616,7 @@ void TiXmlDocument::StreamIn(std::istream* in, TIXML_STRING* tag)
             // We now have something we presume to be a node of
             // some sort. Identify it, and call the node to
             // continue streaming.
-            TiXmlNode* node = Identify(tag->c_str() + tagIndex, TIXML_DEFAULT_ENCODING);
+            TiXmlNode* node = Identify(tag->data() + tagIndex, TIXML_DEFAULT_ENCODING);
 
             if (node) {
                 node->StreamIn(in, tag);
@@ -890,7 +890,7 @@ void TiXmlElement::StreamIn(std::istream* in, TIXML_STRING* tag)
                 // Early out if we find the CDATA id.
                 if (c == '[' && tag->size() >= 9) {
                     const size_t len = tag->size();
-                    const char* start = tag->c_str() + len - 9;
+                    const char* start = tag->data() + len - 9;
                     if (strcmp(start, "<![CDATA[") == 0) {
                         assert(!closingTag);
                         break;
@@ -923,7 +923,7 @@ void TiXmlElement::StreamIn(std::istream* in, TIXML_STRING* tag)
                 return;
             }
             // If not a closing tag, id it, and stream.
-            const char* tagloc = tag->c_str() + tagIndex;
+            const char* tagloc = tag->data() + tagIndex;
             TiXmlNode* node = Identify(tagloc, TIXML_DEFAULT_ENCODING);
             if (!node)
                 return;
@@ -1007,7 +1007,7 @@ const char* TiXmlElement::Parse(const char* p, TiXmlParsingData* data, TiXmlEnco
             // </foo > and
             // </foo>
             // are both valid end tags.
-            if (StringEqual(p, endTag.c_str(), false, encoding)) {
+            if (StringEqual(p, endTag.data(), false, encoding)) {
                 p += endTag.length();
                 p = SkipWhiteSpace(p, encoding);
                 if (p && *p && *p == '>') {

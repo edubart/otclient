@@ -36,7 +36,7 @@ int main(int argc, const char* argv[])
 #if ENABLE_ENCRYPTION == 1
     if (std::find(args.begin(), args.end(), "--encrypt") != args.end()) {
         g_lua.init();
-        g_resources.init(args[0].c_str());
+        g_resources.init(args[0].data());
         g_resources.runEncryption(args.size() >= 3 ? args[2] : "");
         std::cout << "Encryption complete" << std::endl;
     #ifdef WIN32

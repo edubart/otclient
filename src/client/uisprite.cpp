@@ -67,7 +67,7 @@ void UISprite::setSpriteId(int id)
     }
 }
 
-void UISprite::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UISprite::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
 

@@ -43,7 +43,7 @@ void UICreature::setOutfit(const Outfit& outfit)
     m_creature->setOutfit(outfit);
 }
 
-void UICreature::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UICreature::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
 

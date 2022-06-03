@@ -30,10 +30,10 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string& accountName, const std::string& accountPassword, const std::string& host, uint16 port, const std::string& characterName, const std::string& authenticatorToken, const std::string& sessionKey);
+    void login(const std::string_view accountName, const std::string_view accountPassword, const std::string_view host, uint16 port, const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey);
     void send(const OutputMessagePtr& outputMessage) override;
 
-    void sendExtendedOpcode(uint8 opcode, const std::string& buffer);
+    void sendExtendedOpcode(uint8 opcode, const std::string_view buffer);
     void sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom);
     void sendEnterGame();
     void sendLogout();
@@ -69,17 +69,17 @@ public:
     void sendRotateItem(const Position& pos, int thingId, int stackpos);
     void sendCloseContainer(int containerId);
     void sendUpContainer(int containerId);
-    void sendEditText(uint id, const std::string& text);
-    void sendEditList(uint id, int doorId, const std::string& text);
+    void sendEditText(uint id, const std::string_view text);
+    void sendEditList(uint id, int doorId, const std::string_view text);
     void sendLook(const Position& position, int thingId, int stackpos);
     void sendLookCreature(uint creatureId);
-    void sendTalk(Otc::MessageMode mode, int channelId, const std::string& receiver, const std::string& message);
+    void sendTalk(Otc::MessageMode mode, int channelId, const std::string_view receiver, const std::string_view message);
     void sendRequestChannels();
     void sendJoinChannel(int channelId);
     void sendLeaveChannel(int channelId);
-    void sendOpenPrivateChannel(const std::string& receiver);
-    void sendOpenRuleViolation(const std::string& reporter);
-    void sendCloseRuleViolation(const std::string& reporter);
+    void sendOpenPrivateChannel(const std::string_view receiver);
+    void sendOpenRuleViolation(const std::string_view reporter);
+    void sendCloseRuleViolation(const std::string_view reporter);
     void sendCancelRuleViolation();
     void sendCloseNpcChannel();
     void sendChangeFightModes(Otc::FightModes fightMode, Otc::ChaseModes chaseMode, bool safeFight, Otc::PVPModes pvpMode);
@@ -92,31 +92,31 @@ public:
     void sendLeaveParty();
     void sendShareExperience(bool active);
     void sendOpenOwnChannel();
-    void sendInviteToOwnChannel(const std::string& name);
-    void sendExcludeFromOwnChannel(const std::string& name);
+    void sendInviteToOwnChannel(const std::string_view name);
+    void sendExcludeFromOwnChannel(const std::string_view name);
     void sendCancelAttackAndFollow();
     void sendRefreshContainer(int containerId);
     void sendRequestOutfit();
     void sendChangeOutfit(const Outfit& outfit);
     void sendMountStatus(bool mount);
-    void sendAddVip(const std::string& name);
+    void sendAddVip(const std::string_view name);
     void sendRemoveVip(uint playerId);
-    void sendEditVip(uint playerId, const std::string& description, int iconId, bool notifyLogin);
-    void sendBugReport(const std::string& comment);
-    void sendRuleViolation(const std::string& target, int reason, int action, const std::string& comment, const std::string& statement, int statementId, bool ipBanishment);
-    void sendDebugReport(const std::string& a, const std::string& b, const std::string& c, const std::string& d);
+    void sendEditVip(uint playerId, const std::string_view description, int iconId, bool notifyLogin);
+    void sendBugReport(const std::string_view comment);
+    void sendRuleViolation(const std::string_view target, int reason, int action, const std::string_view comment, const std::string_view statement, int statementId, bool ipBanishment);
+    void sendDebugReport(const std::string_view a, const std::string_view b, const std::string_view c, const std::string_view d);
     void sendRequestQuestLog();
     void sendRequestQuestLine(int questId);
-    void sendNewNewRuleViolation(int reason, int action, const std::string& characterName, const std::string& comment, const std::string& translation);
+    void sendNewNewRuleViolation(int reason, int action, const std::string_view characterName, const std::string_view comment, const std::string_view translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
     void sendAnswerModalDialog(uint32 dialog, int button, int choice);
     void sendBrowseField(const Position& position);
     void sendSeekInContainer(int cid, int index);
-    void sendBuyStoreOffer(int offerId, int productType, const std::string& name);
+    void sendBuyStoreOffer(int offerId, int productType, const std::string_view name);
     void sendRequestTransactionHistory(int page, int entriesPerPage);
-    void sendRequestStoreOffers(const std::string& categoryName, int serviceType);
-    void sendOpenStore(int serviceType, const std::string& category);
-    void sendTransferCoins(const std::string& recipient, int amount);
+    void sendRequestStoreOffers(const std::string_view categoryName, int serviceType);
+    void sendOpenStore(int serviceType, const std::string_view category);
+    void sendTransferCoins(const std::string_view recipient, int amount);
     void sendOpenTransactionHistory(int entriesPerPage);
 
     // otclient only

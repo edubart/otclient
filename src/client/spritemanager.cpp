@@ -65,7 +65,7 @@ bool SpriteManager::loadSpr(std::string file)
     }
 }
 
-void SpriteManager::saveSpr(const std::string& fileName)
+void SpriteManager::saveSpr(const std::string_view fileName)
 {
     if (!m_loaded)
         stdext::throw_exception("failed to save, spr is not loaded");

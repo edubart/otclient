@@ -106,37 +106,36 @@ void UIWidget::drawText(const Rect& screenCoords)
         g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, m_color);
 }
 
-void UIWidget::onTextChange(const std::string& text, const std::string& oldText)
+void UIWidget::onTextChange(const std::string_view text, const std::string_view oldText)
 {
     g_app.repaint();
     callLuaField("onTextChange", text, oldText);
 }
 
-void UIWidget::onFontChange(const std::string& font)
+void UIWidget::onFontChange(const std::string_view font)
 {
     callLuaField("onFontChange", font);
 }
 
-void UIWidget::setText(std::string text, bool dontFireLuaCall)
+void UIWidget::setText(const std::string_view text, bool dontFireLuaCall)
 {
+    std::string _text{ text.data() };
     if (m_textOnlyUpperCase)
-        stdext::toupper(text);
+        stdext::toupper(_text);
 
-    if (m_text == text)
+    if (m_text == _text)
         return;
 
     const std::string oldText = m_text;
-    m_text = text;
+    m_text = _text;
     updateText();
 
-    text = m_text;
-
     if (!dontFireLuaCall) {
-        onTextChange(text, oldText);
+        onTextChange(_text, oldText);
     }
 }
 
-void UIWidget::setFont(const std::string& fontName)
+void UIWidget::setFont(const std::string_view fontName)
 {
     m_font = g_fonts.getFont(fontName);
     updateText();

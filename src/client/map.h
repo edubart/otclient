@@ -157,16 +157,16 @@ public:
     void notificateCameraMove(const Point& offset);
     void notificateKeyRelease(const InputEvent& inputEvent);
 
-    bool loadOtcm(const std::string& fileName);
-    void saveOtcm(const std::string& fileName);
+    bool loadOtcm(const std::string_view fileName);
+    void saveOtcm(const std::string_view fileName);
 
-    void loadOtbm(const std::string& fileName);
-    void saveOtbm(const std::string& fileName);
+    void loadOtbm(const std::string_view fileName);
+    void saveOtbm(const std::string_view fileName);
 
     // otbm attributes (description, size, etc.)
-    void setHouseFile(const std::string& file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
-    void setSpawnFile(const std::string& file) { m_attribs.set(OTBM_ATTR_SPAWN_FILE, file); }
-    void setDescription(const std::string& desc) { m_attribs.set(OTBM_ATTR_DESCRIPTION, desc); }
+    void setHouseFile(const std::string_view file) { m_attribs.set(OTBM_ATTR_HOUSE_FILE, file); }
+    void setSpawnFile(const std::string_view file) { m_attribs.set(OTBM_ATTR_SPAWN_FILE, file); }
+    void setDescription(const std::string_view desc) { m_attribs.set(OTBM_ATTR_DESCRIPTION, desc); }
 
     void clearDescriptions() { m_attribs.remove(OTBM_ATTR_DESCRIPTION); }
     void setWidth(uint16 w) { m_attribs.set(OTBM_ATTR_WIDTH, w); }

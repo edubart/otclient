@@ -36,7 +36,7 @@ public:
     void drawText(const Point& dest, const Rect& visibleRect);
 
     void setColor(int color) { m_color = Color::from8bit(color); }
-    void setText(const std::string& text) { m_cachedText.setText(text); }
+    void setText(const std::string_view text) { m_cachedText.setText(text); }
     void setOffset(const Point& offset) { m_offset = offset; }
 
     Color getColor() { return m_color; }

@@ -68,13 +68,7 @@ bool luavalue_cast(int index, double& d)
 }
 
 // string
-int push_luavalue(const char* cstr)
-{
-    g_lua.pushCString(cstr);
-    return 1;
-}
-
-int push_luavalue(const std::string& str)
+int push_luavalue(const std::string_view str)
 {
     g_lua.pushString(str);
     return 1;
@@ -239,7 +233,7 @@ void push_otml_subnode_luavalue(const OTMLNodePtr& node)
             double d;
             long l;
         };
-        const std::string value = node->rawValue();
+        const auto& value = node->rawValue();
         if (stdext::cast(value, b))
             g_lua.pushBoolean(b);
         else if (stdext::cast(value, l))

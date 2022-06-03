@@ -23,7 +23,7 @@
 #include "otmlnode.h"
 #include "otmlemitter.h"
 
-OTMLNodePtr OTMLNode::create(const std::string& tag, bool unique)
+OTMLNodePtr OTMLNode::create(const std::string_view tag, bool unique)
 {
     OTMLNodePtr node(new OTMLNode);
     node->setTag(tag);
@@ -31,7 +31,7 @@ OTMLNodePtr OTMLNode::create(const std::string& tag, bool unique)
     return node;
 }
 
-OTMLNodePtr OTMLNode::create(const std::string& tag, const std::string& value)
+OTMLNodePtr OTMLNode::create(const std::string_view tag, const std::string_view value)
 {
     OTMLNodePtr node(new OTMLNode);
     node->setTag(tag);
@@ -50,7 +50,7 @@ bool OTMLNode::hasChildren()
     return count > 0;
 }
 
-OTMLNodePtr OTMLNode::get(const std::string& childTag)
+OTMLNodePtr OTMLNode::get(const std::string_view childTag)
 {
     for (const OTMLNodePtr& child : m_children) {
         if (child->tag() == childTag && !child->isNull())
@@ -66,7 +66,7 @@ OTMLNodePtr OTMLNode::getIndex(int childIndex)
     return nullptr;
 }
 
-OTMLNodePtr OTMLNode::at(const std::string& childTag)
+OTMLNodePtr OTMLNode::at(const std::string_view childTag)
 {
     OTMLNodePtr res;
     for (const OTMLNodePtr& child : m_children) {

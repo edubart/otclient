@@ -31,7 +31,7 @@ class UIPositionAnchor : public UIAnchor
 {
 public:
     UIPositionAnchor(Fw::AnchorEdge anchoredEdge, const Position& hookedPosition, Fw::AnchorEdge hookedEdge) :
-        UIAnchor(anchoredEdge, std::string(), hookedEdge), m_hookedPosition(hookedPosition)
+        UIAnchor(anchoredEdge, {}, hookedEdge), m_hookedPosition(hookedPosition)
     {}
 
     UIWidgetPtr getHookedWidget(const UIWidgetPtr& /*widget*/, const UIWidgetPtr& parentWidget) override { return parentWidget; }

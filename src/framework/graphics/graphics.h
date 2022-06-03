@@ -44,7 +44,7 @@ public:
     // @dontbind
     void terminate();
 
-    bool parseOption(const std::string& option);
+    bool parseOption(const std::string_view option);
 
     bool isPainterEngineAvailable(PainterEngine painterEngine);
     bool selectPainterEngine(PainterEngine painterEngine);

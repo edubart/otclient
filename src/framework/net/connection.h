@@ -47,12 +47,12 @@ public:
     static void poll();
     static void terminate();
 
-    void connect(const std::string& host, uint16 port, const std::function<void()>& connectCallback);
+    void connect(const std::string_view host, uint16 port, const std::function<void()>& connectCallback);
     void close();
 
     void write(uint8* buffer, size_t size);
     void read(uint16 bytes, const RecvCallback& callback);
-    void read_until(const std::string& what, const RecvCallback& callback);
+    void read_until(const std::string_view what, const RecvCallback& callback);
     void read_some(const RecvCallback& callback);
 
     void setErrorCallback(const ErrorCallback& errorCallback) { m_errorCallback = errorCallback; }

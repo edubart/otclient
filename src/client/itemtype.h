@@ -140,10 +140,10 @@ public:
     void setCategory(ItemCategory category) { m_category = category; }
     ItemCategory getCategory() { return m_category; }
 
-    void setName(const std::string& name) { m_attribs.set(ItemTypeAttrName, name); }
+    void setName(const std::string_view name) { m_attribs.set(ItemTypeAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(ItemTypeAttrName); }
 
-    void setDesc(const std::string& desc) { m_attribs.set(ItemTypeAttrDesc, desc); }
+    void setDesc(const std::string_view desc) { m_attribs.set(ItemTypeAttrDesc, desc); }
     std::string getDesc() { return m_attribs.get<std::string>(ItemTypeAttrDesc); }
 
     bool isNull() { return m_null; }

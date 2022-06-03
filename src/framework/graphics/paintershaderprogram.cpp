@@ -146,7 +146,7 @@ void PainterShaderProgram::updateTime()
     m_time = time;
 }
 
-void PainterShaderProgram::addMultiTexture(const std::string& file)
+void PainterShaderProgram::addMultiTexture(const std::string_view file)
 {
     if (m_multiTextures.size() > 3)
         g_logger.error("cannot add more multi textures to shader, the max is 3");

@@ -135,7 +135,7 @@ void UIMinimap::onZoomChange(int zoom, int oldZoom) { callLuaField("onZoomChange
 
 void UIMinimap::onCameraPositionChange(const Position& position, const Position& oldPosition) { callLuaField("onCameraPositionChange", position, oldPosition); }
 
-void UIMinimap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UIMinimap::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
     for (const OTMLNodePtr& node : styleNode->children()) {

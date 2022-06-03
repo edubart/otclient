@@ -71,7 +71,7 @@ void ThingTypeManager::terminate()
     m_nullItemType = nullptr;
 }
 
-void ThingTypeManager::saveDat(const std::string& fileName)
+void ThingTypeManager::saveDat(const std::string_view fileName)
 {
     if (!m_datLoaded)
         stdext::throw_exception("failed to save, dat is not loaded");
@@ -182,7 +182,7 @@ bool ThingTypeManager::loadOtml(std::string file)
     }
 }
 
-void ThingTypeManager::loadOtb(const std::string& file)
+void ThingTypeManager::loadOtb(const std::string_view file)
 {
     try {
         const FileStreamPtr fin = g_resources.openFile(file);
@@ -234,14 +234,14 @@ void ThingTypeManager::loadOtb(const std::string& file)
     }
 }
 
-void ThingTypeManager::loadXml(const std::string& file)
+void ThingTypeManager::loadXml(const std::string_view file)
 {
     try {
         if (!isOtbLoaded())
             stdext::throw_exception("OTB must be loaded before XML");
 
         TiXmlDocument doc;
-        doc.Parse(g_resources.readFileContents(file).c_str());
+        doc.Parse(g_resources.readFileContents(file).data());
         if (doc.Error())
             stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
 
@@ -263,7 +263,7 @@ void ThingTypeManager::loadXml(const std::string& file)
                         while (i <= ids[1])
                             parseItemType(++i, element);
                     } else
-                        parseItemType(atoi(s.c_str()), element);
+                        parseItemType(atoi(s.data()), element);
                 }
             } else {
                 std::vector<int32> begin = stdext::split<int32>(element->Attribute("fromid"), ";");
@@ -285,7 +285,7 @@ void ThingTypeManager::loadXml(const std::string& file)
     }
 }
 
-bool ThingTypeManager::loadAppearances(const std::string& file)
+bool ThingTypeManager::loadAppearances(const std::string_view file)
 {
     try {
         int spritesCount = 0;
@@ -420,7 +420,7 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByClientId(uint16 id)
     return m_nullItemType;
 }
 
-const ItemTypePtr& ThingTypeManager::findItemTypeByName(const std::string& name)
+const ItemTypePtr& ThingTypeManager::findItemTypeByName(const std::string_view name)
 {
     for (const ItemTypePtr& it : m_itemTypes)
         if (it->getName() == name)
@@ -428,7 +428,7 @@ const ItemTypePtr& ThingTypeManager::findItemTypeByName(const std::string& name)
     return m_nullItemType;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByName(const std::string& name)
+ItemTypeList ThingTypeManager::findItemTypesByName(const std::string_view name)
 {
     ItemTypeList ret;
     for (const ItemTypePtr& it : m_itemTypes)
@@ -437,7 +437,7 @@ ItemTypeList ThingTypeManager::findItemTypesByName(const std::string& name)
     return ret;
 }
 
-ItemTypeList ThingTypeManager::findItemTypesByString(const std::string& name)
+ItemTypeList ThingTypeManager::findItemTypesByString(const std::string_view name)
 {
     ItemTypeList ret;
     for (const ItemTypePtr& it : m_itemTypes)

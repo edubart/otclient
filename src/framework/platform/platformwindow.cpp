@@ -36,7 +36,7 @@ X11Window window;
 
 PlatformWindow& g_window = window;
 
-int PlatformWindow::loadMouseCursor(const std::string& file, const Point& hotSpot)
+int PlatformWindow::loadMouseCursor(const std::string_view file, const Point& hotSpot)
 {
     const ImagePtr image = Image::load(file);
 

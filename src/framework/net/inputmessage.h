@@ -37,8 +37,8 @@ public:
 
     InputMessage();
 
-    void setBuffer(const std::string& buffer);
-    std::string getBuffer() { return std::string((char*)m_buffer + m_headerPos, m_messageSize); }
+    void setBuffer(const std::string_view buffer);
+    std::string_view getBuffer() { return std::string_view{ (char*)m_buffer + m_headerPos, m_messageSize }; }
 
     void skipBytes(uint16 bytes) { m_readPos += bytes; }
     void setReadPos(uint16 readPos) { m_readPos = readPos; }
@@ -47,7 +47,7 @@ public:
     uint32 getU32();
     uint64 getU64();
     int64 get64();
-    std::string getString();
+    std::string_view getString();
     double getDouble();
 
     uint8 peekU8()

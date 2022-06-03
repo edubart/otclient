@@ -40,14 +40,14 @@ public:
 
     void reset();
 
-    void setBuffer(const std::string& buffer);
-    std::string getBuffer() { return std::string((char*)m_buffer + m_headerPos, m_messageSize); }
+    void setBuffer(const std::string_view buffer);
+    std::string_view getBuffer() { return std::string_view{ (char*)m_buffer + m_headerPos, m_messageSize }; }
 
     void addU8(uint8 value);
     void addU16(uint16 value);
     void addU32(uint32 value);
     void addU64(uint64 value);
-    void addString(const std::string& buffer);
+    void addString(const std::string_view buffer);
     void addPaddingBytes(int bytes, uint8 byte = 0);
 
     void encryptRsa();

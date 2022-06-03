@@ -33,13 +33,13 @@ public:
     void terminate();
     void clearFonts();
 
-    bool importFont(std::string file);
+    bool importFont(const std::string_view file);
 
-    bool fontExists(const std::string& fontName);
-    BitmapFontPtr getFont(const std::string& fontName);
+    bool fontExists(const std::string_view fontName);
+    BitmapFontPtr getFont(const std::string_view fontName);
     BitmapFontPtr getDefaultFont() { return m_defaultFont; }
 
-    void setDefaultFont(const std::string& fontName) { m_defaultFont = getFont(fontName); }
+    void setDefaultFont(const std::string_view fontName) { m_defaultFont = getFont(fontName); }
 
 private:
     std::vector<BitmapFontPtr> m_fonts;

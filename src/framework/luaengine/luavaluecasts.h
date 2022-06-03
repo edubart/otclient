@@ -101,8 +101,7 @@ inline bool luavalue_cast(int index, uint64& v)
 }
 
 // string
-int push_luavalue(const char* cstr);
-int push_luavalue(const std::string& str);
+int push_luavalue(const std::string_view str);
 bool luavalue_cast(int index, std::string& str);
 
 // lua cpp function

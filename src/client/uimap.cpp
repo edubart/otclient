@@ -148,7 +148,7 @@ TilePtr UIMap::getTile(const Point& mousePos)
     return m_mapView->getTopTile(tilePos);
 }
 
-void UIMap::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UIMap::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
     for (const OTMLNodePtr& node : styleNode->children()) {

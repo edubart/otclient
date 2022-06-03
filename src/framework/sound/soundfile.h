@@ -30,7 +30,7 @@ class SoundFile : public stdext::shared_object
 public:
     SoundFile(const FileStreamPtr& fileStream);
     ~SoundFile() override = default;
-    static SoundFilePtr loadSoundFile(const std::string& filename);
+    static SoundFilePtr loadSoundFile(const std::string_view filename);
 
     virtual int read(void* /*buffer*/, int /*bufferSize*/) { return -1; }
     virtual void reset() {}

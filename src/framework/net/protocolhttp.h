@@ -33,10 +33,10 @@ public:
     ProtocolHttp();
     ~ProtocolHttp() override;
 
-    void connect(const std::string& host, uint16 port);
+    void connect(const std::string_view host, uint16 port);
     void disconnect();
 
-    void send(const std::string& message);
+    void send(const std::string_view message);
     void recv();
 
     ProtocolHttpPtr asProtocolHttp() { return static_self_cast<ProtocolHttp>(); }

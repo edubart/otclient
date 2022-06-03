@@ -33,7 +33,7 @@ public:
 
     void wrapText(int maxWidth);
     void setFont(const BitmapFontPtr& font) { m_font = font; update(); }
-    void setText(const std::string& text) { m_text = text; update(); }
+    void setText(const std::string_view text) { m_text = text; update(); }
     void setAlign(const Fw::AlignmentFlag align) { m_align = align; update(); }
 
     Size getTextSize() { return m_textSize; }

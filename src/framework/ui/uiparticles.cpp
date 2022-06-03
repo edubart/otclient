@@ -50,7 +50,7 @@ void UIParticles::drawSelf(Fw::DrawPane /*drawPane*/)
     g_drawPool.resetClipRect();
 }
 
-void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& styleNode)
+void UIParticles::onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode)
 {
     UIWidget::onStyleApply(styleName, styleNode);
 
@@ -62,7 +62,7 @@ void UIParticles::onStyleApply(const std::string& styleName, const OTMLNodePtr& 
     }
 }
 
-void UIParticles::addEffect(const std::string& name)
+void UIParticles::addEffect(const std::string_view name)
 {
     const ParticleEffectPtr effect = g_particles.createEffect(name);
     if (effect)

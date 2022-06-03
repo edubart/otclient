@@ -40,7 +40,7 @@ Protocol::~Protocol()
     disconnect();
 }
 
-void Protocol::connect(const std::string& host, uint16 port)
+void Protocol::connect(const std::string_view host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
     m_connection->setErrorCallback([capture0 = asProtocol()](auto&& PH1)

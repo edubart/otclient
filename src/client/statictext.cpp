@@ -46,10 +46,10 @@ void StaticText::drawText(const Point& dest, const Rect& parentRect)
     //}
 }
 
-void StaticText::setText(const std::string& text) { m_cachedText.setText(text); }
-void StaticText::setFont(const std::string& fontName) { m_cachedText.setFont(g_fonts.getFont(fontName)); }
+void StaticText::setText(const std::string_view text) { m_cachedText.setText(text); }
+void StaticText::setFont(const std::string_view fontName) { m_cachedText.setFont(g_fonts.getFont(fontName)); }
 
-bool StaticText::addMessage(const std::string& name, Otc::MessageMode mode, const std::string& text)
+bool StaticText::addMessage(const std::string_view name, Otc::MessageMode mode, const std::string_view text)
 {
     //TODO: this could be moved to lua
     // first message
@@ -103,8 +103,7 @@ void StaticText::scheduleUpdate()
     const int delay = std::max<int>(m_messages.front().second - g_clock.millis(), 0);
 
     auto self = asStaticText();
-    m_updateEvent = g_dispatcher.scheduleEvent([self]
-    {
+    m_updateEvent = g_dispatcher.scheduleEvent([self] {
         self->m_updateEvent = nullptr;
         self->update();
     }, delay);

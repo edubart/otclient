@@ -29,10 +29,10 @@ class Image : public stdext::shared_object
 public:
     Image(const Size& size, int bpp = 4, uint8* pixels = nullptr);
 
-    static ImagePtr load(std::string file);
-    static ImagePtr loadPNG(const std::string& file);
+    static ImagePtr load(std::string_view file);
+    static ImagePtr loadPNG(const std::string_view file);
 
-    void savePNG(const std::string& fileName);
+    void savePNG(const std::string_view fileName);
 
     void overwriteMask(const Color& maskedColor, const Color& insideColor = Color::white, const Color& outsideColor = Color::alpha);
     void overwrite(const Color& color);

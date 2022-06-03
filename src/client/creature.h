@@ -48,7 +48,7 @@ public:
     void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, bool useGray, float horizontalStretchFactor, float verticalStretchFactor, int drawFlags);
 
     void setId(uint32 id) override { m_id = id; }
-    void setName(const std::string& name);
+    void setName(const std::string_view name);
     void setHealthPercent(uint8 healthPercent);
     void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit);
@@ -61,11 +61,11 @@ public:
     void setEmblem(uint8 emblem);
     void setType(uint8 type);
     void setIcon(uint8 icon);
-    void setSkullTexture(const std::string& filename);
-    void setShieldTexture(const std::string& filename, bool blink);
-    void setEmblemTexture(const std::string& filename);
-    void setTypeTexture(const std::string& filename);
-    void setIconTexture(const std::string& filename);
+    void setSkullTexture(const std::string_view filename);
+    void setShieldTexture(const std::string_view filename, bool blink);
+    void setEmblemTexture(const std::string_view filename);
+    void setTypeTexture(const std::string_view filename);
+    void setIconTexture(const std::string_view filename);
     void setPassable(bool passable) { m_passable = passable; }
     void setOutfitShader(const PainterShaderProgramPtr& shader) { m_outfitShader = shader; }
     void setMountShader(const PainterShaderProgramPtr& shader) { m_mountShader = shader; }

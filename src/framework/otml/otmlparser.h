@@ -36,12 +36,12 @@ private:
     /// Retrieve next line from the input stream
     std::string getNextLine();
     /// Counts depth of a line (every 2 spaces increments one depth)
-    int getLineDepth(const std::string& line, bool multilining = false);
+    int getLineDepth(const std::string_view line, bool multilining = false);
 
     /// Parse each line of the input stream
     void parseLine(std::string line);
     /// Parse nodes tag and value
-    void parseNode(const std::string& data);
+    void parseNode(const std::string_view data);
 
     int currentDepth;
     int currentLine;

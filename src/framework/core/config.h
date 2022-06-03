@@ -33,22 +33,22 @@ class Config : public LuaObject
 public:
     Config();
 
-    bool load(const std::string& file);
+    bool load(const std::string_view file);
     bool unload();
     bool save();
     void clear();
 
-    void setValue(const std::string& key, const std::string& value);
-    void setList(const std::string& key, const std::vector<std::string>& list);
-    std::string getValue(const std::string& key);
-    std::vector<std::string> getList(const std::string& key);
+    void setValue(const std::string_view key, const std::string_view value);
+    void setList(const std::string_view key, const std::vector<std::string>& list);
+    std::string getValue(const std::string_view key);
+    std::vector<std::string> getList(const std::string_view key);
 
-    void setNode(const std::string& key, const OTMLNodePtr& node);
-    void mergeNode(const std::string& key, const OTMLNodePtr& node);
-    OTMLNodePtr getNode(const std::string& key);
+    void setNode(const std::string_view key, const OTMLNodePtr& node);
+    void mergeNode(const std::string_view key, const OTMLNodePtr& node);
+    OTMLNodePtr getNode(const std::string_view key);
 
-    bool exists(const std::string& key);
-    void remove(const std::string& key);
+    bool exists(const std::string_view key);
+    void remove(const std::string_view key);
 
     std::string getFileName();
     bool isLoaded();

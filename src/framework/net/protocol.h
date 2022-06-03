@@ -36,7 +36,7 @@ public:
     Protocol();
     ~Protocol() override;
 
-    void connect(const std::string& host, uint16 port);
+    void connect(const std::string_view host, uint16 port);
     void disconnect();
 
     bool isConnected();

@@ -44,27 +44,27 @@ public:
     void init();
     void terminate();
 
-    void registerShader(const std::string& name, const PainterShaderProgramPtr& shader);
+    void registerShader(const std::string_view name, const PainterShaderProgramPtr& shader);
     void setupMapShader(const PainterShaderProgramPtr& shader);
     void setupItemShader(const PainterShaderProgramPtr& shader);
     void setupOutfitShader(const PainterShaderProgramPtr& shader);
     void setupMountShader(const PainterShaderProgramPtr& shader);
 
-    PainterShaderProgramPtr createShader(const std::string& name);
-    PainterShaderProgramPtr createFragmentShader(const std::string& name, std::string file);
-    PainterShaderProgramPtr createFragmentShaderFromCode(const std::string& name, const std::string& code);
+    PainterShaderProgramPtr createShader(const std::string_view name);
+    PainterShaderProgramPtr createFragmentShader(const std::string_view name, const std::string_view file);
+    PainterShaderProgramPtr createFragmentShaderFromCode(const std::string_view name, const std::string_view code);
 
-    PainterShaderProgramPtr createItemShader(const std::string& name, const std::string& file);
-    PainterShaderProgramPtr createOutfitShader(const std::string& name, const std::string& file);
-    PainterShaderProgramPtr createMountShader(const std::string& name, const std::string& file);
-    PainterShaderProgramPtr createMapShader(const std::string& name, const std::string& file);
+    PainterShaderProgramPtr createItemShader(const std::string_view name, const std::string_view file);
+    PainterShaderProgramPtr createOutfitShader(const std::string_view name, const std::string_view file);
+    PainterShaderProgramPtr createMountShader(const std::string_view name, const std::string_view file);
+    PainterShaderProgramPtr createMapShader(const std::string_view name, const std::string_view file);
 
     const PainterShaderProgramPtr& getDefaultItemShader() { return m_defaultItemShader; }
     const PainterShaderProgramPtr& getDefaultOutfitShader() { return m_defaultOutfitShader; }
     const PainterShaderProgramPtr& getDefaultMountShader() { return m_defaultMountShader; }
     const PainterShaderProgramPtr& getDefaultMapShader() { return m_defaultMapShader; }
 
-    PainterShaderProgramPtr getShader(const std::string& name);
+    PainterShaderProgramPtr getShader(const std::string_view name);
 
 private:
 

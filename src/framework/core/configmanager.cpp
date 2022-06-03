@@ -52,7 +52,7 @@ ConfigPtr ConfigManager::getSettings()
     return m_settings;
 }
 
-ConfigPtr ConfigManager::get(const std::string& file)
+ConfigPtr ConfigManager::get(const std::string_view file)
 {
     for (const ConfigPtr& config : m_configs) {
         if (config->getFileName() == file) {
@@ -62,7 +62,7 @@ ConfigPtr ConfigManager::get(const std::string& file)
     return nullptr;
 }
 
-ConfigPtr ConfigManager::loadSettings(const std::string& file)
+ConfigPtr ConfigManager::loadSettings(const std::string_view file)
 {
     if (file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
@@ -74,7 +74,7 @@ ConfigPtr ConfigManager::loadSettings(const std::string& file)
     return nullptr;
 }
 
-ConfigPtr ConfigManager::create(const std::string& file)
+ConfigPtr ConfigManager::create(const std::string_view file)
 {
     ConfigPtr config = load(file);
     if (!config) {
@@ -88,7 +88,7 @@ ConfigPtr ConfigManager::create(const std::string& file)
     return config;
 }
 
-ConfigPtr ConfigManager::load(const std::string& file)
+ConfigPtr ConfigManager::load(const std::string_view file)
 {
     if (file.empty()) {
         g_logger.error("Must provide a configuration file to load.");
@@ -108,7 +108,7 @@ ConfigPtr ConfigManager::load(const std::string& file)
     return config;
 }
 
-bool ConfigManager::unload(const std::string& file)
+bool ConfigManager::unload(const std::string_view file)
 {
     ConfigPtr config = get(file);
     if (config) {

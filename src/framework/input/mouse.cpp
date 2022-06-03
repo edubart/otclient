@@ -35,11 +35,11 @@ void Mouse::terminate()
     m_cursors.clear();
 }
 
-void Mouse::loadCursors(std::string filename)
+void Mouse::loadCursors(const std::string_view filename)
 {
-    filename = g_resources.guessFilePath(filename, "otml");
+    const auto& path = g_resources.guessFilePath(filename, "otml");
     try {
-        const OTMLDocumentPtr doc = OTMLDocument::parse(filename);
+        const OTMLDocumentPtr doc = OTMLDocument::parse(path);
         const OTMLNodePtr cursorsNode = doc->at("Cursors");
 
         for (const OTMLNodePtr& cursorNode : cursorsNode->children())
@@ -51,18 +51,18 @@ void Mouse::loadCursors(std::string filename)
     }
 }
 
-void Mouse::addCursor(const std::string& name, const std::string& file, const Point& hotSpot)
+void Mouse::addCursor(const std::string_view name, const std::string_view file, const Point& hotSpot)
 {
     const int cursorId = g_window.loadMouseCursor(file, hotSpot);
     if (cursorId >= 0) {
-        m_cursors[name] = cursorId;
+        m_cursors[name.data()] = cursorId;
     } else
         g_logger.error(stdext::format("unable to load cursor %s", name));
 }
 
-bool Mouse::pushCursor(const std::string& name)
+bool Mouse::pushCursor(const std::string_view name)
 {
-    const auto it = m_cursors.find(name);
+    const auto it = m_cursors.find(name.data());
     if (it == m_cursors.end())
         return false;
 
@@ -72,15 +72,15 @@ bool Mouse::pushCursor(const std::string& name)
     return true;
 }
 
-void Mouse::popCursor(const std::string& name)
+void Mouse::popCursor(const std::string_view name)
 {
     if (m_cursorStack.empty())
         return;
 
-    if (name.empty() || !m_cursors.contains(name))
+    if (name.empty() || !m_cursors.contains(name.data()))
         m_cursorStack.pop_back();
     else {
-        const int cursorId = m_cursors[name];
+        const int cursorId = m_cursors[name.data()];
         int index = -1;
         for (uint i = 0; i < m_cursorStack.size(); ++i) {
             if (m_cursorStack[i] == cursorId)

@@ -221,22 +221,22 @@ std::pair<MinimapBlock_ptr, MinimapTile> Minimap::threadGetTile(const Position& 
     return std::make_pair(nullptr, nulltile);
 }
 
-bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, float colorFactor)
+bool Minimap::loadImage(const std::string_view fileName, const Position& topLeft, float colorFactor)
 {
     // non pathable colors
     static Color nonPathableColors[] = {
-       std::string("#ffff00"), // yellow
+       "#ffff00"sv, // yellow
     };
 
     // non walkable colors
     static Color nonWalkableColors[] = {
-       std::string("#000000"), // oil, black
-       std::string("#006600"), // trees, dark green
-       std::string("#ff3300"), // walls, red
-       std::string("#666666"), // mountain, grey
-       std::string("#ff6600"), // lava, orange
-       std::string("#00ff00"), // positon
-       std::string("#ccffff"), // ice, very light blue
+       "#000000"sv, // oil, black
+       "#006600"sv, // trees, dark green
+       "#ff3300"sv, // walls, red
+       "#666666"sv, // mountain, grey
+       "#ff6600"sv, // lava, orange
+       "#00ff00"sv, // positon
+       "#ccffff"sv, // ice, very light blue
     };
 
     if (colorFactor <= .01f)
@@ -245,7 +245,7 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
     try {
         const ImagePtr image = Image::load(fileName);
 
-        const uint8 waterc = Color::to8bit(std::string("#3300cc"));
+        const uint8 waterc = Color::to8bit("#3300cc"sv);
 
         for (int_fast32_t y = -1; ++y < image->getHeight();) {
             for (int_fast32_t x = -1; ++x < image->getWidth();) {
@@ -297,12 +297,12 @@ bool Minimap::loadImage(const std::string& fileName, const Position& topLeft, fl
     }
 }
 
-void Minimap::saveImage(const std::string&, const Rect&)
+void Minimap::saveImage(const std::string_view, const Rect&)
 {
     //TODO
 }
 
-bool Minimap::loadOtmm(const std::string& fileName)
+bool Minimap::loadOtmm(const std::string_view fileName)
 {
     try {
         const FileStreamPtr fin = g_resources.openFile(fileName);
@@ -366,7 +366,7 @@ bool Minimap::loadOtmm(const std::string& fileName)
     }
 }
 
-void Minimap::saveOtmm(const std::string& fileName)
+void Minimap::saveOtmm(const std::string_view fileName)
 {
     try {
         stdext::timer saveTimer;

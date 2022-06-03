@@ -59,7 +59,7 @@ const TownPtr& TownManager::getTown(uint32 townId)
     return m_nullTown;
 }
 
-const TownPtr& TownManager::getTownByName(const std::string& name)
+const TownPtr& TownManager::getTownByName(const std::string_view name)
 {
     const auto it = std::find_if(m_towns.begin(), m_towns.end(),
                                  [=](const TownPtr& town) -> bool { return town->getName() == name; });

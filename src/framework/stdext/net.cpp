@@ -32,9 +32,9 @@ namespace stdext
         return address_v4.to_string();
     }
 
-    uint32 string_to_ip(const std::string& string)
+    uint32 string_to_ip(const std::string_view string)
     {
-        const asio::ip::address_v4 address_v4 = asio::ip::address_v4::from_string(string);
+        const asio::ip::address_v4 address_v4 = asio::ip::address_v4::from_string(string.data());
         return asio::detail::socket_ops::host_to_network_long(address_v4.to_ulong());
     }
 

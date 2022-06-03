@@ -38,7 +38,7 @@ namespace
 void BitmapFont::load(const OTMLNodePtr& fontNode)
 {
     const OTMLNodePtr textureNode = fontNode->at("texture");
-    const std::string textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
+    const auto& textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
     const auto glyphSize = fontNode->valueAt<Size>("glyph-size");
     m_glyphHeight = fontNode->valueAt<int>("height");
     m_yOffset = fontNode->valueAt("y-offset", 0);
@@ -85,21 +85,21 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     }
 }
 
-void BitmapFont::drawText(const std::string& text, const Point& startPos, const Color color)
+void BitmapFont::drawText(const std::string_view text, const Point& startPos, const Color color)
 {
     const Size boxSize = g_painter->getResolution() - startPos.toSize();
     const Rect screenCoords(startPos, boxSize);
     drawText(text, screenCoords, color, Fw::AlignTopLeft);
 }
 
-void BitmapFont::drawText(const std::string& text, const Rect& screenCoords, const Color color, Fw::AlignmentFlag align)
+void BitmapFont::drawText(const std::string_view text, const Rect& screenCoords, const Color color, Fw::AlignmentFlag align)
 {
     for (const auto& rects : getDrawTextCoords(text, screenCoords, align)) {
         g_drawPool.addTexturedRect(rects.first, m_texture, rects.second, color);
     }
 }
 
-std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::string& text, const Rect& screenCoords, Fw::AlignmentFlag align)
+std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::string_view text, const Rect& screenCoords, Fw::AlignmentFlag align)
 {
     std::vector<std::pair<Rect, Rect>> list;
     // prevent glitches from invalid rects
@@ -178,7 +178,7 @@ std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::stri
     return list;
 }
 
-const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string& text,
+const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string_view text,
                                                                Fw::AlignmentFlag align,
                                                                Size* textBoxSize)
 {
@@ -259,7 +259,7 @@ const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string
     return s_glyphsPositions;
 }
 
-Size BitmapFont::calculateTextRectSize(const std::string& text)
+Size BitmapFont::calculateTextRectSize(const std::string_view text)
 {
     Size size;
     calculateGlyphsPositions(text, Fw::AlignTopLeft, &size);
@@ -297,10 +297,10 @@ void BitmapFont::calculateGlyphsWidthsAutomatically(const ImagePtr& image, const
     }
 }
 
-std::string BitmapFont::wrapText(const std::string& text, int maxWidth)
+std::string BitmapFont::wrapText(const std::string_view text, int maxWidth)
 {
     if (text.empty())
-        return text;
+        return "";
 
     std::string outText;
     std::vector<std::string> words;
