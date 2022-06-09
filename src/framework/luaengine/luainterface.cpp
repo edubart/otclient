@@ -444,8 +444,11 @@ int LuaInterface::safeCall(int numArgs, int numRets)
     remove(errorFuncIndex); // remove error func
 
      // if there was an error throw an exception
-    if (ret != 0)
-        throw LuaException(popString());
+    if (ret != 0) {
+        const std::string& error = popString();
+        g_logger.error(stdext::format("Lua exception: %s", error));
+        throw LuaException(error);
+    }
 
     int rets = (stackSize() + numArgs + 1) - previousStackSize;
     while (numRets != -1 && rets != numRets) {
