@@ -1,6 +1,9 @@
 -- this is the first file executed when the application starts
 -- we have to load the first modules form here
 
+-- set latest supported version
+g_game.setLastSupportedVersion(1287)
+
 -- setup logger
 g_logger.setLogFile(g_resources.getWorkDir() .. g_app.getCompactName() .. ".log")
 g_logger.info(os.date("== application started at %b %d %Y %X"))

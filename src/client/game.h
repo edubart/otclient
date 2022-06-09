@@ -349,6 +349,13 @@ public:
 
     std::string formatCreatureName(const std::string_view name);
     int findEmptyContainerId();
+    
+    void setLastSupportedVersion(int version) {
+        m_lastSupportedVersion = version;
+    }
+    int getLastSupportedVersion() {
+        return m_lastSupportedVersion;
+    }
 
 protected:
     void enableBotCall() { m_denyBotCall = false; }
@@ -397,6 +404,7 @@ private:
     bool m_connectionFailWarned;
     int m_protocolVersion{ 0 };
     int m_clientVersion{ 0 };
+    int m_lastSupportedVersion{ 1287 };
     std::string m_clientSignature;
     Otc::OperatingSystem_t m_clientCustomOs{ Otc::CLIENTOS_NONE };
 };
