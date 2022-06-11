@@ -32,7 +32,7 @@ class DrawPool
 {
 public:
     template <class T>
-    T* get(const PoolType type) { return static_cast<T*>(m_pools[static_cast<uint8>(type)]); }
+    T* get(const PoolType type) { return static_cast<T*>(m_pools[static_cast<uint8_t>(type)]); }
 
     void use(PoolType type);
     void use(PoolType type, const Rect& dest, const Rect& src, Color colorClear = Color::alpha);
@@ -79,7 +79,7 @@ private:
     PoolFramed* poolFramed() { return m_currentPool->toPoolFramed(); }
 
     CoordsBuffer m_coordsBuffer;
-    std::array<Pool*, static_cast<uint8>(PoolType::UNKNOW) + 1> m_pools{};
+    std::array<Pool*, static_cast<uint8_t>(PoolType::UNKNOW) + 1> m_pools{};
 
     Pool* m_currentPool{ nullptr };
 

@@ -248,12 +248,12 @@ namespace stdext
 
     void ucwords(std::string& str)
     {
-        const uint32 strLen = str.length();
+        const uint32_t strLen = str.length();
         if (strLen == 0)
             return;
 
         str[0] = static_cast<char>(std::toupper(str[0]));
-        for (uint32 i = 1; i < strLen; ++i) {
+        for (uint32_t i = 1; i < strLen; ++i) {
             if (str[i - 1] == ' ')
                 str[i] = static_cast<char>(std::toupper(str[i]));
         }

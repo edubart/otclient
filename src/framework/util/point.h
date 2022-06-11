@@ -85,9 +85,9 @@ public:
 
     std::size_t hash() const { return (7 * 15 + x) * 15 + y; }
 
-    std::array<TPoint<T>, static_cast<uint8>(8)> getPointsAround(const uint8 pixel) const
+    std::array<TPoint<T>, static_cast<uint8_t>(8)> getPointsAround(const uint8_t pixel) const
     {
-        std::array<TPoint<T>, static_cast<uint8>(8)> positions;
+        std::array<TPoint<T>, static_cast<uint8_t>(8)> positions;
         int_fast8_t i = -1;
         for (int_fast32_t xi = -1; xi <= 1; ++xi) {
             for (int_fast32_t yi = -1; yi <= 1; ++yi) {

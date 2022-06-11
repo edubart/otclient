@@ -22,7 +22,7 @@
 
 #pragma once
 
-// common C headers
+ // common C headers
 #include <cassert>
 #include <cmath>
 #include <cstddef>

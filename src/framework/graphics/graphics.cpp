@@ -200,10 +200,10 @@ bool Graphics::selectPainterEngine(PainterEngine painterEngine)
         if (!painter && (painterEngine == Painter_OpenGL2 || painterEngine == Painter_Any)) {
             m_selectedPainterEngine = Painter_OpenGL2;
             painter = g_painterOGL2;
-    }
+        }
         fallbackPainter = g_painterOGL2;
         fallbackPainterEngine = Painter_OpenGL2;
-}
+    }
 #endif
 
 #ifdef PAINTER_OGL1

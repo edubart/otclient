@@ -43,7 +43,7 @@ class Logger
         MAX_LOG_HISTORY = 1000
     };
 
-    using OnLogCallback = std::function<void(Fw::LogLevel, const std::string_view, int64)>;
+    using OnLogCallback = std::function<void(Fw::LogLevel, const std::string_view, int64_t)>;
 
 public:
     void log(Fw::LogLevel level, const std::string_view message);

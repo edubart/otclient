@@ -29,7 +29,7 @@
 #include "framework/core/timer.h"
 #include "texture.h"
 
-enum class PoolType : uint8
+enum class PoolType : uint8_t
 {
     MAP,
     CREATURE_INFORMATION,
@@ -63,7 +63,7 @@ protected:
         std::tuple<Point, Point, Point> points;
         Point dest;
 
-        uint16 intValue{ 0 };
+        uint16_t intValue{ 0 };
     };
 
     struct DrawObject
@@ -129,7 +129,7 @@ private:
 
     std::vector<DrawObject> m_objects, m_cachedObjects;
 
-    std::unordered_map<uint16, size_t> m_drawingPointer;
+    std::unordered_map<uint16_t, size_t> m_drawingPointer;
 
     friend class DrawPool;
 };

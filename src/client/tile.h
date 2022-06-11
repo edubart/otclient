@@ -28,7 +28,7 @@
 #include "mapview.h"
 #include <framework/luaengine/luaobject.h>
 
-enum tileflags_t : uint32
+enum tileflags_t : uint32_t
 {
     TILESTATE_NONE = 0,
     TILESTATE_PROTECTIONZONE = 1 << 0,
@@ -67,7 +67,7 @@ public:
     void addThing(const ThingPtr& thing, int stackPos);
     bool removeThing(ThingPtr thing);
     ThingPtr getThing(int stackPos);
-    EffectPtr getEffect(uint16 id);
+    EffectPtr getEffect(uint16_t id);
     bool hasThing(const ThingPtr& thing);
     int getThingStackPos(const ThingPtr& thing);
     ThingPtr getTopThing();
@@ -88,12 +88,12 @@ public:
     std::vector<ItemPtr> getItems();
     ItemPtr getGround() { return m_ground; }
     int getGroundSpeed();
-    uint8 getMinimapColorByte();
+    uint8_t getMinimapColorByte();
     int getThingCount() { return m_things.size() + m_effects.size(); }
 
     bool isWalkable(bool ignoreCreatures = false);
     bool isClickable();
-    bool isCompletelyCovered(int8 firstFloor = -1);
+    bool isCompletelyCovered(int8_t firstFloor = -1);
 
     bool isPathable() { return m_countFlag.notPathable == 0; }
     bool isFullGround() { return m_countFlag.fullGround > 0; }
@@ -134,16 +134,16 @@ public:
 
     int getElevation() const { return m_countFlag.elevation; }
     bool hasElevation(int elevation = 1) { return m_countFlag.elevation >= elevation; }
-    void overwriteMinimapColor(uint8 color) { m_minimapColor = color; }
+    void overwriteMinimapColor(uint8_t color) { m_minimapColor = color; }
 
-    void remFlag(uint32 flag) { m_flags &= ~flag; }
-    void setFlag(uint32 flag) { m_flags |= flag; }
-    void setFlags(uint32 flags) { m_flags = flags; }
-    bool hasFlag(uint32 flag) { return (m_flags & flag) == flag; }
-    uint32 getFlags() { return m_flags; }
+    void remFlag(uint32_t flag) { m_flags &= ~flag; }
+    void setFlag(uint32_t flag) { m_flags |= flag; }
+    void setFlags(uint32_t flags) { m_flags = flags; }
+    bool hasFlag(uint32_t flag) { return (m_flags & flag) == flag; }
+    uint32_t getFlags() { return m_flags; }
 
-    void setHouseId(uint32 hid) { m_houseId = hid; }
-    uint32 getHouseId() { return m_houseId; }
+    void setHouseId(uint32_t hid) { m_houseId = hid; }
+    uint32_t getHouseId() { return m_houseId; }
     bool isHouseTile() { return m_houseId != 0 && (m_flags & TILESTATE_HOUSE) == TILESTATE_HOUSE; }
 
     void select(bool noFilter = false);
@@ -195,8 +195,8 @@ private:
 
     Position m_position;
 
-    uint8 m_drawElevation{ 0 }, m_minimapColor{ 0 };
-    uint32 m_flags{ 0 }, m_houseId{ 0 };
+    uint8_t m_drawElevation{ 0 }, m_minimapColor{ 0 };
+    uint32_t m_flags{ 0 }, m_houseId{ 0 };
 
     std::array<Position, 8> m_positionsAround;
 

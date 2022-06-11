@@ -45,13 +45,13 @@ struct UnjustifiedPoints
             killsMonthRemaining == other.killsMonthRemaining &&
             skullTime == other.skullTime;
     }
-    uint8 killsDay;
-    uint8 killsDayRemaining;
-    uint8 killsWeek;
-    uint8 killsWeekRemaining;
-    uint8 killsMonth;
-    uint8 killsMonthRemaining;
-    uint8 skullTime;
+    uint8_t killsDay;
+    uint8_t killsDayRemaining;
+    uint8_t killsWeek;
+    uint8_t killsWeekRemaining;
+    uint8_t killsMonth;
+    uint8_t killsMonthRemaining;
+    uint8_t skullTime;
 };
 
 using Vip = std::tuple<std::string, uint, std::string, int, bool>;
@@ -85,7 +85,7 @@ protected:
     void processGameEnd();
     void processDeath(int deathType, int penality);
 
-    void processGMActions(const std::vector<uint8>& actions);
+    void processGMActions(const std::vector<uint8_t >& actions);
     void processInventoryChange(int slot, const ItemPtr& item);
     void processAttackCancel(uint seq);
     void processWalkCancel(Otc::Direction direction);
@@ -149,7 +149,7 @@ protected:
     static void processQuestLine(int questId, const std::vector<std::tuple<std::string, std::string> >& questMissions);
 
     // modal dialogs >= 970
-    static void processModalDialog(uint32 id, const std::string_view title, const std::string_view message, const std::vector<std::tuple<int, std::string> >
+    static void processModalDialog(uint32_t id, const std::string_view title, const std::string_view message, const std::vector<std::tuple<int, std::string> >
                                    & buttonList, int enterButton, int escapeButton, const std::vector<std::tuple<int, std::string> >
                                    & choiceList, bool priority);
 
@@ -281,7 +281,7 @@ public:
     void requestItemInfo(const ItemPtr& item, int index);
 
     // >= 970 modal dialog
-    void answerModalDialog(uint32 dialog, int button, int choice);
+    void answerModalDialog(uint32_t dialog, int button, int choice);
 
     // >= 984 browse field
     void browseField(const Position& position);
@@ -343,17 +343,19 @@ public:
     ProtocolGamePtr getProtocolGame() { return m_protocolGame; }
     std::string getCharacterName() { return m_characterName; }
     std::string getWorldName() { return m_worldName; }
-    std::vector<uint8> getGMActions() { return m_gmActions; }
+    std::vector<uint8_t > getGMActions() { return m_gmActions; }
     bool isGM() { return !m_gmActions.empty(); }
     Otc::Direction getLastWalkDir() { return m_lastWalkDir; }
 
     std::string formatCreatureName(const std::string_view name);
     int findEmptyContainerId();
-    
-    void setLastSupportedVersion(int version) {
+
+    void setLastSupportedVersion(int version)
+    {
         m_lastSupportedVersion = version;
     }
-    int getLastSupportedVersion() {
+    int getLastSupportedVersion()
+    {
         return m_lastSupportedVersion;
     }
 
@@ -394,7 +396,7 @@ private:
     int m_openPvpSituations;
     bool m_safeFight{ true };
     bool m_canReportBugs{ false };
-    std::vector<uint8> m_gmActions;
+    std::vector<uint8_t > m_gmActions;
     std::string m_characterName;
     std::string m_worldName;
     std::bitset<Otc::LastGameFeature> m_features;

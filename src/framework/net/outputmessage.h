@@ -41,25 +41,25 @@ public:
     void setBuffer(const std::string_view buffer);
     std::string_view getBuffer() { return std::string_view{ (char*)m_buffer + m_headerPos, m_messageSize }; }
 
-    void addU8(uint8 value);
-    void addU16(uint16 value);
-    void addU32(uint32 value);
-    void addU64(uint64 value);
+    void addU8(uint8_t value);
+    void addU16(uint16_t value);
+    void addU32(uint32_t value);
+    void addU64(uint64_t value);
     void addString(const std::string_view buffer);
-    void addPaddingBytes(int bytes, uint8 byte = 0);
+    void addPaddingBytes(int bytes, uint8_t byte = 0);
 
     void encryptRsa();
 
-    uint16 getWritePos() { return m_writePos; }
-    uint16 getMessageSize() { return m_messageSize; }
+    uint16_t getWritePos() { return m_writePos; }
+    uint16_t getMessageSize() { return m_messageSize; }
 
-    void setWritePos(uint16 writePos) { m_writePos = writePos; }
-    void setMessageSize(uint16 messageSize) { m_messageSize = messageSize; }
+    void setWritePos(uint16_t writePos) { m_writePos = writePos; }
+    void setMessageSize(uint16_t messageSize) { m_messageSize = messageSize; }
 
 protected:
-    uint8* getWriteBuffer() { return m_buffer + m_writePos; }
-    uint8* getHeaderBuffer() { return m_buffer + m_headerPos; }
-    uint8* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
+    uint8_t* getWriteBuffer() { return m_buffer + m_writePos; }
+    uint8_t* getHeaderBuffer() { return m_buffer + m_headerPos; }
+    uint8_t* getDataBuffer() { return m_buffer + MAX_HEADER_SIZE; }
 
     void writeChecksum();
     void writeMessageSize();
@@ -70,8 +70,8 @@ private:
     bool canWrite(int bytes);
     void checkWrite(int bytes);
 
-    uint16 m_headerPos{ MAX_HEADER_SIZE };
-    uint16 m_writePos{ MAX_HEADER_SIZE };
-    uint16 m_messageSize{ 0 };
-    uint8 m_buffer[BUFFER_MAXSIZE];
+    uint16_t m_headerPos{ MAX_HEADER_SIZE };
+    uint16_t m_writePos{ MAX_HEADER_SIZE };
+    uint16_t m_messageSize{ 0 };
+    uint8_t m_buffer[BUFFER_MAXSIZE];
 };

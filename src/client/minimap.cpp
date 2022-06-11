@@ -49,7 +49,7 @@ void MinimapBlock::update()
     bool shouldDraw = false;
     for (uint_fast8_t x = 0; x < MMBLOCK_SIZE; ++x) {
         for (uint_fast8_t y = 0; y < MMBLOCK_SIZE; ++y) {
-            const uint8 c = getTile(x, y).color;
+            const uint8_t c = getTile(x, y).color;
 
             Color col = Color::alpha.rgba();
             if (c != UINT8_MAX) {
@@ -245,12 +245,12 @@ bool Minimap::loadImage(const std::string_view fileName, const Position& topLeft
     try {
         const ImagePtr image = Image::load(fileName);
 
-        const uint8 waterc = Color::to8bit("#3300cc"sv);
+        const uint8_t waterc = Color::to8bit("#3300cc"sv);
 
         for (int_fast32_t y = -1; ++y < image->getHeight();) {
             for (int_fast32_t x = -1; ++x < image->getWidth();) {
-                Color color = *(uint32*)image->getPixel(x, y);
-                uint8 c = Color::to8bit(color * colorFactor);
+                Color color = *(uint32_t*)image->getPixel(x, y);
+                uint8_t c = Color::to8bit(color * colorFactor);
                 int flags = 0;
 
                 if (c == waterc || color.a() == 0) {
@@ -311,12 +311,12 @@ bool Minimap::loadOtmm(const std::string_view fileName)
 
         fin->cache();
 
-        const uint32 signature = fin->getU32();
+        const uint32_t signature = fin->getU32();
         if (signature != OTMM_SIGNATURE)
             stdext::throw_exception("invalid OTMM file");
 
-        const uint16 start = fin->getU16();
-        const uint16 version = fin->getU16();
+        const uint16_t start = fin->getU16();
+        const uint16_t version = fin->getU16();
         fin->getU32(); // flags
 
         switch (version) {
@@ -375,7 +375,7 @@ void Minimap::saveOtmm(const std::string_view fileName)
         fin->cache();
 
         //TODO: compression flag with zlib
-        const uint32 flags = 0;
+        const uint32_t flags = 0;
 
         // header
         fin->addU32(OTMM_SIGNATURE);
@@ -387,7 +387,7 @@ void Minimap::saveOtmm(const std::string_view fileName)
         fin->addString("OTMM 1.0"); // description
 
         // go back and rewrite where the map data starts
-        const uint32 start = fin->tell();
+        const uint32_t start = fin->tell();
         fin->seek(4);
         fin->addU16(start);
         fin->seek(start);

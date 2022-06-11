@@ -25,9 +25,9 @@
 #include "declarations.h"
 #include <framework/graphics/declarations.h>
 
-constexpr uint8 MMBLOCK_SIZE = 64;
-constexpr uint8 OTMM_VERSION = 1;
-constexpr uint32 OTMM_SIGNATURE = 0x4D4d544F;
+constexpr uint8_t MMBLOCK_SIZE = 64;
+constexpr uint8_t OTMM_VERSION = 1;
+constexpr uint32_t OTMM_SIGNATURE = 0x4D4d544F;
 
 enum MinimapTileFlags
 {
@@ -40,9 +40,9 @@ enum MinimapTileFlags
 #pragma pack(push,1) // disable memory alignment
 struct MinimapTile
 {
-    uint8 flags{ 0 };
-    uint8 color{ 255 };
-    uint8 speed{ 10 };
+    uint8_t flags{ 0 };
+    uint8_t color{ 255 };
+    uint8_t speed{ 10 };
     bool hasFlag(MinimapTileFlags flag) const { return flags & flag; }
     int getSpeed() const { return speed * 10; }
     bool operator==(const MinimapTile& other) const { return color == other.color && flags == other.flags && speed == other.speed; }

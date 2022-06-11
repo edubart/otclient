@@ -79,7 +79,7 @@ private:
 
     Size m_bckResolution;
 
-    uint32 m_fbo, m_prevBoundFbo;
+    uint32_t m_fbo, m_prevBoundFbo;
 
     Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
 

@@ -30,11 +30,11 @@
 class ProtocolGame : public Protocol
 {
 public:
-    void login(const std::string_view accountName, const std::string_view accountPassword, const std::string_view host, uint16 port, const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey);
+    void login(const std::string_view accountName, const std::string_view accountPassword, const std::string_view host, uint16_t port, const std::string_view characterName, const std::string_view authenticatorToken, const std::string_view sessionKey);
     void send(const OutputMessagePtr& outputMessage) override;
 
-    void sendExtendedOpcode(uint8 opcode, const std::string_view buffer);
-    void sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom);
+    void sendExtendedOpcode(uint8_t opcode, const std::string_view buffer);
+    void sendLoginPacket(uint challengeTimestamp, uint8_t challengeRandom);
     void sendEnterGame();
     void sendLogout();
     void sendPing();
@@ -109,7 +109,7 @@ public:
     void sendRequestQuestLine(int questId);
     void sendNewNewRuleViolation(int reason, int action, const std::string_view characterName, const std::string_view comment, const std::string_view translation);
     void sendRequestItemInfo(int itemId, int subType, int index);
-    void sendAnswerModalDialog(uint32 dialog, int button, int choice);
+    void sendAnswerModalDialog(uint32_t dialog, int button, int choice);
     void sendBrowseField(const Position& position);
     void sendSeekInContainer(int cid, int index);
     void sendBuyStoreOffer(int offerId, int productType, const std::string_view name);

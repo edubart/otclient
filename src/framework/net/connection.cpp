@@ -87,7 +87,7 @@ void Connection::close()
     }
 }
 
-void Connection::connect(const std::string_view host, uint16 port, const std::function<void()>& connectCallback)
+void Connection::connect(const std::string_view host, uint16_t port, const std::function<void()>& connectCallback)
 {
     m_connected = false;
     m_connecting = true;
@@ -102,7 +102,7 @@ void Connection::connect(const std::string_view host, uint16 port, const std::fu
     });
 
     m_readTimer.cancel();
-    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(READ_TIMEOUT)));
+    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(READ_TIMEOUT)));
     m_readTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
@@ -117,14 +117,14 @@ void Connection::internal_connect(const asio::ip::basic_resolver<asio::ip::tcp>:
     });
 
     m_readTimer.cancel();
-    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(READ_TIMEOUT)));
+    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(READ_TIMEOUT)));
     m_readTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
     });
 }
 
-void Connection::write(uint8* buffer, size_t size)
+void Connection::write(uint8_t* buffer, size_t size)
 {
     if (!m_connected)
         return;
@@ -166,14 +166,14 @@ void Connection::internal_write()
     });
 
     m_writeTimer.cancel();
-    m_writeTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(WRITE_TIMEOUT)));
+    m_writeTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(WRITE_TIMEOUT)));
     m_writeTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
     });
 }
 
-void Connection::read(uint16 bytes, const RecvCallback& callback)
+void Connection::read(uint16_t bytes, const RecvCallback& callback)
 {
     if (!m_connected)
         return;
@@ -188,7 +188,7 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
     });
 
     m_readTimer.cancel();
-    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(READ_TIMEOUT)));
+    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(READ_TIMEOUT)));
     m_readTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
@@ -211,7 +211,7 @@ void Connection::read_until(const std::string_view what, const RecvCallback& cal
     });
 
     m_readTimer.cancel();
-    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(READ_TIMEOUT)));
+    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(READ_TIMEOUT)));
     m_readTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
@@ -232,7 +232,7 @@ void Connection::read_some(const RecvCallback& callback)
     });
 
     m_readTimer.cancel();
-    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32>(READ_TIMEOUT)));
+    m_readTimer.expires_from_now(asio::chrono::seconds(static_cast<uint32_t>(READ_TIMEOUT)));
     m_readTimer.async_wait([capture0 = asConnection()](auto&& PH1)
     {
         capture0->onTimeout(std::forward<decltype(PH1)>(PH1));
@@ -315,7 +315,7 @@ void Connection::onRecv(const std::error_code& error, size_t recvSize)
         if (!error) {
             if (m_recvCallback) {
                 const auto* header = asio::buffer_cast<const char*>(m_inputStream.data());
-                m_recvCallback((uint8*)header, recvSize);
+                m_recvCallback((uint8_t*)header, recvSize);
             }
         } else
             handleError(error);

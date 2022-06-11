@@ -28,7 +28,7 @@
 #include "declarations.h"
 #include "outfit.h"
 
-enum CreatureAttr : uint8
+enum CreatureAttr : uint8_t
 {
     CreatureAttrPosition = 0,
     CreatureAttrName,
@@ -39,13 +39,13 @@ enum CreatureAttr : uint8
     CreatureAttrLast
 };
 
-enum CreatureRace : uint8
+enum CreatureRace : uint8_t
 {
     CreatureRaceNpc = 0,
     CreatureRaceMonster = 1
 };
 
-enum SpawnAttr : uint8
+enum SpawnAttr : uint8_t
 {
     SpawnAttrRadius = 0,
     SpawnAttrCenter,
@@ -56,10 +56,10 @@ class Spawn : public LuaObject
 {
 public:
     Spawn() = default;
-    Spawn(int32 radius) { setRadius(radius); }
+    Spawn(int32_t radius) { setRadius(radius); }
 
-    void setRadius(int32 r) { m_attribs.set(SpawnAttrRadius, r); }
-    int32 getRadius() { return m_attribs.get<int32>(SpawnAttrRadius); }
+    void setRadius(int32_t r) { m_attribs.set(SpawnAttrRadius, r); }
+    int32_t getRadius() { return m_attribs.get<int32_t>(SpawnAttrRadius); }
 
     void setCenterPos(const Position& pos) { m_attribs.set(SpawnAttrCenter, pos); }
     Position getCenterPos() { return m_attribs.get<Position>(SpawnAttrCenter); }
@@ -85,8 +85,8 @@ public:
     CreatureType() = default;
     CreatureType(const std::string_view name) { setName(name); }
 
-    void setSpawnTime(int32 spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
-    int32 getSpawnTime() { return m_attribs.get<int32>(CreatureAttrSpawnTime); }
+    void setSpawnTime(int32_t spawnTime) { m_attribs.set(CreatureAttrSpawnTime, spawnTime); }
+    int32_t getSpawnTime() { return m_attribs.get<int32_t>(CreatureAttrSpawnTime); }
 
     void setName(const std::string_view name) { m_attribs.set(CreatureAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(CreatureAttrName); }

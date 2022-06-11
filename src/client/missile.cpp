@@ -88,7 +88,7 @@ void Missile::setPath(const Position& fromPosition, const Position& toPosition)
     g_dispatcher.scheduleEvent([self] { g_map.removeThing(self); }, m_duration);
 }
 
-void Missile::setId(uint32 id)
+void Missile::setId(uint32_t id)
 {
     if (!g_things.isValidDatId(id, ThingCategoryMissile))
         id = 0;

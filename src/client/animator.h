@@ -31,14 +31,14 @@
 
 using namespace otclient::protobuf;
 
-enum AnimationPhase : int16
+enum AnimationPhase : int16_t
 {
     AnimPhaseAutomatic = -1,
     AnimPhaseRandom = 254,
     AnimPhaseAsync = 255,
 };
 
-enum AnimationDirection : uint8
+enum AnimationDirection : uint8_t
 {
     AnimDirForward = 0,
     AnimDirBackward = 1

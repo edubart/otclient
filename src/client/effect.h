@@ -32,8 +32,8 @@ class Effect : public Thing
 public:
     void drawEffect(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
-    void setId(uint32 id) override;
-    uint32 getId() override { return m_id; }
+    void setId(uint32_t id) override;
+    uint32_t getId() override { return m_id; }
 
     EffectPtr asEffect() { return static_self_cast<Effect>(); }
     bool isEffect() override { return true; }
@@ -48,7 +48,7 @@ protected:
 private:
     Timer m_animationTimer;
 
-    uint16 m_id;
+    uint16_t m_id;
 
     int m_duration;
     int m_timeToStartDrawing{ 0 };

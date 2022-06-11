@@ -55,7 +55,7 @@ void Spawn::load(TiXmlElement* node)
     centerPos.z = node->readType<int>("centerz");
 
     setCenterPos(centerPos);
-    setRadius(node->readType<int32>("radius"));
+    setRadius(node->readType<int32_t>("radius"));
 
     CreatureTypePtr cType(nullptr);
     for (TiXmlElement* cNode = node->FirstChildElement(); cNode; cNode = cNode->NextSiblingElement()) {
@@ -72,7 +72,7 @@ void Spawn::load(TiXmlElement* node)
 
         cType->setSpawnTime(cNode->readType<int>("spawntime"));
         Otc::Direction dir = Otc::North;
-        auto dir_ = cNode->readType<int16>("direction");
+        auto dir_ = cNode->readType<int16_t>("direction");
         if (dir_ >= Otc::East && dir_ <= Otc::West)
             dir = static_cast<Otc::Direction>(dir_);
         cType->setDirection(dir);
@@ -318,13 +318,13 @@ void CreatureManager::internalLoadCreatureBuffer(TiXmlElement* attrib, const Cre
 
     Outfit out;
 
-    const auto type = attrib->readType<int32>("type");
+    const auto type = attrib->readType<int32_t>("type");
     if (type > 0) {
         out.setCategory(ThingCategoryCreature);
         out.setId(type);
     } else {
         out.setCategory(ThingCategoryItem);
-        out.setAuxId(attrib->readType<int32>("typeex"));
+        out.setAuxId(attrib->readType<int32_t>("typeex"));
     }
 
     {

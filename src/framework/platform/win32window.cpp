@@ -723,12 +723,12 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
             if (newMousePos.x >= 32767)
                 newMousePos.x = 0;
             else
-                newMousePos.x = std::min<int32>(newMousePos.x, m_size.width());
+                newMousePos.x = std::min<int32_t>(newMousePos.x, m_size.width());
 
             if (newMousePos.y >= 32767)
                 newMousePos.y = 0;
             else
-                newMousePos.y = std::min<int32>(newMousePos.y, m_size.height());
+                newMousePos.y = std::min<int32_t>(newMousePos.y, m_size.height());
 
             m_inputEvent.mouseMoved = newMousePos - m_inputEvent.mousePos;
             m_inputEvent.mousePos = newMousePos;
@@ -782,8 +782,8 @@ LRESULT WIN32Window::windowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
                 internalRestoreGLContext();
 
             auto size = Size(LOWORD(lParam), HIWORD(lParam));
-            size.setWidth(std::max<int32>(std::min<int32>(size.width(), 7680), 32));
-            size.setHeight(std::max<int32>(std::min<int32>(size.height(), 4320), 32));
+            size.setWidth(std::max<int32_t>(std::min<int32_t>(size.width(), 7680), 32));
+            size.setHeight(std::max<int32_t>(std::min<int32_t>(size.height(), 4320), 32));
 
             if (m_visible && (forceResize || m_size != size)) {
                 m_size = size;
@@ -838,7 +838,7 @@ int WIN32Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hot
     std::vector<uchar> xorMask(numbytes, 0);
 
     for (int i = 0; i < numbits; ++i) {
-        const uint32 rgba = stdext::readULE32(image->getPixelData() + i * 4);
+        const uint32_t rgba = stdext::readULE32(image->getPixelData() + i * 4);
         if (rgba == 0xffffffff) { //white
             HSB_BIT_SET(xorMask, i);
         } else if (rgba == 0x00000000) { //alpha
@@ -944,9 +944,9 @@ void WIN32Window::setIcon(const std::string_view file)
     }
 
     const int n = image->getWidth() * image->getHeight();
-    std::vector<uint32> iconData(n);
+    std::vector<uint32_t> iconData(n);
     for (int i = 0; i < n; ++i) {
-        auto* const pixel = (uint8*)&iconData[i];
+        auto* const pixel = (uint8_t*)&iconData[i];
         pixel[2] = *(image->getPixelData() + (i * 4) + 0);
         pixel[1] = *(image->getPixelData() + (i * 4) + 1);
         pixel[0] = *(image->getPixelData() + (i * 4) + 2);

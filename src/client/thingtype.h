@@ -40,7 +40,7 @@ enum class TextureType
     ALL_BLANK
 };
 
-enum FrameGroupType : uint8
+enum FrameGroupType : uint8_t
 {
     FrameGroupDefault = 0,
     FrameGroupIdle = FrameGroupDefault,
@@ -48,7 +48,7 @@ enum FrameGroupType : uint8
     FrameGroupInitial
 };
 
-enum ThingCategory : uint8
+enum ThingCategory : uint8_t
 {
     ThingCategoryItem = 0,
     ThingCategoryCreature,
@@ -58,7 +58,7 @@ enum ThingCategory : uint8
     ThingLastCategory = ThingInvalidCategory
 };
 
-enum ThingAttr : uint8
+enum ThingAttr : uint8_t
 {
     ThingAttrGround = 0,
     ThingAttrGroundBorder = 1,
@@ -124,25 +124,25 @@ struct MarketData
 {
     std::string name;
     int category;
-    uint16 requiredLevel;
-    uint16 restrictVocation;
-    uint16 showAs;
-    uint16 tradeAs;
+    uint16_t requiredLevel;
+    uint16_t restrictVocation;
+    uint16_t showAs;
+    uint16_t tradeAs;
 };
 
 struct Light
 {
     Light() = default;
     Light(uint8_t intensity, uint8_t color) : intensity(intensity), color(color) {}
-    uint8 intensity = 0;
-    uint8 color = 215;
+    uint8_t intensity = 0;
+    uint8_t color = 215;
 };
 
 class ThingType : public LuaObject
 {
 public:
-    void unserializeAppearance(uint16 clientId, ThingCategory category, const appearances::Appearance& appearance);
-    void unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin);
+    void unserializeAppearance(uint16_t clientId, ThingCategory category, const appearances::Appearance& appearance);
+    void unserialize(uint16_t clientId, ThingCategory category, const FileStreamPtr& fin);
     void unserializeOtml(const OTMLNodePtr& node);
 
     void serialize(const FileStreamPtr& fin);
@@ -150,7 +150,7 @@ public:
 
     void draw(const Point& dest, float scaleFactor, int layer, int xPattern, int yPattern, int zPattern, int animationPhase, TextureType textureType, Color color = Color::white, LightView* lightView = nullptr);
 
-    uint16 getId() { return m_id; }
+    uint16_t getId() { return m_id; }
     ThingCategory getCategory() { return m_category; }
     bool isNull() { return m_null; }
     bool hasAttr(ThingAttr attr) { return m_attribs.has(attr); }
@@ -171,14 +171,14 @@ public:
     Point getDisplacement() { return m_displacement; }
     int getDisplacementX() { return getDisplacement().x; }
     int getDisplacementY() { return getDisplacement().y; }
-    int getElevation() { return m_attribs.get<uint16>(ThingAttrElevation); }
+    int getElevation() { return m_attribs.get<uint16_t>(ThingAttrElevation); }
 
-    int getGroundSpeed() { return m_attribs.get<uint16>(ThingAttrGround); }
-    int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16>(ThingAttrWritableOnce) : m_attribs.get<uint16>(ThingAttrWritable); }
+    int getGroundSpeed() { return m_attribs.get<uint16_t>(ThingAttrGround); }
+    int getMaxTextLength() { return m_attribs.has(ThingAttrWritableOnce) ? m_attribs.get<uint16_t>(ThingAttrWritableOnce) : m_attribs.get<uint16_t>(ThingAttrWritable); }
     Light getLight() { return m_attribs.get<Light>(ThingAttrLight); }
-    int getMinimapColor() { return m_attribs.get<uint16>(ThingAttrMinimapColor); }
-    int getLensHelp() { return m_attribs.get<uint16>(ThingAttrLensHelp); }
-    int getClothSlot() { return m_attribs.get<uint16>(ThingAttrCloth); }
+    int getMinimapColor() { return m_attribs.get<uint16_t>(ThingAttrMinimapColor); }
+    int getLensHelp() { return m_attribs.get<uint16_t>(ThingAttrLensHelp); }
+    int getClothSlot() { return m_attribs.get<uint16_t>(ThingAttrCloth); }
     MarketData getMarketData() { return m_attribs.get<MarketData>(ThingAttrMarket); }
     bool isGround() { return m_attribs.has(ThingAttrGround); }
     bool isGroundBorder() { return m_attribs.has(ThingAttrGroundBorder); }
@@ -246,7 +246,7 @@ private:
     uint getTextureIndex(int l, int x, int y, int z);
 
     ThingCategory m_category{ ThingInvalidCategory };
-    uint16 m_id{ 0 };
+    uint16_t m_id{ 0 };
 
     bool m_null{ true },
         m_opaque{ false };

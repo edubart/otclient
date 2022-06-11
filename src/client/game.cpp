@@ -218,7 +218,7 @@ void Game::processDeath(int deathType, int penality)
     g_lua.callGlobalField("g_game", "onDeath", deathType, penality);
 }
 
-void Game::processGMActions(const std::vector<uint8>& actions)
+void Game::processGMActions(const std::vector<uint8_t >& actions)
 {
     m_gmActions = actions;
     g_lua.callGlobalField("g_game", "onGMActions", actions);
@@ -481,7 +481,7 @@ void Game::processQuestLine(int questId, const std::vector<std::tuple<std::strin
     g_lua.callGlobalField("g_game", "onQuestLine", questId, questMissions);
 }
 
-void Game::processModalDialog(uint32 id, const std::string_view title, const std::string_view message, const std::vector<std::tuple<int, std::string> >
+void Game::processModalDialog(uint32_t id, const std::string_view title, const std::string_view message, const std::vector<std::tuple<int, std::string> >
                               & buttonList, int enterButton, int escapeButton, const std::vector<std::tuple<int, std::string> >
                               & choiceList, bool priority)
 {
@@ -514,7 +514,7 @@ void Game::loginWorld(const std::string_view account, const std::string_view pas
     m_localPlayer->setName(characterName);
 
     m_protocolGame = ProtocolGamePtr(new ProtocolGame);
-    m_protocolGame->login(account, password, worldHost, static_cast<uint16>(worldPort), characterName, authenticatorToken, sessionKey);
+    m_protocolGame->login(account, password, worldHost, static_cast<uint16_t>(worldPort), characterName, authenticatorToken, sessionKey);
     m_characterName = characterName;
     m_worldName = worldName;
 }
@@ -1404,7 +1404,7 @@ void Game::requestItemInfo(const ItemPtr& item, int index)
     m_protocolGame->sendRequestItemInfo(item->getId(), item->getSubType(), index);
 }
 
-void Game::answerModalDialog(uint32 dialog, int button, int choice)
+void Game::answerModalDialog(uint32_t dialog, int button, int choice)
 {
     if (!canPerformGameAction())
         return;

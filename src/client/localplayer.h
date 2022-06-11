@@ -145,7 +145,7 @@ private:
 
     std::map<Otc::ResourceTypes_t, uint64_t> m_resourcesBalance;
 
-    uint8 m_autoWalkRetries{ 0 };
+    uint8_t m_autoWalkRetries{ 0 };
 
     int m_states{ 0 };
     int m_vocation{ 0 };

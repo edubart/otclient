@@ -35,7 +35,7 @@ Protocol::~Protocol()
     disconnect();
 }
 
-void Protocol::connect(const std::string_view host, uint16 port)
+void Protocol::connect(const std::string_view host, uint16_t port)
 {
     m_connection = ConnectionPtr(new Connection);
     m_connection->setErrorCallback([capture0 = asProtocol()](auto&& PH1)
@@ -93,11 +93,11 @@ void Protocol::recv()
     });
 }
 
-void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
+void Protocol::internalRecvHeader(uint8_t* buffer, uint16_t size)
 {
     // read message size
     m_inputMessage->fillBuffer(buffer, size);
-    const uint16 remainingSize = m_inputMessage->readSize();
+    const uint16_t remainingSize = m_inputMessage->readSize();
 
     // read remaining message data
     if (m_connection)
@@ -108,7 +108,7 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
     });
 }
 
-void Protocol::internalRecvData(uint8* buffer, uint16 size)
+void Protocol::internalRecvData(uint8_t* buffer, uint16_t size)
 {
     // process data only if really connected
     if (!isConnected()) {
@@ -135,7 +135,7 @@ void Protocol::internalRecvData(uint8* buffer, uint16 size)
 void Protocol::generateXteaKey()
 {
     std::random_device rd;
-    std::uniform_int_distribution<uint32> unif;
+    std::uniform_int_distribution<uint32_t> unif;
     std::generate(m_xteaKey.begin(), m_xteaKey.end(), [&unif, &rd] { return unif(rd); });
 }
 
@@ -166,7 +166,7 @@ namespace
 
 bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 {
-    const uint16 encryptedSize = inputMessage->getUnreadSize();
+    const uint16_t encryptedSize = inputMessage->getUnreadSize();
     if (encryptedSize % 8 != 0) {
         g_logger.traceError("invalid encrypted network message");
         return false;
@@ -179,7 +179,7 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
         });
     }
 
-    const uint16 decryptedSize = inputMessage->getU16() + 2;
+    const uint16_t decryptedSize = inputMessage->getU16() + 2;
     const int sizeDelta = decryptedSize - encryptedSize;
     if (sizeDelta > 0 || -sizeDelta > encryptedSize) {
         g_logger.traceError("invalid decrypted network message");
@@ -193,11 +193,11 @@ bool Protocol::xteaDecrypt(const InputMessagePtr& inputMessage)
 void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
 {
     outputMessage->writeMessageSize();
-    uint16 encryptedSize = outputMessage->getMessageSize();
+    uint16_t encryptedSize = outputMessage->getMessageSize();
 
     //add bytes until reach 8 multiple
     if ((encryptedSize % 8) != 0) {
-        const uint16 n = 8 - (encryptedSize % 8);
+        const uint16_t n = 8 - (encryptedSize % 8);
         outputMessage->addPaddingBytes(n);
         encryptedSize += n;
     }

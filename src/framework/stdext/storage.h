@@ -42,7 +42,7 @@ namespace stdext
         void remove(const Key k) { m_data[k].reset(); }
         void clear() { m_data.clear(); }
 
-        bool has(const Key k) const { return static_cast<uint8>(m_data.size()) >= k && m_data[k].has_value(); }
+        bool has(const Key k) const { return static_cast<uint8_t>(m_data.size()) >= k && m_data[k].has_value(); }
         size_t size() const { return m_data.size(); }
 
     private:

@@ -27,7 +27,7 @@
 #endif
 
 #ifdef __clang__
-    #error "Clang is not supported by the project, you can use the docker"
+#error "Clang is not supported by the project, you can use the docker"
 #define BUILD_COMPILER "clang " __VERSION__
 #elif defined(__GNUC__)
 #if !(__GNUC__ > 4 || (__GNUC__ == 11 && __GNUC_MINOR__ >= 0))

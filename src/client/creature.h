@@ -47,20 +47,20 @@ public:
     void drawOutfit(const Rect& destRect, bool resize, Color color = Color::white);
     void drawInformation(const Rect& parentRect, const Point& dest, float scaleFactor, const Point& drawOffset, bool useGray, float horizontalStretchFactor, float verticalStretchFactor, int drawFlags);
 
-    void setId(uint32 id) override { m_id = id; }
+    void setId(uint32_t id) override { m_id = id; }
     void setName(const std::string_view name);
-    void setHealthPercent(uint8 healthPercent);
+    void setHealthPercent(uint8_t healthPercent);
     void setDirection(Otc::Direction direction);
     void setOutfit(const Outfit& outfit);
     void setOutfitColor(const Color& color, int duration);
     void setLight(const Light& light) { m_light = light; }
-    void setSpeed(uint16 speed);
+    void setSpeed(uint16_t speed);
     void setBaseSpeed(double baseSpeed);
-    void setSkull(uint8 skull);
-    void setShield(uint8 shield);
-    void setEmblem(uint8 emblem);
-    void setType(uint8 type);
-    void setIcon(uint8 icon);
+    void setSkull(uint8_t skull);
+    void setShield(uint8_t shield);
+    void setEmblem(uint8_t emblem);
+    void setType(uint8_t type);
+    void setIcon(uint8_t icon);
     void setSkullTexture(const std::string_view filename);
     void setShieldTexture(const std::string_view filename, bool blink);
     void setEmblemTexture(const std::string_view filename);
@@ -70,7 +70,7 @@ public:
     void setOutfitShader(const PainterShaderProgramPtr& shader) { m_outfitShader = shader; }
     void setMountShader(const PainterShaderProgramPtr& shader) { m_mountShader = shader; }
 
-    void addTimedSquare(uint8 color);
+    void addTimedSquare(uint8_t color);
     void removeTimedSquare() { m_showTimedSquare = false; }
     void showStaticSquare(const Color& color) { m_showStaticSquare = true; m_staticSquareColor = color; }
     void hideStaticSquare() { m_showStaticSquare = false; }
@@ -78,22 +78,22 @@ public:
     bool isDrawingOutfitColor() { return m_drawOutfitColor; }
     void setDrawOutfitColor(const bool draw) { m_drawOutfitColor = draw; }
 
-    uint32 getId() override { return m_id; }
+    uint32_t getId() override { return m_id; }
     std::string getName() { return m_name; }
-    uint8 getHealthPercent() { return m_healthPercent; }
+    uint8_t getHealthPercent() { return m_healthPercent; }
     Otc::Direction getDirection() { return m_direction; }
     Outfit getOutfit() { return m_outfit; }
     Light getLight() override;
     bool hasLight() override { return Thing::hasLight() || getLight().intensity > 0; }
-    uint16 getSpeed() { return m_speed; }
+    uint16_t getSpeed() { return m_speed; }
     double getBaseSpeed() { return m_baseSpeed; }
-    uint8 getSkull() { return m_skull; }
-    uint8 getShield() { return m_shield; }
-    uint8 getEmblem() { return m_emblem; }
-    uint8 getType() { return m_type; }
-    uint8 getIcon() { return m_icon; }
+    uint8_t getSkull() { return m_skull; }
+    uint8_t getShield() { return m_shield; }
+    uint8_t getEmblem() { return m_emblem; }
+    uint8_t getType() { return m_type; }
+    uint8_t getIcon() { return m_icon; }
     bool isPassable() { return m_passable; }
-    uint64 getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
+    uint64_t getStepDuration(bool ignoreDiagonal = false, Otc::Direction dir = Otc::InvalidDirection);
     Point getDrawOffset();
     Point getWalkOffset() { return m_walkOffset; }
     PointF getJumpOffset() { return m_jumpOffset; }
@@ -150,7 +150,7 @@ protected:
     void updateOutfitColor(Color color, Color finalColor, Color delta, int duration);
     void updateJump();
 
-    uint32 m_id{ 0 };
+    uint32_t m_id{ 0 };
     std::string m_name;
     Otc::Direction m_direction{ Otc::South };
     Outfit m_outfit;
@@ -160,12 +160,12 @@ protected:
     int m_calculatedStepSpeed{ 0 };
 
     double m_baseSpeed;
-    uint8 m_healthPercent{ 101 };
-    uint8 m_skull{ Otc::SkullNone };
-    uint8 m_shield{ Otc::ShieldNone };
-    uint8 m_emblem{ Otc::EmblemNone };
-    uint8 m_type;
-    uint8 m_icon{ Otc::NpcIconNone };
+    uint8_t m_healthPercent{ 101 };
+    uint8_t m_skull{ Otc::SkullNone };
+    uint8_t m_shield{ Otc::ShieldNone };
+    uint8_t m_emblem{ Otc::EmblemNone };
+    uint8_t m_type;
+    uint8_t m_icon{ Otc::NpcIconNone };
     TexturePtr m_skullTexture;
     TexturePtr m_shieldTexture;
     TexturePtr m_emblemTexture;
@@ -223,12 +223,12 @@ private:
 
     struct StepCache
     {
-        uint16 speed = 0;
-        uint16 groundSpeed = 0;
-        uint64 duration = 0;
-        uint64 diagonalDuration = 0;
+        uint16_t speed = 0;
+        uint16_t groundSpeed = 0;
+        uint64_t duration = 0;
+        uint64_t diagonalDuration = 0;
 
-        uint64 getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
+        uint64_t getDuration(Otc::Direction dir) { return Position::isDiagonal(dir) ? diagonalDuration : duration; }
     };
 
     StepCache m_stepCache;

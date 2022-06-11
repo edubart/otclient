@@ -125,14 +125,14 @@ bool SpriteAppearances::loadSpriteSheet(const SpriteSheetPtr& sheet)
         uint8_t* bufferStart = decompressed.get() + data;
 
         // reverse channels
-        for (uint8* itr = bufferStart; itr < bufferStart + BYTES_IN_SPRITE_SHEET; itr += 4) {
+        for (uint8_t* itr = bufferStart; itr < bufferStart + BYTES_IN_SPRITE_SHEET; itr += 4) {
             std::swap(*(itr + 0), *(itr + 2));
         }
 
         // flip vertically
         for (int y = 0; y < 192; ++y) {
-            uint8* itr1 = &bufferStart[y * SPRITE_SHEET_WIDTH_BYTES];
-            uint8* itr2 = &bufferStart[(384 - y - 1) * SPRITE_SHEET_WIDTH_BYTES];
+            uint8_t* itr1 = &bufferStart[y * SPRITE_SHEET_WIDTH_BYTES];
+            uint8_t* itr2 = &bufferStart[(384 - y - 1) * SPRITE_SHEET_WIDTH_BYTES];
 
             for (std::size_t x = 0; x < SPRITE_SHEET_WIDTH_BYTES; ++x) {
                 std::swap(*(itr1 + x), *(itr2 + x));
@@ -207,7 +207,7 @@ ImagePtr SpriteAppearances::getSpriteImage(int id)
         const Size& size = sheet->getSpriteSize();
 
         ImagePtr image(new Image(size));
-        uint8* pixelData = image->getPixelData();
+        uint8_t* pixelData = image->getPixelData();
 
         const int spriteOffset = id - sheet->firstId;
         const int allColumns = size.width() == 32 ? 12 : 6; // 64 pixel width == 6 columns each 64x or 32 pixels, 12 columns
@@ -222,8 +222,8 @@ ImagePtr SpriteAppearances::getSpriteImage(int id)
 
         if (!image->hasTransparentPixel()) {
             // The image must be more than 4 pixels transparent to be considered transparent.
-            uint8 cntTrans = 0;
-            for (const uint8 pixel : image->getPixels()) {
+            uint8_t cntTrans = 0;
+            for (const uint8_t pixel : image->getPixels()) {
                 if (pixel == 0x00 && ++cntTrans > 4) {
                     image->setTransparentPixel(true);
                     break;

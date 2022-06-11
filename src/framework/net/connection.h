@@ -30,7 +30,7 @@
 class Connection : public LuaObject
 {
     using ErrorCallback = std::function<void(const std::error_code&)>;
-    using RecvCallback = std::function<void(uint8*, uint16)>;
+    using RecvCallback = std::function<void(uint8_t*, uint16_t)>;
 
     enum
     {
@@ -47,11 +47,11 @@ public:
     static void poll();
     static void terminate();
 
-    void connect(const std::string_view host, uint16 port, const std::function<void()>& connectCallback);
+    void connect(const std::string_view host, uint16_t port, const std::function<void()>& connectCallback);
     void close();
 
-    void write(uint8* buffer, size_t size);
-    void read(uint16 bytes, const RecvCallback& callback);
+    void write(uint8_t* buffer, size_t size);
+    void read(uint16_t bytes, const RecvCallback& callback);
     void read_until(const std::string_view what, const RecvCallback& callback);
     void read_some(const RecvCallback& callback);
 

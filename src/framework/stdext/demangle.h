@@ -42,4 +42,4 @@ namespace stdext
 
     /// Returns the name of a type
     template<typename T> std::string demangle_type() { return demangle_name(typeid(T).name()); }
-    }
+}

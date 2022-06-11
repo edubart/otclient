@@ -76,7 +76,7 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highli
     }
 }
 
-void Item::setId(uint32 id)
+void Item::setId(uint32_t id)
 {
     if (!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
@@ -86,7 +86,7 @@ void Item::setId(uint32 id)
     m_thingType = nullptr;
 }
 
-void Item::setOtbId(uint16 id)
+void Item::setOtbId(uint16_t id)
 {
     if (!g_things.isValidOtbId(id))
         id = 0;
@@ -199,8 +199,8 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
         out->addU8(getDoorId());
     }
 
-    const auto aid = m_attribs.get<uint16>(ATTR_ACTION_ID);
-    const auto uid = m_attribs.get<uint16>(ATTR_UNIQUE_ID);
+    const auto aid = m_attribs.get<uint16_t>(ATTR_ACTION_ID);
+    const auto uid = m_attribs.get<uint16_t>(ATTR_UNIQUE_ID);
     if (aid) {
         out->addU8(ATTR_ACTION_ID);
         out->addU16(aid);

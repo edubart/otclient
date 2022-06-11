@@ -32,10 +32,10 @@ class Missile : public Thing
 public:
     void drawMissile(const Point& dest, float scaleFactor, LightView* lightView = nullptr);
 
-    void setId(uint32 id) override;
+    void setId(uint32_t id) override;
     void setPath(const Position& fromPosition, const Position& toPosition);
 
-    uint32 getId() override { return m_id; }
+    uint32_t getId() override { return m_id; }
 
     MissilePtr asMissile() { return static_self_cast<Missile>(); }
     bool isMissile() override { return true; }
@@ -45,8 +45,8 @@ public:
 private:
     Timer m_animationTimer;
     Point m_delta;
-    uint8 m_distance;
+    uint8_t m_distance;
     float m_duration;
-    uint16 m_id;
+    uint16_t m_id;
     Otc::Direction m_direction;
 };

@@ -36,7 +36,7 @@ public:
     Protocol();
     ~Protocol() override;
 
-    void connect(const std::string_view host, uint16 port);
+    void connect(const std::string_view host, uint16_t port);
     void disconnect();
 
     bool isConnected() { return m_connection && m_connection->isConnected(); }
@@ -47,8 +47,8 @@ public:
     void setConnection(const ConnectionPtr& connection) { m_connection = connection; }
 
     void generateXteaKey();
-    void setXteaKey(uint32 a, uint32 b, uint32 c, uint32 d) { m_xteaKey = { a, b, c, d }; }
-    std::vector<uint32> getXteaKey() { return { m_xteaKey.begin(), m_xteaKey.end() }; }
+    void setXteaKey(uint32_t a, uint32_t b, uint32_t c, uint32_t d) { m_xteaKey = { a, b, c, d }; }
+    std::vector<uint32_t> getXteaKey() { return { m_xteaKey.begin(), m_xteaKey.end() }; }
     void enableXteaEncryption() { m_xteaEncryptionEnabled = true; }
 
     void enableChecksum() { m_checksumEnabled = true; }
@@ -63,11 +63,11 @@ protected:
     virtual void onRecv(const InputMessagePtr& inputMessage);
     virtual void onError(const std::error_code& err);
 
-    std::array<uint32, 4> m_xteaKey;
+    std::array<uint32_t, 4> m_xteaKey;
 
 private:
-    void internalRecvHeader(uint8* buffer, uint16 size);
-    void internalRecvData(uint8* buffer, uint16 size);
+    void internalRecvHeader(uint8_t* buffer, uint16_t size);
+    void internalRecvData(uint8_t* buffer, uint16_t size);
 
     bool xteaDecrypt(const InputMessagePtr& inputMessage);
     void xteaEncrypt(const OutputMessagePtr& outputMessage);

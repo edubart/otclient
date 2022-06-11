@@ -48,8 +48,8 @@ private:
     struct Source
     {
         Point pos;
-        uint8 color{ 0 };
-        uint16 intensity{ 0 };
+        uint8_t color{ 0 };
+        uint16_t intensity{ 0 };
         float opacity{ 1.f };
     };
 

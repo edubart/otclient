@@ -25,7 +25,7 @@
 #include <framework/core/declarations.h>
 #include <framework/luaengine/luaobject.h>
 
-enum ItemCategory : uint8
+enum ItemCategory : uint8_t
 {
     ItemCategoryInvalid = 0,
     ItemCategoryGround = 1,
@@ -45,7 +45,7 @@ enum ItemCategory : uint8
     ItemCategoryLast = 15
 };
 
-enum ItemTypeAttr : uint8
+enum ItemTypeAttr : uint8_t
 {
     ItemTypeAttrServerId = 16,
     ItemTypeAttrClientId = 17,
@@ -131,11 +131,11 @@ class ItemType : public LuaObject
 public:
     void unserialize(const BinaryTreePtr& node);
 
-    void setServerId(uint16 serverId) { m_attribs.set(ItemTypeAttrServerId, serverId); }
-    uint16 getServerId() { return m_attribs.get<uint16>(ItemTypeAttrServerId); }
+    void setServerId(uint16_t serverId) { m_attribs.set(ItemTypeAttrServerId, serverId); }
+    uint16_t getServerId() { return m_attribs.get<uint16_t>(ItemTypeAttrServerId); }
 
-    void setClientId(uint16 clientId) { m_attribs.set(ItemTypeAttrClientId, clientId); }
-    uint16 getClientId() { return m_attribs.get<uint16>(ItemTypeAttrClientId); }
+    void setClientId(uint16_t clientId) { m_attribs.set(ItemTypeAttrClientId, clientId); }
+    uint16_t getClientId() { return m_attribs.get<uint16_t>(ItemTypeAttrClientId); }
 
     void setCategory(ItemCategory category) { m_category = category; }
     ItemCategory getCategory() { return m_category; }

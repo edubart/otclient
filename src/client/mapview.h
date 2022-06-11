@@ -30,9 +30,9 @@
 
 struct AwareRange
 {
-    uint8 left, top, right, bottom;
-    uint8 horizontal() { return left + right + 1; }
-    uint8 vertical() { return top + bottom + 1; }
+    uint8_t left, top, right, bottom;
+    uint8_t horizontal() { return left + right + 1; }
+    uint8_t vertical() { return top + bottom + 1; }
 };
 
 // @bindclass
@@ -48,7 +48,7 @@ public:
         ALWAYS_WITH_TRANSPARENCY
     };
 
-    enum AntialiasingMode :uint8
+    enum AntialiasingMode :uint8_t
     {
         ANTIALIASING_DISABLED,
         ANTIALIASING_ENABLED,
@@ -60,12 +60,12 @@ public:
     void draw(const Rect& rect);
 
     // floor visibility related
-    uint8 getLockedFirstVisibleFloor() { return m_lockedFirstVisibleFloor; }
-    uint8 getCachedFirstVisibleFloor() { return m_cachedFirstVisibleFloor; }
-    uint8 getCachedLastVisibleFloor() { return m_cachedLastVisibleFloor; }
-    uint8 getTileSize() { return m_tileSize; }
+    uint8_t getLockedFirstVisibleFloor() { return m_lockedFirstVisibleFloor; }
+    uint8_t getCachedFirstVisibleFloor() { return m_cachedFirstVisibleFloor; }
+    uint8_t getCachedLastVisibleFloor() { return m_cachedLastVisibleFloor; }
+    uint8_t getTileSize() { return m_tileSize; }
 
-    void lockFirstVisibleFloor(uint8 firstVisibleFloor);
+    void lockFirstVisibleFloor(uint8_t firstVisibleFloor);
     void unlockFirstVisibleFloor();
 
     // map dimension related
@@ -109,7 +109,7 @@ public:
     void setDrawManaBar(bool enable) { m_drawManaBar = enable; }
     bool isDrawingManaBar() { return m_drawManaBar; }
 
-    void move(int32 x, int32 y);
+    void move(int32_t x, int32_t y);
 
     void setShader(const PainterShaderProgramPtr& shader, float fadein, float fadeout);
     PainterShaderProgramPtr getShader() { return m_shader; }
@@ -140,11 +140,11 @@ public:
 
     void setDrawHighlightTarget(const bool enable) { m_drawHighlightTarget = enable; }
 
-    void setFloorFading(uint16 value) { m_floorFading = value; }
+    void setFloorFading(uint16_t value) { m_floorFading = value; }
 
 protected:
     void onGlobalLightChange(const Light& light);
-    void onFloorChange(uint8 floor, uint8 previousFloor);
+    void onFloorChange(uint8_t floor, uint8_t previousFloor);
     void onTileUpdate(const Position& pos, const ThingPtr& thing, Otc::Operation operation);
     void onMapCenterChange(const Position& newPos, const Position& oldPos);
     void onCameraMove(const Point& offset);
@@ -178,8 +178,8 @@ private:
     void updateVisibleTilesCache();
     void requestVisibleTilesCacheUpdate() { m_mustUpdateVisibleTilesCache = true; }
 
-    uint8 calcFirstVisibleFloor(bool checkLimitsFloorsView);
-    uint8 calcLastVisibleFloor();
+    uint8_t calcFirstVisibleFloor(bool checkLimitsFloorsView);
+    uint8_t calcLastVisibleFloor();
 
     void updateLight();
     void updateViewportDirectionCache();
@@ -191,7 +191,7 @@ private:
 
     bool canFloorFade() { return m_floorViewMode == FADE && m_floorFading; }
 
-    float getFadeLevel(uint8 z)
+    float getFadeLevel(uint8_t z)
     {
         float fading = std::clamp<float>(static_cast<float>(m_fadingFloorTimers[z].elapsed_millis()) / static_cast<float>(m_floorFading), 0.f, 1.f);
         if (z < m_cachedFirstVisibleFloor)
@@ -209,16 +209,16 @@ private:
         };
     }
 
-    int8 m_lockedFirstVisibleFloor{ -1 };
+    int8_t m_lockedFirstVisibleFloor{ -1 };
 
-    uint8 m_cachedFirstVisibleFloor{ SEA_FLOOR },
+    uint8_t m_cachedFirstVisibleFloor{ SEA_FLOOR },
         m_cachedLastVisibleFloor{ SEA_FLOOR },
         m_tileSize{ SPRITE_SIZE },
         m_floorMin{ 0 },
         m_floorMax{ 0 },
         m_antiAliasingMode;
 
-    uint16 m_floorFading = 500;
+    uint16_t m_floorFading = 500;
 
     float m_minimumAmbientLight{ 0 },
         m_fadeInTime{ 0 },

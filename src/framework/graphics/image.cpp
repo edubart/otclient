@@ -28,7 +28,7 @@
 
 #include "framework/stdext/math.h"
 
-Image::Image(const Size& size, int bpp, uint8* pixels) : m_size(size), m_bpp(bpp)
+Image::Image(const Size& size, int bpp, uint8_t* pixels) : m_size(size), m_bpp(bpp)
 {
     m_pixels.resize(size.area() * bpp, 0);
     if (pixels)
@@ -91,10 +91,10 @@ void Image::overwriteMask(const Color& maskedColor, const Color& insideColor, co
     assert(m_bpp == 4);
 
     for (int p = 0; p < getPixelCount(); ++p) {
-        uint8& r = m_pixels[p * 4 + 0];
-        uint8& g = m_pixels[p * 4 + 1];
-        uint8& b = m_pixels[p * 4 + 2];
-        uint8& a = m_pixels[p * 4 + 3];
+        uint8_t& r = m_pixels[p * 4 + 0];
+        uint8_t& g = m_pixels[p * 4 + 1];
+        uint8_t& b = m_pixels[p * 4 + 2];
+        uint8_t& a = m_pixels[p * 4 + 3];
 
         Color pixelColor(r, g, b, a);
         Color writeColor = (pixelColor == maskedColor) ? insideColor : outsideColor;
@@ -111,10 +111,10 @@ void Image::overwrite(const Color& color)
     assert(m_bpp == 4);
 
     for (int p = 0; p < getPixelCount(); ++p) {
-        uint8& r = m_pixels[p * 4 + 0];
-        uint8& g = m_pixels[p * 4 + 1];
-        uint8& b = m_pixels[p * 4 + 2];
-        uint8& a = m_pixels[p * 4 + 3];
+        uint8_t& r = m_pixels[p * 4 + 0];
+        uint8_t& g = m_pixels[p * 4 + 1];
+        uint8_t& b = m_pixels[p * 4 + 2];
+        uint8_t& a = m_pixels[p * 4 + 3];
 
         Color pixelColor(r, g, b, a);
         Color writeColor = (pixelColor == Color::alpha) ? Color::alpha : color;
@@ -135,7 +135,7 @@ void Image::blit(const Point& dest, const ImagePtr& other)
 
     int coloredPixelSize = 0;
 
-    const uint8* otherPixels = other->getPixelData();
+    const uint8_t* otherPixels = other->getPixelData();
     for (int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();
@@ -158,7 +158,7 @@ void Image::paste(const ImagePtr& other)
     if (!other)
         return;
 
-    const uint8* otherPixels = other->getPixelData();
+    const uint8_t* otherPixels = other->getPixelData();
     for (int p = 0; p < other->getPixelCount(); ++p) {
         const int x = p % other->getWidth();
         const int y = p / other->getWidth();
@@ -184,18 +184,18 @@ bool Image::nextMipmap()
     const int ow = iw > 1 ? iw / 2 : 1;
     const int oh = ih > 1 ? ih / 2 : 1;
 
-    std::vector<uint8> pixels(ow * oh * 4, 0xFF);
+    std::vector<uint8_t > pixels(ow * oh * 4, 0xFF);
 
     //FIXME: calculate mipmaps for 8x1, 4x1, 2x1 ...
     if (iw != 1 && ih != 1) {
         for (int x = 0; x < ow; ++x) {
             for (int y = 0; y < oh; ++y) {
-                uint8* inPixel[4];
+                uint8_t* inPixel[4];
                 inPixel[0] = &m_pixels[((y * 2) * iw + (x * 2)) * 4];
                 inPixel[1] = &m_pixels[((y * 2) * iw + (x * 2) + 1) * 4];
                 inPixel[2] = &m_pixels[((y * 2 + 1) * iw + (x * 2)) * 4];
                 inPixel[3] = &m_pixels[((y * 2 + 1) * iw + (x * 2) + 1) * 4];
-                uint8* outPixel = &pixels[(y * ow + x) * 4];
+                uint8_t* outPixel = &pixels[(y * ow + x) * 4];
 
                 int pixelsSum[4];
                 for (int& i : pixelsSum)
@@ -233,11 +233,11 @@ bool Image::nextMipmap()
 void Image::flipVertically()
 {
     const uint rowIncrement = m_size.height() * m_bpp;
-    uint8* pixelData = m_pixels.data();
+    uint8_t* pixelData = m_pixels.data();
 
     for (int y = 0; y < (getHeight() / 2); ++y) {
-        uint8* itr1 = &pixelData[y * rowIncrement];
-        uint8* itr2 = &pixelData[(m_size.height() - y - 1) * rowIncrement];
+        uint8_t* itr1 = &pixelData[y * rowIncrement];
+        uint8_t* itr2 = &pixelData[(m_size.height() - y - 1) * rowIncrement];
 
         for (std::size_t x = 0; x < rowIncrement; ++x) {
             std::swap(*(itr1 + x), *(itr2 + x));
@@ -247,15 +247,15 @@ void Image::flipVertically()
 
 void Image::reverseChannels()
 {
-    uint8* pixelData = m_pixels.data();
-    for (uint8* itr = pixelData; itr < pixelData + m_pixels.size(); itr += m_bpp) {
+    uint8_t* pixelData = m_pixels.data();
+    for (uint8_t* itr = pixelData; itr < pixelData + m_pixels.size(); itr += m_bpp) {
         std::swap(*(itr + 0), *(itr + 2));
     }
 }
 
 /*
  *
-void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
+void Texture::generateSoftwareMipmaps(std::vector<uint8_t > inPixels)
 {
         bind();
 
@@ -263,7 +263,7 @@ void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
 
         Size inSize = m_glSize;
         Size outSize = inSize / 2;
-        std::vector<uint8> outPixels;
+        std::vector<uint8_t > outPixels;
 
         int mipmap = 1;
         while(true) {
@@ -272,12 +272,12 @@ void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
                 // this is a simple bilinear filtering algorithm, it combines every 4 pixels in one pixel
                 for(int x=0;x<outSize.width();++x) {
                         for(int y=0;y<outSize.height();++y) {
-                                uint8 *inPixel[4];
+                                uint8_t *inPixel[4];
                                 inPixel[0] = &inPixels[((y*2)*inSize.width() + (x*2))*4];
                                 inPixel[1] = &inPixels[((y*2)*inSize.width() + (x*2)+1)*4];
                                 inPixel[2] = &inPixels[((y*2+1)*inSize.width() + (x*2))*4];
                                 inPixel[3] = &inPixels[((y*2+1)*inSize.width() + (x*2)+1)*4];
-                                uint8 *outPixel = &outPixels[(y*outSize.width() + x)*4];
+                                uint8_t *outPixel = &outPixels[(y*outSize.width() + x)*4];
 
                                 int pixelsSum[4];
                                 for(int i=0;i<4;++i)

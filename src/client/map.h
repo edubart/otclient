@@ -89,7 +89,7 @@ enum
     BLOCK_SIZE = 32
 };
 
-enum : uint8
+enum : uint8_t
 {
     Animation_Force,
     Animation_Show
@@ -170,12 +170,12 @@ public:
     void setDescription(const std::string_view desc) { m_attribs.set(OTBM_ATTR_DESCRIPTION, desc); }
 
     void clearDescriptions() { m_attribs.remove(OTBM_ATTR_DESCRIPTION); }
-    void setWidth(uint16 w) { m_attribs.set(OTBM_ATTR_WIDTH, w); }
-    void setHeight(uint16 h) { m_attribs.set(OTBM_ATTR_HEIGHT, h); }
+    void setWidth(uint16_t w) { m_attribs.set(OTBM_ATTR_WIDTH, w); }
+    void setHeight(uint16_t h) { m_attribs.set(OTBM_ATTR_HEIGHT, h); }
 
     std::string getHouseFile() { return m_attribs.get<std::string>(OTBM_ATTR_HOUSE_FILE); }
     std::string getSpawnFile() { return m_attribs.get<std::string>(OTBM_ATTR_SPAWN_FILE); }
-    Size getSize() { return { m_attribs.get<uint16>(OTBM_ATTR_WIDTH), m_attribs.get<uint16>(OTBM_ATTR_HEIGHT) }; }
+    Size getSize() { return { m_attribs.get<uint16_t>(OTBM_ATTR_WIDTH), m_attribs.get<uint16_t>(OTBM_ATTR_HEIGHT) }; }
     std::vector<std::string> getDescriptions() { return stdext::split(m_attribs.get<std::string>(OTBM_ATTR_DESCRIPTION), "\n"); }
 
     void clean();
@@ -183,10 +183,10 @@ public:
     void cleanTexts();
 
     // thing related
-    void addThing(const ThingPtr& thing, const Position& pos, int16 stackPos = -1);
-    ThingPtr getThing(const Position& pos, int16 stackPos);
+    void addThing(const ThingPtr& thing, const Position& pos, int16_t stackPos = -1);
+    ThingPtr getThing(const Position& pos, int16_t stackPos);
     bool removeThing(const ThingPtr& thing);
-    bool removeThingByPos(const Position& pos, int16 stackPos);
+    bool removeThingByPos(const Position& pos, int16_t stackPos);
     void colorizeThing(const ThingPtr& thing, const Color& color);
     void removeThingColor(const ThingPtr& thing);
 
@@ -198,7 +198,7 @@ public:
     const TilePtr& createTileEx(const Position& pos, const Items&... items);
     const TilePtr& getOrCreateTile(const Position& pos);
     const TilePtr& getTile(const Position& pos);
-    const TileList getTiles(int8 floor = -1);
+    const TileList getTiles(int8_t floor = -1);
     void cleanTile(const Position& pos);
 
     // tile zone related
@@ -222,24 +222,24 @@ public:
     void beginGhostMode(float opacity);
     void endGhostMode();
 
-    std::map<Position, ItemPtr> findItemsById(uint16 clientId, uint32 max);
+    std::map<Position, ItemPtr> findItemsById(uint16_t clientId, uint32_t max);
 
     // known creature related
     void addCreature(const CreaturePtr& creature);
-    CreaturePtr getCreatureById(uint32 id);
-    void removeCreatureById(uint32 id);
+    CreaturePtr getCreatureById(uint32_t id);
+    void removeCreatureById(uint32_t id);
     std::vector<CreaturePtr> getSightSpectators(const Position& centerPos, bool multiFloor);
     std::vector<CreaturePtr> getSpectators(const Position& centerPos, bool multiFloor);
-    std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int32 xRange, int32 yRange);
-    std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int32 minXRange, int32 maxXRange, int32 minYRange, int32 maxYRange);
+    std::vector<CreaturePtr> getSpectatorsInRange(const Position& centerPos, bool multiFloor, int32_t xRange, int32_t yRange);
+    std::vector<CreaturePtr> getSpectatorsInRangeEx(const Position& centerPos, bool multiFloor, int32_t minXRange, int32_t maxXRange, int32_t minYRange, int32_t maxYRange);
 
     void setLight(const Light& light);
 
     void setCentralPosition(const Position& centralPosition);
 
     bool isLookPossible(const Position& pos);
-    bool isCovered(const Position& pos, uint8 firstFloor = 0);
-    bool isCompletelyCovered(const Position& pos, uint8 firstFloor = 0);
+    bool isCovered(const Position& pos, uint8_t firstFloor = 0);
+    bool isCompletelyCovered(const Position& pos, uint8_t firstFloor = 0);
     bool isAwareOfPosition(const Position& pos);
 
     void resetLastCamera();
@@ -250,9 +250,9 @@ public:
 
     Light getLight() { return m_light; }
     Position getCentralPosition() { return m_centralPosition; }
-    uint8 getFirstAwareFloor();
-    uint8 getLastAwareFloor();
-    const std::vector<MissilePtr>& getFloorMissiles(uint8 z) { return m_floorMissiles[z]; }
+    uint8_t getFirstAwareFloor();
+    uint8_t getLastAwareFloor();
+    const std::vector<MissilePtr>& getFloorMissiles(uint8_t z) { return m_floorMissiles[z]; }
 
     std::vector<AnimatedTextPtr> getAnimatedTexts() { return m_animatedTexts; }
     std::vector<StaticTextPtr> getStaticTexts() { return m_staticTexts; }
@@ -270,7 +270,7 @@ public:
 private:
     void removeUnawareThings();
 
-    uint16 getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
+    uint16_t getBlockIndex(const Position& pos) { return ((pos.y / BLOCK_SIZE) * (65536 / BLOCK_SIZE)) + (pos.x / BLOCK_SIZE); }
 
     std::array<std::vector<MissilePtr>, MAX_Z + 1> m_floorMissiles;
 
@@ -279,15 +279,15 @@ private:
     std::vector<MapViewPtr> m_mapViews;
 
     std::unordered_map<uint, TileBlock> m_tileBlocks[MAX_Z + 1];
-    std::unordered_map<uint32, CreaturePtr> m_knownCreatures;
+    std::unordered_map<uint32_t, CreaturePtr> m_knownCreatures;
     std::unordered_map<Position, std::string, Position::Hasher> m_waypoints;
 
-    std::map<uint32, Color> m_zoneColors;
+    std::map<uint32_t, Color> m_zoneColors;
 
     stdext::dynamic_storage8<OTBM_ItemAttr, OTBM_ATTR_LAST> m_attribs;
 
-    uint8 m_animationFlags;
-    uint32 m_zoneFlags;
+    uint8_t m_animationFlags;
+    uint32_t m_zoneFlags;
 
     float m_zoneOpacity;
 

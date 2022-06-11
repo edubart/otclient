@@ -70,8 +70,8 @@ std::string Crypt::base64Encode(const std::string_view decoded_string)
     std::string ret;
     int i = 0;
     int j = 0;
-    uint8 char_array_3[3];
-    uint8 char_array_4[4];
+    uint8_t char_array_3[3];
+    uint8_t char_array_4[4];
     int pos = 0;
     int len = decoded_string.size();
 
@@ -114,7 +114,7 @@ std::string Crypt::base64Decode(const std::string_view encoded_string)
     int i = 0;
     int j = 0;
     int in_ = 0;
-    uint8 char_array_4[4], char_array_3[3];
+    uint8_t char_array_4[4], char_array_3[3];
     std::string ret;
 
     while (len-- && (encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
@@ -219,11 +219,11 @@ std::string Crypt::getCryptKey(bool useMachineUUID)
 
 std::string Crypt::_encrypt(const std::string_view decrypted_string, bool useMachineUUID)
 {
-    const uint32 sum = stdext::adler32((const uint8*)decrypted_string.data(), decrypted_string.size());
+    const uint32_t sum = stdext::adler32((const uint8_t*)decrypted_string.data(), decrypted_string.size());
 
     std::string tmp = "0000"s + decrypted_string.data();
 
-    stdext::writeULE32((uint8*)&tmp[0], sum);
+    stdext::writeULE32((uint8_t*)&tmp[0], sum);
     std::string encrypted = base64Encode(xorCrypt(tmp, getCryptKey(useMachineUUID)));
     return encrypted;
 }
@@ -234,9 +234,9 @@ std::string Crypt::_decrypt(const std::string_view encrypted_string, bool useMac
     const auto& tmp = xorCrypt(decoded, getCryptKey(useMachineUUID));
 
     if (tmp.length() >= 4) {
-        const uint32 readsum = stdext::readULE32((const uint8*)tmp.data());
+        const uint32_t readsum = stdext::readULE32((const uint8_t*)tmp.data());
         std::string decrypted_string = tmp.substr(4);
-        const uint32 sum = stdext::adler32((const uint8*)decrypted_string.data(), decrypted_string.size());
+        const uint32_t sum = stdext::adler32((const uint8_t*)decrypted_string.data(), decrypted_string.size());
         if (readsum == sum)
             return decrypted_string;
     }

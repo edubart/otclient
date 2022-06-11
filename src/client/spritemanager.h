@@ -37,7 +37,7 @@ public:
 
     void saveSpr(const std::string_view fileName);
 
-    uint32 getSignature() { return m_signature; }
+    uint32_t getSignature() { return m_signature; }
     int getSpritesCount() { return m_spritesCount; }
 
     ImagePtr getSpriteImage(int id);
@@ -58,7 +58,7 @@ private:
     TexturePtr m_lightTexture, m_shadeTexture;
 
     bool m_loaded{ false };
-    uint32 m_signature{ 0 };
+    uint32_t m_signature{ 0 };
     int m_spritesCount{ 0 };
     int m_spritesOffset;
     FileStreamPtr m_spritesFile;

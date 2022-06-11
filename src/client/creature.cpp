@@ -240,7 +240,7 @@ void Creature::drawInformation(const Rect& parentRect, const Point& dest, float 
     textRect.bind(parentRect);
 
     // distance them
-    uint8 offset = 12;
+    uint8_t offset = 12;
     if (isLocalPlayer()) {
         offset *= 2;
     }
@@ -627,7 +627,7 @@ void Creature::setName(const std::string_view name)
     m_name = name;
 }
 
-void Creature::setHealthPercent(uint8 healthPercent)
+void Creature::setHealthPercent(uint8_t healthPercent)
 {
     if (m_healthPercent == healthPercent) return;
 
@@ -644,7 +644,7 @@ void Creature::setHealthPercent(uint8 healthPercent)
     else
         m_informationColor = Color(0x85, 0x0C, 0x0C);
 
-    const uint8 oldHealthPercent = m_healthPercent;
+    const uint8_t oldHealthPercent = m_healthPercent;
     m_healthPercent = healthPercent;
 
     callLuaField("onHealthPercentChange", healthPercent, oldHealthPercent);
@@ -729,12 +729,12 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
     }, 100);
 }
 
-void Creature::setSpeed(uint16 speed)
+void Creature::setSpeed(uint16_t speed)
 {
     if (speed == m_speed)
         return;
 
-    const uint16 oldSpeed = m_speed;
+    const uint16_t oldSpeed = m_speed;
     m_speed = speed;
 
     // Cache for stepSpeed Law
@@ -764,11 +764,11 @@ void Creature::setBaseSpeed(double baseSpeed)
     }
 }
 
-void Creature::setType(uint8 type) { callLuaField("onTypeChange", m_type = type); }
-void Creature::setIcon(uint8 icon) { callLuaField("onIconChange", m_icon = icon); }
-void Creature::setSkull(uint8 skull) { callLuaField("onSkullChange", m_skull = skull); }
-void Creature::setShield(uint8 shield) { callLuaField("onShieldChange", m_shield = shield); }
-void Creature::setEmblem(uint8 emblem) { callLuaField("onEmblemChange", m_emblem = emblem); }
+void Creature::setType(uint8_t type) { callLuaField("onTypeChange", m_type = type); }
+void Creature::setIcon(uint8_t icon) { callLuaField("onIconChange", m_icon = icon); }
+void Creature::setSkull(uint8_t skull) { callLuaField("onSkullChange", m_skull = skull); }
+void Creature::setShield(uint8_t shield) { callLuaField("onShieldChange", m_shield = shield); }
+void Creature::setEmblem(uint8_t emblem) { callLuaField("onEmblemChange", m_emblem = emblem); }
 
 void Creature::setTypeTexture(const std::string_view filename) { m_typeTexture = g_textures.getTexture(filename); }
 void Creature::setIconTexture(const std::string_view filename) { m_iconTexture = g_textures.getTexture(filename); }
@@ -790,7 +790,7 @@ void Creature::setShieldTexture(const std::string_view filename, bool blink)
     m_shieldBlink = blink;
 }
 
-void Creature::addTimedSquare(uint8 color)
+void Creature::addTimedSquare(uint8_t color)
 {
     m_showTimedSquare = true;
     m_timedSquareColor = Color::from8bit(color);
@@ -828,7 +828,7 @@ Point Creature::getDrawOffset()
     return drawOffset;
 }
 
-uint64 Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
+uint64_t Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
     if (isParalyzed())
         return 0;

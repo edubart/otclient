@@ -33,7 +33,7 @@ public:
     ProtocolHttp();
     ~ProtocolHttp() override;
 
-    void connect(const std::string_view host, uint16 port);
+    void connect(const std::string_view host, uint16_t port);
     void disconnect();
 
     void send(const std::string_view message);
@@ -43,7 +43,7 @@ public:
 
 protected:
     void onConnect();
-    void onRecv(uint8* buffer, uint16 size);
+    void onRecv(uint8_t* buffer, uint16_t size);
     void onError(const std::error_code& err);
 
 private:

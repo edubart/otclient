@@ -53,7 +53,7 @@ Color::Color(const std::string_view coltext)
 
 void Color::update()
 {
-    m_rgba = static_cast<uint32>(a() | b() << 8 | g() << 16 | r() << 24);
+    m_rgba = static_cast<uint32_t>(a() | b() << 8 | g() << 16 | r() << 24);
 }
 
 std::ostream& operator<<(std::ostream& out, const Color& color)
@@ -75,11 +75,11 @@ std::istream& operator>>(std::istream& in, Color& color)
         in.ignore() >> tmp;
 
         if (tmp.length() == 6 || tmp.length() == 8) {
-            color.setRed(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(0, 2))));
-            color.setGreen(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(2, 2))));
-            color.setBlue(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(4, 2))));
+            color.setRed(static_cast<uint8_t>(stdext::hex_to_dec(tmp.substr(0, 2))));
+            color.setGreen(static_cast<uint8_t>(stdext::hex_to_dec(tmp.substr(2, 2))));
+            color.setBlue(static_cast<uint8_t>(stdext::hex_to_dec(tmp.substr(4, 2))));
             if (tmp.length() == 8)
-                color.setAlpha(static_cast<uint8>(stdext::hex_to_dec(tmp.substr(6, 2))));
+                color.setAlpha(static_cast<uint8_t>(stdext::hex_to_dec(tmp.substr(6, 2))));
             else
                 color.setAlpha(255);
         } else {

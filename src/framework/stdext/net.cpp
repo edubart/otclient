@@ -25,26 +25,26 @@
 
 namespace stdext
 {
-    std::string ip_to_string(uint32 ip)
+    std::string ip_to_string(uint32_t ip)
     {
         ip = asio::detail::socket_ops::network_to_host_long(ip);
         const auto address_v4 = asio::ip::address_v4(ip);
         return address_v4.to_string();
     }
 
-    uint32 string_to_ip(const std::string_view string)
+    uint32_t string_to_ip(const std::string_view string)
     {
         const asio::ip::address_v4 address_v4 = asio::ip::address_v4::from_string(string.data());
         return asio::detail::socket_ops::host_to_network_long(address_v4.to_ulong());
     }
 
-    std::vector<uint32> listSubnetAddresses(uint32 address, uint8 mask)
+    std::vector<uint32_t> listSubnetAddresses(uint32_t address, uint8_t mask)
     {
-        std::vector<uint32> list;
+        std::vector<uint32_t> list;
         if (mask < 32) {
-            const uint32 bitmask = (0xFFFFFFFF >> mask);
-            for (uint32 i = 0; i <= bitmask; ++i) {
-                uint32 ip = asio::detail::socket_ops::host_to_network_long((asio::detail::socket_ops::network_to_host_long(address) & (~bitmask)) | i);
+            const uint32_t bitmask = (0xFFFFFFFF >> mask);
+            for (uint32_t i = 0; i <= bitmask; ++i) {
+                uint32_t ip = asio::detail::socket_ops::host_to_network_long((asio::detail::socket_ops::network_to_host_long(address) & (~bitmask)) | i);
                 if ((ip >> 24) != 0 && (ip >> 24) != 0xFF)
                     list.push_back(ip);
             }

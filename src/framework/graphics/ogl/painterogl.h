@@ -86,9 +86,9 @@ protected:
     CoordsBuffer m_coordsBuffer;
 
     std::vector<Matrix3> m_transformMatrixStack;
-    Matrix3 m_transformMatrix= DEFAULT_MATRIX_3;
-    Matrix3 m_projectionMatrix= DEFAULT_MATRIX_3;
-    Matrix3 m_textureMatrix= DEFAULT_MATRIX_3;
+    Matrix3 m_transformMatrix = DEFAULT_MATRIX_3;
+    Matrix3 m_projectionMatrix = DEFAULT_MATRIX_3;
+    Matrix3 m_textureMatrix = DEFAULT_MATRIX_3;
 
     BlendEquation m_blendEquation{ BlendEquation_Add };
     Texture* m_texture{ nullptr };

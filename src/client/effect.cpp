@@ -89,7 +89,7 @@ void Effect::waitFor(const EffectPtr& effect)
     m_timeToStartDrawing = effect->m_duration * (g_app.canOptimize() || g_app.isForcedEffectOptimization() ? .7 : .5);
 }
 
-void Effect::setId(uint32 id)
+void Effect::setId(uint32_t id)
 {
     if (!g_things.isValidDatId(id, ThingCategoryEffect))
         id = 0;

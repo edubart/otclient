@@ -657,7 +657,8 @@ int LuaInterface::luaCollectCppFunction(lua_State*)
     return 0;
 }
 
-void LuaInterface::registerTable(lua_State* L, const std::string& tableName) {
+void LuaInterface::registerTable(lua_State* L, const std::string& tableName)
+{
     // _G[tableName] = {}
     lua_newtable(L);
     lua_setglobal(L, tableName.c_str());
@@ -677,47 +678,53 @@ void LuaInterface::registerMethod(lua_State* L, const std::string& globalName, c
 #ifndef LUAJIT_VERSION
 ///////////////////////////////////////////////////////////////////////////////
 // from here all next functions are interfaces for the Lua API
-int LuaInterface::luaBitNot(lua_State* L) {
+int LuaInterface::luaBitNot(lua_State* L)
+{
     int32_t number = static_cast<int64_t>(lua_tonumber(L, -1));
     lua_pushnumber(L, ~number);
     return 1;
 }
 
-int LuaInterface::luaBitAnd(lua_State* L) {
+int LuaInterface::luaBitAnd(lua_State* L)
+{
     int n = lua_gettop(L); \
-    uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
+        uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
     for (int i = 1; i < n; ++i)
         number &= static_cast<uint32_t>(lua_tonumber(L, i));
     lua_pushnumber(L, number);
     return 1;
 }
 
-int LuaInterface::luaBitOr(lua_State* L) {
+int LuaInterface::luaBitOr(lua_State* L)
+{
     int n = lua_gettop(L); \
-    uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
+        uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
     for (int i = 1; i < n; ++i)
         number |= static_cast<uint32_t>(lua_tonumber(L, i));
     lua_pushnumber(L, number);
     return 1;
 }
 
-int LuaInterface::luaBitXor(lua_State* L) {
+int LuaInterface::luaBitXor(lua_State* L)
+{
     int n = lua_gettop(L); \
-    uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
+        uint32_t number = static_cast<uint32_t>(lua_tonumber(L, -1));
     for (int i = 1; i < n; ++i)
         number ^= static_cast<uint32_t>(lua_tonumber(L, i));
     lua_pushnumber(L, number);
     return 1;
 }
 
-int LuaInterface::luaBitLeftShift(lua_State* L) {
+int LuaInterface::luaBitLeftShift(lua_State* L)
+{
     uint32_t n1 = static_cast<uint32_t>(lua_tonumber(L, 1));
     uint32_t n2 = static_cast<uint32_t>(lua_tonumber(L, 2));
     lua_pushnumber(L, (n1 << n2));
     return 1;
 }
 
-int LuaInterface::luaBitRightShift(lua_State* L) {
+int LuaInterface::luaBitRightShift(lua_State* L)
+{
     uint32_t n1 = static_cast<uint32_t>(lua_tonumber(L, 1));
     uint32_t n2 = static_cast<uint32_t>(lua_tonumber(L, 2));
     lua_pushnumber(L, (n1 >> n2));
@@ -735,7 +742,7 @@ void LuaInterface::createLuaState()
     // load lua standard libraries
     luaL_openlibs(L);
 
-    #ifndef LUAJIT_VERSION
+#ifndef LUAJIT_VERSION
     // load Bit lib for bitwise operations
     registerTable(L, "Bit");
     registerMethod(L, "Bit", "bnot", LuaInterface::luaBitNot);
@@ -744,7 +751,7 @@ void LuaInterface::createLuaState()
     registerMethod(L, "Bit", "bxor", LuaInterface::luaBitXor);
     registerMethod(L, "Bit", "lshift", LuaInterface::luaBitLeftShift);
     registerMethod(L, "Bit", "rshift", LuaInterface::luaBitRightShift);
-    #endif
+#endif
 
     // creates weak table
     newTable();
@@ -966,23 +973,22 @@ void LuaInterface::setField(const std::string_view key, int index)
 void LuaInterface::getEnv(int index)
 {
     assert(hasIndex(index));
-    #ifdef LUAJIT_VERSION
+#ifdef LUAJIT_VERSION
     lua_getfenv(L, index);
-    #else
+#else
     lua_getupvalue(L, index, 1);
-    #endif
+#endif
 }
 
 void LuaInterface::setEnv(int index)
 {
     assert(hasIndex(index));
-    #ifdef LUAJIT_VERSION
+#ifdef LUAJIT_VERSION
     lua_setfenv(L, index);
-    #else
-    const char *name = lua_setupvalue(L, index, 1);
+#else
+    const char* name = lua_setupvalue(L, index, 1);
     assert(strcmp(name, "_ENV") == 0);
-    #endif
-
+#endif
 }
 
 void LuaInterface::getTable(int index)

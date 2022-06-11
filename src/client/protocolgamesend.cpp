@@ -35,7 +35,7 @@ void ProtocolGame::send(const OutputMessagePtr& outputMessage)
     Protocol::send(outputMessage);
 }
 
-void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string_view buffer)
+void ProtocolGame::sendExtendedOpcode(uint8_t opcode, const std::string_view buffer)
 {
     if (m_enableSendExtendedOpcode) {
         const OutputMessagePtr msg(new OutputMessage);
@@ -48,7 +48,7 @@ void ProtocolGame::sendExtendedOpcode(uint8 opcode, const std::string_view buffe
     }
 }
 
-void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRandom)
+void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8_t challengeRandom)
 {
     const OutputMessagePtr msg(new OutputMessage);
 
@@ -91,7 +91,7 @@ void ProtocolGame::sendLoginPacket(uint challengeTimestamp, uint8 challengeRando
         if (g_game.getFeature(Otc::GameAccountNames))
             msg->addString(m_accountName);
         else
-            msg->addU32(stdext::from_string<uint32>(m_accountName));
+            msg->addU32(stdext::from_string<uint32_t>(m_accountName));
 
         msg->addString(m_characterName);
         msg->addString(m_accountPassword);
@@ -165,7 +165,7 @@ void ProtocolGame::sendAutoWalk(const std::vector<Otc::Direction>& path)
     msg->addU8(Proto::ClientAutoWalk);
     msg->addU8(path.size());
     for (const Otc::Direction dir : path) {
-        uint8 byte;
+        uint8_t byte;
         switch (dir) {
             case Otc::East:
                 byte = 1;
@@ -855,7 +855,7 @@ void ProtocolGame::sendRequestItemInfo(int itemId, int subType, int index)
     send(msg);
 }
 
-void ProtocolGame::sendAnswerModalDialog(uint32 dialog, int button, int choice)
+void ProtocolGame::sendAnswerModalDialog(uint32_t dialog, int button, int choice)
 {
     const OutputMessagePtr msg(new OutputMessage);
     msg->addU8(Proto::ClientAnswerModalDialog);

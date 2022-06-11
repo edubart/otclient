@@ -89,7 +89,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
             case ThingAttrMinimapColor:
             case ThingAttrCloth:
             case ThingAttrLensHelp:
-                fin->addU16(m_attribs.get<uint16>(thingAttr));
+                fin->addU16(m_attribs.get<uint16_t>(thingAttr));
                 break;
             default:
                 break;
@@ -123,7 +123,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
     }
 }
 
-void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, const appearances::Appearance& appearance)
+void ThingType::unserializeAppearance(uint16_t clientId, ThingCategory category, const appearances::Appearance& appearance)
 {
     m_null = false;
     m_id = clientId;
@@ -404,7 +404,7 @@ void ThingType::unserializeAppearance(uint16 clientId, ThingCategory category, c
     m_texturesFramesOffsets.resize(m_animationPhases);
 }
 
-void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileStreamPtr& fin)
+void ThingType::unserialize(uint16_t clientId, ThingCategory category, const FileStreamPtr& fin)
 {
     m_null = false;
     m_id = clientId;
@@ -553,7 +553,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                                                m_id, m_category, count, attr));
 
     const bool hasFrameGroups = category == ThingCategoryCreature && g_game.getFeature(Otc::GameIdleAnimations);
-    const uint8 groupCount = hasFrameGroups ? fin->getU8() : 1;
+    const uint8_t groupCount = hasFrameGroups ? fin->getU8() : 1;
 
     m_animationPhases = 0;
     int totalSpritesCount = 0;
@@ -562,12 +562,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
     std::vector<int> total_sprites;
 
     for (int i = 0; i < groupCount; ++i) {
-        uint8 frameGroupType = FrameGroupDefault;
+        uint8_t frameGroupType = FrameGroupDefault;
         if (hasFrameGroups)
             frameGroupType = fin->getU8();
 
-        const uint8 width = fin->getU8();
-        const uint8 height = fin->getU8();
+        const uint8_t width = fin->getU8();
+        const uint8_t height = fin->getU8();
         m_size = { width, height };
         sizes.push_back(m_size);
         if (width > 1 || height > 1) {
@@ -837,7 +837,7 @@ TexturePtr ThingType::getTexture(int animationPhase, const TextureType txtType)
                     Rect drawRect(framePos + Point(m_size.width(), m_size.height()) * SPRITE_SIZE - Point(1), framePos);
                     for (int fx = framePos.x; fx < framePos.x + m_size.width() * SPRITE_SIZE; ++fx) {
                         for (int fy = framePos.y; fy < framePos.y + m_size.height() * SPRITE_SIZE; ++fy) {
-                            const uint8* p = fullImage->getPixel(fx, fy);
+                            const uint8_t* p = fullImage->getPixel(fx, fy);
                             if (p[3] != 0x00) {
                                 drawRect.setTop(std::min<int>(fy, drawRect.top()));
                                 drawRect.setLeft(std::min<int>(fx, drawRect.left()));

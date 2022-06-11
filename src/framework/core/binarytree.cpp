@@ -35,7 +35,7 @@ BinaryTree::~BinaryTree()
 void BinaryTree::skipNodes()
 {
     while (true) {
-        const uint8 byte = m_fin->getU8();
+        const uint8_t byte = m_fin->getU8();
         switch (byte) {
             case BINARYTREE_NODE_START:
             {
@@ -61,7 +61,7 @@ void BinaryTree::unserialize()
 
     m_fin->seek(m_startPos);
     while (true) {
-        uint8 byte = m_fin->getU8();
+        uint8_t byte = m_fin->getU8();
         switch (byte) {
             case BINARYTREE_NODE_START:
             {
@@ -85,7 +85,7 @@ BinaryTreeVec BinaryTree::getChildren()
     BinaryTreeVec children;
     m_fin->seek(m_startPos);
     while (true) {
-        const uint8 byte = m_fin->getU8();
+        const uint8_t byte = m_fin->getU8();
         switch (byte) {
             case BINARYTREE_NODE_START:
             {
@@ -119,47 +119,47 @@ void BinaryTree::skip(uint len)
     seek(tell() + len);
 }
 
-uint8 BinaryTree::getU8()
+uint8_t BinaryTree::getU8()
 {
     unserialize();
     if (m_pos + 1 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU8 failed");
-    const uint8 v = m_buffer[m_pos];
+    const uint8_t v = m_buffer[m_pos];
     m_pos += 1;
     return v;
 }
 
-uint16 BinaryTree::getU16()
+uint16_t BinaryTree::getU16()
 {
     unserialize();
     if (m_pos + 2 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU16 failed");
-    const uint16 v = stdext::readULE16(&m_buffer[m_pos]);
+    const uint16_t v = stdext::readULE16(&m_buffer[m_pos]);
     m_pos += 2;
     return v;
 }
 
-uint32 BinaryTree::getU32()
+uint32_t BinaryTree::getU32()
 {
     unserialize();
     if (m_pos + 4 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU32 failed");
-    const uint32 v = stdext::readULE32(&m_buffer[m_pos]);
+    const uint32_t v = stdext::readULE32(&m_buffer[m_pos]);
     m_pos += 4;
     return v;
 }
 
-uint64 BinaryTree::getU64()
+uint64_t BinaryTree::getU64()
 {
     unserialize();
     if (m_pos + 8 > m_buffer.size())
         stdext::throw_exception("BinaryTree: getU64 failed");
-    const uint64 v = stdext::readULE64(&m_buffer[m_pos]);
+    const uint64_t v = stdext::readULE64(&m_buffer[m_pos]);
     m_pos += 8;
     return v;
 }
 
-std::string BinaryTree::getString(uint16 len)
+std::string BinaryTree::getString(uint16_t len)
 {
     unserialize();
     if (len == 0)
@@ -187,21 +187,21 @@ OutputBinaryTree::OutputBinaryTree(FileStreamPtr fin)
     startNode(0);
 }
 
-void OutputBinaryTree::addU8(uint8 v)
+void OutputBinaryTree::addU8(uint8_t v)
 {
     write(&v, 1);
 }
 
-void OutputBinaryTree::addU16(uint16 v)
+void OutputBinaryTree::addU16(uint16_t v)
 {
-    uint8 data[2];
+    uint8_t data[2];
     stdext::writeULE16(data, v);
     write(data, 2);
 }
 
-void OutputBinaryTree::addU32(uint32 v)
+void OutputBinaryTree::addU32(uint32_t v)
 {
-    uint8 data[4];
+    uint8_t data[4];
     stdext::writeULE32(data, v);
     write(data, 4);
 }
@@ -212,10 +212,10 @@ void OutputBinaryTree::addString(const std::string_view v)
         stdext::throw_exception("too long string");
 
     addU16(v.length());
-    write((const uint8*)v.data(), v.length());
+    write((const uint8_t*)v.data(), v.length());
 }
 
-void OutputBinaryTree::addPos(uint16 x, uint16 y, uint8 z)
+void OutputBinaryTree::addPos(uint16_t x, uint16_t y, uint8_t z)
 {
     addU16(x);
     addU16(y);
@@ -228,7 +228,7 @@ void OutputBinaryTree::addPoint(const Point& point)
     addU8(point.y);
 }
 
-void OutputBinaryTree::startNode(uint8 node)
+void OutputBinaryTree::startNode(uint8_t node)
 {
     m_fin->addU8(BINARYTREE_NODE_START);
     write(&node, 1);
@@ -239,7 +239,7 @@ void OutputBinaryTree::endNode()
     m_fin->addU8(BINARYTREE_NODE_END);
 }
 
-void OutputBinaryTree::write(const uint8* data, size_t size)
+void OutputBinaryTree::write(const uint8_t* data, size_t size)
 {
     for (size_t i = 0; i < size; ++i) {
         if (data[i] == BINARYTREE_NODE_START || data[i] == BINARYTREE_NODE_END || data[i] == BINARYTREE_ESCAPE_CHAR)

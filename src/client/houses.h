@@ -27,7 +27,7 @@
 
 #include <framework/luaengine/luaobject.h>
 
-enum HouseAttr : uint8
+enum HouseAttr : uint8_t
 {
     HouseAttrId,
     HouseAttrName,
@@ -42,7 +42,7 @@ class House : public LuaObject
 {
 public:
     House() = default;
-    House(uint32 hId, const std::string_view name = "", const Position& pos = {});
+    House(uint32_t hId, const std::string_view name = "", const Position& pos = {});
     ~House() override { m_tiles.clear(); }
 
     void setTile(const TilePtr& tile);
@@ -51,24 +51,24 @@ public:
     void setName(const std::string_view name) { m_attribs.set(HouseAttrName, name); }
     std::string getName() { return m_attribs.get<std::string>(HouseAttrName); }
 
-    void setId(uint32 hId) { m_attribs.set(HouseAttrId, hId); }
-    uint32 getId() { return m_attribs.get<uint32>(HouseAttrId); }
+    void setId(uint32_t hId) { m_attribs.set(HouseAttrId, hId); }
+    uint32_t getId() { return m_attribs.get<uint32_t>(HouseAttrId); }
 
-    void setTownId(uint32 tid) { m_attribs.set(HouseAttrTown, tid); }
-    uint32 getTownId() { return m_attribs.get<uint32>(HouseAttrTown); }
+    void setTownId(uint32_t tid) { m_attribs.set(HouseAttrTown, tid); }
+    uint32_t getTownId() { return m_attribs.get<uint32_t>(HouseAttrTown); }
 
-    void setSize(uint32 s) { m_attribs.set(HouseAttrSize, s); }
-    uint32 getSize() { return m_attribs.get<uint32>(HouseAttrSize); }
+    void setSize(uint32_t s) { m_attribs.set(HouseAttrSize, s); }
+    uint32_t getSize() { return m_attribs.get<uint32_t>(HouseAttrSize); }
 
-    void setRent(uint32 r) { m_attribs.set(HouseAttrRent, r); }
-    uint32 getRent() { return m_attribs.get<uint32>(HouseAttrRent); }
+    void setRent(uint32_t r) { m_attribs.set(HouseAttrRent, r); }
+    uint32_t getRent() { return m_attribs.get<uint32_t>(HouseAttrRent); }
 
     void setEntry(const Position& p) { m_attribs.set(HouseAttrEntry, p); }
     Position getEntry() { return m_attribs.get<Position>(HouseAttrEntry); }
 
     void addDoor(const ItemPtr& door);
     void removeDoor(const ItemPtr& door) { removeDoorById(door->getDoorId()); }
-    void removeDoorById(uint32 doorId);
+    void removeDoorById(uint32_t doorId);
 
 protected:
     void load(const TiXmlElement* elem);
@@ -78,7 +78,7 @@ private:
     stdext::dynamic_storage8<HouseAttr, HouseAttrLast> m_attribs;
     TileMap m_tiles;
     ItemVector m_doors;
-    uint32 m_lastDoorId;
+    uint32_t m_lastDoorId;
     bool m_isGuildHall{ false };
 
     friend class HouseManager;
@@ -90,8 +90,8 @@ public:
     HouseManager();
 
     void addHouse(const HousePtr& house);
-    void removeHouse(uint32 houseId);
-    HousePtr getHouse(uint32 houseId);
+    void removeHouse(uint32_t houseId);
+    HousePtr getHouse(uint32_t houseId);
     HousePtr getHouseByName(const std::string_view name);
 
     void load(const std::string_view fileName);
@@ -100,13 +100,13 @@ public:
     void sort();
     void clear() { m_houses.clear(); }
     HouseList getHouseList() { return m_houses; }
-    HouseList filterHouses(uint32 townId);
+    HouseList filterHouses(uint32_t townId);
 
 private:
     HouseList m_houses;
 
 protected:
-    HouseList::iterator findHouse(uint32 houseId);
+    HouseList::iterator findHouse(uint32_t houseId);
 };
 
 extern HouseManager g_houses;

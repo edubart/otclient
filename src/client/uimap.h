@@ -92,7 +92,7 @@ public:
     void setCrosshairTexture(const std::string_view texturePath) { m_mapView->setCrosshairTexture(texturePath); }
     void setDrawHighlightTarget(const bool enable) { m_mapView->setDrawHighlightTarget(enable); }
     void setAntiAliasingMode(const MapView::AntialiasingMode mode) { m_mapView->setAntiAliasingMode(mode); }
-    void setFloorFading(const uint16 v) { m_mapView->setFloorFading(v); }
+    void setFloorFading(const uint16_t v) { m_mapView->setFloorFading(v); }
 
 protected:
     void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode) override;

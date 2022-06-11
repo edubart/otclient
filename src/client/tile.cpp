@@ -84,8 +84,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, LightView* lightVi
             if (!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
 
             drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+        }
     }
-}
 
     for (const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
@@ -114,7 +114,7 @@ void Tile::drawBottom(const Point& dest, float scaleFactor, LightView* lightView
         }
     }
 
-    uint8 redrawPreviousTopW = 0,
+    uint8_t redrawPreviousTopW = 0,
         redrawPreviousTopH = 0;
 
     if (m_countFlag.hasCommonItem) {
@@ -374,7 +374,7 @@ std::vector<ItemPtr> Tile::getItems()
     return items;
 }
 
-EffectPtr Tile::getEffect(uint16 id)
+EffectPtr Tile::getEffect(uint16_t id)
 {
     for (const EffectPtr& effect : m_effects)
         if (effect->getId() == id)
@@ -391,7 +391,7 @@ int Tile::getGroundSpeed()
     return 100;
 }
 
-uint8 Tile::getMinimapColorByte()
+uint8_t Tile::getMinimapColorByte()
 {
     if (m_minimapColor != 0)
         return m_minimapColor;
@@ -400,7 +400,7 @@ uint8 Tile::getMinimapColorByte()
         if (thing->isCreature() || thing->isCommon())
             continue;
 
-        const uint8 c = thing->getMinimapColor();
+        const uint8_t c = thing->getMinimapColor();
         if (c != 0) return c;
     }
 
@@ -478,7 +478,7 @@ ThingPtr Tile::getTopMoveThing()
     if (isEmpty())
         return nullptr;
 
-    for (int8 i = -1, s = m_things.size(); ++i < s;) {
+    for (int8_t i = -1, s = m_things.size(); ++i < s;) {
         const ThingPtr& thing = m_things[i];
         if (thing->isCommon()) {
             if (i > 0 && thing->isNotMoveable())
@@ -509,7 +509,7 @@ ThingPtr Tile::getTopMultiUseThing()
             return thing;
     }
 
-    for (int8 i = -1, s = m_things.size(); ++i < s;) {
+    for (int8_t i = -1, s = m_things.size(); ++i < s;) {
         const ThingPtr& thing = m_things[i];
         if (!thing->isGround() && !thing->isGroundBorder() && !thing->isOnBottom() && !thing->isOnTop()) {
             if (i > 0 && thing->isSplash())
@@ -546,7 +546,7 @@ bool Tile::isWalkable(bool ignoreCreatures)
     return true;
 }
 
-bool Tile::isCompletelyCovered(int8 firstFloor)
+bool Tile::isCompletelyCovered(int8_t firstFloor)
 {
     if (m_ignoreCompletelyCoveredCheck || hasLight())
         return false;
@@ -787,7 +787,7 @@ void Tile::select(const bool noFilter)
         auto& highLight = self->m_highlight;
 
         highLight.fadeLevel += 10 * (highLight.invertedColorSelection ? 1 : -1);
-        highLight.rgbColor = Color(static_cast<uint8>(255), static_cast<uint8>(255), static_cast<uint8>(0), static_cast<uint8>(highLight.fadeLevel));
+        highLight.rgbColor = Color(static_cast<uint8_t>(255), static_cast<uint8_t>(255), static_cast<uint8_t>(0), static_cast<uint8_t>(highLight.fadeLevel));
 
         if (highLight.invertedColorSelection ? highLight.fadeLevel > HIGHTLIGHT_FADE_END : highLight.fadeLevel < HIGHTLIGHT_FADE_START) {
             highLight.invertedColorSelection = !highLight.invertedColorSelection;
@@ -808,7 +808,7 @@ bool Tile::canRender(const bool drawViewportEdge, const Position& cameraPosition
 {
     if (drawViewportEdge || (lightView && lightView->isDark() && hasLight())) return true;
 
-    const int8 dz = m_position.z - cameraPosition.z;
+    const int8_t dz = m_position.z - cameraPosition.z;
     const Position checkPos = m_position.translated(dz, dz);
 
     // Check for non-visible tiles on the screen and ignore them

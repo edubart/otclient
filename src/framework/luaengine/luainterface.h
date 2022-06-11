@@ -243,19 +243,19 @@ private:
     static int luaCollectCppFunction(lua_State* L);
 
     // Bit functions
-    #ifndef LUAJIT_VERSION
+#ifndef LUAJIT_VERSION
     static int luaBitAnd(lua_State* L);
     static int luaBitNot(lua_State* L);
     static int luaBitOr(lua_State* L);
     static int luaBitXor(lua_State* L);
     static int luaBitRightShift(lua_State* L);
     static int luaBitLeftShift(lua_State* L);
-    #endif
+#endif
 
 public:
     void registerTable(lua_State* L, const std::string& tableName);
     void registerMethod(lua_State* L, const std::string& globalName, const std::string& methodName, lua_CFunction func);
-    
+
     void createLuaState();
     void closeLuaState();
 

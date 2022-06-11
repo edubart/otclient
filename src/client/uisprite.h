@@ -45,7 +45,7 @@ protected:
     void onStyleApply(const std::string_view styleName, const OTMLNodePtr& styleNode) override;
 
     TexturePtr m_sprite;
-    uint16 m_spriteId{ 0 };
+    uint16_t m_spriteId{ 0 };
     Color m_spriteColor{ Color::white };
 
     bool m_spriteVisible{ true };

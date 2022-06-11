@@ -200,7 +200,7 @@ public:
     bool isMapPosition() const { return ((x >= 0) && (y >= 0) && (x < UINT16_MAX) && (y < UINT16_MAX) && (z <= MAX_Z)); }
     bool isValid() const { return !(x == UINT16_MAX && y == UINT16_MAX && z == UINT8_MAX); }
     double distance(const Position& pos) const { return sqrt(pow<int32_t>(pos.x - x, 2) + pow<int32_t>(pos.y - y, 2)); }
-    uint16 manhattanDistance(const Position& pos) const { return static_cast<uint16>(std::abs(pos.x - x) + std::abs(pos.y - y)); }
+    uint16_t manhattanDistance(const Position& pos) const { return static_cast<uint16_t>(std::abs(pos.x - x) + std::abs(pos.y - y)); }
 
     void translate(int32_t dx, int32_t dy, int8_t dz = 0) { x += dx; y += dy; z += dz; }
     Position translated(int32_t dx, int32_t dy, int8_t dz = 0) const { Position pos = *this; pos.x += dx; pos.y += dy; pos.z += dz; return pos; }
@@ -233,7 +233,7 @@ public:
     Position& operator=(const Position& other) = default;
     bool operator==(const Position& other) const { return other.x == x && other.y == y && other.z == z; }
     bool operator!=(const Position& other) const { return other.x != x || other.y != y || other.z != z; }
-    bool isInRange(const Position& pos, uint16 xRange, uint16 yRange, const bool ignoreZ = false) const
+    bool isInRange(const Position& pos, uint16_t xRange, uint16_t yRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
         if (pos.z != z) {
@@ -243,7 +243,7 @@ public:
 
         return std::abs(x - _pos.x) <= xRange && std::abs(y - _pos.y) <= yRange && z == pos.z;
     }
-    bool isInRange(const Position& pos, uint16 minXRange, uint16 maxXRange, uint16 minYRange, uint16 maxYRange, const bool ignoreZ = false) const
+    bool isInRange(const Position& pos, uint16_t minXRange, uint16_t maxXRange, uint16_t minYRange, uint16_t maxYRange, const bool ignoreZ = false) const
     {
         auto _pos = pos;
         if (pos.z != z) {

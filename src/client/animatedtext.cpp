@@ -67,7 +67,7 @@ void AnimatedText::onAppear()
 {
     m_animationTimer.restart();
 
-    uint16 textDuration = ANIMATED_TEXT_DURATION;
+    uint16_t textDuration = ANIMATED_TEXT_DURATION;
     if (g_app.canOptimize())
         textDuration /= 2;
 
