@@ -31,11 +31,12 @@
 enum CreatureAttr : uint8
 {
     CreatureAttrPosition = 0,
-    CreatureAttrName = 1,
-    CreatureAttrOutfit = 2,
-    CreatureAttrSpawnTime = 3,
-    CreatureAttrDir = 4,
-    CreatureAttrRace = 5
+    CreatureAttrName,
+    CreatureAttrOutfit,
+    CreatureAttrSpawnTime,
+    CreatureAttrDir,
+    CreatureAttrRace,
+    CreatureAttrLast
 };
 
 enum CreatureRace : uint8
@@ -47,7 +48,8 @@ enum CreatureRace : uint8
 enum SpawnAttr : uint8
 {
     SpawnAttrRadius = 0,
-    SpawnAttrCenter = 1,
+    SpawnAttrCenter,
+    SpawnAttrLast,
 };
 
 class Spawn : public LuaObject
@@ -72,7 +74,7 @@ protected:
     void save(TiXmlElement* node);
 
 private:
-    dynamic_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<SpawnAttr, SpawnAttrLast> m_attribs;
     std::unordered_map<Position, CreatureTypePtr, Position::Hasher> m_creatures;
     friend class CreatureManager;
 };
@@ -101,7 +103,7 @@ public:
     CreaturePtr cast();
 
 private:
-    dynamic_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<CreatureAttr, CreatureAttrLast> m_attribs;
 };
 
 class CreatureManager

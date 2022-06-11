@@ -153,5 +153,5 @@ private:
     ItemCategory m_category{ ItemCategoryInvalid };
     bool m_null{ true };
 
-    dynamic_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<ItemTypeAttr, ItemTypeAttrLast> m_attribs;
 };

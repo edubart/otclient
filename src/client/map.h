@@ -54,7 +54,8 @@ enum OTBM_ItemAttr
     OTBM_ATTR_ATTRIBUTE_MAP = 128,
     /// just random numbers, they're not actually used by the binary reader...
     OTBM_ATTR_WIDTH = 129,
-    OTBM_ATTR_HEIGHT = 130
+    OTBM_ATTR_HEIGHT = 130,
+    OTBM_ATTR_LAST,
 };
 
 enum OTBM_NodeTypes_t
@@ -283,7 +284,7 @@ private:
 
     std::map<uint32, Color> m_zoneColors;
 
-    stdext::packed_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<OTBM_ItemAttr, OTBM_ATTR_LAST> m_attribs;
 
     uint8 m_animationFlags;
     uint32 m_zoneFlags;

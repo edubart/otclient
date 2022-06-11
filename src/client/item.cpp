@@ -109,7 +109,7 @@ void Item::unserializeItem(const BinaryTreePtr& in)
 {
     try {
         while (in->canRead()) {
-            int attrib = in->getU8();
+            ItemAttr attrib = static_cast<ItemAttr>(in->getU8());
             if (attrib == 0)
                 break;
 

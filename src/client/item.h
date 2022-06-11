@@ -65,7 +65,8 @@ enum ItemAttr : uint8
     ATTR_ARTICLE = 41,
     ATTR_SCRIPTPROTECTED = 42,
     ATTR_DUALWIELD = 43,
-    ATTR_ATTRIBUTE_MAP = 128
+    ATTR_ATTRIBUTE_MAP = 128,
+    ATTR_LAST
 };
 
 // @bindclass
@@ -150,7 +151,7 @@ private:
     uint8 m_countOrSubType{ 1 };
     Color m_color{ Color::alpha };
 
-    stdext::packed_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<ItemAttr, ATTR_LAST> m_attribs;
     ItemVector m_containerItems;
 
     uint8 m_phase{ 0 };

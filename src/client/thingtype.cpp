@@ -54,6 +54,8 @@ void ThingType::serialize(const FileStreamPtr& fin)
         }
 
         fin->addU8(attr);
+
+        const auto thingAttr = static_cast<ThingAttr>(attr);
         switch (attr) {
             case ThingAttrDisplacement:
             {
@@ -63,14 +65,14 @@ void ThingType::serialize(const FileStreamPtr& fin)
             }
             case ThingAttrLight:
             {
-                const auto light = m_attribs.get<Light>(attr);
+                const auto light = m_attribs.get<Light>(thingAttr);
                 fin->addU16(light.intensity);
                 fin->addU16(light.color);
                 break;
             }
             case ThingAttrMarket:
             {
-                auto market = m_attribs.get<MarketData>(attr);
+                auto market = m_attribs.get<MarketData>(thingAttr);
                 fin->addU16(market.category);
                 fin->addU16(market.tradeAs);
                 fin->addU16(market.showAs);
@@ -87,7 +89,7 @@ void ThingType::serialize(const FileStreamPtr& fin)
             case ThingAttrMinimapColor:
             case ThingAttrCloth:
             case ThingAttrLensHelp:
-                fin->addU16(m_attribs.get<uint16>(attr));
+                fin->addU16(m_attribs.get<uint16>(thingAttr));
                 break;
             default:
                 break;
@@ -492,6 +494,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 attr = ThingAttrMultiUse;
         }
 
+        const auto thingAttr = static_cast<ThingAttr>(attr);
         switch (attr) {
             case ThingAttrDisplacement:
             {
@@ -502,7 +505,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                     m_displacement.x = 8;
                     m_displacement.y = 8;
                 }
-                m_attribs.set(attr, true);
+                m_attribs.set(thingAttr, true);
                 break;
             }
             case ThingAttrLight:
@@ -510,7 +513,7 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 Light light;
                 light.intensity = fin->getU16();
                 light.color = fin->getU16();
-                m_attribs.set(attr, light);
+                m_attribs.set(thingAttr, light);
                 break;
             }
             case ThingAttrMarket:
@@ -522,12 +525,12 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
                 market.name = fin->getString();
                 market.restrictVocation = fin->getU16();
                 market.requiredLevel = fin->getU16();
-                m_attribs.set(attr, market);
+                m_attribs.set(thingAttr, market);
                 break;
             }
             case ThingAttrElevation:
             {
-                m_attribs.set<uint16_t>(attr, fin->getU16());
+                m_attribs.set<uint16_t>(thingAttr, fin->getU16());
                 break;
             }
             case ThingAttrUsable:
@@ -537,10 +540,10 @@ void ThingType::unserialize(uint16 clientId, ThingCategory category, const FileS
             case ThingAttrMinimapColor:
             case ThingAttrCloth:
             case ThingAttrLensHelp:
-                m_attribs.set(attr, fin->getU16());
+                m_attribs.set(thingAttr, fin->getU16());
                 break;
             default:
-                m_attribs.set(attr, true);
+                m_attribs.set(thingAttr, true);
                 break;
         }
     }

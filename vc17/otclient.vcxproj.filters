@@ -243,9 +243,6 @@
     <ClCompile Include="..\src\framework\input\mouse.cpp">
       <Filter>Source Files\framework\input</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\framework\luaengine\lbitlib.cpp">
-      <Filter>Source Files\framework\luaengine</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\framework\luaengine\luaexception.cpp">
       <Filter>Source Files\framework\luaengine</Filter>
     </ClCompile>
@@ -540,14 +537,11 @@
     <ClCompile Include="..\src\framework\graphics\pool.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\framework\protobuf\appearances.pb.cc">
-      <Filter>Source Files\framework\protobuf</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\framework\protobuf\shared.pb.cc">
-      <Filter>Source Files\framework\protobuf</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\client\spriteappearances.cpp">
       <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\protobuf\appearances.pb.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -710,9 +704,6 @@
     <ClInclude Include="..\src\framework\luaengine\declarations.h">
       <Filter>Header Files\framework\luaengine</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\luaengine\lbitlib.h">
-      <Filter>Header Files\framework\luaengine</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\framework\luaengine\luabinder.h">
       <Filter>Header Files\framework\luaengine</Filter>
     </ClInclude>
@@ -833,10 +824,7 @@
     <ClInclude Include="..\src\framework\stdext\net.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\packed_any.h">
-      <Filter>Header Files\framework\stdext</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\framework\stdext\packed_storage.h">
+    <ClInclude Include="..\src\framework\stdext\storage.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\stdext\shared_object.h">
@@ -1067,17 +1055,14 @@
     <ClInclude Include="..\src\framework\stdext\hash.h">
       <Filter>Header Files\framework\stdext</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\framework\protobuf\shared.pb.h">
-      <Filter>Header Files\framework\protobuf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\framework\protobuf\appearances.pb.h">
-      <Filter>Header Files\framework\protobuf</Filter>
-    </ClInclude>
     <ClInclude Include="..\src\client\spriteappearances.h">
       <Filter>Header Files\client</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\util\uuid.h">
       <Filter>Header Files\framework\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\protobuf\appearances.pb.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

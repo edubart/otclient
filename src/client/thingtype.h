@@ -251,7 +251,7 @@ private:
     bool m_null{ true },
         m_opaque{ false };
 
-    dynamic_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<ThingAttr, ThingLastAttr> m_attribs;
 
     Size m_size;
     Point m_displacement;

@@ -34,7 +34,8 @@ enum HouseAttr : uint8
     HouseAttrTown,
     HouseAttrEntry,
     HouseAttrSize,
-    HouseAttrRent
+    HouseAttrRent,
+    HouseAttrLast,
 };
 
 class House : public LuaObject
@@ -74,7 +75,7 @@ protected:
     void save(TiXmlElement* elem);
 
 private:
-    stdext::packed_storage<uint8> m_attribs;
+    stdext::dynamic_storage8<HouseAttr, HouseAttrLast> m_attribs;
     TileMap m_tiles;
     ItemVector m_doors;
     uint32 m_lastDoorId;

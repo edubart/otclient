@@ -659,8 +659,7 @@ git rev-list --count head &gt;&gt;  ../src/gitinfo.h
     <ClInclude Include="..\src\framework\stdext\hash.h" />
     <ClInclude Include="..\src\framework\stdext\math.h" />
     <ClInclude Include="..\src\framework\stdext\net.h" />
-    <ClInclude Include="..\src\framework\stdext\packed_any.h" />
-    <ClInclude Include="..\src\framework\stdext\packed_storage.h" />
+    <ClInclude Include="..\src\framework\stdext\storage.h" />
     <ClInclude Include="..\src\framework\stdext\shared_object.h" />
     <ClInclude Include="..\src\framework\stdext\shared_ptr.h" />
     <ClInclude Include="..\src\framework\stdext\stdext.h" />
