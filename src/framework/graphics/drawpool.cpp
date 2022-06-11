@@ -271,7 +271,10 @@ void DrawPool::createPools()
             const auto& frameBuffer = g_framebuffers.createFrameBuffer(true);
 
             if (type == PoolType::MAP) frameBuffer->disableBlend();
-            else if (type == PoolType::LIGHT) frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
+            else if (type == PoolType::LIGHT) {
+                pool->m_forceGrouping = true;
+                frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
+            }
 
             pool = new PoolFramed{ frameBuffer };
         } else {
