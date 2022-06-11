@@ -124,7 +124,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         if (m_outfit.hasMount()) {
             if (animateWalk) animationPhase = getCurrentAnimationPhase(true);
 
-            const auto& datType = rawGetMountThingType();
+            const auto& datType = getMountThingType();
 
             dest -= datType->getDisplacement() * scaleFactor;
             datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, textureType, color);
@@ -142,7 +142,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         const PointF jumpOffset = m_jumpOffset * scaleFactor;
         dest -= Point(std::round(jumpOffset.x), std::round(jumpOffset.y));
 
-        auto* datType = rawGetThingType();
+        const auto& datType = getThingType();
 
         // yPattern => creature addon
         for (int yPattern = 0; yPattern < getNumPatternY(); ++yPattern) {
@@ -167,7 +167,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
 
         // outfit is a creature imitating an item or the invisible effect
     } else {
-        ThingType* type = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory());
+        const auto& type = g_things.getThingType(m_outfit.getAuxId(), m_outfit.getCategory());
 
         int animationPhases = type->getAnimationPhases(),
             animateTicks = ITEM_TICKS_PER_FRAME;
@@ -678,6 +678,9 @@ void Creature::setOutfit(const Outfit& outfit)
         m_outfit = outfit;
     }
 
+    m_thingType = nullptr;
+    m_mountType = nullptr;
+
     m_walkAnimationPhase = 0; // might happen when player is walking and outfit is changed.
 
     callLuaField("onOutfitChange", m_outfit, oldOutfit);
@@ -687,7 +690,7 @@ void Creature::setOutfit(const Outfit& outfit)
         if (m_outfit.getCategory() == ThingCategoryCreature)
             m_drawCache.exactSize = getExactSize();
         else
-            m_drawCache.exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
+            m_drawCache.exactSize = g_things.getThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
 
         m_drawCache.frameSizeNotResized = std::max<int>(m_drawCache.exactSize * 0.75f, 2 * SPRITE_SIZE * 0.75f);
     }
@@ -887,7 +890,7 @@ int Creature::getDisplacementX()
         return 0;
 
     if (m_outfit.hasMount())
-        return rawGetMountThingType()->getDisplacementX();
+        return getMountThingType()->getDisplacementX();
 
     return Thing::getDisplacementX();
 }
@@ -901,7 +904,7 @@ int Creature::getDisplacementY()
         return 0;
 
     if (m_outfit.hasMount()) {
-        return rawGetMountThingType()->getDisplacementY();
+        return getMountThingType()->getDisplacementY();
     }
 
     return Thing::getDisplacementY();
@@ -922,12 +925,12 @@ int Creature::getTotalAnimationPhase()
     if (!m_outfit.hasMount())
         return getAnimationPhases();
 
-    return rawGetMountThingType()->getAnimationPhases();
+    return getMountThingType()->getAnimationPhases();
 }
 
 int Creature::getCurrentAnimationPhase(const bool mount)
 {
-    const auto& thingType = mount ? rawGetMountThingType() : rawGetThingType();
+    const auto& thingType = mount ? getMountThingType() : getThingType();
 
     const auto idleAnimator = thingType->getIdleAnimator();
     if (idleAnimator) {
@@ -963,15 +966,10 @@ int Creature::getExactSize()
 
 const ThingTypePtr& Creature::getThingType()
 {
-    return g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);
+    return m_thingType ? m_thingType : m_thingType = g_things.getThingType(m_outfit.getId(), ThingCategoryCreature);
 }
 
-ThingType* Creature::rawGetThingType()
+const ThingTypePtr& Creature::getMountThingType()
 {
-    return g_things.rawGetThingType(m_outfit.getId(), ThingCategoryCreature);
-}
-
-ThingType* Creature::rawGetMountThingType()
-{
-    return g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+    return m_mountType ? m_mountType : m_mountType = g_things.getThingType(m_outfit.getMount(), ThingCategoryCreature);
 }

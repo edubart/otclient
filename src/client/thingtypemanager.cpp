@@ -169,7 +169,7 @@ bool ThingTypeManager::loadOtml(std::string file)
 
             for (const OTMLNodePtr& node2 : node->children()) {
                 const auto id = stdext::safe_cast<uint16>(node2->tag());
-                ThingTypePtr type = getThingType(id, category);
+                const auto& type = getThingType(id, category);
                 if (!type)
                     throw OTMLException(node2, "thing not found");
                 type->unserializeOtml(node2);
@@ -467,7 +467,7 @@ const ItemTypePtr& ThingTypeManager::getItemType(uint16 id)
 ThingTypeList ThingTypeManager::findThingTypeByAttr(ThingAttr attr, ThingCategory category)
 {
     ThingTypeList ret;
-    for (const ThingTypePtr& type : m_thingTypes[category])
+    for (const auto& type : m_thingTypes[category])
         if (type->hasAttr(attr))
             ret.push_back(type);
     return ret;

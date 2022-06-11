@@ -36,7 +36,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
 
     int animationPhase;
     if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
-        const auto& animator = rawGetThingType()->getIdleAnimator();
+        const auto& animator = getThingType()->getIdleAnimator();
         if (!animator)
             return;
 
@@ -55,7 +55,7 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, LightView* lightVi
     const int xPattern = m_position.x % getNumPatternX();
     const int yPattern = m_position.y % getNumPatternY();
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, TextureType::NONE, Color::white, lightView);
+    getThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, 0, animationPhase, TextureType::NONE, Color::white, lightView);
 }
 
 void Effect::onAppear()
@@ -95,14 +95,10 @@ void Effect::setId(uint32 id)
         id = 0;
 
     m_id = id;
+    m_thingType = nullptr;
 }
 
 const ThingTypePtr& Effect::getThingType()
 {
-    return g_things.getThingType(m_id, ThingCategoryEffect);
-}
-
-ThingType* Effect::rawGetThingType()
-{
-    return g_things.rawGetThingType(m_id, ThingCategoryEffect);
+    return m_thingType ? m_thingType : m_thingType = g_things.getThingType(m_id, ThingCategoryEffect);
 }

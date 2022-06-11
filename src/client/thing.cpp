@@ -88,8 +88,3 @@ const ThingTypePtr& Thing::getThingType()
 {
     return g_things.getNullThingType();
 }
-
-ThingType* Thing::rawGetThingType()
-{
-    return g_things.getNullThingType().get();
-}

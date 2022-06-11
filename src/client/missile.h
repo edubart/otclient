@@ -41,7 +41,6 @@ public:
     bool isMissile() override { return true; }
 
     const ThingTypePtr& getThingType() override;
-    ThingType* rawGetThingType() override;
 
 private:
     Timer m_animationTimer;

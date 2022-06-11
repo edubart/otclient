@@ -39,7 +39,6 @@ public:
     bool isEffect() override { return true; }
 
     const ThingTypePtr& getThingType() override;
-    ThingType* rawGetThingType() override;
 
     void waitFor(const EffectPtr&);
 

@@ -70,87 +70,86 @@ public:
 
     // type shortcuts
     virtual const ThingTypePtr& getThingType();
-    virtual ThingType* rawGetThingType();
-    Size getSize() { return rawGetThingType()->getSize(); }
-    int getWidth() { return rawGetThingType()->getWidth(); }
-    int getHeight() { return rawGetThingType()->getHeight(); }
-    int getRealSize() { return rawGetThingType()->getRealSize(); }
-    virtual Point getDisplacement() { return rawGetThingType()->getDisplacement(); }
-    virtual int getDisplacementX() { return rawGetThingType()->getDisplacementX(); }
-    virtual int getDisplacementY() { return rawGetThingType()->getDisplacementY(); }
+    Size getSize() { return getThingType()->getSize(); }
+    int getWidth() { return getThingType()->getWidth(); }
+    int getHeight() { return getThingType()->getHeight(); }
+    int getRealSize() { return getThingType()->getRealSize(); }
+    virtual Point getDisplacement() { return getThingType()->getDisplacement(); }
+    virtual int getDisplacementX() { return getThingType()->getDisplacementX(); }
+    virtual int getDisplacementY() { return getThingType()->getDisplacementY(); }
 
-    virtual int getExactSize() { return rawGetThingType()->getExactSize(0, 0, 0, 0, 0); }
-    virtual int getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase) { return rawGetThingType()->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase); }
-    int getLayers() { return rawGetThingType()->getLayers(); }
-    int getNumPatternX() { return rawGetThingType()->getNumPatternX(); }
-    int getNumPatternY() { return rawGetThingType()->getNumPatternY(); }
-    int getNumPatternZ() { return rawGetThingType()->getNumPatternZ(); }
-    int getAnimationPhases() { return rawGetThingType()->getAnimationPhases(); }
-    bool hasAnimationPhases() { return rawGetThingType()->getAnimationPhases() > 1; }
-    AnimatorPtr getAnimator() { return rawGetThingType()->getAnimator(); }
-    AnimatorPtr getIdleAnimator() { return rawGetThingType()->getIdleAnimator(); }
-    int getGroundSpeed() { return rawGetThingType()->getGroundSpeed(); }
-    int getMaxTextLength() { return rawGetThingType()->getMaxTextLength(); }
-    virtual Light getLight() { return rawGetThingType()->getLight(); }
-    virtual bool hasLight() { return rawGetThingType()->hasLight(); }
-    int getMinimapColor() { return rawGetThingType()->getMinimapColor(); }
-    int getLensHelp() { return rawGetThingType()->getLensHelp(); }
-    int getClothSlot() { return rawGetThingType()->getClothSlot(); }
-    int getElevation() { return rawGetThingType()->getElevation(); }
-    bool isGround() { return rawGetThingType()->isGround(); }
-    bool isGroundBorder() { return rawGetThingType()->isGroundBorder(); }
-    bool isTopGround() { return rawGetThingType()->isTopGround(); }
-    bool isTopGroundBorder() { return rawGetThingType()->isTopGroundBorder(); }
-    bool isSingleGround() { return rawGetThingType()->isSingleGround(); }
-    bool isSingleGroundBorder() { return rawGetThingType()->isSingleGroundBorder(); }
-    bool isOnBottom() { return rawGetThingType()->isOnBottom(); }
-    bool isOnTop() { return rawGetThingType()->isOnTop(); }
+    virtual int getExactSize() { return getThingType()->getExactSize(0, 0, 0, 0, 0); }
+    virtual int getExactSize(int layer, int xPattern, int yPattern, int zPattern, int animationPhase) { return getThingType()->getExactSize(layer, xPattern, yPattern, zPattern, animationPhase); }
+    int getLayers() { return getThingType()->getLayers(); }
+    int getNumPatternX() { return getThingType()->getNumPatternX(); }
+    int getNumPatternY() { return getThingType()->getNumPatternY(); }
+    int getNumPatternZ() { return getThingType()->getNumPatternZ(); }
+    int getAnimationPhases() { return getThingType()->getAnimationPhases(); }
+    bool hasAnimationPhases() { return getThingType()->getAnimationPhases() > 1; }
+    AnimatorPtr getAnimator() { return getThingType()->getAnimator(); }
+    AnimatorPtr getIdleAnimator() { return getThingType()->getIdleAnimator(); }
+    int getGroundSpeed() { return getThingType()->getGroundSpeed(); }
+    int getMaxTextLength() { return getThingType()->getMaxTextLength(); }
+    virtual Light getLight() { return getThingType()->getLight(); }
+    virtual bool hasLight() { return getThingType()->hasLight(); }
+    int getMinimapColor() { return getThingType()->getMinimapColor(); }
+    int getLensHelp() { return getThingType()->getLensHelp(); }
+    int getClothSlot() { return getThingType()->getClothSlot(); }
+    int getElevation() { return getThingType()->getElevation(); }
+    bool isGround() { return getThingType()->isGround(); }
+    bool isGroundBorder() { return getThingType()->isGroundBorder(); }
+    bool isTopGround() { return getThingType()->isTopGround(); }
+    bool isTopGroundBorder() { return getThingType()->isTopGroundBorder(); }
+    bool isSingleGround() { return getThingType()->isSingleGround(); }
+    bool isSingleGroundBorder() { return getThingType()->isSingleGroundBorder(); }
+    bool isOnBottom() { return getThingType()->isOnBottom(); }
+    bool isOnTop() { return getThingType()->isOnTop(); }
     bool isCommon() { return !isGround() && !isGroundBorder() && !isOnTop() && !isCreature() && !isOnBottom(); }
-    virtual bool isContainer() { return rawGetThingType()->isContainer(); }
-    bool isStackable() { return rawGetThingType()->isStackable(); }
-    bool isForceUse() { return rawGetThingType()->isForceUse(); }
-    bool isMultiUse() { return rawGetThingType()->isMultiUse(); }
-    bool isWritable() { return rawGetThingType()->isWritable(); }
-    bool isChargeable() { return rawGetThingType()->isChargeable(); }
-    bool isWritableOnce() { return rawGetThingType()->isWritableOnce(); }
-    bool isFluidContainer() { return rawGetThingType()->isFluidContainer(); }
-    bool isSplash() { return rawGetThingType()->isSplash(); }
-    bool isNotWalkable() { return rawGetThingType()->isNotWalkable(); }
-    bool isNotMoveable() { return rawGetThingType()->isNotMoveable(); }
-    bool isMoveable() { return !rawGetThingType()->isNotMoveable(); }
-    bool blockProjectile() { return rawGetThingType()->blockProjectile(); }
-    bool isNotPathable() { return rawGetThingType()->isNotPathable(); }
-    bool isPickupable() { return rawGetThingType()->isPickupable(); }
-    bool isHangable() { return rawGetThingType()->isHangable(); }
-    bool isHookSouth() { return rawGetThingType()->isHookSouth(); }
-    bool isHookEast() { return rawGetThingType()->isHookEast(); }
-    bool isRotateable() { return rawGetThingType()->isRotateable(); }
-    bool isDontHide() { return rawGetThingType()->isDontHide(); }
-    bool isTranslucent() { return rawGetThingType()->isTranslucent(); }
-    bool hasDisplacement() { return rawGetThingType()->hasDisplacement(); }
-    bool hasElevation() { return rawGetThingType()->hasElevation(); }
-    bool isLyingCorpse() { return rawGetThingType()->isLyingCorpse(); }
-    bool isAnimateAlways() { return rawGetThingType()->isAnimateAlways(); }
-    bool hasMiniMapColor() { return rawGetThingType()->hasMiniMapColor(); }
-    bool hasLensHelp() { return rawGetThingType()->hasLensHelp(); }
-    bool isFullGround() { return rawGetThingType()->isFullGround(); }
-    bool isIgnoreLook() { return rawGetThingType()->isIgnoreLook(); }
-    bool isCloth() { return rawGetThingType()->isCloth(); }
-    bool isMarketable() { return rawGetThingType()->isMarketable(); }
-    bool isUsable() { return rawGetThingType()->isUsable(); }
-    bool isWrapable() { return rawGetThingType()->isWrapable(); }
-    bool isUnwrapable() { return rawGetThingType()->isUnwrapable(); }
-    bool isTopEffect() { return rawGetThingType()->isTopEffect(); }
-    bool hasAction() { return rawGetThingType()->hasAction(); }
-    bool isOpaque() { return rawGetThingType()->isOpaque(); }
-    bool isSingleDimension() { return rawGetThingType()->isSingleDimension(); }
-    bool isTall(const bool useRealSize = false) { return rawGetThingType()->isTall(useRealSize); }
-    uint16_t getClassification() { return rawGetThingType()->getClassification(); }
+    virtual bool isContainer() { return getThingType()->isContainer(); }
+    bool isStackable() { return getThingType()->isStackable(); }
+    bool isForceUse() { return getThingType()->isForceUse(); }
+    bool isMultiUse() { return getThingType()->isMultiUse(); }
+    bool isWritable() { return getThingType()->isWritable(); }
+    bool isChargeable() { return getThingType()->isChargeable(); }
+    bool isWritableOnce() { return getThingType()->isWritableOnce(); }
+    bool isFluidContainer() { return getThingType()->isFluidContainer(); }
+    bool isSplash() { return getThingType()->isSplash(); }
+    bool isNotWalkable() { return getThingType()->isNotWalkable(); }
+    bool isNotMoveable() { return getThingType()->isNotMoveable(); }
+    bool isMoveable() { return !getThingType()->isNotMoveable(); }
+    bool blockProjectile() { return getThingType()->blockProjectile(); }
+    bool isNotPathable() { return getThingType()->isNotPathable(); }
+    bool isPickupable() { return getThingType()->isPickupable(); }
+    bool isHangable() { return getThingType()->isHangable(); }
+    bool isHookSouth() { return getThingType()->isHookSouth(); }
+    bool isHookEast() { return getThingType()->isHookEast(); }
+    bool isRotateable() { return getThingType()->isRotateable(); }
+    bool isDontHide() { return getThingType()->isDontHide(); }
+    bool isTranslucent() { return getThingType()->isTranslucent(); }
+    bool hasDisplacement() { return getThingType()->hasDisplacement(); }
+    bool hasElevation() { return getThingType()->hasElevation(); }
+    bool isLyingCorpse() { return getThingType()->isLyingCorpse(); }
+    bool isAnimateAlways() { return getThingType()->isAnimateAlways(); }
+    bool hasMiniMapColor() { return getThingType()->hasMiniMapColor(); }
+    bool hasLensHelp() { return getThingType()->hasLensHelp(); }
+    bool isFullGround() { return getThingType()->isFullGround(); }
+    bool isIgnoreLook() { return getThingType()->isIgnoreLook(); }
+    bool isCloth() { return getThingType()->isCloth(); }
+    bool isMarketable() { return getThingType()->isMarketable(); }
+    bool isUsable() { return getThingType()->isUsable(); }
+    bool isWrapable() { return getThingType()->isWrapable(); }
+    bool isUnwrapable() { return getThingType()->isUnwrapable(); }
+    bool isTopEffect() { return getThingType()->isTopEffect(); }
+    bool hasAction() { return getThingType()->hasAction(); }
+    bool isOpaque() { return getThingType()->isOpaque(); }
+    bool isSingleDimension() { return getThingType()->isSingleDimension(); }
+    bool isTall(const bool useRealSize = false) { return getThingType()->isTall(useRealSize); }
+    uint16_t getClassification() { return getThingType()->getClassification(); }
 
     void canDraw(bool canDraw) { m_canDraw = canDraw; }
     bool canDraw()  const { return m_canDraw; }
 
-    MarketData getMarketData() { return rawGetThingType()->getMarketData(); }
+    MarketData getMarketData() { return getThingType()->getMarketData(); }
 
     virtual void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) {}
     virtual void onAppear() {}
@@ -159,6 +158,7 @@ public:
 protected:
     Position m_position;
     uint16 m_datId{ 0 };
+    ThingTypePtr m_thingType;
 
 private:
     bool m_canDraw{ true };

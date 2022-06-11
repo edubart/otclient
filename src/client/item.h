@@ -143,7 +143,6 @@ public:
     int getExactSize(int layer = 0, int xPattern = 0, int yPattern = 0, int zPattern = 0, int animationPhase = 0) override;
 
     const ThingTypePtr& getThingType() override;
-    ThingType* rawGetThingType() override;
 
 private:
     uint16 m_clientId{ 0 };

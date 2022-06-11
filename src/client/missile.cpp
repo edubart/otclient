@@ -62,7 +62,7 @@ void Missile::drawMissile(const Point& dest, float scaleFactor, LightView* light
     }
 
     const float fraction = m_animationTimer.ticksElapsed() / m_duration;
-    rawGetThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, TextureType::NONE, Color::white, lightView);
+    getThingType()->draw(dest + m_delta * fraction * scaleFactor, scaleFactor, 0, xPattern, yPattern, 0, 0, TextureType::NONE, Color::white, lightView);
 }
 
 void Missile::setPath(const Position& fromPosition, const Position& toPosition)
@@ -92,15 +92,12 @@ void Missile::setId(uint32 id)
 {
     if (!g_things.isValidDatId(id, ThingCategoryMissile))
         id = 0;
+
     m_id = id;
+    m_thingType = nullptr;
 }
 
 const ThingTypePtr& Missile::getThingType()
 {
-    return g_things.getThingType(m_id, ThingCategoryMissile);
-}
-
-ThingType* Missile::rawGetThingType()
-{
-    return g_things.rawGetThingType(m_id, ThingCategoryMissile);
+    return m_thingType ? m_thingType : m_thingType = g_things.getThingType(m_id, ThingCategoryMissile);
 }

@@ -69,10 +69,10 @@ void Item::draw(const Point& dest, float scaleFactor, bool animate, const Highli
     if (m_color != Color::alpha)
         color = m_color;
 
-    rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType, color, lightView);
+    getThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, textureType, color, lightView);
 
     if (highLight.enabled && this == highLight.thing) {
-        rawGetThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, TextureType::ALL_BLANK, highLight.rgbColor);
+        getThingType()->draw(dest, scaleFactor, 0, xPattern, yPattern, zPattern, animationPhase, TextureType::ALL_BLANK, highLight.rgbColor);
     }
 }
 
@@ -83,6 +83,7 @@ void Item::setId(uint32 id)
 
     m_serverId = g_things.findItemTypeByClientId(id)->getServerId();
     m_clientId = id;
+    m_thingType = nullptr;
 }
 
 void Item::setOtbId(uint16 id)
@@ -96,6 +97,7 @@ void Item::setOtbId(uint16 id)
     if (!g_things.isValidDatId(id, ThingCategoryItem))
         id = 0;
     m_clientId = id;
+    m_thingType = nullptr;
 }
 
 bool Item::isValid()
@@ -388,11 +390,6 @@ int Item::getExactSize(int layer, int xPattern, int yPattern, int zPattern, int 
 
 const ThingTypePtr& Item::getThingType()
 {
-    return g_things.getThingType(m_clientId, ThingCategoryItem);
-}
-
-ThingType* Item::rawGetThingType()
-{
-    return g_things.rawGetThingType(m_clientId, ThingCategoryItem);
+    return m_thingType ? m_thingType : m_thingType = g_things.getThingType(m_clientId, ThingCategoryItem);
 }
 /* vim: set ts=4 sw=4 et :*/

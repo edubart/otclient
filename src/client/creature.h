@@ -130,8 +130,7 @@ public:
     bool isParalyzed() const { return m_speed < 10; }
 
     const ThingTypePtr& getThingType() override;
-    ThingType* rawGetThingType() override;
-    ThingType* rawGetMountThingType();
+    const ThingTypePtr& getMountThingType();
 
     void onPositionChange(const Position& newPos, const Position& oldPos) override;
     void onAppear() override;
@@ -234,6 +233,8 @@ private:
 
     StepCache m_stepCache;
     DrawCache m_drawCache;
+
+    ThingTypePtr m_mountType;
 
     bool m_drawOutfitColor{ true };
     PainterShaderProgramPtr m_outfitShader,
