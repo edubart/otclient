@@ -38,9 +38,12 @@ void UIWidget::updateText()
     else
         m_drawText = m_text;
 
+    if (m_font)
+        m_glyphsPositionsCache = m_font->calculateGlyphsPositions(m_drawText, Fw::AlignTopLeft, &m_textSize);
+
     // update rect size
     if (!m_rect.isValid() || m_textHorizontalAutoResize || m_textVerticalAutoResize) {
-        Size textBoxSize = getTextSize();
+        Size textBoxSize = m_textSize;
         textBoxSize += Size(m_padding.left + m_padding.right, m_padding.top + m_padding.bottom) + m_textOffset.toSize();
         Size size = getSize();
         if (size.width() <= 0 || (m_textHorizontalAutoResize && !m_textWrap))
@@ -50,7 +53,7 @@ void UIWidget::updateText()
         setSize(size);
     }
 
-    m_textMustRecache = true;
+    m_textCachedScreenCoords = {};
 }
 
 void UIWidget::resizeToText()
@@ -91,15 +94,14 @@ void UIWidget::drawText(const Rect& screenCoords)
     if (m_drawText.length() == 0 || m_color.aF() == 0.0f)
         return;
 
-    if (screenCoords != m_textCachedScreenCoords || m_textMustRecache) {
+    if (screenCoords != m_textCachedScreenCoords) {
         auto coords = Rect(screenCoords.topLeft(), screenCoords.bottomRight());
         coords.translate(m_textOffset);
 
-        m_textMustRecache = false;
         m_textCachedScreenCoords = coords;
 
         m_textCoordsCache.clear();
-        m_textCoordsCache = m_font->getDrawTextCoords(m_drawText, coords, m_textAlign);
+        m_textCoordsCache = m_font->getDrawTextCoords(m_drawText, m_textSize, m_textAlign, coords, m_glyphsPositionsCache);
     }
 
     for (const auto& fontRect : m_textCoordsCache)

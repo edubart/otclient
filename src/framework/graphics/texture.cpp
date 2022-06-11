@@ -32,11 +32,7 @@
 
 std::atomic<uint> LAST_ID(0);
 
-Texture::Texture() : m_uniqueId(++LAST_ID)
-{
-    m_id = 0;
-    m_time = 0;
-}
+Texture::Texture() : m_uniqueId(++LAST_ID) {}
 
 Texture::Texture(const Size& size) : m_uniqueId(++LAST_ID)
 {
@@ -235,13 +231,13 @@ void Texture::setupFilters()
 void Texture::setupTranformMatrix()
 {
     if (m_upsideDown) {
-        m_transformMatrix = { 1.0f / m_glSize.width(),  0.0f,                                     0.0f,
-                                                    0.0f,                  -1.0f / m_glSize.height(),                   0.0f,
-                                                    0.0f,                   m_size.height() / static_cast<float>(m_glSize.height()), 1.0f };
+        m_transformMatrix = { 1.0f / m_glSize.width(), 0.0f,                                                    0.0f,
+                              0.0f,                   -1.0f / m_glSize.height(),                                0.0f,
+                              0.0f,                    m_size.height() / static_cast<float>(m_glSize.height()), 1.0f };
     } else {
-        m_transformMatrix = { 1.0f / m_glSize.width(),  0.0f,                    0.0f,
-                                                    0.0f,                   1.0f / m_glSize.height(),  0.0f,
-                                                    0.0f,                   0.0f,                    1.0f };
+        m_transformMatrix = { 1.0f / m_glSize.width(), 0.0f,                     0.0f,
+                              0.0f,                    1.0f / m_glSize.height(), 0.0f,
+                              0.0f,                    0.0f,                     1.0f };
     }
 }
 

@@ -25,12 +25,7 @@
 #include <framework/core/application.h>
 #include <random>
 
-Protocol::Protocol()
-{
-    m_xteaEncryptionEnabled = false;
-    m_checksumEnabled = false;
-    m_inputMessage = InputMessagePtr(new InputMessage);
-}
+Protocol::Protocol() :m_inputMessage(InputMessagePtr(new InputMessage)) {}
 
 Protocol::~Protocol()
 {
@@ -44,9 +39,7 @@ void Protocol::connect(const std::string_view host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
     m_connection->setErrorCallback([capture0 = asProtocol()](auto&& PH1)
-    {
-        capture0->onError(std::forward<decltype(PH1)>(PH1));
-    });
+    { capture0->onError(std::forward<decltype(PH1)>(PH1));    });
     m_connection->connect(host, port, [capture0 = asProtocol()]{ capture0->onConnect(); });
 }
 
@@ -56,20 +49,6 @@ void Protocol::disconnect()
         m_connection->close();
         m_connection.reset();
     }
-}
-
-bool Protocol::isConnected()
-{
-    if (m_connection && m_connection->isConnected())
-        return true;
-    return false;
-}
-
-bool Protocol::isConnecting()
-{
-    if (m_connection && m_connection->isConnecting())
-        return true;
-    return false;
 }
 
 void Protocol::send(const OutputMessagePtr& outputMessage)
@@ -231,10 +210,7 @@ void Protocol::xteaEncrypt(const OutputMessagePtr& outputMessage)
     }
 }
 
-void Protocol::onConnect()
-{
-    callLuaField("onConnect");
-}
+void Protocol::onConnect() { callLuaField("onConnect"); }
 
 void Protocol::onRecv(const InputMessagePtr& inputMessage)
 {

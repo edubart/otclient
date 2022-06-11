@@ -28,28 +28,7 @@
 
 PainterOGL::PainterOGL()
 {
-    m_glTextureId = 0;
-    m_oldStateIndex = 0;
-    m_color = Color::white;
-    m_opacity = 1.0f;
-    m_compositionMode = CompositionMode_Normal;
-    m_blendEquation = BlendEquation_Add;
-    m_shaderProgram = nullptr;
-    m_texture = nullptr;
-    m_alphaWriting = false;
     setResolution(g_window.getSize());
-}
-
-void PainterOGL::resetState()
-{
-    resetColor();
-    resetOpacity();
-    resetCompositionMode();
-    resetBlendEquation();
-    resetClipRect();
-    resetShaderProgram();
-    resetAlphaWriting();
-    resetTransformMatrix();
 }
 
 void PainterOGL::refreshState()
@@ -62,22 +41,6 @@ void PainterOGL::refreshState()
     updateGlAlphaWriting();
 }
 
-void PainterOGL::saveState()
-{
-    assert(m_oldStateIndex < 10);
-    m_olderStates[m_oldStateIndex] = getCurrentState();
-    ++m_oldStateIndex;
-}
-
-PainterOGL::PainterState PainterOGL::getCurrentState()
-{
-    return PainterState{
-        m_resolution , m_transformMatrix, m_projectionMatrix, m_textureMatrix,
-        m_color, m_opacity, m_compositionMode, m_blendEquation, m_clipRect,
-        nullptr, m_shaderProgram, m_alphaWriting
-    };
-}
-
 void PainterOGL::executeState(const PainterState& state)
 {
     setColor(state.color);
@@ -88,23 +51,6 @@ void PainterOGL::executeState(const PainterState& state)
     setShaderProgram(state.shaderProgram);
     setTransformMatrix(state.transformMatrix);
     if (state.action) state.action();
-}
-
-void PainterOGL::saveAndResetState()
-{
-    saveState();
-    resetState();
-}
-
-void PainterOGL::restoreSavedState()
-{
-    --m_oldStateIndex;
-    const auto& state = m_olderStates[m_oldStateIndex];
-
-    setResolution(state.resolution);
-    setTransformMatrix(state.transformMatrix);
-    setTextureMatrix(state.textureMatrix);
-    executeState(state);
 }
 
 void PainterOGL::clear(const Color& color)
@@ -156,17 +102,14 @@ void PainterOGL::setTexture(Texture* texture)
 
     m_texture = texture;
 
-    uint glTextureId;
-    if (texture) {
-        setTextureMatrix(texture->getTransformMatrix());
-        glTextureId = texture->getId();
-    } else
-        glTextureId = 0;
-
-    if (m_glTextureId != glTextureId) {
-        m_glTextureId = glTextureId;
-        updateGlTexture();
+    if (!m_texture) {
+        m_glTextureId = 0;
+        return;
     }
+
+    setTextureMatrix(texture->getTransformMatrix());
+    m_glTextureId = texture->getId();
+    updateGlTexture();
 }
 
 void PainterOGL::setAlphaWriting(bool enable)
@@ -298,15 +241,15 @@ void PainterOGL::updateGlBlendEquation()
     if (!g_graphics.canUseBlendEquation())
         return;
     if (m_blendEquation == BlendEquation_Add)
-        glBlendEquation(0x8006); // GL_FUNC_ADD
+        glBlendEquation(GL_FUNC_ADD);
     else if (m_blendEquation == BlendEquation_Max)
-        glBlendEquation(0x8008); // GL_MAX
+        glBlendEquation(GL_MAX);
     else if (m_blendEquation == BlendEquation_Min)
-        glBlendEquation(0x8007); // GL_MIN
+        glBlendEquation(GL_MIN);
     else if (m_blendEquation == BlendEquation_Subtract)
-        glBlendEquation(0x800A); // GL_FUNC_SUBTRACT
+        glBlendEquation(GL_FUNC_SUBTRACT);
     else if (m_blendEquation == BlendEquation_Rever_Subtract)
-        glBlendEquation(0x800B); // GL_FUNC_REVERSE_SUBTRACT
+        glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
 }
 
 void PainterOGL::updateGlClipRect()

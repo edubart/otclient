@@ -59,12 +59,11 @@ protected:
     struct DrawMethod
     {
         DrawMethodType type;
-        std::pair<Rect, Rect> rects{};
-        std::tuple<Point, Point, Point> points{};
-        Point dest{};
+        std::pair<Rect, Rect> rects;
+        std::tuple<Point, Point, Point> points;
+        Point dest;
 
         uint16 intValue{ 0 };
-        size_t hash{ 0 };
     };
 
     struct DrawObject
@@ -72,9 +71,11 @@ protected:
         ~DrawObject() { drawMethods.clear(); state.texture = nullptr; action = nullptr; }
 
         Painter::PainterState state;
-        Painter::DrawMode drawMode{ Painter::DrawMode::Triangles };
+        Painter::DrawMode drawMode;
         std::vector<DrawMethod> drawMethods;
+        bool isGroupable{ false };
 
+        std::shared_ptr<CoordsBuffer> coordsBuffer;
         std::function<void()> action{ nullptr };
     };
 
@@ -83,14 +84,15 @@ private:
     {
         ~State() { shaderProgram = nullptr; action = nullptr; }
 
-        Painter::CompositionMode compositionMode;
-        Painter::BlendEquation blendEquation;
+        Painter::CompositionMode compositionMode{ Painter::CompositionMode_Normal };
+        Painter::BlendEquation blendEquation{ Painter::BlendEquation_Add };
         Rect clipRect;
-        float opacity;
-        bool alphaWriting{ true };
-        PainterShaderProgram* shaderProgram;
+        float opacity{ 1.f };
+        PainterShaderProgram* shaderProgram{ nullptr };
         std::function<void()> action{ nullptr };
     };
+
+    float getOpacity(const int pos = -1) { return pos == -1 ? m_state.opacity : m_objects[pos - 1].state.opacity; }
 
     void setCompositionMode(Painter::CompositionMode mode, int pos = -1);
     void setBlendEquation(Painter::BlendEquation equation, int pos = -1);
@@ -98,26 +100,36 @@ private:
     void setOpacity(float opacity, int pos = -1);
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1, const std::function<void()>& action = nullptr);
 
-    float getOpacity(const int pos = -1) { return pos == -1 ? m_state.opacity : m_objects[pos - 1].state.opacity; }
-
-    void resetClipRect() { m_state.clipRect = {}; }
-    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
-    void resetOpacity() { m_state.opacity = 1.f; }
-    void resetShaderProgram() { m_state.shaderProgram = nullptr; }
     void resetState();
-    void startPosition() { m_indexToStartSearching = m_objects.size(); }
+    void resetOpacity() { m_state.opacity = 1.f; }
+    void resetClipRect() { m_state.clipRect = {}; }
+    void resetShaderProgram() { m_state.shaderProgram = nullptr; }
+    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
+    void resetBlendEquation() { m_state.blendEquation = Painter::BlendEquation_Add; }
+
+    void next() { m_drawingPointer.clear(); }
 
     virtual bool hasFrameBuffer() const { return false; };
     virtual PoolFramed* toPoolFramed() { return nullptr; }
 
-    std::vector<DrawObject> m_objects;
+    bool hasModification(bool autoUpdateStatus = false);
+    void updateStatus() { m_status.first = m_status.second; m_refreshTime.restart(); }
 
-    bool m_enabled{ true }, m_forceGrouping{ false };
+    bool m_enabled{ true },
+        m_forceGrouping{ false },
+        m_autoUpdate{ false };
+
     State m_state;
 
-    uint16_t m_indexToStartSearching{ 0 };
+    PoolType m_type{ PoolType::UNKNOW };
 
-    PoolType m_type;
+    Timer m_refreshTime;
+
+    std::pair<size_t, size_t> m_status{ 0,0 };
+
+    std::vector<DrawObject> m_objects, m_cachedObjects;
+
+    std::unordered_map<uint16, size_t> m_drawingPointer;
 
     friend class DrawPool;
 };
@@ -127,30 +139,23 @@ class PoolFramed : public Pool
 public:
     void onBeforeDraw(std::function<void()> f) { m_beforeDraw = std::move(f); }
     void onAfterDraw(std::function<void()> f) { m_afterDraw = std::move(f); }
-    void resize(const Size& size) { m_framebuffer->resize(size); }
     void setSmooth(bool enabled) { m_framebuffer->setSmooth(enabled); }
+    void resize(const Size& size) { m_framebuffer->resize(size); }
     Size getSize() { return m_framebuffer->getSize(); }
 
 protected:
-    bool m_autoUpdate{ false };
+    PoolFramed(const FrameBufferPtr& fb) : m_framebuffer(fb) {};
 
     friend class DrawPool;
-    friend class Pool;
 
 private:
-    void updateStatus() { m_status.first = m_status.second; m_refreshTime.restart(); }
-    void resetCurrentStatus() { m_status.second = 0; }
-    bool hasModification(bool autoUpdateStatus = false);
-    bool hasFrameBuffer() const override { return m_framebuffer != nullptr; }
-
+    bool hasFrameBuffer() const override { return true; }
     PoolFramed* toPoolFramed() override { return this; }
 
     FrameBufferPtr m_framebuffer;
     Rect m_dest, m_src;
 
     std::function<void()> m_beforeDraw, m_afterDraw;
-    std::pair<size_t, size_t> m_status{ 0,0 };
-    Timer m_refreshTime;
 };
 
 extern DrawPool g_drawPool;

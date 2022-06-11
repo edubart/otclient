@@ -40,11 +40,12 @@ void BitmapFont::load(const OTMLNodePtr& fontNode)
     const OTMLNodePtr textureNode = fontNode->at("texture");
     const auto& textureFile = stdext::resolve_path(textureNode->value(), textureNode->source());
     const auto glyphSize = fontNode->valueAt<Size>("glyph-size");
+    const int spaceWidth = fontNode->valueAt("space-width", glyphSize.width());
+
     m_glyphHeight = fontNode->valueAt<int>("height");
     m_yOffset = fontNode->valueAt("y-offset", 0);
     m_firstGlyph = fontNode->valueAt("first-glyph", 32);
     m_glyphSpacing = fontNode->valueAt("spacing", Size(0));
-    const int spaceWidth = fontNode->valueAt("space-width", glyphSize.width());
 
     // load font texture
     m_texture = g_textures.getTexture(textureFile);
@@ -94,12 +95,14 @@ void BitmapFont::drawText(const std::string_view text, const Point& startPos, co
 
 void BitmapFont::drawText(const std::string_view text, const Rect& screenCoords, const Color color, Fw::AlignmentFlag align)
 {
-    for (const auto& rects : getDrawTextCoords(text, screenCoords, align)) {
+    Size textBoxSize;
+    const auto& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
+    for (const auto& rects : getDrawTextCoords(text, textBoxSize, align, screenCoords, glyphsPositions)) {
         g_drawPool.addTexturedRect(rects.first, m_texture, rects.second, color);
     }
 }
 
-std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::string_view text, const Rect& screenCoords, Fw::AlignmentFlag align)
+std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::string_view text, const Size& textBoxSize, Fw::AlignmentFlag align, const Rect& screenCoords, const std::vector<Point>& glyphsPositions)
 {
     std::vector<std::pair<Rect, Rect>> list;
     // prevent glitches from invalid rects
@@ -107,10 +110,6 @@ std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::stri
         return list;
 
     const int textLenght = text.length();
-
-    // map glyphs positions
-    Size textBoxSize;
-    const auto& glyphsPositions = calculateGlyphsPositions(text, align, &textBoxSize);
 
     for (int i = 0; i < textLenght; ++i) {
         const int glyph = static_cast<uchar>(text[i]);
@@ -178,9 +177,7 @@ std::vector<std::pair<Rect, Rect>> BitmapFont::getDrawTextCoords(const std::stri
     return list;
 }
 
-const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string_view text,
-                                                               Fw::AlignmentFlag align,
-                                                               Size* textBoxSize)
+const std::vector<Point>& BitmapFont::calculateGlyphsPositions(const std::string_view text, Fw::AlignmentFlag align, Size* textBoxSize)
 {
     const int textLength = text.length();
     int maxLineWidth = 0;

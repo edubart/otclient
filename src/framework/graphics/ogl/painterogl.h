@@ -38,13 +38,8 @@ public:
     void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
     void resetTexture() { setTexture(nullptr); }
     void resetAlphaWriting() { setAlphaWriting(false); }
-    void resetTransformMatrix() { setTransformMatrix(Matrix3()); }
+    void resetTransformMatrix() { setTransformMatrix({}); }
 
-    void resetState() override;
-    void saveState() override;
-    void saveAndResetState() override;
-    void restoreSavedState() override;
-    PainterState getCurrentState() override;
     void executeState(const PainterState& state) override;
 
     void bind() override { refreshState(); }
@@ -71,14 +66,16 @@ public:
     void pushTransformMatrix() override;
     void popTransformMatrix() override;
 
-    Matrix3 getTransformMatrix() { return m_transformMatrix; }
-    Matrix3 getProjectionMatrix() { return m_projectionMatrix; }
-    Matrix3 getTextureMatrix() { return m_textureMatrix; }
+    Matrix3 getTransformMatrix() override { return m_transformMatrix; }
+    Matrix3 getProjectionMatrix() override { return m_projectionMatrix; }
+    Matrix3 getTextureMatrix() override { return m_textureMatrix; }
     BlendEquation getBlendEquation() { return m_blendEquation; }
     PainterShaderProgram* getShaderProgram() { return m_shaderProgram; }
     bool getAlphaWriting() { return m_alphaWriting; }
 
 protected:
+    Matrix3& getTransformMatrixRef() override { return m_transformMatrix; }
+
     void updateGlTexture();
     void updateGlCompositionMode();
     void updateGlBlendEquation();
@@ -89,16 +86,12 @@ protected:
     CoordsBuffer m_coordsBuffer;
 
     std::vector<Matrix3> m_transformMatrixStack;
-    Matrix3 m_transformMatrix;
-    Matrix3 m_projectionMatrix;
-    Matrix3 m_textureMatrix;
+    Matrix3 m_transformMatrix= DEFAULT_MATRIX_3;
+    Matrix3 m_projectionMatrix= DEFAULT_MATRIX_3;
+    Matrix3 m_textureMatrix= DEFAULT_MATRIX_3;
 
-    BlendEquation m_blendEquation;
-    Texture* m_texture;
-    bool m_alphaWriting;
-
-    PainterState m_olderStates[10];
-    int m_oldStateIndex;
-
-    uint m_glTextureId;
+    BlendEquation m_blendEquation{ BlendEquation_Add };
+    Texture* m_texture{ nullptr };
+    bool m_alphaWriting{ false };
+    uint m_glTextureId{ 0 };
 };

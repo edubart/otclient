@@ -44,7 +44,7 @@
 
 MapView::MapView()
 {
-    const auto mapPool = g_drawPool.get<PoolFramed>(PoolType::MAP);
+    auto* mapPool = g_drawPool.get<PoolFramed>(PoolType::MAP);
 
     mapPool->onBeforeDraw([&] {
         const Position cameraPosition = getCameraPosition();
@@ -99,6 +99,7 @@ MapView::~MapView()
 #ifndef NDEBUG
     assert(!g_app.isTerminated());
 #endif
+    m_lightView = nullptr;
 }
 
 void MapView::draw(const Rect& rect)
@@ -147,20 +148,17 @@ void MapView::drawFloor()
 
             const auto& map = m_cachedVisibleTiles[z];
 
-            g_drawPool.startPosition();
-            {
-                for (const auto& tile : map.grounds) {
-                    if (!tile->canRender(m_drawViewportEdge, cameraPosition, m_viewport, lightView))
-                        continue;
+            for (const auto& tile : map.grounds) {
+                if (!tile->canRender(m_drawViewportEdge, cameraPosition, m_viewport, lightView))
+                    continue;
 
-                    if (alwaysTransparent)
-                        g_drawPool.setOpacity(tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true) ? .16 : .7);
+                if (alwaysTransparent)
+                    g_drawPool.setOpacity(tile->getPosition().isInRange(_camera, TRANSPARENT_FLOOR_VIEW_RANGE, TRANSPARENT_FLOOR_VIEW_RANGE, true) ? .16 : .7);
 
-                    tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
+                tile->drawGround(transformPositionTo2D(tile->getPosition(), cameraPosition), m_scaleFactor, lightView);
 
-                    if (alwaysTransparent)
-                        g_drawPool.resetOpacity();
-                }
+                if (alwaysTransparent)
+                    g_drawPool.resetOpacity();
             }
 
             for (const auto& tile : map.surfaces) {
@@ -181,12 +179,8 @@ void MapView::drawFloor()
                     effect->drawEffect(transformPositionTo2D(effect->getPosition(), cameraPosition), m_scaleFactor, lightView);
                 }
             }
-
-            g_drawPool.startPosition();
-            {
-                for (const MissilePtr& missile : g_map.getFloorMissiles(z))
-                    missile->drawMissile(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
-            }
+            for (const MissilePtr& missile : g_map.getFloorMissiles(z))
+                missile->drawMissile(transformPositionTo2D(missile->getPosition(), cameraPosition), m_scaleFactor, lightView);
 
             if (m_shadowFloorIntensity > 0 && z == cameraPosition.z + 1) {
                 g_drawPool.addFilledRect(m_rectDimension, Color::black);
@@ -215,6 +209,8 @@ void MapView::drawFloor()
 
             if (canFloorFade())
                 g_drawPool.resetOpacity();
+
+            g_drawPool.next();
         }
 
         if (m_rectCache.rect.contains(g_window.getMousePosition())) {
@@ -406,9 +402,9 @@ void MapView::updateVisibleTilesCache()
                     if (!tile->isDrawable())
                         continue;
 
-                    if (m_mustUpdateVisibleCreaturesCache) {
+                    if (m_mustUpdateVisibleCreaturesCache && isInRange(tilePos)) {
                         const auto& tileCreatures = tile->getCreatures();
-                        if (isInRange(tilePos) && !tileCreatures.empty()) {
+                        if (!tileCreatures.empty()) {
                             m_visibleCreatures.insert(m_visibleCreatures.end(), tileCreatures.rbegin(), tileCreatures.rend());
                         }
                     }
@@ -828,7 +824,7 @@ void MapView::setShader(const PainterShaderProgramPtr& shader, float fadein, flo
 
 void MapView::setDrawLights(bool enable)
 {
-    const auto& pool = g_drawPool.get<PoolFramed>(PoolType::LIGHT);
+    auto* pool = g_drawPool.get<PoolFramed>(PoolType::LIGHT);
     if (pool) pool->setEnable(enable);
 
     if (enable == m_drawLights) return;

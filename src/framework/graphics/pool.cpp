@@ -29,11 +29,8 @@ void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos
         return;
     }
 
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, mode);
-    }
-
     m_objects[pos - 1].state.compositionMode = mode;
+    stdext::hash_combine(m_status.second, mode);
 }
 
 void Pool::setBlendEquation(Painter::BlendEquation equation, const int pos)
@@ -43,11 +40,8 @@ void Pool::setBlendEquation(Painter::BlendEquation equation, const int pos)
         return;
     }
 
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, equation);
-    }
-
     m_objects[pos - 1].state.blendEquation = equation;
+    stdext::hash_combine(m_status.second, equation);
 }
 
 void Pool::setClipRect(const Rect& clipRect, const int pos)
@@ -57,11 +51,8 @@ void Pool::setClipRect(const Rect& clipRect, const int pos)
         return;
     }
 
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, clipRect.hash());
-    }
-
     m_objects[pos - 1].state.clipRect = clipRect;
+    stdext::hash_combine(m_status.second, clipRect.hash());
 }
 
 void Pool::setOpacity(const float opacity, const int pos)
@@ -71,11 +62,8 @@ void Pool::setOpacity(const float opacity, const int pos)
         return;
     }
 
-    if (hasFrameBuffer()) {
-        stdext::hash_combine(toPoolFramed()->m_status.second, opacity);
-    }
-
     m_objects[pos - 1].state.opacity = opacity;
+    stdext::hash_combine(m_status.second, opacity);
 }
 
 void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos, const std::function<void()>& action)
@@ -88,8 +76,8 @@ void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const 
         return;
     }
 
-    if (hasFrameBuffer() && shader) {
-        toPoolFramed()->m_autoUpdate = true;
+    if (shader) {
+        m_autoUpdate = true;
     }
 
     auto& o = m_objects[pos - 1];
@@ -99,18 +87,18 @@ void Pool::setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const 
 
 void Pool::resetState()
 {
-    resetClipRect();
-    resetCompositionMode();
     resetOpacity();
+    resetClipRect();
     resetShaderProgram();
-    m_indexToStartSearching = 0;
+    resetBlendEquation();
+    resetCompositionMode();
 
-    if (hasFrameBuffer()) {
-        toPoolFramed()->m_autoUpdate = false;
-    }
+    m_autoUpdate = false;
+    m_status.second = 0;
+    m_drawingPointer.clear();
 }
 
-bool PoolFramed::hasModification(const bool autoUpdateStatus)
+bool Pool::hasModification(const bool autoUpdateStatus)
 {
     const bool hasModification = m_status.first != m_status.second || (m_autoUpdate && m_refreshTime.ticksElapsed() > 50);
 

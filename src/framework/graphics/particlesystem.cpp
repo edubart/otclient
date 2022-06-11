@@ -25,11 +25,7 @@
 #include "particleaffector.h"
 #include <framework/core/clock.h>
 
-ParticleSystem::ParticleSystem()
-{
-    m_finished = false;
-    m_lastUpdateTime = g_clock.seconds();
-}
+ParticleSystem::ParticleSystem() :m_lastUpdateTime(g_clock.seconds()) {}
 
 void ParticleSystem::load(const OTMLNodePtr& node)
 {

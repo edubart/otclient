@@ -87,8 +87,6 @@ private:
     Timer m_foregroundRefreshTime;
 
     AdaptativeFrameCounter m_frameCounter;
-
-    PoolFramedPtr m_foregroundFramed;
 };
 
 extern GraphicalApplication g_app;

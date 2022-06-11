@@ -45,8 +45,8 @@ public:
 
     void release();
     void resize(const Size& size);
-    void bind();
-    void draw(const Rect& dest, const Rect& src);
+    void bind(const Rect& dest, const Rect& src);
+    void draw();
 
     void setSmooth(bool enabled) { m_smooth = enabled; m_texture = nullptr; }
     void setBackuping(bool enabled) { m_backuping = enabled; }
@@ -63,9 +63,10 @@ public:
 protected:
     FrameBuffer(bool useAlphaWriting);
 
+    Color m_colorClear{ Color::alpha };
+
     friend class FrameBufferManager;
-    friend class Pool;
-    friend class PoolFramed;
+    friend class DrawPool;
 
 private:
     void internalCreate();
@@ -76,7 +77,7 @@ private:
 
     TexturePtr m_texture, m_screenBackup;
 
-    Size m_oldViewportSize;
+    Size m_bckResolution;
 
     uint32 m_fbo, m_prevBoundFbo;
 
@@ -88,5 +89,5 @@ private:
         m_disableBlend{ false };
 
     Rect m_dest, m_src;
-    CoordsBuffer m_coordsBuffer;
+    CoordsBuffer m_coordsBuffer, m_screenCoordsBuffer;
 };

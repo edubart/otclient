@@ -36,15 +36,11 @@ Tile::Tile(const Position& position) : m_position(position), m_positionsAround(m
 
 void Tile::drawThing(const ThingPtr& thing, const Point& dest, float scaleFactor, bool animate, LightView* lightView)
 {
-    if (thing->isEffect()) {
-        thing->static_self_cast<Effect>()->drawEffect(dest, scaleFactor, lightView);
-    } else {
-        thing->draw(dest, scaleFactor, animate, m_highlight, TextureType::NONE, Color::white, lightView);
+    thing->draw(dest, scaleFactor, animate, m_highlight, TextureType::NONE, Color::white, lightView);
 
-        m_drawElevation += thing->getElevation();
-        if (m_drawElevation > MAX_ELEVATION)
-            m_drawElevation = MAX_ELEVATION;
-    }
+    m_drawElevation += thing->getElevation();
+    if (m_drawElevation > MAX_ELEVATION)
+        m_drawElevation = MAX_ELEVATION;
 }
 
 void Tile::drawGround(const Point& dest, float scaleFactor, LightView* lightView)
@@ -88,8 +84,8 @@ void Tile::drawCreature(const Point& dest, float scaleFactor, LightView* lightVi
             if (!thing->isCreature() || thing->static_self_cast<Creature>()->isWalking()) continue;
 
             drawThing(thing, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
-        }
     }
+}
 
     for (const auto& creature : m_walkingCreatures) {
         drawThing(creature, Point(
@@ -157,7 +153,7 @@ void Tile::drawTop(const Point& dest, float scaleFactor, LightView* lightView)
 {
     if (!g_app.isDrawingEffectsOnTop()) {
         for (const auto& effect : m_effects) {
-            drawThing(effect, dest - m_drawElevation * scaleFactor, scaleFactor, true, lightView);
+            effect->drawEffect(dest - m_drawElevation * scaleFactor, scaleFactor, lightView);
         }
     }
 
@@ -787,8 +783,7 @@ void Tile::select(const bool noFilter)
     m_highlight.fadeLevel = HIGHTLIGHT_FADE_START;
 
     const auto self = this->static_self_cast<Tile>();
-    m_highlight.listeningEvent = g_dispatcher.cycleEvent([self]
-    {
+    m_highlight.listeningEvent = g_dispatcher.cycleEvent([self] {
         auto& highLight = self->m_highlight;
 
         highLight.fadeLevel += 10 * (highLight.invertedColorSelection ? 1 : -1);

@@ -23,15 +23,6 @@
 #include "particleaffector.h"
 #include "particle.h"
 
-ParticleAffector::ParticleAffector()
-{
-    m_active = false;
-    m_finished = false;
-    m_delay = 0;
-    m_duration = 0;
-    m_elapsedTime = 0;
-}
-
 void ParticleAffector::update(float elapsedTime)
 {
     if (m_duration >= 0 && m_elapsedTime >= m_duration + m_delay) {

@@ -36,8 +36,6 @@ public:
         MAX_HEADER_SIZE = 8
     };
 
-    OutputMessage();
-
     void reset();
 
     void setBuffer(const std::string_view buffer);
@@ -72,8 +70,8 @@ private:
     bool canWrite(int bytes);
     void checkWrite(int bytes);
 
-    uint16 m_headerPos;
-    uint16 m_writePos;
-    uint16 m_messageSize;
+    uint16 m_headerPos{ MAX_HEADER_SIZE };
+    uint16 m_writePos{ MAX_HEADER_SIZE };
+    uint16 m_messageSize{ 0 };
     uint8 m_buffer[BUFFER_MAXSIZE];
 };

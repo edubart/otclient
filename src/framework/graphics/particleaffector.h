@@ -28,8 +28,6 @@
 class ParticleAffector : public stdext::shared_object
 {
 public:
-    ParticleAffector();
-
     void update(float elapsedTime);
     virtual void load(const OTMLNodePtr& node);
     virtual void updateParticle(const ParticlePtr&, float) {}
@@ -37,9 +35,8 @@ public:
     bool hasFinished() { return m_finished; }
 
 protected:
-    bool m_finished, m_active;
-    float m_delay, m_duration;
-    float m_elapsedTime;
+    bool m_finished{ false }, m_active{ false };
+    float m_delay{ 0 }, m_duration{ 0 }, m_elapsedTime{ 0 };
 };
 
 class GravityAffector : public ParticleAffector

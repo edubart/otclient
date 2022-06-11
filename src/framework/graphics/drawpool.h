@@ -32,7 +32,7 @@ class DrawPool
 {
 public:
     template <class T>
-    std::shared_ptr<T> get(const PoolType type) { return std::static_pointer_cast<T>(m_pools[static_cast<uint8>(type)]); }
+    T* get(const PoolType type) { return static_cast<T*>(m_pools[static_cast<uint8>(type)]); }
 
     void use(PoolType type);
     void use(PoolType type, const Rect& dest, const Rect& src, Color colorClear = Color::alpha);
@@ -46,26 +46,24 @@ public:
     void addBoundingRect(const Rect& dest, Color color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
-    void drawTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src);
-
-    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
-    void setBlendEquation(Painter::BlendEquation equation, const int pos = -1) { m_currentPool->setBlendEquation(equation, pos); }
-    void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
     void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
+    void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
+    void setBlendEquation(Painter::BlendEquation equation, const int pos = -1) { m_currentPool->setBlendEquation(equation, pos); }
+    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1, const std::function<void()>& action = nullptr) { m_currentPool->setShaderProgram(shaderProgram, pos, action); }
 
     float getOpacity(const int pos = -1) { return m_currentPool->getOpacity(pos); }
 
-    void resetClipRect() { m_currentPool->resetClipRect(); }
-    void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
-    void resetOpacity() { m_currentPool->resetOpacity(); }
     void resetState() { m_currentPool->resetState(); }
+    void resetOpacity() { m_currentPool->resetOpacity(); }
+    void resetClipRect() { m_currentPool->resetClipRect(); }
     void resetShaderProgram() { m_currentPool->resetShaderProgram(); }
+    void resetCompositionMode() { m_currentPool->resetCompositionMode(); }
 
     void forceGrouping(const bool force) { m_currentPool->m_forceGrouping = force; }
     bool isForcingGrouping() const { return m_currentPool->m_forceGrouping; }
 
-    void startPosition() { m_currentPool->startPosition(); }
+    void next() { m_currentPool->next(); }
 
     size_t size() { return m_currentPool->m_objects.size(); }
 
@@ -75,17 +73,17 @@ private:
     void terminate();
     void createPools();
     void drawObject(Pool::DrawObject& obj);
-    void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method);
-    void add(const Painter::PainterState& state, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method, size_t& stateHash);
+    void add(const Color& color, const TexturePtr& texture, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
 
-    PoolFramedPtr poolFramed() { return std::dynamic_pointer_cast<PoolFramed>(m_currentPool); }
-
-    Painter::PainterState generateState(const Color& color, const TexturePtr& texture = nullptr);
+    PoolFramed* poolFramed() { return m_currentPool->toPoolFramed(); }
 
     CoordsBuffer m_coordsBuffer;
-    std::array<PoolPtr, static_cast<uint8>(PoolType::UNKNOW) + 1> m_pools;
+    std::array<Pool*, static_cast<uint8>(PoolType::UNKNOW) + 1> m_pools{};
 
-    PoolPtr m_currentPool, n_unknowPool;
+    Pool* m_currentPool{ nullptr };
+
+    Painter::PainterState NULL_STATE;
 
     friend class GraphicalApplication;
 };

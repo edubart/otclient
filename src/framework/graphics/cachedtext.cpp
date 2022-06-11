@@ -21,45 +21,66 @@
  */
 
 #include "cachedtext.h"
-#include "bitmapfont.h"
 #include "fontmanager.h"
 #include <framework/graphics/drawpool.h>
 
-CachedText::CachedText()
-{
-    m_font = g_fonts.getDefaultFont();
-    m_align = Fw::AlignCenter;
-}
+CachedText::CachedText() : m_font(g_fonts.getDefaultFont()), m_align(Fw::AlignCenter) {}
 
 void CachedText::draw(const Rect& rect, const Color color)
 {
     if (!m_font)
         return;
 
-    if (m_textMustRecache || m_textCachedScreenCoords != rect) {
-        m_textMustRecache = false;
-        m_textCachedScreenCoords = rect;
+    if (m_textScreenCoords != rect) {
+        m_textScreenCoords = rect;
 
-        m_textCoordsCache.clear();
-        m_textCoordsCache = m_font->getDrawTextCoords(m_text, rect, m_align);
+        m_TextureCoords.clear();
+        m_TextureCoords = m_font->getDrawTextCoords(m_text, m_textSize, m_align, rect, m_glyphsPositions);
     }
 
-    for (const auto& fontRect : m_textCoordsCache)
-        g_drawPool.addTexturedRect(fontRect.first, m_font->getTexture(), fontRect.second, color);
+    for (const auto& [screenCoords, textureCoords] : m_TextureCoords)
+        g_drawPool.addTexturedRect(screenCoords, m_font->getTexture(), textureCoords, color);
 }
 
 void CachedText::update()
 {
-    if (m_font)
-        m_textSize = m_font->calculateTextRectSize(m_text);
+    if (m_font) {
+        m_glyphsPositions = m_font->calculateGlyphsPositions(m_text, Fw::AlignTopLeft, &m_textSize);
+    }
 
-    m_textMustRecache = true;
+    m_textScreenCoords = {};
 }
 
 void CachedText::wrapText(int maxWidth)
 {
-    if (m_font) {
-        m_text = m_font->wrapText(m_text, maxWidth);
-        update();
-    }
+    if (!m_font)
+        return;
+
+    m_text = m_font->wrapText(m_text, maxWidth);
+    update();
+}
+
+void CachedText::setFont(const BitmapFontPtr& font)
+{
+    if (m_font == font)
+        return;
+
+    m_font = font;
+    update();
+}
+void CachedText::setText(const std::string_view text)
+{
+    if (m_text == text)
+        return;
+
+    m_text = text;
+    update();
+}
+void CachedText::setAlign(const Fw::AlignmentFlag align)
+{
+    if (m_align == align)
+        return;
+
+    m_align = align;
+    update();
 }

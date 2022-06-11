@@ -65,6 +65,3 @@ using ParticleEffectPtr = stdext::shared_object_ptr<ParticleEffect>;
 using ParticleEffectTypePtr = stdext::shared_object_ptr<ParticleEffectType>;
 using SpriteSheetPtr = stdext::shared_object_ptr<SpriteSheet>;
 using ShaderList = std::vector<ShaderPtr>;
-
-using PoolPtr = std::shared_ptr<Pool>;
-using PoolFramedPtr = std::shared_ptr<PoolFramed>;

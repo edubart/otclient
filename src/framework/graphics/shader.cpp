@@ -26,9 +26,8 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 
-Shader::Shader(ShaderType shaderType)
+Shader::Shader(ShaderType shaderType) : m_shaderType(shaderType)
 {
-    m_shaderType = shaderType;
     switch (shaderType) {
         case Vertex:
             m_shaderId = glCreateShader(GL_VERTEX_SHADER);

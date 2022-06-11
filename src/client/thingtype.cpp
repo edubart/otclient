@@ -722,9 +722,8 @@ void ThingType::draw(const Point& dest, float scaleFactor, int layer, int xPatte
     if (m_opacity < 1.0f)
         color = Color(1.0f, 1.0f, 1.0f, m_opacity);
 
-    if (getCategory() == ThingCategoryMissile || isSingleGround()) {
-        g_drawPool.forceGrouping(true);
-    }
+    g_drawPool.forceGrouping(getCategory() == ThingCategoryMissile || isSingleGround() ||
+                             g_app.isDrawingEffectsOnTop() && getCategory() == ThingCategoryEffect);
 
     g_drawPool.addTexturedRect(screenRect, texture, textureRect, color, dest);
     g_drawPool.forceGrouping(false);

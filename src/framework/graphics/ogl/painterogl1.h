@@ -42,8 +42,6 @@ public:
         MatrixTransform = 0x1700 // GL_MODELVIEW
     };
 
-    PainterOGL1();
-
     void bind() override;
     void unbind() override;
 
@@ -68,7 +66,7 @@ private:
     void updateGlTextureMatrix();
     void updateGlTextureState();
 
-    GLenum m_matrixMode;
+    GLenum m_matrixMode{ GL_PROJECTION };
     bool m_textureEnabled{ false };
 };
 

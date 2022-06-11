@@ -40,6 +40,8 @@ public:
     bool isIdentity() const;
     void fill(T value);
 
+    size_t hash() const { return m_hash; }
+
     Matrix<M, N, T> transposed() const;
     std::enable_if_t<N == M> transpose() { *this = transposed(); }
 
@@ -61,8 +63,19 @@ public:
     bool operator==(const Matrix<N, M, T>& other) const;
     bool operator!=(const Matrix<N, M, T>& other) const;
 
+protected:
+    Matrix<N, M, T>& generateHash()
+    {
+        m_hash = 0;
+        for (int i = -1; ++i < N;)
+            for (int j = -1; ++j < M;)
+                stdext::hash_combine(m_hash, m[i][j]);
+        return *this;
+    }
+
 private:
     T m[N][M];
+    size_t m_hash{ 0 };
 };
 
 template<int N, int M, typename T>
@@ -76,6 +89,7 @@ void Matrix<N, M, T>::setIdentity()
                 m[i][j] = 0.0f;
         }
     }
+    generateHash();
 }
 
 template<int N, int M, typename T>
@@ -94,6 +108,7 @@ void Matrix<N, M, T>::fill(T value)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] = value;
+    generateHash();
 }
 
 template<int N, int M, typename T>
@@ -103,7 +118,7 @@ Matrix<M, N, T> Matrix<N, M, T>::transposed() const
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             result.m[j][i] = m[i][j];
-    return result;
+    return result.generateHash();
 }
 
 template<int N, int M, typename T>
@@ -114,7 +129,7 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator=(const std::initializer_list<U>& valu
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] = *(it++);
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
@@ -124,7 +139,7 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator=(const U* values)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] = values[i * N + j];
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
@@ -133,7 +148,7 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator+=(const Matrix<N, M, T>& other)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] += other.m[i][j];
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
@@ -142,7 +157,7 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator-=(const Matrix<N, M, T>& other)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] -= other.m[i][j];
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
@@ -151,26 +166,23 @@ Matrix<N, M, T>& Matrix<N, M, T>::operator*=(T factor)
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] *= factor;
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
 Matrix<N, M, T>& Matrix<N, M, T>::operator/=(T divisor)
 {
+    m_hash = 0;
     for (int i = 0; i < N; ++i)
         for (int j = 0; j < M; ++j)
             m[i][j] /= divisor;
-    return *this;
+    return generateHash();
 }
 
 template<int N, int M, typename T>
 bool Matrix<N, M, T>::operator==(const Matrix<N, M, T>& other) const
 {
-    for (int i = 0; i < N; ++i)
-        for (int j = 0; j < M; ++j)
-            if (m[i][j] != other.m[i][j])
-                return false;
-    return true;
+    return hash() == other.hash();
 }
 
 template<int N, int M, typename T>
@@ -202,17 +214,6 @@ std::istream& operator>>(std::istream& in, Matrix<N, M, T>& mat)
     return in;
 }
 
-// faster comparing for 3x3 matrixes
-template<>
-inline bool Matrix<3, 3, float>::operator==(const Matrix<3, 3, float>& other) const
-{
-    return m[0][0] == other.m[0][0] && m[1][1] == other.m[1][1] &&
-        m[2][1] == other.m[2][1] && m[2][0] == other.m[2][0] &&
-        m[1][2] == other.m[1][2] && m[0][2] == other.m[0][2] &&
-        m[1][0] == other.m[1][0] && m[0][1] == other.m[0][1] &&
-        m[2][2] == other.m[2][2];
-}
-
 template<int M, int N, int P, int Q, typename T>
 Matrix<M, Q, T> operator*(const Matrix<M, N, T>& a, const Matrix<P, Q, T>& b)
 {
@@ -230,16 +231,16 @@ Matrix<M, Q, T> operator*(const Matrix<M, N, T>& a, const Matrix<P, Q, T>& b)
 }
 
 template<int M, int N, typename T>
-Matrix<M, N, T> operator+(const Matrix<M, N, T>& a, const Matrix<M, N, T>& b) { Matrix<M, N, T> c(a); c += b; return c; }
+Matrix<M, N, T> operator+(const Matrix<M, N, T>& a, const Matrix<M, N, T>& b) { Matrix<M, N, T> c(a); c += b; return c.generateHash(); }
 
 template<int M, int N, typename T>
-Matrix<M, N, T> operator-(const Matrix<M, N, T>& a, const Matrix<M, N, T>& b) { Matrix<M, N, T> c(a); c -= b; return c; }
+Matrix<M, N, T> operator-(const Matrix<M, N, T>& a, const Matrix<M, N, T>& b) { Matrix<M, N, T> c(a); c -= b; return c.generateHash(); }
 
 template<int M, int N, typename T>
-Matrix<M, N, T> operator*(const Matrix<M, N, T>& a, float b) { Matrix<M, N, T> c(a); c *= b; return c; }
+Matrix<M, N, T> operator*(const Matrix<M, N, T>& a, float b) { Matrix<M, N, T> c(a); c *= b; return c.generateHash(); }
 
 template<int M, int N, typename T>
-Matrix<M, N, T> operator/(const Matrix<M, N, T>& a, float b) { Matrix<M, N, T> c = a; c /= b; return c; }
+Matrix<M, N, T> operator/(const Matrix<M, N, T>& a, float b) { Matrix<M, N, T> c = a; c /= b; return c.generateHash(); }
 
 using Matrix4x4 = Matrix<4, 4>;
 using Matrix3x3 = Matrix<3, 3>;
@@ -248,3 +249,7 @@ using Matrix2x2 = Matrix<2, 2>;
 using Matrix4 = Matrix4x4;
 using Matrix3 = Matrix3x3;
 using Matrix2 = Matrix2x2;
+
+const static Matrix4 DEFAULT_MATRIX_4;
+const static Matrix3 DEFAULT_MATRIX_3;
+const static Matrix2 DEFAULT_MATRIX_2;

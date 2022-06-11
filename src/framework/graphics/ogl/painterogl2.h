@@ -46,7 +46,7 @@ public:
     bool hasShaders() override { return true; }
 
 private:
-    PainterShaderProgram* m_drawProgram;
+    PainterShaderProgram* m_drawProgram{ nullptr };
     PainterShaderProgramPtr m_drawTexturedProgram;
     PainterShaderProgramPtr m_drawSolidColorProgram;
 };

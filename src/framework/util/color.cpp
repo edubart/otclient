@@ -48,6 +48,12 @@ Color::Color(const std::string_view coltext)
 {
     std::stringstream ss(std::string{ coltext });
     ss >> *this;
+    update();
+}
+
+void Color::update()
+{
+    m_rgba = static_cast<uint32>(a() | b() << 8 | g() << 16 | r() << 24);
 }
 
 std::ostream& operator<<(std::ostream& out, const Color& color)

@@ -95,7 +95,6 @@ void GraphicalApplication::terminate()
     g_mouse.terminate();
 
     // terminate graphics
-    m_foregroundFramed = nullptr;
     g_drawPool.terminate();
     g_graphics.terminate();
     g_window.terminate();

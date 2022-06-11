@@ -37,26 +37,9 @@ public:
     std::string getName() { return pName; }
 
 protected:
+
     // name
     std::string pName;
-
-    // size
-    Size pStartSize, pFinalSize;
-
-    // initial position related to emitter position
-    float pMinPositionRadius, pMaxPositionRadius;
-    float pMinPositionAngle, pMaxPositionAngle;
-
-    // initial velocity
-    float pMinVelocity, pMaxVelocity;
-    float pMinVelocityAngle, pMaxVelocityAngle;
-
-    // initial acceleration
-    float pMinAcceleration, pMaxAcceleration;
-    float pMinAccelerationAngle, pMaxAccelerationAngle;
-
-    // duration
-    float pMinDuration, pMaxDuration, pIgnorePhysicsAfter;
 
     // visual ralated
     std::vector<Color> pColors;
@@ -64,6 +47,25 @@ protected:
     TexturePtr pTexture;
     ParticleTypePtr particleType;
     Painter::CompositionMode pCompositionMode;
+
+    // particles default configuration. (make them reasonable for user detect missing properties on scripts)
+    // size
+    Size pStartSize{ 32 }, pFinalSize{ 32 };
+
+    // initial position related to emitter position
+    float pMinPositionRadius{ 0 }, pMaxPositionRadius{ 3 };
+    float pMinPositionAngle{ 0 }, pMaxPositionAngle{ 360 };
+
+    // initial velocity
+    float pMinVelocity{ 32 }, pMaxVelocity{ 64 };
+    float pMinVelocityAngle{ 0 }, pMaxVelocityAngle{ 360 };
+
+    // initial acceleration
+    float pMinAcceleration{ 32 }, pMaxAcceleration{ 64 };
+    float pMinAccelerationAngle{ 0 }, pMaxAccelerationAngle{ 360 };
+
+    // duration
+    float pMinDuration{ 0 }, pMaxDuration{ 10 }, pIgnorePhysicsAfter{ -1 };
 
     friend class ParticleEmitter;
 };

@@ -28,12 +28,6 @@
 
 PainterOGL1* g_painterOGL1 = nullptr;
 
-PainterOGL1::PainterOGL1()
-{
-    m_matrixMode = GL_PROJECTION;
-    resetState();
-}
-
 void PainterOGL1::refreshState()
 {
     PainterOGL::refreshState();
@@ -181,7 +175,7 @@ void PainterOGL1::updateGlTransformMatrix()
     const float glTransformMatrix[] = {
             m_transformMatrix(1,1), m_transformMatrix(1,2),                    0.0f, m_transformMatrix(1,3),
             m_transformMatrix(2,1), m_transformMatrix(2,2),                    0.0f, m_transformMatrix(2,3),
-                                                0.0f,                   0.0f,                    1.0f,                   0.0f,
+                              0.0f,                   0.0f,                    1.0f,                   0.0f,
             m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
     };
 
@@ -194,7 +188,7 @@ void PainterOGL1::updateGlProjectionMatrix()
     const float glProjectionMatrix[] = {
             m_projectionMatrix(1,1), m_projectionMatrix(1,2),                    0.0f, m_projectionMatrix(1,3),
             m_projectionMatrix(2,1), m_projectionMatrix(2,2),                    0.0f, m_projectionMatrix(2,3),
-                                                 0.0f,                    0.0f,                    1.0f,                    0.0f,
+                               0.0f,                    0.0f,                    1.0f,                    0.0f,
             m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
     };
 
@@ -207,7 +201,7 @@ void PainterOGL1::updateGlTextureMatrix()
     const float glTextureMatrix[] = {
             m_textureMatrix(1,1), m_textureMatrix(1,2),             0.0f,                 0.0f,
             m_textureMatrix(2,1), m_textureMatrix(2,2),             0.0f,                 0.0f,
-                                            0.0f,                 0.0f,             1.0f,                 0.0f,
+                            0.0f,                 0.0f,             1.0f,                 0.0f,
             m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
     };
 

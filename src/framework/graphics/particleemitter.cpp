@@ -25,19 +25,6 @@
 #include "particlemanager.h"
 #include "particlesystem.h"
 
-ParticleEmitter::ParticleEmitter()
-{
-    m_position = {};
-    m_duration = -1;
-    m_delay = 0;
-    m_burstRate = 1;
-    m_burstCount = 32;
-    m_currentBurst = 0;
-    m_elapsedTime = 0;
-    m_finished = false;
-    m_active = false;
-}
-
 void ParticleEmitter::load(const OTMLNodePtr& node)
 {
     for (const OTMLNodePtr& childNode : node->children()) {

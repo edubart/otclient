@@ -28,11 +28,8 @@
 
 #include "framework/stdext/math.h"
 
-Image::Image(const Size& size, int bpp, uint8* pixels)
+Image::Image(const Size& size, int bpp, uint8* pixels) : m_size(size), m_bpp(bpp)
 {
-    m_size = size;
-    m_bpp = bpp;
-
     m_pixels.resize(size.area() * bpp, 0);
     if (pixels)
         memcpy(&m_pixels[0], pixels, m_pixels.size());
@@ -49,6 +46,7 @@ ImagePtr Image::load(std::string_view file)
     } catch (stdext::exception& e) {
         g_logger.error(stdext::format("unable to load image '%s': %s", path, e.what()));
     }
+
     return image;
 }
 
@@ -257,7 +255,6 @@ void Image::reverseChannels()
 
 /*
  *
-
 void Texture::generateSoftwareMipmaps(std::vector<uint8> inPixels)
 {
         bind();

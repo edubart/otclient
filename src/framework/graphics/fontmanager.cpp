@@ -28,10 +28,7 @@
 
 FontManager g_fonts;
 
-FontManager::FontManager()
-{
-    m_defaultFont = BitmapFontPtr(new BitmapFont("emptyfont"));
-}
+FontManager::FontManager() : m_defaultFont(BitmapFontPtr(new BitmapFont("emptyfont"))) {}
 
 void FontManager::terminate()
 {

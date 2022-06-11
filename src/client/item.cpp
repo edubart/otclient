@@ -254,7 +254,10 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
     if (!isValid())
         return;
 
-    if (isStackable() && getNumPatternX() == 4 && getNumPatternY() == 2) {
+    const int numPatternX = getNumPatternX(),
+        numPatternY = getNumPatternY();
+
+    if (isStackable() && numPatternX == 4 && numPatternY == 2) {
         if (m_countOrSubType <= 0) {
             xPattern = 0;
             yPattern = 0;
@@ -278,9 +281,9 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         const TilePtr& tile = getTile();
         if (tile) {
             if (tile->mustHookSouth())
-                xPattern = getNumPatternX() >= 2 ? 1 : 0;
+                xPattern = numPatternX >= 2 ? 1 : 0;
             else if (tile->mustHookEast())
-                xPattern = getNumPatternX() >= 3 ? 2 : 0;
+                xPattern = numPatternX >= 3 ? 2 : 0;
         }
     } else if (isSplash() || isFluidContainer()) {
         int color = Otc::FluidTransparent;
@@ -347,11 +350,11 @@ void Item::calculatePatterns(int& xPattern, int& yPattern, int& zPattern)
         } else
             color = m_countOrSubType;
 
-        xPattern = (color % 4) % getNumPatternX();
-        yPattern = (color / 4) % getNumPatternY();
+        xPattern = (color % 4) % numPatternX;
+        yPattern = (color / 4) % numPatternY;
     } else {
-        xPattern = m_position.x % getNumPatternX();
-        yPattern = m_position.y % getNumPatternY();
+        xPattern = m_position.x % numPatternX;
+        yPattern = m_position.y % numPatternY;
         zPattern = m_position.z % getNumPatternZ();
     }
 }

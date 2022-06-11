@@ -24,8 +24,7 @@
 
 #include "particlesystem.h"
 
-ParticleEffectType::ParticleEffectType()
-= default;
+ParticleEffectType::ParticleEffectType() = default;
 
 void ParticleEffectType::load(const OTMLNodePtr& node)
 {

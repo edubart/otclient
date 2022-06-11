@@ -35,8 +35,6 @@ public:
         MAX_HEADER_SIZE = 8
     };
 
-    InputMessage();
-
     void setBuffer(const std::string_view buffer);
     std::string_view getBuffer() { return std::string_view{ (char*)m_buffer + m_headerPos, m_messageSize }; }
 
@@ -98,8 +96,8 @@ private:
     void checkRead(int bytes);
     void checkWrite(int bytes);
 
-    uint16 m_headerPos;
-    uint16 m_readPos;
-    uint16 m_messageSize;
+    uint16 m_headerPos{ MAX_HEADER_SIZE };
+    uint16 m_readPos{ MAX_HEADER_SIZE };
+    uint16 m_messageSize{ 0 };
     uint8 m_buffer[BUFFER_MAXSIZE];
 };

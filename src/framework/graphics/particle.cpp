@@ -24,33 +24,23 @@
 
 #include "drawpool.h"
 
-Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity, const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors, const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode, TexturePtr texture)
-{
-    m_colors = colors;
-    m_colorsStops = colorsStops;
-
-    m_position = PointF(pos.x, pos.y);
-    m_startSize = startSize;
-    m_finalSize = finalSize;
-    m_velocity = velocity;
-    m_acceleration = acceleration;
-
-    m_compositionMode = compositionMode;
-    m_texture = texture;
-    m_duration = duration;
-    m_ignorePhysicsAfter = ignorePhysicsAfter;
-    m_elapsedTime = 0;
-    m_finished = false;
-}
+Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity,
+                   const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors,
+                   const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode, TexturePtr texture) :
+    m_colors(colors), m_colorsStops(colorsStops), m_position(PointF(pos.x, pos.y)), m_startSize(startSize),
+    m_finalSize(finalSize), m_velocity(velocity), m_acceleration(acceleration), m_compositionMode(compositionMode),
+    m_texture(texture), m_duration(duration), m_ignorePhysicsAfter(ignorePhysicsAfter)
+{}
 
 void Particle::render()
 {
-    if (!m_texture)
+    if (!m_texture) {
         g_drawPool.addFilledRect(m_rect, m_color);
-    else {
-        g_drawPool.addTexturedRect(m_rect, m_texture, m_color);
-        g_drawPool.setCompositionMode(m_compositionMode, g_drawPool.size());
+        return;
     }
+
+    g_drawPool.addTexturedRect(m_rect, m_texture, m_color);
+    g_drawPool.setCompositionMode(m_compositionMode, g_drawPool.size());
 }
 
 void Particle::update(float elapsedTime)
@@ -101,14 +91,10 @@ void Particle::updateColor()
         const float range = m_colorsStops[1] - m_colorsStops[0];
         const float factor = (currentLife - m_colorsStops[0]) / range;
         m_color = m_colors[0] * (1.0f - factor) + m_colors[1] * factor;
-    } else {
-        if (m_colors.size() > 1) {
-            m_colors.erase(m_colors.begin());
-            m_colorsStops.erase(m_colorsStops.begin());
-        } else {
-            if (m_color != m_colors[0]) {
-                m_color = m_colors[0];
-            }
-        }
+    } else if (m_colors.size() > 1) {
+        m_colors.erase(m_colors.begin());
+        m_colorsStops.erase(m_colorsStops.begin());
+    } else if (m_color != m_colors[0]) {
+        m_color = m_colors[0];
     }
 }

@@ -29,8 +29,6 @@
 class Graphics
 {
 public:
-    Graphics();
-
     enum PainterEngine
     {
         Painter_Any = 0,
@@ -80,8 +78,8 @@ public:
 private:
     Size m_viewportSize;
 
-    int m_maxTextureSize;
-    int m_alphaBits;
+    int m_maxTextureSize{ -1 },
+        m_alphaBits{ 0 };
 
     bool m_ok{ false },
         m_useDrawArrays{ true },
@@ -95,7 +93,7 @@ private:
         m_cacheBackbuffer{ true };
 
     PainterEngine m_prefferedPainterEngine;
-    PainterEngine m_selectedPainterEngine;
+    PainterEngine m_selectedPainterEngine{ Painter_Any };
 };
 
 extern Graphics g_graphics;

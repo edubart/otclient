@@ -23,11 +23,6 @@
 #include "inputmessage.h"
 #include <framework/util/crypt.h>
 
-InputMessage::InputMessage()
-{
-    reset();
-}
-
 void InputMessage::reset()
 {
     m_messageSize = 0;

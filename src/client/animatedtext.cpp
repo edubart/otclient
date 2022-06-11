@@ -37,21 +37,21 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
     constexpr static float tf = ANIMATED_TEXT_DURATION,
         tftf = ANIMATED_TEXT_DURATION * ANIMATED_TEXT_DURATION;
 
-    Point p = dest;
-    const Size textSize = m_cachedText.getTextSize();
+    const auto& textSize = m_cachedText.getTextSize();
     const float t = m_animationTimer.ticksElapsed();
-    p.x += (24 - textSize.width() / 2);
 
+    Point p = dest;
+    p.x += (24 - textSize.width() / 2);
     if (g_game.getFeature(Otc::GameDiagonalAnimatedText)) {
         p.x -= (4 * t / tf) + (8 * t * t / tftf);
     }
 
     p.y += 8 + (-48 * t) / tf;
     p += m_offset;
-    const Rect rect(p, textSize);
+
+    const Rect rect{ p, textSize };
 
     if (visibleRect.contains(rect)) {
-        //TODO: cache into a framebuffer
         const float t0 = tf / 1.2;
 
         Color color = m_color;

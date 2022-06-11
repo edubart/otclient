@@ -23,11 +23,6 @@
 #include <framework/net/outputmessage.h>
 #include <framework/util/crypt.h>
 
-OutputMessage::OutputMessage()
-{
-    reset();
-}
-
 void OutputMessage::reset()
 {
     m_writePos = MAX_HEADER_SIZE;
@@ -128,9 +123,7 @@ void OutputMessage::writeMessageSize()
 
 bool OutputMessage::canWrite(int bytes)
 {
-    if (m_writePos + bytes > BUFFER_MAXSIZE)
-        return false;
-    return true;
+    return m_writePos + bytes <= BUFFER_MAXSIZE;
 }
 
 void OutputMessage::checkWrite(int bytes)

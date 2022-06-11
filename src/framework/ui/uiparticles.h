@@ -27,8 +27,6 @@
 class UIParticles : public UIWidget
 {
 public:
-    UIParticles();
-
     void drawSelf(Fw::DrawPane drawPane) override;
 
     void addEffect(const std::string_view name);
@@ -40,5 +38,5 @@ public:
 
 private:
     std::vector<ParticleEffectPtr> m_effects;
-    PointF m_referencePos;
+    PointF m_referencePos{ -1, -1 };
 };

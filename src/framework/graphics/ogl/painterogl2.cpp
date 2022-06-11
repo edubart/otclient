@@ -29,9 +29,6 @@ PainterOGL2* g_painterOGL2 = nullptr;
 
 PainterOGL2::PainterOGL2()
 {
-    m_drawProgram = nullptr;
-    resetState();
-
     m_drawTexturedProgram = PainterShaderProgramPtr(new PainterShaderProgram);
     assert(m_drawTexturedProgram);
     m_drawTexturedProgram->addShaderFromSourceCode(Shader::Vertex, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());

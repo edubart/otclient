@@ -41,5 +41,5 @@ public:
 
 protected:
     bool m_fitChildren{ false };
-    int m_spacing;
+    int m_spacing{ 0 };
 };

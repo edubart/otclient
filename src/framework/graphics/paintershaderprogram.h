@@ -69,15 +69,18 @@ public:
     void bindMultiTextures();
 
 private:
-    float m_startTime;
+    float m_startTime{ 0 },
+        m_opacity{ 1.f },
+        m_time{ 0 };
 
-    Color m_color;
-    float m_opacity;
-    Matrix3 m_transformMatrix;
-    Matrix3 m_projectionMatrix;
-    Matrix3 m_textureMatrix;
+    Color m_color{ Color::white };
+
+    Matrix3 m_transformMatrix = DEFAULT_MATRIX_3,
+        m_projectionMatrix = DEFAULT_MATRIX_3,
+        m_textureMatrix = DEFAULT_MATRIX_3;
+
     Size m_resolution;
-    float m_time;
+
     std::vector<TexturePtr> m_multiTextures;
 
     Position m_startPos;

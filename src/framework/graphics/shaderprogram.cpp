@@ -27,11 +27,8 @@
 
 uint ShaderProgram::m_currentProgram = 0;
 
-ShaderProgram::ShaderProgram()
+ShaderProgram::ShaderProgram() :m_programId(glCreateProgram())
 {
-    m_linked = false;
-    m_programId = glCreateProgram();
-    m_uniformLocations.fill(-1);
     if (!m_programId)
         g_logger.fatal("Unable to create GL shader program");
 }

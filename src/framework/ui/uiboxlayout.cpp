@@ -26,9 +26,7 @@
 #include <utility>
 
 UIBoxLayout::UIBoxLayout(UIWidgetPtr parentWidget) : UILayout(std::move(parentWidget))
-{
-    m_spacing = 0;
-}
+{}
 
 void UIBoxLayout::applyStyle(const OTMLNodePtr& styleNode)
 {

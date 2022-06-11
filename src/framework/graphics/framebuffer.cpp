@@ -31,10 +31,9 @@
 
 uint FrameBuffer::boundFbo = 0;
 
-FrameBuffer::FrameBuffer(const bool useAlphaWriting)
+FrameBuffer::FrameBuffer(const bool useAlphaWriting) :m_useAlphaWriting(useAlphaWriting)
 {
     internalCreate();
-    m_useAlphaWriting = useAlphaWriting;
 }
 
 void FrameBuffer::internalCreate()
@@ -75,30 +74,15 @@ void FrameBuffer::resize(const Size& size)
         const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         if (status != GL_FRAMEBUFFER_COMPLETE)
             g_logger.fatal("Unable to setup framebuffer object");
+
         internalRelease();
-    } else {
-        if (m_backuping) {
-            m_screenBackup = TexturePtr(new Texture(size));
-            m_screenBackup->setUpsideDown(true);
-        }
+    } else if (m_backuping) {
+        m_screenBackup = TexturePtr(new Texture(size));
+        m_screenBackup->setUpsideDown(true);
     }
 }
 
-void FrameBuffer::bind()
-{
-    g_painter->saveAndResetState();
-    internalBind();
-    g_painter->setResolution(m_texture->getSize());
-    g_painter->setAlphaWriting(m_useAlphaWriting);
-}
-
-void FrameBuffer::release()
-{
-    internalRelease();
-    g_painter->restoreSavedState();
-}
-
-void FrameBuffer::draw(const Rect& dest, const Rect& src)
+void FrameBuffer::bind(const Rect& dest, const Rect& src)
 {
     Rect _dest(0, 0, getSize()), _src = _dest;
     if (dest.isValid()) _dest = dest;
@@ -110,10 +94,34 @@ void FrameBuffer::draw(const Rect& dest, const Rect& src)
 
         m_coordsBuffer.clear();
         m_coordsBuffer.addQuad(m_dest, m_src);
+
+        m_screenCoordsBuffer.clear();
+        m_screenCoordsBuffer.addRect(Rect{ 0, 0, getSize() });
     }
 
+    m_bckResolution = g_painter->getResolution();
+    internalBind();
+    g_painter->setResolution(getSize());
+    g_painter->setAlphaWriting(m_useAlphaWriting);
+
+    if (m_colorClear != Color::alpha) {
+        g_painter->setTexture(nullptr);
+        g_painter->setColor(m_colorClear);
+        g_painter->drawCoords(m_screenCoordsBuffer, Painter::DrawMode::TriangleStrip);
+    }
+}
+
+void FrameBuffer::release()
+{
+    internalRelease();
+    g_painter->setResolution(m_bckResolution);
+}
+
+void FrameBuffer::draw()
+{
     if (m_disableBlend) glDisable(GL_BLEND);
     g_painter->setCompositionMode(m_compositeMode);
+    g_painter->resetColor();
     g_painter->setTexture(m_texture.get());
     g_painter->drawCoords(m_coordsBuffer, Painter::DrawMode::TriangleStrip);
     g_painter->resetCompositionMode();
@@ -149,7 +157,8 @@ void FrameBuffer::internalRelease()
         if (m_backuping) {
             glDisable(GL_BLEND);
             g_painter->resetColor();
-            g_drawPool.drawTexturedRect(screenRect, m_screenBackup, screenRect);
+            g_painter->setTexture(m_screenBackup.get());
+            g_painter->drawCoords(m_screenCoordsBuffer, Painter::DrawMode::TriangleStrip);
             glEnable(GL_BLEND);
         }
     }

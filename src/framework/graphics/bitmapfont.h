@@ -42,11 +42,15 @@ public:
     /// Advanced text render delimited by a screen region and alignment
     void drawText(const std::string_view text, const Rect& screenCoords, Color color = Color::white, Fw::AlignmentFlag align = Fw::AlignTopLeft);
 
-    std::vector<std::pair<Rect, Rect>> getDrawTextCoords(const std::string_view text, const Rect& screenCoords, Fw::AlignmentFlag align = Fw::AlignTopLeft);
+    std::vector<std::pair<Rect, Rect>> getDrawTextCoords(const std::string_view text,
+                                                         const Size& textBoxSize,
+                                                         Fw::AlignmentFlag align,
+                                                         const Rect& screenCoords,
+                                                         const std::vector<Point>& glyphsPositions);
 
     /// Calculate glyphs positions to use on render, also calculates textBoxSize if wanted
     const std::vector<Point>& calculateGlyphsPositions(const std::string_view text,
-                                                       Fw::AlignmentFlag align = Fw::AlignTopLeft,
+                                                       Fw::AlignmentFlag align,
                                                        Size* textBoxSize = nullptr);
 
     /// Simulate render and calculate text size
@@ -67,9 +71,9 @@ private:
     void calculateGlyphsWidthsAutomatically(const ImagePtr& image, const Size& glyphSize);
 
     std::string m_name;
-    int m_glyphHeight;
-    int m_firstGlyph;
-    int m_yOffset;
+    int m_glyphHeight{ 0 };
+    int m_firstGlyph{ 0 };
+    int m_yOffset{ 0 };
     Size m_glyphSpacing;
     TexturePtr m_texture;
     Rect m_glyphsTextureCoords[256];

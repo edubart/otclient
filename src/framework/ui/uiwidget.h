@@ -465,10 +465,10 @@ private:
     void initText();
     void parseTextStyle(const OTMLNodePtr& styleNode);
 
-    bool m_textMustRecache{ true };
     Rect m_textCachedScreenCoords;
-
     std::vector<std::pair<Rect, Rect>> m_textCoordsCache;
+    std::vector<Point> m_glyphsPositionsCache;
+    Size m_textSize;
 
 protected:
     virtual void updateText();
@@ -507,5 +507,5 @@ public:
     Point getTextOffset() { return m_textOffset; }
     bool getTextWrap() { return m_textWrap; }
     std::string getFont() { return m_font->getName(); }
-    Size getTextSize() { return m_font->calculateTextRectSize(m_drawText); }
+    Size getTextSize() { return m_textSize; }
 };

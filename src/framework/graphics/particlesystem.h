@@ -40,7 +40,7 @@ public:
     bool hasFinished() { return m_finished; }
 
 private:
-    bool m_finished;
+    bool m_finished{ false };
     float m_lastUpdateTime;
     std::list<ParticlePtr> m_particles;
     std::list<ParticleEmitterPtr> m_emitters;

@@ -32,9 +32,9 @@ public:
     Color() = default;
     Color(const std::string_view coltext);
     Color(const uint32 rgba) { setRGBA(rgba); }
-    Color(const int r, const int g, const int b, const int a = 0xFF) : m_r(r / 255.f), m_g(g / 255.f), m_b(b / 255.f), m_a(a / 255.f) {}
-    Color(const float r, const float g, const float b, const float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) {}
-    Color(const uint8 r, const uint8 g, const uint8 b, const uint8 a = 0xFF) : m_r(r / 255.f), m_g(g / 255.f), m_b(b / 255.f), m_a(a / 255.f) {}
+    Color(const int r, const int g, const int b, const int a = 0xFF) : m_r(r / 255.f), m_g(g / 255.f), m_b(b / 255.f), m_a(a / 255.f) { update(); }
+    Color(const float r, const float g, const float b, const float a = 1.0f) : m_r(r), m_g(g), m_b(b), m_a(a) { update(); }
+    Color(const uint8 r, const uint8 g, const uint8 b, const uint8 a = 0xFF) : m_r(r / 255.f), m_g(g / 255.f), m_b(b / 255.f), m_a(a / 255.f) { update(); }
 
     Color(const uint8 byteColor, const uint8 intensity, const float formule = 0.5f)
     {
@@ -45,6 +45,7 @@ public:
         m_b = colorMap.bF() * brightness;
         m_g = colorMap.gF() * brightness;
         m_r = colorMap.rF() * brightness;
+        update();
     }
 
     Color(const Color& color) = default;
@@ -59,20 +60,20 @@ public:
     float gF() const { return m_g; }
     float rF() const { return m_r; }
 
-    uint32 rgba() const { return static_cast<uint32>(a() | b() << 8 | g() << 16 | r() << 24); }
+    uint32 rgba() const { return m_rgba; }
 
-    void setRed(const int r) { m_r = static_cast<uint8>(r) / 255.f; }
-    void setGreen(const int g) { m_g = static_cast<uint8>(g) / 255.f; }
-    void setBlue(const int b) { m_b = static_cast<uint8>(b) / 255.f; }
-    void setAlpha(const int a) { m_a = static_cast<uint8>(a) / 255.f; }
+    void setRed(const int r) { m_r = static_cast<uint8>(r) / 255.f; update(); }
+    void setGreen(const int g) { m_g = static_cast<uint8>(g) / 255.f; update(); }
+    void setBlue(const int b) { m_b = static_cast<uint8>(b) / 255.f; update(); }
+    void setAlpha(const int a) { m_a = static_cast<uint8>(a) / 255.f; update(); }
 
-    void setRed(const float r) { m_r = r; }
-    void setGreen(const float g) { m_g = g; }
-    void setBlue(const float b) { m_b = b; }
-    void setAlpha(const float a) { m_a = a; }
+    void setRed(const float r) { m_r = r; update(); }
+    void setGreen(const float g) { m_g = g; update(); }
+    void setBlue(const float b) { m_b = b; update(); }
+    void setAlpha(const float a) { m_a = a; update(); }
 
-    void setRGBA(const uint8 r, const uint8 g, const uint8 b, const uint8 a = 0xFF) { m_r = r / 255.f; m_g = g / 255.f; m_b = b / 255.f; m_a = a / 255.f; }
-    void setRGBA(const uint32 rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); }
+    void setRGBA(const uint8 r, const uint8 g, const uint8 b, const uint8 a = 0xFF) { m_r = r / 255.f; m_g = g / 255.f; m_b = b / 255.f; m_a = a / 255.f; update(); }
+    void setRGBA(const uint32 rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); update(); }
 
     Color operator+(const Color& other) const { return Color(m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a); }
     Color operator-(const Color& other) const { return Color(m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a); }
@@ -92,6 +93,7 @@ public:
         m_r *= (1 - color.m_a) + color.m_r * color.m_a;
         m_g *= (1 - color.m_a) + color.m_g * color.m_a;
         m_b *= (1 - color.m_a) + color.m_b * color.m_a;
+        update();
     }
 
     static uint8 to8bit(const Color& color)
@@ -125,10 +127,14 @@ public:
         lightGray, orange;
 
 private:
+    void update();
+
     float m_r{ 1.f },
         m_g{ 1.f },
         m_b{ 1.f },
         m_a{ 1.f };
+
+    uint32 m_rgba;
 };
 
 std::ostream& operator<<(std::ostream& out, const Color& color);

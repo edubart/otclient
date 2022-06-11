@@ -90,8 +90,8 @@ protected:
     static std::list<std::shared_ptr<asio::streambuf>> m_outputStreams;
     std::shared_ptr<asio::streambuf> m_outputStream;
     asio::streambuf m_inputStream;
-    bool m_connected;
-    bool m_connecting;
+    bool m_connected{ false };
+    bool m_connecting{ false };
     std::error_code m_error;
     stdext::timer m_activityTimer;
 

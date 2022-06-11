@@ -36,6 +36,9 @@
 #include "houses.h"
 #include "towns.h"
 
+static constexpr uint8
+MAX_VIEWPORT_X = 8, MAX_VIEWPORT_Y = 6;
+
 Map g_map;
 TilePtr Map::m_nulltile;
 
@@ -64,8 +67,7 @@ void Map::removeMapView(const MapViewPtr& mapView)
 
 void Map::resetAwareRange()
 {
-    constexpr uint8 left = 8, top = 6;
-    setAwareRange({ left , top, left + 1, top + 1 });
+    setAwareRange({ MAX_VIEWPORT_X , MAX_VIEWPORT_Y, MAX_VIEWPORT_X + 1, MAX_VIEWPORT_Y + 1 });
 }
 
 void Map::notificateKeyRelease(const InputEvent& inputEvent)
@@ -360,8 +362,10 @@ const TilePtr& Map::getTile(const Position& pos)
     if (!pos.isMapPosition())
         return m_nulltile;
 
-    const auto it = m_tileBlocks[pos.z].find(getBlockIndex(pos));
-    if (it != m_tileBlocks[pos.z].end())
+    auto& tileBlocks = m_tileBlocks[pos.z];
+
+    const auto it = tileBlocks.find(getBlockIndex(pos));
+    if (it != tileBlocks.end())
         return it->second.get(pos);
 
     return m_nulltile;

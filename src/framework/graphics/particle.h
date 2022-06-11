@@ -57,6 +57,6 @@ private:
     Rect m_rect;
     Painter::CompositionMode m_compositionMode;
     float m_duration, m_ignorePhysicsAfter;
-    float m_elapsedTime;
-    bool m_finished;
+    float m_elapsedTime{ 0 };
+    bool m_finished{ false };
 };

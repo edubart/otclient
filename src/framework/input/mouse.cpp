@@ -27,8 +27,7 @@
 
 Mouse g_mouse;
 
-void Mouse::init()
-{}
+void Mouse::init() {}
 
 void Mouse::terminate()
 {

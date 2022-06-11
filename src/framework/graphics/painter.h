@@ -58,10 +58,7 @@ public:
     {
         ~PainterState() { shaderProgram = nullptr; action = nullptr; }
 
-        Size resolution;
         Matrix3 transformMatrix;
-        Matrix3 projectionMatrix;
-        Matrix3 textureMatrix;
         Color color;
         float opacity;
         CompositionMode compositionMode;
@@ -69,12 +66,11 @@ public:
         Rect clipRect;
         TexturePtr texture;
         PainterShaderProgram* shaderProgram;
-        bool alphaWriting;
         std::function<void()> action{ nullptr };
 
         bool operator==(const PainterState& s2) const
         {
-            return resolution == s2.resolution &&
+            return
                 transformMatrix == s2.transformMatrix &&
                 color == s2.color &&
                 opacity == s2.opacity &&
@@ -82,8 +78,7 @@ public:
                 blendEquation == s2.blendEquation &&
                 clipRect == s2.clipRect &&
                 texture == s2.texture &&
-                shaderProgram == s2.shaderProgram &&
-                alphaWriting == s2.alphaWriting;
+                shaderProgram == s2.shaderProgram;
         }
     };
 
@@ -93,11 +88,6 @@ public:
     virtual void bind() {}
     virtual void unbind() {}
 
-    virtual void resetState() = 0;
-    virtual void saveState() = 0;
-    virtual void saveAndResetState() = 0;
-    virtual void restoreSavedState() = 0;
-    virtual PainterState getCurrentState() = 0;
     virtual void executeState(const PainterState& state) = 0;
 
     virtual void clear(const Color& color) = 0;
@@ -129,12 +119,16 @@ public:
     Rect getClipRect() { return m_clipRect; }
     CompositionMode getCompositionMode() { return m_compositionMode; }
 
+    virtual Matrix3 getTransformMatrix() = 0;
+    virtual Matrix3 getProjectionMatrix() = 0;
+    virtual Matrix3 getTextureMatrix() = 0;
+
     virtual void setCompositionMode(CompositionMode compositionMode) = 0;
 
     virtual void pushTransformMatrix() = 0;
     virtual void popTransformMatrix() = 0;
 
-    void resetClipRect() { setClipRect(Rect()); }
+    void resetClipRect() { setClipRect({}); }
     void resetOpacity() { setOpacity(1.0f); }
     void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
     void resetColor() { setColor(Color::white); }
@@ -143,12 +137,17 @@ public:
     virtual bool hasShaders() = 0;
 
 protected:
-    PainterShaderProgram* m_shaderProgram;
-    CompositionMode m_compositionMode;
-    Color m_color;
+    virtual Matrix3& getTransformMatrixRef() = 0;
+
+    float m_opacity{ 1.f };
+
+    PainterShaderProgram* m_shaderProgram{ nullptr };
+    CompositionMode m_compositionMode{ CompositionMode_Normal };
+    Color m_color{ Color::white };
     Size m_resolution;
-    float m_opacity;
     Rect m_clipRect;
+
+    friend class DrawPool;
 };
 
 extern Painter* g_painter;

@@ -90,9 +90,9 @@ public:
     ShaderList getShaders() { return m_shaders; }
 
 private:
-    bool m_linked;
+    bool m_linked{ false };
     uint m_programId;
     static uint m_currentProgram;
     ShaderList m_shaders;
-    std::array<int, MAX_UNIFORM_LOCATIONS> m_uniformLocations;
+    std::array<int, MAX_UNIFORM_LOCATIONS> m_uniformLocations{ };
 };

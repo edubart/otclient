@@ -39,8 +39,8 @@ public:
     void connect(const std::string_view host, uint16 port);
     void disconnect();
 
-    bool isConnected();
-    bool isConnecting();
+    bool isConnected() { return m_connection && m_connection->isConnected(); }
+    bool isConnecting() { return m_connection && m_connection->isConnecting(); }
     ticks_t getElapsedTicksSinceLastRead() { return m_connection ? m_connection->getElapsedTicksSinceLastRead() : -1; }
 
     ConnectionPtr getConnection() { return m_connection; }
@@ -72,8 +72,8 @@ private:
     bool xteaDecrypt(const InputMessagePtr& inputMessage);
     void xteaEncrypt(const OutputMessagePtr& outputMessage);
 
-    bool m_checksumEnabled;
-    bool m_xteaEncryptionEnabled;
+    bool m_checksumEnabled{ false };
+    bool m_xteaEncryptionEnabled{ false };
     ConnectionPtr m_connection;
     InputMessagePtr m_inputMessage;
 };

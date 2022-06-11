@@ -37,10 +37,7 @@ Connection::Connection() :
     m_delayedWriteTimer(g_ioService),
     m_resolver(g_ioService),
     m_socket(g_ioService)
-{
-    m_connected = false;
-    m_connecting = false;
-}
+{}
 
 Connection::~Connection()
 {

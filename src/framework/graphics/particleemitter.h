@@ -29,7 +29,6 @@
 class ParticleEmitter : public stdext::shared_object
 {
 public:
-    ParticleEmitter();
 
     void load(const OTMLNodePtr& node);
 
@@ -40,10 +39,10 @@ public:
 private:
     // self related
     Point m_position;
-    float m_duration, m_delay;
-    float m_elapsedTime;
-    bool m_finished, m_active;
-    float m_burstRate;
-    int m_currentBurst, m_burstCount;
+    float m_duration{ -1 }, m_delay{ 0 },
+        m_elapsedTime{ 0 }, m_burstRate{ 1.f };
+    int m_currentBurst, m_burstCount{ 32 };
+    bool m_finished{ false }, m_active{ false };
+
     ParticleTypePtr m_particleType;
 };
