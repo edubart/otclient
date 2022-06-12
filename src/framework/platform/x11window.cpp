@@ -913,7 +913,7 @@ int X11Window::internalLoadMouseCursor(const ImagePtr& image, const Point& hotSp
     std::vector<uchar> maskBits(numbytes, 0);
 
     for(int i=0;i<numbits;++i) {
-        uint32 rgba = stdext::readULE32(image->getPixelData() + i*4);
+        uint32_t rgba = stdext::readULE32(image->getPixelData() + i*4);
         if(rgba == 0xffffffff) { //white, background
             LSB_BIT_SET(maskBits, i);
         } else if(rgba == 0xff000000) { //black, foreground
@@ -1008,7 +1008,7 @@ void X11Window::setIcon(const std::string_view file)
     iconData[0] = image->getWidth();
     iconData[1] = image->getHeight();
     for(int i=0; i < n;++i) {
-        uint8 *pixel = (uint8*)&iconData[2 + i];
+        uint8_t *pixel = (uint8_t*)&iconData[2 + i];
         pixel[2] = *(image->getPixelData() + (i * 4) + 0);
         pixel[1] = *(image->getPixelData() + (i * 4) + 1);
         pixel[0] = *(image->getPixelData() + (i * 4) + 2);
