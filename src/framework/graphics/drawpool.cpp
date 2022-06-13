@@ -270,13 +270,13 @@ void DrawPool::createPools()
         if (type == PoolType::MAP || type == PoolType::LIGHT || type == PoolType::FOREGROUND) {
             const auto& frameBuffer = g_framebuffers.createFrameBuffer(true);
 
+            pool = new PoolFramed{ frameBuffer };
+
             if (type == PoolType::MAP) frameBuffer->disableBlend();
             else if (type == PoolType::LIGHT) {
                 pool->m_forceGrouping = true;
                 frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
             }
-
-            pool = new PoolFramed{ frameBuffer };
         } else {
             pool = new Pool;
             pool->m_forceGrouping = true; // CREATURE_INFORMATION & TEXT
