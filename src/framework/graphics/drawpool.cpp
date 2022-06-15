@@ -39,12 +39,12 @@ void DrawPool::terminate()
     }
 }
 
-void DrawPool::add(const Color& color, const TexturePtr& texture, const Pool::DrawMethod& method, const Painter::DrawMode drawMode)
+void DrawPool::add(const Color& color, const TexturePtr& texture, const Pool::DrawMethod& method, const DrawMode drawMode)
 {
     const auto& state = Painter::PainterState{
        g_painter->getTransformMatrixRef(), color, m_currentPool->m_state.opacity,
        m_currentPool->m_state.compositionMode, m_currentPool->m_state.blendEquation,
-        m_currentPool->m_state.clipRect, texture, m_currentPool->m_state.shaderProgram
+       m_currentPool->m_state.clipRect, texture, m_currentPool->m_state.shaderProgram
     };
 
     size_t stateHash = 0;
@@ -61,7 +61,7 @@ void DrawPool::add(const Color& color, const TexturePtr& texture, const Pool::Dr
             m_currentPool->m_drawingPointer[stateHash] = list.size();
 
             //TODO: For now isGroupable will be false for drawings using framebuffer.
-            list.push_back({ state, Painter::DrawMode::Triangles, {method}, !m_currentPool->hasFrameBuffer() });
+            list.push_back({ state, DrawMode::TRIANGLES, {method}, !m_currentPool->hasFrameBuffer() });
         }
 
         return;
@@ -85,7 +85,7 @@ void DrawPool::add(const Color& color, const TexturePtr& texture, const Pool::Dr
         }
 
         if (sameState) {
-            prevObj.drawMode = Painter::DrawMode::Triangles;
+            prevObj.drawMode = DrawMode::TRIANGLES;
             prevObj.drawMethods.push_back(method);
             return;
         }
@@ -142,33 +142,26 @@ void DrawPool::drawObject(Pool::DrawObject& obj)
 
     if (obj.drawMethods.empty()) return;
 
-    g_painter->executeState(obj.state);
-
-    if (obj.state.texture) {
-        obj.state.texture->create();
-        g_painter->setTexture(obj.state.texture.get());
-    }
-
     if (obj.isGroupable && obj.coordsBuffer == nullptr) {
         obj.coordsBuffer = std::make_shared<CoordsBuffer>();
     }
 
-    const bool isGlobalCoord = obj.coordsBuffer == nullptr;
-    auto& buffer = isGlobalCoord ? m_coordsBuffer : *obj.coordsBuffer;
+    const bool useGlobalCoord = obj.coordsBuffer == nullptr;
+    auto& buffer = useGlobalCoord ? m_coordsBuffer : *obj.coordsBuffer;
 
     if (buffer.getVertexCount() == 0) {
         for (const auto& method : obj.drawMethods) {
             if (method.type == Pool::DrawMethodType::BOUNDING_RECT) {
                 buffer.addBoudingRect(method.rects.first, method.intValue);
             } else if (method.type == Pool::DrawMethodType::RECT) {
-                if (obj.drawMode == Painter::DrawMode::Triangles)
+                if (obj.drawMode == DrawMode::TRIANGLES)
                     buffer.addRect(method.rects.first, method.rects.second);
                 else
                     buffer.addQuad(method.rects.first, method.rects.second);
             } else if (method.type == Pool::DrawMethodType::TRIANGLE) {
                 buffer.addTriangle(std::get<0>(method.points), std::get<1>(method.points), std::get<2>(method.points));
             } else if (method.type == Pool::DrawMethodType::UPSIDEDOWN_RECT) {
-                if (obj.drawMode == Painter::DrawMode::Triangles)
+                if (obj.drawMode == DrawMode::TRIANGLES)
                     buffer.addUpsideDownRect(method.rects.first, method.rects.second);
                 else
                     buffer.addUpsideDownQuad(method.rects.first, method.rects.second);
@@ -178,18 +171,23 @@ void DrawPool::drawObject(Pool::DrawObject& obj)
         }
     }
 
+    if (obj.state.texture) {
+        obj.state.texture->create();
+        g_painter->setTexture(obj.state.texture.get());
+    }
+    g_painter->executeState(obj.state);
     g_painter->drawCoords(buffer, obj.drawMode);
 
-    if (isGlobalCoord)
+    if (useGlobalCoord)
         m_coordsBuffer.clear();
 }
 
-void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color color)
+void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color& color)
 {
     addTexturedRect(dest, texture, Rect(Point(), texture->getSize()), color);
 }
 
-void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color, const Point& originalDest)
+void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color, const Point& originalDest)
 {
     if (dest.isEmpty() || src.isEmpty())
         return;
@@ -200,20 +198,20 @@ void DrawPool::addTexturedRect(const Rect& dest, const TexturePtr& texture, cons
         .dest = originalDest
     };
 
-    add(color, texture, method, Painter::DrawMode::TriangleStrip);
+    add(color, texture, method, DrawMode::TRIANGLE_STRIP);
 }
 
-void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
+void DrawPool::addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color)
 {
     if (dest.isEmpty() || src.isEmpty())
         return;
 
     const Pool::DrawMethod method{ Pool::DrawMethodType::UPSIDEDOWN_RECT, std::make_pair(dest, src) };
 
-    add(color, texture, method, Painter::DrawMode::TriangleStrip);
+    add(color, texture, method, DrawMode::TRIANGLE_STRIP);
 }
 
-void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color color)
+void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color)
 {
     if (dest.isEmpty() || src.isEmpty())
         return;
@@ -223,7 +221,7 @@ void DrawPool::addTexturedRepeatedRect(const Rect& dest, const TexturePtr& textu
     add(color, texture, method);
 }
 
-void DrawPool::addFilledRect(const Rect& dest, const Color color)
+void DrawPool::addFilledRect(const Rect& dest, const Color& color)
 {
     if (dest.isEmpty())
         return;
@@ -233,7 +231,7 @@ void DrawPool::addFilledRect(const Rect& dest, const Color color)
     add(color, nullptr, method);
 }
 
-void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color color)
+void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color& color)
 {
     if (a == b || a == c || b == c)
         return;
@@ -243,7 +241,7 @@ void DrawPool::addFilledTriangle(const Point& a, const Point& b, const Point& c,
     add(color, nullptr, method);
 }
 
-void DrawPool::addBoundingRect(const Rect& dest, const Color color, int innerLineWidth)
+void DrawPool::addBoundingRect(const Rect& dest, const Color& color, int innerLineWidth)
 {
     if (dest.isEmpty() || innerLineWidth == 0)
         return;
@@ -275,7 +273,7 @@ void DrawPool::createPools()
             if (type == PoolType::MAP) frameBuffer->disableBlend();
             else if (type == PoolType::LIGHT) {
                 pool->m_forceGrouping = true;
-                frameBuffer->setCompositionMode(Painter::CompositionMode_Light);
+                frameBuffer->setCompositionMode(CompositionMode::LIGHT);
             }
         } else {
             pool = new Pool;
@@ -293,7 +291,7 @@ void DrawPool::use(const PoolType type)
     m_currentPool->resetState();
 }
 
-void DrawPool::use(const PoolType type, const Rect& dest, const Rect& src, const Color colorClear)
+void DrawPool::use(const PoolType type, const Rect& dest, const Rect& src, const Color& colorClear)
 {
     use(type);
     if (!m_currentPool->hasFrameBuffer())
@@ -309,14 +307,14 @@ void DrawPool::use(const PoolType type, const Rect& dest, const Rect& src, const
 void DrawPool::updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method, size_t& stateHash)
 {
     { // State Hash
-        if (state.blendEquation != Painter::BlendEquation_Add)
+        if (state.blendEquation != BlendEquation::ADD)
             stdext::hash_combine(stateHash, state.blendEquation);
 
         if (state.clipRect.isValid()) stdext::hash_combine(stateHash, state.clipRect.hash());
         if (state.color != Color::white)
             stdext::hash_combine(stateHash, state.color.rgba());
 
-        if (state.compositionMode != Painter::CompositionMode_Normal)
+        if (state.compositionMode != CompositionMode::NORMAL)
             stdext::hash_combine(stateHash, state.compositionMode);
 
         if (state.opacity < 1.f)

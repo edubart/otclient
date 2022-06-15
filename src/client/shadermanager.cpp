@@ -76,8 +76,8 @@ PainterShaderProgramPtr ShaderManager::createFragmentShader(const std::string_vi
 
     const auto& path = g_resources.guessFilePath(file, "frag");
 
-    shader->addShaderFromSourceCode(Shader::Vertex, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());
-    if (!shader->addShaderFromSourceFile(Shader::Fragment, path)) {
+    shader->addShaderFromSourceCode(ShaderType::VERTEX, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());
+    if (!shader->addShaderFromSourceFile(ShaderType::FRAGMENT, path)) {
         g_logger.error(stdext::format("unable to load fragment shader '%s' from source file '%s'", name, path));
         return nullptr;
     }
@@ -97,8 +97,8 @@ PainterShaderProgramPtr ShaderManager::createFragmentShaderFromCode(const std::s
     if (!shader)
         return nullptr;
 
-    shader->addShaderFromSourceCode(Shader::Vertex, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());
-    if (!shader->addShaderFromSourceCode(Shader::Fragment, code)) {
+    shader->addShaderFromSourceCode(ShaderType::VERTEX, std::string{ glslMainWithTexCoordsVertexShader } + glslPositionOnlyVertexShader.data());
+    if (!shader->addShaderFromSourceCode(ShaderType::FRAGMENT, code)) {
         g_logger.error(stdext::format("unable to load fragment shader '%s'", name));
         return nullptr;
     }

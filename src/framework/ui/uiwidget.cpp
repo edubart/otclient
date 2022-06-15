@@ -38,11 +38,7 @@
 
 UIWidget::UIWidget()
 {
-    m_lastFocusReason = Fw::ActiveFocusReason;
-    m_states = Fw::DefaultState;
-    m_autoFocusPolicy = Fw::AutoFocusLast;
     m_clickTimer.stop();
-    m_autoRepeatDelay = 500;
 
     initBaseStyle();
     initText();
@@ -62,7 +58,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 {
     Rect oldClipRect;
     if (m_clipping) {
-        oldClipRect = g_painter->getClipRect();
+        oldClipRect = g_drawPool.getClipRect();
         g_drawPool.setClipRect(visibleRect);
     }
 
@@ -119,7 +115,7 @@ void UIWidget::drawChildren(const Rect& visibleRect, Fw::DrawPane drawPane)
             continue;
 
         // store current graphics opacity
-        const float oldOpacity = g_painter->getOpacity();
+        const float oldOpacity = g_drawPool.getOpacity();
 
         // decrease to self opacity
         if (child->getOpacity() < oldOpacity)

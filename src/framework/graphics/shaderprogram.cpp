@@ -50,7 +50,7 @@ bool ShaderProgram::addShader(const ShaderPtr& shader)
     return true;
 }
 
-bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const std::string_view sourceCode)
+bool ShaderProgram::addShaderFromSourceCode(ShaderType shaderType, const std::string_view sourceCode)
 {
     const ShaderPtr shader(new Shader(shaderType));
     if (!shader->compileSourceCode(sourceCode)) {
@@ -60,7 +60,7 @@ bool ShaderProgram::addShaderFromSourceCode(Shader::ShaderType shaderType, const
     return addShader(shader);
 }
 
-bool ShaderProgram::addShaderFromSourceFile(Shader::ShaderType shaderType, const std::string_view sourceFile)
+bool ShaderProgram::addShaderFromSourceFile(ShaderType shaderType, const std::string_view sourceFile)
 {
     const ShaderPtr shader(new Shader(shaderType));
     if (!shader->compileSourceFile(sourceFile)) {

@@ -26,7 +26,7 @@
 
 Particle::Particle(const Point& pos, const Size& startSize, const Size& finalSize, const PointF& velocity,
                    const PointF& acceleration, float duration, float ignorePhysicsAfter, const std::vector<Color>& colors,
-                   const std::vector<float>& colorsStops, Painter::CompositionMode compositionMode, TexturePtr texture) :
+                   const std::vector<float>& colorsStops, CompositionMode compositionMode, TexturePtr texture) :
     m_colors(colors), m_colorsStops(colorsStops), m_position(PointF(pos.x, pos.y)), m_startSize(startSize),
     m_finalSize(finalSize), m_velocity(velocity), m_acceleration(acceleration), m_compositionMode(compositionMode),
     m_texture(texture), m_duration(duration), m_ignorePhysicsAfter(ignorePhysicsAfter)

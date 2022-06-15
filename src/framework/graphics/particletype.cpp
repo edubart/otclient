@@ -126,11 +126,11 @@ void ParticleType::load(const OTMLNodePtr& node)
             pTexture = g_textures.getTexture(childNode->value());
         else if (childNode->tag() == "composition-mode") {
             if (childNode->value() == "normal")
-                pCompositionMode = Painter::CompositionMode_Normal;
+                pCompositionMode = CompositionMode::NORMAL;
             else if (childNode->value() == "multiply")
-                pCompositionMode = Painter::CompositionMode_Multiply;
+                pCompositionMode = CompositionMode::MULTIPLY;
             else if (childNode->value() == "addition")
-                pCompositionMode = Painter::CompositionMode_Add;
+                pCompositionMode = CompositionMode::ADD;
         }
     }
 

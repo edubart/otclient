@@ -107,7 +107,7 @@ void FrameBuffer::bind(const Rect& dest, const Rect& src)
     if (m_colorClear != Color::alpha) {
         g_painter->setTexture(nullptr);
         g_painter->setColor(m_colorClear);
-        g_painter->drawCoords(m_screenCoordsBuffer, Painter::DrawMode::TriangleStrip);
+        g_painter->drawCoords(m_screenCoordsBuffer, DrawMode::TRIANGLE_STRIP);
     }
 }
 
@@ -123,7 +123,7 @@ void FrameBuffer::draw()
     g_painter->setCompositionMode(m_compositeMode);
     g_painter->resetColor();
     g_painter->setTexture(m_texture.get());
-    g_painter->drawCoords(m_coordsBuffer, Painter::DrawMode::TriangleStrip);
+    g_painter->drawCoords(m_coordsBuffer, DrawMode::TRIANGLE_STRIP);
     g_painter->resetCompositionMode();
     if (m_disableBlend) glEnable(GL_BLEND);
 }
@@ -158,7 +158,7 @@ void FrameBuffer::internalRelease()
             glDisable(GL_BLEND);
             g_painter->resetColor();
             g_painter->setTexture(m_screenBackup.get());
-            g_painter->drawCoords(m_screenCoordsBuffer, Painter::DrawMode::TriangleStrip);
+            g_painter->drawCoords(m_screenCoordsBuffer, DrawMode::TRIANGLE_STRIP);
             glEnable(GL_BLEND);
         }
     }

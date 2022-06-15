@@ -212,25 +212,25 @@ void PainterOGL::updateGlTexture()
 void PainterOGL::updateGlCompositionMode()
 {
     switch (m_compositionMode) {
-        case CompositionMode_Normal:
+        case CompositionMode::NORMAL:
             if (g_graphics.canUseBlendFuncSeparate())
                 glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
             else
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             break;
-        case CompositionMode_Multiply:
+        case CompositionMode::MULTIPLY:
             glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
             break;
-        case CompositionMode_Add:
+        case CompositionMode::ADD:
             glBlendFunc(GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR);
             break;
-        case CompositionMode_Replace:
+        case CompositionMode::REPLACE:
             glBlendFunc(GL_ONE, GL_ZERO);
             break;
-        case CompositionMode_DestBlending:
+        case CompositionMode::DESTINATION_BLENDING:
             glBlendFunc(GL_ONE_MINUS_DST_ALPHA, GL_DST_ALPHA);
             break;
-        case CompositionMode_Light:
+        case CompositionMode::LIGHT:
             glBlendFunc(GL_ZERO, GL_SRC_COLOR);
             break;
     }
@@ -240,15 +240,15 @@ void PainterOGL::updateGlBlendEquation()
 {
     if (!g_graphics.canUseBlendEquation())
         return;
-    if (m_blendEquation == BlendEquation_Add)
+    if (m_blendEquation == BlendEquation::ADD)
         glBlendEquation(GL_FUNC_ADD);
-    else if (m_blendEquation == BlendEquation_Max)
+    else if (m_blendEquation == BlendEquation::MAX)
         glBlendEquation(GL_MAX);
-    else if (m_blendEquation == BlendEquation_Min)
+    else if (m_blendEquation == BlendEquation::MIN)
         glBlendEquation(GL_MIN);
-    else if (m_blendEquation == BlendEquation_Subtract)
+    else if (m_blendEquation == BlendEquation::SUBTRACT)
         glBlendEquation(GL_FUNC_SUBTRACT);
-    else if (m_blendEquation == BlendEquation_Rever_Subtract)
+    else if (m_blendEquation == BlendEquation::REVER_SUBTRACT)
         glBlendEquation(GL_FUNC_REVERSE_SUBTRACT);
 }
 
@@ -265,10 +265,7 @@ void PainterOGL::updateGlClipRect()
 
 void PainterOGL::updateGlAlphaWriting()
 {
-    if (m_alphaWriting)
-        glColorMask(1, 1, 1, 1);
-    else
-        glColorMask(1, 1, 1, 0);
+    glColorMask(1, 1, 1, m_alphaWriting);
 }
 
 void PainterOGL::updateGlViewport()

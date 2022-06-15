@@ -79,8 +79,8 @@ protected:
     UIWidgetPtr m_focusedChild;
     OTMLNodePtr m_style;
     Timer m_clickTimer;
-    Fw::FocusReason m_lastFocusReason;
-    Fw::AutoFocusPolicy m_autoFocusPolicy;
+    Fw::FocusReason m_lastFocusReason{ Fw::ActiveFocusReason };
+    Fw::AutoFocusPolicy m_autoFocusPolicy{ Fw::AutoFocusLast };
 
 public:
     void addChild(const UIWidgetPtr& child);
@@ -177,7 +177,7 @@ private:
     bool m_updateStyleScheduled{ false };
     bool m_firstOnStyle{ true };
     OTMLNodePtr m_stateStyle;
-    int m_states;
+    int m_states{ Fw::DefaultState };
 
     // event processing
 protected:
@@ -277,21 +277,21 @@ protected:
     void drawBorder(const Rect& screenCoords);
     void drawIcon(const Rect& screenCoords);
 
-    Color m_color;
-    Color m_backgroundColor;
+    Color m_color{ Color::white };
+    Color m_backgroundColor{ Color::alpha };
     Rect m_backgroundRect;
     TexturePtr m_icon;
-    Color m_iconColor;
+    Color m_iconColor{ Color::white };
     Rect m_iconRect;
     Rect m_iconClipRect;
-    Fw::AlignmentFlag m_iconAlign;
+    Fw::AlignmentFlag m_iconAlign{ Fw::AlignNone };
     EdgeGroup<Color> m_borderColor;
     EdgeGroup<int> m_borderWidth;
     EdgeGroup<int> m_margin;
     EdgeGroup<int> m_padding;
-    float m_opacity;
-    float m_rotation;
-    int m_autoRepeatDelay;
+    float m_opacity{ 1.f };
+    float m_rotation{ 0.f };
+    int m_autoRepeatDelay{ 500 };
     Point m_lastClickPosition;
 
 public:

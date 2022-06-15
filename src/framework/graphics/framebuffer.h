@@ -57,7 +57,7 @@ public:
     bool isBackuping() { return m_backuping; }
     bool isSmooth() { return m_smooth; }
 
-    void setCompositionMode(const Painter::CompositionMode mode) { m_compositeMode = mode; }
+    void setCompositionMode(const CompositionMode mode) { m_compositeMode = mode; }
     void disableBlend() { m_disableBlend = true; }
 
 protected:
@@ -81,7 +81,7 @@ private:
 
     uint32_t m_fbo, m_prevBoundFbo;
 
-    Painter::CompositionMode m_compositeMode{ Painter::CompositionMode_Normal };
+    CompositionMode m_compositeMode{ CompositionMode::NORMAL };
 
     bool m_backuping{ true },
         m_smooth{ true },

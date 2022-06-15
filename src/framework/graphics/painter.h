@@ -26,73 +26,44 @@
 #include <framework/graphics/declarations.h>
 #include <framework/graphics/paintershaderprogram.h>
 
+enum class BlendEquation
+{
+    ADD,
+    MAX,
+    MIN,
+    SUBTRACT,
+    REVER_SUBTRACT,
+};
+
+enum class CompositionMode
+{
+    NORMAL,
+    MULTIPLY,
+    ADD,
+    REPLACE,
+    DESTINATION_BLENDING,
+    LIGHT
+};
+
+enum class DrawMode
+{
+    NONE = GL_NONE,
+    TRIANGLES = GL_TRIANGLES,
+    TRIANGLE_STRIP = GL_TRIANGLE_STRIP
+};
+
 class Painter
 {
 public:
-    enum BlendEquation
-    {
-        BlendEquation_Add,
-        BlendEquation_Max,
-        BlendEquation_Min,
-        BlendEquation_Subtract,
-        BlendEquation_Rever_Subtract,
-    };
-    enum CompositionMode
-    {
-        CompositionMode_Normal,
-        CompositionMode_Multiply,
-        CompositionMode_Add,
-        CompositionMode_Replace,
-        CompositionMode_DestBlending,
-        CompositionMode_Light
-    };
-
-    enum class DrawMode
-    {
-        None = GL_NONE,
-        Triangles = GL_TRIANGLES,
-        TriangleStrip = GL_TRIANGLE_STRIP
-    };
-
-    struct PainterState
-    {
-        ~PainterState() { shaderProgram = nullptr; action = nullptr; }
-
-        Matrix3 transformMatrix;
-        Color color;
-        float opacity;
-        CompositionMode compositionMode;
-        BlendEquation blendEquation;
-        Rect clipRect;
-        TexturePtr texture;
-        PainterShaderProgram* shaderProgram;
-        std::function<void()> action{ nullptr };
-
-        bool operator==(const PainterState& s2) const
-        {
-            return
-                transformMatrix == s2.transformMatrix &&
-                color == s2.color &&
-                opacity == s2.opacity &&
-                compositionMode == s2.compositionMode &&
-                blendEquation == s2.blendEquation &&
-                clipRect == s2.clipRect &&
-                texture == s2.texture &&
-                shaderProgram == s2.shaderProgram;
-        }
-    };
-
     Painter();
     virtual ~Painter() = default;
 
     virtual void bind() {}
     virtual void unbind() {}
 
-    virtual void executeState(const PainterState& state) = 0;
-
     virtual void clear(const Color& color) = 0;
 
-    virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) = 0;
+    virtual void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::TRIANGLES) = 0;
 
     virtual void setTexture(Texture* texture) = 0;
     virtual void setClipRect(const Rect& clipRect) = 0;
@@ -130,24 +101,55 @@ public:
 
     void resetClipRect() { setClipRect({}); }
     void resetOpacity() { setOpacity(1.0f); }
-    void resetCompositionMode() { setCompositionMode(CompositionMode_Normal); }
+    void resetCompositionMode() { setCompositionMode(CompositionMode::NORMAL); }
     void resetColor() { setColor(Color::white); }
     void resetShaderProgram() { setShaderProgram(nullptr); }
 
     virtual bool hasShaders() = 0;
 
 protected:
+    struct PainterState
+    {
+        ~PainterState() { shaderProgram = nullptr; action = nullptr; }
+
+        Matrix3 transformMatrix;
+        Color color;
+        float opacity;
+        CompositionMode compositionMode;
+        BlendEquation blendEquation;
+        Rect clipRect;
+        TexturePtr texture;
+        PainterShaderProgram* shaderProgram;
+        std::function<void()> action{ nullptr };
+
+        bool operator==(const PainterState& s2) const
+        {
+            return
+                transformMatrix == s2.transformMatrix &&
+                color == s2.color &&
+                opacity == s2.opacity &&
+                compositionMode == s2.compositionMode &&
+                blendEquation == s2.blendEquation &&
+                clipRect == s2.clipRect &&
+                texture == s2.texture &&
+                shaderProgram == s2.shaderProgram;
+        }
+    };
+
+    virtual void executeState(const PainterState& state) = 0;
+
     virtual Matrix3& getTransformMatrixRef() = 0;
 
     float m_opacity{ 1.f };
 
     PainterShaderProgram* m_shaderProgram{ nullptr };
-    CompositionMode m_compositionMode{ CompositionMode_Normal };
+    CompositionMode m_compositionMode{ CompositionMode::NORMAL };
     Color m_color{ Color::white };
     Size m_resolution;
     Rect m_clipRect;
 
     friend class DrawPool;
+    friend class Pool;
 };
 
 extern Painter* g_painter;

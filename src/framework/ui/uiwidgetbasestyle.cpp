@@ -32,19 +32,14 @@
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
 
+static std::atomic<ulong> UID(0);
+
 void UIWidget::initBaseStyle()
 {
-    m_backgroundColor = Color::alpha;
     m_borderColor.set(Color::black);
-    m_iconColor = Color::white;
-    m_color = Color::white;
-    m_opacity = 1.0f;
-    m_rotation = 0.0f;
-    m_iconAlign = Fw::AlignNone;
 
     // generate an unique id, this is need because anchored layouts find widgets by id
-    static unsigned long id = 1;
-    m_id = stdext::format("widget%d", ++id);
+    m_id = stdext::format("widget%d", ++UID);
 }
 
 void UIWidget::parseBaseStyle(const OTMLNodePtr& styleNode)

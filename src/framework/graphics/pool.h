@@ -71,7 +71,7 @@ protected:
         ~DrawObject() { drawMethods.clear(); state.texture = nullptr; action = nullptr; }
 
         Painter::PainterState state;
-        Painter::DrawMode drawMode;
+        DrawMode drawMode;
         std::vector<DrawMethod> drawMethods;
         bool isGroupable{ false };
 
@@ -84,8 +84,8 @@ private:
     {
         ~State() { shaderProgram = nullptr; action = nullptr; }
 
-        Painter::CompositionMode compositionMode{ Painter::CompositionMode_Normal };
-        Painter::BlendEquation blendEquation{ Painter::BlendEquation_Add };
+        CompositionMode compositionMode{ CompositionMode::NORMAL };
+        BlendEquation blendEquation{ BlendEquation::ADD };
         Rect clipRect;
         float opacity{ 1.f };
         PainterShaderProgram* shaderProgram{ nullptr };
@@ -93,9 +93,10 @@ private:
     };
 
     float getOpacity(const int pos = -1) { return pos == -1 ? m_state.opacity : m_objects[pos - 1].state.opacity; }
+    Rect getClipRect(const int pos = -1) { return pos == -1 ? m_state.clipRect : m_objects[pos - 1].state.clipRect; }
 
-    void setCompositionMode(Painter::CompositionMode mode, int pos = -1);
-    void setBlendEquation(Painter::BlendEquation equation, int pos = -1);
+    void setCompositionMode(CompositionMode mode, int pos = -1);
+    void setBlendEquation(BlendEquation equation, int pos = -1);
     void setClipRect(const Rect& clipRect, int pos = -1);
     void setOpacity(float opacity, int pos = -1);
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, int pos = -1, const std::function<void()>& action = nullptr);
@@ -104,8 +105,8 @@ private:
     void resetOpacity() { m_state.opacity = 1.f; }
     void resetClipRect() { m_state.clipRect = {}; }
     void resetShaderProgram() { m_state.shaderProgram = nullptr; }
-    void resetCompositionMode() { m_state.compositionMode = Painter::CompositionMode_Normal; }
-    void resetBlendEquation() { m_state.blendEquation = Painter::BlendEquation_Add; }
+    void resetCompositionMode() { m_state.compositionMode = CompositionMode::NORMAL; }
+    void resetBlendEquation() { m_state.blendEquation = BlendEquation::ADD; }
 
     void next() { m_drawingPointer.clear(); }
 

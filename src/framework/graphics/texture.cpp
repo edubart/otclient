@@ -30,11 +30,11 @@
 
 #include "framework/stdext/math.h"
 
-std::atomic<uint> LAST_ID(0);
+static std::atomic<ulong> UID(0);
 
-Texture::Texture() : m_uniqueId(++LAST_ID) {}
+Texture::Texture() : m_uniqueId(++UID) {}
 
-Texture::Texture(const Size& size) : m_uniqueId(++LAST_ID)
+Texture::Texture(const Size& size) : m_uniqueId(++UID)
 {
     m_id = 0;
     m_time = 0;
@@ -49,7 +49,7 @@ Texture::Texture(const Size& size) : m_uniqueId(++LAST_ID)
     setupFilters();
 }
 
-Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress, bool canSuperimposed, bool load) : m_uniqueId(++LAST_ID)
+Texture::Texture(const ImagePtr& image, bool buildMipmaps, bool compress, bool canSuperimposed, bool load) : m_uniqueId(++UID)
 {
     m_id = 0;
     m_time = 0;

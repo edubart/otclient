@@ -39,7 +39,7 @@ public:
     void bind() override;
     void unbind() override;
 
-    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::TRIANGLES) override;
 
     void setDrawProgram(PainterShaderProgram* drawProgram) { m_drawProgram = drawProgram; }
 

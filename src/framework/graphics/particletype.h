@@ -46,7 +46,7 @@ protected:
     std::vector<float> pColorsStops;
     TexturePtr pTexture;
     ParticleTypePtr particleType;
-    Painter::CompositionMode pCompositionMode;
+    CompositionMode pCompositionMode;
 
     // particles default configuration. (make them reasonable for user detect missing properties on scripts)
     // size

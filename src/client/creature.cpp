@@ -156,7 +156,7 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
             }
 
             if (m_drawOutfitColor && isNotBlank && getLayers() > 1) {
-                g_drawPool.setCompositionMode(Painter::CompositionMode_Multiply);
+                g_drawPool.setCompositionMode(CompositionMode::MULTIPLY);
                 datType->draw(dest, scaleFactor, SpriteMaskYellow, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getHeadColor());
                 datType->draw(dest, scaleFactor, SpriteMaskRed, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getBodyColor());
                 datType->draw(dest, scaleFactor, SpriteMaskGreen, xPattern, yPattern, zPattern, animationPhase, textureType, m_outfit.getLegsColor());

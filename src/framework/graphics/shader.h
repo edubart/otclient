@@ -24,14 +24,15 @@
 
 #include "declarations.h"
 
+enum class ShaderType
+{
+    VERTEX,
+    FRAGMENT
+};
+
 class Shader : public stdext::shared_object
 {
 public:
-    enum ShaderType
-    {
-        Vertex,
-        Fragment
-    };
 
     Shader(ShaderType shaderType);
     ~Shader() override;

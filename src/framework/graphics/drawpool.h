@@ -35,24 +35,25 @@ public:
     T* get(const PoolType type) { return static_cast<T*>(m_pools[static_cast<uint8_t>(type)]); }
 
     void use(PoolType type);
-    void use(PoolType type, const Rect& dest, const Rect& src, Color colorClear = Color::alpha);
+    void use(PoolType type, const Rect& dest, const Rect& src, const Color& colorClear = Color::alpha);
 
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, Color color = Color::white);
-    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white, const Point& originalDest = {});
-    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
-    void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, Color color = Color::white);
-    void addFilledRect(const Rect& dest, Color color = Color::white);
-    void addFilledTriangle(const Point& a, const Point& b, const Point& c, Color color = Color::white);
-    void addBoundingRect(const Rect& dest, Color color = Color::white, int innerLineWidth = 1);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Color& color = Color::white);
+    void addTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color = Color::white, const Point& originalDest = {});
+    void addUpsideDownTexturedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color = Color::white);
+    void addTexturedRepeatedRect(const Rect& dest, const TexturePtr& texture, const Rect& src, const Color& color = Color::white);
+    void addFilledRect(const Rect& dest, const Color& color = Color::white);
+    void addFilledTriangle(const Point& a, const Point& b, const Point& c, const Color& color = Color::white);
+    void addBoundingRect(const Rect& dest, const Color& color = Color::white, int innerLineWidth = 1);
     void addAction(std::function<void()> action);
 
     void setOpacity(const float opacity, const int pos = -1) { m_currentPool->setOpacity(opacity, pos); }
     void setClipRect(const Rect& clipRect, const int pos = -1) { m_currentPool->setClipRect(clipRect, pos); }
-    void setBlendEquation(Painter::BlendEquation equation, const int pos = -1) { m_currentPool->setBlendEquation(equation, pos); }
-    void setCompositionMode(const Painter::CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
+    void setBlendEquation(BlendEquation equation, const int pos = -1) { m_currentPool->setBlendEquation(equation, pos); }
+    void setCompositionMode(const CompositionMode mode, const int pos = -1) { m_currentPool->setCompositionMode(mode, pos); }
     void setShaderProgram(const PainterShaderProgramPtr& shaderProgram, const int pos = -1, const std::function<void()>& action = nullptr) { m_currentPool->setShaderProgram(shaderProgram, pos, action); }
 
     float getOpacity(const int pos = -1) { return m_currentPool->getOpacity(pos); }
+    Rect getClipRect(const int pos = -1) { return m_currentPool->getClipRect(pos); }
 
     void resetState() { m_currentPool->resetState(); }
     void resetOpacity() { m_currentPool->resetOpacity(); }
@@ -74,7 +75,7 @@ private:
     void createPools();
     void drawObject(Pool::DrawObject& obj);
     void updateHash(const Painter::PainterState& state, const Pool::DrawMethod& method, size_t& stateHash);
-    void add(const Color& color, const TexturePtr& texture, const Pool::DrawMethod& method, Painter::DrawMode drawMode = Painter::DrawMode::Triangles);
+    void add(const Color& color, const TexturePtr& texture, const Pool::DrawMethod& method, DrawMode drawMode = DrawMode::TRIANGLES);
 
     PoolFramed* poolFramed() { return m_currentPool->toPoolFramed(); }
 

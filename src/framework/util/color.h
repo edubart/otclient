@@ -73,7 +73,7 @@ public:
     void setAlpha(const float a) { m_a = a; update(); }
 
     void setRGBA(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a = 0xFF) { m_r = r / 255.f; m_g = g / 255.f; m_b = b / 255.f; m_a = a / 255.f; update(); }
-    void setRGBA(const uint32_t rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); update(); }
+    void setRGBA(const uint32_t rgba) { setRGBA((rgba >> 0) & 0xff, (rgba >> 8) & 0xff, (rgba >> 16) & 0xff, (rgba >> 24) & 0xff); }
 
     Color operator+(const Color& other) const { return Color(m_r + other.m_r, m_g + other.m_g, m_b + other.m_b, m_a + other.m_a); }
     Color operator-(const Color& other) const { return Color(m_r - other.m_r, m_g - other.m_g, m_b - other.m_b, m_a - other.m_a); }
@@ -134,7 +134,7 @@ private:
         m_b{ 1.f },
         m_a{ 1.f };
 
-    uint32_t m_rgba;
+    uint32_t m_rgba{ UINT32_MAX };
 };
 
 std::ostream& operator<<(std::ostream& out, const Color& color);

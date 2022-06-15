@@ -63,7 +63,7 @@ void LightView::draw(const Rect& dest, const Rect& src)
             const uint16_t radius = light.intensity * m_tileSize;
 
             g_drawPool.addTexturedRect(Rect(light.pos - radius, Size(radius * 2)), g_sprites.getLightTexture(), color);
-            g_drawPool.setBlendEquation(Painter::BlendEquation_Max, g_drawPool.size());
+            g_drawPool.setBlendEquation(BlendEquation::MAX, g_drawPool.size());
         } else {
             g_drawPool.setOpacity(light.opacity);
             g_drawPool.addTexturedRect(Rect(light.pos - m_tileSize * 1.8, size, size), g_sprites.getShadeTexture(), m_globalLightColor);

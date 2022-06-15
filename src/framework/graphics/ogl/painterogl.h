@@ -30,15 +30,14 @@ public:
     PainterOGL();
     ~PainterOGL() override = default;
 
-    virtual void refreshState();
     virtual void setTransformMatrix(const Matrix3& transformMatrix) { m_transformMatrix = transformMatrix; }
     virtual void setProjectionMatrix(const Matrix3& projectionMatrix) { m_projectionMatrix = projectionMatrix; }
     virtual void setTextureMatrix(const Matrix3& textureMatrix) { m_textureMatrix = textureMatrix; }
 
-    void resetBlendEquation() { setBlendEquation(BlendEquation_Add); }
+    void resetBlendEquation() { setBlendEquation(BlendEquation::ADD); }
     void resetTexture() { setTexture(nullptr); }
     void resetAlphaWriting() { setAlphaWriting(false); }
-    void resetTransformMatrix() { setTransformMatrix({}); }
+    void resetTransformMatrix() { setTransformMatrix(DEFAULT_MATRIX_3); }
 
     void executeState(const PainterState& state) override;
 
@@ -74,6 +73,8 @@ public:
     bool getAlphaWriting() { return m_alphaWriting; }
 
 protected:
+    virtual void refreshState();
+
     Matrix3& getTransformMatrixRef() override { return m_transformMatrix; }
 
     void updateGlTexture();
@@ -90,7 +91,7 @@ protected:
     Matrix3 m_projectionMatrix = DEFAULT_MATRIX_3;
     Matrix3 m_textureMatrix = DEFAULT_MATRIX_3;
 
-    BlendEquation m_blendEquation{ BlendEquation_Add };
+    BlendEquation m_blendEquation{ BlendEquation::ADD };
     Texture* m_texture{ nullptr };
     bool m_alphaWriting{ false };
     uint m_glTextureId{ 0 };

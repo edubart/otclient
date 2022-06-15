@@ -35,21 +35,11 @@
 class PainterOGL1 : public PainterOGL
 {
 public:
-    enum MatrixMode
-    {
-        MatrixProjection = 0x1701, // GL_PROJECTION
-        MatrixTexture = 0x1702, // GL_TEXTURE
-        MatrixTransform = 0x1700 // GL_MODELVIEW
-    };
-
     void bind() override;
     void unbind() override;
 
-    void refreshState() override;
+    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::TRIANGLES) override;
 
-    void drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode = DrawMode::Triangles) override;
-
-    void setMatrixMode(MatrixMode matrixMode);
     void setTransformMatrix(const Matrix3& transformMatrix) override;
     void setProjectionMatrix(const Matrix3& projectionMatrix) override;
     void setTextureMatrix(const Matrix3& textureMatrix) override;
@@ -58,7 +48,19 @@ public:
 
     bool hasShaders() override { return false; }
 
+protected:
+    void refreshState() override;
+
 private:
+    enum class MatrixMode
+    {
+        PROJECTION = GL_PROJECTION,
+        TEXTURE = GL_TEXTURE,
+        TRANSFORM = GL_MODELVIEW
+    };
+
+    void setMatrixMode(MatrixMode matrixMode);
+
     void updateGlColor();
     void updateGlMatrixMode();
     void updateGlProjectionMatrix();

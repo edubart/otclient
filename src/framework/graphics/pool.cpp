@@ -22,7 +22,7 @@
 
 #include "pool.h"
 
-void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos)
+void Pool::setCompositionMode(const CompositionMode mode, const int pos)
 {
     if (pos == -1) {
         m_state.compositionMode = mode;
@@ -33,7 +33,7 @@ void Pool::setCompositionMode(const Painter::CompositionMode mode, const int pos
     stdext::hash_combine(m_status.second, mode);
 }
 
-void Pool::setBlendEquation(Painter::BlendEquation equation, const int pos)
+void Pool::setBlendEquation(BlendEquation equation, const int pos)
 {
     if (pos == -1) {
         m_state.blendEquation = equation;

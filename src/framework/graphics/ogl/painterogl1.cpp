@@ -98,10 +98,8 @@ void PainterOGL1::drawCoords(CoordsBuffer& coordsBuffer, DrawMode drawMode)
         // use glBegin/glEnd, this is not available in OpenGL ES
         // and is considered much slower then glDrawArrays,
         // but this code is executed in really old graphics cards
-        if (drawMode == DrawMode::Triangles)
-            glBegin(GL_TRIANGLES);
-        else if (drawMode == DrawMode::TriangleStrip)
-            glBegin(GL_TRIANGLE_STRIP);
+
+        glBegin(static_cast<GLenum>(drawMode));
         for (int i = 0; i < verticesSize; i += 2) {
             if (textured)
                 glTexCoord2f(texCoords[i], texCoords[i + 1]);
@@ -117,7 +115,7 @@ void PainterOGL1::setMatrixMode(MatrixMode matrixMode)
     if (m_matrixMode == static_cast<GLenum>(matrixMode))
         return;
 
-    m_matrixMode = matrixMode;
+    m_matrixMode = static_cast<GLenum>(matrixMode);
     updateGlMatrixMode();
 }
 
@@ -179,7 +177,7 @@ void PainterOGL1::updateGlTransformMatrix()
             m_transformMatrix(3,1), m_transformMatrix(3,2),                    0.0f, m_transformMatrix(3,3),
     };
 
-    setMatrixMode(MatrixTransform);
+    setMatrixMode(MatrixMode::TRANSFORM);
     glLoadMatrixf(glTransformMatrix);
 }
 
@@ -192,7 +190,7 @@ void PainterOGL1::updateGlProjectionMatrix()
             m_projectionMatrix(3,1), m_projectionMatrix(3,2),                    0.0f, m_projectionMatrix(3,3),
     };
 
-    setMatrixMode(MatrixProjection);
+    setMatrixMode(MatrixMode::PROJECTION);
     glLoadMatrixf(glProjectionMatrix);
 }
 
@@ -205,7 +203,7 @@ void PainterOGL1::updateGlTextureMatrix()
             m_textureMatrix(3,1), m_textureMatrix(3,2),             0.0f, m_textureMatrix(3,3),
     };
 
-    setMatrixMode(MatrixTexture);
+    setMatrixMode(MatrixMode::TEXTURE);
     glLoadMatrixf(glTextureMatrix);
 }
 

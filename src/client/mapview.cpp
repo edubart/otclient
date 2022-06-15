@@ -49,10 +49,10 @@ MapView::MapView()
     mapPool->onBeforeDraw([&] {
         const Position cameraPosition = getCameraPosition();
 
-        float fadeOpacity = 1.0f;
+        float fadeOpacity = 1.f;
         if (!m_shaderSwitchDone && m_fadeOutTime > 0) {
-            fadeOpacity = 1.0f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
-            if (fadeOpacity < 0.0f) {
+            fadeOpacity = 1.f - (m_fadeTimer.timeElapsed() / m_fadeOutTime);
+            if (fadeOpacity < 0.f) {
                 m_shader = m_nextShader;
                 m_nextShader = nullptr;
                 m_shaderSwitchDone = true;
@@ -61,14 +61,14 @@ MapView::MapView()
         }
 
         if (m_shaderSwitchDone && m_shader && m_fadeInTime > 0)
-            fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.0f);
+            fadeOpacity = std::min<float>(m_fadeTimer.timeElapsed() / m_fadeInTime, 1.f);
 
         if (m_shader && g_painter->hasShaders() && g_graphics.shouldUseShaders()) {
             auto framebufferRect = Rect(0, 0, m_drawDimension * m_tileSize);
             const Point center = m_rectCache.srcRect.center();
             const Point globalCoord = Point(cameraPosition.x - m_drawDimension.width() / 2, -(cameraPosition.y - m_drawDimension.height() / 2)) * m_tileSize;
             m_shader->bind();
-            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.0f - center.y / static_cast<float>(m_rectDimension.height()));
+            m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / static_cast<float>(m_rectDimension.width()), 1.f - center.y / static_cast<float>(m_rectDimension.height()));
             m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / static_cast<float>(m_rectDimension.height()), globalCoord.y / static_cast<float>(m_rectDimension.height()));
             m_shader->setUniformValue(ShaderManager::MAP_ZOOM, m_scaleFactor);
 
