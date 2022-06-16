@@ -32,7 +32,7 @@
 #include <framework/graphics/texture.h>
 #include <framework/graphics/texturemanager.h>
 
-static std::atomic<ulong> UID(0);
+static std::atomic<uint32_t> UID(0);
 
 void UIWidget::initBaseStyle()
 {
