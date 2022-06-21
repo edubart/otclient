@@ -480,6 +480,9 @@ void UITextEdit::paste(const std::string& text)
 
 std::string UITextEdit::copy()
 {
+    if(m_textHidden)
+        return "";
+
     std::string text;
     if(hasSelection()) {
         text = getSelection();
