@@ -230,10 +230,11 @@ void Game::processGameEnd()
 
 void Game::processDeath(int deathType, int penality)
 {
+  if(m_localPlayer->getHealth() > 0){
     m_dead = true;
     m_localPlayer->stopWalk();
-
     g_lua.callGlobalField("g_game", "onDeath", deathType, penality);
+  }
 }
 
 void Game::processGMActions(const std::vector<uint8>& actions)

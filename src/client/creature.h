@@ -121,7 +121,7 @@ public:
     bool isWalking() { return m_walking; }
     bool isRemoved() { return m_removed; }
     bool isInvisible() { return m_outfit.getCategory() == ThingCategoryEffect && m_outfit.getAuxId() == 13; }
-    bool isDead() { return m_healthPercent <= 0; }
+    bool isDead();
     bool canBeSeen() { return !isInvisible() || isPlayer(); }
 
     bool isCreature() { return true; }

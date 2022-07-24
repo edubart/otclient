@@ -689,10 +689,10 @@ void Map::setAwareRange(const AwareRange& range)
 void Map::resetAwareRange()
 {
     AwareRange range;
-    range.left = 8;
-    range.top = 6;
-    range.bottom = 7;
-    range.right = 9;
+    range.left = 12; //Mesmo valor do server em maxClientViewportX - map.h
+    range.top = 9; //Mesmo valor do server em maxClientViewportY - map.h
+    range.bottom = range.top+1;
+    range.right = range.left+1;
     setAwareRange(range);
 }
 
