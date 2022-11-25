@@ -1717,9 +1717,9 @@ bool UIWidget::propagateOnMouseMove(const Point& mousePos, const Point& mouseMov
             if(child->isExplicitlyVisible() && child->isExplicitlyEnabled() && child->containsPoint(mousePos))
                 child->propagateOnMouseMove(mousePos, mouseMoved, widgetList);
 
-            widgetList.push_back(static_self_cast<UIWidget>());
         }
     }
 
+    widgetList.push_back(static_self_cast<UIWidget>());
     return true;
 }
