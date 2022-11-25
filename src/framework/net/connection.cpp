@@ -162,7 +162,7 @@ void Connection::read(uint16 bytes, const RecvCallback& callback)
     m_recvCallback = callback;
 
     asio::async_read(m_socket,
-                     asio::buffer(m_inputStream.prepare(bytes)),
+                     asio::mutable_buffer(m_inputStream.prepare(bytes)),
                      std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.cancel();
@@ -194,7 +194,7 @@ void Connection::read_some(const RecvCallback& callback)
 
     m_recvCallback = callback;
 
-    m_socket.async_read_some(asio::buffer(m_inputStream.prepare(RECV_BUFFER_SIZE)),
+    m_socket.async_read_some(asio::mutable_buffer(m_inputStream.prepare(RECV_BUFFER_SIZE)),
                              std::bind(&Connection::onRecv, asConnection(), std::placeholders::_1, std::placeholders::_2));
 
     m_readTimer.cancel();
