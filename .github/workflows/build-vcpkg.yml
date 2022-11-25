@@ -10,6 +10,7 @@ on:
       - v*
 
     paths:
+      - .github/workflows/**
       - cmake/**
       - src/**
       - CMakeLists.txt
@@ -96,7 +97,7 @@ jobs:
           vcpkgArguments: ${{ matrix.packages }}
           vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
           vcpkgTriplet: ${{ matrix.triplet }}
-          vcpkgGitCommitId: e809a42f87565e803b2178a0c11263f462d1800a
+          vcpkgGitCommitId: 6f7ffeb18f99796233b958aaaf14ec7bd4fb64b2
 
       - name: Build with CMake
         uses: lukka/run-cmake@v3
