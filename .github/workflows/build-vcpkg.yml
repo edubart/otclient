@@ -66,7 +66,7 @@ jobs:
             luajit: off
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
 
@@ -92,7 +92,7 @@ jobs:
           echo "CC=${{ matrix.cc }}" >> $GITHUB_ENV
 
       - name: Run vcpkg
-        uses: lukka/run-vcpkg@v7.1
+        uses: lukka/run-vcpkg@v7
         with:
           vcpkgArguments: ${{ matrix.packages }}
           vcpkgDirectory: ${{ runner.workspace }}/vcpkg/
@@ -112,21 +112,21 @@ jobs:
         shell: bash
 
       - name: Upload artifact binary
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
           path: ${{ runner.workspace }}/build/otclient
         if: "! contains( matrix.os, 'windows')"
 
       - name: Upload artifact binary (exe)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
           path: ${{ runner.workspace }}/build/otclient.exe
         if: contains( matrix.os, 'windows')
 
       - name: Upload artifact binary (dlls)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: otclient-${{ matrix.name }}-${{ matrix.buildtype }}-luajit=${{ matrix.luajit }}-${{ github.sha }}
           path: ${{ runner.workspace }}/build/*.dll
