@@ -45,9 +45,15 @@ void GraphicalApplication::init(std::vector<std::string>& args)
     // setup platform window
     g_window.init();
     g_window.hide();
-    g_window.setOnResize(std::bind(&GraphicalApplication::resize, this, std::placeholders::_1));
-    g_window.setOnInputEvent(std::bind(&GraphicalApplication::inputEvent, this, std::placeholders::_1));
-    g_window.setOnClose(std::bind(&GraphicalApplication::close, this));
+    g_window.setOnResize([this] (auto size) {
+        resize(size);
+    });
+    g_window.setOnInputEvent([this] (const auto &event) {
+        inputEvent(event);
+    });
+    g_window.setOnClose([this] () {
+        close();
+    });
 
     g_mouse.init();
 
