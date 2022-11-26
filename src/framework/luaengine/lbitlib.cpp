@@ -158,6 +158,7 @@ static lua_Unsigned luaL_checkunsigned (lua_State *L, int arg) {
 
 #define LUAMOD_API  LUALIB_API
 #define LUA_BIT32LIBNAME "bit32"
+#undef luaL_newlib
 #define luaL_newlib(x, y) luaL_register(x, LUA_BIT32LIBNAME, y)
 
 /* ----- avoid a 'symbol redefined' warning below ----- */
