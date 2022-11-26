@@ -46,7 +46,9 @@ void exitSignalHandler(int sig)
         case SIGINT:
             if(!signaled && !g_app.isStopping() && !g_app.isTerminated()) {
                 signaled = true;
-                g_dispatcher.addEvent(std::bind(&Application::close, &g_app));
+                g_dispatcher.addEvent([] () {
+                    g_app.close();
+                });
             }
             break;
     }

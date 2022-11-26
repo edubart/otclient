@@ -43,8 +43,12 @@ Protocol::~Protocol()
 void Protocol::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
-    m_connection->setErrorCallback(std::bind(&Protocol::onError, asProtocol(), std::placeholders::_1));
-    m_connection->connect(host, port, std::bind(&Protocol::onConnect, asProtocol()));
+    m_connection->setErrorCallback([proto = asProtocol()] (auto error) {
+        proto->onError(error);
+    });
+    m_connection->connect(host, port, [proto = asProtocol()] () {
+        proto->onConnect();
+    });
 }
 
 void Protocol::disconnect()
@@ -104,7 +108,9 @@ void Protocol::recv()
 
     // read the first 2 bytes which contain the message size
     if(m_connection)
-        m_connection->read(2, std::bind(&Protocol::internalRecvHeader, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read(2, [proto = asProtocol()] (auto buffer, auto size) {
+            proto->internalRecvHeader(buffer, size);
+        });
 }
 
 void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
@@ -115,7 +121,9 @@ void Protocol::internalRecvHeader(uint8* buffer, uint16 size)
 
     // read remaining message data
     if(m_connection)
-        m_connection->read(remainingSize, std::bind(&Protocol::internalRecvData, asProtocol(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read(remainingSize, [proto = asProtocol()] (auto buffer, auto size) {
+            proto->internalRecvData(buffer, size);
+        });
 }
 
 void Protocol::internalRecvData(uint8* buffer, uint16 size)

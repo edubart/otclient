@@ -38,7 +38,9 @@ void AsyncDispatcher::terminate()
 void AsyncDispatcher::spawn_thread()
 {
     m_running = true;
-    m_threads.emplace_back(std::bind(&AsyncDispatcher::exec_loop, this));
+    m_threads.emplace_back([this] () {
+        exec_loop();
+    });
 }
 
 void AsyncDispatcher::stop()

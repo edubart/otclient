@@ -39,8 +39,12 @@ ProtocolHttp::~ProtocolHttp()
 void ProtocolHttp::connect(const std::string& host, uint16 port)
 {
     m_connection = ConnectionPtr(new Connection);
-    m_connection->setErrorCallback(std::bind(&ProtocolHttp::onError, asProtocolHttp(), std::placeholders::_1));
-    m_connection->connect(host, port, std::bind(&ProtocolHttp::onConnect, asProtocolHttp()));
+    m_connection->setErrorCallback([proto = asProtocolHttp()] (auto error) {
+        proto->onError(error);
+    });
+    m_connection->connect(host, port, [proto = asProtocolHttp()] () {
+        proto->onConnect();
+    });
 }
 
 void ProtocolHttp::disconnect()
@@ -60,7 +64,9 @@ void ProtocolHttp::send(const std::string& message)
 void ProtocolHttp::recv()
 {
     if(m_connection)
-        m_connection->read_until("\r\n\r\n", std::bind(&ProtocolHttp::onRecv, asProtocolHttp(), std::placeholders::_1,  std::placeholders::_2));
+        m_connection->read_until("\r\n\r\n", [proto = asProtocolHttp()] (auto buffer, auto size) {
+            proto->onRecv(buffer, size);
+        });
 }
 
 void ProtocolHttp::onConnect()
