@@ -103,12 +103,12 @@ function loadMap(clean)
   end
 
   if otmm then
-    local minimapFile = '/minimap.otmm'
+    local minimapFile = '/minimap_'.. G.host ..'.otmm'
     if g_resources.fileExists(minimapFile) then
       g_minimap.loadOtmm(minimapFile)
     end
   else
-    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+    local minimapFile = '/minimap_' .. clientVersion .. '_'.. G.host ..'.otcm'
     if g_resources.fileExists(minimapFile) then
       g_map.loadOtcm(minimapFile)
     end
@@ -119,10 +119,10 @@ end
 function saveMap()
   local clientVersion = g_game.getClientVersion()
   if otmm then
-    local minimapFile = '/minimap.otmm'
+    local minimapFile = '/minimap_'.. G.host ..'.otmm'
     g_minimap.saveOtmm(minimapFile)
   else
-    local minimapFile = '/minimap_' .. clientVersion .. '.otcm'
+    local minimapFile = '/minimap_' .. clientVersion .. '_'.. G.host ..'.otcm'
     g_map.saveOtcm(minimapFile)
   end
   minimapWidget:save()
