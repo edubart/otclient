@@ -1,0 +1,22 @@
+{
+    "name": "example",
+    "version-string": "0.0.1",
+    "dependencies": [
+        "boost-iostreams",
+        "boost-asio", 
+        "boost-system",
+        "boost-variant",
+        "boost-lockfree",
+        "boost-filesystem",
+        "boost-uuid",
+        "glew",
+        "luajit", 
+        "libogg", 
+        "libvorbis", 
+        "openal-soft", 
+        "opengl", 
+        "openssl", 
+        "physfs", 
+        "zlib"
+    ]
+  }

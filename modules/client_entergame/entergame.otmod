@@ -12,6 +12,7 @@ Module
     dofile 'characterlist'
     EnterGame.init()
     CharacterList.init()
+    EnterGame.setUniqueServer("theforgottentibia.servegame.com", 7171, 1098)
 
   @onUnload: |
     EnterGame.terminate()

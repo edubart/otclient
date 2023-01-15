@@ -1,0 +1,74 @@
+Panel
+  CheckBox
+    id: healthCheckBox
+    text: Health circle
+    phantom: false
+    !tooltip: tr('On health circle')
+    anchors.left: parent.left
+    anchors.top: parent.top
+    width: 140
+    //margin-top: 8
+    @onCheckChange: |
+      if self:isChecked() then
+        modules.game_healthcircle.setHealthCircle(true)
+      else
+        modules.game_healthcircle.setHealthCircle(false)
+      end
+
+  CheckBox
+    id: manaCheckBox
+    text: Mana circle
+    phantom: false
+    !tooltip: tr('On mana circle')
+    anchors.left: parent.left
+    anchors.top: healthCheckBox.bottom
+    width: 140
+    margin-top: 8
+    @onCheckChange: |
+      if self:isChecked() then
+        modules.game_healthcircle.setManaCircle(true)
+      else
+        modules.game_healthcircle.setManaCircle(false)
+      end
+
+  Label
+    id: distFromCenLabel
+    phantom: false
+    !tooltip: tr('Set distance from center.')
+    width: 120
+    anchors.left: parent.left
+    anchors.top: manaCheckBox.bottom
+    margin-top: 8
+
+  OptionScrollbar
+    id: distFromCenScrollbar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: distFromCenLabel.bottom
+    margin-top: 5
+    minimum: 0
+    maximum: 100
+    @onValueChange: |
+      modules.game_healthcircle.optionPanel:recursiveGetChildById('distFromCenLabel'):setText(tr('Distance: %s', self:getValue()))
+      modules.game_healthcircle.setDistanceFromCenter(self:getValue())
+
+  Label
+    id: opacityLabel
+    phantom: false
+    !tooltip: tr('Set circle opacity.')
+    width: 120
+    anchors.left: parent.left
+    anchors.top: distFromCenScrollbar.bottom
+    margin-top: 8
+
+  OptionScrollbar
+    id: opacityScrollbar
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: opacityLabel.bottom
+    margin-top: 5
+    minimum: 0
+    maximum: 100
+    @onValueChange: |
+      modules.game_healthcircle.optionPanel:recursiveGetChildById('opacityLabel'):setText(tr('Opacity: %s', self:getValue() / 100))
+      modules.game_healthcircle.setCircleOpacity(self:getValue() / 100)

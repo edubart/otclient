@@ -1237,7 +1237,6 @@ void Game::setOpenPvpSituations(int openPvpSituations)
     g_lua.callGlobalField("g_game", "onOpenPvpSituationsChange", openPvpSituations);
 }
 
-
 void Game::inspectNpcTrade(const ItemPtr& item)
 {
     if(!canPerformGameAction() || !item)
@@ -1708,6 +1707,19 @@ void Game::setFollowingCreature(const CreaturePtr& creature)
     m_followingCreature = creature;
 
     g_lua.callGlobalField("g_game", "onFollowingCreatureChange", creature, oldCreature);
+}
+
+void Game::applyNewSkills(uint16_t magic, uint16_t vitality, uint16_t strenght, uint16_t defence,
+						uint16_t dexterity, uint16_t intelligence, uint16_t faith, uint16_t endurance)
+{
+	if (!canPerformGameAction())
+		return;
+	m_protocolGame->sendSetNewSkills(magic, vitality, strenght, defence, dexterity, intelligence, faith, endurance);
+}
+
+void Game::checkVersionToPlay(uint16_t versionToPlay)
+{
+	m_protocolGame->sendVersionToPlay(versionToPlay);
 }
 
 std::string Game::formatCreatureName(const std::string& name)

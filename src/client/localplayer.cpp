@@ -34,27 +34,31 @@ LocalPlayer::LocalPlayer()
     m_blessings = Otc::BlessingNone;
     m_walkLockExpiration = 0;
 
-    m_skillsLevel.fill(-1);
-    m_skillsBaseLevel.fill(-1);
-    m_skillsLevelPercent.fill(-1);
-
+	m_experience = -1;
+	m_level = -1;
+	m_levelPercent = -1;
     m_health = -1;
     m_maxHealth = -1;
+	m_mana = -1;
+	m_maxMana = -1;
     m_freeCapacity = -1;
-    m_experience = -1;
-    m_level = -1;
-    m_levelPercent = -1;
-    m_mana = -1;
-    m_maxMana = -1;
-    m_magicLevel = -1;
-    m_magicLevelPercent = -1;
-    m_baseMagicLevel = -1;
+	m_totalCapacity = -1;
+	m_skillPoints = -1;
     m_soul = -1;
     m_stamina = -1;
     m_baseSpeed = -1;
+	m_attackSpeed = -1;
     m_regenerationTime = -1;
-    m_offlineTrainingTime = -1;
-    m_totalCapacity = -1;
+
+	m_magicLevel = -1;
+	m_baseMagicLevel = -1;
+	m_newBaseMagicLevel = 0;
+
+	m_skillsLevel.fill(-1);
+	m_skillsBaseLevel.fill(-1);
+
+	m_newSkillsBaseLevel.fill(0);
+
 }
 
 void LocalPlayer::lockWalk(int millis)
@@ -328,7 +332,7 @@ void LocalPlayer::setStates(int states)
     }
 }
 
-void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
+void LocalPlayer::setSkill(Otc::Skill skill, int level)
 {
     if(skill >= Otc::LastSkill) {
         g_logger.traceError("invalid skill");
@@ -336,29 +340,41 @@ void LocalPlayer::setSkill(Otc::Skill skill, int level, int levelPercent)
     }
 
     int oldLevel = m_skillsLevel[skill];
-    int oldLevelPercent = m_skillsLevelPercent[skill];
-
-    if(level != oldLevel || levelPercent != oldLevelPercent) {
+    if(level != oldLevel) {
         m_skillsLevel[skill] = level;
-        m_skillsLevelPercent[skill] = levelPercent;
 
-        callLuaField("onSkillChange", skill, level, levelPercent, oldLevel, oldLevelPercent);
+        callLuaField("onSkillChange", skill, level, oldLevel);
     }
 }
 
 void LocalPlayer::setBaseSkill(Otc::Skill skill, int baseLevel)
 {
-    if(skill >= Otc::LastSkill) {
-        g_logger.traceError("invalid skill");
-        return;
-    }
+	if (skill >= Otc::LastSkill) {
+		g_logger.traceError("invalid skill");
+		return;
+	}
 
-    int oldBaseLevel = m_skillsBaseLevel[skill];
-    if(baseLevel != oldBaseLevel) {
-        m_skillsBaseLevel[skill] = baseLevel;
+	int oldBaseLevel = m_skillsBaseLevel[skill];
+	if (baseLevel != oldBaseLevel) {
+		m_skillsBaseLevel[skill] = baseLevel;
 
-        callLuaField("onBaseSkillChange", skill, baseLevel, oldBaseLevel);
-    }
+		callLuaField("onBaseSkillChange", skill, baseLevel, oldBaseLevel);
+	}
+}
+
+void LocalPlayer::setNewBaseSkill(Otc::Skill skill, int level)
+{
+	if (skill >= Otc::LastSkill) {
+		g_logger.traceError("invalid skill");
+		return;
+	}
+
+	int oldLevel = m_newSkillsBaseLevel[skill];
+	if (level != oldLevel) {
+		m_newSkillsBaseLevel[skill] = level;
+
+		callLuaField("onNewBaseSkillChange", skill, level, oldLevel);
+	}
 }
 
 void LocalPlayer::setHealth(double health, double maxHealth)
@@ -434,26 +450,72 @@ void LocalPlayer::setMana(double mana, double maxMana)
     }
 }
 
-void LocalPlayer::setMagicLevel(double magicLevel, double magicLevelPercent)
+void LocalPlayer::setBlessings(int blessings)
 {
-    if(m_magicLevel != magicLevel || m_magicLevelPercent != magicLevelPercent) {
-        double oldMagicLevel = m_magicLevel;
-        double oldMagicLevelPercent = m_magicLevelPercent;
-        m_magicLevel = magicLevel;
-        m_magicLevelPercent = magicLevelPercent;
+	if (m_blessings != blessings) {
+		double oldBlessings = m_blessings;
+		m_blessings = blessings;
 
-        callLuaField("onMagicLevelChange", magicLevel, magicLevelPercent, oldMagicLevel, oldMagicLevelPercent);
+		callLuaField("onBlessingsChange", blessings, oldBlessings);
+	}
+}
+
+void LocalPlayer::setResets(int resets)
+{
+	if (m_resets != resets) {
+		double oldResets = m_resets;
+		m_resets = resets;
+
+		callLuaField("onResetsChange", resets, oldResets);
+	}
+}
+
+void LocalPlayer::setAttackSpeed(double attackSpeed)
+{
+	if (m_attackSpeed != attackSpeed) {
+		double oldAttackSpeed = m_attackSpeed;
+		m_attackSpeed = attackSpeed;
+
+		callLuaField("onAttackSpeedChange", attackSpeed, oldAttackSpeed);
+	}
+}
+
+void LocalPlayer::setSkillPoints(double points)
+{
+	if (m_skillPoints != points) {
+		double oldSkillPoints = m_skillPoints;
+		m_skillPoints = points;
+
+		callLuaField("onSkillPointsChange", points, oldSkillPoints);
+	}
+}
+
+void LocalPlayer::setMagicLevel(double magicLevel)
+{
+    if(m_magicLevel != magicLevel) {
+        double oldmagicLevel = m_magicLevel;
+        m_magicLevel = magicLevel;
+
+        callLuaField("onMagicLevelChange", magicLevel, oldmagicLevel);
     }
 }
 
 void LocalPlayer::setBaseMagicLevel(double baseMagicLevel)
 {
-    if(m_baseMagicLevel != baseMagicLevel) {
-        double oldBaseMagicLevel = m_baseMagicLevel;
-        m_baseMagicLevel = baseMagicLevel;
+	if (m_baseMagicLevel != baseMagicLevel) {
+		double oldBaseMagicLevel = m_baseMagicLevel;
+		m_baseMagicLevel = baseMagicLevel;
 
-        callLuaField("onBaseMagicLevelChange", baseMagicLevel, oldBaseMagicLevel);
-    }
+		callLuaField("onBaseMagicLevelChange", baseMagicLevel, oldBaseMagicLevel);
+	}
+}
+
+void LocalPlayer::setNewBaseMagicLevel(double newMagicLevel)
+{
+	double oldNewMagicLevel = m_newBaseMagicLevel;
+	m_newBaseMagicLevel = newMagicLevel;
+
+	callLuaField("onNewBaseMagicLevelChange", newMagicLevel, oldNewMagicLevel);
 }
 
 void LocalPlayer::setSoul(double soul)
@@ -520,16 +582,6 @@ void LocalPlayer::setRegenerationTime(double regenerationTime)
     }
 }
 
-void LocalPlayer::setOfflineTrainingTime(double offlineTrainingTime)
-{
-    if(m_offlineTrainingTime != offlineTrainingTime) {
-        double oldOfflineTrainingTime = m_offlineTrainingTime;
-        m_offlineTrainingTime = offlineTrainingTime;
-
-        callLuaField("onOfflineTrainingChange", offlineTrainingTime, oldOfflineTrainingTime);
-    }
-}
-
 void LocalPlayer::setSpells(const std::vector<int>& spells)
 {
     if(m_spells != spells) {
@@ -537,16 +589,6 @@ void LocalPlayer::setSpells(const std::vector<int>& spells)
         m_spells = spells;
 
         callLuaField("onSpellsChange", spells, oldSpells);
-    }
-}
-
-void LocalPlayer::setBlessings(int blessings)
-{
-    if(blessings != m_blessings) {
-        int oldBlessings = m_blessings;
-        m_blessings = blessings;
-
-        callLuaField("onBlessingsChange", blessings, oldBlessings);
     }
 }
 

@@ -182,6 +182,16 @@ EnterGameWindow
     anchors.top: prev.bottom
     margin-top: 2
 
+  CheckBox
+    id: connectToLocalhostBox
+    enabled: true
+    !text: tr('Connect to localhost')
+    !tooltip: tr('Used for local tests on ip 127.0.0.1')
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: prev.bottom
+    margin-top: 2
+
   HorizontalSeparator
     anchors.left: parent.left
     anchors.right: parent.right
@@ -189,11 +199,21 @@ EnterGameWindow
     margin-top: 6
 
   EnterGameButton
-    !text: tr('Ok')
+    !text: tr('Login')
     anchors.right: parent.right
     anchors.top: prev.bottom
     margin-top: 4
     @onClick: EnterGame.doLogin()
+
+  
+  Button
+    id: buttonTesteBuilds
+    !text: tr('Test Builds')
+    width: 128
+    anchors.right: prev.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    @onClick: EnterGame.doLoginToTest()
 
   Label
     id: serverInfoLabel

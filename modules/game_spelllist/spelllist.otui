@@ -39,7 +39,7 @@ FilterButton < Button
 MainWindow
   id: spelllistWindow
   !text: tr('Spell List')
-  size: 550 400
+  size: 550 310
   @onEscape: toggle()
 
   TextList
@@ -82,14 +82,10 @@ MainWindow
     margin-top: 8
 
   FilterButton
-    id: buttonFilterLevel
-    !text: tr('Level')
-    !tooltip: tr('Hide spells for higher exp. levels')
-
-  FilterButton
-    id: buttonFilterVocation
-    !text: tr('Vocation')
-    !tooltip: tr('Hide spells for other vocations')
+    id: buttonFilterCanUse
+    width: 180
+    !text: tr('Show only spells I can use')
+    !tooltip: tr('Hide spells you can not use')
 
   SpellInfoLabel
     id: labelFormula
@@ -97,17 +93,10 @@ MainWindow
     anchors.top: labelName.bottom
     !text: tr('Formula') .. ':'
 
-
-  SpellInfoLabel
-    id: labelVocation
-    anchors.left: spellList.right
-    anchors.top: labelFormula.bottom
-    !text: tr('Vocation') .. ':'
-
   SpellInfoLabel
     id: labelGroup
     anchors.left: spellList.right
-    anchors.top: labelVocation.bottom
+    anchors.top: labelFormula.bottom
     !text: tr('Group') .. ':'
 
   SpellInfoLabel
@@ -123,28 +112,34 @@ MainWindow
     !text: tr('Cooldown') .. ':'
 
   SpellInfoLabel
-    id: labelLevel
+    id: labelStrenght
     anchors.left: spellList.right
     anchors.top: labelCooldown.bottom
-    !text: tr('Level') .. ':'
+    !text: tr('Strenght') .. ':'
+
+  SpellInfoLabel
+    id: labelDexterity
+    anchors.left: spellList.right
+    anchors.top: labelStrenght.bottom
+    !text: tr('Dexterity') .. ':'
+
+  SpellInfoLabel
+    id: labelFaith
+    anchors.left: spellList.right
+    anchors.top: labelDexterity.bottom
+    !text: tr('Faith') .. ':'
+
+  SpellInfoLabel
+    id: labelIntelligence
+    anchors.left: spellList.right
+    anchors.top: labelFaith.bottom
+    !text: tr('Intelligence') .. ':'
 
   SpellInfoLabel
     id: labelMana
     anchors.left: spellList.right
-    anchors.top: labelLevel.bottom
+    anchors.top: labelIntelligence.bottom
     !text: tr('Mana') .. ' / ' .. tr('Soul') .. ':'
-
-  SpellInfoLabel
-    id: labelPremium
-    anchors.left: spellList.right
-    anchors.top: labelMana.bottom
-    !text: tr('Premium') .. ':'
-
-  SpellInfoLabel
-    id: labelDescription
-    anchors.left: spellList.right
-    anchors.top: labelPremium.bottom
-    !text: tr('Description') .. ':'
 
   SpellInfoValueLabel
     id: labelNameValue
@@ -157,14 +152,9 @@ MainWindow
     anchors.top: labelNameValue.bottom
 
   SpellInfoValueLabel
-    id: labelVocationValue
-    anchors.left: labelVocation.right
-    anchors.top: labelFormulaValue.bottom
-
-  SpellInfoValueLabel
     id: labelGroupValue
     anchors.left: labelGroup.right
-    anchors.top: labelVocationValue.bottom
+    anchors.top: labelFormulaValue.bottom
 
   SpellInfoValueLabel
     id: labelTypeValue
@@ -177,92 +167,36 @@ MainWindow
     anchors.top: labelTypeValue.bottom
 
   SpellInfoValueLabel
-    id: labelLevelValue
-    anchors.left: labelLevel.right
+    id: labelStrenghtValue
+    anchors.left: labelStrenght.right
     anchors.top: labelCooldownValue.bottom
+
+  SpellInfoValueLabel
+    id: labelDexterityValue
+    anchors.left: labelDexterity.right
+    anchors.top: labelStrenghtValue.bottom
+
+  SpellInfoValueLabel
+    id: labelFaithValue
+    anchors.left: labelFaith.right
+    anchors.top: labelDexterityValue.bottom
+
+  SpellInfoValueLabel
+    id: labelIntelligenceValue
+    anchors.left: labelIntelligence.right
+    anchors.top: labelFaithValue.bottom
 
   SpellInfoValueLabel
     id: labelManaValue
     anchors.left: labelMana.right
-    anchors.top: labelLevelValue.bottom
-
-  SpellInfoValueLabel
-    id: labelPremiumValue
-    anchors.left: labelPremium.right
-    anchors.top: labelManaValue.bottom
-
-  SpellInfoValueLabel
-    id: labelDescriptionValue
-    anchors.left: labelDescription.right
-    anchors.top: labelPremiumValue.bottom
-
-  Label
-    id: labelVocationFilter
-    anchors.top: labelPremium.bottom
-    anchors.left: spellList.right
-    width: 70
-    font: verdana-11px-monochrome
-    !text: tr('Vocation')
-    margin-top: 30
-    margin-left: 20
-
-  CheckBox
-    id: vocationBoxAny
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    margin-left: 3
-    !text: tr('Any')
-    width: 75
-
-  CheckBox
-    id: vocationBoxSorcerer
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('Sorcerer')
-    width: 75
-
-  CheckBox
-    id: vocationBoxDruid
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('Druid')
-    width: 75
-
-  CheckBox
-    id: vocationBoxPaladin
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('Paladin')
-    width: 75
-
-  CheckBox
-    id: vocationBoxKnight
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('Knight')
-    width: 75
-
-  Label
-    id: labelGroupFilter
-    anchors.top: labelPremium.bottom
-    anchors.left: labelVocationFilter.right
-    width: 70
-    font: verdana-11px-monochrome
-    !text: tr('Group')
-    margin-top: 30
-    margin-left: 20
+    anchors.top: labelIntelligenceValue.bottom
 
   CheckBox
     id: groupBoxAny
-    anchors.left: prev.left
+    anchors.left: spellsScrollBar.right
     anchors.top: prev.bottom
-    margin-top: 3
-    margin-left: 3
+    margin-top: 10
+    margin-left: 11
     !text: tr('Any')
     width: 75
 
@@ -288,39 +222,4 @@ MainWindow
     anchors.top: prev.bottom
     margin-top: 3
     !text: tr('Support')
-    width: 75
-
-  Label
-    id: labelPremiumFilter
-    anchors.top: labelPremium.bottom
-    anchors.left: labelGroupFilter.right
-    width: 70
-    font: verdana-11px-monochrome
-    !text: tr('Premium')
-    margin-top: 30
-    margin-left: 20
-
-  CheckBox
-    id: premiumBoxAny
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    margin-left: 3
-    !text: tr('Any')
-    width: 75
-
-  CheckBox
-    id: premiumBoxNo
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('No')
-    width: 75
-
-  CheckBox
-    id: premiumBoxYes
-    anchors.left: prev.left
-    anchors.top: prev.bottom
-    margin-top: 3
-    !text: tr('Yes')
     width: 75

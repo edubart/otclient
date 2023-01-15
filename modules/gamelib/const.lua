@@ -1,5 +1,10 @@
 -- @docconsts @{
 
+clientVersionToPlay = 4
+clientDownloadLink = "http://189.122.73.38:8080/download.php?file=/TheForgottenTibia.zip"
+
+dualWieldingAttackSpeed = 1500
+
 FloorHigher = 0
 FloorLower = 15
 
@@ -45,20 +50,106 @@ Directions = {
   NorthWest = 7
 }
 
+initial = {
+	mana = 10,
+	health = 120,
+	cap = 36500,
+	soul = 200,
+	attackSpeed = 2000,
+}
+
+levelGain = {
+	health = 5,
+	mana = 5,
+	capacity = 1000,  -- 1000 here == 10 in vocations.xml capGain == 10 cap per level
+	speed = 1
+}
+
+magicInfo = {
+  ['cost'] = 2,
+  ['initial'] = 0,
+  ['max'] = 110,
+  ['mana'] = 15
+}
+
+vitalityInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 130,
+  ['health'] = 15
+}
+
+strenghtInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 130,
+  ['cap'] = 5
+}
+
+defenceInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 130
+}
+
+dexterityInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 130,
+  ['attackSpeed'] = 10, --ms per level
+  ['walkSpeed'] = 0.5,
+}
+
+faithInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 58,
+  ['mana'] = 10
+}
+
+intelligenceInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 108,
+  ['mana'] = 10
+}
+
+enduranceInfo = {
+  ['cost'] = 1,
+  ['initial'] = 8,
+  ['max'] = 130,
+  ['health'] = 5,
+  ['cap'] = 15
+}
+
 Skill = {
-  Fist = 0,
-  Club = 1,
-  Sword = 2,
-  Axe = 3,
-  Distance = 4,
-  Shielding = 5,
-  Fishing = 6,
+  Vitality = 0,
+  Strenght = 1,
+  Faith = 2,
+  Intelligence = 3,
+  Dexterity = 4,
+  Defence = 5,
+  Endurance = 6,
   CriticalChance = 7,
   CriticalDamage = 8,
   LifeLeechChance = 9,
   LifeLeechAmount = 10,
   ManaLeechChance = 11,
   ManaLeechAmount = 12
+}
+
+SkillDescription = {
+	Magic = '+ spell damage\n+ rune damage\n+ runes           \n+ 15 mana       ',
+	Vitality = '+ 15 health', 
+	Strenght = '+ melee damage   \n+ distance damage\n+ 5 capacity         ', 
+	Faith = '+ 2% of maximum damage for rod\n+ support spells and runes             \n+ healing spells and runes              \n+ 10 mana                                     ', 
+	Intelligence = '+ 1% of maximum damage for wand\n+ attack spells and runes                  \n+ 10 mana                                       ', 
+	Dexterity = '+ distance damage     \n+ 0.5 walk speed      \n+ 0.5% attack speed', 
+	Defence = '+ defence with shield   \n+ defence with weapon', 
+	--Endurance = '+ 15 capacity             \n+ 5 health                 \n+ health regeneration\n+ mana regeneration ',
+	Endurance = '+ 15 capacity\n+ 5 health    ',
+	Wand = 'Maximum damage',
+	Rod = 'Maximum damage'
 }
 
 North = Directions.North

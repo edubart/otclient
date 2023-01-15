@@ -42,16 +42,20 @@ public:
     bool canWalk(Otc::Direction direction);
 
     void setStates(int states);
-    void setSkill(Otc::Skill skill, int level, int levelPercent);
-    void setBaseSkill(Otc::Skill skill, int baseLevel);
+    void setSkill(Otc::Skill skill, int level);
+	void setBaseSkill(Otc::Skill skill, int baseLevel);
+	void setNewBaseSkill(Otc::Skill skill, int level);
     void setHealth(double health, double maxHealth);
     void setFreeCapacity(double freeCapacity);
     void setTotalCapacity(double totalCapacity);
     void setExperience(double experience);
     void setLevel(double level, double levelPercent);
     void setMana(double mana, double maxMana);
-    void setMagicLevel(double magicLevel, double magicLevelPercent);
-    void setBaseMagicLevel(double baseMagicLevel);
+	void setSkillPoints(double points);
+	void setAttackSpeed(double attackSpeed);
+    void setMagicLevel(double magicLevel);
+	void setBaseMagicLevel(double baseMagicLevel);
+	void setNewBaseMagicLevel(double newMagicLevel);
     void setSoul(double soul);
     void setStamina(double stamina);
     void setKnown(bool known) { m_known = known; }
@@ -60,14 +64,15 @@ public:
     void setVocation(int vocation);
     void setPremium(bool premium);
     void setRegenerationTime(double regenerationTime);
-    void setOfflineTrainingTime(double offlineTrainingTime);
     void setSpells(const std::vector<int>& spells);
-    void setBlessings(int blessings);
+	void setBlessings(int blessings);
+	void setResets(int resets);
+
 
     int getStates() { return m_states; }
+	int getBaseSkillLevel(Otc::Skill skill) { return m_skillsBaseLevel[skill]; }
     int getSkillLevel(Otc::Skill skill) { return m_skillsLevel[skill]; }
-    int getSkillBaseLevel(Otc::Skill skill) { return m_skillsBaseLevel[skill]; }
-    int getSkillLevelPercent(Otc::Skill skill) { return m_skillsLevelPercent[skill]; }
+	int getNewBaseSkillLevel(Otc::Skill skill) { return m_newSkillsBaseLevel[skill]; }
     int getVocation() { return m_vocation; }
     double getHealth() { return m_health; }
     double getMaxHealth() { return m_maxHealth; }
@@ -78,16 +83,18 @@ public:
     double getLevelPercent() { return m_levelPercent; }
     double getMana() { return m_mana; }
     double getMaxMana() { return m_maxMana; }
+	double getAttackSpeed() { return m_attackSpeed; }
+	double getSkillPoints() { return m_skillPoints; }
+	double getBaseMagicLevel() { return m_baseMagicLevel; }
     double getMagicLevel() { return m_magicLevel; }
-    double getMagicLevelPercent() { return m_magicLevelPercent; }
-    double getBaseMagicLevel() { return m_baseMagicLevel; }
+	double getNewBaseMagicLevel() { return m_newBaseMagicLevel; }
     double getSoul() { return m_soul; }
     double getStamina() { return m_stamina; }
     double getRegenerationTime() { return m_regenerationTime; }
-    double getOfflineTrainingTime() { return m_offlineTrainingTime; }
     std::vector<int> getSpells() { return m_spells; }
     ItemPtr getInventoryItem(Otc::InventorySlot inventory) { return m_inventoryItems[inventory]; }
-    int getBlessings() { return m_blessings; }
+	int getBlessings() { return m_blessings; }
+	int getResets() { return m_resets; }
 
     bool hasSight(const Position& pos);
     bool isKnown() { return m_known; }
@@ -138,30 +145,32 @@ private:
     Timer m_idleTimer;
 
     std::array<int, Otc::LastSkill> m_skillsLevel;
-    std::array<int, Otc::LastSkill> m_skillsBaseLevel;
-    std::array<int, Otc::LastSkill> m_skillsLevelPercent;
+	std::array<int, Otc::LastSkill> m_skillsBaseLevel;
+	std::array<int, Otc::LastSkill> m_newSkillsBaseLevel;
     std::vector<int> m_spells;
 
     int m_states;
     int m_vocation;
     int m_blessings;
+	int m_resets;
 
+	double m_experience;
+	double m_level;
+	double m_levelPercent;
     double m_health;
     double m_maxHealth;
+	double m_mana;
+	double m_maxMana;
     double m_freeCapacity;
     double m_totalCapacity;
-    double m_experience;
-    double m_level;
-    double m_levelPercent;
-    double m_mana;
-    double m_maxMana;
+	double m_attackSpeed;
+	double m_skillPoints;
     double m_magicLevel;
-    double m_magicLevelPercent;
-    double m_baseMagicLevel;
+	double m_baseMagicLevel;
+	double m_newBaseMagicLevel;
     double m_soul;
     double m_stamina;
     double m_regenerationTime;
-    double m_offlineTrainingTime;
 };
 
 #endif

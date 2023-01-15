@@ -5,45 +5,25 @@ spelllistButton       = nil
 spellList             = nil
 nameValueLabel        = nil
 formulaValueLabel     = nil
-vocationValueLabel    = nil
 groupValueLabel       = nil
 typeValueLabel        = nil
 cooldownValueLabel    = nil
-levelValueLabel       = nil
+strenghtValueLabel       = nil
+dexterityValueLabel       = nil
+faithValueLabel       = nil
+intelligenceValueLabel = nil
 manaValueLabel        = nil
 premiumValueLabel     = nil
 descriptionValueLabel = nil
-
-vocationBoxAny        = nil
-vocationBoxSorcerer   = nil
-vocationBoxDruid      = nil
-vocationBoxPaladin    = nil
-vocationBoxKnight     = nil
 
 groupBoxAny           = nil
 groupBoxAttack        = nil
 groupBoxHealing       = nil
 groupBoxSupport       = nil
 
-premiumBoxAny         = nil
-premiumBoxNo          = nil
-premiumBoxYes         = nil
-
-vocationRadioGroup    = nil
 groupRadioGroup       = nil
-premiumRadioGroup     = nil
 
 -- consts
-FILTER_PREMIUM_ANY        = 0
-FILTER_PREMIUM_NO         = 1
-FILTER_PREMIUM_YES        = 2
-
-FILTER_VOCATION_ANY       = 0
-FILTER_VOCATION_SORCERER  = 1
-FILTER_VOCATION_DRUID     = 2
-FILTER_VOCATION_PALADIN   = 3
-FILTER_VOCATION_KNIGHT    = 4
-
 FILTER_GROUP_ANY          = 0
 FILTER_GROUP_ATTACK       = 1
 FILTER_GROUP_HEALING      = 2
@@ -51,11 +31,7 @@ FILTER_GROUP_SUPPORT      = 3
 
 -- Filter Settings
 local filters = {
-  level        = false,
-  vocation     = false,
-
-  vocationId   = FILTER_VOCATION_ANY,
-  premium      = FILTER_PREMIUM_ANY,
+  canUse = false,
   groupId      = FILTER_GROUP_ANY
 }
 
@@ -81,13 +57,6 @@ function online()
   else
     spelllistButton:hide()
   end
-
-  -- Vocation is only send in newer clients
-  if g_game.getClientVersion() >= 950 then
-    spelllistWindow:getChildById('buttonFilterVocation'):setVisible(true)
-  else
-    spelllistWindow:getChildById('buttonFilterVocation'):setVisible(false)
-  end
 end
 
 function offline()
@@ -106,36 +75,21 @@ function init()
 
   nameValueLabel        = spelllistWindow:getChildById('labelNameValue')
   formulaValueLabel     = spelllistWindow:getChildById('labelFormulaValue')
-  vocationValueLabel    = spelllistWindow:getChildById('labelVocationValue')
   groupValueLabel       = spelllistWindow:getChildById('labelGroupValue')
   typeValueLabel        = spelllistWindow:getChildById('labelTypeValue')
   cooldownValueLabel    = spelllistWindow:getChildById('labelCooldownValue')
-  levelValueLabel       = spelllistWindow:getChildById('labelLevelValue')
+  strenghtValueLabel       = spelllistWindow:getChildById('labelStrenghtValue')
+  dexterityValueLabel       = spelllistWindow:getChildById('labelDexterityValue')
+  faithValueLabel       = spelllistWindow:getChildById('labelFaithValue')
+  intelligenceValueLabel = spelllistWindow:getChildById('labelIntelligenceValue')
   manaValueLabel        = spelllistWindow:getChildById('labelManaValue')
   premiumValueLabel     = spelllistWindow:getChildById('labelPremiumValue')
   descriptionValueLabel = spelllistWindow:getChildById('labelDescriptionValue')
-
-  vocationBoxAny        = spelllistWindow:getChildById('vocationBoxAny')
-  vocationBoxSorcerer   = spelllistWindow:getChildById('vocationBoxSorcerer')
-  vocationBoxDruid      = spelllistWindow:getChildById('vocationBoxDruid')
-  vocationBoxPaladin    = spelllistWindow:getChildById('vocationBoxPaladin')
-  vocationBoxKnight     = spelllistWindow:getChildById('vocationBoxKnight')
 
   groupBoxAny           = spelllistWindow:getChildById('groupBoxAny')
   groupBoxAttack        = spelllistWindow:getChildById('groupBoxAttack')
   groupBoxHealing       = spelllistWindow:getChildById('groupBoxHealing')
   groupBoxSupport       = spelllistWindow:getChildById('groupBoxSupport')
-
-  premiumBoxAny         = spelllistWindow:getChildById('premiumBoxAny')
-  premiumBoxYes         = spelllistWindow:getChildById('premiumBoxYes')
-  premiumBoxNo          = spelllistWindow:getChildById('premiumBoxNo')
-
-  vocationRadioGroup = UIRadioGroup.create()
-  vocationRadioGroup:addWidget(vocationBoxAny)
-  vocationRadioGroup:addWidget(vocationBoxSorcerer)
-  vocationRadioGroup:addWidget(vocationBoxDruid)
-  vocationRadioGroup:addWidget(vocationBoxPaladin)
-  vocationRadioGroup:addWidget(vocationBoxKnight)
 
   groupRadioGroup = UIRadioGroup.create()
   groupRadioGroup:addWidget(groupBoxAny)
@@ -143,18 +97,9 @@ function init()
   groupRadioGroup:addWidget(groupBoxHealing)
   groupRadioGroup:addWidget(groupBoxSupport)
 
-  premiumRadioGroup = UIRadioGroup.create()
-  premiumRadioGroup:addWidget(premiumBoxAny)
-  premiumRadioGroup:addWidget(premiumBoxYes)
-  premiumRadioGroup:addWidget(premiumBoxNo)
-
-  premiumRadioGroup:selectWidget(premiumBoxAny)
-  vocationRadioGroup:selectWidget(vocationBoxAny)
   groupRadioGroup:selectWidget(groupBoxAny)
 
-  vocationRadioGroup.onSelectionChange  = toggleFilter
   groupRadioGroup.onSelectionChange     = toggleFilter
-  premiumRadioGroup.onSelectionChange   = toggleFilter
 
   spellList = spelllistWindow:getChildById('spellList')
 
@@ -181,9 +126,8 @@ function terminate()
   spelllistWindow:destroy()
   spelllistButton:destroy()
 
-  vocationRadioGroup:destroy()
   groupRadioGroup:destroy()
-  premiumRadioGroup:destroy()
+  --premiumRadioGroup:destroy()
 end
 
 function initializeSpelllist()
@@ -241,7 +185,12 @@ function updateSpelllist()
     local tmpLabel = spellList:getChildById(spell)
 
     local localPlayer = g_game.getLocalPlayer()
-    if (not(filters.level) or info.level <= localPlayer:getLevel()) and (not(filters.vocation) or table.find(info.vocations, localPlayer:getVocation())) and (filters.vocationId == FILTER_VOCATION_ANY or table.find(info.vocations, filters.vocationId) or table.find(info.vocations, filters.vocationId+4)) and (filters.groupId == FILTER_GROUP_ANY or info.group[filters.groupId]) and (filters.premium == FILTER_PREMIUM_ANY or (info.premium and filters.premium == FILTER_PREMIUM_YES) or (not(info.premium) and filters.premium == FILTER_PREMIUM_NO)) then
+    if (not(filters.canUse) or (info.intelligence <= localPlayer:getSkillLevel(Skill.Intelligence) and 
+								info.faith <= localPlayer:getSkillLevel(Skill.Faith) and 
+								info.strenght <= localPlayer:getSkillLevel(Skill.Strenght) and 
+								info.dexterity <= localPlayer:getSkillLevel(Skill.Dexterity))) and 
+								(filters.groupId == FILTER_GROUP_ANY or info.group[filters.groupId]) and 
+								(filters.premium == FILTER_PREMIUM_ANY or (info.premium and filters.premium == FILTER_PREMIUM_YES) or (not(info.premium) and filters.premium == FILTER_PREMIUM_NO)) then
       tmpLabel:setVisible(true)
     else
       tmpLabel:setVisible(false)
@@ -254,27 +203,21 @@ function updateSpellInformation(widget)
 
   local name        = ''
   local formula     = ''
-  local vocation    = ''
   local group       = ''
   local type        = ''
   local cooldown    = ''
-  local level       = ''
+  local strenght    = ''
+  local dexterity   = ''
+  local faith       = ''
+  local intelligence = ''
   local mana        = ''
   local premium     = ''
-  local description = ''
 
   if SpellInfo[SpelllistProfile][spell] then
     local info = SpellInfo[SpelllistProfile][spell]
 
     name    = spell
     formula = info.words
-
-    for i = 1, #info.vocations do
-      local vocationId = info.vocations[i]
-      if vocationId <= 4 or not(table.find(info.vocations, (vocationId-4))) then
-        vocation = vocation .. (vocation:len() == 0 and '' or ', ') .. VocationNames[vocationId]
-      end
-    end
 
     cooldown = (info.exhaustion / 1000) .. 's'
     for groupId, groupName in ipairs(SpellGroups) do
@@ -283,30 +226,34 @@ function updateSpellInformation(widget)
         cooldown = cooldown .. ' / ' .. (info.group[groupId] / 1000) .. 's'
       end
     end
+	
 
     type    = info.type
-    level   = info.level
+	strenght = info.strenght or '-'
+	dexterity = info.dexterity or '-'
+    faith = info.faith or '-'
+    intelligence = info.intelligence or '-'
     mana    = info.mana .. ' / ' .. info.soul
     premium = (info.premium and 'yes' or 'no')
-    description = info.description or '-'
   end
 
   nameValueLabel:setText(name)
   formulaValueLabel:setText(formula)
-  vocationValueLabel:setText(vocation)
   groupValueLabel:setText(group)
   typeValueLabel:setText(type)
   cooldownValueLabel:setText(cooldown)
-  levelValueLabel:setText(level)
+  strenghtValueLabel:setText(strenght)
+  dexterityValueLabel:setText(dexterity)
+  faithValueLabel:setText(faith)
+  intelligenceValueLabel:setText(intelligence)
   manaValueLabel:setText(mana)
-  premiumValueLabel:setText(premium)
-  descriptionValueLabel:setText(description)
 end
 
 function toggle()
   if spelllistButton:isOn() then
     spelllistButton:setOn(false)
     spelllistWindow:hide()
+    resetWindow()
   else
     spelllistButton:setOn(true)
     spelllistWindow:show()
@@ -316,20 +263,7 @@ function toggle()
 end
 
 function toggleFilter(widget, selectedWidget)
-  if widget == vocationRadioGroup then
-    local boxId = selectedWidget:getId()
-    if boxId == 'vocationBoxAny' then
-      filters.vocationId = FILTER_VOCATION_ANY
-    elseif boxId == 'vocationBoxSorcerer' then
-      filters.vocationId = FILTER_VOCATION_SORCERER
-    elseif boxId == 'vocationBoxDruid' then
-      filters.vocationId = FILTER_VOCATION_DRUID
-    elseif boxId == 'vocationBoxPaladin' then
-      filters.vocationId = FILTER_VOCATION_PALADIN
-    elseif boxId == 'vocationBoxKnight' then
-      filters.vocationId = FILTER_VOCATION_KNIGHT
-    end
-  elseif widget == groupRadioGroup then
+  if widget == groupRadioGroup then
     local boxId = selectedWidget:getId()
     if boxId == 'groupBoxAny' then
       filters.groupId = FILTER_GROUP_ANY
@@ -351,12 +285,9 @@ function toggleFilter(widget, selectedWidget)
     end
   else
     local id = widget:getId()
-    if id == 'buttonFilterLevel' then
-      filters.level = not(filters.level)
-      widget:setOn(filters.level)
-    elseif id == 'buttonFilterVocation' then
-      filters.vocation = not(filters.vocation)
-      widget:setOn(filters.vocation)
+    if id == 'buttonFilterCanUse' then
+      filters.canUse = not(filters.canUse)
+      widget:setOn(filters.canUse)
     end
   end
 
@@ -373,18 +304,12 @@ function resetWindow()
   spelllistButton:setOn(false)
 
   -- Resetting filters
-  filters.level = false
-  filters.vocation = false
+  filters.canUse = false
 
-  local buttonFilterLevel = spelllistWindow:getChildById('buttonFilterLevel')
-  buttonFilterLevel:setOn(filters.level)
+  local buttonFilterCanUse = spelllistWindow:getChildById('buttonFilterCanUse')
+  buttonFilterCanUse:setOn(filters.canUse)
 
-  local buttonFilterVocation = spelllistWindow:getChildById('buttonFilterVocation')
-  buttonFilterVocation:setOn(filters.vocation)
-
-  vocationRadioGroup:selectWidget(vocationBoxAny)
   groupRadioGroup:selectWidget(groupBoxAny)
-  premiumRadioGroup:selectWidget(premiumBoxAny)
 
   updateSpelllist()
 end

@@ -1200,11 +1200,10 @@ void ProtocolGame::parseCreatureSpeed(const InputMessagePtr& msg)
 {
     uint id = msg->getU32();
 
-    int baseSpeed = -1;
-    if(g_game.getClientVersion() >= 1059)
-        baseSpeed = msg->getU16();
+    double baseSpeed = -1;
+    baseSpeed = msg->getDouble() / 2.0f;
 
-    int speed = msg->getU16();
+	double speed = msg->getDouble() / 2.0f;
 
     CreaturePtr creature = g_map.getCreatureById(id);
     if(creature) {
@@ -1321,136 +1320,126 @@ void ProtocolGame::parsePlayerInfo(const InputMessagePtr& msg)
 
 void ProtocolGame::parsePlayerStats(const InputMessagePtr& msg)
 {
-    double health;
-    double maxHealth;
+	double experience = msg->getU64();
+	double level = msg->getU16();
+	double levelPercent = msg->getU8();
 
-    if(g_game.getFeature(Otc::GameDoubleHealth)) {
-        health = msg->getU32();
-        maxHealth = msg->getU32();
-    } else {
-        health = msg->getU16();
-        maxHealth = msg->getU16();
-    }
+    double health = msg->getU32();
+    double maxHealth = msg->getU32();
+	double mana = msg->getU32();
+	double maxMana = msg->getU32();
+	double blessings = msg->getU8();
+	double resets = msg->getU8();
+	double soul = msg->getU8();
+	double skillPoints = msg->getU16();
+	double freeCapacity = msg->getU32() / 100.0;
+	double totalCapacity = msg->getU32() / 100.0;
+	double baseSpeed = msg->getDouble() / 2.0;
+	double attackSpeed = msg->getU32();
 
-    double freeCapacity;
-    if(g_game.getFeature(Otc::GameDoubleFreeCapacity))
-        freeCapacity = msg->getU32() / 100.0;
-    else
-        freeCapacity = msg->getU16() / 100.0;
+	double regeneration = msg->getU16();
+	double stamina = msg->getU16();
 
-    double totalCapacity = 0;
-    if(g_game.getFeature(Otc::GameTotalCapacity))
-        totalCapacity = msg->getU32() / 100.0;
+	int baseMagic = msg->getU8();
+	int currentMagic = msg->getU8();
 
-    double experience;
-    if(g_game.getFeature(Otc::GameDoubleExperience))
-        experience = msg->getU64();
-    else
-        experience = msg->getU32();
+    int baseXpGain = msg->getU16(); //base xp gain rate
+    int voucherAddend = msg->getU16(); //xp voucher
+    int grindingAddend = msg->getU16(); //low level bonus
+    int storeBoostAddend = msg->getU16(); //xp boost
+    int huntingBoostFactor = msg->getU16(); //stamina multiplier (100 = x1.0)
 
-    double level = msg->getU16();
-    double levelPercent = msg->getU8();
-
-    if(g_game.getFeature(Otc::GameExperienceBonus)) {
-        if(g_game.getClientVersion() <= 1096) {
-            double experienceBonus = msg->getDouble();
-        } else {
-            int baseXpGain = msg->getU16();
-            int voucherAddend = msg->getU16();
-            int grindingAddend = msg->getU16();
-            int storeBoostAddend = msg->getU16();
-            int huntingBoostFactor = msg->getU16();
-        }
-    }
-
-    double mana;
-    double maxMana;
-
-    if(g_game.getFeature(Otc::GameDoubleHealth)) {
-        mana = msg->getU32();
-        maxMana = msg->getU32();
-    } else {
-        mana = msg->getU16();
-        maxMana = msg->getU16();
-    }
-
-    double magicLevel = msg->getU8();
-
-    double baseMagicLevel;
-    if(g_game.getFeature(Otc::GameSkillsBase))
-        baseMagicLevel = msg->getU8();
-    else
-        baseMagicLevel = magicLevel;
-
-    double magicLevelPercent = msg->getU8();
-    double soul = msg->getU8();
-    double stamina = 0;
-    if(g_game.getFeature(Otc::GamePlayerStamina))
-        stamina = msg->getU16();
-
-    double baseSpeed = 0;
-    if(g_game.getFeature(Otc::GameSkillsBase))
-        baseSpeed = msg->getU16();
-
-    double regeneration = 0;
-    if(g_game.getFeature(Otc::GamePlayerRegenerationTime))
-        regeneration = msg->getU16();
-
-    double training = 0;
-    if(g_game.getFeature(Otc::GameOfflineTrainingTime)) {
-        training = msg->getU16();
-        if(g_game.getClientVersion() >= 1097) {
-            int remainingStoreXpBoostSeconds = msg->getU16();
-            bool canBuyMoreStoreXpBoosts = msg->getU8();
-        }
-    }
+	m_localPlayer->setExperience(experience);
+	m_localPlayer->setLevel(level, levelPercent);
 
     m_localPlayer->setHealth(health, maxHealth);
+	m_localPlayer->setMana(mana, maxMana);
+	m_localPlayer->setBlessings(blessings);
+	m_localPlayer->setResets(resets);
+	m_localPlayer->setSoul(soul);
+	m_localPlayer->setSkillPoints(skillPoints);
     m_localPlayer->setFreeCapacity(freeCapacity);
     m_localPlayer->setTotalCapacity(totalCapacity);
-    m_localPlayer->setExperience(experience);
-    m_localPlayer->setLevel(level, levelPercent);
-    m_localPlayer->setMana(mana, maxMana);
-    m_localPlayer->setMagicLevel(magicLevel, magicLevelPercent);
-    m_localPlayer->setBaseMagicLevel(baseMagicLevel);
-    m_localPlayer->setStamina(stamina);
-    m_localPlayer->setSoul(soul);
-    m_localPlayer->setBaseSpeed(baseSpeed);
+	m_localPlayer->setBaseSpeed(baseSpeed);
+	m_localPlayer->setAttackSpeed(attackSpeed);
+
     m_localPlayer->setRegenerationTime(regeneration);
-    m_localPlayer->setOfflineTrainingTime(training);
+	m_localPlayer->setStamina(stamina);
+
+	m_localPlayer->setBaseMagicLevel(baseMagic);
+	m_localPlayer->setMagicLevel(currentMagic);
 }
 
 void ProtocolGame::parsePlayerSkills(const InputMessagePtr& msg)
-{
-    int lastSkill = Otc::Fishing + 1;
-    if(g_game.getFeature(Otc::GameAdditionalSkills))
-        lastSkill = Otc::LastSkill;
+{   
+	int baseVitality = msg->getU16();
+	int baseStrenght = msg->getU16();
+	int baseDefence = msg->getU16();
+	int baseDexterity = msg->getU16();
+	int baseIntelligence = msg->getU16();
+	int baseFaith = msg->getU16();
+	int baseEndurance = msg->getU16();
 
-    for(int skill = 0; skill < lastSkill; skill++) {
-        int level;
+	int baseCriticalHitChance = msg->getU16();
+	int baseCriticalHitAmount = msg->getU16();
+	int baseHitpointsLeechChance = msg->getU16();
+	int baseHitpointsLeechAmount = msg->getU16();
+	int baseManaLeechChance = msg->getU16();
+	int baseManaLeechAmount = msg->getU16();
 
-        if(g_game.getFeature(Otc::GameDoubleSkills))
-            level = msg->getU16();
-        else
-            level = msg->getU8();
+	int currentVitality = msg->getU16();
+	int currentStrenght = msg->getU16();
+	int currentDefence = msg->getU16();
+	int currentDexterity = msg->getU16();
+	int currentIntelligence = msg->getU16();
+	int currentFaith = msg->getU16();
+	int currentEndurance = msg->getU16();
 
-        int baseLevel;
-        if(g_game.getFeature(Otc::GameSkillsBase))
-            if(g_game.getFeature(Otc::GameBaseSkillU16))
-                baseLevel = msg->getU16();
-            else
-                baseLevel = msg->getU8();
-        else
-            baseLevel = level;
+	int currentCriticalHitChance = msg->getU16();
+	int currentCriticalHitAmount = msg->getU16();
+	int currentHitpointsLeechChance = msg->getU16();
+	int currentHitpointsLeechAmount = msg->getU16();
+	int currentManaLeechChance = msg->getU16();
+	int currentManaLeechAmount = msg->getU16();
 
-        int levelPercent = 0;
-        // Critical, Life Leech and Mana Leech have no level percent
-        if(skill <= Otc::Fishing)
-            levelPercent = msg->getU8();
+	m_localPlayer->setBaseSkill(Otc::Vitality, baseVitality);
+	m_localPlayer->setSkill(Otc::Vitality, currentVitality);
 
-        m_localPlayer->setSkill((Otc::Skill)skill, level, levelPercent);
-        m_localPlayer->setBaseSkill((Otc::Skill)skill, baseLevel);
-    }
+	m_localPlayer->setBaseSkill(Otc::Strenght, baseStrenght);
+	m_localPlayer->setSkill(Otc::Strenght, currentStrenght);
+
+	m_localPlayer->setBaseSkill(Otc::Defence, baseDefence);
+	m_localPlayer->setSkill(Otc::Defence, currentDefence);
+
+	m_localPlayer->setBaseSkill(Otc::Dexterity, baseDexterity);
+	m_localPlayer->setSkill(Otc::Dexterity, currentDexterity);
+
+	m_localPlayer->setBaseSkill(Otc::Intelligence, baseIntelligence);
+	m_localPlayer->setSkill(Otc::Intelligence, currentIntelligence);
+
+	m_localPlayer->setBaseSkill(Otc::Faith, baseFaith);
+	m_localPlayer->setSkill(Otc::Faith, currentFaith);
+
+	m_localPlayer->setBaseSkill(Otc::Endurance, baseEndurance);
+	m_localPlayer->setSkill(Otc::Endurance, currentEndurance);
+
+	m_localPlayer->setBaseSkill(Otc::CriticalChance, baseCriticalHitChance);
+	m_localPlayer->setSkill(Otc::CriticalChance, currentCriticalHitChance);
+
+	m_localPlayer->setBaseSkill(Otc::CriticalDamage, baseCriticalHitAmount);
+	m_localPlayer->setSkill(Otc::CriticalDamage, currentCriticalHitAmount);
+
+	m_localPlayer->setBaseSkill(Otc::LifeLeechChance, baseHitpointsLeechChance);
+	m_localPlayer->setSkill(Otc::LifeLeechChance, currentHitpointsLeechChance);
+
+	m_localPlayer->setBaseSkill(Otc::LifeLeechAmount, baseHitpointsLeechAmount);
+	m_localPlayer->setSkill(Otc::LifeLeechAmount, currentHitpointsLeechAmount);
+
+	m_localPlayer->setBaseSkill(Otc::ManaLeechChance, baseManaLeechChance);
+	m_localPlayer->setSkill(Otc::ManaLeechChance, currentManaLeechChance);
+
+	m_localPlayer->setBaseSkill(Otc::ManaLeechAmount, baseManaLeechAmount);
+	m_localPlayer->setSkill(Otc::ManaLeechAmount, currentManaLeechAmount);
 }
 
 void ProtocolGame::parsePlayerState(const InputMessagePtr& msg)
@@ -1472,7 +1461,6 @@ void ProtocolGame::parsePlayerCancelAttack(const InputMessagePtr& msg)
 
     g_game.processAttackCancel(seq);
 }
-
 
 void ProtocolGame::parsePlayerModes(const InputMessagePtr& msg)
 {
@@ -2099,6 +2087,7 @@ int ProtocolGame::setTileDescription(const InputMessagePtr& msg, Position positi
 
     return 0;
 }
+
 Outfit ProtocolGame::getOutfit(const InputMessagePtr& msg)
 {
     Outfit outfit;

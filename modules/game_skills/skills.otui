@@ -3,14 +3,12 @@ SkillFirstWidget < UIWidget
 SkillButton < UIButton
   height: 21
   margin-bottom: 2
-  &onClick: onSkillButtonClick
 
 SmallSkillButton < SkillButton
   height: 14
 
 SkillNameLabel < GameLabel
   font: verdana-11px-monochrome
-  anchors.left: parent.left
   anchors.top: parent.top
   anchors.bottom: parent.bottom
 
@@ -18,10 +16,65 @@ SkillValueLabel < GameLabel
   id: value
   font: verdana-11px-monochrome
   text-align: topright
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+
+SkillArrowLabel < GameLabel
+  id: arrow
+  font: verdana-11px-monochrome
+  text-align: topleft
+  width: 15
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  anchors.left: prev.right
+  margin-left: 5
+  !text: tr('->')
+  visible: false
+
+SkillNewValueLabel < GameLabel
+  id: newValue
+  font: verdana-11px-monochrome
+  text-align: topleft
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  anchors.left: prev.right
+  margin-left: 2
+  color: #008b00
+  visible: false
+  
+SkillMinusButton < Button
+  id: minusbutton
+  font: verdana-11px-monochrome
+  width: 15
+  height: 15
+  margin-right: 1
+  anchors.right: prev.left
+  anchors.top: parent.top
+  anchors.bottom: parent.bottom
+  text-offset: 0 -2
+  !text: tr('-')
+  visible: false
+  
+  $pressed:
+    text-offset: 0 -2
+    opacity: 0.8
+
+SkillPlusButton < Button
+  id: plusbutton
+  font: verdana-11px-monochrome
+  width: 15
+  height: 15
+  margin-left: 2
   anchors.right: parent.right
   anchors.top: parent.top
   anchors.bottom: parent.bottom
-  anchors.left: prev.left
+  text-offset: 0 -2
+  !text: tr('+')
+  visible: false
+  
+  $pressed:
+    text-offset: 0 -2
+    opacity: 0.8
 
 SkillPercentPanel < ProgressBar
   id: percent
@@ -36,10 +89,48 @@ SkillPercentPanel < ProgressBar
 MiniWindow
   id: skillWindow
   !text: tr('Skills')
-  height: 150
+  height: 100
   icon: /images/topbuttons/skills
   @onClose: modules.game_skills.onMiniWindowClose()
+  @onOpen: modules.game_skills.onMiniWindowOpen()
   &save: true
+
+  Label
+    text: ?
+    id: help
+    text-align: center
+    phantom: false
+    !tooltip: tr('Click on \'apply\' to save changes.                    \n\nRod\'s Maximum Damage Formula: rodMaxDamage + (rodMaxDamage  * 2 * (FAITH - 8) / 100)              \nWand\'s Maximum Damage Formula: wandMaxDamage + (wandMaxDamage * (INTTELIGENCE - 8) / 100)\n\nOne Handed Distance Weapon\'s Attack Skill Value: DEXTERITY                                                             \nTwo Handed Distance Weapon\'s Attack Skill Value: STRENGHT * 0.75 + DEXTERITY * 0.5                       \n\nDefense with weapons (using axe, sword or club and not wearing shield) uses DEFENSE skill                  \n\nINTELLIGENCE and FAITH gives access to spells and runes                                                                   \nMAGIC and LEVEL gives power/damage with runes and spells                                                              ')
+    anchors.top: minimizeButton.top
+    anchors.right: minimizeButton.left
+    margin-right: 3
+    size: 14 14
+
+  TabButton
+    id: applybutton
+    font: verdana-11px-antialised
+    anchors.top: prev.top
+    anchors.right: prev.left
+    margin-right: 3
+    margin-top: -1
+    size: 81 16
+    text-align: center
+    text-offset: 0 -1
+    color: #008b00
+    !text: tr ('Apply')
+    visible: false
+    @onClick: onClickApply()
+
+    $hover !on:
+      image-clip: 0 23 22 23
+      color: #008b00
+
+    $on:
+      image-clip: 0 46 22 23
+      color: #008b00
+
+    $pressed:
+      image-clip: 0 46 22 23
 
   MiniWindowContents
     padding-left: 5
@@ -51,14 +142,22 @@ MiniWindow
       id: experience
       height: 15
       SkillNameLabel
+        anchors.left: parent.left
+        text-align:topleft
         !text: tr('Experience')
       SkillValueLabel
+        anchors.left: prev.right
+        anchors.right: parent.right
 
     SkillButton
       id: level
       SkillNameLabel
+        anchors.left: parent.left
+        text-align: topleft
         !text: tr('Level')
       SkillValueLabel
+        anchors.left: prev.right
+        anchors.right: parent.right
       SkillPercentPanel
         background-color: red
 
@@ -66,146 +165,317 @@ MiniWindow
       id: health
       height: 15
       SkillNameLabel
-        !text: tr('Hit Points')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Health')
       SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
 
     SkillButton
       id: mana
       height: 15
       SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
         !text: tr('Mana')
       SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillNewValueLabel
+        margin-left: 5
+        color: #b22222
+
+    SkillButton
+      id: blessings
+      height: 15
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Blessings')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+
+    SkillButton
+      id: resets
+      height: 15
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Resets')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+
+    SkillButton
+      id: skillpoints
+      height: 15
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Points')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+        margin-left: 5
+        color: #b22222
 
     SkillButton
       id: soul
       height: 15
       SkillNameLabel
-        !text: tr('Soul Points')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Soul')
       SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
 
     SkillButton
       id: capacity
       height: 15
       SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
         !text: tr('Capacity')
       SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
 
     SkillButton
-      id: speed
+      id: walkspeed
       height: 15
       SkillNameLabel
-        !text: tr('Speed')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Walk Speed')
       SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+  
+    SkillButton
+      id: attackspeed
+      height: 15
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 85
+        !text: tr('Attack Speed')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
 
     SkillButton
       id: regenerationTime
       SkillNameLabel
+        anchors.left: parent.left
+        text-align:topleft
         !text: tr('Regeneration Time')
       SkillValueLabel
+        anchors.right: parent.right
+      SkillPercentPanel
 
     SkillButton
       id: stamina
       SkillNameLabel
+        anchors.left: parent.left
+        text-align: topleft
         !text: tr('Stamina')
       SkillValueLabel
+        anchors.right: parent.right
       SkillPercentPanel
 
-    SkillButton
-      id: offlineTraining
-      SkillNameLabel
-        !text: tr('Offline Training')
-      SkillValueLabel
-      SkillPercentPanel
-
-    SkillButton
+    SmallSkillButton
       id: magiclevel
       SkillNameLabel
-        !text: tr('Magic Level')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Magic')
       SkillValueLabel
-      SkillPercentPanel
-        background-color: red
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddMagic()
+      SkillMinusButton
+        @onClick: onClickRemoveMagic()
 
-    SkillButton
+
+    SmallSkillButton
       id: skillId0
       SkillNameLabel
-        !text: tr('Fist Fighting')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Vitality')
       SkillValueLabel
-      SkillPercentPanel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddVitality()
+      SkillMinusButton
+        @onClick: onClickRemoveVitality()
 
-    SkillButton
+    SmallSkillButton
       id: skillId1
       SkillNameLabel
-        !text: tr('Club Fighting')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Strenght')
       SkillValueLabel
-      SkillPercentPanel
-
-    SkillButton
-      id: skillId2
-      SkillNameLabel
-        !text: tr('Sword Fighting')
-      SkillValueLabel
-      SkillPercentPanel
-
-    SkillButton
-      id: skillId3
-      SkillNameLabel
-        !text: tr('Axe Fighting')
-      SkillValueLabel
-      SkillPercentPanel
-
-    SkillButton
-      id: skillId4
-      SkillNameLabel
-        !text: tr('Distance Fighting')
-      SkillValueLabel
-      SkillPercentPanel
-
-    SkillButton
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddStrenght()
+      SkillMinusButton
+        @onClick: onClickRemoveStrenght()
+  
+    SmallSkillButton
       id: skillId5
       SkillNameLabel
-        !text: tr('Shielding')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Defence')
       SkillValueLabel
-      SkillPercentPanel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddDefence()
+      SkillMinusButton
+        @onClick: onClickRemoveDefence()
 
-    SkillButton
+    SmallSkillButton
+      id: skillId4
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Dexterity')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddDexterity()
+      SkillMinusButton
+        @onClick: onClickRemoveDexterity()
+
+    SmallSkillButton
+      id: skillId3
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Intelligence')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddIntelligence()
+      SkillMinusButton
+        @onClick: onClickRemoveIntelligence()
+
+    SmallSkillButton
+      id: skillId2
+      SkillNameLabel
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Faith')
+      SkillValueLabel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddFaith()
+      SkillMinusButton
+        @onClick: onClickRemoveFaith()
+
+    SmallSkillButton
       id: skillId6
       SkillNameLabel
-        !text: tr('Fishing')
+        text-align: topright
+        anchors.right: parent.right
+        margin-right: 94
+        !text: tr('Endurance')
       SkillValueLabel
-      SkillPercentPanel
+        text-align: topleft
+        anchors.left: prev.right
+        margin-left: 5
+      SkillArrowLabel
+      SkillNewValueLabel
+      SkillPlusButton
+        @onClick: onClickAddEndurance()
+      SkillMinusButton
+        @onClick: onClickRemoveEndurance()
 
     SmallSkillButton
-      id: skillId7
+      id: wanddamage
       SkillNameLabel
-        !text: tr('Critical Hit Chance')
+        anchors.left: parent.left
+        text-align:topleft
+        !text: tr('Wand Damage')
       SkillValueLabel
+        anchors.right: parent.right
 
     SmallSkillButton
-      id: skillId8
+      id: roddamage
       SkillNameLabel
-        !text: tr('Critical Hit Damage')
+        anchors.left: parent.left
+        text-align:topleft
+        !text: tr('Rod Damage')
       SkillValueLabel
-
-    SmallSkillButton
-      id: skillId9
-      SkillNameLabel
-        !text: tr('Life Leech Chance')
-      SkillValueLabel
-
-    SmallSkillButton
-      id: skillId10
-      SkillNameLabel
-        !text: tr('Life Leech Amount')
-      SkillValueLabel
-
-    SmallSkillButton
-      id: skillId11
-      SkillNameLabel
-        !text: tr('Life Leech Chance')
-      SkillValueLabel
-
-    SmallSkillButton
-      id: skillId12
-      SkillNameLabel
-        !text: tr('Life Leech Amount')
-      SkillValueLabel
+        anchors.right: parent.right

@@ -142,13 +142,13 @@ namespace Otc
     };
 
     enum Skill {
-        Fist = 0,
-        Club,
-        Sword,
-        Axe,
-        Distance,
-        Shielding,
-        Fishing,
+        Vitality = 0,
+        Strenght,
+        Faith,
+        Intelligence,
+        Dexterity,
+        Defence,
+        Endurance,
         CriticalChance,
         CriticalDamage,
         LifeLeechChance,

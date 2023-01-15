@@ -123,6 +123,24 @@ int Animator::getPhase()
     return m_phase;
 }
 
+int Animator::getPhaseAt(ticks_t time)
+{
+	int index = 0;
+	ticks_t total = 0;
+
+	for (const auto &pair : m_phaseDurations) {
+		total += std::get<1>(pair);
+
+		if (time < total) {
+			return index;
+		}
+
+		++index;
+	}
+
+	return std::min<int>(index, m_animationPhases - 1);
+}
+
 int Animator::getStartPhase()
 {
     if(m_startPhase > -1)
@@ -196,4 +214,14 @@ void Animator::calculateSynchronous()
         totalTime += duration;
     }
     m_lastPhaseTicks = ticks;
+}
+
+ticks_t Animator::getTotalDuration()
+{
+	ticks_t time = 0;
+	for (const auto &pair : m_phaseDurations) {
+		time += std::get<1>(pair);
+	}
+
+	return time;
 }

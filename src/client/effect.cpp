@@ -22,6 +22,7 @@
 
 #include "effect.h"
 #include "map.h"
+#include "game.h"
 #include <framework/core/eventdispatcher.h>
 
 void Effect::drawEffect(const Point& dest, float scaleFactor, bool animate, int offsetX, int offsetY, LightView *lightView)
@@ -30,8 +31,21 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, bool animate, int 
         return;
 
     int animationPhase = 0;
-    if(animate)
-        animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / m_phaseDuration), getAnimationPhases() - 1);
+	if (animate) {
+		if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
+			// This requires a separate getPhaseAt method as using getPhase would make all magic effects use the same phase regardless of their appearance time
+			animationPhase = rawGetThingType()->getAnimator()->getPhaseAt(m_animationTimer.ticksElapsed());
+		}
+		else {
+			// hack to fix some animation phases duration, currently there is no better solution
+			int ticks = EFFECT_TICKS_PER_FRAME;
+			if (m_id == 33) {
+				ticks <<= 2;
+			}
+
+			animationPhase = std::min<int>((int)(m_animationTimer.ticksElapsed() / ticks), getAnimationPhases() - 1);
+		}
+	}
 
     int xPattern = offsetX % getNumPatternX();
     if(xPattern < 0)
@@ -46,16 +60,26 @@ void Effect::drawEffect(const Point& dest, float scaleFactor, bool animate, int 
 
 void Effect::onAppear()
 {
-    m_animationTimer.restart();
-    m_phaseDuration = EFFECT_TICKS_PER_FRAME;
+	m_animationTimer.restart();
 
-    // hack to fix some animation phases duration, currently there is no better solution
-    if(m_id == 33)
-        m_phaseDuration <<= 2;
+	int duration = 0;
+	if (g_game.getFeature(Otc::GameEnhancedAnimations)) {
+		duration = getThingType()->getAnimator()->getTotalDuration();
+	}
+	else {
+		duration = EFFECT_TICKS_PER_FRAME;
 
-    // schedule removal
-    auto self = asEffect();
-    g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, m_phaseDuration * getAnimationPhases());
+		// hack to fix some animation phases duration, currently there is no better solution
+		if (m_id == 33) {
+			duration <<= 2;
+		}
+
+		duration *= getAnimationPhases();
+	}
+
+	// schedule removal
+	auto self = asEffect();
+	g_dispatcher.scheduleEvent([self]() { g_map.removeThing(self); }, duration);
 }
 
 void Effect::setId(uint32 id)

@@ -1,1 +1,0 @@
-setx OTCLIENTSDKDir %CD%

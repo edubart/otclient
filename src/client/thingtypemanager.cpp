@@ -107,6 +107,8 @@ bool ThingTypeManager::loadDat(std::string file)
 
         FileStreamPtr fin = g_resources.openFile(file);
 
+		fin->cache();
+
         m_datSignature = fin->getU32();
         m_contentRevision = static_cast<uint16_t>(m_datSignature);
 
@@ -175,6 +177,8 @@ void ThingTypeManager::loadOtb(const std::string& file)
 {
     try {
         FileStreamPtr fin = g_resources.openFile(file);
+
+		fin->cache();
 
         uint signature = fin->getU32();
         if(signature != 0)
@@ -271,6 +275,51 @@ void ThingTypeManager::loadXml(const std::string& file)
         g_logger.error(stdext::format("Failed to load '%s' (XML file): %s", file, e.what()));
     }
 }
+
+/*void ThingTypeManager::loadSkillsXml(const std::string& file)
+{
+	try {
+		if (!isOtbLoaded())
+			stdext::throw_exception("OTB must be loaded before XML");
+
+		TiXmlDocument doc;
+		doc.Parse(g_resources.readFileContents(file).c_str());
+		if (doc.Error())
+			stdext::throw_exception(stdext::format("failed to parse '%s': '%s'", file, doc.ErrorDesc()));
+
+		TiXmlElement* root = doc.FirstChildElement();
+		if (!root || root->ValueTStr() != "skills")
+			stdext::throw_exception("invalid root tag name");
+
+		for (TiXmlElement *element = root->FirstChildElement(); element; element = element->NextSiblingElement()) {
+			if (unlikely(element->ValueTStr() != "skill"))
+				continue;
+
+			uint16 id = element->readType<uint16>("id");
+			if (id >= 0 && id <= 7) {
+				std::vector<std::string> s_ids = stdext::split(element->Attribute("id"), ";");
+				for (const std::string& s : s_ids) {
+					std::vector<int32> ids = stdext::split<int32>(s, "-");
+					if (ids.size() > 1) {
+						int32 i = ids[0];
+						while (i <= ids[1])
+							parseItemType(i++, element);
+					}
+					else
+						parseItemType(atoi(s.c_str()), element);
+				}
+			}
+		}
+
+		doc.Clear();
+		m_xmlLoaded = true;
+		g_logger.debug("skills.xml read successfully.");
+	}
+	catch (std::exception& e) {
+		g_logger.error(stdext::format("Failed to load '%s' (XML file): %s", file, e.what()));
+	}
+}*/
+
 
 void ThingTypeManager::parseItemType(uint16 serverId, TiXmlElement* elem)
 {

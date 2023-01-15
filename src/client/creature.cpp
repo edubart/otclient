@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010-2017 OTClient <https://github.com/edubart/otclient>
+ * Copyright (c) 2010-2020 OTClient <https://github.com/edubart/otclient>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -109,11 +109,18 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
     // outfit is a real creature
     if(m_outfit.getCategory() == ThingCategoryCreature) {
         int animationPhase = animateWalk ? m_walkAnimationPhase : 0;
-
-        if(isAnimateAlways() && animateIdle) {
-            int ticksPerFrame = 1000 / getAnimationPhases();
-            animationPhase = (g_clock.millis() % (ticksPerFrame * getAnimationPhases())) / ticksPerFrame;
+        if (!isWalking() && animateIdle && getIdleAnimator() != nullptr)
+            animationPhase = getIdleAnimator()->getPhase();
+        else if (isWalking() && animateWalk && getAnimator() != nullptr) {
+            int halfAnimationPhases = ceil(getAnimationPhases() / 2);
+            if (m_outfit.getMount() == 0 && getIdleAnimator() != nullptr && animationPhase < halfAnimationPhases) {
+                animationPhase = halfAnimationPhases;
+                m_footStep = halfAnimationPhases;
+            }
         }
+
+        if(isAnimateAlways() && getAnimator() != nullptr)
+            animationPhase = getAnimator()->getPhase();
 
         // xPattern => creature direction
         int xPattern;
@@ -127,8 +134,22 @@ void Creature::internalDrawOutfit(Point dest, float scaleFactor, bool animateWal
         int zPattern = 0;
         if(m_outfit.getMount() != 0) {
             auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+			int animationPhaseMount = animateWalk ? m_walkAnimationPhase : 0;
+			if (datType->getIdleAnimator() != nullptr && !isWalking() && animateIdle)
+				animationPhaseMount = datType->getIdleAnimator()->getPhase();
+			else if (animateWalk && datType->getAnimator() != nullptr && isWalking()) {
+				int animationPhases = getAnimationPhases();
+				if (datType->getAnimationPhases() > animationPhases) {
+					animationPhase = animationPhase % animationPhases;
+				}
+                int halfAnimationPhasesMount = ceil(datType->getAnimationPhases() / 2);
+                if (datType->getIdleAnimator() != nullptr && animationPhaseMount < halfAnimationPhasesMount) {
+                    animationPhaseMount = halfAnimationPhasesMount;
+                    m_footStep = halfAnimationPhasesMount;
+                }
+            }
             dest -= datType->getDisplacement() * scaleFactor;
-            datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhase, lightView);
+			datType->draw(dest, scaleFactor, 0, xPattern, 0, 0, animationPhaseMount, lightView);
             dest += getDisplacement() * scaleFactor;
             zPattern = std::min<int>(1, getNumPatternZ() - 1);
         }
@@ -349,6 +370,7 @@ void Creature::walk(const Position& oldPos, const Position& newPos)
     m_walking = true;
     m_walkTimer.restart();
     m_walkedPixels = 0;
+	m_footStep = 0;
 
     if(m_walkFinishAnimEvent) {
         m_walkFinishAnimEvent->cancel();
@@ -405,7 +427,7 @@ void Creature::updateJump()
 
         int nextT, i = 1;
         do {
-            nextT = stdext::round((-b + std::sqrt(std::max<int>(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
+            nextT = stdext::round((-b + std::sqrt(std::max<double>(b*b + 4*a*(roundHeight+diff*i), 0.0)) * diff) / (2*a));
             ++i;
 
             if(nextT < halfJumpDuration)
@@ -490,32 +512,48 @@ void Creature::updateWalkAnimation(int totalPixelsWalked)
         return;
 
     int footAnimPhases = getAnimationPhases() - 1;
-    int footDelay = getStepDuration(true) / 3;
-    // Since mount is a different outfit we need to get the mount animation phases
+    int footDelay = getStepDuration(true) / getAnimationPhases() + 15;
+    if (m_outfit.getMount() != 0) {
+        auto datType = g_things.rawGetThingType(m_outfit.getMount(), ThingCategoryCreature);
+        footAnimPhases = datType->getAnimationPhases() - 1;
+        if (datType->getIdleAnimator() != nullptr) {
+            footDelay = getStepDuration(true) / ceil(footAnimPhases / 2) + 15;
+        }
+    } else if (getIdleAnimator() != nullptr) {
+        footDelay = getStepDuration(true) / ceil(footAnimPhases / 2) + 15;
+    }
+
+    // since mount is a different outfit we need to get the mount animation phases
     if(m_outfit.getMount() != 0) {
         ThingType *type = g_things.rawGetThingType(m_outfit.getMount(), m_outfit.getCategory());
         footAnimPhases = type->getAnimationPhases() - 1;
+		footDelay = getStepDuration(true) / footAnimPhases;
     }
-    if(footAnimPhases == 0)
-        m_walkAnimationPhase = 0;
+
+	if (totalPixelsWalked >= 32 && !m_walkFinishAnimEvent) {
+		m_footStep = 0;
+
+		auto self = static_self_cast<Creature>();
+		m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
+			if (!self->m_walking || self->m_walkTimer.ticksElapsed() >= self->getStepDuration(true)) {
+				self->m_walkAnimationPhase = 0;
+			}
+			self->m_walkFinishAnimEvent = nullptr;
+		}, std::min<int>(footDelay, 200));
+	}
+
+	if (footAnimPhases == 0) {
+		m_walkAnimationPhase = 0;
+	}
     else if(m_footStepDrawn && m_footTimer.ticksElapsed() >= footDelay && totalPixelsWalked < 32) {
         m_footStep++;
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
+		m_walkAnimationPhase = (m_footStep % footAnimPhases);
         m_footStepDrawn = false;
         m_footTimer.restart();
-    } else if(m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
-        m_walkAnimationPhase = 1 + (m_footStep % footAnimPhases);
     }
-
-    if(totalPixelsWalked == 32 && !m_walkFinishAnimEvent) {
-        auto self = static_self_cast<Creature>();
-        m_walkFinishAnimEvent = g_dispatcher.scheduleEvent([self] {
-            if(!self->m_walking || self->m_walkTimer.ticksElapsed() >= self->getStepDuration(true))
-                self->m_walkAnimationPhase = 0;
-            self->m_walkFinishAnimEvent = nullptr;
-        }, std::min<int>(footDelay, 200));
+	else if(m_walkAnimationPhase == 0 && totalPixelsWalked < 32) {
+		m_walkAnimationPhase = (m_footStep % footAnimPhases);
     }
-
 }
 
 void Creature::updateWalkOffset(int totalPixelsWalked)
@@ -711,9 +749,9 @@ void Creature::updateOutfitColor(Color color, Color finalColor, Color delta, int
     }
 }
 
-void Creature::setSpeed(uint16 speed)
+void Creature::setSpeed(double speed)
 {
-    uint16 oldSpeed = m_speed;
+    double oldSpeed = m_speed;
     m_speed = speed;
 
     // speed can change while walking (utani hur, paralyze, etc..)
@@ -854,7 +892,7 @@ Point Creature::getDrawOffset()
 
 int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
 {
-    int speed = m_speed;
+    double speed = m_speed;
     if(speed < 1)
         return 0;
 
@@ -894,19 +932,23 @@ int Creature::getStepDuration(bool ignoreDiagonal, Otc::Direction dir)
         interval /= speed;
 
     if(g_game.getClientVersion() >= 900)
-        interval = (interval / g_game.getServerBeat()) * g_game.getServerBeat();
+		interval = std::ceil(interval / (g_game.getServerBeat() * 1.f)) * g_game.getServerBeat();
 
-    float factor = 3;
-    if(g_game.getClientVersion() <= 810)
-        factor = 2;
+    //float factor = 3;
+    //if(g_game.getClientVersion() <= 810)
+    //    factor = 2;
 
     interval = std::max<int>(interval, g_game.getServerBeat());
 
-    if(!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
-       m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
-        interval *= factor;
+    //if(!ignoreDiagonal && (m_lastStepDirection == Otc::NorthWest || m_lastStepDirection == Otc::NorthEast ||
+    //   m_lastStepDirection == Otc::SouthWest || m_lastStepDirection == Otc::SouthEast))
+    //    interval *= factor;
 
-    return interval;
+	if (this->isLocalPlayer()) {
+		return interval;
+	}
+
+    return (int)interval*0.8f;
 }
 
 Point Creature::getDisplacement()

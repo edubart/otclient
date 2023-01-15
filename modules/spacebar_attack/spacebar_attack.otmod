@@ -1,0 +1,14 @@
+Module
+  name: spacebar_attack
+  description: Attack the monsters using the spacebar button.
+  author: Egzo
+  website: https://github.com/EgzoT/-OTClient-Mod-spacebar_attack
+  version: 1.1
+
+  autoload: true
+  autoload-priority: 1000
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ spacebar_attack ]
+  @onLoad: init()
+  @onUnload: terminate()

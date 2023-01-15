@@ -120,6 +120,17 @@ function init()
     g_window.setClipboardText(selection)
     return true
   end
+  
+  local toggleChat = function()
+    if not consoleToggleChat:isChecked() then
+      consoleToggleChat:setChecked(true)
+	  disableChat()
+	else
+	  consoleToggleChat:setChecked(false)
+	  enableChat()
+    end
+    
+  end
 
   g_keyboard.bindKeyPress('Shift+Up', function() navigateMessageHistory(1) end, consolePanel)
   g_keyboard.bindKeyPress('Shift+Down', function() navigateMessageHistory(-1) end, consolePanel)
@@ -127,6 +138,8 @@ function init()
   g_keyboard.bindKeyPress('Shift+Tab', function() consoleTabBar:selectPrevTab() end, consolePanel)
   g_keyboard.bindKeyDown('Enter', sendCurrentMessage, consolePanel)
   g_keyboard.bindKeyPress('Ctrl+A', function() consoleTextEdit:clearText() end, consolePanel)
+  g_keyboard.bindKeyPress('Ctrl+Space', toggleChat, consolePanel)
+  g_keyboard.bindKeyPress('Shift+Space', toggleChat, consolePanel)
 
   -- apply buttom functions after loaded
   consoleTabBar:setNavigation(consolePanel:getChildById('prevChannelButton'), consolePanel:getChildById('nextChannelButton'))
@@ -174,15 +187,18 @@ function toggleChat()
   end
 end
 
-function enableChat()
+function enableChat() -- is walking with arrows
   local gameInterface = modules.game_interface
 
   consoleTextEdit:setVisible(true)
   consoleTextEdit:setText("")
-
-  g_keyboard.unbindKeyUp("Space")
-  g_keyboard.unbindKeyUp("Enter")
-  g_keyboard.unbindKeyUp("Escape")
+  
+  local quickFunc2 = function()
+    if not consoleToggleChat:isChecked() then
+      consoleToggleChat:setChecked(true)
+    end
+    disableChat()
+  end
 
   gameInterface.unbindWalkKey("W")
   gameInterface.unbindWalkKey("D")
@@ -194,10 +210,10 @@ function enableChat()
   gameInterface.unbindWalkKey("C")
   gameInterface.unbindWalkKey("Z")
 
-  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using ASDW"))
+  consoleToggleChat:setTooltip(tr("Disable chat mode, allow to walk using WASD"))
 end
 
-function disableChat()
+function disableChat() -- is walking with wasd
   local gameInterface = modules.game_interface
 
   consoleTextEdit:setVisible(false)
@@ -209,9 +225,6 @@ function disableChat()
     end
     enableChat()
   end
-  g_keyboard.bindKeyUp("Space", quickFunc)
-  g_keyboard.bindKeyUp("Enter", quickFunc)
-  g_keyboard.bindKeyUp("Escape", quickFunc)
 
   gameInterface.bindWalkKey("W", North)
   gameInterface.bindWalkKey("D", East)
@@ -978,7 +991,7 @@ function navigateMessageHistory(step)
 end
 
 function applyMessagePrefixies(name, level, message)
-  if name then
+  if name and #name > 0 then
     if modules.client_options.getOption('showLevelsInConsole') and level > 0 then
       message = name .. ' [' .. level .. ']: ' .. message
     else

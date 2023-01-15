@@ -1,0 +1,20 @@
+HealthCircle < UIProgressBar
+  image-source: /game_healthcircle/img_game_healthcircle/left_empty
+  opacity: 0.7
+  phantom: true
+
+ManaCircle < UIProgressBar
+  image-source: /game_healthcircle/img_game_healthcircle/right_empty
+  opacity: 0.7
+  phantom: true
+
+HealthCircleFront < UIProgressBar
+  image-source: /game_healthcircle/img_game_healthcircle/left_full
+  opacity: 0.7
+  phantom: true
+
+ManaCircleFront < UIProgressBar
+  image-source: /game_healthcircle/img_game_healthcircle/right_full
+  opacity: 0.7
+  image-color: #0000FFFF
+  phantom: true

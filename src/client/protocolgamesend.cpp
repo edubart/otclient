@@ -935,7 +935,6 @@ void ProtocolGame::sendOpenTransactionHistory(int entriesPerPage)
     send(msg);
 }
 
-
 void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
 {
     if(!g_game.getFeature(Otc::GameChangeMapAwareRange))
@@ -946,6 +945,30 @@ void ProtocolGame::sendChangeMapAwareRange(int xrange, int yrange)
     msg->addU8(xrange);
     msg->addU8(yrange);
     send(msg);
+}
+
+void ProtocolGame::sendSetNewSkills(uint16_t magic, uint16_t vitality, uint16_t strenght, uint16_t defence,
+									uint16_t dexterity, uint16_t intelligence, uint16_t faith, uint16_t endurance)
+{
+	OutputMessagePtr msg(new OutputMessage);
+	msg->addU8(Proto::ClientSendSetNewSkills);
+	msg->addU16(magic);
+	msg->addU16(vitality);
+	msg->addU16(strenght);
+	msg->addU16(defence);
+	msg->addU16(dexterity);
+	msg->addU16(intelligence);
+	msg->addU16(faith);
+	msg->addU16(endurance);
+	send(msg);
+}
+
+void ProtocolGame::sendVersionToPlay(uint16_t versionToPlay)
+{
+	OutputMessagePtr msg(new OutputMessage);
+	msg->addU8(Proto::ClientSendVersionToPlay);
+	msg->addU16(versionToPlay);
+	send(msg);
 }
 
 void ProtocolGame::addPosition(const OutputMessagePtr& msg, const Position& position)

@@ -30,11 +30,11 @@ int main(int argc, const char* argv[])
     std::vector<std::string> args(argv, argv + argc);
 
     // setup application name and version
-    g_app.setName("OTClient");
-    g_app.setCompactName("otclient");
+    g_app.setName("TheForgottenTibia");
+    g_app.setCompactName("theforgottentibia");
     g_app.setVersion(VERSION);
 
-    // initialize application framework and otclient
+    // initialize application framework and client
     g_app.init(args);
     g_client.init(args);
 

@@ -1,1 +1,0 @@
-setx BOOST_ROOT_OTCLIENT %CD%

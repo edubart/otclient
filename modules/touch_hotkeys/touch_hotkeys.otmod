@@ -1,0 +1,13 @@
+Module
+  name: touch_hotkeys
+  description: Use hotkeys by touch or mouse.
+  author: EgzoT
+  website: https://github.com/EgzoT/touch_hotkeys
+  version: 1.0
+
+  autoload: true
+  autoload-priority: 1000
+  sandboxed: true
+  scripts: [ touch_hotkeys ]
+  @onLoad: init()
+  @onUnload: terminate()

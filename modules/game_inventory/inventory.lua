@@ -19,7 +19,7 @@ purseButton = nil
 function init()
   connect(LocalPlayer, {
     onInventoryChange = onInventoryChange,
-    onBlessingsChange = onBlessingsChange
+    --onBlessingsChange = onBlessingsChange
   })
   connect(g_game, { onGameStart = refresh })
 
@@ -39,7 +39,7 @@ function init()
       g_game.use(purse)
     end
   end
-  purseButton.onClick = purseFunction
+  --purseButton.onClick = purseFunction
 
   refresh()
   inventoryWindow:setup()
@@ -48,7 +48,7 @@ end
 function terminate()
   disconnect(LocalPlayer, {
     onInventoryChange = onInventoryChange,
-    onBlessingsChange = onBlessingsChange
+    --onBlessingsChange = onBlessingsChange
   })
   disconnect(g_game, { onGameStart = refresh })
 
@@ -78,7 +78,7 @@ function refresh()
     toggleAdventurerStyle(player and Bit.hasBit(player:getBlessings(), Blessings.Adventurer) or false)
   end
 
-  purseButton:setVisible(g_game.getFeature(GamePurseSlot))
+  --purseButton:setVisible(g_game.getFeature(GamePurseSlot))
 end
 
 function toggle()
@@ -101,7 +101,7 @@ function onInventoryChange(player, slot, item, oldItem)
 
   if slot == InventorySlotPurse then
     if g_game.getFeature(GamePurseSlot) then
-      purseButton:setEnabled(item and true or false)
+      --purseButton:setEnabled(item and true or false)
     end
     return
   end
@@ -116,9 +116,9 @@ function onInventoryChange(player, slot, item, oldItem)
   end
 end
 
-function onBlessingsChange(player, blessings, oldBlessings)
+--[[function onBlessingsChange(player, blessings, oldBlessings)
   local hasAdventurerBlessing = Bit.hasBit(blessings, Blessings.Adventurer)
   if hasAdventurerBlessing ~= Bit.hasBit(oldBlessings, Blessings.Adventurer) then
     toggleAdventurerStyle(hasAdventurerBlessing)
   end
-end
+end]]

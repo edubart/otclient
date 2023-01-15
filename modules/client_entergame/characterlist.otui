@@ -118,7 +118,7 @@ MainWindow
 
   Button
     id: buttonOk
-    !text: tr('Ok')
+    !text: tr('Login')
     width: 64
     anchors.right: next.left
     anchors.bottom: parent.bottom

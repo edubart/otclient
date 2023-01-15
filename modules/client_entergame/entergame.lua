@@ -107,6 +107,7 @@ function EnterGame.init()
   motdButton = modules.client_topmenu.addLeftButton('motdButton', tr('Message of the day'), '/images/topbuttons/motd', EnterGame.displayMotd)
   motdButton:hide()
   g_keyboard.bindKeyDown('Ctrl+G', EnterGame.openWindow)
+  downloadButton = modules.client_topmenu.addLeftButton('downloadButton', tr(clientDownloadLink), '/images/topbuttons/download', function() os.execute("start " .. clientDownloadLink .. " exit") end)
 
   if motdEnabled and G.motdNumber then
     motdButton:show()
@@ -119,6 +120,7 @@ function EnterGame.init()
   local stayLogged = g_settings.getBoolean('staylogged')
   local autologin = g_settings.getBoolean('autologin')
   local clientVersion = g_settings.getInteger('client-version')
+  
   if clientVersion == 0 then clientVersion = 1074 end
 
   if port == nil or port == 0 then port = 7171 end
@@ -130,6 +132,7 @@ function EnterGame.init()
   enterGame:getChildById('serverPortTextEdit'):setText(port)
   enterGame:getChildById('autoLoginBox'):setChecked(autologin)
   enterGame:getChildById('stayLoggedBox'):setChecked(stayLogged)
+  enterGame:getChildById('connectToLocalhostBox'):setChecked(false)
 
   clientBox = enterGame:getChildById('clientComboBox')
   for _, proto in pairs(g_game.getSupportedClients()) do
@@ -302,6 +305,61 @@ function EnterGame.doLogin()
   G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
   local clientVersion = tonumber(clientBox:getText())
   EnterGame.hide()
+  
+  if enterGame:getChildById('connectToLocalhostBox'):isChecked() then 
+	G.host = "127.0.0.1"
+  end
+
+  if g_game.isOnline() then
+    local errorBox = displayErrorBox(tr('Login Error'), tr('Cannot login while already in game.'))
+    connect(errorBox, { onOk = EnterGame.show })
+    return
+  end
+
+  g_settings.set('host', G.host)
+  g_settings.set('port', G.port)
+  g_settings.set('client-version', clientVersion)
+
+  protocolLogin = ProtocolLogin.create()
+  protocolLogin.onLoginError = onError
+  protocolLogin.onMotd = onMotd
+  protocolLogin.onSessionKey = onSessionKey
+  protocolLogin.onCharacterList = onCharacterList
+  protocolLogin.onUpdateNeeded = onUpdateNeeded
+
+  loadBox = displayCancelBox(tr('Please wait'), tr('Connecting to login server...'))
+  connect(loadBox, { onCancel = function(msgbox)
+                                  loadBox = nil
+                                  protocolLogin:cancelLogin()
+                                  EnterGame.show()
+                                end })
+
+  g_game.setClientVersion(clientVersion)
+  g_game.setProtocolVersion(g_game.getClientProtocolVersion(clientVersion))
+  g_game.chooseRsa(G.host)
+
+  if modules.game_things.isLoaded() then
+    protocolLogin:login(G.host, G.port, G.account, G.password, G.authenticatorToken, G.stayLogged)
+  else
+    loadBox:destroy()
+    loadBox = nil
+    EnterGame.show()
+  end
+end
+
+function EnterGame.doLoginToTest()
+  G.account = 'teste'
+  G.password = 'teste'
+  G.authenticatorToken = enterGame:getChildById('authenticatorTokenTextEdit'):getText()
+  G.stayLogged = enterGame:getChildById('stayLoggedBox'):isChecked()
+  G.host = enterGame:getChildById('serverHostTextEdit'):getText()
+  G.port = tonumber(enterGame:getChildById('serverPortTextEdit'):getText())
+  local clientVersion = tonumber(clientBox:getText())
+  EnterGame.hide()
+  
+  if enterGame:getChildById('connectToLocalhostBox'):isChecked() then 
+	G.host = "127.0.0.1"
+  end
 
   if g_game.isOnline() then
     local errorBox = displayErrorBox(tr('Login Error'), tr('Cannot login while already in game.'))
@@ -409,7 +467,7 @@ function EnterGame.setUniqueServer(host, port, protocol, windowWidth, windowHeig
 
   if not windowWidth then windowWidth = 236 end
   enterGame:setWidth(windowWidth)
-  if not windowHeight then windowHeight = 210 end
+  if not windowHeight then windowHeight = 230 end
   enterGame:setHeight(windowHeight)
 end
 

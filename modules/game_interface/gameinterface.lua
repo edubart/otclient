@@ -12,7 +12,7 @@ countWindow = nil
 logoutWindow = nil
 exitWindow = nil
 bottomSplitter = nil
-limitedZoom = false
+limitedZoom = true
 currentViewMode = 0
 smartWalkDirs = {}
 smartWalkDir = nil
@@ -66,6 +66,10 @@ function init()
 
   bindKeys()
 
+  -- ZOOM OUT E TITLE E TUTORIAL WINDOW
+  gameMapPanel:zoomOut()
+  g_window.setTitle('The Forgotten Tibia')
+
   if g_game.isOnline() then
     show()
   end
@@ -97,12 +101,12 @@ function bindKeys()
   bindTurnKey('Ctrl+Numpad4', West)
 
   g_keyboard.bindKeyPress('Escape', function() g_game.cancelAttackAndFollow() end, gameRootPanel)
-  g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
-  g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
+  --g_keyboard.bindKeyPress('Ctrl+=', function() gameMapPanel:zoomIn() end, gameRootPanel)
+  --g_keyboard.bindKeyPress('Ctrl+-', function() gameMapPanel:zoomOut() end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+Q', function() tryLogout(false) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+L', function() tryLogout(false) end, gameRootPanel)
   g_keyboard.bindKeyDown('Ctrl+W', function() g_map.cleanTexts() modules.game_textmessage.clearMessages() end, gameRootPanel)
-  g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
+  --g_keyboard.bindKeyDown('Ctrl+.', nextViewMode, gameRootPanel)
 end
 
 function bindWalkKey(key, dir)
@@ -180,7 +184,7 @@ function show()
       gameMapPanel:setMaxZoomOut(513)
       gameMapPanel:setLimitVisibleRange(false)
     else
-      gameMapPanel:setMaxZoomOut(11)
+      gameMapPanel:setMaxZoomOut(13)
       gameMapPanel:setLimitVisibleRange(true)
     end
   end)
@@ -488,7 +492,7 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   end
 
   if not classic then shortcut = '(Ctrl)' else shortcut = nil end
-  if useThing then
+  if useThing then		
     if useThing:isContainer() then
       if useThing:getParentContainer() then
         menu:addOption(tr('Open'), function() g_game.open(useThing, useThing:getParentContainer()) end, shortcut)
@@ -514,8 +518,10 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
   end
 
   if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then
+    menu:addOption(tr('Loot'), function() g_game.talk('!loot ' .. useThing:getServerId()) end)
     menu:addSeparator()
     menu:addOption(tr('Trade with ...'), function() startTradeWith(lookThing) end)
+	
   end
 
   if lookThing then
@@ -530,7 +536,8 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
     menu:addSeparator()
 
     if creatureThing:isLocalPlayer() then
-      menu:addOption(tr('Set Outfit'), function() g_game.requestOutfit() end)
+      menu:addOption(tr('Set Outfit and Mount'), function() g_game.requestOutfit() end)
+	  menu:addOption(tr('Loot List'), function() g_game.talk('!lootlist') end)
 
       if g_game.getFeature(GamePlayerMounts) then
         if not localPlayer:isMounted() then

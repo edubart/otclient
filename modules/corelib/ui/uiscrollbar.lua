@@ -126,8 +126,8 @@ end
 function UIScrollBar:onSetup()
   self.setupDone = true
   local sliderButton = self:getChildById('sliderButton')
-  g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:decrement() end, 300)
-  g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:increment() end, 300)
+  g_mouse.bindAutoPress(self:getChildById('decrementButton'), function() self:onDecrement() end, 300)
+  g_mouse.bindAutoPress(self:getChildById('incrementButton'), function() self:onIncrement() end, 300)
   g_mouse.bindPressMove(sliderButton, function(mousePos, mouseMoved) parseSliderPos(self, sliderButton, mousePos, mouseMoved) end)
   g_mouse.bindPress(sliderButton, function(mousePos, mouseButton) parseSliderPress(self, sliderButton, mousePos, mouseButton) end)
 
@@ -155,6 +155,26 @@ function UIScrollBar:onStyleApply(styleName, styleNode)
     elseif name == 'mouse-scroll' then
       self.mouseScroll = value
     end
+  end
+end
+
+function UIScrollBar:onDecrement()
+  if g_keyboard.isCtrlPressed() then
+    self:decrement(self.value)
+  elseif g_keyboard.isShiftPressed() then
+    self:decrement(10)
+  else
+    self:decrement()
+  end
+end
+
+function UIScrollBar:onIncrement()
+  if g_keyboard.isCtrlPressed() then
+    self:increment(self.maximum)
+  elseif g_keyboard.isShiftPressed() then
+    self:increment(10)
+  else
+    self:increment()
   end
 end
 

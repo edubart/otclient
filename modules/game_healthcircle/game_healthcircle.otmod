@@ -1,0 +1,14 @@
+Module
+  name: game_healthcircle
+  description: Draw health circle and mana circle in game map.
+  author: EgzoT, GustavoBlaze, Tekadon58
+  website: https://github.com/EgzoT/-OTClient-Mod-health_and_mana_circle
+  version: 1.4.0
+
+  autoload: true
+  autoload-priority: 1000
+  sandboxed: true
+  dependencies: [ game_interface ]
+  scripts: [ game_healthcircle ]
+  @onLoad: init()
+  @onUnload: terminate()

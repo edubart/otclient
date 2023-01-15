@@ -1,0 +1,181 @@
+TouchHotkeys < UICheckBox
+
+  margin-top: 2
+  font: verdana-11px-monochrome
+  phantom: false
+
+  size: 57 57
+
+  $!pressed:
+    image-clip: 0 0 40 40
+
+  $pressed:
+    image-clip: 0 40 40 40
+
+Background < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/background
+
+HotF1 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF1
+
+HotF2 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF2
+
+HotF3 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF3
+
+HotF4 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF4
+
+HotF5 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF5
+
+HotF6 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF6
+
+HotF7 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF7
+
+HotF8 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF8
+
+HotF9 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF9
+
+HotF10 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF10
+
+HotF11 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF11
+
+HotF12 < TouchHotkeys
+  image-source: /touch_hotkeys/img_touch_hotkeys/HotF12
+
+MiniWindow
+  id: touchHotkeysWindow
+  !text: tr('Hotkeys')
+  height: 100
+  width: 745
+  icon: /touch_hotkeys/img_touch_hotkeys/Hotkey_icon
+  @onClose: modules.touch_hotkeys.onMiniWindowClose()
+  &save: true
+
+  UIButton
+    id: changeButtonHotkeys
+    anchors.top: minimizeButton.top
+    anchors.right: minimizeButton.left
+    margin-right: 3
+    size: 14 14
+    image-source: /images/ui/miniwindow_buttons
+    image-clip: 70 0 14 14
+    @onMouseRelease: modules.touch_hotkeys.changeVerticalToHorizontal()
+
+    $hover:
+      image-clip: 70 14 14 14
+
+    $pressed:
+      image-clip: 70 28 14 14
+
+  MiniWindowContents
+    Background
+      id: background
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+
+    HotF1
+      id: hotf1
+      anchors.top: parent.top
+      anchors.left: parent.left
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F1')
+
+    HotF2
+      id: hotf2
+      anchors.top: parent.top
+      anchors.left: hotf1.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F2')
+
+    HotF3
+      id: hotf3
+      anchors.top: parent.top
+      anchors.left: hotf2.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F3')
+
+    HotF4
+      id: hotf4
+      anchors.top: parent.top
+      anchors.left: hotf3.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F4')
+
+    HotF5
+      id: hotf5
+      anchors.top: parent.top
+      anchors.left: hotf4.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F5')
+
+    HotF6
+      id: hotf6
+      anchors.top: parent.top
+      anchors.left: hotf5.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F6')
+
+    HotF7
+      id: hotf7
+      anchors.top: parent.top
+      anchors.left: hotf6.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F7')
+
+    HotF8
+      id: hotf8
+      anchors.top: parent.top
+      anchors.left: hotf7.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F8')
+
+    HotF9
+      id: hotf9
+      anchors.top: parent.top
+      anchors.left: hotf8.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F9')
+
+    HotF10
+      id: hotf10
+      anchors.top: parent.top
+      anchors.left: hotf9.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F10')
+
+    HotF11
+      id: hotf11
+      anchors.top: parent.top
+      anchors.left: hotf10.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F11')
+
+    HotF12
+      id: hotf12
+      anchors.top: parent.top
+      anchors.left: hotf11.right
+      margin-top: 5
+      margin-left: 5
+      @onMousePress: modules.game_hotkeys.doKeyCombo('F12')

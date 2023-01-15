@@ -2,14 +2,14 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <LUA_DIR>$(OTCLIENTSDKDir)\LuaJIT-2.1.0\</LUA_DIR>
-    <GLEW_DIR>$(OTCLIENTSDKDir)\glew-2.0.0\</GLEW_DIR>
-    <LIBOGG_DIR>$(OTCLIENTSDKDir)\libogg-1.3.2\</LIBOGG_DIR>
-    <LIBVORBIS_DIR>$(OTCLIENTSDKDir)\libvorbis-1.3.5\</LIBVORBIS_DIR>
-    <OPEN_AL_DIR>$(OTCLIENTSDKDir)\OpenAL-1.15.1\</OPEN_AL_DIR>
-    <OPEN_SSL_DIR>$(OTCLIENTSDKDir)\OpenSSL-1.0.2j\</OPEN_SSL_DIR>
-    <PHYSFS_DIR>$(OTCLIENTSDKDir)\physfs-2.0.3.1\</PHYSFS_DIR>
-    <ZLIB_DIR>$(OTCLIENTSDKDir)\zlib-1.2.8.8\</ZLIB_DIR>
+    <LUA_DIR>C:\otclient-sdk\LuaJIT-2.1.0\</LUA_DIR>
+    <GLEW_DIR>C:\otclient-sdk\glew-2.0.0\</GLEW_DIR>
+    <LIBOGG_DIR>C:\otclient-sdk\libogg-1.3.2\</LIBOGG_DIR>
+    <LIBVORBIS_DIR>C:\otclient-sdk\libvorbis-1.3.5\</LIBVORBIS_DIR>
+    <OPEN_AL_DIR>C:\otclient-sdk\OpenAL-1.15.1\</OPEN_AL_DIR>
+    <OPEN_SSL_DIR>C:\otclient-sdk\OpenSSL-1.0.2j\</OPEN_SSL_DIR>
+    <PHYSFS_DIR>C:\otclient-sdk\physfs-2.0.3.1\</PHYSFS_DIR>
+    <ZLIB_DIR>C:\otclient-sdk\zlib-1.2.8.8\</ZLIB_DIR>
 
     <PREPROCESSOR_DEFS>
         WIN32;
@@ -26,11 +26,11 @@
         BUILD_COMMIT="devel";
         BUILD_REVISION="0";
         VERSION="0.6.3";
-        AB
+        AB;
     </PREPROCESSOR_DEFS>
     
     <OTCLIENT_INCLUDES>
-        $(BOOST_ROOT_OTCLIENT);
+        C:\boost_1_65_1;
         $(LUA_DIR)\include;
         $(GLEW_DIR)\include;
         $(LIBOGG_DIR)\include;
@@ -38,11 +38,12 @@
         $(OPEN_AL_DIR)\include;
         $(OPEN_SSL_DIR)\include;
         $(PHYSFS_DIR)\include;
-        $(ZLIB_DIR)\include
+        $(ZLIB_DIR)\include;
     </OTCLIENT_INCLUDES>
     
     <OTCLIENT_LIBS>
-        $(BOOST_ROOT_OTCLIENT)\lib32-msvc-14.0;
+        C:\boost_1_65_1\libs;
+		C:\boost_1_65_1\stage\lib;
         $(LUA_DIR)\lib;
         $(GLEW_DIR)\lib;
         $(LIBOGG_DIR)\lib;
@@ -50,11 +51,12 @@
         $(OPEN_AL_DIR)\lib;
         $(OPEN_SSL_DIR)\lib;
         $(PHYSFS_DIR)\lib;
-        $(ZLIB_DIR)\lib
+        $(ZLIB_DIR)\lib;
     </OTCLIENT_LIBS>
     
     <OTCLIENT_LIBS64>
-        $(BOOST_ROOT_OTCLIENT)\lib64-msvc-14.0;
+        C:\boost_1_65_1\libs;
+		C:\boost_1_65_1\stage\lib;
         $(LUA_DIR)\lib64;
         $(GLEW_DIR)\lib64;
         $(LIBOGG_DIR)\lib64;
@@ -62,7 +64,7 @@
         $(OPEN_AL_DIR)\lib64;
         $(OPEN_SSL_DIR)\lib64;
         $(PHYSFS_DIR)\lib64;
-        $(ZLIB_DIR)\lib64
+        $(ZLIB_DIR)\lib64;
     </OTCLIENT_LIBS64>
     
     <OTCLIENT_LIBDEPS>

@@ -15,6 +15,7 @@ local defaultOptions = {
   showPrivateMessagesInConsole = true,
   showPrivateMessagesOnScreen = true,
   showLeftPanel = false,
+  moveWindowsToPanel = false,
   foregroundFrameRate = 61,
   backgroundFrameRate = 201,
   painterEngine = 0,
@@ -109,11 +110,11 @@ function init()
   graphicsPanel = g_ui.loadUI('graphics')
   optionsTabBar:addTab(tr('Graphics'), graphicsPanel, '/images/optionstab/graphics')
 
-  audioPanel = g_ui.loadUI('audio')
-  optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
+  --audioPanel = g_ui.loadUI('audio')
+  --optionsTabBar:addTab(tr('Audio'), audioPanel, '/images/optionstab/audio')
 
   optionsButton = modules.client_topmenu.addLeftButton('optionsButton', tr('Options'), '/images/topbuttons/options', toggle)
-  audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
+  --audioButton = modules.client_topmenu.addLeftButton('audioButton', tr('Audio'), '/images/topbuttons/audio', function() toggleOption('enableAudio') end)
 
   addEvent(function() setup() end)
 end
@@ -123,7 +124,7 @@ function terminate()
   g_keyboard.unbindKeyDown('Ctrl+N')
   optionsWindow:destroy()
   optionsButton:destroy()
-  audioButton:destroy()
+  --audioButton:destroy()
 end
 
 function setup()
@@ -192,17 +193,19 @@ function setOption(key, value, force)
   elseif key == 'enableAudio' then
     g_sounds.setAudioEnabled(value)
     if value then
-      audioButton:setIcon('/images/topbuttons/audio')
+      --audioButton:setIcon('/images/topbuttons/audio')
     else
-      audioButton:setIcon('/images/topbuttons/audio_mute')
+      --audioButton:setIcon('/images/topbuttons/audio_mute')
     end
-  elseif key == 'enableMusicSound' then
-    g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
-  elseif key == 'musicSoundVolume' then
-    g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
-    audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
+  --elseif key == 'enableMusicSound' then
+    --g_sounds.getChannel(SoundChannels.Music):setEnabled(value)
+  --elseif key == 'musicSoundVolume' then
+    --g_sounds.getChannel(SoundChannels.Music):setGain(value/100)
+    --audioPanel:getChildById('musicSoundVolumeLabel'):setText(tr('Music volume: %d', value))
   elseif key == 'showLeftPanel' then
     modules.game_interface.getLeftPanel():setOn(value)
+  elseif key == 'moveWindowsToPanel' then
+    g_settings.set('moveWindowsToPanel', true)
   elseif key == 'backgroundFrameRate' then
     local text, v = value, value
     if value <= 0 or value >= 201 then text = 'max' v = 0 end

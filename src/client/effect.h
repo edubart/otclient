@@ -51,7 +51,7 @@ protected:
 
 private:
     Timer m_animationTimer;
-    uint m_phaseDuration;
+	uint m_phaseDuration;
     uint16 m_id;
 };
 

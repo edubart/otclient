@@ -687,13 +687,20 @@ void Map::setAwareRange(const AwareRange& range)
 }
 
 void Map::resetAwareRange()
-{
+{/*
     AwareRange range;
     range.left = 8;
     range.top = 6;
     range.bottom = 7;
     range.right = 9;
-    setAwareRange(range);
+    setAwareRange(range);*/
+
+	AwareRange range;
+	range.left = 9; //Change this to = maxClientViewportX
+	range.top = 7; //Change this to = maxClientViewportY
+	range.bottom = range.top + 1;
+	range.right = range.left + 1;
+	setAwareRange(range);
 }
 
 int Map::getFirstAwareFloor()

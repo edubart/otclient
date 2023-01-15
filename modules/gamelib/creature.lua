@@ -48,6 +48,13 @@ function getNextSkullId(skullId)
   return SkullRed
 end
 
+function script_path()
+   local str = debug.getinfo(1, "S").source:sub(2)
+   return str:match("(.*/)")
+end
+
+print(script_path())
+
 function getSkullImagePath(skullId)
   local path
   if skullId == SkullYellow then
@@ -113,9 +120,9 @@ end
 function getTypeImagePath(creatureType)
   local path
   if creatureType == CreatureTypeSummonOwn then
-    path = '/images/game/creaturetype/summon_own'
+    path = '/images/game/summon_own'
   elseif creatureType == CreatureTypeSummonOther then
-    path = '/images/game/creaturetype/summon_other'
+    path = '/images/game/summon_other'
   end
   return path
 end
