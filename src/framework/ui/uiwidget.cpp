@@ -65,7 +65,7 @@ void UIWidget::draw(const Rect& visibleRect, Fw::DrawPane drawPane)
 
     if(m_rotation != 0.0f) {
         g_painter->pushTransformMatrix();
-        g_painter->rotate(m_rect.center(), m_rotation * (Fw::pi / 180.0));
+        g_painter->rotate(m_rect.center(), m_rotation * (Fw::pi / 180.f));
     }
 
     drawSelf(drawPane);

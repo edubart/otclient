@@ -37,38 +37,38 @@ Color Outfit::getColor(int color)
 
     float loc1 = 0, loc2 = 0, loc3 = 0;
     if(color % HSI_H_STEPS != 0) {
-        loc1 = color % HSI_H_STEPS * 1.0/18.0;
+        loc1 = color % HSI_H_STEPS * 1.f/18.f;
         loc2 = 1;
         loc3 = 1;
 
         switch(int(color / HSI_H_STEPS)) {
         case 0:
-            loc2 = 0.25;
-            loc3 = 1.00;
+            loc2 = 0.25f;
+            loc3 = 1.f;
             break;
         case 1:
-            loc2 = 0.25;
-            loc3 = 0.75;
+            loc2 = 0.25f;
+            loc3 = 0.75f;
             break;
         case 2:
-            loc2 = 0.50;
-            loc3 = 0.75;
+            loc2 = 0.5f;
+            loc3 = 0.75f;
             break;
         case 3:
-            loc2 = 0.667;
-            loc3 = 0.75;
+            loc2 = 0.667f;
+            loc3 = 0.75f;
             break;
         case 4:
-            loc2 = 1.00;
-            loc3 = 1.00;
+            loc2 = 1.f;
+            loc3 = 1.f;
             break;
         case 5:
-            loc2 = 1.00;
-            loc3 = 0.75;
+            loc2 = 1.f;
+            loc3 = 0.75f;
             break;
         case 6:
-            loc2 = 1.00;
-            loc3 = 0.50;
+            loc2 = 1.f;
+            loc3 = 0.5f;
             break;
         }
     }
@@ -88,27 +88,27 @@ Color Outfit::getColor(int color)
 
     float red = 0, green = 0, blue = 0;
 
-    if(loc1 < 1.0/6.0) {
+    if(loc1 < 1.f/6.f) {
         red = loc3;
         blue = loc3 * (1 - loc2);
         green = blue + (loc3 - blue) * 6 * loc1;
     }
-    else if(loc1 < 2.0/6.0) {
+    else if(loc1 < 2.f/6.f) {
         green = loc3;
         blue = loc3 * (1 - loc2);
         red = green - (loc3 - blue) * (6 * loc1 - 1);
     }
-    else if(loc1 < 3.0/6.0) {
+    else if(loc1 < 3.f/6.f) {
         green = loc3;
         red = loc3 * (1 - loc2);
         blue = red + (loc3 - red) * (6 * loc1 - 2);
     }
-    else if(loc1 < 4.0/6.0) {
+    else if(loc1 < 4.f/6.f) {
         blue = loc3;
         red = loc3 * (1 - loc2);
         green = blue - (loc3 - red) * (6 * loc1 - 3);
     }
-    else if(loc1 < 5.0/6.0) {
+    else if(loc1 < 5.f/6.f) {
         blue = loc3;
         green = loc3 * (1 - loc2);
         red = green + (loc3 - green) * (6 * loc1 - 4);

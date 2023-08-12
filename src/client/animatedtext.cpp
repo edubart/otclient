@@ -53,7 +53,7 @@ void AnimatedText::drawText(const Point& dest, const Rect& visibleRect)
 
     if(visibleRect.contains(rect)) {
         //TODO: cache into a framebuffer
-        float t0 = tf / 1.2;
+        float t0 = tf / 1.2f;
         if(t > t0) {
             Color color = m_color;
             color.setAlpha((float)(1 - (t - t0) / (tf - t0)));
@@ -92,7 +92,7 @@ bool AnimatedText::merge(const AnimatedTextPtr& other)
     if(other->getCachedText().getFont() != m_cachedText.getFont())
         return false;
 
-    if(m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5)
+    if(m_animationTimer.ticksElapsed() > Otc::ANIMATED_TEXT_DURATION / 2.5f)
         return false;
 
     try {
