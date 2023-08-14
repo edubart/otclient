@@ -131,7 +131,7 @@ public:
         return positions;
     }
 
-    static double getAngleFromPositions(const Position& fromPos, const Position& toPos) {
+    static float getAngleFromPositions(const Position& fromPos, const Position& toPos) {
         // Returns angle in radians from 0 to 2Pi. -1 means positions are equal.
         int dx = toPos.x - fromPos.x;
         int dy = toPos.y - fromPos.y;
@@ -145,7 +145,7 @@ public:
         return angle;
     }
 
-    double getAngleFromPosition(const Position& position) const {
+    float getAngleFromPosition(const Position& position) const {
         return getAngleFromPositions(*this, position);
     }
 

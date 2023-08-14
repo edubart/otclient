@@ -134,7 +134,7 @@ void Map::addThing(const ThingPtr& thing, const Position& pos, int stackPos)
                 if(prevAnimatedText) {
                     Point offset = prevAnimatedText->getOffset();
                     float t = prevAnimatedText->getTimer().ticksElapsed();
-                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.0) { // didnt move 12 pixels
+                    if(t < Otc::ANIMATED_TEXT_DURATION / 4.f) { // didnt move 12 pixels
                         int y = 12 - 48 * t / (float)Otc::ANIMATED_TEXT_DURATION;
                         offset += Point(0, y);
                     }
