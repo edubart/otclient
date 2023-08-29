@@ -9,6 +9,20 @@ function UIMiniWindowContainer.create()
   return container
 end
 
+function UIMiniWindowContainer:getEmptySpaceHeight()
+  local sumHeight = 0
+  local children = self:getChildren()
+
+  for i=1,#children do
+    if children[i]:isVisible() then
+      sumHeight = sumHeight + children[i]:getHeight()
+    end
+  end
+  local selfHeight = self:getHeight() - (self:getPaddingTop() + self:getPaddingBottom())
+
+  return selfHeight - sumHeight
+end
+
 -- TODO: connect to window onResize event
 -- TODO: try to resize another widget?
 -- TODO: try to find another panel?
@@ -78,7 +92,11 @@ function UIMiniWindowContainer:fitAll(noRemoveChild)
 
   -- close widgets
   for i=1,#removeChildren do
-    removeChildren[i]:close()
+    signalcall(removeChildren[i].onRemoveFromContainer, removeChildren[i])
+    
+    if removeChildren[i]:getParent():getId() == self:getId() then
+      removeChildren[i]:close()
+    end
   end
 end
 
