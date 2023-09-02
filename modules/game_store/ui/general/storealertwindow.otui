@@ -1,0 +1,45 @@
+StoreAlertWindow < MainWindow
+  size: 270 150
+  text: Store Notification
+
+  Panel
+    id: message
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    height: 60
+    margin-top: 3
+    margin-left: 3
+    margin-bottom: 30
+    margin-right: 3
+
+    VerticalScrollBar
+      id: itemsPanelListScrollBar
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      anchors.right: parent.right
+      step: 28
+      pixels-scroll: true
+
+    ScrollablePanel
+      anchors.fill: parent
+      text-wrap: true
+      vertical-scrollbar: itemsPanelListScrollBar
+      background-color: #494949
+      border-color: #272727
+      border-width: 1
+      layout: verticalBox
+      padding: 5
+      margin-right: 12
+
+      Panel
+        id: alert
+        text-wrap: true
+        text: You have successfully purchased this outfit bitch
+
+  Button
+    id: confirmButton
+    text: Close
+    anchors.top: prev.bottom
+    anchors.horizontalCenter: parent.horizontalCenter
+    margin-top: 10

@@ -1,0 +1,50 @@
+StorePromptWindow < MainWindow
+  size: 270 135
+  text: Store Alert
+
+  Panel
+    id: message
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-top: 3
+    margin-left: 3
+    margin-right: 3
+
+    Label
+      text: New name:
+      font: verdana-11px-monochrome
+      text-offset: 0 2
+      anchors.top: parent.top
+      anchors.left: parent.left
+      height: 22
+      width: 100
+      text-auto-resize: true
+
+    InputBoxLineEdit
+      id: nameInput
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      anchors.right: parent.right
+      margin-top: 10
+      height: 22
+
+    Button
+      id: confirmButton
+      text: Change name
+      color: #CB5C5C
+      anchors.top: prev.bottom
+      anchors.left: parent.left
+      text-auto-resize: true
+      margin-top: 10
+
+    Button
+      id: cancelButton
+      text: Cancel
+      margin-left: 15
+      anchors.top: prev.top
+      anchors.left: confirmButton.right
+      anchors.right: parent.right
+      anchors.bottom: prev.bottom
+      text-auto-resize: true

@@ -27,6 +27,7 @@ Module
     - game_playermount
     - game_ruleviolation
     - game_market
+    - game_store
     - game_spelllist
     - game_cooldown
     - game_modaldialog
