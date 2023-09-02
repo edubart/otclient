@@ -41,6 +41,28 @@ function quit()
   g_app.quit()
 end
 
+function hasValue(object, value)
+  local ret = object[value] ~= nil
+  local meta = getmetatable(object)
+  if meta and meta.__index and type(meta.__index) == 'table' then
+    ret = object[value] ~= meta.__index[value]
+  end
+  return ret
+end
+
+function createHandler(object, signal)
+  return function (...)
+    local target = object
+    while type(target) == 'table' and not hasValue(target, signal) do
+      target = getmetatable(target)
+      if target then target = target.__index end
+    end
+    if type(target) == 'table' then
+      signalcall(target[signal], ...)
+    end
+  end
+end
+
 function connect(object, arg1, arg2, arg3)
   local signalsAndSlots
   local pushFront
@@ -53,6 +75,10 @@ function connect(object, arg1, arg2, arg3)
   end
 
   for signal,slot in pairs(signalsAndSlots) do
+    if type(slot) ~= 'function' then
+      perror(debug.traceback('unable to connect a non function value'))
+    end
+
     if not object[signal] then
       local mt = getmetatable(object)
       if mt and type(object) == 'userdata' then
@@ -62,21 +88,26 @@ function connect(object, arg1, arg2, arg3)
       end
     end
 
-    if not object[signal] then
-      object[signal] = slot
+    local objectHasValue = hasValue(object, signal)
+    local addHandler = type(object) == 'table' and (not object[signal] or not objectHasValue or type(object[signal]) ~= 'table')
+
+    if not object[signal] or not objectHasValue then
+      object[signal] = { }
     elseif type(object[signal]) == 'function' then
       object[signal] = { object[signal] }
     end
 
-    if type(slot) ~= 'function' then
-      perror(debug.traceback('unable to connect a non function value'))
+    if pushFront then
+      table.insert(object[signal], 1, slot)
+    else
+      table.insert(object[signal], #object[signal]+1, slot)
     end
 
-    if type(object[signal]) == 'table' then
-      if pushFront then
-        table.insert(object[signal], 1, slot)
-      else
-        table.insert(object[signal], #object[signal]+1, slot)
+    if addHandler then
+      local meta = getmetatable(object)
+      local parent = meta and meta.__index
+      if type(parent) == 'table' then
+        table.insert(object[signal], createHandler(parent, signal))
       end
     end
   end
