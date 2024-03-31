@@ -736,6 +736,7 @@ void Application::registerLuaFunctions()
     g_lua.registerClass<ShaderProgram>();
     g_lua.registerClass<PainterShaderProgram>();
     g_lua.bindClassMemberFunction<PainterShaderProgram>("addMultiTexture", &PainterShaderProgram::addMultiTexture);
+    g_lua.bindClassMemberFunction<PainterShaderProgram>("addPlayerOutfitMultiTexture", &PainterShaderProgram::addPlayerOutfitMultiTexture); // Expose addPlayerOutfitMultiTexture to lua api
 
     // ParticleEffect
     g_lua.registerClass<ParticleEffectType>();

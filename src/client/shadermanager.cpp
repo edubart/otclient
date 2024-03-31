@@ -134,6 +134,7 @@ void ShaderManager::setupMapShader(const PainterShaderProgramPtr& shader)
     shader->bindUniformLocation(MAP_CENTER_COORD, "u_MapCenterCoord");
     shader->bindUniformLocation(MAP_GLOBAL_COORD, "u_MapGlobalCoord");
     shader->bindUniformLocation(MAP_ZOOM, "u_MapZoom");
+    shader->bindUniformLocation(PLAYER_DIRECTION, "u_PlayerLookDirection"); // Binding player look direction uniform to the shader manager
 }
 
 PainterShaderProgramPtr ShaderManager::getShader(const std::string& name)

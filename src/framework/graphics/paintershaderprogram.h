@@ -64,6 +64,7 @@ public:
     void updateTime();
 
     void addMultiTexture(const std::string& file);
+    void addPlayerOutfitMultiTexture();
     void bindMultiTextures();
 
 private:
@@ -76,7 +77,8 @@ private:
     Matrix3 m_textureMatrix;
     Size m_resolution;
     float m_time;
-    std::vector<TexturePtr> m_multiTextures;
+    int m_playerOutfitIndex = INT_MAX;
+    std::vector<TexturePtr> m_multiTextures; // Control variables (a shader should have only one player outfit uniform, yet, it needs to be updated very often)
 };
 
 #endif

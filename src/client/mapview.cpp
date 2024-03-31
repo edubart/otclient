@@ -37,6 +37,7 @@
 #include <framework/core/eventdispatcher.h>
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
+#include "game.h"
 
 
 enum {
@@ -186,6 +187,7 @@ void MapView::draw(const Rect& rect)
         m_shader->setUniformValue(ShaderManager::MAP_CENTER_COORD, center.x / (float)framebufferRect.width(), 1.0f - center.y / (float)framebufferRect.height());
         m_shader->setUniformValue(ShaderManager::MAP_GLOBAL_COORD, globalCoord.x / (float)framebufferRect.height(), globalCoord.y / (float)framebufferRect.height());
         m_shader->setUniformValue(ShaderManager::MAP_ZOOM, scaleFactor);
+        m_shader->setUniformValue(ShaderManager::PLAYER_DIRECTION, g_game.getLocalPlayer()->getDirection()); // Set the player direction uniform
         g_painter->setShaderProgram(m_shader);
     }
 

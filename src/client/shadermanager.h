@@ -34,7 +34,8 @@ public:
         ITEM_ID_UNIFORM = 10,
         MAP_CENTER_COORD = 10,
         MAP_GLOBAL_COORD = 11,
-        MAP_ZOOM = 12
+        MAP_ZOOM = 12,
+        PLAYER_DIRECTION = 13, // Added player direction to the list of default shader uniforms
     };
 
     void init();
