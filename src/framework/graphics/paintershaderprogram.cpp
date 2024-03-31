@@ -27,6 +27,7 @@
 #include "graphics.h"
 #include <framework/core/clock.h>
 #include <framework/platform/platformwindow.h>
+#include <client/game.h>
 
 PainterShaderProgram::PainterShaderProgram()
 {
@@ -161,6 +162,30 @@ void PainterShaderProgram::addMultiTexture(const std::string& file)
     texture->setRepeat(true);
 
     m_multiTextures.push_back(texture);
+}
+
+// Add player outfit texture to the shader uniforms
+void PainterShaderProgram::addPlayerOutfitMultiTexture()
+{
+    if (m_multiTextures.size() > 3)
+        g_logger.error("cannot add more multi textures to shader, the max is 3");
+
+    TexturePtr texture = g_game.getLocalPlayer()->getOutfitTexture(); // Get player outfit texture
+    if (!texture)
+        return;
+
+    texture->setSmooth(false);
+    texture->setRepeat(false);
+
+    if (m_playerOutfitIndex == INT_MAX)
+    {
+        m_playerOutfitIndex = m_multiTextures.size();
+        m_multiTextures.push_back(texture);
+        return;
+    }
+    else {
+        m_multiTextures.at(m_playerOutfitIndex) = texture;
+    }
 }
 
 void PainterShaderProgram::bindMultiTextures()

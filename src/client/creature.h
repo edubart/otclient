@@ -49,6 +49,7 @@ public:
     void internalDrawOutfit(Point dest, float scaleFactor, bool animateWalk, bool animateIdle, Otc::Direction direction, LightView *lightView = nullptr);
     void drawOutfit(const Rect& destRect, bool resize);
     void drawInformation(const Point& point, bool useGray, const Rect& parentRect, int drawFlags);
+    TexturePtr getOutfitTexture(); // Method for receiving the player outfit texture
 
     void setId(uint32 id) { m_id = id; }
     void setName(const std::string& name);

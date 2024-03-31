@@ -322,6 +322,32 @@ void Creature::drawInformation(const Point& point, bool useGray, const Rect& par
     }
 }
 
+// Get the player outfit texture
+TexturePtr Creature::getOutfitTexture() 
+{
+    int exactSize;
+    if (m_outfit.getCategory() == ThingCategoryCreature)
+        exactSize = getExactSize();
+    else
+        exactSize = g_things.rawGetThingType(m_outfit.getAuxId(), m_outfit.getCategory())->getExactSize();
+
+    int frameSize;
+    frameSize = std::max<int>(exactSize * 0.75f, 2 * Otc::TILE_PIXELS * 0.75f); // Define the frame size
+
+    if (g_graphics.canUseFBO()) {
+        // Create a temporary frame buffer
+        const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
+        outfitBuffer->resize(Size(frameSize, frameSize)); // Set the frame buffer size to frameSize (square)
+        outfitBuffer->bind(); // Draw operations are binded to this framebuffer from now
+        g_painter->setAlphaWriting(true);
+        g_painter->clear(Color::alpha);
+        internalDrawOutfit(Point(frameSize - Otc::TILE_PIXELS, frameSize - Otc::TILE_PIXELS) + getDisplacement(), 1, false, true, getDirection()); // Call the internal outfit draw
+        outfitBuffer->release(); // Release the frame buffer, it's not receiving next draw calls
+        return outfitBuffer->getTexture(); // Return the resulting texture
+    }
+    return nullptr;
+}
+
 void Creature::turn(Otc::Direction direction)
 {
     // if is not walking change the direction right away
