@@ -13,7 +13,7 @@ Panel
   UILabel
     id: clientVersionLabel
     background-color: #00000099
-    anchors.right: parent.right
+    anchors.right: parent.horizontalCenter
     anchors.bottom: parent.bottom
     text-align: center
     text-auto-resize: true

@@ -1,0 +1,10 @@
+Module
+  name: client_ui_debug
+  description: Draws tree of widgets on mouse position
+  author: Oroppo
+  reloadable: true
+  sandboxed: true
+  scripts: [ client_debug_ui ]
+  autoload: false
+  @onLoad: init()
+  @onUnload: terminate()

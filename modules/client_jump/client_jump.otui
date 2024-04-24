@@ -1,0 +1,39 @@
+Panel
+  id: clientJumpWindow
+  anchors.bottom: parent.bottom
+  image-source: /images/ui/window
+  image-smooth: true
+  height: 950
+  width: 600
+  margin-top: 1
+  focusable: false
+
+  UIButton
+    id: clientJumpButton
+    size: 50 50
+    width: 100
+    height: 75
+    image-source: /images/ui/menubox
+    anchors.right: parent.right
+    anchors.bottom: parent.verticalCenter
+    padding-top: 500  
+
+    $hover !disabled:
+      image-color: #ffffff99
+
+    $pressed:
+      image-color: #ffffff44
+
+    $disabled:
+      image-color: #ffffff55
+
+    @onClick: onClickEvent()
+
+  UILabel
+    id: clientJumpLabel
+
+    text-align: left
+    text-auto-resize: false
+    anchors.centerIn: clientJumpButton
+    color: #ffffff
+    font: verdana-40px-antialised

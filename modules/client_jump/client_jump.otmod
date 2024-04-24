@@ -1,0 +1,11 @@
+Module
+  name: client_jump
+  description: Jump away!
+  author: Oroppo
+  reloadable: true
+  sandboxed: true
+  scripts: [ client_jump ]
+  autoload: true
+  autoload-priority: 1001
+  @onLoad: init()
+  @onUnload: terminate()

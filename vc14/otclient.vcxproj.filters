@@ -531,6 +531,9 @@
     <ClCompile Include="..\src\client\animator.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="MovingButton.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\framework\const.h">
@@ -1048,6 +1051,9 @@
     </ClInclude>
     <ClInclude Include="..\src\client\animator.h">
       <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="MovingButton.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
