@@ -89,6 +89,17 @@ void OutputMessage::addString(const std::string& buffer)
     m_messageSize += len;
 }
 
+void OutputMessage::addRawString(const std::string& buffer)
+{
+    int len = buffer.length();
+    if (len > MAX_STRING_LENGTH)
+        throw stdext::exception(stdext::format("string length > %d", MAX_STRING_LENGTH));
+    checkWrite(len);
+    memcpy((char*)(m_buffer + m_writePos), buffer.c_str(), len);
+    m_writePos += len;
+    m_messageSize += len;
+}
+
 void OutputMessage::addPaddingBytes(int bytes, uint8 byte)
 {
     if(bytes <= 0)
