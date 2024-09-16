@@ -1,0 +1,19 @@
+Panel
+  id: storeOffersPanel
+
+
+  StoreComboBox
+    id: storeComboBox
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+
+  Panel
+    id: storeOffersItemsPanel
+    anchors.top: prev.bottom
+    anchors.left: prev.left
+    anchors.right: prev.right
+    anchors.bottom: parent.bottom
+    border-width: 1
+    border-color: #000000
+    margin-top: 3

@@ -1,0 +1,9 @@
+Panel
+  background-color: #22283322
+  margin: 1
+
+  Label
+    !text: tr('Not implemented')
+    anchors.top: parent.top
+    anchors.left: parent.left
+    margin-left: 10

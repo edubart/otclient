@@ -28,10 +28,10 @@ offersTabBar = nil
 selectionTabBar = nil
 
 marketOffersPanel = nil
-browsePanel = nil
+BROWSE_PANEL = nil
 overviewPanel = nil
 itemOffersPanel = nil
-itemDetailsPanel = nil
+ITEM_DETAILS_PANEL = nil
 itemStatsPanel = nil
 myOffersPanel = nil
 currentOffersPanel = nil
@@ -40,7 +40,6 @@ itemsPanel = nil
 selectedOffer = {}
 selectedMyOffer = {}
 
-nameLabel = nil
 feeLabel = nil
 balanceLabel = nil
 totalPriceEdit = nil
@@ -49,8 +48,10 @@ amountEdit = nil
 searchEdit = nil
 radioItemSet = nil
 selectedItem = nil
+selectedItemLabel = nil
+selectedItemTitleLabel = nil
 offerTypeList = nil
-categoryList = nil
+CATEGORY_LIST = nil
 subCategoryList = nil
 slotFilterList = nil
 createOfferButton = nil
@@ -443,7 +444,9 @@ local function updateSelectedItem(widget)
   Market.resetCreateOffer()
   if Market.isItemSelected() then
     selectedItem:setItem(selectedItem.item.displayItem)
-    nameLabel:setText(selectedItem.item.marketData.name)
+    selectedItemLabel:setText('')
+    selectedItemTitleLabel:setText(selectedItem.item.marketData.name)
+    Market:hideOffersTableInstructions()
     clearOffers()
 
     Market.enableCreateOffer(true) -- update offer types
@@ -726,8 +729,10 @@ local function initMarketItems()
           }
 
           -- add new market item
+        if marketItems[marketData.category] ~= nil then
           table.insert(marketItems[marketData.category], marketItem)
           itemSet[marketData.tradeAs] = true
+        end
       end
     end
   end
@@ -741,13 +746,17 @@ local function initInterface()
 
   -- setup 'Market Offer' section tabs
   marketOffersPanel = g_ui.loadUI('ui/marketoffers')
-  mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
+  local mopTab = mainTabBar:addTab(tr('Market Offers'), marketOffersPanel)
+  mopTab.onClick = function()
+    mainTabBar:selectTab(mopTab)
+    Market.refreshOffers()
+  end
 
   selectionTabBar = marketOffersPanel:getChildById('leftTabBar')
   selectionTabBar:setContentWidget(marketOffersPanel:getChildById('leftTabContent'))
 
-  browsePanel = g_ui.loadUI('ui/marketoffers/browse')
-  selectionTabBar:addTab(tr('Browse'), browsePanel)
+  BROWSE_PANEL = g_ui.loadUI('ui/marketoffers/browse')
+  selectionTabBar:addTab(tr('Browse'), BROWSE_PANEL)
 
   -- Currently not used
   -- "Reserved for more functionality later"
@@ -760,8 +769,8 @@ local function initInterface()
   itemStatsPanel = g_ui.loadUI('ui/marketoffers/itemstats')
   displaysTabBar:addTab(tr('Statistics'), itemStatsPanel)
 
-  itemDetailsPanel = g_ui.loadUI('ui/marketoffers/itemdetails')
-  displaysTabBar:addTab(tr('Details'), itemDetailsPanel)
+  ITEM_DETAILS_PANEL = g_ui.loadUI('ui/marketoffers/itemdetails')
+  displaysTabBar:addTab(tr('Details'), ITEM_DETAILS_PANEL)
 
   itemOffersPanel = g_ui.loadUI('ui/marketoffers/itemoffers')
   displaysTabBar:addTab(tr('Offers'), itemOffersPanel)
@@ -769,7 +778,11 @@ local function initInterface()
 
   -- setup 'My Offer' section tabs
   myOffersPanel = g_ui.loadUI('ui/myoffers')
-  mainTabBar:addTab(tr('My Offers'), myOffersPanel)
+  local moTab = mainTabBar:addTab(tr('My Offers'), myOffersPanel)
+  moTab.onClick = function()
+    mainTabBar:selectTab(moTab)
+    Market.refreshMyOffers()
+  end
 
   offersTabBar = myOffersPanel:getChildById('offersTabBar')
   offersTabBar:setContentWidget(myOffersPanel:getChildById('offersTabContent'))
@@ -790,8 +803,9 @@ local function initInterface()
   sellButton.onClick = function() openAmountWindow(Market.acceptMarketOffer, MarketAction.Sell, 'Sell') end
 
   -- setup selected item
-  nameLabel = marketOffersPanel:getChildById('nameLabel')
   selectedItem = marketOffersPanel:getChildById('selectedItem')
+  selectedItemLabel = selectedItem:getChildById('selectedItemLabel')
+  selectedItemTitleLabel = marketOffersPanel:getChildById('selectedItemTitleLabel')
 
   -- setup create new offer
   totalPriceEdit = marketOffersPanel:getChildById('totalPriceEdit')
@@ -811,10 +825,10 @@ local function initInterface()
   Market.enableCreateOffer(false)
 
   -- setup filters
-  filterButtons[MarketFilters.Vocation] = browsePanel:getChildById('filterVocation')
-  filterButtons[MarketFilters.Level] = browsePanel:getChildById('filterLevel')
-  filterButtons[MarketFilters.Depot] = browsePanel:getChildById('filterDepot')
-  filterButtons[MarketFilters.SearchAll] = browsePanel:getChildById('filterSearchAll')
+  filterButtons[MarketFilters.Vocation] = BROWSE_PANEL:getChildById('filterVocation')
+  filterButtons[MarketFilters.Level] = BROWSE_PANEL:getChildById('filterLevel')
+  filterButtons[MarketFilters.Depot] = BROWSE_PANEL:getChildById('filterDepot')
+  filterButtons[MarketFilters.SearchAll] = BROWSE_PANEL:getChildById('filterSearchAll')
 
   -- set filter default values
   clearFilters()
@@ -824,10 +838,10 @@ local function initInterface()
     filter.onCheckChange = Market.updateCurrentItems
   end
 
-  searchEdit = browsePanel:getChildById('searchEdit')
-  categoryList = browsePanel:getChildById('categoryComboBox')
-  subCategoryList = browsePanel:getChildById('subCategoryComboBox')
-  slotFilterList = browsePanel:getChildById('slotComboBox')
+  searchEdit = BROWSE_PANEL:getChildById('searchEdit')
+  CATEGORY_LIST = BROWSE_PANEL:getChildById('categoryComboBox')
+  subCategoryList = BROWSE_PANEL:getChildById('subCategoryComboBox')
+  slotFilterList = BROWSE_PANEL:getChildById('slotComboBox')
 
   slotFilterList:addOption(MarketSlotFilters[255])
   slotFilterList:setEnabled(false)
@@ -836,22 +850,22 @@ local function initInterface()
     if i >= MarketCategory.Ammunition and i <= MarketCategory.WandsRods then
       subCategoryList:addOption(getMarketCategoryName(i))
     else
-      categoryList:addOption(getMarketCategoryName(i))
+      CATEGORY_LIST:addOption(getMarketCategoryName(i))
     end
   end
-  categoryList:addOption(getMarketCategoryName(255)) -- meta weapons
-  categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  CATEGORY_LIST:addOption(getMarketCategoryName(255)) -- meta weapons
+  CATEGORY_LIST:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   subCategoryList:setEnabled(false)
 
   -- hook item filters
-  categoryList.onOptionChange = onChangeCategory
+  CATEGORY_LIST.onOptionChange = onChangeCategory
   subCategoryList.onOptionChange = onChangeSubCategory
   slotFilterList.onOptionChange = onChangeSlotFilter
 
   -- setup tables
   buyOfferTable = itemOffersPanel:recursiveGetChildById('buyingTable')
   sellOfferTable = itemOffersPanel:recursiveGetChildById('sellingTable')
-  detailsTable = itemDetailsPanel:recursiveGetChildById('detailsTable')
+  detailsTable = ITEM_DETAILS_PANEL:recursiveGetChildById('detailsTable')
   buyStatsTable = itemStatsPanel:recursiveGetChildById('buyStatsTable')
   sellStatsTable = itemStatsPanel:recursiveGetChildById('sellStatsTable')
   buyOfferTable.onSelectionChange = onSelectBuyOffer
@@ -917,10 +931,37 @@ function terminate()
   Market = nil
 end
 
+function Market.showMyOffersTableInstructions()
+  local instruction = tr('Press %s button to update', tr('Refresh Offers'))
+  if sellMyOfferTable then sellMyOfferTable:setText(instruction) end
+  if buyMyOfferTable then buyMyOfferTable:setText(instruction) end
+end
+
+function Market.hideMyOffersTableInstructions()
+  if sellMyOfferTable then sellMyOfferTable:setText('') end
+  if buyMyOfferTable then buyMyOfferTable:setText('') end
+end
+
+function Market.showOffersTableInstructions()
+  local instruction = tr('Select an item to view the offers')
+  if sellOfferTable then sellOfferTable:setText(instruction) end
+  if buyOfferTable then buyOfferTable:setText(instruction) end
+end
+
+function Market.hideOffersTableInstructions()
+  if sellOfferTable then sellOfferTable:setText('') end
+  if buyOfferTable then buyOfferTable:setText('') end
+end
+
 function Market.reset()
   balanceLabel:setColor('#bbbbbb')
-  categoryList:setCurrentOption(getMarketCategoryName(MarketCategory.First))
+  CATEGORY_LIST:setCurrentOption(getMarketCategoryName(MarketCategory.First))
   searchEdit:setText('')
+
+  -- When uses closes market at this screen we need to show this instruction again when it gets opened,
+  -- since we cannot load offers for the user ourselves due to the bot protection.
+  Market:showMyOffersTableInstructions()
+
   clearFilters()
   clearMyOffers()
   if not table.empty(information) then
@@ -944,11 +985,13 @@ function Market.clearSelectedItem()
 
     clearOffers()
     radioItemSet:selectWidget(nil)
-    nameLabel:setText('No item selected.')
+    Market:showOffersTableInstructions()
     selectedItem:setItem(nil)
     selectedItem.item = nil
     selectedItem.ref:setChecked(false)
     selectedItem.ref = nil
+    selectedItemLabel:setText('?')
+    selectedItemTitleLabel:setText(tr('No item selected.'))
 
     detailsTable:clearData()
     buyStatsTable:clearData()
@@ -1008,7 +1051,7 @@ function Market.decrementAmount()
 end
 
 function Market.updateCurrentItems()
-  local id = getMarketCategoryId(categoryList:getCurrentOption().text)
+  local id = getMarketCategoryId(CATEGORY_LIST:getCurrentOption().text)
   if id == MarketCategory.MetaWeapons then
     id = getMarketCategoryId(subCategoryList:getCurrentOption().text)
   end
@@ -1030,7 +1073,7 @@ end
 
 function Market.refreshItemsWidget(selectItem)
   local selectItem = selectItem or 0
-  itemsPanel = browsePanel:recursiveGetChildById('itemsPanel')
+  itemsPanel = BROWSE_PANEL:recursiveGetChildById('itemsPanel')
 
   local layout = itemsPanel:getLayout()
   layout:disableUpdates()
@@ -1084,6 +1127,7 @@ function Market.refreshOffers()
 end
 
 function Market.refreshMyOffers()
+  Market:hideMyOffersTableInstructions()
   clearMyOffers()
   MarketProtocol.sendMarketBrowseMyOffers()
 end
@@ -1264,4 +1308,8 @@ end
 
 function Market.onMarketBrowse(offers)
   updateOffers(offers)
+end
+
+function Market.onMarketResourceBalance(balance, money)
+  return
 end

@@ -68,6 +68,8 @@ Panel
     column-style: OfferTableColumn
     header-column-style: false
     header-row-style: false
+    color: #cccccc
+    !text: tr('Press %s button to update', tr('Refresh Offers'))
 
     OfferTableHeaderRow
       id: header
@@ -141,6 +143,8 @@ Panel
     column-style: OfferTableColumn
     header-column-style: false
     header-row-style: false
+    color: #cccccc
+    !text: tr('Press %s button to update', tr('Refresh Offers'))
 
     OfferTableHeaderRow
       id: header
