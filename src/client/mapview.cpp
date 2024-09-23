@@ -23,6 +23,7 @@
 #include "mapview.h"
 
 #include "creature.h"
+#include "game.h"
 #include "map.h"
 #include "tile.h"
 #include "statictext.h"
@@ -66,6 +67,11 @@ MapView::MapView()
     setVisibleDimension(Size(15, 11));
 
     m_shader = g_shaders.getDefaultMapShader();
+
+    for(int dir = Otc::North; dir < Otc::InvalidDirection; ++dir) {
+        MapViewControl mapViewControl = MapViewControl((Otc::Direction) dir);
+        m_mapViewControl[dir] = mapViewControl;
+    }
 }
 
 MapView::~MapView()
@@ -130,7 +136,6 @@ void MapView::draw(const Rect& rect)
         auto it = m_cachedVisibleTiles.begin();
         auto end = m_cachedVisibleTiles.end();
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
-
             while(it != end) {
                 const TilePtr& tile = *it;
                 Position tilePos = tile->getPosition();
@@ -159,7 +164,6 @@ void MapView::draw(const Rect& rect)
 
         m_mustDrawVisibleTilesCache = false;
     }
-
 
     float fadeOpacity = 1.0f;
     if(!m_shaderSwitchDone && m_fadeOutTime > 0) {
@@ -311,6 +315,10 @@ void MapView::updateVisibleTilesCache(int start)
     if(!cameraPosition.isValid())
         return;
 
+    const LocalPlayerPtr player = g_game.getLocalPlayer();
+    const bool isWalking = player->isWalking() || player->isPreWalking() || player->isServerWalking();
+    const auto& mapViewControl = isWalking ? m_mapViewControl[player->getDirection()] : m_mapViewControl[Otc::InvalidDirection];
+
     bool stop = false;
 
     // clear current visible tiles cache
@@ -351,6 +359,8 @@ void MapView::updateVisibleTilesCache(int start)
                             continue;
                         // skip tiles that are completely behind another tile
                         if(g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
+                            continue;
+                        if(!mapViewControl.isValid(tile, cameraPosition))
                             continue;
                         m_cachedVisibleTiles.push_back(tile);
                     }
@@ -401,7 +411,7 @@ void MapView::updateVisibleTilesCache(int start)
                 Position tilePos = cameraPosition.translated(p.x - m_virtualCenterOffset.x, p.y - m_virtualCenterOffset.y);
                 tilePos.coveredUp(cameraPosition.z - iz);
                 if(const TilePtr& tile = g_map.getTile(tilePos)) {
-                    if(tile->isDrawable())
+                    if(tile->isDrawable() && mapViewControl.isValid(tile, cameraPosition))
                         m_cachedVisibleTiles.push_back(tile);
                 }
             }

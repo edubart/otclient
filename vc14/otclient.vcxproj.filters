@@ -453,6 +453,9 @@
     <ClCompile Include="..\src\client\mapview.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\client\mapviewcontrol.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\client\minimap.cpp">
       <Filter>Source Files\client</Filter>
     </ClCompile>

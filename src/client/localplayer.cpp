@@ -244,6 +244,9 @@ void LocalPlayer::stopWalk()
 
     m_lastPrewalkDone = true;
     m_lastPrewalkDestination = Position();
+
+    for(const auto& mapView: g_map.getMapViews())
+        mapView->requestVisibleTilesCacheUpdate();
 }
 
 void LocalPlayer::updateWalkOffset(int totalPixelsWalked)
