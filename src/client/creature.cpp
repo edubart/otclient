@@ -30,6 +30,8 @@
 #include "effect.h"
 #include "luavaluecasts.h"
 #include "lightview.h"
+#include "shadermanager.h"
+
 
 #include <framework/graphics/graphics.h>
 #include <framework/core/eventdispatcher.h>
@@ -115,7 +117,31 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
         }
     }
 
-    internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
+    auto __dest = dest + animationOffset * scaleFactor;
+
+    // Draw Creature with framebuffer to use outline shader
+    if (m_dash.length > 0) {
+        const auto exactSize = rawGetThingType()->getExactSize();
+        const int size = static_cast<int>(Otc::TILE_PIXELS * std::max<int>(rawGetThingType()->getSize().area(), 2) * scaleFactor);
+        const auto& p = (Point(size, size) - Point(exactSize, exactSize)) / 2;
+        const auto& destFB = Rect(__dest - p, Size{ size,size });
+
+        g_painter->setShaderProgram(g_shaders.getOutlineShader());
+        const FrameBufferPtr& outfitBuffer = g_framebuffers.getTemporaryFrameBuffer();
+        outfitBuffer->resize(destFB.size());
+        outfitBuffer->bind();
+        g_painter->setAlphaWriting(true);
+        g_painter->clear(Color::alpha);
+
+        internalDrawOutfit(p, scaleFactor, animate, animate, m_direction);
+
+        outfitBuffer->release();
+        outfitBuffer->draw(destFB, Rect(0, 0, destFB.size()));
+        g_painter->resetShaderProgram();
+    }
+    else {
+        internalDrawOutfit(__dest * scaleFactor, scaleFactor, animate, animate, m_direction);
+    }
 
     m_footStepDrawn = true;
 

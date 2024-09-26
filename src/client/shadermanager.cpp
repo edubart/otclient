@@ -38,6 +38,36 @@ void ShaderManager::init()
 
     m_defaultMapShader = createFragmentShaderFromCode("Map", glslMainFragmentShader + glslTextureSrcFragmentShader);
 
+    auto outlineSource = "\n\
+    const float offset = 1.0 / 160.0;      \n\
+    uniform float u_Time;                 \n\
+    uniform sampler2D u_Tex0;             \n\
+    varying vec2 v_TexCoord;               \n\
+    \n\
+    void main()                                       \n\
+    {           \n\
+        vec4 col = texture2D(u_Tex0, v_TexCoord);                           \n\
+        if (col.a > 0.5)                                                    \n\
+            gl_FragColor = col;                                               \n\
+        else {            \n\
+            float a = texture2D(u_Tex0, vec2(v_TexCoord.x + offset, v_TexCoord.y)).a + \n\
+                texture2D(u_Tex0, vec2(v_TexCoord.x, v_TexCoord.y - offset)).a + \n\
+                texture2D(u_Tex0, vec2(v_TexCoord.x - offset, v_TexCoord.y)).a + \n\
+                texture2D(u_Tex0, vec2(v_TexCoord.x, v_TexCoord.y + offset)).a;   \n\
+            if (col.a < 1.0 && a > 0.0) {                  \n\
+                float pulse = (cos(u_Time * 6.0) + 1.0) / 2.0;                \n\
+                float alpha = pulse * 0.5 + 0.5;                        \n\
+                vec3 color = vec3(1.0, 0.0, 0.0);                     \n\
+                gl_FragColor = vec4(color, alpha);           \n\
+            }                                                        \n\
+            else { \n\
+                gl_FragColor = col;            \n\
+            }              \n\
+        }                 \n\
+    }";
+
+    m_outfileShader = createFragmentShaderFromCode("outline", outlineSource);
+
     PainterShaderProgram::release();
 }
 
@@ -45,6 +75,7 @@ void ShaderManager::terminate()
 {
     m_defaultItemShader = nullptr;
     m_defaultMapShader = nullptr;
+    m_outfileShader = nullptr;
     m_shaders.clear();
 }
 
