@@ -21,6 +21,7 @@ build/
 [Bb]in/
 [Oo]bj/
 cmake-build-*/
+vc14/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
