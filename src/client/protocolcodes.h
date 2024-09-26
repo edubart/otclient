@@ -66,6 +66,7 @@ namespace Proto {
         // NOTE: add any custom opcodes in this range
         // 51 - 99
         GameServerChangeMapAwareRange       = 51,
+        GameServerCreatureDash              = 52,
 
         // original tibia ONLY
         GameServerFullMap                   = 100,

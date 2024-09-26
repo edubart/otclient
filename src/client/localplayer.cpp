@@ -64,6 +64,9 @@ void LocalPlayer::lockWalk(int millis)
 
 bool LocalPlayer::canWalk(Otc::Direction)
 {
+    if (m_dash.length > 0)
+        return false;
+
     // cannot walk while locked
     if(m_walkLockExpiration != 0 && g_clock.millis() < m_walkLockExpiration)
         return false;

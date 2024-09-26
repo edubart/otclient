@@ -82,7 +82,41 @@ void Creature::draw(const Point& dest, float scaleFactor, bool animate, LightVie
         g_painter->setColor(Color::white);
     }
 
+    if (m_dash.length > 0) {
+        float ticks = m_dash.timer.ticksElapsed();
+        if (ticks >= 100 * m_dash.length) {
+            m_dash.length = 0;
+        }
+        else {
+            m_outfitColor = Color(89, 178, 255);
+
+            ticks /= 100.f * (m_dash.length + 1);
+
+            for (auto i = m_dash.length; i > 0; --i) {
+                auto dist = (10 * i * scaleFactor);
+                auto recDist = Point();
+                if (m_direction == Otc::Direction::East || m_direction == Otc::Direction::South)
+                    dist *= -1;
+
+                if (m_direction == Otc::Direction::West || m_direction == Otc::Direction::East)
+                    recDist.x = dist;
+                else
+                    recDist.y = dist;
+
+                const auto opacity = std::max<float>(1.f - (i / 10.f) - ticks, 0.f);
+                if(opacity > 0.1f) {
+                    g_painter->setOpacity(opacity);
+                    internalDrawOutfit(dest + recDist + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
+                }
+            }
+
+            g_painter->resetOpacity();
+            m_outfitColor = Color::white;
+        }
+    }
+
     internalDrawOutfit(dest + animationOffset * scaleFactor, scaleFactor, animate, animate, m_direction);
+
     m_footStepDrawn = true;
 
     if(lightView) {

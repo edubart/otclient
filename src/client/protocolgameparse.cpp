@@ -395,6 +395,9 @@ void ProtocolGame::parseMessage(const InputMessagePtr& msg)
             case Proto::GameServerChangeMapAwareRange:
                 parseChangeMapAwareRange(msg);
                 break;
+            case Proto::GameServerCreatureDash:
+                parseCreatureDash(msg);
+                break;
             default:
                 stdext::throw_exception(stdext::format("unhandled opcode %d", (int)opcode));
                 break;
@@ -2398,4 +2401,16 @@ Position ProtocolGame::getPosition(const InputMessagePtr& msg)
     uint8 z = msg->getU8();
 
     return Position(x, y, z);
+}
+
+void ProtocolGame::parseCreatureDash(const InputMessagePtr& msg)
+{
+    const auto id = msg->getU32();
+    const auto dashLength = msg->getU8();
+
+    CreaturePtr creature = g_map.getCreatureById(id);
+    if (creature)
+        creature->setDashLength(dashLength);
+    else
+        g_logger.traceError(stdext::format("could not get creature with id %d", id));
 }
