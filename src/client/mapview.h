@@ -160,7 +160,7 @@ private:
     stdext::boolean<true> m_smooth;
 
     stdext::boolean<true> m_follow;
-    std::vector<TilePtr> m_cachedVisibleTiles;
+    std::vector<TilePtr> m_cachedVisibleTiles[Otc::MAX_Z + 1] = {};
     std::vector<CreaturePtr> m_cachedFloorVisibleCreatures;
     CreaturePtr m_followingCreature;
     FrameBufferPtr m_framebuffer;

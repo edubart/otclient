@@ -126,24 +126,32 @@ void MapView::draw(const Rect& rect)
             }
         }
         g_painter->setColor(Color::white);
+           
 
-        auto it = m_cachedVisibleTiles.begin();
-        auto end = m_cachedVisibleTiles.end();
         for(int z=m_cachedLastVisibleFloor;z>=m_cachedFirstVisibleFloor;--z) {
 
-            while(it != end) {
-                const TilePtr& tile = *it;
-                Position tilePos = tile->getPosition();
-                if(tilePos.z != z)
-                    break;
-                else
-                    ++it;
-
+            // Draw Ground First
+            auto __drawFlags = Otc::DrawGround | Otc::DrawGroundBorders;
+            for (const auto& tile : m_cachedVisibleTiles[z]) {
+                const auto& tilePos = tile->getPosition();
                 if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags);
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, __drawFlags);
                 else
-                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, drawFlags, m_lightView.get());
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, __drawFlags, m_lightView.get());
             }
+              
+
+            __drawFlags = drawFlags;
+            __drawFlags &= ~(Otc::DrawGround | Otc::DrawGroundBorders);
+
+            for (const auto& tile : m_cachedVisibleTiles[z]) {
+                const auto& tilePos = tile->getPosition();
+                if (g_map.isCovered(tilePos, m_cachedFirstVisibleFloor))
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, __drawFlags);
+                else
+                    tile->draw(transformPositionTo2D(tilePos, cameraPosition), scaleFactor, __drawFlags, m_lightView.get());
+            }
+           
 
             if(drawFlags & Otc::DrawMissiles) {
                 for(const MissilePtr& missile : g_map.getFloorMissiles(z)) {
@@ -297,7 +305,6 @@ void MapView::updateVisibleTilesCache(int start)
             m_cachedLastVisibleFloor = m_cachedFirstVisibleFloor;
 
         m_cachedFloorVisibleCreatures.clear();
-        m_cachedVisibleTiles.clear();
 
         m_mustCleanFramebuffer = true;
         m_mustDrawVisibleTilesCache = true;
@@ -314,13 +321,16 @@ void MapView::updateVisibleTilesCache(int start)
     bool stop = false;
 
     // clear current visible tiles cache
-    m_cachedVisibleTiles.clear();
+    for (auto& floor : m_cachedVisibleTiles)
+        floor.clear();
+    
     m_mustDrawVisibleTilesCache = true;
     m_updateTilesPos = 0;
 
     // cache visible tiles in draw order
     // draw from last floor (the lower) to first floor (the higher)
     for(int iz = m_cachedLastVisibleFloor; iz >= m_cachedFirstVisibleFloor && !stop; --iz) {
+        auto& floor = m_cachedVisibleTiles[iz];
         if(m_viewMode <= FAR_VIEW) {
             const int numDiagonals = m_drawDimension.width() + m_drawDimension.height() - 1;
             // loop through / diagonals beginning at top left and going to top right
@@ -335,7 +345,7 @@ void MapView::updateVisibleTilesCache(int start)
                     }
 
                     // avoid rendering too much tiles at once
-                    if((int)m_cachedVisibleTiles.size() > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
+                    if((int)floor.size() > MAX_TILE_DRAWS && m_viewMode >= HUGE_VIEW) {
                         stop = true;
                         break;
                     }
@@ -352,7 +362,7 @@ void MapView::updateVisibleTilesCache(int start)
                         // skip tiles that are completely behind another tile
                         if(g_map.isCompletelyCovered(tilePos, m_cachedFirstVisibleFloor))
                             continue;
-                        m_cachedVisibleTiles.push_back(tile);
+                        floor.push_back(tile);
                     }
                     m_updateTilesPos++;
                 }
@@ -392,7 +402,7 @@ void MapView::updateVisibleTilesCache(int start)
 
             for(m_updateTilesPos = start; m_updateTilesPos < (int)spiral.size(); ++m_updateTilesPos) {
                 // avoid rendering too much tiles at once
-                if((int)m_cachedVisibleTiles.size() > MAX_TILE_DRAWS) {
+                if((int)floor.size() > MAX_TILE_DRAWS) {
                     stop = true;
                     break;
                 }
@@ -402,7 +412,7 @@ void MapView::updateVisibleTilesCache(int start)
                 tilePos.coveredUp(cameraPosition.z - iz);
                 if(const TilePtr& tile = g_map.getTile(tilePos)) {
                     if(tile->isDrawable())
-                        m_cachedVisibleTiles.push_back(tile);
+                        floor.push_back(tile);
                 }
             }
         }
