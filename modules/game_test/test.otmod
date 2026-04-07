@@ -1,0 +1,8 @@
+Module
+  name: game_test
+  description: My first test module
+  author: Rodrigo
+  sandboxed: true
+  scripts: [ test ]
+  @onLoad: init()
+  @onUnload: terminate()
